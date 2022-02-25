@@ -1,16 +1,14 @@
-import { client, q } from '../config/db'
+import { client, q } from "../helpers/db";
 
-export default function createNote(text) {
-    client.query(
-    q.Create(
-        q.Collection('notes'),
-        {
+export default function createJoke(text) {
+  client
+    .query(
+      q.Create(q.Collection("jokes"), {
         data: {
-            text
+          text,
         },
-        },
-    )
+      }),
     )
     .then(ret => ret)
-    .catch(err => console.warn(err))
+    .catch(err => console.warn(err));
 }

@@ -1,9 +1,8 @@
-import { client, q } from '../config/db'
+import { client, q } from "../helpers/db";
 
 export default function deleteJoke(jokeRef) {
-    client.query(
-    q.Delete(q.Ref(q.Collection('jokes'), jokeRef))
-    )
+  client
+    .query(q.Delete(q.Ref(q.Collection("jokes"), jokeRef)))
     .then(res => res)
-    .catch(err => console.warn(err.message))
+    .catch(err => console.warn(err.message));
 }
