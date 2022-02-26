@@ -1,9 +1,9 @@
 import faunadb from "faunadb";
 
-const client = new faunadb.Client({ 
+const client = new faunadb.Client({
   secret: process.env.REACT_APP_FAUNADB_KEY,
-  domain: 'db.us.fauna.com',
-  scheme: 'https',
+  domain: "db.us.fauna.com",
+  scheme: "https",
 });
 const q = faunadb.query;
 
