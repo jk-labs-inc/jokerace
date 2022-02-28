@@ -29,11 +29,11 @@ export default function useGetAllRaces() {
   }, []);
 
   const [filteredResults, setFilteredResults] = useState([]);
-  const [searchInput, setSearchInput] = useState('');
+  const [searchInput, setSearchInput] = useState("");
 
   if (isLoading) {
     return <div>Loading...</div>;
   } else {
-    return RaceSearch(data, searchInput, setSearchInput, filteredResults, setFilteredResults)
-  };
+    return RaceSearch(data, searchInput, setSearchInput, filteredResults, setFilteredResults);
+  }
 }
