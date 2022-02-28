@@ -46,6 +46,6 @@ export default function useGetAllRaces() {
   if (isLoading) {
     return <div>Loading...</div>;
   } else {
-    return RaceSearch(races, searchInput, searchItems, filteredResults, fetchRaces);
+    return RaceSearch(races, searchInput, searchItems, filteredResults);
   }
 }
