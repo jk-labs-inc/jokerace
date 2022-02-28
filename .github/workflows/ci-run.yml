@@ -55,4 +55,4 @@ jobs:
         run: yarn install --frozen-lockfile --prefer-offline
 
       - name: Tests with yarn
-        run: yarn test
+        run: yarn react-app:test
