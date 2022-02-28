@@ -1,26 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, Input, Collapse, Button } from "antd";
 import { RaceItem } from "../components";
 
-export default function RaceSearch(races, searchInput, setSearchInput, filteredResults, setFilteredResults, fetchRaces) {
-
-  const searchItems = (searchValue) => {
-    setSearchInput(searchValue)
-    if (searchInput !== '') {
-        const filteredData = races.filter((item) => {
-            return Object.values(item.data.name).join('').toLowerCase().includes(searchInput.toLowerCase())
-        })
-        setFilteredResults(filteredData)
-    }
-    else{
-        setFilteredResults(races)
-    }
-  }
-
+export default function RaceSearch(races, searchInput, searchItemsFunc, filteredResults, fetchRaces) {
   return (
     <div>
       <Button onClick={() => fetchRaces()}>Refresh</Button>
-      <Input icon='search' placeholder='Search...' onChange={(e) => searchItems(e.target.value)}/>
+      <Input icon='search' placeholder='Search...' value={searchInput} onChange={(e) => searchItemsFunc(e.target.value)} />
       <Card title="Search for your race!">
         <Collapse>
           {searchInput.length > 1 ? (
@@ -31,7 +17,8 @@ export default function RaceSearch(races, searchInput, setSearchInput, filteredR
             races.map((entry, index) => {
               return RaceItem(entry.data, index);
             })
-          )}
+          )
+          }
         </Collapse>
       </Card>
     </div>

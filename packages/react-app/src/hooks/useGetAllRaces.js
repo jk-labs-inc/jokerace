@@ -8,6 +8,18 @@ export default function useGetAllRaces() {
   const [filteredResults, setFilteredResults] = useState([]);
   const [searchInput, setSearchInput] = useState("");
 
+  function searchItems(searchValue) {
+    setSearchInput(searchValue);
+    if (searchInput !== "") {
+      const filteredData = races.filter(item => {
+        return Object.values(item.data.name).join("").toLowerCase().includes(searchInput.toLowerCase());
+      });
+      setFilteredResults(filteredData);
+    } else {
+      setFilteredResults(races);
+    }
+  }
+
   async function fetchRaces() {
     setIsLoading(true);
 
@@ -34,6 +46,6 @@ export default function useGetAllRaces() {
   if (isLoading) {
     return <div>Loading...</div>;
   } else {
-    return RaceSearch(races, searchInput, setSearchInput, filteredResults, setFilteredResults, fetchRaces);
+    return RaceSearch(races, searchInput, searchItems, filteredResults, fetchRaces);
   }
 }
