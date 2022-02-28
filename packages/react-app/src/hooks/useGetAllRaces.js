@@ -1,6 +1,6 @@
 import { client, q } from "../helpers/db";
 import { useState, useEffect } from "react";
-import { RaceItem } from "../components";
+import { RaceSearch } from "../components";
 
 export default function useGetAllRaces() {
   const [isLoading, setIsLoading] = useState(false);
@@ -18,7 +18,6 @@ export default function useGetAllRaces() {
           ),
         )
         .then(response => {
-          // console.log(response.data)
           return response.data;
         })
         .catch(error => console.log("error", error.message));
@@ -29,13 +28,12 @@ export default function useGetAllRaces() {
     fetchData();
   }, []);
 
-  console.log(data);
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
 
-  return isLoading ? (
-    <div>Loading</div>
-  ) : (
-    data.map(entry => {
-      return RaceItem(entry.data);
-    })
-  );
+  if (isLoading) {
+    return <div>Loading...</div>;
+  } else {
+    return RaceSearch(data, searchInput, setSearchInput, filteredResults, setFilteredResults)
+  };
 }

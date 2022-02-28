@@ -1,11 +1,14 @@
 import React from "react";
-import { Divider } from "antd";
+import { Collapse } from "antd";
 
-export default function JokeItem(joke) {
-  return ( 
-    <div>
-      <div>Joke: {joke.content}</div>
-      <div>Votes: {joke.votes}</div>
-    </div>
+const { Panel } = Collapse;
+
+export default function JokeItem(joke, index) {
+  return (
+    <Panel header={joke.content} key={index}>
+      <div>
+        <div>Votes: {joke.votes}</div>
+      </div>
+    </Panel>
   );
 }
