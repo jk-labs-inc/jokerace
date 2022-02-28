@@ -4,7 +4,7 @@ import { JokeItem } from ".";
 
 const { Panel } = Collapse;
 
-export default function RaceItem(entry, index) {
+export default function RaceItem(raceData, index) {
   function voteSortFunc(joke1, joke2) {
     if (joke1.votes < joke2.votes) {
       return 1;
@@ -16,9 +16,9 @@ export default function RaceItem(entry, index) {
   }
 
   return ( 
-    <Panel header={entry.name} key={index}>
+    <Panel header={raceData.name} key={index}>
       <Collapse>
-        {entry.jokes.sort(voteSortFunc).map((joke, index) => { return JokeItem(joke, index) })}
+        {raceData.jokes.sort(voteSortFunc).map((joke, index) => { return JokeItem(joke, index) })}
       </Collapse>
     </Panel>
   );
