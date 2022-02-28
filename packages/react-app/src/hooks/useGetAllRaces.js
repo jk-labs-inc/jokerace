@@ -4,10 +4,10 @@ import { RaceSearch } from "../components";
 
 export default function useGetAllRaces() {
   const [isLoading, setIsLoading] = useState(false);
-  const [data, setData] = useState([]);
+  const [races, setRaces] = useState([]);
 
   useEffect(() => {
-    async function fetchData() {
+    async function fetchRaces() {
       setIsLoading(true);
 
       const parsedResp = await client
@@ -22,10 +22,10 @@ export default function useGetAllRaces() {
         })
         .catch(error => console.log("error", error.message));
 
-      setData(parsedResp);
+      setRaces(parsedResp);
       setIsLoading(false);
     }
-    fetchData();
+    fetchRaces();
   }, []);
 
   const [filteredResults, setFilteredResults] = useState([]);
@@ -34,6 +34,6 @@ export default function useGetAllRaces() {
   if (isLoading) {
     return <div>Loading...</div>;
   } else {
-    return RaceSearch(data, searchInput, setSearchInput, filteredResults, setFilteredResults);
+    return RaceSearch(races, searchInput, setSearchInput, filteredResults, setFilteredResults);
   }
 }
