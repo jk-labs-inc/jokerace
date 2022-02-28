@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Input, Collapse } from "antd";
+import { Card, Input, Collapse, Button } from "antd";
 import { RaceItem } from "../components";
 
-export default function RaceSearch(races, searchInput, setSearchInput, filteredResults, setFilteredResults) {
+export default function RaceSearch(races, searchInput, setSearchInput, filteredResults, setFilteredResults, fetchRaces) {
 
   const searchItems = (searchValue) => {
     setSearchInput(searchValue)
@@ -19,6 +19,7 @@ export default function RaceSearch(races, searchInput, setSearchInput, filteredR
 
   return (
     <div>
+      <Button onClick={() => fetchRaces()}>Refresh</Button>
       <Input icon='search' placeholder='Search...' onChange={(e) => searchItems(e.target.value)}/>
       <Card title="Search for your race!">
         <Collapse>
