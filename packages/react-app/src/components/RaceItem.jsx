@@ -1,10 +1,8 @@
 import React from "react";
-import { Collapse } from "antd";
-import { JokeItem } from ".";
+import { Card, Button } from "antd";
+import JokeItem from "./JokeItem";
 
-const { Panel } = Collapse;
-
-export default function RaceItem(raceData, index) {
+export default function RaceItem({raceData}) {
   function voteSortFunc(joke1, joke2) {
     if (joke1.votes < joke2.votes) {
       return 1;
@@ -16,10 +14,12 @@ export default function RaceItem(raceData, index) {
   }
 
   return ( 
-    <Panel header={raceData.name} key={index}>
-      <Collapse>
-        {raceData.jokes.sort(voteSortFunc).map((joke, index) => { return JokeItem(joke, index) })}
-      </Collapse>
-    </Panel>
+    <Card>
+      <h3>{raceData.name}</h3>
+      <Button onClick={() => {window.location.reload();}}>Submit Joke</Button>
+      {raceData.jokes.sort(voteSortFunc).map(
+        (joke) => { return <JokeItem joke={joke} /> }
+      )}
+    </Card>
   );
 }
