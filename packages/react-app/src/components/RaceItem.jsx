@@ -1,6 +1,8 @@
 import React, {useState} from "react";
-import { Card, Button, Modal, Input } from "antd";
+import { Card, Button, Modal, Input, Statistic } from "antd";
 import JokeItem from "./JokeItem";
+
+const { Countdown } = Statistic;
 
 function voteSortFunc(joke1, joke2) {
   if (joke1.votes < joke2.votes) {
@@ -14,6 +16,7 @@ function voteSortFunc(joke1, joke2) {
 
 export default function RaceItem({raceData}) {
   const [isSubmitJokeModalVisible, setIsSubmitJokeModalVisible] = useState(false);
+  const [showCountdown, setShowCountdown] = useState(false);
 
   const showModal = () => {
     setIsSubmitJokeModalVisible(true);
@@ -32,6 +35,7 @@ export default function RaceItem({raceData}) {
       <h3>{raceData.name}</h3>
       <h4>From {new Date(raceData.startTime).toUTCString()}</h4>
       <h4>To {new Date(raceData.endTime).toUTCString()}</h4>
+      <Button onClick={() => setShowCountdown(!showCountdown)}>Toggle Countdown</Button>
       <Button type="primary" onClick={showModal}>
         Submit Joke
       </Button>
@@ -40,7 +44,13 @@ export default function RaceItem({raceData}) {
         <p>Race you are joking in: </p>
         <p>Joke you would like to submit: </p>
         <Input icon='search' placeholder='Vote to submit' />
-      </Modal>      
+      </Modal>
+      {showCountdown 
+        ? <div>
+            <p>Time until end of race: <Countdown visible={isSubmitJokeModalVisible} value={raceData.endTime}></Countdown></p>
+          </div>
+        : null
+      }
       {raceData.jokes.sort(voteSortFunc).map(
         (joke) => { return <JokeItem joke={joke} /> }
       )}
