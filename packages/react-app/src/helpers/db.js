@@ -40,3 +40,7 @@ export const createRace = paramDict => {
     .then(ret => ret)
     .catch(err => console.warn(err));
 };
+
+export const createJoke = jokeText => {
+  // TODO: fill in logic
+};

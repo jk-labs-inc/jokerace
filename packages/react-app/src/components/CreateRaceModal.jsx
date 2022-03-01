@@ -68,12 +68,6 @@ export default function CreateRaceModal({modalVisible, setModalVisible}) {
           <DateTimePicker onChange={setCreateRaceEndTimeChange} disableCalendar="true" disableClock="true" minDate={new Date()} value={new Date()} clearIcon={null} />
           {createRaceEndTime.toString()}
         </Form.Item>
-
-        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </Form.Item>
       </Form>
     </Modal>
   );

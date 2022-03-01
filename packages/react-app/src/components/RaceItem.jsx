@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { Card, Button, Modal, Input, Statistic } from "antd";
 import JokeItem from "./JokeItem";
+import CreateJokeModal from "./CreateJokeModal";
 
 const { Countdown } = Statistic;
 
@@ -22,14 +23,6 @@ export default function RaceItem({raceData}) {
     setIsSubmitJokeModalVisible(true);
   };
 
-  const handleOk = () => {
-    setIsSubmitJokeModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setIsSubmitJokeModalVisible(false);
-  };
-
   return ( 
     <Card>
       <h3>{raceData.name}</h3>
@@ -39,12 +32,7 @@ export default function RaceItem({raceData}) {
       <Button type="primary" onClick={showModal}>
         Submit Joke
       </Button>
-      <Modal title="Basic Modal" visible={isSubmitJokeModalVisible} onOk={handleOk} onCancel={handleCancel}>
-        {/* TODO: Use this https://ant.design/components/modal/#components-modal-demo-confirm */}
-        <p>Race you are joking in: </p>
-        <p>Joke you would like to submit: </p>
-        <Input icon='search' placeholder='Vote to submit' />
-      </Modal>
+      <CreateJokeModal raceName={raceData.name} modalVisible={isSubmitJokeModalVisible} setModalVisible={setIsSubmitJokeModalVisible} />
       {showCountdown 
         ? <div>
             <p>Time until end of race: <Countdown visible={isSubmitJokeModalVisible} value={raceData.endTime}></Countdown></p>
