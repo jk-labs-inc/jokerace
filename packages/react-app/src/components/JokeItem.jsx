@@ -2,18 +2,18 @@ import React, { useState } from 'react';
 import { Card, Modal, Button, Col, Row, Input } from 'antd';
 
 export default function JokeItem({joke}) {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isVoteModalVisible, setIsVoteModalVisible] = useState(false);
 
   const showModal = () => {
-    setIsModalVisible(true);
+    setIsVoteModalVisible(true);
   };
 
   const handleOk = () => {
-    setIsModalVisible(false);
+    setIsVoteModalVisible(false);
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    setIsVoteModalVisible(false);
   };
 
   return (
@@ -28,14 +28,14 @@ export default function JokeItem({joke}) {
           <Button type="primary" onClick={showModal}>
             Vote
           </Button>
-          <Modal title="Basic Modal" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+          <Modal title="Basic Modal" visible={isVoteModalVisible} onOk={handleOk} onCancel={handleCancel}>
             {/* TODO: Use this https://ant.design/components/modal/#components-modal-demo-confirm */}
 
             <p>Your Total Tokens: </p>
             <p>Remaining Available Votes: </p>
             <p>Race you are voting in: </p>
             <p>Joke you are voting for: </p>
-            <Input icon='search' placeholder='Votes to cast for this joke:' />
+            <Input icon='search' placeholder='Votes to cast for this joke' />
           </Modal>
         </Col>
       </Row>
