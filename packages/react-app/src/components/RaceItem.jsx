@@ -30,6 +30,8 @@ export default function RaceItem({raceData}) {
   return ( 
     <Card>
       <h3>{raceData.name}</h3>
+      <h4>From {new Date(raceData.startTime).toUTCString()}</h4>
+      <h4>To {new Date(raceData.endTime).toUTCString()}</h4>
       <Button type="primary" onClick={showModal}>
         Submit Joke
       </Button>
