@@ -1,5 +1,5 @@
 import React from "react";
-import { client, q } from "../helpers/db";
+import { client, q, getEntireCollectionQuery } from "../helpers/db";
 import { useState, useEffect } from "react";
 import { RaceSearch } from "../components";
 
@@ -10,20 +10,7 @@ export default function RacesPage() {
 
   async function fetchRaces() {
     setIsLoading(true);
-
-    const parsedResp = await client
-      .query(
-        q.Map(
-          q.Paginate(q.Documents(q.Collection("races"))),
-          q.Lambda(x => q.Get(x)),
-        ),
-      )
-      .then(response => {
-        return response.data;
-      })
-      .catch(error => console.log("error", error.message));
-
-    setRaces(parsedResp);
+    const parsedResp = getEntireCollectionQuery("races").then(racesResp => setRaces(racesResp));
     setIsLoading(false);
   }
 
