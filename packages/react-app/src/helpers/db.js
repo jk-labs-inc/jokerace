@@ -20,7 +20,7 @@ export const getEntireCollectionQuery = collection =>
     })
     .catch(error => console.log("error", error.message));
 
-export const createRace = (name, startTime, endTime, creator) =>
+export const createRace = (name, creator, startTime, endTime) =>
   client
     .query(
       q.Create(q.Collection("races"), {
