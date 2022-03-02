@@ -36,7 +36,7 @@ export default function RaceItem({raceData}) {
       <CreateJokeModal raceId={raceData.id} raceName={raceData.name} modalVisible={isSubmitJokeModalVisible} setModalVisible={setIsSubmitJokeModalVisible} />
       {showCountdown 
         ? <div>
-            <p>Time until end of race: <Countdown visible={isSubmitJokeModalVisible} value={raceData.endTime}></Countdown></p>
+            <div>Time until end of race: <Countdown visible={isSubmitJokeModalVisible} value={raceData.endTime}></Countdown></div>
           </div>
         : null
       }
