@@ -10,11 +10,11 @@ export default function CreateRaceModal({modalVisible, setModalVisible}) {
   const [createRaceEndTime, setCreateRaceEndTimeChange] = useState(new Date());
 
   const handleOk = () => {
-    createRace({
-      "name": createRaceName,
-      "startTime": convertToUnixTimeStamp(createRaceStartTime),
-      "endTime": convertToUnixTimeStamp(createRaceEndTime)
-    })
+    var retVal = createRace(
+      createRaceName,
+      convertToUnixTimeStamp(createRaceStartTime),
+      convertToUnixTimeStamp(createRaceEndTime)
+    )
     setModalVisible(false);
     window.location.reload();
   };
@@ -32,7 +32,7 @@ export default function CreateRaceModal({modalVisible, setModalVisible}) {
   };
 
   return (
-    <Modal title="Basic Modal" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
+    <Modal title="Create Race" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
       {/* TODO: Use this https://ant.design/components/modal/#components-modal-demo-confirm */}
       <Form
         name="basic"
@@ -56,7 +56,7 @@ export default function CreateRaceModal({modalVisible, setModalVisible}) {
           name="starttime"
           rules={[{ required: true, message: 'Please input the start time of this race!' }]}
         >
-          <DateTimePicker onChange={setCreateRaceStartTimeChange} disableCalendar="true" disableClock="true" minDate={new Date()} value={new Date()} clearIcon={null} />
+          <DateTimePicker onChange={setCreateRaceStartTimeChange} disableCalendar={true} disableClock={true} minDate={new Date()} value={new Date()} clearIcon={null} />
           {createRaceStartTime.toString()}
         </Form.Item>
 
@@ -65,7 +65,7 @@ export default function CreateRaceModal({modalVisible, setModalVisible}) {
           name="endtime"
           rules={[{ required: true, message: 'Please input the end time of this race!' }]}
         >
-          <DateTimePicker onChange={setCreateRaceEndTimeChange} disableCalendar="true" disableClock="true" minDate={new Date()} value={new Date()} clearIcon={null} />
+          <DateTimePicker onChange={setCreateRaceEndTimeChange} disableCalendar={true} disableClock={true} minDate={new Date()} value={new Date()} clearIcon={null} />
           {createRaceEndTime.toString()}
         </Form.Item>
       </Form>

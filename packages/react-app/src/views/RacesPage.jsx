@@ -10,7 +10,7 @@ export default function RacesPage() {
 
   async function fetchRaces() {
     setIsLoading(true);
-    const parsedResp = getEntireCollectionQuery("races").then(racesResp => setRaces(racesResp));
+    getEntireCollectionQuery("races").then(racesResp => setRaces(racesResp));
     setIsLoading(false);
   }
 

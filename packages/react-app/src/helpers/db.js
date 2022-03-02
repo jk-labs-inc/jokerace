@@ -16,31 +16,48 @@ export const getEntireCollectionQuery = collection =>
       ),
     )
     .then(response => {
-      console.log(response);
       return response.data;
     })
     .catch(error => console.log("error", error.message));
 
-export const createRace = paramDict => {
-  const nameParam = paramDict.name;
-  const startTimeParam = paramDict.startTime;
-  const endTimeParam = paramDict.endTime;
-
+export const createRace = (name, startTime, endTime) =>
   client
     .query(
       q.Create(q.Collection("races"), {
         data: {
-          name: nameParam,
-          startTime: startTimeParam,
-          endTime: endTimeParam,
+          id: q.Count(q.Documents(q.Collection("races"))),
+          name: name,
+          startTime: startTime,
+          endTime: endTime,
           jokes: [],
         },
       }),
     )
     .then(ret => ret)
     .catch(err => console.warn(err));
-};
 
-export const createJoke = jokeText => {
-  // TODO: fill in logic
+export const createJoke = (raceId, jokeContent, author) => {
+  client
+    .query(
+      q.Let(
+        {
+          doc: q.Get(q.Match(q.Index("race_id_index"), raceId)),
+        },
+        q.Update(q.Select(["ref"], q.Var("doc")), {
+          data: {
+            jokes: q.Append(
+              {
+                id: q.Count(q.Select(["data", "jokes"], q.Var("doc"))),
+                votes: 0,
+                content: jokeContent,
+                author: author,
+              },
+              q.Select(["data", "jokes"], q.Var("doc")),
+            ),
+          },
+        }),
+      ),
+    )
+    .then(ret => console.log(ret))
+    .catch(err => console.warn(err));
 };

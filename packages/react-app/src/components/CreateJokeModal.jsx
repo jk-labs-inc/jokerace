@@ -2,13 +2,15 @@ import React, {useState} from 'react';
 import { Input, Modal, Form, Button } from "antd";
 import { createJoke } from "../helpers/db"
 
-export default function CreateJokeModal({raceName, modalVisible, setModalVisible}) {
-  const [createJokeName, setCreateJokeNameChange] = useState("");
+export default function CreateJokeModal({raceId, raceName, modalVisible, setModalVisible}) {
+  const [jokeContent, setJokeContent] = useState("");
   
   const handleOk = () => {
-    createJoke({
-      "jokeForSubmission": createJokeName
-    })
+    createJoke(
+      raceId,
+      jokeContent,
+      "seanmc.eth"  // TODO: Set author dynamically when sign-in with Ethereum is implemented
+    )
     setModalVisible(false);
     window.location.reload();
   };
@@ -44,7 +46,7 @@ export default function CreateJokeModal({raceName, modalVisible, setModalVisible
           name="jokeforsubmission"
           rules={[{ required: true, message: 'Please input your joke!' }]}
         >
-          <Input placeholder='Joke:' onChange={(e) => setCreateJokeNameChange(e.target.value)} />
+          <Input placeholder='Share joke here' onChange={(e) => setJokeContent(e.target.value)} />
         </Form.Item>
       </Form>
     </Modal>
