@@ -9,7 +9,7 @@ export default function CreateJokeModal({raceId, raceName, modalVisible, setModa
     createJoke(
       raceId,
       jokeContent,
-      "seanmc.eth"  // TODO: Set author dynamically when sign-in with Ethereum is implemented
+      "jokedao"  // TODO: Set author dynamically when sign-in with Ethereum is implemented
     )
     setModalVisible(false);
     window.location.reload();

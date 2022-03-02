@@ -10,10 +10,11 @@ export default function CreateRaceModal({modalVisible, setModalVisible}) {
   const [createRaceEndTime, setCreateRaceEndTimeChange] = useState(new Date());
 
   const handleOk = () => {
-    var retVal = createRace(
+    createRace(
       createRaceName,
+      "jokedao",  // TODO: Set creator dynamically when sign-in with Ethereum is implemented
       convertToUnixTimeStamp(createRaceStartTime),
-      convertToUnixTimeStamp(createRaceEndTime)
+      convertToUnixTimeStamp(createRaceEndTime),
     )
     setModalVisible(false);
     window.location.reload();

@@ -25,7 +25,8 @@ export default function RaceItem({raceData}) {
 
   return ( 
     <Card>
-      <h3>{raceData.name}</h3>
+      <h2>{raceData.name}</h2>
+      <h3>Created By: {raceData.creator}</h3>
       <h4>From {new Date(raceData.startTime).toUTCString()}</h4>
       <h4>To {new Date(raceData.endTime).toUTCString()}</h4>
       <Button onClick={() => setShowCountdown(!showCountdown)}>Toggle Countdown</Button>

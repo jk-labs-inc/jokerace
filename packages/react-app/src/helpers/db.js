@@ -20,13 +20,14 @@ export const getEntireCollectionQuery = collection =>
     })
     .catch(error => console.log("error", error.message));
 
-export const createRace = (name, startTime, endTime) =>
+export const createRace = (name, startTime, endTime, creator) =>
   client
     .query(
       q.Create(q.Collection("races"), {
         data: {
           id: q.Count(q.Documents(q.Collection("races"))),
           name: name,
+          creator: creator,
           startTime: startTime,
           endTime: endTime,
           jokes: [],
