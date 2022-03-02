@@ -1,3 +1,6 @@
+# JokeDaoV2-specific
+Check out the latest Fleek preview of the site by clicking the (should be at least haha) green checkmark next to the latest commit!
+
 # 🏗 Scaffold-ETH
 
 > everything you need to build on Ethereum! 🚀
