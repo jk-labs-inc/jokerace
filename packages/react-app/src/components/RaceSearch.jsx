@@ -40,6 +40,7 @@ export default function RaceSearch({races}) {
         )
         }
       </Card>
+      <h10>jokecartel was here</h10>
     </div>
   );
 }
