@@ -9,7 +9,7 @@ const tryToDisplay = (thing, asText = false, blockExplorer) => {
     try {
       return thing.toNumber();
     } catch (e) {
-      const displayable = "Ξ" + utils.formatUnits(thing, "ether");
+      const displayable = "" + thing;
       return asText ? displayable : <span style={{ overflowWrap: "break-word", width: "100%" }}>{displayable}</span>;
     }
   }
