@@ -293,6 +293,8 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         require(numVotes > 0, "GovernorVotingSimple: cannot vote with 0 or fewer votes");
 
         uint256 totalVotes = getVotes(account, contestSnapshot());
+        require(totalVotes > 0, "GovernorVotingSimple: you must have greater than 0 delegated votes at the snapshot in order to vote");
+
         _countVote(proposalId, account, support, numVotes, totalVotes);
 
         emit VoteCast(account, proposalId, support, numVotes, reason);
