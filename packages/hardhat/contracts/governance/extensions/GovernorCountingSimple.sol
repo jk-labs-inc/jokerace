@@ -24,6 +24,7 @@ abstract contract GovernorCountingSimple is Governor {
 
     struct ProposalVote {
         VoteCounts proposalVoteCounts;
+        address[] addressesVoted;
         mapping(address => uint256) addressTotalVoteCount;
         mapping(address => VoteCounts) addressVoteCounts;
     }
@@ -69,6 +70,21 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
+     * @dev Accessor to which addresses have cast a vote for a given proposal.
+     */
+    function proposalAddressesHaveVoted(uint256 proposalId)
+        public
+        view
+        virtual
+        returns (
+            address[] memory
+        )
+    {
+        ProposalVote storage proposalvote = _proposalVotes[proposalId];
+        return (proposalvote.addressesVoted);
+    }
+
+    /**
      * @dev See {Governor-_countVote}. In this module, the support follows the `VoteType` enum (from Governor Bravo).
      */
     function _countVote(
@@ -82,13 +98,16 @@ abstract contract GovernorCountingSimple is Governor {
 
         require(numVotes <= (totalVotes - proposalvote.addressTotalVoteCount[account]), "GovernorVotingSimple: not enough votes left to cast");
 
-        proposalvote.addressTotalVoteCount[account] += numVotes;
-
         if (support == uint8(VoteType.For)) {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
             proposalvote.addressVoteCounts[account].forVotes += numVotes;
         } else {
             revert("GovernorVotingSimple: invalid value for enum VoteType");
         }
+        
+        if (proposalvote.addressTotalVoteCount[account] == 0) {  // First time voting only add that they voted
+            proposalvote.addressesVoted.push(account);
+        }
+        proposalvote.addressTotalVoteCount[account] += numVotes;
     }
 }
