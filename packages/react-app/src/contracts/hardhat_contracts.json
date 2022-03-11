@@ -5,7 +5,7 @@
       "chainId": "31337",
       "contracts": {
         "Contest": {
-          "address": "0x2279B7A0a67DB372996a5FaB50D91eAA73d2eBe6",
+          "address": "0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e",
           "abi": [
             {
               "inputs": [
@@ -578,6 +578,25 @@
                   "internalType": "uint256",
                   "name": "forVotes",
                   "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "proposalId",
+                  "type": "uint256"
+                }
+              ],
+              "name": "proposalAddressesHaveVoted",
+              "outputs": [
+                {
+                  "internalType": "address[]",
+                  "name": "",
+                  "type": "address[]"
                 }
               ],
               "stateMutability": "view",
