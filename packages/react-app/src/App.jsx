@@ -255,15 +255,14 @@ function App(props) {
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
 
-      <RacesPage/>
-      <Contract
-            name="Contest"
-            price={price}
-            signer={userSigner}
-            provider={localProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={contractConfig}
+      <RacesPage
+        targetNetwork={targetNetwork}
+        price={price}
+        signer={userSigner}
+        provider={localProvider}
+        address={address}
+        blockExplorer={blockExplorer}
+        contractConfig={contractConfig}
       />
 
       <ThemeSwitch />

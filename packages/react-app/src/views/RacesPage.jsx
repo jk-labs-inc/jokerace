@@ -1,34 +1,59 @@
-import React from "react";
-import { client, q, getEntireCollectionQuery } from "../helpers/db";
-import { useState, useEffect } from "react";
-import { RaceSearch } from "../components";
+import React, { useState, useEffect } from "react";
+import { Button, Card, Input } from "antd";
+import { Contract, CreateRaceModal } from "../components";
 
-export default function RacesPage() {
+export default function RacesPage({targetNetwork, price, signer, provider, address, blockExplorer, contractConfig}) {
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [races, setRaces] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [isSubmitRaceModalVisible, setIsSubmitRaceModalVisible] = useState(false);  
+  const [currentContract, setCurrentContract] = useState("");
 
-  async function fetchRaces() {
-    setIsLoading(true);
-    getEntireCollectionQuery("races").then(racesResp => setRaces(racesResp));
-    setIsLoading(false);
+  const showModal = () => {
+    setIsSubmitRaceModalVisible(true);
+  };
+
+  function searchRace() {
+    let customConfig = {};
+    
+    customConfig["deployedContracts"] = {};
+    customConfig["deployedContracts"][targetNetwork.chainId] = {};
+    customConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] = {
+      chainId: targetNetwork.chainId.toString(),
+      contracts: {
+        Contest: {
+          abi: contractConfig["deployedContracts"]["31337"]["localhost"]["contracts"]["Contest"].abi,
+          address: searchInput
+        }
+      },
+      name: targetNetwork.name
+    };
+    
+    setCurrentContract(<Contract
+        name="Contest"
+        price={price}
+        signer={signer}
+        provider={provider}
+        address={address}
+        blockExplorer={blockExplorer}
+        contractConfig={customConfig}
+    />);
   }
-
-  useEffect(() => {
-    fetchRaces();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
-        Loading...
-      </div>
-    );
-  } else {
-    return (
+  
+  return (
+    <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 64 }}>
+      <Button onClick={() => {window.location.reload();}}>Refresh</Button>
+      <Button type="primary" onClick={showModal}>
+        Submit Race
+      </Button>
+      <CreateRaceModal modalVisible={isSubmitRaceModalVisible} setModalVisible={setIsSubmitRaceModalVisible} />
       <div>
-        <RaceSearch races={races} />
+        <Input icon='search' placeholder='Search races...' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
+        <Button onClick={searchRace}>Search</Button>
       </div>
-    );
-  }
+      <div>
+        {currentContract}
+      </div>
+      <h10>jokecartel was here</h10>
+    </div>
+  );
 }

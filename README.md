@@ -1,6 +1,9 @@
 # JokeDaoV2-specific
 Check out the latest Fleek preview of the site by clicking the (should be at least haha) green checkmark next to the latest commit!
 
+Dev Notes:
+ - Always make sure to deploy to localhost at chainId 31337 and that those changes are persisted in `hardhat_contracts.js` because that is the ABI that is read for the UI to parse the Contest contract from whatever given chain it has been deployed to.
+
 # 🏗 Scaffold-ETH
 
 > everything you need to build on Ethereum! 🚀
