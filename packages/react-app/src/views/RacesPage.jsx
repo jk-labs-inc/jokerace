@@ -21,7 +21,11 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
       chainId: targetNetwork.chainId.toString(),
       contracts: {
         Contest: {
-          abi: contractConfig["deployedContracts"]["31337"]["localhost"]["contracts"]["Contest"].abi,
+          abi: contractConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name]["contracts"]["Contest"].abi,
+          address: searchInput
+        },
+        GenericVotesToken: {
+          abi: contractConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name]["contracts"]["GenericVotesToken"].abi,
           address: searchInput
         }
       },

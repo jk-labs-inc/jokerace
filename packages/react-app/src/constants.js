@@ -46,7 +46,7 @@ export const NETWORKS = {
     chainId: 3,
     faucet: "https://faucet.ropsten.be/",
     blockExplorer: "https://ropsten.etherscan.io/",
-    rpcUrl: `https://ropsten.infura.io/v3/${INFURA_ID}`,
+    rpcUrl: "https://ropsten.infura.io/v3/" + process.env.REACT_APP_ROPSTEN_INFURA_KEY,
   },
   goerli: {
     name: "goerli",
@@ -81,7 +81,7 @@ export const NETWORKS = {
     chainId: 80001,
     price: 1,
     gasPrice: 1000000000,
-    rpcUrl: "https://rpc-mumbai.maticvigil.com",
+    rpcUrl: "https://rpc-mumbai.maticvigil.com/v1/" + process.env.REACT_APP_MUMBAI_MATIC_RPC_KEY,
     faucet: "https://faucet.polygon.technology/",
     blockExplorer: "https://mumbai.polygonscan.com/",
   },

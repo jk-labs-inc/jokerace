@@ -47,11 +47,11 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
 
   //If you want to send value to an address from the deployer
-  const deployerWallet = ethers.provider.getSigner()
-  await deployerWallet.sendTransaction({
-    to: "0xd698e31229aB86334924ed9DFfd096a71C686900",
-    value: ethers.utils.parseEther("1")
-  })
+  // const deployerWallet = ethers.provider.getSigner()
+  // await deployerWallet.sendTransaction({
+  //   to: "0xd698e31229aB86334924ed9DFfd096a71C686900",
+  //   value: ethers.utils.parseEther("1")
+  // })
 
 
   /*
