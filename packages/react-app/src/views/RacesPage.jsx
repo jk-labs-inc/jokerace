@@ -4,44 +4,61 @@ import { Contract, CreateRaceModal } from "../components";
 
 export default function RacesPage({targetNetwork, price, signer, provider, address, blockExplorer, contractConfig}) {
 
-  const [searchInput, setSearchInput] = useState("");
+  const [contestSearchInput, setContestSearchInput] = useState("");
+  const [tokenSearchInput, setTokenSearchInput] = useState("");
   const [isSubmitRaceModalVisible, setIsSubmitRaceModalVisible] = useState(false);  
-  const [currentContract, setCurrentContract] = useState("");
+  const [currentContest, setCurrentContest] = useState("");
+  const [currentToken, setCurrentToken] = useState("");
+  
+  let customConfig = {};
 
-  const showModal = () => {
-    setIsSubmitRaceModalVisible(true);
-  };
-
-  function searchRace() {
-    let customConfig = {};
-    
+  if (contractConfig["deployedContracts"][targetNetwork.chainId]) {
     customConfig["deployedContracts"] = {};
     customConfig["deployedContracts"][targetNetwork.chainId] = {};
     customConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] = {
       chainId: targetNetwork.chainId.toString(),
       contracts: {
         Contest: {
+          // TODO: Add error handling/path for if people try to call this and the targetNetwork doesn't have an entry in the hardhat deployedContracts
           abi: contractConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name]["contracts"]["Contest"].abi,
-          address: searchInput
+          address: contestSearchInput
         },
         GenericVotesToken: {
           abi: contractConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name]["contracts"]["GenericVotesToken"].abi,
-          address: searchInput
+          address: tokenSearchInput
         }
       },
       name: targetNetwork.name
     };
-    
-    setCurrentContract(<Contract
-        name="Contest"
-        price={price}
-        signer={signer}
-        provider={provider}
-        address={address}
-        blockExplorer={blockExplorer}
-        contractConfig={customConfig}
+  }
+
+  function searchContest() {
+    setCurrentContest(<Contract
+      name="Contest"
+      price={price}
+      signer={signer}
+      provider={provider}
+      address={address}
+      blockExplorer={blockExplorer}
+      contractConfig={customConfig}
     />);
   }
+
+  function searchToken() {
+    setCurrentToken(<Contract
+      name="GenericVotesToken"
+      price={price}
+      signer={signer}
+      provider={provider}
+      address={address}
+      blockExplorer={blockExplorer}
+      contractConfig={customConfig}
+    />);
+  }
+
+  const showModal = () => {
+    setIsSubmitRaceModalVisible(true);
+  };
   
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 64 }}>
@@ -51,11 +68,18 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
       </Button>
       <CreateRaceModal modalVisible={isSubmitRaceModalVisible} setModalVisible={setIsSubmitRaceModalVisible} />
       <div>
-        <Input icon='search' placeholder='Search races...' value={searchInput} onChange={(e) => setSearchInput(e.target.value)} />
-        <Button onClick={searchRace}>Search</Button>
+        <Input icon='search' placeholder='Search races...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value)} />
+        <Button onClick={searchContest}>Search</Button>
       </div>
       <div>
-        {currentContract}
+        {currentContest}
+      </div>
+      <div>
+        <Input icon='search' placeholder='Search tokens...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value)} />
+        <Button onClick={searchToken}>Search</Button>
+      </div>
+      <div>
+        {currentToken}
       </div>
       <h10>jokecartel was here</h10>
     </div>
