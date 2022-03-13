@@ -4,8 +4,8 @@ import { Contract, CreateRaceModal } from "../components";
 
 export default function RacesPage({targetNetwork, price, signer, provider, address, blockExplorer, contractConfig}) {
 
-  const [contestSearchInput, setContestSearchInput] = useState("");
-  const [tokenSearchInput, setTokenSearchInput] = useState("");
+  const [contestSearchInput, setContestSearchInput] = useState("0xd71929d7ad7d425acf6009d238257378c7fd2203");
+  const [tokenSearchInput, setTokenSearchInput] = useState("0x003da13b325cba4d4477207871d8e7c7f2f5ad8e");
   const [isSubmitRaceModalVisible, setIsSubmitRaceModalVisible] = useState(false);  
   const [currentContest, setCurrentContest] = useState("");
   const [currentToken, setCurrentToken] = useState("");
@@ -31,6 +31,8 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
       name: targetNetwork.name
     };
   }
+
+  console.log(customConfig)
 
   function searchContest() {
     setCurrentContest(<Contract
@@ -68,20 +70,20 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
       </Button>
       <CreateRaceModal modalVisible={isSubmitRaceModalVisible} setModalVisible={setIsSubmitRaceModalVisible} />
       <div>
-        <Input icon='search' placeholder='Search contests...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value)} />
+        <Input icon='search' placeholder='Search contests...' onChange={(e) => setContestSearchInput(e.target.value)} />
         <Button onClick={searchContest}>Search Contests</Button>
       </div>
       <div>
         {currentContest}
       </div>
       <div>
-        <Input icon='search' placeholder='Search tokens...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value)} />
+        <Input icon='search' placeholder='Search tokens...' onChange={(e) => setTokenSearchInput(e.target.value)} />
         <Button onClick={searchToken}>Search ERC20Votes Tokens</Button>
       </div>
       <div>
         {currentToken}
       </div>
-      <h10>jokecartel was here</h10>
+      <h5>jokecartel was here</h5>
     </div>
   );
 }

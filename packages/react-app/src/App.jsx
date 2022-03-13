@@ -14,14 +14,14 @@ import { Link, Route, Switch, useLocation } from "react-router-dom";
 import "./App.css";
 import {
   Account,
-  Contract,
-  Faucet,
-  GasGauge,
+  // Contract,
+  // Faucet,
+  // GasGauge,
   Header,
-  Ramp,
+  // Ramp,
   ThemeSwitch,
   NetworkDisplay,
-  FaucetHint,
+  // FaucetHint,
   NetworkSwitch,
 } from "./components";
 import { NETWORKS, ALCHEMY_KEY } from "./constants";
@@ -292,9 +292,6 @@ function App(props) {
             blockExplorer={blockExplorer}
           />
         </div>
-        {yourLocalBalance.lte(ethers.BigNumber.from("0")) && (
-          <FaucetHint localProvider={localProvider} targetNetwork={targetNetwork} address={address} />
-        )}
       </div>
     </div>
   );
