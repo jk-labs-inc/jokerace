@@ -64,19 +64,19 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 64 }}>
       <Button onClick={() => {window.location.reload();}}>Refresh</Button>
       <Button type="primary" onClick={showModal}>
-        Submit Race
+        Submit Contest
       </Button>
       <CreateRaceModal modalVisible={isSubmitRaceModalVisible} setModalVisible={setIsSubmitRaceModalVisible} />
       <div>
-        <Input icon='search' placeholder='Search races...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value)} />
-        <Button onClick={searchContest}>Search</Button>
+        <Input icon='search' placeholder='Search contests...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value)} />
+        <Button onClick={searchContest}>Search Contests</Button>
       </div>
       <div>
         {currentContest}
       </div>
       <div>
         <Input icon='search' placeholder='Search tokens...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value)} />
-        <Button onClick={searchToken}>Search</Button>
+        <Button onClick={searchToken}>Search ERC20Votes Tokens</Button>
       </div>
       <div>
         {currentToken}
