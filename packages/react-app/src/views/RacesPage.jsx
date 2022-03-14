@@ -11,25 +11,30 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
   const [currentToken, setCurrentToken] = useState("");
   
   let customConfig = {};
+  let fullConfigPath = contractConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name]["contracts"]
 
   if (contractConfig["deployedContracts"][targetNetwork.chainId]) {
     customConfig["deployedContracts"] = {};
     customConfig["deployedContracts"][targetNetwork.chainId] = {};
-    customConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] = {
-      chainId: targetNetwork.chainId.toString(),
-      contracts: {
-        Contest: {
-          // TODO: Add error handling/path for if people try to call this and the targetNetwork doesn't have an entry in the hardhat deployedContracts
-          abi: contractConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name]["contracts"]["Contest"].abi,
-          address: contestSearchInput
+    customConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] =
+    (fullConfigPath["Contest"] && fullConfigPath["GenericVotesToken"]) ?
+      {
+        chainId: targetNetwork.chainId.toString(),
+        contracts: {
+          Contest: {
+            // TODO: Add error handling/path for if people try to call this and the targetNetwork doesn't have an entry in the hardhat deployedContracts
+            abi: fullConfigPath["Contest"].abi,
+            address: contestSearchInput
+          },
+          GenericVotesToken: {
+            abi: fullConfigPath["GenericVotesToken"].abi,
+            address: tokenSearchInput
+          }
         },
-        GenericVotesToken: {
-          abi: contractConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name]["contracts"]["GenericVotesToken"].abi,
-          address: tokenSearchInput
-        }
-      },
-      name: targetNetwork.name
-    };
+        name: targetNetwork.name
+      }
+    : {};
+      
   }
 
   console.log(customConfig)
