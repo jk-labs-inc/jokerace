@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Input } from "antd";
-import { Contract, CreateRaceModal } from "../components";
+import { ContestContract, CreateRaceModal } from "../components";
 
 export default function RacesPage({targetNetwork, price, signer, provider, address, blockExplorer, contractConfig}) {
 
@@ -22,7 +22,6 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
         chainId: targetNetwork.chainId.toString(),
         contracts: {
           Contest: {
-            // TODO: Add error handling/path for if people try to call this and the targetNetwork doesn't have an entry in the hardhat deployedContracts
             abi: fullConfigPath["Contest"].abi,
             address: contestSearchInput
           },
@@ -40,7 +39,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
   console.log(customConfig)
 
   function searchContest() {
-    setCurrentContest(<Contract
+    setCurrentContest(<ContestContract
       name="Contest"
       price={price}
       signer={signer}
@@ -52,7 +51,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
   }
 
   function searchToken() {
-    setCurrentToken(<Contract
+    setCurrentToken(<ContestContract
       name="GenericVotesToken"
       price={price}
       signer={signer}

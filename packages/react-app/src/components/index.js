@@ -26,3 +26,4 @@ export { default as TokenSelect } from "./TokenSelect";
 export { default as RaceItem } from "./RaceItem";
 export { default as JokeItem } from "./JokeItem";
 export { default as CreateRaceModal } from "./CreateRaceModal";
+export { default as ContestContract } from "./ContestContract";

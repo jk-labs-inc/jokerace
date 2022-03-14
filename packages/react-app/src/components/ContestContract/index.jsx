@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import Address from "../Address";
 import Balance from "../Balance";
 import DisplayVariable from "./DisplayVariable";
+import ProposalsDisplayVariable from "./ProposalsDisplayVariable";
 import FunctionForm from "./FunctionForm";
 
 const noContractDisplay = (
@@ -44,7 +45,7 @@ const noContractDisplay = (
 
 const isQueryable = fn => (fn.stateMutability === "view" || fn.stateMutability === "pure") && fn.inputs.length === 0;
 
-export default function Contract({
+export default function ContestContract({
   customContract,
   account,
   gasPrice,
@@ -81,7 +82,13 @@ export default function Contract({
   }, [contract, show]);
 
   const [refreshRequired, triggerRefresh] = useState(false);
-  console.log("functions: " + displayedContractFunctions)
+  
+  console.log("functions: " + displayedContractFunctions);
+  const funcsDict = {};
+  displayedContractFunctions.forEach(contractFuncInfo => {
+    funcsDict[contractFuncInfo[1].name] = contractFuncInfo;
+  });
+
   const contractDisplay = displayedContractFunctions.map(contractFuncInfo => {
     const contractFunc =
       contractFuncInfo[1].stateMutability === "view" || contractFuncInfo[1].stateMutability === "pure"
@@ -91,6 +98,18 @@ export default function Contract({
     if (typeof contractFunc === "function") {
       if (isQueryable(contractFuncInfo[1])) {
         // If there are no inputs, just display return value
+        if (contractFuncInfo[0] == "getAllProposalIds()") {
+          return (<ProposalsDisplayVariable
+            key={contractFuncInfo[1].name}
+            contractFunction={contractFunc}
+            functionInfo={contractFuncInfo[1]}
+            refreshRequired={refreshRequired}
+            triggerRefresh={triggerRefresh}
+            blockExplorer={blockExplorer}
+            />
+          )
+        }
+
         return (
           <DisplayVariable
             key={contractFuncInfo[1].name}
