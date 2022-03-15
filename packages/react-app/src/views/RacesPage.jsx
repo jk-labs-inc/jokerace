@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button, Card, Input } from "antd";
-import { ContestContract, CreateRaceModal } from "../components";
+import { Contract, ContestContract, CreateRaceModal } from "../components";
 
 export default function RacesPage({targetNetwork, price, signer, provider, address, blockExplorer, contractConfig}) {
 
@@ -39,19 +39,32 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
   console.log(customConfig)
 
   function searchContest() {
-    setCurrentContest(<ContestContract
-      name="Contest"
-      price={price}
-      signer={signer}
-      provider={provider}
-      address={address}
-      blockExplorer={blockExplorer}
-      contractConfig={customConfig}
-    />);
+    setCurrentContest(
+      <div>
+        <ContestContract
+          name="Contest"
+          price={price}
+          signer={signer}
+          provider={provider}
+          address={address}
+          blockExplorer={blockExplorer}
+          contractConfig={customConfig}
+        />
+        <Contract
+          name="Contest"
+          price={price}
+          signer={signer}
+          provider={provider}
+          address={address}
+          blockExplorer={blockExplorer}
+          contractConfig={customConfig}
+        />
+      </div>
+    );
   }
 
   function searchToken() {
-    setCurrentToken(<ContestContract
+    setCurrentToken(<Contract
       name="GenericVotesToken"
       price={price}
       signer={signer}

@@ -4,8 +4,8 @@ import React, { useMemo, useState } from "react";
 import Address from "../Address";
 import Balance from "../Balance";
 import DisplayVariable from "./DisplayVariable";
-import ProposalsDisplayVariable from "./ProposalsDisplayVariable";
 import FunctionForm from "./FunctionForm";
+import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
 
 const noContractDisplay = (
   <div>
@@ -89,53 +89,22 @@ export default function ContestContract({
     funcsDict[contractFuncInfo[1].name] = contractFuncInfo;
   });
 
-  const contractDisplay = displayedContractFunctions.map(contractFuncInfo => {
-    const contractFunc =
-      contractFuncInfo[1].stateMutability === "view" || contractFuncInfo[1].stateMutability === "pure"
-        ? contract[contractFuncInfo[0]]
-        : contract.connect(signer)[contractFuncInfo[0]];
+  const getProposalFuncInfo = funcsDict["getProposal"]
+  const getAllProposalIdsFuncInfo = funcsDict["getAllProposalIds"]
 
-    if (typeof contractFunc === "function") {
-      if (isQueryable(contractFuncInfo[1])) {
-        // If there are no inputs, just display return value
-        if (contractFuncInfo[0] == "getAllProposalIds()") {
-          return (<ProposalsDisplayVariable
-            key={contractFuncInfo[1].name}
-            contractFunction={contractFunc}
-            functionInfo={contractFuncInfo[1]}
-            refreshRequired={refreshRequired}
-            triggerRefresh={triggerRefresh}
-            blockExplorer={blockExplorer}
-            />
-          )
-        }
-
-        return (
-          <DisplayVariable
-            key={contractFuncInfo[1].name}
-            contractFunction={contractFunc}
-            functionInfo={contractFuncInfo[1]}
-            refreshRequired={refreshRequired}
-            triggerRefresh={triggerRefresh}
-            blockExplorer={blockExplorer}
-          />
-        );
-      }
-
-      // If there are inputs, display a form to allow users to provide these
-      return (
-        <FunctionForm
-          key={"FF" + contractFuncInfo[0]}
-          contractFunction={contractFunc}
-          functionInfo={contractFuncInfo[1]}
-          provider={provider}
-          gasPrice={gasPrice}
-          triggerRefresh={triggerRefresh}
-        />
-      );
-    }
-    return null;
-  });
+  const contractDisplay = contract ?
+    [
+      <AllProposalIdsDisplayVariable
+        getProposalInfoContractFunction={contract[getProposalFuncInfo[0]]}
+        getProposalInfoFunctionInfo={getProposalFuncInfo}
+        getAllProposalIdsContractFunction={contract[getAllProposalIdsFuncInfo[0]]}
+        getAllProposalIdsFunctionInfo={getAllProposalIdsFuncInfo}
+        refreshRequired={refreshRequired}
+        triggerRefresh={triggerRefresh}
+        blockExplorer={blockExplorer}
+      />
+    ] :
+    ""
 
   return (
     <div style={{ margin: "auto", width: "70vw" }}>
