@@ -23,8 +23,8 @@ abstract contract IGovernor is IERC165 {
      */
     event ProposalCreated(
         uint256 proposalId,
-        address proposer,
-        string description
+        string description,
+        address proposer
     );
 
     /**

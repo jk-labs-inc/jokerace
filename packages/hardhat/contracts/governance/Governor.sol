@@ -208,8 +208,8 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
 
         emit ProposalCreated(
             proposalId,
-            _msgSender(),
-            proposalDescription
+            proposalDescription,
+            _msgSender()
         );
 
         return proposalId;
