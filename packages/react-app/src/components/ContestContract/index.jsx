@@ -89,21 +89,23 @@ export default function ContestContract({
     funcsDict[contractFuncInfo[1].name] = contractFuncInfo;
   });
 
-  const getProposalFuncInfo = funcsDict["getProposal"]
   const getAllProposalIdsFuncInfo = funcsDict["getAllProposalIds"]
+  const getProposalFuncInfo = funcsDict["getProposal"]
+  const proposalVotesFuncInfo = funcsDict["proposalVotes"]
 
   const contractDisplay = contract ?
-    [
-      <AllProposalIdsDisplayVariable
-        getProposalInfoContractFunction={contract[getProposalFuncInfo[0]]}
-        getProposalInfoFunctionInfo={getProposalFuncInfo}
-        getAllProposalIdsContractFunction={contract[getAllProposalIdsFuncInfo[0]]}
-        getAllProposalIdsFunctionInfo={getAllProposalIdsFuncInfo}
-        refreshRequired={refreshRequired}
-        triggerRefresh={triggerRefresh}
-        blockExplorer={blockExplorer}
-      />
-    ] :
+    <AllProposalIdsDisplayVariable
+      getAllProposalIdsContractFunction={contract[getAllProposalIdsFuncInfo[0]]}
+      getAllProposalIdsFunctionInfo={getAllProposalIdsFuncInfo}
+      getProposalContractFunction={contract[getProposalFuncInfo[0]]}
+      getProposalFunctionInfo={getProposalFuncInfo}
+      proposalVotesContractFunction={contract[proposalVotesFuncInfo[0]]}
+      proposalVotesFunctionInfo={proposalVotesFuncInfo}
+      refreshRequired={refreshRequired}
+      triggerRefresh={triggerRefresh}
+      blockExplorer={blockExplorer}
+    />
+     :
     ""
 
   return (

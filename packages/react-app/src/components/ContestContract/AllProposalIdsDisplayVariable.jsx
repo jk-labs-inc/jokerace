@@ -5,30 +5,33 @@ import { tryToDisplay } from "./utils";
 import ProposalDisplayVariable from "./ProposalDisplayVariable";
 
 const AllProposalIdsDisplayVariable = ({ 
-            getProposalInfoContractFunction, getProposalInfoFunctionInfo, 
-            getAllProposalIdsContractFunction, getAllProposalIdsFunctionInfo, refreshRequired, 
-            triggerRefresh, blockExplorer }) => {
-  const [allProposals, setAllProposals] = useState([]);
+            getAllProposalIdsContractFunction, getAllProposalIdsFunctionInfo, 
+            getProposalContractFunction, getProposalFunctionInfo, 
+            proposalVotesContractFunction, proposalVotesFunctionInfo,
+            refreshRequired, triggerRefresh, blockExplorer }) => {
+  const [allProposalIds, setAllProposalIds] = useState([]);
 
   const refresh = useCallback(async () => {
     try {
       const funcResponse = await getAllProposalIdsContractFunction();
-      setAllProposals(funcResponse);
+      setAllProposalIds(funcResponse);
       triggerRefresh(false);
     } catch (e) {
       console.log(e);
     }
-  }, [setAllProposals, getAllProposalIdsContractFunction, triggerRefresh]);
+  }, [setAllProposalIds, getAllProposalIdsContractFunction, triggerRefresh]);
 
   useEffect(() => {
     refresh();
   }, [refresh, refreshRequired, getAllProposalIdsContractFunction]);
 
-  return allProposals.map(proposalId => 
+  return allProposalIds.map(proposalId => 
     <ProposalDisplayVariable 
       proposalId={proposalId}
-      getProposalInfoContractFunction={getProposalInfoContractFunction}
-      getProposalInfoFunctionInfo={getProposalInfoFunctionInfo}
+      getProposalContractFunction={getProposalContractFunction}
+      getProposalFunctionInfo={getProposalFunctionInfo}
+      proposalVotesContractFunction={proposalVotesContractFunction}
+      proposalVotesFunctionInfo={proposalVotesFunctionInfo}
       refreshRequired={refreshRequired}
       triggerRefresh={triggerRefresh}
       blockExplorer={blockExplorer}

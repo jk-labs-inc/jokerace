@@ -4,23 +4,28 @@ import React, { useCallback, useEffect, useState } from "react";
 import { tryToDisplay } from "./utils";
 
 const ProposalDisplayVariable = ({ 
-            proposalId, getProposalInfoContractFunction, getProposalInfoFunctionInfo, 
+            proposalId, 
+            getProposalContractFunction, getProposalFunctionInfo, 
+            proposalVotesContractFunction, proposalVotesFunctionInfo,
             refreshRequired, triggerRefresh, blockExplorer }) => {
-  const [proposalContent, setRenderedProposal] = useState([]);
+  const [proposalContent, setProposalContent] = useState([]);
+  const [proposalTotalVotes, setProposalTotalVotes] = useState([]);
 
   const refresh = useCallback(async () => {
     try {
-      const funcResponse = await getProposalInfoContractFunction(proposalId);
-      setRenderedProposal(funcResponse);
+      const getProposalResponse = await getProposalContractFunction(proposalId);
+      const proposalTotalVotesResponse = await proposalVotesContractFunction(proposalId);
+      setProposalContent(getProposalResponse);
+      setProposalTotalVotes(proposalTotalVotesResponse);
       triggerRefresh(false);
     } catch (e) {
       console.log(e);
     }
-  }, [setRenderedProposal, getProposalInfoContractFunction, triggerRefresh]);
+  }, [setProposalContent, setProposalTotalVotes, getProposalContractFunction, proposalVotesContractFunction, triggerRefresh]);
 
   useEffect(() => {
     refresh();
-  }, [refresh, refreshRequired, getProposalInfoContractFunction]);
+  }, [refresh, refreshRequired, getProposalContractFunction, proposalVotesContractFunction]);
 
   return (
     <div>
@@ -34,11 +39,12 @@ const ProposalDisplayVariable = ({
             fontSize: 24,
           }}
         >
-          {getProposalInfoFunctionInfo[1].name}
+          {getProposalFunctionInfo[1].name}
         </Col>
         <Col span={14}>
           {/* It is second (proposalContent[1]) in the array because that's what the struct is for a Proposal: id, content, author */}
           <h2>{tryToDisplay(proposalContent[1], false, blockExplorer)}</h2>
+          <h2>{tryToDisplay(proposalTotalVotes, false, blockExplorer)}</h2>
         </Col>
         <Col span={2}>
           <h2>
