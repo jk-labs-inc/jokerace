@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Button, Card, Input } from "antd";
+import React, { useState } from "react";
+import { Button, Input } from "antd";
 import { Contract, ContestContract, CreateRaceModal } from "../components";
+import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
 
 export default function RacesPage({targetNetwork, price, signer, provider, address, blockExplorer, contractConfig}) {
 
@@ -11,32 +13,26 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
   const [currentToken, setCurrentToken] = useState("");
   
   let customConfig = {};
-  let fullConfigPath = contractConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name]["contracts"]
-
+  
   if (contractConfig["deployedContracts"][targetNetwork.chainId]) {
     customConfig["deployedContracts"] = {};
     customConfig["deployedContracts"][targetNetwork.chainId] = {};
     customConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] =
-    (fullConfigPath["Contest"] && fullConfigPath["GenericVotesToken"]) ?
       {
         chainId: targetNetwork.chainId.toString(),
         contracts: {
           Contest: {
-            abi: fullConfigPath["Contest"].abi,
+            abi: DeployedContestContract.abi,
             address: contestSearchInput
           },
           GenericVotesToken: {
-            abi: fullConfigPath["GenericVotesToken"].abi,
+            abi: DeployedGenericVotesTokenContract.abi,
             address: tokenSearchInput
           }
         },
         name: targetNetwork.name
       }
-    : {};
-      
   }
-
-  console.log(customConfig)
 
   function searchContest() {
     setCurrentContest(
@@ -87,7 +83,8 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
       </Button>
       <CreateRaceModal modalVisible={isSubmitRaceModalVisible} setModalVisible={setIsSubmitRaceModalVisible} />
       <div>
-        <Input icon='search' placeholder='Search contests...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value)} />
+        {/* Get rid of any whitespace or extra quotation marks */}
+        <Input icon='search' placeholder='Search contests...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
         <Button onClick={searchContest}>Search Contests</Button>
       </div>
       <div>
