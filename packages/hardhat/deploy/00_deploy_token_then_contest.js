@@ -20,6 +20,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await deploy("GenericVotesToken", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
+    args: ["joketest", "JOKE", "0xd698e31229aB86334924ed9DFfd096a71C686900", ethers.utils.parseEther("10000")],
     log: true,
     waitConfirmations: 5,
   });
