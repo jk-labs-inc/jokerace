@@ -23,7 +23,9 @@ const AllProposalIdsDisplayVariable = ({
 
   const refresh = useCallback(async () => {
     try {
-      const newTotalVotes = await Promise.all((await getAllProposalIdsContractFunction()).map(async proposalId => [proposalId, await proposalVotesContractFunction(proposalId)]));
+      const newTotalVotes = await Promise.all((await getAllProposalIdsContractFunction()).map(
+        async proposalId => [proposalId, await proposalVotesContractFunction(proposalId)])
+      );
       setAllProposalsTotalVotes(newTotalVotes)
       triggerRefresh(false);
     } catch (e) {
@@ -38,10 +40,9 @@ const AllProposalIdsDisplayVariable = ({
   let displayVars = allProposalsTotalVotes.sort(sortDisplays).map(vars => 
     <ProposalDisplayVariable 
       proposalId={vars[0]}
+      proposalTotalVotes={vars[1]}
       getProposalContractFunction={getProposalContractFunction}
       getProposalFunctionInfo={getProposalFunctionInfo}
-      proposalVotesContractFunction={proposalVotesContractFunction}
-      proposalVotesFunctionInfo={proposalVotesFunctionInfo}
       addressesVotedContractFunction={addressesVotedContractFunction}
       addressesVotedFunctionInfo={addressesVotedFunctionInfo}
       proposalAddressVotesContractFunction={proposalAddressVotesContractFunction}

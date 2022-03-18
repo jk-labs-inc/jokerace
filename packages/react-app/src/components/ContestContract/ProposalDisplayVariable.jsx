@@ -5,34 +5,30 @@ import { tryToDisplay } from "./utils";
 import AddressProposalVotes from "./AddressProposalVotes";
 
 const ProposalDisplayVariable = ({ 
-            proposalId, 
+            proposalId, proposalTotalVotes,
             getProposalContractFunction, getProposalFunctionInfo, 
-            proposalVotesContractFunction, proposalVotesFunctionInfo,
             addressesVotedContractFunction, addressesVotedFunctionInfo,
             proposalAddressVotesContractFunction, proposalAddressVotesFunctionInfo,
             refreshRequired, triggerRefresh, blockExplorer, provider }) => {
   const [proposalContent, setProposalContent] = useState([]);
-  const [proposalTotalVotes, setProposalTotalVotes] = useState([]);
   const [addressesVoted, setAddressesVoted] = useState([]);
 
   const refresh = useCallback(async () => {
     try {
       const getProposalResponse = await getProposalContractFunction(proposalId);
-      const proposalTotalVotesResponse = await proposalVotesContractFunction(proposalId);
       const addressesVotedResponse = await addressesVotedContractFunction(proposalId);
       setProposalContent(getProposalResponse);
-      setProposalTotalVotes(proposalTotalVotesResponse);
       setAddressesVoted(addressesVotedResponse)
       triggerRefresh(false);
     } catch (e) {
       console.log(e);
     }
-  }, [setProposalContent, setProposalTotalVotes, getProposalContractFunction, proposalVotesContractFunction,
+  }, [setProposalContent, getProposalContractFunction,
          addressesVotedContractFunction, triggerRefresh]);
 
   useEffect(() => {
     refresh();
-  }, [refresh, refreshRequired, getProposalContractFunction, proposalVotesContractFunction, addressesVotedContractFunction]);
+  }, [refresh, refreshRequired, getProposalContractFunction, addressesVotedContractFunction]);
 
   return (
     <div>
