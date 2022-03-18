@@ -73,7 +73,7 @@ export const NETWORKS = {
     price: 1,
     gasPrice: 1000000000,
     rpcUrl: "https://polygon-rpc.com/",
-    blockExplorer: "https://polygonscan.com/",
+    blockExplorer: "https://polygonscan.com/" + process.env.REACT_APP_MATIC_MAINNET_RPC_KEY,
   },
   mumbai: {
     name: "mumbai",
