@@ -25,10 +25,10 @@ abstract contract GovernorCountingSimple is Governor {
     struct ProposalVote {
         VoteCounts proposalVoteCounts;
         address[] addressesVoted;
-        mapping(address => uint256) addressTotalVoteCount;
         mapping(address => VoteCounts) addressVoteCounts;
     }
 
+    mapping(address => uint256) addressTotalVoteCount;
     mapping(uint256 => ProposalVote) private _proposalVotes;
 
     /**
@@ -96,7 +96,7 @@ abstract contract GovernorCountingSimple is Governor {
     ) internal virtual override {
         ProposalVote storage proposalvote = _proposalVotes[proposalId];
 
-        require(numVotes <= (totalVotes - proposalvote.addressTotalVoteCount[account]), "GovernorVotingSimple: not enough votes left to cast");
+        require(numVotes <= (totalVotes - addressTotalVoteCount[account]), "GovernorVotingSimple: not enough votes left to cast");
 
         if (support == uint8(VoteType.For)) {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
@@ -105,9 +105,9 @@ abstract contract GovernorCountingSimple is Governor {
             revert("GovernorVotingSimple: invalid value for enum VoteType");
         }
         
-        if (proposalvote.addressTotalVoteCount[account] == 0) {  // First time voting only add that they voted
+        if (addressTotalVoteCount[account] == 0) {  // First time voting only add that they voted
             proposalvote.addressesVoted.push(account);
         }
-        proposalvote.addressTotalVoteCount[account] += numVotes;
+        addressTotalVoteCount[account] += numVotes;
     }
 }
