@@ -6,8 +6,8 @@ import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/Gener
 
 export default function RacesPage({targetNetwork, price, signer, provider, address, blockExplorer, contractConfig}) {
 
-  const [contestSearchInput, setContestSearchInput] = useState("0xd71929d7ad7d425acf6009d238257378c7fd2203");
-  const [tokenSearchInput, setTokenSearchInput] = useState("0x003da13b325cba4d4477207871d8e7c7f2f5ad8e");
+  const [contestSearchInput, setContestSearchInput] = useState("");
+  const [tokenSearchInput, setTokenSearchInput] = useState("");
   const [isCreateContestModalVisible, setIsCreateContestModalVisible] = useState(false);  
   const [isCreateTokenModalVisible, setIsCreateTokenModalVisible] = useState(false);  
   const [currentContest, setCurrentContest] = useState("");
