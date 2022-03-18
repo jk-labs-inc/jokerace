@@ -65,7 +65,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           name="votingtokenaddress"
           rules={[{ required: true, message: 'Please input your voting token address!' }]}
         >
-          <Input placeholder='Voting Token Address' onChange={(e) => setVotingTokenAddress(e.target.value).trim().replace(/['"]+/g, '')} />
+          <Input placeholder='Voting Token Address' onChange={(e) => setVotingTokenAddress(e.target.value.trim().replace(/['"]+/g, ''))} />
         </Form.Item>
         <Form.Item
           label="Voting Delay"
