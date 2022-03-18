@@ -87,14 +87,14 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
       </Button>
       <CreateRaceModal modalVisible={isSubmitRaceModalVisible} setModalVisible={setIsSubmitRaceModalVisible} />
       <div>
-        <Input icon='search' placeholder='Search contests...' onChange={(e) => setContestSearchInput(e.target.value)} />
+        <Input icon='search' placeholder='Search contests...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value)} />
         <Button onClick={searchContest}>Search Contests</Button>
       </div>
       <div>
         {currentContest}
       </div>
       <div>
-        <Input icon='search' placeholder='Search tokens...' onChange={(e) => setTokenSearchInput(e.target.value)} />
+        <Input icon='search' placeholder='Search tokens...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value)} />
         <Button onClick={searchToken}>Search ERC20Votes Tokens</Button>
       </div>
       <div>

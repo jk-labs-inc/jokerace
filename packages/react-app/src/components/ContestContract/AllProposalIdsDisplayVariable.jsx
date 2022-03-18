@@ -8,7 +8,9 @@ const AllProposalIdsDisplayVariable = ({
             getAllProposalIdsContractFunction, getAllProposalIdsFunctionInfo, 
             getProposalContractFunction, getProposalFunctionInfo, 
             proposalVotesContractFunction, proposalVotesFunctionInfo,
-            refreshRequired, triggerRefresh, blockExplorer }) => {
+            addressesVotedContractFunction, addressesVotedFunctionInfo,
+            proposalAddressVotesContractFunction, proposalAddressVotesFunctionInfo,
+            refreshRequired, triggerRefresh, blockExplorer, provider }) => {
   const [allProposalIds, setAllProposalIds] = useState([]);
 
   const refresh = useCallback(async () => {
@@ -32,9 +34,14 @@ const AllProposalIdsDisplayVariable = ({
       getProposalFunctionInfo={getProposalFunctionInfo}
       proposalVotesContractFunction={proposalVotesContractFunction}
       proposalVotesFunctionInfo={proposalVotesFunctionInfo}
+      addressesVotedContractFunction={addressesVotedContractFunction}
+      addressesVotedFunctionInfo={addressesVotedFunctionInfo}
+      proposalAddressVotesContractFunction={proposalAddressVotesContractFunction}
+      proposalAddressVotesFunctionInfo={proposalAddressVotesFunctionInfo}
       refreshRequired={refreshRequired}
       triggerRefresh={triggerRefresh}
       blockExplorer={blockExplorer}
+      provider={provider}
     />
   );
 };

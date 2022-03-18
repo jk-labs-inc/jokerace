@@ -92,6 +92,8 @@ export default function ContestContract({
   const getAllProposalIdsFuncInfo = funcsDict["getAllProposalIds"]
   const getProposalFuncInfo = funcsDict["getProposal"]
   const proposalVotesFuncInfo = funcsDict["proposalVotes"]
+  const addressesVotedFuncInfo = funcsDict["proposalAddressesHaveVoted"]
+  const proposalAddressVotesFuncInfo = funcsDict["proposalAddressVotes"]
 
   const contractDisplay = contract ?
     <AllProposalIdsDisplayVariable
@@ -101,15 +103,20 @@ export default function ContestContract({
       getProposalFunctionInfo={getProposalFuncInfo}
       proposalVotesContractFunction={contract[proposalVotesFuncInfo[0]]}
       proposalVotesFunctionInfo={proposalVotesFuncInfo}
+      addressesVotedContractFunction={contract[addressesVotedFuncInfo[0]]}
+      addressesVotedFunctionInfo={addressesVotedFuncInfo}
+      proposalAddressVotesContractFunction={contract[proposalAddressVotesFuncInfo[0]]}
+      proposalAddressVotesFunctionInfo={proposalAddressVotesFuncInfo}
       refreshRequired={refreshRequired}
       triggerRefresh={triggerRefresh}
       blockExplorer={blockExplorer}
+      provider={provider}
     />
      :
     ""
 
   return (
-    <div style={{ margin: "auto", width: "70vw" }}>
+    <div style={{ margin: "auto" }}>
       <Card
         title={
           <div style={{ fontSize: 24 }}>

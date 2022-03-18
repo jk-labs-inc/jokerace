@@ -118,7 +118,7 @@ export default function Contract({
   });
 
   return (
-    <div style={{ margin: "auto", width: "70vw" }}>
+    <div style={{ margin: "auto" }}>
       <Card
         title={
           <div style={{ fontSize: 24 }}>
