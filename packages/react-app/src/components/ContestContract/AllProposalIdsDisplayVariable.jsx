@@ -38,10 +38,10 @@ const AllProposalIdsDisplayVariable = ({
     refresh();
   }, [refresh, refreshRequired, getAllProposalIdsContractFunction, proposalVotesContractFunction]);  
 
-  let displayVars = allProposalsTotalVotes.sort(sortDisplays).map(vars => 
+  let displayVars = allProposalsTotalVotes.sort(sortDisplays).map(idAndTotalVotesInfo => 
     <ProposalDisplayVariable 
-      proposalId={vars[0]}
-      proposalTotalVotes={vars[1]}
+      proposalId={idAndTotalVotesInfo[0]}
+      proposalTotalVotes={idAndTotalVotesInfo[1]}
       getProposalContractFunction={getProposalContractFunction}
       getProposalFunctionInfo={getProposalFunctionInfo}
       addressesVotedContractFunction={addressesVotedContractFunction}
