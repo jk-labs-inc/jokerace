@@ -6,8 +6,11 @@ import "./token/ERC20/extensions/draft-ERC20Permit.sol";
 import "./token/ERC20/extensions/ERC20Votes.sol";
 
 contract GenericVotesToken is ERC20, ERC20Permit, ERC20Votes {
-    constructor() ERC20("TestToken", "TEST") ERC20Permit("TestToken") {
-        _mint(0xd698e31229aB86334924ed9DFfd096a71C686900, 10000 * 10 ** decimals());
+    constructor(string memory _name, string memory _symbol, address _mintRecipient, uint256 _amountToMint) 
+        ERC20(_name, _symbol) 
+        ERC20Permit(_name)
+    {
+        _mint(_mintRecipient, _amountToMint);
     }
 
     // The following functions are overrides required by Solidity.

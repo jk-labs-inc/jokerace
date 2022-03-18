@@ -25,7 +25,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
                                         proposalThreshold, voteStartBlock, maxProposalCount);
     console.log(contract.address)
     console.log(contract.deployTransaction)
-    setResultMessage("The contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)
+    setResultMessage("The " + contestTitle + " contest contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)
     setModalVisible(false);
   };
 
@@ -55,7 +55,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
       >
         <Form.Item
           label="Contest Title"
-          name="contestTitle"
+          name="contesttitle"
           rules={[{ required: true, message: 'Please input your contest title!' }]}
         >
           <Input placeholder='Contest Title' onChange={(e) => setContestTitle(e.target.value)} />
@@ -65,7 +65,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           name="votingtokenaddress"
           rules={[{ required: true, message: 'Please input your voting token address!' }]}
         >
-          <Input placeholder='Voting Token Address' onChange={(e) => setVotingTokenAddress(e.target.value)} />
+          <Input placeholder='Voting Token Address' onChange={(e) => setVotingTokenAddress(e.target.value).trim().replace(/['"]+/g, '')} />
         </Form.Item>
         <Form.Item
           label="Voting Delay"
