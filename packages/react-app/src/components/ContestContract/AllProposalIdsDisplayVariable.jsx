@@ -23,10 +23,11 @@ const AllProposalIdsDisplayVariable = ({
 
   const refresh = useCallback(async () => {
     try {
-      const newTotalVotes = await Promise.all((await getAllProposalIdsContractFunction()).map(
+      const idsResp = await getAllProposalIdsContractFunction();
+      const allProposalsTotalVotesResp = await Promise.all(idsResp.map(
         async proposalId => [proposalId, await proposalVotesContractFunction(proposalId)])
       );
-      setAllProposalsTotalVotes(newTotalVotes)
+      setAllProposalsTotalVotes(allProposalsTotalVotesResp)
       triggerRefresh(false);
     } catch (e) {
       console.log(e);
