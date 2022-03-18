@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Input } from "antd";
-import { Contract, ContestContract, CreateRaceModal } from "../components";
+import { Contract, ContestContract, CreateContestModal } from "../components";
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
 
@@ -8,9 +8,10 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
 
   const [contestSearchInput, setContestSearchInput] = useState("0xd71929d7ad7d425acf6009d238257378c7fd2203");
   const [tokenSearchInput, setTokenSearchInput] = useState("0x003da13b325cba4d4477207871d8e7c7f2f5ad8e");
-  const [isSubmitRaceModalVisible, setIsSubmitRaceModalVisible] = useState(false);  
+  const [isCreateContestModalVisible, setIsCreateContestModalVisible] = useState(false);  
   const [currentContest, setCurrentContest] = useState("");
   const [currentToken, setCurrentToken] = useState("");
+  const [resultMessage, setResultMessage] = useState("")
   
   let customConfig = {};
   
@@ -72,16 +73,25 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
   }
 
   const showModal = () => {
-    setIsSubmitRaceModalVisible(true);
+    setIsCreateContestModalVisible(true);
   };
   
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 64 }}>
       <Button onClick={() => {window.location.reload();}}>Refresh</Button>
       <Button type="primary" onClick={showModal}>
-        Submit Contest
+        Create Contest
       </Button>
-      <CreateRaceModal modalVisible={isSubmitRaceModalVisible} setModalVisible={setIsSubmitRaceModalVisible} />
+      <CreateContestModal 
+        modalVisible={isCreateContestModalVisible} 
+        setModalVisible={setIsCreateContestModalVisible} 
+        setResultMessage={setResultMessage} 
+        signer={signer}
+      />
+      <Button onClick={() => setResultMessage("")}>Clear message</Button>
+      <div>
+        <p>{resultMessage}</p>
+      </div>
       <div>
         {/* Get rid of any whitespace or extra quotation marks */}
         <Input icon='search' placeholder='Search contests...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
