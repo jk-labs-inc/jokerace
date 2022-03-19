@@ -3,7 +3,6 @@ import { useContractExistsAtAddress, useContractLoader } from "eth-hooks";
 import React, { useMemo, useState } from "react";
 import Address from "../Address";
 import Balance from "../Balance";
-import DisplayVariable from "./DisplayVariable";
 import FunctionForm from "./FunctionForm";
 import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
 
@@ -94,24 +93,34 @@ export default function ContestContract({
   const proposalVotesFuncInfo = funcsDict["proposalVotes"]
   const addressesVotedFuncInfo = funcsDict["proposalAddressesHaveVoted"]
   const proposalAddressVotesFuncInfo = funcsDict["proposalAddressVotes"]
+  const proposeFuncInfo = funcsDict["propose"]
 
   const contractDisplay = contract ?
-    <AllProposalIdsDisplayVariable
-      getAllProposalIdsContractFunction={contract[getAllProposalIdsFuncInfo[0]]}
-      getAllProposalIdsFunctionInfo={getAllProposalIdsFuncInfo}
-      getProposalContractFunction={contract[getProposalFuncInfo[0]]}
-      getProposalFunctionInfo={getProposalFuncInfo}
-      proposalVotesContractFunction={contract[proposalVotesFuncInfo[0]]}
-      proposalVotesFunctionInfo={proposalVotesFuncInfo}
-      addressesVotedContractFunction={contract[addressesVotedFuncInfo[0]]}
-      addressesVotedFunctionInfo={addressesVotedFuncInfo}
-      proposalAddressVotesContractFunction={contract[proposalAddressVotesFuncInfo[0]]}
-      proposalAddressVotesFunctionInfo={proposalAddressVotesFuncInfo}
-      refreshRequired={refreshRequired}
-      triggerRefresh={triggerRefresh}
-      blockExplorer={blockExplorer}
-      provider={provider}
-    />
+    <div>
+      <FunctionForm 
+        contractFunction={contract[proposeFuncInfo[0]]}
+        functionInfo={proposeFuncInfo[1]}
+        provider={provider}
+        gasPrice={gasPrice}
+        triggerRefresh={triggerRefresh}
+      />
+      <AllProposalIdsDisplayVariable
+        getAllProposalIdsContractFunction={contract[getAllProposalIdsFuncInfo[0]]}
+        getAllProposalIdsFunctionInfo={getAllProposalIdsFuncInfo}
+        getProposalContractFunction={contract[getProposalFuncInfo[0]]}
+        getProposalFunctionInfo={getProposalFuncInfo}
+        proposalVotesContractFunction={contract[proposalVotesFuncInfo[0]]}
+        proposalVotesFunctionInfo={proposalVotesFuncInfo}
+        addressesVotedContractFunction={contract[addressesVotedFuncInfo[0]]}
+        addressesVotedFunctionInfo={addressesVotedFuncInfo}
+        proposalAddressVotesContractFunction={contract[proposalAddressVotesFuncInfo[0]]}
+        proposalAddressVotesFunctionInfo={proposalAddressVotesFuncInfo}
+        refreshRequired={refreshRequired}
+        triggerRefresh={triggerRefresh}
+        blockExplorer={blockExplorer}
+        provider={provider}
+      />
+    </div>
      :
     ""
 
