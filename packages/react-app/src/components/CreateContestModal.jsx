@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import DateTimePicker from 'react-datetime-picker'
-import { Input, Modal, Form, Button } from "antd";
+import { Input, Modal, Form } from "antd";
 
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 

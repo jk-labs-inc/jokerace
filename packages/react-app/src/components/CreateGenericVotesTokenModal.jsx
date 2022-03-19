@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { Input, Modal, Form, Button } from "antd";
 
-import DeployedGenericVotesTokenContract from "../contracts/deployedBytecode/GenericVotesToken.sol/GenericVotesToken.json";
+import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
 
 const { ethers } = require("ethers");
 
