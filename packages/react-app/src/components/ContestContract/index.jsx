@@ -98,7 +98,7 @@ export default function ContestContract({
   const contractDisplay = contract ?
     <div>
       <FunctionForm 
-        contractFunction={contract[proposeFuncInfo[0]]}
+        contractFunction={contract.connect(signer)[proposeFuncInfo[0]]}
         functionInfo={proposeFuncInfo[1]}
         provider={provider}
         gasPrice={gasPrice}
