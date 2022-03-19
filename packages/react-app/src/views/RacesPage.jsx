@@ -10,23 +10,39 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
   const [tokenSearchInput, setTokenSearchInput] = useState("");
   const [isCreateContestModalVisible, setIsCreateContestModalVisible] = useState(false);  
   const [isCreateTokenModalVisible, setIsCreateTokenModalVisible] = useState(false);  
-  const [currentContest, setCurrentContest] = useState("");
-  const [currentToken, setCurrentToken] = useState("");
+  const [showContest, setShowContest] = useState(false);
+  const [showToken, setShowToken] = useState(false);
   const [resultMessage, setResultMessage] = useState("")
   
-  let customConfig = {};
-  
-  if (contractConfig["deployedContracts"][targetNetwork.chainId]) {
-    customConfig["deployedContracts"] = {};
-    customConfig["deployedContracts"][targetNetwork.chainId] = {};
-    customConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] =
+  function generateCustomConfigBase() {
+    let customConfigBase = {};
+    customConfigBase["deployedContracts"] = {};
+    customConfigBase["deployedContracts"][targetNetwork.chainId] = {};
+    return customConfigBase;
+  }
+
+  function generateCustomContestConfig() {
+    let customContestConfig = generateCustomConfigBase();
+    customContestConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] =
       {
         chainId: targetNetwork.chainId.toString(),
         contracts: {
           Contest: {
             abi: DeployedContestContract.abi,
             address: contestSearchInput
-          },
+          }
+        },
+        name: targetNetwork.name
+      }
+    return customContestConfig;
+  }
+  
+  function generateCustomTokenConfig() {
+    let customTokenConfig = generateCustomConfigBase();
+    customTokenConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] =
+      {
+        chainId: targetNetwork.chainId.toString(),
+        contracts: {
           GenericVotesToken: {
             abi: DeployedGenericVotesTokenContract.abi,
             address: tokenSearchInput
@@ -34,43 +50,19 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
         },
         name: targetNetwork.name
       }
+    return customTokenConfig;
   }
 
   function searchContest() {
-    setCurrentContest(
-      <div>
-        <ContestContract
-          name="Contest"
-          price={price}
-          signer={signer}
-          provider={provider}
-          address={address}
-          blockExplorer={blockExplorer}
-          contractConfig={customConfig}
-        />
-        <Contract
-          name="Contest"
-          price={price}
-          signer={signer}
-          provider={provider}
-          address={address}
-          blockExplorer={blockExplorer}
-          contractConfig={customConfig}
-        />
-      </div>
-    );
+    if (contestSearchInput != "") {
+      setShowContest(true)
+    }
   }
 
   function searchToken() {
-    setCurrentToken(<Contract
-      name="GenericVotesToken"
-      price={price}
-      signer={signer}
-      provider={provider}
-      address={address}
-      blockExplorer={blockExplorer}
-      contractConfig={customConfig}
-    />);
+    if (tokenSearchInput != "") {
+      setShowToken(true)
+    }
   }
 
   const showContestModal = () => {
@@ -111,16 +103,43 @@ export default function RacesPage({targetNetwork, price, signer, provider, addre
         <Input icon='search' placeholder='Search contests...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
         <Button onClick={searchContest}>Search Contests</Button>
       </div>
+      {showContest ? 
+        <div>
+          <ContestContract
+            name="Contest"
+            price={price}
+            signer={signer}
+            provider={provider}
+            address={address}
+            blockExplorer={blockExplorer}
+            contractConfig={generateCustomContestConfig()}
+          />
+          <Contract
+            name="Contest"
+            price={price}
+            signer={signer}
+            provider={provider}
+            address={address}
+            blockExplorer={blockExplorer}
+            contractConfig={generateCustomContestConfig()}
+          />
+        </div> 
+      : ""}
       <div>
-        {currentContest}
-      </div>
-      <div>
-        <Input icon='search' placeholder='Search tokens...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value)} />
+        <Input icon='search' placeholder='Search tokens...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
         <Button onClick={searchToken}>Search ERC20Votes Tokens</Button>
       </div>
-      <div>
-        {currentToken}
-      </div>
+      {showToken ? 
+        <Contract
+          name="GenericVotesToken"
+          price={price}
+          signer={signer}
+          provider={provider}
+          address={address}
+          blockExplorer={blockExplorer}
+          contractConfig={generateCustomTokenConfig()}
+        /> 
+      : ""}
       <h5>jokecartel was here</h5>
     </div>
   );
