@@ -83,7 +83,6 @@ export default function ContestContract({
 
   const [refreshRequired, triggerRefresh] = useState(false);
   
-  console.log("functions: " + displayedContractFunctions);
   const funcsDict = {};
   displayedContractFunctions.forEach(contractFuncInfo => {
     funcsDict[contractFuncInfo[1].name] = contractFuncInfo;
