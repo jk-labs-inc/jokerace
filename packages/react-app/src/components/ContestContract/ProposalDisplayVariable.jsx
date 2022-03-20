@@ -33,21 +33,10 @@ const ProposalDisplayVariable = ({
   return (
     <div>
       <Row>
-        <Col
-          span={8}
-          style={{
-            textAlign: "right",
-            opacity: 0.333,
-            paddingRight: 6,
-            fontSize: 24,
-          }}
-        >
-          {getProposalFunctionInfo[1].name}
-        </Col>
         <Col span={14}>
           {/* It is second (proposalContent[1]) in the array because that's what the struct is for a Proposal: id, content, author */}
           <h2>{tryToDisplay(proposalContent[1], false, blockExplorer)}</h2>
-          <h2>Total Votes: {tryToDisplay(proposalTotalVotes, false, blockExplorer)}</h2>
+          <h2>Total Votes: {tryToDisplay(proposalTotalVotes/1e18, false, blockExplorer)}</h2>
           {addressesVoted.map(userAddress => <AddressProposalVotes 
             proposalId={proposalId}
             userAddress={userAddress}
@@ -57,6 +46,17 @@ const ProposalDisplayVariable = ({
             triggerRefresh={triggerRefresh}
             blockExplorer={blockExplorer}
             provider={provider}/>)}
+        </Col>
+        <Col
+          span={8}
+          style={{
+            textAlign: "center",
+            opacity: 0.333,
+            paddingRight: 6,
+            fontSize: 24,
+          }}
+        >
+          {getProposalFunctionInfo[1].name}
         </Col>
         <Col span={2}>
           <h2>

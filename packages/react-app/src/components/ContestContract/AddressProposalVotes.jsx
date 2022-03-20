@@ -28,7 +28,7 @@ const AddressProposalVotes = ({ userAddress, proposalId, proposalAddressVotesCon
     <div>
       <Collapse>
         <Panel header={<Address address={userAddress} ensProvider={provider} blockExplorer={blockExplorer} />} key="1">
-          <p>{tryToDisplay(variable, false, blockExplorer)}</p>
+          <p>{tryToDisplay(variable/1e18, false, blockExplorer)}</p>
         </Panel>
       </Collapse>
     </div>
