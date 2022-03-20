@@ -20,7 +20,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
     return customConfigBase;
   }
 
-  function generateCustomContestConfig() {
+  function generateCustomContestConfig(fullContest) {
     let customContestConfig = generateCustomConfigBase();
     customContestConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] =
       {
@@ -28,7 +28,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
         contracts: {
           Contest: {
             abi: DeployedContestContract.abi,
-            address: contestSearchInput
+            address: fullContest ? fullContestSearchInput : contestSearchInput
           }
         },
         name: targetNetwork.name
@@ -98,7 +98,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
           mainnetProvider={mainnetProvider}
           address={address}
           blockExplorer={blockExplorer}
-          contractConfig={generateCustomContestConfig()}
+          contractConfig={generateCustomContestConfig(false)}
         />
       : ""}
       <div>
@@ -112,7 +112,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
             provider={provider}
             address={address}
             blockExplorer={blockExplorer}
-            contractConfig={generateCustomContestConfig()}
+            contractConfig={generateCustomContestConfig(true)}
           />
         : ""
       }
