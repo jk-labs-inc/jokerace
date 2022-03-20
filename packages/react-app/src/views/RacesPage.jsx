@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input } from "antd";
+import { Button, Divider, Input } from "antd";
 import { Contract, ContestContract, CreateContestModal, CreateGenericVotesTokenModal } from "../components";
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
@@ -87,7 +87,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
       </div>
       <div>
         {/* Get rid of any whitespace or extra quotation marks */}
-        <Input icon='search' placeholder='Search contest contract interface...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
+        <Input icon='search' placeholder='Enter Contest contract address here' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
       </div>
       {contestSearchInput != "" ? 
         <ContestContract
@@ -101,8 +101,10 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
           contractConfig={generateCustomContestConfig(false)}
         />
       : ""}
+      <Divider />
+      <h4>Below are fields with which you can search the address of Contest and ERC20Votes types of contracts and access their full function list</h4>
       <div>
-        <Input icon='search' placeholder='Search full contest contract functions...' value={fullContestSearchInput} onChange={(e) => setFullContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
+        <Input icon='search' placeholder='Search Contest full contract functions' value={fullContestSearchInput} onChange={(e) => setFullContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
       </div>
       {fullContestSearchInput != "" ?
           <Contract
@@ -118,7 +120,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
       }
       <div>
         {/* Get rid of any whitespace or extra quotation marks */}
-        <Input icon='search' placeholder='Search ERC20Votes-compatible token addresses...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
+        <Input icon='search' placeholder='Search ERC20Votes full contract functions' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
       </div>
       {tokenSearchInput != "" ? 
         <Contract
