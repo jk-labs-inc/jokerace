@@ -59,8 +59,7 @@ const ProposalDisplayVariable = ({
         <Col
           span={8}
           style={{
-            textAlign: "center",
-            opacity: 0.333,
+            textAlign: "left",
             paddingRight: 6,
             fontSize: 24,
           }}

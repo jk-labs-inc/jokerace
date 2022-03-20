@@ -46,7 +46,7 @@ export default function VotingFunctionForm({ proposalId, castVoteContractFunctio
     }
   };
 
-  const buttonIcon = <Button style={{ marginLeft: -32 }}>Vote</Button>
+  const buttonIcon = <Button>Vote</Button>
   inputs.push(
     <div style={{ cursor: "pointer", margin: 2 }} key="goButton">
       <Input
@@ -109,7 +109,6 @@ export default function VotingFunctionForm({ proposalId, castVoteContractFunctio
       <Row>
         <Col span={24}>{inputs}</Col>
       </Row>
-      <Divider />
     </div>
   );
 }

@@ -166,12 +166,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
     }
   };
 
-  const buttonIcon =
-    functionInfo.type === "call" ? (
-      <Button style={{ marginLeft: -32 }}>Read📡</Button>
-    ) : (
-      <Button style={{ marginLeft: -32 }}>Send💸</Button>
-    );
+  const buttonIcon = <Button style={{ marginLeft: -32 }}>Submit</Button>
   inputs.push(
     <div style={{ cursor: "pointer", margin: 2 }} key="goButton">
       <Input
