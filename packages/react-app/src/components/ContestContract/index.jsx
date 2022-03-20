@@ -94,7 +94,8 @@ export default function ContestContract({
   const addressesVotedFuncInfo = funcsDict["proposalAddressesHaveVoted"]
   const proposalAddressVotesFuncInfo = funcsDict["proposalAddressVotes"]
   const proposeFuncInfo = funcsDict["propose"]
-
+  const castVoteFuncInfo = funcsDict["castVote"]
+  
   const contractDisplay = contract ?
     <div>
       <FunctionForm 
@@ -115,10 +116,13 @@ export default function ContestContract({
         addressesVotedFunctionInfo={addressesVotedFuncInfo}
         proposalAddressVotesContractFunction={contract[proposalAddressVotesFuncInfo[0]]}
         proposalAddressVotesFunctionInfo={proposalAddressVotesFuncInfo}
+        castVoteContractFunction={contract.connect(signer)[castVoteFuncInfo[0]]} // Different bc function, not display form
+        castVoteFunctionInfo={castVoteFuncInfo[1]}
         refreshRequired={refreshRequired}
         triggerRefresh={triggerRefresh}
         blockExplorer={blockExplorer}
         provider={provider}
+        gasPrice={gasPrice}
       />
     </div>
      :

@@ -3,13 +3,15 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import { tryToDisplay } from "./utils";
 import AddressProposalVotes from "./AddressProposalVotes";
+import VotingFunctionForm from "./VotingFunctionForm";
 
 const ProposalDisplayVariable = ({ 
             proposalId, proposalTotalVotes,
             getProposalContractFunction, getProposalFunctionInfo, 
             addressesVotedContractFunction, addressesVotedFunctionInfo,
             proposalAddressVotesContractFunction, proposalAddressVotesFunctionInfo,
-            refreshRequired, triggerRefresh, blockExplorer, provider }) => {
+            castVoteContractFunction, castVoteFunctionInfo,
+            refreshRequired, triggerRefresh, blockExplorer, provider, gasPrice }) => {
   const [proposalContent, setProposalContent] = useState([]);
   const [addressesVoted, setAddressesVoted] = useState([]);
 
@@ -56,7 +58,14 @@ const ProposalDisplayVariable = ({
             fontSize: 24,
           }}
         >
-          {getProposalFunctionInfo[1].name}
+          <VotingFunctionForm 
+            proposalId={proposalId}
+            castVoteContractFunction={castVoteContractFunction}
+            castVoteFunctionInfo={castVoteFunctionInfo}
+            provider={provider}
+            gasPrice={gasPrice}
+            triggerRefresh={triggerRefresh}
+          />
         </Col>
         <Col span={2}>
           <h2>
