@@ -14,6 +14,11 @@ const ProposalDisplayVariable = ({
             refreshRequired, triggerRefresh, blockExplorer, provider, gasPrice }) => {
   const [proposalContent, setProposalContent] = useState([]);
   const [addressesVoted, setAddressesVoted] = useState([]);
+  const [showIndividualVotes, setShowIndividualVotes] = useState(false);
+
+  const toggleIndividualVotes = () => {
+    setShowIndividualVotes(!showIndividualVotes)
+  }
 
   const refresh = useCallback(async () => {
     try {
@@ -39,7 +44,8 @@ const ProposalDisplayVariable = ({
           {/* It is second (proposalContent[1]) in the array because that's what the struct is for a Proposal: id, content, author */}
           <h2>{tryToDisplay(proposalContent[1], false, blockExplorer)}</h2>
           <h2>Total Votes: {tryToDisplay(proposalTotalVotes/1e18, false, blockExplorer)}</h2>
-          {addressesVoted.map(userAddress => <AddressProposalVotes 
+          <Button onClick={toggleIndividualVotes}>Toggle Showing Individual Addresses Votes</Button>
+          {showIndividualVotes ? addressesVoted.map(userAddress => <AddressProposalVotes 
             proposalId={proposalId}
             userAddress={userAddress}
             proposalAddressVotesContractFunction={proposalAddressVotesContractFunction}
@@ -47,7 +53,8 @@ const ProposalDisplayVariable = ({
             refreshRequired={refreshRequired}
             triggerRefresh={triggerRefresh}
             blockExplorer={blockExplorer}
-            provider={provider}/>)}
+            provider={provider}/>) :
+            ""}
         </Col>
         <Col
           span={8}

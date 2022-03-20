@@ -26,11 +26,7 @@ const AddressProposalVotes = ({ userAddress, proposalId, proposalAddressVotesCon
 
   return (
     <div>
-      <Collapse>
-        <Panel header={<Address address={userAddress} ensProvider={provider} blockExplorer={blockExplorer} />} key="1">
-          <p>{tryToDisplay(variable/1e18, false, blockExplorer)}</p>
-        </Panel>
-      </Collapse>
+      <p><Address address={userAddress} ensProvider={provider} fontSize={16} blockExplorer={blockExplorer} />: {tryToDisplay(variable/1e18, false, blockExplorer)}</p>
     </div>
   );
 };
