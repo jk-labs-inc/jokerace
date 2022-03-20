@@ -44,7 +44,7 @@ const ProposalDisplayVariable = ({
           {/* It is second (proposalContent[1]) in the array because that's what the struct is for a Proposal: id, content, author */}
           <h2>{tryToDisplay(proposalContent[1], false, blockExplorer).replace(/['"]+/g, '')}</h2>
           <h2>Total Votes: {tryToDisplay(proposalTotalVotes/1e18, false, blockExplorer)}</h2>
-          <Button onClick={toggleIndividualVotes}>Toggle Showing Individual Addresses Votes</Button>
+          <Button onClick={toggleIndividualVotes}>Toggle Individual Address Votes</Button>
           {showIndividualVotes ? addressesVoted.map(userAddress => <AddressProposalVotes 
             proposalId={proposalId}
             userAddress={userAddress}
