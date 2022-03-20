@@ -20,6 +20,14 @@ const ProposalDisplayVariable = ({
     setShowIndividualVotes(!showIndividualVotes)
   }
 
+  const formatProposalString = (inputString) => {
+    let retString = ""
+    if (inputString) {
+      retString = inputString.replace(/['"]+/g, '')
+    }
+    return retString;
+  }
+
   const refresh = useCallback(async () => {
     try {
       const getProposalResponse = await getProposalContractFunction(proposalId);
@@ -42,7 +50,7 @@ const ProposalDisplayVariable = ({
       <Row>
         <Col span={14}>
           {/* It is second (proposalContent[1]) in the array because that's what the struct is for a Proposal: id, content, author */}
-          <h2>{tryToDisplay(proposalContent[1], false, blockExplorer).replace(/['"]+/g, '')}</h2>
+          <h2>{formatProposalString(tryToDisplay(proposalContent[1], false, blockExplorer))}</h2>
           <h2>Total Votes: {tryToDisplay(proposalTotalVotes/1e18, false, blockExplorer)}</h2>
           <Button onClick={toggleIndividualVotes}>Toggle Individual Address Votes</Button>
           {showIndividualVotes ? addressesVoted.map(userAddress => <AddressProposalVotes 
