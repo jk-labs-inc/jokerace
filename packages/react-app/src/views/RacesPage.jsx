@@ -62,7 +62,7 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
   
   return (
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 64 }}>
-      <Button onClick={() => {window.location.reload();}}>Refresh</Button>
+      <Button onClick={() => {window.location.reload();}}>Refresh Page</Button>
       <Button type="primary" onClick={showTokenModal}>
         Create Generic Votes Token
       </Button>

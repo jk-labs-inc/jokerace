@@ -26,7 +26,9 @@ const AddressProposalVotes = ({ userAddress, proposalId, proposalAddressVotesCon
 
   return (
     <div>
-      <p><Address address={userAddress} ensProvider={mainnetProvider} fontSize={16} blockExplorer={blockExplorer} />: {tryToDisplay(variable/1e18, false, blockExplorer)}</p>
+      <div>
+        <Address address={userAddress} ensProvider={mainnetProvider} fontSize={16} blockExplorer={blockExplorer} />: {tryToDisplay(variable/1e18, false, blockExplorer)}
+      </div>
     </div>
   );
 };
