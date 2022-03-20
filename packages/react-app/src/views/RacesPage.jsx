@@ -4,7 +4,7 @@ import { Contract, ContestContract, CreateContestModal, CreateGenericVotesTokenM
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
 
-export default function RacesPage({targetNetwork, price, signer, provider, mainnetProvider, address, blockExplorer}) {
+export default function RacesPage({targetNetwork, price, signer, provider, mainnetProvider, address, gasPrice, blockExplorer}) {
 
   const [contestSearchInput, setContestSearchInput] = useState("");
   const [fullContestSearchInput, setFullContestSearchInput] = useState("");
@@ -99,6 +99,8 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
           address={address}
           blockExplorer={blockExplorer}
           contractConfig={generateCustomContestConfig(false)}
+          gasPrice={gasPrice}
+          chainId={targetNetwork.chainId}
         />
       : ""}
       <Divider />
@@ -115,6 +117,8 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={generateCustomContestConfig(true)}
+            gasPrice={gasPrice}
+            chainId={targetNetwork.chainId}
           />
         : ""
       }
@@ -131,6 +135,8 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
           address={address}
           blockExplorer={blockExplorer}
           contractConfig={generateCustomTokenConfig()}
+          gasPrice={gasPrice}
+          chainId={targetNetwork.chainId}
         /> 
       : ""}
       <h5>jokecartel was here</h5>

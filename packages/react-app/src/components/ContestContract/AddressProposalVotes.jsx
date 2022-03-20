@@ -1,10 +1,7 @@
-import { Collapse } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 import Address from "../Address";
 
 import { tryToDisplay } from "./utils";
-
-const { Panel } = Collapse;
 
 const AddressProposalVotes = ({ userAddress, proposalId, proposalAddressVotesContractFunction, proposalAddressVotesFunctionInfo,
    refreshRequired, triggerRefresh, blockExplorer, mainnetProvider }) => {
