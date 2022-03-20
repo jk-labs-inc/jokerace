@@ -9,7 +9,7 @@ const AllProposalIdsDisplayVariable = ({
             addressesVotedContractFunction, addressesVotedFunctionInfo,
             proposalAddressVotesContractFunction, proposalAddressVotesFunctionInfo,
             castVoteContractFunction, castVoteFunctionInfo,
-            refreshRequired, triggerRefresh, blockExplorer, provider, gasPrice }) => {
+            refreshRequired, triggerRefresh, blockExplorer, provider, mainnetProvider, gasPrice }) => {
   const [allProposalsTotalVotes, setAllProposalsTotalVotes] = useState([]);
 
   function sortDisplays(x, y) {
@@ -55,6 +55,7 @@ const AllProposalIdsDisplayVariable = ({
       triggerRefresh={triggerRefresh}
       blockExplorer={blockExplorer}
       provider={provider}
+      mainnetProvider={mainnetProvider}
       gasPrice={gasPrice}
     />
   );

@@ -11,7 +11,7 @@ const ProposalDisplayVariable = ({
             addressesVotedContractFunction, addressesVotedFunctionInfo,
             proposalAddressVotesContractFunction, proposalAddressVotesFunctionInfo,
             castVoteContractFunction, castVoteFunctionInfo,
-            refreshRequired, triggerRefresh, blockExplorer, provider, gasPrice }) => {
+            refreshRequired, triggerRefresh, blockExplorer, provider, mainnetProvider, gasPrice }) => {
   const [proposalContent, setProposalContent] = useState([]);
   const [addressesVoted, setAddressesVoted] = useState([]);
   const [showIndividualVotes, setShowIndividualVotes] = useState(false);
@@ -61,7 +61,7 @@ const ProposalDisplayVariable = ({
             refreshRequired={refreshRequired}
             triggerRefresh={triggerRefresh}
             blockExplorer={blockExplorer}
-            provider={provider}/>) :
+            mainnetProvider={mainnetProvider}/>) :
             ""}
         </Col>
         <Col

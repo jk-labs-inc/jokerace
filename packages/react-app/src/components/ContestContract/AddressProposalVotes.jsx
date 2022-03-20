@@ -7,7 +7,7 @@ import { tryToDisplay } from "./utils";
 const { Panel } = Collapse;
 
 const AddressProposalVotes = ({ userAddress, proposalId, proposalAddressVotesContractFunction, proposalAddressVotesFunctionInfo,
-   refreshRequired, triggerRefresh, blockExplorer, provider }) => {
+   refreshRequired, triggerRefresh, blockExplorer, mainnetProvider }) => {
   const [variable, setVariable] = useState("");
 
   const refresh = useCallback(async () => {
@@ -26,7 +26,7 @@ const AddressProposalVotes = ({ userAddress, proposalId, proposalAddressVotesCon
 
   return (
     <div>
-      <p><Address address={userAddress} ensProvider={provider} fontSize={16} blockExplorer={blockExplorer} />: {tryToDisplay(variable/1e18, false, blockExplorer)}</p>
+      <p><Address address={userAddress} ensProvider={mainnetProvider} fontSize={16} blockExplorer={blockExplorer} />: {tryToDisplay(variable/1e18, false, blockExplorer)}</p>
     </div>
   );
 };

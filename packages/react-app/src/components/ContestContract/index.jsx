@@ -50,6 +50,7 @@ export default function ContestContract({
   gasPrice,
   signer,
   provider,
+  mainnetProvider,
   name,
   show,
   price,
@@ -122,6 +123,7 @@ export default function ContestContract({
         triggerRefresh={triggerRefresh}
         blockExplorer={blockExplorer}
         provider={provider}
+        mainnetProvider={mainnetProvider}
         gasPrice={gasPrice}
       />
     </div>
