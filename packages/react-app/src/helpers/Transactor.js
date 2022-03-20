@@ -115,13 +115,20 @@ export default function Transactor(providerOrSigner, gasPrice, etherscan) {
         return result;
       } catch (e) {
         if (DEBUG) console.log(e);
-        console.log("e", e);
-        console.log("e.data", e.data);
-        console.log("e.data.message", e.data.message);
+        
+        let message = "";
+        if (e) {
+          console.log(e)
+          message += e + " ";
+        };
+        if (e.data) {
+          if (e.data.message) {
+            console.log(e.data.message)
+            message += " - Details: " + e.data.message + " ";
+          }
+        };
 
         // Accounts for Metamask and default signer on all networks
-        let message = e.message + " - Details: " + e.data.message;
-
         console.log("Attempt to clean up:", message);
         try {
           let obj = JSON.parse(message);
