@@ -7,11 +7,10 @@ import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/Gener
 export default function RacesPage({targetNetwork, price, signer, provider, mainnetProvider, address, blockExplorer}) {
 
   const [contestSearchInput, setContestSearchInput] = useState("");
+  const [fullContestSearchInput, setFullContestSearchInput] = useState("");
   const [tokenSearchInput, setTokenSearchInput] = useState("");
   const [isCreateContestModalVisible, setIsCreateContestModalVisible] = useState(false);  
   const [isCreateTokenModalVisible, setIsCreateTokenModalVisible] = useState(false);  
-  const [showContest, setShowContest] = useState(false);
-  const [showToken, setShowToken] = useState(false);
   const [resultMessage, setResultMessage] = useState("")
   
   function generateCustomConfigBase() {
@@ -53,18 +52,6 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
     return customTokenConfig;
   }
 
-  function searchContest() {
-    if (contestSearchInput != "") {
-      setShowContest(true)
-    }
-  }
-
-  function searchToken() {
-    if (tokenSearchInput != "") {
-      setShowToken(true)
-    }
-  }
-
   const showContestModal = () => {
     setIsCreateContestModalVisible(true);
   };
@@ -100,21 +87,24 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
       </div>
       <div>
         {/* Get rid of any whitespace or extra quotation marks */}
-        <Input icon='search' placeholder='Search contests...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
-        <Button onClick={searchContest}>Search Contests</Button>
+        <Input icon='search' placeholder='Search contest contract interface...' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
       </div>
-      {showContest ? 
-        <div>
-          <ContestContract
-            name="Contest"
-            price={price}
-            signer={signer}
-            provider={provider}
-            mainnetProvider={mainnetProvider}
-            address={address}
-            blockExplorer={blockExplorer}
-            contractConfig={generateCustomContestConfig()}
-          />
+      {contestSearchInput != "" ? 
+        <ContestContract
+          name="Contest"
+          price={price}
+          signer={signer}
+          provider={provider}
+          mainnetProvider={mainnetProvider}
+          address={address}
+          blockExplorer={blockExplorer}
+          contractConfig={generateCustomContestConfig()}
+        />
+      : ""}
+      <div>
+        <Input icon='search' placeholder='Search full contest contract functions...' value={fullContestSearchInput} onChange={(e) => setFullContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
+      </div>
+      {fullContestSearchInput != "" ?
           <Contract
             name="Contest"
             price={price}
@@ -124,13 +114,13 @@ export default function RacesPage({targetNetwork, price, signer, provider, mainn
             blockExplorer={blockExplorer}
             contractConfig={generateCustomContestConfig()}
           />
-        </div> 
-      : ""}
+        : ""
+      }
       <div>
-        <Input icon='search' placeholder='Search tokens...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
-        <Button onClick={searchToken}>Search ERC20Votes Tokens</Button>
+        {/* Get rid of any whitespace or extra quotation marks */}
+        <Input icon='search' placeholder='Search ERC20Votes-compatible token addresses...' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
       </div>
-      {showToken ? 
+      {tokenSearchInput != "" ? 
         <Contract
           name="GenericVotesToken"
           price={price}
