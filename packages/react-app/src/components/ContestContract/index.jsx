@@ -59,7 +59,6 @@ export default function ContestContract({
   contractConfig,
 }) {
   const contracts = useContractLoader(provider, contractConfig, chainId);
-  console.log("CONTRACTS: ", contracts)
   let contract;
   if (!customContract) {
     contract = contracts ? contracts[name] : "";
@@ -69,8 +68,6 @@ export default function ContestContract({
 
   const address = contract ? contract.address : "";
   const contractIsDeployed = useContractExistsAtAddress(provider, address);
-  console.log("PROVIDER: ", provider)
-  console.log("deployed?", contractIsDeployed)
 
   const displayedContractFunctions = useMemo(() => {
     const results = contract

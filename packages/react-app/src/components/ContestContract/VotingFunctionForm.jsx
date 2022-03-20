@@ -17,8 +17,6 @@ export default function VotingFunctionForm({ proposalId, castVoteContractFunctio
 
   const tx = Transactor(provider, gasPrice);
 
-  console.log(castVoteFunctionInfo.inputs)
-
   const inputs = castVoteFunctionInfo.inputs.filter(input => input.name == "numVotes").map((input, inputIndex) => {
     const key = getFunctionInputKey(castVoteFunctionInfo, input, inputIndex);
 

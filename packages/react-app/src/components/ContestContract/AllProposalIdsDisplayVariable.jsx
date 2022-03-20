@@ -40,8 +40,9 @@ const AllProposalIdsDisplayVariable = ({
     refresh();
   }, [refresh, refreshRequired, getAllProposalIdsContractFunction, proposalVotesContractFunction]);  
 
-  let displayVars = allProposalsTotalVotes.sort(sortDisplays).map(idAndTotalVotesInfo => 
+  let displayVars = allProposalsTotalVotes.sort(sortDisplays).map((idAndTotalVotesInfo, index) => 
     <ProposalDisplayVariable 
+      key={index}
       proposalId={idAndTotalVotesInfo[0]}
       proposalTotalVotes={idAndTotalVotesInfo[1]}
       getProposalContractFunction={getProposalContractFunction}
