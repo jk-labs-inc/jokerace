@@ -244,7 +244,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
         <Col
           span={8}
           style={{
-            textAlign: "center",
+            textAlign: "right",
             paddingRight: 6,
             fontSize: 24,
           }}

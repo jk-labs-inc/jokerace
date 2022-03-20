@@ -134,9 +134,8 @@ export default function ContestContract({
         title={
           <div style={{ fontSize: 24 }}>
             {name}
-            <div style={{ float: "right" }}>
-              <Address value={address} />
-              <Balance address={address} provider={provider} price={price} />
+            <div style={{ align: "center" }}>
+              <Address value={address} fontSize={20} />
             </div>
           </div>
         }
