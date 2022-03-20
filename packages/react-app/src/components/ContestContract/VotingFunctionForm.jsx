@@ -22,23 +22,6 @@ export default function VotingFunctionForm({ proposalId, castVoteContractFunctio
   const inputs = castVoteFunctionInfo.inputs.filter(input => input.name == "numVotes").map((input, inputIndex) => {
     const key = getFunctionInputKey(castVoteFunctionInfo, input, inputIndex);
 
-    let buttons = "";
-    buttons = (
-      <Tooltip placement="right" title="* 10 ** 18">
-        <div
-          type="dashed"
-          style={{ cursor: "pointer" }}
-          onClick={async () => {
-            const formUpdate = { ...form };
-            formUpdate[key] = utils.parseEther(form[key]);
-            setForm(formUpdate);
-          }}
-        >
-          ✴️
-        </div>
-      </Tooltip>
-    );
-
     return (
       <div style={{ margin: 2 }} key={key}>
         <Input
@@ -52,7 +35,6 @@ export default function VotingFunctionForm({ proposalId, castVoteContractFunctio
             formUpdate[event.target.name] = event.target.value;
             setForm(formUpdate);
           }}
-          suffix={buttons}
         />
       </div>
     );
@@ -85,7 +67,7 @@ export default function VotingFunctionForm({ proposalId, castVoteContractFunctio
                 return value;
               });
 
-              const args = [proposalId, utils.parseEther("0"), numVotesArg[0]] // propId, support (only option is 0 or For for now), and numVotes
+              const args = [proposalId, utils.parseEther("0"), utils.parseEther(numVotesArg[0])] // propId, support (only option is 0 or For for now), and numVotes
 
               let result;
               if (castVoteFunctionInfo.stateMutability === "view" || castVoteFunctionInfo.stateMutability === "pure") {
