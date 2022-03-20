@@ -244,13 +244,12 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
         <Col
           span={8}
           style={{
-            textAlign: "right",
-            opacity: 0.333,
+            textAlign: "center",
             paddingRight: 6,
             fontSize: 24,
           }}
         >
-          {functionInfo.name}
+          Submit a proposal:
         </Col>
         <Col span={16}>{inputs}</Col>
       </Row>

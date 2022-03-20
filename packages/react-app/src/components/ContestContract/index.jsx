@@ -3,7 +3,7 @@ import { useContractExistsAtAddress, useContractLoader } from "eth-hooks";
 import React, { useMemo, useState } from "react";
 import Address from "../Address";
 import Balance from "../Balance";
-import FunctionForm from "./FunctionForm";
+import ProposingFunctionForm from "./ProposingFunctionForm";
 import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
 
 const noContractDisplay = (
@@ -98,7 +98,7 @@ export default function ContestContract({
   
   const contractDisplay = contract ?
     <div>
-      <FunctionForm 
+      <ProposingFunctionForm 
         contractFunction={contract.connect(signer)[proposeFuncInfo[0]]}
         functionInfo={proposeFuncInfo[1]}
         provider={provider}
