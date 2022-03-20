@@ -1,8 +1,7 @@
-import { Card } from "antd";
+import { Card, Button } from "antd";
 import { useContractExistsAtAddress, useContractLoader } from "eth-hooks";
 import React, { useMemo, useState } from "react";
 import Address from "../Address";
-import Balance from "../Balance";
 import ProposingFunctionForm from "./ProposingFunctionForm";
 import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
 
@@ -135,6 +134,7 @@ export default function ContestContract({
             <div style={{ align: "center" }}>
               <Address value={address} fontSize={20} />
             </div>
+            <Button onClick={() => {triggerRefresh(true)}}>Refresh Contest</Button>
           </div>
         }
         size="large"
