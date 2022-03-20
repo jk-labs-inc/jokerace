@@ -1,3 +1,4 @@
+import { Button, Divider } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 
 import ProposalDisplayVariable from "./ProposalDisplayVariable";
@@ -60,7 +61,13 @@ const AllProposalIdsDisplayVariable = ({
     />
   );
   
-  return displayVars;
+  return (
+    <div>
+      <Button onClick={() => {triggerRefresh(true)}}>Refresh Proposals</Button>
+      <Divider />
+      {displayVars}
+    </div>
+  );
 };
 
 export default AllProposalIdsDisplayVariable;
