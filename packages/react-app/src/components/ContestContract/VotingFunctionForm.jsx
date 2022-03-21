@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Input, Row, Tooltip } from "antd";
+import { Button, Col, Input, Row } from "antd";
 import React, { useState } from "react";
 
 import { Transactor } from "../../helpers";
