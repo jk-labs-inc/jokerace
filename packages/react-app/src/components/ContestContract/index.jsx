@@ -1,11 +1,10 @@
 import { Card, Button, Divider } from "antd";
 import { useContractExistsAtAddress, useContractLoader } from "eth-hooks";
 import React, { useMemo, useState } from "react";
-import Address from "../Address";
 import ProposingFunctionForm from "./ProposingFunctionForm";
 import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
 import UserVotesAndUsedDisplayVariable from "./UserVotesAndUsedDisplayVariable";
-import ContestNameDisplayVariable from "./ContestNameDisplayVariable";
+import ContestInfoDisplayVariable from "./ContestInfoDisplayVariable";
 
 const noContractDisplay = (
   <div>
@@ -96,20 +95,19 @@ export default function ContestContract({
   const proposalThresholdFuncInfo = funcsDict["proposalThreshold"]
   const stateFuncInfo = funcsDict["state"]
   const nameFuncInfo = funcsDict["name"]
+  const tokenFuncInfo = funcsDict["token"]
   
   const contractDisplay = contract ?
     <div>
       <div style={{ fontSize: 24 }}>
-        <ContestNameDisplayVariable
-          contractFunction={contract[nameFuncInfo[0]]}
-          functionInfo={nameFuncInfo}
+        <ContestInfoDisplayVariable
+          nameContractFunction={contract[nameFuncInfo[0]]}
+          tokenContractFunction={contract[tokenFuncInfo[0]]}
+          address={address}
           refreshRequired={refreshRequired}
           triggerRefresh={triggerRefresh}
           blockExplorer={blockExplorer}
         />
-        <div style={{ align: "center" }}>
-          <Address value={address} fontSize={20} />
-        </div>
         <Button onClick={() => {triggerRefresh(true)}}>Refresh Contest</Button>
       </div>
       <Divider />
