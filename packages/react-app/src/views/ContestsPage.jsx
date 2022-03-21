@@ -4,7 +4,7 @@ import { Contract, ContestContract, CreateContestModal, CreateGenericVotesTokenM
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
 
-export default function RacesPage({targetNetwork, price, signer, provider, mainnetProvider, address, gasPrice, blockExplorer}) {
+export default function ContestsPage({targetNetwork, price, signer, provider, mainnetProvider, address, gasPrice, blockExplorer}) {
 
   const [contestSearchInput, setContestSearchInput] = useState("");
   const [fullContestSearchInput, setFullContestSearchInput] = useState("");

@@ -29,7 +29,7 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ExampleUI, Hints, Subgraph, RacesPage } from "./views";
+import { Home, ExampleUI, Hints, Subgraph, ContestsPage } from "./views";
 import { useStaticJsonRPC } from "./hooks";
 
 const { ethers } = require("ethers");
@@ -171,7 +171,7 @@ function App(props) {
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
 
-      <RacesPage
+      <ContestsPage
         targetNetwork={targetNetwork}
         price={price}
         signer={userSigner}

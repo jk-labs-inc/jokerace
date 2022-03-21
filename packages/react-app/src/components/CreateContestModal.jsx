@@ -41,7 +41,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
   };
 
   return (
-    <Modal title="Create Race" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
+    <Modal title="Create Contest" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
       <Form
         name="basic"
         labelCol={{ span: 8 }}
