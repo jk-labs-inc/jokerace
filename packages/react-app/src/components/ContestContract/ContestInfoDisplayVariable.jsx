@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { tryToDisplay, stripQuotationMarks } from "./utils";
-import Address from "../Address";
 
 const ContestInfoDisplayVariable = ({ nameContractFunction, tokenContractFunction, address, refreshRequired, triggerRefresh, blockExplorer }) => {
   const [contestName, setContestName] = useState("");
