@@ -1610,7 +1610,7 @@
                   "type": "address"
                 }
               ],
-              "name": "contestAddressVotes",
+              "name": "contestAddressTotalVotesCast",
               "outputs": [
                 {
                   "internalType": "uint256",

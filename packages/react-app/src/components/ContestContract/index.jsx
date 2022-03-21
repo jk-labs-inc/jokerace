@@ -4,6 +4,7 @@ import React, { useMemo, useState } from "react";
 import Address from "../Address";
 import ProposingFunctionForm from "./ProposingFunctionForm";
 import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
+import UserVotesAndUsedDisplayVariable from "./UserVotesAndUsedDisplayVariable";
 
 const noContractDisplay = (
   <div>
@@ -43,6 +44,7 @@ const noContractDisplay = (
 
 export default function ContestContract({
   customContract,
+  userAddress,
   gasPrice,
   signer,
   provider,
@@ -87,9 +89,23 @@ export default function ContestContract({
   const proposalAddressVotesFuncInfo = funcsDict["proposalAddressVotes"]
   const proposeFuncInfo = funcsDict["propose"]
   const castVoteFuncInfo = funcsDict["castVote"]
+  const getVotesFuncInfo = funcsDict["getVotes"]
+  const contestAddressTotalVotesCastFuncInfo = funcsDict["contestAddressTotalVotesCast"]
+  const contestSnapshotFuncInfo = funcsDict["contestSnapshot"]
+  const proposalThresholdFuncInfo = funcsDict["proposalThreshold"]
   
   const contractDisplay = contract ?
     <div>
+      <UserVotesAndUsedDisplayVariable
+        userAddress={userAddress}
+        getVotesContractFunction={contract[getVotesFuncInfo[0]]}
+        proposalThresholdContractFunction={contract[proposalThresholdFuncInfo[0]]}
+        contestAddressTotalVotesCastContractFunction={contract[contestAddressTotalVotesCastFuncInfo[0]]}
+        constestSnapshotContractFunction={contract[contestSnapshotFuncInfo[0]]}
+        refreshRequired={refreshRequired}
+        provider={provider}
+        triggerRefresh={triggerRefresh}
+      />
       <ProposingFunctionForm 
         contractFunction={contract.connect(signer)[proposeFuncInfo[0]]}
         functionInfo={proposeFuncInfo[1]}

@@ -57,7 +57,7 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.
      */
-    function contestAddressVotes(address userAddress)
+    function contestAddressTotalVotesCast(address userAddress)
         public
         view
         virtual

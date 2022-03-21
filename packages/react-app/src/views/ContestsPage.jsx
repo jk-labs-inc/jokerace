@@ -96,7 +96,7 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
           signer={signer}
           provider={provider}
           mainnetProvider={mainnetProvider}
-          address={address}
+          userAddress={address}
           blockExplorer={blockExplorer}
           contractConfig={generateCustomContestConfig(false)}
           chainId={targetNetwork.chainId}

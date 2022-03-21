@@ -38,8 +38,7 @@ const ProposalDisplayVariable = ({
     } catch (e) {
       console.log(e);
     }
-  }, [setProposalContent, getProposalContractFunction,
-         addressesVotedContractFunction, triggerRefresh]);
+  }, [setProposalContent, setAddressesVoted, getProposalContractFunction, addressesVotedContractFunction, triggerRefresh]);
 
   useEffect(() => {
     refresh();
