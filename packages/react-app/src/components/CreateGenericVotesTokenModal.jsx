@@ -38,7 +38,6 @@ export default function CreateGenericVotesTokenModal({modalVisible, setModalVisi
 
   return (
     <Modal title="Create Generic Votes Token" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
-      {/* TODO: Use this https://ant.design/components/modal/#components-modal-demo-confirm */}
       <Form
         name="basic"
         labelCol={{ span: 8 }}

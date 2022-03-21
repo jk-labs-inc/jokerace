@@ -42,7 +42,6 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
 
   return (
     <Modal title="Create Race" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
-      {/* TODO: Use this https://ant.design/components/modal/#components-modal-demo-confirm */}
       <Form
         name="basic"
         labelCol={{ span: 8 }}
