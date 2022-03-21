@@ -23,9 +23,7 @@ const AddressProposalVotes = ({ userAddress, proposalId, proposalAddressVotesCon
 
   return (
     <div>
-      <div>
-        <Address address={userAddress} ensProvider={mainnetProvider} fontSize={16} blockExplorer={blockExplorer} />: {tryToDisplay(variable/1e18, false, blockExplorer)}
-      </div>
+      <Address address={userAddress} ensProvider={mainnetProvider} fontSize={16} blockExplorer={blockExplorer} />: {tryToDisplay(variable/1e18, false, blockExplorer)}
     </div>
   );
 };

@@ -64,7 +64,7 @@ const UserVotesAndUsedDisplayVariable = ({
     (provider._lastBlockNumber >= parseInt(contestSnapshot) - 10) ?
       (<div>
         You have {totalVotes/1e18} votes as of the snapshot at block {contestSnapshot}.
-        You have cast {totalVotesCast/1e18} of those so far.
+        You have cast {totalVotesCast/1e18} of them so far.
 
         <div>Contest State: {formatContestState(contestState)}</div>
         <Divider />
