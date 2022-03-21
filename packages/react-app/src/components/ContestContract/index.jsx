@@ -96,8 +96,6 @@ export default function ContestContract({
   const proposalThresholdFuncInfo = funcsDict["proposalThreshold"]
   const stateFuncInfo = funcsDict["state"]
   const nameFuncInfo = funcsDict["name"]
-
-  console.log("functions: ", displayedContractFunctions)
   
   const contractDisplay = contract ?
     <div>

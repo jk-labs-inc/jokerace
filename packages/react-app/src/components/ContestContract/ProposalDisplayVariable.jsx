@@ -36,8 +36,6 @@ const ProposalDisplayVariable = ({
     refresh();
   }, [refresh, refreshRequired, getProposalContractFunction, addressesVotedContractFunction]);
 
-  console.log("propcontent", proposalContent)
-
   return (
     <div>
       <Row>
