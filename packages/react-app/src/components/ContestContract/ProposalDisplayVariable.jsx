@@ -1,7 +1,7 @@
 import { Button, Col, Divider, Row } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 
-import { tryToDisplay } from "./utils";
+import { tryToDisplay, stripQuotationMarks } from "./utils";
 import AddressProposalVotes from "./AddressProposalVotes";
 import VotingFunctionForm from "./VotingFunctionForm";
 
@@ -20,14 +20,6 @@ const ProposalDisplayVariable = ({
     setShowIndividualVotes(!showIndividualVotes)
   }
 
-  const formatProposalString = (inputString) => {
-    let retString = ""
-    if (inputString) {
-      retString = inputString.replace(/['"]+/g, '')
-    }
-    return retString;
-  }
-
   const refresh = useCallback(async () => {
     try {
       const getProposalResponse = await getProposalContractFunction(proposalId);
@@ -44,12 +36,15 @@ const ProposalDisplayVariable = ({
     refresh();
   }, [refresh, refreshRequired, getProposalContractFunction, addressesVotedContractFunction]);
 
+  console.log("propcontent", proposalContent)
+
   return (
     <div>
       <Row>
         <Col span={14}>
-          {/* It is second (proposalContent[1]) in the array because that's what the struct is for a Proposal: id, content, author */}
-          <h2>{formatProposalString(tryToDisplay(proposalContent[1], false, blockExplorer))}</h2>
+          {/* Proposal struct is: author (0), content (1), exists bool (2) */}
+          <h2>{stripQuotationMarks(tryToDisplay(proposalContent[1], false, blockExplorer))}</h2>
+          <h2>Author: {tryToDisplay(proposalContent[0], false, blockExplorer)}</h2>
           <h2>Total Votes: {tryToDisplay(proposalTotalVotes/1e18, false, blockExplorer)}</h2>
           <Button onClick={toggleIndividualVotes}>Toggle Individual Address Votes</Button>
           {showIndividualVotes ? addressesVoted.map( (userAddress, index) => <AddressProposalVotes 

@@ -28,6 +28,14 @@ const tryToDisplay = (thing, asText = false, blockExplorer) => {
   return JSON.stringify(thing);
 };
 
+const stripQuotationMarks = (inputString) => {
+  let retString = ""
+  if (inputString) {
+    retString = inputString.replace(/['"]+/g, '')
+  }
+  return retString;
+}
+
 const tryToDisplayAsText = thing => tryToDisplay(thing, true);
 
-export { tryToDisplay, tryToDisplayAsText };
+export { tryToDisplay, tryToDisplayAsText, stripQuotationMarks };

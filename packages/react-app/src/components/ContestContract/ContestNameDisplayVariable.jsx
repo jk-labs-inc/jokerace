@@ -1,7 +1,6 @@
-import { Button, Col, Divider, Row } from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 
-import { tryToDisplay } from "./utils";
+import { tryToDisplay, stripQuotationMarks } from "./utils";
 
 const ContestNameDisplayVariable = ({ contractFunction, functionInfo, refreshRequired, triggerRefresh, blockExplorer }) => {
   const [variable, setVariable] = useState("");
@@ -22,7 +21,7 @@ const ContestNameDisplayVariable = ({ contractFunction, functionInfo, refreshReq
 
   return (
     <div>
-      {tryToDisplay(variable, false, blockExplorer).replace(/['"]+/g, '')}
+      {stripQuotationMarks(tryToDisplay(variable, false, blockExplorer))}
     </div>
   );
 };
