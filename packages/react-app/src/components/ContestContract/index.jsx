@@ -1,10 +1,11 @@
-import { Card, Button } from "antd";
+import { Card, Button, Divider } from "antd";
 import { useContractExistsAtAddress, useContractLoader } from "eth-hooks";
 import React, { useMemo, useState } from "react";
 import Address from "../Address";
 import ProposingFunctionForm from "./ProposingFunctionForm";
 import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
 import UserVotesAndUsedDisplayVariable from "./UserVotesAndUsedDisplayVariable";
+import ContestNameDisplayVariable from "./ContestNameDisplayVariable";
 
 const noContractDisplay = (
   <div>
@@ -94,9 +95,26 @@ export default function ContestContract({
   const contestSnapshotFuncInfo = funcsDict["contestSnapshot"]
   const proposalThresholdFuncInfo = funcsDict["proposalThreshold"]
   const stateFuncInfo = funcsDict["state"]
+  const nameFuncInfo = funcsDict["name"]
+
+  console.log("functions: ", displayedContractFunctions)
   
   const contractDisplay = contract ?
     <div>
+      <div style={{ fontSize: 24 }}>
+        <ContestNameDisplayVariable
+          contractFunction={contract[nameFuncInfo[0]]}
+          functionInfo={nameFuncInfo}
+          refreshRequired={refreshRequired}
+          triggerRefresh={triggerRefresh}
+          blockExplorer={blockExplorer}
+        />
+        <div style={{ align: "center" }}>
+          <Address value={address} fontSize={20} />
+        </div>
+        <Button onClick={() => {triggerRefresh(true)}}>Refresh Contest</Button>
+      </div>
+      <Divider />
       <UserVotesAndUsedDisplayVariable
         userAddress={userAddress}
         contestStateContractFunction={contract[stateFuncInfo[0]]}
@@ -142,15 +160,6 @@ export default function ContestContract({
   return (
     <div style={{ margin: "auto" }}>
       <Card
-        title={
-          <div style={{ fontSize: 24 }}>
-            {name}
-            <div style={{ align: "center" }}>
-              <Address value={address} fontSize={20} />
-            </div>
-            <Button onClick={() => {triggerRefresh(true)}}>Refresh Contest</Button>
-          </div>
-        }
         size="large"
         style={{ marginTop: 25, width: "100%" }}
         loading={contractDisplay && contractDisplay.length <= 0}
