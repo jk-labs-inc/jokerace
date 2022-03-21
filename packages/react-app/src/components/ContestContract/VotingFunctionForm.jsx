@@ -78,9 +78,9 @@ export default function VotingFunctionForm({ proposalId, castVoteContractFunctio
                 }
               } else {
                 const overrides = {};
-                if (gasPrice) {
-                  overrides.gasPrice = gasPrice;
-                }
+                // if (gasPrice) {
+                //   overrides.gasPrice = gasPrice;
+                // }
                 // Uncomment this if you want to skip the gas estimation for each transaction
                 // overrides.gasLimit = hexlify(1200000);
 

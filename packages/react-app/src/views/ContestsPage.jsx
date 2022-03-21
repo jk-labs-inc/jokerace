@@ -99,7 +99,6 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
           address={address}
           blockExplorer={blockExplorer}
           contractConfig={generateCustomContestConfig(false)}
-          gasPrice={gasPrice}
           chainId={targetNetwork.chainId}
         />
       : ""}
@@ -117,7 +116,6 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
             address={address}
             blockExplorer={blockExplorer}
             contractConfig={generateCustomContestConfig(true)}
-            gasPrice={gasPrice}
             chainId={targetNetwork.chainId}
           />
         : ""
@@ -135,7 +133,6 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
           address={address}
           blockExplorer={blockExplorer}
           contractConfig={generateCustomTokenConfig()}
-          gasPrice={gasPrice}
           chainId={targetNetwork.chainId}
         /> 
       : ""}
