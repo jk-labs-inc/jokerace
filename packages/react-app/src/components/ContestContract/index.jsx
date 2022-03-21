@@ -93,11 +93,13 @@ export default function ContestContract({
   const contestAddressTotalVotesCastFuncInfo = funcsDict["contestAddressTotalVotesCast"]
   const contestSnapshotFuncInfo = funcsDict["contestSnapshot"]
   const proposalThresholdFuncInfo = funcsDict["proposalThreshold"]
+  const stateFuncInfo = funcsDict["state"]
   
   const contractDisplay = contract ?
     <div>
       <UserVotesAndUsedDisplayVariable
         userAddress={userAddress}
+        contestStateContractFunction={contract[stateFuncInfo[0]]}
         getVotesContractFunction={contract[getVotesFuncInfo[0]]}
         proposalThresholdContractFunction={contract[proposalThresholdFuncInfo[0]]}
         contestAddressTotalVotesCastContractFunction={contract[contestAddressTotalVotesCastFuncInfo[0]]}
