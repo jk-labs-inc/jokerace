@@ -44,7 +44,7 @@ const ProposalDisplayVariable = ({
           <h2>{stripQuotationMarks(tryToDisplay(proposalContent[1], false, blockExplorer))}</h2>
           <h2>Author: {tryToDisplay(proposalContent[0], false, blockExplorer)}</h2>
           <h2>Total Votes: {tryToDisplay(proposalTotalVotes/1e18, false, blockExplorer)}</h2>
-          <Button onClick={toggleIndividualVotes}>Toggle Individual Address Votes</Button>
+          <Button onClick={toggleIndividualVotes}>Show All Votes</Button>
           {showIndividualVotes ? addressesVoted.map( (userAddress, index) => <AddressProposalVotes 
             key={index}
             proposalId={proposalId}
