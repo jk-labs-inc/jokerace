@@ -112,6 +112,8 @@ abstract contract GovernorCountingSimple is Governor {
 
         require(numVotes <= (totalVotes - _addressTotalCastVoteCounts[account]), "GovernorVotingSimple: not enough votes left to cast");
 
+        bool firstTimeVoting = proposalvote.addressVoteCounts[account].forVotes == 0;
+
         if (support == uint8(VoteType.For)) {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
             proposalvote.addressVoteCounts[account].forVotes += numVotes;
@@ -119,7 +121,7 @@ abstract contract GovernorCountingSimple is Governor {
             revert("GovernorVotingSimple: invalid value for enum VoteType");
         }
         
-        if (_addressTotalCastVoteCounts[account] == 0) {  // First time voting only add that they voted
+        if (firstTimeVoting) {
             proposalvote.addressesVoted.push(account);
         }
         _addressTotalCastVoteCounts[account] += numVotes;
