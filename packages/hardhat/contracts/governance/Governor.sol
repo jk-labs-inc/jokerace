@@ -27,7 +27,6 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
 
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
 
-    uint256[] public _proposalIds;
 
     struct ProposalCore {
         address author;
@@ -35,6 +34,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         bool exists;
     }
 
+    uint256[] private _proposalIds;
     string private _name;
     bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
