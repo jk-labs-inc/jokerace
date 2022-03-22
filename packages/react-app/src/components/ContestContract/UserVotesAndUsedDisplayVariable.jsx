@@ -71,8 +71,9 @@ const UserVotesAndUsedDisplayVariable = ({
       </div>)
     : 
       (<div>
-        You currently have {totalVotes/1e18} votes delegated to you. The snapshot block is at {contestSnapshot}.
-        The proposal threshold for this contest (how many votes one must have to create a proposal) is {proposalThreshold/1e18}.
+        <div>You currently have {totalVotes/1e18} votes delegated to you.</div>
+        <div>The snapshot block is at {contestSnapshot}.</div>
+        <div>The proposal threshold for this contest (how many votes one must have to create a proposal) is {proposalThreshold/1e18}.</div>
 
         <div>Contest State: {formatContestState(contestState)}</div>
         <Divider />
