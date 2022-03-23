@@ -86,15 +86,38 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Block number the contest started at.
+     * @dev Timestamp the contest started at.
      */
     function contestStart() public view virtual returns (uint256);
 
     /**
      * @notice module:core
-     * @dev Owner of the contest, has the power to cancel.
+     * @dev Timestamp the contest vote begins.
      */
-    function owner() public view virtual returns (address);
+    function voteStart() public view virtual returns (uint256);
+
+    /**
+     * @notice module:core
+     * @dev Timestamp at which votes close. Votes close at the end of this block, so it is possible to cast a vote
+     * during this block.
+     */
+    function contestDeadline() public view virtual returns (uint256);
+
+    /**
+     * @notice module:user-config
+     * @dev Delay, in seconds, between the proposal is created and the vote starts. This can be increassed to
+     * leave time for users to buy voting power, of delegate it, before the voting of a proposal starts.
+     */
+    function votingDelay() public view virtual returns (uint256);
+
+    /**
+     * @notice module:user-config
+     * @dev Delay, in seconds, between the vote start and vote ends.
+     *
+     * NOTE: The {votingDelay} can delay the start of the vote. This must be considered when setting the voting
+     * duration compared to the voting delay.
+     */
+    function votingPeriod() public view virtual returns (uint256);
 
     /**
      * @notice module:core
@@ -106,26 +129,9 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Block number at which votes close. Votes close at the end of this block, so it is possible to cast a vote
-     * during this block.
+     * @dev Owner of the contest, has the power to cancel.
      */
-    function contestDeadline() public view virtual returns (uint256);
-
-    /**
-     * @notice module:user-config
-     * @dev Delay, in number of block, between the proposal is created and the vote starts. This can be increassed to
-     * leave time for users to buy voting power, of delegate it, before the voting of a proposal starts.
-     */
-    function votingDelay() public view virtual returns (uint256);
-
-    /**
-     * @notice module:user-config
-     * @dev Delay, in number of blocks, between the vote start and vote ends.
-     *
-     * NOTE: The {votingDelay} can delay the start of the vote. This must be considered when setting the voting
-     * duration compared to the voting delay.
-     */
-    function votingPeriod() public view virtual returns (uint256);
+    function owner() public view virtual returns (address);
 
     /**
      * @notice module:reputation

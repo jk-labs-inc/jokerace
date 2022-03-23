@@ -113,15 +113,15 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
             return ContestState.Canceled;
         }
 
-        uint256 snapshot = contestSnapshot();
+        uint256 voteStartTimestamp = voteStart();
 
-        if (snapshot >= block.number) {
+        if (voteStartTimestamp >= block.timestamp) {
             return ContestState.Queued;
         }
 
-        uint256 deadline = contestDeadline();
+        uint256 deadlineTimestamp = contestDeadline();
 
-        if (deadline >= block.number) {
+        if (deadlineTimestamp >= block.timestamp) {
             return ContestState.Active;
         }
 
@@ -136,9 +136,9 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
-     * @dev See {IGovernor-contestSnapshot}.
+     * @dev See {IGovernor-voteStart}.
      */
-    function contestSnapshot() public view virtual override returns (uint256) {
+    function voteStart() public view virtual override returns (uint256) {
         return contestStart() + votingDelay();
     }
 

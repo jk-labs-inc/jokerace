@@ -1207,6 +1207,11 @@
               "name": "proposalThreshold",
               "outputs": [
                 {
+                  "internalType": "uint64",
+                  "name": "_initialContestStart",
+                  "type": "uint64"
+                },
+                {
                   "internalType": "uint256",
                   "name": "",
                   "type": "uint256"
@@ -1227,7 +1232,7 @@
               "outputs": [
                 {
                   "internalType": "uint256",
-                  "name": "forVotes",
+                  "name": "_initialContestSnapshot",
                   "type": "uint256"
                 }
               ],
@@ -1237,13 +1242,10 @@
             {
               "inputs": [
                 {
-                  "internalType": "string",
-                  "name": "proposalDescription",
-                  "type": "string"
-                }
-              ],
-              "name": "propose",
-              "outputs": [
+                  "internalType": "uint256",
+                  "name": "_initialProposalThreshold",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "uint256",
                   "name": "",
@@ -1269,13 +1271,49 @@
             {
               "inputs": [
                 {
-                  "internalType": "bytes4",
-                  "name": "interfaceId",
-                  "type": "bytes4"
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "oldContestSnapshot",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "newContestSnapshot",
+                  "type": "uint256"
                 }
               ],
-              "name": "supportsInterface",
-              "outputs": [
+              "name": "ContestSnapshotSet",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "oldContestStart",
+                  "type": "uint256"
+                },
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "newContestStart",
+                  "type": "uint256"
+                }
+              ],
+              "name": "ContestStartSet",
+              "type": "event"
+            },
+            {
+              "anonymous": false,
+              "inputs": [
+                {
+                  "indexed": false,
+                  "internalType": "uint256",
+                  "name": "oldMaxProposalCount",
+                  "type": "uint256"
+                },
                 {
                   "internalType": "bool",
                   "name": "",
@@ -1401,40 +1439,9 @@
               "anonymous": false,
               "inputs": [
                 {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "delegator",
-                  "type": "address"
-                },
-                {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "fromDelegate",
-                  "type": "address"
-                },
-                {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "toDelegate",
-                  "type": "address"
-                }
-              ],
-              "name": "DelegateChanged",
-              "type": "event"
-            },
-            {
-              "anonymous": false,
-              "inputs": [
-                {
-                  "indexed": true,
-                  "internalType": "address",
-                  "name": "delegate",
-                  "type": "address"
-                },
-                {
                   "indexed": false,
                   "internalType": "uint256",
-                  "name": "previousBalance",
+                  "name": "oldVotingDelay",
                   "type": "uint256"
                 },
                 {
@@ -1510,26 +1517,9 @@
               "type": "function"
             },
             {
-              "inputs": [
-                {
-                  "internalType": "address",
-                  "name": "spender",
-                  "type": "address"
-                },
-                {
-                  "internalType": "uint256",
-                  "name": "amount",
-                  "type": "uint256"
-                }
-              ],
-              "name": "approve",
-              "outputs": [
-                {
-                  "internalType": "bool",
-                  "name": "",
-                  "type": "bool"
-                }
-              ],
+              "inputs": [],
+              "name": "cancel",
+              "outputs": [],
               "stateMutability": "nonpayable",
               "type": "function"
             },
@@ -1933,10 +1923,31 @@
                   "type": "address"
                 },
                 {
-                  "internalType": "address",
-                  "name": "to",
-                  "type": "address"
-                },
+                  "internalType": "string",
+                  "name": "",
+                  "type": "string"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "voteStart",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "votingDelay",
+              "outputs": [
                 {
                   "internalType": "uint256",
                   "name": "amount",

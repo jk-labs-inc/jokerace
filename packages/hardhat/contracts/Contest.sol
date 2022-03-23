@@ -7,16 +7,25 @@ import "./governance/extensions/GovernorCountingSimple.sol";
 import "./governance/extensions/GovernorVotes.sol";
 
 contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes {
-    constructor(string memory _name, IVotes _token, uint256 _initialVotingDelay, uint256 _initialVotingPeriod,
-                uint256 _initialProposalThreshold, uint64 _voteStartBlock, uint256 _initialMaxProposalCount)
+    constructor(string memory _name, IVotes _token, uint64 _initialContestStart, 
+                uint256 _initialVotingDelay, uint256 _initialVotingPeriod, uint256 _initialContestSnapshot,
+                uint256 _initialProposalThreshold, uint256 _initialMaxProposalCount)
         Governor(_name)
-        GovernorSettings(_initialVotingDelay /* 5 = 1 minute */, _initialVotingPeriod /* 45 = 10 minutes */, 
-                         _initialProposalThreshold /* 1e18 = 1 token needed to vote */, _voteStartBlock,
-                        _initialMaxProposalCount)
+        GovernorSettings(_initialContestStart, _initialVotingDelay, _initialVotingPeriod,
+                        _initialContestSnapshot, _initialProposalThreshold, _initialMaxProposalCount)
         GovernorVotes(_token)
     {}
 
     // The following functions are overrides required by Solidity.
+
+    function contestStart()
+        public
+        view
+        override(IGovernor, GovernorSettings)
+        returns (uint256)
+    {
+        return super.contestStart();
+    }
 
     function votingDelay()
         public
@@ -34,15 +43,6 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         returns (uint256)
     {
         return super.votingPeriod();
-    }
-
-    function getVotes(address account, uint256 blockNumber)
-        public
-        view
-        override(IGovernor, GovernorVotes)
-        returns (uint256)
-    {
-        return super.getVotes(account, blockNumber);
     }
 
     function proposalThreshold()
@@ -63,15 +63,6 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         return super.maxProposalCount();
     }
 
-    function contestStart()
-        public
-        view
-        override(IGovernor, GovernorSettings)
-        returns (uint256)
-    {
-        return super.contestStart();
-    }
-
     function owner()
         public
         view
@@ -79,5 +70,14 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         returns (address)
     {
         return super.owner();
+    }
+
+    function getVotes(address account, uint256 blockNumber)
+        public
+        view
+        override(IGovernor, GovernorVotes)
+        returns (uint256)
+    {
+        return super.getVotes(account, blockNumber);
     }
 }
