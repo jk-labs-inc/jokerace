@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Input, Modal, Form, Button } from "antd";
+import { Input, Modal, Form, Button, Divider } from "antd";
 
 import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
 
@@ -47,6 +47,11 @@ export default function CreateGenericVotesTokenModal({modalVisible, setModalVisi
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
+        <h4>Token Name: the name you would like your token to have</h4>
+        <h4>Token Symbol: the symbol (ie. JOKE) you would like your token to have</h4>
+        <h4>Minting Recipient: the address that the created tokens will be minted to</h4>
+        <h4>Amount To Mint: the number of tokens to mint to the minting recipient</h4>
+        <Divider />
         <Form.Item
           label="Token Name"
           name="tokenname"
@@ -76,10 +81,6 @@ export default function CreateGenericVotesTokenModal({modalVisible, setModalVisi
           <Input placeholder='Amount To Mint' onChange={(e) => setAmountToMint(ethers.utils.parseEther(e.target.value))} />
         </Form.Item>
       </Form>
-      <h4>Token Name: the name you would like your token to have</h4>
-      <h4>Token Symbol: the symbol (ie. JOKE) you would like your token to have</h4>
-      <h4>Minting Recipient: the address that the created tokens will be minted to</h4>
-      <h4>Amount To Mint: the number of tokens to mint to the minting recipient</h4>
     </Modal>
   );
 }
