@@ -8,7 +8,7 @@ const { ethers } = require("ethers");
 export default function CreateContestModal({modalVisible, setModalVisible, setResultMessage, signer}) {
   const [contestTitle, setContestTitle] = useState("")
   const [votingTokenAddress, setVotingTokenAddress] = useState("")
-  const [voteStart, setVoteStart] = useState("")
+  const [contestStart, setContestStart] = useState("")
   const [votingDelay, setVotingDelay] = useState("")
   const [votingPeriod, setVotingPeriod] = useState("")
   const [contestSnapshot, setContestSnapshot] = useState("")
@@ -21,8 +21,8 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
     console.log(factory)
 
     // Deploy an instance of the contract
-    let contract = await factory.deploy(contestTitle, votingTokenAddress, voteStart, votingDelay, votingPeriod, 
-                                        contestSnapshot, proposalThreshold, voteStart, maxProposalCount);
+    let contract = await factory.deploy(contestTitle, votingTokenAddress, contestStart, votingDelay, votingPeriod, 
+                                        contestSnapshot, proposalThreshold, maxProposalCount);
     console.log(contract.address)
     console.log(contract.deployTransaction)
     setResultMessage("The " + contestTitle + " contest contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)
@@ -67,28 +67,28 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           <Input placeholder='Voting Token Address' onChange={(e) => setVotingTokenAddress(e.target.value.trim().replace(/['"]+/g, ''))} />
         </Form.Item>
         <Form.Item
-          label="Vote Start"
-          name="votestart"
-          rules={[{ required: true, message: 'Please input your vote start time!' }]}
+          label="Contest Start Time"
+          name="conteststart"
+          rules={[{ required: true, message: 'Please input your contest start time!' }]}
         >
-          <Input placeholder='Vote Start Block' onChange={(e) => setVoteStart(e.target.value)} />
+          <Input placeholder='Contest Start Time' onChange={(e) => setContestStart(e.target.value)} />
         </Form.Item>
         <Form.Item
-          label="Voting Delay"
+          label="Proposal Open Period"
           name="votingdelay"
-          rules={[{ required: true, message: 'Please input your voting delay!' }]}
+          rules={[{ required: true, message: 'Please input how long proposals will be open for!' }]}
         >
-          <Input placeholder='Voting Delay' onChange={(e) => setVotingDelay(e.target.value)} />
+          <Input placeholder='How many seconds will proposals be open?' onChange={(e) => setVotingDelay(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="Voting Period"
           name="votingperiod"
-          rules={[{ required: true, message: 'Please input your voting period!' }]}
+          rules={[{ required: true, message: 'Please input how long people will able to vote for!' }]}
         >
-          <Input placeholder='Voting Period' onChange={(e) => setVotingPeriod(e.target.value)} />
+          <Input placeholder='How many seconds will voting be open?' onChange={(e) => setVotingPeriod(e.target.value)} />
         </Form.Item>
         <Form.Item
-          label="Contest Snapshot Block"
+          label="Contest Snapshot"
           name="contestsnapshotblock"
           rules={[{ required: true, message: 'Please input your Contest Snapshot block!' }]}
         >
@@ -109,10 +109,11 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           <Input placeholder='Max Proposal Count' onChange={(e) => setMaxProposalCount(e.target.value)} />
         </Form.Item>
       </Form>
-      <h4>Voting Delay: the number of blocks from the start block until the snapshot and voting begins - the time during which proposals can be submitted</h4>
-      <h4>Voting Period: the number of blocks that voting be open for from the snapshot</h4>
+      <h4>Contest Start Time: when proposal submission opens</h4>
+      <h4>Proposal Open Period: how long after the contest start that proposals can be submitted</h4>
+      <h4>Voting Period: how long after the proposal open period closes that people can vote</h4>
+      <h4>Contest Snapshot Block: the block at which the snapshot of delegated votes will be taken for voting</h4>
       <h4>Proposal Threshold: the number of delegated votes an address must have in order to submit a proposal</h4>
-      <h4>Vote Start Block: the block at which proposals can start being submitted, also this + voting delay = snapshot block number and when voting begins</h4>
       <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
     </Modal>
   );
