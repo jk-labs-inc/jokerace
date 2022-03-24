@@ -146,7 +146,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
      * @dev See {IGovernor-contestDeadline}.
      */
     function contestDeadline() public view virtual override returns (uint256) {
-        return contestSnapshot() + votingPeriod();
+        return voteStart() + votingPeriod();
     }
 
     /**
