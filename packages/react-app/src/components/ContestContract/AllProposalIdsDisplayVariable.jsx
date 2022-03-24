@@ -13,10 +13,10 @@ const AllProposalIdsDisplayVariable = ({
   const [allProposalsTotalVotes, setAllProposalsTotalVotes] = useState([]);
 
   function sortDisplays(x, y) {
-    if (x[1] < y[1]) {
+    if (x[1].lt(y[1])) {
       return 1;
     }
-    if (x[1] > y[1]) {
+    if (x[1].gt(y[1])) {
       return -1;
     }
     return 0;
