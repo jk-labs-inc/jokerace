@@ -8,10 +8,11 @@ const { ethers } = require("ethers");
 export default function CreateContestModal({modalVisible, setModalVisible, setResultMessage, signer}) {
   const [contestTitle, setContestTitle] = useState("")
   const [votingTokenAddress, setVotingTokenAddress] = useState("")
+  const [voteStart, setVoteStart] = useState("")
   const [votingDelay, setVotingDelay] = useState("")
   const [votingPeriod, setVotingPeriod] = useState("")
+  const [contestSnapshot, setContestSnapshot] = useState("")
   const [proposalThreshold, setProposalThreshold] = useState("")
-  const [voteStartBlock, setVoteStartBlock] = useState("")
   const [maxProposalCount, setMaxProposalCount] = useState("")
 
   const handleOk = async () => {
@@ -20,8 +21,8 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
     console.log(factory)
 
     // Deploy an instance of the contract
-    let contract = await factory.deploy(contestTitle, votingTokenAddress, votingDelay, votingPeriod, 
-                                        proposalThreshold, voteStartBlock, maxProposalCount);
+    let contract = await factory.deploy(contestTitle, votingTokenAddress, voteStart, votingDelay, votingPeriod, 
+                                        contestSnapshot, proposalThreshold, voteStart, maxProposalCount);
     console.log(contract.address)
     console.log(contract.deployTransaction)
     setResultMessage("The " + contestTitle + " contest contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)
@@ -66,6 +67,13 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           <Input placeholder='Voting Token Address' onChange={(e) => setVotingTokenAddress(e.target.value.trim().replace(/['"]+/g, ''))} />
         </Form.Item>
         <Form.Item
+          label="Vote Start"
+          name="votestart"
+          rules={[{ required: true, message: 'Please input your vote start time!' }]}
+        >
+          <Input placeholder='Vote Start Block' onChange={(e) => setVoteStart(e.target.value)} />
+        </Form.Item>
+        <Form.Item
           label="Voting Delay"
           name="votingdelay"
           rules={[{ required: true, message: 'Please input your voting delay!' }]}
@@ -80,18 +88,18 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           <Input placeholder='Voting Period' onChange={(e) => setVotingPeriod(e.target.value)} />
         </Form.Item>
         <Form.Item
+          label="Contest Snapshot Block"
+          name="contestsnapshotblock"
+          rules={[{ required: true, message: 'Please input your Contest Snapshot block!' }]}
+        >
+          <Input placeholder='Contest Snapshot Block' onChange={(e) => setContestSnapshot(e.target.value)} />
+        </Form.Item>
+        <Form.Item
           label="Proposal Threshold"
           name="proposalthreshold"
           rules={[{ required: true, message: 'Please input your proposal threshold!' }]}
         >
           <Input placeholder='Proposal Threshold' onChange={(e) => setProposalThreshold(ethers.utils.parseEther(e.target.value))} />
-        </Form.Item>
-        <Form.Item
-          label="Vote Start Block"
-          name="votestartblock"
-          rules={[{ required: true, message: 'Please input your vote start block!' }]}
-        >
-          <Input placeholder='Vote Start Block' onChange={(e) => setVoteStartBlock(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="Max Proposal Count"
