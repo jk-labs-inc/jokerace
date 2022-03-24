@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Input, Modal, Form } from "antd";
+import { Input, Modal, Form, Divider } from "antd";
 
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 
@@ -52,6 +52,15 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
+        <h4>Contest Start Time: when proposal submission opens</h4>
+        <h4>Proposal Open Period: how long after the contest start that proposals can be submitted</h4>
+        <h4>Voting Period: how long after the proposal open period closes that people can vote</h4>
+        <h4>Contest Snapshot Block: the block at which the snapshot of delegated votes will be taken for voting</h4>
+        <h4>Proposal Threshold: the number of delegated votes an address must have in order to submit a proposal</h4>
+        <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
+        <Divider />
+        <h4>Tip: A Unix timestamp of what you would like the contest start time to be is required in the Contest Start Time field, you can use <a href="https://www.unixtimestamp.com/index.php">https://www.unixtimestamp.com/index.php</a> to get that!</h4>
+        <Divider />
         <Form.Item
           label="Contest Title"
           name="contesttitle"
@@ -69,21 +78,21 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         <Form.Item
           label="Contest Start Time"
           name="conteststart"
-          rules={[{ required: true, message: 'Please input your contest start time!' }]}
-        >
-          <Input placeholder='Contest Start Time' onChange={(e) => setContestStart(e.target.value)} />
+          rules={[{ required: true, message: 'Please input the Unix timestamp of your contest start time!' }]}
+          >
+          <Input placeholder='Unix timestamp of your contest start time' onChange={(e) => setContestStart(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="Proposal Open Period"
           name="votingdelay"
-          rules={[{ required: true, message: 'Please input how long proposals will be open for!' }]}
+          rules={[{ required: true, message: 'Please input how long (in seconds) proposals will be open for!' }]}
         >
           <Input placeholder='How many seconds will proposals be open?' onChange={(e) => setVotingDelay(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="Voting Period"
           name="votingperiod"
-          rules={[{ required: true, message: 'Please input how long people will able to vote for!' }]}
+          rules={[{ required: true, message: 'Please input how long (in seconds) people will able to vote for!' }]}
         >
           <Input placeholder='How many seconds will voting be open?' onChange={(e) => setVotingPeriod(e.target.value)} />
         </Form.Item>
@@ -109,12 +118,6 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           <Input placeholder='Max Proposal Count' onChange={(e) => setMaxProposalCount(e.target.value)} />
         </Form.Item>
       </Form>
-      <h4>Contest Start Time: when proposal submission opens</h4>
-      <h4>Proposal Open Period: how long after the contest start that proposals can be submitted</h4>
-      <h4>Voting Period: how long after the proposal open period closes that people can vote</h4>
-      <h4>Contest Snapshot Block: the block at which the snapshot of delegated votes will be taken for voting</h4>
-      <h4>Proposal Threshold: the number of delegated votes an address must have in order to submit a proposal</h4>
-      <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
     </Modal>
   );
 }
