@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { tryToDisplay, stripQuotationMarks } from "./utils";
 import AddressProposalVotes from "./AddressProposalVotes";
 import VotingFunctionForm from "./VotingFunctionForm";
+import Address from "../Address";
 
 const ProposalDisplayVariable = ({ 
             proposalId, proposalTotalVotes,
@@ -42,7 +43,7 @@ const ProposalDisplayVariable = ({
         <Col span={14}>
           {/* Proposal struct is: author (0), content (1), exists bool (2) */}
           <h2>{stripQuotationMarks(tryToDisplay(proposalContent[1], false, blockExplorer))}</h2>
-          <h2>Author: {tryToDisplay(proposalContent[0], false, blockExplorer)}</h2>
+          <h2>Author: <Address address={proposalContent[0]} ensProvider={mainnetProvider} fontSize={20} blockExplorer={blockExplorer} /></h2>
           <h2>Total Votes: {tryToDisplay(proposalTotalVotes/1e18, false, blockExplorer)}</h2>
           <Button onClick={toggleIndividualVotes}>Show All Votes</Button>
           {showIndividualVotes ? addressesVoted.map( (userAddress, index) => <AddressProposalVotes 
