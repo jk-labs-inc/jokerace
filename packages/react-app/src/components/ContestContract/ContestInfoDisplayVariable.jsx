@@ -9,8 +9,8 @@ const ContestInfoDisplayVariable = ({ nameContractFunction, tokenContractFunctio
   const refresh = useCallback(async () => {
     try {
       const nameFuncResponse = await nameContractFunction();
-      const tokenFuncResponse = await tokenContractFunction();
       setContestName(nameFuncResponse);
+      const tokenFuncResponse = await tokenContractFunction();
       setContestToken(tokenFuncResponse);
       triggerRefresh(false);
     } catch (e) {

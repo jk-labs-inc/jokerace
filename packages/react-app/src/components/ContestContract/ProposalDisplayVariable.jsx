@@ -23,8 +23,8 @@ const ProposalDisplayVariable = ({
   const refresh = useCallback(async () => {
     try {
       const getProposalResponse = await getProposalContractFunction(proposalId);
-      const addressesVotedResponse = await addressesVotedContractFunction(proposalId);
       setProposalContent(getProposalResponse);
+      const addressesVotedResponse = await addressesVotedContractFunction(proposalId);
       setAddressesVoted(addressesVotedResponse)
       triggerRefresh(false);
     } catch (e) {

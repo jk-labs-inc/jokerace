@@ -41,16 +41,16 @@ const UserVotesAndUsedDisplayVariable = ({
     try {
       const currentBlock = provider._lastBlockNumber - 10; // Subtract 10 to make sure that the provider isn't too far ahead of RPC/we get a "block not yet mined" error
       const contestStateResponse = await contestStateContractFunction();
-      const contestSnapshotResponse = await constestSnapshotContractFunction();
-      const proposalThresholdResponse = await proposalThresholdContractFunction();
-      const totalVotesCastResponse = await contestAddressTotalVotesCastContractFunction(userAddress);
-      const voteStartResponse = await voteStartContractFunction();
-      const contestDeadlineResponse = await contestDeadlineContractFunction();
       setContestState(contestStateResponse.toString());
+      const contestSnapshotResponse = await constestSnapshotContractFunction();
       setContestSnapshot(contestSnapshotResponse.toString());
+      const proposalThresholdResponse = await proposalThresholdContractFunction();
       setProposalThreshold(proposalThresholdResponse.toString());
+      const totalVotesCastResponse = await contestAddressTotalVotesCastContractFunction(userAddress);
       setTotalVotesCast(totalVotesCastResponse.toString());
+      const voteStartResponse = await voteStartContractFunction();
       setVoteStart(voteStartResponse.toString());
+      const contestDeadlineResponse = await contestDeadlineContractFunction();
       setContestDeadline(contestDeadlineResponse.toString());
 
       const blockToCheck = (currentBlock >= contestSnapshotResponse) ? contestSnapshotResponse : currentBlock;
