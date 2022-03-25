@@ -21,7 +21,7 @@ export const NETWORKS = {
     name: "Ethereum Mainnet",
     color: "#ff8b9e",
     chainId: 1,
-    rpcUrl: `https://mainnet.infura.io/v3/${INFURA_ID}`,
+    rpcUrl: "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
     blockExplorer: "https://etherscan.io/",
   },
   kovan: {
@@ -46,7 +46,7 @@ export const NETWORKS = {
     chainId: 3,
     faucet: "https://faucet.ropsten.be/",
     blockExplorer: "https://ropsten.etherscan.io/",
-    rpcUrl: "https://ropsten.infura.io/v3/" + process.env.REACT_APP_ROPSTEN_INFURA_KEY,
+    rpcUrl: `https://ropsten.infura.io/v3/${INFURA_ID}`,
   },
   goerli: {
     name: "Goerli Testnet",
