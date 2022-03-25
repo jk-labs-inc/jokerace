@@ -96,6 +96,8 @@ export default function ContestContract({
   const stateFuncInfo = funcsDict["state"]
   const nameFuncInfo = funcsDict["name"]
   const tokenFuncInfo = funcsDict["token"]
+  const voteStartFuncInfo = funcsDict["voteStart"]
+  const contestDeadlineFuncInfo = funcsDict["contestDeadline"]
   
   const contractDisplay = contract ?
     <div>
@@ -118,6 +120,8 @@ export default function ContestContract({
         proposalThresholdContractFunction={contract[proposalThresholdFuncInfo[0]]}
         contestAddressTotalVotesCastContractFunction={contract[contestAddressTotalVotesCastFuncInfo[0]]}
         constestSnapshotContractFunction={contract[contestSnapshotFuncInfo[0]]}
+        voteStartContractFunction={contract[voteStartFuncInfo[0]]}
+        contestDeadlineContractFunction={contract[contestDeadlineFuncInfo[0]]}
         refreshRequired={refreshRequired}
         provider={provider}
         triggerRefresh={triggerRefresh}
