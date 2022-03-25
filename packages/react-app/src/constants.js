@@ -11,21 +11,21 @@ export const ALCHEMY_KEY = "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 
 export const NETWORKS = {
   localhost: {
-    name: "localhost",
+    name: "Localhost",
     color: "#666666",
     chainId: 31337,
     blockExplorer: "",
     rpcUrl: "http://" + (global.window ? window.location.hostname : "localhost") + ":8545",
   },
   mainnet: {
-    name: "mainnet",
+    name: "Ethereum Mainnet",
     color: "#ff8b9e",
     chainId: 1,
     rpcUrl: `https://mainnet.infura.io/v3/${INFURA_ID}`,
     blockExplorer: "https://etherscan.io/",
   },
   kovan: {
-    name: "kovan",
+    name: "Kovan Testnet",
     color: "#7003DD",
     chainId: 42,
     rpcUrl: `https://kovan.infura.io/v3/${INFURA_ID}`,
@@ -33,7 +33,7 @@ export const NETWORKS = {
     faucet: "https://gitter.im/kovan-testnet/faucet", // https://faucet.kovan.network/
   },
   rinkeby: {
-    name: "rinkeby",
+    name: "Rinkeby Testnet",
     color: "#e0d068",
     chainId: 4,
     rpcUrl: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
@@ -41,7 +41,7 @@ export const NETWORKS = {
     blockExplorer: "https://rinkeby.etherscan.io/",
   },
   ropsten: {
-    name: "ropsten",
+    name: "Ropsten Testnet",
     color: "#F60D09",
     chainId: 3,
     faucet: "https://faucet.ropsten.be/",
@@ -49,7 +49,7 @@ export const NETWORKS = {
     rpcUrl: "https://ropsten.infura.io/v3/" + process.env.REACT_APP_ROPSTEN_INFURA_KEY,
   },
   goerli: {
-    name: "goerli",
+    name: "Goerli Testnet",
     color: "#0975F6",
     chainId: 5,
     faucet: "https://goerli-faucet.slock.it/",
@@ -57,7 +57,7 @@ export const NETWORKS = {
     rpcUrl: `https://goerli.infura.io/v3/${INFURA_ID}`,
   },
   xdai: {
-    name: "xdai",
+    name: "xDai Mainnet",
     color: "#48a9a6",
     chainId: 100,
     price: 1,
@@ -67,7 +67,7 @@ export const NETWORKS = {
     blockExplorer: "https://blockscout.com/poa/xdai/",
   },
   polygon: {
-    name: "polygon",
+    name: "Polygon Mainnet",
     color: "#2bbdf7",
     chainId: 137,
     price: 1,
@@ -76,12 +76,12 @@ export const NETWORKS = {
     blockExplorer: "https://polygonscan.com/",
   },
   mumbai: {
-    name: "mumbai",
+    name: "Polygon Mumbai Testnet",
     color: "#92D9FA",
     chainId: 80001,
     price: 1,
     gasPrice: 1000000000,
-    rpcUrl: "https://rpc-mumbai.maticvigil.com/v1/" + process.env.REACT_APP_MUMBAI_MATIC_RPC_KEY,
+    rpcUrl: "https://rpc-mumbai.maticvigil.com/v1/",
     faucet: "https://faucet.polygon.technology/",
     blockExplorer: "https://mumbai.polygonscan.com/",
   },
@@ -100,18 +100,18 @@ export const NETWORKS = {
     rpcUrl: `http://localhost:7545`,
   },
   rinkebyArbitrum: {
-    name: "Arbitrum Testnet",
+    name: "Arbitrum Rinkeby Testnet",
     color: "#50a0ea",
     chainId: 421611,
     blockExplorer: "https://rinkeby-explorer.arbitrum.io/#/",
     rpcUrl: `https://rinkeby.arbitrum.io/rpc`,
   },
   arbitrum: {
-    name: "Arbitrum",
+    name: "Arbitrum Mainnet",
     color: "#50a0ea",
     chainId: 42161,
     blockExplorer: "https://explorer.arbitrum.io/#/",
-    rpcUrl: `https://arb1.arbitrum.io/rpc`,
+    rpcUrl: `https://arbitrum.public-rpc.com`,
     gasPrice: 0,
   },
   localOptimismL1: {
@@ -130,7 +130,7 @@ export const NETWORKS = {
     gasPrice: 0,
   },
   kovanOptimism: {
-    name: "kovanOptimism",
+    name: "Optimism Kovan Testnet",
     color: "#f01a37",
     chainId: 69,
     blockExplorer: "https://kovan-optimistic.etherscan.io/",
@@ -138,7 +138,7 @@ export const NETWORKS = {
     gasPrice: 0,
   },
   optimism: {
-    name: "optimism",
+    name: "Optimism Mainnet",
     color: "#f01a37",
     chainId: 10,
     blockExplorer: "https://optimistic.etherscan.io/",
@@ -160,16 +160,16 @@ export const NETWORKS = {
     rpcUrl: `https://api.avax-test.network/ext/bc/C/rpc`,
     gasPrice: 225000000000,
   },
-  mainnetAvalanche: {
-    name: "mainnetAvalanche",
+  avalanche: {
+    name: "Avalanche Mainnet",
     color: "#666666",
     chainId: 43114,
     blockExplorer: "https://cchain.explorer.avax.network/",
-    rpcUrl: `https://api.avax.network/ext/bc/C/rpc`,
+    rpcUrl: `https://avalanche.public-rpc.com`,
     gasPrice: 225000000000,
   },
   testnetHarmony: {
-    name: "testnetHarmony",
+    name: "Harmony Testnet",
     color: "#00b0ef",
     chainId: 1666700000,
     blockExplorer: "https://explorer.pops.one/",
@@ -177,7 +177,7 @@ export const NETWORKS = {
     gasPrice: 1000000000,
   },
   mainnetHarmony: {
-    name: "mainnetHarmony",
+    name: "Harmony Mainnet",
     color: "#00b0ef",
     chainId: 1666600000,
     blockExplorer: "https://explorer.harmony.one/",
@@ -185,15 +185,15 @@ export const NETWORKS = {
     gasPrice: 1000000000,
   },
   fantom: {
-    name: "fantom",
+    name: "Fantom Mainnet",
     color: "#1969ff",
     chainId: 250,
     blockExplorer: "https://ftmscan.com/",
-    rpcUrl: `https://rpcapi.fantom.network`,
+    rpcUrl: `https://rpc.ftm.tools/`,
     gasPrice: 1000000000,
   },
   testnetFantom: {
-    name: "testnetFantom",
+    name: "Fantom Testnet",
     color: "#1969ff",
     chainId: 4002,
     blockExplorer: "https://testnet.ftmscan.com/",
