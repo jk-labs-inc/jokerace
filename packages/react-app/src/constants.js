@@ -21,7 +21,7 @@ export const NETWORKS = {
     name: "Ethereum Mainnet",
     color: "#ff8b9e",
     chainId: 1,
-    rpcUrl: "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
+    rpcUrl: `https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406`,
     blockExplorer: "https://etherscan.io/",
   },
   kovan: {
@@ -181,7 +181,7 @@ export const NETWORKS = {
     color: "#00b0ef",
     chainId: 1666600000,
     blockExplorer: "https://explorer.harmony.one/",
-    rpcUrl: `https://api.harmony.one`,
+    rpcUrl: `https://harmony.public-rpc.com`,
     gasPrice: 1000000000,
   },
   fantom: {
