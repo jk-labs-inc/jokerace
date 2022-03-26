@@ -43,7 +43,7 @@ export default function Header() {
                   <Panel header="Yes" key="1">
                     <p>Cool! There are two primary options for doing this!</p>
                     <ol>
-                      <li>Mint new tokens based on a snapshot of your pre-existing tokens on the chain that you would like for use on proposals.</li>
+                      <li>Create a new GenericVotesToken on the chain that you would like the contest to be held on and distribute it based on a snapshot of your pre-existing token.</li>
                       <li>Bridge (if your tokens aren't already on the chain you would like to run contests on) and Wrap your pre-existent tokens to have them implement <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> functionality.</li>
                       </ol>
                   </Panel>
