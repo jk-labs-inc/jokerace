@@ -61,7 +61,7 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
   };
   
   return (
-    <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 64 }}>
+    <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 24 }}>
       <Button onClick={() => {window.location.reload();}}>Refresh Page</Button>
       <Button type="primary" onClick={showTokenModal}>
         Create Generic Votes Token
@@ -136,7 +136,6 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
           chainId={targetNetwork.chainId}
         /> 
       : ""}
-      <h5>jokecartel was here</h5>
     </div>
   );
 }
