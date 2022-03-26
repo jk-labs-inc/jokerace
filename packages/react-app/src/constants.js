@@ -176,7 +176,7 @@ export const NETWORKS = {
     rpcUrl: `https://api.s0.b.hmny.io`,
     gasPrice: 1000000000,
   },
-  mainnetHarmony: {
+  harmony: {
     name: "Harmony Mainnet",
     color: "#00b0ef",
     chainId: 1666600000,
