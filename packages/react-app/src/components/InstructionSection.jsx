@@ -18,7 +18,7 @@ export default function Header() {
                 <p>Bridge: You need to bridge your <a href="https://etherscan.io/address/0xa973c558265ad458031fa3067071646836df7713">$JOKE</a> from Ethereum mainnet to Polygon mainnet using the <a href="https://wallet.polygon.technology/bridge/">Polygon Bridge</a>.</p>
                 <p>Wrap:</p>
                 <ol>
-                  <li>Once you've bridged, you will need to wrap your tokens on Polygon so that they can be used for voting (have <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> functionality).</li>
+                  <li>Once you've bridged, you will need to wrap your tokens so that they can be used for voting (have <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> functionality).</li>
                   <li>To do this, enter the official $JOKE token ERC20Votes wrapping contract address (*address here once deployed*) into the below input box for Wrapping contracts.</li>
                   <li>Then call the deposit function with the number of tokens (don't forget to convert to multiply by 1e18 since ERC20 tokens have 18 decimals, you can do this by just pressing the star button) you'd like to wrap.</li>
                 </ol>
