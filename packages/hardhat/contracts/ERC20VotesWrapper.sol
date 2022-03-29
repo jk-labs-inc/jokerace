@@ -6,9 +6,9 @@ import "./token/ERC20/extensions/ERC20Wrapper.sol";
 import "./token/ERC20/extensions/ERC20Votes.sol";
  
 contract ERC20VotesWrapper is ERC20, ERC20Wrapper, ERC20Votes{
-    constructor(IERC20 wrappedToken)
-       ERC20("Wrapped Joke", "wJOKE")
-       ERC20Permit("Wrapped Joke")
+    constructor(IERC20 wrappedToken, string memory tokenName, string memory tokenSymbol)
+       ERC20(tokenName, tokenSymbol)
+       ERC20Permit(tokenName)
        ERC20Wrapper(wrappedToken)
     {}
     

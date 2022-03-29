@@ -38,7 +38,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await deploy("ERC20VotesWrapper", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: ["0x59e36d05E47BF17Eb5753aA1F04b2164f1606A45"],
+    args: ["0x59e36d05E47BF17Eb5753aA1F04b2164f1606A45", "Wrapped JOKE", "wJOKE"],
     log: true,
     waitConfirmations: 5,
   });
