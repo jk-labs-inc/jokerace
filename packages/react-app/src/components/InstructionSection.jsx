@@ -3,7 +3,7 @@ import React from "react";
 
 const { Panel } = Collapse;
 
-export default function Header() {
+export default function InstructionSection() {
   return (
     <div>
       <h1 style={{marginTop: 64}}>Welcome to jokedao contests!</h1>
@@ -31,7 +31,7 @@ export default function Header() {
               </Panel>
               <Panel header="I'd like to vote on something amongst a group of people!" key="2">
                 <ol>
-                  <li>Create a Generic Votes token (an <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a>  token).</li>
+                  <li>Create a Generic Votes token (an <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> token).</li>
                   <li>Distribute that token to people you want to be able to vote by using <a href="https://disperse.app/">Disperse App</a> or by entering the token contract address into the below input field for ERC20Votes contract addresses and using the transfer function (don't forget to convert to multiply by 1e18 since ERC20 tokens have 18 decimals, you can do this by just pressing the star button).</li>
                   <li>Create a Contest with the token you made in step one as the voting token.</li>
                   <li>Propose and Vote on your contest and experiment with governance!</li>

@@ -131,10 +131,8 @@ module.exports = {
     polygon: {
       url: "https://polygon-rpc.com",
       // url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXx/polygon/mainnet", // <---- YOUR MORALIS ID! (not limited to infura)
-      gasPrice: 3200000000,
-      accounts: {
-        mnemonic: mnemonic(),
-      },
+      gasPrice: 6000000000,
+      accounts: [process.env.POLYGON_DEPLOYER_PRIV_KEY],
     },
     mumbai: {
       url: "https://rpc-mumbai.maticvigil.com/v1/" + process.env.MUMBAI_MATIC_RPC_KEY,
