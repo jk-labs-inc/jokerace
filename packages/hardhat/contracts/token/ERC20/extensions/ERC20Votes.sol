@@ -53,9 +53,11 @@ abstract contract ERC20Votes is IVotes, ERC20Permit {
 
     /**
      * @dev Get the address `account` is currently delegating to.
+     *
+     * If someone hasn't delegated, then they are their own delegate
      */
     function delegates(address account) public view virtual override returns (address) {
-        return _delegates[account];
+        return _delegates[account] != address(0) ? _delegates[account] : account;
     }
 
     /**
