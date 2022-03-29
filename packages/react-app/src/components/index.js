@@ -25,5 +25,6 @@ export { default as MultiAddressInput } from "./MultiAddressInput";
 export { default as TokenSelect } from "./TokenSelect";
 export { default as CreateContestModal } from "./CreateContestModal";
 export { default as CreateGenericVotesTokenModal } from "./CreateGenericVotesTokenModal";
+export { default as CreateERC20VotesWrapperModal } from "./CreateERC20VotesWrapperModal";
 export { default as ContestContract } from "./ContestContract";
 export { default as InstructionSection } from "./InstructionSection";
