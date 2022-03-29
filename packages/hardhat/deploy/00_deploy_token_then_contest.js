@@ -35,6 +35,14 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     waitConfirmations: 5,
   });
 
+  await deploy("ERC20VotesWrapper", {
+    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+    from: deployer,
+    args: ["0x59e36d05E47BF17Eb5753aA1F04b2164f1606A45"],
+    log: true,
+    waitConfirmations: 5,
+  });
+
   // Getting a previously deployed contract
   // const YourContract = await ethers.getContract("YourContract", deployer);
   /*  await YourContract.setPurpose("Hello");
@@ -48,11 +56,11 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
 
   //If you want to send value to an address from the deployer
-  const deployerWallet = ethers.provider.getSigner()
-  await deployerWallet.sendTransaction({
-    to: "0xd698e31229aB86334924ed9DFfd096a71C686900",
-    value: ethers.utils.parseEther("1")
-  })
+  // const deployerWallet = ethers.provider.getSigner()
+  // await deployerWallet.sendTransaction({
+  //   to: "0xd698e31229aB86334924ed9DFfd096a71C686900",
+  //   value: ethers.utils.parseEther("1")
+  // })
 
 
   /*
