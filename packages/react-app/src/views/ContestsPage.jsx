@@ -3,12 +3,14 @@ import { Button, Divider, Input } from "antd";
 import { Contract, ContestContract, CreateContestModal, CreateGenericVotesTokenModal } from "../components";
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
+import DeployedERC20VotesWrapperContract from "../contracts/bytecodeAndAbi/ERC20VotesWrapper.sol/ERC20VotesWrapper.json";
 
 export default function ContestsPage({targetNetwork, price, signer, provider, mainnetProvider, address, gasPrice, blockExplorer}) {
 
   const [contestSearchInput, setContestSearchInput] = useState("");
   const [fullContestSearchInput, setFullContestSearchInput] = useState("");
   const [tokenSearchInput, setTokenSearchInput] = useState("");
+  const [wrapperSearchInput, setWrapperSearchInput] = useState("");
   const [isCreateContestModalVisible, setIsCreateContestModalVisible] = useState(false);  
   const [isCreateTokenModalVisible, setIsCreateTokenModalVisible] = useState(false);  
   const [resultMessage, setResultMessage] = useState("")
@@ -50,6 +52,22 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
         name: targetNetwork.name
       }
     return customTokenConfig;
+  }
+  
+  function generateCustomWrapperConfig() {
+    let customWrapprConfig = generateCustomConfigBase();
+    customWrapprConfig["deployedContracts"][targetNetwork.chainId][targetNetwork.name] =
+      {
+        chainId: targetNetwork.chainId.toString(),
+        contracts: {
+          ERC20VotesWrapper: {
+            abi: DeployedERC20VotesWrapperContract.abi,
+            address: wrapperSearchInput
+          }
+        },
+        name: targetNetwork.name
+      }
+    return customWrapprConfig;
   }
 
   const showContestModal = () => {
@@ -133,6 +151,22 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
           address={address}
           blockExplorer={blockExplorer}
           contractConfig={generateCustomTokenConfig()}
+          chainId={targetNetwork.chainId}
+        /> 
+      : ""}
+      <div>
+        {/* Get rid of any whitespace or extra quotation marks */}
+        <Input icon='search' placeholder='Search ERC20VotesWrapper full contract functions' value={wrapperSearchInput} onChange={(e) => setWrapperSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
+      </div>
+      {wrapperSearchInput != "" ? 
+        <Contract
+          name="ERC20VotesWrapper"
+          price={price}
+          signer={signer}
+          provider={provider}
+          address={address}
+          blockExplorer={blockExplorer}
+          contractConfig={generateCustomWrapperConfig()}
           chainId={targetNetwork.chainId}
         /> 
       : ""}
