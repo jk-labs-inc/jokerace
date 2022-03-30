@@ -7,6 +7,7 @@ export default function InstructionSection() {
   return (
     <div>
       <h1 style={{marginTop: 64}}>Welcome to jokedao contests!</h1>
+      <h3 style={{marginTop: 6}}>We're open-source, check out the code on <a href="https://github.com/seanmc9/JokeDaoV2Dev">our Github</a>!</h3>
       <div style={{ border: "1px solid #cccccc", textAlign: "left", padding: 16, width: 800, margin: "auto", marginTop: 18 }}>
         <h2 style={{textAlign: "center"}}>Tips and Instructions Zone</h2>
         <p><b>Tip:</b> The very first thing you should make sure to do is connect your wallet and ensure that you are on the network you want to be both on the site and in your wallet.</p>
