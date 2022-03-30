@@ -10,29 +10,17 @@ export default function InstructionSection() {
       <div style={{ border: "1px solid #cccccc", textAlign: "left", padding: 16, width: 800, margin: "auto", marginTop: 18 }}>
         <h2 style={{textAlign: "center"}}>Tips and Instructions Zone</h2>
         <p><b>Tip:</b> The very first thing you should make sure to do is connect your wallet and ensure that you are on the network you want to be both on the site and in your wallet.</p>
-        <p><b>Tip:</b> In order to vote with <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> tokens you need to have delegated them to yourself, always make sure that you've done this before the snapshot of a contest you'd like to vote in.</p>
         <Collapse>
           <Panel header="Here are instructions for some adventures you may be on if you're interested!" key="1">
             <Collapse>
               <Panel header="I want to play the jokerace on Polygon!" key="1">
-                <p>Bridge: You need to bridge your <a href="https://etherscan.io/address/0xa973c558265ad458031fa3067071646836df7713">$JOKE</a> from Ethereum mainnet to Polygon mainnet using the <a href="https://wallet.polygon.technology/bridge/">Polygon Bridge</a>.</p>
-                <p>Wrap:</p>
-                <ol>
-                  <li>Once you've bridged, you will need to wrap your tokens so that they can be used for voting (have <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> functionality).</li>
-                  <li>To do this, enter the official $JOKE token ERC20Votes wrapping contract address (*address here once deployed*) into the below input box for Wrapping contracts.</li>
-                  <li>Then call the deposit function with the number of tokens (don't forget to convert to multiply by 1e18 since ERC20 tokens have 18 decimals, you can do this by just pressing the star button) you'd like to wrap.</li>
-                </ol>
-                <p>Delegate</p>
-                <ol>
-                  <li>In order to vote (and propose if a contest has a required number of votes for an address to propose a joke), you need to delegate the votes of your tokens to yourself (or who you'd like to delegate to if that is someone else)!</li>
-                  <li>Delegate your votes by entering the Wrapped JOKE contract address into the below input for ERC20Votes tokens and call the delegate function with the address you would like to delegate to.</li>
-                </ol>
-                <p>Propose and Vote: Now you're good to go, enter the contract address of the jokerace you are playing in the top input field and you can get to proposing and voting on jokes!!</p>
+                <p>You will be airdropped tokens that are a snapshot of your holdings of $JOKE on Ethereum mainnet for a given race and they will be by default delegated to you (you can change this and delegate to someone else if you'd like, just make sure you do so before voting begins on the race). Just plug in the Contest address of the jokerace that is using those tokens and go!</p>
+                <p>First jokerace airdrop token (JR1) address: 0xa82FFD215346963fC22eF3317A7bbA09c5692269</p>
               </Panel>
-              <Panel header="I'd like to vote on something amongst a group of people!" key="2">
+              <Panel header="I'd like to vote on something and/or make a DAO with a group of people!" key="2">
                 <ol>
                   <li>Create a Generic Votes token (an <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> token).</li>
-                  <li>Distribute that token to people you want to be able to vote by using <a href="https://disperse.app/">Disperse App</a> or by entering the token contract address into the below input field for ERC20Votes contract addresses and using the transfer function (don't forget to convert to multiply by 1e18 since ERC20 tokens have 18 decimals, you can do this by just pressing the star button).</li>
+                  <li>Distribute that token to people you want to be able to vote by using <a href="https://multisender.app/">Multisender App</a> or by entering the token contract address into the below input field for ERC20Votes contract addresses and using the transfer function (don't forget to convert to multiply by 1e18 since ERC20 tokens have 18 decimals, you can do this by just pressing the star button).</li>
                   <li>Create a Contest with the token you made in step one as the voting token.</li>
                   <li>Propose and Vote on your contest and experiment with governance!</li>
                 </ol>
