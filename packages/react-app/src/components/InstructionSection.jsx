@@ -14,7 +14,7 @@ export default function InstructionSection() {
           <Panel header="Here are instructions for some adventures you may be on if you're interested!" key="1">
             <Collapse>
               <Panel header="I want to play the jokerace on Polygon!" key="1">
-                <p>You will be airdropped tokens that are a snapshot of your holdings of $JOKE on Ethereum mainnet for a given race and they will be by default delegated to you (you can change this and delegate to someone else if you'd like, just make sure you do so before the snapshot block of the race). Just plug in the Contest address of the jokerace that is using those tokens and go!</p>
+                <p>You will be airdropped tokens that are a snapshot of your holdings of $JOKE on Ethereum mainnet for a given race and they will be by default delegated to you (you can change this and delegate to someone else if you'd like, just make sure you do so before the snapshot block of the race). Just plug in the Contest address of the jokerace that is using those tokens (propose a joke if the race is currently queued or vote if the voting period is open)!</p>
                 <p>First jokerace airdrop token (JR1) address: 0xa82FFD215346963fC22eF3317A7bbA09c5692269</p>
               </Panel>
               <Panel header="I'd like to vote on something and/or make a DAO with a group of people!" key="2">
