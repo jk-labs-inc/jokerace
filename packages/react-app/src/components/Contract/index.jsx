@@ -10,7 +10,7 @@ const noContractDisplay = (
   <div>
     Loading...{" "}
     <div style={{ padding: 32 }}>
-    If this does not populate in a couple of seconds either the contract has not been deployed yet or the address that was input is not correct.
+    If this does not populate in a couple of seconds either the contract has not been deployed yet or the inputted address is not correct.
     </div>
   </div>
 );
