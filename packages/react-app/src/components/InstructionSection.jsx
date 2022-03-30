@@ -20,7 +20,7 @@ export default function InstructionSection() {
               <Panel header="I'd like to vote on something and/or make a DAO with a group of people!" key="2">
                 <ol>
                   <li>Create a Generic Votes token (an <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> token).</li>
-                  <li>Distribute that token to people you want to be able to vote by using <a href="https://multisender.app/">Multisender App</a> or by entering the token contract address into the below input field for ERC20Votes contract addresses and using the transfer function (don't forget to convert to multiply by 1e18 since ERC20 tokens have 18 decimals, you can do this by just pressing the star button).</li>
+                  <li>Distribute that token to people you want to be able to vote by using <a href="https://www.coinvise.co/dashboard">Coinvise Airdrops</a>, <a href="https://multisender.app/">Multisender App</a>, your wallet provider, or really any site that allows you to send ERC20 tokens.</li>
                   <li>Create a Contest with the token you made in step one as the voting token.</li>
                   <li>Propose and Vote on your contest and experiment with governance!</li>
                 </ol>
