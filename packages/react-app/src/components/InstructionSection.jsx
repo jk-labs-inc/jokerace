@@ -11,7 +11,7 @@ export default function InstructionSection() {
       <div style={{ border: "1px solid #cccccc", textAlign: "left", padding: 16, width: 800, margin: "auto", marginTop: 18 }}>
         <h2 style={{textAlign: "center"}}>Tips and Instructions Zone</h2>
         <p><b>Tip:</b> The very first thing you should make sure to do is connect your wallet and ensure that you are on the network you want to be both on the site and in your wallet.</p>
-        <p><b>Tip:</b> Currently addresses with enough votes (per the proposal threshold) can only submit one proposal each.</p>
+        <p><b>Tip:</b> Currently addresses with enough votes (per the proposal threshold) can only submit one proposal each to a given contest.</p>
         <Collapse>
           <Panel header="Here are instructions for some adventures you may be on if you're interested!" key="1">
             <Collapse>
