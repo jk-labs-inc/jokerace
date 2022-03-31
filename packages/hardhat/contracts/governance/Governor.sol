@@ -216,10 +216,22 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
-     * @dev Internal cancel mechanism: locks up the proposal timer, preventing it from being re-submitted. Marks it as
-     * canceled to allow distinguishing it from executed proposals.
+     * @dev Delete a proposal.
      *
-     * Emits a {IGovernor-ProposalCanceled} event.
+     * Emits a {IGovernor-ProposalDeleted} event.
+     */
+    function deleteProposal(uint256 proposalId) public virtual {
+        require(msg.sender == owner());
+        
+        _proposals[proposalId].description = "This proposal has been deleted by the creator of the contest.";
+
+        emit ProposalDeleted(proposalId);
+    }
+
+    /**
+     * @dev 
+     *
+     * Emits a {IGovernor-ContestCanceled} event.
      */
     function cancel() public virtual {
         require(msg.sender == owner());

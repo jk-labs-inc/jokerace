@@ -28,7 +28,14 @@ abstract contract IGovernor is IERC165 {
     );
 
     /**
-     * @dev Emitted when a proposal is canceled.
+     * @dev Emitted when a proposal is deleted.
+     */
+    event ProposalDeleted(
+        uint256 proposalId
+    );
+
+    /**
+     * @dev Emitted when a contest is canceled.
      */
     event ContestCanceled();
 
@@ -129,7 +136,7 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Owner of the contest, has the power to cancel.
+     * @dev Owner of the contest, has the power to cancel the contest and delete proposals in it.
      */
     function owner() public view virtual returns (address);
 
