@@ -58,6 +58,8 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         <h4>Contest Snapshot Block: the block at which the snapshot of delegated votes will be taken for voting</h4>
         <h4>Proposal Threshold: the number of delegated votes an address must have in order to submit a proposal</h4>
         <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
+        <h4>Currently only one proposal submission per eligible address is allowed</h4>
+        <h4>Creators have the ability to cancel contests and delete proposals in them</h4>
         <Divider />
         <h4>Tip: A Unix timestamp of what you would like the contest start time to be is required in the Contest Start Time field, you can use <a href="https://www.unixtimestamp.com/index.php">https://www.unixtimestamp.com/index.php</a> to get that!</h4>
         <Divider />
