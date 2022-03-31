@@ -28,10 +28,10 @@ abstract contract IGovernor is IERC165 {
     );
 
     /**
-     * @dev Emitted when a proposal is deleted.
+     * @dev Emitted when proposals are deleted.
      */
-    event ProposalDeleted(
-        uint256 proposalId
+    event ProposalsDeleted(
+        uint256[] proposalIds
     );
 
     /**

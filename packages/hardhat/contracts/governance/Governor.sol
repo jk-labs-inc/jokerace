@@ -216,16 +216,18 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
-     * @dev Delete a proposal.
+     * @dev Delete proposals.
      *
-     * Emits a {IGovernor-ProposalDeleted} event.
+     * Emits a {IGovernor-ProposalsDeleted} event.
      */
-    function deleteProposal(uint256 proposalId) public virtual {
+    function deleteProposals(uint256[] memory proposalIds) public virtual {
         require(msg.sender == creator());
         
-        _proposals[proposalId].description = "This proposal has been deleted by the creator of the contest.";
+        for(uint index=0; index<proposalIds.length; index++){
+            _proposals[proposalIds[index]].description = "This proposal has been deleted by the creator of the contest.";
+        }
 
-        emit ProposalDeleted(proposalId);
+        emit ProposalsDeleted(proposalIds);
     }
 
     /**
