@@ -63,13 +63,13 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         return super.maxProposalCount();
     }
 
-    function owner()
+    function creator()
         public
         view
         override(IGovernor, GovernorSettings)
         returns (address)
     {
-        return super.owner();
+        return super.creator();
     }
 
     function getVotes(address account, uint256 blockNumber)

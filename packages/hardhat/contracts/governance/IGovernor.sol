@@ -136,9 +136,9 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Owner of the contest, has the power to cancel the contest and delete proposals in it.
+     * @dev Creator of the contest, has the power to cancel the contest and delete proposals in it.
      */
-    function owner() public view virtual returns (address);
+    function creator() public view virtual returns (address);
 
     /**
      * @notice module:reputation

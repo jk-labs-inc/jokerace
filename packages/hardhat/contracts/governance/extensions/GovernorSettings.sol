@@ -18,7 +18,7 @@ abstract contract GovernorSettings is Governor {
     uint256 private _contestSnapshot;
     uint256 private _proposalThreshold;
     uint256 private _maxProposalCount;
-    address private _owner;
+    address private _creator;
 
     event ContestStartSet(uint256 oldContestStart, uint256 newContestStart);
     event VotingDelaySet(uint256 oldVotingDelay, uint256 newVotingDelay);
@@ -26,7 +26,7 @@ abstract contract GovernorSettings is Governor {
     event ContestSnapshotSet(uint256 oldContestSnapshot, uint256 newContestSnapshot);
     event ProposalThresholdSet(uint256 oldProposalThreshold, uint256 newProposalThreshold);
     event MaxProposalCountSet(uint256 oldMaxProposalCount, uint256 newMaxProposalCount);
-    event OwnerSet(address oldOwner, address newOwner);
+    event CreatorSet(address oldCreator, address newCreator);
 
     /**
      * @dev Initialize the governance parameters.
@@ -45,7 +45,7 @@ abstract contract GovernorSettings is Governor {
         _setContestSnapshot(initialContestSnapshot);
         _setProposalThreshold(initialProposalThreshold);
         _setMaxProposalCount(initialMaxProposalCount);
-        _setOwner(msg.sender);
+        _setCreator(msg.sender);
     }
 
     /**
@@ -91,10 +91,10 @@ abstract contract GovernorSettings is Governor {
     }
 
     /**
-     * @dev See {IGovernor-owner}.
+     * @dev See {IGovernor-creator}.
      */
-    function owner() public view virtual override returns (address) {
-        return _owner;
+    function creator() public view virtual override returns (address) {
+        return _creator;
     }
 
     /**
@@ -160,12 +160,12 @@ abstract contract GovernorSettings is Governor {
     }
 
     /**
-     * @dev Internal setter for owner.
+     * @dev Internal setter for creator.
      *
-     * Emits a {OwnerSet} event.
+     * Emits a {CreatorSet} event.
      */
-    function _setOwner(address newOwner) internal virtual {
-        emit OwnerSet(_owner, newOwner);
-        _owner = newOwner;
+    function _setCreator(address newCreator) internal virtual {
+        emit CreatorSet(_creator, newCreator);
+        _creator = newCreator;
     }
 }
