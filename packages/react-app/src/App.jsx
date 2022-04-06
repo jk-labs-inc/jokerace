@@ -152,21 +152,21 @@ function App(props) {
       {/* ✏️ Edit the header and change the title to your project name */}
       <Header />
 
+      <InstructionSection
+        targetNetwork={targetNetwork}
+        price={price}
+        signer={userSigner}
+        provider={localProvider}
+        address={address}
+        blockExplorer={blockExplorer}
+      />
+
       <ContestsPage
         targetNetwork={targetNetwork}
         price={price}
         signer={userSigner}
         provider={localProvider}
         mainnetProvider={mainnetProvider}
-        address={address}
-        blockExplorer={blockExplorer}
-      />
-
-      <InstructionSection
-        targetNetwork={targetNetwork}
-        price={price}
-        signer={userSigner}
-        provider={localProvider}
         address={address}
         blockExplorer={blockExplorer}
       />

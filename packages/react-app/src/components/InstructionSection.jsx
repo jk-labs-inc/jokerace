@@ -52,7 +52,7 @@ export default function InstructionSection({targetNetwork, price, signer, provid
 
   return (
     <div>
-      <div style={{ border: "1px solid #cccccc", textAlign: "left", padding: 16, width: 800, margin: "auto", marginTop: 18 }}>
+      <div style={{ border: "1px solid #cccccc", textAlign: "left", padding: 16, width: 800, margin: "auto", marginTop: 48 }}>
         <Collapse>
           <Panel header="Tips and Instructions Zone">
             <h4 style={{marginTop: 6}}>We're open-source, check out the code on <a href="https://github.com/seanmc9/JokeDaoV2Dev">our Github</a>!</h4>

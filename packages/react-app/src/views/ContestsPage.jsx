@@ -43,7 +43,7 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
   const showTokenModal = () => {
     setIsCreateTokenModalVisible(true);
   };
-  
+
   useEffect(() => {
     if(window.localStorage.getItem('currentContest') != null) {
       setContestSearchInput(window.localStorage.getItem('currentContest'));
@@ -58,7 +58,7 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
   
   
   return (
-    <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 48 }}>
+    <div style={{ border: "1px solid #cccccc", padding: 16, width: 800, margin: "auto", marginTop: 24 }}>
       <Button onClick={() => {window.location.reload();}}>Refresh</Button>
       <Button type="primary" onClick={showTokenModal}>
         Create Generic Votes Token
