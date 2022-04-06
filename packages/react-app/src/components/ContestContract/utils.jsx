@@ -4,6 +4,15 @@ import Address from "../Address";
 
 const { utils } = require("ethers");
 
+const stripQuotationMarks = (input) => {
+  let retString = ""
+  if (input && ((typeof input === 'string' || input instanceof String))) {
+    retString = input.replace(/^\"/, '').replace(/\"$/, '');
+    return retString;
+  }
+  return input
+}
+
 const tryToDisplay = (thing, asText = false, blockExplorer) => {
   if (thing && thing.toNumber) {
     try {
@@ -16,6 +25,9 @@ const tryToDisplay = (thing, asText = false, blockExplorer) => {
   if (thing && thing.indexOf && thing.indexOf("0x") === 0 && thing.length === 42) {
     return asText ? thing : <Address address={thing} fontSize={22} blockExplorer={blockExplorer} />;
   }
+  if (thing && thing.indexOf && thing.indexOf("https://") === 0) {
+    return asText ? thing : <img src={thing} />;
+  }
   if (thing && thing.constructor && thing.constructor.name === "Array") {
     const mostReadable = v => (["number", "boolean"].includes(typeof v) ? v : tryToDisplayAsText(v));
     const displayable = JSON.stringify(thing.map(mostReadable));
@@ -27,14 +39,6 @@ const tryToDisplay = (thing, asText = false, blockExplorer) => {
   }
   return JSON.stringify(thing);
 };
-
-const stripQuotationMarks = (inputString) => {
-  let retString = ""
-  if (inputString) {
-    retString = inputString.replace(/['"]+/g, '')
-  }
-  return retString;
-}
 
 const tryToDisplayAsText = thing => tryToDisplay(thing, true);
 

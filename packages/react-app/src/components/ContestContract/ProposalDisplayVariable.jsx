@@ -40,7 +40,7 @@ const ProposalDisplayVariable = ({
   return (
     <div>
       <Row>
-        <Col span={14}>
+        <Col span={16}>
           {/* Proposal struct is: author (0), content (1), exists bool (2) */}
           <h2>{stripQuotationMarks(tryToDisplay(proposalContent[1], false, blockExplorer))}</h2>
           <h2>Author: <Address address={proposalContent[0]} ensProvider={mainnetProvider} fontSize={20} blockExplorer={blockExplorer} /></h2>
@@ -74,11 +74,6 @@ const ProposalDisplayVariable = ({
             gasPrice={gasPrice}
             triggerRefresh={triggerRefresh}
           />
-        </Col>
-        <Col span={2}>
-          <h2>
-            <Button type="link" onClick={refresh} icon="🔄" />
-          </h2>
         </Col>
       </Row>
       <Divider />
