@@ -248,6 +248,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
         </Col>
         <Col span={16}>{inputs}</Col>
       </Row>
+      <Divider />
     </div>
   );
 }

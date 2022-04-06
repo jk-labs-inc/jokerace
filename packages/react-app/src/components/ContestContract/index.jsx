@@ -85,40 +85,35 @@ export default function ContestContract({
           blockExplorer={blockExplorer}
         />
       </div>
-      <Collapse>
-        <Panel header="Contest Info and Proposal Button" key="1">
-          <ContestAddressesInfoDisplayVariable
-            tokenContractFunction={contract[tokenFuncInfo[0]]}
-            address={address}
-            refreshRequired={refreshRequired}
-            triggerRefresh={triggerRefresh}
-            blockExplorer={blockExplorer}
-          />
-          <Divider />
-          <UserVotesAndUsedDisplayVariable
-            userAddress={userAddress}
-            contestStateContractFunction={contract[stateFuncInfo[0]]}
-            getVotesContractFunction={contract[getVotesFuncInfo[0]]}
-            proposalThresholdContractFunction={contract[proposalThresholdFuncInfo[0]]}
-            contestAddressTotalVotesCastContractFunction={contract[contestAddressTotalVotesCastFuncInfo[0]]}
-            constestSnapshotContractFunction={contract[contestSnapshotFuncInfo[0]]}
-            voteStartContractFunction={contract[voteStartFuncInfo[0]]}
-            contestDeadlineContractFunction={contract[contestDeadlineFuncInfo[0]]}
-            refreshRequired={refreshRequired}
-            provider={provider}
-            triggerRefresh={triggerRefresh}
-          />
-          <Divider />
-          <ProposingFunctionForm 
-            contractFunction={contract.connect(signer)[proposeFuncInfo[0]]}
-            functionInfo={proposeFuncInfo[1]}
-            provider={provider}
-            gasPrice={gasPrice}
-            triggerRefresh={triggerRefresh}
-          />
-        </Panel>
-      </Collapse>
+      <ContestAddressesInfoDisplayVariable
+        tokenContractFunction={contract[tokenFuncInfo[0]]}
+        address={address}
+        refreshRequired={refreshRequired}
+        triggerRefresh={triggerRefresh}
+        blockExplorer={blockExplorer}
+      />
       <Divider />
+      <UserVotesAndUsedDisplayVariable
+        userAddress={userAddress}
+        contestStateContractFunction={contract[stateFuncInfo[0]]}
+        getVotesContractFunction={contract[getVotesFuncInfo[0]]}
+        proposalThresholdContractFunction={contract[proposalThresholdFuncInfo[0]]}
+        contestAddressTotalVotesCastContractFunction={contract[contestAddressTotalVotesCastFuncInfo[0]]}
+        constestSnapshotContractFunction={contract[contestSnapshotFuncInfo[0]]}
+        voteStartContractFunction={contract[voteStartFuncInfo[0]]}
+        contestDeadlineContractFunction={contract[contestDeadlineFuncInfo[0]]}
+        refreshRequired={refreshRequired}
+        provider={provider}
+        triggerRefresh={triggerRefresh}
+      />
+      <Divider />
+      <ProposingFunctionForm 
+        contractFunction={contract.connect(signer)[proposeFuncInfo[0]]}
+        functionInfo={proposeFuncInfo[1]}
+        provider={provider}
+        gasPrice={gasPrice}
+        triggerRefresh={triggerRefresh}
+      />
       <AllProposalIdsDisplayVariable
         getAllProposalIdsContractFunction={contract[getAllProposalIdsFuncInfo[0]]}
         getAllProposalIdsFunctionInfo={getAllProposalIdsFuncInfo}
