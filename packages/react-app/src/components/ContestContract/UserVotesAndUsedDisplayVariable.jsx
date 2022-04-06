@@ -80,7 +80,6 @@ const UserVotesAndUsedDisplayVariable = ({
         <div>Contest State: {formatContestState(contestState)}</div>
         <div>Vote Start: {new Date(parseInt(voteStart) * 1000).toUTCString()} <Countdown value={new Date(parseInt(voteStart) * 1000)} valueStyle={{fontSize:12}}></Countdown></div>
         <div>Vote End: {new Date(parseInt(contestDeadline) * 1000).toUTCString()} <Countdown value={new Date(parseInt(contestDeadline) * 1000)} valueStyle={{fontSize:12}}></Countdown></div>
-        <Divider />
       </div>)
     : 
       (<div>
@@ -91,7 +90,6 @@ const UserVotesAndUsedDisplayVariable = ({
         <div>Contest State: {formatContestState(contestState)}</div>
         <div>Vote Start: {new Date(parseInt(voteStart) * 1000).toUTCString()} <Countdown value={new Date(parseInt(voteStart) * 1000)} valueStyle={{fontSize:12}}></Countdown></div>
         <div>Vote End: {new Date(parseInt(contestDeadline) * 1000).toUTCString()} <Countdown value={new Date(parseInt(contestDeadline) * 1000)} valueStyle={{fontSize:12}}></Countdown></div>
-        <Divider />
       </div>)
   );
 };

@@ -1,10 +1,13 @@
-import { Card, Button, Divider } from "antd";
+import { Card, Collapse, Divider } from "antd";
 import { useContractExistsAtAddress, useContractLoader } from "eth-hooks";
 import React, { useMemo, useState } from "react";
 import ProposingFunctionForm from "./ProposingFunctionForm";
 import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
 import UserVotesAndUsedDisplayVariable from "./UserVotesAndUsedDisplayVariable";
-import ContestInfoDisplayVariable from "./ContestInfoDisplayVariable";
+import ContestAddressesInfoDisplayVariable from "./ContestAddressesInfoDisplayVariable";
+import ContestNameDisplayVariable from "./ContestNameDisplayVariable";
+
+const { Panel } = Collapse;
 
 const noContractDisplay = (
   <div>
@@ -75,37 +78,47 @@ export default function ContestContract({
   const contractDisplay = contract ?
     <div>
       <div style={{ fontSize: 24 }}>
-        <ContestInfoDisplayVariable
+        <ContestNameDisplayVariable
           nameContractFunction={contract[nameFuncInfo[0]]}
-          tokenContractFunction={contract[tokenFuncInfo[0]]}
-          address={address}
           refreshRequired={refreshRequired}
           triggerRefresh={triggerRefresh}
           blockExplorer={blockExplorer}
         />
-        <Button onClick={() => {triggerRefresh(true)}}>Refresh Contest</Button>
       </div>
+      <Collapse>
+        <Panel header="Contest Info and Proposal Button" key="1">
+          <ContestAddressesInfoDisplayVariable
+            tokenContractFunction={contract[tokenFuncInfo[0]]}
+            address={address}
+            refreshRequired={refreshRequired}
+            triggerRefresh={triggerRefresh}
+            blockExplorer={blockExplorer}
+          />
+          <Divider />
+          <UserVotesAndUsedDisplayVariable
+            userAddress={userAddress}
+            contestStateContractFunction={contract[stateFuncInfo[0]]}
+            getVotesContractFunction={contract[getVotesFuncInfo[0]]}
+            proposalThresholdContractFunction={contract[proposalThresholdFuncInfo[0]]}
+            contestAddressTotalVotesCastContractFunction={contract[contestAddressTotalVotesCastFuncInfo[0]]}
+            constestSnapshotContractFunction={contract[contestSnapshotFuncInfo[0]]}
+            voteStartContractFunction={contract[voteStartFuncInfo[0]]}
+            contestDeadlineContractFunction={contract[contestDeadlineFuncInfo[0]]}
+            refreshRequired={refreshRequired}
+            provider={provider}
+            triggerRefresh={triggerRefresh}
+          />
+          <Divider />
+          <ProposingFunctionForm 
+            contractFunction={contract.connect(signer)[proposeFuncInfo[0]]}
+            functionInfo={proposeFuncInfo[1]}
+            provider={provider}
+            gasPrice={gasPrice}
+            triggerRefresh={triggerRefresh}
+          />
+        </Panel>
+      </Collapse>
       <Divider />
-      <UserVotesAndUsedDisplayVariable
-        userAddress={userAddress}
-        contestStateContractFunction={contract[stateFuncInfo[0]]}
-        getVotesContractFunction={contract[getVotesFuncInfo[0]]}
-        proposalThresholdContractFunction={contract[proposalThresholdFuncInfo[0]]}
-        contestAddressTotalVotesCastContractFunction={contract[contestAddressTotalVotesCastFuncInfo[0]]}
-        constestSnapshotContractFunction={contract[contestSnapshotFuncInfo[0]]}
-        voteStartContractFunction={contract[voteStartFuncInfo[0]]}
-        contestDeadlineContractFunction={contract[contestDeadlineFuncInfo[0]]}
-        refreshRequired={refreshRequired}
-        provider={provider}
-        triggerRefresh={triggerRefresh}
-      />
-      <ProposingFunctionForm 
-        contractFunction={contract.connect(signer)[proposeFuncInfo[0]]}
-        functionInfo={proposeFuncInfo[1]}
-        provider={provider}
-        gasPrice={gasPrice}
-        triggerRefresh={triggerRefresh}
-      />
       <AllProposalIdsDisplayVariable
         getAllProposalIdsContractFunction={contract[getAllProposalIdsFuncInfo[0]]}
         getAllProposalIdsFunctionInfo={getAllProposalIdsFuncInfo}

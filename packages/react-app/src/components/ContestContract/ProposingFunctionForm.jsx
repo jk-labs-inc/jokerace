@@ -223,7 +223,7 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
 
               console.log("SETTING RESULT:", result);
               setReturnValue(result);
-              triggerRefresh(true);
+              // triggerRefresh(true);
             }}
           >
             {buttonIcon}
@@ -248,7 +248,6 @@ export default function FunctionForm({ contractFunction, functionInfo, provider,
         </Col>
         <Col span={16}>{inputs}</Col>
       </Row>
-      <Divider />
     </div>
   );
 }

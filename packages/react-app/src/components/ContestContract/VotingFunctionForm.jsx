@@ -92,7 +92,7 @@ export default function VotingFunctionForm({ proposalId, castVoteContractFunctio
 
               console.log("SETTING RESULT:", result);
               setReturnValue(result);
-              triggerRefresh(true);
+              // triggerRefresh(true);
             }}
           >
             {buttonIcon}

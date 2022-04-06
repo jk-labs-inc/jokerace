@@ -152,8 +152,6 @@ function App(props) {
       {/* ✏️ Edit the header and change the title to your project name */}
       <Header />
 
-      <InstructionSection />
-
       <ContestsPage
         targetNetwork={targetNetwork}
         price={price}
@@ -161,13 +159,17 @@ function App(props) {
         provider={localProvider}
         mainnetProvider={mainnetProvider}
         address={address}
-        gasPrice={gasPrice}
         blockExplorer={blockExplorer}
       />
 
-      <div style={{ padding: 5, width: 800, margin: "auto", marginTop: 75 }}>
-        <h5>jokecartel was here</h5>
-      </div>
+      <InstructionSection
+        targetNetwork={targetNetwork}
+        price={price}
+        signer={userSigner}
+        provider={localProvider}
+        address={address}
+        blockExplorer={blockExplorer}
+      />
 
       <ThemeSwitch />
 
