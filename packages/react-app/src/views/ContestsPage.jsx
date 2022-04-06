@@ -43,14 +43,17 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
   const showTokenModal = () => {
     setIsCreateTokenModalVisible(true);
   };
-
+  
   useEffect(() => {
-    setContestSearchInput(window.localStorage.getItem('currentContest'));
+    if(window.localStorage.getItem('currentContest') != null) {
+      setContestSearchInput(window.localStorage.getItem('currentContest'));
+    }
   }, []);
   
   useEffect(() => {
-    window.localStorage.setItem('currentContest', contestSearchInput);
-    console.log("current", window.localStorage.getItem('currentContest'))
+    if((contestSearchInput != null) && (contestSearchInput != "null")) {
+      window.localStorage.setItem('currentContest', contestSearchInput);
+    }
   }, [contestSearchInput]);
   
   
