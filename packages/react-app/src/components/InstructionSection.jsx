@@ -53,6 +53,7 @@ export default function InstructionSection({targetNetwork, price, signer, provid
   return (
     <div>
       <div style={{ border: "1px solid #cccccc", textAlign: "left", padding: 16, width: 800, margin: "auto", marginTop: 48 }}>
+        <h3 style={{ textAlign: "center" }}><a href="https://docs.google.com/document/d/14NvQuYIv0CpSV8L5nR3iHwbnZ6yH--oywe2d_qDK3rE/edit?usp=sharing">Find contests here</a></h3>
         <Collapse>
           <Panel header="Tips and Instructions Zone">
             <h4 style={{marginTop: 6}}>We're open-source, check out the code on <a href="https://github.com/seanmc9/JokeDaoV2Dev">our Github</a>!</h4>
