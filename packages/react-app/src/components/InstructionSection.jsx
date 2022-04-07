@@ -53,10 +53,10 @@ export default function InstructionSection({targetNetwork, price, signer, provid
   return (
     <div>
       <div style={{ border: "1px solid #cccccc", textAlign: "left", padding: 16, width: 800, margin: "auto", marginTop: 48 }}>
-        <h3 style={{ textAlign: "center" }}><a href="https://docs.google.com/document/d/14NvQuYIv0CpSV8L5nR3iHwbnZ6yH--oywe2d_qDK3rE/edit?usp=sharing">Find contests here</a></h3>
+        <h3 style={{ textAlign: "center" }}><a href="https://docs.google.com/document/d/14NvQuYIv0CpSV8L5nR3iHwbnZ6yH--oywe2d_qDK3rE/edit?usp=sharing" target="_blank">Find contests here</a></h3>
         <Collapse>
           <Panel header="Tips and Instructions Zone">
-            <h4 style={{marginTop: 6}}>We're open-source, check out the code on <a href="https://github.com/seanmc9/JokeDaoV2Dev">our Github</a>!</h4>
+            <h4 style={{marginTop: 6}}>We're open-source, check out the code on <a href="https://github.com/seanmc9/JokeDaoV2Dev" target="_blank">our Github</a>!</h4>
             <p><b>Tip:</b> The very first thing you should make sure to do is connect your wallet and ensure that you are on the network you want to be both on the site and in your wallet.</p>
             <p><b>Tip:</b> Currently addresses with enough votes (per the proposal threshold) can only submit one proposal each to a given contest.</p>
             <Collapse>
@@ -68,8 +68,8 @@ export default function InstructionSection({targetNetwork, price, signer, provid
                   </Panel>
                   <Panel header="I'd like to vote on something and/or make a DAO with a group of people!" key="2">
                     <ol>
-                      <li>Create a Generic Votes token (an <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> token).</li>
-                      <li>Distribute that token to people you want to be able to vote by using <a href="https://www.coinvise.co/dashboard">Coinvise Airdrops</a>, <a href="https://multisender.app/">Multisender App</a>, your wallet provider, or really any site that allows you to send ERC20 tokens.</li>
+                      <li>Create a Generic Votes token (an <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes" target="_blank">ERC20Votes</a> token).</li>
+                      <li>Distribute that token to people you want to be able to vote by using <a href="https://www.coinvise.co/dashboard" target="_blank">Coinvise Airdrops</a>, <a href="https://multisender.app/" target="_blank">Multisender App</a>, your wallet provider, or really any site that allows you to send ERC20 tokens.</li>
                       <li>Create a Contest with the token you made in step one as the voting token.</li>
                       <li>Propose and Vote on your contest and experiment with governance!</li>
                     </ol>
@@ -81,7 +81,7 @@ export default function InstructionSection({targetNetwork, price, signer, provid
                         <p>Cool! There are two primary options for doing this!</p>
                         <ol>
                           <li>Create a new GenericVotesToken on the chain that you would like the contest to be held on and distribute it based on a snapshot of your pre-existing token.</li>
-                          <li>Bridge (if your tokens aren't already on the chain you would like to run contests on) and Wrap your pre-existent tokens to have them implement <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes">ERC20Votes</a> functionality.</li>
+                          <li>Bridge (if your tokens aren't already on the chain you would like to run contests on) and Wrap your pre-existent tokens to have them implement <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes" target="_blank">ERC20Votes</a> functionality.</li>
                           </ol>
                       </Panel>
                       <Panel header="No" key="2">
