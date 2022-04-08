@@ -7,7 +7,7 @@ const { utils } = require("ethers");
 const stripQuotationMarks = (input) => {
   let retString = ""
   if (input && ((typeof input === 'string' || input instanceof String))) {
-    retString = input.replace(/^\"/, '').replace(/\"$/, '');
+    retString = input.replace(/^\"/, '').replace(/\"$/, '').replace(/\\\"/g, '\"');
     return retString;
   }
   return input
