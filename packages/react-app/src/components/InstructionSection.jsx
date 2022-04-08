@@ -59,6 +59,7 @@ export default function InstructionSection({targetNetwork, price, signer, provid
             <h4 style={{marginTop: 6}}>We're open-source, check out the code on <a href="https://github.com/seanmc9/JokeDaoV2Dev" target="_blank">our Github</a>!</h4>
             <p><b>Tip:</b> The very first thing you should make sure to do is connect your wallet and ensure that you are on the network you want to be both on the site and in your wallet.</p>
             <p><b>Tip:</b> Currently addresses with enough votes (per the proposal threshold) can only submit one proposal each to a given contest.</p>
+            <p><b>Tip:</b> In order to submit an image or gif, make sure that you submit only the link and that the link begins with "https://" and it is a direct link to the image file (it will end in .jpg or the file type of the media).</p>
             <Collapse>
               <Panel header="Here are instructions for some adventures you may be on if you're interested!" key="1">
                 <Collapse>
