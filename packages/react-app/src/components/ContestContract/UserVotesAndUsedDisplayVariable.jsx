@@ -84,7 +84,7 @@ const UserVotesAndUsedDisplayVariable = ({
     : 
       (<div>
         <div>You currently have {totalVotes/1e18} votes delegated to you.</div>
-        <div>The snapshot time is {new Date(parseInt(contestSnapshot) * 1000).toUTCString()}.</div>
+        <div>The snapshot time { (Date.now()) >= (parseInt(contestSnapshot) * 1000) ? "was" : "is" } {new Date(parseInt(contestSnapshot) * 1000).toUTCString()}.</div>
         <div>The proposal threshold for this contest (how many votes one must have to create a proposal) is {proposalThreshold/1e18}.</div>
         <Divider />
         <div>Contest State: {formatContestState(contestState)}</div>
