@@ -26,7 +26,7 @@ import "../../../utils/cryptography/ECDSA.sol";
  */
 abstract contract ERC20Votes is IVotes, ERC20Permit {
     struct Checkpoint {
-        uint32 fromBlock;
+        uint256 fromTimestamp;
         uint224 votes;
     }
 
@@ -69,50 +69,51 @@ abstract contract ERC20Votes is IVotes, ERC20Permit {
     }
 
     /**
-     * @dev Retrieve the number of votes for `account` at the end of `blockNumber`.
+     * @dev Retrieve the number of votes for `account` at the end of `timestamp`.
      *
      * Requirements:
      *
-     * - `blockNumber` must have been already mined
+     * - the block with the timestamp `timestamp` must have been already mined
      */
-    function getPastVotes(address account, uint256 blockNumber) public view virtual override returns (uint256) {
-        require(blockNumber < block.number, "ERC20Votes: block not yet mined");
-        return _checkpointsLookup(_checkpoints[account], blockNumber);
+    function getPastVotes(address account, uint256 timestamp) public view virtual override returns (uint256) {
+        require(timestamp < block.timestamp, "ERC20Votes: block not yet mined");
+        return _checkpointsLookup(_checkpoints[account], timestamp);
     }
 
     /**
-     * @dev Retrieve the `totalSupply` at the end of `blockNumber`. Note, this value is the sum of all balances.
+     * @dev Retrieve the `totalSupply` at the end of the block containing the timestamp `timestamp`. Note, this
+     * value is the sum of all balances.
      * It is but NOT the sum of all the delegated votes!
      *
      * Requirements:
      *
-     * - `blockNumber` must have been already mined
+     * - the block with the timestamp `timestamp` must have been already mined
      */
-    function getPastTotalSupply(uint256 blockNumber) public view virtual override returns (uint256) {
-        require(blockNumber < block.number, "ERC20Votes: block not yet mined");
-        return _checkpointsLookup(_totalSupplyCheckpoints, blockNumber);
+    function getPastTotalSupply(uint256 timestamp) public view virtual override returns (uint256) {
+        require(timestamp < block.timestamp, "ERC20Votes: block not yet mined");
+        return _checkpointsLookup(_totalSupplyCheckpoints, timestamp);
     }
 
     /**
      * @dev Lookup a value in a list of (sorted) checkpoints.
      */
-    function _checkpointsLookup(Checkpoint[] storage ckpts, uint256 blockNumber) private view returns (uint256) {
-        // We run a binary search to look for the earliest checkpoint taken after `blockNumber`.
+    function _checkpointsLookup(Checkpoint[] storage ckpts, uint256 timestamp) private view returns (uint256) {
+        // We run a binary search to look for the earliest checkpoint taken after `timestamp`.
         //
         // During the loop, the index of the wanted checkpoint remains in the range [low-1, high).
         // With each iteration, either `low` or `high` is moved towards the middle of the range to maintain the invariant.
-        // - If the middle checkpoint is after `blockNumber`, we look in [low, mid)
-        // - If the middle checkpoint is before or equal to `blockNumber`, we look in [mid+1, high)
+        // - If the middle checkpoint is after `timestamp`, we look in [low, mid)
+        // - If the middle checkpoint is before or equal to `timestamp`, we look in [mid+1, high)
         // Once we reach a single value (when low == high), we've found the right checkpoint at the index high-1, if not
         // out of bounds (in which case we're looking too far in the past and the result is 0).
-        // Note that if the latest checkpoint available is exactly for `blockNumber`, we end up with an index that is
-        // past the end of the array, so we technically don't find a checkpoint after `blockNumber`, but it works out
+        // Note that if the latest checkpoint available is exactly for `timestamp`, we end up with an index that is
+        // past the end of the array, so we technically don't find a checkpoint after `timestamp`, but it works out
         // the same.
         uint256 high = ckpts.length;
         uint256 low = 0;
         while (low < high) {
             uint256 mid = Math.average(low, high);
-            if (ckpts[mid].fromBlock > blockNumber) {
+            if (ckpts[mid].fromTimestamp > timestamp) {
                 high = mid;
             } else {
                 low = mid + 1;
@@ -234,10 +235,10 @@ abstract contract ERC20Votes is IVotes, ERC20Permit {
         oldWeight = pos == 0 ? 0 : ckpts[pos - 1].votes;
         newWeight = op(oldWeight, delta);
 
-        if (pos > 0 && ckpts[pos - 1].fromBlock == block.number) {
+        if (pos > 0 && ckpts[pos - 1].fromTimestamp == block.timestamp) {
             ckpts[pos - 1].votes = SafeCast.toUint224(newWeight);
         } else {
-            ckpts.push(Checkpoint({fromBlock: SafeCast.toUint32(block.number), votes: SafeCast.toUint224(newWeight)}));
+            ckpts.push(Checkpoint({fromTimestamp: block.timestamp, votes: SafeCast.toUint224(newWeight)}));
         }
     }
 

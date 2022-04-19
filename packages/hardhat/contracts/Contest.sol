@@ -80,4 +80,13 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
     {
         return super.getVotes(account, blockNumber);
     }
+
+    function getCurrentVotes(address account)
+        public
+        view
+        override(IGovernor, GovernorVotes)
+        returns (uint256)
+    {
+        return super.getCurrentVotes(account);
+    }
 }
