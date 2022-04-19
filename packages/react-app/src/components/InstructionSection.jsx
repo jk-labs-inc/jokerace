@@ -2,7 +2,7 @@ import { Collapse, Input } from "antd";
 import React, { useState } from "react";
 import { Contract } from "../components";
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
+import DeployedGenericVotesTimestampTokenContract from "../contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 
 const { Panel } = Collapse;
 
@@ -40,8 +40,8 @@ export default function InstructionSection({targetNetwork, price, signer, provid
       {
         chainId: targetNetwork.chainId.toString(),
         contracts: {
-          GenericVotesToken: {
-            abi: DeployedGenericVotesTokenContract.abi,
+          GenericVotesTimestampToken: {
+            abi: DeployedGenericVotesTimestampTokenContract.abi,
             address: tokenSearchInput
           }
         },
@@ -64,12 +64,12 @@ export default function InstructionSection({targetNetwork, price, signer, provid
               <Panel header="Here are instructions for some adventures you may be on if you're interested!" key="1">
                 <Collapse>
                   <Panel header="I want to play the jokerace on Polygon!" key="1">
-                    <p>You will be airdropped tokens that are a snapshot of your holdings of $JOKE on Ethereum mainnet for a given race and they will be by default delegated to you (you can change this and delegate to someone else if you'd like, just make sure you do so before the snapshot block of the race). Just plug in the Contest address of the jokerace that is using those tokens (propose a joke if the race is currently queued or vote if the voting period is open)!</p>
+                    <p>You will be airdropped tokens that are a snapshot of your holdings of $JOKE on Ethereum mainnet for a given race and they will be by default delegated to you (you can change this and delegate to someone else if you'd like, just make sure you do so before the snapshot time of the contest). Just plug in the Contest address of the jokerace that is using those tokens (propose a joke if the race is currently queued or vote if the voting period is open)!</p>
                     <p>First jokerace contract address: 0x8f2877A461a4cD978edDbc46861192a63133e026</p>
                   </Panel>
                   <Panel header="I'd like to vote on something and/or make a DAO with a group of people!" key="2">
                     <ol>
-                      <li>Create a Generic Votes token (an <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes" target="_blank">ERC20Votes</a> token).</li>
+                      <li>Create an ERC20VotesTimestamp token (an <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes" target="_blank">ERC20Votes</a> token that tracks voting by time instead of block number).</li>
                       <li>Distribute that token to people you want to be able to vote by using <a href="https://www.coinvise.co/dashboard" target="_blank">Coinvise Airdrops</a>, <a href="https://multisender.app/" target="_blank">Multisender App</a>, your wallet provider, or really any site that allows you to send ERC20 tokens.</li>
                       <li>Create a Contest with the token you made in step one as the voting token.</li>
                       <li>Propose and Vote on your contest and experiment with governance!</li>
@@ -81,8 +81,8 @@ export default function InstructionSection({targetNetwork, price, signer, provid
                       <Panel header="Yes" key="1">
                         <p>Cool! There are two primary options for doing this!</p>
                         <ol>
-                          <li>Create a new GenericVotesToken on the chain that you would like the contest to be held on and distribute it based on a snapshot of your pre-existing token.</li>
-                          <li>Bridge (if your tokens aren't already on the chain you would like to run contests on) and Wrap your pre-existent tokens to have them implement <a href="https://docs.openzeppelin.com/contracts/4.x/api/token/erc20#ERC20Votes" target="_blank">ERC20Votes</a> functionality.</li>
+                          <li>Create a new GenericVotesTimestampToken on the chain that you would like the contest to be held on and distribute it based on a snapshot of your pre-existing token.</li>
+                          <li>Bridge (if your tokens aren't already on the chain you would like to run contests on) and Wrap your pre-existent tokens to have them implement ERC20VotesTimestamp functionality.</li>
                           </ol>
                       </Panel>
                       <Panel header="No" key="2">
@@ -120,11 +120,11 @@ export default function InstructionSection({targetNetwork, price, signer, provid
                 }
                 <div>
                   {/* Get rid of any whitespace or extra quotation marks */}
-                  <Input icon='search' placeholder='Search ERC20Votes full contract functions' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
+                  <Input icon='search' placeholder='Search ERC20VotesTimestamp full contract functions' value={tokenSearchInput} onChange={(e) => setTokenSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
                 </div>
                 {tokenSearchInput != "" ? 
                   <Contract
-                    name="GenericVotesToken"
+                    name="GenericVotesTimestampToken"
                     price={price}
                     signer={signer}
                     provider={provider}

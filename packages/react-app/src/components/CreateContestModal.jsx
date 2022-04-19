@@ -55,7 +55,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         <h4>Contest Start Time: when proposal submission opens</h4>
         <h4>Proposal Open Period: how long after the contest start that proposals can be submitted</h4>
         <h4>Voting Period: how long after the proposal open period closes that people can vote</h4>
-        <h4>Contest Snapshot Block: the block at which the snapshot of delegated votes will be taken for voting</h4>
+        <h4>Contest Snapshot: when the snapshot of delegated votes will be taken for voting</h4>
         <h4>Proposal Threshold: the number of delegated votes an address must have in order to submit a proposal</h4>
         <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
         <h4>Currently only one proposal submission per eligible address is allowed</h4>
@@ -100,10 +100,10 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         </Form.Item>
         <Form.Item
           label="Contest Snapshot"
-          name="contestsnapshotblock"
-          rules={[{ required: true, message: 'Please input your Contest Snapshot block!' }]}
+          name="contestsnapshot"
+          rules={[{ required: true, message: 'Please input the Unix timestamp of your contest snapshot!' }]}
         >
-          <Input placeholder='Contest Snapshot Block' onChange={(e) => setContestSnapshot(e.target.value)} />
+          <Input placeholder='Unix timestamp of your contest snapshot' onChange={(e) => setContestSnapshot(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="Proposal Threshold"

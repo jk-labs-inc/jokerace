@@ -1,18 +1,18 @@
 import React, {useState} from 'react';
-import { Input, Modal, Form, Button, Divider } from "antd";
+import { Input, Modal, Form, Divider } from "antd";
 
-import DeployedERC20VotesWrapperContract from "../contracts/bytecodeAndAbi/ERC20VotesWrapper.sol/ERC20VotesWrapper.json";
+import DeployedERC20VotesTimestampWrapperContract from "../contracts/bytecodeAndAbi/ERC20VotesTimestampWrapper.sol/ERC20VotesTimestampWrapper.json";
 
 const { ethers } = require("ethers");
 
-export default function CreateERC20VotesWrapperModal({modalVisible, setModalVisible, setResultMessage, signer}) {
+export default function CreateERC20VotesTimestampWrapperModal({modalVisible, setModalVisible, setResultMessage, signer}) {
   const [tokenName, setTokenName] = useState("")
   const [tokenSymbol, setTokenSymbol] = useState("")
   const [tokenAddress, setTokenAddress] = useState("")
 
   const handleOk = async () => {
     // The factory we use for deploying contracts
-    let factory = new ethers.ContractFactory(DeployedERC20VotesWrapperContract.abi, DeployedERC20VotesWrapperContract.bytecode, signer)
+    let factory = new ethers.ContractFactory(DeployedERC20VotesTimestampWrapperContract.abi, DeployedERC20VotesTimestampWrapperContract.bytecode, signer)
     console.log(factory)
 
     // Deploy an instance of the contract
@@ -36,7 +36,7 @@ export default function CreateERC20VotesWrapperModal({modalVisible, setModalVisi
   };
 
   return (
-    <Modal title="Create ERC20Votes Wrapper Token" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
+    <Modal title="Create ERC20VotesTimestamp Wrapper" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
       <Form
         name="basic"
         labelCol={{ span: 8 }}
