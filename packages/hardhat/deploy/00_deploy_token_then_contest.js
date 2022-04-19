@@ -17,7 +17,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
-  await deploy("GenericVotesToken", {
+  await deploy("GenericVotesTimestampToken", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     args: ["joketest", "JOKE", "0xd698e31229aB86334924ed9DFfd096a71C686900", ethers.utils.parseEther("10000")],
@@ -25,17 +25,17 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     waitConfirmations: 5,
   });
   
-  const GenericVotesToken = await ethers.getContract("GenericVotesToken", deployer);
+  const GenericVotesTimestampToken = await ethers.getContract("GenericVotesTimestampToken", deployer);
 
   await deploy("Contest", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: ["joking", GenericVotesToken.address, 5, 10, 10, 7, ethers.utils.parseEther("1"), 100],
+    args: ["joking", GenericVotesTimestampToken.address, 5, 10, 10, 7, ethers.utils.parseEther("1"), 100],
     log: true,
     waitConfirmations: 5,
   });
 
-  await deploy("ERC20VotesWrapper", {
+  await deploy("ERC20VotesTimestampWrapper", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
     args: ["0x59e36d05E47BF17Eb5753aA1F04b2164f1606A45", "Wrapped JOKE", "wJOKE"],
