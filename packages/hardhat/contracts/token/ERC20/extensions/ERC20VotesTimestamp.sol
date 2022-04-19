@@ -76,7 +76,7 @@ abstract contract ERC20VotesTimestamp is IVotesTimestamp, ERC20Permit {
      * - the block with the timestamp `timestamp` must have been already mined
      */
     function getPastVotes(address account, uint256 timestamp) public view virtual override returns (uint256) {
-        require(timestamp < block.timestamp, "ERC20Votes: block not yet mined");
+        require(timestamp < block.timestamp, "ERC20VotesTimestamp: block not yet mined");
         return _checkpointsLookup(_checkpoints[account], timestamp);
     }
 
@@ -90,7 +90,7 @@ abstract contract ERC20VotesTimestamp is IVotesTimestamp, ERC20Permit {
      * - the block with the timestamp `timestamp` must have been already mined
      */
     function getPastTotalSupply(uint256 timestamp) public view virtual override returns (uint256) {
-        require(timestamp < block.timestamp, "ERC20Votes: block not yet mined");
+        require(timestamp < block.timestamp, "ERC20VotesTimestamp: block not yet mined");
         return _checkpointsLookup(_totalSupplyCheckpoints, timestamp);
     }
 
@@ -141,14 +141,14 @@ abstract contract ERC20VotesTimestamp is IVotesTimestamp, ERC20Permit {
         bytes32 r,
         bytes32 s
     ) public virtual override {
-        require(block.timestamp <= expiry, "ERC20Votes: signature expired");
+        require(block.timestamp <= expiry, "ERC20VotesTimestamp: signature expired");
         address signer = ECDSA.recover(
             _hashTypedDataV4(keccak256(abi.encode(_DELEGATION_TYPEHASH, delegatee, nonce, expiry))),
             v,
             r,
             s
         );
-        require(nonce == _useNonce(signer), "ERC20Votes: invalid nonce");
+        require(nonce == _useNonce(signer), "ERC20VotesTimestamp: invalid nonce");
         _delegate(signer, delegatee);
     }
 
@@ -164,7 +164,7 @@ abstract contract ERC20VotesTimestamp is IVotesTimestamp, ERC20Permit {
      */
     function _mint(address account, uint256 amount) internal virtual override {
         super._mint(account, amount);
-        require(totalSupply() <= _maxSupply(), "ERC20Votes: total supply risks overflowing votes");
+        require(totalSupply() <= _maxSupply(), "ERC20VotesTimestamp: total supply risks overflowing votes");
 
         _writeCheckpoint(_totalSupplyCheckpoints, _add, amount);
     }

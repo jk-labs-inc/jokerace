@@ -101,7 +101,7 @@ export default function InstructionSection({targetNetwork, price, signer, provid
                 </Collapse>
               </Panel>
               <Panel header="Want to see and/or use the full function list of the Contest or token contracts?" key="2">
-                <h4>Below are fields with which you can search the address of Contest and ERC20Votes types of contracts and access their full function lists</h4>
+                <h4>Below are fields with which you can search the address of Contest and ERC20VotesTimestamp types of contracts and access their full function lists</h4>
                 <div>
                   <Input icon='search' placeholder='Search Contest full contract functions' value={fullContestSearchInput} onChange={(e) => setFullContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
                 </div>
