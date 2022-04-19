@@ -193,7 +193,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         require(_hasSubmitted[msg.sender] != true, "Governor: the same address cannot submit more than one proposal");
         require(_proposalIds.length < maxProposalCount(), "Governor: the max number of proposals have been submitted");
         require(
-            getVotes(msg.sender, block.number - 1) >= proposalThreshold(),
+            getCurrentVotes(msg.sender) >= proposalThreshold(),
             "GovernorCompatibilityBravo: proposer votes below proposal threshold"
         );
 

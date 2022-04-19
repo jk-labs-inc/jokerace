@@ -128,8 +128,8 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Block number used to retrieve user's votes and quorum. As per Compound's Comp and OpenZeppelin's
-     * ERC20Votes, the snapshot is performed at the end of this block. Hence, voting for this proposal starts at the
+     * @dev Timestamp used to retrieve user's votes and quorum. As per Compound's Comp and OpenZeppelin's
+     * ERC20Votes, the snapshot is performed at the end of this block with this timestamp. Hence, voting for this proposal starts at the
      * beginning of the following block.
      */
     function contestSnapshot() public view virtual returns (uint256);
@@ -142,12 +142,21 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:reputation
-     * @dev Voting power of an `account` at a specific `blockNumber`.
+     * @dev Voting power of an `account` at a specific `timestamp`.
      *
      * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
      * multiple), {ERC20Votes} tokens.
      */
-    function getVotes(address account, uint256 blockNumber) public view virtual returns (uint256);
+    function getVotes(address account, uint256 timestamp) public view virtual returns (uint256);
+
+    /**
+     * @notice module:reputation
+     * @dev Voting power of an `account` at the current block.
+     *
+     * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
+     * multiple), {ERC20Votes} tokens.
+     */
+    function getCurrentVotes(address account) public view virtual returns (uint256);
 
     /**
      * @dev Create a new proposal. Vote start {IGovernor-votingDelay} blocks after the proposal is created and ends
