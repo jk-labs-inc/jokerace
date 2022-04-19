@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import { Input, Modal, Form, Button, Divider } from "antd";
+import { Input, Modal, Form, Divider } from "antd";
 
-import DeployedGenericVotesTokenContract from "../contracts/bytecodeAndAbi/GenericVotesToken.sol/GenericVotesToken.json";
+import DeployedGenericVotesTimestampTokenContract from "../contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 
 const { ethers } = require("ethers");
 
-export default function CreateGenericVotesTokenModal({modalVisible, setModalVisible, setResultMessage, signer}) {
+export default function CreateGenericVotesTimestampTokenModal({modalVisible, setModalVisible, setResultMessage, signer}) {
   const [tokenName, setTokenName] = useState("")
   const [tokenSymbol, setTokenSymbol] = useState("")
   const [mintingRecipient, setMintingRecipient] = useState("")
@@ -13,11 +13,11 @@ export default function CreateGenericVotesTokenModal({modalVisible, setModalVisi
 
   const handleOk = async () => {
     // The factory we use for deploying contracts
-    let factory = new ethers.ContractFactory(DeployedGenericVotesTokenContract.abi, DeployedGenericVotesTokenContract.bytecode, signer)
+    let factory = new ethers.ContractFactory(DeployedGenericVotesTimestampTokenContract.abi, DeployedGenericVotesTimestampTokenContract.bytecode, signer)
     console.log(factory)
 
     // Deploy an instance of the contract
-    let contract = await factory.deploy(tokenName, tokenSymbol, mintingRecipient, amountToMint, );
+    let contract = await factory.deploy(tokenName, tokenSymbol, mintingRecipient, amountToMint);
     console.log(contract.address)
     console.log(contract.deployTransaction)
     setResultMessage("The " + tokenName + " token contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)

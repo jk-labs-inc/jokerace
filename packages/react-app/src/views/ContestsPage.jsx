@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Button, Divider, Input, Collapse } from "antd";
+import { Button, Input, Collapse } from "antd";
 
-import { ContestContract, CreateContestModal, CreateGenericVotesTokenModal } from "../components";
+import { ContestContract, CreateContestModal, CreateGenericVotesTimestampTokenModal } from "../components";
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 
 const { Panel } = Collapse;
@@ -61,7 +61,7 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
     <div style={{ border: "1px solid #cccccc", padding: 16, width: 900, margin: "auto", marginTop: 24 }}>
       <Button onClick={() => {window.location.reload();}}>Refresh</Button>
       <Button type="primary" onClick={showTokenModal}>
-        Create Generic Votes Token
+        Create Voting Token
       </Button>
       <Button type="primary" onClick={showContestModal}>
         Create Contest
@@ -72,7 +72,7 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
         setResultMessage={setResultMessage} 
         signer={signer}
       />
-      <CreateGenericVotesTokenModal 
+      <CreateGenericVotesTimestampTokenModal 
         modalVisible={isCreateTokenModalVisible} 
         setModalVisible={setIsCreateTokenModalVisible} 
         setResultMessage={setResultMessage} 

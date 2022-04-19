@@ -39,7 +39,6 @@ const UserVotesAndUsedDisplayVariable = ({
 
   const refresh = useCallback(async () => {
     try {
-      const currentBlock = provider._lastBlockNumber - 10; // Subtract 10 to make sure that the provider isn't too far ahead of RPC/we get a "block not yet mined" error
       const contestStateResponse = await contestStateContractFunction();
       setContestState(contestStateResponse.toString());
       const contestSnapshotResponse = await constestSnapshotContractFunction();
@@ -53,8 +52,9 @@ const UserVotesAndUsedDisplayVariable = ({
       const contestDeadlineResponse = await contestDeadlineContractFunction();
       setContestDeadline(contestDeadlineResponse.toString());
 
-      const blockToCheck = (currentBlock >= contestSnapshotResponse) ? contestSnapshotResponse : currentBlock;
-      const getVotesResponse = await getVotesContractFunction(userAddress, blockToCheck);
+      const delayedCurrentTimestamp = Date.now() - 30; // Delay by 30 seconds to make sure we're looking at a block that has been mined
+      const timestampToCheck = (delayedCurrentTimestamp >= contestSnapshotResponse) ? contestSnapshotResponse : delayedCurrentTimestamp;
+      const getVotesResponse = await getVotesContractFunction(userAddress, timestampToCheck);
       setTotalVotes(getVotesResponse.toString());
       triggerRefresh(false);
     } catch (e) {
@@ -73,7 +73,7 @@ const UserVotesAndUsedDisplayVariable = ({
   return (
     ((Date.now()) >= (parseInt(voteStart) * 1000)) ?
       (<div>
-        <div>You have {totalVotes/1e18} votes as of the snapshot at block {contestSnapshot}.</div>
+        <div>You have {totalVotes/1e18} votes as of the snapshot at {new Date(parseInt(contestSnapshot) * 1000).toUTCString()}.</div>
         <div>You have cast {totalVotesCast/1e18} of them so far.</div>
         <div>You have {totalVotes/1e18 - totalVotesCast/1e18} votes left.</div>
         <Divider />
@@ -84,7 +84,7 @@ const UserVotesAndUsedDisplayVariable = ({
     : 
       (<div>
         <div>You currently have {totalVotes/1e18} votes delegated to you.</div>
-        <div>The snapshot block is {contestSnapshot}.</div>
+        <div>The snapshot time is {new Date(parseInt(contestSnapshot) * 1000).toUTCString()}.</div>
         <div>The proposal threshold for this contest (how many votes one must have to create a proposal) is {proposalThreshold/1e18}.</div>
         <Divider />
         <div>Contest State: {formatContestState(contestState)}</div>
