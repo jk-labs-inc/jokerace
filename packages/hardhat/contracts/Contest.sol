@@ -4,16 +4,16 @@ pragma solidity ^0.8.4;
 import "./governance/Governor.sol";
 import "./governance/extensions/GovernorSettings.sol";
 import "./governance/extensions/GovernorCountingSimple.sol";
-import "./governance/extensions/GovernorVotes.sol";
+import "./governance/extensions/GovernorVotesTimestamp.sol";
 
-contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotes {
-    constructor(string memory _name, IVotes _token, uint64 _initialContestStart, 
+contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotesTimestamp {
+    constructor(string memory _name, IVotesTimestamp _token, uint64 _initialContestStart, 
                 uint256 _initialVotingDelay, uint256 _initialVotingPeriod, uint256 _initialContestSnapshot,
                 uint256 _initialProposalThreshold, uint256 _initialMaxProposalCount)
         Governor(_name)
         GovernorSettings(_initialContestStart, _initialVotingDelay, _initialVotingPeriod,
                         _initialContestSnapshot, _initialProposalThreshold, _initialMaxProposalCount)
-        GovernorVotes(_token)
+        GovernorVotesTimestamp(_token)
     {}
 
     // The following functions are overrides required by Solidity.
@@ -75,7 +75,7 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
     function getVotes(address account, uint256 blockNumber)
         public
         view
-        override(IGovernor, GovernorVotes)
+        override(IGovernor, GovernorVotesTimestamp)
         returns (uint256)
     {
         return super.getVotes(account, blockNumber);
@@ -84,7 +84,7 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
     function getCurrentVotes(address account)
         public
         view
-        override(IGovernor, GovernorVotes)
+        override(IGovernor, GovernorVotesTimestamp)
         returns (uint256)
     {
         return super.getCurrentVotes(account);

@@ -7,7 +7,7 @@ pragma solidity ^0.8.0;
  *
  * _Available since v4.5._
  */
-interface IVotes {
+interface IVotesTimestamp {
     /**
      * @dev Emitted when an account changes their delegate.
      */
