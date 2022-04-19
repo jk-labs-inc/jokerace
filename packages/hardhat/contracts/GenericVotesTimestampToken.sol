@@ -5,7 +5,7 @@ import "./token/ERC20/ERC20.sol";
 import "./token/ERC20/extensions/draft-ERC20Permit.sol";
 import "./token/ERC20/extensions/ERC20VotesTimestamp.sol";
 
-contract GenericVotesToken is ERC20, ERC20Permit, ERC20VotesTimestamp {
+contract GenericVotesTimestampToken is ERC20, ERC20Permit, ERC20VotesTimestamp {
     constructor(string memory _name, string memory _symbol, address _mintRecipient, uint256 _amountToMint) 
         ERC20(_name, _symbol) 
         ERC20Permit(_name)
