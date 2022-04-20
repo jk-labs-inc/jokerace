@@ -64,7 +64,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
         <h4>Creators have the ability to cancel contests and delete proposals in them</h4>
         <Divider />
-        <h4>Tip: A Unix timestamp of what you would like the contest start time to be is required in the Contest Start Time field, you can use <a href="https://www.epochconverter.com/" target="_blank">https://www.epochconverter.com/</a> to get that!</h4>
+        <h4>Tip: A Unix timestamp of what you would like the contest start time and contest snapshot to be is required in the Contest Start Time and Contest Snapshot fields, you can use <a href="https://www.epochconverter.com/" target="_blank">https://www.epochconverter.com/</a> to get that!</h4>
         <Divider />
         <Form.Item
           label="Contest Title"
