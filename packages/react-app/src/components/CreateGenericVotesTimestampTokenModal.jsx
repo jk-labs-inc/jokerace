@@ -37,7 +37,7 @@ export default function CreateGenericVotesTimestampTokenModal({modalVisible, set
   };
 
   return (
-    <Modal title="Create Generic Votes Token" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
+    <Modal title="Create Votes Token (ERC20VotesTimestamp)" visible={modalVisible} onOk={handleOk} onCancel={handleCancel}>
       <Form
         name="basic"
         labelCol={{ span: 8 }}
