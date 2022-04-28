@@ -69,6 +69,15 @@ function App(props) {
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
   const location = useLocation();
 
+  useEffect(() => {
+    setSelectedNetwork(window.localStorage.getItem('currentNetwork'));
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem('currentNetwork', selectedNetwork);
+    console.log("current", window.localStorage.getItem('currentNetwork'))
+  }, [selectedNetwork]);
+
   const targetNetwork = NETWORKS[selectedNetwork];
 
   // 🔭 block explorer URL
