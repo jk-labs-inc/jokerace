@@ -26,7 +26,6 @@ const CsvExportButton = ({
     var propArrayToReturn = [];
     console.log("Number of Proposals: ", idArray.length);
     var tenthPercentile = Math.ceil(idArray.length/10);
-    console.log("tenth percentile:", tenthPercentile)
 
     for (let i = 0; i < idArray.length; i++) {
       var propId = idArray[i];
