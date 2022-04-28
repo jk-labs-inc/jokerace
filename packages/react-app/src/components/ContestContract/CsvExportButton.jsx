@@ -24,6 +24,9 @@ const CsvExportButton = ({
 
   const getPropDictInfo = async (idArray) => {
     var propArrayToReturn = [];
+    console.log("Number of Proposals: ", idArray.length);
+    var tenthPercentile = idArray.length/10;
+
     for (let i = 0; i < idArray.length; i++) {
       var propId = idArray[i];
       var propTotalVotes = await proposalVotesContractFunction(propId);
@@ -63,6 +66,11 @@ const CsvExportButton = ({
 
         propArrayToReturn.push(voterDict);
       }
+
+      if (i%tenthPercentile == 0) {
+        console.log(i + " out of " + idArray.length + " proposals loaded for export!");
+      }
+
     }
 
     return propArrayToReturn;
