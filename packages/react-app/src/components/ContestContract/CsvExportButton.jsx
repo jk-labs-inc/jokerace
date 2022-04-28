@@ -19,13 +19,14 @@ const CsvExportButton = ({
     { label: "TotalVotes", key: "totalVotes" },
     { label: "Voter", key: "voter" },
     { label: "Votes", key: "votes" },
-    { label: "PercentOfTotalVotes", key: "percentOfTotalVotes" }
+    { label: "PercentOfSubmissionVotes", key: "percentOfSubmissionVotes" }
   ];
 
   const getPropDictInfo = async (idArray) => {
     var propArrayToReturn = [];
     console.log("Number of Proposals: ", idArray.length);
-    var tenthPercentile = idArray.length/10;
+    var tenthPercentile = Math.ceil(idArray.length/10);
+    console.log("tenth percentile:", tenthPercentile)
 
     for (let i = 0; i < idArray.length; i++) {
       var propId = idArray[i];
@@ -43,7 +44,7 @@ const CsvExportButton = ({
           "totalVotes": propTotalVotes/1e18,
           "voter": "No voters",
           "votes": "No votes",
-          "percentOfTotalVotes": 0
+          "percentOfSubmissionVotes": 0
         }
 
         propArrayToReturn.push(noVoterDict);
@@ -61,7 +62,7 @@ const CsvExportButton = ({
           "totalVotes": propTotalVotes/1e18,
           "voter": address,
           "votes": addressPropVote/1e18,
-          "percentOfTotalVotes": (addressPropVote)/propTotalVotes
+          "percentOfSubmissionVotes": (addressPropVote)/propTotalVotes
         }
 
         propArrayToReturn.push(voterDict);
