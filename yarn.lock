@@ -18168,6 +18168,11 @@ react-css-theme-switcher@^0.2.2:
   resolved "https://registry.yarnpkg.com/react-css-theme-switcher/-/react-css-theme-switcher-0.2.3.tgz#1de02aa5624790ec44ff51824a142de35ca008f4"
   integrity sha512-sWzbT8IqG8Me7zeLAuoh6q6AU+AQunR7pV4WULNB9oPCCdzYLMCWVhv/I2Burf2DG3HYYcb+XCcyHTQsevQxQw==
 
+react-csv@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/react-csv/-/react-csv-2.2.2.tgz#5bbf0d72a846412221a14880f294da9d6def9bfb"
+  integrity sha512-RG5hOcZKZFigIGE8LxIEV/OgS1vigFQT4EkaHeKgyuCbUAu9Nbd/1RYq++bJcJJ9VOqO/n9TZRADsXNDR4VEpw==
+
 react-date-picker@^8.4.0:
   version "8.4.0"
   resolved "https://registry.yarnpkg.com/react-date-picker/-/react-date-picker-8.4.0.tgz#2d166bbaa59b08ec8686f671fde553458d19f8c8"

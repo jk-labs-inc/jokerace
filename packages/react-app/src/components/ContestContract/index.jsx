@@ -6,6 +6,7 @@ import AllProposalIdsDisplayVariable from "./AllProposalIdsDisplayVariable";
 import UserVotesAndUsedDisplayVariable from "./UserVotesAndUsedDisplayVariable";
 import ContestAddressesInfoDisplayVariable from "./ContestAddressesInfoDisplayVariable";
 import ContestNameDisplayVariable from "./ContestNameDisplayVariable";
+import CsvExportButton from "./CsvExportButton";
 
 const { Panel } = Collapse;
 
@@ -105,6 +106,14 @@ export default function ContestContract({
         refreshRequired={refreshRequired}
         provider={provider}
         triggerRefresh={triggerRefresh}
+      />
+      <Divider />
+      <CsvExportButton
+        getAllProposalIdsContractFunction={contract[getAllProposalIdsFuncInfo[0]]}
+        getProposalContractFunction={contract[getProposalFuncInfo[0]]}
+        proposalVotesContractFunction={contract[proposalVotesFuncInfo[0]]}
+        addressesVotedContractFunction={contract[addressesVotedFuncInfo[0]]}
+        proposalAddressVotesContractFunction={contract[proposalAddressVotesFuncInfo[0]]}
       />
       <Divider />
       <ProposingFunctionForm 
