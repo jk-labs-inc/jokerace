@@ -9,10 +9,10 @@ import "./governance/extensions/GovernorVotesTimestamp.sol";
 contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotesTimestamp {
     constructor(string memory _name, IVotesTimestamp _token, uint64 _initialContestStart, 
                 uint256 _initialVotingDelay, uint256 _initialVotingPeriod, uint256 _initialContestSnapshot,
-                uint256 _initialProposalThreshold, uint256 _initialMaxProposalCount)
+                uint256 _initialProposalThreshold, uint256 _initialNumAllowedProposalSubmissions, uint256 _initialMaxProposalCount)
         Governor(_name)
         GovernorSettings(_initialContestStart, _initialVotingDelay, _initialVotingPeriod,
-                        _initialContestSnapshot, _initialProposalThreshold, _initialMaxProposalCount)
+                        _initialContestSnapshot, _initialProposalThreshold, _initialNumAllowedProposalSubmissions, _initialMaxProposalCount)
         GovernorVotesTimestamp(_token)
     {}
 
@@ -52,6 +52,15 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         returns (uint256)
     {
         return super.proposalThreshold();
+    }
+
+    function numAllowedProposalSubmissions()
+        public
+        view
+        override(Governor, GovernorSettings)
+        returns (uint256)
+    {
+        return super.numAllowedProposalSubmissions();
     }
 
     function maxProposalCount()
