@@ -38,7 +38,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     string private _name;
     bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
-    mapping(address => bool) private _hasSubmitted;
+    mapping(address => uint256) private _numSubmissions;
 
 
     /**
@@ -157,6 +157,13 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
+     * @dev _"The number of proposals that a proposer who meets the proposalThreshold can submit for this contest"_.
+     */
+    function numAllowedProposalSubmissions() public view virtual returns (uint256) {
+        return 1;
+    }
+
+    /**
      * @dev Max number of proposals allowed in this contest
      */
     function maxProposalCount() public view virtual returns (uint256) {
@@ -168,6 +175,13 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
      */
     function getProposal(uint256 proposalId) public view virtual returns (ProposalCore memory) {
         return _proposals[proposalId];
+    }
+
+    /**
+     * @dev Get the number of proposal submissions for a given address.
+     */
+    function getNumSubmissions(address account) public view virtual returns (uint256) {
+        return _numSubmissions[account];
     }
 
     /**
@@ -190,7 +204,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         string memory proposalDescription
     ) public virtual override returns (uint256) {
         require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
-        require(_hasSubmitted[msg.sender] != true, "Governor: the same address cannot submit more than one proposal");
+        require(_numSubmissions[msg.sender] < numAllowedProposalSubmissions(), "Governor: the same address cannot submit more than one proposal");
         require(_proposalIds.length < maxProposalCount(), "Governor: the max number of proposals have been submitted");
         require(
             getCurrentVotes(msg.sender) >= proposalThreshold(),
@@ -204,7 +218,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
 
         _proposalIds.push(proposalId);
         _proposals[proposalId] = ProposalCore({author: msg.sender, description: proposalDescription, exists: true});
-        _hasSubmitted[msg.sender] = true;
+        _numSubmissions[msg.sender] += 1;
 
         emit ProposalCreated(
             proposalId,

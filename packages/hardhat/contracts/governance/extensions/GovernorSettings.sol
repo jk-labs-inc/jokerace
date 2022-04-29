@@ -17,6 +17,7 @@ abstract contract GovernorSettings is Governor {
     uint256 private _votingPeriod;
     uint256 private _contestSnapshot;
     uint256 private _proposalThreshold;
+    uint256 private _numAllowedProposalSubmissions;
     uint256 private _maxProposalCount;
     address private _creator;
 
@@ -25,6 +26,7 @@ abstract contract GovernorSettings is Governor {
     event VotingPeriodSet(uint256 oldVotingPeriod, uint256 newVotingPeriod);
     event ContestSnapshotSet(uint256 oldContestSnapshot, uint256 newContestSnapshot);
     event ProposalThresholdSet(uint256 oldProposalThreshold, uint256 newProposalThreshold);
+    event NumAllowedProposalSubmissionsSet(uint256 oldNumAllowedProposalSubmissions, uint256 newNumAllowedProposalSubmissions);
     event MaxProposalCountSet(uint256 oldMaxProposalCount, uint256 newMaxProposalCount);
     event CreatorSet(address oldCreator, address newCreator);
 
@@ -37,6 +39,7 @@ abstract contract GovernorSettings is Governor {
         uint256 initialVotingPeriod,
         uint256 initialContestSnapshot,
         uint256 initialProposalThreshold,
+        uint256 initialNumAllowedProposalSubmissions,
         uint256 initialMaxProposalCount
     ) {
         _setContestStart(initialContestStart);
@@ -44,6 +47,7 @@ abstract contract GovernorSettings is Governor {
         _setVotingPeriod(initialVotingPeriod);
         _setContestSnapshot(initialContestSnapshot);
         _setProposalThreshold(initialProposalThreshold);
+        _setNumAllowedProposalSubmissions(initialNumAllowedProposalSubmissions);
         _setMaxProposalCount(initialMaxProposalCount);
         _setCreator(msg.sender);
     }
@@ -81,6 +85,13 @@ abstract contract GovernorSettings is Governor {
      */
     function proposalThreshold() public view virtual override returns (uint256) {
         return _proposalThreshold;
+    }
+
+    /**
+     * @dev See {Governor-numAllowedProposalSubmissions}.
+     */
+    function numAllowedProposalSubmissions() public view virtual override returns (uint256) {
+        return _numAllowedProposalSubmissions;
     }
 
     /**
@@ -147,6 +158,16 @@ abstract contract GovernorSettings is Governor {
     function _setProposalThreshold(uint256 newProposalThreshold) internal virtual {
         emit ProposalThresholdSet(_proposalThreshold, newProposalThreshold);
         _proposalThreshold = newProposalThreshold;
+    }
+
+    /**
+     * @dev Internal setter for the number of allowed proposal submissions per permissioned address.
+     *
+     * Emits a {NumAllowedProposalSubmissionsSet} event.
+     */
+    function _setNumAllowedProposalSubmissions(uint256 newNumAllowedProposalSubmissions) internal virtual {
+        emit NumAllowedProposalSubmissionsSet(_numAllowedProposalSubmissions, newNumAllowedProposalSubmissions);
+        _numAllowedProposalSubmissions = newNumAllowedProposalSubmissions;
     }
 
     /**
