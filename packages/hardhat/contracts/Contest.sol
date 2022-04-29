@@ -7,12 +7,17 @@ import "./governance/extensions/GovernorCountingSimple.sol";
 import "./governance/extensions/GovernorVotesTimestamp.sol";
 
 contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotesTimestamp {
-    constructor(string memory _name, IVotesTimestamp _token, uint64 _initialContestStart, 
-                uint256 _initialVotingDelay, uint256 _initialVotingPeriod, uint256 _initialContestSnapshot,
-                uint256 _initialProposalThreshold, uint256 _initialNumAllowedProposalSubmissions, uint256 _initialMaxProposalCount)
+    constructor(string memory _name, IVotesTimestamp _token, uint256[] memory _constructorIntParams)
         Governor(_name)
-        GovernorSettings(_initialContestStart, _initialVotingDelay, _initialVotingPeriod,
-                        _initialContestSnapshot, _initialProposalThreshold, _initialNumAllowedProposalSubmissions, _initialMaxProposalCount)
+        GovernorSettings(
+            _constructorIntParams[0], // _initialContestStart
+            _constructorIntParams[1], // _initialVotingDelay, 
+            _constructorIntParams[2], // _initialVotingPeriod, 
+            _constructorIntParams[3], // _initialContestSnapshot,
+            _constructorIntParams[4], // _initialProposalThreshold, 
+            _constructorIntParams[5], // _initialNumAllowedProposalSubmissions, 
+            _constructorIntParams[6]  // _initialMaxProposalCount
+        )
         GovernorVotesTimestamp(_token)
     {}
 
