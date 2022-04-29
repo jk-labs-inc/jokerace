@@ -62,7 +62,6 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         <h4>Proposal Threshold: the number of delegated votes an address must have in order to submit a proposal</h4>
         <h4>Number of Allowed Proposal Submissions: the number of submissions that addresses that meet the proposal threshold can propose</h4>
         <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
-        <h4>Currently only one proposal submission per eligible address is allowed</h4>
         <h4>Creators have the ability to cancel contests and delete proposals in them</h4>
         <Divider />
         <h4>Tip: A Unix timestamp of what you would like the contest start time to be is required in the Contest Start Time field, you can use <a href="https://www.epochconverter.com/" target="_blank">https://www.epochconverter.com/</a> to get that!</h4>
