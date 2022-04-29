@@ -13,6 +13,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
   const [votingPeriod, setVotingPeriod] = useState("")
   const [contestSnapshot, setContestSnapshot] = useState("")
   const [proposalThreshold, setProposalThreshold] = useState("")
+  const [numAllowedProposalSubmissions, setNumAllowedProposalSubmissions] = useState("")
   const [maxProposalCount, setMaxProposalCount] = useState("")
 
   const handleOk = async () => {
@@ -20,9 +21,11 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
     let factory = new ethers.ContractFactory(DeployedContestContract.abi, DeployedContestContract.bytecode, signer)
     console.log(factory)
 
+    var intContestParameters = [contestStart, votingDelay, votingPeriod, 
+      contestSnapshot, proposalThreshold, numAllowedProposalSubmissions, maxProposalCount];
+
     // Deploy an instance of the contract
-    let contract = await factory.deploy(contestTitle, votingTokenAddress, contestStart, votingDelay, votingPeriod, 
-                                        contestSnapshot, proposalThreshold, maxProposalCount);
+    let contract = await factory.deploy(contestTitle, votingTokenAddress, intContestParameters);
     console.log(contract.address)
     console.log(contract.deployTransaction)
     setResultMessage("The " + contestTitle + " contest contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)
@@ -57,6 +60,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         <h4>Voting Period: how long after the proposal open period closes that people can vote</h4>
         <h4>Contest Snapshot: when the snapshot of delegated votes will be taken for voting</h4>
         <h4>Proposal Threshold: the number of delegated votes an address must have in order to submit a proposal</h4>
+        <h4>Number of Allowed Proposal Submissions: the number of submissions that addresses that meet the proposal threshold can propose</h4>
         <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
         <h4>Currently only one proposal submission per eligible address is allowed</h4>
         <h4>Creators have the ability to cancel contests and delete proposals in them</h4>
@@ -111,6 +115,13 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           rules={[{ required: true, message: 'Please input your proposal threshold!' }]}
         >
           <Input placeholder='Proposal Threshold' onChange={(e) => setProposalThreshold(ethers.utils.parseEther(e.target.value))} />
+        </Form.Item>
+        <Form.Item
+          label="Allowed Proposal Submissions"
+          name="numberofallowedproposalsubmissions"
+          rules={[{ required: true, message: 'Please input your number of allowed proposal submissions per address!' }]}
+        >
+          <Input placeholder='Number of Allowed Proposal Submissions' onChange={(e) => setNumAllowedProposalSubmissions(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="Max Proposal Count"
