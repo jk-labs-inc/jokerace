@@ -204,7 +204,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         string memory proposalDescription
     ) public virtual override returns (uint256) {
         require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
-        require(_numSubmissions[msg.sender] < numAllowedProposalSubmissions(), "Governor: the same address cannot submit more than one proposal");
+        require(_numSubmissions[msg.sender] < numAllowedProposalSubmissions(), "Governor: the same cannot submit more than the numAllowedProposalSubmissions for this contest");
         require(_proposalIds.length < maxProposalCount(), "Governor: the max number of proposals have been submitted");
         require(
             getCurrentVotes(msg.sender) >= proposalThreshold(),
