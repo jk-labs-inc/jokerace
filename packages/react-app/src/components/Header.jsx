@@ -7,7 +7,7 @@ export default function Header() {
   return (
     <a href="https://github.com/seanmc9/JokeDaoV2Dev" target="_blank" rel="noopener noreferrer">
       <PageHeader
-        title="🃏 Joker contests"
+        title="🃏 Joker Contests"
         subTitle="open source, on-chain, collaborative decision-making platform"
         style={{ cursor: "pointer" }}
       />
