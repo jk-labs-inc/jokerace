@@ -5,7 +5,7 @@ Check out the live site at [jokedao.io](https://jokedao.io)!
 
 Prerequisites: [Node (v16 LTS)](https://nodejs.org/en/download/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/) and [Git](https://git-scm.com/downloads)
 
-> clone/fork jokedao contests:
+> clone/fork Joker Contests:
 
 ```bash
 git clone https://github.com/seanmc9/JokeDaoV2Dev.git
