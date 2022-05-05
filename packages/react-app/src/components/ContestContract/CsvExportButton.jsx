@@ -12,6 +12,8 @@ const CsvExportButton = ({
           }) => {
   const [propInfo, setPropInfo] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState("");
 
   const propInfoheaders = [
     { label: "ProposalId", key: "proposalId" },
@@ -96,21 +98,26 @@ const CsvExportButton = ({
       }
 
       if (i%tenthPercentile == 0) {
-        console.log(i + " out of " + idArray.length + " proposals loaded for export!");
+        setLoadingMessage("Loading: " + i + " out of " + idArray.length + " proposals loaded for export" + (i == 0 ? " (the first couple proposals especially can take a while sometimes - this should update in 30 seconds or so if you have less than 100 proposals though)" : ""));
+        console.log(loadingMessage);
       }
 
     }
 
+    setLoadingMessage("Completed: " + idArray.length + " out of " + idArray.length + " proposals loaded for export - ready to export!")
     return propArrayToReturn;
+
   }
 
   const getPropInfo = async () => {
     try {
       console.log("Export load started")
       setDataLoaded(false)
+      setDataLoading(true)
       const idsResp = await getAllProposalIdsContractFunction();
       const allProposalsResp = await getPropDictInfo(idsResp);
       setPropInfo(allProposalsResp);
+      setDataLoading(false)
       setDataLoaded(true)
       console.log("Export load finished - ready to export")
     } catch (e) {
@@ -122,6 +129,13 @@ const CsvExportButton = ({
     <div>
       <div>
         <Button onClick={async () => await getPropInfo()}>Load Proposal and Voter Data For Export</Button>
+      </div>
+      <div>
+        { 
+          (dataLoaded || dataLoading) ?
+            loadingMessage
+            : ""
+        }
       </div>
       <div>
         { dataLoaded ?
