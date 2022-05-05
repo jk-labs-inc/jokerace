@@ -114,6 +114,7 @@ export default function ContestContract({
         proposalVotesContractFunction={contract[proposalVotesFuncInfo[0]]}
         addressesVotedContractFunction={contract[addressesVotedFuncInfo[0]]}
         proposalAddressVotesContractFunction={contract[proposalAddressVotesFuncInfo[0]]}
+        mainnetProvider={mainnetProvider}
       />
       <Divider />
       <ProposingFunctionForm 

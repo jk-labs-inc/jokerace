@@ -3,14 +3,13 @@ import { Button } from "antd";
 import { CSVLink, CSVDownload } from "react-csv";
 import { useLookupAddress } from "eth-hooks/dapps/ens";
 
-const isENS = (address = "") => address.endsWith(".eth") || address.endsWith(".xyz");
-
 const CsvExportButton = ({ 
             getAllProposalIdsContractFunction, 
             getProposalContractFunction, 
             proposalVotesContractFunction,
             addressesVotedContractFunction,
-            proposalAddressVotesContractFunction
+            proposalAddressVotesContractFunction,
+            mainnetProvider
           }) => {
   const [propInfo, setPropInfo] = useState([]);
   const [dataLoaded, setDataLoaded] = useState(false);
@@ -23,8 +22,10 @@ const CsvExportButton = ({
     { label: "Voter", key: "voter" },
     { label: "Votes", key: "votes" },
     { label: "PercentOfSubmissionVotes", key: "percentOfSubmissionVotes" },
-    { label: "HasEnsReverseRecordSet", key: "hasEnsReverseRecordSet" },
-    { label: "EnsReverseRecordIfSet", key: "ensReverseRecordIfSet" }
+    { label: "ProposerHasEnsReverseRecordSet", key: "proposerHasEnsReverseRecordSet" },
+    { label: "ProposerEnsReverseRecordIfSet", key: "proposerEnsReverseRecordIfSet" },
+    { label: "VoterHasEnsReverseRecordSet", key: "voterHasEnsReverseRecordSet" },
+    { label: "VoterEnsReverseRecordIfSet", key: "voterEnsReverseRecordIfSet" }
   ];
 
   const getPropDictInfo = async (idArray) => {
@@ -37,20 +38,25 @@ const CsvExportButton = ({
       var propTotalVotes = await proposalVotesContractFunction(propId);
       var propContent = await getProposalContractFunction(propId);
 
+      var proposerAddress = propContent[0];
+      var proposerEnsLookupResult = await mainnetProvider.lookupAddress(proposerAddress);
+
       var addressesVoted = await addressesVotedContractFunction(propId);
 
       if (addressesVoted.length == 0) {
 
         var noVoterDict = {
           "proposalId": propId,
-          "author": propContent[0],
+          "author": proposerAddress,
           "proposalContent": propContent[1],
           "totalVotes": propTotalVotes/1e18,
           "voter": "No voters",
           "votes": "No votes",
           "percentOfSubmissionVotes": 0,
-          "hasEnsReverseRecordSet": "No voters",
-          "ensReverseRecordIfSet": ""
+          "proposerHasEnsReverseRecordSet": proposerEnsLookupResult == null ? false : true,
+          "proposerEnsReverseRecordIfSet": proposerEnsLookupResult == null ? "" : proposerEnsLookupResult,
+          "voterHasEnsReverseRecordSet": "No voters",
+          "voterEnsReverseRecordIfSet": ""
         }
 
         propArrayToReturn.push(noVoterDict);
@@ -60,7 +66,7 @@ const CsvExportButton = ({
         
         var address = addressesVoted[j]
         var addressPropVote = await proposalAddressVotesContractFunction(propId, address);
-        var ensLookupResult = useLookupAddress(address);
+        var voterEnsLookupResult = await mainnetProvider.lookupAddress(address);
         
         var voterDict = {
           "proposalId": propId,
@@ -70,8 +76,10 @@ const CsvExportButton = ({
           "voter": address,
           "votes": addressPropVote/1e18,
           "percentOfSubmissionVotes": (addressPropVote)/propTotalVotes,
-          "hasEnsReverseRecordSet": isENS(ensLookupResult) ? true : false,
-          "ensReverseRecordIfSet": isENS(ensLookupResult) ? ensLookupResult : ""
+          "proposerHasEnsReverseRecordSet": proposerEnsLookupResult == null ? false : true,
+          "proposerEnsReverseRecordIfSet": proposerEnsLookupResult == null ? "" : proposerEnsLookupResult,
+          "voterHasEnsReverseRecordSet": voterEnsLookupResult == null ? false : true,
+          "voterEnsReverseRecordIfSet": voterEnsLookupResult == null ? "" : voterEnsLookupResult
         }
 
         propArrayToReturn.push(voterDict);
