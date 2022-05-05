@@ -33,18 +33,23 @@ const CsvExportButton = ({
     console.log("Number of Proposals: ", idArray.length);
     var tenthPercentile = Math.ceil(idArray.length/10);
 
+    var ensNamesMap = new Map();
+
     for (let i = 0; i < idArray.length; i++) {
       var propId = idArray[i];
       var propTotalVotes = await proposalVotesContractFunction(propId);
       var propContent = await getProposalContractFunction(propId);
-
-      var proposerAddress = propContent[0];
-      var proposerEnsLookupResult = await mainnetProvider.lookupAddress(proposerAddress);
-
       var addressesVoted = await addressesVotedContractFunction(propId);
 
-      if (addressesVoted.length == 0) {
+      var proposerAddress = propContent[0];
+      if (!ensNamesMap.has(proposerAddress)) { // Keep a cache of ENS resolutions
+        var ensLookupResult = await mainnetProvider.lookupAddress(proposerAddress);
+        var checkedResult = ensLookupResult == null ? "No reverse record" : ensLookupResult;
+        ensNamesMap.set(proposerAddress, checkedResult);
+      }
+      var proposerEnsLookupResult = ensNamesMap.get(proposerAddress);
 
+      if (addressesVoted.length == 0) {
         var noVoterDict = {
           "proposalId": propId,
           "author": proposerAddress,
@@ -53,8 +58,8 @@ const CsvExportButton = ({
           "voter": "No voters",
           "votes": "No votes",
           "percentOfSubmissionVotes": 0,
-          "proposerHasEnsReverseRecordSet": proposerEnsLookupResult == null ? false : true,
-          "proposerEnsReverseRecordIfSet": proposerEnsLookupResult == null ? "" : proposerEnsLookupResult,
+          "proposerHasEnsReverseRecordSet": proposerEnsLookupResult == "No reverse record" ? false : true,
+          "proposerEnsReverseRecordIfSet": proposerEnsLookupResult == "No reverse record" ? "" : proposerEnsLookupResult,
           "voterHasEnsReverseRecordSet": "No voters",
           "voterEnsReverseRecordIfSet": ""
         }
@@ -66,7 +71,13 @@ const CsvExportButton = ({
         
         var address = addressesVoted[j]
         var addressPropVote = await proposalAddressVotesContractFunction(propId, address);
-        var voterEnsLookupResult = await mainnetProvider.lookupAddress(address);
+
+        if (!ensNamesMap.has(address)) { // Keep a cache of ENS resolutions
+          var ensLookupResult = await mainnetProvider.lookupAddress(address);
+          var checkedResult = ensLookupResult == null ? "No reverse record" : ensLookupResult;
+          ensNamesMap.set(address, checkedResult);
+        }
+        var voterEnsLookupResult = ensNamesMap.get(address);
         
         var voterDict = {
           "proposalId": propId,
@@ -76,10 +87,10 @@ const CsvExportButton = ({
           "voter": address,
           "votes": addressPropVote/1e18,
           "percentOfSubmissionVotes": (addressPropVote)/propTotalVotes,
-          "proposerHasEnsReverseRecordSet": proposerEnsLookupResult == null ? false : true,
-          "proposerEnsReverseRecordIfSet": proposerEnsLookupResult == null ? "" : proposerEnsLookupResult,
-          "voterHasEnsReverseRecordSet": voterEnsLookupResult == null ? false : true,
-          "voterEnsReverseRecordIfSet": voterEnsLookupResult == null ? "" : voterEnsLookupResult
+          "proposerHasEnsReverseRecordSet": proposerEnsLookupResult == "No reverse record" ? false : true,
+          "proposerEnsReverseRecordIfSet": proposerEnsLookupResult == "No reverse record" ? "" : proposerEnsLookupResult,
+          "voterHasEnsReverseRecordSet": voterEnsLookupResult == "No reverse record" ? false : true,
+          "voterEnsReverseRecordIfSet": voterEnsLookupResult == "No reverse record" ? "" : voterEnsLookupResult
         }
 
         propArrayToReturn.push(voterDict);
