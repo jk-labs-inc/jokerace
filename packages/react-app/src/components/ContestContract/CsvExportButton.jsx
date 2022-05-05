@@ -3,6 +3,8 @@ import { Button } from "antd";
 import { CSVLink, CSVDownload } from "react-csv";
 import { useLookupAddress } from "eth-hooks/dapps/ens";
 
+const isENS = (address = "") => address.endsWith(".eth") || address.endsWith(".xyz");
+
 const CsvExportButton = ({ 
             getAllProposalIdsContractFunction, 
             getProposalContractFunction, 
@@ -20,7 +22,9 @@ const CsvExportButton = ({
     { label: "TotalVotes", key: "totalVotes" },
     { label: "Voter", key: "voter" },
     { label: "Votes", key: "votes" },
-    { label: "PercentOfSubmissionVotes", key: "percentOfSubmissionVotes" }
+    { label: "PercentOfSubmissionVotes", key: "percentOfSubmissionVotes" },
+    { label: "HasEnsReverseRecordSet", key: "hasEnsReverseRecordSet" },
+    { label: "EnsReverseRecordIfSet", key: "ensReverseRecordIfSet" }
   ];
 
   const getPropDictInfo = async (idArray) => {
@@ -44,7 +48,9 @@ const CsvExportButton = ({
           "totalVotes": propTotalVotes/1e18,
           "voter": "No voters",
           "votes": "No votes",
-          "percentOfSubmissionVotes": 0
+          "percentOfSubmissionVotes": 0,
+          "hasEnsReverseRecordSet": "No voters",
+          "ensReverseRecordIfSet": ""
         }
 
         propArrayToReturn.push(noVoterDict);
@@ -54,6 +60,7 @@ const CsvExportButton = ({
         
         var address = addressesVoted[j]
         var addressPropVote = await proposalAddressVotesContractFunction(propId, address);
+        var ensLookupResult = useLookupAddress(address);
         
         var voterDict = {
           "proposalId": propId,
@@ -62,7 +69,9 @@ const CsvExportButton = ({
           "totalVotes": propTotalVotes/1e18,
           "voter": address,
           "votes": addressPropVote/1e18,
-          "percentOfSubmissionVotes": (addressPropVote)/propTotalVotes
+          "percentOfSubmissionVotes": (addressPropVote)/propTotalVotes,
+          "hasEnsReverseRecordSet": isENS(ensLookupResult) ? true : false,
+          "ensReverseRecordIfSet": isENS(ensLookupResult) ? ensLookupResult : ""
         }
 
         propArrayToReturn.push(voterDict);
