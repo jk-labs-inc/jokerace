@@ -99,7 +99,7 @@ const CsvExportButton = ({
 
       if (i%tenthPercentile == 0) {
         setLoadingMessage("Loading: " + i + " out of " + idArray.length + " proposals loaded for export" + (i == 0 ? " (the first couple proposals especially can take a while sometimes - this should update in 30 seconds or so if you have less than 100 proposals though)" : ""));
-        console.log(loadingMessage);
+        console.log("Loading: " + i + " out of " + idArray.length + " proposals loaded for export" + (i == 0 ? " (the first couple proposals especially can take a while sometimes - this should update in 30 seconds or so if you have less than 100 proposals though)" : ""));
       }
 
     }
