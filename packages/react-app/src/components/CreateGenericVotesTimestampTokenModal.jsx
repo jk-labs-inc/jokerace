@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Input, Modal, Form, Divider } from "antd";
+import { Input, Modal, Form, Divider, Checkbox } from "antd";
 
 import DeployedGenericVotesTimestampTokenContract from "../contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 
@@ -10,6 +10,7 @@ export default function CreateGenericVotesTimestampTokenModal({modalVisible, set
   const [tokenSymbol, setTokenSymbol] = useState("")
   const [mintingRecipient, setMintingRecipient] = useState("")
   const [amountToMint, setAmountToMint] = useState("")
+  const [isNontransferable, setIsNontransferable] = useState(false)
 
   const handleOk = async () => {
     // The factory we use for deploying contracts
@@ -17,7 +18,7 @@ export default function CreateGenericVotesTimestampTokenModal({modalVisible, set
     console.log(factory)
 
     // Deploy an instance of the contract
-    let contract = await factory.deploy(tokenName, tokenSymbol, mintingRecipient, amountToMint);
+    let contract = await factory.deploy(tokenName, tokenSymbol, mintingRecipient, amountToMint, isNontransferable);
     console.log(contract.address)
     console.log(contract.deployTransaction)
     setResultMessage("The " + tokenName + " token contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)
@@ -80,6 +81,12 @@ export default function CreateGenericVotesTimestampTokenModal({modalVisible, set
           rules={[{ required: true, message: 'Please input the amount of tokens to mint to the recipient!' }]}
         >
           <Input placeholder='Amount To Mint' onChange={(e) => setAmountToMint(ethers.utils.parseEther(e.target.value))} />
+        </Form.Item>
+        <Form.Item
+          label="Non-transferable?"
+          name="nontransferable"
+        >
+          <Checkbox onChange={(e) => setIsNontransferable(e.target.checked)} />
         </Form.Item>
       </Form>
     </Modal>
