@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Input, Modal, Form, Divider } from "antd";
+import { Input, Modal, Form, Divider, Checkbox } from "antd";
 
 import DeployedERC20VotesTimestampWrapperContract from "../contracts/bytecodeAndAbi/ERC20VotesTimestampWrapper.sol/ERC20VotesTimestampWrapper.json";
 
@@ -9,6 +9,7 @@ export default function CreateERC20VotesTimestampWrapperModal({modalVisible, set
   const [tokenName, setTokenName] = useState("")
   const [tokenSymbol, setTokenSymbol] = useState("")
   const [tokenAddress, setTokenAddress] = useState("")
+  const [isNontransferable, setIsNontransferable] = useState(false)
 
   const handleOk = async () => {
     // The factory we use for deploying contracts
@@ -16,7 +17,7 @@ export default function CreateERC20VotesTimestampWrapperModal({modalVisible, set
     console.log(factory)
 
     // Deploy an instance of the contract
-    let contract = await factory.deploy(tokenAddress, tokenName, tokenSymbol);
+    let contract = await factory.deploy(tokenAddress, tokenName, tokenSymbol, isNontransferable);
     console.log(contract.address)
     console.log(contract.deployTransaction)
     setResultMessage("The " + tokenName + " contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)
@@ -70,6 +71,12 @@ export default function CreateERC20VotesTimestampWrapperModal({modalVisible, set
           rules={[{ required: true, message: 'Please input your token address!' }]}
         >
           <Input placeholder='Token Address' onChange={(e) => setTokenAddress(e.target.value.trim().replace(/['"]+/g, ''))} />
+        </Form.Item>
+        <Form.Item
+          label="Non-transferable?"
+          name="nontransferable"
+        >
+          <Checkbox onChange={(e) => setIsNontransferable(e.target.checked)} />
         </Form.Item>
       </Form>
     </Modal>
