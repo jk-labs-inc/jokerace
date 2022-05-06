@@ -37,6 +37,13 @@ abstract contract ERC20VotesTimestamp is IVotesTimestamp, ERC20Permit {
     mapping(address => Checkpoint[]) private _checkpoints;
     Checkpoint[] private _totalSupplyCheckpoints;
 
+    address public _minter;
+    bool public _nontransferable;
+
+    constructor(bool nontransferable_) {
+        _nontransferable = nontransferable_;
+    }
+
     /**
      * @dev Get the `pos`-th checkpoint for `account`.
      */
@@ -166,6 +173,8 @@ abstract contract ERC20VotesTimestamp is IVotesTimestamp, ERC20Permit {
         super._mint(account, amount);
         require(totalSupply() <= _maxSupply(), "ERC20VotesTimestamp: total supply risks overflowing votes");
 
+        _minter = account;
+
         _writeCheckpoint(_totalSupplyCheckpoints, _add, amount);
     }
 
@@ -178,6 +187,24 @@ abstract contract ERC20VotesTimestamp is IVotesTimestamp, ERC20Permit {
         _writeCheckpoint(_totalSupplyCheckpoints, _subtract, amount);
     }
 
+    /**
+     * @dev Move voting power when tokens are transferred.
+     *
+     * Emits a {DelegateVotesChanged} event.
+     */
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal virtual override {
+        super._beforeTokenTransfer(from, to, amount);
+
+        if (_nontransferable) {
+            require(from == _minter || allowance(_minter, from) > 0 || to == address(0) || from == address(0),
+                "ERC20VotesTimestamp: token is non-transferable unless from minter or an address approved by the minter");
+        }
+    }
+    
     /**
      * @dev Move voting power when tokens are transferred.
      *
