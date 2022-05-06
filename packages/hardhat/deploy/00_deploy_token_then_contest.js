@@ -20,7 +20,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await deploy("GenericVotesTimestampToken", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: ["joketest", "JOKE", "0xd698e31229aB86334924ed9DFfd096a71C686900", ethers.utils.parseEther("10000")],
+    args: ["joketest", "JOKE", "0xd698e31229aB86334924ed9DFfd096a71C686900", ethers.utils.parseEther("10000"), true],
     log: true,
     waitConfirmations: 5,
   });
@@ -38,7 +38,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await deploy("ERC20VotesTimestampWrapper", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: ["0x59e36d05E47BF17Eb5753aA1F04b2164f1606A45", "Wrapped JOKE", "wJOKE"],
+    args: ["0x59e36d05E47BF17Eb5753aA1F04b2164f1606A45", "Wrapped JOKE", "wJOKE", true],
     log: true,
     waitConfirmations: 5,
   });
