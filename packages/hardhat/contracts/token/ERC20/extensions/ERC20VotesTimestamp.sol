@@ -200,7 +200,7 @@ abstract contract ERC20VotesTimestamp is IVotesTimestamp, ERC20Permit {
         super._beforeTokenTransfer(from, to, amount);
 
         if (_nontransferable) {
-            require(from == _minter || allowance(_minter, from) > 0 || to == address(0) || from == address(0),
+            require(from == _minter || allowance(_minter, from) > 0 || from == address(0),
                 "ERC20VotesTimestamp: token is non-transferable unless from minter or an address approved by the minter");
         }
     }
