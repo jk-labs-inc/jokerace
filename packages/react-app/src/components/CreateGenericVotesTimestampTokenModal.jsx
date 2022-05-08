@@ -52,6 +52,7 @@ export default function CreateGenericVotesTimestampTokenModal({modalVisible, set
         <h4>Token Symbol: the symbol (ie. JOKE) you would like your token to have</h4>
         <h4>Minting Recipient: the address that the created tokens will be minted to</h4>
         <h4>Amount To Mint: the number of tokens to mint to the minting recipient</h4>
+        <h4>Non-transferable: do you want this token to only be transferable by the creator and accounts the creator has approved an allowance for as well as burnable?</h4>
         <h4>The voting power of these tokens will be delegated by default to the addresses that hold them, holders can always delegate to others if they would like though</h4>
         <Divider />
         <Form.Item
