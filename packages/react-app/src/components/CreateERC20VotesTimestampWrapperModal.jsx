@@ -50,6 +50,7 @@ export default function CreateERC20VotesTimestampWrapperModal({modalVisible, set
         <h4>Token Name: the name you would like your wrapped token to have</h4>
         <h4>Token Symbol: the symbol (ie. wJOKE) you would like your wrapped token to have</h4>
         <h4>Token Address: the address of the ERC20 token that this token will be wrapping</h4>
+        <h4>Non-transferable: do you want this token to only be transferable by the creator and accounts the creator has approved an allowance for as well as burnable?</h4>
         <Divider />
         <Form.Item
           label="Token Name"
