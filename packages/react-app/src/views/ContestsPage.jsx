@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Button, Input, Collapse } from "antd";
+import { Button, Input, Collapse, notification } from "antd";
+import { useLocation } from "react-router-dom";
 
 import { ContestContract, CreateContestModal, CreateGenericVotesTimestampTokenModal } from "../components";
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
@@ -11,7 +12,8 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
   const [contestSearchInput, setContestSearchInput] = useState("");
   const [isCreateContestModalVisible, setIsCreateContestModalVisible] = useState(false);
   const [isCreateTokenModalVisible, setIsCreateTokenModalVisible] = useState(false);
-  const [resultMessage, setResultMessage] = useState("")
+  const [resultMessage, setResultMessage] = useState("");
+  const location = useLocation();
   
   function generateCustomConfigBase() {
     let customConfigBase = {};
@@ -45,14 +47,22 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
   };
 
   useEffect(() => {
-    if(window.localStorage.getItem('currentContest') != null) {
-      setContestSearchInput(window.localStorage.getItem('currentContest'));
+    let linkedContest = new URLSearchParams(location.search).get("linkedContest");
+    if (linkedContest != null){
+      setContestSearchInput(linkedContest);
+    } else {
+      if(window.localStorage.getItem('currentContest') != null) {
+        setContestSearchInput(window.localStorage.getItem('currentContest'));
+      }
     }
   }, []);
   
   useEffect(() => {
-    if((contestSearchInput != null) && (contestSearchInput != "null")) {
-      window.localStorage.setItem('currentContest', contestSearchInput);
+    let linkedContest = new URLSearchParams(location.search).get("linkedContest");
+    if (linkedContest == null){
+      if((contestSearchInput != null) && (contestSearchInput != "null")) {
+        window.localStorage.setItem('currentContest', contestSearchInput);
+      }
     }
   }, [contestSearchInput]);
   
@@ -87,17 +97,28 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
         <Input icon='search' placeholder='Enter Contest contract address here' value={contestSearchInput} onChange={(e) => setContestSearchInput(e.target.value.trim().replace(/['"]+/g, ''))} />
       </div>
       {contestSearchInput != "" ? 
-        <ContestContract
-          name="Contest"
-          price={price}
-          signer={signer}
-          provider={provider}
-          mainnetProvider={mainnetProvider}
-          userAddress={address}
-          blockExplorer={blockExplorer}
-          contractConfig={generateCustomContestConfig()}
-          chainId={targetNetwork.chainId}
-        />
+        <div>
+          <Button onClick={() => {
+            navigator.clipboard.writeText("https://jokedao.io/?linkedContest=" + contestSearchInput); 
+            notification.info({
+              message: "Copied to clipboard",
+              description: "https://jokedao.io/?linkedContest=" + contestSearchInput,
+              placement: "bottomRight",
+            });}}
+            >Copy contest link to clipboard
+          </Button>
+          <ContestContract
+            name="Contest"
+            price={price}
+            signer={signer}
+            provider={provider}
+            mainnetProvider={mainnetProvider}
+            userAddress={address}
+            blockExplorer={blockExplorer}
+            contractConfig={generateCustomContestConfig()}
+            chainId={targetNetwork.chainId}
+          />
+        </div>
       : ""}
     </div>
   );

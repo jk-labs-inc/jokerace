@@ -5,7 +5,6 @@ import {
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import "./App.css";
 import {
   Account,
@@ -67,7 +66,6 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
-  const location = useLocation();
 
   useEffect(() => {
     setSelectedNetwork(window.localStorage.getItem('currentNetwork'));
