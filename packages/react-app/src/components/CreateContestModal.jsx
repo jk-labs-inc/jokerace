@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Input, Modal, Form, Divider } from "antd";
+import { Input, Modal, Form, Tooltip, Radio } from "antd";
 
 import DeployedContestContract from "../contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 
@@ -11,18 +11,25 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
   const [contestStart, setContestStart] = useState("")
   const [votingDelay, setVotingDelay] = useState("")
   const [votingPeriod, setVotingPeriod] = useState("")
-  const [contestSnapshot, setContestSnapshot] = useState("")
+  const [radioState, setRadioState] = useState("")
+  const [contestVotingSnapshot, setContestVotingSnapshot] = useState("")
   const [proposalThreshold, setProposalThreshold] = useState("")
   const [numAllowedProposalSubmissions, setNumAllowedProposalSubmissions] = useState("")
   const [maxProposalCount, setMaxProposalCount] = useState("")
+
+  const onRadioChange = (e) => {
+    setRadioState(e.target.value);
+  };
 
   const handleOk = async () => {
     // The factory we use for deploying contracts
     let factory = new ethers.ContractFactory(DeployedContestContract.abi, DeployedContestContract.bytecode, signer)
     console.log(factory)
 
+    var chosenContestVotingSnapshot = radioState == 2 ? contestVotingSnapshot : contestStart + votingDelay;
+
     var intContestParameters = [contestStart, votingDelay, votingPeriod, 
-      contestSnapshot, proposalThreshold, numAllowedProposalSubmissions, maxProposalCount];
+      chosenContestVotingSnapshot, proposalThreshold, numAllowedProposalSubmissions, maxProposalCount];
 
     // Deploy an instance of the contract
     let contract = await factory.deploy(contestTitle, votingTokenAddress, intContestParameters);
@@ -54,20 +61,10 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
+        layout="vertical"
       >
-        <h4>Contest Start Time: when proposal submission opens</h4>
-        <h4>Proposal Open Period: how long after the contest start that proposals can be submitted</h4>
-        <h4>Voting Period: how long after the proposal open period closes that people can vote</h4>
-        <h4>Contest Snapshot: when the snapshot of delegated votes will be taken for voting</h4>
-        <h4>Proposal Threshold: the number of delegated votes an address must have in order to submit a proposal</h4>
-        <h4>Number of Allowed Proposal Submissions: the number of submissions that addresses that meet the proposal threshold can propose</h4>
-        <h4>Max Proposal Count: the maximum number of proposals allowed</h4>
-        <h4>Creators have the ability to cancel contests and delete proposals in them</h4>
-        <Divider />
-        <h4>Tip: A Unix timestamp of what you would like the contest start time and contest snapshot to be is required in the Contest Start Time and Contest Snapshot fields, you can use <a href="https://www.epochconverter.com/" target="_blank">https://www.epochconverter.com/</a> to get that!</h4>
-        <Divider />
         <Form.Item
-          label="Contest Title"
+          label={<span style={{ whiteSpace: 'normal' }}>Contest Title</span>}
           name="contesttitle"
           rules={[{ required: true, message: 'Please input your contest title!' }]}
         >
@@ -78,56 +75,84 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           name="votingtokenaddress"
           rules={[{ required: true, message: 'Please input your voting token address!' }]}
         >
-          <Input placeholder='Voting Token Address' onChange={(e) => setVotingTokenAddress(e.target.value.trim().replace(/['"]+/g, ''))} />
+          <Input placeholder='What is the address of your voting token?' onChange={(e) => setVotingTokenAddress(e.target.value.trim().replace(/['"]+/g, ''))} />
         </Form.Item>
         <Form.Item
-          label="Contest Start Time"
-          name="conteststart"
+          label={<span style={{ whiteSpace: 'normal' }}>Number of Tokens Required to Submit</span>}
+          name="numtokensrequiredtosubmit"
+          rules={[{ required: true, message: 'Please input the number of tokens required to submit!' }]}
+        >
+          <Tooltip title="Tip: Set to 0 if you want to let anyone submit">
+            <Input placeholder='How many tokens do you need to submit an entry?' onChange={(e) => setProposalThreshold(ethers.utils.parseEther(e.target.value))} />
+          </Tooltip>
+        </Form.Item>
+        <Form.Item
+          label={<span style={{ whiteSpace: 'normal' }}>Submissions Per Wallet</span>}
+          name="submissionsperwallet"
+          rules={[{ required: true, message: 'Please input the number of submissions per wallet allowed!' }]}
+        >
+          <Tooltip title="Tip: We usually recommend 1">
+            <Input placeholder='How many entries can a wallet with the required tokens submit?' onChange={(e) => setNumAllowedProposalSubmissions(e.target.value)} />
+          </Tooltip>
+        </Form.Item>
+        <Form.Item
+          label={<span style={{ whiteSpace: 'normal' }}>Max Submissions</span>}
+          name="maxsubmissions"
+          rules={[{ required: true, message: 'Please input the maximum number of submissions allowed!' }]}
+        >
+          <Tooltip title="Tip: We usually recommend 100">
+            <Input placeholder="What's the max number of submissions your contest will show?" onChange={(e) => setMaxProposalCount(e.target.value)} />
+          </Tooltip>
+        </Form.Item>
+        <Form.Item
+          label={<span style={{ whiteSpace: 'normal' }}>Submission Start Time</span>}
+          name="submissionstarttime"
           rules={[{ required: true, message: 'Please input the Unix timestamp of your contest start time!' }]}
           >
-          <Input placeholder='Unix timestamp of your contest start time' onChange={(e) => setContestStart(e.target.value)} />
+            <Tooltip title="When can people start submitting entries to vote on? Tip: use https://www.epochconverter.com/">
+              <Input placeholder='Unix timestamp of your contest start time' onChange={(e) => setContestStart(e.target.value)} />
+            </Tooltip>
         </Form.Item>
         <Form.Item
-          label="Proposal Open Period"
-          name="votingdelay"
-          rules={[{ required: true, message: 'Please input how long (in seconds) proposals will be open for!' }]}
+          label={<span style={{ whiteSpace: 'normal' }}>Submission Duration</span>}
+          name="submissionDuration"
+          rules={[{ required: true, message: 'Please input how long (in seconds) submissions will be open for!' }]}
         >
-          <Input placeholder='How many seconds will proposals be open?' onChange={(e) => setVotingDelay(e.target.value)} />
+          <Tooltip title="Tip: 1 hour = 3600 seconds, 1 day = 86400 seconds">
+            <Input placeholder='How many seconds will submissions be open?' onChange={(e) => setVotingDelay(e.target.value)} />
+          </Tooltip>
         </Form.Item>
         <Form.Item
-          label="Voting Period"
-          name="votingperiod"
-          rules={[{ required: true, message: 'Please input how long (in seconds) people will able to vote for!' }]}
+          label={<span style={{ whiteSpace: 'normal' }}>Wallets Must Have Tokens By End Of Submission Period To Vote?</span>}
+          name="contestvotingsnapshotradio"
+          rules={[{ required: true, message: 'Please decide on the voting snapshot time!' }]}
         >
-          <Input placeholder='How many seconds will voting be open?' onChange={(e) => setVotingPeriod(e.target.value)} />
+          <Radio.Group onChange={onRadioChange} value={radioState}>
+            <Radio value={1}>Yes</Radio>
+            <Radio value={2}>No</Radio>
+          </Radio.Group>
         </Form.Item>
+        {
+          radioState == 2 ?
+            <Form.Item  
+              label={<span style={{ whiteSpace: 'normal' }}>Contest Voting Snapshot</span>}
+              name="contestvotingsnapshot"
+              rules={[{ required: true, message: 'Please input the Unix timestamp of your voting snapshot!' }]}
+            >
+              <Tooltip title="What is the Unix timestamp that this contest will look at to determine wallet voting power? We suggest it being the time that submissions end.">
+                <Input placeholder='Unix timestamp of the snapshot that will determine voting power' onChange={(e) => setContestVotingSnapshot(e.target.value)} />
+              </Tooltip>
+            </Form.Item> :
+          ""
+        }
         <Form.Item
-          label="Contest Snapshot"
-          name="contestsnapshot"
-          rules={[{ required: true, message: 'Please input the Unix timestamp of your contest snapshot!' }]}
+          label={<span style={{ whiteSpace: 'normal' }}>Voting Duration</span>}
+          name="votingduration"
+          rules={[{ required: true, message: 'Please input how many seconds voting will be open!' }]}
         >
-          <Input placeholder='Unix timestamp of your contest snapshot' onChange={(e) => setContestSnapshot(e.target.value)} />
-        </Form.Item>
-        <Form.Item
-          label="Proposal Threshold"
-          name="proposalthreshold"
-          rules={[{ required: true, message: 'Please input your proposal threshold!' }]}
-        >
-          <Input placeholder='Proposal Threshold' onChange={(e) => setProposalThreshold(ethers.utils.parseEther(e.target.value))} />
-        </Form.Item>
-        <Form.Item
-          label="Allowed Proposal Submissions"
-          name="numberofallowedproposalsubmissions"
-          rules={[{ required: true, message: 'Please input your number of allowed proposal submissions per address!' }]}
-        >
-          <Input placeholder='Number of Allowed Proposal Submissions' onChange={(e) => setNumAllowedProposalSubmissions(e.target.value)} />
-        </Form.Item>
-        <Form.Item
-          label="Max Proposal Count"
-          name="maxproposalcount"
-          rules={[{ required: true, message: 'Please input your max proposal count!' }]}
-        >
-          <Input placeholder='Max Proposal Count' onChange={(e) => setMaxProposalCount(e.target.value)} />
+          <Tooltip title="Note: Voting starts as soon as submissions close">
+            <Input placeholder='How many seconds will voting be open?' onChange={(e) => setVotingPeriod(e.target.value)} />
+          </Tooltip>
         </Form.Item>
       </Form>
     </Modal>
