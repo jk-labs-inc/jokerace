@@ -11,7 +11,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
   const [contestStart, setContestStart] = useState("")
   const [votingDelay, setVotingDelay] = useState("")
   const [votingPeriod, setVotingPeriod] = useState("")
-  const [radioState, setRadioState] = useState("")
+  const [radioState, setRadioState] = useState(1)
   const [contestVotingSnapshot, setContestVotingSnapshot] = useState("")
   const [proposalThreshold, setProposalThreshold] = useState("")
   const [numAllowedProposalSubmissions, setNumAllowedProposalSubmissions] = useState("")
@@ -107,10 +107,10 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
         <Form.Item
           label={<span style={{ whiteSpace: 'normal' }}>Submission Start Time</span>}
           name="submissionstarttime"
-          rules={[{ required: true, message: 'Please input the Unix timestamp of your contest start time!' }]}
+          rules={[{ required: true, message: 'Please input the Unix timestamp of when submissions open!' }]}
           >
-            <Tooltip title="When can people start submitting entries to vote on? Tip: use https://www.epochconverter.com/">
-              <Input placeholder='Unix timestamp of your contest start time' onChange={(e) => setContestStart(e.target.value)} />
+            <Tooltip title="Tip: use https://www.epochconverter.com/">
+              <Input placeholder='Unix timestamp of when submissions open' onChange={(e) => setContestStart(e.target.value)} />
             </Tooltip>
         </Form.Item>
         <Form.Item
@@ -123,13 +123,13 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           </Tooltip>
         </Form.Item>
         <Form.Item
-          label={<span style={{ whiteSpace: 'normal' }}>Wallets Must Have Tokens By End Of Submission Period To Vote?</span>}
+          label={<span style={{ whiteSpace: 'normal' }}>When do wallets qualify to vote?</span>}
           name="contestvotingsnapshotradio"
-          rules={[{ required: true, message: 'Please decide on the voting snapshot time!' }]}
+          rules={[{ required: true, message: 'Please decide on the voting qualification time!' }]}
         >
-          <Radio.Group onChange={onRadioChange} value={radioState}>
-            <Radio value={1}>Yes</Radio>
-            <Radio value={2}>No</Radio>
+          <Radio.Group onChange={onRadioChange} value={radioState} defaultValue={1}>
+            <Radio value={1}>If they have tokens at start of voting period (recommended)</Radio>
+            <Radio value={2}>If they have tokens at a custom time</Radio>
           </Radio.Group>
         </Form.Item>
         {
