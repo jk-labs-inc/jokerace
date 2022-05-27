@@ -26,7 +26,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
     let factory = new ethers.ContractFactory(DeployedContestContract.abi, DeployedContestContract.bytecode, signer)
     console.log(factory)
 
-    var chosenContestVotingSnapshot = radioState == 2 ? contestVotingSnapshot : contestStart + votingDelay;
+    var chosenContestVotingSnapshot = radioState == 2 ? parseInt(contestVotingSnapshot) : parseInt(contestStart) + parseInt(votingDelay);
 
     var intContestParameters = [contestStart, votingDelay, votingPeriod, 
       chosenContestVotingSnapshot, proposalThreshold, numAllowedProposalSubmissions, maxProposalCount];
