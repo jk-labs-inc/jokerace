@@ -1,0 +1,63 @@
+/*
+  font-face rules (custom fonts declarations)
+*/
+@font-face {
+  src: url("/Lato-Regular.woff2") format("woff2");
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  src: url("/Lato-Bold.woff2") format("woff2");
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  src: url("/Lato-Black.woff2") format("woff2");
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-true-black text-true-white;
+  }
+  body {
+    @apply text-base flex flex-col min-h-screen;
+  }
+  #__next,
+  #__next > [data-rk=""] {
+    @apply grow flex flex-col;
+  }
+
+  .navLink-desktop {
+    @apply py-2 px-5 rounded-full font-semibold;
+  }
+  .navLink-desktop--inactive {
+    @apply text-true-white hover:bg-true-white hover:bg-opacity-10 focus:text-primary-10;
+  }
+  .navLink-desktop--active {
+    @apply text-primary-10;
+  }
+
+  .navLink-mobile {
+    @apply font-bold px-4 py-3;
+  }
+}
+
+@layer components {
+  .container {
+    @apply px-3 max-w-screen-lg;
+  }
+}
