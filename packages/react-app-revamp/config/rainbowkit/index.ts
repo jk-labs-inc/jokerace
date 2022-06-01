@@ -6,7 +6,7 @@ const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
 export const jokeDAOTheme = {
   fonts: {
-    body: tailwindTheme.fontFamily.sans,
+    body: tailwindTheme.fontFamily.sans.toString(),
   },
   colors: {
     actionButtonBorder: "transparent",

@@ -8,9 +8,9 @@ import { Menu, Transition } from "@headlessui/react";
 import { XIcon, MenuIcon } from "@heroicons/react/solid";
 
 interface MenuLinkBaseProps {
-  href: string
-  children: React.ReactNode
-  active: boolean
+  href: string;
+  children: React.ReactNode;
+  active: boolean;
 }
 // eslint-disable-next-line react/display-name
 const MenuLink = forwardRef((props: MenuLinkBaseProps, ref) => {
@@ -35,7 +35,7 @@ const MenuLink = forwardRef((props: MenuLinkBaseProps, ref) => {
 });
 
 interface LayoutBaseProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const LayoutBase = (props: LayoutBaseProps) => {
@@ -98,13 +98,27 @@ const LayoutBase = (props: LayoutBaseProps) => {
                   >
                     <Menu.Items className="text-2xs px-3 divide-y divide-solid divide-neutral-4 fixed w-full bottom-8 left-1/2 -translate-x-1/2 ">
                       <div className="pb-5 pt-2.5 flex flex-col border bg-primary-0 rounded-lg border-neutral-3 border-solid bg-neutral-1">
-                        <Menu.Item>{({ active }) => <MenuLink active={active} href="/">Home</MenuLink>}</Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <MenuLink active={active} href="/">
+                              Home
+                            </MenuLink>
+                          )}
+                        </Menu.Item>
 
                         <Menu.Item>
-                          {({ active }) => <MenuLink active={active} href={ROUTE_CREATE_CONTEST}>Create contest</MenuLink>}
+                          {({ active }) => (
+                            <MenuLink active={active} href={ROUTE_CREATE_CONTEST}>
+                              Create contest
+                            </MenuLink>
+                          )}
                         </Menu.Item>
                         <Menu.Item>
-                          {({ active }) => <MenuLink active={active} href={ROUTE_VIEW_CONTESTS}>View contests</MenuLink>}
+                          {({ active }) => (
+                            <MenuLink active={active} href={ROUTE_VIEW_CONTESTS}>
+                              View contests
+                            </MenuLink>
+                          )}
                         </Menu.Item>
                       </div>
                     </Menu.Items>
@@ -120,7 +134,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
         </div>
       </header>
       <main className="flex flex-col grow">{children}</main>
-      <footer className="mt-auto pb-20 sm:pb-0">
+      <footer className="mt-auto py-20 sm:pb-0">
         <div className="text-true-white text-opacity-80 font-medium container justify-center items-start text-2xs flex flex-col space-y-1 sm:space-y-0 sm:space-i-4 sm:flex-row mx-auto">
           {FOOTER_LINKS.map((link, key) => (
             <a

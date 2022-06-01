@@ -10,13 +10,16 @@
   },
   "dependencies": {
     "@felte/react": "^1.2.2",
+    "@felte/validator-zod": "^1.0.10",
     "@headlessui/react": "^1.6.4",
     "@heroicons/react": "^1.0.6",
     "@rainbow-me/rainbowkit": "^0.2.1",
+    "class-variance-authority": "^0.2.1",
     "ethers": "^5.6.8",
     "next": "12.1.6",
     "react": "18.1.0",
     "react-dom": "18.1.0",
+    "react-html-props": "^1.0.33",
     "tailwindcss": "^3.0.24",
     "wagmi": "^0.4.4",
     "zod": "^3.17.3"

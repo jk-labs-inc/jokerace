@@ -2556,6 +2556,13 @@
   dependencies:
     "@felte/core" "1.3.2"
 
+"@felte/validator-zod@^1.0.10":
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/@felte/validator-zod/-/validator-zod-1.0.10.tgz#482229ac8add9877ad793f4c69507111a36259b2"
+  integrity sha512-Il4/Lq5XrMeDxqXZjRvleXTTxlhpJJpKJIHBe3acvT5WmfWyeV1Iygb+zI5zDOQ5NHGk4kGkLNfzW5+rY1sRnw==
+  dependencies:
+    "@felte/common" "1.1.1"
+
 "@graphiql/toolkit@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@graphiql/toolkit/-/toolkit-0.3.2.tgz#551753436ada2bc27ea870b7668e5199a958ccfb"
@@ -7699,6 +7706,11 @@ class-utils@^0.3.5:
     define-property "^0.2.5"
     isobject "^3.0.0"
     static-extend "^0.1.1"
+
+class-variance-authority@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/class-variance-authority/-/class-variance-authority-0.2.1.tgz#4c0b857456056e842e2bb0e63620a2a554ed0575"
+  integrity sha512-1saIFSnCyvtc/piraDhejwrPRd2P6btFaDSMy3/UwoitCX3tBcpJt4+hGuK82FoojN+qEkGgGgexfZpNWMrD5w==
 
 classnames@2.x, classnames@^2.2.1, classnames@^2.2.3, classnames@^2.2.5, classnames@^2.2.6, classnames@^2.3.1:
   version "2.3.1"
@@ -19990,10 +20002,10 @@ react-fit@^1.4.0:
     prop-types "^15.6.0"
     tiny-warning "^1.0.0"
 
-react-icons@^4.4.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/react-icons/-/react-icons-4.4.0.tgz#a13a8a20c254854e1ec9aecef28a95cdf24ef703"
-  integrity sha512-fSbvHeVYo/B5/L4VhB7sBA1i2tS8MkT0Hb9t2H1AVPkwGfVHLJCqyr2Py9dKMxsyM63Eng1GkdZfbWj+Fmv8Rg==
+react-html-props@^1.0.33:
+  version "1.0.33"
+  resolved "https://registry.yarnpkg.com/react-html-props/-/react-html-props-1.0.33.tgz#3c501d06f88779156e14b7f1a6f9b9b3e1071a33"
+  integrity sha512-AmQb+N22J1P0VDPte/ttg3yyvp/j/aVQIPDyuS+5A8azFP3hAMC29Ab2YWM+pja+yy5lo54D6VNqg7UIjqhV6g==
 
 react-is@^16.12.0, react-is@^16.13.1, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4:
   version "16.13.1"

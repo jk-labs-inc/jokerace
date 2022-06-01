@@ -1,7 +1,10 @@
 import { chain, configureChains, createClient } from "wagmi";
 import { fantom, avalanche, harmony, gnosis } from "@helpers/chains";
 import { publicProvider } from "wagmi/providers/public";
+import { infuraProvider } from "wagmi/providers/infura";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
+
+const infuraId = process.env.INFURA_ID;
 
 const testnetChains = [
   chain.polygonMumbai,
@@ -25,7 +28,7 @@ const defaultChains = [
 ];
 const appChains = process.env.NODE_ENV === "development" ? [...defaultChains, ...testnetChains] : defaultChains;
 
-export const { chains, provider } = configureChains(appChains, [publicProvider()]);
+export const { chains, provider } = configureChains(appChains, [infuraProvider({ infuraId }), publicProvider()]);
 
 const { wallets } = getDefaultWallets({
   appName: "JokeDAO",
