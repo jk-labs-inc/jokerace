@@ -60,7 +60,7 @@ module.exports = {
       "2xl": remToPx(screensRem["2xl"]),
     },
     fontFamily: {
-      sans: ['"Lato" ,sans-serif'],
+      sans: ['"Lato", sans-serif'],
       mono: ["monospace"],
     },
     fontSize: {
@@ -175,6 +175,11 @@ module.exports = {
         ...theme("screens"),
         unset: "unset",
       }),
+      opacity: {
+        "2.5": "0.025",
+        "3.5": "0.035",
+        "7.5": "0.075",
+      },
       spacing: {
         "1ex": "1ex",
       },

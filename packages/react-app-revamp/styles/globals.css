@@ -58,6 +58,12 @@
 
 @layer components {
   .container {
-    @apply px-3 max-w-screen-lg;
+    @apply px-5 lg:px-3 max-w-screen-lg;
+  }
+
+  .input--invalid,
+  .input[aria-invalid="true"],
+  .input:not(:placeholder-shown):invalid {
+    @apply bg-negative-1 bg-negative-2 border-negative-6 focus:border-negative-8 placeholder:text-negative-11 text-negative-11 !important;
   }
 }
