@@ -16,10 +16,11 @@
     "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@components/*": ["components/*"],
-      "@contracts/*": ["./../hardhat/contracts/*"],
+      "@components/*": ["components/*", "components/_pages/*"],
+      "@contracts/*": ["contracts/*"],
       "@config/*": ["config/*"],
       "@helpers/*": ["helpers/*"],
+      "@hooks/*": ["hooks/*"],
       "@layouts/*": ["layouts/*"],
       "@styles/*": ["styles/*"]
     }

@@ -1,11 +1,14 @@
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import type { DivProps, LabelProps, PProps } from 'react-html-props'
 
-const FormField = (props: DivProps) => {
-    const { children } = props
+interface FormFieldProps extends DivProps {
+  disabled?: boolean
+}
+const FormField = (props: FormFieldProps) => {
+    const { children, disabled } = props
   return (
     <div
-      className="flex flex-col"
+      className={`flex flex-col ${disabled === true ? "opacity-50 cursor-not-allowed" : ""}`}
 
     >
       {children}

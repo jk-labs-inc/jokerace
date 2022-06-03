@@ -146,10 +146,18 @@ module.exports = {
     },
     extend: {
       keyframes: {
+        "card-rotation": {
+          from: {
+            transform: "rotateY(360deg)",
+          },
+          to: {
+            transform: "rotateY(0)",
+          },
+        },
         appear: {
           from: {
             opacity: 0,
-            transform: "translateY(10%)",
+            transform: "translateY(10px)",
           },
           to: {
             opacity: 1,
@@ -158,8 +166,7 @@ module.exports = {
         },
       },
       animation: {
-        "fade-out": "fade-out 200ms ease-in",
-        "fade-in": "fade-in 300ms ease-in forwards",
+        "card-rotation": "card-rotation 2000ms linear infinite",
         appear: "appear 300ms ease-in forwards",
       },
       height: {

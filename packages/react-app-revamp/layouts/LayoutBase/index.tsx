@@ -44,21 +44,21 @@ const LayoutBase = (props: LayoutBaseProps) => {
 
   return (
     <>
-      <header className="relative">
-        <div className="py-2 container flex justify-content items-center mx-auto">
+      <header className="relative border-b border-neutral-2 border-solid">
+        <div className="py-2 container flex items-center mx-auto">
           <Link href="/">
             <a className="text-4xl sm:text-xl">
               🃏 <span className="sr-only">Home</span>
             </a>
           </Link>
-          <nav className="hidden sm:mis-auto sm:flex text-xs space-i-4">
+          <nav className="hidden sm:flex sm:mis-4 space-i-0.5">
             <Link href={ROUTE_CREATE_CONTEST}>
               <a
                 className={`navLink-desktop ${
                   pathname === ROUTE_CREATE_CONTEST ? "navLink-desktop--active" : "navLink-desktop--inactive"
                 }`}
               >
-                Create contest
+                Create contests
               </a>
             </Link>
             <Link href={ROUTE_VIEW_CONTESTS}>
@@ -67,7 +67,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
                   pathname === ROUTE_VIEW_CONTESTS ? "navLink-desktop--active" : "navLink-desktop--inactive"
                 }`}
               >
-                View contest
+                View contests
               </a>
             </Link>
           </nav>
@@ -128,7 +128,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
             </Menu>
           </div>
 
-          <div className="text-2xs mis-auto">
+          <div className="text-sm mis-auto">
             <ConnectButton showBalance={false} label="Connect wallet" />
           </div>
         </div>
