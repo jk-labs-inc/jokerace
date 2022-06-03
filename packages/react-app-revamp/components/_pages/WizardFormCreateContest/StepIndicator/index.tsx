@@ -26,7 +26,7 @@ export const StepIndicator = () => {
   const state = useStore();
 
   return (
-    <div className="pb-5 sm:pb-10">
+    <div className="pb-5">
       <ul className={`${styles.stepperDesktop} hidden sm:flex justify-between items-center text-sm`}>
         {Object.keys(stepsNames).map(indicator => {
           return (

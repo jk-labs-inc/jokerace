@@ -30,19 +30,23 @@
 @tailwind utilities;
 
 @layer base {
+  *:not(.normal-case, input, textarea) {
+    text-transform: lowercase !important;
+  }
   html {
     @apply bg-true-black text-true-white;
   }
   body {
     @apply text-base flex flex-col min-h-screen;
   }
+
   #__next,
   #__next > [data-rk=""] {
     @apply grow flex flex-col;
   }
 
   .navLink-desktop {
-    @apply py-2 px-5 rounded-full font-semibold;
+    @apply py-2 px-3 rounded-full font-semibold;
   }
   .navLink-desktop--inactive {
     @apply text-true-white hover:bg-true-white hover:bg-opacity-10 focus:text-primary-10;
@@ -58,7 +62,7 @@
 
 @layer components {
   .container {
-    @apply px-5 lg:px-3 max-w-screen-lg;
+    @apply px-5 lg:px-3 max-w-screen-md;
   }
 
   .input--invalid,
