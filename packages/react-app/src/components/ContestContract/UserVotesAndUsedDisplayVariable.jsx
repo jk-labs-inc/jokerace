@@ -52,7 +52,7 @@ const UserVotesAndUsedDisplayVariable = ({
       const contestDeadlineResponse = await contestDeadlineContractFunction();
       setContestDeadline(contestDeadlineResponse.toString());
 
-      const delayedCurrentTimestamp = Date.now() - 30; // Delay by 30 seconds to make sure we're looking at a block that has been mined
+      const delayedCurrentTimestamp = Math.floor(Date.now() / 1000) - 30; // Delay by 30 seconds to make sure we're looking at a block that has been mined
       const timestampToCheck = (delayedCurrentTimestamp >= contestSnapshotResponse) ? contestSnapshotResponse : delayedCurrentTimestamp;
       const getVotesResponse = await getVotesContractFunction(userAddress, timestampToCheck);
       setTotalVotes(getVotesResponse.toString());
