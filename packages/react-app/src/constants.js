@@ -111,7 +111,7 @@ export const NETWORKS = {
     color: "#50a0ea",
     chainId: 42161,
     blockExplorer: "https://explorer.arbitrum.io/#/",
-    rpcUrl: `https://arbitrum.public-rpc.com`,
+    rpcUrl: `https://arb1.arbitrum.io/rpc`,
     gasPrice: 0,
   },
   localOptimismL1: {
