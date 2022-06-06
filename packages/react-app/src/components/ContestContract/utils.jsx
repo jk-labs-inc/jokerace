@@ -30,7 +30,7 @@ const tryToDisplay = (thing, asText = false, blockExplorer) => {
       (
         (thing.lastIndexOf(".jpg") === (thing.length - 4) || thing.lastIndexOf(".png") === (thing.length - 4)) ?
         <img src={thing} width="300" height="300" /> :
-        <a target="_blank" href={thing}>{thing}</a>
+        <a style={{ overflowWrap: "break-word", width: "100%" }} target="_blank" href={thing}>{thing}</a>
       )
   }
   if (thing && thing.constructor && thing.constructor.name === "Array") {
