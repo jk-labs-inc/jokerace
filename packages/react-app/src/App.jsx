@@ -19,6 +19,7 @@ import { NETWORKS, ALCHEMY_KEY } from "./constants";
 import { Web3ModalSetup } from "./helpers";
 import { ContestsPage } from "./views";
 import { useStaticJsonRPC } from "./hooks";
+import { useLocation } from "react-router-dom";
 
 const { ethers } = require("ethers");
 /*
@@ -66,9 +67,17 @@ function App(props) {
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
   const [selectedNetwork, setSelectedNetwork] = useState(networkOptions[0]);
+  const location = useLocation();
 
   useEffect(() => {
-    setSelectedNetwork(window.localStorage.getItem('currentNetwork'));
+    let linkedNetwork = new URLSearchParams(location.search).get("linked_network");
+    if (linkedNetwork != null){
+      setSelectedNetwork(linkedNetwork);
+    } else {
+      if(window.localStorage.getItem('currentNetwork') != null) {
+        setSelectedNetwork(window.localStorage.getItem('currentNetwork'));
+      }
+    }
   }, []);
 
   useEffect(() => {

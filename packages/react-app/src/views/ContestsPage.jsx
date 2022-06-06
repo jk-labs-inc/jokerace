@@ -47,7 +47,7 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
   };
 
   useEffect(() => {
-    let linkedContest = new URLSearchParams(location.search).get("linkedContest");
+    let linkedContest = new URLSearchParams(location.search).get("linked_contest");
     if (linkedContest != null){
       setContestSearchInput(linkedContest);
     } else {
@@ -58,7 +58,7 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
   }, []);
   
   useEffect(() => {
-    let linkedContest = new URLSearchParams(location.search).get("linkedContest");
+    let linkedContest = new URLSearchParams(location.search).get("linked_contest");
     if (linkedContest == null){
       if((contestSearchInput != null) && (contestSearchInput != "null")) {
         window.localStorage.setItem('currentContest', contestSearchInput);
@@ -99,10 +99,10 @@ export default function ContestsPage({targetNetwork, price, signer, provider, ma
       {contestSearchInput != "" ? 
         <div>
           <Button onClick={() => {
-            navigator.clipboard.writeText("https://jokedao.io/?linkedContest=" + contestSearchInput); 
+            navigator.clipboard.writeText("https://jokedao.io/?linked_contest=" + contestSearchInput + "&linked_network=" + targetNetwork.rawName);
             notification.info({
               message: "Copied to clipboard",
-              description: "https://jokedao.io/?linkedContest=" + contestSearchInput,
+              description: "https://jokedao.io/?linked_contest=" + contestSearchInput + "&linked_network=" + targetNetwork.rawName,
               placement: "bottomRight",
             });}}
             >Copy contest link to clipboard

@@ -11,6 +11,7 @@ export const ALCHEMY_KEY = "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 
 export const NETWORKS = {
   localhost: {
+    rawName: "localhost",
     name: "Localhost",
     color: "#666666",
     chainId: 31337,
@@ -18,6 +19,7 @@ export const NETWORKS = {
     rpcUrl: "http://" + (global.window ? window.location.hostname : "localhost") + ":8545",
   },
   mainnet: {
+    rawName: "mainnet",
     name: "Ethereum Mainnet",
     color: "#ff8b9e",
     chainId: 1,
@@ -25,6 +27,7 @@ export const NETWORKS = {
     blockExplorer: "https://etherscan.io/",
   },
   kovan: {
+    rawName: "kovan",
     name: "Kovan Testnet",
     color: "#7003DD",
     chainId: 42,
@@ -33,6 +36,7 @@ export const NETWORKS = {
     faucet: "https://gitter.im/kovan-testnet/faucet", // https://faucet.kovan.network/
   },
   rinkeby: {
+    rawName: "rinkeby",
     name: "Rinkeby Testnet",
     color: "#e0d068",
     chainId: 4,
@@ -41,6 +45,7 @@ export const NETWORKS = {
     blockExplorer: "https://rinkeby.etherscan.io/",
   },
   ropsten: {
+    rawName: "ropsten",
     name: "Ropsten Testnet",
     color: "#F60D09",
     chainId: 3,
@@ -49,6 +54,7 @@ export const NETWORKS = {
     rpcUrl: `https://ropsten.infura.io/v3/${INFURA_ID}`,
   },
   goerli: {
+    rawName: "goerli",
     name: "Goerli Testnet",
     color: "#0975F6",
     chainId: 5,
@@ -57,6 +63,7 @@ export const NETWORKS = {
     rpcUrl: `https://goerli.infura.io/v3/${INFURA_ID}`,
   },
   xdai: {
+    rawName: "xdai",
     name: "xDai Mainnet",
     color: "#48a9a6",
     chainId: 100,
@@ -67,6 +74,7 @@ export const NETWORKS = {
     blockExplorer: "https://blockscout.com/poa/xdai/",
   },
   polygon: {
+    rawName: "polygon",
     name: "Polygon Mainnet",
     color: "#2bbdf7",
     chainId: 137,
@@ -76,6 +84,7 @@ export const NETWORKS = {
     blockExplorer: "https://polygonscan.com/",
   },
   mumbai: {
+    rawName: "mumbai",
     name: "Polygon Mumbai Testnet",
     color: "#92D9FA",
     chainId: 80001,
@@ -86,6 +95,7 @@ export const NETWORKS = {
     blockExplorer: "https://mumbai.polygonscan.com/",
   },
   localArbitrum: {
+    rawName: "localArbitrum",
     name: "localArbitrum",
     color: "#50a0ea",
     chainId: 153869338190755,
@@ -93,6 +103,7 @@ export const NETWORKS = {
     rpcUrl: `http://localhost:8547`,
   },
   localArbitrumL1: {
+    rawName: "localArbitrumL1",
     name: "localArbitrumL1",
     color: "#50a0ea",
     chainId: 44010,
@@ -100,6 +111,7 @@ export const NETWORKS = {
     rpcUrl: `http://localhost:7545`,
   },
   rinkebyArbitrum: {
+    rawName: "rinkebyArbitrum",
     name: "Arbitrum Rinkeby Testnet",
     color: "#50a0ea",
     chainId: 421611,
@@ -107,6 +119,7 @@ export const NETWORKS = {
     rpcUrl: `https://rinkeby.arbitrum.io/rpc`,
   },
   arbitrum: {
+    rawName: "arbitrum",
     name: "Arbitrum Mainnet",
     color: "#50a0ea",
     chainId: 42161,
@@ -115,6 +128,7 @@ export const NETWORKS = {
     gasPrice: 0,
   },
   localOptimismL1: {
+    rawName: "localOptimismL1",
     name: "localOptimismL1",
     color: "#f01a37",
     chainId: 31337,
@@ -122,6 +136,7 @@ export const NETWORKS = {
     rpcUrl: "http://" + (global.window ? window.location.hostname : "localhost") + ":9545",
   },
   localOptimism: {
+    rawName: "localOptimism",
     name: "localOptimism",
     color: "#f01a37",
     chainId: 420,
@@ -130,6 +145,7 @@ export const NETWORKS = {
     gasPrice: 0,
   },
   kovanOptimism: {
+    rawName: "kovanOptimism",
     name: "Optimism Kovan Testnet",
     color: "#f01a37",
     chainId: 69,
@@ -138,6 +154,7 @@ export const NETWORKS = {
     gasPrice: 0,
   },
   optimism: {
+    rawName: "optimism",
     name: "Optimism Mainnet",
     color: "#f01a37",
     chainId: 10,
@@ -145,6 +162,7 @@ export const NETWORKS = {
     rpcUrl: `https://mainnet.optimism.io`,
   },
   localAvalanche: {
+    rawName: "localAvalanche",
     name: "localAvalanche",
     color: "#666666",
     chainId: 43112,
@@ -153,6 +171,7 @@ export const NETWORKS = {
     gasPrice: 225000000000,
   },
   fujiAvalanche: {
+    rawName: "fujiAvalanche",
     name: "fujiAvalanche",
     color: "#666666",
     chainId: 43113,
@@ -161,6 +180,7 @@ export const NETWORKS = {
     gasPrice: 225000000000,
   },
   avalanche: {
+    rawName: "avalanche",
     name: "Avalanche Mainnet",
     color: "#666666",
     chainId: 43114,
@@ -169,6 +189,7 @@ export const NETWORKS = {
     gasPrice: 225000000000,
   },
   testnetHarmony: {
+    rawName: "testnetHarmony",
     name: "Harmony Testnet",
     color: "#00b0ef",
     chainId: 1666700000,
@@ -177,6 +198,7 @@ export const NETWORKS = {
     gasPrice: 1000000000,
   },
   harmony: {
+    rawName: "harmony",
     name: "Harmony Mainnet",
     color: "#00b0ef",
     chainId: 1666600000,
@@ -185,6 +207,7 @@ export const NETWORKS = {
     gasPrice: 1000000000,
   },
   fantom: {
+    rawName: "fantom",
     name: "Fantom Mainnet",
     color: "#1969ff",
     chainId: 250,
@@ -193,6 +216,7 @@ export const NETWORKS = {
     gasPrice: 1000000000,
   },
   testnetFantom: {
+    rawName: "testnetFantom",
     name: "Fantom Testnet",
     color: "#1969ff",
     chainId: 4002,
