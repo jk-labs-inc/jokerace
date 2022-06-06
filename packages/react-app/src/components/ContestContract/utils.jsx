@@ -26,7 +26,12 @@ const tryToDisplay = (thing, asText = false, blockExplorer) => {
     return asText ? thing : <Address address={thing} fontSize={22} blockExplorer={blockExplorer} />;
   }
   if (thing && thing.indexOf && thing.indexOf("https://") === 0) {
-    return asText ? thing : <img src={thing} width="300" height="300" />;
+    return asText ? thing : 
+      (
+        (thing.lastIndexOf(".jpg") === (thing.length - 4) || thing.lastIndexOf(".png") === (thing.length - 4)) ?
+        <img src={thing} width="300" height="300" /> :
+        <a target="_blank" href={thing}>{thing}</a>
+      )
   }
   if (thing && thing.constructor && thing.constructor.name === "Array") {
     const mostReadable = v => (["number", "boolean"].includes(typeof v) ? v : tryToDisplayAsText(v));
