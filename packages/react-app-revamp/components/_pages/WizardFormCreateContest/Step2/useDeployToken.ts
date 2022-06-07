@@ -44,7 +44,7 @@ export function useDeployToken(form) {
       stateContractDeployment.setIsSuccess(true);
       stateWizardForm.setDeployTokenData({
         hash: receipt.transactionHash,
-        deployedTokenAddress: contract.address,
+        address: contract.address,
       });
       if (stateWizardForm.modalDeployTokenOpen === false)
         toast.success(
