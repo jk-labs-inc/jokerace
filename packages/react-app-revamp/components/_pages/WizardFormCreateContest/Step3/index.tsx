@@ -69,10 +69,7 @@ export const Step3 = () => {
               }}
             >
               <a>
-                View contest{" "}
-                <span className="font-bold text-positive-9 underline focus:text-positive-10 hover:no-underline">
-                  here
-                </span>
+                View contest <span className="link">here</span>
               </a>
             </Link>
           </div>

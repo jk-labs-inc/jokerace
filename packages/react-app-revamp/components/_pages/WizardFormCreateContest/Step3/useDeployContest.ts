@@ -66,7 +66,7 @@ export function useDeployContest(form) {
       stateContestDeployment.setIsSuccess(true);
       stateWizardForm.setDeployContestData({
         hash: receipt.transactionHash,
-        address: contract.address,
+        deployedContractAddress: contract.address,
       });
       if (stateWizardForm.modalDeployContestOpen === false)
         toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully`);

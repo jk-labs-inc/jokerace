@@ -43,14 +43,14 @@ export const Step2 = () => {
             <span className="font-bold">Token address:</span>
             <div className="relative focus-within:text-opacity-50 hover:text-opacity-75">
               <button
-                onClick={() => copyToClipboard(stateWizardForm.dataDeployToken?.deployedTokenAddress, "Address copied")}
+                onClick={() => copyToClipboard(stateWizardForm.dataDeployToken?.address, "Token address copied !")}
                 title="Copy address"
                 className="w-full absolute z-10 inset-0 opacity-0"
               >
                 Copy address
               </button>
               <p className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
-                {stateWizardForm.dataDeployToken?.deployedTokenAddress}
+                {stateWizardForm.dataDeployToken?.address}
               </p>
               <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
             </div>
