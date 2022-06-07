@@ -4,7 +4,7 @@ import button from '@components/Button/styles'
 import type { NextPage } from 'next'
 
 const ctaGoBackStyles = button({
-  className: 'w-full 2xs:w-auto'
+  class: 'w-full 2xs:w-auto'
 })
 
 const Page: NextPage = () => {

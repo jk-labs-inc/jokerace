@@ -20,18 +20,18 @@ export const input = cva(
         'input--invalid'
        ]
       },
-      size: {
+      scale: {
         default: ['px-3 py-1.5 text-sm rounded-md', 'border'],
         sm: ['px-1.5 py-0.5 text-sm rounded-md', 'border'],
       },
     },
     defaultVariants: {
       intent: 'default',
-      size: 'default',
+      scale: 'default',
     },
   },
 )
 
-export type SystemUiButtonProps = VariantProps<typeof input>
+export type SystemUiInputProps = VariantProps<typeof input>
 
 export default input

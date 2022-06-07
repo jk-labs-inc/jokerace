@@ -28,7 +28,7 @@ export const button = cva(
             'border-neutral-10 hover:border-neutral-11 hover:focus:border-neutral-12 focus:border-true-white',
         ],
       },
-      size: {
+      scale: {
         default: ['text-xs', 'py-2 px-4 sm:px-5', 'font-bold', 'border'],
         lg: ['text-md', 'py-1.5 px-4 sm:px-5', 'font-bold', 'border'],
         sm: ['text-2xs', 'py-2 px-2.5', 'font-bold', 'border']
@@ -36,7 +36,7 @@ export const button = cva(
     },
     defaultVariants: {
       intent: 'primary',
-      size: 'default',
+      scale: 'default',
     },
   },
 )

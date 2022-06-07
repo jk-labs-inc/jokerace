@@ -8,13 +8,13 @@ export const formFieldLabel = cva(
       intent: {
         default: ['text-neutral-12'],
       },
-      size: {
+      scale: {
         default: ['pb-2'],
       },
     },
     defaultVariants: {
       intent: 'default',
-      size: 'default',
+      scale: 'default',
     },
   },
 )

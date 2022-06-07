@@ -6,13 +6,28 @@ import Button from "@components/Button";
 import ToggleSwitch from "@components/ToggleSwitch";
 import button from "@components/Button/styles";
 import { useStore } from "../store";
+import type { WizardFormState } from '../store'
 
+interface FormProps {
+  isDeploying: boolean
+  // the following are returned by felte hook useForm()
+  form: any
+  touched: any
+  data: any
+  errors: any
+  isValid: any
+  interacted: any
+  resetField: any
+  setData: any
+}
 const appearAsNeutralButton = button({ intent: "neutral-outline" });
-export const Form = props => {
+
+export const Form = (props: FormProps) => {
   const { isDeploying, form, data, errors, isValid, interacted, setData } = props;
   const { isConnected } = useConnect();
   const { activeChain } = useNetwork();
-  const stateWizardForm = useStore();
+  //@ts-ignore
+  const stateWizardForm: WizardFormState = useStore();
   const { pressProps } = usePress({
     onPress: () => stateWizardForm.setCurrentStep(3),
   });
@@ -142,7 +157,7 @@ export const Form = props => {
             label="Non-transferable"
             disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
             checked={data().nonTransferable}
-            onChange={e => setData("nonTransferable", e)}
+            onChange={(e: boolean) => setData("nonTransferable", e)}
             name="nonTransferable"
             helpText={
               <>
@@ -156,6 +171,7 @@ export const Form = props => {
       <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
         <Button
           isLoading={isDeploying === true}
+          //@ts-ignore
           intent="neutral-oultine"
           disabled={
             !isConnected ||

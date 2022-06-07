@@ -3,7 +3,8 @@ import createContext from "zustand/context"
 import Router from "next/router"
 import { ROUTE_CREATE_CONTEST } from "@config/routes";
 import type { Chain } from "wagmi";
-import type { DataStep2 } from "./Step2/useForm"
+import type { DataStep2 } from "./Step2/schema"
+import type { DataStep3 } from "./Step3/schema"
 
 export const { Provider, useStore } = createContext();
 
@@ -13,10 +14,9 @@ const stepsIndex = {
 };
 
 export type WizardFormStep = 1 | 2 | 3 | 4;
-export type WizardFormStepThreeData = null
 export type setStepDataType =
   | { step: 2; data: DataStep2 }
-  | { step: 3; data: WizardFormStepThreeData };
+  | { step: 3; data: DataStep3 };
 
 export interface WizardFormState {
   // chain on which we're gonna create the token
@@ -30,7 +30,7 @@ export interface WizardFormState {
   // Steps
   currentStep: WizardFormStep,
   stepTwo: DataStep2 | null;
-  stepThree: WizardFormStepThreeData | null;
+  stepThree: DataStep3 | null;
   setStepData: ({ step, data }: setStepDataType) => void;
   setCurrentStep: (stepNumber: WizardFormStep) => void;
 
