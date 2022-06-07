@@ -7,14 +7,17 @@ import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 import { useStore } from "../store";
+import type { WizardFormState } from '../store'
 
-export function useDeployToken(form) {
+export function useDeployToken(form: any) {
   const stateContractDeployment = useContractFactory();
   const { activeChain } = useNetwork();
   const { refetch } = useSigner();
-  const stateWizardForm = useStore();
+  //@ts-ignore
+  const stateWizardForm: WizardFormState= useStore();
 
   async function handleSubmitForm(values: any) {
+    //@ts-ignore
     stateWizardForm.setTokenDeployedToChain(activeChain);
     stateWizardForm.setModalDeployTokenOpen(true);
     stateContractDeployment.setIsLoading(true);
@@ -28,6 +31,7 @@ export function useDeployToken(form) {
       const factory = new ContractFactory(
         DeployedGenericVotesTimestampTokenContract.abi,
         DeployedGenericVotesTimestampTokenContract.bytecode,
+        //@ts-ignore
         signer.data,
       );
       const contract = await factory.deploy(
@@ -58,6 +62,7 @@ export function useDeployToken(form) {
       if (stateWizardForm.modalDeployTokenOpen === false)
         toast.error(`The contract for your token ${values.tokenName} ($${values.tokenSymbol}) couldn't be deployed.`);
       stateContractDeployment.setIsError(true);
+      //@ts-ignore
       stateContractDeployment.setErrorMessage(e.message);
       stateContractDeployment.setIsLoading(false);
     }

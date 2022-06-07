@@ -12,9 +12,11 @@ const toastOptions = {
 export async function copyToClipboard(textToCopy: string, toastMessage: string) {
   if ("clipboard" in navigator) {
     await navigator.clipboard.writeText(textToCopy);
+    //@ts-ignore
     toast(toastMessage, toastOptions);
   } else {
     document.execCommand("copy", true, textToCopy);
+    //@ts-ignore
     toast(toastMessage, toastOptions);
   }
 }

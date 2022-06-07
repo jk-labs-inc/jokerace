@@ -9,8 +9,11 @@ import { useStore } from "../store";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployToken } from "./useDeployToken";
+import type { WizardFormState } from '../store'
+
 export const Step2 = () => {
-  const stateWizardForm = useStore();
+  //@ts-ignore
+  const stateWizardForm: WizardFormState = useStore();
   const form = useForm({
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values),

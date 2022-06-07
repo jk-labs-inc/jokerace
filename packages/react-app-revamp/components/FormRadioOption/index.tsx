@@ -1,6 +1,5 @@
 import { RadioGroup } from "@headlessui/react";
-
-export const FormRadioOption = props => {
+export const FormRadioOption = (props: any) => {
   const { children, className, classNameWrapper, classNameCheckbox, ...rest } = props;
   return (
     <RadioGroup.Option className={`${props.disabled ? "cursor-not-allowed" : "cursor-pointer"}`} {...rest}>

@@ -9,9 +9,11 @@ import { useStore } from "../store";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
+import type { WizardFormState} from '../store'
 
 export const Step3 = () => {
-  const stateWizardForm = useStore();
+  //@ts-ignore
+  const stateWizardForm: WizardFormState = useStore();
 
   /*
     add 10min to the current datetime to anticipate
@@ -58,6 +60,7 @@ export const Step3 = () => {
         isLoading={stateContestDeployment.isLoading}
         isSuccess={stateContestDeployment.isSuccess}
         error={stateContestDeployment.error}
+        //@ts-ignore
         transactionHref={`${stateWizardForm.contestDeployedToChain?.blockExplorers?.default?.url}/tx/${stateWizardForm.dataDeployContest?.hash}`}
       >
         {stateContestDeployment.isSuccess && (
@@ -65,6 +68,7 @@ export const Step3 = () => {
             <Link
               href={{
                 pathname: ROUTE_VIEW_CONTEST,
+                //@ts-ignore
                 query: { id: stateWizardForm.dataDeployContest?.address },
               }}
             >

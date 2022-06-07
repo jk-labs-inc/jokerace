@@ -7,7 +7,7 @@ import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import StepIndicator from "./StepIndicator";
-import type { WizardFormStep } from './store'
+import type { WizardFormStep, WizardFormState } from './store'
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import { Transition } from "@headlessui/react";
 
@@ -33,13 +33,15 @@ function renderStep(step: WizardFormStep, urlParam: string | undefined) {
     }
   }
 export const WizardFormCreateContest = () => {
-    const stateWizardForm = useStore()
+    //@ts-ignore
+    const stateWizardForm: WizardFormState = useStore()
     const { query: { step }, isReady } = useRouter()
     const connect = useConnect()
     const { isConnected } = connect
     const { activeChain, isLoading } = useNetwork()
 
     useEffect(() => {
+      //@ts-ignore
       if(isReady && step && parseInt(step) !== stateWizardForm.currentStep) stateWizardForm.setCurrentStep(parseInt(step))
     },[step, isReady])
 
@@ -82,6 +84,7 @@ leaveTo="opacity-0 "
     </div>}
     <StepIndicator />
     <div className="w-full">
+      {/* @ts-ignore */}
       {renderStep(stateWizardForm.currentStep, step)}
     </div>
   </div>

@@ -4,15 +4,17 @@ import { copyToClipboard } from "@helpers/copyToClipboard";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import { useStore } from "../store";
+import type { WizardFormState } from '../store'
 
-const appearAsNeutralButton = button({ intent: "neutral-outline", size: "lg", class: "w-full xs:w-auto" });
+const appearAsNeutralButton = button({ intent: "neutral-outline", scale: "lg", class: "w-full xs:w-auto" });
 export const TextInstructions = () => {
-  const stateWizardForm = useStore();
+  //@ts-ignore
+  const stateWizardForm: WizardFormState = useStore();
   return (
     <div className="space-y-7 leading-relaxed">
       <section>
         <h3 className="font-bold text-lg">
-          Now let’s airdrop your voting token to your community using{" "}
+          Now let&apos;s airdrop your voting token to your community using{" "}
           <a rel="nofollow noreferrer" target="_blank" href="https://www.coinvise.co" className="link">
             Coinvise.
           </a>
@@ -40,6 +42,7 @@ export const TextInstructions = () => {
               <Link
                 href={{
                   pathname: ROUTE_VIEW_CONTEST,
+                  //@ts-ignore
                   query: { id: stateWizardForm.dataDeployContest?.address },
                 }}
               >
@@ -53,26 +56,26 @@ export const TextInstructions = () => {
         )}
       </section>
       <section>
-        <h3 className="font-bold text-lg mb-3">Here's how to airdrop.</h3>
+        <h3 className="font-bold text-lg mb-3">Here&apos;s how to airdrop.</h3>
         <ol className="list-decimal space-y-1 pis-4">
           <li>
             Go to{" "}
             <a rel="nofollow noreferrer" target="_blank" href="https://www.coinvise.co/airdrop" className="link">
-              Coinvise’s airdrop page
+              Coinvise&apos;s airdrop page
             </a>
             , and connect your wallet to the chain you created your token{" "}
             <span className="text-xs text-neutral-11">(ie polygon)</span>
           </li>
           <li>
-            Tap <span className="font-bold">"select token"</span> and input your token address{" "}
+            Tap <span className="font-bold">&quot;select token&quot;</span> and input your token address{" "}
             {stateWizardForm?.dataDeployToken?.address && " above"}
           </li>
           <li>
-            Input wallet addresses and number of tokens each one gets — don’t worry, we’ll come back to this in a sec
+            Input wallet addresses and number of tokens each one gets — don&apos;t worry, we&apos;ll come back to this in a sec
           </li>
           <li>
-            Press <span className="font-bold">"next"</span>, airdrop, and{" "}
-            <span className="font-bold">you’re done!</span>
+            Press <span className="font-bold">&quot;next&quot;</span>, airdrop, and{" "}
+            <span className="font-bold">you&apos;re done!</span>
           </li>
         </ol>
       </section>
@@ -84,14 +87,14 @@ export const TextInstructions = () => {
           <ol className="list-decimal space-y-1 pis-4">
             <li>Ask your community to drop a comment that includes their ENS in a Twitter thread</li>
             <li>
-              Scroll down Coinvise’s airdrop page to <span className="font-bold">"import addresses from twitter"</span>
+              Scroll down Coinvise&apos;s airdrop page to <span className="font-bold">&quot;import addresses from twitter&quot;</span>
             </li>
-            <li>Tap the import button, drop your link, and you’re all set.</li>
+            <li>Tap the import button, drop your link, and you&apos;re all set.</li>
           </ol>
         </section>
         <section className="mb-6">
           <h4 className="text-md font-bold mb-1">Method two: send to token-holders</h4>
-          <p>Here, we’ll send the voting token to anyone who holds a specific token.</p>
+          <p>Here, we&apos;ll send the voting token to anyone who holds a specific token.</p>
           <ol className="list-decimal space-y-1 mt-2 pis-4">
             <li>
               Go to{" "}
@@ -110,47 +113,47 @@ export const TextInstructions = () => {
             </li>
             <li>Type your token address into search</li>
             <li>
-              Tap the link next to <span className="font-bold">"token tracker"</span> in{" "}
-              <span className="font-bold">"more info"</span>
+              Tap the link next to <span className="font-bold">&quot;token tracker&quot;</span> in{" "}
+              <span className="font-bold">&quot;more info&quot;</span>
             </li>
             <li>
-              Tap the tab that says <span className="font-bold">"holder"</span>
+              Tap the tab that says <span className="font-bold">&quot;holder&quot;</span>
             </li>
             <li>
-              Scroll down to the bottom and tap <span className="font-bold">"download CSV export"</span>
+              Scroll down to the bottom and tap <span className="font-bold">&quot;download CSV export&quot;</span>
             </li>
             <li>
               Open that file and edit the spreadsheet to have two columns: token addresses on the left, the amount of
               tokens each receives on the right
             </li>
-            <li>Save as a CSV and open in an independent app like "Notes"</li>
+            <li>Save as a CSV and open in an independent app like &quot;Notes&quot;</li>
           </ol>
           <p>
-            You’re done! You should see your full list of recipients and the number of tokens each receives, separated
+            You&apos;re done! You should see your full list of recipients and the number of tokens each receives, separated
             by a comma. Paste that in!
           </p>
         </section>
         <section>
           <p className="text-md">
-            Finally, if you’d rather let your community ùclaim* the voting token individually, you can use{" "}
+            Finally, if you&apos;d rather let your community *claim* the voting token individually, you can use{" "}
             <a
-              rel="nofollow noreferrer"
-              target="_blank"
               rel="nofollow noreferrer"
               target="_blank"
               href="https://coinvise.mirror.xyz/e5LrC96xymHILF36-FXoJHABKz8uYkx_k2IUg6C_GPg"
               className="link"
             >
-              Coinvise’s claim page
+              Coinvise&apos;s claim page
             </a>{" "}
             and just input the addresses of tokens whose holders can claim.
           </p>
         </section>
       </section>
+      {/*@ts-ignore */}
       {stateWizardForm.dataDeployContest?.address && (
         <Link
           href={{
             pathname: ROUTE_VIEW_CONTEST,
+            //@ts-ignore
             query: { id: stateWizardForm.dataDeployContest?.address },
           }}
         >

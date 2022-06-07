@@ -14,11 +14,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     <WagmiConfig client={client}>
       <RainbowKitProvider
         chains={chains}
+        /* @ts-ignore */
         theme={jokeDAOTheme}
       >
         <LayoutBase>
           <Component {...pageProps} />
         </LayoutBase>
+        {/* @ts-ignore */}
         <Toaster position="bottom-right" toastOptions={toastOptions} />
       </RainbowKitProvider>
     </WagmiConfig>

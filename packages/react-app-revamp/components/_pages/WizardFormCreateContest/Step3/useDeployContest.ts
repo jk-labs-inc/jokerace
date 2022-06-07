@@ -7,16 +7,18 @@ import { getUnixTime, differenceInSeconds } from "date-fns";
 import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
-
 import { useStore } from "../store";
+import type { WizardFormState } from "../store";
 
-export function useDeployContest(form) {
+export function useDeployContest(form: any) {
   const stateContestDeployment = useContractFactory();
   const { activeChain } = useNetwork();
   const { refetch } = useSigner();
-  const stateWizardForm = useStore();
+  //@ts-ignore
+  const stateWizardForm: WizardFormState = useStore();
 
   async function handleSubmitForm(values: any) {
+    //@ts-ignore
     stateWizardForm.setContestDeployedToChain(activeChain); // in case
     stateWizardForm.setModalDeployContestOpen(true);
     stateContestDeployment.setIsLoading(true);
@@ -27,6 +29,7 @@ export function useDeployContest(form) {
     try {
       // we need to refetch the signer, otherwise an error is triggered
       const signer = await refetch();
+      //@ts-ignore
       const factory = new ContractFactory(DeployedContestContract.abi, DeployedContestContract.bytecode, signer.data);
 
       const chosenContestVotingSnapshot =
@@ -78,7 +81,8 @@ export function useDeployContest(form) {
       if (stateWizardForm.modalDeployContestOpen === false)
         toast.error(`The contract for your contest ("${values.contestTitle}") couldn't be deployed.`);
       stateContestDeployment.setIsError(true);
-      stateContestDeployment.setErrorMessage(e.message);
+      //@ts-ignore
+      stateContestDeployment.setErrorMessage(e?.message);
       stateContestDeployment.setIsLoading(false);
     }
   }

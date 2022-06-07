@@ -1,8 +1,9 @@
 import Button from "@components/Button";
 import { useStore } from "../store";
-
+import type { WizardFormState } from '../store'
 export const Step1 = () => {
-  const stateWizardForm = useStore();
+  //@ts-ignore
+  const stateWizardForm: WizardFormState = useStore();
 
   return (
     <>

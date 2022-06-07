@@ -10,12 +10,27 @@ import { isAfter, isBefore, isPast } from "date-fns";
 import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
+import type { WizardFormState } from '../store'
 
-export const Form = props => {
+interface FormProps {
+  isDeploying: boolean
+  // the following are returned by felte hook useForm()
+  form: any
+  touched: any
+  data: any
+  errors: any
+  isValid: any
+  interacted: any
+  resetField: any
+  setData: any
+}
+
+export const Form = (props: FormProps) => {
   const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
   const { isConnected } = useConnect();
   const { activeChain } = useNetwork();
-  const stateWizardForm = useStore();
+  //@ts-ignore
+  const stateWizardForm: WizardFormState = useStore();
   const isDateOpeningSubmissionsValid =
     data()?.datetimeOpeningSubmissions && !isPast(new Date(data().datetimeOpeningSubmissions));
   const isDateOpeningVotesValid =
@@ -86,7 +101,7 @@ export const Form = props => {
               />
             </FormField.InputField>
             <FormField.HelpBlock hasError={errors().contestTitle?.length > 0 === true} id="input-contesttile-helpblock">
-              Your contest title can't be empty
+              Your contest title can&apos;t be empty
             </FormField.HelpBlock>
           </FormField>
 
@@ -205,7 +220,7 @@ export const Form = props => {
               hasError={errors().datetimeOpeningSubmissions?.length > 0 === true || !isDateOpeningSubmissionsValid}
               id="input-datetimeopeningsubmissions-helpblock-2"
             >
-              The opening date for submissions can't be in the past
+              The opening date for submissions can&apos;t be in the past
             </FormField.HelpBlock>
           </FormField>
 
@@ -248,7 +263,7 @@ export const Form = props => {
           <FormRadioGroup
             disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
             value={data()?.submissionOpenToAll}
-            onChange={e => {
+            onChange={(e: boolean) => {
               if (e === true) {
                 resetField("requiredNumberOfTokenToSubmit");
               }
@@ -270,7 +285,7 @@ export const Form = props => {
                   placeholder="200"
                   required={data()?.submissionOpenToAll === false}
                   className="mx-2 max-w-auto w-[12ex]"
-                  size="sm"
+                  scale="sm"
                   type="number"
                   name="requiredNumberOfTokenToSubmit"
                   id="requiredNumberOfTokenToSubmit"
@@ -294,7 +309,7 @@ export const Form = props => {
           <FormRadioGroup
             disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
             value={data()?.noSubmissionLimitPerUser}
-            onChange={e => {
+            onChange={(e: boolean )=> {
               if (e === true) {
                 resetField("submissionPerUserMaxNumber");
               }
@@ -313,7 +328,7 @@ export const Form = props => {
                   }
                   placeholder="1"
                   className="mx-2 max-w-auto w-[12ex]"
-                  size="sm"
+                  scale="sm"
                   type="number"
                   name="submissionPerUserMaxNumber"
                   id="submissionPerUserMaxNumber"
@@ -425,7 +440,7 @@ export const Form = props => {
                 Voting closes <span className="text-2xs text-neutral-10 pis-1">(and submissions close)</span>
               </FormField.Label>
               <FormField.Description id="input-datetimeclosesvoting-description">
-                The date and time on which users won't be able to vote anymore
+                The date and time on which users won&apos;t be able to vote anymore
               </FormField.Description>
               <div className="flex">
                 <FormInput
@@ -484,7 +499,7 @@ export const Form = props => {
               !isDateClosingVotesValid || !isConnected || activeChain?.unsupported === true || isDeploying === true
             }
             value={data()?.usersQualifyToVoteIfTheyHoldTokenOnVoteStart}
-            onChange={e => {
+            onChange={(e: boolean) => {
               if (e === true) {
                 resetField("usersQualifyToVoteAtAnotherDatetime");
               }
@@ -535,7 +550,7 @@ export const Form = props => {
               </FormField.Description>
               <FormInput
                 required
-                size="sm"
+                scale="sm"
                 disabled={
                   !isDateClosingVotesValid ||
                   data()?.usersQualifyToVoteIfTheyHoldTokenOnVoteStart !== false ||
@@ -590,6 +605,7 @@ export const Form = props => {
       <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
         <Button
           isLoading={isDeploying === true}
+          //@ts-ignore
           intent="neutral-oultine"
           disabled={
             !isConnected ||

@@ -1,8 +1,8 @@
 import { Switch } from "@headlessui/react";
 
-export const ToggleSwitch = props => {
+export const ToggleSwitch = (props: any) => {
   const { label, helpText, ...rest } = props;
-  const { checked, disabled } = rest;
+  const { checked } = rest;
   return (
     <Switch.Group>
       <div className="flex flex-col">
