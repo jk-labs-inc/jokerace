@@ -1,12 +1,13 @@
+import button from "@components/Button/styles";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { copyToClipboard } from "@helpers/copyToClipboard";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import { useStore } from "../store";
 
-export const ContestCreated = () => {
+const appearAsNeutralButton = button({ intent: "neutral-outline", size: "lg", class: "w-full xs:w-auto" });
+export const TextInstructions = () => {
   const stateWizardForm = useStore();
-
   return (
     <div className="space-y-7 leading-relaxed">
       <section>
@@ -31,7 +32,7 @@ export const ContestCreated = () => {
                   Copy address
                 </button>
                 <span className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
-                  {stateWizardForm?.dataDeployToken ?? ""}
+                  {stateWizardForm?.dataDeployToken?.address ?? ""}
                 </span>
                 <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
               </span>
@@ -42,7 +43,7 @@ export const ContestCreated = () => {
                   query: { id: stateWizardForm.dataDeployContest?.address },
                 }}
               >
-                <a rel="nofollow noreferrer" target="_blank" className="link">
+                <a target="_blank" className="link">
                   the contest page
                 </a>
               </Link>
@@ -59,15 +60,20 @@ export const ContestCreated = () => {
             <a rel="nofollow noreferrer" target="_blank" href="https://www.coinvise.co/airdrop" className="link">
               Coinvise’s airdrop page
             </a>
-            , and connect your wallet to the chain you created your token (ie polygon)
+            , and connect your wallet to the chain you created your token{" "}
+            <span className="text-xs text-neutral-11">(ie polygon)</span>
           </li>
           <li>
-            Tap "select token" and input your token address {stateWizardForm?.dataDeployToken?.address && " above"}
+            Tap <span className="font-bold">"select token"</span> and input your token address{" "}
+            {stateWizardForm?.dataDeployToken?.address && " above"}
           </li>
           <li>
             Input wallet addresses and number of tokens each one gets — don’t worry, we’ll come back to this in a sec
           </li>
-          <li>Press "next" airdrop, and you’re done!</li>
+          <li>
+            Press <span className="font-bold">"next"</span>, airdrop, and{" "}
+            <span className="font-bold">you’re done!</span>
+          </li>
         </ol>
       </section>
       <section>
@@ -77,7 +83,9 @@ export const ContestCreated = () => {
           <h4 className="text-md font-bold mb-1">Method one: Twitter thread</h4>
           <ol className="list-decimal space-y-1 pis-4">
             <li>Ask your community to drop a comment that includes their ENS in a Twitter thread</li>
-            <li>Scroll down Coinvise’s airdrop page to "import addresses from twitter"</li>
+            <li>
+              Scroll down Coinvise’s airdrop page to <span className="font-bold">"import addresses from twitter"</span>
+            </li>
             <li>Tap the import button, drop your link, and you’re all set.</li>
           </ol>
         </section>
@@ -101,9 +109,16 @@ export const ContestCreated = () => {
               for NFT holders.
             </li>
             <li>Type your token address into search</li>
-            <li>Tap the link next to "token tracker" in "more info"</li>
-            <li>Tap the tab that says "holder"</li>
-            <li>Scroll down to the bottom and tap "download CSV export"</li>
+            <li>
+              Tap the link next to <span className="font-bold">"token tracker"</span> in{" "}
+              <span className="font-bold">"more info"</span>
+            </li>
+            <li>
+              Tap the tab that says <span className="font-bold">"holder"</span>
+            </li>
+            <li>
+              Scroll down to the bottom and tap <span className="font-bold">"download CSV export"</span>
+            </li>
             <li>
               Open that file and edit the spreadsheet to have two columns: token addresses on the left, the amount of
               tokens each receives on the right
@@ -117,7 +132,7 @@ export const ContestCreated = () => {
         </section>
         <section>
           <p className="text-md">
-            Finally, if you’d rather let your community *claim* the voting token individually, you can use{" "}
+            Finally, if you’d rather let your community ùclaim* the voting token individually, you can use{" "}
             <a
               rel="nofollow noreferrer"
               target="_blank"
@@ -132,8 +147,20 @@ export const ContestCreated = () => {
           </p>
         </section>
       </section>
+      {stateWizardForm.dataDeployContest?.address && (
+        <Link
+          href={{
+            pathname: ROUTE_VIEW_CONTEST,
+            query: { id: stateWizardForm.dataDeployContest?.address },
+          }}
+        >
+          <a className={appearAsNeutralButton} target="_blank">
+            Go to contest page
+          </a>
+        </Link>
+      )}
     </div>
   );
 };
 
-export default ContestCreated;
+export default TextInstructions;

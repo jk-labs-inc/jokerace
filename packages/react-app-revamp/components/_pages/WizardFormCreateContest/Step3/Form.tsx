@@ -172,7 +172,6 @@ export const Form = props => {
               <FormInput
                 required
                 onChange={() => {
-                  resetField("datetimeOpeningSubmissions");
                   resetField("datetimeOpeningVoting");
                   resetField("datetimeClosingVoting");
                   resetField("usersQualifyToVoteAtAnotherDatetime");

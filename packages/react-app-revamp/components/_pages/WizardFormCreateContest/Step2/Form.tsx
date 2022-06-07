@@ -7,6 +7,7 @@ import ToggleSwitch from "@components/ToggleSwitch";
 import button from "@components/Button/styles";
 import { useStore } from "../store";
 
+const appearAsNeutralButton = button({ intent: "neutral-outline" });
 export const Form = props => {
   const { isDeploying, form, data, errors, isValid, interacted, setData } = props;
   const { isConnected } = useConnect();
@@ -168,7 +169,7 @@ export const Form = props => {
           Mint
         </Button>
 
-        <div className={button({ intent: "neutral-outline" })} tabIndex={0} role="button" {...pressProps}>
+        <div className={appearAsNeutralButton} tabIndex={0} role="button" {...pressProps}>
           {stateWizardForm.dataDeployToken !== null ? "Next" : "Skip"}
         </div>
       </div>

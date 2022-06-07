@@ -27,7 +27,7 @@ export const Step2 = () => {
           minting it here.
         </p>
       </div>
-      <Form isDeploying={stateContractDeployment.isLoading} handleSubmitForm={handleSubmitForm} {...form} />
+      <Form isDeploying={stateContractDeployment.isLoading} {...form} />
       <DialogModalDeployTransaction
         isOpen={stateWizardForm.modalDeployTokenOpen}
         setIsOpen={stateWizardForm.setModalDeployTokenOpen}

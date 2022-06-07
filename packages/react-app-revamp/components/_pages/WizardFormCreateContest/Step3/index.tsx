@@ -49,7 +49,7 @@ export const Step3 = () => {
         </ul>
         <p className="text-neutral-11 text-xs">note: voting starts when submissions end.</p>
       </div>
-      <Form isDeploying={false} handleSubmitForm={() => console.log("hey")} {...form} />
+      <Form isDeploying={stateContestDeployment.isLoading} {...form} />
       <DialogModalDeployTransaction
         isOpen={stateWizardForm.modalDeployContestOpen}
         setIsOpen={stateWizardForm.setModalDeployContestOpen}
@@ -68,7 +68,7 @@ export const Step3 = () => {
                 query: { id: stateWizardForm.dataDeployContest?.address },
               }}
             >
-              <a>
+              <a target="_blank">
                 View contest <span className="link">here</span>
               </a>
             </Link>
