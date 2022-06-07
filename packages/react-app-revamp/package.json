@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json}\""
+    "prettier": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json}\"",
+    "export": "next export"
   },
   "dependencies": {
     "@felte/react": "^1.2.2",
