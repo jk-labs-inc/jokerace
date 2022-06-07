@@ -26,7 +26,7 @@ const defaultChains = [
   gnosis,
   chain.localhost,
 ];
-const appChains = process.env.NODE_ENV === "development" ? [...defaultChains, ...testnetChains] : defaultChains;
+const appChains = [...defaultChains, ...testnetChains];
 
 export const { chains, provider } = configureChains(appChains, [infuraProvider({ infuraId }), publicProvider()]);
 
