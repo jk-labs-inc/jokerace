@@ -35,22 +35,22 @@ export const Step2 = () => {
         isError={stateContractDeployment.isError}
         isLoading={stateContractDeployment.isLoading}
         isSuccess={stateContractDeployment.isSuccess}
-        error={stateContractDeployment.deployTokenError}
+        error={stateContractDeployment.error}
         transactionHref={`${stateWizardForm.tokenDeployedToChain?.blockExplorers?.default?.url}/tx/${stateWizardForm?.dataDeployToken?.hash}`}
       >
-        {stateContractDeployment.isSuccess && (
+        {stateContractDeployment.isSuccess === true && (
           <div className="mt-3 animate-appear relative">
             <span className="font-bold">Token address:</span>
             <div className="relative focus-within:text-opacity-50 hover:text-opacity-75">
               <button
-                onClick={() => copyToClipboard(stateWizardForm.dataDeployToken.deployedTokenAddress, "Address copied")}
+                onClick={() => copyToClipboard(stateWizardForm.dataDeployToken?.deployedTokenAddress, "Address copied")}
                 title="Copy address"
                 className="w-full absolute z-10 inset-0 opacity-0"
               >
                 Copy address
               </button>
               <p className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
-                {stateWizardForm.dataDeployToken.deployedTokenAddress}
+                {stateWizardForm.dataDeployToken?.deployedTokenAddress}
               </p>
               <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
             </div>

@@ -12,7 +12,6 @@ export const Form = props => {
   const { isConnected } = useConnect();
   const { activeChain } = useNetwork();
   const stateWizardForm = useStore();
-
   const { pressProps } = usePress({
     onPress: () => stateWizardForm.setCurrentStep(3),
   });

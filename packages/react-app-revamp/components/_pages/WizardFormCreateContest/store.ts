@@ -19,9 +19,13 @@ export type setStepDataType =
   | { step: 3; data: WizardFormStepThreeData };
 
 export interface WizardFormState {
-  // chain on which we're gonna create the token & the contest
+  // chain on which we're gonna create the token
   tokenDeployedToChain: null | Chain
   setTokenDeployedToChain: (chain: null | Chain) => void;
+  
+  // chain on which we're gonna create the contest 
+  contestDeployedToChain: null | Chain
+  setContestDeployedToChain: (chain: null | Chain) => void;
 
   // Steps
   currentStep: WizardFormStep,
@@ -46,7 +50,10 @@ export interface WizardFormState {
 export const createStore = () => {
   return create<WizardFormState>((set) => ({
     tokenDeployedToChain: null,
-    setTokenDeployedToChain: (chain) => set({ tokenDeployedToChain: chain }),
+    setTokenDeployedToChain: (chain) => set({ contestDeployedToChain: chain }),
+
+    contestDeployedToChain: null,
+    setContestDeployedToChain: (chain) => set({ contestDeployedToChain: chain }),
 
     currentStep: 1,
     setCurrentStep: (newStep) => set(() => {
@@ -72,5 +79,4 @@ export const createStore = () => {
     setDeployContestData: (value) => set({ dataDeployContest: value }),
     modalDeployContestOpen: false,
     setModalDeployContestOpen:  (value) => set({ modalDeployContestOpen: value }),
-
 }))}

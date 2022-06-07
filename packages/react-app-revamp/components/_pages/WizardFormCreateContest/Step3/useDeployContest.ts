@@ -1,11 +1,13 @@
 import { ContractFactory } from "ethers";
-import { parseEther } from "ethers/lib/utils";
 import toast from "react-hot-toast";
 import { useNetwork, useSigner } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
+import { parseEther } from "ethers/lib/utils";
+import { getUnixTime, differenceInSeconds } from "date-fns";
 import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
-import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
+import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
+
 import { useStore } from "../store";
 
 export function useDeployContest(form) {
@@ -15,8 +17,8 @@ export function useDeployContest(form) {
   const stateWizardForm = useStore();
 
   async function handleSubmitForm(values: any) {
-    stateWizardForm.setTokenDeployedToChain(activeChain); // in case
-    stateWizardForm.setModalDeployTokenOpen(true);
+    stateWizardForm.setContestDeployedToChain(activeChain); // in case
+    stateWizardForm.setModalDeployContestOpen(true);
     stateContestDeployment.setIsLoading(true);
     stateContestDeployment.setIsSuccess(false);
     stateContestDeployment.setIsError(false);
@@ -25,17 +27,37 @@ export function useDeployContest(form) {
     try {
       // we need to refetch the signer, otherwise an error is triggered
       const signer = await refetch();
-      const factory = new ContractFactory(
-        DeployedGenericVotesTimestampTokenContract.abi,
-        DeployedGenericVotesTimestampTokenContract.bytecode,
-        signer.data,
-      );
+      const factory = new ContractFactory(DeployedContestContract.abi, DeployedContestContract.bytecode, signer.data);
+
+      const chosenContestVotingSnapshot =
+        values.usersQualifyToVoteIfTheyHoldTokenOnVoteStart === true
+          ? getUnixTime(new Date(values.datetimeOpeningVoting))
+          : getUnixTime(new Date(values.usersQualifyToVoteAtAnotherDatetime));
+      const proposalThreshold = values.submissionOpenToAll ? 0 : values.requiredNumberOfTokenToSubmit;
+      const numAllowedProposalSubmissions =
+        values.noSubmissionLimitPerUser === true ? 10000000 : values.submissionPerUserMaxNumber;
+      const contestParameters = [
+        // UNIX timestamp of when submissions open
+        getUnixTime(new Date(values.datetimeOpeningSubmissions)),
+        // how many seconds will submissions be open
+        differenceInSeconds(new Date(values.datetimeOpeningVoting), new Date(values.datetimeOpeningSubmissions)),
+        // how many seconds will voting be open
+        differenceInSeconds(new Date(values.datetimeClosingVoting), new Date(values.datetimeOpeningVoting)),
+        // UNIX timestamp of the snapshot that will determine voting power
+        chosenContestVotingSnapshot,
+        // amount of tokens the user needs to submit an entry (0 if open to all)
+        parseEther(`${proposalThreshold}`),
+        // how many entries can a wallet with the required tokens submit
+        numAllowedProposalSubmissions,
+        // max proposal count: the maximum number of submissions the contest will show
+        values?.submissionMaxNumber,
+      ];
+
       const contract = await factory.deploy(
-        values.tokenName,
-        values.tokenSymbol,
-        values.receivingAddress,
-        parseEther(`${values.numberOfTokens}`),
-        values?.nonTransferable ?? false,
+        // @TODO: add description field (value.contestDescription)
+        values.contestTitle,
+        values.votingTokenAddress,
+        contestParameters,
       );
       const receipt = await waitForTransaction({
         chainId: activeChain?.id,
@@ -44,15 +66,17 @@ export function useDeployContest(form) {
       stateContestDeployment.setIsSuccess(true);
       stateWizardForm.setDeployContestData({
         hash: receipt.transactionHash,
-        //deployedTokenAddress: contract.address
+        address: contract.address,
       });
-      // if(stateWizardForm.modalDeployContestOpen === false) toast.success(`The contract for your token ${values.tokenName} ($${values.tokenSymbol}) was deployed successfully`)
+      if (stateWizardForm.modalDeployContestOpen === false)
+        toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully`);
 
       stateContestDeployment.setIsLoading(false);
       form.reset();
     } catch (e) {
       console.error(e);
-      // if(stateWizardForm.modalDeployContestOpen === false) toast.error(`The contract for your token ${values.tokenName} ($${values.tokenSymbol}) couldn't be deployed.`)
+      if (stateWizardForm.modalDeployContestOpen === false)
+        toast.error(`The contract for your contest ("${values.contestTitle}") couldn't be deployed.`);
       stateContestDeployment.setIsError(true);
       stateContestDeployment.setErrorMessage(e.message);
       stateContestDeployment.setIsLoading(false);
@@ -65,40 +89,4 @@ export function useDeployContest(form) {
   };
 }
 
-export default useDeployToken;
-/*
-export function useFormDeployToken() {
-    const { refetch } = useSigner()
-    const stateWizardForm = useStore();
-  
-    async function handleSubmitForm(values: any) {
-        stateWizardForm.setModalDeployTokenOpen(true)
-        stateWizardForm.setIsDeployTokenLoading(true)
-        stateWizardForm.setIsDeployTokenSuccess(false)
-        stateWizardForm.setIsDeployTokenError(false)
-        stateWizardForm.setDeployTokenErrorMessage(null)
-        try {
-          const signer = await refetch()
-          const factory = new ContractFactory(DeployedGenericVotesTimestampTokenContract.abi, DeployedGenericVotesTimestampTokenContract.bytecode, signer.data)    
-          const contract = await factory.deploy(values.tokenName, values.tokenSymbol, values.receivingAddress, values.numberOfTokens, values?.isNontransferable ?? false);
-          console.log(contract)
-          stateWizardForm.setIsDeployTokenSuccess(true)
-          stateWizardForm.setDeployTokenData({
-            hash: contract.deployTransaction.hash,
-            deployedTokenAddress: contract.address
-          })
-          console.log(stateWizardForm.data)
-          stateWizardForm.setIsDeployTokenLoading(false)
-        }
-        catch(e) {
-          console.error(e)
-          stateWizardForm.setIsDeployTokenError(true)
-          stateWizardForm.setDeployTokenErrorMessage(e.message)
-          stateWizardForm.setIsDeployTokenLoading(false)
-        }
-      }
-    
-      return {
-        handleSubmitForm
-      }
-}*/
+export default useDeployContest;
