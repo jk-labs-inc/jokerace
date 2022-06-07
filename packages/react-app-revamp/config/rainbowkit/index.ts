@@ -6,15 +6,16 @@ const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
 export const jokeDAOTheme = {
   fonts: {
-    body: tailwindTheme.fontFamily.sans,
+    body: tailwindTheme.fontFamily.sans.toString(),
   },
   colors: {
     actionButtonBorder: "transparent",
-    accentColor: tailwindTheme.colors.primary[9],
+    accentColor: tailwindTheme.colors.primary[10],
     accentColorForeground: tailwindTheme.colors.primary[1],
     error: tailwindTheme.colors.negative[10],
     connectButtonInnerBackground: "rgba(255, 255, 255, 0.1)",
     connectButtonBackground: tailwindTheme.colors.neutral[2],
+    connectButtonBackgroundError: tailwindTheme.colors.negative[1],
     connectButtonTextError: tailwindTheme.colors.negative[11],
     modalText: tailwindTheme.colors["true-white"],
     modalTextDim: tailwindTheme.colors.neutral[10],

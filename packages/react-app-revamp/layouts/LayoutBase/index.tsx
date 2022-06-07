@@ -8,9 +8,9 @@ import { Menu, Transition } from "@headlessui/react";
 import { XIcon, MenuIcon } from "@heroicons/react/solid";
 
 interface MenuLinkBaseProps {
-  href: string
-  children: React.ReactNode
-  active: boolean
+  href: string;
+  children: React.ReactNode;
+  active: boolean;
 }
 // eslint-disable-next-line react/display-name
 const MenuLink = forwardRef((props: MenuLinkBaseProps, ref) => {
@@ -35,7 +35,7 @@ const MenuLink = forwardRef((props: MenuLinkBaseProps, ref) => {
 });
 
 interface LayoutBaseProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const LayoutBase = (props: LayoutBaseProps) => {
@@ -44,21 +44,21 @@ const LayoutBase = (props: LayoutBaseProps) => {
 
   return (
     <>
-      <header className="relative">
-        <div className="py-2 container flex justify-content items-center mx-auto">
+      <header className="relative border-b border-neutral-2 border-solid">
+        <div className="py-2 container flex items-center mx-auto">
           <Link href="/">
             <a className="text-4xl sm:text-xl">
               🃏 <span className="sr-only">Home</span>
             </a>
           </Link>
-          <nav className="hidden sm:mis-auto sm:flex text-xs space-i-4">
+          <nav className="hidden sm:flex sm:mis-4 space-i-0.5">
             <Link href={ROUTE_CREATE_CONTEST}>
               <a
                 className={`navLink-desktop ${
                   pathname === ROUTE_CREATE_CONTEST ? "navLink-desktop--active" : "navLink-desktop--inactive"
                 }`}
               >
-                Create contest
+                Create contests
               </a>
             </Link>
             <Link href={ROUTE_VIEW_CONTESTS}>
@@ -67,7 +67,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
                   pathname === ROUTE_VIEW_CONTESTS ? "navLink-desktop--active" : "navLink-desktop--inactive"
                 }`}
               >
-                View contest
+                View contests
               </a>
             </Link>
           </nav>
@@ -98,13 +98,27 @@ const LayoutBase = (props: LayoutBaseProps) => {
                   >
                     <Menu.Items className="text-2xs px-3 divide-y divide-solid divide-neutral-4 fixed w-full bottom-8 left-1/2 -translate-x-1/2 ">
                       <div className="pb-5 pt-2.5 flex flex-col border bg-primary-0 rounded-lg border-neutral-3 border-solid bg-neutral-1">
-                        <Menu.Item>{({ active }) => <MenuLink active={active} href="/">Home</MenuLink>}</Menu.Item>
+                        <Menu.Item>
+                          {({ active }) => (
+                            <MenuLink active={active} href="/">
+                              Home
+                            </MenuLink>
+                          )}
+                        </Menu.Item>
 
                         <Menu.Item>
-                          {({ active }) => <MenuLink active={active} href={ROUTE_CREATE_CONTEST}>Create contest</MenuLink>}
+                          {({ active }) => (
+                            <MenuLink active={active} href={ROUTE_CREATE_CONTEST}>
+                              Create contest
+                            </MenuLink>
+                          )}
                         </Menu.Item>
                         <Menu.Item>
-                          {({ active }) => <MenuLink active={active} href={ROUTE_VIEW_CONTESTS}>View contests</MenuLink>}
+                          {({ active }) => (
+                            <MenuLink active={active} href={ROUTE_VIEW_CONTESTS}>
+                              View contests
+                            </MenuLink>
+                          )}
                         </Menu.Item>
                       </div>
                     </Menu.Items>
@@ -114,13 +128,13 @@ const LayoutBase = (props: LayoutBaseProps) => {
             </Menu>
           </div>
 
-          <div className="text-2xs mis-auto">
+          <div className="text-sm mis-auto">
             <ConnectButton showBalance={false} label="Connect wallet" />
           </div>
         </div>
       </header>
       <main className="flex flex-col grow">{children}</main>
-      <footer className="mt-auto pb-20 sm:pb-0">
+      <footer className="mt-auto py-20 sm:pb-0">
         <div className="text-true-white text-opacity-80 font-medium container justify-center items-start text-2xs flex flex-col space-y-1 sm:space-y-0 sm:space-i-4 sm:flex-row mx-auto">
           {FOOTER_LINKS.map((link, key) => (
             <a
