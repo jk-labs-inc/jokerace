@@ -13,14 +13,16 @@ export const input = cva(
     variants: {
       intent: {
         default: [
-          'bg-true-white border-true-white'
+          'bg-true-white text-true-white border-true-white'
         ],
+      'pseudo-disabled': 'bg-true-white text-true-white border-true-white opacity-50 pointer-events-none border-opacity-20 hover:border-opacity-20',
        error: [
         'input--invalid'
        ]
       },
       size: {
         default: ['px-3 py-1.5 text-sm rounded-md', 'border'],
+        sm: ['px-1.5 py-0.5 text-sm rounded-md', 'border'],
       },
     },
     defaultVariants: {

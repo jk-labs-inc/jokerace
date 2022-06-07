@@ -6,8 +6,8 @@ interface FormInputProps extends InputProps {
 }
 
 export const FormInput = (props: FormInputProps) => {
-    const { className, hasError, ...rest } = props
-    return <input className={input({ size: 'default', variant: hasError === true ? 'error' : 'default', class: className ?? ''})} {...rest} />
+    const { className, hasError, size, ...rest } = props
+    return <input className={input({ size: size ?? 'default', variant: hasError === true ? 'error' : 'default', class: className ?? ''})} {...rest} />
 }
 
 export default FormInput
