@@ -23,7 +23,7 @@ export const Step3 = () => {
 
   const form = useForm({
     initialValues: {
-      votingTokenAddress: stateWizardForm.dataDeployToken?.deployedTokenAddress ?? null,
+      votingTokenAddress: stateWizardForm.dataDeployToken?.address ?? null,
       datetimeOpeningSubmissions: new Date(date.getTime() - date.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, -8), // get current local time in ISO format without seconds & milliseconds
