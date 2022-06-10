@@ -1,0 +1,15 @@
+.stepper::before {
+  @apply absolute w-0.5 inline-start-0.5 bg-secondary-3 top-4 translate-x-1/2;
+  content: " ";
+  height: var(--stepperLineIndicatorHeight);
+  z-index: 0;
+}
+
+.step {
+  @apply relative flex;
+}
+
+.step::before {
+  @apply relative w-2 h-2 mt-3 mie-3 rounded-full bg-current flex flex-col;
+  content: " ";
+}

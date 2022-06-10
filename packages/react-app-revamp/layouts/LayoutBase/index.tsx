@@ -44,7 +44,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
 
   return (
     <>
-      <header className="relative border-b border-neutral-2 border-solid">
+      <header className="relative z-20 border-b border-neutral-2 border-solid">
         <div className="py-2 container flex items-center mx-auto">
           <Link href="/">
             <a className="text-4xl sm:text-xl">
@@ -152,5 +152,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
     </>
   );
 };
+
+export const getLayout = (page: any) => <LayoutBase>{page}</LayoutBase>;
 
 export default LayoutBase;

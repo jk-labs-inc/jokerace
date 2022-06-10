@@ -294,7 +294,7 @@ export const Form = (props: FormProps) => {
                   hasError={touched()?.requiredNumberOfTokenToSubmit && !isRequiredNumberOfTokenToSubmitValid}
                   aria-describedby="input-requirednumberoftoken-helpblock"
                 />{" "}
-                token{data()?.requiredNumberOfTokenToSubmit > 1 ? "s" : ""} to submit
+                token(s) to submit
               </>
             </FormRadioOption>
           </FormRadioGroup>
@@ -363,7 +363,7 @@ export const Form = (props: FormProps) => {
           Voting
         </legend>
         <div className="space-y-6">
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField disabled={!isDateOpeningSubmissionsValid || !isConnected || activeChain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label
                 hasError={
@@ -398,7 +398,7 @@ export const Form = (props: FormProps) => {
                 className="xs:max-w-fit-content w-full"
                 type="datetime-local"
                 name="datetimeOpeningVoting"
-                min={data()?.datetimeOpeningVoting}
+                min={data()?.datetimeOpeningSubmissions}
                 pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
                 id="datetimeOpeningVoting"
                 hasError={
@@ -428,13 +428,13 @@ export const Form = (props: FormProps) => {
             </FormField.HelpBlock>
           </FormField>
 
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField disabled={ !isDateOpeningVotesValid || !isConnected || activeChain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label
                 hasError={
                   errors().datetimeClosingVoting?.length > 0 === true ||
                   (data()?.datetimeClosingVoting && !isDateClosingVotesValid)
-                }
+                } 
                 htmlFor="datetimeClosingVoting"
               >
                 Voting closes <span className="text-2xs text-neutral-10 pis-1">(and submissions close)</span>
@@ -541,7 +541,7 @@ export const Form = (props: FormProps) => {
                   errors().usersQualifyToVoteAtAnotherDatetime?.length > 0 === true ||
                   (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid)
                 }
-                htmlFor="datetimeOpeningVoting"
+                htmlFor="usersQualifyToVoteAtAnotherDatetime"
               >
                 Users can vote from date
               </FormField.Label>
@@ -595,9 +595,8 @@ export const Form = (props: FormProps) => {
             >
               The opening date for votes must be{" "}
               <span className="font-bold">
-                after the opening date for submissions and before the voting closing date.{" "}
+                after the closing date for submissions and before the closing date for votes.{" "}
               </span>
-              .
             </FormField.HelpBlock>
           </FormField>
         </div>

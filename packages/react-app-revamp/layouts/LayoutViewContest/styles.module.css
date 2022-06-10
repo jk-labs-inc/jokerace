@@ -1,0 +1,21 @@
+.navLinkIcon {
+  @apply hidden 2xs:block mie-1 text-inherit w-5;
+}
+
+.navLink {
+  @apply w-max-content xs:w-auto font-bold md:p-1 items-center flex text-center md:text-start;
+}
+
+.navLink--active {
+  @apply text-primary-10;
+}
+
+.navbar {
+  @apply space-i-8 2xs:space-i-10 xs:space-i-20 flex md:flex-col md:space-i-0;
+}
+
+.withFakeSeparator::after {
+  @apply absolute h-px -inline-start-5 bottom-0 bg-neutral-4 md:hidden;
+  content: " ";
+  width: calc(100% + theme("spacing.5") * 2);
+}

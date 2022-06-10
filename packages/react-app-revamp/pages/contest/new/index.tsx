@@ -4,7 +4,6 @@ import WizardFormCreateContest from '@components/_pages/WizardFormCreateContest'
 import type { NextPage } from 'next'
 
 const Page: NextPage = () => {
-
   return (
     <>
       <Head>

@@ -10,6 +10,7 @@ import StepIndicator from "./StepIndicator";
 import type { WizardFormStep, WizardFormState } from './store'
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import { Transition } from "@headlessui/react";
+import Loader from "@components/Loader";
 
 function renderStep(step: WizardFormStep, urlParam: string | undefined) {
     const stepToRender = urlParam ? parseInt(urlParam) : step 
@@ -62,9 +63,8 @@ export const WizardFormCreateContest = () => {
     leaveTo="opacity-0"
     
    >
-    <div className="text-7xl text-center mx-auto pt-20">
-      <div className="animate-card-rotation">🃏</div>
-      <div className="text-lg text-neutral-7 font-bold">Loading, one moment please...</div>
+    <div>
+      <Loader />
     </div>
    </Transition>
    <Transition
