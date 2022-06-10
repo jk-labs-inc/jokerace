@@ -40,7 +40,7 @@ export const DialogModal = (props: DialogModalProps) => {
                 </svg>
                 <span className="sr-only">Close modal</span>
               </button>
-              {children}
+              <div className="pt-3 pie-3">{children}</div>
             </div>
           </Dialog.Panel>
         </div>

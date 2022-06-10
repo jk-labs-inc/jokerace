@@ -24,6 +24,7 @@
     "react-dom": "18.1.0",
     "react-hot-toast": "^2.2.0",
     "react-html-props": "^1.0.33",
+    "react-use": "^17.4.0",
     "tailwindcss": "^3.0.24",
     "wagmi": "^0.4.8",
     "zod": "^3.17.3"

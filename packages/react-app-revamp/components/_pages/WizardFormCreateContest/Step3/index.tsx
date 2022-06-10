@@ -31,6 +31,12 @@ export const Step3 = () => {
         .slice(0, -8), // get current local time in ISO format without seconds & milliseconds
       datetimeOpeningVoting: "",
       datetimeClosingVoting: "",
+      submissionOpenToAll: true,
+      noSubmissionLimitPerUser: false,
+      submissionMaxNumber: 200,
+      requiredNumberOfTokensToSubmit: 1,
+      submissionPerUserMaxNumber: 1,
+      usersQualifyToVoteIfTheyHoldTokenOnVoteStart: true,
     },
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values),
@@ -69,7 +75,7 @@ export const Step3 = () => {
               href={{
                 pathname: ROUTE_VIEW_CONTEST,
                 //@ts-ignore
-                query: { id: stateWizardForm.dataDeployContest?.address },
+                query: { chain: stateWizardForm.contestDeployedToChain?.name.toLocaleLowerCase() , address: stateWizardForm.dataDeployContest?.address },
               }}
             >
               <a target="_blank">

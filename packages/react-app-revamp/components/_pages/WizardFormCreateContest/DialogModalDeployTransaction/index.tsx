@@ -14,7 +14,7 @@ export const DialogModalDeployTransaction = (props: DialogModalDeployTransaction
     const { children, isError, isLoading, isSuccess, error, transactionHref,...rest } = props
 
     return <DialogModal {...rest}>
-        <ol className={`space-y-4 font-bold ${styles.stepper}`}>
+        <ol className={`space-y-4 leading-[1.75] font-bold ${styles.stepper}`}>
             <li className={`${isLoading  === true || isSuccess === true ? 'text-primary-10' : isError  === true ? 'text-negative-11' : 'text-true-white'} ${isLoading === true ? 'animate-pulse' : ""}`}>
                 {isError ? 'Something went wrong during deployment, please try again.' : "Deploying transaction..."}
                 </li>
