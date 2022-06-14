@@ -1,15 +1,21 @@
+import shallow from "zustand/shallow";
 import button from "@components/Button/styles";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { copyToClipboard } from "@helpers/copyToClipboard";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import Link from "next/link";
 import { useStore } from "../store";
-import type { WizardFormState } from '../store'
 
 const appearAsNeutralButton = button({ intent: "neutral-outline", scale: "lg", class: "w-full xs:w-auto" });
 export const TextInstructions = () => {
-  //@ts-ignore
-  const stateWizardForm: WizardFormState = useStore();
+  const { dataDeployToken } = useStore(
+    state => ({
+      //@ts-ignore
+      dataDeployToken: state.dataDeployToken,
+    }),
+    shallow,
+  );
+
   return (
     <div className="space-y-7 leading-relaxed">
       <section>
@@ -19,22 +25,20 @@ export const TextInstructions = () => {
             Coinvise.
           </a>
         </h3>
-        {stateWizardForm?.dataDeployToken?.address && (
+        {dataDeployToken?.address && (
           <>
             <p className="text-neutral-11 text-xs mt-3">
               as a reminder, your token address is: <br />
               <span className="relative inline-flex focus-within:text-opacity-50 hover:text-opacity-75">
                 <button
-                  onClick={() =>
-                    copyToClipboard(stateWizardForm?.dataDeployToken?.address ?? "", "Token address copied !")
-                  }
+                  onClick={() => copyToClipboard(dataDeployToken?.address ?? "", "Token address copied !")}
                   title="Copy address"
                   className="w-full absolute z-10 inset-0 opacity-0"
                 >
                   Copy address
                 </button>
                 <span className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
-                  {stateWizardForm?.dataDeployToken?.address ?? ""}
+                  {dataDeployToken?.address ?? ""}
                 </span>
                 <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
               </span>
@@ -43,7 +47,7 @@ export const TextInstructions = () => {
                 href={{
                   pathname: ROUTE_VIEW_CONTEST,
                   //@ts-ignore
-                  query: { id: stateWizardForm.dataDeployContest?.address },
+                  query: { id: dataDeployContest?.address },
                 }}
               >
                 <a target="_blank" className="link">
@@ -68,10 +72,11 @@ export const TextInstructions = () => {
           </li>
           <li>
             Tap <span className="font-bold">&quot;select token&quot;</span> and input your token address{" "}
-            {stateWizardForm?.dataDeployToken?.address && " above"}
+            {dataDeployToken?.address && " above"}
           </li>
           <li>
-            Input wallet addresses and number of tokens each one gets — don&apos;t worry, we&apos;ll come back to this in a sec
+            Input wallet addresses and number of tokens each one gets — don&apos;t worry, we&apos;ll come back to this
+            in a sec
           </li>
           <li>
             Press <span className="font-bold">&quot;next&quot;</span>, airdrop, and{" "}
@@ -87,7 +92,8 @@ export const TextInstructions = () => {
           <ol className="list-decimal space-y-1 pis-4">
             <li>Ask your community to drop a comment that includes their ENS in a Twitter thread</li>
             <li>
-              Scroll down Coinvise&apos;s airdrop page to <span className="font-bold">&quot;import addresses from twitter&quot;</span>
+              Scroll down Coinvise&apos;s airdrop page to{" "}
+              <span className="font-bold">&quot;import addresses from twitter&quot;</span>
             </li>
             <li>Tap the import button, drop your link, and you&apos;re all set.</li>
           </ol>
@@ -129,8 +135,8 @@ export const TextInstructions = () => {
             <li>Save as a CSV and open in an independent app like &quot;Notes&quot;</li>
           </ol>
           <p>
-            You&apos;re done! You should see your full list of recipients and the number of tokens each receives, separated
-            by a comma. Paste that in!
+            You&apos;re done! You should see your full list of recipients and the number of tokens each receives,
+            separated by a comma. Paste that in!
           </p>
         </section>
         <section>
@@ -149,12 +155,12 @@ export const TextInstructions = () => {
         </section>
       </section>
       {/*@ts-ignore */}
-      {stateWizardForm.dataDeployContest?.address && (
+      {dataDeployContest?.address && (
         <Link
           href={{
             pathname: ROUTE_VIEW_CONTEST,
             //@ts-ignore
-            query: { id: stateWizardForm.dataDeployContest?.address },
+            query: { id: dataDeployContest?.address },
           }}
         >
           <a className={appearAsNeutralButton} target="_blank">

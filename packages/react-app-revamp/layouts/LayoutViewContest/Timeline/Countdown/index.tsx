@@ -1,12 +1,23 @@
-import { useStore } from "@hooks/useProviderContest";
+import shallow from "zustand/shallow";
+import { useStore } from "@hooks/useContest";
 import { useCountdown } from "./useCountdown";
 import styles from "./styles.module.css";
 
 export const Countdown = () => {
-  const stateContest = useStore();
-  const countdownUntilSubmissionsOpen = useCountdown(new Date(), stateContest.submissionsOpen);
-  const countdownUntilVotingOpen = useCountdown(stateContest.submissionsOpen, stateContest.votesOpen);
-  const countdownUntilVotingClose = useCountdown(stateContest.votesOpen, stateContest.votesClose);
+  const { submissionsOpen, votesOpen, votesClose } = useStore(
+    state => ({
+      //@ts-ignore
+      submissionsOpen: state.submissionsOpen,
+      //@ts-ignore
+      votesOpen: state.votesOpen,
+      //@ts-ignore
+      votesClose: state.votesClose,
+    }),
+    shallow,
+  );
+  const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen);
+  const countdownUntilVotingOpen = useCountdown(submissionsOpen, votesOpen);
+  const countdownUntilVotingClose = useCountdown(votesOpen, votesClose);
 
   if (countdownUntilSubmissionsOpen.isCountdownRunning) {
     return (
@@ -15,6 +26,7 @@ export const Countdown = () => {
         <div className={styles.countdown}>
           {Object.keys(countdownUntilSubmissionsOpen.countdown).map((unit: string) => (
             <div className={styles.wrapperUnit} key={`countdown-submissions-open-${unit}`}>
+              {/*@ts-ignore */}
               <span className={styles.unitValue}>{countdownUntilSubmissionsOpen.countdown[unit]}</span>
               <span className={styles.unit}>{unit}</span>
             </div>
@@ -30,6 +42,7 @@ export const Countdown = () => {
         <div className={styles.countdown}>
           {Object.keys(countdownUntilVotingOpen.countdown).map((unit: string) => (
             <div className={styles.wrapperUnit} key={`countdown-voting-open-${unit}`}>
+              {/*@ts-ignore */}
               <span className={styles.unitValue}>{countdownUntilVotingOpen.countdown[unit]}</span>
               <span className={styles.unit}>{unit}</span>
             </div>
@@ -45,6 +58,7 @@ export const Countdown = () => {
         <div className={styles.countdown}>
           {Object.keys(countdownUntilVotingClose.countdown).map((unit: string) => (
             <div className={styles.wrapperUnit} key={`countdown-voting-closes-${unit}`}>
+              {/*@ts-ignore */}
               <span className={styles.unitValue}>{countdownUntilVotingClose.countdown[unit]}</span>
               <span className={styles.unit}>{unit}</span>
             </div>

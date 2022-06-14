@@ -1,6 +1,6 @@
+import shallow from "zustand/shallow";
 import { Disclosure, Transition } from "@headlessui/react";
 import { useStore } from "../store";
-import type { WizardFormState } from "../store";
 import styles from "./styles.module.css";
 
 export const stepsNames = {
@@ -24,8 +24,15 @@ export const stepsNames = {
 
 const stepsNumber = Object.keys(stepsNames).length;
 export const StepIndicator = () => {
-  //@ts-ignore
-  const state: WizardFormState = useStore();
+  const { currentStep, setCurrentStep } = useStore(
+    state => ({
+      //@ts-ignore
+      currentStep: state.currentStep,
+      //@ts-ignore
+      setCurrentStep: state.setCurrentStep,
+    }),
+    shallow,
+  );
 
   return (
     <div className="pb-5">
@@ -35,9 +42,9 @@ export const StepIndicator = () => {
             <li
               className={`grow flex items-center 
             ${
-              state.currentStep === parseInt(indicator)
+              currentStep === parseInt(indicator)
                 ? "text-primary-10 font-bold"
-                : state.currentStep > parseInt(indicator)
+                : currentStep > parseInt(indicator)
                 ? "text-primary-8"
                 : "text-true-white"
             }`}
@@ -45,7 +52,7 @@ export const StepIndicator = () => {
               key={`desktop-wizardform-step-${stepsNames[indicator].key}`}
             >
               {/* @ts-ignore*/}
-              <button className="flex" onClick={() => state.setCurrentStep(parseInt(indicator))}>
+              <button className="flex" onClick={() => setCurrentStep(parseInt(indicator))}>
                 <span className="px-2 text-sm flex items-center justify-center mie-1ex aspect-square rounded-full border-solid border-current border">
                   {indicator}
                 </span>
@@ -62,10 +69,11 @@ export const StepIndicator = () => {
             <span className="text-start text-primary-6 text-2xs block">
               Step{" "}
               <span className="pis-1ex">
-                {state.currentStep} / {stepsNumber}
+                {currentStep} / {stepsNumber}
               </span>
             </span>
-            <div className="flex font-bold items-center text-primary-10">{stepsNames[state.currentStep].label}</div>
+            {/* @ts-ignore */}
+            <div className="flex font-bold items-center text-primary-10">{stepsNames[currentStep].label}</div>
           </Disclosure.Button>
 
           <Transition
@@ -79,9 +87,9 @@ export const StepIndicator = () => {
             <Disclosure.Panel>
               <ul
                 style={{
-                  // @ts-ignore 
-                  "--stepperLineIndicatorHeight": `${    
-                    state.currentStep === 1 ? 0 : (state.currentStep / stepsNumber) * 100 - stepsNumber * 2.75
+                  // @ts-ignore
+                  "--stepperLineIndicatorHeight": `${
+                    currentStep === 1 ? 0 : (currentStep / stepsNumber) * 100 - stepsNumber * 2.75
                   }%`,
                 }}
                 className={`${styles.stepperMobile} before:top-1 before:inline-start-1.5 before:translate-x-1/2 relative flex mx-3 pb-3 mt-3 space-y-4 flex-col`}
@@ -92,14 +100,14 @@ export const StepIndicator = () => {
                     <li key={`mobile-wizard-form-step-${stepsNames[indicator].key}`}>
                       <Disclosure.Button
                         className={`grow w-full flex font-bold items-center text-xs ${
-                          state.currentStep === parseInt(indicator)
+                          currentStep === parseInt(indicator)
                             ? "text-primary-10"
-                            : state.currentStep > parseInt(indicator)
+                            : currentStep > parseInt(indicator)
                             ? "text-primary-8"
                             : "text-true-white"
                         }`}
                         //@ts-ignore
-                        onClick={() => state.setCurrentStep(parseInt(indicator))}
+                        onClick={() => setCurrentStep(parseInt(indicator))}
                       >
                         <span className="px-1 bg-true-black text-2xs flex items-center justify-center mie-1ex aspect-square rounded-full border-solid border-current border">
                           {indicator}

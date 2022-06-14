@@ -1,3 +1,4 @@
+import shallow from "zustand/shallow";
 import Button from "@components/Button";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
@@ -9,11 +10,29 @@ import { useStore } from "../store";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployToken } from "./useDeployToken";
-import type { WizardFormState } from '../store'
 
 export const Step2 = () => {
-  //@ts-ignore
-  const stateWizardForm: WizardFormState = useStore();
+  const {
+    tokenDeployedToChain,
+    setCurrentStep,
+    dataDeployToken,
+    modalDeployTokenOpen,
+    setModalDeployTokenOpen,
+  } = useStore(
+    state => ({
+      //@ts-ignore
+      setCurrentStep: state.setCurrentStep,
+      //@ts-ignore
+      dataDeployToken: state.dataDeployToken,
+      //@ts-ignore
+      modalDeployTokenOpen: state.modalDeployTokenOpen,
+      //@ts-ignore
+      setModalDeployTokenOpen: state.setModalDeployTokenOpen,
+      //@ts-ignore
+      tokenDeployedToChain: state.tokenDeployedToChain,
+    }),
+    shallow,
+  );
   const form = useForm({
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values),
@@ -32,28 +51,28 @@ export const Step2 = () => {
       </div>
       <Form isDeploying={stateContractDeployment.isLoading} {...form} />
       <DialogModalDeployTransaction
-        isOpen={stateWizardForm.modalDeployTokenOpen}
-        setIsOpen={stateWizardForm.setModalDeployTokenOpen}
+        isOpen={modalDeployTokenOpen}
+        setIsOpen={setModalDeployTokenOpen}
         title="Token deployment transaction"
         isError={stateContractDeployment.isError}
         isLoading={stateContractDeployment.isLoading}
         isSuccess={stateContractDeployment.isSuccess}
         error={stateContractDeployment.error}
-        transactionHref={`${stateWizardForm.tokenDeployedToChain?.blockExplorers?.default?.url}/tx/${stateWizardForm?.dataDeployToken?.hash}`}
+        transactionHref={`${tokenDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployToken?.hash}`}
       >
         {stateContractDeployment.isSuccess === true && (
           <div className="mt-3 animate-appear relative">
             <span className="font-bold">Token address:</span>
             <div className="relative focus-within:text-opacity-50 hover:text-opacity-75">
               <button
-                onClick={() => copyToClipboard(stateWizardForm.dataDeployToken?.address, "Token address copied !")}
+                onClick={() => copyToClipboard(dataDeployToken?.address, "Token address copied !")}
                 title="Copy address"
                 className="w-full absolute z-10 inset-0 opacity-0"
               >
                 Copy address
               </button>
               <p className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
-                {stateWizardForm.dataDeployToken?.address}
+                {dataDeployToken?.address}
               </p>
               <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
             </div>
@@ -63,7 +82,7 @@ export const Step2 = () => {
         <div className="pt-6 flex flex-col space-y-3 xs:flex-row xs:space-y-0 xs:space-i-3">
           <Button
             className="w-full py-1 xs:min-w-fit-content xs:w-auto"
-            onClick={() => stateWizardForm.setCurrentStep(3)}
+            onClick={() => setCurrentStep(3)}
             disabled={!stateContractDeployment.isSuccess}
             intent="neutral-outline"
           >

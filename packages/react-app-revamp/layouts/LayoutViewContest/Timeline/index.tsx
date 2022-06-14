@@ -1,16 +1,23 @@
-import { useStore } from "@hooks/useProviderContest";
+import shallow from "zustand/shallow";
+import { useStore } from "@hooks/useContest";
 import isWithinInterval from "date-fns/isWithinInterval";
 import Countdown from "./Countdown";
 import Steps from "./Steps";
 
 export const Timeline = () => {
-  const stateContest = useStore();
+  const { submissionsOpen, votesOpen } = useStore(
+    state => ({
+      submissionsOpen: state.submissionsOpen,
+      votesOpen: state.votesOpen,
+    }),
+    shallow,
+  );
 
   return (
     <>
       {isWithinInterval(new Date(), {
-        start: stateContest.submissionsOpen,
-        end: stateContest.votesOpen,
+        start: submissionsOpen,
+        end: votesOpen,
       }) && (
         <div className="animate-appear mb-4 md:mb-6">
           <Countdown />
