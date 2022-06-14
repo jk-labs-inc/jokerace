@@ -2,9 +2,11 @@ import { chain, configureChains, createClient } from "wagmi";
 import { fantom, avalanche, harmony, gnosis } from "@helpers/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
 
 const infuraId = process.env.INFURA_ID;
+const alchemyId = process.env.ALCHEMY_KEY;
 
 const testnetChains = [
   chain.polygonMumbai,
@@ -28,7 +30,11 @@ const defaultChains = [
 ];
 const appChains = [...defaultChains, ...testnetChains];
 
-export const { chains, provider } = configureChains(appChains, [infuraProvider({ infuraId }), publicProvider()]);
+export const { chains, provider } = configureChains(appChains, [
+  // alchemyProvider({ alchemyId }),
+  // infuraProvider({ infuraId }),
+  publicProvider(),
+]);
 
 const { wallets } = getDefaultWallets({
   appName: "JokeDAO",

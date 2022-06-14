@@ -1,4 +1,5 @@
-import { useNetwork, useConnect, useSigner } from "wagmi";
+import shallow from "zustand/shallow";
+import { useNetwork, useConnect } from "wagmi";
 import { usePress } from "@react-aria/interactions";
 import FormField from "@components/FormField";
 import FormInput from "@components/FormInput";
@@ -6,19 +7,18 @@ import Button from "@components/Button";
 import ToggleSwitch from "@components/ToggleSwitch";
 import button from "@components/Button/styles";
 import { useStore } from "../store";
-import type { WizardFormState } from '../store'
 
 interface FormProps {
-  isDeploying: boolean
+  isDeploying: boolean;
   // the following are returned by felte hook useForm()
-  form: any
-  touched: any
-  data: any
-  errors: any
-  isValid: any
-  interacted: any
-  resetField: any
-  setData: any
+  form: any;
+  touched: any;
+  data: any;
+  errors: any;
+  isValid: any;
+  interacted: any;
+  resetField: any;
+  setData: any;
 }
 const appearAsNeutralButton = button({ intent: "neutral-outline" });
 
@@ -26,10 +26,17 @@ export const Form = (props: FormProps) => {
   const { isDeploying, form, data, errors, isValid, interacted, setData } = props;
   const { isConnected } = useConnect();
   const { activeChain } = useNetwork();
-  //@ts-ignore
-  const stateWizardForm: WizardFormState = useStore();
+  const { setCurrentStep, dataDeployToken } = useStore(
+    state => ({
+      //@ts-ignore
+      setCurrentStep: state.setCurrentStep,
+      //@ts-ignore
+      dataDeployToken: state.dataDeployToken,
+    }),
+    shallow,
+  );
   const { pressProps } = usePress({
-    onPress: () => stateWizardForm.setCurrentStep(3),
+    onPress: () => setCurrentStep(3),
   });
 
   return (
@@ -186,7 +193,7 @@ export const Form = (props: FormProps) => {
         </Button>
 
         <div className={appearAsNeutralButton} tabIndex={0} role="button" {...pressProps}>
-          {stateWizardForm.dataDeployToken !== null ? "Next" : "Skip"}
+          {dataDeployToken !== null ? "Next" : "Skip"}
         </div>
       </div>
     </form>

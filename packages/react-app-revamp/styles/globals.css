@@ -34,7 +34,7 @@
     text-transform: lowercase !important;
   }
   html {
-    @apply bg-true-black text-true-white;
+    @apply bg-true-black text-true-white overflow-x-hidden;
   }
   body {
     @apply text-base flex flex-col min-h-screen;

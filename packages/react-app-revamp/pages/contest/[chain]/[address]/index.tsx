@@ -1,8 +1,10 @@
+import shallow from 'zustand/shallow'
 import Head from 'next/head'
 import { chains } from '@config/wagmi'
 import { getLayout } from '@layouts/LayoutViewContest'
 import type { NextPage } from 'next'
-import { useStore } from '@hooks/useProviderContest'
+import { useStore } from '@hooks/useContest'
+import ListProposals from '@components/_pages/ListProposals'
 
 interface PageProps {
   address: string,
@@ -10,21 +12,21 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
-  const stateContest = useStore()
-  console.log(stateContest)
+  const { isLoading, contestName } = useStore(state =>  ({ 
+    //@ts-ignore
+    isLoading: state.isLoading, 
+    //@ts-ignore
+    contestName: state.contestName, 
+   }), shallow);
   return (
     <>
       <Head>
-        <title>Contest {address} - JokeDAO</title>
+        <title>Contest {contestName ?? address } - JokeDAO</title>
         <meta name="description" content="@TODO: change this" />
       </Head>
-    <h1 className='sr-only'>Contest {address} </h1>
-    {!stateContest.isLoading && <>
-      <Head>
-        <title>{stateContest.contestName} - JokeDAO</title>
-        <meta name="description" content="@TODO: change this" />
-      </Head>
-    
+    <h1 className='sr-only'>Contest {contestName ?? address} </h1>
+    {!isLoading && <>
+      <ListProposals />
     </>}
   </>
 )}

@@ -1,11 +1,14 @@
 import create from "zustand";
 import createContext from "zustand/context";
+import shallow from "zustand/shallow";
 import { useAccount, useContractRead, useEnsName, useNetwork, useToken } from "wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { chains } from "@config/wagmi";
 import { chain } from "wagmi";
+import { fetchEnsName, readContract } from "@wagmi/core";
+import isUrlToImage from "@helpers/isUrlToImage";
 
 export const { Provider, useStore } = createContext();
 
@@ -21,6 +24,7 @@ export const createStore = () => {
     votingTokenAddress: null,
     currentUserAvailableVotesAmount: null,
     listProposalsIds: [],
+    listProposalsData: {},
     isListProposalsLoading: true,
     setContestStatus: (state: number) => set({ contestStatus: state }),
     setContestName: (name: string) => set({ contestName: name }),
@@ -33,6 +37,16 @@ export const createStore = () => {
     setCurrentUserAvailableVotesAmount: (amount: number) => set({ currentUserAvailableVotesAmount: amount }),
     setListProposalsIds: (list: any) => set({ listProposalsIds: list }),
     setIsListProposalsLoading: (value: boolean) => set({ isListProposalsLoading: value }),
+    //@ts-ignore
+    setProposalData: ({ id, data }) =>
+      set(state => ({
+        ...state,
+        listProposalsData: {
+          //@ts-ignore
+          ...state.listProposalsData,
+          [id]: data,
+        },
+      })),
   }));
 };
 
@@ -43,15 +57,68 @@ export const stateContest = {
   [3]: "Completed",
 };
 
-export function useContestData() {
+export function useContest() {
   const { asPath } = useRouter();
-  const url = asPath.split("/");
+  const [url] = useState(asPath.split("/"));
   const { activeChain } = useNetwork();
   const [chainId] = useState(chains.filter(chain => chain.name.toLowerCase() === url[2])?.[0]?.id);
   const [canFetch, setCanFetch] = useState(chainId === activeChain?.id);
-  const address = url[3];
-  const stateContest = useStore();
-  const { data, error, isLoading } = useAccount();
+  const [address] = useState(url[3]);
+  const {
+    setContestName,
+    setProposalData,
+    setContestAuthor,
+    contestAuthor,
+    setSubmissionsOpen,
+    setContestStatus,
+    setVotingTokenAddress,
+    votingTokenAddress,
+    setVotingToken,
+    setVotesOpen,
+    setCurrentUserAvailableVotesAmount,
+    setListProposalsIds,
+    isListProposalsLoading,
+    setIsListProposalsLoading,
+    setVotesClose,
+  } = useStore(
+    state => ({
+      //@ts-ignore
+      setContestName: state.setContestName,
+      //@ts-ignore
+      contestAuthor: state.contestAuthor,
+      //@ts-ignore
+      setContestAuthor: state.setContestAuthor,
+      //@ts-ignore
+      setVotingTokenAddress: state.setVotingTokenAddress,
+      //@ts-ignore
+      votingTokenAddress: state.votingTokenAddress,
+      //@ts-ignore
+      setVotingToken: state.setVotingToken,
+      //@ts-ignore
+      setSubmissionsOpen: state.setSubmissionsOpen,
+      //@ts-ignore
+      setVotesClose: state.setVotesClose,
+      //@ts-ignore
+      setVotesOpen: state.setVotesOpen,
+      //@ts-ignore
+      setContestStatus: state.setContestStatus,
+      //@ts-ignore
+      setCurrentUserAvailableVotesAmount: state.setCurrentUserAvailableVotesAmount,
+      //@ts-ignore
+      listProposalsIds: state.listProposalsIds,
+      //@ts-ignore
+      setProposalData: state.setProposalData,
+      //@ts-ignore
+      setIsListProposalsLoading: state.setIsListProposalsLoading,
+      //@ts-ignore
+      setListProposalsIds: state.setListProposalsIds,
+      //@ts-ignore
+      isListProposalsLoading: state.isListProposalsLoading,
+    }),
+    shallow,
+  );
+
+  const { data, isLoading } = useAccount();
   const nameRawData = useContractRead(
     {
       //@ts-ignore
@@ -61,7 +128,7 @@ export function useContestData() {
     "name",
     {
       chainId,
-      onSuccess: data => stateContest.setContestName(data),
+      onSuccess: data => setContestName(data),
       enabled: canFetch,
     },
   );
@@ -74,16 +141,16 @@ export function useContestData() {
     "creator",
     {
       chainId,
-      onSuccess: data => stateContest.setContestAuthor(data),
+      onSuccess: data => setContestAuthor(data),
       enabled: canFetch,
     },
   );
 
   const contestAuthorENSRawData = useEnsName({
-    address: stateContest?.contestAuthor,
+    address: contestAuthor,
     chainId,
-    onSuccess: data => stateContest.setContestAuthor(data),
-    enabled: activeChain?.id === chain.mainnet.id && canFetch && stateContest?.contestAuthor,
+    onSuccess: data => setContestAuthor(data),
+    enabled: activeChain?.id === chain.mainnet.id && canFetch && contestAuthor !== null,
   });
 
   const tokenAddressRawData = useContractRead(
@@ -96,13 +163,13 @@ export function useContestData() {
     {
       chainId,
       enabled: canFetch,
-      onSuccess: data => stateContest.setVotingTokenAddress(data),
+      onSuccess: data => setVotingTokenAddress(data),
     },
   );
 
   const tokenRawData = useToken({
-    enabled: canFetch && stateContest.votingTokenAddress !== null,
-    address: stateContest.votingTokenAddress,
+    enabled: canFetch && votingTokenAddress !== null,
+    address: votingTokenAddress,
     chainId,
   });
 
@@ -115,7 +182,8 @@ export function useContestData() {
     "contestStart",
     {
       chainId,
-      onSuccess: data => stateContest.setSubmissionsOpen(new Date(parseInt(data) * 1000)),
+      //@ts-ignore
+      onSuccess: data => setSubmissionsOpen(new Date(parseInt(data) * 1000)),
       enabled: canFetch,
     },
   );
@@ -128,7 +196,8 @@ export function useContestData() {
     "contestDeadline",
     {
       chainId,
-      onSuccess: data => stateContest.setVotesClose(new Date(parseInt(data) * 1000)),
+      //@ts-ignore
+      onSuccess: data => setVotesClose(new Date(parseInt(data) * 1000)),
       enabled: canFetch,
     },
   );
@@ -142,7 +211,8 @@ export function useContestData() {
     {
       chainId,
       enabled: canFetch,
-      onSuccess: data => stateContest.setVotesOpen(new Date(parseInt(data) * 1000)),
+      //@ts-ignore
+      onSuccess: data => setVotesOpen(new Date(parseInt(data) * 1000)),
     },
   );
   const statusRawData = useContractRead(
@@ -155,7 +225,7 @@ export function useContestData() {
     {
       chainId,
       enabled: canFetch,
-      onSuccess: data => stateContest.setContestStatus(data),
+      onSuccess: data => setContestStatus(data),
     },
   );
   const amountOfTokensRequiredToSubmitEntryRawData = useContractRead(
@@ -180,7 +250,8 @@ export function useContestData() {
     {
       chainId,
       enabled: canFetch,
-      onSuccess: data => stateContest.setVotesOpen(new Date(parseInt(data) * 1000)),
+      //@ts-ignore
+      onSuccess: data => setVotesOpen(new Date(parseInt(data) * 1000)),
     },
   );
   const currentAddressTotalVotesRawData = useContractRead(
@@ -195,7 +266,7 @@ export function useContestData() {
       cacheOnBlock: true,
       args: data?.address,
       enabled: data?.address && canFetch ? true : false,
-      onSuccess: data => stateContest.setCurrentUserAvailableVotesAmount(data),
+      onSuccess: data => setCurrentUserAvailableVotesAmount(data),
     },
   );
 
@@ -210,11 +281,51 @@ export function useContestData() {
       chainId,
       enabled: canFetch,
       onSuccess: data => {
-        stateContest.setListProposalsIds(data);
-        stateContest.setIsListProposalsLoading(false);
+        setListProposalsIds(data);
+        if (data.length === 0) {
+          setIsListProposalsLoading(false);
+        } else {
+          fetchAllProposals(data);
+        }
       },
     },
   );
+
+  async function fetchAllProposals(list) {
+    try {
+      Promise.all(
+        list.map(async (id: number) => {
+          const data = await readContract(
+            {
+              //@ts-ignore
+              addressOrName: address,
+              contractInterface: DeployedContestContract.abi,
+            },
+            "getProposal",
+            {
+              args: id,
+              chainId,
+            },
+          );
+          const author = await fetchEnsName({
+            address: data[0],
+            chainId: chain.mainnet.id,
+          });
+          const proposalData = {
+            author: author ?? data[0],
+            content: data[1],
+            isContentImage: isUrlToImage(data[1]) ? true : false,
+            exists: data[2],
+          };
+          setProposalData({ id, data: proposalData });
+        }),
+      );
+      setIsListProposalsLoading(false);
+    } catch (e) {
+      console.error(e);
+      setIsListProposalsLoading(false);
+    }
+  }
 
   useEffect(() => {
     if (activeChain?.id !== chainId) {
@@ -226,7 +337,7 @@ export function useContestData() {
 
   useEffect(() => {
     if (activeChain?.id === chainId && tokenRawData?.data) {
-      stateContest.setVotingToken(tokenRawData.data);
+      setVotingToken(tokenRawData.data);
     }
   }, [activeChain?.id, tokenRawData.data]);
 
@@ -242,14 +353,21 @@ export function useContestData() {
     currentAddressTotalVotesRawData,
     deadlineRawData,
     votesOpenRawData,
+    proposalsIdsRawData,
   ];
 
   return {
+    address,
+    chainId,
+    canFetch,
     isLoading:
       !canFetch ||
       !tokenRawData.data ||
       isLoading ||
+      isListProposalsLoading ||
       datalist.filter(e => e.isFetching === false && e.isLoading === false && e.isRefetching === false && e.isSuccess)
         .length < datalist.length,
   };
 }
+
+export default useContest;

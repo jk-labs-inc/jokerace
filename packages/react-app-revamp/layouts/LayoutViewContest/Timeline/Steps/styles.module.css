@@ -1,5 +1,5 @@
 .stepper::before {
-  @apply absolute w-0.5 inline-start-0.5 bg-secondary-3 top-4 translate-x-1/2;
+  @apply absolute w-0.5 inline-start-0.5 bg-positive-3 top-4 translate-x-1/2;
   content: " ";
   height: var(--stepperLineIndicatorHeight);
   z-index: 0;
