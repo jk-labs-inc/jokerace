@@ -2,7 +2,13 @@ import { forwardRef, Fragment } from "react";
 import { useRouter } from "next/router";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
+import {
+  ROUTE_CONTEST_PROPOSAL,
+  ROUTE_CREATE_CONTEST,
+  ROUTE_VIEW_CONTEST,
+  ROUTE_VIEW_CONTESTS,
+  ROUTE_VIEW_CONTEST_RULES,
+} from "@config/routes";
 import { FOOTER_LINKS } from "@config/links";
 import { Menu, Transition } from "@headlessui/react";
 import { XIcon, MenuIcon } from "@heroicons/react/solid";
@@ -64,7 +70,11 @@ const LayoutBase = (props: LayoutBaseProps) => {
             <Link href={ROUTE_VIEW_CONTESTS}>
               <a
                 className={`navLink-desktop ${
-                  pathname === ROUTE_VIEW_CONTESTS ? "navLink-desktop--active" : "navLink-desktop--inactive"
+                  [ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS, ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST_RULES].includes(
+                    pathname,
+                  )
+                    ? "navLink-desktop--active"
+                    : "navLink-desktop--inactive"
                 }`}
               >
                 View contests

@@ -15,14 +15,9 @@ export const Timeline = () => {
 
   return (
     <>
-      {isWithinInterval(new Date(), {
-        start: submissionsOpen,
-        end: votesOpen,
-      }) && (
-        <div className="animate-appear mb-4 md:mb-6">
-          <Countdown />
-        </div>
-      )}
+      <div className="animate-appear mb-4 md:mb-6">
+        <Countdown />
+      </div>
       <div className="animate-appear">
         <Steps />
       </div>

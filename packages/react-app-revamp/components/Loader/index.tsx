@@ -1,8 +1,22 @@
-export const Loader = () => {
+import { loaderText, loaderIcon, loaderWrapper } from "./styles";
+interface LoaderProps {
+  children?: React.ReactNode;
+  scale?: string;
+  classNameIcon?: string;
+  classNameWrapper?: string;
+  classNameText?: string;
+}
+
+export const Loader = (props: LoaderProps) => {
+  const { children, scale, classNameText, classNameWrapper, classNameIcon } = props;
   return (
-    <div className="text-7xl text-center mx-auto pt-20">
-      <div className="animate-card-rotation">🃏</div>
-      <div className="text-lg text-neutral-7 font-bold">Loading, one moment please...</div>
+    <div className={loaderWrapper({ scale: scale ?? "page", class: classNameWrapper ?? "" })}>
+      <div className={`${loaderIcon({ scale: scale ?? "page", class: classNameIcon ?? "" })} animate-card-rotation`}>
+        🃏
+      </div>
+      <div className={loaderText({ scale: scale ?? "page", class: classNameText ?? "" })}>
+        {children ?? "Loading, one moment please..."}
+      </div>
     </div>
   );
 };

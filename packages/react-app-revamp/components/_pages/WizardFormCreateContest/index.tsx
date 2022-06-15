@@ -70,7 +70,7 @@ export const WizardFormCreateContest = () => {
     
    >
     <div>
-      <Loader />
+      <Loader scale="page" />
     </div>
    </Transition>
    <Transition

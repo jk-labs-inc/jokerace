@@ -1,0 +1,4 @@
+.wrapper {
+  @apply flex flex-col-reverse 2xs:grid gap-3;
+  grid-template-columns: 8ex 1fr;
+}

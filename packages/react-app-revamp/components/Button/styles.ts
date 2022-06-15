@@ -27,11 +27,18 @@ export const button = cva(
             'text-true-white focus:text-true-black',
             'border-neutral-10 hover:border-neutral-11 hover:focus:border-neutral-12 focus:border-true-white',
         ],
+        'true-solid-outline': [
+          'bg-true-black hover:bg-neutral-12 focus:bg-true-white hover:focus:bg-true-white',
+          'text-true-white hover:text-neutral-1 focus:text-true-black',
+          'border-neutral-10 hover:border-neutral-11 hover:focus:border-neutral-12 focus:border-true-white',
+
+        ],
       },
       scale: {
         default: ['text-xs', 'py-2 px-4 sm:px-5', 'font-bold', 'border'],
         lg: ['text-md', 'py-1.5 px-4 sm:px-5', 'font-bold', 'border'],
-        sm: ['text-2xs', 'py-2 px-2.5', 'font-bold', 'border']
+        sm: ['text-2xs', 'py-2 px-2.5', 'font-bold', 'border'],
+        xs: ['text-2xs', 'py-1 px-1.5', 'font-bold', 'border']
       },
     },
     defaultVariants: {
