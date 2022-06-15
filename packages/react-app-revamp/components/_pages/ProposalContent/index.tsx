@@ -1,6 +1,8 @@
 import isUrlToImage from "@helpers/isUrlToImage";
 import { isUrlTweet } from "@helpers/isUrlTweet";
 import { TwitterTweetEmbed } from "react-twitter-embed";
+import { Interweave } from "interweave";
+import { UrlMatcher } from "interweave-autolink";
 interface ProposalContentProps {
   content: string;
   author: string;
@@ -22,7 +24,11 @@ function renderContent(str: string) {
       </>
     );
   }
-  return <p>{str.replaceAll(",", ",\n")}</p>;
+  return (
+    <div className="with-link-highlighted">
+      <Interweave content={str.replaceAll(",", ",\n")} matchers={[new UrlMatcher("url")]} />
+    </div>
+  );
 }
 
 export const ProposalContent = (props: ProposalContentProps) => {
