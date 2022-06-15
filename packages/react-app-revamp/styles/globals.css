@@ -59,6 +59,7 @@
     @apply font-bold px-4 py-3;
   }
 
+  .with-link-highlighted a,
   .link {
     @apply cursor-pointer font-bold text-positive-9 underline focus:text-positive-10 hover:no-underline;
   }
