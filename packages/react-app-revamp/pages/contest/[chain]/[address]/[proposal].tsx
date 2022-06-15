@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { chains } from '@config/wagmi'
 import { useStore } from '@hooks/useContest'
-import { Provider, createStore } from '@hooks/useProposal'
+import { Provider, createStore } from '@hooks/useProposalVotes'
 import { getLayout } from '@layouts/LayoutViewContest'
 import ProposalContent from '@components/_pages/ProposalContent'
 import ListProposalVotes from '@components/_pages/ListProposalVotes'
@@ -40,12 +40,11 @@ const Page: NextPage = (props: PageProps) => {
     {!isLoading && listProposalsData[proposal] && <div className='animate-appear'>
         <ProposalContent 
           author={listProposalsData[proposal]?.author}
-          isImage={listProposalsData[proposal]?.isContentImage}
           content={listProposalsData[proposal]?.content}
         />
-        {isAfter(new Date(), votesOpen) &&  <Provider createStore={() => createStore()}>
+        {isAfter(new Date(), votesOpen) &&  <Provider createStore={createStore}>
           <div className='mt-8 text-sm'>
-            <ListProposalVotes />
+            <ListProposalVotes id={proposal} />
           </div>
         </Provider>}
     </div>}

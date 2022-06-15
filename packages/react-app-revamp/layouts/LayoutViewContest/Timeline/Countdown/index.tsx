@@ -15,6 +15,7 @@ export const Countdown = () => {
     }),
     shallow,
   );
+
   const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen);
   const countdownUntilVotingOpen = useCountdown(submissionsOpen, votesOpen);
   const countdownUntilVotingClose = useCountdown(votesOpen, votesClose);
@@ -54,6 +55,7 @@ export const Countdown = () => {
   if (countdownUntilVotingClose.isCountdownRunning) {
     return (
       <>
+        <p className={`text-sm font-bold text-center text-negative-11`}>Submissions closed</p>
         <p className={styles.label}>Voting closes in</p>
         <div className={styles.countdown}>
           {Object.keys(countdownUntilVotingClose.countdown).map((unit: string) => (
@@ -68,7 +70,7 @@ export const Countdown = () => {
     );
   }
 
-  return null;
+  return <p className={`text-sm font-bold text-center text-neutral-11`}>Voting closed</p>;
 };
 
 export default Countdown;

@@ -3,7 +3,7 @@ import createContext from "zustand/context";
 import shallow from "zustand/shallow";
 import { useContractRead, useNetwork } from "wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useStore as useStoreContest } from "./../useContest";
+import { useStore as useStoreContest } from "../useContest";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { chains } from "@config/wagmi";
@@ -12,7 +12,6 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 
 export const createStore = () => {
   return create(set => ({
-    votes: 0,
     isListVotersLoading: true,
     votesPerAddress: {},
     //@ts-ignore
@@ -26,13 +25,12 @@ export const createStore = () => {
         },
       })),
     setIsListVotersLoading: (value: boolean) => set({ isListVotersLoading: value }),
-    setNumberofVotes: (amount: number) => set({ votes: amount }),
   }));
 };
 
 export const { Provider, useStore } = createContext();
 
-export function useProposal() {
+export function useProposalVotes() {
   const { asPath } = useRouter();
   const [url] = useState(asPath.split("/"));
   const { activeChain } = useNetwork();
@@ -49,12 +47,8 @@ export function useProposal() {
     shallow,
   );
 
-  const { votes, setNumberofVotes, setIsListVotersLoading, setVotesPerAddress, isListVotersLoading } = useStore(
+  const { setIsListVotersLoading, setVotesPerAddress, isListVotersLoading } = useStore(
     state => ({
-      //@ts-ignore
-      votes: state.votes,
-      //@ts-ignore
-      setNumberofVotes: state.setNumberofVotes,
       //@ts-ignore
       isListVotersLoading: state.isListVotersLoading,
       //@ts-ignore
@@ -63,22 +57,6 @@ export function useProposal() {
       setIsListVotersLoading: state.setIsListVotersLoading,
     }),
     shallow,
-  );
-
-  const proposalVotesRawData = useContractRead(
-    {
-      addressOrName: address,
-      contractInterface: DeployedContestContract.abi,
-    },
-    "proposalVotes",
-    {
-      chainId,
-      args: id,
-      onSuccess: data => {
-        //@ts-ignore
-        setNumberofVotes(data / 1e18);
-      },
-    },
   );
 
   const proposalVotersRawData = useContractRead(
@@ -90,7 +68,7 @@ export function useProposal() {
     {
       chainId,
       args: id,
-      enabled: canFetch && listProposalsData[id] && proposalVotesRawData.isSuccess && votes > 0,
+      enabled: canFetch && listProposalsData[id] && listProposalsData[id].votes > 0,
       onSuccess: data => {
         //@ts-ignore
         fetchVotesPerAddress(data);
@@ -100,7 +78,7 @@ export function useProposal() {
 
   async function fetchVotesPerAddress(list: Array<string>) {
     try {
-      Promise.all(
+      await Promise.all(
         list.map(async (userAddress: string) => {
           const data = await readContract(
             {
@@ -123,6 +101,7 @@ export function useProposal() {
             address: userAddress,
             value: {
               displayAddress: author ?? shortenEthereumAddress(userAddress),
+              //@ts-ignore
               votes: data / 1e18,
             },
           });
@@ -135,8 +114,6 @@ export function useProposal() {
     }
   }
 
-  const datalist = [proposalVotesRawData, proposalVotersRawData];
-
   useEffect(() => {
     if (activeChain?.id !== chainId) {
       setCanFetch(false);
@@ -145,13 +122,25 @@ export function useProposal() {
     }
   }, [activeChain]);
 
+  const datalist = [proposalVotersRawData];
+
   return {
     isLoading:
-      !canFetch ||
       isListVotersLoading ||
       datalist.filter(e => e.isFetching === false && e.isLoading === false && e.isRefetching === false && e.isSuccess)
         .length < datalist.length,
+    retry: async () => {
+      await Promise.all(
+        datalist
+          .filter(e => e.isError)
+          .map(async fn => {
+            await fn.refetch();
+          }),
+      );
+    },
+    isSuccess: datalist.filter(e => e.isSuccess).length === datalist.length,
+    isError: datalist.filter(e => e.isError).length > 0,
   };
 }
 
-export default useProposal;
+export default useProposalVotes;

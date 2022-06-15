@@ -6,9 +6,9 @@ interface FormInputProps extends InputProps, SystemUiInputProps {
 }
 
 export const FormInput = (props: FormInputProps) => {
-    const { className, hasError, scale, ...rest } = props
+    const { className, hasError, scale, appearance, ...rest } = props
     //@ts-ignore
-    return <input className={input({ scale: scale ?? 'default', variant: hasError === true ? 'error' : 'default', class: className ?? ''})} {...rest} />
+    return <input className={input({ appearance: appearance ?? 'square', scale: scale ?? 'default', variant: hasError === true ? 'error' : 'default', class: className ?? ''})} {...rest} />
 }
 
 export default FormInput

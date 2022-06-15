@@ -64,7 +64,7 @@ module.exports = {
       mono: ["monospace"],
     },
     fontSize: {
-      "3xs": clamp(-5),
+      "3xs": clamp(-3),
       "2xs": clamp(-2),
       xs: clamp(-1),
       sm: clamp(-0.5),

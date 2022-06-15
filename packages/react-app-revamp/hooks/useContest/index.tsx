@@ -1,14 +1,14 @@
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { chain, useAccount, useContractRead, useEnsName, useNetwork, useToken } from "wagmi";
+import { fetchEnsName, readContract } from "@wagmi/core";
 import create from "zustand";
 import createContext from "zustand/context";
 import shallow from "zustand/shallow";
-import { useAccount, useContractRead, useEnsName, useNetwork, useToken } from "wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import { chains } from "@config/wagmi";
-import { chain } from "wagmi";
-import { fetchEnsName, readContract } from "@wagmi/core";
 import isUrlToImage from "@helpers/isUrlToImage";
+import toast from "react-hot-toast";
 
 export const { Provider, useStore } = createContext();
 
@@ -129,9 +129,11 @@ export function useContest() {
     {
       chainId,
       onSuccess: data => setContestName(data),
+      onError: onContractError,
       enabled: canFetch,
     },
   );
+
   const contestAuthorRawData = useContractRead(
     {
       //@ts-ignore
@@ -142,7 +144,8 @@ export function useContest() {
     {
       chainId,
       onSuccess: data => setContestAuthor(data),
-      enabled: canFetch,
+      onError: onContractError,
+      enabled: nameRawData.isSuccess && canFetch,
     },
   );
 
@@ -150,7 +153,8 @@ export function useContest() {
     address: contestAuthor,
     chainId,
     onSuccess: data => setContestAuthor(data),
-    enabled: activeChain?.id === chain.mainnet.id && canFetch && contestAuthor !== null,
+    onError: onContractError,
+    enabled: nameRawData.isSuccess && activeChain?.id === chain.mainnet.id && canFetch && contestAuthor !== null,
   });
 
   const tokenAddressRawData = useContractRead(
@@ -162,13 +166,14 @@ export function useContest() {
     "token",
     {
       chainId,
-      enabled: canFetch,
+      enabled: nameRawData.isSuccess && canFetch,
+      onError: onContractError,
       onSuccess: data => setVotingTokenAddress(data),
     },
   );
 
   const tokenRawData = useToken({
-    enabled: canFetch && votingTokenAddress !== null,
+    enabled: nameRawData.isSuccess && canFetch && votingTokenAddress !== null,
     address: votingTokenAddress,
     chainId,
   });
@@ -184,7 +189,8 @@ export function useContest() {
       chainId,
       //@ts-ignore
       onSuccess: data => setSubmissionsOpen(new Date(parseInt(data) * 1000)),
-      enabled: canFetch,
+      onError: onContractError,
+      enabled: nameRawData.isSuccess && canFetch,
     },
   );
   const deadlineRawData = useContractRead(
@@ -198,7 +204,8 @@ export function useContest() {
       chainId,
       //@ts-ignore
       onSuccess: data => setVotesClose(new Date(parseInt(data) * 1000)),
-      enabled: canFetch,
+      onError: onContractError,
+      enabled: nameRawData.isSuccess && canFetch,
     },
   );
   const votesOpenRawData = useContractRead(
@@ -210,9 +217,10 @@ export function useContest() {
     "voteStart",
     {
       chainId,
-      enabled: canFetch,
+      enabled: nameRawData.isSuccess && canFetch,
       //@ts-ignore
       onSuccess: data => setVotesOpen(new Date(parseInt(data) * 1000)),
+      onError: onContractError,
     },
   );
   const statusRawData = useContractRead(
@@ -224,8 +232,9 @@ export function useContest() {
     "state",
     {
       chainId,
-      enabled: canFetch,
+      enabled: nameRawData.isSuccess && canFetch,
       onSuccess: data => setContestStatus(data),
+      onError: onContractError,
     },
   );
   const amountOfTokensRequiredToSubmitEntryRawData = useContractRead(
@@ -237,7 +246,8 @@ export function useContest() {
     "proposalThreshold",
     {
       chainId,
-      enabled: canFetch,
+      enabled: nameRawData.isSuccess && canFetch,
+      onError: onContractError,
     },
   );
   const usersQualifyToVoteIfTheyHoldTokenAtTimeRawData = useContractRead(
@@ -249,9 +259,10 @@ export function useContest() {
     "contestSnapshot",
     {
       chainId,
-      enabled: canFetch,
+      enabled: nameRawData.isSuccess && canFetch,
       //@ts-ignore
       onSuccess: data => setVotesOpen(new Date(parseInt(data) * 1000)),
+      onError: onContractError,
     },
   );
   const currentAddressTotalVotesRawData = useContractRead(
@@ -265,8 +276,9 @@ export function useContest() {
       chainId,
       cacheOnBlock: true,
       args: data?.address,
-      enabled: data?.address && canFetch ? true : false,
+      enabled: nameRawData.isSuccess && data?.address && canFetch ? true : false,
       onSuccess: data => setCurrentUserAvailableVotesAmount(data),
+      onError: onContractError,
     },
   );
 
@@ -279,23 +291,31 @@ export function useContest() {
     "getAllProposalIds",
     {
       chainId,
-      enabled: canFetch,
+      enabled: nameRawData.isSuccess && canFetch,
+      onError: onContractError,
       onSuccess: data => {
         setListProposalsIds(data);
         if (data.length === 0) {
           setIsListProposalsLoading(false);
         } else {
+          //@ts-ignore
           fetchAllProposals(data);
         }
       },
     },
   );
 
-  async function fetchAllProposals(list) {
+  function onContractError(err: any) {
+    let toastMessage = err?.message ?? err;
+    if (err.code === "CALL_EXCEPTION") toastMessage = "This contract doesn't exist on this chain.";
+    toast.error(toastMessage);
+  }
+
+  async function fetchAllProposals(list: Array<any>) {
     try {
-      Promise.all(
+      await Promise.all(
         list.map(async (id: number) => {
-          const data = await readContract(
+          const proposalRawData = await readContract(
             {
               //@ts-ignore
               addressOrName: address,
@@ -307,15 +327,29 @@ export function useContest() {
               chainId,
             },
           );
+          const proposalVotesData = await readContract(
+            {
+              //@ts-ignore
+              addressOrName: address,
+              contractInterface: DeployedContestContract.abi,
+            },
+            "proposalVotes",
+            {
+              args: id,
+              chainId,
+            },
+          );
+
           const author = await fetchEnsName({
-            address: data[0],
+            address: proposalRawData[0],
             chainId: chain.mainnet.id,
           });
           const proposalData = {
-            author: author ?? data[0],
-            content: data[1],
-            isContentImage: isUrlToImage(data[1]) ? true : false,
-            exists: data[2],
+            author: author ?? proposalRawData[0],
+            content: proposalRawData[1],
+            isContentImage: isUrlToImage(proposalRawData[1]) ? true : false,
+            exists: proposalRawData[2],
+            votes: proposalVotesData / 1e18,
           };
           setProposalData({ id, data: proposalData });
         }),
@@ -360,6 +394,17 @@ export function useContest() {
     address,
     chainId,
     canFetch,
+    retry: async () => {
+      await Promise.all(
+        datalist
+          .filter(e => e.isError)
+          .map(async fn => {
+            await fn.refetch();
+          }),
+      );
+    },
+    isSuccess: datalist.filter(e => e.isSuccess).length === datalist.length,
+    isError: datalist.filter(e => e.isError).length > 0,
     isLoading:
       !canFetch ||
       !tokenRawData.data ||

@@ -25,9 +25,9 @@ const Page: NextPage = (props: PageProps) => {
         <meta name="description" content="@TODO: change this" />
       </Head>
     <h1 className='sr-only'>Contest {contestName ?? address} </h1>
-    {!isLoading && <>
+    {!isLoading && <div className='animate-appear'>
       <ListProposals />
-    </>}
+    </div>}
   </>
 )}
 
