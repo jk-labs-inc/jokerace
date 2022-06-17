@@ -7,7 +7,7 @@ import VotingFunctionForm from "./VotingFunctionForm";
 import Address from "../Address";
 
 const ProposalDisplayVariable = ({ 
-            proposalId, proposalTotalVotes,
+            position, proposalId, proposalTotalVotes,
             getProposalContractFunction, getProposalFunctionInfo, 
             addressesVotedContractFunction, addressesVotedFunctionInfo,
             proposalAddressVotesContractFunction, proposalAddressVotesFunctionInfo,
@@ -40,7 +40,10 @@ const ProposalDisplayVariable = ({
   return (
     <div>
       <Row>
-        <Col span={16}>
+        <Col span={2}>
+          {position}
+        </Col>
+        <Col span={14}>
           {/* Proposal struct is: author (0), content (1), exists bool (2) */}
           <h2>{stripQuotationMarks(tryToDisplay(proposalContent[1], false, blockExplorer))}</h2>
           <h2>Author: <Address address={proposalContent[0]} ensProvider={mainnetProvider} fontSize={20} blockExplorer={blockExplorer} /></h2>
