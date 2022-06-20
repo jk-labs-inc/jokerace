@@ -1,5 +1,5 @@
 import shallow from "zustand/shallow";
-import { useStore } from "@hooks/useContest";
+import { useStore } from "@hooks/useContest/store";
 import { useCountdown } from "./useCountdown";
 import styles from "./styles.module.css";
 

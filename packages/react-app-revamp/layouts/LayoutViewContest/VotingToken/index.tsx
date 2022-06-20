@@ -1,4 +1,4 @@
-import { useStore } from "@hooks/useContest";
+import { useStore } from "@hooks/useContest/store";
 import shallow from "zustand/shallow";
 
 export const VotingToken = () => {

@@ -38,7 +38,7 @@ export const button = cva(
         default: ['text-xs', 'py-2 px-4 sm:px-5', 'font-bold', 'border'],
         lg: ['text-md', 'py-1.5 px-4 sm:px-5', 'font-bold', 'border'],
         sm: ['text-2xs', 'py-2 px-2.5', 'font-bold', 'border'],
-        xs: ['text-2xs', 'py-1 px-1.5', 'font-bold', 'border']
+        xs: ['text-2xs', 'py-0.5 px-3', 'font-bold', 'border']
       },
     },
     defaultVariants: {

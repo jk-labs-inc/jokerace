@@ -1,13 +1,14 @@
 import shallow from "zustand/shallow";
-import { useStore } from "@hooks/useContest";
-import isWithinInterval from "date-fns/isWithinInterval";
+import { useStore } from "@hooks/useContest/store";
 import Countdown from "./Countdown";
 import Steps from "./Steps";
 
 export const Timeline = () => {
   const { submissionsOpen, votesOpen } = useStore(
     state => ({
+      //@ts-ignore
       submissionsOpen: state.submissionsOpen,
+      //@ts-ignore
       votesOpen: state.votesOpen,
     }),
     shallow,

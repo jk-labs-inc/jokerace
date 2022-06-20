@@ -6,26 +6,43 @@ import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
 import { schema } from "./schema";
 import FormField from "@components/FormField";
+import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
 
-export const FormSearchContest = () => {
-  const { activeChain } = useNetwork();
-  const router = useRouter();
-  const { form, errors, isValid, interacted } = useForm({
+interface FormSearchContestProps {
+  isInline?: boolean
+  onSubmit?: (address: string) => void
+}
+
+export const FormSearchContest = (props: FormSearchContestProps) => {
+  const { isInline, onSubmit } = props;
+  const { asPath, push, pathname } = useRouter();
+  const { form, errors } = useForm({
     extend: validator({ schema }),
-    onSubmit: values => router.push(`/contest/${activeChain?.name.toLocaleLowerCase()}/${values.contestAddress}`),
+    onSubmit: values => {
+      const currentChain = asPath.split("/")[2];
+      push(ROUTE_VIEW_CONTEST, `/contest/${currentChain}/${values.contestAddress}`, { shallow: true });
+      if (pathname !== ROUTE_VIEW_CONTESTS) {
+        //@ts-ignore
+        onSubmit(values.contestAddress);
+      }
+    },
   });
 
   return (
     <>
-      <form ref={form} className="flex flex-col" role="search">
-        <FormField>
+      <form
+        ref={form}
+        className={`flex ${!isInline ? "flex-col" : "items-center space-i-2 justify-center"}`}
+        role="search"
+      >
+        <FormField className={isInline ? "w-full h-full min-h-8" : ""}>
           <label htmlFor="contestAddress" className="sr-only">
             Contest address
           </label>
           <FormInput
             required
-            className="w-full mx-auto xs:max-w-[55ex]"
-            scale="md"
+            className={`w-full ${isInline ? "h-full" : "mx-auto xs:max-w-[55ex]"}`}
+            scale={isInline ? "sm" : "md"}
             appearance="pill"
             placeholder="Search contract address (0x...)"
             aria-invalid={errors().contestAddress?.length > 0 === true ? "true" : "false"}
@@ -35,7 +52,7 @@ export const FormSearchContest = () => {
             aria-describedby="input-contestaddress-helpblock"
           />
           <FormField.HelpBlock
-            className="text-center"
+            className={`${isInline ? "sr-only" : "text-center text-2xs"}`}
             hasError={errors().contestAddress?.length > 0 === true}
             id="input-contestaddress-helpblock"
           >
@@ -44,8 +61,8 @@ export const FormSearchContest = () => {
         </FormField>
 
         <Button
-          disabled={isValid() === false || interacted() === null}
-          className="mx-auto mt-3"
+          scale={isInline ? "xs" : "default"}
+          className={`${isInline ? "h-full min-h-8" : " mx-auto mt-3"}`}
           intent="neutral-outline"
         >
           Search

@@ -4,7 +4,7 @@ import shallow from "zustand/shallow";
 import ProposalContent from "@components/_pages/ProposalContent";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import truncate from "@helpers/truncate";
-import { useStore } from "@hooks/useContest";
+import { useStore } from "@hooks/useContest/store";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import styles from "./styles.module.css";
 import { isAfter, isBefore } from "date-fns";
@@ -32,7 +32,6 @@ export const ListProposals = () => {
     <ul className="space-y-12">
       {Object.keys(listProposalsData)
         .sort((a, b) => {
-          // Sort proposals with most voted first
           if (listProposalsData[a].votes === listProposalsData[b].votes) {
             return listProposalsData[b].price - listProposalsData[a].price;
           }
@@ -40,21 +39,26 @@ export const ListProposals = () => {
         })
         .map(id => {
           return (
-            <li className={`"relative overflow-hidden text-sm ${styles.wrapper}`} key={id}>
-              <div className="text-center border-is-[0.35rem] border-solid border-neutral-1 flex flex-col items-center pt-2">
+            <li
+              className={`px-5 pt-5 pb-3 rounded-md 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
+              key={id}
+            >
+              <div className="text-center 2xs:border-is-[0.35rem] border-solid border-neutral-1 flex flex-col 2xs:items-center pt-2">
                 {isBefore(new Date(), votesOpen) ? (
                   <span className="text-3xs text-neutral-11 italic">Votes not open yet</span>
                 ) : (
                   <button
                     disabled={isAfter(new Date(), votesClose)}
-                    className="text-neutral-12 flex flex-col items-center justify-center font-bold text-2xs"
+                    className="text-neutral-12 flex 2xs:flex-col items-center 2xs:justify-center font-bold text-2xs"
                   >
-                    <ChevronUpIcon className="w-5 mb-1" />
+                    <ChevronUpIcon className="w-5 mie-2 2xs:mie-0 2xs:mb-1" />
                     {Intl.NumberFormat("en-US", {
                       notation: "compact",
                       maximumFractionDigits: 3,
                     }).format(parseFloat(listProposalsData[id].votes))}{" "}
-                    <span className="text-neutral-11 text-3xs">vote{listProposalsData[id].votes > 1 && "s"}</span>
+                    <span className="text-neutral-11 pis-1ex 2xs:pis-0 text-3xs">
+                      vote{listProposalsData[id].votes > 1 && "s"}
+                    </span>
                   </button>
                 )}
               </div>

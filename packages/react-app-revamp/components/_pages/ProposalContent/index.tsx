@@ -14,6 +14,7 @@ function renderContent(str: string) {
     const tweetId =
       str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/) === null
         ? new URL(str).pathname.split("/")[3]
+        //@ts-ignore
         : str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/)[3];
     return (
       <>
