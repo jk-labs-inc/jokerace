@@ -191,6 +191,9 @@ module.exports = {
         "fit-content": "fit-content",
         "min-content": "min-content",
       },
+      minHeight: ({ theme }) => ({
+        ...theme("height"),
+      }),
       maxWidth: ({ theme }) => ({
         ...theme("width"),
         ...theme("screens"),

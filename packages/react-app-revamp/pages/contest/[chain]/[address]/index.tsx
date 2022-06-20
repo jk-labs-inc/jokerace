@@ -3,7 +3,7 @@ import Head from 'next/head'
 import { chains } from '@config/wagmi'
 import { getLayout } from '@layouts/LayoutViewContest'
 import type { NextPage } from 'next'
-import { useStore } from '@hooks/useContest'
+import { useStore } from '@hooks/useContest/store'
 import ListProposals from '@components/_pages/ListProposals'
 
 interface PageProps {
@@ -12,20 +12,22 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
-  const { isLoading, contestName } = useStore(state =>  ({ 
+  const { isListProposalsLoading, isListProposalsSuccess, contestName } = useStore(state =>  ({ 
     //@ts-ignore
-    isLoading: state.isLoading, 
+    isListProposalsLoading: state.isListProposalsLoading, 
+    //@ts-ignore
+    isListProposalsSuccess: state.isListProposalsSuccess,
     //@ts-ignore
     contestName: state.contestName, 
    }), shallow);
   return (
     <>
       <Head>
-        <title>Contest {contestName ?? address } - JokeDAO</title>
+        <title>Contest {contestName ? contestName : address} - JokeDAO</title>
         <meta name="description" content="@TODO: change this" />
       </Head>
-    <h1 className='sr-only'>Contest {contestName ?? address} </h1>
-    {!isLoading && <div className='animate-appear'>
+    <h1 className='sr-only'>Contest {contestName ? contestName : address} </h1>
+    {!isListProposalsLoading && isListProposalsSuccess && <div className='animate-appear'>
       <ListProposals />
     </div>}
   </>
@@ -54,6 +56,7 @@ export async function getStaticProps({ params }: any) {
     return { notFound: true }
   }
 }
+//@ts-ignore
 Page.getLayout = getLayout
 
 export default Page

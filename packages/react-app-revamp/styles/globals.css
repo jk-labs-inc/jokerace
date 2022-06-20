@@ -78,4 +78,9 @@
   .input[aria-invalid="true"][type="datetime-local"] {
     @apply bg-negative-1 bg-negative-2 border-negative-6 focus:border-negative-8 placeholder:text-negative-11 text-negative-11 !important;
   }
+
+  .twitter-tweet.twitter-tweet-rendered,
+  .twitter-tweet.twitter-tweet-rendered > iframe {
+    @apply !max-w-full !xs:max-w-screen-2xs;
+  }
 }

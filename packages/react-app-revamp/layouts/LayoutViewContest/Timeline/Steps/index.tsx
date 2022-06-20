@@ -1,6 +1,6 @@
 import shallow from "zustand/shallow";
 import { format } from "date-fns";
-import { useStore } from "@hooks/useContest";
+import { useStore } from "@hooks/useContest/store";
 import styles from "./styles.module.css";
 // - Contest status
 // 0: Voting open

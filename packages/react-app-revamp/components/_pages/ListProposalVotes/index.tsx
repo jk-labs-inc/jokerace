@@ -2,17 +2,18 @@ import { Fragment } from "react";
 import { Transition } from "@headlessui/react";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
-import useProposalVotes, { useStore as useStoreProposalVotes } from "@hooks/useProposalVotes";
-import { useStore as useStoreContest } from "@hooks/useContest";
+import useProposalVotes from "@hooks/useProposalVotes";
+import { useStore as useStoreProposalVotes } from "@hooks/useProposalVotes/store";
+import { useStore as useStoreContest } from "@hooks/useContest/store";
 import shallow from "zustand/shallow";
 
 interface ListProposalVotesProps {
-  id: number;
+  id: number | string
 }
 
 export const ListProposalVotes = (props: ListProposalVotesProps) => {
   const { id } = props;
-  const { isLoading, isSuccess, isError, retry } = useProposalVotes();
+  const { isLoading, isSuccess, isError, retry } = useProposalVotes(id);
   const { listProposalsData } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -31,58 +32,35 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
   );
   return (
     <>
-      <Transition
-        show={isLoading}
-        as={Fragment}
-        enter="ease-out duration-300 delay-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="ease-in duration-300"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0"
-      >
-        <div>
+      {isLoading && (
+        <div className="animate-appear">
           <Loader classNameWrapper={!isLoading ? "hidden" : ""} scale="component">
             Loading the votes of this proposal, one moment please...{" "}
           </Loader>
         </div>
-      </Transition>
-      <Transition
-        show={!isLoading && isError}
-        as={Fragment}
-        enter="ease-out duration-300 delay-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="ease-in duration-300"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0 "
-      >
-        <div className="flex flex-col">
-          <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
-            <p className="text-sm font-bold text-negative-10 text-center">
-              Something went wrong while fetching the votes of this proposal.
-            </p>
+      )}
+
+      {!isLoading && isError && (
+        <div className="animate-appear">
+          <div className="flex flex-col">
+            <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
+              <p className="text-sm font-bold text-negative-10 text-center">
+                Something went wrong while fetching the votes of this proposal.
+              </p>
+            </div>
+            <Button
+              onClick={() => retry()}
+              className="mt-5 w-full mx-auto py-1 xs:w-auto xs:min-w-fit-content"
+              intent="neutral-outline"
+            >
+              Try again
+            </Button>
           </div>
-          <Button
-            onClick={() => retry()}
-            className="mt-5 w-full mx-auto py-1 xs:w-auto xs:min-w-fit-content"
-            intent="neutral-outline"
-          >
-            Try again
-          </Button>
         </div>
-      </Transition>
-      <Transition
-        show={isSuccess && !isLoading}
-        as={Fragment}
-        enter="ease-out duration-300 delay-300"
-        enterFrom="opacity-0"
-        enterTo="opacity-100"
-        leave="ease-in duration-300"
-        leaveFrom="opacity-100"
-        leaveTo="opacity-0 "
-      >
-        <section>
+      )}
+
+      {isSuccess && !isLoading && (
+        <section className="animate-appear">
           <p className="animate-appear font-bold mb-3">
             <span>Current votes:</span> <br />
             <span className="text-positive-9">
@@ -114,7 +92,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
             </tbody>
           </table>
         </section>
-      </Transition>
+      )}
     </>
   );
 };
