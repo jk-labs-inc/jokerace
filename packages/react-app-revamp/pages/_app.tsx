@@ -12,7 +12,9 @@ import type { AppProps } from 'next/app'
 
 function MyApp({ Component, pageProps }: AppProps) {
   //@ts-ignore
-  const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase children={page} />)
+  const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase>
+      {page}
+    </LayoutBase>)
 
   return <>
     <Head>

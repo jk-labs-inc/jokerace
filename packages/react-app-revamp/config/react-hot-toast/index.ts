@@ -8,7 +8,7 @@ export const toastOptions = {
   style: {
     fontWeight: tailwindTheme.fontWeight.bold,
     fontSize: tailwindTheme.fontSize["xs"],
-    borderRadius: tailwindTheme.borderRadius.full,
+    borderRadius: tailwindTheme.borderRadius["md"],
     padding: tailwindTheme.padding[1],
     paddingInlineStart: tailwindTheme.padding[1.5],
   },

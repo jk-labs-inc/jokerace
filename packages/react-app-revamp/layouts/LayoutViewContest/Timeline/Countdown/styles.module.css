@@ -7,7 +7,7 @@
 }
 
 .unitValue {
-  @apply text-primary-10 text-lg font-black italic;
+  @apply text-primary-10 text-md font-black italic;
   font-variant-numeric: tabular-nums;
 }
 

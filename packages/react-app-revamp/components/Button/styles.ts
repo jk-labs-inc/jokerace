@@ -7,7 +7,7 @@ export const button = cva(
     'tracking-wide',
     'rounded-full',
     'transition-colors transition-500',
-    'disabled:opacity-50 disabled:pointer-events-none'
+    'disabled:!opacity-50 disabled:pointer-events-none'
   ],
   {
     variants: {
@@ -31,7 +31,11 @@ export const button = cva(
           'bg-true-black hover:bg-neutral-12 focus:bg-true-white hover:focus:bg-true-white',
           'text-true-white hover:text-neutral-1 focus:text-true-black',
           'border-neutral-10 hover:border-neutral-11 hover:focus:border-neutral-12 focus:border-true-white',
-
+        ],
+        'primary-outline': [
+          'bg-true-black hover:bg-primary-10 focus:bg-primary-11 hover:focus:bg-primary-10 ',
+          'text-true-white hover:text-neutral-1 focus:text-true-black',
+          'border-primary-9 hover:border-primary-10 hover:focus:border-primary-10 focus:border-primary-11',
         ],
       },
       scale: {

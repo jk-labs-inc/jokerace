@@ -2,3 +2,23 @@
   @apply flex flex-col-reverse 2xs:grid gap-3;
   grid-template-columns: 8ex 1fr;
 }
+
+.list .listElement:first-child .rankIndicator {
+  @apply bg-primary-10 text-primary-1 text-xs p-2;
+}
+
+.list .listElement:not(:first-child) .rankIndicator {
+  @apply p-1.5 text-2xs;
+}
+
+.list .listElement:nth-child(2) .rankIndicator {
+  @apply bg-primary-3 text-primary-10;
+}
+
+.list .listElement:nth-child(3) .rankIndicator {
+  @apply bg-primary-1 text-primary-12;
+}
+
+.list .listElement:not(:first-child, :nth-child(2), :nth-child(3)) .rankIndicator {
+  @apply text-true-white;
+}

@@ -1,7 +1,8 @@
 import shallow from "zustand/shallow";
 import { useStore } from "@hooks/useContest/store";
-import { useCountdown } from "./useCountdown";
+import { useCountdown } from "@hooks/useCountdown";
 import styles from "./styles.module.css";
+import { isBefore } from "date-fns";
 
 export const Countdown = () => {
   const { submissionsOpen, votesOpen, votesClose } = useStore(
@@ -36,7 +37,8 @@ export const Countdown = () => {
       </>
     );
   }
-  if (countdownUntilVotingOpen.isCountdownRunning) {
+
+  if (countdownUntilVotingOpen.isCountdownRunning || isBefore(new Date(), votesOpen)) {
     return (
       <>
         <p className={styles.label}>Voting opens in</p>
@@ -52,7 +54,8 @@ export const Countdown = () => {
       </>
     );
   }
-  if (countdownUntilVotingClose.isCountdownRunning) {
+
+  if (countdownUntilVotingClose.isCountdownRunning || isBefore(new Date(), votesClose)) {
     return (
       <>
         <p className={`text-sm font-bold text-center text-negative-11`}>Submissions closed</p>

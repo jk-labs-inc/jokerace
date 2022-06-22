@@ -1,0 +1,32 @@
+import styles from "./styles.module.css";
+export const TrackerDeployTransaction = (props: any) => {
+  const { isError, isLoading, isSuccess, transactionHref, textSuccess, textError, textPending } = props;
+  return (
+    <>
+      <ol className={`space-y-4 leading-[1.75] font-bold ${styles.stepper}`}>
+        <li
+          className={`${
+            isLoading === true || isSuccess === true
+              ? "text-primary-10"
+              : isError === true
+              ? "text-negative-11"
+              : "text-true-white"
+          } ${isLoading === true ? "animate-pulse" : ""}`}
+        >
+          {isError ? textError ?? "Something went wrong during deployment." : textPending ?? "Deploying transaction..."}
+        </li>
+        <li className={isSuccess === true ? "text-primary-10" : "text-neutral-8"}>{textSuccess ?? "Deployed"}!</li>
+      </ol>
+
+      {isSuccess === true && transactionHref && (
+        <>
+          <a className="mt-5 block" rel="nofollow noreferrer" target="_blank" href={transactionHref}>
+            View transaction <span className="link">here</span>
+          </a>
+        </>
+      )}
+    </>
+  );
+};
+
+export default TrackerDeployTransaction;

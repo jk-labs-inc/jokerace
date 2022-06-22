@@ -9,18 +9,21 @@ import FormField from "@components/FormField";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
 
 interface FormSearchContestProps {
-  isInline?: boolean
-  onSubmit?: (address: string) => void
+  isInline?: boolean;
+  onSubmit?: (address: string) => void;
 }
 
 export const FormSearchContest = (props: FormSearchContestProps) => {
   const { isInline, onSubmit } = props;
+  const { activeChain } = useNetwork();
   const { asPath, push, pathname } = useRouter();
   const { form, errors } = useForm({
     extend: validator({ schema }),
     onSubmit: values => {
       const currentChain = asPath.split("/")[2];
-      push(ROUTE_VIEW_CONTEST, `/contest/${currentChain}/${values.contestAddress}`, { shallow: true });
+      push(ROUTE_VIEW_CONTEST, `/contest/${currentChain ?? activeChain?.name.toLowerCase()}/${values.contestAddress}`, {
+        shallow: true,
+      });
       if (pathname !== ROUTE_VIEW_CONTESTS) {
         //@ts-ignore
         onSubmit(values.contestAddress);

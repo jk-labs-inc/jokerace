@@ -13,8 +13,9 @@ export const createStore = () => {
     votesClose: null,
     votingToken: null,
     votingTokenAddress: null,
-    amountOfTokensRequiredToSubmitEntry: null,
+    amountOfTokensRequiredToSubmitEntry: 0,
     currentUserAvailableVotesAmount: null,
+    currentUserTotalVotesCast: null,
     listProposalsIds: [],
     listProposalsData: {},
     isLoading: true,
@@ -23,7 +24,19 @@ export const createStore = () => {
     isListProposalsError: null,
     isListProposalsSuccess: false,
     isListProposalsLoading: true,
-    setContestStatus: (state: number) => set({ contestStatus: state }),
+    contestMaxNumberSubmissionsPerUser: null,
+    contestMaxProposalCount: null,
+    currentUserProposalCount: 0,
+    setCurrentUserProposalCount: (amount: number) => set({ currentUserProposalCount: amount }),
+    //@ts-ignore
+    increaseCurrentUserProposalCount: () =>
+      set(state => ({ currentUserProposalCount: state.currentUserProposalCount + 1 })),
+    //@ts-ignore
+    addProposalId: (id: number | string) => set(state => ({ listProposalsIds: [...state.listProposalsIds, id] })),
+    setContestMaxProposalCount: (amount: number | null) => set({ contestMaxProposalCount: amount }),
+    setContestMaxNumberSubmissionsPerUser: (amount: number | null) =>
+      set({ contestMaxNumberSubmissionsPerUser: amount }),
+    setContestStatus: (status: number) => set({ contestStatus: status }),
     setContestName: (name: string) => set({ contestName: name }),
     setContestAuthor: (author: string) => set({ contestAuthor: author }),
     setSubmissionsOpen: (datetime: string) => set({ submissionsOpen: datetime }),
@@ -32,6 +45,7 @@ export const createStore = () => {
     setVotingToken: (token: any) => set({ votingToken: token }),
     setVotingTokenAddress: (address: any) => set({ votingTokenAddress: address }),
     setCurrentUserAvailableVotesAmount: (amount: number) => set({ currentUserAvailableVotesAmount: amount }),
+    setCurrentUserTotalVotesCast: (amount: number) => set({ currentUserTotalVotesCast: amount }),
     setAmountOfTokensRequiredToSubmitEntry: (amount: number) => set({ amountOfTokensRequiredToSubmitEntry: amount }),
     setListProposalsIds: (list: any) => set({ listProposalsIds: list }),
     setIsListProposalsLoading: (value: boolean) => set({ isListProposalsLoading: value }),
@@ -42,13 +56,32 @@ export const createStore = () => {
     setIsListProposalsSuccess: (value: boolean) => set({ isListProposalsSuccess: value }),
     resetListProposals: () => set({ listProposalsData: {}, listProposalsIds: [] }),
     //@ts-ignore
+    increaseProposalVotes: ({ id, votes }) =>
+      set(state => ({
+        ...state,
+        listProposalsData: {
+          //@ts-ignore
+          ...state.listProposalsData,
+          [id]: {
+            //@ts-ignore
+            ...state.listProposalsData[id],
+            //@ts-ignore
+            votes: state.listProposalsData[id]?.votes += votes,
+          },
+        },
+      })),
+    //@ts-ignore
     setProposalData: ({ id, data }) =>
       set(state => ({
         ...state,
         listProposalsData: {
           //@ts-ignore
           ...state.listProposalsData,
-          [id]: data,
+          [id]: {
+            //@ts-ignore
+            ...state.listProposalsData[id],
+            ...data,
+          },
         },
       })),
   }));
