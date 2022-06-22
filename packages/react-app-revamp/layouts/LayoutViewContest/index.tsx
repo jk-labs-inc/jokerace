@@ -1,30 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import shallow from "zustand/shallow";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useAccount, useNetwork } from "wagmi";
-import { isAfter, isBefore, isDate, isWithinInterval } from "date-fns";
+import { useAccount, useConnect, useNetwork } from "wagmi";
+import { isAfter, isBefore, isDate } from "date-fns";
 import { ArrowLeftIcon, HomeIcon } from "@heroicons/react/solid";
 import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_RULES } from "@config/routes";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
 import DialogModal from "@components/DialogModal";
-import { useStore, Provider, createStore } from "@hooks/useContest/store";
+import {
+  useStore as useStoreContest,
+  Provider as ProviderContest,
+  createStore as createStoreContest,
+} from "@hooks/useContest/store";
+import {
+  useStore as useStoreSubmitProposal,
+  Provider as ProviderSubmitProposal,
+  createStore as createStoreSubmitProposal,
+} from "@hooks/useSubmitProposal/store";
+
+import {
+  useStore as useStoreCastVotes,
+  Provider as ProviderCastVotes,
+  createStore as createStoreCastVotes,
+} from "@hooks/useCastVotes/store";
+
 import { useContest } from "@hooks/useContest";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import Timeline from "./Timeline";
 import VotingToken from "./VotingToken";
 import styles from "./styles.module.css";
 import FormSearchContest from "@components/_pages/FormSearchContest";
+import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
+import DialogModalVoteForProposal from "@components/_pages/DialogModalVoteForProposal";
+import useContestEvents from "@hooks/useContestEvents";
+import { chains } from "@config/wagmi";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
-  const { query, asPath, pathname } = useRouter();
+  const { query, asPath, pathname, push } = useRouter();
   const { data } = useAccount();
   const { activeChain, switchNetwork } = useNetwork();
+  const { activeConnector } = useConnect();
   const {
     isLoading,
+    address,
+    fetchContestInfo,
+    setIsLoading,
+    setIsListProposalsLoading,
     isListProposalsLoading,
     isSuccess,
     isError,
@@ -33,7 +58,20 @@ const LayoutViewContest = (props: any) => {
     onSearch,
     chainId,
   } = useContest();
-  const { submissionsOpen, votesOpen, votesClose, contestName, contestAuthor } = useStore(
+
+  const {
+    amountOfTokensRequiredToSubmitEntry,
+    currentUserAvailableVotesAmount,
+    listProposalsIds,
+    currentUserProposalCount,
+    contestMaxNumberSubmissionsPerUser,
+    contestMaxProposalCount,
+    submissionsOpen,
+    votesOpen,
+    votesClose,
+    contestName,
+    contestAuthor,
+  } = useStoreContest(
     state => ({
       //@ts-ignore
       contestName: state.contestName,
@@ -45,11 +83,52 @@ const LayoutViewContest = (props: any) => {
       votesOpen: state.votesOpen,
       //@ts-ignore
       votesClose: state.votesClose,
+      //@ts-ignore
+      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+      //@ts-ignore
+      contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
+      //@ts-ignore
+      contestMaxProposalCount: state.contestMaxProposalCount,
+      //@ts-ignore
+      currentUserProposalCount: state.currentUserProposalCount,
+      //@ts-ignore
+      listProposalsIds: state.listProposalsIds,
+      //@ts-ignore
+      amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
     }),
     shallow,
   );
 
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
+  const stateSubmitProposal = useStoreSubmitProposal();
+  const stateCastVotes = useStoreCastVotes();
+
+  useContestEvents();
+
+  useEffect(() => {
+    if (activeChain?.id === chainId) {
+      fetchContestInfo();
+    } else {
+      setIsLoading(false);
+      setIsListProposalsLoading(false);
+    }
+  }, [activeChain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
+
+  useEffect(() => {
+    const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase();
+    if (asPath.split("/")[2] !== chainName) {
+      push(pathname, `/contest/${chainName}/${address}`, { shallow: true });
+    }
+  }, [chainId, address]);
+
+  useEffect(() => {
+    if (activeConnector) {
+      activeConnector.on("change", data => {
+        //@ts-ignore
+        setChaindId(data.chain.id);
+      });
+    }
+  }, [activeConnector]);
 
   return (
     <>
@@ -111,29 +190,44 @@ const LayoutViewContest = (props: any) => {
             <DocumentDownloadIcon className={styles.navLinkIcon} />
             Export data
           </button>
-          {isDate(submissionsOpen) &&
+          {!isLoading &&
+            isDate(submissionsOpen) &&
             isDate(votesOpen) &&
             isAfter(new Date(), submissionsOpen) &&
             isBefore(new Date(), votesOpen) && (
-              <Button
-                className="animate-appear fixed md:static z-10 aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
-                disabled={
-                  isLoading ||
-                  isListProposalsLoading ||
-                  isListProposalsError ||
-                  isError === null ||
-                  activeChain?.id !== chainId
-                }
-              >
-                <PaperAirplaneIcon className="w-5 2xs:w-6 rotate-45 2xs:mie-0.5 -translate-y-0.5 md:hidden" />
-                <span className="sr-only 2xs:not-sr-only">Submit</span>
-              </Button>
+              <>
+                <Button
+                  /* @ts-ignore */
+                  onClick={() => stateSubmitProposal.setIsModalOpen(true)}
+                  className="animate-appear fixed md:static z-10  aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
+                  intent={
+                    currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
+                    currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
+                    contestMaxProposalCount === listProposalsIds.length
+                      ? "primary-outline"
+                      : "primary"
+                  }
+                  disabled={
+                    isLoading ||
+                    isListProposalsLoading ||
+                    isListProposalsError !== null ||
+                    isError !== null ||
+                    activeChain?.id !== chainId ||
+                    currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
+                    currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
+                    contestMaxProposalCount === listProposalsIds.length
+                  }
+                >
+                  <PaperAirplaneIcon className="w-5 2xs:w-6 rotate-45 2xs:mie-0.5 -translate-y-0.5 md:hidden" />
+                  <span className="sr-only 2xs:not-sr-only">Submit</span>
+                </Button>
+              </>
             )}
           <Button
             onClick={() => setIsTimelineModalOpen(true)}
             disabled={
               isLoading ||
-              isError === null ||
+              isError !== null ||
               activeChain?.id !== chainId ||
               !isDate(submissionsOpen) ||
               !isDate(votesOpen) ||
@@ -144,7 +238,8 @@ const LayoutViewContest = (props: any) => {
           ${
             !isDate(submissionsOpen) ||
             !isDate(votesOpen) ||
-            !isAfter(new Date(), submissionsOpen) || !isBefore(new Date(), votesOpen)
+            !isAfter(new Date(), submissionsOpen) ||
+            !isBefore(new Date(), votesOpen)
               ? "bottom-16"
               : "bottom-32"
           }
@@ -192,7 +287,7 @@ const LayoutViewContest = (props: any) => {
                   </Button>
                 </div>
               )}
-              {activeChain?.id === chainId && isLoading && (
+              {activeChain?.id === chainId && (isLoading || isListProposalsLoading) && (
                 <div className="animate-appear">
                   <Loader scale="page" />
                 </div>
@@ -268,6 +363,35 @@ const LayoutViewContest = (props: any) => {
                         </>
                       )}
                   </DialogModal>
+                  {!isLoading &&
+                    isSuccess &&
+                    activeChain?.id === chainId &&
+                    isDate(submissionsOpen) &&
+                    isAfter(new Date(), submissionsOpen) &&
+                    isDate(votesOpen) &&
+                    isBefore(new Date(), votesOpen) && (
+                      <DialogModalSendProposal
+                        /* @ts-ignore */
+                        isOpen={stateSubmitProposal.isModalOpen}
+                        /* @ts-ignore */
+                        setIsOpen={stateSubmitProposal.setIsModalOpen}
+                      />
+                    )}
+
+                  {!isLoading &&
+                    isSuccess &&
+                    activeChain?.id === chainId &&
+                    isDate(votesOpen) &&
+                    isAfter(new Date(), votesOpen) &&
+                    isDate(votesClose) &&
+                    isBefore(new Date(), votesClose) && (
+                      <DialogModalVoteForProposal
+                        /* @ts-ignore */
+                        isOpen={stateCastVotes.isModalOpen}
+                        /* @ts-ignore */
+                        setIsOpen={stateCastVotes.setIsModalOpen}
+                      />
+                    )}
                 </div>
               )}
             </>
@@ -280,8 +404,12 @@ const LayoutViewContest = (props: any) => {
 
 export const getLayout = (page: any) => {
   return getBaseLayout(
-    <Provider createStore={createStore}>
-      <LayoutViewContest>{page}</LayoutViewContest>
-    </Provider>,
+    <ProviderContest createStore={createStoreContest}>
+      <ProviderSubmitProposal createStore={createStoreSubmitProposal}>
+        <ProviderCastVotes createStore={createStoreCastVotes}>
+          <LayoutViewContest>{page}</LayoutViewContest>
+        </ProviderCastVotes>
+      </ProviderSubmitProposal>
+    </ProviderContest>,
   );
 };

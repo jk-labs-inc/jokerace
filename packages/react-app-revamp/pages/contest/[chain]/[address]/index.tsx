@@ -12,13 +12,17 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
-  const { isListProposalsLoading, isListProposalsSuccess, contestName } = useStore(state =>  ({ 
+  const { isSuccess, isLoading, isListProposalsLoading, isListProposalsSuccess, contestName } = useStore(state =>  ({ 
+    //@ts-ignore
+    isLoading: state.isLoading,
     //@ts-ignore
     isListProposalsLoading: state.isListProposalsLoading, 
     //@ts-ignore
     isListProposalsSuccess: state.isListProposalsSuccess,
     //@ts-ignore
     contestName: state.contestName, 
+    //@ts-ignore
+    isSuccess: state.isSuccess,
    }), shallow);
   return (
     <>
@@ -27,7 +31,7 @@ const Page: NextPage = (props: PageProps) => {
         <meta name="description" content="@TODO: change this" />
       </Head>
     <h1 className='sr-only'>Contest {contestName ? contestName : address} </h1>
-    {!isListProposalsLoading && isListProposalsSuccess && <div className='animate-appear'>
+    {!isLoading && !isListProposalsLoading && isSuccess && isListProposalsSuccess && <div className='animate-appear'>
       <ListProposals />
     </div>}
   </>

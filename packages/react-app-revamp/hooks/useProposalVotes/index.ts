@@ -1,14 +1,14 @@
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
-import { chain, useConnect, useNetwork } from "wagmi";
+import { chain, useConnect, useContractEvent, useNetwork } from "wagmi";
 import { fetchEnsName, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useStore as useStoreContest } from "../useContest/store";
-import { useEffect, useState } from "react";
 import { chains } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useStore } from "./store";
-import toast from "react-hot-toast";
 
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
@@ -122,6 +122,17 @@ export function useProposalVotes(id: number | string) {
       });
     }
   }, [activeConnector]);
+
+  useContractEvent(
+    {
+      addressOrName: asPath.split("/")[3],
+      contractInterface: DeployedContestContract.abi,
+    },
+    "VoteCast",
+    async event => {
+      await fetchProposalVotes();
+    },
+  );
 
   return {
     isLoading: isListVotersLoading,

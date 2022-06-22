@@ -15,7 +15,12 @@ export function useDeployContest(form: any) {
   const { activeChain } = useNetwork();
   const { refetch } = useSigner();
   //@ts-ignore
-  const { modalDeployContestOpen, setModalDeployContestOpen, setDeployContestData } = useStore(
+  const {
+    modalDeployContestOpen,
+    setModalDeployContestOpen,
+    setDeployContestData,
+    setContestDeployedToChain,
+  } = useStore(
     state => ({
       //@ts-ignore
       modalDeployContestOpen: state.modalDeployContestOpen,
@@ -25,13 +30,14 @@ export function useDeployContest(form: any) {
       setModalDeployContestOpen: state.setModalDeployContestOpen,
       //@ts-ignore
       setDeployContestData: state.setDeployContestData,
+      //@ts-ignore
+      setContestDeployedToChain: state.setContestDeployedToChain,
     }),
     shallow,
   );
 
   async function handleSubmitForm(values: any) {
-    //@ts-ignore
-    setContestDeployedToChain(activeChain); // in case
+    setContestDeployedToChain(activeChain);
     setModalDeployContestOpen(true);
     stateContestDeployment.setIsLoading(true);
     stateContestDeployment.setIsSuccess(false);
@@ -84,7 +90,7 @@ export function useDeployContest(form: any) {
         address: contract.address,
       });
       if (modalDeployContestOpen === false)
-        toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully`);
+        toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully!`);
 
       stateContestDeployment.setIsLoading(false);
       form.reset();

@@ -12,7 +12,14 @@ import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
 
 export const Step3 = () => {
-  const { setCurrentStep, dataDeployToken, modalDeployContestOpen, setModalDeployContestOpen } = useStore(
+  const {
+    contestDeployedToChain,
+    setCurrentStep,
+    dataDeployToken,
+    modalDeployContestOpen,
+    setModalDeployContestOpen,
+    dataDeployContest,
+  } = useStore(
     state => ({
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
@@ -24,6 +31,10 @@ export const Step3 = () => {
       setModalDeployContestOpen: state.setModalDeployContestOpen,
       //@ts-ignore
       setModalDeployContestOpen: state.setModalDeployContestOpen,
+      //@ts-ignore
+      contestDeployedToChain: state.contestDeployedToChain,
+      //@ts-ignore
+      dataDeployContest: state.dataDeployContest,
     }),
     shallow,
   );

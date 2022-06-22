@@ -63,7 +63,7 @@ export function useDeployToken(form: any) {
       });
       if (modalDeployTokenOpen === false)
         toast.success(
-          `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) was deployed successfully`,
+          `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) was deployed successfully!`,
         );
 
       stateContractDeployment.setIsLoading(false);

@@ -8,10 +8,12 @@ import { useStore } from "../store";
 
 const appearAsNeutralButton = button({ intent: "neutral-outline", scale: "lg", class: "w-full xs:w-auto" });
 export const TextInstructions = () => {
-  const { dataDeployToken } = useStore(
+  const { dataDeployToken, dataDeployContest } = useStore(
     state => ({
       //@ts-ignore
       dataDeployToken: state.dataDeployToken,
+      //@ts-ignore:
+      dataDeployContest: state.dataDeployContest,
     }),
     shallow,
   );

@@ -8,7 +8,7 @@ import { useStore as useStoreContest } from "@hooks/useContest/store";
 import shallow from "zustand/shallow";
 
 interface ListProposalVotesProps {
-  id: number | string
+  id: number | string;
 }
 
 export const ListProposalVotes = (props: ListProposalVotesProps) => {
@@ -35,7 +35,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
       {isLoading && (
         <div className="animate-appear">
           <Loader classNameWrapper={!isLoading ? "hidden" : ""} scale="component">
-            Loading the votes of this proposal, one moment please...{" "}
+            Loading votes, one moment please...{" "}
           </Loader>
         </div>
       )}

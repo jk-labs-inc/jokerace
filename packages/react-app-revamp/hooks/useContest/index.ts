@@ -1,15 +1,15 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { chain, useAccount, useConnect, useNetwork } from "wagmi";
-import { fetchEnsName, fetchToken, readContract } from "@wagmi/core";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { chain, useAccount, useConnect, useNetwork, useProvider } from "wagmi";
+import { fetchBlockNumber, fetchEnsName, fetchToken, readContract } from "@wagmi/core";
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
-import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
+import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 
 export function useContest() {
+  const provider = useProvider();
   const { activeConnector } = useConnect();
   const { asPath, push, pathname } = useRouter();
   const { activeChain } = useNetwork();
@@ -69,6 +69,14 @@ export function useContest() {
     setIsListProposalsSuccess,
     //@ts-ignore
     resetListProposals,
+    //@ts-ignore
+    setCurrentUserTotalVotesCast,
+    //@ts-ignore
+    setContestMaxNumberSubmissionsPerUser,
+    //@ts-ignore
+    setContestMaxProposalCount,
+    //@ts-ignore
+    setCurrentUserProposalCount,
   } = useStore();
 
   function onContractError(err: any) {
@@ -86,9 +94,12 @@ export function useContest() {
         contractInterface: DeployedContestContract.abi,
       };
       const contractBaseOptions = {};
+
+      // Contest name
       const contestNameRawData = await readContract(contractConfig, "name", contractBaseOptions);
       setContestName(contestNameRawData);
 
+      // Contest author ethereum address + ENS
       const contestAuthorRawData = await readContract(contractConfig, "creator", contractBaseOptions);
       const contestAuthorEns = await fetchEnsName({
         //@ts-ignore
@@ -97,35 +108,29 @@ export function useContest() {
       });
       setContestAuthor(contestAuthorEns && contestAuthorEns !== null ? contestAuthorEns : contestNameRawData);
 
-      const tokenAddressRawData = await readContract(contractConfig, "token", contractBaseOptions);
-      setVotingTokenAddress(tokenAddressRawData);
-      //@ts-ignore
-      const tokenRawData = await fetchToken({ address: tokenAddressRawData, chainId });
-      //@ts-ignore
-      setVotingToken(tokenRawData);
-
-      const contestStartRawData = await readContract(contractConfig, "contestStart", contractBaseOptions);
-      //@ts-ignore
-      setSubmissionsOpen(new Date(parseInt(contestStartRawData) * 1000));
-
-      const deadlineRawData = await readContract(contractConfig, "contestDeadline", contractBaseOptions);
-      //@ts-ignore
-      setVotesClose(new Date(parseInt(deadlineRawData) * 1000));
-
-      const votesOpenRawData = await readContract(contractConfig, "voteStart", contractBaseOptions);
-      //@ts-ignore
-      setVotesOpen(new Date(parseInt(votesOpenRawData) * 1000));
-
-      const statusRawData = await readContract(contractConfig, "state", contractBaseOptions);
-      setContestStatus(statusRawData);
-
-      const amountOfTokensRequiredToSubmitEntryRawData = await readContract(
+      // Maximum submissions *per user* for the contest
+      const contestMaxNumberSubmissionsPerUser = await readContract(
         contractConfig,
-        "proposalThreshold",
+        "numAllowedProposalSubmissions",
         contractBaseOptions,
       );
+      setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser.toNumber());
+
+      // Maximum amout of proposals for the contest
+      const contestMaxProposalCount = await readContract(contractConfig, "maxProposalCount", contractBaseOptions);
+      setContestMaxProposalCount(contestMaxProposalCount.toNumber());
+
+      // Voting token
+      // Address
+      const tokenAddressRawData = await readContract(contractConfig, "token", contractBaseOptions);
+      setVotingTokenAddress(tokenAddressRawData);
+      // Data (balance, symbol, total supply etc) (for ERC-20 token)
       //@ts-ignore
-      setAmountOfTokensRequiredToSubmitEntry(amountOfTokensRequiredToSubmitEntryRawData / 1e18);
+      const tokenRawData = await fetchToken({ address: tokenAddressRawData, chainId });
+      setVotingToken(tokenRawData);
+
+      // Timestamp from when a user can vote
+      // depending on the amount of voting token they're holding at a given timestamp (snapshot)
       const usersQualifyToVoteIfTheyHoldTokenAtTimeRawData = await readContract(
         contractConfig,
         "contestSnapshot",
@@ -134,28 +139,39 @@ export function useContest() {
       //@ts-ignore
       setVotesOpen(new Date(parseInt(usersQualifyToVoteIfTheyHoldTokenAtTimeRawData) * 1000));
 
-      const currentAddressTotalVotesRawData = await readContract(contractConfig, "contestAddressTotalVotesCast", {
-        ...contractBaseOptions,
-        args: account?.data?.address,
-      });
-      setCurrentUserAvailableVotesAmount(currentAddressTotalVotesRawData);
+      // Current user votes
+      await updateCurrentUserVotes();
 
-      if (pathname === ROUTE_CONTEST_PROPOSAL) {
-        await fetchProposal(asPath.split("/")[4]);
-      } else {
-        const proposalsIdsRawData = await readContract(contractConfig, "getAllProposalIds", contractBaseOptions);
-        setListProposalsIds(proposalsIdsRawData);
-        if (proposalsIdsRawData.length === 0) {
-          setIsListProposalsSuccess(true);
-          setIsListProposalsLoading(false);
-          setIsLoading(false);
-          setIsError(null);
-          setIsSuccess(true);
-        } else {
-          //@ts-ignore
-          await fetchAllProposals(proposalsIdsRawData);
-        }
-      }
+      // Timestamp when contest start (submissions open)
+      const contestStartRawData = await readContract(contractConfig, "contestStart", contractBaseOptions);
+      //@ts-ignore
+      setSubmissionsOpen(new Date(parseInt(contestStartRawData) * 1000));
+
+      // Timestamp when contest ends (voting closes)
+      const deadlineRawData = await readContract(contractConfig, "contestDeadline", contractBaseOptions);
+      //@ts-ignore
+      setVotesClose(new Date(parseInt(deadlineRawData) * 1000));
+
+      // Timestamp when votes open
+      const votesOpenRawData = await readContract(contractConfig, "voteStart", contractBaseOptions);
+      //@ts-ignore
+      setVotesOpen(new Date(parseInt(votesOpenRawData) * 1000));
+
+      // Contest status
+      const statusRawData = await readContract(contractConfig, "state", contractBaseOptions);
+      setContestStatus(statusRawData);
+
+      // Amount of token required for a user to vote
+      const amountOfTokensRequiredToSubmitEntryRawData = await readContract(
+        contractConfig,
+        "proposalThreshold",
+        contractBaseOptions,
+      );
+      //@ts-ignore
+      setAmountOfTokensRequiredToSubmitEntry(amountOfTokensRequiredToSubmitEntryRawData / 1e18);
+
+      // List of proposals for this contest
+      await fetchAllProposals();
     } catch (e) {
       onContractError(e);
       //@ts-ignore
@@ -168,41 +184,58 @@ export function useContest() {
     }
   }
 
-  async function fetchProposal(id: any) {
+  async function fetchAllProposals() {
     const contractConfig = {
       addressOrName: address,
       contractInterface: DeployedContestContract.abi,
     };
+    const contractBaseOptions = {};
     setIsListProposalsLoading(true);
     try {
-      const proposalRawData = await readContract(contractConfig, "getProposal", {
-        args: id,
-      });
-      const proposalVotesData = await readContract(contractConfig, "proposalVotes", {
-        args: id,
-      });
+      // Get list of proposals (ids)
+      const proposalsIdsRawData = await readContract(contractConfig, "getAllProposalIds", contractBaseOptions);
+      setListProposalsIds(proposalsIdsRawData);
+      if (proposalsIdsRawData.length > 0) {
+        let currentUserProposalCount = 0;
+        // For all proposals, fetch
+        await Promise.all(
+          proposalsIdsRawData.map(async (id: number) => {
+            // proposal content
+            const proposalRawData = await readContract(contractConfig, "getProposal", {
+              args: id,
+            });
+            // votes received
+            const proposalVotesData = await readContract(contractConfig, "proposalVotes", {
+              args: id,
+            });
+            // author
+            const author = await fetchEnsName({
+              address: proposalRawData[0],
+              chainId: chain.mainnet.id,
+            });
+            const proposalData = {
+              author: author ?? proposalRawData[0],
+              content: proposalRawData[1],
+              isContentImage: isUrlToImage(proposalRawData[1]) ? true : false,
+              exists: proposalRawData[2],
+              //@ts-ignore
+              votes: proposalVotesData / 1e18,
+            };
+            // Check if that proposal belongs to the current user
+            // Needed to track if the current user can submit a proposal
+            if (proposalRawData[0] === account.data?.address) currentUserProposalCount++;
+            setProposalData({ id, data: proposalData });
+          }),
+        );
+        setCurrentUserProposalCount(currentUserProposalCount);
+      }
 
-      const author = await fetchEnsName({
-        address: proposalRawData[0],
-        chainId: chain.mainnet.id,
-      });
-
-      const proposalData = {
-        author: author ?? proposalRawData[0],
-        content: proposalRawData[1],
-        isContentImage: isUrlToImage(proposalRawData[1]) ? true : false,
-        exists: proposalRawData[2],
-        //@ts-ignore
-        votes: proposalVotesData / 1e18,
-      };
-
-      setIsSuccess(true);
-      setProposalData({ id, data: proposalData });
       setIsLoading(false);
-      setIsError(null);
       setIsListProposalsLoading(false);
       setIsListProposalsError(null);
+      setIsError(null);
       setIsListProposalsSuccess(true);
+      setIsSuccess(true);
     } catch (e) {
       onContractError(e);
       console.error(e);
@@ -211,85 +244,47 @@ export function useContest() {
       //@ts-ignore
       setIsListProposalsError(e?.code ?? e);
       setIsListProposalsLoading(false);
+      setIsListProposalsSuccess(false);
     }
   }
 
-  async function fetchAllProposals(list: Array<any>) {
+  async function updateCurrentUserVotes() {
     const contractConfig = {
       addressOrName: address,
       contractInterface: DeployedContestContract.abi,
     };
-    setIsListProposalsLoading(true);
+    const contractBaseOptions = {};
+
     try {
-      await Promise.all(
-        list.map(async (id: number) => {
-          const proposalRawData = await readContract(contractConfig, "getProposal", {
-            args: id,
-          });
-          const proposalVotesData = await readContract(contractConfig, "proposalVotes", {
-            args: id,
-          });
+      // get current block number
+      const currentBlockNumber = await fetchBlockNumber();
+      const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 30; // (necessary to avoid block not mined error)
 
-          const author = await fetchEnsName({
-            address: proposalRawData[0],
-            chainId: chain.mainnet.id,
-          });
-          const proposalData = {
-            author: author ?? proposalRawData[0],
-            content: proposalRawData[1],
-            isContentImage: isUrlToImage(proposalRawData[1]) ? true : false,
-            exists: proposalRawData[2],
-            //@ts-ignore
-            votes: proposalVotesData / 1e18,
-          };
-          setProposalData({ id, data: proposalData });
-        }),
-      );
-
-      setIsListProposalsLoading(false);
-      setIsListProposalsError(null);
-      setIsListProposalsSuccess(true);
-
-      setIsSuccess(true);
-      setIsLoading(false);
-      setIsError(null);
-    } catch (e) {
-      onContractError(e);
-      console.error(e);
-      setIsLoading(false);
-      setIsSuccess(false);
+      // get current user availables votes now
       //@ts-ignore
-      setIsListProposalsError(e?.code ?? e);
-      setIsListProposalsLoading(false);
+      const currentUserAvailableVotesAmountRawData = await readContract(contractConfig, "getVotes", {
+        ...contractBaseOptions,
+        args: [account?.data?.address, timestamp],
+      });
+      //@ts-ignore
+      setCurrentUserAvailableVotesAmount(currentUserAvailableVotesAmountRawData / 1e18);
+
+      // get votes cast by current user
+      const currentAddressTotalVotesCastRawData = await readContract(contractConfig, "contestAddressTotalVotesCast", {
+        ...contractBaseOptions,
+        args: account?.data?.address,
+      });
+      setCurrentUserTotalVotesCast(currentAddressTotalVotesCastRawData);
+    } catch (e) {
+      console.error(e);
     }
   }
-
-  useEffect(() => {
-    if (activeChain?.id === chainId) {
-      fetchContestInfo();
-    } else {
-      setIsLoading(false);
-      setIsListProposalsLoading(false);
-    }
-  }, [activeChain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
-
-  useEffect(() => {
-    const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase();
-    if (asPath.split("/")[2] !== chainName) {
-      push(pathname, `/contest/${chainName}/${address}`, { shallow: true });
-    }
-  }, [chainId, address]);
-
-  useEffect(() => {
-    if (activeConnector) {
-      activeConnector.on("change", data => {
-        //@ts-ignore
-        setChaindId(data.chain.id);
-      });
-    }
-  }, [activeConnector]);
 
   return {
+    address,
+    fetchContestInfo,
+    setIsLoading,
+    setIsListProposalsLoading,
     chainId,
     fetchAllProposals,
     isLoading,
@@ -298,6 +293,7 @@ export function useContest() {
     isListProposalsError,
     isSuccess,
     isListProposalsSuccess,
+    updateCurrentUserVotes,
     retry: fetchContestInfo,
     onSearch: (addr: string) => {
       setIsLoading(true);
