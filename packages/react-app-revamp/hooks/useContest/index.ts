@@ -180,6 +180,7 @@ export function useContest() {
         const timestampToCheck =
           //@ts-ignore
           delayedCurrentTimestamp >= parseInt(timestampSnapshotRawData) * 1000
+            //@ts-ignore
             ? parseInt(timestampSnapshotRawData) * 1000
             : delayedCurrentTimestamp;
 
