@@ -1,3 +1,4 @@
+import shallow from "zustand/shallow";
 import { ContractFactory } from "ethers";
 import toast from "react-hot-toast";
 import { useNetwork, useSigner } from "wagmi";
@@ -8,19 +9,36 @@ import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { useStore } from "../store";
-import type { WizardFormState } from "../store";
 
 export function useDeployContest(form: any) {
   const stateContestDeployment = useContractFactory();
   const { activeChain } = useNetwork();
   const { refetch } = useSigner();
   //@ts-ignore
-  const stateWizardForm: WizardFormState = useStore();
+  const {
+    modalDeployContestOpen,
+    setModalDeployContestOpen,
+    setDeployContestData,
+    setContestDeployedToChain,
+  } = useStore(
+    state => ({
+      //@ts-ignore
+      modalDeployContestOpen: state.modalDeployContestOpen,
+      //@ts-ignore
+      setModalDeployContestOpen: state.setModalDeployContestOpen,
+      //@ts-ignore
+      setModalDeployContestOpen: state.setModalDeployContestOpen,
+      //@ts-ignore
+      setDeployContestData: state.setDeployContestData,
+      //@ts-ignore
+      setContestDeployedToChain: state.setContestDeployedToChain,
+    }),
+    shallow,
+  );
 
   async function handleSubmitForm(values: any) {
-    //@ts-ignore
-    stateWizardForm.setContestDeployedToChain(activeChain); // in case
-    stateWizardForm.setModalDeployContestOpen(true);
+    setContestDeployedToChain(activeChain);
+    setModalDeployContestOpen(true);
     stateContestDeployment.setIsLoading(true);
     stateContestDeployment.setIsSuccess(false);
     stateContestDeployment.setIsError(false);
@@ -67,18 +85,18 @@ export function useDeployContest(form: any) {
         hash: contract.deployTransaction.hash,
       });
       stateContestDeployment.setIsSuccess(true);
-      stateWizardForm.setDeployContestData({
+      setDeployContestData({
         hash: receipt.transactionHash,
         address: contract.address,
       });
-      if (stateWizardForm.modalDeployContestOpen === false)
-        toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully`);
+      if (modalDeployContestOpen === false)
+        toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully!`);
 
       stateContestDeployment.setIsLoading(false);
       form.reset();
     } catch (e) {
       console.error(e);
-      if (stateWizardForm.modalDeployContestOpen === false)
+      if (modalDeployContestOpen === false)
         toast.error(`The contract for your contest ("${values.contestTitle}") couldn't be deployed.`);
       stateContestDeployment.setIsError(true);
       //@ts-ignore

@@ -17,9 +17,7 @@ export const schema = object({
     .max(10)
     .trim()
     .min(1),
-  receivingAddress: string()
-    .regex(/^0x[a-fA-F0-9]{40}$/)
-    .or(string().regex(/.*\.eth$/)),
+  receivingAddress: string().regex(/^0x[a-fA-F0-9]{40}$/),
   numberOfTokens: number().positive(),
   nonTransferable: boolean().optional(),
 });

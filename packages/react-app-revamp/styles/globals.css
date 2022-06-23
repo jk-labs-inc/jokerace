@@ -34,7 +34,7 @@
     text-transform: lowercase !important;
   }
   html {
-    @apply bg-true-black text-true-white;
+    @apply bg-true-black text-true-white overflow-x-hidden;
   }
   body {
     @apply text-base flex flex-col min-h-screen;
@@ -59,6 +59,7 @@
     @apply font-bold px-4 py-3;
   }
 
+  .with-link-highlighted a,
   .link {
     @apply cursor-pointer font-bold text-positive-9 underline focus:text-positive-10 hover:no-underline;
   }
@@ -76,5 +77,10 @@
   .input:not(:placeholder-shown, [type="datetime-local"]):invalid,
   .input[aria-invalid="true"][type="datetime-local"] {
     @apply bg-negative-1 bg-negative-2 border-negative-6 focus:border-negative-8 placeholder:text-negative-11 text-negative-11 !important;
+  }
+
+  .twitter-tweet.twitter-tweet-rendered,
+  .twitter-tweet.twitter-tweet-rendered > iframe {
+    @apply !max-w-full !xs:max-w-screen-2xs;
   }
 }

@@ -1,4 +1,5 @@
-import { useNetwork, useConnect, useSigner } from "wagmi";
+import shallow from "zustand/shallow";
+import { useNetwork, useConnect } from "wagmi";
 import { usePress } from "@react-aria/interactions";
 import FormField from "@components/FormField";
 import FormInput from "@components/FormInput";
@@ -6,19 +7,18 @@ import Button from "@components/Button";
 import ToggleSwitch from "@components/ToggleSwitch";
 import button from "@components/Button/styles";
 import { useStore } from "../store";
-import type { WizardFormState } from '../store'
 
 interface FormProps {
-  isDeploying: boolean
+  isDeploying: boolean;
   // the following are returned by felte hook useForm()
-  form: any
-  touched: any
-  data: any
-  errors: any
-  isValid: any
-  interacted: any
-  resetField: any
-  setData: any
+  form: any;
+  touched: any;
+  data: any;
+  errors: any;
+  isValid: any;
+  interacted: any;
+  resetField: any;
+  setData: any;
 }
 const appearAsNeutralButton = button({ intent: "neutral-outline" });
 
@@ -26,10 +26,17 @@ export const Form = (props: FormProps) => {
   const { isDeploying, form, data, errors, isValid, interacted, setData } = props;
   const { isConnected } = useConnect();
   const { activeChain } = useNetwork();
-  //@ts-ignore
-  const stateWizardForm: WizardFormState = useStore();
+  const { setCurrentStep, dataDeployToken } = useStore(
+    state => ({
+      //@ts-ignore
+      setCurrentStep: state.setCurrentStep,
+      //@ts-ignore
+      dataDeployToken: state.dataDeployToken,
+    }),
+    shallow,
+  );
   const { pressProps } = usePress({
-    onPress: () => stateWizardForm.setCurrentStep(3),
+    onPress: () => setCurrentStep(3),
   });
 
   return (
@@ -93,17 +100,17 @@ export const Form = (props: FormProps) => {
         <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
           <FormField.InputField>
             <FormField.Label hasError={errors().receivingAddress?.length > 0 === true} htmlFor="receivingAddress">
-              Receiving address <span className="text-2xs text-neutral-10 pis-1">(Ethereum address or ENS)</span>
+              Receiving address <span className="text-2xs text-neutral-10 pis-1">(Ethereum address)</span>
             </FormField.Label>
             <FormField.Description id="input-receivingaddress-description">
-              An Ethereum or ENS address that will receive the tokens
+              An Ethereum address that will receive the tokens
             </FormField.Description>
             <FormInput
               required
               disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
               aria-invalid={errors().receivingAddress?.length > 0 === true ? "true" : "false"}
               className="max-w-full w-auto 2xs:w-full"
-              placeholder="mywallet.eth"
+              placeholder="0x..."
               type="text"
               name="receivingAddress"
               id="receivingAddress"
@@ -115,7 +122,7 @@ export const Form = (props: FormProps) => {
             hasError={errors().receivingAddress?.length > 0 === true}
             id="input-receivingaddress-helpblock"
           >
-            Please type a valid Ethereum address or a valid ENS address.
+            Please type a valid Ethereum address.
           </FormField.HelpBlock>
         </FormField>
 
@@ -186,7 +193,7 @@ export const Form = (props: FormProps) => {
         </Button>
 
         <div className={appearAsNeutralButton} tabIndex={0} role="button" {...pressProps}>
-          {stateWizardForm.dataDeployToken !== null ? "Next" : "Skip"}
+          {dataDeployToken !== null ? "Next" : "Skip"}
         </div>
       </div>
     </form>

@@ -1,5 +1,6 @@
 import { useNetwork, useConnect } from "wagmi";
 import { usePress } from "@react-aria/interactions";
+import shallow from "zustand/shallow";
 import Button from "@components/Button";
 import button from "@components/Button/styles";
 import FormField from "@components/FormField";
@@ -10,27 +11,33 @@ import { isAfter, isBefore, isPast } from "date-fns";
 import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
-import type { WizardFormState } from '../store'
-
 interface FormProps {
-  isDeploying: boolean
+  isDeploying: boolean;
   // the following are returned by felte hook useForm()
-  form: any
-  touched: any
-  data: any
-  errors: any
-  isValid: any
-  interacted: any
-  resetField: any
-  setData: any
+  form: any;
+  touched: any;
+  data: any;
+  errors: any;
+  isValid: any;
+  interacted: any;
+  resetField: any;
+  setData: any;
 }
 
 export const Form = (props: FormProps) => {
   const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
   const { isConnected } = useConnect();
   const { activeChain } = useNetwork();
-  //@ts-ignore
-  const stateWizardForm: WizardFormState = useStore();
+  const { setCurrentStep, dataDeployToken } = useStore(
+    state => ({
+      //@ts-ignore
+      setCurrentStep: state.setCurrentStep,
+      //@ts-ignore
+      dataDeployToken: state.dataDeployToken,
+    }),
+    shallow,
+  );
+
   const isDateOpeningSubmissionsValid =
     data()?.datetimeOpeningSubmissions && !isPast(new Date(data().datetimeOpeningSubmissions));
   const isDateOpeningVotesValid =
@@ -65,7 +72,7 @@ export const Form = (props: FormProps) => {
     : false;
 
   const { pressProps } = usePress({
-    onPress: () => stateWizardForm.setCurrentStep(4),
+    onPress: () => setCurrentStep(4),
   });
 
   return (
@@ -294,7 +301,7 @@ export const Form = (props: FormProps) => {
                   hasError={touched()?.requiredNumberOfTokenToSubmit && !isRequiredNumberOfTokenToSubmitValid}
                   aria-describedby="input-requirednumberoftoken-helpblock"
                 />{" "}
-                token{data()?.requiredNumberOfTokenToSubmit > 1 ? "s" : ""} to submit
+                token(s) to submit
               </>
             </FormRadioOption>
           </FormRadioGroup>
@@ -309,7 +316,7 @@ export const Form = (props: FormProps) => {
           <FormRadioGroup
             disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
             value={data()?.noSubmissionLimitPerUser}
-            onChange={(e: boolean )=> {
+            onChange={(e: boolean) => {
               if (e === true) {
                 resetField("submissionPerUserMaxNumber");
               }
@@ -363,7 +370,14 @@ export const Form = (props: FormProps) => {
           Voting
         </legend>
         <div className="space-y-6">
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField
+            disabled={
+              !isDateOpeningSubmissionsValid ||
+              !isConnected ||
+              activeChain?.unsupported === true ||
+              isDeploying === true
+            }
+          >
             <FormField.InputField>
               <FormField.Label
                 hasError={
@@ -398,7 +412,7 @@ export const Form = (props: FormProps) => {
                 className="xs:max-w-fit-content w-full"
                 type="datetime-local"
                 name="datetimeOpeningVoting"
-                min={data()?.datetimeOpeningVoting}
+                min={data()?.datetimeOpeningSubmissions}
                 pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
                 id="datetimeOpeningVoting"
                 hasError={
@@ -428,7 +442,11 @@ export const Form = (props: FormProps) => {
             </FormField.HelpBlock>
           </FormField>
 
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField
+            disabled={
+              !isDateOpeningVotesValid || !isConnected || activeChain?.unsupported === true || isDeploying === true
+            }
+          >
             <FormField.InputField>
               <FormField.Label
                 hasError={
@@ -541,7 +559,7 @@ export const Form = (props: FormProps) => {
                   errors().usersQualifyToVoteAtAnotherDatetime?.length > 0 === true ||
                   (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid)
                 }
-                htmlFor="datetimeOpeningVoting"
+                htmlFor="usersQualifyToVoteAtAnotherDatetime"
               >
                 Users can vote from date
               </FormField.Label>
@@ -595,9 +613,8 @@ export const Form = (props: FormProps) => {
             >
               The opening date for votes must be{" "}
               <span className="font-bold">
-                after the opening date for submissions and before the voting closing date.{" "}
+                after the closing date for submissions and before the closing date for votes.{" "}
               </span>
-              .
             </FormField.HelpBlock>
           </FormField>
         </div>
@@ -625,7 +642,7 @@ export const Form = (props: FormProps) => {
         </Button>
 
         <div className={button({ intent: "neutral-outline" })} tabIndex={0} role="button" {...pressProps}>
-          {stateWizardForm.dataDeployToken !== null ? "Next" : "Skip"}
+          {dataDeployToken !== null ? "Next" : "Skip"}
         </div>
       </div>
     </form>

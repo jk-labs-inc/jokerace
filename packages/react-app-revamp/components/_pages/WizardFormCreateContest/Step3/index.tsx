@@ -1,3 +1,4 @@
+import shallow from "zustand/shallow";
 import Button from "@components/Button";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { useForm } from "@felte/react";
@@ -9,12 +10,34 @@ import { useStore } from "../store";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
-import type { WizardFormState} from '../store'
 
 export const Step3 = () => {
-  //@ts-ignore
-  const stateWizardForm: WizardFormState = useStore();
-
+  const {
+    contestDeployedToChain,
+    setCurrentStep,
+    dataDeployToken,
+    modalDeployContestOpen,
+    setModalDeployContestOpen,
+    dataDeployContest,
+  } = useStore(
+    state => ({
+      //@ts-ignore
+      setCurrentStep: state.setCurrentStep,
+      //@ts-ignore
+      dataDeployToken: state.dataDeployToken,
+      //@ts-ignore
+      modalDeployContestOpen: state.modalDeployContestOpen,
+      //@ts-ignore
+      setModalDeployContestOpen: state.setModalDeployContestOpen,
+      //@ts-ignore
+      setModalDeployContestOpen: state.setModalDeployContestOpen,
+      //@ts-ignore
+      contestDeployedToChain: state.contestDeployedToChain,
+      //@ts-ignore
+      dataDeployContest: state.dataDeployContest,
+    }),
+    shallow,
+  );
   /*
     add 10min to the current datetime to anticipate
     the user actions on the form and prevent 
@@ -25,12 +48,18 @@ export const Step3 = () => {
 
   const form = useForm({
     initialValues: {
-      votingTokenAddress: stateWizardForm.dataDeployToken?.address ?? null,
+      votingTokenAddress: dataDeployToken?.address ?? null,
       datetimeOpeningSubmissions: new Date(date.getTime() - date.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, -8), // get current local time in ISO format without seconds & milliseconds
       datetimeOpeningVoting: "",
       datetimeClosingVoting: "",
+      submissionOpenToAll: true,
+      noSubmissionLimitPerUser: false,
+      submissionMaxNumber: 200,
+      requiredNumberOfTokensToSubmit: 1,
+      submissionPerUserMaxNumber: 1,
+      usersQualifyToVoteIfTheyHoldTokenOnVoteStart: true,
     },
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values),
@@ -53,15 +82,15 @@ export const Step3 = () => {
       </div>
       <Form isDeploying={stateContestDeployment.isLoading} {...form} />
       <DialogModalDeployTransaction
-        isOpen={stateWizardForm.modalDeployContestOpen}
-        setIsOpen={stateWizardForm.setModalDeployContestOpen}
+        isOpen={modalDeployContestOpen}
+        setIsOpen={setModalDeployContestOpen}
         title="Token deployment transaction"
         isError={stateContestDeployment.isError}
         isLoading={stateContestDeployment.isLoading}
         isSuccess={stateContestDeployment.isSuccess}
         error={stateContestDeployment.error}
         //@ts-ignore
-        transactionHref={`${stateWizardForm.contestDeployedToChain?.blockExplorers?.default?.url}/tx/${stateWizardForm.dataDeployContest?.hash}`}
+        transactionHref={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
       >
         {stateContestDeployment.isSuccess && (
           <div className="mt-3 animate-appear relative">
@@ -69,7 +98,7 @@ export const Step3 = () => {
               href={{
                 pathname: ROUTE_VIEW_CONTEST,
                 //@ts-ignore
-                query: { id: stateWizardForm.dataDeployContest?.address },
+                query: { chain: contestDeployedToChain?.name.toLocaleLowerCase(), address: dataDeployContest?.address },
               }}
             >
               <a target="_blank">
@@ -82,7 +111,7 @@ export const Step3 = () => {
         <div className="pt-6 flex flex-col space-y-3 xs:flex-row xs:space-y-0 xs:space-i-3">
           <Button
             className="w-full py-1 xs:min-w-fit-content xs:w-auto"
-            onClick={() => stateWizardForm.setCurrentStep(4)}
+            onClick={() => setCurrentStep(4)}
             disabled={!stateContestDeployment.isSuccess}
             intent="neutral-outline"
           >

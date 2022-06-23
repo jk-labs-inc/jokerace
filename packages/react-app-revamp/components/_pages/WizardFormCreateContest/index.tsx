@@ -1,3 +1,4 @@
+import shallow from 'zustand/shallow'
 import { useRouter } from "next/router";
 import { Fragment, useEffect } from "react";
 import { useConnect, useNetwork } from "wagmi";
@@ -7,9 +8,10 @@ import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import StepIndicator from "./StepIndicator";
-import type { WizardFormStep, WizardFormState } from './store'
+import type { WizardFormStep } from './store'
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import { Transition } from "@headlessui/react";
+import Loader from "@components/Loader";
 
 function renderStep(step: WizardFormStep, urlParam: string | undefined) {
     const stepToRender = urlParam ? parseInt(urlParam) : step 
@@ -33,8 +35,13 @@ function renderStep(step: WizardFormStep, urlParam: string | undefined) {
     }
   }
 export const WizardFormCreateContest = () => {
-    //@ts-ignore
-    const stateWizardForm: WizardFormState = useStore()
+    const { currentStep, setCurrentStep } = useStore(state =>  ({ 
+      //@ts-ignore
+      currentStep: state.currentStep, 
+      //@ts-ignore
+      setCurrentStep: state.setCurrentStep, 
+     }), shallow);
+    
     const { query: { step }, isReady } = useRouter()
     const connect = useConnect()
     const { isConnected } = connect
@@ -42,13 +49,13 @@ export const WizardFormCreateContest = () => {
 
     useEffect(() => {
       //@ts-ignore
-      if(isReady && step && parseInt(step) !== stateWizardForm.currentStep) stateWizardForm.setCurrentStep(parseInt(step))
+      if(isReady && step && parseInt(step) !== currentStep) setCurrentStep(parseInt(step))
     },[step, isReady])
 
     useEffect(() => {
       document.body.scrollTop = 0; // For Safari
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    }, [stateWizardForm.currentStep])
+    }, [currentStep])
 
  return <>
    <Transition 
@@ -62,9 +69,8 @@ export const WizardFormCreateContest = () => {
     leaveTo="opacity-0"
     
    >
-    <div className="text-7xl text-center mx-auto pt-20">
-      <div className="animate-card-rotation">🃏</div>
-      <div className="text-lg text-neutral-7 font-bold">Loading, one moment please...</div>
+    <div>
+      <Loader scale="page" />
     </div>
    </Transition>
    <Transition
@@ -85,7 +91,7 @@ leaveTo="opacity-0 "
     <StepIndicator />
     <div className="w-full">
       {/* @ts-ignore */}
-      {renderStep(stateWizardForm.currentStep, step)}
+      {renderStep(currentStep, step)}
     </div>
   </div>
   </Transition>

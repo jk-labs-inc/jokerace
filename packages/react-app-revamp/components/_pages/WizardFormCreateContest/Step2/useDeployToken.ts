@@ -1,3 +1,4 @@
+import shallow from "zustand/shallow";
 import { ContractFactory } from "ethers";
 import { parseEther } from "ethers/lib/utils";
 import toast from "react-hot-toast";
@@ -7,19 +8,29 @@ import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 import { useStore } from "../store";
-import type { WizardFormState } from '../store'
 
 export function useDeployToken(form: any) {
   const stateContractDeployment = useContractFactory();
   const { activeChain } = useNetwork();
   const { refetch } = useSigner();
-  //@ts-ignore
-  const stateWizardForm: WizardFormState= useStore();
+  const { modalDeployTokenOpen, setTokenDeployedToChain, setModalDeployTokenOpen, setDeployTokenData } = useStore(
+    state => ({
+      //@ts-ignore
+      setTokenDeployedToChain: state.setTokenDeployedToChain,
+      //@ts-ignore
+      setModalDeployTokenOpen: state.setModalDeployTokenOpen,
+      //@ts-ignore
+      setDeployTokenData: state.setDeployTokenData,
+      //@ts-ignore
+      modalDeployTokenOpen: state.modalDeployTokenOpen,
+    }),
+    shallow,
+  );
 
   async function handleSubmitForm(values: any) {
     //@ts-ignore
-    stateWizardForm.setTokenDeployedToChain(activeChain);
-    stateWizardForm.setModalDeployTokenOpen(true);
+    setTokenDeployedToChain(activeChain);
+    setModalDeployTokenOpen(true);
     stateContractDeployment.setIsLoading(true);
     stateContractDeployment.setIsSuccess(false);
     stateContractDeployment.setIsError(false);
@@ -46,20 +57,20 @@ export function useDeployToken(form: any) {
         hash: contract.deployTransaction.hash,
       });
       stateContractDeployment.setIsSuccess(true);
-      stateWizardForm.setDeployTokenData({
+      setDeployTokenData({
         hash: receipt.transactionHash,
         address: contract.address,
       });
-      if (stateWizardForm.modalDeployTokenOpen === false)
+      if (modalDeployTokenOpen === false)
         toast.success(
-          `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) was deployed successfully`,
+          `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) was deployed successfully!`,
         );
 
       stateContractDeployment.setIsLoading(false);
       form.reset();
     } catch (e) {
       console.error(e);
-      if (stateWizardForm.modalDeployTokenOpen === false)
+      if (modalDeployTokenOpen === false)
         toast.error(`The contract for your token ${values.tokenName} ($${values.tokenSymbol}) couldn't be deployed.`);
       stateContractDeployment.setIsError(true);
       //@ts-ignore
