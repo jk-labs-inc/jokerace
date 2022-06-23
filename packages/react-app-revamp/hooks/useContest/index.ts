@@ -83,6 +83,8 @@ export function useContest() {
     setDidUserPassSnapshotAndCanVote,
     //@ts-ignore
     setSnapshotTaken,
+    //@ts-ignore
+    setCheckIfUserPassedSnapshotLoading,
   } = useStore();
 
   function onContractError(err: any) {
@@ -166,34 +168,8 @@ export function useContest() {
         setContestStatus(statusRawData);
       }
 
-      // Timestamp from when a user can vote
-      // depending on the amount of voting token they're holding at a given timestamp (snapshot)
-      const timestampSnapshotRawData = await readContract(contractConfig, "contestSnapshot", contractBaseOptions);
-
       //@ts-ignore
-      setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
-
-      //@ts-ignore
-      if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
-        setSnapshotTaken(true);
-        const delayedCurrentTimestamp = Date.now() - 30; // Delay by 30 seconds to make sure we're looking at a block that has been mined
-        const timestampToCheck =
-          //@ts-ignore
-          delayedCurrentTimestamp >= parseInt(timestampSnapshotRawData) * 1000
-            //@ts-ignore
-            ? parseInt(timestampSnapshotRawData) * 1000
-            : delayedCurrentTimestamp;
-
-        const tokenUserWasHoldingAtSnapshotRawData = await readContract(contractConfig, "getVotes", {
-          ...contractBaseOptions,
-          args: [account?.data?.address, timestampToCheck],
-        });
-
-        //@ts-ignore
-        setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
-      } else {
-        setSnapshotTaken(false);
-      }
+      if (statusRawData === CONTEST_STATUS.VOTING_OPEN) await checkIfCurrentUserQualifyToVote();
 
       // Amount of token required for a user to vote
       const amountOfTokensRequiredToSubmitEntryRawData = await readContract(
@@ -215,6 +191,48 @@ export function useContest() {
       setIsListProposalsLoading(false);
       setIsLoading(false);
       console.error(e);
+    }
+  }
+
+  async function checkIfCurrentUserQualifyToVote() {
+    const contractConfig = {
+      addressOrName: address,
+      contractInterface: DeployedContestContract.abi,
+    };
+    const contractBaseOptions = {};
+    setCheckIfUserPassedSnapshotLoading(true);
+    try {
+      // Timestamp from when a user can vote
+      // depending on the amount of voting token they're holding at a given timestamp (snapshot)
+      const timestampSnapshotRawData = await readContract(contractConfig, "contestSnapshot", contractBaseOptions);
+
+      //@ts-ignore
+      setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
+
+      //@ts-ignore
+      if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
+        setSnapshotTaken(true);
+        const delayedCurrentTimestamp = Date.now() - 59; // Delay by 59 seconds to make sure we're looking at a block that has been mined
+
+        const timestampToCheck =
+          //@ts-ignore
+          delayedCurrentTimestamp >= timestampSnapshotRawData ? timestampSnapshotRawData : delayedCurrentTimestamp;
+
+        const tokenUserWasHoldingAtSnapshotRawData = await readContract(contractConfig, "getVotes", {
+          ...contractBaseOptions,
+          args: [account?.data?.address, timestampToCheck],
+        });
+
+        //@ts-ignore
+        setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
+      } else {
+        setSnapshotTaken(false);
+      }
+
+      setCheckIfUserPassedSnapshotLoading(false);
+    } catch (e) {
+      console.error(e);
+      setCheckIfUserPassedSnapshotLoading(false);
     }
   }
 
@@ -292,7 +310,7 @@ export function useContest() {
     try {
       // get current block number
       const currentBlockNumber = await fetchBlockNumber();
-      const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 30; // (necessary to avoid block not mined error)
+      const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 50; // (necessary to avoid block not mined error)
 
       // get current user availables votes now
       //@ts-ignore
@@ -333,6 +351,7 @@ export function useContest() {
     isSuccess,
     isListProposalsSuccess,
     updateCurrentUserVotes,
+    checkIfCurrentUserQualifyToVote,
     retry: fetchContestInfo,
     onSearch: (addr: string) => {
       setIsLoading(true);

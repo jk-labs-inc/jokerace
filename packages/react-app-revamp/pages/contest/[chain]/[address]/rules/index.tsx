@@ -13,7 +13,7 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
-  const { snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName } = useStore(state =>  ({ 
+  const { checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName } = useStore(state =>  ({ 
     //@ts-ignore
     votingToken: state.votingToken,
     //@ts-ignore
@@ -34,20 +34,22 @@ const Page: NextPage = (props: PageProps) => {
     didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
     //@ts-ignore
     snapshotTaken: state.snapshotTaken,
+    //@ts-ignore
+    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading
    }), shallow);
   return (
     <>
       <Head>
-        <title>Contest {contestName ? contestName : address} rules - JokeDAO</title>
-        <meta name="description" content="@TODO: change this" />
+        <title>Contest {contestName ? contestName : ""} rules - JokeDAO</title>
+        <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
       </Head>
     <h1 className='sr-only'>Rules of contest {contestName ? contestName : address} </h1>
     {!isLoading  && isSuccess && <div className='animate-appear space-y-8'>
      <section>
        <p className={`p-3 rounded-md border-solid border mb-5 text-sm font-bold
-       ${!snapshotTaken ? ' border-neutral-4' : didUserPassSnapshotAndCanVote ? 'bg-positive-1 text-positive-10 border-positive-4' : ' bg-primary-1 text-primary-10 border-primary-4'}`
+       ${(!snapshotTaken || checkIfUserPassedSnapshotLoading ) ? ' border-neutral-4' : didUserPassSnapshotAndCanVote ? 'bg-positive-1 text-positive-10 border-positive-4' : ' bg-primary-1 text-primary-10 border-primary-4'}`
        }>
-         {!snapshotTaken ? 'Snapshot wasn\'t taken yet.': didUserPassSnapshotAndCanVote ? 'Congrats ! Your wallet qualified to vote.' : 'Too bad, your wallet didn\'t qualify to vote.'}
+         {checkIfUserPassedSnapshotLoading ? 'Checking snapshot...' : !snapshotTaken ? 'Snapshot wasn\'t taken yet.': didUserPassSnapshotAndCanVote ? 'Congrats ! Your wallet qualified to vote.' : 'Too bad, your wallet didn\'t qualify to vote.'}
        </p>
      </section>
      <section>

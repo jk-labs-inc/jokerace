@@ -11,6 +11,7 @@ import ListProposalVotes from '@components/_pages/ListProposalVotes'
 import { CONTEST_STATUS } from '@helpers/contestStatus'
 import type { NextPage } from 'next'
 import Button from '@components/Button'
+import { IconSpinner } from '@components/Icons'
 
 interface PageProps {
   address: string,
@@ -19,7 +20,7 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { query: { proposal, address }} = useRouter()
-  const { didUserPassSnapshotAndCanVote, currentUserAvailableVotesAmount, listProposalsData, contestName, contestStatus } = useStoreContest(state =>  ({ 
+  const { checkIfUserPassedSnapshotLoading, didUserPassSnapshotAndCanVote, currentUserAvailableVotesAmount, listProposalsData, contestName, contestStatus } = useStoreContest(state =>  ({ 
     //@ts-ignore
     contestStatus: state.contestStatus,
     //@ts-ignore
@@ -34,6 +35,8 @@ const Page: NextPage = (props: PageProps) => {
     didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
     //@ts-ignore
     currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+    //@ts-ignore
+    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
    }), shallow);
 
    const { setPickedProposal, setIsModalOpen } = useStoreCastVotes(
@@ -67,13 +70,14 @@ const Page: NextPage = (props: PageProps) => {
         {contestStatus === CONTEST_STATUS.VOTING_OPEN && proposal && proposal !== null && <div className='flex flex-col items-center justify-center mt-10'>
 
         <Button 
-          intent={(currentUserAvailableVotesAmount === 0 || !didUserPassSnapshotAndCanVote) ? 'primary-outline' : 'primary'}
-          disabled={!didUserPassSnapshotAndCanVote || currentUserAvailableVotesAmount === 0} 
+          isLoading={checkIfUserPassedSnapshotLoading}
+          intent={(currentUserAvailableVotesAmount === 0 || checkIfUserPassedSnapshotLoading || !didUserPassSnapshotAndCanVote) ? 'primary-outline' : 'primary'}
+          disabled={!didUserPassSnapshotAndCanVote || checkIfUserPassedSnapshotLoading || currentUserAvailableVotesAmount === 0} 
           onClick={onClickProposalVote}>
-          Cast your votes for this proposal
+            {!checkIfUserPassedSnapshotLoading ? 'Cast your votes for this proposal' : 'Checking snapshot...'}
         </Button>
         <span className='text-2xs mt-1 text-neutral-11'>Available: {new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
-        {<p className='text-2xs mt-1 text-neutral-11'>{!didUserPassSnapshotAndCanVote ? 'Your wallet didn\'t qualify to vote.' : 'Your wallet qualified to vote!'}</p>}
+        {<p className='text-2xs mt-1 text-neutral-11'>{checkIfUserPassedSnapshotLoading ? 'Checking snapshot...': !didUserPassSnapshotAndCanVote ? 'Your wallet didn\'t qualify to vote.' : 'Your wallet qualified to vote!'}</p>}
         </div>}
         {[CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus)  &&  <ProviderProposalVotes createStore={createStoreProposalVotes}>
           <div className='mt-8 text-sm'>

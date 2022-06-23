@@ -5,7 +5,7 @@ import updateCountdown from "@helpers/updateCountdown";
 
 export function useCountdown(startDate: Date, endDate: Date) {
   const [countdown, setCountdown] = useState(updateCountdown(endDate));
-  const [isCountdownRunning, toggleIsCountdownRunning] = useBoolean(
+  const [isCountdownRunning, setIsCountdownRunning] = useBoolean(
     isAfter(new Date(), startDate) && isBefore(new Date(), endDate),
   );
 
@@ -15,7 +15,7 @@ export function useCountdown(startDate: Date, endDate: Date) {
       isWithinInterval(new Date(), {
         start: startDate,
         end: endDate,
-      }) === false && toggleIsCountdownRunning(false);
+      }) === false && setIsCountdownRunning(false);
     },
     isCountdownRunning ? 1000 : null,
   );
@@ -23,6 +23,6 @@ export function useCountdown(startDate: Date, endDate: Date) {
   return {
     countdown,
     isCountdownRunning,
-    restart: () => toggleIsCountdownRunning(true),
+    setIsCountdownRunning,
   };
 }
