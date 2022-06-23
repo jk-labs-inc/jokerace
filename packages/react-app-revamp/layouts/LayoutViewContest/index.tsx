@@ -42,13 +42,14 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 const LayoutViewContest = (props: any) => {
   const { children } = props;
   const { query, asPath, pathname, push } = useRouter();
-  const { data } = useAccount();
+  const { data, isFetching } = useAccount();
   const { activeChain, switchNetwork } = useNetwork();
   const { activeConnector } = useConnect();
   const {
     isLoading,
     address,
     fetchContestInfo,
+    checkIfCurrentUserQualifyToVote,
     setIsLoading,
     setIsListProposalsLoading,
     isListProposalsLoading,
@@ -142,14 +143,27 @@ const LayoutViewContest = (props: any) => {
     }
   }, [activeConnector]);
 
+  useEffect(() => {
+    const verifySnapshot = async () => {
+      await checkIfCurrentUserQualifyToVote();
+    };
+    if (contestStatus === CONTEST_STATUS.VOTING_OPEN) {
+      verifySnapshot();
+    }
+  }, [contestStatus]);
+
   return (
     <>
-      <div className="border-b border-solid border-neutral-2 py-2">
+      <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
         <div className="container mx-auto">
           <FormSearchContest onSubmit={onSearch} isInline={true} />
         </div>
       </div>
-      <div className="flex-grow container mx-auto relative md:grid md:gap-6  md:grid-cols-12">
+      <div
+        className={`${
+          isLoading ? "pointer-events-none" : ""
+        } flex-grow container mx-auto relative md:grid md:gap-6  md:grid-cols-12`}
+      >
         <div
           className={`${styles.navbar} ${styles.withFakeSeparator} z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:max-h-[calc(100vh-4rem)] md:col-span-4`}
         >
@@ -273,7 +287,14 @@ const LayoutViewContest = (props: any) => {
             )}
         </div>
         <div className="md:pt-5 flex flex-col md:col-span-8">
-          {!data?.address ? (
+          {isFetching ||
+            (activeChain?.id === chainId && (isLoading || isListProposalsLoading) && (
+              <div className="animate-appear">
+                <Loader scale="page" />
+              </div>
+            ))}
+
+          {!isFetching && !data?.address ? (
             <p className="animate-appear font-bold text-center text-lg pt-10">
               Please connect your account to view this contest.
             </p>
@@ -293,11 +314,6 @@ const LayoutViewContest = (props: any) => {
                   >
                     Switch network
                   </Button>
-                </div>
-              )}
-              {activeChain?.id === chainId && (isLoading || isListProposalsLoading) && (
-                <div className="animate-appear">
-                  <Loader scale="page" />
                 </div>
               )}
 

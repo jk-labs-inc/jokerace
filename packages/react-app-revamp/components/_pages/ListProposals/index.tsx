@@ -9,7 +9,7 @@ import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
 import { useStore as useStoreCastVotes } from "@hooks/useCastVotes/store";
 import styles from "./styles.module.css";
-import { IconCaretUp } from "@components/Icons";
+import { IconCaretUp, IconSpinner } from "@components/Icons";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 export const ListProposals = () => {
@@ -22,6 +22,7 @@ export const ListProposals = () => {
     currentUserAvailableVotesAmount,
     contestStatus,
     didUserPassSnapshotAndCanVote,
+    checkIfUserPassedSnapshotLoading,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -34,6 +35,8 @@ export const ListProposals = () => {
       amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
       //@ts-ignore
       didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
+      //@ts-ignore
+      checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
     }),
     shallow,
   );
@@ -58,7 +61,7 @@ export const ListProposals = () => {
     if (contestStatus === CONTEST_STATUS.SUBMISSIONS_NOT_OPEN) {
       return (
         <div className="flex flex-col text-center items-center">
-          <p className="text-neutral-9 italic mb-6 animate-pulse">Submissions aren&apos;t open yet.</p>
+          <p className="text-neutral-9 italic mb-6">Submissions aren&apos;t open yet.</p>
         </div>
       );
     }
@@ -113,12 +116,16 @@ export const ListProposals = () => {
                         <button
                           onClick={() => onClickProposalVote(id)}
                           disabled={
+                            checkIfUserPassedSnapshotLoading ||
                             !didUserPassSnapshotAndCanVote ||
                             contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
                             currentUserAvailableVotesAmount === 0
                           }
                           className="disabled:border-none border p-2 border-solid border-neutral-6 rounded-md disabled:text-opacity-50 disabled:cursor-not-allowed text-neutral-12 flex 2xs:flex-col items-center 2xs:justify-center font-bold text-2xs"
                         >
+                          {checkIfUserPassedSnapshotLoading && (
+                            <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
+                          )}
                           {didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                             currentUserAvailableVotesAmount > 0 && (

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { isBefore, isAfter } from "date-fns";
+import { isBefore, isAfter, isEqual } from "date-fns";
 import shallow from "zustand/shallow";
 import { useStore } from "@hooks/useContest/store";
 import { useCountdown } from "@hooks/useCountdown";
@@ -35,38 +35,42 @@ export const Countdown = () => {
   const countdownUntilVotingClose = useCountdown(votesOpen, votesClose);
 
   useEffect(() => {
-    if (
-      !countdownUntilSubmissionsOpen.isCountdownRunning &&
-      !countdownUntilVotingOpen.isCountdownRunning &&
-      isBefore(new Date(), votesOpen)
-    ) {
-      countdownUntilVotingOpen.restart();
-      setContestStatus(CONTEST_STATUS.SUBMISSIONS_OPEN);
-    }
+    if (contestStatus !== null) {
+      if (
+        !countdownUntilSubmissionsOpen.isCountdownRunning &&
+        !countdownUntilVotingOpen.isCountdownRunning &&
+        isBefore(new Date(), votesOpen)
+      ) {
+        countdownUntilVotingOpen.setIsCountdownRunning(true);
+        setContestStatus(CONTEST_STATUS.SUBMISSIONS_OPEN);
+      }
 
-    if (
-      !countdownUntilSubmissionsOpen.isCountdownRunning &&
-      !countdownUntilVotingOpen.isCountdownRunning &&
-      !countdownUntilVotingClose.isCountdownRunning &&
-      contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-      isBefore(new Date(), votesClose)
-    ) {
-      countdownUntilVotingClose.restart();
-      setContestStatus(CONTEST_STATUS.VOTING_OPEN);
-    }
+      if (
+        !countdownUntilSubmissionsOpen.isCountdownRunning &&
+        !countdownUntilVotingOpen.isCountdownRunning &&
+        !countdownUntilVotingClose.isCountdownRunning &&
+        contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
+        (isAfter(new Date(), votesOpen) || isEqual(new Date(), votesOpen)) &&
+        isBefore(new Date(), votesClose)
+      ) {
+        countdownUntilVotingClose.setIsCountdownRunning(true);
+        setContestStatus(CONTEST_STATUS.VOTING_OPEN);
+      }
 
-    if (
-      !countdownUntilSubmissionsOpen.isCountdownRunning &&
-      !countdownUntilVotingOpen.isCountdownRunning &&
-      !countdownUntilVotingClose.isCountdownRunning &&
-      isAfter(new Date(), votesClose)
-    ) {
-      setContestStatus(CONTEST_STATUS.COMPLETED);
+      if (
+        !countdownUntilSubmissionsOpen.isCountdownRunning &&
+        !countdownUntilVotingOpen.isCountdownRunning &&
+        !countdownUntilVotingClose.isCountdownRunning &&
+        isAfter(new Date(), votesClose)
+      ) {
+        setContestStatus(CONTEST_STATUS.COMPLETED);
+      }
     }
   }, [
-    countdownUntilSubmissionsOpen.isCountdownRunning,
     countdownUntilVotingOpen.isCountdownRunning,
+    countdownUntilSubmissionsOpen.isCountdownRunning,
     countdownUntilVotingClose.isCountdownRunning,
+    contestStatus,
   ]);
 
   if (countdownUntilSubmissionsOpen.isCountdownRunning) {
