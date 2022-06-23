@@ -2,13 +2,15 @@ import shallow from 'zustand/shallow'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { chains } from '@config/wagmi'
-import { useStore } from '@hooks/useContest/store'
-import { Provider, createStore } from '@hooks/useProposalVotes/store'
+import { useStore as useStoreContest } from '@hooks/useContest/store'
+import { useStore as useStoreCastVotes } from '@hooks/useCastVotes/store'
+import { Provider as ProviderProposalVotes, createStore as createStoreProposalVotes } from '@hooks/useProposalVotes/store'
 import { getLayout } from '@layouts/LayoutViewContest'
 import ProposalContent from '@components/_pages/ProposalContent'
 import ListProposalVotes from '@components/_pages/ListProposalVotes'
+import { CONTEST_STATUS } from '@helpers/contestStatus'
 import type { NextPage } from 'next'
-import { isAfter } from 'date-fns'
+import Button from '@components/Button'
 
 interface PageProps {
   address: string,
@@ -17,7 +19,9 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { query: { proposal, address }} = useRouter()
-  const { listProposalsData, contestName, votesOpen } = useStore(state =>  ({ 
+  const { didUserPassSnapshotAndCanVote, currentUserAvailableVotesAmount, listProposalsData, contestName, contestStatus } = useStoreContest(state =>  ({ 
+    //@ts-ignore
+    contestStatus: state.contestStatus,
     //@ts-ignore
     contestName: state.contestName, 
     //@ts-ignore
@@ -26,7 +30,27 @@ const Page: NextPage = (props: PageProps) => {
     votesOpen: state.votesOpen,
     //@ts-ignore
     votesClose: state.votesClose,
+    //@ts-ignore
+    didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
+    //@ts-ignore
+    currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
    }), shallow);
+
+   const { setPickedProposal, setIsModalOpen } = useStoreCastVotes(
+    state => ({
+      //@ts-ignore
+      setPickedProposal: state.setPickedProposal,
+      //@ts-ignore
+      setIsModalOpen: state.setIsModalOpen,
+    }),
+    shallow,
+  );
+
+  function onClickProposalVote() {
+    setPickedProposal(proposal);
+    setIsModalOpen(true);
+  }
+
 
   return (
     <>
@@ -40,12 +64,25 @@ const Page: NextPage = (props: PageProps) => {
           author={listProposalsData[proposal]?.author}
           content={listProposalsData[proposal]?.content}
         />
-        {isAfter(new Date(), votesOpen) &&  <Provider createStore={createStore}>
+        {contestStatus === CONTEST_STATUS.VOTING_OPEN && proposal && proposal !== null && <div className='flex flex-col items-center justify-center mt-10'>
+
+        <Button 
+          intent={(currentUserAvailableVotesAmount === 0 || !didUserPassSnapshotAndCanVote) ? 'primary-outline' : 'primary'}
+          disabled={!didUserPassSnapshotAndCanVote || currentUserAvailableVotesAmount === 0} 
+          onClick={onClickProposalVote}>
+          Cast your votes for this proposal
+        </Button>
+        <span className='text-2xs mt-1 text-neutral-11'>Available: {new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
+        {<p className='text-2xs mt-1 text-neutral-11'>{!didUserPassSnapshotAndCanVote ? 'Your wallet didn\'t qualify to vote.' : 'Your wallet qualified to vote!'}</p>}
+        </div>}
+        {[CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus)  &&  <ProviderProposalVotes createStore={createStoreProposalVotes}>
           <div className='mt-8 text-sm'>
             {/* @ts-ignore */}
             <ListProposalVotes id={proposal} />
           </div>
-        </Provider>}
+        </ProviderProposalVotes>
+      }
+    
     </div>}
   </>
 )}

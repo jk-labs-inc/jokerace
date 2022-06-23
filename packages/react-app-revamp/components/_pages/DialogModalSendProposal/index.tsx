@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useEffect, useState } from "react";
-import { isBefore } from "date-fns";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
 interface DialogModalSendProposalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -30,7 +30,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     currentUserProposalCount,
     contestMaxNumberSubmissionsPerUser,
     contestMaxProposalCount,
-    votesOpen,
+    contestStatus,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -46,7 +46,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       //@ts-ignore
       amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
       //@ts-ignore
-      votesOpen: state.votesOpen,
+      contestStatus: state.contestStatus,
     }),
     shallow,
   );
@@ -106,7 +106,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
           </Link>
         </div>
       )}
-      {error !== null && !isSuccess && (
+      {error !== null && !isSuccess && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
         <>
           <Button onClick={onSubmitProposal} intent="neutral-outline" type="submit" className="mx-auto my-3">
             Try again
@@ -117,7 +117,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       {currentUserAvailableVotesAmount >= amountOfTokensRequiredToSubmitEntry &&
       currentUserProposalCount < contestMaxNumberSubmissionsPerUser &&
       listProposalsIds.length < contestMaxProposalCount &&
-      isBefore(new Date(), votesOpen) ? (
+      contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
         <>
           {showForm === true ? (
             <>
@@ -170,7 +170,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
         </>
       ) : (
         <>
-          <p>You can't submit more proposals.</p>
+          <p className="italic font-bold text-neutral-11">You can&apos;t submit more proposals.</p>
         </>
       )}
     </DialogModal>

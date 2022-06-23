@@ -37,6 +37,7 @@ import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal"
 import DialogModalVoteForProposal from "@components/_pages/DialogModalVoteForProposal";
 import useContestEvents from "@hooks/useContestEvents";
 import { chains } from "@config/wagmi";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -57,6 +58,7 @@ const LayoutViewContest = (props: any) => {
     retry,
     onSearch,
     chainId,
+    setChaindId,
   } = useContest();
 
   const {
@@ -71,8 +73,11 @@ const LayoutViewContest = (props: any) => {
     votesClose,
     contestName,
     contestAuthor,
+    contestStatus,
   } = useStoreContest(
     state => ({
+      //@ts-ignore
+      contestStatus: state.contestStatus,
       //@ts-ignore
       contestName: state.contestName,
       //@ts-ignore
@@ -117,7 +122,14 @@ const LayoutViewContest = (props: any) => {
   useEffect(() => {
     const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase();
     if (asPath.split("/")[2] !== chainName) {
-      push(pathname, `/contest/${chainName}/${address}`, { shallow: true });
+      if (pathname === ROUTE_VIEW_CONTEST) {
+        let newRoute = pathname
+          .replace("[chain]", chainName)
+          .replace("[address]", address)
+          //@ts-ignore
+          .replace("[proposal]", query?.proposal);
+        push(pathname, newRoute, { shallow: true });
+      }
     }
   }, [chainId, address]);
 
@@ -190,39 +202,35 @@ const LayoutViewContest = (props: any) => {
             <DocumentDownloadIcon className={styles.navLinkIcon} />
             Export data
           </button>
-          {!isLoading &&
-            isDate(submissionsOpen) &&
-            isDate(votesOpen) &&
-            isAfter(new Date(), submissionsOpen) &&
-            isBefore(new Date(), votesOpen) && (
-              <>
-                <Button
-                  /* @ts-ignore */
-                  onClick={() => stateSubmitProposal.setIsModalOpen(true)}
-                  className="animate-appear fixed md:static z-10  aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
-                  intent={
-                    currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
-                    currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
-                    contestMaxProposalCount === listProposalsIds.length
-                      ? "primary-outline"
-                      : "primary"
-                  }
-                  disabled={
-                    isLoading ||
-                    isListProposalsLoading ||
-                    isListProposalsError !== null ||
-                    isError !== null ||
-                    activeChain?.id !== chainId ||
-                    currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
-                    currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
-                    contestMaxProposalCount === listProposalsIds.length
-                  }
-                >
-                  <PaperAirplaneIcon className="w-5 2xs:w-6 rotate-45 2xs:mie-0.5 -translate-y-0.5 md:hidden" />
-                  <span className="sr-only 2xs:not-sr-only">Submit</span>
-                </Button>
-              </>
-            )}
+          {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
+            <>
+              <Button
+                /* @ts-ignore */
+                onClick={() => stateSubmitProposal.setIsModalOpen(true)}
+                className="animate-appear fixed md:static z-10  aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
+                intent={
+                  currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
+                  currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
+                  contestMaxProposalCount === listProposalsIds.length
+                    ? "primary-outline"
+                    : "primary"
+                }
+                disabled={
+                  isLoading ||
+                  isListProposalsLoading ||
+                  isListProposalsError !== null ||
+                  isError !== null ||
+                  activeChain?.id !== chainId ||
+                  currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
+                  currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
+                  contestMaxProposalCount === listProposalsIds.length
+                }
+              >
+                <PaperAirplaneIcon className="w-5 2xs:w-6 rotate-45 2xs:mie-0.5 -translate-y-0.5 md:hidden" />
+                <span className="sr-only 2xs:not-sr-only">Submit</span>
+              </Button>
+            </>
+          )}
           <Button
             onClick={() => setIsTimelineModalOpen(true)}
             disabled={

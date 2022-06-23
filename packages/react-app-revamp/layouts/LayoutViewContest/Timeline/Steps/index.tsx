@@ -2,6 +2,7 @@ import shallow from "zustand/shallow";
 import { format } from "date-fns";
 import { useStore } from "@hooks/useContest/store";
 import styles from "./styles.module.css";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
 // - Contest status
 // 0: Voting open
 // 1: Contest cancelled
@@ -28,14 +29,20 @@ export const Steps = () => {
       className={`${styles.stepper} relative md:text-xs flex pb-3 mt-3 space-y-4 flex-col`}
       style={{
         // @ts-ignore
-        "--stepperLineIndicatorHeight": `${contestStatus === 2 ? "33" : contestStatus === 1 ? "0" : "66"}%`,
+        "--stepperLineIndicatorHeight": `${
+          contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN
+            ? "33"
+            : contestStatus === CONTEST_STATUS.CANCELLED || contestStatus === CONTEST_STATUS.SUBMISSIONS_NOT_OPEN
+            ? "0"
+            : "66"
+        }%`,
       }}
     >
       <li
         className={`${styles.step} ${
-          contestStatus === 1
+          contestStatus === CONTEST_STATUS.CANCELLED || contestStatus === CONTEST_STATUS.SUBMISSIONS_NOT_OPEN
             ? "text-neutral-11"
-            : contestStatus === 3
+            : contestStatus === CONTEST_STATUS.COMPLETED
             ? "text-positive-10 text-opacity-75"
             : "text-positive-10"
         }`}
@@ -46,9 +53,9 @@ export const Steps = () => {
       </li>
       <li
         className={`${styles.step} ${
-          contestStatus === 0
+          contestStatus === CONTEST_STATUS.VOTING_OPEN
             ? "text-positive-10"
-            : contestStatus === 3
+            : contestStatus === CONTEST_STATUS.COMPLETED
             ? "text-positive-10 text-opacity-75"
             : "text-neutral-11"
         }`}
@@ -57,7 +64,11 @@ export const Steps = () => {
           <span className="font-bold">{format(votesOpen, "PPP p")}</span> <span>voting opens</span>
         </div>
       </li>
-      <li className={`${styles.step} ${contestStatus === 3 ? "text-positive-10" : "text-neutral-11"}`}>
+      <li
+        className={`${styles.step} ${
+          contestStatus === CONTEST_STATUS.COMPLETED ? "text-positive-10" : "text-neutral-11"
+        }`}
+      >
         <div className="flex flex-col">
           <span className="font-bold">{format(votesClose, "PPP p")}</span> <span>voting closes</span>
         </div>
