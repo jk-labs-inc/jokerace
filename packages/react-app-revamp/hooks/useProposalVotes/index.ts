@@ -74,9 +74,9 @@ export function useProposalVotes(id: number | string) {
               addressOrName: address,
               contractInterface: DeployedContestContract.abi,
             },
-            "contestAddressTotalVotesCast",
+            "proposalAddressVotes",
             {
-              args: userAddress,
+              args: [id, userAddress],
               chainId,
             },
           );
@@ -122,6 +122,10 @@ export function useProposalVotes(id: number | string) {
       });
     }
   }, [activeConnector]);
+
+  useEffect(() => {
+    fetchProposalVotes();
+  }, []);
 
   useContractEvent(
     {

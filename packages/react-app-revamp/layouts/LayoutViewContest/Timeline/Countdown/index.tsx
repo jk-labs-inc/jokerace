@@ -1,11 +1,20 @@
+import { useEffect } from "react";
+import { isBefore, isAfter } from "date-fns";
 import shallow from "zustand/shallow";
 import { useStore } from "@hooks/useContest/store";
 import { useCountdown } from "@hooks/useCountdown";
 import styles from "./styles.module.css";
-import { isBefore } from "date-fns";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
+
+// - Contest status
+// -1: Submissions not opened yet
+// 0: Voting open
+// 1: Contest cancelled
+// 2: Submissions open
+// 3: Completed
 
 export const Countdown = () => {
-  const { submissionsOpen, votesOpen, votesClose } = useStore(
+  const { contestStatus, submissionsOpen, votesOpen, votesClose, setContestStatus } = useStore(
     state => ({
       //@ts-ignore
       submissionsOpen: state.submissionsOpen,
@@ -13,6 +22,10 @@ export const Countdown = () => {
       votesOpen: state.votesOpen,
       //@ts-ignore
       votesClose: state.votesClose,
+      //@ts-ignore,
+      setContestStatus: state.setContestStatus,
+      //@ts-ignore
+      contestStatus: state.contestStatus,
     }),
     shallow,
   );
@@ -20,6 +33,41 @@ export const Countdown = () => {
   const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen);
   const countdownUntilVotingOpen = useCountdown(submissionsOpen, votesOpen);
   const countdownUntilVotingClose = useCountdown(votesOpen, votesClose);
+
+  useEffect(() => {
+    if (
+      !countdownUntilSubmissionsOpen.isCountdownRunning &&
+      !countdownUntilVotingOpen.isCountdownRunning &&
+      isBefore(new Date(), votesOpen)
+    ) {
+      countdownUntilVotingOpen.restart();
+      setContestStatus(CONTEST_STATUS.SUBMISSIONS_OPEN);
+    }
+
+    if (
+      !countdownUntilSubmissionsOpen.isCountdownRunning &&
+      !countdownUntilVotingOpen.isCountdownRunning &&
+      !countdownUntilVotingClose.isCountdownRunning &&
+      contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
+      isBefore(new Date(), votesClose)
+    ) {
+      countdownUntilVotingClose.restart();
+      setContestStatus(CONTEST_STATUS.VOTING_OPEN);
+    }
+
+    if (
+      !countdownUntilSubmissionsOpen.isCountdownRunning &&
+      !countdownUntilVotingOpen.isCountdownRunning &&
+      !countdownUntilVotingClose.isCountdownRunning &&
+      isAfter(new Date(), votesClose)
+    ) {
+      setContestStatus(CONTEST_STATUS.COMPLETED);
+    }
+  }, [
+    countdownUntilSubmissionsOpen.isCountdownRunning,
+    countdownUntilVotingOpen.isCountdownRunning,
+    countdownUntilVotingClose.isCountdownRunning,
+  ]);
 
   if (countdownUntilSubmissionsOpen.isCountdownRunning) {
     return (

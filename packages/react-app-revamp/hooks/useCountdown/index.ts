@@ -23,5 +23,6 @@ export function useCountdown(startDate: Date, endDate: Date) {
   return {
     countdown,
     isCountdownRunning,
+    restart: () => toggleIsCountdownRunning(true),
   };
 }

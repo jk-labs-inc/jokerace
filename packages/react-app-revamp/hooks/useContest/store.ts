@@ -26,10 +26,13 @@ export const createStore = () => {
     isListProposalsLoading: true,
     contestMaxNumberSubmissionsPerUser: null,
     contestMaxProposalCount: null,
+    usersQualifyToVoteIfTheyHoldTokenAtTime: null,
+    didUserPassSnapshotAndCanVote: false,
+    snapshotTaken: false,
     currentUserProposalCount: 0,
     setCurrentUserProposalCount: (amount: number) => set({ currentUserProposalCount: amount }),
-    //@ts-ignore
     increaseCurrentUserProposalCount: () =>
+      //@ts-ignore
       set(state => ({ currentUserProposalCount: state.currentUserProposalCount + 1 })),
     //@ts-ignore
     addProposalId: (id: number | string) => set(state => ({ listProposalsIds: [...state.listProposalsIds, id] })),
@@ -40,15 +43,19 @@ export const createStore = () => {
     setContestName: (name: string) => set({ contestName: name }),
     setContestAuthor: (author: string) => set({ contestAuthor: author }),
     setSubmissionsOpen: (datetime: string) => set({ submissionsOpen: datetime }),
+    setDidUserPassSnapshotAndCanVote: (isQualified: boolean) => set({ didUserPassSnapshotAndCanVote: isQualified }),
     setVotesOpen: (datetime: string) => set({ votesOpen: datetime }),
     setVotesClose: (datetime: string) => set({ votesClose: datetime }),
     setVotingToken: (token: any) => set({ votingToken: token }),
     setVotingTokenAddress: (address: any) => set({ votingTokenAddress: address }),
     setCurrentUserAvailableVotesAmount: (amount: number) => set({ currentUserAvailableVotesAmount: amount }),
     setCurrentUserTotalVotesCast: (amount: number) => set({ currentUserTotalVotesCast: amount }),
+    setUsersQualifyToVoteIfTheyHoldTokenAtTime: (datetime: string) =>
+      set({ usersQualifyToVoteIfTheyHoldTokenAtTime: datetime }),
     setAmountOfTokensRequiredToSubmitEntry: (amount: number) => set({ amountOfTokensRequiredToSubmitEntry: amount }),
     setListProposalsIds: (list: any) => set({ listProposalsIds: list }),
     setIsListProposalsLoading: (value: boolean) => set({ isListProposalsLoading: value }),
+    setSnapshotTaken: (value: boolean) => set({ snapshotTaken: value }),
     setIsLoading: (value: boolean) => set({ isLoading: value }),
     setIsListProposalsError: (value: string | null) => set({ isListProposalsError: value }),
     setIsError: (value: string | null) => set({ isError: value }),
@@ -56,7 +63,7 @@ export const createStore = () => {
     setIsListProposalsSuccess: (value: boolean) => set({ isListProposalsSuccess: value }),
     resetListProposals: () => set({ listProposalsData: {}, listProposalsIds: [] }),
     //@ts-ignore
-    increaseProposalVotes: ({ id, votes }) =>
+    setProposalVotes: ({ id, votes }) =>
       set(state => ({
         ...state,
         listProposalsData: {
@@ -66,7 +73,7 @@ export const createStore = () => {
             //@ts-ignore
             ...state.listProposalsData[id],
             //@ts-ignore
-            votes: state.listProposalsData[id]?.votes += votes,
+            votes: votes,
           },
         },
       })),
@@ -85,11 +92,4 @@ export const createStore = () => {
         },
       })),
   }));
-};
-
-export const stateContest = {
-  [0]: "Active (voting is open)",
-  [1]: "Cancelled",
-  [2]: "Queued (proposal submissions are open)",
-  [3]: "Completed",
 };

@@ -1,18 +1,18 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
-import { chain, useAccount, useConnect, useNetwork, useProvider } from "wagmi";
+import { chain, useAccount, useProvider } from "wagmi";
 import { fetchBlockNumber, fetchEnsName, fetchToken, readContract } from "@wagmi/core";
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { format, isBefore, isFuture } from "date-fns";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 export function useContest() {
   const provider = useProvider();
-  const { activeConnector } = useConnect();
-  const { asPath, push, pathname } = useRouter();
-  const { activeChain } = useNetwork();
+  const { asPath } = useRouter();
   const account = useAccount();
   const [chainId, setChaindId] = useState(
     chains.filter(chain => chain.name.toLowerCase() === asPath.split("/")[2])?.[0]?.id,
@@ -77,6 +77,12 @@ export function useContest() {
     setContestMaxProposalCount,
     //@ts-ignore
     setCurrentUserProposalCount,
+    //@ts-ignore
+    setUsersQualifyToVoteIfTheyHoldTokenAtTime,
+    //@ts-ignore
+    setDidUserPassSnapshotAndCanVote,
+    //@ts-ignore
+    setSnapshotTaken,
   } = useStore();
 
   function onContractError(err: any) {
@@ -129,16 +135,6 @@ export function useContest() {
       const tokenRawData = await fetchToken({ address: tokenAddressRawData, chainId });
       setVotingToken(tokenRawData);
 
-      // Timestamp from when a user can vote
-      // depending on the amount of voting token they're holding at a given timestamp (snapshot)
-      const usersQualifyToVoteIfTheyHoldTokenAtTimeRawData = await readContract(
-        contractConfig,
-        "contestSnapshot",
-        contractBaseOptions,
-      );
-      //@ts-ignore
-      setVotesOpen(new Date(parseInt(usersQualifyToVoteIfTheyHoldTokenAtTimeRawData) * 1000));
-
       // Current user votes
       await updateCurrentUserVotes();
 
@@ -159,7 +155,44 @@ export function useContest() {
 
       // Contest status
       const statusRawData = await readContract(contractConfig, "state", contractBaseOptions);
-      setContestStatus(statusRawData);
+      if (
+        //@ts-ignore
+        statusRawData === CONTEST_STATUS.SUBMISSIONS_OPEN &&
+        //@ts-ignore
+        isBefore(new Date(), new Date(parseInt(contestStartRawData) * 1000))
+      ) {
+        setContestStatus(CONTEST_STATUS.SUBMISSIONS_NOT_OPEN);
+      } else {
+        setContestStatus(statusRawData);
+      }
+
+      // Timestamp from when a user can vote
+      // depending on the amount of voting token they're holding at a given timestamp (snapshot)
+      const timestampSnapshotRawData = await readContract(contractConfig, "contestSnapshot", contractBaseOptions);
+
+      //@ts-ignore
+      setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
+
+      //@ts-ignore
+      if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
+        setSnapshotTaken(true);
+        const delayedCurrentTimestamp = Date.now() - 30; // Delay by 30 seconds to make sure we're looking at a block that has been mined
+        const timestampToCheck =
+          //@ts-ignore
+          delayedCurrentTimestamp >= parseInt(timestampSnapshotRawData) * 1000
+            ? parseInt(timestampSnapshotRawData) * 1000
+            : delayedCurrentTimestamp;
+
+        const tokenUserWasHoldingAtSnapshotRawData = await readContract(contractConfig, "getVotes", {
+          ...contractBaseOptions,
+          args: [account?.data?.address, timestampToCheck],
+        });
+
+        //@ts-ignore
+        setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
+      } else {
+        setSnapshotTaken(false);
+      }
 
       // Amount of token required for a user to vote
       const amountOfTokensRequiredToSubmitEntryRawData = await readContract(
@@ -266,15 +299,19 @@ export function useContest() {
         ...contractBaseOptions,
         args: [account?.data?.address, timestamp],
       });
-      //@ts-ignore
-      setCurrentUserAvailableVotesAmount(currentUserAvailableVotesAmountRawData / 1e18);
 
       // get votes cast by current user
       const currentAddressTotalVotesCastRawData = await readContract(contractConfig, "contestAddressTotalVotesCast", {
         ...contractBaseOptions,
         args: account?.data?.address,
       });
-      setCurrentUserTotalVotesCast(currentAddressTotalVotesCastRawData);
+      //@ts-ignore
+      setCurrentUserTotalVotesCast(currentAddressTotalVotesCastRawData / 1e18);
+      //@ts-ignore
+      setCurrentUserAvailableVotesAmount(
+        //@ts-ignore
+        currentUserAvailableVotesAmountRawData / 1e18 - currentAddressTotalVotesCastRawData / 1e18,
+      );
     } catch (e) {
       console.error(e);
     }
@@ -286,6 +323,7 @@ export function useContest() {
     setIsLoading,
     setIsListProposalsLoading,
     chainId,
+    setChaindId,
     fetchAllProposals,
     isLoading,
     isListProposalsLoading,

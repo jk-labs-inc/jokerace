@@ -7,8 +7,8 @@ import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useStore as useStoreCastVotes } from "@hooks/useCastVotes/store";
 import { useEffect, useState } from "react";
 import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
-import { isBefore } from "date-fns";
 import useCastVotes from "@hooks/useCastVotes";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -25,14 +25,14 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
     }),
     shallow,
   );
-  const { listProposalsData, votesClose, currentUserAvailableVotesAmount } = useStoreContest(
+  const { listProposalsData, contestStatus, currentUserAvailableVotesAmount } = useStoreContest(
     state => ({
       //@ts-ignore
       currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
       //@ts-ignore
       listProposalsData: state.listProposalsData,
       //@ts-ignore
-      votesClose: state.votesClose,
+      contestStatus: state.contestStatus,
     }),
     shallow,
   );
@@ -70,24 +70,32 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
       )}
 
       {showDeploymentSteps && transactionData?.transactionHref && (
-        <div className="mt-2 space-y-2 mb-4 animate-appear relative">
+        <div className="my-2 animate-appear">
           <a rel="nofollow noreferrer" target="_blank" href={transactionData?.transactionHref}>
             View transaction <span className="link">here</span>
           </a>
-
-          <Button onClick={() => props.setIsOpen(false)}>Go back</Button>
         </div>
       )}
 
-      {error !== null && !isSuccess && (
-        <>
-          <Button onClick={onSubmitCastVotes} intent="neutral-outline" type="submit" className="mx-auto my-3">
-            Try again
-          </Button>
-        </>
-      )}
+      {currentUserAvailableVotesAmount === 0 ||
+        (showDeploymentSteps && transactionData?.transactionHref && (
+          <div className="mt-2 mb-4 animate-appear">
+            <Button onClick={() => props.setIsOpen(false)}>Go back</Button>
+          </div>
+        ))}
 
-      {showForm === true && isBefore(new Date(), votesClose) && currentUserAvailableVotesAmount && (
+      {currentUserAvailableVotesAmount > 0 &&
+        error !== null &&
+        !isSuccess &&
+        contestStatus === CONTEST_STATUS.VOTING_OPEN && (
+          <>
+            <Button onClick={onSubmitCastVotes} intent="neutral-outline" type="submit" className="mx-auto my-3">
+              Try again
+            </Button>
+          </>
+        )}
+
+      {showForm === true && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 && (
         <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitCastVotes}>
           <FormField className="w-full">
             <FormField.Label

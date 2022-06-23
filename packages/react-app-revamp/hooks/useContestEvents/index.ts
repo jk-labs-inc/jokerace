@@ -1,5 +1,5 @@
 import isUrlToImage from "@helpers/isUrlToImage";
-import { chain, fetchEnsName } from "@wagmi/core";
+import { chain, fetchEnsName, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useContractEvent } from "wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
@@ -15,7 +15,7 @@ export function useContestEvents() {
     //@ts-ignore
     addProposalId,
     //@ts-ignore
-    increaseProposalVotes,
+    setProposalVotes,
   } = useStoreContest();
 
   useContractEvent(
@@ -56,10 +56,21 @@ export function useContestEvents() {
       contractInterface: DeployedContestContract.abi,
     },
     "VoteCast",
-    event => {
-      const votesCast = event[5].args.numVotes;
+    async event => {
       const proposalId = event[5].args.proposalId;
-      increaseProposalVotes({ id: proposalId, votes: votesCast });
+      const votes = await readContract(
+        {
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+        },
+        "proposalVotes",
+        {
+          args: proposalId,
+        },
+      );
+
+      //@ts-ignore
+      setProposalVotes({ id: proposalId, votes: votes / 1e18 });
     },
   );
 
