@@ -4,7 +4,7 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import { useStore as useStoreCastVotes } from "./store";
 import { useNetwork } from "wagmi";
 import { useRouter } from "next/router";
-import { hexlify, parseEther, parseUnits } from "ethers/lib/utils";
+import { parseEther, parseUnits } from "ethers/lib/utils";
 import useContest from "@hooks/useContest";
 
 export function useCastVotes() {

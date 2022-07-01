@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-import { Transition } from "@headlessui/react";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
 import useProposalVotes from "@hooks/useProposalVotes";
