@@ -80,7 +80,7 @@ export const NETWORKS = {
     chainId: 137,
     price: 1,
     gasPrice: 1000000000,
-    rpcUrl: "https://polygon-rpc.com/",
+    rpcUrl: "https://rpc-mainnet.maticvigil.com/",
     blockExplorer: "https://polygonscan.com/",
   },
   mumbai: {
