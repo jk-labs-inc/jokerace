@@ -6,7 +6,12 @@ import { useAccount, useConnect, useNetwork } from "wagmi";
 import { isAfter, isBefore, isDate } from "date-fns";
 import { ArrowLeftIcon, HomeIcon } from "@heroicons/react/solid";
 import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
-import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_RULES } from "@config/routes";
+import {
+  ROUTE_CONTEST_PROPOSAL,
+  ROUTE_VIEW_CONTEST,
+  ROUTE_VIEW_CONTEST_EXPORT_DATA,
+  ROUTE_VIEW_CONTEST_RULES,
+} from "@config/routes";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
 import DialogModal from "@components/DialogModal";
@@ -205,23 +210,33 @@ const LayoutViewContest = (props: any) => {
                 Rules
               </a>
             </Link>
+            <Link
+              href={{
+                pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
+                //@ts-ignore
+                query: {
+                  chain: query.chain,
+                  address: query.address,
+                },
+              }}
+            >
+              <a
+                className={`${styles.navLink} ${
+                  pathname === ROUTE_VIEW_CONTEST_EXPORT_DATA ? styles["navLink--active"] : ""
+                }`}
+              >
+                <DocumentDownloadIcon className={styles.navLinkIcon} />
+                Export data
+              </a>
+            </Link>
           </nav>
 
-          <button
-            disabled={isLoading || isError === null || activeChain?.id !== chainId}
-            className={`md:mt-1 md:mb-3 ${
-              isLoading || isError === null || activeChain?.id !== chainId ? "opacity-50 cursor-not-allowed" : ""
-            } ${styles.navLink}`}
-          >
-            <DocumentDownloadIcon className={styles.navLinkIcon} />
-            Export data
-          </button>
           {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
             <>
               <Button
                 /* @ts-ignore */
                 onClick={() => stateSubmitProposal.setIsModalOpen(true)}
-                className="animate-appear fixed md:static z-10  aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
+                className="animate-appear fixed md:static z-10  md:mt-3 aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
                 intent={
                   currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
                   currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||

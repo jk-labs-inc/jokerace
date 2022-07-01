@@ -266,6 +266,7 @@ export function useContest() {
               chainId: chain.mainnet.id,
             });
             const proposalData = {
+              authorEthereumAddress: proposalRawData[0],
               author: author ?? proposalRawData[0],
               content: proposalRawData[1],
               isContentImage: isUrlToImage(proposalRawData[1]) ? true : false,
