@@ -38,8 +38,7 @@ export const Form = (props: FormProps) => {
     shallow,
   );
 
-  const isDateOpeningSubmissionsValid =
-    data()?.datetimeOpeningSubmissions && !isPast(new Date(data().datetimeOpeningSubmissions));
+  const isDateOpeningSubmissionsValid = data()?.datetimeOpeningSubmissions;
   const isDateOpeningVotesValid =
     isDateOpeningSubmissionsValid && data()?.datetimeOpeningVoting
       ? isAfter(new Date(data().datetimeOpeningVoting), new Date(data().datetimeOpeningSubmissions))
@@ -193,11 +192,6 @@ export const Form = (props: FormProps) => {
               </FormField.Description>
               <FormInput
                 required
-                onChange={() => {
-                  resetField("datetimeOpeningVoting");
-                  resetField("datetimeClosingVoting");
-                  resetField("usersQualifyToVoteAtAnotherDatetime");
-                }}
                 disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
                 aria-invalid={
                   errors().datetimeOpeningSubmissions?.length > 0 === true || !isDateOpeningSubmissionsValid
@@ -227,7 +221,7 @@ export const Form = (props: FormProps) => {
               hasError={errors().datetimeOpeningSubmissions?.length > 0 === true || !isDateOpeningSubmissionsValid}
               id="input-datetimeopeningsubmissions-helpblock-2"
             >
-              The opening date for submissions can&apos;t be in the past
+              Please type a valid date.
             </FormField.HelpBlock>
           </FormField>
 
@@ -392,10 +386,6 @@ export const Form = (props: FormProps) => {
                 The date and time from which users can start voting
               </FormField.Description>
               <FormInput
-                onChange={() => {
-                  resetField("datetimeClosingVoting");
-                  resetField("usersQualifyToVoteAtAnotherDatetime");
-                }}
                 required
                 disabled={
                   !data()?.datetimeOpeningSubmissions ||
@@ -438,7 +428,7 @@ export const Form = (props: FormProps) => {
               id="input-datetimeopeningvoting-helpblock-2"
             >
               The opening date for votes must be{" "}
-              <span className="font-bold">after the opening date for submissions</span>.
+              <span className="font-bold">after the opening date for submissions and can&apos;t be in the past.</span>.
             </FormField.HelpBlock>
           </FormField>
 
@@ -462,9 +452,6 @@ export const Form = (props: FormProps) => {
               </FormField.Description>
               <div className="flex">
                 <FormInput
-                  onChange={() => {
-                    resetField("usersQualifyToVoteAtAnotherDatetime");
-                  }}
                   required
                   disabled={
                     !data()?.datetimeOpeningSubmissions ||
@@ -508,7 +495,8 @@ export const Form = (props: FormProps) => {
               }
               id="input-datetimeclosesvoting-helpblock-2"
             >
-              The closes date for votes must be <span className="font-bold">after the opening date for votes</span>.
+              The closes date for votes must be{" "}
+              <span className="font-bold">after the opening date for votes and can&apos;t be in the past</span>.
             </FormField.HelpBlock>
           </FormField>
 

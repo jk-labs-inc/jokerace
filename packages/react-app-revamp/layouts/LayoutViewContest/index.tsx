@@ -5,7 +5,12 @@ import Link from "next/link";
 import { useAccount, useConnect, useNetwork } from "wagmi";
 import { isAfter, isBefore, isDate } from "date-fns";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
-import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
+import {
+  ROUTE_CONTEST_PROPOSAL,
+  ROUTE_VIEW_CONTEST,
+  ROUTE_VIEW_CONTEST_EXPORT_DATA,
+  ROUTE_VIEW_CONTEST_RULES,
+} from "@config/routes";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
 import DialogModal from "@components/DialogModal";
@@ -38,6 +43,7 @@ import useContestEvents from "@hooks/useContestEvents";
 import { chains } from "@config/wagmi";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import Sidebar from "./Sidebar";
+import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -62,7 +68,17 @@ const LayoutViewContest = (props: any) => {
     setChaindId,
   } = useContest();
 
-  const { submissionsOpen, votesOpen, votesClose, contestName, contestAuthor, contestStatus } = useStoreContest(
+  const {
+    didUserPassSnapshotAndCanVote,
+    snapshotTaken,
+    checkIfUserPassedSnapshotLoading,
+    submissionsOpen,
+    votesOpen,
+    votesClose,
+    contestName,
+    contestAuthor,
+    contestStatus,
+  } = useStoreContest(
     state => ({
       //@ts-ignore
       contestStatus: state.contestStatus,
@@ -76,16 +92,21 @@ const LayoutViewContest = (props: any) => {
       votesOpen: state.votesOpen,
       //@ts-ignore
       votesClose: state.votesClose,
+      //@ts-ignore
+      snapshotTaken: state.snapshotTaken,
+      //@ts-ignore
+      checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
+      //@ts-ignore
+      didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
     }),
     shallow,
   );
-
+  const { updateSnapshotProgress } = useCheckSnapshotProgress();
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
   const stateSubmitProposal = useStoreSubmitProposal();
   const stateCastVotes = useStoreCastVotes();
 
   useContestEvents();
-
   useEffect(() => {
     if (activeChain?.id === chainId) {
       fetchContestInfo();
@@ -122,7 +143,11 @@ const LayoutViewContest = (props: any) => {
     const verifySnapshot = async () => {
       await checkIfCurrentUserQualifyToVote();
     };
-    verifySnapshot();
+
+    if (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING) updateSnapshotProgress();
+    if ([CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus)) {
+      verifySnapshot();
+    }
   }, [contestStatus]);
 
   return (
@@ -233,6 +258,24 @@ const LayoutViewContest = (props: any) => {
                     <span className="uppercase tracking-wide pie-1ex">{contestName}</span>{" "}
                     <span className="text-xs overflow-hidden text-neutral-8 text-ellipsis">by {contestAuthor}</span>
                   </h2>
+                  {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
+                    <div className="animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
+                      <p>Snapshot ongoing, voting will be open in a 30sec-1min, please wait... </p>
+                    </div>
+                  )}
+
+                  {snapshotTaken &&
+                    !checkIfUserPassedSnapshotLoading &&
+                    !didUserPassSnapshotAndCanVote &&
+                    contestStatus === CONTEST_STATUS.VOTING_OPEN &&
+                    ![ROUTE_VIEW_CONTEST_RULES, ROUTE_VIEW_CONTEST_EXPORT_DATA].includes(pathname) && (
+                      <section className="animate-appear">
+                        <p className="p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
+                          Too bad, your wallet didn&apos;t qualify to vote.
+                        </p>
+                      </section>
+                    )}
+
                   {children}
 
                   <DialogModal isOpen={isTimelineModalOpen} setIsOpen={setIsTimelineModalOpen} title="Contest timeline">
