@@ -8,8 +8,10 @@ import { useStore } from "../store";
 
 const appearAsNeutralButton = button({ intent: "neutral-outline", scale: "lg", class: "w-full xs:w-auto" });
 export const TextInstructions = () => {
-  const { dataDeployToken, dataDeployContest } = useStore(
+  const { dataDeployToken, dataDeployContest, contestDeployedToChain } = useStore(
     state => ({
+      //@ts-ignore
+      contestDeployedToChain: state.contestDeployedToChain,
       //@ts-ignore
       dataDeployToken: state.dataDeployToken,
       //@ts-ignore:
@@ -30,7 +32,7 @@ export const TextInstructions = () => {
         {dataDeployToken?.address && (
           <>
             <p className="text-neutral-11 text-xs mt-3">
-              as a reminder, your token address is: <br />
+              As a reminder, your token address is: <br />
               <span className="relative inline-flex focus-within:text-opacity-50 hover:text-opacity-75">
                 <button
                   onClick={() => copyToClipboard(dataDeployToken?.address ?? "", "Token address copied !")}
@@ -49,7 +51,10 @@ export const TextInstructions = () => {
                 href={{
                   pathname: ROUTE_VIEW_CONTEST,
                   //@ts-ignore
-                  query: { id: dataDeployContest?.address },
+                  query: {
+                    chain: contestDeployedToChain.name.toLowerCase(),
+                    address: dataDeployContest?.address,
+                  },
                 }}
               >
                 <a target="_blank" className="link">

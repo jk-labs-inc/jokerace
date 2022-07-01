@@ -24,7 +24,7 @@ export const schema = object({
     .trim()
     .min(1),
   votingTokenAddress: string().regex(/^0x[a-fA-F0-9]{40}$/),
-  datetimeOpeningSubmissions: string().refine(value => !isPast(new Date(value))),
+  datetimeOpeningSubmissions: string(),
   submissionMaxNumber: number().positive(),
   submissionOpenToAll: boolean(),
   requiredNumberOfTokenToSubmit: number()

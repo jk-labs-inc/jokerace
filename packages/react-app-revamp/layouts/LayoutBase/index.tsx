@@ -64,7 +64,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
                   pathname === ROUTE_CREATE_CONTEST ? "navLink-desktop--active" : "navLink-desktop--inactive"
                 }`}
               >
-                Create contests
+                Create contest
               </a>
             </Link>
             <Link href={ROUTE_VIEW_CONTESTS}>

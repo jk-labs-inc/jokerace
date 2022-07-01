@@ -54,9 +54,8 @@ export const Countdown = () => {
         isBefore(new Date(), votesClose)
       ) {
         countdownUntilVotingClose.setIsCountdownRunning(true);
-        setContestStatus(CONTEST_STATUS.VOTING_OPEN);
+        setContestStatus(CONTEST_STATUS.SNAPSHOT_ONGOING);
       }
-
       if (
         !countdownUntilSubmissionsOpen.isCountdownRunning &&
         !countdownUntilVotingOpen.isCountdownRunning &&

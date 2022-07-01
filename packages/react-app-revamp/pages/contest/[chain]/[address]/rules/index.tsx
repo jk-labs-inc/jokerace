@@ -6,6 +6,7 @@ import type { NextPage } from 'next'
 import { useStore } from '@hooks/useContest/store'
 import Steps from '@layouts/LayoutViewContest/Timeline/Steps'
 import { format } from 'date-fns'
+import { CONTEST_STATUS } from '@helpers/contestStatus'
 
 interface PageProps {
   address: string,
@@ -13,7 +14,7 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
-  const { checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName } = useStore(state =>  ({ 
+  const { contestState, checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName } = useStore(state =>  ({ 
     //@ts-ignore
     votingToken: state.votingToken,
     //@ts-ignore
@@ -35,7 +36,9 @@ const Page: NextPage = (props: PageProps) => {
     //@ts-ignore
     snapshotTaken: state.snapshotTaken,
     //@ts-ignore
-    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading
+    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
+    //@ts-ignore
+    contestState: state.contestState
    }), shallow);
   return (
     <>
@@ -45,13 +48,13 @@ const Page: NextPage = (props: PageProps) => {
       </Head>
     <h1 className='sr-only'>Rules of contest {contestName ? contestName : address} </h1>
     {!isLoading  && isSuccess && <div className='animate-appear space-y-8'>
-     <section>
+     {contestState !== CONTEST_STATUS.SNAPSHOT_ONGOING && <section className='animate-appear'>
        <p className={`p-3 rounded-md border-solid border mb-5 text-sm font-bold
        ${(!snapshotTaken || checkIfUserPassedSnapshotLoading ) ? ' border-neutral-4' : didUserPassSnapshotAndCanVote ? 'bg-positive-1 text-positive-10 border-positive-4' : ' bg-primary-1 text-primary-10 border-primary-4'}`
        }>
          {checkIfUserPassedSnapshotLoading ? 'Checking snapshot...' : !snapshotTaken ? 'Snapshot wasn\'t taken yet.': didUserPassSnapshotAndCanVote ? 'Congrats ! Your wallet qualified to vote.' : 'Too bad, your wallet didn\'t qualify to vote.'}
        </p>
-     </section>
+     </section>}
      <section>
        <h2 className='uppercase font-bold mb-2'>Rules</h2>
        <ul className='list-disc pis-4 leading-loose'>

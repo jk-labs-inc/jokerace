@@ -7,7 +7,7 @@ import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { format, isBefore, isFuture } from "date-fns";
+import { isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 export function useContest() {
@@ -168,8 +168,7 @@ export function useContest() {
         setContestStatus(statusRawData);
       }
 
-      //@ts-ignore
-      if (statusRawData === CONTEST_STATUS.VOTING_OPEN) await checkIfCurrentUserQualifyToVote();
+      await checkIfCurrentUserQualifyToVote();
 
       // Amount of token required for a user to vote
       const amountOfTokensRequiredToSubmitEntryRawData = await readContract(
@@ -195,13 +194,13 @@ export function useContest() {
   }
 
   async function checkIfCurrentUserQualifyToVote() {
-    console.log("hello world");
     const contractConfig = {
       addressOrName: address,
       contractInterface: DeployedContestContract.abi,
     };
     const contractBaseOptions = {};
     setCheckIfUserPassedSnapshotLoading(true);
+
     try {
       // Timestamp from when a user can vote
       // depending on the amount of voting token they're holding at a given timestamp (snapshot)
