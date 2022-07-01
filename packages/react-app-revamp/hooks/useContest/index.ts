@@ -195,6 +195,7 @@ export function useContest() {
   }
 
   async function checkIfCurrentUserQualifyToVote() {
+    console.log("hello world");
     const contractConfig = {
       addressOrName: address,
       contractInterface: DeployedContestContract.abi,
@@ -208,7 +209,6 @@ export function useContest() {
 
       //@ts-ignore
       setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
-
       //@ts-ignore
       if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
         setSnapshotTaken(true);

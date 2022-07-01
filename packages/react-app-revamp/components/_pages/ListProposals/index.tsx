@@ -107,7 +107,7 @@ export const ListProposals = () => {
                       <>
                         {listProposalsData[id].votes > 0 && (
                           <span
-                            className={`${styles.rankIndicator} rounded-full items-center flex justify-center aspect-square text-opacity-100 mb-3`}
+                            className={`${styles.rankIndicator} hidden 2xs:flex rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
                           >
                             #{i + 1}
                           </span>
@@ -123,7 +123,7 @@ export const ListProposals = () => {
                           }
                           className="disabled:border-none border p-2 border-solid border-neutral-6 rounded-md disabled:text-opacity-50 disabled:cursor-not-allowed text-neutral-12 flex 2xs:flex-col items-center 2xs:justify-center font-bold text-2xs"
                         >
-                          {checkIfUserPassedSnapshotLoading && (
+                          {contestStatus === CONTEST_STATUS.VOTING_OPEN && checkIfUserPassedSnapshotLoading && (
                             <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
                           )}
                           {didUserPassSnapshotAndCanVote &&
@@ -143,6 +143,13 @@ export const ListProposals = () => {
                     )}
                   </div>
                   <div className="relative overflow-hidden">
+                    {listProposalsData[id].votes > 0 && (
+                      <span
+                        className={`${styles.rankIndicator} inline-flex 2xs:hidden rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
+                      >
+                        #{i + 1}
+                      </span>
+                    )}
                     <ProposalContent
                       author={listProposalsData[id].author}
                       content={
