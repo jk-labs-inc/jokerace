@@ -78,7 +78,7 @@ export const Form = (props: FormProps) => {
     <form ref={form} className="w-full">
       <fieldset>
         <legend
-          className={`text-neutral-12 uppercase font-bold tracking-wider text-xs ${
+          className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
@@ -170,9 +170,9 @@ export const Form = (props: FormProps) => {
         </div>
       </fieldset>
 
-      <fieldset className="my-6">
+      <fieldset className="my-12">
         <legend
-          className={`text-neutral-12 uppercase font-bold tracking-wider text-xs ${
+          className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
@@ -357,7 +357,7 @@ export const Form = (props: FormProps) => {
 
       <fieldset>
         <legend
-          className={`text-neutral-12 uppercase font-bold tracking-wider text-xs ${
+          className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
