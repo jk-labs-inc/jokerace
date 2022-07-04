@@ -188,7 +188,7 @@ export const Form = (props: FormProps) => {
                 Submissions open{" "}
               </FormField.Label>
               <FormField.Description id="input-datetimeopeningsubmissions-description">
-                The date and time from which users can start sending their submissions
+                The date and time from which users can start sending their submissions 
               </FormField.Description>
               <FormInput
                 required
@@ -211,9 +211,8 @@ export const Form = (props: FormProps) => {
             <FormField.HelpBlock
               hasError={false}
               id="input-datetimeopeningsubmissions-helpblock-1"
-              className="min:block text-2xs text-neutral-11"
+              className="min:not-sr-only text-2xs text-neutral-11"
             >
-              month / day / year, hour:minute AM/PM <br />
               Timezone: ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormField.HelpBlock>
 
@@ -415,9 +414,8 @@ export const Form = (props: FormProps) => {
             <FormField.HelpBlock
               hasError={false}
               id="put-datetimeopeningvoting-helpblock-1"
-              className="min:block text-2xs text-neutral-11"
+              className="min:not-sr-only text-2xs text-neutral-11"
             >
-              month / day / year, hour:minute AM/PM <br />
               Timezone: ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormField.HelpBlock>
             <FormField.HelpBlock
@@ -483,9 +481,8 @@ export const Form = (props: FormProps) => {
             <FormField.HelpBlock
               hasError={false}
               id="input-datetimeclosesvoting-helpblock-1"
-              className="min:block text-2xs text-neutral-11"
+              className="min:not-sr-only text-2xs text-neutral-11"
             >
-              month / day / year, hour:minute AM/PM <br />
               Timezone: ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormField.HelpBlock>
             <FormField.HelpBlock
@@ -587,9 +584,8 @@ export const Form = (props: FormProps) => {
             <FormField.HelpBlock
               hasError={false}
               id="put-usersqualifytovoteatanotherdatetime-helpblock-1"
-              className="min:block text-2xs text-neutral-11"
+              className="min:not-sr-only text-2xs text-neutral-11"
             >
-              month / day / year, hour:minute AM/PM <br />
               Timezone: ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormField.HelpBlock>
             <FormField.HelpBlock
