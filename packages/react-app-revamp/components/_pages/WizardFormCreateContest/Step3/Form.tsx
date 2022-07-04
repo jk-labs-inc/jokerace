@@ -233,7 +233,7 @@ export const Form = (props: FormProps) => {
                 htmlFor="submissionMaxNumber"
               >
                 Maximum number of submissions in contest{" "}
-                <span className="text-2xs text-neutral-10 pis-1">(recommended)</span>
+                <span className="text-2xs text-neutral-10 pis-1">(recommended: 200 submissions max)</span>
               </FormField.Label>
               <FormField.Description id="input-numberoftokens-description">
                 The maximum number of submissions your contest will show
@@ -339,7 +339,7 @@ export const Form = (props: FormProps) => {
                   aria-describedby="input-submissionperusermaxnumber-helpblock"
                 />{" "}
                 entr{data()?.submissionPerUserMaxNumber > 1 ? "ies" : "y"}{" "}
-                <span className="text-2xs pis-1ex text-neutral-10">(recommended)</span>
+                <span className="text-2xs pis-1ex text-neutral-10">(recommended: 1 entry)</span>
               </>
             </FormRadioOption>
             <FormField.HelpBlock
