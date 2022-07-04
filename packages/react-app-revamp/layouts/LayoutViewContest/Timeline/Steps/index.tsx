@@ -26,7 +26,9 @@ export const Steps = () => {
 
   return (
     <ol
-      className={`${styles.stepper} relative md:text-xs flex pb-3 mt-3 space-y-4 flex-col`}
+      className={`${styles.stepper} ${
+        contestStatus === CONTEST_STATUS.COMPLETED ? styles.stepperCompleted : styles.stepperNotCompleted
+      } relative md:text-xs flex pb-3 mt-3 space-y-4 flex-col`}
       style={{
         // @ts-ignore
         "--stepperLineIndicatorHeight": `${
@@ -43,7 +45,7 @@ export const Steps = () => {
           contestStatus === CONTEST_STATUS.CANCELLED || contestStatus === CONTEST_STATUS.SUBMISSIONS_NOT_OPEN
             ? "text-neutral-11"
             : contestStatus === CONTEST_STATUS.COMPLETED
-            ? "text-positive-10 text-opacity-75"
+            ? "text-secondary-11"
             : "text-positive-10"
         }`}
       >
@@ -56,7 +58,7 @@ export const Steps = () => {
           contestStatus === CONTEST_STATUS.VOTING_OPEN
             ? "text-positive-10"
             : contestStatus === CONTEST_STATUS.COMPLETED
-            ? "text-positive-10 text-opacity-75"
+            ? "text-secondary-11"
             : "text-neutral-11"
         }`}
       >
@@ -66,7 +68,7 @@ export const Steps = () => {
       </li>
       <li
         className={`${styles.step} ${
-          contestStatus === CONTEST_STATUS.COMPLETED ? "text-positive-10" : "text-neutral-11"
+          contestStatus === CONTEST_STATUS.COMPLETED ? "text-secondary-11" : "text-neutral-11"
         }`}
       >
         <div className="flex flex-col">

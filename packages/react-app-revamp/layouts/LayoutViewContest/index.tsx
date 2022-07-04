@@ -289,7 +289,7 @@ const LayoutViewContest = (props: any) => {
                       isDate(votesClose) && (
                         <>
                           <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
-                          <div className="mb-2">
+                          <div className="mb-4">
                             <VotingToken />
                           </div>
                           <Timeline />
