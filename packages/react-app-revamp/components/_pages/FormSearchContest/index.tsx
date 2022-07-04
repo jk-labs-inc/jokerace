@@ -1,4 +1,4 @@
-import { useAccount, useNetwork } from "wagmi";
+import { useNetwork } from "wagmi";
 import { useRouter } from "next/router";
 import Button from "@components/Button";
 import FormInput from "@components/FormInput";
@@ -7,6 +7,7 @@ import { validator } from "@felte/validator-zod";
 import { schema } from "./schema";
 import FormField from "@components/FormField";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
+import { useEffect, useState } from "react";
 
 interface FormSearchContestProps {
   isInline?: boolean;
@@ -30,7 +31,10 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
       }
     },
   });
-
+  const [buttonLabel, setButtonLabel] = useState("Search");
+  useEffect(() => {
+    setButtonLabel(!activeChain ? "Connect your wallet" : activeChain.unsupported ? "Unsupported network" : "Search");
+  }, [activeChain]);
   return (
     <>
       <form
@@ -63,14 +67,14 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
           </FormField.HelpBlock>
         </FormField>
 
-        {<Button
+        <Button
           disabled={!activeChain || activeChain.unsupported === true}
           scale={isInline ? "xs" : "default"}
           className={`${isInline ? "h-full whitespace-nowrap min-h-8" : " mx-auto mt-3"}`}
           intent="neutral-outline"
         >
-          {!activeChain ? "Connect your wallet" : activeChain.unsupported  ? "Unsupported network" : "Search"}
-        </Button>}
+          {buttonLabel}
+        </Button>
       </form>
     </>
   );

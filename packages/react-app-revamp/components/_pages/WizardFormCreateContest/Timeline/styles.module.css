@@ -1,26 +1,25 @@
 .pseudoIndicator::before {
-    @apply inline-start-0;
+  @apply inline-start-0;
 }
 
 .pseudoIndicator::before,
 .pseudoTimeline .pseudoIndicator:not(:first-child)::after {
-    @apply absolute top-0 -translate-y-7/12 bg-true-black px-1 text-xl;
+  @apply absolute top-0 -translate-y-7/12 bg-true-black px-1 text-xl;
 }
 
 .pseudoTimeline .pseudoIndicator:not(:last-child)::before {
-  content: '✉️';
+  content: "✉️";
 }
 
 .pseudoTimeline .pseudoIndicator:not(:first-child)::before {
   @apply -translate-x-1/2;
-  content: '🗳️';
+  content: "🗳️";
 }
 
 .pseudoTimeline .pseudoIndicator:not(:first-child)::after {
-    content: '🏁';
-  }
-  
+  content: "🏁";
+}
 
 .pseudoTimeline .pseudoIndicator:not(:first-child)::after {
-    @apply inline-end-0;
+  @apply inline-end-0;
 }

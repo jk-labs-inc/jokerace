@@ -188,7 +188,7 @@ export const Form = (props: FormProps) => {
                 Submissions open{" "}
               </FormField.Label>
               <FormField.Description id="input-datetimeopeningsubmissions-description">
-                The date and time from which users can start sending their submissions 
+                The date and time from which users can start sending their submissions
               </FormField.Description>
               <FormInput
                 required
