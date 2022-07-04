@@ -1,4 +1,4 @@
-import { useNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { useRouter } from "next/router";
 import Button from "@components/Button";
 import FormInput from "@components/FormInput";
@@ -63,13 +63,14 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
           </FormField.HelpBlock>
         </FormField>
 
-        <Button
+        {<Button
+          disabled={!activeChain || activeChain.unsupported === true}
           scale={isInline ? "xs" : "default"}
-          className={`${isInline ? "h-full min-h-8" : " mx-auto mt-3"}`}
+          className={`${isInline ? "h-full whitespace-nowrap min-h-8" : " mx-auto mt-3"}`}
           intent="neutral-outline"
         >
-          Search
-        </Button>
+          {!activeChain ? "Connect your wallet" : activeChain.unsupported  ? "Unsupported network" : "Search"}
+        </Button>}
       </form>
     </>
   );
