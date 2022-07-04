@@ -1,4 +1,4 @@
-import { differenceInDays, intervalToDuration } from "date-fns";
+import { differenceInHours, intervalToDuration } from "date-fns";
 
 export function updateCountdown(countdownEndDatetime: Date) {
   const interval = intervalToDuration({
@@ -7,8 +7,7 @@ export function updateCountdown(countdownEndDatetime: Date) {
   });
 
   return {
-    days: differenceInDays(countdownEndDatetime, new Date()),
-    hr: interval.hours,
+    h: differenceInHours(countdownEndDatetime, new Date()),
     min: interval.minutes,
     sec: interval.seconds,
   };
