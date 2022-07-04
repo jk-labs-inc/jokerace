@@ -445,7 +445,7 @@ export const Form = (props: FormProps) => {
                 }
                 htmlFor="datetimeClosingVoting"
               >
-                Voting closes <span className="text-2xs text-neutral-10 pis-1">(and submissions close)</span>
+                Voting closes <span className="text-2xs text-neutral-10 pis-1">(and contest closes)</span>
               </FormField.Label>
               <FormField.Description id="input-datetimeclosesvoting-description">
                 The date and time on which users won&apos;t be able to vote anymore
