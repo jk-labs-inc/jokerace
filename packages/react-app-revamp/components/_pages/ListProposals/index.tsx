@@ -98,10 +98,10 @@ export const ListProposals = () => {
             .map((id, i) => {
               return (
                 <li
-                  className={`${styles.listElement} px-5 pt-5 pb-3 rounded-md 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
+                  className={`${styles.listElement} px-5 pt-5 pb-3 rounded-md 2xs:rounded-none 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
                   key={id}
                 >
-                  <div className="text-center 2xs:border-none border-solid border-neutral-1 flex flex-col 2xs:items-center pt-2">
+                  <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
                     {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
                       <span className="text-3xs text-neutral-11 italic">Vote not open yet</span>
                     ) : (
