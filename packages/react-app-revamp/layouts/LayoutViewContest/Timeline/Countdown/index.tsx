@@ -92,6 +92,7 @@ export const Countdown = () => {
   if (countdownUntilVotingOpen.isCountdownRunning || isBefore(new Date(), votesOpen)) {
     return (
       <>
+        <p className={`text-sm font-bold text-center text-true-white mb-4`}>✨ Submissions open ✨</p>
         <p className={styles.label}>Voting opens in</p>
         <div className={styles.countdown}>
           {Object.keys(countdownUntilVotingOpen.countdown).map((unit: string) => (
@@ -109,7 +110,8 @@ export const Countdown = () => {
   if (countdownUntilVotingClose.isCountdownRunning || isBefore(new Date(), votesClose)) {
     return (
       <>
-        <p className={`text-sm font-bold text-center text-negative-11`}>Submissions closed</p>
+        <p className={`text-xs font-bold text-center text-neutral-10`}>Submissions closed</p>
+        <p className={`text-sm font-bold text-center text-true-white mb-4`}>✨ Voting open ✨</p>
         <p className={styles.label}>Voting closes in</p>
         <div className={styles.countdown}>
           {Object.keys(countdownUntilVotingClose.countdown).map((unit: string) => (
@@ -124,7 +126,7 @@ export const Countdown = () => {
     );
   }
 
-  return <p className={`text-sm font-bold text-center text-neutral-11`}>Voting closed</p>;
+  return <p className={`text-sm font-bold text-center text-[#D79EFF] mb-4`}> Contest finished</p>;
 };
 
 export default Countdown;

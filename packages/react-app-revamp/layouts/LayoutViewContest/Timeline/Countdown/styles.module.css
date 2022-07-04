@@ -16,5 +16,5 @@
 }
 
 .label {
-  @apply md:text-xs mb-1 md:text-center text-true-white font-bold;
+  @apply md:text-xs mb-1 md:text-center text-primary-10 font-bold;
 }

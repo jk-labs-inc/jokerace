@@ -1,11 +1,14 @@
 import { useStore } from "@hooks/useContest/store";
+import { isAfter } from "date-fns";
 import shallow from "zustand/shallow";
 
 export const VotingToken = () => {
-  const { votingToken, currentUserAvailableVotesAmount } = useStore(
+  const { votingToken, votesClose, currentUserAvailableVotesAmount } = useStore(
     state => ({
       //@ts-ignore
       votingToken: state.votingToken,
+      //@ts-ignore
+      votesClose: state.votesClose,
       //@ts-ignore
       currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
     }),
@@ -15,7 +18,9 @@ export const VotingToken = () => {
   return (
     <>
       <div className="font-black leading-snug flex flex-wrap space-i-1ex md:space-i-0 md:flex-col items-center slashed-zero tabular-nums">
-        <span className="text-sm font-bold">Votes remaining:</span>
+        <span className="text-sm font-bold">
+          {isAfter(new Date(), votesClose) ? "Used votes:" : "Votes remaining:"}
+        </span>
         <span title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)} className="text-lg">
           <span aria-hidden="true" className="hidden md:inline-block">
             {currentUserAvailableVotesAmount > 1000000000

@@ -1,8 +1,16 @@
 .stepper::before {
-  @apply absolute w-0.5 inline-start-0.5 bg-positive-3 top-4 translate-x-1/2;
+  @apply absolute w-0.5 inline-start-0.5 top-4 translate-x-1/2;
   content: " ";
   height: var(--stepperLineIndicatorHeight);
   z-index: 0;
+}
+
+.stepperNotCompleted::before {
+  @apply bg-positive-3;
+}
+
+.stepperCompleted::before {
+  @apply bg-secondary-5;
 }
 
 .step {
