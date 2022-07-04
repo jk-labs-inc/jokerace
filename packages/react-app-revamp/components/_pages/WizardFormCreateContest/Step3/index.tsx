@@ -10,6 +10,7 @@ import { useStore } from "../store";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
+import Timeline from "../Timeline";
 
 export const Step3 = () => {
   const {
@@ -78,7 +79,9 @@ export const Step3 = () => {
             <span className="font-bold">voting:</span> your community votes on the entries.
           </li>
         </ul>
-        <p className="text-neutral-11 text-xs">note: voting starts when submissions end.</p>
+        <p className="text-neutral-11 text-xs mb-8">note: voting starts when submissions end.</p>
+
+        <Timeline />
       </div>
       <Form isDeploying={stateContestDeployment.isLoading} {...form} />
       <DialogModalDeployTransaction

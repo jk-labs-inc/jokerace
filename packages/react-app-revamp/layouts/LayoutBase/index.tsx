@@ -53,11 +53,11 @@ const LayoutBase = (props: LayoutBaseProps) => {
       <header className="relative z-20 border-b border-neutral-2 border-solid">
         <div className="py-2 container flex items-center mx-auto">
           <Link href="/">
-            <a className="text-4xl sm:text-xl">
+            <a className="text-4xl xs:text-xl">
               🃏 <span className="sr-only">Home</span>
             </a>
           </Link>
-          <nav className="hidden sm:flex sm:mis-4 space-i-0.5">
+          <nav className="hidden xs:flex xs:mis-4 space-i-0.5">
             <Link href={ROUTE_CREATE_CONTEST}>
               <a
                 className={`navLink-desktop ${
@@ -81,7 +81,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
               </a>
             </Link>
           </nav>
-          <div className="sm:hidden">
+          <div className="xs:hidden">
             <Menu>
               {({ open }) => (
                 <>
@@ -139,16 +139,17 @@ const LayoutBase = (props: LayoutBaseProps) => {
           </div>
 
           <div className="text-sm mis-auto">
-            <ConnectButton showBalance={false} label="Connect wallet" />
+
+            <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
           </div>
         </div>
       </header>
       <main className="flex flex-col grow">{children}</main>
-      <footer className="mt-auto py-20 sm:pb-0">
-        <div className="text-true-white text-opacity-80 font-medium container justify-center items-start text-2xs flex flex-col space-y-1 sm:space-y-0 sm:space-i-4 sm:flex-row mx-auto">
+      <footer className="mt-auto py-20 xs:pb-0">
+        <div className="text-true-white text-opacity-80 font-medium container justify-center items-start text-2xs flex flex-col space-y-1 xs:space-y-0 xs:space-i-4 xs:flex-row mx-auto">
           {FOOTER_LINKS.map((link, key) => (
             <a
-              className="py-2 sm:px-2"
+              className="py-2 xs:px-2"
               key={`footer-link-${key}`}
               href={link.href}
               rel="nofollow noreferrer"
