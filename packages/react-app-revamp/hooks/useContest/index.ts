@@ -114,7 +114,7 @@ export function useContest() {
         address: contestAuthorRawData,
         chainId: chain.mainnet.id,
       });
-      setContestAuthor(contestAuthorEns && contestAuthorEns !== null ? contestAuthorEns : contestNameRawData);
+      setContestAuthor(contestAuthorEns && contestAuthorEns !== null ? contestAuthorEns : contestAuthorRawData);
 
       // Maximum submissions *per user* for the contest
       const contestMaxNumberSubmissionsPerUser = await readContract(
