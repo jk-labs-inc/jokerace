@@ -1,6 +1,7 @@
 .stepper::before {
   @apply absolute w-0.5 inline-start-0.5 top-4 translate-x-1/2;
   content: " ";
+  transition: all ease-in-out 350ms;
   height: var(--stepperLineIndicatorHeight);
   z-index: 0;
 }
@@ -15,6 +16,7 @@
 
 .step {
   @apply relative flex;
+  transition: all ease-in-out 350ms;
 }
 
 .step::before {

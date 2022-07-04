@@ -40,7 +40,7 @@ export const StepIndicator = () => {
         {Object.keys(stepsNames).map((indicator: any) => {
           return (
             <li
-              className={`grow flex items-center 
+              className={`transition-all ease-in-out grow flex items-center 
             ${
               currentStep === parseInt(indicator)
                 ? "text-primary-10 font-bold"
@@ -97,7 +97,7 @@ export const StepIndicator = () => {
                 {Object.keys(stepsNames).map((indicator: any) => {
                   return (
                     //@ts-ignore
-                    <li key={`mobile-wizard-form-step-${stepsNames[indicator].key}`}>
+                    <li key={`transition-all ease-in-out mobile-wizard-form-step-${stepsNames[indicator].key}`}>
                       <Disclosure.Button
                         className={`grow w-full flex font-bold items-center text-xs ${
                           currentStep === parseInt(indicator)

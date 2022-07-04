@@ -2,6 +2,7 @@
   @apply absolute w-0.5 bg-primary-3;
   content: " ";
   height: var(--stepperLineIndicatorHeight);
+  transition: all 350ms ease-in-out;
   z-index: -1;
 }
 

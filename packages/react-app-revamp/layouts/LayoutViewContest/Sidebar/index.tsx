@@ -2,7 +2,7 @@ import shallow from "zustand/shallow";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useNetwork } from "wagmi";
-import { isAfter, isBefore, isDate } from "date-fns";
+import { isDate } from "date-fns";
 import { HomeIcon } from "@heroicons/react/solid";
 import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
 import {

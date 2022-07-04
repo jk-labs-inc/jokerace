@@ -19,5 +19,5 @@ export const formFieldLabel = cva(
   },
 )
 
-export type SystemUiButtonProps = VariantProps<typeof formFieldLabel>
+export type SystemUiFormFieldProps = VariantProps<typeof formFieldLabel>
 
