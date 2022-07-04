@@ -139,7 +139,6 @@ const LayoutBase = (props: LayoutBaseProps) => {
           </div>
 
           <div className="text-sm mis-auto">
-
             <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
           </div>
         </div>
