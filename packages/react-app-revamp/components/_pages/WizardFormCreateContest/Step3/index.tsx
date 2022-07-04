@@ -10,6 +10,7 @@ import { useStore } from "../store";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
+import Timeline from "../Timeline";
 
 export const Step3 = () => {
   const {
@@ -67,7 +68,7 @@ export const Step3 = () => {
   const { handleSubmitForm, stateContestDeployment } = useDeployContest(form);
   return (
     <>
-      <div className="tracking-wide pb-5">
+      <div className="tracking-wide pb-8">
         <h2 className="sr-only">Step 3: Create contest</h2>
         <p className="font-bold text-lg mb-2">Let’s set the rules for your contest across two stages.</p>
         <ul className="mb-3 list-disc pis-4 text-neutral-12">
@@ -78,7 +79,9 @@ export const Step3 = () => {
             <span className="font-bold">voting:</span> your community votes on the entries.
           </li>
         </ul>
-        <p className="text-neutral-11 text-xs">note: voting starts when submissions end.</p>
+        <p className="text-neutral-11 text-xs mb-8">note: voting starts when submissions end.</p>
+
+        <Timeline />
       </div>
       <Form isDeploying={stateContestDeployment.isLoading} {...form} />
       <DialogModalDeployTransaction

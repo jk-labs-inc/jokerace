@@ -7,6 +7,7 @@ import { validator } from "@felte/validator-zod";
 import { schema } from "./schema";
 import FormField from "@components/FormField";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
+import { useEffect, useState } from "react";
 
 interface FormSearchContestProps {
   isInline?: boolean;
@@ -30,7 +31,10 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
       }
     },
   });
-
+  const [buttonLabel, setButtonLabel] = useState("Search");
+  useEffect(() => {
+    setButtonLabel(!activeChain ? "Connect your wallet" : activeChain.unsupported ? "Unsupported network" : "Search");
+  }, [activeChain]);
   return (
     <>
       <form
@@ -64,11 +68,12 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
         </FormField>
 
         <Button
+          disabled={!activeChain || activeChain.unsupported === true}
           scale={isInline ? "xs" : "default"}
-          className={`${isInline ? "h-full min-h-8" : " mx-auto mt-3"}`}
+          className={`${isInline ? "h-full whitespace-nowrap min-h-8" : " mx-auto mt-3"}`}
           intent="neutral-outline"
         >
-          Search
+          {buttonLabel}
         </Button>
       </form>
     </>

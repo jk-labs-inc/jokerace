@@ -29,7 +29,7 @@ const Label = (props: FormLabelProps) => {
   const { children, hasError, className, ...rest } = props
   return (
     <label className={formFieldLabel({class: className ?? ""})} {...rest}>
-      {hasError && <ExclamationCircleIcon className="w-5 animate-appear text-negative-10 mie-1" />}
+      {hasError && <ExclamationCircleIcon className="w-5 self-center animate-appear text-negative-10 mie-1" />}
       {children}
     </label>
   )

@@ -1,5 +1,3 @@
-import { Fragment } from "react";
-import { Transition } from "@headlessui/react";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
 import useProposalVotes from "@hooks/useProposalVotes";
@@ -81,7 +79,15 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
                   className="animate-appear"
                   key={`${votesPerAddress[address].displayAddress}-${votesPerAddress[address].votes}`}
                 >
-                  <td className="text-ellipsis font-mono overflow-hidden p-2">
+                  <td title={address} className="relative text-ellipsis font-mono overflow-hidden p-2">
+                    <a
+                      className="top-0 left-0 absolute w-full h-full z-10 cursor-pointer opacity-0"
+                      target="_blank"
+                      rel="nofollow noreferrer"
+                      href={`https://debank.com/profile/${address}`}
+                    >
+                      Click to view this address on Debank
+                    </a>
                     {votesPerAddress[address].displayAddress}:
                   </td>
                   <td className="p-2 font-bold">

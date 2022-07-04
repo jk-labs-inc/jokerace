@@ -6,6 +6,8 @@ import type { NextPage } from 'next'
 import { useStore } from '@hooks/useContest/store'
 import Steps from '@layouts/LayoutViewContest/Timeline/Steps'
 import { format } from 'date-fns'
+import { CONTEST_STATUS } from '@helpers/contestStatus'
+import { useNetwork } from 'wagmi'
 
 interface PageProps {
   address: string,
@@ -13,7 +15,8 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
-  const { checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName } = useStore(state =>  ({ 
+  const { activeChain } = useNetwork()
+  const { contestState, checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName } = useStore(state =>  ({ 
     //@ts-ignore
     votingToken: state.votingToken,
     //@ts-ignore
@@ -35,8 +38,11 @@ const Page: NextPage = (props: PageProps) => {
     //@ts-ignore
     snapshotTaken: state.snapshotTaken,
     //@ts-ignore
-    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading
+    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
+    //@ts-ignore
+    contestState: state.contestState
    }), shallow);
+
   return (
     <>
       <Head>
@@ -45,13 +51,13 @@ const Page: NextPage = (props: PageProps) => {
       </Head>
     <h1 className='sr-only'>Rules of contest {contestName ? contestName : address} </h1>
     {!isLoading  && isSuccess && <div className='animate-appear space-y-8'>
-     <section>
+     {contestState !== CONTEST_STATUS.SNAPSHOT_ONGOING && <section className='animate-appear'>
        <p className={`p-3 rounded-md border-solid border mb-5 text-sm font-bold
        ${(!snapshotTaken || checkIfUserPassedSnapshotLoading ) ? ' border-neutral-4' : didUserPassSnapshotAndCanVote ? 'bg-positive-1 text-positive-10 border-positive-4' : ' bg-primary-1 text-primary-10 border-primary-4'}`
        }>
          {checkIfUserPassedSnapshotLoading ? 'Checking snapshot...' : !snapshotTaken ? 'Snapshot wasn\'t taken yet.': didUserPassSnapshotAndCanVote ? 'Congrats ! Your wallet qualified to vote.' : 'Too bad, your wallet didn\'t qualify to vote.'}
        </p>
-     </section>
+     </section>}
      <section>
        <h2 className='uppercase font-bold mb-2'>Rules</h2>
        <ul className='list-disc pis-4 leading-loose'>
@@ -68,6 +74,15 @@ const Page: NextPage = (props: PageProps) => {
            </li>
          <li>Submitters qualify to vote if they have token by <span className="font-bold">{format(usersQualifyToVoteIfTheyHoldTokenAtTime, "PPP p")}</span></li>
        </ul>
+     </section>
+     <section>
+      <h2 className='uppercase font-bold mb-2'>Token</h2>
+      <ul className='list-disc pis-4 leading-loose'>
+        <li title={`$${votingToken.symbol}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Symbol: <span className='font-bold normal-case'>${votingToken.symbol}</span></span></li>
+        <li title={`${new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Total supply: <span className='font-bold'>{new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}</span></span></li>
+        <li title={votingToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${activeChain?.blockExplorers?.default?.url}/address/${votingToken.address}`.replace('//address', '/address')}>{votingToken.address}</a></span></li>
+      </ul>
+      
      </section>
      <section>
        <h2 className='uppercase leading-relaxed font-bold mb-2'>Timeline</h2>

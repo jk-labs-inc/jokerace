@@ -38,8 +38,7 @@ export const Form = (props: FormProps) => {
     shallow,
   );
 
-  const isDateOpeningSubmissionsValid =
-    data()?.datetimeOpeningSubmissions && !isPast(new Date(data().datetimeOpeningSubmissions));
+  const isDateOpeningSubmissionsValid = data()?.datetimeOpeningSubmissions;
   const isDateOpeningVotesValid =
     isDateOpeningSubmissionsValid && data()?.datetimeOpeningVoting
       ? isAfter(new Date(data().datetimeOpeningVoting), new Date(data().datetimeOpeningSubmissions))
@@ -79,7 +78,7 @@ export const Form = (props: FormProps) => {
     <form ref={form} className="w-full">
       <fieldset>
         <legend
-          className={`text-neutral-12 uppercase font-bold tracking-wider text-xs ${
+          className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
@@ -171,9 +170,9 @@ export const Form = (props: FormProps) => {
         </div>
       </fieldset>
 
-      <fieldset className="my-6">
+      <fieldset className="my-12">
         <legend
-          className={`text-neutral-12 uppercase font-bold tracking-wider text-xs ${
+          className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
@@ -193,11 +192,6 @@ export const Form = (props: FormProps) => {
               </FormField.Description>
               <FormInput
                 required
-                onChange={() => {
-                  resetField("datetimeOpeningVoting");
-                  resetField("datetimeClosingVoting");
-                  resetField("usersQualifyToVoteAtAnotherDatetime");
-                }}
                 disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
                 aria-invalid={
                   errors().datetimeOpeningSubmissions?.length > 0 === true || !isDateOpeningSubmissionsValid
@@ -217,9 +211,8 @@ export const Form = (props: FormProps) => {
             <FormField.HelpBlock
               hasError={false}
               id="input-datetimeopeningsubmissions-helpblock-1"
-              className="min:block text-2xs text-neutral-11"
+              className="min:not-sr-only text-2xs text-neutral-11"
             >
-              month / day / year, hour:minute AM/PM <br />
               Timezone: ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormField.HelpBlock>
 
@@ -227,7 +220,7 @@ export const Form = (props: FormProps) => {
               hasError={errors().datetimeOpeningSubmissions?.length > 0 === true || !isDateOpeningSubmissionsValid}
               id="input-datetimeopeningsubmissions-helpblock-2"
             >
-              The opening date for submissions can&apos;t be in the past
+              Please type a valid date.
             </FormField.HelpBlock>
           </FormField>
 
@@ -239,7 +232,7 @@ export const Form = (props: FormProps) => {
                 htmlFor="submissionMaxNumber"
               >
                 Maximum number of submissions in contest{" "}
-                <span className="text-2xs text-neutral-10 pis-1">(recommended)</span>
+                <span className="text-2xs text-neutral-10 pis-1">(recommended: 200 submissions max)</span>
               </FormField.Label>
               <FormField.Description id="input-numberoftokens-description">
                 The maximum number of submissions your contest will show
@@ -345,7 +338,7 @@ export const Form = (props: FormProps) => {
                   aria-describedby="input-submissionperusermaxnumber-helpblock"
                 />{" "}
                 entr{data()?.submissionPerUserMaxNumber > 1 ? "ies" : "y"}{" "}
-                <span className="text-2xs pis-1ex text-neutral-10">(recommended)</span>
+                <span className="text-2xs pis-1ex text-neutral-10">(recommended: 1 entry)</span>
               </>
             </FormRadioOption>
             <FormField.HelpBlock
@@ -363,7 +356,7 @@ export const Form = (props: FormProps) => {
 
       <fieldset>
         <legend
-          className={`text-neutral-12 uppercase font-bold tracking-wider text-xs ${
+          className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
@@ -392,10 +385,6 @@ export const Form = (props: FormProps) => {
                 The date and time from which users can start voting
               </FormField.Description>
               <FormInput
-                onChange={() => {
-                  resetField("datetimeClosingVoting");
-                  resetField("usersQualifyToVoteAtAnotherDatetime");
-                }}
                 required
                 disabled={
                   !data()?.datetimeOpeningSubmissions ||
@@ -425,9 +414,8 @@ export const Form = (props: FormProps) => {
             <FormField.HelpBlock
               hasError={false}
               id="put-datetimeopeningvoting-helpblock-1"
-              className="min:block text-2xs text-neutral-11"
+              className="min:not-sr-only text-2xs text-neutral-11"
             >
-              month / day / year, hour:minute AM/PM <br />
               Timezone: ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormField.HelpBlock>
             <FormField.HelpBlock
@@ -438,7 +426,7 @@ export const Form = (props: FormProps) => {
               id="input-datetimeopeningvoting-helpblock-2"
             >
               The opening date for votes must be{" "}
-              <span className="font-bold">after the opening date for submissions</span>.
+              <span className="font-bold">after the opening date for submissions and can&apos;t be in the past.</span>.
             </FormField.HelpBlock>
           </FormField>
 
@@ -455,16 +443,13 @@ export const Form = (props: FormProps) => {
                 }
                 htmlFor="datetimeClosingVoting"
               >
-                Voting closes <span className="text-2xs text-neutral-10 pis-1">(and submissions close)</span>
+                Voting closes <span className="text-2xs text-neutral-10 pis-1">(and contest closes)</span>
               </FormField.Label>
               <FormField.Description id="input-datetimeclosesvoting-description">
                 The date and time on which users won&apos;t be able to vote anymore
               </FormField.Description>
               <div className="flex">
                 <FormInput
-                  onChange={() => {
-                    resetField("usersQualifyToVoteAtAnotherDatetime");
-                  }}
                   required
                   disabled={
                     !data()?.datetimeOpeningSubmissions ||
@@ -496,9 +481,8 @@ export const Form = (props: FormProps) => {
             <FormField.HelpBlock
               hasError={false}
               id="input-datetimeclosesvoting-helpblock-1"
-              className="min:block text-2xs text-neutral-11"
+              className="min:not-sr-only text-2xs text-neutral-11"
             >
-              month / day / year, hour:minute AM/PM <br />
               Timezone: ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormField.HelpBlock>
             <FormField.HelpBlock
@@ -508,7 +492,8 @@ export const Form = (props: FormProps) => {
               }
               id="input-datetimeclosesvoting-helpblock-2"
             >
-              The closes date for votes must be <span className="font-bold">after the opening date for votes</span>.
+              The closes date for votes must be{" "}
+              <span className="font-bold">after the opening date for votes and can&apos;t be in the past</span>.
             </FormField.HelpBlock>
           </FormField>
 
@@ -599,9 +584,8 @@ export const Form = (props: FormProps) => {
             <FormField.HelpBlock
               hasError={false}
               id="put-usersqualifytovoteatanotherdatetime-helpblock-1"
-              className="min:block text-2xs text-neutral-11"
+              className="min:not-sr-only text-2xs text-neutral-11"
             >
-              month / day / year, hour:minute AM/PM <br />
               Timezone: ({Intl.DateTimeFormat().resolvedOptions().timeZone})
             </FormField.HelpBlock>
             <FormField.HelpBlock

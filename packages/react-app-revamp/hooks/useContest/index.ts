@@ -7,7 +7,7 @@ import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { format, isBefore, isFuture } from "date-fns";
+import { isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 export function useContest() {
@@ -114,7 +114,7 @@ export function useContest() {
         address: contestAuthorRawData,
         chainId: chain.mainnet.id,
       });
-      setContestAuthor(contestAuthorEns && contestAuthorEns !== null ? contestAuthorEns : contestNameRawData);
+      setContestAuthor(contestAuthorEns && contestAuthorEns !== null ? contestAuthorEns : contestAuthorRawData);
 
       // Maximum submissions *per user* for the contest
       const contestMaxNumberSubmissionsPerUser = await readContract(
@@ -168,8 +168,7 @@ export function useContest() {
         setContestStatus(statusRawData);
       }
 
-      //@ts-ignore
-      if (statusRawData === CONTEST_STATUS.VOTING_OPEN) await checkIfCurrentUserQualifyToVote();
+      await checkIfCurrentUserQualifyToVote();
 
       // Amount of token required for a user to vote
       const amountOfTokensRequiredToSubmitEntryRawData = await readContract(
@@ -201,6 +200,7 @@ export function useContest() {
     };
     const contractBaseOptions = {};
     setCheckIfUserPassedSnapshotLoading(true);
+
     try {
       // Timestamp from when a user can vote
       // depending on the amount of voting token they're holding at a given timestamp (snapshot)
@@ -208,7 +208,6 @@ export function useContest() {
 
       //@ts-ignore
       setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
-
       //@ts-ignore
       if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
         setSnapshotTaken(true);
@@ -266,6 +265,7 @@ export function useContest() {
               chainId: chain.mainnet.id,
             });
             const proposalData = {
+              authorEthereumAddress: proposalRawData[0],
               author: author ?? proposalRawData[0],
               content: proposalRawData[1],
               isContentImage: isUrlToImage(proposalRawData[1]) ? true : false,

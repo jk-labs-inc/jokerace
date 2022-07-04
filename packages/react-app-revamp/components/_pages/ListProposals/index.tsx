@@ -40,6 +40,7 @@ export const ListProposals = () => {
     }),
     shallow,
   );
+
   const stateSubmitProposal = useStoreSubmitProposal();
   const { setPickedProposal, setIsModalOpen } = useStoreCastVotes(
     state => ({
@@ -97,17 +98,17 @@ export const ListProposals = () => {
             .map((id, i) => {
               return (
                 <li
-                  className={`${styles.listElement} px-5 pt-5 pb-3 rounded-md 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
+                  className={`${styles.listElement} px-5 pt-5 pb-3 rounded-md 2xs:rounded-none 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
                   key={id}
                 >
-                  <div className="text-center 2xs:border-none border-solid border-neutral-1 flex flex-col 2xs:items-center pt-2">
+                  <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
                     {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
-                      <span className="text-3xs text-neutral-11 italic">Votes not open yet</span>
+                      <span className="text-3xs text-neutral-11 italic">Vote not open yet</span>
                     ) : (
                       <>
                         {listProposalsData[id].votes > 0 && (
                           <span
-                            className={`${styles.rankIndicator} rounded-full items-center flex justify-center aspect-square text-opacity-100 mb-3`}
+                            className={`${styles.rankIndicator} hidden 2xs:flex rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
                           >
                             #{i + 1}
                           </span>
@@ -123,9 +124,10 @@ export const ListProposals = () => {
                           }
                           className="disabled:border-none border p-2 border-solid border-neutral-6 rounded-md disabled:text-opacity-50 disabled:cursor-not-allowed text-neutral-12 flex 2xs:flex-col items-center 2xs:justify-center font-bold text-2xs"
                         >
-                          {checkIfUserPassedSnapshotLoading && (
-                            <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
-                          )}
+                          {(contestStatus === CONTEST_STATUS.VOTING_OPEN && checkIfUserPassedSnapshotLoading) ||
+                            (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
+                              <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
+                            ))}
                           {didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                             currentUserAvailableVotesAmount > 0 && (
@@ -136,13 +138,20 @@ export const ListProposals = () => {
                             maximumFractionDigits: 3,
                           }).format(parseFloat(listProposalsData[id].votes))}{" "}
                           <span className="text-neutral-11 pis-1ex 2xs:pis-0 text-3xs">
-                            vote{listProposalsData[id].votes > 1 && "s"}
+                            vote{listProposalsData[id].votes === 1 && "s"}
                           </span>
                         </button>
                       </>
                     )}
                   </div>
                   <div className="relative overflow-hidden">
+                    {listProposalsData[id].votes > 0 && (
+                      <span
+                        className={`${styles.rankIndicator} inline-flex 2xs:hidden rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
+                      >
+                        #{i + 1}
+                      </span>
+                    )}
                     <ProposalContent
                       author={listProposalsData[id].author}
                       content={
