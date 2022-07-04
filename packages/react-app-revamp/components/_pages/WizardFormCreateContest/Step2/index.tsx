@@ -41,7 +41,7 @@ export const Step2 = () => {
   const { isConnected } = useConnect();
   return (
     <>
-      <div className="tracking-wide pb-5">
+      <div className="tracking-wide pb-8">
         <h2 className="sr-only">Step 2: Mint a token</h2>
         <p className="font-bold text-lg mb-3">Let’s start by minting a token your community will use to vote.</p>
         <p className="text-neutral-11 text-xs">

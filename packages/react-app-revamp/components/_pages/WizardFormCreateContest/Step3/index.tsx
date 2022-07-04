@@ -67,7 +67,7 @@ export const Step3 = () => {
   const { handleSubmitForm, stateContestDeployment } = useDeployContest(form);
   return (
     <>
-      <div className="tracking-wide pb-5">
+      <div className="tracking-wide pb-8">
         <h2 className="sr-only">Step 3: Create contest</h2>
         <p className="font-bold text-lg mb-2">Let’s set the rules for your contest across two stages.</p>
         <ul className="mb-3 list-disc pis-4 text-neutral-12">
