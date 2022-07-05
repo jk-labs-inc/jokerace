@@ -26,7 +26,7 @@ const appearAsNeutralButton = button({ intent: "neutral-outline" });
 export const Form = (props: FormProps) => {
   const { isDeploying, form, data, errors, isValid, interacted, setData, setFields } = props;
   const { isConnected } = useConnect();
-  const account = useAccount()
+  const account = useAccount();
   const { activeChain } = useNetwork();
   const { setCurrentStep, dataDeployToken } = useStore(
     state => ({
@@ -120,11 +120,17 @@ export const Form = (props: FormProps) => {
               aria-describedby="input-receivingaddress-description input-receivingaddress-helpblock"
             />
             <div className="mt-2">
-            <span className="text-neutral-10 pie-1ex text-xs">or</span>
-            {/* @ts-ignore */}
-            <Button onClick={() => setFields(($data) => ({ ...$data, receivingAddress: account?.data?.address }))} disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true} type="button" scale="xs" intent="true-solid-outline" >
-              Use my address
-            </Button>
+              <span className="text-neutral-10 pie-1ex text-xs">or</span>
+              {/* @ts-ignore */}
+              <Button
+                onClick={() => setFields($data => ({ ...$data, receivingAddress: account?.data?.address }))}
+                disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                type="button"
+                scale="xs"
+                intent="true-solid-outline"
+              >
+                Use my address
+              </Button>
             </div>
           </FormField.InputField>
           <FormField.HelpBlock

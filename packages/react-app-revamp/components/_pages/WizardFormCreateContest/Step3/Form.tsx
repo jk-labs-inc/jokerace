@@ -123,7 +123,7 @@ export const Form = (props: FormProps) => {
                 required
                 disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
                 aria-invalid={errors().contestDescription?.length > 0 === true ? "true" : "false"}
-                className="max-w-full w-auto 2xs:w-full"
+                className="max-w-full w-auto 2xs:w-full min-h-[20ch]"
                 placeholder="What's your prompt ?"
                 name="contestDescription"
                 id="contestDescription"

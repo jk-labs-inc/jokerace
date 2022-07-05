@@ -85,6 +85,8 @@ export function useContest() {
     setSnapshotTaken,
     //@ts-ignore
     setCheckIfUserPassedSnapshotLoading,
+    //@ts-ignore
+    setContestPrompt,
   } = useStore();
 
   function onContractError(err: any) {
@@ -106,6 +108,10 @@ export function useContest() {
       // Contest name
       const contestNameRawData = await readContract(contractConfig, "name", contractBaseOptions);
       setContestName(contestNameRawData);
+
+      // Contest prompt
+      const contestPromptRawData = await readContract(contractConfig, "prompt", contractBaseOptions);
+      setContestPrompt(contestPromptRawData);
 
       // Contest author ethereum address + ENS
       const contestAuthorRawData = await readContract(contractConfig, "creator", contractBaseOptions);

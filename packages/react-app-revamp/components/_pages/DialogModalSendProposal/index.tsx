@@ -6,6 +6,8 @@ import FormTextarea from "@components/FormTextarea";
 import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import useSubmitProposal from "@hooks/useSubmitProposal";
+import { Interweave } from "interweave";
+import { UrlMatcher } from "interweave-autolink";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
@@ -31,8 +33,11 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     contestMaxNumberSubmissionsPerUser,
     contestMaxProposalCount,
     contestStatus,
+    contestPrompt,
   } = useStoreContest(
     state => ({
+      //@ts-ignore
+      contestPrompt: state.contestPrompt,
       //@ts-ignore
       currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
       //@ts-ignore
@@ -119,6 +124,9 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       listProposalsIds.length < contestMaxProposalCount &&
       contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
         <>
+          <p className="mb-4 text-neutral-11 text-md font-bold with-link-highlighted ">
+            <Interweave content={contestPrompt.replaceAll(",", ",\n")} matchers={[new UrlMatcher("url")]} />
+          </p>
           {showForm === true ? (
             <>
               <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>
@@ -133,7 +141,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
                     }}
                     value={proposal}
                     required
-                    className="w-full"
+                    className="w-full min-h-[15ch]"
                     disabled={isLoading}
                     placeholder="What do you think ?"
                     name="proposal"

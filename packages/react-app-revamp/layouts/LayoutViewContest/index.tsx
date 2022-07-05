@@ -30,7 +30,8 @@ import {
   Provider as ProviderCastVotes,
   createStore as createStoreCastVotes,
 } from "@hooks/useCastVotes/store";
-
+import { Interweave } from "interweave";
+import { UrlMatcher } from "interweave-autolink";
 import { useContest } from "@hooks/useContest";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import Timeline from "./Timeline";
@@ -77,6 +78,7 @@ const LayoutViewContest = (props: any) => {
     votesClose,
     contestName,
     contestAuthor,
+    contestPrompt,
     contestStatus,
   } = useStoreContest(
     state => ({
@@ -84,6 +86,8 @@ const LayoutViewContest = (props: any) => {
       contestStatus: state.contestStatus,
       //@ts-ignore
       contestName: state.contestName,
+      //@ts-ignore
+      contestPrompt: state.contestPrompt,
       //@ts-ignore
       contestAuthor: state.contestAuthor,
       //@ts-ignore
@@ -260,6 +264,11 @@ const LayoutViewContest = (props: any) => {
                     <span className="uppercase tracking-wide pie-1ex">{contestName}</span>{" "}
                     <span className="text-xs overflow-hidden text-neutral-8 text-ellipsis">by {contestAuthor}</span>
                   </h2>
+
+                  <p className="mb-8 text-lg with-link-highlighted font-bold">
+                    <Interweave content={contestPrompt.replaceAll(",", ",\n")} matchers={[new UrlMatcher("url")]} />
+                  </p>
+
                   {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
                     <div className="animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
                       <p>Snapshot ongoing, voting will be open in a 30sec-1min, please wait... </p>

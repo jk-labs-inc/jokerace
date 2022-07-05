@@ -75,8 +75,8 @@ export function useDeployContest(form: any) {
       ];
 
       const contract = await factory.deploy(
-        // @TODO: add description field (value.contestDescription)
         values.contestTitle,
+        values.contestDescription,
         values.votingTokenAddress,
         contestParameters,
       );
