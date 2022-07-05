@@ -7,6 +7,7 @@ const { ethers } = require("ethers");
 
 export default function CreateContestModal({modalVisible, setModalVisible, setResultMessage, signer}) {
   const [contestTitle, setContestTitle] = useState("")
+  const [contestPrompt, setContestPrompt] = useState("")
   const [votingTokenAddress, setVotingTokenAddress] = useState("")
   const [contestStart, setContestStart] = useState("")
   const [votingDelay, setVotingDelay] = useState("")
@@ -32,7 +33,7 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
       chosenContestVotingSnapshot, proposalThreshold, numAllowedProposalSubmissions, maxProposalCount];
 
     // Deploy an instance of the contract
-    let contract = await factory.deploy(contestTitle, votingTokenAddress, intContestParameters);
+    let contract = await factory.deploy(contestTitle, contestPrompt, votingTokenAddress, intContestParameters);
     console.log(contract.address)
     console.log(contract.deployTransaction)
     setResultMessage("The " + contestTitle + " contest contract creation transaction has been submitted with this transaction id: " + contract.deployTransaction.hash + " for the contract to be deployed at this address: " + contract.address)
@@ -69,6 +70,13 @@ export default function CreateContestModal({modalVisible, setModalVisible, setRe
           rules={[{ required: true, message: 'Please input your contest title!' }]}
         >
           <Input placeholder='Contest Title' onChange={(e) => setContestTitle(e.target.value)} />
+        </Form.Item>
+        <Form.Item
+          label={<span style={{ whiteSpace: 'normal' }}>Contest Prompt</span>}
+          name="contestprompt"
+          rules={[{ required: true, message: 'Please input your contest prompt!' }]}
+        >
+          <Input placeholder='Contest Prompt' onChange={(e) => setContestPrompt(e.target.value)} />
         </Form.Item>
         <Form.Item
           label="Voting Token Address"

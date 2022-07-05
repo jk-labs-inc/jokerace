@@ -36,6 +36,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
 
     uint256[] private _proposalIds;
     string private _name;
+    string private _prompt;
     bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
@@ -54,8 +55,9 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     /**
      * @dev Sets the value for {name} and {version}
      */
-    constructor(string memory name_) EIP712(name_, version()) {
+    constructor(string memory name_, string memory prompt_) EIP712(name_, version()) {
         _name = name_;
+        _prompt = prompt_;
     }
 
     /**
@@ -77,6 +79,13 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
      */
     function name() public view virtual override returns (string memory) {
         return _name;
+    }
+
+    /**
+     * @dev See {IGovernor-prompt}.
+     */
+    function prompt() public view virtual override returns (string memory) {
+        return _prompt;
     }
 
     /**

@@ -54,6 +54,12 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
+     * @dev Prompt of the governor instance (used in building the ERC712 domain separator).
+     */
+    function prompt() public view virtual returns (string memory);
+
+    /**
+     * @notice module:core
      * @dev Version of the governor instance (used in building the ERC712 domain separator). Default: "1"
      */
     function version() public view virtual returns (string memory);
