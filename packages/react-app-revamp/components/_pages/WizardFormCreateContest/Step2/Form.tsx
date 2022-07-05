@@ -121,8 +121,8 @@ export const Form = (props: FormProps) => {
             />
             <div className="mt-2">
               <span className="text-neutral-10 pie-1ex text-xs">or</span>
-              {/* @ts-ignore */}
               <Button
+                /* @ts-ignore */
                 onClick={() => setFields($data => ({ ...$data, receivingAddress: account?.data?.address }))}
                 disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
                 type="button"

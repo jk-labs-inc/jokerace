@@ -124,9 +124,11 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       listProposalsIds.length < contestMaxProposalCount &&
       contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
         <>
-          <p className="mb-4 text-neutral-11 text-md font-bold with-link-highlighted ">
-            <Interweave content={contestPrompt.replaceAll(",", ",\n")} matchers={[new UrlMatcher("url")]} />
-          </p>
+          {contestPrompt && (
+            <p className="mb-4 text-neutral-11 text-md font-bold with-link-highlighted ">
+              <Interweave content={contestPrompt.replaceAll(",", ",\n")} matchers={[new UrlMatcher("url")]} />
+            </p>
+          )}
           {showForm === true ? (
             <>
               <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>

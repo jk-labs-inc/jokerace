@@ -6,9 +6,9 @@ import { fetchBlockNumber, fetchEnsName, fetchToken, readContract } from "@wagmi
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useContest() {
   const provider = useProvider();
@@ -98,20 +98,32 @@ export function useContest() {
   async function fetchContestInfo() {
     setIsLoading(true);
     setIsListProposalsLoading(true);
+    const abi = await getContestContractVersion(address);
+    if (abi === null) {
+      toast.error("This contract doesn't exist on this chain.");
+      setIsError("This contract doesn't exist on this chain.");
+      setIsSuccess(false);
+      setCheckIfUserPassedSnapshotLoading(false);
+      setIsListProposalsSuccess(false);
+      setIsListProposalsLoading(false);
+      setIsLoading(false);
+      return;
+    }
+    const contractConfig = {
+      addressOrName: address,
+      contractInterface: abi,
+    };
+    const contractBaseOptions = {};
     try {
-      const contractConfig = {
-        addressOrName: address,
-        contractInterface: DeployedContestContract.abi,
-      };
-      const contractBaseOptions = {};
-
       // Contest name
       const contestNameRawData = await readContract(contractConfig, "name", contractBaseOptions);
       setContestName(contestNameRawData);
 
-      // Contest prompt
-      const contestPromptRawData = await readContract(contractConfig, "prompt", contractBaseOptions);
-      setContestPrompt(contestPromptRawData);
+      if (abi?.filter(el => el.name === "prompt").length > 0) {
+        // Contest prompt
+        const contestPromptRawData = await readContract(contractConfig, "prompt", contractBaseOptions);
+        setContestPrompt(contestPromptRawData);
+      }
 
       // Contest author ethereum address + ENS
       const contestAuthorRawData = await readContract(contractConfig, "creator", contractBaseOptions);
@@ -200,9 +212,21 @@ export function useContest() {
   }
 
   async function checkIfCurrentUserQualifyToVote() {
+    const abi = await getContestContractVersion(address);
+    if (abi === null) {
+      toast.error("This contract doesn't exist on this chain.");
+      setIsError("This contract doesn't exist on this chain.");
+      setIsSuccess(false);
+      setIsListProposalsSuccess(false);
+      setIsListProposalsLoading(false);
+      setCheckIfUserPassedSnapshotLoading(false);
+      setIsLoading(false);
+      return;
+    }
+
     const contractConfig = {
       addressOrName: address,
-      contractInterface: DeployedContestContract.abi,
+      contractInterface: abi,
     };
     const contractBaseOptions = {};
     setCheckIfUserPassedSnapshotLoading(true);
@@ -242,9 +266,21 @@ export function useContest() {
   }
 
   async function fetchAllProposals() {
+    const abi = await getContestContractVersion(address);
+    if (abi === null) {
+      toast.error("This contract doesn't exist on this chain.");
+      setIsError("This contract doesn't exist on this chain.");
+      setIsSuccess(false);
+      setIsListProposalsSuccess(false);
+      setIsListProposalsLoading(false);
+      setCheckIfUserPassedSnapshotLoading(false);
+      setIsLoading(false);
+      return;
+    }
+
     const contractConfig = {
       addressOrName: address,
-      contractInterface: DeployedContestContract.abi,
+      contractInterface: abi,
     };
     const contractBaseOptions = {};
     setIsListProposalsLoading(true);
@@ -307,9 +343,21 @@ export function useContest() {
   }
 
   async function updateCurrentUserVotes() {
+    const abi = await getContestContractVersion(address);
+    if (abi === null) {
+      toast.error("This contract doesn't exist on this chain.");
+      setIsError("This contract doesn't exist on this chain.");
+      setIsSuccess(false);
+      setIsListProposalsSuccess(false);
+      setIsListProposalsLoading(false);
+      setCheckIfUserPassedSnapshotLoading(false);
+      setIsLoading(false);
+      return;
+    }
+
     const contractConfig = {
       addressOrName: address,
-      contractInterface: DeployedContestContract.abi,
+      contractInterface: abi,
     };
     const contractBaseOptions = {};
 

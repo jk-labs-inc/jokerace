@@ -38,8 +38,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       <link rel="preload" href="/harmony.png" as="image" /> 
       <link rel="preload" href="/fantom.png" as="image" /> 
       <link rel="preload" href="/gnosis.png" as="image" /> 
-      <link rel="preload" href="/logo@desktop.png" as="image" /> 
-      <link rel="preload" href="/logo@mobile.png" as="image" /> 
     </Head>
     <WagmiConfig client={client}>
       <RainbowKitProvider

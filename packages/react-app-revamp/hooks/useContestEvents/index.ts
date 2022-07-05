@@ -17,7 +17,6 @@ export function useContestEvents() {
     //@ts-ignore
     setProposalVotes,
   } = useStoreContest();
-
   useContractEvent(
     {
       addressOrName: asPath.split("/")[3],
