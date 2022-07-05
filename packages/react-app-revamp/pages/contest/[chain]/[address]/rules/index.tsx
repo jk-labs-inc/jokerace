@@ -61,10 +61,7 @@ const Page: NextPage = (props: PageProps) => {
      <section>
        <h2 className='uppercase font-bold mb-2'>Rules</h2>
        <ul className='list-disc pis-4 leading-loose'>
-         <li>
-           <span className='font-bold'>{new Intl.NumberFormat().format(contestMaxProposalCount)} proposals</span>{" "}max</li>
-         <li>
-          
+          <li>
            {amountOfTokensRequiredToSubmitEntry === 0 ?  <span className='font-bold'>Anyone can submit</span> : <>
            <span className='font-bold'>{new Intl.NumberFormat().format(amountOfTokensRequiredToSubmitEntry)}{" "}<span className='normal-case'>${votingToken.symbol}</span>{" "}required</span>{' '}to submit a proposal</>}</li>
          <li>Qualified wallets can submit up to <span className='font-bold'>
@@ -73,6 +70,9 @@ const Page: NextPage = (props: PageProps) => {
            
            </li>
          <li>Submitters qualify to vote if they have token by <span className="font-bold">{format(usersQualifyToVoteIfTheyHoldTokenAtTime, "PPP p")}</span></li>
+         <li>
+           <span className='font-bold'>Contest accepts up to {new Intl.NumberFormat().format(contestMaxProposalCount)} proposals</span>{" "}total
+          </li>
        </ul>
      </section>
      <section>

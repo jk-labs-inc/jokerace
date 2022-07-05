@@ -36,7 +36,7 @@ export const loaderText = cva(
     {
       variants: {
         intent: {
-            default: 'text-neutral-7'
+            default: 'text-neutral-9'
         },
         scale: {
           page: ['text-lg'],

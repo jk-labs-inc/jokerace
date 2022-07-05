@@ -5,8 +5,9 @@ export const { Provider, useStore } = createContext();
 
 export const createStore = () => {
   return create(set => ({
-    contestStatus: null,
+    version: null,
     contestName: null,
+    contestPrompt: null,
     contestAuthor: null,
     submissionsOpen: null,
     votesOpen: null,
@@ -31,6 +32,7 @@ export const createStore = () => {
     checkIfUserPassedSnapshotLoading: true,
     snapshotTaken: false,
     currentUserProposalCount: 0,
+    setContestPrompt: (prompt: string | null) => set({ contestPrompt: prompt }),
     setCurrentUserProposalCount: (amount: number) => set({ currentUserProposalCount: amount }),
     increaseCurrentUserProposalCount: () =>
       //@ts-ignore

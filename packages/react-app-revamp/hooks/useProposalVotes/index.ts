@@ -5,10 +5,12 @@ import shallow from "zustand/shallow";
 import { chain, useConnect, useContractEvent, useNetwork } from "wagmi";
 import { fetchEnsName, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import LegacyDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.legacy.sol/Contest.json";
 import { useStore as useStoreContest } from "../useContest/store";
 import { chains } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useStore } from "./store";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
@@ -34,8 +36,11 @@ export function useProposalVotes(id: number | string) {
     setIsListVotersError,
     setVotesPerAddress,
     setIsListVotersSuccess,
+    version,
   } = useStore(
     state => ({
+      //@ts-ignore
+      version: state.version,
       //@ts-ignore
       isListVotersSuccess: state.isListVotersSuccess,
       //@ts-ignore
@@ -56,10 +61,19 @@ export function useProposalVotes(id: number | string) {
 
   async function fetchProposalVotes() {
     setIsListVotersLoading(true);
+    const abi = await getContestContractVersion(address);
+    if (abi === null) {
+      setIsListVotersLoading(false);
+      setIsListVotersError("This contract doesn't exist on this chain.");
+      setIsListVotersSuccess(false);
+      setIsListVotersLoading(false);
+      toast.error("This contract doesn't exist on this chain.");
+      return;
+    }
     try {
       const contractConfig = {
         addressOrName: address,
-        contractInterface: DeployedContestContract.abi,
+        contractInterface: abi,
       };
       const list = await readContract(contractConfig, "proposalAddressesHaveVoted", {
         chainId,

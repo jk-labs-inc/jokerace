@@ -169,11 +169,7 @@ export const Sidebar = (props: any) => {
         }
         intent="true-solid-outline"
         className={`
-  ${
-    contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN
-      ? "bottom-32"
-      : "bottom-16"
-  }
+  ${contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? "bottom-32" : "bottom-16"}
   animate-appear fixed md:static md:hidden z-10 aspect-square 2xs:aspect-auto inline-end-5 md:bottom-unset md:inline-end-unset`}
       >
         <CalendarIcon className="w-5 2xs:mie-1 md:hidden" />

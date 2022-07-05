@@ -3,9 +3,9 @@ import shallow from "zustand/shallow";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { chain, fetchEnsName, readContract, fetchEnsResolver } from "@wagmi/core";
 import { useRouter } from "next/router";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { HEADERS_KEYS } from "@config/react-csv/export-contest";
 import { createExportDataStore } from "./store";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 const useStoreExportData = createExportDataStore();
 
@@ -27,11 +27,16 @@ export function useExportContestDataToCSV() {
     const url = asPath.split("/");
     const chainId = chains.filter(chain => chain.name.toLowerCase() === url[2])?.[0]?.id;
     const address = url[3];
+    const abi = await getContestContractVersion(address);
+    if (abi === null) {
+      return;
+    }
     try {
       const contractConfig = {
         addressOrName: address,
-        contractInterface: DeployedContestContract.abi,
+        contractInterface: abi,
       };
+      //@ts-ignore
       const list = await readContract(contractConfig, "proposalAddressesHaveVoted", {
         chainId,
         args: proposalId,
@@ -46,13 +51,17 @@ export function useExportContestDataToCSV() {
     const url = asPath.split("/");
     const chainId = chains.filter(chain => chain.name.toLowerCase() === url[2])?.[0]?.id;
     const address = url[3];
+    const abi = await getContestContractVersion(address);
+    if (abi === null) {
+      return;
+    }
 
     try {
       const data = await readContract(
         {
           //@ts-ignore
           addressOrName: address,
-          contractInterface: DeployedContestContract.abi,
+          contractInterface: abi,
         },
         "proposalAddressVotes",
         {
