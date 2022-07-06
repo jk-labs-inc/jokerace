@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import shallow from "zustand/shallow";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useAccount, useConnect, useNetwork } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import { isAfter, isBefore, isDate } from "date-fns";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import {
@@ -49,9 +49,10 @@ import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgr
 const LayoutViewContest = (props: any) => {
   const { children } = props;
   const { query, asPath, pathname, push } = useRouter();
-  const { data, isFetching } = useAccount();
-  const { activeChain, switchNetwork } = useNetwork();
-  const { activeConnector } = useConnect();
+  const account = useAccount();
+  const { chain } = useNetwork();
+  const { switchNetwork } = useSwitchNetwork();
+
   const {
     isLoading,
     address,
@@ -112,13 +113,13 @@ const LayoutViewContest = (props: any) => {
 
   useContestEvents();
   useEffect(() => {
-    if (activeChain?.id === chainId) {
+    if (chain?.id === chainId) {
       fetchContestInfo();
     } else {
       setIsLoading(false);
       setIsListProposalsLoading(false);
     }
-  }, [activeChain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
+  }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
     const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase();
@@ -135,13 +136,13 @@ const LayoutViewContest = (props: any) => {
   }, [chainId, address]);
 
   useEffect(() => {
-    if (activeConnector) {
-      activeConnector.on("change", data => {
+    if (account?.connector) {
+      account?.connector.on("change", data => {
         //@ts-ignore
         setChaindId(data.chain.id);
       });
     }
-  }, [activeConnector]);
+  }, [account?.connector]);
 
   useEffect(() => {
     const verifySnapshot = async () => {
@@ -161,7 +162,7 @@ const LayoutViewContest = (props: any) => {
           <FormSearchContest onSubmit={onSearch} isInline={true} />
         </div>
       </div>
-      {activeChain?.id === chainId &&
+      {chain?.id === chainId &&
         isSuccess &&
         isError === null &&
         !isLoading &&
@@ -197,7 +198,7 @@ const LayoutViewContest = (props: any) => {
           />
         </div>
         <div className="md:pt-5 md:pb-20 flex flex-col md:col-span-8">
-          {activeChain?.id === chainId &&
+          {chain?.id === chainId &&
             isSuccess &&
             isError === null &&
             !isLoading &&
@@ -214,20 +215,21 @@ const LayoutViewContest = (props: any) => {
                 </div>
               </div>
             )}
-          {isFetching ||
-            (activeChain?.id === chainId && (isLoading || isListProposalsLoading) && (
+          {account.isConnecting ||
+            account.isReconnecting ||
+            (chain?.id === chainId && (isLoading || isListProposalsLoading) && (
               <div className="animate-appear">
                 <Loader scale="page" />
               </div>
             ))}
 
-          {!isFetching && !data?.address ? (
+          {!account.isConnecting && !account.isReconnecting && !account?.address ? (
             <p className="animate-appear font-bold text-center text-lg pt-10">
               Please connect your account to view this contest.
             </p>
           ) : (
             <>
-              {activeChain?.id !== chainId && (
+              {chain?.id !== chainId && (
                 <div className="animate-appear flex text-center flex-col mt-10 mx-auto">
                   <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
                   <p className="mt-2 mb-4 text-neutral-11 text-xs">
@@ -244,7 +246,7 @@ const LayoutViewContest = (props: any) => {
                 </div>
               )}
 
-              {activeChain?.id === chainId && isError !== null && !isLoading && (
+              {chain?.id === chainId && isError !== null && !isLoading && (
                 <div className="my-6 md:my-0 animate-appear flex flex-col">
                   <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                     <p className="text-sm font-bold text-negative-10 text-center">
@@ -254,8 +256,8 @@ const LayoutViewContest = (props: any) => {
                   {isError === "CALL_EXCEPTION" ? (
                     <div className="animate-appear text-center my-3 space-y-3">
                       <p>
-                        Looks like this contract doesn&apos;t exist on {activeChain.name}. <br /> Try switching to
-                        another network.
+                        Looks like this contract doesn&apos;t exist on {chain.name}. <br /> Try switching to another
+                        network.
                       </p>
                     </div>
                   ) : (
@@ -271,7 +273,7 @@ const LayoutViewContest = (props: any) => {
                 </div>
               )}
 
-              {activeChain?.id === chainId && isSuccess && isError === null && !isLoading && (
+              {chain?.id === chainId && isSuccess && isError === null && !isLoading && (
                 <div className="animate-appear pt-3 md:pt-0">
                   {pathname === ROUTE_CONTEST_PROPOSAL && (
                     <div>
@@ -326,7 +328,7 @@ const LayoutViewContest = (props: any) => {
                   <DialogModal isOpen={isTimelineModalOpen} setIsOpen={setIsTimelineModalOpen} title="Contest timeline">
                     {!isLoading &&
                       isSuccess &&
-                      activeChain?.id === chainId &&
+                      chain?.id === chainId &&
                       isDate(submissionsOpen) &&
                       isDate(votesOpen) &&
                       isDate(votesClose) && (
@@ -341,7 +343,7 @@ const LayoutViewContest = (props: any) => {
                   </DialogModal>
                   {!isLoading &&
                     isSuccess &&
-                    activeChain?.id === chainId &&
+                    chain?.id === chainId &&
                     isDate(submissionsOpen) &&
                     isAfter(new Date(), submissionsOpen) &&
                     isDate(votesOpen) &&
@@ -356,7 +358,7 @@ const LayoutViewContest = (props: any) => {
 
                   {!isLoading &&
                     isSuccess &&
-                    activeChain?.id === chainId &&
+                    chain?.id === chainId &&
                     isDate(votesOpen) &&
                     isAfter(new Date(), votesOpen) &&
                     isDate(votesClose) &&

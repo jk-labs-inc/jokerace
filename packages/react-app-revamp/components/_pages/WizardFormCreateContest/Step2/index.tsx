@@ -4,7 +4,7 @@ import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
 import { copyToClipboard } from "@helpers/copyToClipboard";
 import { DuplicateIcon } from "@heroicons/react/outline";
-import { useConnect } from "wagmi";
+import { useAccount } from "wagmi";
 import { DialogModalDeployTransaction } from "../DialogModalDeployTransaction";
 import { useStore } from "../store";
 import Form from "./Form";
@@ -38,7 +38,7 @@ export const Step2 = () => {
     onSubmit: values => handleSubmitForm(values),
   });
   const { handleSubmitForm, stateContractDeployment } = useDeployToken(form);
-  const { isConnected } = useConnect();
+  const { isConnected } = useAccount();
   return (
     <>
       <div className="tracking-wide pb-8">

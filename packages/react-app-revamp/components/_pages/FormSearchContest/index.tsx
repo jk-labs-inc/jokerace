@@ -16,13 +16,13 @@ interface FormSearchContestProps {
 
 export const FormSearchContest = (props: FormSearchContestProps) => {
   const { isInline, onSubmit } = props;
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
   const { asPath, push, pathname } = useRouter();
   const { form, errors } = useForm({
     extend: validator({ schema }),
     onSubmit: values => {
       const currentChain = asPath.split("/")[2];
-      push(ROUTE_VIEW_CONTEST, `/contest/${currentChain ?? activeChain?.name.toLowerCase()}/${values.contestAddress}`, {
+      push(ROUTE_VIEW_CONTEST, `/contest/${currentChain ?? chain?.name.toLowerCase()}/${values.contestAddress}`, {
         shallow: true,
       });
       if (pathname !== ROUTE_VIEW_CONTESTS) {
@@ -33,8 +33,8 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
   });
   const [buttonLabel, setButtonLabel] = useState("Search");
   useEffect(() => {
-    setButtonLabel(!activeChain ? "Connect your wallet" : activeChain.unsupported ? "Unsupported network" : "Search");
-  }, [activeChain]);
+    setButtonLabel(!chain ? "Connect your wallet" : chain.unsupported ? "Unsupported network" : "Search");
+  }, [chain]);
   return (
     <>
       <form
@@ -68,7 +68,7 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
         </FormField>
 
         <Button
-          disabled={!activeChain || activeChain.unsupported === true}
+          disabled={!chain || chain.unsupported === true}
           scale={isInline ? "xs" : "default"}
           className={`${isInline ? "h-full whitespace-nowrap min-h-8" : " mx-auto mt-3"}`}
           intent="neutral-outline"

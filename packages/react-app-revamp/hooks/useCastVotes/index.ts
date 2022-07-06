@@ -26,7 +26,7 @@ export function useCastVotes() {
     //@ts-ignore
     setTransactionData,
   } = useStoreCastVotes();
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useContest();
 
@@ -43,15 +43,17 @@ export function useCastVotes() {
     try {
       // args are (*in this order!*): proposalId, support, numVotes
 
-      const txCastVotes = await writeContract(contractConfig, "castVote", {
+      const txCastVotes = await writeContract({
+        ...contractConfig,
+        functionName: "castVote",
         args: [pickedProposal, parseEther("0"), parseUnits(`${amount}`)],
       });
       const receipt = await waitForTransaction({
-        chainId: activeChain?.id,
+        chainId: chain?.id,
         //@ts-ignore
         hash: txCastVotes.hash,
         //@ts-ignore
-        transactionHref: `${activeChain.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
+        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
       });
       setTransactionData({
         hash: receipt.transactionHash,

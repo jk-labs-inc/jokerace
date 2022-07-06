@@ -28,13 +28,11 @@ export function useCheckSnapshotProgress() {
   async function updateSnapshotProgress() {
     const address = asPath.split("/")[3];
     while (isSnaspshotTaken !== true) {
-      const statusRawData = await readContract(
-        {
-          addressOrName: address,
-          contractInterface: DeployedContestContract.abi,
-        },
-        "state",
-      );
+      const statusRawData = await readContract({
+        addressOrName: address,
+        contractInterface: DeployedContestContract.abi,
+        functionName: "state",
+      });
       if (
         // @ts-ignore
         ![CONTEST_STATUS.COMPLETED, CONTEST_STATUS.VOTING_OPEN].includes(statusRawData) &&

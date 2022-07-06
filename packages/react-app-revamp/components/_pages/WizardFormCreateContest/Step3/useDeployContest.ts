@@ -12,7 +12,7 @@ import { useStore } from "../store";
 
 export function useDeployContest(form: any) {
   const stateContestDeployment = useContractFactory();
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
   const { refetch } = useSigner();
   //@ts-ignore
   const {
@@ -37,7 +37,7 @@ export function useDeployContest(form: any) {
   );
 
   async function handleSubmitForm(values: any) {
-    setContestDeployedToChain(activeChain);
+    setContestDeployedToChain(chain);
     setModalDeployContestOpen(true);
     stateContestDeployment.setIsLoading(true);
     stateContestDeployment.setIsSuccess(false);
@@ -81,7 +81,7 @@ export function useDeployContest(form: any) {
         contestParameters,
       );
       const receipt = await waitForTransaction({
-        chainId: activeChain?.id,
+        chainId: chain?.id,
         hash: contract.deployTransaction.hash,
       });
       stateContestDeployment.setIsSuccess(true);

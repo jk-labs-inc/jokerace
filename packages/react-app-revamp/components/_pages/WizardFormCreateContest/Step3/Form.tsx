@@ -1,4 +1,4 @@
-import { useNetwork, useConnect } from "wagmi";
+import { useNetwork, useAccount } from "wagmi";
 import { usePress } from "@react-aria/interactions";
 import shallow from "zustand/shallow";
 import Button from "@components/Button";
@@ -7,7 +7,7 @@ import FormField from "@components/FormField";
 import FormInput from "@components/FormInput";
 import FormTextarea from "@components/FormTextarea";
 import { useStore } from "../store";
-import { isAfter, isBefore, isPast } from "date-fns";
+import { isAfter, isBefore } from "date-fns";
 import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
@@ -26,8 +26,8 @@ interface FormProps {
 
 export const Form = (props: FormProps) => {
   const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
-  const { isConnected } = useConnect();
-  const { activeChain } = useNetwork();
+  const { isConnected } = useAccount();
+  const { chain } = useNetwork();
   const { setCurrentStep, dataDeployToken } = useStore(
     state => ({
       //@ts-ignore
@@ -79,13 +79,13 @@ export const Form = (props: FormProps) => {
       <fieldset>
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
-            !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
+            !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
           The basics
         </legend>
         <div className="space-y-6">
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label hasError={errors().contestTitle?.length > 0 === true} htmlFor="contestTitle">
                 Contest title
@@ -95,7 +95,7 @@ export const Form = (props: FormProps) => {
               </FormField.Description>
               <FormInput
                 required
-                disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                 aria-invalid={errors().contestTitle?.length > 0 === true ? "true" : "false"}
                 className="max-w-full w-auto 2xs:w-full"
                 placeholder="What's your contest title ?"
@@ -111,7 +111,7 @@ export const Form = (props: FormProps) => {
             </FormField.HelpBlock>
           </FormField>
 
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label hasError={errors().contestDescription?.length > 0 === true} htmlFor="contestDescription">
                 Contest description
@@ -121,7 +121,7 @@ export const Form = (props: FormProps) => {
               </FormField.Description>
               <FormTextarea
                 required
-                disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                 aria-invalid={errors().contestDescription?.length > 0 === true ? "true" : "false"}
                 className="max-w-full w-auto 2xs:w-full min-h-[20ch]"
                 placeholder="What's your prompt ?"
@@ -139,7 +139,7 @@ export const Form = (props: FormProps) => {
             </FormField.HelpBlock>
           </FormField>
 
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label hasError={errors().votingTokenAddress?.length > 0 === true} htmlFor="votingTokenAddress">
                 Voting token address{" "}
@@ -149,7 +149,7 @@ export const Form = (props: FormProps) => {
               </FormField.Description>
               <FormInput
                 required
-                disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                 aria-invalid={errors().votingTokenAddress?.length > 0 === true ? "true" : "false"}
                 className="max-w-full w-auto 2xs:w-full"
                 placeholder="0x..."
@@ -173,13 +173,13 @@ export const Form = (props: FormProps) => {
       <fieldset className="my-12">
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
-            !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
+            !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
           Submissions
         </legend>
         <div className="space-y-6">
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label
                 hasError={errors().datetimeOpeningSubmissions?.length > 0 === true || !isDateOpeningSubmissionsValid}
@@ -192,7 +192,7 @@ export const Form = (props: FormProps) => {
               </FormField.Description>
               <FormInput
                 required
-                disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                 aria-invalid={
                   errors().datetimeOpeningSubmissions?.length > 0 === true || !isDateOpeningSubmissionsValid
                     ? "true"
@@ -224,7 +224,7 @@ export const Form = (props: FormProps) => {
             </FormField.HelpBlock>
           </FormField>
 
-          <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+          <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label
                 className="flex flex-wrap"
@@ -239,7 +239,7 @@ export const Form = (props: FormProps) => {
               </FormField.Description>
               <FormInput
                 required
-                disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                 aria-invalid={errors().submissionMaxNumber?.length > 0 === true ? "true" : "false"}
                 className="max-w-full w-auto 2xs:w-full"
                 placeholder="200"
@@ -261,7 +261,7 @@ export const Form = (props: FormProps) => {
           </FormField>
 
           <FormRadioGroup
-            disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+            disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.submissionOpenToAll}
             onChange={(e: boolean) => {
               if (e === true) {
@@ -278,7 +278,7 @@ export const Form = (props: FormProps) => {
               <>
                 Must have{" "}
                 <FormInput
-                  disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                   aria-invalid={
                     touched()?.requiredNumberOfTokenToSubmit && !isRequiredNumberOfTokenToSubmitValid ? "true" : "false"
                   }
@@ -307,7 +307,7 @@ export const Form = (props: FormProps) => {
           </FormField.HelpBlock>
 
           <FormRadioGroup
-            disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+            disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.noSubmissionLimitPerUser}
             onChange={(e: boolean) => {
               if (e === true) {
@@ -322,7 +322,7 @@ export const Form = (props: FormProps) => {
               <>
                 Each submitters can submit up to{" "}
                 <FormInput
-                  disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                   aria-invalid={
                     touched()?.submissionPerUserMaxNumber && !isSubmissionNumberLimitValid ? "true" : "false"
                   }
@@ -357,7 +357,7 @@ export const Form = (props: FormProps) => {
       <fieldset>
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
-            !isConnected || activeChain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
+            !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
           }`}
         >
           Voting
@@ -365,10 +365,7 @@ export const Form = (props: FormProps) => {
         <div className="space-y-6">
           <FormField
             disabled={
-              !isDateOpeningSubmissionsValid ||
-              !isConnected ||
-              activeChain?.unsupported === true ||
-              isDeploying === true
+              !isDateOpeningSubmissionsValid || !isConnected || chain?.unsupported === true || isDeploying === true
             }
           >
             <FormField.InputField>
@@ -389,7 +386,7 @@ export const Form = (props: FormProps) => {
                 disabled={
                   !data()?.datetimeOpeningSubmissions ||
                   !isConnected ||
-                  activeChain?.unsupported === true ||
+                  chain?.unsupported === true ||
                   isDeploying === true
                 }
                 aria-invalid={
@@ -431,9 +428,7 @@ export const Form = (props: FormProps) => {
           </FormField>
 
           <FormField
-            disabled={
-              !isDateOpeningVotesValid || !isConnected || activeChain?.unsupported === true || isDeploying === true
-            }
+            disabled={!isDateOpeningVotesValid || !isConnected || chain?.unsupported === true || isDeploying === true}
           >
             <FormField.InputField>
               <FormField.Label
@@ -455,7 +450,7 @@ export const Form = (props: FormProps) => {
                     !data()?.datetimeOpeningSubmissions ||
                     !data()?.datetimeOpeningVoting ||
                     !isConnected ||
-                    activeChain?.unsupported === true ||
+                    chain?.unsupported === true ||
                     isDeploying === true
                   }
                   aria-invalid={
@@ -498,9 +493,7 @@ export const Form = (props: FormProps) => {
           </FormField>
 
           <FormRadioGroup
-            disabled={
-              !isDateClosingVotesValid || !isConnected || activeChain?.unsupported === true || isDeploying === true
-            }
+            disabled={!isDateClosingVotesValid || !isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.usersQualifyToVoteIfTheyHoldTokenOnVoteStart}
             onChange={(e: boolean) => {
               if (e === true) {
@@ -533,7 +526,7 @@ export const Form = (props: FormProps) => {
               !isDateClosingVotesValid ||
               data()?.usersQualifyToVoteIfTheyHoldTokenOnVoteStart !== false ||
               !isConnected ||
-              activeChain?.unsupported === true ||
+              chain?.unsupported === true ||
               isDeploying === true
             }
           >
@@ -558,7 +551,7 @@ export const Form = (props: FormProps) => {
                   !isDateClosingVotesValid ||
                   data()?.usersQualifyToVoteIfTheyHoldTokenOnVoteStart !== false ||
                   !isConnected ||
-                  activeChain?.unsupported === true ||
+                  chain?.unsupported === true ||
                   isDeploying === true
                 }
                 aria-invalid={
@@ -610,7 +603,7 @@ export const Form = (props: FormProps) => {
           intent="neutral-oultine"
           disabled={
             !isConnected ||
-            activeChain?.unsupported === true ||
+            chain?.unsupported === true ||
             isDeploying === true ||
             isValid() === false ||
             interacted() === null ||

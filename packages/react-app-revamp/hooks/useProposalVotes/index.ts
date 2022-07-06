@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
-import { chain, useConnect, useContractEvent, useNetwork } from "wagmi";
+import { chain as wagmiChain, useAccount, useContractEvent, useNetwork } from "wagmi";
 import { fetchEnsName, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import LegacyDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.legacy.sol/Contest.json";
 import { useStore as useStoreContest } from "../useContest/store";
 import { chains } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
@@ -14,8 +13,8 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
-  const { activeConnector } = useConnect();
-  const { activeChain } = useNetwork();
+  const account = useAccount();
+  const { chain } = useNetwork();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(chains.filter(chain => chain.name.toLowerCase() === url[2])?.[0]?.id);
   const [address] = useState(url[3]);
@@ -36,7 +35,6 @@ export function useProposalVotes(id: number | string) {
     setIsListVotersError,
     setVotesPerAddress,
     setIsListVotersSuccess,
-    version,
   } = useStore(
     state => ({
       //@ts-ignore
@@ -75,29 +73,27 @@ export function useProposalVotes(id: number | string) {
         addressOrName: address,
         contractInterface: abi,
       };
-      const list = await readContract(contractConfig, "proposalAddressesHaveVoted", {
+      const list = await readContract({
+        ...contractConfig,
         chainId,
+        functionName: "proposalAddressesHaveVoted",
         args: id,
       });
 
       await Promise.all(
         list.map(async (userAddress: string) => {
-          const data = await readContract(
-            {
-              //@ts-ignore
-              addressOrName: address,
-              contractInterface: DeployedContestContract.abi,
-            },
-            "proposalAddressVotes",
-            {
-              args: [id, userAddress],
-              chainId,
-            },
-          );
+          const data = await readContract({
+            //@ts-ignore
+            addressOrName: address,
+            contractInterface: DeployedContestContract.abi,
+            functionName: "proposalAddressVotes",
+            args: [id, userAddress],
+            chainId,
+          });
 
           const author = await fetchEnsName({
             address: userAddress,
-            chainId: chain.mainnet.id,
+            chainId: wagmiChain.mainnet.id,
           });
           setVotesPerAddress({
             address: userAddress,
@@ -123,34 +119,32 @@ export function useProposalVotes(id: number | string) {
   }
 
   useEffect(() => {
-    if (activeChain?.id === chainId && listProposalsData[id] && listProposalsData[id]?.votes > 0) {
+    if (chain?.id === chainId && listProposalsData[id] && listProposalsData[id]?.votes > 0) {
       fetchProposalVotes();
     }
-  }, [activeChain?.id, chainId, listProposalsData[id]?.votes]);
+  }, [chain?.id, chainId, listProposalsData[id]?.votes]);
 
   useEffect(() => {
-    if (activeConnector) {
-      activeConnector.on("change", data => {
+    if (account?.connector) {
+      account?.connector.on("change", data => {
         //@ts-ignore
         setChainId(data.chain.id);
       });
     }
-  }, [activeConnector]);
+  }, [account?.connector]);
 
   useEffect(() => {
     fetchProposalVotes();
   }, []);
 
-  useContractEvent(
-    {
-      addressOrName: asPath.split("/")[3],
-      contractInterface: DeployedContestContract.abi,
-    },
-    "VoteCast",
-    async event => {
+  useContractEvent({
+    addressOrName: asPath.split("/")[3],
+    contractInterface: DeployedContestContract.abi,
+    eventName: "VoteCast",
+    listener: async event => {
       await fetchProposalVotes();
     },
-  );
+  });
 
   return {
     isLoading: isListVotersLoading,

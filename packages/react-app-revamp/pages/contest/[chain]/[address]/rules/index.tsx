@@ -15,7 +15,7 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
-  const { activeChain } = useNetwork()
+  const { chain } = useNetwork()
   const { contestState, checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName } = useStore(state =>  ({ 
     //@ts-ignore
     votingToken: state.votingToken,
@@ -80,7 +80,7 @@ const Page: NextPage = (props: PageProps) => {
       <ul className='list-disc pis-4 leading-loose'>
         <li title={`$${votingToken.symbol}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Symbol: <span className='font-bold normal-case'>${votingToken.symbol}</span></span></li>
         <li title={`${new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Total supply: <span className='font-bold'>{new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}</span></span></li>
-        <li title={votingToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${activeChain?.blockExplorers?.default?.url}/address/${votingToken.address}`.replace('//address', '/address')}>{votingToken.address}</a></span></li>
+        <li title={votingToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${chain?.blockExplorers?.default?.url}/address/${votingToken.address}`.replace('//address', '/address')}>{votingToken.address}</a></span></li>
       </ul>
       
      </section>
