@@ -563,7 +563,6 @@ export const Form = (props: FormProps) => {
                 className="mt-2 xs:max-w-fit-content w-full"
                 type="datetime-local"
                 name="usersQualifyToVoteAtAnotherDatetime"
-                min={data()?.datetimeOpeningVoting}
                 max={data()?.datetimeClosingVoting}
                 pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
                 id="usersQualifyToVoteAtAnotherDatetime"

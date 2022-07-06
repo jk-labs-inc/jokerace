@@ -118,12 +118,13 @@ export const Form = (props: FormProps) => {
               hasError={errors().receivingAddress?.length > 0 === true}
               aria-describedby="input-receivingaddress-description input-receivingaddress-helpblock"
             />
-            <div className="mt-2">
+            <div className="mt-2 space-y-2 items-center flex flex-col 2xs:flex-row">
               <span className="text-neutral-10 pie-1ex text-xs">or</span>
               <Button
                 /* @ts-ignore */
                 onClick={() => setFields($data => ({ ...$data, receivingAddress: account?.address }))}
                 disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}
+                className='w-full 2xs:w-auto'
                 type="button"
                 scale="xs"
                 intent="true-solid-outline"

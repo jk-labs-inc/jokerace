@@ -174,7 +174,7 @@ export function useContest() {
       }
 
       const results = await readContracts({ contracts });
-      if (abi?.filter(el => el.name === "prompt").length > 0) setContestPrompt(results[contracts.length + 1]);
+      if (abi?.filter(el => el.name === "prompt").length > 0) setContestPrompt(results[contracts.length - 1]);
       setContestName(results[0]);
       const contestAuthorEns = await fetchEnsName({
         //@ts-ignore
