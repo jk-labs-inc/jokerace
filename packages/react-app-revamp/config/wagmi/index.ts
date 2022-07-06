@@ -29,12 +29,14 @@ const defaultChains = [
   chain.localhost,
 ];
 const appChains = [...defaultChains, ...testnetChains];
-
-export const { chains, provider } = configureChains(appChains, [
-  // alchemyProvider({ alchemyId }),
-  // infuraProvider({ infuraId }),
+const providers = process.env.NODE_ENV === 'development' ? [
   publicProvider(),
-]);
+] : [
+  alchemyProvider({ alchemyId }),
+  infuraProvider({ infuraId }),
+  publicProvider(),
+]
+export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({
   appName: "JokeDAO",
