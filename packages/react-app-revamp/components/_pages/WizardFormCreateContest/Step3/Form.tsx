@@ -7,7 +7,7 @@ import FormField from "@components/FormField";
 import FormInput from "@components/FormInput";
 import FormTextarea from "@components/FormTextarea";
 import { useStore } from "../store";
-import { isAfter, isBefore } from "date-fns";
+import { isAfter, isBefore, isFuture } from "date-fns";
 import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
@@ -398,7 +398,11 @@ export const Form = (props: FormProps) => {
                 className="xs:max-w-fit-content w-full"
                 type="datetime-local"
                 name="datetimeOpeningVoting"
-                min={data()?.datetimeOpeningSubmissions}
+                min={
+                  isFuture(new Date(data()?.datetimeOpeningSubmissions))
+                    ? data()?.datetimeOpeningSubmissions
+                    : new Date().toISOString()
+                }
                 pattern="[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}"
                 id="datetimeOpeningVoting"
                 hasError={

@@ -124,7 +124,7 @@ export const Form = (props: FormProps) => {
                 /* @ts-ignore */
                 onClick={() => setFields($data => ({ ...$data, receivingAddress: account?.address }))}
                 disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}
-                className='w-full 2xs:w-auto'
+                className="w-full 2xs:w-auto"
                 type="button"
                 scale="xs"
                 intent="true-solid-outline"

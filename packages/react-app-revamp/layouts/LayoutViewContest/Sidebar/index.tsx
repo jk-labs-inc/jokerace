@@ -136,20 +136,27 @@ export const Sidebar = (props: any) => {
             className="animate-appear fixed md:static z-10  md:mt-3 aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
             intent={
               currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
-              currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
-              contestMaxProposalCount === listProposalsIds.length
-                ? "primary-outline"
-                : "primary"
-            }
-            disabled={
+              currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
+              listProposalsIds.length >= contestMaxProposalCount ||
+              contestStatus !== CONTEST_STATUS.SUBMISSIONS_OPEN ||
               isLoading ||
               isListProposalsLoading ||
               isListProposalsError !== null ||
               isError !== null ||
-              chain?.id !== chainId ||
+              chain?.id !== chainId
+                ? "primary-outline"
+                : "primary"
+            }
+            disabled={
               currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
-              currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
-              contestMaxProposalCount === listProposalsIds.length
+              currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
+              listProposalsIds.length >= contestMaxProposalCount ||
+              contestStatus !== CONTEST_STATUS.SUBMISSIONS_OPEN ||
+              isLoading ||
+              isListProposalsLoading ||
+              isListProposalsError !== null ||
+              isError !== null ||
+              chain?.id !== chainId
             }
           >
             <PaperAirplaneIcon className="w-5 2xs:w-6 rotate-45 2xs:mie-0.5 -translate-y-0.5 md:hidden" />
