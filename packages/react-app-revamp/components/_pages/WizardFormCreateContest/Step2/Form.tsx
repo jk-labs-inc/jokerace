@@ -1,5 +1,5 @@
 import shallow from "zustand/shallow";
-import { useNetwork, useConnect, useAccount } from "wagmi";
+import { useNetwork, useAccount } from "wagmi";
 import { usePress } from "@react-aria/interactions";
 import FormField from "@components/FormField";
 import FormInput from "@components/FormInput";
@@ -25,9 +25,8 @@ const appearAsNeutralButton = button({ intent: "neutral-outline" });
 
 export const Form = (props: FormProps) => {
   const { isDeploying, form, data, errors, isValid, interacted, setData, setFields } = props;
-  const { isConnected } = useConnect();
   const account = useAccount();
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
   const { setCurrentStep, dataDeployToken } = useStore(
     state => ({
       //@ts-ignore
@@ -44,7 +43,7 @@ export const Form = (props: FormProps) => {
   return (
     <form ref={form} className="w-full">
       <fieldset className="space-y-6">
-        <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+        <FormField disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}>
           <FormField.InputField>
             <FormField.Label hasError={errors().tokenName?.length > 0 === true} htmlFor="tokenName">
               Token name <span className="text-2xs text-neutral-10 pis-1">(max. 30 characters)</span>
@@ -52,7 +51,7 @@ export const Form = (props: FormProps) => {
             <FormField.Description id="input-tokenname-description">The name of your token</FormField.Description>
             <FormInput
               required
-              disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+              disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}
               aria-invalid={errors().tokenName?.length > 0 === true ? "true" : "false"}
               className="max-w-full w-auto 2xs:w-full"
               placeholder="My token"
@@ -69,7 +68,7 @@ export const Form = (props: FormProps) => {
           </FormField.HelpBlock>
         </FormField>
 
-        <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+        <FormField disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}>
           <FormField.InputField>
             <FormField.Label hasError={errors().tokenSymbol?.length > 0 === true} htmlFor="tokenSymbol">
               Token symbol <span className="text-2xs text-neutral-10 pis-1">(max. 10 characters)</span>
@@ -81,7 +80,7 @@ export const Form = (props: FormProps) => {
               </div>
               <FormInput
                 required
-                disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}
                 aria-invalid={errors().tokenSymbol?.length > 0 === true ? "true" : "false"}
                 className="pis-9 max-w-full w-auto 2xs:w-full"
                 placeholder="TOKEN"
@@ -99,7 +98,7 @@ export const Form = (props: FormProps) => {
           </FormField.HelpBlock>
         </FormField>
 
-        <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+        <FormField disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}>
           <FormField.InputField>
             <FormField.Label hasError={errors().receivingAddress?.length > 0 === true} htmlFor="receivingAddress">
               Receiving address <span className="text-2xs text-neutral-10 pis-1">(Ethereum address)</span>
@@ -109,7 +108,7 @@ export const Form = (props: FormProps) => {
             </FormField.Description>
             <FormInput
               required
-              disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+              disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}
               aria-invalid={errors().receivingAddress?.length > 0 === true ? "true" : "false"}
               className="max-w-full w-auto 2xs:w-full"
               placeholder="0x..."
@@ -119,12 +118,13 @@ export const Form = (props: FormProps) => {
               hasError={errors().receivingAddress?.length > 0 === true}
               aria-describedby="input-receivingaddress-description input-receivingaddress-helpblock"
             />
-            <div className="mt-2">
+            <div className="mt-2 space-y-2 items-center flex flex-col 2xs:flex-row">
               <span className="text-neutral-10 pie-1ex text-xs">or</span>
               <Button
                 /* @ts-ignore */
-                onClick={() => setFields($data => ({ ...$data, receivingAddress: account?.data?.address }))}
-                disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+                onClick={() => setFields($data => ({ ...$data, receivingAddress: account?.address }))}
+                disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}
+                className='w-full 2xs:w-auto'
                 type="button"
                 scale="xs"
                 intent="true-solid-outline"
@@ -141,7 +141,7 @@ export const Form = (props: FormProps) => {
           </FormField.HelpBlock>
         </FormField>
 
-        <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+        <FormField disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}>
           <FormField.InputField>
             <FormField.Label hasError={errors().numberOfTokens?.length > 0 === true} htmlFor="numberOfTokens">
               Number of tokens{" "}
@@ -154,7 +154,7 @@ export const Form = (props: FormProps) => {
             </FormField.Description>
             <FormInput
               required
-              disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+              disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}
               aria-invalid={errors().numberOfTokens?.length > 0 === true ? "true" : "false"}
               className="max-w-full w-auto 2xs:w-full"
               placeholder="10000000000"
@@ -174,10 +174,10 @@ export const Form = (props: FormProps) => {
             Please type a positive number.
           </FormField.HelpBlock>
         </FormField>
-        <FormField disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}>
+        <FormField disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}>
           <ToggleSwitch
             label="Non-transferable"
-            disabled={!isConnected || activeChain?.unsupported === true || isDeploying === true}
+            disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}
             checked={data().nonTransferable}
             onChange={(e: boolean) => setData("nonTransferable", e)}
             name="nonTransferable"
@@ -196,8 +196,8 @@ export const Form = (props: FormProps) => {
           //@ts-ignore
           intent="neutral-oultine"
           disabled={
-            !isConnected ||
-            activeChain?.unsupported === true ||
+            !account.isConnected ||
+            chain?.unsupported === true ||
             isDeploying === true ||
             isValid() === false ||
             interacted() === null

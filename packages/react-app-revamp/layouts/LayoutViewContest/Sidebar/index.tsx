@@ -21,7 +21,7 @@ import styles from "./styles.module.css";
 
 export const Sidebar = (props: any) => {
   const { query, pathname } = useRouter();
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
   const {
     isLoading,
     isListProposalsLoading,
@@ -146,7 +146,7 @@ export const Sidebar = (props: any) => {
               isListProposalsLoading ||
               isListProposalsError !== null ||
               isError !== null ||
-              activeChain?.id !== chainId ||
+              chain?.id !== chainId ||
               currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount === contestMaxNumberSubmissionsPerUser ||
               contestMaxProposalCount === listProposalsIds.length
@@ -162,7 +162,7 @@ export const Sidebar = (props: any) => {
         disabled={
           isLoading ||
           isError !== null ||
-          activeChain?.id !== chainId ||
+          chain?.id !== chainId ||
           !isDate(submissionsOpen) ||
           !isDate(votesOpen) ||
           !isDate(votesClose)
@@ -177,7 +177,7 @@ export const Sidebar = (props: any) => {
       </Button>
       {!isLoading &&
         isSuccess &&
-        activeChain?.id === chainId &&
+        chain?.id === chainId &&
         isDate(submissionsOpen) &&
         isDate(votesOpen) &&
         isDate(votesClose) && (

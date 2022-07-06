@@ -17,13 +17,12 @@ export function useContestEvents() {
     //@ts-ignore
     setProposalVotes,
   } = useStoreContest();
-  useContractEvent(
-    {
-      addressOrName: asPath.split("/")[3],
-      contractInterface: DeployedContestContract.abi,
-    },
-    "ProposalCreated",
-    async event => {
+
+  useContractEvent({
+    addressOrName: asPath.split("/")[3],
+    contractInterface: DeployedContestContract.abi,
+    eventName: "ProposalCreated",
+    listener: async event => {
       const proposalContent = event[3].args.description;
       const proposalAuthor = event[3].args.proposer;
       const proposalId = event[3].args.proposalId.toString();
@@ -47,31 +46,26 @@ export function useContestEvents() {
 
       updateProposalTransactionData(event[3].transactionHash, proposalId);
     },
-  );
+  });
 
-  useContractEvent(
-    {
-      addressOrName: asPath.split("/")[3],
-      contractInterface: DeployedContestContract.abi,
-    },
-    "VoteCast",
-    async event => {
+  useContractEvent({
+    addressOrName: asPath.split("/")[3],
+    contractInterface: DeployedContestContract.abi,
+    eventName: "VoteCast",
+
+    listener: async event => {
       const proposalId = event[5].args.proposalId;
-      const votes = await readContract(
-        {
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
-        },
-        "proposalVotes",
-        {
-          args: proposalId,
-        },
-      );
+      const votes = await readContract({
+        addressOrName: asPath.split("/")[3],
+        contractInterface: DeployedContestContract.abi,
+        functionName: "proposalVotes",
+        args: proposalId,
+      });
 
       //@ts-ignore
       setProposalVotes({ id: proposalId, votes: votes / 1e18 });
     },
-  );
+  });
 
   function updateProposalTransactionData(transactionHash: string, proposalId: string | number) {
     //@ts-ignore

@@ -11,7 +11,7 @@ import { useStore } from "../store";
 
 export function useDeployToken(form: any) {
   const stateContractDeployment = useContractFactory();
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
   const { refetch } = useSigner();
   const { modalDeployTokenOpen, setTokenDeployedToChain, setModalDeployTokenOpen, setDeployTokenData } = useStore(
     state => ({
@@ -29,7 +29,7 @@ export function useDeployToken(form: any) {
 
   async function handleSubmitForm(values: any) {
     //@ts-ignore
-    setTokenDeployedToChain(activeChain);
+    setTokenDeployedToChain(chain);
     setModalDeployTokenOpen(true);
     stateContractDeployment.setIsLoading(true);
     stateContractDeployment.setIsSuccess(false);
@@ -53,7 +53,7 @@ export function useDeployToken(form: any) {
         values?.nonTransferable ?? false,
       );
       const receipt = await waitForTransaction({
-        chainId: activeChain?.id,
+        chainId: chain?.id,
         hash: contract.deployTransaction.hash,
       });
       stateContractDeployment.setIsSuccess(true);

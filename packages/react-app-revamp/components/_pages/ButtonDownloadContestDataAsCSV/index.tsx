@@ -9,7 +9,7 @@ import button from "@components/Button/styles";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
 export const ButtonDownloadContestDataAsCSV = () => {
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
   const { asPath } = useRouter();
   const { chainId } = useContest();
   const { stateExportData, formatContestCSVData } = useExportContestDataToCSV();
@@ -17,10 +17,10 @@ export const ButtonDownloadContestDataAsCSV = () => {
     const startDownloading = async () => {
       await formatContestCSVData();
     };
-    if (activeChain?.id === chainId) {
+    if (chain?.id === chainId) {
       startDownloading();
     }
-  }, [activeChain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
+  }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
   return (
     <>
       {stateExportData.isLoading && (

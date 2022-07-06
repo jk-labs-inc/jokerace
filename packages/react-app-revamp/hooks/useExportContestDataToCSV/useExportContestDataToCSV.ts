@@ -57,18 +57,14 @@ export function useExportContestDataToCSV() {
     }
 
     try {
-      const data = await readContract(
-        {
-          //@ts-ignore
-          addressOrName: address,
-          contractInterface: abi,
-        },
-        "proposalAddressVotes",
-        {
-          args: [id, userAddress],
-          chainId,
-        },
-      );
+      const data = await readContract({
+        //@ts-ignore
+        addressOrName: address,
+        contractInterface: abi,
+        functionName: "proposalAddressVotes",
+        args: [id, userAddress],
+        chainId,
+      });
       //@ts-ignore
       return data / 1e18;
     } catch (e) {

@@ -28,7 +28,7 @@ export function useSubmitProposal() {
     //@ts-ignore
     setTransactionData,
   } = useStoreSubmitProposal();
-  const { activeChain } = useNetwork();
+  const { chain } = useNetwork();
   const { asPath } = useRouter();
 
   async function sendProposal(proposalContent: string) {
@@ -42,18 +42,21 @@ export function useSubmitProposal() {
       contractInterface: DeployedContestContract.abi,
     };
     try {
-      const txSendProposal = await writeContract(contractConfig, "propose", {
+      const txSendProposal = await writeContract({
+        ...contractConfig,
+        functionName: "propose",
         args: proposalContent,
       });
+
       const receipt = await waitForTransaction({
-        chainId: activeChain?.id,
+        chainId: chain?.id,
         //@ts-ignore
         hash: txSendProposal.hash,
         //@ts-ignore
-        transactionHref: `${activeChain.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
+        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
       });
       setTransactionData({
-        chainId: activeChain?.id,
+        chainId: chain?.id,
         hash: receipt.transactionHash,
       });
       setIsLoading(false);

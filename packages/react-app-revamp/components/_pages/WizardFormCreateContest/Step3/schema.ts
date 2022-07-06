@@ -37,7 +37,5 @@ export const schema = object({
   datetimeOpeningVoting: string().refine(value => !isPast(new Date(value))),
   datetimeClosingVoting: string().refine(value => !isPast(new Date(value))),
   usersQualifyToVoteIfTheyHoldTokenOnVoteStart: boolean(),
-  usersQualifyToVoteAtAnotherDatetime: string()
-    .refine(value => !isPast(new Date(value)))
-    .optional(),
+  usersQualifyToVoteAtAnotherDatetime: string().optional(),
 });

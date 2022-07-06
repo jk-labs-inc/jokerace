@@ -50,7 +50,7 @@ export interface WizardFormState {
 export const createStore = () => {
   return create<WizardFormState>((set) => ({
     tokenDeployedToChain: null,
-    setTokenDeployedToChain: (chain) => set({ contestDeployedToChain: chain }),
+    setTokenDeployedToChain: (chain) => set({ tokenDeployedToChain: chain }),
 
     contestDeployedToChain: null,
     setContestDeployedToChain: (chain) => set({ contestDeployedToChain: chain }),

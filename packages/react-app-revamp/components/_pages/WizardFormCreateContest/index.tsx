@@ -1,7 +1,7 @@
 import shallow from 'zustand/shallow'
 import { useRouter } from "next/router";
 import { Fragment, useEffect } from "react";
-import { useConnect, useNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { useStore } from "./store";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
@@ -43,9 +43,8 @@ export const WizardFormCreateContest = () => {
      }), shallow);
     
     const { query: { step }, isReady } = useRouter()
-    const connect = useConnect()
-    const { isConnected } = connect
-    const { activeChain, isLoading } = useNetwork()
+    const { isConnected, isConnecting, isReconnecting } = useAccount()
+    const { chain } = useNetwork()
 
     useEffect(() => {
       //@ts-ignore
@@ -59,7 +58,7 @@ export const WizardFormCreateContest = () => {
 
  return <>
    <Transition 
-    show={!isReady || isLoading}
+    show={!isReady || isConnecting || isReconnecting}
     as={Fragment}
     enter="ease-out duration-200"
     enterFrom="opacity-0"
@@ -74,7 +73,7 @@ export const WizardFormCreateContest = () => {
     </div>
    </Transition>
    <Transition
-show={isReady && !isLoading}
+show={isReady && !isConnecting && !isReconnecting}
 as={Fragment}
 enter="ease-out duration-300 delay-300"
 enterFrom="opacity-0"
@@ -84,9 +83,9 @@ leaveFrom="opacity-100"
 leaveTo="opacity-0 "
 >
 <div>
-    {(isReady && (!isConnected || activeChain?.unsupported === true)) && <div className='mb-5 text-sm font-bold flex items-center bg-primary-1 text-primary-10 p-3 rounded-md border-solid border border-primary-4'>
+    {(isReady && (!isConnected || chain?.unsupported === true)) && <div className='mb-5 text-sm font-bold flex items-center bg-primary-1 text-primary-10 p-3 rounded-md border-solid border border-primary-4'>
     <ExclamationCircleIcon className="w-6 mie-1ex" />
-    {!isConnected ? "Connect your wallet to create your contest." : activeChain?.unsupported === true && "We don't support this chain (yet). In the meantime, please switch to another network."}
+    {!isConnected ? "Connect your wallet to create your contest." : chain?.unsupported === true && "We don't support this chain (yet). In the meantime, please switch to another network."}
     </div>}
     <StepIndicator />
     <div className="w-full">
