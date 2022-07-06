@@ -1,0 +1,111 @@
+/*
+  font-face rules (custom fonts declarations)
+*/
+@font-face {
+  src: url("/Lato-Regular.woff2") format("woff2");
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  src: url("/Lato-Bold.woff2") format("woff2");
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+@font-face {
+  src: url("/Lato-Black.woff2") format("woff2");
+  font-family: "Lato";
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *:not(.normal-case, .uppercase, input, textarea) {
+    text-transform: lowercase !important;
+  }
+  html {
+    --brand: theme("colors.primary.10");
+    scrollbar-color: var(--brand) Canvas;
+    color-scheme: dark;
+  }
+
+  :root {
+    accent-color: var(--brand);
+  }
+  :focus-visible {
+    outline-color: var(--brand);
+  }
+  ::selection {
+    background-color: var(--brand);
+  }
+  ::marker:not(li) {
+    color: var(--brand);
+  }
+  *::selection {
+    @apply text-true-black;
+  }
+
+  :is(::-webkit-calendar-picker-indicator, ::-webkit-clear-button, ::-webkit-inner-spin-button, ::-webkit-outer-spin-button) {
+    color: var(--brand);
+  }
+  html {
+    @apply bg-true-black text-true-white overflow-x-hidden;
+  }
+  body {
+    @apply text-base flex flex-col min-h-screen;
+  }
+
+  #__next,
+  #__next > [data-rk=""] {
+    @apply grow flex flex-col;
+  }
+
+  .navLink-desktop {
+    @apply py-2 px-3 rounded-full font-semibold;
+  }
+  .navLink-desktop--inactive {
+    @apply text-true-white hover:bg-true-white hover:bg-opacity-10 focus:text-primary-10;
+  }
+  .navLink-desktop--active {
+    @apply text-primary-10;
+  }
+
+  .navLink-mobile {
+    @apply font-bold px-4 py-3;
+  }
+
+  .with-link-highlighted a,
+  .link {
+    @apply cursor-pointer font-bold text-positive-9 underline focus:text-positive-10 hover:no-underline;
+  }
+}
+
+@layer components {
+  .container {
+    @apply px-5 lg:px-3 max-w-screen-md;
+  }
+  .form-field--disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  .input--invalid,
+  .input[aria-invalid="true"],
+  .input:not(:placeholder-shown, [type="datetime-local"]):invalid,
+  .input[aria-invalid="true"][type="datetime-local"] {
+    @apply bg-negative-1 bg-negative-2 border-negative-6 focus:border-negative-8 placeholder:text-negative-11 text-negative-11 !important;
+  }
+
+  .twitter-tweet.twitter-tweet-rendered,
+  .twitter-tweet.twitter-tweet-rendered > iframe {
+    @apply !max-w-full !xs:max-w-screen-2xs;
+  }
+}

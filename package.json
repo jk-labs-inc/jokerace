@@ -10,6 +10,12 @@
   ],
   "private": true,
   "scripts": {
+    "react-app-revamp:build": "yarn workspace @scaffold-eth/react-app-revamp build",
+    "react-app-revamp:export": "yarn workspace @scaffold-eth/react-app-revamp export",
+    "react-app-revamp:dev": "yarn workspace @scaffold-eth/react-app-revamp dev",
+    "react-app-revamp:lint": "yarn workspace @scaffold-eth/react-app-revamp lint",
+    "react-app-revamp:start": "yarn workspace @scaffold-eth/react-app-revamp start",
+    "react-app-revamp:test": "yarn workspace @scaffold-eth/react-app test",
     "react-app:build": "yarn workspace @scaffold-eth/react-app build --max-old-space-size=12288",
     "react-app:eject": "yarn workspace @scaffold-eth/react-app eject",
     "react-app:start": "yarn workspace @scaffold-eth/react-app start",

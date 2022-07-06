@@ -1,0 +1,20 @@
+.countdown {
+  @apply md:justify-center flex flex-wrap space-i-1ex items-center;
+}
+
+.wrapperUnit {
+  @apply flex items-baseline;
+}
+
+.unitValue {
+  @apply text-primary-10 text-md font-black italic;
+  font-variant-numeric: tabular-nums;
+}
+
+.unit {
+  @apply pis-1ex text-xs text-primary-8 font-bold;
+}
+
+.label {
+  @apply md:text-xs mb-1 md:text-center text-primary-10 font-bold;
+}
