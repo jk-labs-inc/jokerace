@@ -161,10 +161,15 @@ const LayoutBase = (props: LayoutBaseProps) => {
         </div>
         <div className="py-4 text-2xs">
           <div className="mx-auto container">
-            <a className="items-center flex xs:justify-center" target="_blank" rel="nofollow noreferrer" href="https://vercel.com/?utm_source=jokedao&utm_campaign=oss">
+            <a
+              className="items-center flex xs:justify-center"
+              target="_blank"
+              rel="nofollow noreferrer"
+              href="https://vercel.com/?utm_source=jokedao&utm_campaign=oss"
+            >
               <span className="sr-only">Powered by Vercel</span>
               <span className="pie-1ex">Powered by</span>
-              <IconPoweredByVercel aria-hidden="true" className="w-20"/>
+              <IconPoweredByVercel aria-hidden="true" className="w-20" />
             </a>
           </div>
         </div>
