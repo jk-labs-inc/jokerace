@@ -162,23 +162,6 @@ const LayoutViewContest = (props: any) => {
           <FormSearchContest onSubmit={onSearch} isInline={true} />
         </div>
       </div>
-      {chain?.id === chainId &&
-        isSuccess &&
-        isError === null &&
-        !isLoading &&
-        (!contestPrompt || contestPrompt === null) &&
-        isBefore(new Date(), votesClose) &&
-        isAfter(new Date(), submissionsOpen) && (
-          <div className="hidden md:block animate-appear text-2xs text-center bg-primary-1 bg-opacity-50 text-primary-10 py-2">
-            <div className="container mx-auto">
-              <p>
-                This contest uses the legacy version of our contracts. <br /> Contract interactions like submitting a
-                proposal or casting votes won&apos;t be reflected on the UI in real time and will require you to reload
-                the page to reflect those changes.
-              </p>
-            </div>
-          </div>
-        )}
       <div
         className={`${
           isLoading ? "pointer-events-none" : ""
@@ -198,23 +181,6 @@ const LayoutViewContest = (props: any) => {
           />
         </div>
         <div className="md:pt-5 md:pb-20 flex flex-col md:col-span-8">
-          {chain?.id === chainId &&
-            isSuccess &&
-            isError === null &&
-            !isLoading &&
-            (!contestPrompt || contestPrompt === null) &&
-            isBefore(new Date(), votesClose) &&
-            isAfter(new Date(), submissionsOpen) && (
-              <div className="mt-4 md:mt-0 md:hidden animate-appear text-sm bg-primary-1 bg-opacity-75 text-primary-10 rounded-md p-3">
-                <div className="container mx-auto">
-                  <p>
-                    This contest uses the legacy version of our contracts. <br /> Contract interactions like submitting
-                    a proposal or casting votes won&apos;t be reflected on the UI in real time and will require you to
-                    reload the page to reflect those changes.
-                  </p>
-                </div>
-              </div>
-            )}
           {account.isConnecting ||
             account.isReconnecting ||
             (chain?.id === chainId && (isLoading || isListProposalsLoading) && (

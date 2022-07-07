@@ -8,6 +8,7 @@ import { schema } from "./schema";
 import FormField from "@components/FormField";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { useEffect, useState } from "react";
+import { getNetwork } from '@wagmi/core'
 
 interface FormSearchContestProps {
   isInline?: boolean;
@@ -21,8 +22,8 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
   const { form, errors } = useForm({
     extend: validator({ schema }),
     onSubmit: values => {
-      const currentChain = asPath.split("/")[2];
-      push(ROUTE_VIEW_CONTEST, `/contest/${currentChain ?? chain?.name.toLowerCase()}/${values.contestAddress}`, {
+      const currentChain = asPath.split("/")[2];  getNetwork
+      push(ROUTE_VIEW_CONTEST, `/contest/${currentChain ?? getNetwork()?.chain?.name.toLowerCase()}/${values.contestAddress}`, {
         shallow: true,
       });
       if (pathname !== ROUTE_VIEW_CONTESTS) {
