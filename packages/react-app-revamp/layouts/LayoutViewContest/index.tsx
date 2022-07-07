@@ -168,7 +168,7 @@ const LayoutViewContest = (props: any) => {
         } flex-grow container mx-auto md:grid md:gap-6 md:grid-cols-12 md:-mb-20`}
       >
         <div
-          className={`md:max-h-[calc(100vh-12.5rem)] ${styles.navbar} ${styles.withFakeSeparator} z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-4`}
+          className={`md:max-h-[calc(100vh-14.85rem)] ${styles.navbar} ${styles.withFakeSeparator} z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-4`}
         >
           <Sidebar
             isLoading={isLoading}
