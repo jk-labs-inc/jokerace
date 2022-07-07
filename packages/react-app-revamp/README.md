@@ -1,4 +1,5 @@
 # JokeDAO Front-end
+[![Vercel](./public/powered-by-vercel.svg)](https://vercel.com?utm_source=jokedao&utm_campaign=oss)
 
 ## Pre-requisites
 - `yarn` installed
@@ -28,3 +29,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - NextJS
 - Tailwind CSS & Headless-UI
 - ethers, wagmi, @wagmi/core, @rainbow-me/rainbowkit
+- zustand
+
+JokeDAO V2 front-end is hosted on [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
