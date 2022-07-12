@@ -23,7 +23,6 @@ export function useContestEvents() {
     contractInterface: DeployedContestContract.abi,
     eventName: "ProposalCreated",
     listener: async event => {
-      console.log("heee");
       const proposalContent = event[3].args.description;
       const proposalAuthor = event[3].args.proposer;
       const proposalId = event[3].args.proposalId.toString();
