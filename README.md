@@ -1,5 +1,5 @@
 # JokeDaoV1
-Check out the live site at [jokedao.io](https://jokedao.io)!
+Check out the live v1 site at [jokedao.jokedao.io](https://jokedao.jokedao.io) and the live v2 site at [jokedao.io](https://jokedao.io)
 
 # 🏄‍♂️ Quick Start To Spin Up Locally
 
