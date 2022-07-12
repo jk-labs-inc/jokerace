@@ -1,4 +1,4 @@
-# JokeDaoV2
+# JokeDaoV1
 Check out the live site at [jokedao.io](https://jokedao.io)!
 
 # 🏄‍♂️ Quick Start To Spin Up Locally
