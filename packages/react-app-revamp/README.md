@@ -30,5 +30,6 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - Tailwind CSS & Headless-UI
 - ethers, wagmi, @wagmi/core, @rainbow-me/rainbowkit
 - zustand
+- [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
 
 JokeDAO V2 front-end is hosted on [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
