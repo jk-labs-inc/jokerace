@@ -1,6 +1,8 @@
 # JokeDaoV2
 Check out the live site at [jokedao.io](https://jokedao.io)!
 
+You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io)
+
 # 🏄‍♂️ Quick Start To Spin Up Locally
 
 Prerequisites: [Node (v16 LTS)](https://nodejs.org/en/download/) plus [Yarn](https://classic.yarnpkg.com/en/docs/install/) and [Git](https://git-scm.com/downloads)
