@@ -27,7 +27,7 @@ function renderContent(str: string) {
   }
   return (
     <div className="with-link-highlighted">
-      <Interweave content={str.replaceAll(",", ",\n")} matchers={[new UrlMatcher("url")]} />
+      <Interweave content={str} matchers={[new UrlMatcher("url")]} />
     </div>
   );
 }

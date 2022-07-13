@@ -126,7 +126,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
         <>
           {contestPrompt && (
             <p className="mb-4 text-neutral-11 text-md font-bold with-link-highlighted ">
-              <Interweave content={contestPrompt.replaceAll(",", ",\n")} matchers={[new UrlMatcher("url")]} />
+              <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
             </p>
           )}
           {showForm === true ? (
