@@ -8,6 +8,7 @@ import { schema } from "./schema";
 import FormField from "@components/FormField";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { useEffect, useState } from "react";
+import { getNetwork } from "@wagmi/core";
 
 interface FormSearchContestProps {
   isInline?: boolean;
@@ -17,14 +18,21 @@ interface FormSearchContestProps {
 export const FormSearchContest = (props: FormSearchContestProps) => {
   const { isInline, onSubmit } = props;
   const { chain } = useNetwork();
-  const { asPath, push, pathname } = useRouter();
+  const { asPath, push, pathname, events } = useRouter();
+  const [showLoader, setShowLoader] = useState(false);
   const { form, errors } = useForm({
     extend: validator({ schema }),
     onSubmit: values => {
+      if (!chain || chain.unsupported === true) return;
       const currentChain = asPath.split("/")[2];
-      push(ROUTE_VIEW_CONTEST, `/contest/${currentChain ?? chain?.name.toLowerCase()}/${values.contestAddress}`, {
-        shallow: true,
-      });
+      getNetwork;
+      push(
+        ROUTE_VIEW_CONTEST,
+        `/contest/${currentChain ?? getNetwork()?.chain?.name.toLowerCase()}/${values.contestAddress}`,
+        {
+          shallow: true,
+        },
+      );
       if (pathname !== ROUTE_VIEW_CONTESTS) {
         //@ts-ignore
         onSubmit(values.contestAddress);
@@ -35,6 +43,18 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
   useEffect(() => {
     setButtonLabel(!chain ? "Connect your wallet" : chain.unsupported ? "Unsupported network" : "Search");
   }, [chain]);
+
+  useEffect(() => {
+    events.on("routeChangeStart", () => setShowLoader(true));
+    events.on("routeChangeComplete", () => setShowLoader(false));
+    events.on("routeChangeError", () => setShowLoader(false));
+    return () => {
+      events.off("routeChangeStart", () => setShowLoader(false));
+      events.off("routeChangeComplete", () => setShowLoader(false));
+      events.off("routeChangeError", () => setShowLoader(false));
+    };
+  }, []);
+
   return (
     <>
       <form
@@ -68,9 +88,11 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
         </FormField>
 
         <Button
-          disabled={!chain || chain.unsupported === true}
+          isLoading={showLoader}
           scale={isInline ? "xs" : "default"}
-          className={`${isInline ? "h-full whitespace-nowrap min-h-8" : " mx-auto mt-3"}`}
+          className={`${isInline ? "h-full whitespace-nowrap min-h-8" : " mx-auto mt-3"} ${
+            !chain || chain.unsupported === true ? "pointer-events-none opacity-50" : ""
+          }`}
           intent="neutral-outline"
         >
           {buttonLabel}
