@@ -29,13 +29,10 @@ const defaultChains = [
   chain.localhost,
 ];
 const appChains = [...defaultChains, ...testnetChains];
-const providers = process.env.NODE_ENV === 'development' ? [
-  publicProvider(),
-] : [
-  alchemyProvider({ alchemyId }),
-  infuraProvider({ infuraId }),
-  publicProvider(),
-]
+const providers =
+  process.env.NODE_ENV === "development"
+    ? [publicProvider()]
+    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({

@@ -5,7 +5,6 @@ export const { Provider, useStore } = createContext();
 
 export const createStore = () => {
   return create(set => ({
-    version: null,
     contestName: null,
     contestPrompt: null,
     contestAuthor: null,

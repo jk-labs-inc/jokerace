@@ -12,6 +12,7 @@ import {
 import { FOOTER_LINKS } from "@config/links";
 import { Menu, Transition } from "@headlessui/react";
 import { XIcon, MenuIcon } from "@heroicons/react/solid";
+import { IconPoweredByVercel } from "@components/Icons";
 
 interface MenuLinkBaseProps {
   href: string;
@@ -144,7 +145,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
         </div>
       </header>
       <main className="flex flex-col grow">{children}</main>
-      <footer className="mt-auto py-20 xs:pb-0">
+      <footer className="mt-auto py-20 xs:pb-0 xs:pt-32">
         <div className="text-true-white text-opacity-80 font-medium container justify-center items-start text-2xs flex flex-col space-y-1 xs:space-y-0 xs:space-i-4 xs:flex-row mx-auto">
           {FOOTER_LINKS.map((link, key) => (
             <a
@@ -157,6 +158,20 @@ const LayoutBase = (props: LayoutBaseProps) => {
               {link.label}
             </a>
           ))}
+        </div>
+        <div className="py-4 text-2xs">
+          <div className="mx-auto container">
+            <a
+              className="items-center flex xs:justify-center"
+              target="_blank"
+              rel="nofollow noreferrer"
+              href="https://vercel.com/?utm_source=jokedao&utm_campaign=oss"
+            >
+              <span className="sr-only">Powered by Vercel</span>
+              <span className="pie-1ex">Powered by</span>
+              <IconPoweredByVercel aria-hidden="true" className="w-20" />
+            </a>
+          </div>
         </div>
       </footer>
     </>

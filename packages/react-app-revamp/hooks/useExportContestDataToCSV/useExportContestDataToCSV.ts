@@ -37,7 +37,9 @@ export function useExportContestDataToCSV() {
         contractInterface: abi,
       };
       //@ts-ignore
-      const list = await readContract(contractConfig, "proposalAddressesHaveVoted", {
+      const list = await readContract({
+        ...contractConfig,
+        functionName: "proposalAddressesHaveVoted",
         chainId,
         args: proposalId,
       });
