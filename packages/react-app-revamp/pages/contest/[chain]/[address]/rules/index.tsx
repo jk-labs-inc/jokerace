@@ -69,7 +69,7 @@ const Page: NextPage = (props: PageProps) => {
          </span>
            
            </li>
-         <li>Submitters qualify to vote if they have token by <span className="font-bold">{format(usersQualifyToVoteIfTheyHoldTokenAtTime, "PPP p")}</span></li>
+         <li>Token holders qualify to vote if they have token by <span className="font-bold">{format(usersQualifyToVoteIfTheyHoldTokenAtTime, "PPP p")}</span></li>
          <li>
            <span className='font-bold'>Contest accepts up to {new Intl.NumberFormat().format(contestMaxProposalCount)} proposals</span>{" "}total
           </li>
