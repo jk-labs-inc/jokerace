@@ -3,8 +3,10 @@ import { isAfter, isBefore } from "date-fns";
 import shallow from "zustand/shallow";
 
 export const VotingToken = () => {
-  const { currentUserTotalVotesCast, votingToken, votesOpen, currentUserAvailableVotesAmount } = useStore(
+  const { currentUserTotalVotesCast, votingToken, votesClose, votesOpen, currentUserAvailableVotesAmount } = useStore(
     state => ({
+      //@ts-ignore,
+      votesClose: state.votesClose,
       //@ts-ignore
       votesOpen: state.votesOpen,
       //@ts-ignore
@@ -22,7 +24,7 @@ export const VotingToken = () => {
         <span className="text-sm font-bold pb-0.5">
           {isBefore(new Date(), votesOpen)
             ? "Your available votes"
-            : isAfter(new Date(), votesOpen)
+            : isAfter(new Date(), votesClose)
             ? "Your used votes:"
             : "Your remaining votes:"}
         </span>
@@ -43,21 +45,21 @@ export const VotingToken = () => {
               <span className="md:hidden">{new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
             </span>
           </>
-        ) : (
+        ) : isBefore(new Date(), votesClose) ? (
           <>
-            <span title={new Intl.NumberFormat().format(currentUserTotalVotesCast)} className="text-lg">
+            <span title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)} className="text-lg">
               <span aria-hidden="true" className="hidden md:inline-block">
-                {currentUserTotalVotesCast > 1000000000
+                {currentUserAvailableVotesAmount > 1000000000
                   ? Intl.NumberFormat("en-US", {
                       notation: "compact",
                       maximumFractionDigits: 3,
-                    }).format(parseFloat(currentUserTotalVotesCast))
-                  : new Intl.NumberFormat("en-US").format(currentUserTotalVotesCast)}
+                    }).format(parseFloat(currentUserAvailableVotesAmount))
+                  : new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}
               </span>
-              <span className="md:hidden">{new Intl.NumberFormat("en-US").format(currentUserTotalVotesCast)}</span>
+              <span className="md:hidden">{new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}</span>
             </span>
             <span
-              title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}
+              title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}
               className="text-center text-md text-neutral-8"
             >
               <span className="px-[0.5ex]">out of</span>
@@ -72,7 +74,34 @@ export const VotingToken = () => {
               <span className="md:hidden">{new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}</span>
             </span>
           </>
-        )}
+        ) : <>
+        <span title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)} className="text-lg">
+          <span aria-hidden="true" className="hidden md:inline-block">
+            {currentUserAvailableVotesAmount > 1000000000
+              ? Intl.NumberFormat("en-US", {
+                  notation: "compact",
+                  maximumFractionDigits: 3,
+                }).format(parseFloat(currentUserAvailableVotesAmount))
+              : new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}
+          </span>
+          <span className="md:hidden">{new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}</span>
+        </span>
+        <span
+          title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}
+          className="text-center text-md text-neutral-8"
+        >
+          <span className="px-[0.5ex]">out of</span>
+          <span aria-hidden="true" className="hidden md:inline-block">
+            {currentUserAvailableVotesAmount + currentUserTotalVotesCast > 1000000000
+              ? new Intl.NumberFormat("en-US", {
+                  notation: "compact",
+                  maximumFractionDigits: 3,
+                }).format(parseFloat(currentUserAvailableVotesAmount + currentUserTotalVotesCast))
+              : new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}
+          </span>
+          <span className="md:hidden">{new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}</span>
+        </span>
+      </>}
 
         <span className="text-xs font-bold text-neutral-7">${votingToken?.symbol}</span>
       </div>
