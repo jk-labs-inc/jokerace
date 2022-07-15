@@ -109,7 +109,7 @@ export const StepIndicator = () => {
                         //@ts-ignore
                         onClick={() => setCurrentStep(parseInt(indicator))}
                       >
-                        <span className="px-1 bg-true-black text-2xs flex items-center justify-center mie-1ex aspect-square rounded-full border-solid border-current border">
+                        <span className="px-1 bg-true-black text-2xs flex items-center justify-center mie-1ex w-6 h-6 rounded-full border-solid border-current border">
                           {indicator}
                         </span>
                         {/* @ts-ignore */}

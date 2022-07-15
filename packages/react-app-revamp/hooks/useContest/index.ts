@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { chain, useAccount, useProvider } from "wagmi";
-import { fetchBlockNumber, fetchEnsName, fetchToken, readContract, readContracts } from "@wagmi/core";
+import { chain, useProvider } from "wagmi";
+import { fetchBlockNumber, fetchEnsName, fetchToken, getAccount, readContract, readContracts } from "@wagmi/core";
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
@@ -13,7 +13,6 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 export function useContest() {
   const provider = useProvider();
   const { asPath } = useRouter();
-  const account = useAccount();
   const [chainId, setChaindId] = useState(
     chains.filter(chain => chain.name.toLowerCase() === asPath.split("/")[2])?.[0]?.id,
   );
@@ -251,6 +250,8 @@ export function useContest() {
     setCheckIfUserPassedSnapshotLoading(true);
 
     try {
+      const accountData  = await getAccount()
+
       // Timestamp from when a user can vote
       // depending on the amount of voting token they're holding at a given timestamp (snapshot)
       const timestampSnapshotRawData = await readContract({
@@ -275,7 +276,7 @@ export function useContest() {
           ...contractBaseOptions,
           functionName: "getVotes",
           //@ts-ignore
-          args: [account?.address, timestampToCheck],
+          args: [accountData?.address, timestampToCheck],
         });
         //@ts-ignore
         setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
@@ -310,6 +311,8 @@ export function useContest() {
     const contractBaseOptions = {};
     setIsListProposalsLoading(true);
     try {
+      const accountData  = await getAccount()
+
       // Get list of proposals (ids)
       const proposalsIdsRawData = await readContract({
         ...contractConfig,
@@ -367,7 +370,7 @@ export function useContest() {
           // Check if that proposal belongs to the current user
           // (Needed to track if the current user can submit a proposal)
           //@ts-ignore
-          if (data[0] === account.address) currentUserProposalCount++;
+          if (data[0] === accountData?.address) currentUserProposalCount++;
           setProposalData({ id: proposalsIdsRawData[i], data: proposalData });
         }
         setCurrentUserProposalCount(currentUserProposalCount);
@@ -413,21 +416,21 @@ export function useContest() {
       // get current block number
       const currentBlockNumber = await fetchBlockNumber();
       const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 50; // (necessary to avoid block not mined error)
-
+      const accountData  = await getAccount()
       const contracts = [
         // get current user availables votes now
         {
           ...contractConfig,
           functionName: "getVotes",
           //@ts-ignore
-          args: [account?.address, timestamp],
+          args: [accountData?.address, timestamp],
         },
         // get votes cast by current user
         {
           ...contractConfig,
           functionName: "contestAddressTotalVotesCast",
           //@ts-ignore
-          args: account?.address,
+          args: accountData?.address,
         },
       ];
 
