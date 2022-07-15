@@ -27,7 +27,7 @@ const Page: NextPage = (props: PageProps) => {
         <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
       </Head>
     <h1 className='sr-only'>Rules of contest {contestName ? contestName : address} </h1>
-    {!isLoading  && isSuccess && <div className='animate-appear'>
+    {!isLoading  && isSuccess && <div className='animate-appear mt-4'>
         <p>Let&apos;s create a spreadsheet of full data from your contest: <br/>
             proposals, addresses of submitters, voters, number of votes, etc.
         </p>

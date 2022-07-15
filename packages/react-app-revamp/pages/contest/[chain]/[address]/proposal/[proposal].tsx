@@ -11,7 +11,6 @@ import ListProposalVotes from '@components/_pages/ListProposalVotes'
 import { CONTEST_STATUS } from '@helpers/contestStatus'
 import type { NextPage } from 'next'
 import Button from '@components/Button'
-import { IconSpinner } from '@components/Icons'
 
 interface PageProps {
   address: string,
@@ -62,7 +61,7 @@ const Page: NextPage = (props: PageProps) => {
         <meta name="description" content="@TODO: change this" />
       </Head>
     <h1 className='sr-only'>Proposal {proposal} - Contest {contestName ? contestName : address} </h1>
-    {listProposalsData[proposal] && <div className='animate-appear'>
+    {listProposalsData[proposal] && <div className='mt-6 animate-appear'>
         <ProposalContent 
           author={listProposalsData[proposal]?.author}
           content={listProposalsData[proposal]?.content}
