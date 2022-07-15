@@ -5,7 +5,7 @@ const LINK_TWITTER = "https://twitter.com/jokedao_";
 const LINK_UNISWAP = "https://app.uniswap.org/#/swap?chain=mainnet";
 const LINK_ABOUT = "https://etherscan.io/address/0x84f508cd68e1cd97c1dcc0cd7b5ff295a382b2ed";
 const LINK_V1 = "https://jokedao.jokedao.io/"
-const LINK_BUG_REPORT = "https://github.com/JokeDAO/JokeDaoV2Dev/issues/new"
+const LINK_BUG_REPORT = "https://github.com/JokeDAO/JokeDaoV2Dev/issues/new?assignees=&labels=bug&template=bug_report.md&title=%5BBUG%5D"
 
 export const FOOTER_LINKS = [
   {
