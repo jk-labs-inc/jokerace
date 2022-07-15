@@ -1,0 +1,3 @@
+.content * {
+    @apply normal-case !important;
+}

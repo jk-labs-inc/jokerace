@@ -3,6 +3,7 @@ import { isUrlTweet } from "@helpers/isUrlTweet";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
+import styles from './styles.module.css'
 interface ProposalContentProps {
   content: string;
   author: string;
@@ -26,7 +27,7 @@ function renderContent(str: string) {
     );
   }
   return (
-    <div className="with-link-highlighted">
+    <div className={`with-link-highlighted ${styles.content}`}>
       <Interweave content={str} matchers={[new UrlMatcher("url")]} />
     </div>
   );
