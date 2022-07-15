@@ -9,6 +9,6 @@
 }
 
 .stepper li::before {
-  @apply bg-neutral-1 px-2 text-sm inline-flex items-center justify-center mie-1ex aspect-square rounded-full border-solid border-current border;
+  @apply bg-neutral-1 text-sm inline-flex items-center justify-center mie-1ex w-7 h-7 rounded-full border-solid border-current border;
   content: counter(my-awesome-counter);
 }
