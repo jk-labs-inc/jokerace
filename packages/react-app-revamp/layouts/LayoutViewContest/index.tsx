@@ -260,19 +260,19 @@ const LayoutViewContest = (props: any) => {
                       </Link>
                     </div>
                   )}
-                  <h2 className="flex flex-wrap items-baseline text-neutral-11 font-bold mb-6">
+                  <h2 className={`flex flex-wrap items-baseline text-neutral-11 font-bold ${contestPrompt ? 'mb-3' : 'mb-6'}`}>
                     <span className="uppercase tracking-wide pie-1ex">{contestName}</span>{" "}
                     <span className="text-xs overflow-hidden text-neutral-8 text-ellipsis">by {contestAuthor}</span>
                   </h2>
 
                   {contestPrompt && (
-                    <p className="mb-8 text-lg with-link-highlighted font-bold">
+                    <p className="text-lg with-link-highlighted font-bold">
                       <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
                     </p>
                   )}
 
                   {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
-                    <div className="animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
+                    <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
                       <p>Snapshot ongoing, voting will be open in a 30sec-1min, please wait... </p>
                     </div>
                   )}
@@ -283,7 +283,7 @@ const LayoutViewContest = (props: any) => {
                     contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                     ![ROUTE_VIEW_CONTEST_RULES, ROUTE_VIEW_CONTEST_EXPORT_DATA].includes(pathname) && (
                       <section className="animate-appear">
-                        <p className="p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
+                        <p className="mt-4 p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
                           Too bad, your wallet didn&apos;t qualify to vote.
                         </p>
                       </section>

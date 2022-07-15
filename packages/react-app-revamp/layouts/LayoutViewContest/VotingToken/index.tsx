@@ -19,18 +19,18 @@ export const VotingToken = () => {
   return (
     <>
       <div className="font-black leading-snug flex flex-wrap space-i-1ex md:space-i-0 md:flex-col items-center slashed-zero tabular-nums">
-        <span className="text-sm font-bold">
+        <span className="text-sm font-bold pb-0.5">
           {isBefore(new Date(), votesOpen)
-            ? "Available votes"
+            ? "Your available votes"
             : isAfter(new Date(), votesOpen)
-            ? "Used votes:"
-            : "Votes remaining:"}
+            ? "Your used votes:"
+            : "Your remaining votes:"}
         </span>
         {isBefore(new Date(), votesOpen) ? (
           <>
             <span
               title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}
-              className="text-center text-md text-neutral-8 pt-2"
+              className="text-center text-md text-true-white pt-2"
             >
               <span aria-hidden="true" className="hidden md:inline-block">
                 {currentUserAvailableVotesAmount > 1000000000
@@ -52,24 +52,24 @@ export const VotingToken = () => {
                       notation: "compact",
                       maximumFractionDigits: 3,
                     }).format(parseFloat(currentUserTotalVotesCast))
-                  : new Intl.NumberFormat().format(currentUserTotalVotesCast)}
+                  : new Intl.NumberFormat("en-US").format(currentUserTotalVotesCast)}
               </span>
-              <span className="md:hidden">{new Intl.NumberFormat().format(currentUserTotalVotesCast)}</span>
+              <span className="md:hidden">{new Intl.NumberFormat("en-US").format(currentUserTotalVotesCast)}</span>
             </span>
             <span
               title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}
               className="text-center text-md text-neutral-8"
             >
-              <span className="px-1ex">of</span>
+              <span className="px-[0.5ex]">out of</span>
               <span aria-hidden="true" className="hidden md:inline-block">
-                {currentUserAvailableVotesAmount > 1000000000
+                {currentUserAvailableVotesAmount + currentUserTotalVotesCast > 1000000000
                   ? new Intl.NumberFormat("en-US", {
                       notation: "compact",
                       maximumFractionDigits: 3,
-                    }).format(parseFloat(currentUserAvailableVotesAmount))
-                  : new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}
+                    }).format(parseFloat(currentUserAvailableVotesAmount + currentUserTotalVotesCast))
+                  : new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}
               </span>
-              <span className="md:hidden">{new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
+              <span className="md:hidden">{new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}</span>
             </span>
           </>
         )}

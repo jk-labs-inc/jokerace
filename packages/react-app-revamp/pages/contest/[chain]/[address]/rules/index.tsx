@@ -52,7 +52,7 @@ const Page: NextPage = (props: PageProps) => {
     <h1 className='sr-only'>Rules of contest {contestName ? contestName : address} </h1>
     {!isLoading  && isSuccess && <div className='animate-appear space-y-8'>
      {contestState !== CONTEST_STATUS.SNAPSHOT_ONGOING && <section className='animate-appear'>
-       <p className={`p-3 rounded-md border-solid border mb-5 text-sm font-bold
+       <p className={`p-3 mt-4 rounded-md border-solid border mb-5 text-sm font-bold
        ${(!snapshotTaken || checkIfUserPassedSnapshotLoading ) ? ' border-neutral-4' : didUserPassSnapshotAndCanVote ? 'bg-positive-1 text-positive-10 border-positive-4' : ' bg-primary-1 text-primary-10 border-primary-4'}`
        }>
          {checkIfUserPassedSnapshotLoading ? 'Checking snapshot...' : !snapshotTaken ? 'Snapshot wasn\'t taken yet.': didUserPassSnapshotAndCanVote ? 'Congrats ! Your wallet qualified to vote.' : 'Too bad, your wallet didn\'t qualify to vote.'}
