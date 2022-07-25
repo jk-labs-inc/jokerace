@@ -322,35 +322,33 @@ export function useContest() {
       setListProposalsIds(proposalsIdsRawData);
       if (proposalsIdsRawData.length > 0) {
         let currentUserProposalCount = 0;
-        // For all proposals, fetch
-        const contracts: any = [];
-        proposalsIdsRawData.map(id => {
+        for (let i = 0; i < proposalsIdsRawData.length; i++) {
+          // For all proposals, fetch
+          const contracts: any = [];
           contracts.push(
             // proposal content
             {
               ...contractConfig,
               functionName: "getProposal",
-              args: id,
+              args: proposalsIdsRawData[i],
             },
             // Votes received
             {
               ...contractConfig,
               functionName: "proposalVotes",
-              args: id,
+              args: proposalsIdsRawData[i],
             },
           );
-        });
 
-        const results = await readContracts({ contracts });
-        // Create an array of proposals
-        // A proposal is a pair of data
-        // A pair of a proposal data is [content, votes]
-        const proposalDataPerId = results.reduce((result, value, index, array) => {
-          if (index % 2 === 0) result.push(array.slice(index, index + 2));
-          return result;
-        }, []);
+          const results = await readContracts({ contracts });
+          // Create an array of proposals
+          // A proposal is a pair of data
+          // A pair of a proposal data is [content, votes]
+          const proposalDataPerId = results.reduce((result, value, index, array) => {
+            if (index % 2 === 0) result.push(array.slice(index, index + 2));
+            return result;
+          }, []);
 
-        for (let i = 0; i < proposalsIdsRawData.length; i++) {
           const data = proposalDataPerId[i][0];
           // proposal author ENS
           const author = await fetchEnsName({
