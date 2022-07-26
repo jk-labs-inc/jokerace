@@ -304,12 +304,16 @@ export function useContest() {
       return;
     }
 
+    setIsLoading(false);
+    setIsListProposalsLoading(false);
+    setIsListProposalsSuccess(true);
+    setIsSuccess(true);
+
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
     };
     const contractBaseOptions = {};
-    setIsListProposalsLoading(true);
     try {
       const accountData  = await getAccount()
 
@@ -349,7 +353,7 @@ export function useContest() {
             return result;
           }, []);
 
-          const data = proposalDataPerId[i][0];
+          const data = proposalDataPerId[0][0];
           // proposal author ENS
           const author = await fetchEnsName({
             address: data[0],
@@ -363,7 +367,7 @@ export function useContest() {
             isContentImage: isUrlToImage(data[1]) ? true : false,
             exists: data[2],
             //@ts-ignore
-            votes: proposalDataPerId[i][1] / 1e18,
+            votes: proposalDataPerId[0][1] / 1e18,
           };
           // Check if that proposal belongs to the current user
           // (Needed to track if the current user can submit a proposal)
@@ -374,12 +378,8 @@ export function useContest() {
         setCurrentUserProposalCount(currentUserProposalCount);
       }
 
-      setIsLoading(false);
-      setIsListProposalsLoading(false);
       setIsListProposalsError(null);
       setIsError(null);
-      setIsListProposalsSuccess(true);
-      setIsSuccess(true);
     } catch (e) {
       onContractError(e);
       console.error(e);
