@@ -305,7 +305,6 @@ export function useContest() {
     }, []);
 
     const data = proposalDataPerId[0][0];
-    console.log("data: ", data)
     // proposal author ENS
     const author = await fetchEnsName({
       address: data[0],
@@ -380,10 +379,10 @@ export function useContest() {
       }
       setIsLoading(false);
       setIsListProposalsLoading(false);
-      setIsListProposalsSuccess(true);
-      setIsSuccess(true);
       setIsListProposalsError(null);
       setIsError(null);
+      setIsListProposalsSuccess(true);
+      setIsSuccess(true);
     } catch (e) {
       onContractError(e);
       console.error(e);
