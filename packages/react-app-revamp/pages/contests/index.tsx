@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { getLayout } from '@layouts/LayoutContests'
 import FormSearchContest from '@components/_pages/FormSearchContest'
 import type { NextPage } from 'next'
 
@@ -17,5 +18,8 @@ const Page: NextPage = () => {
     </>
   )
 }
+
+//@ts-ignore
+Page.getLayout = getLayout
 
 export default Page
