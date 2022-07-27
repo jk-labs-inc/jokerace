@@ -86,6 +86,8 @@ export function useContest() {
     setCheckIfUserPassedSnapshotLoading,
     //@ts-ignore
     setContestPrompt,
+    //@ts-ignore
+    currentUserProposalCount,
   } = useStore();
 
   function onContractError(err: any) {
@@ -291,6 +293,43 @@ export function useContest() {
     }
   }
 
+  async function fetchProposal(i: number, contracts: any = [], proposalsIdsRawData: any) {
+    const accountData  = await getAccount();
+    const results = await readContracts({ contracts });
+    // Create an array of proposals
+    // A proposal is a pair of data
+    // A pair of a proposal data is [content, votes]
+    const proposalDataPerId = results.reduce((result, value, index, array) => {
+      if (index % 2 === 0) result.push(array.slice(index, index + 2));
+      return result;
+    }, []);
+
+    const data = proposalDataPerId[0][0];
+    // proposal author ENS
+    const author = await fetchEnsName({
+      address: data[0],
+      chainId: chain.mainnet.id,
+    });
+
+    const proposalData = {
+      authorEthereumAddress: data[0],
+      author: author ?? data[0],
+      content: data[1],
+      isContentImage: isUrlToImage(data[1]) ? true : false,
+      exists: data[2],
+      //@ts-ignore
+      votes: proposalDataPerId[0][1] / 1e18,
+    };
+    // Check if that proposal belongs to the current user
+    // (Needed to track if the current user can submit a proposal)
+    //@ts-ignore
+    if (data[0] === accountData?.address) {
+      let tempCount = currentUserProposalCount;
+      setCurrentUserProposalCount(tempCount++);
+    }
+    setProposalData({ id: proposalsIdsRawData[i], data: proposalData });
+  }
+
   async function fetchAllProposals() {
     const abi = await getContestContractVersion(address);
     if (abi === null) {
@@ -309,10 +348,7 @@ export function useContest() {
       contractInterface: abi,
     };
     const contractBaseOptions = {};
-    setIsListProposalsLoading(true);
     try {
-      const accountData  = await getAccount()
-
       // Get list of proposals (ids)
       const proposalsIdsRawData = await readContract({
         ...contractConfig,
@@ -321,61 +357,26 @@ export function useContest() {
       });
       setListProposalsIds(proposalsIdsRawData);
       if (proposalsIdsRawData.length > 0) {
-        let currentUserProposalCount = 0;
-        // For all proposals, fetch
-        const contracts: any = [];
-        proposalsIdsRawData.map(id => {
+        for (let i = 0; i < proposalsIdsRawData.length; i++) {
+          // For all proposals, fetch
+          const contracts: any = [];
           contracts.push(
             // proposal content
             {
               ...contractConfig,
               functionName: "getProposal",
-              args: id,
+              args: proposalsIdsRawData[i],
             },
             // Votes received
             {
               ...contractConfig,
               functionName: "proposalVotes",
-              args: id,
+              args: proposalsIdsRawData[i],
             },
           );
-        });
-
-        const results = await readContracts({ contracts });
-        // Create an array of proposals
-        // A proposal is a pair of data
-        // A pair of a proposal data is [content, votes]
-        const proposalDataPerId = results.reduce((result, value, index, array) => {
-          if (index % 2 === 0) result.push(array.slice(index, index + 2));
-          return result;
-        }, []);
-
-        for (let i = 0; i < proposalsIdsRawData.length; i++) {
-          const data = proposalDataPerId[i][0];
-          // proposal author ENS
-          const author = await fetchEnsName({
-            address: data[0],
-            chainId: chain.mainnet.id,
-          });
-
-          const proposalData = {
-            authorEthereumAddress: data[0],
-            author: author ?? data[0],
-            content: data[1],
-            isContentImage: isUrlToImage(data[1]) ? true : false,
-            exists: data[2],
-            //@ts-ignore
-            votes: proposalDataPerId[i][1] / 1e18,
-          };
-          // Check if that proposal belongs to the current user
-          // (Needed to track if the current user can submit a proposal)
-          //@ts-ignore
-          if (data[0] === accountData?.address) currentUserProposalCount++;
-          setProposalData({ id: proposalsIdsRawData[i], data: proposalData });
+          fetchProposal(i, contracts, proposalsIdsRawData);
         }
-        setCurrentUserProposalCount(currentUserProposalCount);
       }
-
       setIsLoading(false);
       setIsListProposalsLoading(false);
       setIsListProposalsError(null);
