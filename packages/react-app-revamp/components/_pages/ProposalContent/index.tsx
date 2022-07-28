@@ -3,7 +3,7 @@ import { isUrlTweet } from "@helpers/isUrlTweet";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import styles from './styles.module.css'
+import styles from "./styles.module.css";
 interface ProposalContentProps {
   content: string;
   author: string;

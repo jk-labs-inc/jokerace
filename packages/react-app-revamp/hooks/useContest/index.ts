@@ -250,7 +250,7 @@ export function useContest() {
     setCheckIfUserPassedSnapshotLoading(true);
 
     try {
-      const accountData  = await getAccount()
+      const accountData = await getAccount();
 
       // Timestamp from when a user can vote
       // depending on the amount of voting token they're holding at a given timestamp (snapshot)
@@ -311,7 +311,7 @@ export function useContest() {
     const contractBaseOptions = {};
     setIsListProposalsLoading(true);
     try {
-      const accountData  = await getAccount()
+      const accountData = await getAccount();
 
       // Get list of proposals (ids)
       const proposalsIdsRawData = await readContract({
@@ -416,7 +416,7 @@ export function useContest() {
       // get current block number
       const currentBlockNumber = await fetchBlockNumber();
       const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 50; // (necessary to avoid block not mined error)
-      const accountData  = await getAccount()
+      const accountData = await getAccount();
       const contracts = [
         // get current user availables votes now
         {

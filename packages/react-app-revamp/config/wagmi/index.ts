@@ -59,3 +59,24 @@ export const client = createClient({
   connectors,
   provider,
 });
+
+export const chainsImages = {
+  avalanche: "/avalanche.png",
+  fantom: "/fantom.png",
+  gnosis: "/gnosis.png",
+  harmony: "/harmony.png",
+  arbitrum: "/arbitrum.svg",
+  arbitrumone: "/arbitrum.svg",
+  arbitrumrinkeby: "/arbitrum.svg",
+  optimismkovan: "/optimism.svg",
+  optimism: "/optimism.svg",
+  ethereum: "/ethereum.svg",
+  hardhat: "/hardhat.svg",
+  rinkeby: "/ethereum.svg",
+  ropsten: "/ethereum.svg",
+  localhost: "/ethereum.svg",
+  goerli: "/ethereum.svg",
+  kovan: "/ethereum.svg",
+  polygon: "/polygon.svg",
+  polygonmumbai: "/polygon.svg",
+};
