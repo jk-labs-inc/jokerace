@@ -222,10 +222,13 @@ export function useContest() {
       await checkIfCurrentUserQualifyToVote();
       // List of proposals for this contest
       await fetchAllProposals();
+
       const indexingResult  = await supabase
         .from('contests')
         .select("*")
         .eq('address', address)
+
+      // If this contest doesn't exist in the database, index it
       //@ts-ignore
       if(indexingResult.data.length === 0) {
         await indexContest({
