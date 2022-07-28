@@ -11,7 +11,7 @@ import ListContests from '@components/_pages/ListContests'
 
 function useContests() {
     const [page, setPage] = useState(0)
-    const [itemsPerPage] = useState(2)
+    const [itemsPerPage] = useState(7)
     async function getPastContests(currentPage: number) {
         const { from, to } = getPagination(currentPage, itemsPerPage)
         try {
