@@ -9,8 +9,11 @@ import { useStore } from "./store";
 import { isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import useContestsIndex from "@hooks/useContestsIndex";
+import { supabase } from "@config/supabase";
 
 export function useContest() {
+  const { indexContest } = useContestsIndex();
   const provider = useProvider();
   const { asPath } = useRouter();
   const [chainId, setChaindId] = useState(
@@ -219,6 +222,27 @@ export function useContest() {
       await checkIfCurrentUserQualifyToVote();
       // List of proposals for this contest
       await fetchAllProposals();
+      const indexingResult  = await supabase
+        .from('contests')
+        .select("*")
+        .eq('address', address)
+      //@ts-ignore
+      if(indexingResult.data.length === 0) {
+        await indexContest({
+          //@ts-ignore
+          datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
+          //@ts-ignore
+          datetimeOpeningVoting: new Date(parseInt(results[7]) * 1000).toISOString(),
+          //@ts-ignore
+          datetimeClosingVoting: new Date(parseInt(results[6]) * 1000),
+          contestTitle: results[0],
+          daoName: null,
+          contractAddress: address,
+          authorAddress: results[1],
+          votingTokenAddress: results[4],
+          networkName: asPath.split("/")[2],
+        })
+      }
     } catch (e) {
       onContractError(e);
       //@ts-ignore

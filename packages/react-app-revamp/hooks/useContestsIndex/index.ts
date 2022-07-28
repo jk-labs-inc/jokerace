@@ -18,7 +18,7 @@ export function useContestsIndex() {
           title: values.contestTitle,
           dao_name: values?.daoName ?? null,
           address: values.contractAddress,
-          author_address: address,
+          author_address: values?.authorAddress ?? address,
           token_address: values.votingTokenAddress,
           token_symbol: tokenRawData.symbol,
           network_name: values.networkName,
