@@ -2,6 +2,7 @@ import '@styles/globals.css'
 import '@rainbow-me/rainbowkit/styles.css'
 import { WagmiConfig } from 'wagmi'
 import { RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { chains, client } from '@config/wagmi'
 import { jokeDAOTheme } from '@config/rainbowkit'
 import LayoutBase from '@layouts/LayoutBase'
@@ -9,6 +10,18 @@ import { Toaster } from 'react-hot-toast'
 import { toastOptions } from '@config/react-hot-toast'
 import Head from 'next/head'
 import type { AppProps } from 'next/app'
+
+const queryClient = new QueryClient(
+  {
+    defaultOptions: {
+      queries: {
+        retry: 0,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false
+      }
+    }
+  }
+)
 
 function MyApp({ Component, pageProps }: AppProps) {
   //@ts-ignore
@@ -45,8 +58,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         /* @ts-ignore */
         theme={jokeDAOTheme}
       >
+        <QueryClientProvider client={queryClient}>
         {getLayout(<Component {...pageProps} />)}
-
+        </QueryClientProvider>
         {/* @ts-ignore */}
         <Toaster position="bottom-right" toastOptions={toastOptions} />
       </RainbowKitProvider>
