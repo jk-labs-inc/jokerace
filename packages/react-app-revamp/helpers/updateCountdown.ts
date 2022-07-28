@@ -3,7 +3,7 @@ import { isBefore } from "date-fns";
 
 export function updateCountdown(countdownEndDatetime: Date) {
   const interval = intervalToDuration({
-    start: (isBefore(new Date(), countdownEndDatetime) ? new Date() : countdownEndDatetime),
+    start: isBefore(new Date(), countdownEndDatetime) ? new Date() : countdownEndDatetime,
     end: countdownEndDatetime,
   });
 
