@@ -122,7 +122,7 @@ const LayoutViewContest = (props: any) => {
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
-    const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase();
+    const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase().replace(' ', '');
     if (asPath.split("/")[2] !== chainName) {
       if (pathname === ROUTE_VIEW_CONTEST) {
         let newRoute = pathname

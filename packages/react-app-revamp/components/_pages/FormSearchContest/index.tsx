@@ -28,7 +28,7 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
       getNetwork;
       push(
         ROUTE_VIEW_CONTEST,
-        `/contest/${currentChain ?? getNetwork()?.chain?.name.toLowerCase()}/${values.contestAddress}`,
+        `/contest/${currentChain ?? getNetwork()?.chain?.name.toLowerCase().replace(' ', '')}/${values.contestAddress}`,
         {
           shallow: true,
         },
