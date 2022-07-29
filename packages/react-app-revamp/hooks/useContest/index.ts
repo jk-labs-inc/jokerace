@@ -242,8 +242,8 @@ export function useContest() {
             .from("contests")
             .select("*")
             .eq("address", address);
-          if (indexingResult && indexingResult.data && (indexingResult.data.length === 0)) {
-            await indexContest({
+          if (indexingResult && indexingResult?.data && (indexingResult?.data?.length === 0)) {
+            indexContest({
               //@ts-ignore
               datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
               //@ts-ignore
