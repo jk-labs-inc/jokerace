@@ -230,34 +230,34 @@ export function useContest() {
         const config = await import("@config/supabase");
         const supabase = config.supabase;
 
-        const indexingResult = await supabase
-          .from("contests")
-          .select("*")
-          .eq("address", address);
-
         // If this contest doesn't exist in the database, index it
         //@ts-ignore
         if (
           process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
           process.env.NEXT_PUBLIC_SUPABASE_URL &&
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
-          indexingResult.data.length === 0
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
         ) {
-          indexContest({
-            //@ts-ignore
-            datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
-            //@ts-ignore
-            datetimeOpeningVoting: new Date(parseInt(results[7]) * 1000).toISOString(),
-            //@ts-ignore
-            datetimeClosingVoting: new Date(parseInt(results[6]) * 1000),
-            contestTitle: results[0],
-            daoName: null,
-            contractAddress: address,
-            authorAddress: results[1],
-            votingTokenAddress: results[4],
-            networkName: asPath.split("/")[2],
-          });
+          const indexingResult = await supabase
+            .from("contests")
+            .select("*")
+            .eq("address", address);
+          if (indexingResult && indexingResult.data && (indexingResult.data.length === 0)) {
+            await indexContest({
+              //@ts-ignore
+              datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
+              //@ts-ignore
+              datetimeOpeningVoting: new Date(parseInt(results[7]) * 1000).toISOString(),
+              //@ts-ignore
+              datetimeClosingVoting: new Date(parseInt(results[6]) * 1000),
+              contestTitle: results[0],
+              daoName: null,
+              contractAddress: address,
+              authorAddress: results[1],
+              votingTokenAddress: results[4],
+              networkName: asPath.split("/")[2],
+            });
+          }
         }
       }
     } catch (e) {

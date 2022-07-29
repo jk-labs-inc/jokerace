@@ -32,7 +32,7 @@ export const ListContests = (props: ListContestsProps) => {
         <>
           {result?.count === 0 ? (
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">
-              No contest found
+              No contests found
               {/* @ts-ignore */}
             </div>
           ) : (
