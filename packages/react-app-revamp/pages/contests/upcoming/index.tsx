@@ -9,7 +9,7 @@ import getPagination from '@helpers/getPagination'
 import { supabase } from '@config/supabase'
 import ListContests from '@components/_pages/ListContests'
 
-function useContests() {
+function useContests(initialData: any) {
     const [page, setPage] = useState(0)
     const [itemsPerPage] = useState(7)
     async function getUpcomingContests(currentPage: number) {
@@ -26,17 +26,24 @@ function useContests() {
             if(error) {
                 throw new Error(error.message)
               }
-            return {data, count }
+            return {data, count}
 
         } catch(e) {
             console.error(e)
         }
     }
-  
+    const queryOptions = {
+      keepPreviousData: true,
+      staleTime: 5000,
+    }
+
+    //@ts-ignore
+    if(initialData?.data) queryOptions.initialData = initialData.data
+
     const { status, data, error, isFetching } = useQuery(
       ['upcomingContests', page],
       () => getUpcomingContests(page),
-      { keepPreviousData: true, staleTime: 5000 },
+      queryOptions
     )
   
     return {
@@ -50,7 +57,8 @@ function useContests() {
     }
   
 }
-const Page: NextPage = () => {
+const Page: NextPage = (props) => {
+  const initialData = props
   const {
         page, 
         setPage,
@@ -59,7 +67,8 @@ const Page: NextPage = () => {
         error,
         itemsPerPage,
         isFetching
-  } = useContests()
+  //@ts-ignore
+  } = useContests(initialData?.data)
 
   return (
     <>
@@ -75,6 +84,36 @@ const Page: NextPage = () => {
     </>
   )
 }
+
+export async function getStaticProps() {
+  const { from, to } = getPagination(0, 7)
+
+  const result  = await supabase
+  .from('contests')
+  .select("*", { count: "exact" })
+   // all rows whose submissions start date is > to the current date.
+  .gt('start_at', new Date().toISOString())
+  .order('start_at', { ascending: false })
+  .range(from, to) 
+  const { data, error } = result
+
+  if(error) {
+    return {
+      props: {},
+      revalidate: 60
+    }
+  }
+  return {
+    props: {
+      data
+    },
+    // Next.js will attempt to re-generate the page:
+    // - When a request comes in
+    // - At most once every 60 seconds
+    revalidate: 60, // In seconds
+  }
+}
+
 
 //@ts-ignore
 Page.getLayout = getLayout

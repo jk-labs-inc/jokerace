@@ -223,14 +223,14 @@ export function useContest() {
       // List of proposals for this contest
       await fetchAllProposals();
 
-      const indexingResult  = await supabase
-        .from('contests')
+      const indexingResult = await supabase
+        .from("contests")
         .select("*")
-        .eq('address', address)
+        .eq("address", address);
 
       // If this contest doesn't exist in the database, index it
       //@ts-ignore
-      if(indexingResult.data.length === 0) {
+      if (indexingResult.data.length === 0) {
         await indexContest({
           //@ts-ignore
           datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
@@ -244,7 +244,7 @@ export function useContest() {
           authorAddress: results[1],
           votingTokenAddress: results[4],
           networkName: asPath.split("/")[2],
-        })
+        });
       }
     } catch (e) {
       onContractError(e);
@@ -321,7 +321,7 @@ export function useContest() {
   }
 
   async function fetchProposal(i: number, contracts: any = [], proposalsIdsRawData: any) {
-    const accountData  = await getAccount();
+    const accountData = await getAccount();
     const results = await readContracts({ contracts });
     // Create an array of proposals
     // A proposal is a pair of data
