@@ -6,13 +6,15 @@ import {
     useQuery,
   } from "@tanstack/react-query"
 import getPagination from '@helpers/getPagination'
-import { supabase } from '@config/supabase'
 import ListContests from '@components/_pages/ListContests'
 
 function useContests(initialData: any) {
     const [page, setPage] = useState(0)
     const [itemsPerPage] = useState(7)
     async function getLiveContests(currentPage: number) {
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        const config = await import('@config/supabase')
+        const supabase = config.supabase
         const { from, to } = getPagination(currentPage, itemsPerPage)
         try {
             const result  = await supabase
@@ -33,6 +35,9 @@ function useContests(initialData: any) {
         } catch(e) {
             console.error(e)
         }
+      }
+    
+        
     }
     const queryOptions = {
       keepPreviousData: true,
@@ -80,13 +85,23 @@ const Page: NextPage = (props) => {
 
      <div className="container mx-auto pt-10">
       <h1 className='sr-only'>Live contests</h1>
-      <ListContests isFetching={isFetching} itemsPerPage={itemsPerPage} status={status} error={error} page={page} setPage={setPage} result={data} />
+      {process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? <ListContests isFetching={isFetching} itemsPerPage={itemsPerPage} status={status} error={error} page={page} setPage={setPage} result={data} /> : <div 
+      className='border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold'>
+      You can checkout{" "}<a className='link px-1ex' href="https://docs.google.com/document/d/14NvQuYIv0CpSV8L5nR3iHwbnZ6yH--oywe2d_qDK3rE/edit" target="_blank" rel="noreferrer">
+          JokeDAO contests repository
+        </a>{" "}for live contests.
+      </div>
+      }
      </div>
     </>
   )
 }
 
 export async function getStaticProps() {
+  if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+  const config = await import('@config/supabase')
+  const supabase = config.supabase
+
   const { from, to } = getPagination(0, 7)
 
   const result  = await supabase
@@ -114,6 +129,12 @@ export async function getStaticProps() {
     // - At most once every 60 seconds
     revalidate: 60, // In seconds
   }
+ }
+ return {
+  props: {
+    data: []
+  }
+ }
 }
 
 

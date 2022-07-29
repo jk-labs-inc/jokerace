@@ -86,11 +86,19 @@ export function useDeployContest(form: any) {
         chainId: chain?.id,
         hash: contract.deployTransaction.hash,
       });
-      await indexContest({
-        ...values,
-        contractAddress: contract.address,
-        networkName: chain?.name.toLowerCase().replace(" ", ""),
-      });
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ) {
+        await indexContest({
+          ...values,
+          contractAddress: contract.address,
+          networkName: chain?.name.toLowerCase().replace(" ", ""),
+        });
+      }
+
       stateContestDeployment.setIsSuccess(true);
       setDeployContestData({
         hash: receipt.transactionHash,
