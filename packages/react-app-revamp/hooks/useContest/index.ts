@@ -244,7 +244,7 @@ export function useContest() {
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
           indexingResult.data.length === 0
         ) {
-          await indexContest({
+          indexContest({
             //@ts-ignore
             datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
             //@ts-ignore

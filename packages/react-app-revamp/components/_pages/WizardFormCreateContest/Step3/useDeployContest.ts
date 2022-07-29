@@ -92,7 +92,7 @@ export function useDeployContest(form: any) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       ) {
-        await indexContest({
+        indexContest({
           ...values,
           contractAddress: contract.address,
           networkName: chain?.name.toLowerCase().replace(" ", ""),
