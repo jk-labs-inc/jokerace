@@ -85,7 +85,7 @@ const Page: NextPage = (props) => {
       <h1 className='sr-only'>Upcoming contests</h1>
       {process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? <ListContests isFetching={isFetching} itemsPerPage={itemsPerPage} status={status} error={error} page={page} setPage={setPage} result={data} /> : <div 
       className='border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold'>
-      This site's current deployment does not have access to jokedao's reference database of contests, but you can check out our manual {" "}<a className='link px-1ex' href="https://docs.google.com/document/d/14NvQuYIv0CpSV8L5nR3iHwbnZ6yH--oywe2d_qDK3rE/edit" target="_blank" rel="noreferrer">
+      This site&apos;s current deployment does not have access to jokedao&apos;s reference database of contests, but you can check out our manual {" "}<a className='link px-1ex' href="https://docs.google.com/document/d/14NvQuYIv0CpSV8L5nR3iHwbnZ6yH--oywe2d_qDK3rE/edit" target="_blank" rel="noreferrer">
           JokeDAO contests repository
         </a>{" "}for upcoming contests!
       </div>
