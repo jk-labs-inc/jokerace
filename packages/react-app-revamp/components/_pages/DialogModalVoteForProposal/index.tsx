@@ -39,7 +39,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
   //@ts-ignore
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
-  const [votesToCast, setVotesToCast] = useState(1);
+  const [votesToCast, setVotesToCast] = useState(currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1);
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
   useEffect(() => {
@@ -50,7 +50,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
 
   useEffect(() => {
     if (props.isOpen === false && !isLoading) {
-      setVotesToCast(1);
+      setVotesToCast(currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1);
       setShowForm(true);
       setShowDeploymentSteps(false);
     }
@@ -128,7 +128,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
                 id="input-contestaddress-helpblock-1"
                 hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
               >
-                <span>Available: {new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
+                <span>Available: {currentUserAvailableVotesAmount}</span>
                 {pickedProposal !== null && (
                   <span>
                     Votes on submission: {new Intl.NumberFormat().format(listProposalsData[pickedProposal].votes)}{" "}
