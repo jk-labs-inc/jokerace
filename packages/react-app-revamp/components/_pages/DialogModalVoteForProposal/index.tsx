@@ -128,7 +128,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
                 id="input-contestaddress-helpblock-1"
                 hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
               >
-                <span>Available: {new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
+                <span>Available: {currentUserAvailableVotesAmount}</span>
                 {pickedProposal !== null && (
                   <span>
                     Votes on submission: {new Intl.NumberFormat().format(listProposalsData[pickedProposal].votes)}{" "}
