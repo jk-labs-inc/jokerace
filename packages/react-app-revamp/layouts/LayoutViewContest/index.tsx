@@ -159,7 +159,7 @@ const LayoutViewContest = (props: any) => {
     <>
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
         <div className="container mx-auto">
-          <FormSearchContest onSubmit={onSearch} isInline={true} />
+          <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
         </div>
       </div>
       <div

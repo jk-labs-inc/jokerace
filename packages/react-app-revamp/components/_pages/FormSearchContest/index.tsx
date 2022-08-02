@@ -13,26 +13,28 @@ import { getNetwork } from "@wagmi/core";
 interface FormSearchContestProps {
   isInline?: boolean;
   onSubmit?: (address: string) => void;
+  retry?: any
 }
 
 export const FormSearchContest = (props: FormSearchContestProps) => {
-  const { isInline, onSubmit } = props;
+  const { isInline, onSubmit, retry } = props;
   const { chain } = useNetwork();
   const { asPath, push, pathname, events } = useRouter();
   const [showLoader, setShowLoader] = useState(false);
   const { form, errors } = useForm({
     extend: validator({ schema }),
     onSubmit: values => {
+      const contestAddress = asPath.split("/")[3];
       if (!chain || chain.unsupported === true) return;
       const currentChain = asPath.split("/")[2];
-      getNetwork;
       push(
         ROUTE_VIEW_CONTEST,
-        `/contest/${currentChain ?? getNetwork()?.chain?.name.toLowerCase().replace(' ', '')}/${values.contestAddress}`,
+        `/contest/${!currentChain  || currentChain !== getNetwork()?.chain?.name.toLowerCase().replace(' ', '') ? getNetwork()?.chain?.name.toLowerCase().replace(' ', '') : currentChain }/${values.contestAddress}`,
         {
           shallow: true,
         },
       );
+      if(contestAddress && contestAddress === values.contestAddress) return
       if (pathname !== ROUTE_VIEW_CONTESTS) {
         //@ts-ignore
         onSubmit(values.contestAddress);
