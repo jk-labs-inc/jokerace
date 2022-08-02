@@ -109,3 +109,8 @@
     @apply !max-w-full !xs:max-w-screen-2xs;
   }
 }
+
+[aria-labelledby="rk_chain_modal_title"] [tabindex="0"] ~ [role="document"] > div > div {
+  @apply overflow-y-auto md:max-h-unset;
+  max-height: calc(100vh - 60px);
+}
