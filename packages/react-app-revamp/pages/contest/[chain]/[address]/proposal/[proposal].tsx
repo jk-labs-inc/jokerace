@@ -75,7 +75,7 @@ const Page: NextPage = (props: PageProps) => {
           onClick={onClickProposalVote}>
             {!checkIfUserPassedSnapshotLoading ? 'Cast your votes for this proposal' : 'Checking snapshot...'}
         </Button>
-        <span className='text-2xs mt-1 text-neutral-11'>Available: {new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
+        <span className='text-2xs mt-1 text-neutral-11'>Available: {currentUserAvailableVotesAmount}</span>
         {<p className='text-2xs mt-1 text-neutral-11'>{checkIfUserPassedSnapshotLoading ? 'Checking snapshot...': !didUserPassSnapshotAndCanVote ? 'Your wallet didn\'t qualify to vote.' : 'Your wallet qualified to vote!'}</p>}
         </div>}
         {[CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus)  &&  <ProviderProposalVotes createStore={createStoreProposalVotes}>
