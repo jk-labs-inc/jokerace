@@ -9,8 +9,10 @@ import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { useStore } from "../store";
+import useContestsIndex from "@hooks/useContestsIndex";
 
 export function useDeployContest(form: any) {
+  const { indexContest } = useContestsIndex();
   const stateContestDeployment = useContractFactory();
   const { chain } = useNetwork();
   const { refetch } = useSigner();
@@ -84,6 +86,19 @@ export function useDeployContest(form: any) {
         chainId: chain?.id,
         hash: contract.deployTransaction.hash,
       });
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ) {
+        indexContest({
+          ...values,
+          contractAddress: contract.address,
+          networkName: chain?.name.toLowerCase().replace(" ", ""),
+        });
+      }
+
       stateContestDeployment.setIsSuccess(true);
       setDeployContestData({
         hash: receipt.transactionHash,

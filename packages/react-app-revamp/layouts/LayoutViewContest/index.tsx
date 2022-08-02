@@ -260,7 +260,11 @@ const LayoutViewContest = (props: any) => {
                       </Link>
                     </div>
                   )}
-                  <h2 className={`flex flex-wrap items-baseline text-neutral-11 font-bold ${contestPrompt ? 'mb-3' : 'mb-6'}`}>
+                  <h2
+                    className={`flex flex-wrap items-baseline text-neutral-11 font-bold ${
+                      contestPrompt ? "mb-3" : "mb-6"
+                    }`}
+                  >
                     <span className="uppercase tracking-wide pie-1ex">{contestName}</span>{" "}
                     <span className="text-xs overflow-hidden text-neutral-8 text-ellipsis">by {contestAuthor}</span>
                   </h2>

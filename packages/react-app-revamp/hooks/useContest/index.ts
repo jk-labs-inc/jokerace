@@ -9,8 +9,10 @@ import { useStore } from "./store";
 import { isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import useContestsIndex from "@hooks/useContestsIndex";
 
 export function useContest() {
+  const { indexContest } = useContestsIndex();
   const provider = useProvider();
   const { asPath } = useRouter();
   const [chainId, setChaindId] = useState(
@@ -219,6 +221,45 @@ export function useContest() {
       await checkIfCurrentUserQualifyToVote();
       // List of proposals for this contest
       await fetchAllProposals();
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+      ) {
+        const config = await import("@config/supabase");
+        const supabase = config.supabase;
+
+        // If this contest doesn't exist in the database, index it
+        //@ts-ignore
+        if (
+          process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+          process.env.NEXT_PUBLIC_SUPABASE_URL &&
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        ) {
+          const indexingResult = await supabase
+            .from("contests")
+            .select("*")
+            .eq("address", address);
+          if (indexingResult && indexingResult?.data && (indexingResult?.data?.length === 0)) {
+            indexContest({
+              //@ts-ignore
+              datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
+              //@ts-ignore
+              datetimeOpeningVoting: new Date(parseInt(results[7]) * 1000).toISOString(),
+              //@ts-ignore
+              datetimeClosingVoting: new Date(parseInt(results[6]) * 1000),
+              contestTitle: results[0],
+              daoName: null,
+              contractAddress: address,
+              authorAddress: results[1],
+              votingTokenAddress: results[4],
+              networkName: asPath.split("/")[2],
+            });
+          }
+        }
+      }
     } catch (e) {
       onContractError(e);
       //@ts-ignore
@@ -252,7 +293,7 @@ export function useContest() {
     setCheckIfUserPassedSnapshotLoading(true);
 
     try {
-      const accountData  = await getAccount()
+      const accountData = await getAccount();
 
       // Timestamp from when a user can vote
       // depending on the amount of voting token they're holding at a given timestamp (snapshot)
@@ -294,7 +335,7 @@ export function useContest() {
   }
 
   async function fetchProposal(i: number, contracts: any = [], proposalsIdsRawData: any) {
-    const accountData  = await getAccount();
+    const accountData = await getAccount();
     const results = await readContracts({ contracts });
     // Create an array of proposals
     // A proposal is a pair of data
@@ -417,7 +458,7 @@ export function useContest() {
       // get current block number
       const currentBlockNumber = await fetchBlockNumber();
       const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 50; // (necessary to avoid block not mined error)
-      const accountData  = await getAccount()
+      const accountData = await getAccount();
       const contracts = [
         // get current user availables votes now
         {
