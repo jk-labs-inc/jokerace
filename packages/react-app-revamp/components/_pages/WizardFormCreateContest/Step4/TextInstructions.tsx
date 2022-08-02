@@ -52,7 +52,7 @@ export const TextInstructions = () => {
                   pathname: ROUTE_VIEW_CONTEST,
                   //@ts-ignore
                   query: {
-                    chain: contestDeployedToChain.name.toLowerCase(),
+                    chain: contestDeployedToChain.name.toLowerCase().replace(' ', ''),
                     address: dataDeployContest?.address,
                   },
                 }}

@@ -75,7 +75,7 @@ const Page: NextPage = (props: PageProps) => {
           onClick={onClickProposalVote}>
             {!checkIfUserPassedSnapshotLoading ? 'Cast your votes for this proposal' : 'Checking snapshot...'}
         </Button>
-        <span className='text-2xs mt-1 text-neutral-11'>Available: {new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
+        <span className='text-2xs mt-1 text-neutral-11'>Available: {currentUserAvailableVotesAmount}</span>
         {<p className='text-2xs mt-1 text-neutral-11'>{checkIfUserPassedSnapshotLoading ? 'Checking snapshot...': !didUserPassSnapshotAndCanVote ? 'Your wallet didn\'t qualify to vote.' : 'Your wallet qualified to vote!'}</p>}
         </div>}
         {[CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus)  &&  <ProviderProposalVotes createStore={createStoreProposalVotes}>
@@ -98,7 +98,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: any) {
   const { chain, address } = params
-  if (!REGEX_ETHEREUM_ADDRESS.test(address) || chains.filter(c => c.name.toLowerCase() === chain).length === 0 ) {
+  if (!REGEX_ETHEREUM_ADDRESS.test(address) || chains.filter(c => c.name.toLowerCase().replace(' ', '') === chain).length === 0 ) {
     return { notFound: true }
   }
 

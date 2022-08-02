@@ -45,7 +45,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }: any) {
   const { chain, address } = params
-  if (!REGEX_ETHEREUM_ADDRESS.test(address) || chains.filter(c => c.name.toLowerCase() === chain).length === 0 ) {
+  if (!REGEX_ETHEREUM_ADDRESS.test(address) || chains.filter(c => c.name.toLowerCase().replace(' ', '') === chain).length === 0 ) {
     return { notFound: true }
   }
 

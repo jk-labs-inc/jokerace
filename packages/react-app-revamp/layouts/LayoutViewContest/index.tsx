@@ -122,7 +122,7 @@ const LayoutViewContest = (props: any) => {
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
-    const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase();
+    const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase().replace(' ', '');
     if (asPath.split("/")[2] !== chainName) {
       if (pathname === ROUTE_VIEW_CONTEST) {
         let newRoute = pathname
@@ -159,7 +159,7 @@ const LayoutViewContest = (props: any) => {
     <>
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
         <div className="container mx-auto">
-          <FormSearchContest onSubmit={onSearch} isInline={true} />
+          <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
         </div>
       </div>
       <div

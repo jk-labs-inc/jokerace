@@ -40,9 +40,9 @@ export const VotingToken = () => {
                       notation: "compact",
                       maximumFractionDigits: 3,
                     }).format(parseFloat(currentUserAvailableVotesAmount))
-                  : new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}
+                  : parseFloat(currentUserAvailableVotesAmount.toFixed(5))}
               </span>
-              <span className="md:hidden">{new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}</span>
+              <span className="md:hidden">{parseFloat(currentUserAvailableVotesAmount.toFixed(5))}</span>
             </span>
           </>
         ) : isBefore(new Date(), votesClose) ? (
@@ -54,7 +54,7 @@ export const VotingToken = () => {
                       notation: "compact",
                       maximumFractionDigits: 3,
                     }).format(parseFloat(currentUserAvailableVotesAmount))
-                  : new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}
+                  : parseFloat(currentUserAvailableVotesAmount.toFixed(5))}
               </span>
               <span className="md:hidden">
                 {new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}
@@ -112,7 +112,6 @@ export const VotingToken = () => {
             </span>
           </>
         )}
-
         <span className="text-xs font-bold text-neutral-7">${votingToken?.symbol}</span>
       </div>
     </>

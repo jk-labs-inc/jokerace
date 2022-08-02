@@ -200,6 +200,10 @@ module.exports = {
         ...theme("screens"),
         unset: "unset",
       }),
+      maxHeight: ({ theme }) => ({
+        ...theme("height"),
+        unset: "unset",
+      }),
       opacity: {
         "2.5": "0.025",
         "3.5": "0.035",

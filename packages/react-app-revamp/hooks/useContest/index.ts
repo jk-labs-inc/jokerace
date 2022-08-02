@@ -16,7 +16,7 @@ export function useContest() {
   const provider = useProvider();
   const { asPath } = useRouter();
   const [chainId, setChaindId] = useState(
-    chains.filter(chain => chain.name.toLowerCase() === asPath.split("/")[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(' ', '') === asPath.split("/")[2])?.[0]?.id,
   );
   const [address, setAddress] = useState(asPath.split("/")[3]);
   const {
