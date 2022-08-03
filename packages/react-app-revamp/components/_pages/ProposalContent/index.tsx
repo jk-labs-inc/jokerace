@@ -10,11 +10,17 @@ interface ProposalContentProps {
 }
 
 function renderContent(str: string) {
-  if (isUrlToImage(str)) return <img className="w-auto md:w-full h-auto" src={str} alt="" />;
+  let renderedContent = str
+  if (isUrlToImage(renderedContent)) {
+    str.match(/^https[^\?]*.(jpg|jpeg|gif|avif|webp|png|tiff|bmp)(\?(.*))?$/gim)?.map(img => {
+      renderedContent = renderedContent.replace(img, `<img class="w-auto md:w-full h-auto" src="${img}" alt="" />`)
+    })
+  };
+
   if (isUrlTweet(str)) {
     const tweetId =
       str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/) === null
-        ? new URL(str).pathname.split("/")[3]
+        ? new URL(renderedContent).pathname.split("/")[3]
         : //@ts-ignore
           str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/)[3];
     return (
@@ -28,7 +34,7 @@ function renderContent(str: string) {
   }
   return (
     <div className={`with-link-highlighted ${styles.content}`}>
-      <Interweave content={str} matchers={[new UrlMatcher("url")]} />
+      <Interweave content={renderedContent} matchers={[new UrlMatcher("url")]} />
     </div>
   );
 }
