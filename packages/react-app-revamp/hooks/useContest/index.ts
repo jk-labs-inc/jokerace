@@ -334,9 +334,8 @@ export function useContest() {
     }
   }
 
-  async function fetchProposal(i: number, contracts: any = [], proposalsIdsRawData: any) {
+  async function fetchProposal(i: number, results: any[], proposalsIdsRawData: any) {
     const accountData = await getAccount();
-    const results = await readContracts({ contracts });
     // Create an array of proposals
     // A proposal is a pair of data
     // A pair of a proposal data is [content, votes]
@@ -345,7 +344,7 @@ export function useContest() {
       return result;
     }, []);
 
-    const data = proposalDataPerId[0][0];
+    const data = proposalDataPerId[i][0];
     // proposal author ENS
     const author = await fetchEnsName({
       address: data[0],
@@ -359,7 +358,7 @@ export function useContest() {
       isContentImage: isUrlToImage(data[1]) ? true : false,
       exists: data[2],
       //@ts-ignore
-      votes: proposalDataPerId[0][1] / 1e18,
+      votes: proposalDataPerId[i][1] / 1e18,
     };
     // Check if that proposal belongs to the current user
     // (Needed to track if the current user can submit a proposal)
@@ -398,24 +397,29 @@ export function useContest() {
       });
       setListProposalsIds(proposalsIdsRawData);
       if (proposalsIdsRawData.length > 0) {
-        for (let i = 0; i < proposalsIdsRawData.length; i++) {
-          // For all proposals, fetch
-          const contracts: any = [];
+        const contracts: any = [];
+        proposalsIdsRawData.map(id => {
           contracts.push(
             // proposal content
             {
               ...contractConfig,
               functionName: "getProposal",
-              args: proposalsIdsRawData[i],
+              args: id,
             },
             // Votes received
             {
               ...contractConfig,
               functionName: "proposalVotes",
-              args: proposalsIdsRawData[i],
+              args: id,
             },
           );
-          fetchProposal(i, contracts, proposalsIdsRawData);
+        });
+
+        const results = await readContracts({ contracts });
+
+        for (let i = 0; i < proposalsIdsRawData.length; i++) {
+          // For all proposals, fetch
+          fetchProposal(i, results, proposalsIdsRawData);
         }
       }
       setIsLoading(false);
