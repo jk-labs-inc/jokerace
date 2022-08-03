@@ -270,7 +270,7 @@ const LayoutViewContest = (props: any) => {
                   </h2>
 
                   {contestPrompt && (
-                    <p className="text-lg with-link-highlighted font-bold">
+                    <p className="text-base with-link-highlighted font-bold">
                       <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
                     </p>
                   )}
