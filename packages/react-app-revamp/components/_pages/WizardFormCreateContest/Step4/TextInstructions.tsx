@@ -167,7 +167,10 @@ export const TextInstructions = () => {
           href={{
             pathname: ROUTE_VIEW_CONTEST,
             //@ts-ignore
-            query: { id: dataDeployContest?.address },
+            query: { 
+              chain: contestDeployedToChain.name.toLowerCase().replace(' ', ''),
+              address: dataDeployContest?.address
+            },
           }}
         >
           <a className={appearAsNeutralButton} target="_blank">
