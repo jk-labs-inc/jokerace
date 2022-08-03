@@ -31,10 +31,21 @@ const defaultChains = [
 ];
 const customProvider = jsonRpcProvider({
   priority: 0,
-  rpc: (chain) => ({
-    // TODO: need to fix toLowerCase from just changing to "ethereum"
-    http: `https://rpc.ankr.com/${chain.name.toLowerCase()}`,
-  }),
+  rpc: (chain) => {
+    let ankrSuffixUrl;
+    switch(chain.name) {
+      case "Ethereum": 
+        ankrSuffixUrl = 'eth'
+      break
+      default:
+        ankrSuffixUrl = chain.name.toLowerCase()
+      break
+    }
+    console.log("ankrSuffixUrl:", ankrSuffixUrl);
+    return ({
+      http: `https://rpc.ankr.com/${ankrSuffixUrl}`,
+      });
+  }
 });
 console.log(customProvider)
 const appChains = [...defaultChains, ...testnetChains];
