@@ -10,6 +10,8 @@ import useContest from "@hooks/useContest";
 export function useCastVotes() {
   const {
     //@ts-ignore
+    castPositiveAmountOfVotes,
+    //@ts-ignore
     pickedProposal,
     //@ts-ignore
     isLoading,
@@ -80,6 +82,7 @@ export function useCastVotes() {
     isLoading,
     isSuccess,
     error,
+    castPositiveAmountOfVotes,
   };
 }
 
