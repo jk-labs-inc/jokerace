@@ -61,9 +61,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
 
   function onSubmitCastVotes(e: any) {
     e.preventDefault();
-    // If contest allows downvote
-    // and !isPositive -> votesToCast * -1 
-    castVotes(votesToCast);
+    castVotes(votesToCast, isPositive);
   }
 
   return (

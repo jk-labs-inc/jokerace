@@ -32,7 +32,7 @@ export function useCastVotes() {
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useContest();
 
-  async function castVotes(amount: number) {
+  async function castVotes(amount: number, isPositive: boolean) {
     const address = asPath.split("/")[3];
     setIsLoading(true);
     setIsSuccess(false);
@@ -48,7 +48,7 @@ export function useCastVotes() {
       const txCastVotes = await writeContract({
         ...contractConfig,
         functionName: "castVote",
-        args: [pickedProposal, parseEther("0"), parseUnits(`${amount}`)],
+        args: [pickedProposal, isPositive ? parseEther("0") : parseEther("1"), parseUnits(`${amount}`)],
       });
       const receipt = await waitForTransaction({
         chainId: chain?.id,
