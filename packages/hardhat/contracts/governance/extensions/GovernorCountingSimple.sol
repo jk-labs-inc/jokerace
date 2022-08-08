@@ -55,6 +55,26 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
+     * @dev Accessor to the internal vote counts for a given proposal.
+     */
+    function allProposalTotalVotes()
+        public
+        view
+        virtual
+        returns (
+            uint256[] memory proposalIdsReturn,
+            VoteCounts[] memory proposalVoteCountsArrayReturn
+        )
+    {
+        uint256[] memory proposalIds = getAllProposalIds();
+        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
+        for (uint256 i = 0; i < proposalIds.length; i++) {
+            proposalVoteCountsArray[i] = _proposalVotes[proposalIds[i]].proposalVoteCounts;
+        }
+        return (proposalIds, proposalVoteCountsArray);
+    }
+    
+    /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.
      */
     function contestAddressTotalVotesCast(address userAddress)
