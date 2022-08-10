@@ -16,7 +16,8 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
             _constructorIntParams[3], // _initialContestSnapshot,
             _constructorIntParams[4], // _initialProposalThreshold, 
             _constructorIntParams[5], // _initialNumAllowedProposalSubmissions, 
-            _constructorIntParams[6]  // _initialMaxProposalCount
+            _constructorIntParams[6], // _initialMaxProposalCount
+            _constructorIntParams[7]  // _initialDownvotingAllowed
         )
         GovernorVotesTimestamp(_token)
     {}
@@ -75,6 +76,15 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         returns (uint256)
     {
         return super.maxProposalCount();
+    }
+
+    function downvotingAllowed()
+        public
+        view
+        override(Governor, GovernorSettings)
+        returns (uint256)
+    {
+        return super.downvotingAllowed();
     }
 
     function creator()
