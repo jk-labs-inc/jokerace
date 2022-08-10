@@ -17,21 +17,21 @@ function renderContent(str: string) {
     })
   };
 
-  if (isUrlTweet(str)) {
-    const tweetId =
-      str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/) === null
-        ? new URL(renderedContent).pathname.split("/")[3]
-        : //@ts-ignore
-          str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/)[3];
-    return (
-      <>
-        <a target="_blank" rel="nofollow noreferrer" className="link mb-1 text-2xs" href={str}>
-          View on Twitter
-        </a>
-        <TwitterTweetEmbed tweetId={tweetId} options={{ theme: "dark", dnt: "true" }} />
-      </>
-    );
-  }
+  // if (isUrlTweet(str)) {
+  //   const tweetId =
+  //     str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/) === null
+  //       ? new URL(renderedContent).pathname.split("/")[3]
+  //       : //@ts-ignore
+  //         str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/)[3];
+  //   return (
+  //     <>
+  //       <a target="_blank" rel="nofollow noreferrer" className="link mb-1 text-2xs" href={str}>
+  //         View on Twitter
+  //       </a>
+  //       <TwitterTweetEmbed tweetId={tweetId} options={{ theme: "dark", dnt: "true" }} />
+  //     </>
+  //   );
+  // }
   return (
     <div className={`with-link-highlighted ${styles.content}`}>
       <Interweave content={renderedContent} matchers={[new UrlMatcher("url")]} />
