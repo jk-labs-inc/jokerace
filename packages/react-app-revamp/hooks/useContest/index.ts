@@ -16,7 +16,7 @@ export function useContest() {
   const provider = useProvider();
   const { asPath } = useRouter();
   const [chainId, setChaindId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(' ', '') === asPath.split("/")[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
   );
   const [address, setAddress] = useState(asPath.split("/")[3]);
   const {
@@ -242,7 +242,7 @@ export function useContest() {
             .from("contests")
             .select("*")
             .eq("address", address);
-          if (indexingResult && indexingResult?.data && (indexingResult?.data?.length === 0)) {
+          if (indexingResult && indexingResult?.data && indexingResult?.data?.length === 0) {
             indexContest({
               //@ts-ignore
               datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),

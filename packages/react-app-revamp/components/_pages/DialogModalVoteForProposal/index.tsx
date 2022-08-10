@@ -39,7 +39,9 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
   //@ts-ignore
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
-  const [votesToCast, setVotesToCast] = useState(currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1);
+  const [votesToCast, setVotesToCast] = useState(
+    currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1,
+  );
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
   useEffect(() => {

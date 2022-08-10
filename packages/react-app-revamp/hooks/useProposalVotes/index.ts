@@ -16,7 +16,9 @@ export function useProposalVotes(id: number | string) {
   const account = useAccount();
   const { chain } = useNetwork();
   const [url] = useState(asPath.split("/"));
-  const [chainId, setChainId] = useState(chains.filter(chain => chain.name.toLowerCase().replace(' ', '') === url[2])?.[0]?.id);
+  const [chainId, setChainId] = useState(
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
+  );
   const [address] = useState(url[3]);
 
   const { listProposalsData } = useStoreContest(

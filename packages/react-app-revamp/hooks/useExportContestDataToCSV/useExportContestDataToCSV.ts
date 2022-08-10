@@ -25,7 +25,7 @@ export function useExportContestDataToCSV() {
 
   async function fetchProposalVoters(proposalId: number | string) {
     const url = asPath.split("/");
-    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(' ', '') === url[2])?.[0]?.id;
+    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id;
     const address = url[3];
     const abi = await getContestContractVersion(address);
     if (abi === null) {
@@ -51,7 +51,7 @@ export function useExportContestDataToCSV() {
 
   async function fetchVotesPerAddress(id: number | string, userAddress: string) {
     const url = asPath.split("/");
-    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(' ', '') === url[2])?.[0]?.id;
+    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id;
     const address = url[3];
     const abi = await getContestContractVersion(address);
     if (abi === null) {

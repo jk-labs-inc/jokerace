@@ -10,6 +10,7 @@ import { Toaster } from 'react-hot-toast'
 import { toastOptions } from '@config/react-hot-toast'
 import Head from 'next/head'
 import type { AppProps } from 'next/app'
+import ErrorBoundary from '@components/ErrorBoundary'
 
 const queryClient = new QueryClient(
   {
@@ -59,7 +60,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         theme={jokeDAOTheme}
       >
         <QueryClientProvider client={queryClient}>
-        {getLayout(<Component {...pageProps} />)}
+        {getLayout(
+        <ErrorBoundary><Component {...pageProps} /></ErrorBoundary>
+        )}
         </QueryClientProvider>
         {/* @ts-ignore */}
         <Toaster position="bottom-right" toastOptions={toastOptions} />
