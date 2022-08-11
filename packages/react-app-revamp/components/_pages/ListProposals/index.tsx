@@ -23,8 +23,11 @@ export const ListProposals = () => {
     contestStatus,
     didUserPassSnapshotAndCanVote,
     checkIfUserPassedSnapshotLoading,
+    downvotingAllowed,
   } = useStoreContest(
     state => ({
+      //@ts-ignore
+      downvotingAllowed: state.downvotingAllowed,
       //@ts-ignore
       contestStatus: state.contestStatus,
       //@ts-ignore
@@ -155,7 +158,8 @@ export const ListProposals = () => {
                           </span>
                           {didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
-                            currentUserAvailableVotesAmount > 0 && (
+                            currentUserAvailableVotesAmount > 0 && 
+                            downvotingAllowed === true && (
                               <button 
                               onClick={() => onClickDownVote(id)}
                               disabled={

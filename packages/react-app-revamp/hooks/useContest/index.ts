@@ -89,6 +89,8 @@ export function useContest() {
     //@ts-ignore
     setContestPrompt,
     //@ts-ignore
+    setDownvotingAllowed,
+    //@ts-ignore
     currentUserProposalCount,
   } = useStore();
 
@@ -168,6 +170,7 @@ export function useContest() {
           ...contractConfig,
           functionName: "proposalThreshold",
         },
+
       ];
       if (abi?.filter(el => el.name === "prompt").length > 0) {
         contracts.push({
@@ -175,9 +178,25 @@ export function useContest() {
           functionName: "prompt",
         });
       }
+      if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
+        console.log("here")
+        contracts.push({
+          ...contractConfig,
+          functionName: "downvotingAllowed",
+        });
+      }
 
       const results = await readContracts({ contracts });
-      if (abi?.filter(el => el.name === "prompt").length > 0) setContestPrompt(results[contracts.length - 1]);
+      if (abi?.filter(el => el.name === "prompt").length > 0) {
+        const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed").length > 0 ? 2 : 1
+        setContestPrompt(results[contracts.length - indexToCheck]);
+      }
+      if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
+        const isAllowed = results[contracts.length - 1] === 0 ? false : true
+        setDownvotingAllowed(isAllowed)
+      } else {
+        setDownvotingAllowed(false)
+      }
       setContestName(results[0]);
       const contestAuthorEns = await fetchEnsName({
         //@ts-ignore
