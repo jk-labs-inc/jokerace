@@ -12,6 +12,7 @@ export const ToggleSwitch = (props: any) => {
           </Switch.Label>
           <Switch
             {...rest}
+            type="button"
             className={`${
               checked
                 ? "bg-positive-11 focus-visible:ring-positive-9 focus-visible:ring-opacity-25"
