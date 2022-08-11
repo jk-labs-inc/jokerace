@@ -15,11 +15,13 @@ abstract contract GovernorCountingSimple is Governor {
      * @dev Supported vote types. Matches Governor Bravo ordering.
      */
     enum VoteType {
-        For
+        For,
+        Against
     }
 
     struct VoteCounts {
         uint256 forVotes;
+        uint256 againstVotes;
     }
 
     struct ProposalVote {
@@ -36,7 +38,7 @@ abstract contract GovernorCountingSimple is Governor {
      */
     // solhint-disable-next-line func-name-mixedcase
     function COUNTING_MODE() public pure virtual override returns (string memory) {
-        return "support=for";
+        return "support=bravo&quorum=for";
     }
 
     /**
@@ -47,13 +49,34 @@ abstract contract GovernorCountingSimple is Governor {
         view
         virtual
         returns (
-            uint256 forVotes
+            uint256 forVotes,
+            uint256 againstVotes
         )
     {
         ProposalVote storage proposalvote = _proposalVotes[proposalId];
-        return (proposalvote.proposalVoteCounts.forVotes);
+        return (proposalvote.proposalVoteCounts.forVotes, proposalvote.proposalVoteCounts.againstVotes);
     }
 
+    /**
+     * @dev Accessor to the internal vote counts for a given proposal.
+     */
+    function allProposalTotalVotes()
+        public
+        view
+        virtual
+        returns (
+            uint256[] memory proposalIdsReturn,
+            VoteCounts[] memory proposalVoteCountsArrayReturn
+        )
+    {
+        uint256[] memory proposalIds = getAllProposalIds();
+        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
+        for (uint256 i = 0; i < proposalIds.length; i++) {
+            proposalVoteCountsArray[i] = _proposalVotes[proposalIds[i]].proposalVoteCounts;
+        }
+        return (proposalIds, proposalVoteCountsArray);
+    }
+    
     /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.
      */
@@ -76,11 +99,12 @@ abstract contract GovernorCountingSimple is Governor {
         view
         virtual
         returns (
-            uint256 forVotes
+            uint256 forVotes,
+            uint256 againstVotes
         )
     {
         ProposalVote storage proposalvote = _proposalVotes[proposalId];
-        return (proposalvote.addressVoteCounts[userAddress].forVotes);
+        return (proposalvote.addressVoteCounts[userAddress].forVotes, proposalvote.addressVoteCounts[userAddress].againstVotes);
     }
 
     /**
@@ -117,6 +141,10 @@ abstract contract GovernorCountingSimple is Governor {
         if (support == uint8(VoteType.For)) {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
             proposalvote.addressVoteCounts[account].forVotes += numVotes;
+        } else if (support == uint8(VoteType.Against)) {
+            require(downvotingAllowed() == 1, "GovernorVotingSimple: downvoting is not enabled for this Contest");
+            proposalvote.proposalVoteCounts.againstVotes += numVotes;
+            proposalvote.addressVoteCounts[account].againstVotes += numVotes;
         } else {
             revert("GovernorVotingSimple: invalid value for enum VoteType");
         }

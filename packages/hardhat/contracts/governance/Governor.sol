@@ -180,6 +180,13 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
+     * @dev If downvoting is enabled in this contest
+     */
+    function downvotingAllowed() public view virtual returns (uint256) {
+        return 0; // 0 == false, 1 == true
+    }
+
+    /**
      * @dev Retrieve proposal data"_.
      */
     function getProposal(uint256 proposalId) public view virtual returns (ProposalCore memory) {

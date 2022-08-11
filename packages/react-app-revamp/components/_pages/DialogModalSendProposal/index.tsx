@@ -125,7 +125,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
         <>
           {contestPrompt && (
-            <p className="mb-4 text-neutral-11 text-md font-bold with-link-highlighted ">
+            <p className="mb-4 text-neutral-12 leading-tight text-2xs font-medium with-link-highlighted">
               <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
             </p>
           )}
