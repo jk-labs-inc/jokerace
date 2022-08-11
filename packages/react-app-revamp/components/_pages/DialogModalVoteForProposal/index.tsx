@@ -17,12 +17,16 @@ interface DialogModalVoteForProposalProps {
 }
 
 export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProps) => {
-  const { pickedProposal, transactionData } = useStoreCastVotes(
+  const { pickedProposal, transactionData, castPositiveAmountOfVotes, setCastPositiveAmountOfVotes } = useStoreCastVotes(
     state => ({
       //@ts-ignore
       pickedProposal: state.pickedProposal,
       //@ts-ignore
       transactionData: state.transactionData,
+      //@ts-ignore
+      castPositiveAmountOfVotes: state.castPositiveAmountOfVotes,
+      //@ts-ignore
+      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes
     }),
     shallow,
   );
@@ -45,7 +49,6 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
   const [votesToCast, setVotesToCast] = useState(currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1);
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
-  const [isPositive, setIsPositive] = useState(true)
 
   useEffect(() => {
     if (isSuccess) setShowForm(false);
@@ -63,8 +66,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
 
   function onSubmitCastVotes(e: any) {
     e.preventDefault();
-    if(downvotingAllowed === false) castVotes(votesToCast)
-    ///castVotes(votesToCast, isPositive);
+    castVotes(votesToCast, castPositiveAmountOfVotes);
   }
 
   return (
@@ -103,7 +105,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
 
       {showForm === true && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 &&  (
         <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitCastVotes}>
-          {downvotingAllowed === true && <RadioGroup className="overflow-hidden text-xs font-medium mb-6 divide-i divide-neutral-4 flex rounded-full border-solid border border-neutral-4" value={isPositive} onChange={setIsPositive}>
+          {downvotingAllowed === true && <RadioGroup className="overflow-hidden text-xs font-medium mb-6 divide-i divide-neutral-4 flex rounded-full border-solid border border-neutral-4" value={castPositiveAmountOfVotes} onChange={setCastPositiveAmountOfVotes}>
       <RadioGroup.Option className="relative w-1/2 p-1 flex items-center justify-center" value={true}>
         {({ checked }) => (
           <>
@@ -131,7 +133,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
             </FormField.Label>
             <div className="flex items-center">
             {downvotingAllowed === true && <span className="text-neutral-9 font-bold text-lg pie-1ex">
-              {isPositive ? "+" : "-"}
+              {castPositiveAmountOfVotes ? "+" : "-"}
             </span>}
             <FormInput
               required

@@ -100,7 +100,7 @@ export function useProposalVotes(id: number | string) {
             value: {
               displayAddress: author ?? shortenEthereumAddress(userAddress),
               //@ts-ignore
-              votes: data / 1e18,
+              votes: data?.forVotes  ? (data?.forVotes / 1e18 - data?.againstVotes / 1e18)  : data / 1e18,
             },
           });
         }),
@@ -109,6 +109,7 @@ export function useProposalVotes(id: number | string) {
       setIsListVotersError(null);
       setIsListVotersLoading(false);
     } catch (e) {
+      console.error(e)
       //@ts-ignore
       setIsListVotersError(e?.code ?? e);
       setIsListVotersSuccess(false);

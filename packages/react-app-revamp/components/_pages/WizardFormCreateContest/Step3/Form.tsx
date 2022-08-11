@@ -12,7 +12,6 @@ import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
-import { useEffect } from "react";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -75,10 +74,6 @@ export const Form = (props: FormProps) => {
   const { pressProps } = usePress({
     onPress: () => setCurrentStep(4),
   });
-
-  useEffect(() => {
-    console.log(data().downvoting, isValid(), errors())
-  })
 
   return (
     <form ref={form} className="w-full">
@@ -608,9 +603,9 @@ export const Form = (props: FormProps) => {
           <ToggleSwitch
             label="Downvoting"
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-            checked={data().downvoting}
+            checked={data().downvotingAllowed}
             onChange={(e: boolean) => {
-              setData("downvoting", e)
+              setData("downvotingAllowed", e)
             }}
           />
         </FormField>
