@@ -17,7 +17,12 @@ interface DialogModalVoteForProposalProps {
 }
 
 export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProps) => {
-  const { pickedProposal, transactionData, castPositiveAmountOfVotes, setCastPositiveAmountOfVotes } = useStoreCastVotes(
+  const {
+    pickedProposal,
+    transactionData,
+    castPositiveAmountOfVotes,
+    setCastPositiveAmountOfVotes,
+  } = useStoreCastVotes(
     state => ({
       //@ts-ignore
       pickedProposal: state.pickedProposal,
@@ -26,7 +31,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
       //@ts-ignore
       castPositiveAmountOfVotes: state.castPositiveAmountOfVotes,
       //@ts-ignore
-      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes
+      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
     }),
     shallow,
   );
@@ -46,7 +51,9 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
   //@ts-ignore
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
-  const [votesToCast, setVotesToCast] = useState(currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1);
+  const [votesToCast, setVotesToCast] = useState(
+    currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1,
+  );
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
 
@@ -103,27 +110,44 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
           </>
         )}
 
-      {showForm === true && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 &&  (
+      {showForm === true && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 && (
         <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitCastVotes}>
-          {downvotingAllowed === true && <RadioGroup className="overflow-hidden text-xs font-medium mb-6 divide-i divide-neutral-4 flex rounded-full border-solid border border-neutral-4" value={castPositiveAmountOfVotes} onChange={setCastPositiveAmountOfVotes}>
-      <RadioGroup.Option className="relative w-1/2 p-1 flex items-center justify-center" value={true}>
-        {({ checked }) => (
-          <>
-            <span className={`${checked ? 'bg-positive-9' : ''} cursor-pointer absolute top-0 left-0 w-full h-full block`} />
-            <span className={`cursor-pointer relative z-10 ${checked ? 'text-positive-1 font-bold': ''}`}>Upvote</span>
-          </>
-        )}
-      </RadioGroup.Option>
-      <RadioGroup.Option className="relative w-1/2 p-1 flex items-center justify-center" value={false}>
-        {({ checked }) => (
-          <>
-          <span className={`${checked ? 'bg-positive-9' : ''} cursor-pointer absolute top-0 left-0 w-full h-full block`} />
-          <span className={`cursor-pointer relative z-10 ${checked ? 'text-positive-1 font-bold': ''}`}>Downvote</span>
-        </>
-        )}
-      </RadioGroup.Option>
-
-    </RadioGroup>}
+          {downvotingAllowed === true && (
+            <RadioGroup
+              className="overflow-hidden text-xs font-medium mb-6 divide-i divide-neutral-4 flex rounded-full border-solid border border-neutral-4"
+              value={castPositiveAmountOfVotes}
+              onChange={setCastPositiveAmountOfVotes}
+            >
+              <RadioGroup.Option className="relative w-1/2 p-1 flex items-center justify-center" value={true}>
+                {({ checked }) => (
+                  <>
+                    <span
+                      className={`${
+                        checked ? "bg-positive-9" : ""
+                      } cursor-pointer absolute top-0 left-0 w-full h-full block`}
+                    />
+                    <span className={`cursor-pointer relative z-10 ${checked ? "text-positive-1 font-bold" : ""}`}>
+                      Upvote
+                    </span>
+                  </>
+                )}
+              </RadioGroup.Option>
+              <RadioGroup.Option className="relative w-1/2 p-1 flex items-center justify-center" value={false}>
+                {({ checked }) => (
+                  <>
+                    <span
+                      className={`${
+                        checked ? "bg-positive-9" : ""
+                      } cursor-pointer absolute top-0 left-0 w-full h-full block`}
+                    />
+                    <span className={`cursor-pointer relative z-10 ${checked ? "text-positive-1 font-bold" : ""}`}>
+                      Downvote
+                    </span>
+                  </>
+                )}
+              </RadioGroup.Option>
+            </RadioGroup>
+          )}
           <FormField className="w-full">
             <FormField.Label
               htmlFor="votesToCast"
@@ -132,28 +156,30 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
               Cast votes
             </FormField.Label>
             <div className="flex items-center">
-            {downvotingAllowed === true && <span className="text-neutral-9 font-bold text-lg pie-1ex">
-              {castPositiveAmountOfVotes ? "+" : "-"}
-            </span>}
-            <FormInput
-              required
-              type="number"
-              placeholder="0"
-              min={0}
-              step={0.000000001}
-              onChange={e => {
-                setVotesToCast(parseFloat(e.currentTarget.value));
-              }}
-              className="w-full"
-              value={votesToCast}
-              max={currentUserAvailableVotesAmount}
-              aria-invalid={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount ? "true" : "false"}
-              name="votesToCast"
-              id="votesToCast"
-              disabled={isLoading}
-              hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount === true}
-              aria-describedby="input-votesToCast-helpblock-1 input-votesToCast-helpblock-2"
-            />
+              {downvotingAllowed === true && (
+                <span className="text-neutral-9 font-bold text-lg pie-1ex">
+                  {castPositiveAmountOfVotes ? "+" : "-"}
+                </span>
+              )}
+              <FormInput
+                required
+                type="number"
+                placeholder="0"
+                min={0}
+                step={0.000000001}
+                onChange={e => {
+                  setVotesToCast(parseFloat(e.currentTarget.value));
+                }}
+                className="w-full"
+                value={votesToCast}
+                max={currentUserAvailableVotesAmount}
+                aria-invalid={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount ? "true" : "false"}
+                name="votesToCast"
+                id="votesToCast"
+                disabled={isLoading}
+                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount === true}
+                aria-describedby="input-votesToCast-helpblock-1 input-votesToCast-helpblock-2"
+              />
             </div>
             <div className="mt-2 my-1">
               <FormField.HelpBlock
