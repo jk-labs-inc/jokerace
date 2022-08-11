@@ -48,7 +48,7 @@ export function useCastVotes() {
       const txCastVotes = await writeContract({
         ...contractConfig,
         functionName: "castVote",
-        args: [pickedProposal, isPositive ? parseEther("0") : parseEther("1"), parseUnits(`${amount}`)],
+        args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
       });
       const receipt = await waitForTransaction({
         chainId: chain?.id,

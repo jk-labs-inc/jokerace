@@ -10,6 +10,7 @@ import { isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
+import { parseEther, parseUnits } from "ethers/lib/utils";
 
 export function useContest() {
   const { indexContest } = useContestsIndex();
@@ -179,7 +180,6 @@ export function useContest() {
         });
       }
       if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
-        console.log("here")
         contracts.push({
           ...contractConfig,
           functionName: "downvotingAllowed",
@@ -192,7 +192,8 @@ export function useContest() {
         setContestPrompt(results[contracts.length - indexToCheck]);
       }
       if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
-        const isAllowed = results[contracts.length - 1] === 0 ? false : true
+
+        const isAllowed = parseInt(`${results[contracts.length - 1]}`) === 1 ? true : false
         setDownvotingAllowed(isAllowed)
       } else {
         setDownvotingAllowed(false)
@@ -377,7 +378,7 @@ export function useContest() {
       isContentImage: isUrlToImage(data[1]) ? true : false,
       exists: data[2],
       //@ts-ignore
-      votes: proposalDataPerId[i][1] / 1e18,
+      votes:  proposalDataPerId[i][1]?.forVotes ? proposalDataPerId[i][1]?.forVotes / 1e18 -  proposalDataPerId[i][1]?.againstVotes / 1e18 : proposalDataPerId[i][1] / 1e18,
     };
     // Check if that proposal belongs to the current user
     // (Needed to track if the current user can submit a proposal)

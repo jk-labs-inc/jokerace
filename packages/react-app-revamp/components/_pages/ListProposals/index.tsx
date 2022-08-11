@@ -153,7 +153,7 @@ export const ListProposals = () => {
                               maximumFractionDigits: 3,
                             }).format(parseFloat(listProposalsData[id].votes))}{" "}
                             <span className="text-neutral-11 pis-1ex 2xs:pis-0 text-3xs">
-                              vote{listProposalsData[id].votes === 1 && "s"}
+                              vote{listProposalsData[id].votes > 1 || listProposalsData[id].votes === 0 && "s"}
                             </span>
                           </span>
                           {didUserPassSnapshotAndCanVote &&
