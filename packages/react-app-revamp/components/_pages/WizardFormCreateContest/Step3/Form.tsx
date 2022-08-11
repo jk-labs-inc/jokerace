@@ -600,15 +600,15 @@ export const Form = (props: FormProps) => {
           </FormField>
 
           <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
-          <ToggleSwitch
-            label="Downvoting"
-            disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-            checked={data().downvotingAllowed}
-            onChange={(e: boolean) => {
-              setData("downvotingAllowed", e)
-            }}
-          />
-        </FormField>
+            <ToggleSwitch
+              label="Downvoting"
+              disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+              checked={data().downvotingAllowed}
+              onChange={(e: boolean) => {
+                setData("downvotingAllowed", e);
+              }}
+            />
+          </FormField>
         </div>
       </fieldset>
       <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">

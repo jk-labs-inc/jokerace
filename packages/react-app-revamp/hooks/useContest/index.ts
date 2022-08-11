@@ -17,7 +17,7 @@ export function useContest() {
   const provider = useProvider();
   const { asPath } = useRouter();
   const [chainId, setChaindId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(' ', '') === asPath.split("/")[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
   );
   const [address, setAddress] = useState(asPath.split("/")[3]);
   const {
@@ -171,7 +171,6 @@ export function useContest() {
           ...contractConfig,
           functionName: "proposalThreshold",
         },
-
       ];
       if (abi?.filter(el => el.name === "prompt").length > 0) {
         contracts.push({
@@ -188,15 +187,14 @@ export function useContest() {
 
       const results = await readContracts({ contracts });
       if (abi?.filter(el => el.name === "prompt").length > 0) {
-        const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed").length > 0 ? 2 : 1
+        const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed").length > 0 ? 2 : 1;
         setContestPrompt(results[contracts.length - indexToCheck]);
       }
       if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
-
-        const isAllowed = parseInt(`${results[contracts.length - 1]}`) === 1 ? true : false
-        setDownvotingAllowed(isAllowed)
+        const isAllowed = parseInt(`${results[contracts.length - 1]}`) === 1 ? true : false;
+        setDownvotingAllowed(isAllowed);
       } else {
-        setDownvotingAllowed(false)
+        setDownvotingAllowed(false);
       }
       setContestName(results[0]);
       const contestAuthorEns = await fetchEnsName({
@@ -262,7 +260,7 @@ export function useContest() {
             .from("contests")
             .select("*")
             .eq("address", address);
-          if (indexingResult && indexingResult?.data && (indexingResult?.data?.length === 0)) {
+          if (indexingResult && indexingResult?.data && indexingResult?.data?.length === 0) {
             indexContest({
               //@ts-ignore
               datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
@@ -378,7 +376,9 @@ export function useContest() {
       isContentImage: isUrlToImage(data[1]) ? true : false,
       exists: data[2],
       //@ts-ignore
-      votes:  proposalDataPerId[i][1]?.forVotes ? proposalDataPerId[i][1]?.forVotes / 1e18 -  proposalDataPerId[i][1]?.againstVotes / 1e18 : proposalDataPerId[i][1] / 1e18,
+      votes: proposalDataPerId[i][1]?.forVotes
+        ? proposalDataPerId[i][1]?.forVotes / 1e18 - proposalDataPerId[i][1]?.againstVotes / 1e18
+        : proposalDataPerId[i][1] / 1e18,
     };
     // Check if that proposal belongs to the current user
     // (Needed to track if the current user can submit a proposal)

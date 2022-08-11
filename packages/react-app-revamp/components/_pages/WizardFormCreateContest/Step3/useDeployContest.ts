@@ -45,7 +45,7 @@ export function useDeployContest(form: any) {
     stateContestDeployment.setIsSuccess(false);
     stateContestDeployment.setIsError(false);
     stateContestDeployment.setErrorMessage(null);
-  
+
     try {
       // we need to refetch the signer, otherwise an error is triggered
       const signer = await refetch();

@@ -52,19 +52,19 @@ export const ListProposals = () => {
       //@ts-ignore
       setIsModalOpen: state.setIsModalOpen,
       //@ts-ignore
-      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes
+      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
     }),
     shallow,
   );
 
   function onClickUpVote(proposalId: number | string) {
-    setCastPositiveAmountOfVotes(true)
+    setCastPositiveAmountOfVotes(true);
     setPickedProposal(proposalId);
     setIsModalOpen(true);
   }
 
   function onClickDownVote(proposalId: number | string) {
-    setCastPositiveAmountOfVotes(false)
+    setCastPositiveAmountOfVotes(false);
     setPickedProposal(proposalId);
     setIsModalOpen(true);
   }
@@ -134,45 +134,46 @@ export const ListProposals = () => {
                           {didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                             currentUserAvailableVotesAmount > 0 && (
-                              <button 
-                              onClick={() => onClickUpVote(id)}
-                              disabled={
-                                checkIfUserPassedSnapshotLoading ||
-                                !didUserPassSnapshotAndCanVote ||
-                                contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
-                                currentUserAvailableVotesAmount === 0
-                              }
-                              className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center">
-                              <IconCaretUp className="text-2xs mie-2 2xs:mie-0" />
-                              <span className="2xs:sr-only">Up vote</span>
+                              <button
+                                onClick={() => onClickUpVote(id)}
+                                disabled={
+                                  checkIfUserPassedSnapshotLoading ||
+                                  !didUserPassSnapshotAndCanVote ||
+                                  contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
+                                  currentUserAvailableVotesAmount === 0
+                                }
+                                className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center"
+                              >
+                                <IconCaretUp className="text-2xs mie-2 2xs:mie-0" />
+                                <span className="2xs:sr-only">Up vote</span>
                               </button>
                             )}
-                            <span className="flex 2xs:flex-col">
+                          <span className="flex 2xs:flex-col">
                             {Intl.NumberFormat("en-US", {
                               notation: "compact",
                               maximumFractionDigits: 3,
                             }).format(parseFloat(listProposalsData[id].votes))}{" "}
                             <span className="text-neutral-11 pis-1ex 2xs:pis-0 text-3xs">
-                              vote{listProposalsData[id].votes > 1 || listProposalsData[id].votes === 0 && "s"}
+                              vote{listProposalsData[id].votes > 1 || (listProposalsData[id].votes === 0 && "s")}
                             </span>
                           </span>
                           {didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
-                            currentUserAvailableVotesAmount > 0 && 
+                            currentUserAvailableVotesAmount > 0 &&
                             downvotingAllowed === true && (
-                              <button 
-                              onClick={() => onClickDownVote(id)}
-                              disabled={
-                                checkIfUserPassedSnapshotLoading ||
-                                !didUserPassSnapshotAndCanVote ||
-                                contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
-                                currentUserAvailableVotesAmount === 0
-                              }
-                              className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center">
-                              <IconCaretDown className="text-2xs mie-2 2xs:mie-0" />
-                              <span className="2xs:sr-only">Down vote</span>
+                              <button
+                                onClick={() => onClickDownVote(id)}
+                                disabled={
+                                  checkIfUserPassedSnapshotLoading ||
+                                  !didUserPassSnapshotAndCanVote ||
+                                  contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
+                                  currentUserAvailableVotesAmount === 0
+                                }
+                                className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center"
+                              >
+                                <IconCaretDown className="text-2xs mie-2 2xs:mie-0" />
+                                <span className="2xs:sr-only">Down vote</span>
                               </button>
-
                             )}
                         </div>
                       </>

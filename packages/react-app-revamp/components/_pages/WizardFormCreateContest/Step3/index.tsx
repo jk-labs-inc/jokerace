@@ -102,7 +102,10 @@ export const Step3 = () => {
               href={{
                 pathname: ROUTE_VIEW_CONTEST,
                 //@ts-ignore
-                query: { chain: contestDeployedToChain?.name.toLowerCase().replace(" ", ""), address: dataDeployContest?.address },
+                query: {
+                  chain: contestDeployedToChain?.name.toLowerCase().replace(" ", ""),
+                  address: dataDeployContest?.address,
+                },
               }}
             >
               <a target="_blank">

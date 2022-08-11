@@ -16,7 +16,9 @@ export function useProposalVotes(id: number | string) {
   const account = useAccount();
   const { chain } = useNetwork();
   const [url] = useState(asPath.split("/"));
-  const [chainId, setChainId] = useState(chains.filter(chain => chain.name.toLowerCase().replace(' ', '') === url[2])?.[0]?.id);
+  const [chainId, setChainId] = useState(
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
+  );
   const [address] = useState(url[3]);
 
   const { listProposalsData } = useStoreContest(
@@ -100,7 +102,7 @@ export function useProposalVotes(id: number | string) {
             value: {
               displayAddress: author ?? shortenEthereumAddress(userAddress),
               //@ts-ignore
-              votes: data?.forVotes  ? (data?.forVotes / 1e18 - data?.againstVotes / 1e18)  : data / 1e18,
+              votes: data?.forVotes ? data?.forVotes / 1e18 - data?.againstVotes / 1e18 : data / 1e18,
             },
           });
         }),
@@ -109,7 +111,7 @@ export function useProposalVotes(id: number | string) {
       setIsListVotersError(null);
       setIsListVotersLoading(false);
     } catch (e) {
-      console.error(e)
+      console.error(e);
       //@ts-ignore
       setIsListVotersError(e?.code ?? e);
       setIsListVotersSuccess(false);
