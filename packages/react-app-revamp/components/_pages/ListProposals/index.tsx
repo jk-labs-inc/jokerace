@@ -8,14 +8,18 @@ import truncate from "@helpers/truncate";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
 import { useStore as useStoreCastVotes } from "@hooks/useCastVotes/store";
+import { useStore as useStoreDeleteProposal } from "@hooks/useDeleteProposal/store";
 import styles from "./styles.module.css";
 import { IconCaretUp, IconSpinner } from "@components/Icons";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { useAccount } from "wagmi";
+import isProposalDeleted from "@helpers/isProposalDeleted";
 
 export const ListProposals = () => {
   const {
     query: { chain, address },
   } = useRouter();
+  const accountData = useAccount()
   const {
     amountOfTokensRequiredToSubmitEntry,
     listProposalsData,
@@ -42,19 +46,34 @@ export const ListProposals = () => {
   );
 
   const stateSubmitProposal = useStoreSubmitProposal();
-  const { setPickedProposal, setIsModalOpen } = useStoreCastVotes(
+  const { setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useStoreCastVotes(
     state => ({
       //@ts-ignore
-      setPickedProposal: state.setPickedProposal,
+      setPickedProposalToVoteFor: state.setPickedProposal,
       //@ts-ignore
-      setIsModalOpen: state.setIsModalOpen,
+      setIsModalCastVotesOpen: state.setIsModalOpen,
+    }),
+    shallow,
+  );
+
+  const { setPickedProposalToDelete, setIsModalDeleteProposalOpen } = useStoreDeleteProposal(
+    state => ({
+      //@ts-ignore
+      setPickedProposalToDelete: state.setPickedProposal,
+      //@ts-ignore
+      setIsModalDeleteProposalOpen: state.setIsModalOpen,
     }),
     shallow,
   );
 
   function onClickProposalVote(proposalId: number | string) {
-    setPickedProposal(proposalId);
-    setIsModalOpen(true);
+    setPickedProposalToVoteFor(proposalId);
+    setIsModalCastVotesOpen(true);
+  }
+
+  function onClickProposalDelete(proposalId: number | string) {
+    setPickedProposalToDelete(proposalId);
+    setIsModalDeleteProposalOpen(true);
   }
 
   // Contest not cancelled
@@ -115,8 +134,10 @@ export const ListProposals = () => {
                         )}
 
                         <button
+
                           onClick={() => onClickProposalVote(id)}
                           disabled={
+                            isProposalDeleted(listProposalsData[id].content) ||
                             checkIfUserPassedSnapshotLoading ||
                             !didUserPassSnapshotAndCanVote ||
                             contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
@@ -128,7 +149,9 @@ export const ListProposals = () => {
                             (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
                               <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
                             ))}
-                          {didUserPassSnapshotAndCanVote &&
+                          {
+                            !isProposalDeleted(listProposalsData[id].content)  &&
+                            didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                             currentUserAvailableVotesAmount > 0 && (
                               <IconCaretUp className="text-xs mie-2 2xs:mie-0 2xs:mb-1" />
@@ -144,7 +167,7 @@ export const ListProposals = () => {
                       </>
                     )}
                   </div>
-                  <div className="relative overflow-hidden">
+                  <div className="relative overflow-visible">
                     {listProposalsData[id].votes > 0 && (
                       <span
                         className={`${styles.rankIndicator} inline-flex 2xs:hidden rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
@@ -175,6 +198,9 @@ export const ListProposals = () => {
                         View proposal #{id}
                       </a>
                     </Link>
+                    {!isProposalDeleted(listProposalsData[id].content) && listProposalsData[id].authorEthereumAddress === accountData?.address && <button onClick={() => onClickProposalDelete(id)} className="w-full 2xs:w-auto mt-6 text-xs 2xs:text-2xs rounded-md py-1.5 2xs:py-1 px-3 relative z-20 bg-negative-4 hover:bg-opacity-50 focus:bg-opacity-75 text-negative-11 bg-opacity-40">
+                      <span className="font-bold">Delete this proposal</span>
+                    </button>}
                   </div>
                 </li>
               );

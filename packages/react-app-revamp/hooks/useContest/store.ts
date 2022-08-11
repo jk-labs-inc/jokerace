@@ -94,5 +94,20 @@ export const createStore = () => {
           },
         },
       })),
+          //@ts-ignore
+    softDeleteProposal: (id) =>
+    set(state => ({
+      ...state,
+      listProposalsData: {
+        //@ts-ignore
+        ...state.listProposalsData,
+        [id]: {
+          //@ts-ignore
+          ...state.listProposalsData[id],
+          content: 'This proposal has been deleted by the creator of the contest.',
+          isContentImage: false,
+        },
+      },
+    })),
   }));
 };

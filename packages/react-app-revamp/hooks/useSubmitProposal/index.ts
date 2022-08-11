@@ -52,12 +52,12 @@ export function useSubmitProposal() {
         chainId: chain?.id,
         //@ts-ignore
         hash: txSendProposal.hash,
-        //@ts-ignore
-        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
       });
       setTransactionData({
         chainId: chain?.id,
         hash: receipt.transactionHash,
+        //@ts-ignore
+        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
       });
       setIsLoading(false);
       setIsSuccess(true);
