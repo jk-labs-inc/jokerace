@@ -113,11 +113,19 @@ const LayoutViewContest = (props: any) => {
 
   useContestEvents();
   useEffect(() => {
+    if (chain?.id === chainId) {
       fetchContestInfo();
+    } else {
+      setIsLoading(false);
+      setIsListProposalsLoading(false);
+    }
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
-    const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase().replace(' ', '');
+    const chainName = chains
+      .filter(chain => chain.id === chainId)?.[0]
+      ?.name.toLowerCase()
+      .replace(" ", "");
     if (asPath.split("/")[2] !== chainName) {
       if (pathname === ROUTE_VIEW_CONTEST) {
         let newRoute = pathname
@@ -176,17 +184,38 @@ const LayoutViewContest = (props: any) => {
           />
         </div>
         <div className="md:pt-5 md:pb-20 flex flex-col md:col-span-8">
-          {
-            ((isLoading || isListProposalsLoading) && (
+          {account.isConnecting ||
+            account.isReconnecting ||
+            (chain?.id === chainId && (isLoading || isListProposalsLoading) && (
               <div className="animate-appear">
                 <Loader scale="page" />
               </div>
             ))}
 
-          {
+          {!account.isConnecting && !account.isReconnecting && !account?.address ? (
+            <p className="animate-appear font-bold text-center text-lg pt-10">
+              Please connect your account to view this contest.
+            </p>
+          ) : (
             <>
+              {chain?.id !== chainId && (
+                <div className="animate-appear flex text-center flex-col mt-10 mx-auto">
+                  <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
+                  <p className="mt-2 mb-4 text-neutral-11 text-xs">
+                    You need to use {asPath.split("/")[2]} to check this contest.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      switchNetwork?.(chainId);
+                    }}
+                    className="mx-auto"
+                  >
+                    Switch network
+                  </Button>
+                </div>
+              )}
 
-              {isError !== null && !isLoading && (
+              {chain?.id === chainId && isError !== null && !isLoading && (
                 <div className="my-6 md:my-0 animate-appear flex flex-col">
                   <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                     <p className="text-sm font-bold text-negative-10 text-center">
@@ -196,7 +225,7 @@ const LayoutViewContest = (props: any) => {
                   {isError === "CALL_EXCEPTION" ? (
                     <div className="animate-appear text-center my-3 space-y-3">
                       <p>
-                        Looks like this contract doesn&apos;t exist on {chain?.name}. <br /> Try switching to another
+                        Looks like this contract doesn&apos;t exist on {chain.name}. <br /> Try switching to another
                         network.
                       </p>
                     </div>
@@ -213,7 +242,7 @@ const LayoutViewContest = (props: any) => {
                 </div>
               )}
 
-              {isSuccess && isError === null && !isLoading && (
+              {chain?.id === chainId && isSuccess && isError === null && !isLoading && (
                 <div className="animate-appear pt-3 md:pt-0">
                   {pathname === ROUTE_CONTEST_PROPOSAL && (
                     <div>
@@ -247,7 +276,6 @@ const LayoutViewContest = (props: any) => {
                     <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
                       <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
                     </p>
-
                   )}
 
                   {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
@@ -318,7 +346,7 @@ const LayoutViewContest = (props: any) => {
                 </div>
               )}
             </>
-          }
+          )}
         </div>
       </div>
     </>

@@ -9,7 +9,7 @@ import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
 import { useStore as useStoreCastVotes } from "@hooks/useCastVotes/store";
 import styles from "./styles.module.css";
-import { IconCaretUp, IconSpinner } from "@components/Icons";
+import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/Icons";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 export const ListProposals = () => {
@@ -23,8 +23,11 @@ export const ListProposals = () => {
     contestStatus,
     didUserPassSnapshotAndCanVote,
     checkIfUserPassedSnapshotLoading,
+    downvotingAllowed,
   } = useStoreContest(
     state => ({
+      //@ts-ignore
+      downvotingAllowed: state.downvotingAllowed,
       //@ts-ignore
       contestStatus: state.contestStatus,
       //@ts-ignore
@@ -42,17 +45,26 @@ export const ListProposals = () => {
   );
 
   const stateSubmitProposal = useStoreSubmitProposal();
-  const { setPickedProposal, setIsModalOpen } = useStoreCastVotes(
+  const { setCastPositiveAmountOfVotes, setPickedProposal, setIsModalOpen } = useStoreCastVotes(
     state => ({
       //@ts-ignore
       setPickedProposal: state.setPickedProposal,
       //@ts-ignore
       setIsModalOpen: state.setIsModalOpen,
+      //@ts-ignore
+      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
     }),
     shallow,
   );
 
-  function onClickProposalVote(proposalId: number | string) {
+  function onClickUpVote(proposalId: number | string) {
+    setCastPositiveAmountOfVotes(true);
+    setPickedProposal(proposalId);
+    setIsModalOpen(true);
+  }
+
+  function onClickDownVote(proposalId: number | string) {
+    setCastPositiveAmountOfVotes(false);
     setPickedProposal(proposalId);
     setIsModalOpen(true);
   }
@@ -114,16 +126,7 @@ export const ListProposals = () => {
                           </span>
                         )}
 
-                        <button
-                          onClick={() => onClickProposalVote(id)}
-                          disabled={
-                            checkIfUserPassedSnapshotLoading ||
-                            !didUserPassSnapshotAndCanVote ||
-                            contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
-                            currentUserAvailableVotesAmount === 0
-                          }
-                          className="disabled:border-none border p-2 border-solid border-neutral-6 rounded-md disabled:text-opacity-50 disabled:cursor-not-allowed text-neutral-12 flex 2xs:flex-col items-center 2xs:justify-center font-bold text-2xs"
-                        >
+                        <div className=" text-neutral-12 flex space-y-2 flex-col items-center justify-center font-bold text-2xs">
                           {(contestStatus === CONTEST_STATUS.VOTING_OPEN && checkIfUserPassedSnapshotLoading) ||
                             (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
                               <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
@@ -131,16 +134,48 @@ export const ListProposals = () => {
                           {didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                             currentUserAvailableVotesAmount > 0 && (
-                              <IconCaretUp className="text-xs mie-2 2xs:mie-0 2xs:mb-1" />
+                              <button
+                                onClick={() => onClickUpVote(id)}
+                                disabled={
+                                  checkIfUserPassedSnapshotLoading ||
+                                  !didUserPassSnapshotAndCanVote ||
+                                  contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
+                                  currentUserAvailableVotesAmount === 0
+                                }
+                                className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center"
+                              >
+                                <IconCaretUp className="text-2xs mie-2 2xs:mie-0" />
+                                <span className="2xs:sr-only">Up vote</span>
+                              </button>
                             )}
-                          {Intl.NumberFormat("en-US", {
-                            notation: "compact",
-                            maximumFractionDigits: 3,
-                          }).format(parseFloat(listProposalsData[id].votes))}{" "}
-                          <span className="text-neutral-11 pis-1ex 2xs:pis-0 text-3xs">
-                            vote{listProposalsData[id].votes === 1 && "s"}
+                          <span className="flex 2xs:flex-col">
+                            {Intl.NumberFormat("en-US", {
+                              notation: "compact",
+                              maximumFractionDigits: 3,
+                            }).format(parseFloat(listProposalsData[id].votes))}{" "}
+                            <span className="text-neutral-11 pis-1ex 2xs:pis-0 text-3xs">
+                              vote{listProposalsData[id].votes > 1 || (listProposalsData[id].votes === 0 && "s")}
+                            </span>
                           </span>
-                        </button>
+                          {didUserPassSnapshotAndCanVote &&
+                            contestStatus === CONTEST_STATUS.VOTING_OPEN &&
+                            currentUserAvailableVotesAmount > 0 &&
+                            downvotingAllowed === true && (
+                              <button
+                                onClick={() => onClickDownVote(id)}
+                                disabled={
+                                  checkIfUserPassedSnapshotLoading ||
+                                  !didUserPassSnapshotAndCanVote ||
+                                  contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
+                                  currentUserAvailableVotesAmount === 0
+                                }
+                                className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center"
+                              >
+                                <IconCaretDown className="text-2xs mie-2 2xs:mie-0" />
+                                <span className="2xs:sr-only">Down vote</span>
+                              </button>
+                            )}
+                        </div>
                       </>
                     )}
                   </div>

@@ -11,6 +11,7 @@ import { isAfter, isBefore, isFuture } from "date-fns";
 import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
+import ToggleSwitch from "@components/ToggleSwitch";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -596,6 +597,17 @@ export const Form = (props: FormProps) => {
                 after the closing date for submissions and before the closing date for votes.{" "}
               </span>
             </FormField.HelpBlock>
+          </FormField>
+
+          <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+            <ToggleSwitch
+              label="Downvoting"
+              disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+              checked={data().downvotingAllowed}
+              onChange={(e: boolean) => {
+                setData("downvotingAllowed", e);
+              }}
+            />
           </FormField>
         </div>
       </fieldset>

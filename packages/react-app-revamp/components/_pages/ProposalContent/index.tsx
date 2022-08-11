@@ -10,12 +10,12 @@ interface ProposalContentProps {
 }
 
 function renderContent(str: string) {
-  let renderedContent = str
+  let renderedContent = str;
   if (isUrlToImage(renderedContent)) {
     str.match(/^https[^\?]*.(jpg|jpeg|gif|avif|webp|png|tiff|bmp)(\?(.*))?$/gim)?.map(img => {
-      renderedContent = renderedContent.replace(img, `<img class="w-auto md:w-full h-auto" src="${img}" alt="" />`)
-    })
-  };
+      renderedContent = renderedContent.replace(img, `<img class="w-auto md:w-full h-auto" src="${img}" alt="" />`);
+    });
+  }
 
   if (isUrlTweet(str)) {
     const tweetId =

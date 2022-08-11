@@ -10,6 +10,8 @@ import useContest from "@hooks/useContest";
 export function useCastVotes() {
   const {
     //@ts-ignore
+    castPositiveAmountOfVotes,
+    //@ts-ignore
     pickedProposal,
     //@ts-ignore
     isLoading,
@@ -30,7 +32,7 @@ export function useCastVotes() {
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useContest();
 
-  async function castVotes(amount: number) {
+  async function castVotes(amount: number, isPositive: boolean) {
     const address = asPath.split("/")[3];
     setIsLoading(true);
     setIsSuccess(false);
@@ -46,7 +48,7 @@ export function useCastVotes() {
       const txCastVotes = await writeContract({
         ...contractConfig,
         functionName: "castVote",
-        args: [pickedProposal, parseEther("0"), parseUnits(`${amount}`)],
+        args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
       });
       const receipt = await waitForTransaction({
         chainId: chain?.id,
@@ -80,6 +82,7 @@ export function useCastVotes() {
     isLoading,
     isSuccess,
     error,
+    castPositiveAmountOfVotes,
   };
 }
 

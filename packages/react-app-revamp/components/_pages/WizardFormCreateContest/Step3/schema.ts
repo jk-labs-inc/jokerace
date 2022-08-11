@@ -14,6 +14,7 @@ export interface DataStep3 {
   datetimeClosingVoting: string;
   usersQualifyToVoteIfTheyHoldTokenOnVoteStart: boolean;
   usersQualifyToVoteAtAnotherDatetime: string;
+  downvoting: boolean;
 }
 
 export const schema = object({
@@ -38,4 +39,5 @@ export const schema = object({
   datetimeClosingVoting: string().refine(value => !isPast(new Date(value))),
   usersQualifyToVoteIfTheyHoldTokenOnVoteStart: boolean(),
   usersQualifyToVoteAtAnotherDatetime: string().optional(),
+  downvoting: boolean(),
 });
