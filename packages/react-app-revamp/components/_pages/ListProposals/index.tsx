@@ -21,6 +21,7 @@ export const ListProposals = () => {
   } = useRouter();
   const accountData = useAccount()
   const {
+    contestAuthorEthereumAddress,
     amountOfTokensRequiredToSubmitEntry,
     listProposalsData,
     currentUserAvailableVotesAmount,
@@ -29,6 +30,8 @@ export const ListProposals = () => {
     checkIfUserPassedSnapshotLoading,
   } = useStoreContest(
     state => ({
+      //@ts-ignore
+      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
       //@ts-ignore
       contestStatus: state.contestStatus,
       //@ts-ignore
@@ -198,7 +201,7 @@ export const ListProposals = () => {
                         View proposal #{id}
                       </a>
                     </Link>
-                    {!isProposalDeleted(listProposalsData[id].content) && listProposalsData[id].authorEthereumAddress === accountData?.address && <button onClick={() => onClickProposalDelete(id)} className="w-full 2xs:w-auto mt-6 text-xs 2xs:text-2xs rounded-md py-1.5 2xs:py-1 px-3 relative z-20 bg-negative-4 hover:bg-opacity-50 focus:bg-opacity-75 text-negative-11 bg-opacity-40">
+                    {!isProposalDeleted(listProposalsData[id].content) && contestAuthorEthereumAddress === accountData?.address && <button onClick={() => onClickProposalDelete(id)} className="w-full 2xs:w-auto mt-6 text-xs 2xs:text-2xs rounded-md py-1.5 2xs:py-1 px-3 relative z-20 bg-negative-4 hover:bg-opacity-50 focus:bg-opacity-75 text-negative-11 bg-opacity-40">
                       <span className="font-bold">Delete this proposal</span>
                     </button>}
                   </div>
