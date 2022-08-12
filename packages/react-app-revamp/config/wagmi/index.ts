@@ -22,17 +22,12 @@ const defaultChains = [
   chain.arbitrum,
   chain.mainnet,
   chain.optimism,
-  fantom,
-  avalanche,
-  harmony,
-  gnosis,
-  chain.localhost,
 ];
 const appChains = [...defaultChains, ...testnetChains];
 const providers =
   process.env.NODE_ENV === "development"
     ? [publicProvider()]
-    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
+    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId })];
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({
