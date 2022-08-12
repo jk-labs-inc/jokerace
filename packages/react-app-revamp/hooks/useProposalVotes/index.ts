@@ -86,8 +86,7 @@ export function useProposalVotes(id: number | string) {
         list.map(async (userAddress: string) => {
           const data = await readContract({
             //@ts-ignore
-            addressOrName: address,
-            contractInterface: DeployedContestContract.abi,
+            ...contractConfig,
             functionName: "proposalAddressVotes",
             args: [id, userAddress],
             chainId,

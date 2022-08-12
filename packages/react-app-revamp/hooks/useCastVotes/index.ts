@@ -6,6 +6,7 @@ import { useNetwork } from "wagmi";
 import { useRouter } from "next/router";
 import { parseEther, parseUnits } from "ethers/lib/utils";
 import useContest from "@hooks/useContest";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useCastVotes() {
   const {
@@ -34,13 +35,14 @@ export function useCastVotes() {
 
   async function castVotes(amount: number, isPositive: boolean) {
     const address = asPath.split("/")[3];
+    const abi = await getContestContractVersion(address);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
     const contractConfig = {
       addressOrName: address,
-      contractInterface: DeployedContestContract.abi,
+      contractInterface: abi ? abi : DeployedContestContract.abi,
     };
     try {
       // args are (*in this order!*): proposalId, support, numVotes
