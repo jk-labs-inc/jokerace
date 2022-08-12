@@ -78,7 +78,7 @@ export function useContest() {
     //@ts-ignore
     setContestMaxProposalCount,
     //@ts-ignore
-    setCurrentUserProposalCount,
+    increaseCurrentUserProposalCount,
     //@ts-ignore
     setUsersQualifyToVoteIfTheyHoldTokenAtTime,
     //@ts-ignore
@@ -384,8 +384,7 @@ export function useContest() {
     // (Needed to track if the current user can submit a proposal)
     //@ts-ignore
     if (data[0] === accountData?.address) {
-      let tempCount = currentUserProposalCount;
-      setCurrentUserProposalCount(tempCount++);
+      increaseCurrentUserProposalCount();
     }
     setProposalData({ id: proposalsIdsRawData[i], data: proposalData });
   }
