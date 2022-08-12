@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import shallow from "zustand/shallow";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { isAfter, isBefore, isDate } from "date-fns";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import {
@@ -30,6 +30,13 @@ import {
   Provider as ProviderCastVotes,
   createStore as createStoreCastVotes,
 } from "@hooks/useCastVotes/store";
+
+import {
+  useStore as useStoreDeleteProposal,
+  Provider as ProviderDeleteProposal,
+  createStore as createStoreDeleteProposal,
+} from "@hooks/useDeleteProposal/store";
+
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { useContest } from "@hooks/useContest";
@@ -45,21 +52,19 @@ import { chains } from "@config/wagmi";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import Sidebar from "./Sidebar";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
+import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
   const { query, asPath, pathname, push } = useRouter();
   const account = useAccount();
   const { chain } = useNetwork();
-  const { switchNetwork } = useSwitchNetwork();
 
   const {
     isLoading,
     address,
     fetchContestInfo,
     checkIfCurrentUserQualifyToVote,
-    setIsLoading,
-    setIsListProposalsLoading,
     isListProposalsLoading,
     isSuccess,
     isError,
@@ -110,6 +115,7 @@ const LayoutViewContest = (props: any) => {
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
   const stateSubmitProposal = useStoreSubmitProposal();
   const stateCastVotes = useStoreCastVotes();
+  const stateDeleteProposasl = useStoreDeleteProposal();
 
   useContestEvents();
   useEffect(() => {
@@ -300,7 +306,16 @@ const LayoutViewContest = (props: any) => {
                         setIsOpen={stateSubmitProposal.setIsModalOpen}
                       />
                     )}
-
+                  {!isLoading &&
+                    isSuccess &&
+                    chain?.id === chainId &&
+                    <DialogModalDeleteProposal
+                      /* @ts-ignore */
+                      isOpen={stateDeleteProposasl.isModalOpen}
+                      /* @ts-ignore */
+                      setIsOpen={stateDeleteProposasl.setIsModalOpen}
+                    />
+                  }
                   {!isLoading &&
                     isSuccess &&
                     chain?.id === chainId &&
@@ -330,7 +345,9 @@ export const getLayout = (page: any) => {
     <ProviderContest createStore={createStoreContest}>
       <ProviderSubmitProposal createStore={createStoreSubmitProposal}>
         <ProviderCastVotes createStore={createStoreCastVotes}>
-          <LayoutViewContest>{page}</LayoutViewContest>
+          <ProviderDeleteProposal createStore={createStoreDeleteProposal}>
+            <LayoutViewContest>{page}</LayoutViewContest>
+          </ProviderDeleteProposal>
         </ProviderCastVotes>
       </ProviderSubmitProposal>
     </ProviderContest>,
