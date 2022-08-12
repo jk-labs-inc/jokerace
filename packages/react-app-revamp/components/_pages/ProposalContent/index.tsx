@@ -4,6 +4,7 @@ import { TwitterTweetEmbed } from "react-twitter-embed";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import styles from "./styles.module.css";
+import isProposalDeleted from "@helpers/isProposalDeleted";
 interface ProposalContentProps {
   content: string;
   author: string;
@@ -43,10 +44,13 @@ export const ProposalContent = (props: ProposalContentProps) => {
   const { content, author } = props;
   return (
     <>
-      <blockquote className="leading-relaxed">{renderContent(content)}</blockquote>
-      <figcaption className="pt-5 font-mono overflow-hidden text-neutral-12 text-ellipsis whitespace-nowrap">
+      <blockquote className={`
+        leading-relaxed
+        ${isProposalDeleted(content) ? "italic text-neutral-11" : ""}
+      `}>{renderContent(content)}</blockquote>
+      {!isProposalDeleted(content)  && <figcaption className="pt-5 font-mono overflow-hidden text-neutral-12 text-ellipsis whitespace-nowrap">
         — {author}
-      </figcaption>
+      </figcaption>}
     </>
   );
 };

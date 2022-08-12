@@ -7,6 +7,7 @@ export const createStore = () => {
   return create(set => ({
     contestName: null,
     contestPrompt: null,
+    contestAuthorEthereumAddress: null,
     contestAuthor: null,
     submissionsOpen: null,
     votesOpen: null,
@@ -45,7 +46,7 @@ export const createStore = () => {
       set({ contestMaxNumberSubmissionsPerUser: amount }),
     setContestStatus: (status: number) => set({ contestStatus: status }),
     setContestName: (name: string) => set({ contestName: name }),
-    setContestAuthor: (author: string) => set({ contestAuthor: author }),
+    setContestAuthor: (author: string, address: string) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
     setSubmissionsOpen: (datetime: string) => set({ submissionsOpen: datetime }),
     setDidUserPassSnapshotAndCanVote: (isQualified: boolean) => set({ didUserPassSnapshotAndCanVote: isQualified }),
     setVotesOpen: (datetime: string) => set({ votesOpen: datetime }),
@@ -96,5 +97,20 @@ export const createStore = () => {
           },
         },
       })),
+          //@ts-ignore
+    softDeleteProposal: (id) =>
+    set(state => ({
+      ...state,
+      listProposalsData: {
+        //@ts-ignore
+        ...state.listProposalsData,
+        [id]: {
+          //@ts-ignore
+          ...state.listProposalsData[id],
+          content: 'This proposal has been deleted by the creator of the contest.',
+          isContentImage: false,
+        },
+      },
+    })),
   }));
 };

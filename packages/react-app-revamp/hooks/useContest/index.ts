@@ -202,7 +202,7 @@ export function useContest() {
         address: results[1],
         chainId: chain.mainnet.id,
       });
-      setContestAuthor(contestAuthorEns && contestAuthorEns !== null ? contestAuthorEns : results[1]);
+      setContestAuthor(contestAuthorEns && contestAuthorEns !== null ? contestAuthorEns : results[1], results[1]);
       setContestMaxNumberSubmissionsPerUser(results[2]);
       setContestMaxProposalCount(results[3]);
       setVotingTokenAddress(results[4]);

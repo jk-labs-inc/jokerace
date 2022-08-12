@@ -11,6 +11,7 @@ import ListProposalVotes from '@components/_pages/ListProposalVotes'
 import { CONTEST_STATUS } from '@helpers/contestStatus'
 import type { NextPage } from 'next'
 import Button from '@components/Button'
+import isProposalDeleted from '@helpers/isProposalDeleted'
 
 interface PageProps {
   address: string,
@@ -66,7 +67,7 @@ const Page: NextPage = (props: PageProps) => {
           author={listProposalsData[proposal]?.author}
           content={listProposalsData[proposal]?.content}
         />
-        {contestStatus === CONTEST_STATUS.VOTING_OPEN && proposal && proposal !== null && <div className='flex flex-col items-center justify-center mt-10'>
+        {contestStatus === CONTEST_STATUS.VOTING_OPEN && proposal && proposal !== null && !isProposalDeleted(listProposalsData[proposal]?.content) && <div className='flex flex-col items-center justify-center mt-10'>
 
         <Button 
           isLoading={checkIfUserPassedSnapshotLoading}

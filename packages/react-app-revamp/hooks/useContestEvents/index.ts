@@ -16,6 +16,8 @@ export function useContestEvents() {
     addProposalId,
     //@ts-ignore
     setProposalVotes,
+    //@ts-ignore,
+    softDeleteProposal,
   } = useStoreContest();
 
   useContractEvent({
@@ -47,6 +49,15 @@ export function useContestEvents() {
       updateProposalTransactionData(event[3].transactionHash, proposalId);
     },
   });
+
+  useContractEvent({
+    addressOrName: asPath.split("/")[3],
+    contractInterface: DeployedContestContract.abi,
+    eventName: "ProposalsDeleted",
+    listener: async event => {
+      softDeleteProposal(event[0].toString());
+    },
+  })
 
   useContractEvent({
     addressOrName: asPath.split("/")[3],
