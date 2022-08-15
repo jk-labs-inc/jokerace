@@ -33,6 +33,7 @@ export const Sidebar = (props: any) => {
   } = props;
 
   const {
+    listProposalsData,
     amountOfTokensRequiredToSubmitEntry,
     currentUserAvailableVotesAmount,
     listProposalsIds,
@@ -45,6 +46,8 @@ export const Sidebar = (props: any) => {
     contestStatus,
   } = useStoreContest(
     state => ({
+      //@ts-ignore
+      listProposalsData: state.listProposalsData,
       //@ts-ignore
       contestStatus: state.contestStatus,
       //@ts-ignore
@@ -68,7 +71,6 @@ export const Sidebar = (props: any) => {
     }),
     shallow,
   );
-
   const stateSubmitProposal = useStoreSubmitProposal();
 
   return (
@@ -148,6 +150,7 @@ export const Sidebar = (props: any) => {
                 : "primary"
             }
             disabled={
+              listProposalsIds.length > Object.keys(listProposalsData).length || 
               currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
               listProposalsIds.length >= contestMaxProposalCount ||

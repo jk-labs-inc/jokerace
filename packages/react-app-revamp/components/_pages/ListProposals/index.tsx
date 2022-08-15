@@ -29,10 +29,13 @@ export const ListProposals = () => {
     didUserPassSnapshotAndCanVote,
     checkIfUserPassedSnapshotLoading,
     downvotingAllowed,
+    listProposalsIds,
   } = useStoreContest(
     state => ({
       //@ts-ignore
       downvotingAllowed: state.downvotingAllowed,
+      //@ts-ignore
+      listProposalsIds: state.listProposalsIds,
       //@ts-ignore
       contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
       //@ts-ignore
@@ -101,7 +104,7 @@ export const ListProposals = () => {
       );
     }
     // Empty state
-    if (Object.keys(listProposalsData).length === 0) {
+    if (listProposalsIds.length === 0) {
       return (
         <div className="flex flex-col text-center items-center">
           <p className="text-neutral-9 italic mb-6">
@@ -112,7 +115,8 @@ export const ListProposals = () => {
           </p>
           {/* @ts-ignore */}
           {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-            currentUserAvailableVotesAmount >= amountOfTokensRequiredToSubmitEntry && (
+            currentUserAvailableVotesAmount >= amountOfTokensRequiredToSubmitEntry && 
+            (
               //@ts-ignore
               <Button onClick={() => stateSubmitProposal.setIsModalOpen(true)}>Submit a proposal</Button>
             )}
@@ -132,7 +136,7 @@ export const ListProposals = () => {
             .map((id, i) => {
               return (
                 <li
-                  className={`${styles.listElement} px-5 pt-5 pb-3 rounded-md 2xs:rounded-none 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
+                  className={`${styles.listElement} animate-appear px-5 pt-5 pb-3 rounded-md 2xs:rounded-none 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
                   key={id}
                 >
                   <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
