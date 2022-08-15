@@ -13,7 +13,7 @@ import { getNetwork } from "@wagmi/core";
 interface FormSearchContestProps {
   isInline?: boolean;
   onSubmit?: (address: string) => void;
-  retry?: any
+  retry?: any;
 }
 
 export const FormSearchContest = (props: FormSearchContestProps) => {
@@ -29,12 +29,22 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
       const currentChain = asPath.split("/")[2];
       push(
         ROUTE_VIEW_CONTEST,
-        `/contest/${!currentChain  || currentChain !== getNetwork()?.chain?.name.toLowerCase().replace(' ', '') ? getNetwork()?.chain?.name.toLowerCase().replace(' ', '') : currentChain }/${values.contestAddress}`,
+        `/contest/${
+          !currentChain ||
+          currentChain !==
+            getNetwork()
+              ?.chain?.name.toLowerCase()
+              .replace(" ", "")
+            ? getNetwork()
+                ?.chain?.name.toLowerCase()
+                .replace(" ", "")
+            : currentChain
+        }/${values.contestAddress}`,
         {
           shallow: true,
         },
       );
-      if(contestAddress && contestAddress === values.contestAddress) return
+      if (contestAddress && contestAddress === values.contestAddress) return;
       if (pathname !== ROUTE_VIEW_CONTESTS) {
         //@ts-ignore
         onSubmit(values.contestAddress);

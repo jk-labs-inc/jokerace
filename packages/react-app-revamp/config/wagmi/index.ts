@@ -5,8 +5,8 @@ import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
 
-const infuraId = process.env.INFURA_ID;
-const alchemyId = process.env.ALCHEMY_KEY;
+const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
+const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
 const testnetChains = [
   chain.polygonMumbai,
@@ -22,17 +22,12 @@ const defaultChains = [
   chain.arbitrum,
   chain.mainnet,
   chain.optimism,
-  fantom,
-  avalanche,
-  harmony,
-  gnosis,
-  chain.localhost,
 ];
 const appChains = [...defaultChains, ...testnetChains];
 const providers =
   process.env.NODE_ENV === "development"
     ? [publicProvider()]
-    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
+    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId })];
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({

@@ -52,7 +52,7 @@ export const TextInstructions = () => {
                   pathname: ROUTE_VIEW_CONTEST,
                   //@ts-ignore
                   query: {
-                    chain: contestDeployedToChain.name.toLowerCase().replace(' ', ''),
+                    chain: contestDeployedToChain.name.toLowerCase().replace(" ", ""),
                     address: dataDeployContest?.address,
                   },
                 }}
@@ -167,7 +167,10 @@ export const TextInstructions = () => {
           href={{
             pathname: ROUTE_VIEW_CONTEST,
             //@ts-ignore
-            query: { id: dataDeployContest?.address },
+            query: {
+              chain: contestDeployedToChain.name.toLowerCase().replace(" ", ""),
+              address: dataDeployContest?.address,
+            },
           }}
         >
           <a className={appearAsNeutralButton} target="_blank">

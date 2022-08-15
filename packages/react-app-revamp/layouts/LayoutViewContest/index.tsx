@@ -124,7 +124,10 @@ const LayoutViewContest = (props: any) => {
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
-    const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase().replace(' ', '');
+    const chainName = chains
+      .filter(chain => chain.id === chainId)?.[0]
+      ?.name.toLowerCase()
+      .replace(" ", "");
     if (asPath.split("/")[2] !== chainName) {
       if (pathname === ROUTE_VIEW_CONTEST) {
         let newRoute = pathname
@@ -271,12 +274,11 @@ const LayoutViewContest = (props: any) => {
                     <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
                       <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
                     </p>
-
                   )}
 
                   {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
                     <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
-                      <p>Snapshot ongoing, voting will be open in a 30sec-1min, please wait... </p>
+                      <p>Snapshot ongoing, voting will be open in 30sec-1min, please wait... </p>
                     </div>
                   )}
 
