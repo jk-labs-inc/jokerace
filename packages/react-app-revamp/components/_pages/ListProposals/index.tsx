@@ -147,7 +147,6 @@ export const ListProposals = () => {
                             #{i + 1}
                           </span>
                         )}
-
                         <div className=" text-neutral-12 flex space-y-2 flex-col items-center justify-center font-bold text-2xs">
                           {(contestStatus === CONTEST_STATUS.VOTING_OPEN && checkIfUserPassedSnapshotLoading) ||
                             (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (

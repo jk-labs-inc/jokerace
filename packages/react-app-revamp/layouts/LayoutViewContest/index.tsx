@@ -53,6 +53,7 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 import Sidebar from "./Sidebar";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
 import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
+import { switchNetwork } from "@wagmi/core";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -192,10 +193,27 @@ const LayoutViewContest = (props: any) => {
               </div>
             ))}
 
+              {account?.address && chain?.id !== chainId && (
+                <div className="animate-appear flex text-center flex-col mt-10 mx-auto">
+                  <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
+                  <p className="mt-2 mb-4 text-neutral-11 text-xs">
+                    You need to use {asPath.split("/")[2]} to check this contest.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      switchNetwork?.({chainId});
+                    }}
+                    className="mx-auto"
+                  >
+                    Switch network
+                  </Button>
+                </div>
+              )}
+
           {
             <>
 
-              {isError !== null && !isLoading && (
+              {((account?.address && chain?.id !== chainId) === false)  && isError !== null && !isLoading && (
                 <div className="my-6 md:my-0 animate-appear flex flex-col">
                   <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                     <p className="text-sm font-bold text-negative-10 text-center">
