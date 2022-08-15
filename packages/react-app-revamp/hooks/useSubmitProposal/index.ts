@@ -5,6 +5,7 @@ import { useStore as useStoreSubmitProposal } from "./store";
 import { useStore as useStoreContest } from "./../useContest/store";
 import { useNetwork } from "wagmi";
 import { useRouter } from "next/router";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useSubmitProposal() {
   const {
@@ -33,13 +34,14 @@ export function useSubmitProposal() {
 
   async function sendProposal(proposalContent: string) {
     const address = asPath.split("/")[3];
+    const abi = await getContestContractVersion(address);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
     const contractConfig = {
       addressOrName: address,
-      contractInterface: DeployedContestContract.abi,
+      contractInterface: abi ? abi : DeployedContestContract.abi,
     };
     try {
       const txSendProposal = await writeContract({

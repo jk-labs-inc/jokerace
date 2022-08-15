@@ -7,6 +7,7 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { sleep } from "@helpers/sleep";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { isAfter, isEqual } from "date-fns";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useCheckSnapshotProgress() {
   const { asPath } = useRouter();
@@ -27,10 +28,11 @@ export function useCheckSnapshotProgress() {
 
   async function updateSnapshotProgress() {
     const address = asPath.split("/")[3];
+    const abi = await getContestContractVersion(address);
     while (isSnaspshotTaken !== true) {
       const statusRawData = await readContract({
         addressOrName: address,
-        contractInterface: DeployedContestContract.abi,
+        contractInterface: abi ? abi : DeployedContestContract.abi,
         functionName: "state",
       });
       if (

@@ -32,6 +32,8 @@ export const createStore = () => {
     checkIfUserPassedSnapshotLoading: true,
     snapshotTaken: false,
     currentUserProposalCount: 0,
+    downvotingAllowed: false,
+    setDownvotingAllowed: (isAllowed: boolean) => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: (prompt: string | null) => set({ contestPrompt: prompt }),
     setCurrentUserProposalCount: (amount: number) => set({ currentUserProposalCount: amount }),
     increaseCurrentUserProposalCount: () =>

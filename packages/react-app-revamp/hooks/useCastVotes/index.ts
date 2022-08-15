@@ -6,9 +6,12 @@ import { useNetwork } from "wagmi";
 import { useRouter } from "next/router";
 import { parseEther, parseUnits } from "ethers/lib/utils";
 import useContest from "@hooks/useContest";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useCastVotes() {
   const {
+    //@ts-ignore
+    castPositiveAmountOfVotes,
     //@ts-ignore
     pickedProposal,
     //@ts-ignore
@@ -30,15 +33,16 @@ export function useCastVotes() {
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useContest();
 
-  async function castVotes(amount: number) {
+  async function castVotes(amount: number, isPositive: boolean) {
     const address = asPath.split("/")[3];
+    const abi = await getContestContractVersion(address);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
     const contractConfig = {
       addressOrName: address,
-      contractInterface: DeployedContestContract.abi,
+      contractInterface: abi ? abi : DeployedContestContract.abi,
     };
     try {
       // args are (*in this order!*): proposalId, support, numVotes
@@ -46,7 +50,7 @@ export function useCastVotes() {
       const txCastVotes = await writeContract({
         ...contractConfig,
         functionName: "castVote",
-        args: [pickedProposal, parseEther("0"), parseUnits(`${amount}`)],
+        args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
       });
       const receipt = await waitForTransaction({
         chainId: chain?.id,
@@ -80,6 +84,7 @@ export function useCastVotes() {
     isLoading,
     isSuccess,
     error,
+    castPositiveAmountOfVotes,
   };
 }
 

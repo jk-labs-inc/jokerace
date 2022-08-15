@@ -74,6 +74,9 @@ export function useDeployContest(form: any) {
         numAllowedProposalSubmissions,
         // max proposal count: the maximum number of submissions the contest will show
         values?.submissionMaxNumber,
+        // downvoting: is downvoting allowed in this contest
+        // 0 = false; 1 = true
+        values?.downvotingAllowed === true ? 1 : 0,
       ];
 
       const contract = await factory.deploy(
