@@ -13,9 +13,11 @@ import "../utils/IVotesTimestamp.sol";
  */
 abstract contract GovernorVotesTimestamp is Governor {
     IVotesTimestamp public immutable token;
+    IVotesTimestamp public immutable submissionToken;
 
-    constructor(IVotesTimestamp tokenAddress) {
+    constructor(IVotesTimestamp tokenAddress, IVotesTimestamp submissionTokenAddress) {
         token = tokenAddress;
+        submissionToken = submissionTokenAddress;
     }
 
     /**
@@ -30,5 +32,12 @@ abstract contract GovernorVotesTimestamp is Governor {
      */
     function getCurrentVotes(address account) public view virtual override returns (uint256) {
         return token.getVotes(account);
+    }
+
+    /**
+     * Read the voting weight from the token's built in snapshot mechanism (see {IGovernor-getCurrentVotes}).
+     */
+    function getCurrentSubmissionTokenVotes(address account) public view virtual override returns (uint256) {
+        return submissionToken.getVotes(account);
     }
 }

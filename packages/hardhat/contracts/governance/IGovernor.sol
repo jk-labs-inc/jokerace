@@ -165,6 +165,15 @@ abstract contract IGovernor is IERC165 {
     function getCurrentVotes(address account) public view virtual returns (uint256);
 
     /**
+     * @notice module:reputation
+     * @dev Voting power of an `account` at the current block for a token for submission gating.
+     *
+     * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
+     * multiple), {ERC20Votes} tokens.
+     */
+    function getCurrentSubmissionTokenVotes(address account) public view virtual returns (uint256);
+
+    /**
      * @dev Create a new proposal. Vote start {IGovernor-votingDelay} blocks after the proposal is created and ends
      * {IGovernor-votingPeriod} blocks after the voting starts.
      *
