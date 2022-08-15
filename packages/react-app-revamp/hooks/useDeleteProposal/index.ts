@@ -5,6 +5,7 @@ import { useNetwork } from "wagmi";
 import { useStore } from "./store";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useEffect } from "react";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useDeleteProposal() {
   const { asPath } = useRouter()
@@ -37,7 +38,7 @@ export function useDeleteProposal() {
 
   async function deleteProposal() {
     const address = asPath.split("/")[3];
-
+    const abi = await getContestContractVersion(address);
     setIsLoading(true)
     setIsLoading(true);
     setIsSuccess(false);
@@ -45,7 +46,7 @@ export function useDeleteProposal() {
     setTransactionData(null);
     const contractConfig = {
       addressOrName: address,
-      contractInterface: DeployedContestContract.abi,
+      contractInterface: abi ? abi : DeployedContestContract.abi,
     };
     try {
       const txCastVotes = await writeContract({

@@ -74,7 +74,11 @@ export function useContestEvents() {
       });
 
       //@ts-ignore
-      setProposalVotes({ id: proposalId, votes: votes / 1e18 });
+      setProposalVotes({
+        id: proposalId,
+        //@ts-ignore
+        votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+      });
     },
   });
 
