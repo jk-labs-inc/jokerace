@@ -180,10 +180,17 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
-     * @dev If downvoting is enabled in this contest
+     * @dev If downvoting is enabled in this contest.
      */
     function downvotingAllowed() public view virtual returns (uint256) {
         return 0; // 0 == false, 1 == true
+    }
+
+    /**
+     * @dev If submission gating is done by voting token in this contest.
+     */
+    function submissionGatingByVotingToken() public view virtual returns (uint256) {
+        return 1; // 0 == false, 1 == true
     }
 
     /**
@@ -222,10 +229,19 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
         require(_numSubmissions[msg.sender] < numAllowedProposalSubmissions(), "Governor: the same cannot submit more than the numAllowedProposalSubmissions for this contest");
         require(_proposalIds.length < maxProposalCount(), "Governor: the max number of proposals have been submitted");
-        require(
-            getCurrentVotes(msg.sender) >= proposalThreshold(),
-            "GovernorCompatibilityBravo: proposer votes below proposal threshold"
-        );
+        if (submissionGatingByVotingToken() == 1) {
+            require(
+                getCurrentVotes(msg.sender) >= proposalThreshold(),
+                "GovernorCompatibilityBravo: proposer votes below proposal threshold"
+            );
+        } else if (submissionGatingByVotingToken() == 0) {
+            require(
+                getCurrentSubmissionTokenVotes(msg.sender) >= proposalThreshold(),
+                "GovernorCompatibilityBravo: proposer submission gating token votes below proposal threshold"
+            );
+        } else {
+            revert("submissionGatingByVotingToken must be set to either true (1) or false (0)");
+        }
 
         require(bytes(proposalDescription).length != 0, "Governor: empty proposal");
 
