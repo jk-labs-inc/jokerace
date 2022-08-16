@@ -24,7 +24,7 @@ function useContests(initialData: any) {
             .lte('start_at', new Date().toISOString())
             // all rows whose votes end date is >= to the current date.
             .gte('end_at', new Date().toISOString())
-            .order('end_at', { ascending: false })
+            .order('end_at', { ascending: true })
             .range(from, to) 
             const { data, count, error } = result
             if(error) {
@@ -109,7 +109,7 @@ export async function getStaticProps() {
   .select("*", { count: "exact" })
   .lte('start_at', new Date().toISOString())
   .gte('end_at', new Date().toISOString())
-  .order('end_at', { ascending: false })
+  .order('end_at', { ascending: true })
   .range(from, to) 
 
   const { data, error } = result
