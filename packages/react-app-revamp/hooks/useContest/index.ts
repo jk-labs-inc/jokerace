@@ -172,13 +172,15 @@ export function useContest() {
           functionName: "proposalThreshold",
         },
       ];
-      if (abi?.filter(el => el.name === "prompt").length > 0) {
+      //@ts-ignore
+      if (abi?.filter(el => el.name === "prompt")?.length > 0) {
         contracts.push({
           ...contractConfig,
           functionName: "prompt",
         });
       }
-      if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
+      //@ts-ignore
+      if (abi?.filter(el => el.name === "downvotingAllowed")?.length > 0) {
         contracts.push({
           ...contractConfig,
           functionName: "downvotingAllowed",
@@ -186,12 +188,15 @@ export function useContest() {
       }
 
       const results = await readContracts({ contracts });
-      if (abi?.filter(el => el.name === "prompt").length > 0) {
-        const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed").length > 0 ? 2 : 1;
-        setContestPrompt(results[contracts.length - indexToCheck]);
+      //@ts-ignore
+      if (abi?.filter(el => el.name === "prompt")?.length > 0) {
+        //@ts-ignore
+        const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed")?.length > 0 ? 2 : 1;
+        setContestPrompt(results[contracts?.length - indexToCheck]);
       }
-      if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
-        const isAllowed = parseInt(`${results[contracts.length - 1]}`) === 1 ? true : false;
+      //@ts-ignore
+      if (abi?.filter(el => el.name === "downvotingAllowed")?.length > 0) {
+        const isAllowed = parseInt(`${results[contracts?.length - 1]}`) === 1 ? true : false;
         setDownvotingAllowed(isAllowed);
       } else {
         setDownvotingAllowed(false);
@@ -415,7 +420,7 @@ export function useContest() {
         functionName: "getAllProposalIds",
       });
       setListProposalsIds(proposalsIdsRawData);
-      if (proposalsIdsRawData.length > 0) {
+      if (proposalsIdsRawData?.length > 0) {
         const contracts: any = [];
         proposalsIdsRawData.map(id => {
           contracts.push(
@@ -436,7 +441,7 @@ export function useContest() {
 
         const results = await readContracts({ contracts });
 
-        for (let i = 0; i < proposalsIdsRawData.length; i++) {
+        for (let i = 0; i < proposalsIdsRawData?.length; i++) {
           // For all proposals, fetch
           fetchProposal(i, results, proposalsIdsRawData);
         }

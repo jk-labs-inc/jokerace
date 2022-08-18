@@ -54,6 +54,7 @@ import Sidebar from "./Sidebar";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
 import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 import { switchNetwork } from "@wagmi/core";
+import { ErrorBoundary } from "react-error-boundary";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -362,6 +363,20 @@ const LayoutViewContest = (props: any) => {
 
 export const getLayout = (page: any) => {
   return getBaseLayout(
+    <ErrorBoundary
+    fallbackRender={({error, resetErrorBoundary}) => (
+      <div role="alert" className="container m-auto sm:text-center">
+        <p className='text-2xl font-black mb-3 text-primary-10'>Something went wrong</p>
+        {/*  eslint-disable-next-line react/no-unescaped-entities */}
+        <p className='text-neutral-12 mb-6'>
+          {error?.message ?? error}
+        </p>
+        <Button onClick={resetErrorBoundary}>
+          Try again
+        </Button>
+      </div>
+    )}
+  >
     <ProviderContest createStore={createStoreContest}>
       <ProviderSubmitProposal createStore={createStoreSubmitProposal}>
         <ProviderCastVotes createStore={createStoreCastVotes}>
@@ -370,6 +385,7 @@ export const getLayout = (page: any) => {
           </ProviderDeleteProposal>
         </ProviderCastVotes>
       </ProviderSubmitProposal>
-    </ProviderContest>,
+    </ProviderContest>
+    </ErrorBoundary>,
   );
 };

@@ -22,7 +22,7 @@ export const stepsNames = {
   },
 };
 
-const stepsNumber = Object.keys(stepsNames).length;
+const stepsNumber = Object.keys(stepsNames)?.length;
 export const StepIndicator = () => {
   const { currentStep, setCurrentStep } = useStore(
     state => ({
