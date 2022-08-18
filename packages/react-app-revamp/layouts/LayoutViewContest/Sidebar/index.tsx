@@ -139,7 +139,7 @@ export const Sidebar = (props: any) => {
             intent={
               currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
-              listProposalsIds.length >= contestMaxProposalCount ||
+              listProposalsIds?.length >= contestMaxProposalCount ||
               contestStatus !== CONTEST_STATUS.SUBMISSIONS_OPEN ||
               isLoading ||
               isListProposalsLoading ||
@@ -150,10 +150,10 @@ export const Sidebar = (props: any) => {
                 : "primary"
             }
             disabled={
-              listProposalsIds.length > Object.keys(listProposalsData).length || 
+              listProposalsIds?.length > Object.keys(listProposalsData)?.length || 
               currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
-              listProposalsIds.length >= contestMaxProposalCount ||
+              listProposalsIds?.length >= contestMaxProposalCount ||
               contestStatus !== CONTEST_STATUS.SUBMISSIONS_OPEN ||
               isLoading ||
               isListProposalsLoading ||

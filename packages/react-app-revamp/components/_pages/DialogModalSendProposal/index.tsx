@@ -121,7 +121,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
 
       {currentUserAvailableVotesAmount >= amountOfTokensRequiredToSubmitEntry &&
       currentUserProposalCount < contestMaxNumberSubmissionsPerUser &&
-      listProposalsIds.length < contestMaxProposalCount &&
+      listProposalsIds?.length < contestMaxProposalCount &&
       contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
         <>
           {contestPrompt && (
@@ -162,7 +162,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
                   </div>
                 </FormField>
                 <Button
-                  disabled={proposal.trim().length === 0 || isLoading}
+                  disabled={proposal?.trim()?.length === 0 || isLoading}
                   type="submit"
                   className={isLoading || error !== null ? "hidden" : "mt-3"}
                 >
