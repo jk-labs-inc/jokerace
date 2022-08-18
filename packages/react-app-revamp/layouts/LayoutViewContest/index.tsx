@@ -366,7 +366,7 @@ export const getLayout = (page: any) => {
     <ErrorBoundary
     fallbackRender={({error, resetErrorBoundary}) => (
       <div role="alert" className="container m-auto sm:text-center">
-        <p className='text-4xl font-black mb-3 text-primary-10'>Something went wrong</p>
+        <p className='text-2xl font-black mb-3 text-primary-10'>Something went wrong</p>
         {/*  eslint-disable-next-line react/no-unescaped-entities */}
         <p className='text-neutral-12 mb-6'>
           {error?.message ?? error}
