@@ -55,7 +55,6 @@ import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgr
 import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 import { switchNetwork } from "@wagmi/core";
 import { ErrorBoundary } from "react-error-boundary";
-import FallbackViewError from './FallbackViewError'
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -163,12 +162,7 @@ const LayoutViewContest = (props: any) => {
   }, [contestStatus]);
 
   return (
-    <ErrorBoundary
-      FallbackComponent={FallbackViewError}
-      onReset={() => {
-        fetchContestInfo()
-      }}
-    >
+    <>
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
         <div className="container mx-auto">
           <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
@@ -363,12 +357,26 @@ const LayoutViewContest = (props: any) => {
           }
         </div>
       </div>
-    </ErrorBoundary>
+    </>
   );
 };
 
 export const getLayout = (page: any) => {
   return getBaseLayout(
+    <ErrorBoundary
+    fallbackRender={({error, resetErrorBoundary}) => (
+      <div role="alert" className="container m-auto sm:text-center">
+        <p className='text-4xl font-black mb-3 text-primary-10'>Something went wrong</p>
+        {/*  eslint-disable-next-line react/no-unescaped-entities */}
+        <p className='text-neutral-12 mb-6'>
+          {error?.message ?? error}
+        </p>
+        <Button onClick={resetErrorBoundary}>
+          Try again
+        </Button>
+      </div>
+    )}
+  >
     <ProviderContest createStore={createStoreContest}>
       <ProviderSubmitProposal createStore={createStoreSubmitProposal}>
         <ProviderCastVotes createStore={createStoreCastVotes}>
@@ -377,6 +385,7 @@ export const getLayout = (page: any) => {
           </ProviderDeleteProposal>
         </ProviderCastVotes>
       </ProviderSubmitProposal>
-    </ProviderContest>,
+    </ProviderContest>
+    </ErrorBoundary>,
   );
 };

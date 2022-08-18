@@ -172,12 +172,14 @@ export function useContest() {
           functionName: "proposalThreshold",
         },
       ];
+      //@ts-ignore
       if (abi?.filter(el => el.name === "prompt").length > 0) {
         contracts.push({
           ...contractConfig,
           functionName: "prompt",
         });
       }
+      //@ts-ignore
       if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
         contracts.push({
           ...contractConfig,
@@ -186,10 +188,13 @@ export function useContest() {
       }
 
       const results = await readContracts({ contracts });
+      //@ts-ignore
       if (abi?.filter(el => el.name === "prompt").length > 0) {
+        //@ts-ignore
         const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed").length > 0 ? 2 : 1;
         setContestPrompt(results[contracts.length - indexToCheck]);
       }
+      //@ts-ignore
       if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
         const isAllowed = parseInt(`${results[contracts.length - 1]}`) === 1 ? true : false;
         setDownvotingAllowed(isAllowed);
@@ -415,7 +420,7 @@ export function useContest() {
         functionName: "getAllProposalIds",
       });
       setListProposalsIds(proposalsIdsRawData);
-      if (proposalsIdsRawData.length > 0) {
+      if (proposalsIdsRawData?.length > 0) {
         const contracts: any = [];
         proposalsIdsRawData.map(id => {
           contracts.push(
