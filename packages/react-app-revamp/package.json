@@ -28,6 +28,7 @@
     "react-aria": "^3.16.0",
     "react-csv": "^2.2.2",
     "react-dom": "18.1.0",
+    "react-error-boundary": "^3.1.4",
     "react-headless-pagination": "^0.1.0",
     "react-hot-toast": "^2.2.0",
     "react-html-props": "^1.0.33",

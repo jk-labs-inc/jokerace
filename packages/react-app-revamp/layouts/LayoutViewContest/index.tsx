@@ -54,6 +54,8 @@ import Sidebar from "./Sidebar";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
 import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 import { switchNetwork } from "@wagmi/core";
+import { ErrorBoundary } from "react-error-boundary";
+import FallbackViewError from './FallbackViewError'
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -161,7 +163,12 @@ const LayoutViewContest = (props: any) => {
   }, [contestStatus]);
 
   return (
-    <>
+    <ErrorBoundary
+      FallbackComponent={FallbackViewError}
+      onReset={() => {
+        fetchContestInfo()
+      }}
+    >
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
         <div className="container mx-auto">
           <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
@@ -356,7 +363,7 @@ const LayoutViewContest = (props: any) => {
           }
         </div>
       </div>
-    </>
+    </ErrorBoundary>
   );
 };
 
