@@ -9,12 +9,12 @@ export async function getContestContractVersion(address: string) {
   const provider = await getProvider();
   const bytecode = await provider.getCode(address);
 
-  if (bytecode?.length <= 2) return null;
-  if (!bytecode?.includes(utils.id("prompt()").slice(2, 10))) {
+  if (bytecode.length <= 2) return null;
+  if (!bytecode.includes(utils.id("prompt()").slice(2, 10))) {
     return LegacyDeployedContestContract.abi;
-  } else if (!bytecode?.includes(utils.id("allProposalTotalVotes()").slice(2, 10))) {
+  } else if (!bytecode.includes(utils.id("allProposalTotalVotes()").slice(2, 10))) {
     return PromptDeployedContestContract.abi;
-  } else if (!bytecode?.includes(utils.id("downvotingAllowed()").slice(2, 10))) {
+  } else if (!bytecode.includes(utils.id("downvotingAllowed()").slice(2, 10))) {
     return AllProposalTotalVotesDeployedContestContract.abi;
   }
   
