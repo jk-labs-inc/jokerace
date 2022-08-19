@@ -104,7 +104,7 @@ export const ListProposals = () => {
       );
     }
     // Empty state
-    if (listProposalsIds?.length === 0) {
+    if (listProposalsIds.length === 0) {
       return (
         <div className="flex flex-col text-center items-center">
           <p className="text-neutral-9 italic mb-6">

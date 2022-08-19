@@ -173,14 +173,14 @@ export function useContest() {
         },
       ];
       //@ts-ignore
-      if (abi?.filter(el => el.name === "prompt")?.length > 0) {
+      if (abi?.filter(el => el.name === "prompt").length > 0) {
         contracts.push({
           ...contractConfig,
           functionName: "prompt",
         });
       }
       //@ts-ignore
-      if (abi?.filter(el => el.name === "downvotingAllowed")?.length > 0) {
+      if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
         contracts.push({
           ...contractConfig,
           functionName: "downvotingAllowed",
@@ -189,14 +189,14 @@ export function useContest() {
 
       const results = await readContracts({ contracts });
       //@ts-ignore
-      if (abi?.filter(el => el.name === "prompt")?.length > 0) {
+      if (abi?.filter(el => el.name === "prompt").length > 0) {
         //@ts-ignore
-        const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed")?.length > 0 ? 2 : 1;
-        setContestPrompt(results[contracts?.length - indexToCheck]);
+        const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed").length > 0 ? 2 : 1;
+        setContestPrompt(results[contracts.length - indexToCheck]);
       }
       //@ts-ignore
-      if (abi?.filter(el => el.name === "downvotingAllowed")?.length > 0) {
-        const isAllowed = parseInt(`${results[contracts?.length - 1]}`) === 1 ? true : false;
+      if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
+        const isAllowed = parseInt(`${results[contracts.length - 1]}`) === 1 ? true : false;
         setDownvotingAllowed(isAllowed);
       } else {
         setDownvotingAllowed(false);
@@ -441,7 +441,7 @@ export function useContest() {
 
         const results = await readContracts({ contracts });
 
-        for (let i = 0; i < proposalsIdsRawData?.length; i++) {
+        for (let i = 0; i < proposalsIdsRawData.length; i++) {
           // For all proposals, fetch
           fetchProposal(i, results, proposalsIdsRawData);
         }

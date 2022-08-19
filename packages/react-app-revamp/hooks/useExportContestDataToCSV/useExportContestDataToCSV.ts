@@ -82,10 +82,10 @@ export function useExportContestDataToCSV() {
     stateExportData.setError(null, false);
 
     const propArrayToReturn = [];
-    const tenthPercentile = Math.ceil(listProposalsIds?.length / 10);
+    const tenthPercentile = Math.ceil(listProposalsIds.length / 10);
     const ensNamesMap = new Map();
     try {
-      for (let i = 0; i < listProposalsIds?.length; i++) {
+      for (let i = 0; i < listProposalsIds.length; i++) {
         const propId = listProposalsIds[i];
         const propTotalVotes = listProposalsData[propId].votes;
         const propContent = listProposalsData[propId].content;
@@ -109,7 +109,7 @@ export function useExportContestDataToCSV() {
         };
 
         //@ts-ignore
-        if (addressesVoted?.length == 0) {
+        if (addressesVoted.length == 0) {
           const noVoterDict = {
             ...COMMON_DATA,
             [HEADERS_KEYS.VOTER]: "No voters",
@@ -127,7 +127,7 @@ export function useExportContestDataToCSV() {
         }
 
         //@ts-ignore
-        for (let j = 0; j < addressesVoted?.length; j++) {
+        for (let j = 0; j < addressesVoted.length; j++) {
           //@ts-ignore
           const address = addressesVoted[j];
           const addressPropVote = await fetchVotesPerAddress(propId, address);
@@ -163,11 +163,11 @@ export function useExportContestDataToCSV() {
         }
 
         if (i % tenthPercentile == 0) {
-          stateExportData.setLoadingMessage(`Loading ${i} of ${listProposalsIds?.length} entries...`);
+          stateExportData.setLoadingMessage(`Loading ${i} of ${listProposalsIds.length} entries...`);
         }
       }
 
-      stateExportData.setLoadingMessage(`Loaded ${listProposalsIds?.length} out of ${listProposalsIds?.length} entries!`);
+      stateExportData.setLoadingMessage(`Loaded ${listProposalsIds.length} out of ${listProposalsIds.length} entries!`);
       stateExportData.setCsv(propArrayToReturn);
       stateExportData.setIsSuccess(true);
       stateExportData.setIsLoading(false);
