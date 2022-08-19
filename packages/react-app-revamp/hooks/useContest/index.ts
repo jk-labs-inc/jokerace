@@ -413,6 +413,7 @@ export function useContest() {
     };
     const contractBaseOptions = {};
     try {
+      setIsListProposalsLoading(true);
       // Get list of proposals (ids)
       const proposalsIdsRawData = await readContract({
         ...contractConfig,
@@ -441,10 +442,12 @@ export function useContest() {
 
         const results = await readContracts({ contracts });
 
+        var proposalFetchPromises = [];
         for (let i = 0; i < proposalsIdsRawData.length; i++) {
           // For all proposals, fetch
-          fetchProposal(i, results, proposalsIdsRawData);
+          proposalFetchPromises.push(fetchProposal(i, results, proposalsIdsRawData));
         }
+        await Promise.all(proposalFetchPromises);
       }
       setIsLoading(false);
       setIsListProposalsLoading(false);
