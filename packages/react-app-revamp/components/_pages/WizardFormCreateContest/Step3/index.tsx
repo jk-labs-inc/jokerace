@@ -93,7 +93,7 @@ export const Step3 = () => {
         <Timeline />
       </div>
       <Form isDeploying={stateContestDeployment.isLoading} {...form} />
-      {modalDeploySubmissionTokenOpen && <DialogModalMintProposalToken />}
+      {modalDeploySubmissionTokenOpen && <DialogModalMintProposalToken formCreateContestSetFields={form.setFields}/>}
       <DialogModalDeployTransaction
         isOpen={modalDeployContestOpen}
         setIsOpen={setModalDeployContestOpen}
