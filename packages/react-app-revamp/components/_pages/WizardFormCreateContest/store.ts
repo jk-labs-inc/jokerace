@@ -36,10 +36,15 @@ export interface WizardFormState {
 
   // Deploy token
   modalDeployTokenOpen: boolean
-  dataDeployToken: any,
-  setDeployTokenData: (data: any) => void
+  modalDeploySubmissionTokenOpen: boolean,
+  dataDeploySubmissionToken: any,
+  dataDeployVotingToken: any,
+  setModalDeploySubmissionTokenOpen:   (isOpen: boolean) => void;
+  setDeploySubmissionTokenData: (data: any) => void
+  setDeployVotingTokenData: (data: any) => void
   setModalDeployTokenOpen: (isOpen: boolean) => void;
-
+  setDeployTokenData: (data: any) => void;
+  
   // Deploy contest
   modalDeployContestOpen: boolean
   dataDeployContest: null
@@ -51,6 +56,10 @@ export const createStore = () => {
   return create<WizardFormState>((set) => ({
     tokenDeployedToChain: null,
     setTokenDeployedToChain: (chain) => set({ tokenDeployedToChain: chain }),
+    setDeployTokenData: (data) => set({
+      dataDeployVotingToken: data,
+      dataDeploySubmissionToken: data,
+    }),
 
     contestDeployedToChain: null,
     setContestDeployedToChain: (chain) => set({ contestDeployedToChain: chain }),
@@ -70,10 +79,16 @@ export const createStore = () => {
       [stepsIndex[step]]: data,
     })),
 
-    dataDeployToken: null, 
-    setDeployTokenData: (value) => set({ dataDeployToken: value }),
     modalDeployTokenOpen: false,
     setModalDeployTokenOpen:  (value) => set({ modalDeployTokenOpen: value }),
+
+    dataDeploySubmissionToken: null, 
+    setDeploySubmissionTokenData: (value) => set({ dataDeploySubmissionToken: value }),
+    setModalDeploySubmissionTokenOpen:  (value) => set({ modalDeploySubmissionTokenOpen: value }),
+    modalDeploySubmissionTokenOpen: false,
+
+    dataDeployVotingToken: null, 
+    setDeployVotingTokenData: (value) => set({ dataDeployVotingToken: value }),
 
     dataDeployContest: null, 
     setDeployContestData: (value) => set({ dataDeployContest: value }),

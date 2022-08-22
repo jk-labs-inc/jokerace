@@ -7,6 +7,8 @@ export interface DataStep3 {
   datetimeOpeningSubmissions: string;
   submissionMaxNumber: number;
   submissionOpenToAll: boolean;
+  useSameTokenForSubmissions: boolean;
+  submissionTokenAddress: string;
   requiredNumberOfTokensToSubmit: null | number;
   noSubmissionLimitPerUser: boolean;
   submissionPerUserMaxNumber: null | number;
@@ -24,6 +26,8 @@ export const schema = object({
   contestDescription: string()
     .trim()
     .min(1),
+  useSameTokenForSubmissions: boolean(),
+  submissionTokenAddress: string().regex(/^0x[a-fA-F0-9]{40}$/),
   votingTokenAddress: string().regex(/^0x[a-fA-F0-9]{40}$/),
   datetimeOpeningSubmissions: string(),
   submissionMaxNumber: number().positive(),

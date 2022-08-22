@@ -8,12 +8,20 @@ import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 import { useStore } from "../store";
+import { useEffect } from "react";
 
 export function useDeployToken(form: any) {
   const stateContractDeployment = useContractFactory();
   const { chain } = useNetwork();
   const { refetch } = useSigner();
-  const { modalDeployTokenOpen, setTokenDeployedToChain, setModalDeployTokenOpen, setDeployTokenData } = useStore(
+  const {
+    setDeploySubmissionTokenData,
+    modalDeploySubmissionTokenOpen,
+    modalDeployTokenOpen,
+    setTokenDeployedToChain,
+    setModalDeployTokenOpen,
+    setDeployTokenData,
+  } = useStore(
     state => ({
       //@ts-ignore
       setTokenDeployedToChain: state.setTokenDeployedToChain,
@@ -23,11 +31,15 @@ export function useDeployToken(form: any) {
       setDeployTokenData: state.setDeployTokenData,
       //@ts-ignore
       modalDeployTokenOpen: state.modalDeployTokenOpen,
+      //@ts-ignore
+      modalDeploySubmissionTokenOpen: state.modalDeploySubmissionTokenOpen,
+      //@ts-ignore
+      setDeploySubmissionTokenData: state.setDeploySubmissionTokenData,
     }),
     shallow,
   );
 
-  async function handleSubmitForm(values: any) {
+  async function handleSubmitForm(values: any, isDeployingSubmissionToken: boolean) {
     //@ts-ignore
     setTokenDeployedToChain(chain);
     setModalDeployTokenOpen(true);
@@ -57,11 +69,18 @@ export function useDeployToken(form: any) {
         hash: contract.deployTransaction.hash,
       });
       stateContractDeployment.setIsSuccess(true);
-      setDeployTokenData({
-        hash: receipt.transactionHash,
-        address: contract.address,
-      });
-      if (modalDeployTokenOpen === false)
+      if (isDeployingSubmissionToken === true) {
+        setDeploySubmissionTokenData({
+          hash: receipt.transactionHash,
+          address: contract.address,
+        });
+      } else {
+        setDeployTokenData({
+          hash: receipt.transactionHash,
+          address: contract.address,
+        });
+      }
+      if (modalDeployTokenOpen === false && modalDeploySubmissionTokenOpen === false)
         toast.success(
           `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) was deployed successfully!`,
         );
@@ -70,7 +89,7 @@ export function useDeployToken(form: any) {
       form.reset();
     } catch (e) {
       console.error(e);
-      if (modalDeployTokenOpen === false)
+      if (modalDeployTokenOpen === false && modalDeploySubmissionTokenOpen === false)
         toast.error(`The contract for your token ${values.tokenName} ($${values.tokenSymbol}) couldn't be deployed.`);
       stateContractDeployment.setIsError(true);
       //@ts-ignore
@@ -78,6 +97,15 @@ export function useDeployToken(form: any) {
       stateContractDeployment.setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (modalDeploySubmissionTokenOpen === false || modalDeployTokenOpen === false) {
+      stateContractDeployment.setIsSuccess(false);
+      stateContractDeployment.setIsLoading(false);
+      stateContractDeployment.setIsError(false);
+      stateContractDeployment.setErrorMessage(null);
+    }
+  }, [modalDeployTokenOpen, modalDeploySubmissionTokenOpen]);
 
   return {
     handleSubmitForm,

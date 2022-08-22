@@ -12,6 +12,7 @@ import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
+import { useEffect, useId } from "react";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -26,15 +27,18 @@ interface FormProps {
 }
 
 export const Form = (props: FormProps) => {
+  const formId = useId();
   const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { setCurrentStep, dataDeployToken } = useStore(
+  const { dataDeploySubmissionToken, setCurrentStep, setModalDeploySubmissionTokenOpen } = useStore(
     state => ({
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
       //@ts-ignore
-      dataDeployToken: state.dataDeployToken,
+      setModalDeploySubmissionTokenOpen: state.setModalDeploySubmissionTokenOpen,
+      //@ts-ignore
+      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
     }),
     shallow,
   );
@@ -76,7 +80,7 @@ export const Form = (props: FormProps) => {
   });
 
   return (
-    <form ref={form} className="w-full">
+    <form ref={form} id={formId} className="w-full">
       <fieldset>
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
@@ -260,6 +264,64 @@ export const Form = (props: FormProps) => {
               Please type a positive number.
             </FormField.HelpBlock>
           </FormField>
+
+          <FormRadioGroup
+            disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+            value={data()?.useSameTokenForSubmissions}
+            onChange={(e: boolean) => {
+              if (e === true) {
+                resetField("submissionTokenAddress");
+              }
+              setData("useSameTokenForSubmissions", e);
+            }}
+          >
+            <RadioGroup.Label className="sr-only">
+              Does your contest require a different token for submitting proposals and voting ?
+            </RadioGroup.Label>
+            <FormRadioOption value={true}>Use the same token for both submitting proposals and voting</FormRadioOption>
+            <FormRadioOption value={false}>
+              <div className="flex items-center flex-wrap">
+                <span className="pie-1ex">Require separate submission token</span>
+                <FormInput
+                  disabled={
+                    data()?.useSameTokenForSubmissions ||
+                    !isConnected ||
+                    chain?.unsupported === true ||
+                    isDeploying === true
+                  }
+                  aria-invalid={
+                    touched()?.submissionTokenAddress && !data()?.useSameTokenForSubmissions ? "true" : "false"
+                  }
+                  value={dataDeploySubmissionToken?.address}
+                  required={data()?.useSameTokenForSubmissions === true}
+                  className="max-w-full flex-grow"
+                  placeholder="0x..."
+                  scale="sm"
+                  name="submissionTokenAddress"
+                  id="submissionTokenAddress"
+                  hasError={touched()?.submissionTokenAddress && !data()?.useSameTokenForSubmissions}
+                  aria-describedby="input-useSameTokenForSubmissions-helpblock"
+                />
+                <div className="flex items-center w-full pt-1">
+                  <span className="text-neutral-11 pie-1ex">Or&nbsp;</span>
+                  <Button
+                    onClick={() => setModalDeploySubmissionTokenOpen(true)}
+                    disabled={
+                      data()?.useSameTokenForSubmissions ||
+                      !isConnected ||
+                      chain?.unsupported === true ||
+                      isDeploying === true
+                    }
+                    className="w-full 2xs:w-fit-content"
+                    type="button"
+                    scale="xs"
+                  >
+                    Mint new token
+                  </Button>
+                </div>
+              </div>
+            </FormRadioOption>
+          </FormRadioGroup>
 
           <FormRadioGroup
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
@@ -634,7 +696,7 @@ export const Form = (props: FormProps) => {
         </Button>
 
         <div className={button({ intent: "neutral-outline" })} tabIndex={0} role="button" {...pressProps}>
-          {dataDeployToken !== null ? "Next" : "Skip"}
+          Next
         </div>
       </div>
     </form>
