@@ -160,6 +160,14 @@ module.exports = {
       },
     },
     extend: {
+      typography: theme => ({
+        DEFAULT: {
+          css: {
+            color: theme("colors.true-white"),
+            "--tw-prose-invert-hr": theme("colors.neutral.4"),
+          },
+        },
+      }),
       keyframes: {
         "card-rotation": {
           from: {

@@ -1,8 +1,6 @@
 import shallow from "zustand/shallow";
 import Button from "@components/Button";
 import DialogModal from "@components/DialogModal";
-import FormField from "@components/FormField";
-import FormTextarea from "@components/FormTextarea";
 import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import useSubmitProposal from "@hooks/useSubmitProposal";
@@ -14,6 +12,14 @@ import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/sto
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useEffect, useState } from "react";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Image from "@tiptap/extension-image";
+import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
+import Iframe from "@components/tiptap/Iframe";
+import Placeholder from "@tiptap/extension-placeholder";
+import TipTapEditor from "@components/TipTapEditor";
+
 interface DialogModalSendProposalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -55,9 +61,31 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     }),
     shallow,
   );
-  const [proposal, setProposal] = useState("");
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
+  const [proposal, setProposal] = useState("");
+
+  const editorProposal = useEditor({
+    extensions: [
+      StarterKit,
+      Image,
+      TiptapExtensionLink,
+      Placeholder.configure({
+        placeholder: "Your proposal …",
+      }),
+      Iframe,
+    ],
+    content: proposal,
+    editorProps: {
+      attributes: {
+        class: "prose prose-invert p-3 flex-grow focus:outline-none",
+      },
+    },
+    onUpdate: ({ editor }) => {
+      const content = editor.getHTML();
+      setProposal(content);
+    },
+  });
 
   useEffect(() => {
     if (isSuccess) setShowForm(false);
@@ -69,18 +97,30 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     if (props.isOpen === false && !isLoading) {
       setProposal("");
       setShowForm(true);
+      setShowForm(true);
+      editorProposal?.setOptions({
+        ...editorProposal.options,
+        editable: true,
+      });
+      editorProposal?.commands.clearContent();
       setShowDeploymentSteps(false);
     }
   }, [props.isOpen, isLoading]);
 
   function onSubmitProposal(e: any) {
     e.preventDefault();
+    editorProposal?.setEditable(false);
     sendProposal(proposal.trim());
   }
 
   function onClickSubmitAnotherProposal() {
     setProposal("");
     setShowForm(true);
+    editorProposal?.setOptions({
+      ...editorProposal.options,
+      editable: true,
+    });
+    editorProposal?.commands.clearContent();
     setShowDeploymentSteps(false);
   }
 
@@ -132,35 +172,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
           {showForm === true ? (
             <>
               <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>
-                <FormField className="w-full">
-                  <FormField.Label htmlFor="proposal" hasError={false}>
-                    Your proposal
-                  </FormField.Label>
-                  <FormTextarea
-                    hasError={false}
-                    onChange={e => {
-                      setProposal(e.currentTarget.value);
-                    }}
-                    value={proposal}
-                    required
-                    className="w-full min-h-[15ch]"
-                    disabled={isLoading}
-                    placeholder="What do you think ?"
-                    name="proposal"
-                    id="proposal"
-                    aria-describedby="input-proposal-helpblock-1 input-proposal-helpblock-2"
-                  />
-                  <div className="mt-2 my-1">
-                    <FormField.HelpBlock
-                      className="min:not-sr-only text-2xs text-neutral-11"
-                      id="input-contestaddress-helpblock-1"
-                      hasError={false}
-                    >
-                      To submit media, input a link to the file online, starting in https:// and ending in .jpg, .png,
-                      etc.
-                    </FormField.HelpBlock>
-                  </div>
-                </FormField>
+                <TipTapEditor editor={editorProposal} />
                 <Button
                   disabled={proposal?.trim()?.length === 0 || isLoading}
                   type="submit"

@@ -33,6 +33,10 @@
   *:not(.normal-case, .uppercase, input, textarea) {
     text-transform: lowercase !important;
   }
+  .prose,
+  .prose * {
+    text-transform: initial !important;
+  }
   html {
     --brand: theme("colors.primary.10");
     scrollbar-color: var(--brand) Canvas;
@@ -84,9 +88,15 @@
     @apply font-bold px-4 py-3;
   }
 
+  .prose a,
   .with-link-highlighted a,
   .link {
     @apply cursor-pointer font-bold text-positive-9 underline focus:text-positive-10 hover:no-underline;
+  }
+
+  .prose :where(hr):not(:where([class~="not-prose"] *)) {
+    margin-top: 1.5em !important;
+    margin-bottom: 1.5em !important;
   }
 }
 
