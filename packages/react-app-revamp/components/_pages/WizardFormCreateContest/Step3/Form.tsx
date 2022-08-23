@@ -12,7 +12,7 @@ import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
-import { useEffect, useId } from "react";
+import { useId } from "react";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -282,26 +282,47 @@ export const Form = (props: FormProps) => {
             <FormRadioOption value={false}>
               <div className="flex items-center flex-wrap">
                 <span className="pie-1ex">Require separate submission token</span>
-                <FormInput
-                  disabled={
-                    data()?.useSameTokenForSubmissions ||
-                    !isConnected ||
-                    chain?.unsupported === true ||
-                    isDeploying === true
-                  }
-                  aria-invalid={
-                    touched()?.submissionTokenAddress && !data()?.useSameTokenForSubmissions ? "true" : "false"
-                  }
-                  value={dataDeploySubmissionToken?.address}
-                  required={data()?.useSameTokenForSubmissions === true}
-                  className="max-w-full flex-grow"
-                  placeholder="0x..."
-                  scale="sm"
-                  name="submissionTokenAddress"
-                  id="submissionTokenAddress"
-                  hasError={touched()?.submissionTokenAddress && !data()?.useSameTokenForSubmissions}
-                  aria-describedby="input-useSameTokenForSubmissions-helpblock"
-                />
+                <div className="flex-grow py-1">
+                  <FormInput
+                    disabled={
+                      data()?.useSameTokenForSubmissions ||
+                      !isConnected ||
+                      chain?.unsupported === true ||
+                      isDeploying === true
+                    }
+                    aria-invalid={
+                      data()?.useSameTokenForSubmissions === false &&
+                      touched()?.submissionTokenAddress &&
+                      (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
+                        ? "true"
+                        : "false"
+                    }
+                    value={dataDeploySubmissionToken?.address}
+                    required={data()?.useSameTokenForSubmissions === true}
+                    className="w-full"
+                    placeholder="0x..."
+                    scale="sm"
+                    name="submissionTokenAddress"
+                    id="submissionTokenAddress"
+                    hasError={
+                      data()?.useSameTokenForSubmissions === false &&
+                      touched()?.submissionTokenAddress &&
+                      (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
+                    }
+                    aria-describedby="input-submissionTokenAddress-helpblock"
+                  />
+                  <FormField.HelpBlock
+                    hasError={
+                      errors().submissionTokenAddress?.length > 0 === true ||
+                      (data()?.useSameTokenForSubmissions === false &&
+                        touched()?.submissionTokenAddress &&
+                        (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === ""))
+                    }
+                    id="input-submissionTokenAddress-helpblock"
+                  >
+                    Please type a valid Ethereum address.
+                  </FormField.HelpBlock>
+                </div>
                 <div className="flex items-center w-full pt-1">
                   <span className="text-neutral-11 pie-1ex">Or&nbsp;</span>
                   <Button
@@ -679,15 +700,17 @@ export const Form = (props: FormProps) => {
           //@ts-ignore
           intent="neutral-oultine"
           disabled={
+            !isValid() ||
+            interacted() === null ||
             !isConnected ||
             chain?.unsupported === true ||
             isDeploying === true ||
-            isValid() === false ||
-            interacted() === null ||
             !isRequiredNumberOfTokenToSubmitValid ||
             !isSubmissionNumberLimitValid ||
             (data()?.datetimeClosingVoting && !isDateClosingVotesValid) ||
             (data()?.datetimeOpeningVoting && !isDateOpeningVotesValid) ||
+            (data()?.useSameTokenForSubmissions === false && !data()?.submissionTokenAddress) ||
+              (data()?.useSameTokenForSubmissions === false && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid)
           }
           type="submit"

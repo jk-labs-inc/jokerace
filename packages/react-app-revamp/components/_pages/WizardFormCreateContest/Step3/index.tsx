@@ -18,7 +18,6 @@ export const Step3 = () => {
     contestDeployedToChain,
     setCurrentStep,
     dataDeployVotingToken,
-    dataDeploySubmissionToken,
     modalDeployContestOpen,
     setModalDeployContestOpen,
     dataDeployContest,
@@ -27,8 +26,6 @@ export const Step3 = () => {
     state => ({
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
-      //@ts-ignore
-      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
       //@ts-ignore
       dataDeployVotingToken: state.dataDeployVotingToken,
       //@ts-ignore
@@ -93,7 +90,7 @@ export const Step3 = () => {
         <Timeline />
       </div>
       <Form isDeploying={stateContestDeployment.isLoading} {...form} />
-      {modalDeploySubmissionTokenOpen && <DialogModalMintProposalToken formCreateContestSetFields={form.setFields}/>}
+      {modalDeploySubmissionTokenOpen && <DialogModalMintProposalToken formCreateContestSetFields={form.setFields} />}
       <DialogModalDeployTransaction
         isOpen={modalDeployContestOpen}
         setIsOpen={setModalDeployContestOpen}

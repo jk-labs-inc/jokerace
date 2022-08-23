@@ -77,12 +77,14 @@ export function useDeployContest(form: any) {
         // downvoting: is downvoting allowed in this contest
         // 0 = false; 1 = true
         values?.downvotingAllowed === true ? 1 : 0,
+        values?.useSameTokenForSubmissions === true ? 0 : 1,
       ];
 
       const contract = await factory.deploy(
         values.contestTitle,
         values.contestDescription,
         values.votingTokenAddress,
+        values.useSameTokenForSubmissions === true ? values.votingTokenAddress : values.submissionTokenAddress,
         contestParameters,
       );
       const receipt = await waitForTransaction({

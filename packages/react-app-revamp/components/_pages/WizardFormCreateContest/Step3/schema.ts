@@ -1,5 +1,5 @@
 import { object, string, number, boolean } from "zod";
-import { isPast } from "date-fns";
+import { isDate, isPast } from "date-fns";
 export interface DataStep3 {
   contestTitle: string;
   contestDescription: string;
@@ -27,7 +27,9 @@ export const schema = object({
     .trim()
     .min(1),
   useSameTokenForSubmissions: boolean(),
-  submissionTokenAddress: string().regex(/^0x[a-fA-F0-9]{40}$/),
+  submissionTokenAddress: string()
+    .regex(/^0x[a-fA-F0-9]{40}$/)
+    .or(string().max(0)),
   votingTokenAddress: string().regex(/^0x[a-fA-F0-9]{40}$/),
   datetimeOpeningSubmissions: string(),
   submissionMaxNumber: number().positive(),
@@ -39,8 +41,8 @@ export const schema = object({
   submissionPerUserMaxNumber: number()
     .positive()
     .optional(),
-  datetimeOpeningVoting: string().refine(value => !isPast(new Date(value))),
-  datetimeClosingVoting: string().refine(value => !isPast(new Date(value))),
+  datetimeOpeningVoting: string().refine(value => value !== "" && !isPast(new Date(value))),
+  datetimeClosingVoting: string().refine(value => value !== "" && !isPast(new Date(value))),
   usersQualifyToVoteIfTheyHoldTokenOnVoteStart: boolean(),
   usersQualifyToVoteAtAnotherDatetime: string().optional(),
   downvoting: boolean(),

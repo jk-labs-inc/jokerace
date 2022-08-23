@@ -14,11 +14,11 @@ import useDeployToken from "../Step2/useDeployToken";
 import { useStore } from "../store";
 
 interface DialogModalMintProposalTokenProps {
-  formCreateContestSetFields: any
+  formCreateContestSetFields: any;
 }
 export const DialogModalMintProposalToken = (props: DialogModalMintProposalTokenProps) => {
   const { isConnected } = useAccount();
-  const { formCreateContestSetFields } = props
+  const { formCreateContestSetFields } = props;
   const {
     tokenDeployedToChain,
     dataDeploySubmissionToken,
@@ -37,7 +37,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
       //@ts-ignore
       tokenDeployedToChain: state.tokenDeployedToChain,
       //@ts-ignore
-      dataDeploySubmissionToken: state.dataDeploySubmissionToken
+      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
     }),
     shallow,
   );
@@ -64,11 +64,11 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
   }, [modalDeploySubmissionTokenOpen, stateContractDeployment.isLoading]);
 
   useEffect(() => {
-    if(stateContractDeployment.isSuccess && dataDeploySubmissionToken?.address) {
+    if (stateContractDeployment.isSuccess && dataDeploySubmissionToken?.address) {
       // set the value of the input with [name=submissionTokenAddress] in the form to our newly deployed token address
-      formCreateContestSetFields('submissionTokenAddress', dataDeploySubmissionToken.address)
+      formCreateContestSetFields("submissionTokenAddress", dataDeploySubmissionToken.address);
     }
-  }, [stateContractDeployment.isSuccess, dataDeploySubmissionToken?.address])
+  }, [stateContractDeployment.isSuccess, dataDeploySubmissionToken?.address]);
   return (
     <DialogModal
       isOpen={modalDeploySubmissionTokenOpen}
