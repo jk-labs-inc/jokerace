@@ -34,7 +34,7 @@ function renderContent(str: string) {
     );
   }
   return (
-    <div className={`with-link-highlighted ${styles.content}`}>
+    <div className={`with-link-highlighted prose prose-invert ${styles.content}`}>
       <Interweave content={renderedContent} matchers={[new UrlMatcher("url")]} />
     </div>
   );
@@ -44,13 +44,19 @@ export const ProposalContent = (props: ProposalContentProps) => {
   const { content, author } = props;
   return (
     <>
-      <blockquote className={`
+      <blockquote
+        className={`
         leading-relaxed
         ${isProposalDeleted(content) ? "italic text-neutral-11" : ""}
-      `}>{renderContent(content)}</blockquote>
-      {!isProposalDeleted(content)  && <figcaption className="pt-5 font-mono overflow-hidden text-neutral-12 text-ellipsis whitespace-nowrap">
-        — {author}
-      </figcaption>}
+      `}
+      >
+        {renderContent(content)}
+      </blockquote>
+      {!isProposalDeleted(content) && (
+        <figcaption className="pt-5 font-mono overflow-hidden text-neutral-12 text-ellipsis whitespace-nowrap">
+          — {author}
+        </figcaption>
+      )}
     </>
   );
 };

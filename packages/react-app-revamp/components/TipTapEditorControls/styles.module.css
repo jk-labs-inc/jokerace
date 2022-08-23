@@ -1,0 +1,11 @@
+.control {
+  @apply rounded-md p-2 flex items-center justify-center focus:outline-none focus-visible:ring focus-visible:ring-primary-10 focus-visible:ring-opacity-75;
+}
+
+.control:not(.text) {
+  @apply h-9 w-9;
+}
+
+.control--active {
+  @apply bg-primary-10 text-primary-1;
+}

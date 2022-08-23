@@ -57,3 +57,401 @@ export const IconPoweredByVercel = (props: SVGProps) => {
   </svg>
   
 }
+
+
+export const IconEditorBold = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`bold uppercase ${props?.className ?? ''}`}>
+      B
+    </span>
+  )
+}
+
+export const IconEditorItalic = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`italic uppercase ${props?.className ?? ''}`}>
+      I
+    </span>
+  )
+}
+
+export const IconEditorUnderline = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`underline uppercase ${props?.className ?? ''}`}>
+      U
+    </span>
+  )
+}
+
+export const IconEditorStrike = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`strike uppercase ${props?.className ?? ''}`}>
+      S
+    </span>
+  )
+}
+
+export const IconEditorH1 = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`font-bold uppercase ${props?.className ?? ''}`}>
+      H1
+    </span>
+  )
+}
+
+export const IconEditorH2 = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`font-bold uppercase ${props?.className ?? ''}`}>
+      H2
+    </span>
+  )
+}
+
+export const IconEditorH3 = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`font-bold uppercase ${props?.className ?? ''}`}>
+      H3
+    </span>
+  )
+}
+
+export const IconEditorH4 = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`font-bold uppercase ${props?.className ?? ''}`}>
+      H4
+    </span>
+  )
+}
+
+export const IconEditorH5 = (props: SVGProps) => {
+  return (
+    <span aria-hidden="true" className={`font-bold uppercase ${props?.className ?? ''}`}>
+      H5
+    </span>
+  )
+}
+
+export const IconEditorParagraph = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M12 6v15h-2v-5a6 6 0 1 1 0-12h10v2h-3v15h-2V6h-3zm-2 0a4 4 0 1 0 0 8V6z"></path>
+      </g>
+    </svg>
+  )
+}
+
+export const IconEditorAnchor = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        d="M4.222 19.778a4.983 4.983 0 0 0 3.535 1.462 4.986 4.986 0 0 0 3.536-1.462l2.828-2.829-1.414-1.414-2.828 2.829a3.007 3.007 0 0 1-4.243 0 3.005 3.005 0 0 1 0-4.243l2.829-2.828-1.414-1.414-2.829 2.828a5.006 5.006 0 0 0 0 7.071zm15.556-8.485a5.008 5.008 0 0 0 0-7.071 5.006 5.006 0 0 0-7.071 0L9.879 7.051l1.414 1.414 2.828-2.829a3.007 3.007 0 0 1 4.243 0 3.005 3.005 0 0 1 0 4.243l-2.829 2.828 1.414 1.414 2.829-2.828z"
+      ></path>
+      <path d="m8.464 16.95-1.415-1.414 8.487-8.486 1.414 1.415z"></path>
+    </svg>
+  )
+}
+
+export const IconEditorRemoveAnchor = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M16.949 14.121 19.071 12a5.008 5.008 0 0 0 0-7.071 5.006 5.006 0 0 0-7.071 0l-.707.707 1.414 1.414.707-.707a3.007 3.007 0 0 1 4.243 0 3.005 3.005 0 0 1 0 4.243l-2.122 2.121a2.723 2.723 0 0 1-.844.57L13.414 12l1.414-1.414-.707-.707a4.965 4.965 0 0 0-3.535-1.465c-.235 0-.464.032-.691.066L3.707 2.293 2.293 3.707l18 18 1.414-1.414-5.536-5.536c.277-.184.538-.396.778-.636zm-6.363 3.536a3.007 3.007 0 0 1-4.243 0 3.005 3.005 0 0 1 0-4.243l1.476-1.475-1.414-1.414L4.929 12a5.008 5.008 0 0 0 0 7.071 4.983 4.983 0 0 0 3.535 1.462A4.982 4.982 0 0 0 12 19.071l.707-.707-1.414-1.414-.707.707z"></path>
+    </svg>
+  )
+}
+
+export const IconEditorCode = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 512 512"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="32"
+        d="M160 368L32 256l128-112m192 224l128-112-128-112"
+      ></path>
+    </svg>
+  )
+}
+
+export const IconEditorCodeBlock = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M20 3H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V5c0-1.103-.897-2-2-2zM4 19V7h16l.002 12H4z"></path>
+      <path d="M9.293 9.293 5.586 13l3.707 3.707 1.414-1.414L8.414 13l2.293-2.293zm5.414 0-1.414 1.414L15.586 13l-2.293 2.293 1.414 1.414L18.414 13z"></path>
+    </svg>
+  )
+}
+
+export const IconEditorImage = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M20 5H4v14l9.292-9.294a1 1 0 0 1 1.414 0L20 15.01V5zM2 3.993A1 1 0 0 1 2.992 3h18.016c.548 0 .992.445.992.993v16.014a1 1 0 0 1-.992.993H2.992A.993.993 0 0 1 2 20.007V3.993zM8 11a2 2 0 1 1 0-4 2 2 0 0 1 0 4z"></path>
+      </g>
+    </svg>
+  )
+}
+
+export const IconEditorQuote = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"></path>
+      </g>
+    </svg>
+  )
+}
+
+export const IconEditorDivider = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 1024 1024"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M904 476H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z"></path>
+    </svg>
+  )
+}
+
+export const IconEditorListUnordered = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M8 4h13v2H8V4zm-5-.5h3v3H3v-3zm0 7h3v3H3v-3zm0 7h3v3H3v-3zM8 11h13v2H8v-2zm0 7h13v2H8v-2z"></path>
+      </g>
+    </svg>
+  )
+}
+
+export const IconEditorListOrdered = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M8 4h13v2H8V4zM5 3v3h1v1H3V6h1V4H3V3h2zM3 14v-2.5h2V11H3v-1h3v2.5H4v.5h2v1H3zm2 5.5H3v-1h2V18H3v-1h3v4H3v-1h2v-.5zM8 11h13v2H8v-2zm0 7h13v2H8v-2z"></path>
+      </g>
+    </svg>
+  )
+}
+
+export const IconEditorUndo = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M9 10h6c1.654 0 3 1.346 3 3s-1.346 3-3 3h-3v2h3c2.757 0 5-2.243 5-5s-2.243-5-5-5H9V5L4 9l5 4v-3z"></path>
+    </svg>
+  )
+}
+
+export const IconEditorRedo = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <path d="M9 18h3v-2H9c-1.654 0-3-1.346-3-3s1.346-3 3-3h6v3l5-4-5-4v3H9c-2.757 0-5 2.243-5 5s2.243 5 5 5z"></path>
+    </svg>
+  )
+}
+
+export const IconEditorClearFormat = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M12.651 14.065L11.605 20H9.574l1.35-7.661-7.41-7.41L4.93 3.515 20.485 19.07l-1.414 1.414-6.42-6.42zm-.878-6.535l.27-1.53h-1.8l-2-2H20v2h-5.927L13.5 9.257 11.773 7.53z"></path>
+      </g>
+    </svg>
+  )
+}
+
+export const IconEditorTextCenter = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M3 4h18v2H3V4zm2 15h14v2H5v-2zm-2-5h18v2H3v-2zm2-5h14v2H5V9z"></path>
+      </g>
+    </svg>
+  )
+}
+
+export const IconEditorTextLeft = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M3 4h18v2H3V4zm0 15h14v2H3v-2zm0-5h18v2H3v-2zm0-5h14v2H3V9z"></path>
+      </g>
+    </svg>
+  )
+}
+
+export const IconEditorTextRight = (props: SVGProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      stroke="currentColor"
+      fill="currentColor"
+      strokeWidth="0"
+      viewBox="0 0 24 24"
+      height="1em"
+      width="1em"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <g>
+        <path fill="none" d="M0 0h24v24H0z"></path>
+        <path d="M3 4h18v2H3V4zm4 15h14v2H7v-2zm-4-5h18v2H3v-2zm4-5h14v2H7V9z"></path>
+      </g>
+    </svg>
+  )
+}
