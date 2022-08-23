@@ -8,7 +8,6 @@ import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 import { useStore } from "../store";
-import { useEffect } from "react";
 
 export function useDeployToken(form: any) {
   const stateContractDeployment = useContractFactory();
@@ -40,13 +39,14 @@ export function useDeployToken(form: any) {
   );
 
   async function handleSubmitForm(values: any, isDeployingSubmissionToken: boolean) {
+    stateContractDeployment.setIsSuccess(false);
+    stateContractDeployment.setIsError(false);
+    stateContractDeployment.setErrorMessage(null);
+
     //@ts-ignore
     setTokenDeployedToChain(chain);
     setModalDeployTokenOpen(true);
     stateContractDeployment.setIsLoading(true);
-    stateContractDeployment.setIsSuccess(false);
-    stateContractDeployment.setIsError(false);
-    stateContractDeployment.setErrorMessage(null);
 
     try {
       // we need to refetch the signer, otherwise an error is triggered
@@ -80,12 +80,15 @@ export function useDeployToken(form: any) {
           address: contract.address,
         });
       }
-      if (modalDeployTokenOpen === false && modalDeploySubmissionTokenOpen === false)
+      if (modalDeployTokenOpen === false && modalDeploySubmissionTokenOpen === false) {
         toast.success(
           `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) was deployed successfully!`,
         );
-
+      }
       stateContractDeployment.setIsLoading(false);
+      stateContractDeployment.setIsSuccess(true);
+      stateContractDeployment.setIsError(false);
+      stateContractDeployment.setErrorMessage(null);
       form.reset();
     } catch (e) {
       console.error(e);
@@ -97,15 +100,6 @@ export function useDeployToken(form: any) {
       stateContractDeployment.setIsLoading(false);
     }
   }
-
-  useEffect(() => {
-    if (modalDeploySubmissionTokenOpen === false || modalDeployTokenOpen === false) {
-      stateContractDeployment.setIsSuccess(false);
-      stateContractDeployment.setIsLoading(false);
-      stateContractDeployment.setIsError(false);
-      stateContractDeployment.setErrorMessage(null);
-    }
-  }, [modalDeployTokenOpen, modalDeploySubmissionTokenOpen]);
 
   return {
     handleSubmitForm,

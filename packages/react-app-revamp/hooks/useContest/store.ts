@@ -33,6 +33,7 @@ export const createStore = () => {
     snapshotTaken: false,
     currentUserProposalCount: 0,
     downvotingAllowed: false,
+    currentUserSubmitProposalTokensAmount: null,
     setDownvotingAllowed: (isAllowed: boolean) => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: (prompt: string | null) => set({ contestPrompt: prompt }),
     setCurrentUserProposalCount: (amount: number) => set({ currentUserProposalCount: amount }),
@@ -44,9 +45,12 @@ export const createStore = () => {
     setContestMaxProposalCount: (amount: number | null) => set({ contestMaxProposalCount: amount }),
     setContestMaxNumberSubmissionsPerUser: (amount: number | null) =>
       set({ contestMaxNumberSubmissionsPerUser: amount }),
+    setCurrentUserSubmitProposalTokensAmount: (amount: number | null) =>
+      set({ currentUserSubmitProposalTokensAmount: amount }),
     setContestStatus: (status: number) => set({ contestStatus: status }),
     setContestName: (name: string) => set({ contestName: name }),
-    setContestAuthor: (author: string, address: string) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
+    setContestAuthor: (author: string, address: string) =>
+      set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
     setSubmissionsOpen: (datetime: string) => set({ submissionsOpen: datetime }),
     setDidUserPassSnapshotAndCanVote: (isQualified: boolean) => set({ didUserPassSnapshotAndCanVote: isQualified }),
     setVotesOpen: (datetime: string) => set({ votesOpen: datetime }),
@@ -97,20 +101,20 @@ export const createStore = () => {
           },
         },
       })),
+    //@ts-ignore
+    softDeleteProposal: id =>
+      set(state => ({
+        ...state,
+        listProposalsData: {
           //@ts-ignore
-    softDeleteProposal: (id) =>
-    set(state => ({
-      ...state,
-      listProposalsData: {
-        //@ts-ignore
-        ...state.listProposalsData,
-        [id]: {
-          //@ts-ignore
-          ...state.listProposalsData[id],
-          content: 'This proposal has been deleted by the creator of the contest.',
-          isContentImage: false,
+          ...state.listProposalsData,
+          [id]: {
+            //@ts-ignore
+            ...state.listProposalsData[id],
+            content: "This proposal has been deleted by the creator of the contest.",
+            isContentImage: false,
+          },
         },
-      },
-    })),
+      })),
   }));
 };

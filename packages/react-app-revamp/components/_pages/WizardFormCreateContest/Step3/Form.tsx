@@ -710,7 +710,7 @@ export const Form = (props: FormProps) => {
             (data()?.datetimeClosingVoting && !isDateClosingVotesValid) ||
             (data()?.datetimeOpeningVoting && !isDateOpeningVotesValid) ||
             (data()?.useSameTokenForSubmissions === false && !data()?.submissionTokenAddress) ||
-              (data()?.useSameTokenForSubmissions === false && data()?.submissionTokenAddress === "") ||
+            (data()?.useSameTokenForSubmissions === false && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid)
           }
           type="submit"

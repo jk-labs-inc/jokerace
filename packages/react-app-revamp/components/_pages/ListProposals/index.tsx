@@ -19,7 +19,7 @@ export const ListProposals = () => {
   const {
     query: { chain, address },
   } = useRouter();
-  const accountData = useAccount()
+  const accountData = useAccount();
   const {
     contestAuthorEthereumAddress,
     amountOfTokensRequiredToSubmitEntry,
@@ -30,6 +30,7 @@ export const ListProposals = () => {
     checkIfUserPassedSnapshotLoading,
     downvotingAllowed,
     listProposalsIds,
+    currentUserSubmitProposalTokensAmount,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -50,6 +51,8 @@ export const ListProposals = () => {
       didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
       //@ts-ignore
       checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
+      //@ts-ignore
+      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
     }),
     shallow,
   );
@@ -109,14 +112,13 @@ export const ListProposals = () => {
         <div className="flex flex-col text-center items-center">
           <p className="text-neutral-9 italic mb-6">
             {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-            currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry
+            currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry
               ? "You can't submit a proposal for this contest."
               : "It seems no one submitted a proposal for this contest."}
           </p>
           {/* @ts-ignore */}
           {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-            currentUserAvailableVotesAmount >= amountOfTokensRequiredToSubmitEntry && 
-            (
+            currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry && (
               //@ts-ignore
               <Button onClick={() => stateSubmitProposal.setIsModalOpen(true)}>Submit a proposal</Button>
             )}
@@ -156,8 +158,7 @@ export const ListProposals = () => {
                             (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
                               <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
                             ))}
-                          {
-                            !isProposalDeleted(listProposalsData[id].content)  &&
+                          {!isProposalDeleted(listProposalsData[id].content) &&
                             didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                             currentUserAvailableVotesAmount > 0 && (
@@ -181,11 +182,14 @@ export const ListProposals = () => {
                               maximumFractionDigits: 3,
                             }).format(parseFloat(listProposalsData[id].votes))}{" "}
                             <span className="text-neutral-11 pis-1ex 2xs:pis-0 text-3xs">
-                              vote{(listProposalsData[id].votes > 1 || listProposalsData[id].votes < -1 || listProposalsData[id].votes === 0) && "s"}
+                              vote
+                              {(listProposalsData[id].votes > 1 ||
+                                listProposalsData[id].votes < -1 ||
+                                listProposalsData[id].votes === 0) &&
+                                "s"}
                             </span>
                           </span>
-                          {
-                            !isProposalDeleted(listProposalsData[id].content)  &&
+                          {!isProposalDeleted(listProposalsData[id].content) &&
                             didUserPassSnapshotAndCanVote &&
                             contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                             currentUserAvailableVotesAmount > 0 &&
@@ -239,9 +243,15 @@ export const ListProposals = () => {
                         View proposal #{id}
                       </a>
                     </Link>
-                    {!isProposalDeleted(listProposalsData[id].content) && contestAuthorEthereumAddress === accountData?.address && <button onClick={() => onClickProposalDelete(id)} className="w-full 2xs:w-auto mt-6 text-xs 2xs:text-2xs rounded-md py-1.5 2xs:py-1 px-3 relative z-20 bg-negative-4 hover:bg-opacity-50 focus:bg-opacity-75 text-negative-11 bg-opacity-40">
-                      <span className="font-bold">Delete this proposal</span>
-                    </button>}
+                    {!isProposalDeleted(listProposalsData[id].content) &&
+                      contestAuthorEthereumAddress === accountData?.address && (
+                        <button
+                          onClick={() => onClickProposalDelete(id)}
+                          className="w-full 2xs:w-auto mt-6 text-xs 2xs:text-2xs rounded-md py-1.5 2xs:py-1 px-3 relative z-20 bg-negative-4 hover:bg-opacity-50 focus:bg-opacity-75 text-negative-11 bg-opacity-40"
+                        >
+                          <span className="font-bold">Delete this proposal</span>
+                        </button>
+                      )}
                   </div>
                 </li>
               );

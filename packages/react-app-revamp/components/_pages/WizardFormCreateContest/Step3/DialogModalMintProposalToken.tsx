@@ -69,6 +69,16 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
       formCreateContestSetFields("submissionTokenAddress", dataDeploySubmissionToken.address);
     }
   }, [stateContractDeployment.isSuccess, dataDeploySubmissionToken?.address]);
+
+  // Make sure to reset the step tracker + deployment state when the modal opens
+  useEffect(() => {
+    setShowDeploymentSteps(false);
+    stateContractDeployment.setIsLoading(false);
+    stateContractDeployment.setIsSuccess(false);
+    stateContractDeployment.setIsError(false);
+    stateContractDeployment.setErrorMessage(null);
+  }, []);
+
   return (
     <DialogModal
       isOpen={modalDeploySubmissionTokenOpen}
