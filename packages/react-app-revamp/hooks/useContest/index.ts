@@ -16,10 +16,11 @@ export function useContest() {
   const { indexContest } = useContestsIndex();
   const provider = useProvider();
   const { asPath } = useRouter();
-  const [chainId, setChaindId] = useState(
+  const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
   );
   const [address, setAddress] = useState(asPath.split("/")[3]);
+  const [chainName, setChainName] = useState(asPath.split("/")[2]);
   const {
     //@ts-ignore
     setContestName,
@@ -104,7 +105,7 @@ export function useContest() {
   async function fetchContestInfo() {
     setIsLoading(true);
     setIsListProposalsLoading(true);
-    const abi = await getContestContractVersion(address);
+    const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error("This contract doesn't exist on this chain.");
       setIsError("This contract doesn't exist on this chain.");
@@ -118,6 +119,7 @@ export function useContest() {
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
+      chainId: chainId,
     };
     try {
       const contracts = [
@@ -296,7 +298,7 @@ export function useContest() {
   }
 
   async function checkIfCurrentUserQualifyToVote() {
-    const abi = await getContestContractVersion(address);
+    const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error("This contract doesn't exist on this chain.");
       setIsError("This contract doesn't exist on this chain.");
@@ -311,6 +313,7 @@ export function useContest() {
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
+      chainId: chainId,
     };
     const contractBaseOptions = {};
     setCheckIfUserPassedSnapshotLoading(true);
@@ -395,7 +398,7 @@ export function useContest() {
   }
 
   async function fetchAllProposals() {
-    const abi = await getContestContractVersion(address);
+    const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error("This contract doesn't exist on this chain.");
       setIsError("This contract doesn't exist on this chain.");
@@ -410,6 +413,7 @@ export function useContest() {
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
+      chainId: chainId,
     };
     const contractBaseOptions = {};
     try {
@@ -468,7 +472,7 @@ export function useContest() {
   }
 
   async function updateCurrentUserVotes() {
-    const abi = await getContestContractVersion(address);
+    const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error("This contract doesn't exist on this chain.");
       setIsError("This contract doesn't exist on this chain.");
@@ -483,6 +487,7 @@ export function useContest() {
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
+      chainId: chainId,
     };
 
     try {
@@ -528,7 +533,7 @@ export function useContest() {
     setIsLoading,
     setIsListProposalsLoading,
     chainId,
-    setChaindId,
+    setChainId,
     fetchAllProposals,
     isLoading,
     isListProposalsLoading,

@@ -38,7 +38,8 @@ export function useDeleteProposal() {
 
   async function deleteProposal() {
     const address = asPath.split("/")[3];
-    const abi = await getContestContractVersion(address);
+    const chainName = asPath.split("/")[2];
+    const abi = await getContestContractVersion(address, chainName);
     setIsLoading(true)
     setIsLoading(true);
     setIsSuccess(false);
