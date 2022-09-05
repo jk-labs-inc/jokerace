@@ -88,6 +88,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
       <div className="animate-appear">
         {showDeploymentSteps && (
           <TrackerDeployTransaction
+            textError={stateContractDeployment.error}
             isError={stateContractDeployment.isError}
             isLoading={stateContractDeployment.isLoading}
             isSuccess={stateContractDeployment.isSuccess}

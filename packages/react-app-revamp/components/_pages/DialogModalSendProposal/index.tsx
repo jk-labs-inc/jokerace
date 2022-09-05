@@ -128,7 +128,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     <DialogModal title="Submit your proposal" {...props}>
       {showDeploymentSteps && (
         <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction isSuccess={isSuccess} isError={error !== null} isLoading={isLoading} />
+          <TrackerDeployTransaction textError={error} isSuccess={isSuccess} isError={error !== null} isLoading={isLoading} />
         </div>
       )}
 

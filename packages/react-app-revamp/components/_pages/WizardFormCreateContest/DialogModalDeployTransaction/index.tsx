@@ -13,7 +13,7 @@ interface DialogModalDeployTransaction extends DialogModalProps {
 export const DialogModalDeployTransaction = (props: DialogModalDeployTransaction) => {
     const { children, isError, isLoading, isSuccess, error, transactionHref,...rest } = props
     return <DialogModal {...rest}>
-        <TrackerDeployTransaction isError={isError} isLoading={isLoading} isSuccess={isSuccess} transactionHref={transactionHref} />
+        <TrackerDeployTransaction textError={error} isError={isError} isLoading={isLoading} isSuccess={isSuccess} transactionHref={transactionHref} />
         {children}
     </DialogModal>
 }
