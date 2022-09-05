@@ -14,6 +14,8 @@ export const createStore = () => {
     votesClose: null,
     votingToken: null,
     votingTokenAddress: null,
+    submitProposalToken: null,
+    submitProposalTokenAddress: null,
     amountOfTokensRequiredToSubmitEntry: 0,
     currentUserAvailableVotesAmount: null,
     currentUserTotalVotesCast: null,
@@ -57,6 +59,8 @@ export const createStore = () => {
     setVotesClose: (datetime: string) => set({ votesClose: datetime }),
     setVotingToken: (token: any) => set({ votingToken: token }),
     setVotingTokenAddress: (address: any) => set({ votingTokenAddress: address }),
+    setSubmitProposalToken: (token: any) => set({ submitProposalToken: token }),
+    setSubmitProposalTokenAddress: (address: any) => set({ submitProposalTokenAddress: address }),
     setCurrentUserAvailableVotesAmount: (amount: number) => set({ currentUserAvailableVotesAmount: amount }),
     setCurrentUserTotalVotesCast: (amount: number) => set({ currentUserTotalVotesCast: amount }),
     setUsersQualifyToVoteIfTheyHoldTokenAtTime: (datetime: string) =>

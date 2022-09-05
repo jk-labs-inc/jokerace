@@ -16,7 +16,7 @@ interface PageProps {
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
   const { chain } = useNetwork()
-  const { contestState, checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName } = useStore(state =>  ({ 
+  const { contestState, checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName, submitProposalToken } = useStore(state =>  ({ 
     //@ts-ignore
     votingToken: state.votingToken,
     //@ts-ignore
@@ -40,7 +40,9 @@ const Page: NextPage = (props: PageProps) => {
     //@ts-ignore
     checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
     //@ts-ignore
-    contestState: state.contestState
+    contestState: state.contestState,
+    //@ts-ignore
+    submitProposalToken: state.submitProposalToken,
    }), shallow);
 
   return (
@@ -63,7 +65,7 @@ const Page: NextPage = (props: PageProps) => {
        <ul className='list-disc pis-4 leading-loose'>
           <li>
            {amountOfTokensRequiredToSubmitEntry === 0 ?  <span className='font-bold'>Anyone can submit</span> : <>
-           <span className='font-bold'>{new Intl.NumberFormat().format(amountOfTokensRequiredToSubmitEntry)}{" "}<span className='normal-case'>submission token{amountOfTokensRequiredToSubmitEntry > 1 && "s"}</span>{" "}required</span>{' '}to submit a proposal</>}</li>
+           <span className='font-bold'>{new Intl.NumberFormat().format(amountOfTokensRequiredToSubmitEntry)}{" "}<span className='normal-case'>${submitProposalToken.symbol}</span>{" "}required</span>{' '}to submit a proposal</>}</li>
          <li>Qualified wallets can submit up to <span className='font-bold'>
           {new Intl.NumberFormat().format(contestMaxNumberSubmissionsPerUser)} proposal{contestMaxNumberSubmissionsPerUser > 1 && "s"}
          </span>
@@ -82,7 +84,14 @@ const Page: NextPage = (props: PageProps) => {
         <li title={`${new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Total supply: <span className='font-bold'>{new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}</span></span></li>
         <li title={votingToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${chain?.blockExplorers?.default?.url}/address/${votingToken.address}`.replace('//address', '/address')}>{votingToken.address}</a></span></li>
       </ul>
-      
+     </section>
+     <section>
+      <h2 className='uppercase font-bold mb-2'>Submit proposals token</h2>
+      <ul className='list-disc pis-4 leading-loose'>
+        <li title={`$${submitProposalToken.symbol}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Symbol: <span className='font-bold normal-case'>${submitProposalToken.symbol}</span></span></li>
+        <li title={`${new Intl.NumberFormat().format(submitProposalToken.totalSupply.formatted)}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Total supply: <span className='font-bold'>{new Intl.NumberFormat().format(submitProposalToken.totalSupply.formatted)}</span></span></li>
+        <li title={submitProposalToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${chain?.blockExplorers?.default?.url}/address/${submitProposalToken.address}`.replace('//address', '/address')}>{submitProposalToken.address}</a></span></li>
+      </ul>
      </section>
      <section>
        <h2 className='uppercase leading-relaxed font-bold mb-2'>Timeline</h2>

@@ -93,6 +93,12 @@ export function useContest() {
     setContestPrompt,
     //@ts-ignore
     setDownvotingAllowed,
+    //@ts-ignore
+    submitProposalToken,
+    //@ts-ignore
+    setSubmitProposalTokenAddress,
+    //@ts-ignore
+    setSubmitProposalToken,
   } = useStore();
 
   function onContractError(err: any) {
@@ -190,6 +196,10 @@ export function useContest() {
           ...contractConfig,
           functionName: "submissionGatingByVotingToken",
         });
+        contracts.push({
+          ...contractConfig,
+          functionName: "submissionToken"
+        })
       }
 
       const results = await readContracts({ contracts });
@@ -197,7 +207,7 @@ export function useContest() {
         //@ts-ignore
         const indexToCheck =
           abi?.filter(el => el.name === "submissionGatingByVotingToken").length > 0
-            ? 3
+            ? 4
             : abi?.filter(el => el.name === "downvotingAllowed").length > 0
             ? 2
             : 1;
@@ -209,7 +219,7 @@ export function useContest() {
             `${
               results[
                 abi?.filter(el => el.name === "submissionGatingByVotingToken").length > 0
-                  ? contracts.length - 2
+                  ? contracts.length - 3
                   : contracts.length - 1
               ]
             }`,
@@ -233,8 +243,8 @@ export function useContest() {
       setVotingTokenAddress(results[4]);
       // Voting token data (balance, symbol, total supply etc) (for ERC-20 token)
       //@ts-ignore
-      const tokenRawData = await fetchToken({ address: results[4], chainId });
-      setVotingToken(tokenRawData);
+      const votingTokenRawData = await fetchToken({ address: results[4], chainId });
+      setVotingToken(votingTokenRawData);
       //@ts-ignore
       setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
       //@ts-ignore
@@ -259,7 +269,14 @@ export function useContest() {
       setAmountOfTokensRequiredToSubmitEntry(results[9] / 1e18);
 
       if (abi?.filter(el => el.name === "submissionGatingByVotingToken").length > 0) {
+        //@ts-ignore
+        const submitProposalTokenRawData = await fetchToken({ address: results[contracts.length - 1 ], chainId });
+        setSubmitProposalTokenAddress(results[contracts.length - 1 ]);
+        setSubmitProposalToken(submitProposalTokenRawData);
         await checkCurrentUserAmountOfProposalTokens();
+      } else {
+        setSubmitProposalTokenAddress(results[4]);
+        setSubmitProposalToken(votingTokenRawData);
       }
       // Current user votes
       await updateCurrentUserVotes();
