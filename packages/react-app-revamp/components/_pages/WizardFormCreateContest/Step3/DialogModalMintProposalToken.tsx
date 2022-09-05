@@ -132,7 +132,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
               onClick={() => {
                 handleSubmitForm(form.data(), true);
               }}
-              className="animate-appear w-full py-1 xs:w-auto xs:min-w-fit-content"
+              className="animate-appear mb-5 w-full py-1 xs:w-auto xs:min-w-fit-content"
               disabled={stateContractDeployment.isLoading || !isConnected}
               intent="neutral-outline"
               type="button"
