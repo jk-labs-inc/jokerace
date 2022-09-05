@@ -13,11 +13,13 @@ export const TrackerDeployTransaction = (props: any) => {
               : "text-true-white"
           } ${isLoading === true ? "animate-pulse" : ""}`}
         >
-          {isError ? textError ?? "Something went wrong during deployment." : textPending ?? "Deploying transaction..."}
+          {isError ? "Something went wrong during deployment." : textPending ?? "Deploying transaction..."}
         </li>
         <li className={isSuccess === true ? "text-primary-10" : "text-neutral-8"}>{textSuccess ?? "Deployed"}!</li>
       </ol>
-
+      {isError && textError && <p className="animate-appear mt-3 rounded bor px-4 border border-solid border-negative-4 py-2 text-negative-11 bg-negative-1">
+       {textError} 
+      </p>}
       {isSuccess === true && transactionHref && (
         <>
           <a className="mt-5 block" rel="nofollow noreferrer" target="_blank" href={transactionHref}>
