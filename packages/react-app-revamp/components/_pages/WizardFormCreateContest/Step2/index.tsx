@@ -45,8 +45,7 @@ export const Step2 = () => {
         <h2 className="sr-only">Step 2: Mint a token</h2>
         <p className="font-bold text-lg mb-3">Let’s start by minting a token your community will use to vote.</p>
         <p className="text-neutral-11 text-xs">
-          You can use your own, but it needs to be compatible with our contest contracts, so we *strongly* recommend
-          minting it here.
+          Tokens minted on other platforms <span className="font-bold">aren’t compatible with JokeDAO</span>. <br/> Skip this step only if you want to re-use a token already minted on JokeDAO.
         </p>
       </div>
       <Form showSkipButton={true} isDeploying={stateContractDeployment.isLoading} {...form} />
