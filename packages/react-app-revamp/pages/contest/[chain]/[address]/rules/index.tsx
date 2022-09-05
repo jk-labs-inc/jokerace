@@ -63,7 +63,7 @@ const Page: NextPage = (props: PageProps) => {
        <ul className='list-disc pis-4 leading-loose'>
           <li>
            {amountOfTokensRequiredToSubmitEntry === 0 ?  <span className='font-bold'>Anyone can submit</span> : <>
-           <span className='font-bold'>{new Intl.NumberFormat().format(amountOfTokensRequiredToSubmitEntry)}{" "}<span className='normal-case'>${votingToken.symbol}</span>{" "}required</span>{' '}to submit a proposal</>}</li>
+           <span className='font-bold'>{new Intl.NumberFormat().format(amountOfTokensRequiredToSubmitEntry)}{" "}<span className='normal-case'>submission token{amountOfTokensRequiredToSubmitEntry > 1 && "s"}</span>{" "}required</span>{' '}to submit a proposal</>}</li>
          <li>Qualified wallets can submit up to <span className='font-bold'>
           {new Intl.NumberFormat().format(contestMaxNumberSubmissionsPerUser)} proposal{contestMaxNumberSubmissionsPerUser > 1 && "s"}
          </span>
@@ -76,7 +76,7 @@ const Page: NextPage = (props: PageProps) => {
        </ul>
      </section>
      <section>
-      <h2 className='uppercase font-bold mb-2'>Token</h2>
+      <h2 className='uppercase font-bold mb-2'>Voting token</h2>
       <ul className='list-disc pis-4 leading-loose'>
         <li title={`$${votingToken.symbol}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Symbol: <span className='font-bold normal-case'>${votingToken.symbol}</span></span></li>
         <li title={`${new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Total supply: <span className='font-bold'>{new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}</span></span></li>
