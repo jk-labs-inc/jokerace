@@ -13,6 +13,7 @@ import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
 import { useId } from "react";
+import { InformationCircleIcon, ShieldExclamationIcon } from "@heroicons/react/outline";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -147,7 +148,7 @@ export const Form = (props: FormProps) => {
           <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label hasError={errors().votingTokenAddress?.length > 0 === true} htmlFor="votingTokenAddress">
-                Voting token address{" "}
+                Voting token address
               </FormField.Label>
               <FormField.Description id="input-votingtokenaddress-description">
                 The Ethereum address of your voting token
@@ -162,9 +163,13 @@ export const Form = (props: FormProps) => {
                 name="votingTokenAddress"
                 id="votingTokenAddress"
                 hasError={errors().votingTokenAddress?.length > 0 === true}
-                aria-describedby="input-votingtokenaddress-description input-votingtokenaddress-helpblock"
+                aria-describedby="input-votingtokenaddress-description input-votingtokenaddress-helpblock input-votingtokenaddress-note"
               />
             </FormField.InputField>
+            <p id="input-votingtokenaddress-note" className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center">
+              <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5"/>
+              The token must be minted on our platform or implement the &nbsp;<span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
+            </p>
             <FormField.HelpBlock
               hasError={errors().votingTokenAddress?.length > 0 === true}
               id="input-votingtokenaddress-helpblock"
@@ -271,6 +276,8 @@ export const Form = (props: FormProps) => {
             onChange={(e: boolean) => {
               if (e === true) {
                 resetField("submissionTokenAddress");
+              } else {
+                setData("submissionOpenToAll", false)
               }
               setData("useSameTokenForSubmissions", e);
             }}
@@ -297,7 +304,7 @@ export const Form = (props: FormProps) => {
                         ? "true"
                         : "false"
                     }
-                    value={dataDeploySubmissionToken?.address}
+                    value={data()?.useSameTokenForSubmissions ? dataDeploySubmissionToken?.address : data()?.submissionTokenAddress}
                     required={data()?.useSameTokenForSubmissions === true}
                     className="w-full"
                     placeholder="0x..."
@@ -309,8 +316,12 @@ export const Form = (props: FormProps) => {
                       touched()?.submissionTokenAddress &&
                       (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
                     }
-                    aria-describedby="input-submissionTokenAddress-helpblock"
+                    aria-describedby={`input-submissionTokenAddress-helpblock ${data()?.useSameTokenForSubmissions === false ? "input-submissionTokenAddress-note" : ""}`}
                   />
+                  {data()?.useSameTokenForSubmissions === false && <p id="input-submissionTokenAddress-note" className="text-2xs pt-2 font-normal text-secondary-11 pis-1 flex flex-wrap items-center">
+              <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5"/>
+              The token must be minted on our platform or implement the &nbsp;<span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
+            </p>}
                   <FormField.HelpBlock
                     hasError={
                       errors().submissionTokenAddress?.length > 0 === true ||
@@ -323,7 +334,7 @@ export const Form = (props: FormProps) => {
                     Please type a valid Ethereum address.
                   </FormField.HelpBlock>
                 </div>
-                <div className="flex items-center w-full pt-1">
+                <div className="flex items-center w-full pt-3">
                   <span className="text-neutral-11 pie-1ex">Or&nbsp;</span>
                   <Button
                     onClick={() => setModalDeploySubmissionTokenOpen(true)}
@@ -349,6 +360,11 @@ export const Form = (props: FormProps) => {
             value={data()?.submissionOpenToAll}
             onChange={(e: boolean) => {
               if (e === true) {
+                // If submissions are open to everyone
+                // then the contest will use the same token for proposals and submissions
+                // this will be reflected in the UI
+                // aka "Use the same token for both submitting proposals and voting" will be selected 
+                setData("useSameTokenForSubmissions", true)
                 resetField("requiredNumberOfTokenToSubmit");
               }
               setData("submissionOpenToAll", e);

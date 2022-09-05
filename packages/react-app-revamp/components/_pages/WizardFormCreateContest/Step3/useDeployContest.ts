@@ -45,7 +45,6 @@ export function useDeployContest(form: any) {
     stateContestDeployment.setIsSuccess(false);
     stateContestDeployment.setIsError(false);
     stateContestDeployment.setErrorMessage(null);
-
     try {
       // we need to refetch the signer, otherwise an error is triggered
       const signer = await refetch();
@@ -77,7 +76,9 @@ export function useDeployContest(form: any) {
         // downvoting: is downvoting allowed in this contest
         // 0 = false; 1 = true
         values?.downvotingAllowed === true ? 1 : 0,
-        values?.useSameTokenForSubmissions === true ? 0 : 1,
+        // same tokens: if this contest allows proposals to be sent for holders of the voting token or of another token
+        // 0 = false; 1 = true
+        values?.useSameTokenForSubmissions === true ? 1 : 0,
       ];
 
       const contract = await factory.deploy(
