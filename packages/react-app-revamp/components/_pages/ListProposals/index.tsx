@@ -14,6 +14,7 @@ import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/Icons";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useAccount } from "wagmi";
 import isProposalDeleted from "@helpers/isProposalDeleted";
+import useContest from "@hooks/useContest";
 
 export const ListProposals = () => {
   const {
@@ -53,7 +54,7 @@ export const ListProposals = () => {
     }),
     shallow,
   );
-
+  const { fetchNextPage, hasNextPage, nextPageLoading } = useContest()
   const stateSubmitProposal = useStoreSubmitProposal();
   const { setCastPositiveAmountOfVotes, setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useStoreCastVotes(
     state => ({
@@ -125,6 +126,7 @@ export const ListProposals = () => {
     } else {
       // List
       return (
+        <>
         <ul className={`${styles.list} space-y-12`}>
           {Object.keys(listProposalsData)
             .sort((a, b) => {
@@ -247,6 +249,10 @@ export const ListProposals = () => {
               );
             })}
         </ul>
+        {hasNextPage && <Button isLoading={nextPageLoading} disabled={nextPageLoading} className="mx-auto mt-6" intent="neutral-outline" scale="sm" onClick={fetchNextPage}>
+          Load more proposals  
+        </Button>}
+        </>
       );
     }
   }
