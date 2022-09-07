@@ -12,7 +12,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
 import arrayToChunks from "@helpers/arrayToChunks";
 
-const PROPOSALS_PER_PAGE = 15
+const PROPOSALS_PER_PAGE = 12
 
 export function useContest() {
   const { indexContest } = useContestsIndex();
@@ -436,7 +436,7 @@ export function useContest() {
       toast.error(e?.message ?? e);
      }
   }
-  
+
   async function checkCurrentUserAmountOfProposalTokens() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
