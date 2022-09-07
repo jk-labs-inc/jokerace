@@ -116,6 +116,18 @@ export function useContest() {
     setSubmitProposalTokenAddress,
     //@ts-ignore
     setSubmitProposalToken,
+    //@ts-ignore
+    setIndexPaginationProposalPerId,
+    //@ts-ignore
+    setTotalPagesPaginationProposals,
+    //@ts-ignore
+    setHasPaginationProposalsNextPage,
+    //@ts-ignore
+    setCurrentPagePaginationProposals,
+    //@ts-ignore
+    setIsPageProposalsLoading,
+    //@ts-ignore
+    setIsPageProposalsError,
   } = useStore();
 
   function onContractError(err: any) {
