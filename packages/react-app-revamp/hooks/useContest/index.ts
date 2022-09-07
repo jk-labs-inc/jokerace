@@ -439,6 +439,7 @@ export function useContest() {
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
+      chainId: chainId,
     };
     const contractBaseOptions = {};
     try {
