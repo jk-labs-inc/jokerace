@@ -27,7 +27,8 @@ export function useExportContestDataToCSV() {
     const url = asPath.split("/");
     const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id;
     const address = url[3];
-    const abi = await getContestContractVersion(address);
+    const chainName = url[2];
+    const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       return;
     }
@@ -35,6 +36,7 @@ export function useExportContestDataToCSV() {
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
+        chainId: chainId,
       };
       //@ts-ignore
       const list = await readContract({
@@ -53,7 +55,8 @@ export function useExportContestDataToCSV() {
     const url = asPath.split("/");
     const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id;
     const address = url[3];
-    const abi = await getContestContractVersion(address);
+    const chainName = url[2];
+    const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       return;
     }

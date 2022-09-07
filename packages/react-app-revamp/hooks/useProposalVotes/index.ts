@@ -61,7 +61,8 @@ export function useProposalVotes(id: number | string) {
 
   async function fetchProposalVotes() {
     setIsListVotersLoading(true);
-    const abi = await getContestContractVersion(address);
+    const chainName = url[2];
+    const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       setIsListVotersLoading(false);
       setIsListVotersError("This contract doesn't exist on this chain.");
@@ -74,6 +75,7 @@ export function useProposalVotes(id: number | string) {
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
+        chainId: chainId,
       };
       const list = await readContract({
         ...contractConfig,

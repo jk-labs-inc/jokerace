@@ -74,7 +74,7 @@ const LayoutViewContest = (props: any) => {
     retry,
     onSearch,
     chainId,
-    setChaindId,
+    setChainId,
   } = useContest();
 
   const {
@@ -145,7 +145,7 @@ const LayoutViewContest = (props: any) => {
     if (account?.connector) {
       account?.connector.on("change", data => {
         //@ts-ignore
-        setChaindId(data.chain.id);
+        setChainId(data.chain.id);
       });
     }
   }, [account?.connector]);

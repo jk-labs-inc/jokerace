@@ -28,7 +28,8 @@ export function useCheckSnapshotProgress() {
 
   async function updateSnapshotProgress() {
     const address = asPath.split("/")[3];
-    const abi = await getContestContractVersion(address);
+    const chainName = asPath.split("/")[2];
+    const abi = await getContestContractVersion(address, chainName);
     while (isSnaspshotTaken !== true) {
       const statusRawData = await readContract({
         addressOrName: address,
