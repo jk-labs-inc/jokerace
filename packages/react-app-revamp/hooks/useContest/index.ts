@@ -336,7 +336,7 @@ export function useContest() {
   }
 
   async function checkCurrentUserAmountOfProposalTokens() {
-    const abi = await getContestContractVersion(address);
+    const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error("This contract doesn't exist on this chain.");
       setIsError("This contract doesn't exist on this chain.");
