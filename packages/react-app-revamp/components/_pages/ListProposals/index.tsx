@@ -13,8 +13,9 @@ import styles from "./styles.module.css";
 import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/Icons";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useAccount } from "wagmi";
+import { useContest } from "@hooks/useContest" 
 import isProposalDeleted from "@helpers/isProposalDeleted";
-import useContest from "@hooks/useContest";
+import Loader from "@components/Loader";
 
 export const ListProposals = () => {
   const {
@@ -31,8 +32,22 @@ export const ListProposals = () => {
     checkIfUserPassedSnapshotLoading,
     downvotingAllowed,
     listProposalsIds,
+    hasPaginationProposalsNextPage,
+    isPageProposalsLoading,
+    isPageProposalsError,
+    currentPagePaginationProposals,
+    indexPaginationProposals,
+    totalPagesPaginationProposals,
   } = useStoreContest(
     state => ({
+      //@ts-ignore
+      currentPagePaginationProposals: state.currentPagePaginationProposals,
+      //@ts-ignore
+      hasPaginationProposalsNextPage: state.hasPaginationProposalsNextPage,
+      //@ts-ignore
+      isPageProposalsLoading: state.isPageProposalsLoading,
+      //@ts-ignore
+      isPageProposalsError: state.isPageProposalsError,
       //@ts-ignore
       downvotingAllowed: state.downvotingAllowed,
       //@ts-ignore
@@ -51,10 +66,13 @@ export const ListProposals = () => {
       didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
       //@ts-ignore
       checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
+      //@ts-ignore
+      indexPaginationProposals: state.indexPaginationProposals,
+      //@ts-ignore,
+      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
     }),
     shallow,
   );
-  const { fetchNextPage, hasNextPage, nextPageLoading } = useContest()
   const stateSubmitProposal = useStoreSubmitProposal();
   const { setCastPositiveAmountOfVotes, setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useStoreCastVotes(
     state => ({
@@ -77,6 +95,8 @@ export const ListProposals = () => {
     }),
     shallow,
   );
+
+  const { fetchProposalsPage } = useContest()
 
   function onClickUpVote(proposalId: number | string) {
     setCastPositiveAmountOfVotes(true);
@@ -124,7 +144,11 @@ export const ListProposals = () => {
         </div>
       );
     } else {
-      // List
+      if(isPageProposalsLoading && Object.keys(listProposalsData)?.length === 0) {
+        return <Loader scale="component">
+          Loading proposals...
+        </Loader>
+      }
       return (
         <>
         <ul className={`${styles.list} space-y-12`}>
@@ -249,10 +273,25 @@ export const ListProposals = () => {
               );
             })}
         </ul>
-        {hasNextPage && <Button isLoading={nextPageLoading} disabled={nextPageLoading} className="mx-auto mt-6" intent="neutral-outline" scale="sm" onClick={fetchNextPage}>
-          Load more proposals  
-        </Button>}
-        </>
+        {isPageProposalsLoading && Object.keys(listProposalsData)?.length > 1 && <Loader scale="component" classNameWrapper="my-3">
+          Loading proposals...
+        </Loader>}
+        {hasPaginationProposalsNextPage && !isPageProposalsLoading && <div className="pt-8 flex animate-appear">
+          <Button 
+            intent="neutral-outline"
+            scale="sm"
+            className="mx-auto animate-appear"
+            onClick={() => fetchProposalsPage(
+              currentPagePaginationProposals + 1,
+              indexPaginationProposals[currentPagePaginationProposals + 1],
+              totalPagesPaginationProposals
+            )
+          }
+          >
+              {isPageProposalsError ? 'Try again' : 'Show more proposals'}
+          </Button>
+        </div>}
+      </>
       );
     }
   }

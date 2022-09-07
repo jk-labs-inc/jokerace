@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { chain, useContractInfiniteReads, useProvider, paginatedIndexesConfig } from "wagmi";
+import { chain, useProvider } from "wagmi";
 import { fetchBlockNumber, fetchEnsName, fetchToken, getAccount, readContract, readContracts } from "@wagmi/core";
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
@@ -10,8 +10,9 @@ import { isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
-import { parseEther, parseUnits } from "ethers/lib/utils";
-import { useAsync } from "react-use";
+import arrayToChunks from "@helpers/arrayToChunks";
+
+const PROPOSALS_PER_PAGE = 15
 
 export function useContest() {
   const { indexContest } = useContestsIndex();
@@ -48,8 +49,6 @@ export function useContest() {
     setIsError,
     //@ts-ignore
     setIsLoading,
-    //@ts-ignore
-    setIsListProposalsError,
     //@ts-ignore
     setIsListProposalsLoading,
     //@ts-ignore
@@ -93,94 +92,18 @@ export function useContest() {
     //@ts-ignore
     setDownvotingAllowed,
     //@ts-ignore
-    currentUserProposalCount,
+    setIndexPaginationProposalPerId,
     //@ts-ignore
-    listProposalsIds,
+    setTotalPagesPaginationProposals,
+    //@ts-ignore
+    setHasPaginationProposalsNextPage,
+    //@ts-ignore
+    setCurrentPagePaginationProposals,
+    //@ts-ignore
+    setIsPageProposalsLoading,
+    //@ts-ignore
+    setIsPageProposalsError,
   } = useStore();
-  const abiState = useAsync(async () => {
-    const result = await getContestContractVersion(address)
-    return result
-  }, [address]);
-
-  const paginatedProposalsVotes = useContractInfiniteReads({
-    enabled: abiState.loading === false && abiState?.value !== null && listProposalsIds?.length > 0,
-    cacheKey: `${chainId}-${address}-proposals-votes`,
-    ...paginatedIndexesConfig(    
-      index => ({
-        addressOrName: address,
-        //@ts-ignore
-        contractInterface: abiState?.value,
-        functionName: "proposalVotes",
-        args: listProposalsIds[index],
-      }),
-      { start: 0, perPage: 8, direction: 'increment' },
-    ),
-  })
-
-  const paginatedProposalsContent = useContractInfiniteReads({
-    enabled: abiState.loading === false && abiState?.value !== null && listProposalsIds?.length > 0 && paginatedProposalsVotes?.isSuccess && paginatedProposalsVotes?.isLoading === false && paginatedProposalsVotes?.isError === false,
-    cacheKey: `${chainId}-${address}-proposals-content`,
-    ...paginatedIndexesConfig(    
-      index => ({
-        addressOrName: address,
-        //@ts-ignore
-        contractInterface: abiState?.value,
-        functionName: "getProposal",
-        args: listProposalsIds[index],
-      }),
-      { start: 0, perPage: 8, direction: 'increment' },
-    ),
-
-    onSuccess(data) {
-      data.pages[0].map(async (result, i) => {
-        const id = listProposalsIds[i].toString()
-        try {
-          const accountData = await getAccount()
-          const proposal = result
-      
-          const proposalData = {
-            authorEthereumAddress: proposal[0],
-            author: proposal[0],
-            content: proposal[1],
-            isContentImage: isUrlToImage(proposal[1]) ? true : false,
-            exists: proposal[2],
-            //@ts-ignore
-            votes: paginatedProposalsVotes?.data?.pages[0][i]?.forVotes
-              ? paginatedProposalsVotes?.data?.pages[0][i]?.forVotes / 1e18 - paginatedProposalsVotes?.data?.pages[0][i]?.againstVotes / 1e18
-              : paginatedProposalsVotes?.data?.pages[0][i] / 1e18,
-          };
-          // Check if that proposal belongs to the current user
-          // (Needed to track if the current user can submit a proposal)
-          //@ts-ignore
-          if (proposal[0] === accountData?.address) {
-            increaseCurrentUserProposalCount();
-          }
-          setProposalData({ id, data: proposalData });
-          setIsLoading(false);
-          setIsListProposalsLoading(false);
-          setIsListProposalsError(null);
-          setIsError(null);
-          setIsListProposalsSuccess(true);
-          setIsSuccess(true);
-    
-        } catch(e) {
-          onContractError(e);
-          console.error(e);
-          setIsLoading(false);
-          setIsSuccess(false);
-          //@ts-ignore
-          setIsListProposalsError(e?.code ?? e);
-          setIsListProposalsLoading(false);
-          setIsListProposalsSuccess(false);
-        }
-      })
-    },
-  })
-
-  function fetchNextPage() {
-    paginatedProposalsVotes.fetchNextPage()
-    paginatedProposalsContent.fetchNextPage()
-  }
 
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
@@ -330,7 +253,29 @@ export function useContest() {
       // Check snapshot
       await checkIfCurrentUserQualifyToVote();
       // List of proposals for this contest
-      await fetchAllProposals();
+      setIsListProposalsLoading(true);
+      // Get list of proposals (ids)
+      const proposalsIdsRawData = await readContract({
+        ...contractConfig,
+        functionName: "getAllProposalIds",
+      });
+      setListProposalsIds(proposalsIdsRawData);
+      setIsListProposalsLoading(false);
+      setIsListProposalsSuccess(true);
+      setIsError(null);
+      setIsSuccess(true);
+      setIsLoading(false);
+
+      // Pagination
+      const totalPagesPaginationProposals = Math.ceil(proposalsIdsRawData?.length / PROPOSALS_PER_PAGE)
+      setTotalPagesPaginationProposals(totalPagesPaginationProposals)
+      setCurrentPagePaginationProposals(0)
+      //@ts-ignore
+      const paginationChunks = arrayToChunks(proposalsIdsRawData, PROPOSALS_PER_PAGE)
+      setTotalPagesPaginationProposals(paginationChunks.length)
+      setIndexPaginationProposalPerId(paginationChunks)
+      await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length)
+      
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
         process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -380,6 +325,61 @@ export function useContest() {
       setIsLoading(false);
       console.error(e);
     }
+  }
+
+  async function fetchProposalsPage(pageIndex: number, slice: Array<any>, totalPagesPaginationProposals: number) {
+    setCurrentPagePaginationProposals(pageIndex)
+    setIsPageProposalsLoading(true);
+    setIsPageProposalsError(null);
+    try {
+      const abi = await getContestContractVersion(address);
+      if (abi === null) {
+        toast.error("This contract doesn't exist on this chain.");
+        setIsPageProposalsError("This contract doesn't exist on this chain.");
+        setIsPageProposalsLoading(false);
+        return;
+      }
+  
+      const contractConfig = {
+        addressOrName: address,
+        contractInterface: abi,
+      };
+      const contracts: any = [];
+
+      slice.map((id: number) => {
+        contracts.push(
+          // proposal content
+          {
+            ...contractConfig,
+            functionName: "getProposal",
+            args: id,
+          },
+          // Votes received
+          {
+            ...contractConfig,
+            functionName: "proposalVotes",
+            args: id,
+          },
+        );
+      });
+
+      const results = await readContracts({ contracts });
+      let proposalFetchPromises = [];
+      for (let i = 0; i < slice.length; i++) {
+        // For all proposals, fetch
+        proposalFetchPromises.push(fetchProposal(i, results, slice));
+      }
+      await Promise.all(proposalFetchPromises);
+      setIsPageProposalsLoading(false);
+      setIsPageProposalsError(null);
+      setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals)
+     } catch(e) {
+      setIsPageProposalsLoading(false);
+      //@ts-ignore
+      setIsPageProposalsError(e?.message ?? e);
+      //@ts-ignore
+      toast.error(e?.message ?? e);
+     }
   }
 
   async function checkIfCurrentUserQualifyToVote() {
@@ -480,46 +480,7 @@ export function useContest() {
     }
     setProposalData({ id: proposalsIdsRawData[i], data: proposalData });
   }
-
-  async function fetchAllProposals() {
-    const abi = await getContestContractVersion(address);
-    if (abi === null) {
-      toast.error("This contract doesn't exist on this chain.");
-      setIsError("This contract doesn't exist on this chain.");
-      setIsSuccess(false);
-      setIsListProposalsSuccess(false);
-      setIsListProposalsLoading(false);
-      setCheckIfUserPassedSnapshotLoading(false);
-      setIsLoading(false);
-      return;
-    }
-
-    const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi,
-    };
-    const contractBaseOptions = {};
-    try {
-      setIsListProposalsLoading(true);
-      // Get list of proposals (ids)
-      const proposalsIdsRawData = await readContract({
-        ...contractConfig,
-        ...contractBaseOptions,
-        functionName: "getAllProposalIds",
-      });
-      setListProposalsIds(proposalsIdsRawData);
-    } catch (e) {
-      onContractError(e);
-      console.error(e);
-      setIsLoading(false);
-      setIsSuccess(false);
-      //@ts-ignore
-      setIsListProposalsError(e?.code ?? e);
-      setIsListProposalsLoading(false);
-      setIsListProposalsSuccess(false);
-    }
-  }
-
+  
   async function updateCurrentUserVotes() {
     const abi = await getContestContractVersion(address);
     if (abi === null) {
@@ -576,16 +537,13 @@ export function useContest() {
   }
 
   return {
-    fetchNextPage,
-    hasNextPage: paginatedProposalsContent.hasNextPage,
-    nextPageLoading: paginatedProposalsContent.isLoading || paginatedProposalsVotes.isLoading,
+    fetchProposalsPage,
     address,
     fetchContestInfo,
     setIsLoading,
     setIsListProposalsLoading,
     chainId,
     setChaindId,
-    fetchAllProposals,
     isLoading,
     isListProposalsLoading,
     isError,
