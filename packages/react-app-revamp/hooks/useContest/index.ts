@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { chain, useContractInfiniteReads, useProvider, paginatedIndexesConfig } from "wagmi";
+import { chain, useProvider } from "wagmi";
 import { fetchBlockNumber, fetchEnsName, fetchToken, getAccount, readContract, readContracts } from "@wagmi/core";
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
