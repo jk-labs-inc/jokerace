@@ -30,7 +30,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await deploy("Contest", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: ["joking", "Enter a joke", GenericVotesTimestampToken.address, [5, 10, 10, 7, ethers.utils.parseEther("1"), 2, 100, 1]],
+    args: ["joking", "Enter a joke", GenericVotesTimestampToken.address, GenericVotesTimestampToken.address, [5, 10, 10, 7, ethers.utils.parseEther("1"), 2, 100, 1, 1]],
     log: true,
     waitConfirmations: 5,
   });

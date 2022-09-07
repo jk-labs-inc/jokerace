@@ -7,7 +7,7 @@ import "./governance/extensions/GovernorCountingSimple.sol";
 import "./governance/extensions/GovernorVotesTimestamp.sol";
 
 contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotesTimestamp {
-    constructor(string memory _name, string memory _prompt, IVotesTimestamp _token, uint256[] memory _constructorIntParams)
+    constructor(string memory _name, string memory _prompt, IVotesTimestamp _token, IVotesTimestamp _submissionToken, uint256[] memory _constructorIntParams)
         Governor(_name, _prompt)
         GovernorSettings(
             _constructorIntParams[0], // _initialContestStart
@@ -17,9 +17,10 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
             _constructorIntParams[4], // _initialProposalThreshold, 
             _constructorIntParams[5], // _initialNumAllowedProposalSubmissions, 
             _constructorIntParams[6], // _initialMaxProposalCount
-            _constructorIntParams[7]  // _initialDownvotingAllowed
+            _constructorIntParams[7], // _initialDownvotingAllowed
+            _constructorIntParams[8]  // _initialSubmissionGatingByVotingToken
         )
-        GovernorVotesTimestamp(_token)
+        GovernorVotesTimestamp(_token, _submissionToken)
     {}
 
     // The following functions are overrides required by Solidity.
@@ -87,6 +88,15 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         return super.downvotingAllowed();
     }
 
+    function submissionGatingByVotingToken()
+        public
+        view
+        override(Governor, GovernorSettings)
+        returns (uint256)
+    {
+        return super.submissionGatingByVotingToken();
+    }
+
     function creator()
         public
         view
@@ -112,5 +122,14 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         returns (uint256)
     {
         return super.getCurrentVotes(account);
+    }
+
+    function getCurrentSubmissionTokenVotes(address account)
+        public
+        view
+        override(IGovernor, GovernorVotesTimestamp)
+        returns (uint256)
+    {
+        return super.getCurrentSubmissionTokenVotes(account);
     }
 }

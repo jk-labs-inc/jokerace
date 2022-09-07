@@ -15,7 +15,7 @@ export const Step2 = () => {
   const {
     tokenDeployedToChain,
     setCurrentStep,
-    dataDeployToken,
+    dataDeployVotingToken,
     modalDeployTokenOpen,
     setModalDeployTokenOpen,
   } = useStore(
@@ -23,7 +23,7 @@ export const Step2 = () => {
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
       //@ts-ignore
-      dataDeployToken: state.dataDeployToken,
+      dataDeployVotingToken: state.dataDeployVotingToken,
       //@ts-ignore
       modalDeployTokenOpen: state.modalDeployTokenOpen,
       //@ts-ignore
@@ -35,7 +35,7 @@ export const Step2 = () => {
   );
   const form = useForm({
     extend: validator({ schema }),
-    onSubmit: values => handleSubmitForm(values),
+    onSubmit: values => handleSubmitForm(values, false),
   });
   const { handleSubmitForm, stateContractDeployment } = useDeployToken(form);
   const { isConnected } = useAccount();
@@ -45,11 +45,10 @@ export const Step2 = () => {
         <h2 className="sr-only">Step 2: Mint a token</h2>
         <p className="font-bold text-lg mb-3">Let’s start by minting a token your community will use to vote.</p>
         <p className="text-neutral-11 text-xs">
-          You can use your own, but it needs to be compatible with our contest contracts, so we *strongly* recommend
-          minting it here.
+          Tokens minted on other platforms <span className="font-bold">aren’t compatible with JokeDAO</span>. <br/> Skip this step only if you want to re-use a token already minted on JokeDAO.
         </p>
       </div>
-      <Form isDeploying={stateContractDeployment.isLoading} {...form} />
+      <Form showSkipButton={true} isDeploying={stateContractDeployment.isLoading} {...form} />
       <DialogModalDeployTransaction
         isOpen={modalDeployTokenOpen}
         setIsOpen={setModalDeployTokenOpen}
@@ -58,21 +57,21 @@ export const Step2 = () => {
         isLoading={stateContractDeployment.isLoading}
         isSuccess={stateContractDeployment.isSuccess}
         error={stateContractDeployment.error}
-        transactionHref={`${tokenDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployToken?.hash}`}
+        transactionHref={`${tokenDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployVotingToken?.hash}`}
       >
         {stateContractDeployment.isSuccess === true && (
           <div className="mt-3 animate-appear relative">
             <span className="font-bold">Token address:</span>
             <div className="relative focus-within:text-opacity-50 hover:text-opacity-75">
               <button
-                onClick={() => copyToClipboard(dataDeployToken?.address, "Token address copied !")}
+                onClick={() => copyToClipboard(dataDeployVotingToken?.address, "Token address copied !")}
                 title="Copy address"
                 className="w-full absolute z-10 inset-0 opacity-0"
               >
                 Copy address
               </button>
               <p className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
-                {dataDeployToken?.address}
+                {dataDeployVotingToken?.address}
               </p>
               <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
             </div>
@@ -91,7 +90,7 @@ export const Step2 = () => {
           {stateContractDeployment.isError && (
             <Button
               onClick={() => {
-                handleSubmitForm(form.data());
+                handleSubmitForm(form.data(), false);
               }}
               className="w-full py-1 xs:w-auto xs:min-w-fit-content"
               disabled={stateContractDeployment.isLoading || !isConnected}

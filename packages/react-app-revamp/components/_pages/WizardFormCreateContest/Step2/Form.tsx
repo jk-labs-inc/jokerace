@@ -7,8 +7,10 @@ import Button from "@components/Button";
 import ToggleSwitch from "@components/ToggleSwitch";
 import button from "@components/Button/styles";
 import { useStore } from "../store";
+import { useId } from "react";
 
 interface FormProps {
+  showSkipButton: boolean;
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
   form: any;
@@ -24,15 +26,16 @@ interface FormProps {
 const appearAsNeutralButton = button({ intent: "neutral-outline" });
 
 export const Form = (props: FormProps) => {
-  const { isDeploying, form, data, errors, isValid, interacted, setData, setFields } = props;
+  const formId = useId();
+  const { isDeploying, form, data, errors, isValid, interacted, setData, setFields, showSkipButton } = props;
   const account = useAccount();
   const { chain } = useNetwork();
-  const { setCurrentStep, dataDeployToken } = useStore(
+  const { setCurrentStep, dataDeployVotingToken } = useStore(
     state => ({
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
       //@ts-ignore
-      dataDeployToken: state.dataDeployToken,
+      dataDeployVotingToken: state.dataDeployVotingToken,
     }),
     shallow,
   );
@@ -41,7 +44,7 @@ export const Form = (props: FormProps) => {
   });
 
   return (
-    <form ref={form} className="w-full">
+    <form ref={form} className="w-full" id={formId}>
       <fieldset className="space-y-6">
         <FormField disabled={!account.isConnected || chain?.unsupported === true || isDeploying === true}>
           <FormField.InputField>
@@ -207,9 +210,11 @@ export const Form = (props: FormProps) => {
           Mint
         </Button>
 
-        <div className={appearAsNeutralButton} tabIndex={0} role="button" {...pressProps}>
-          {dataDeployToken !== null ? "Next" : "Skip"}
-        </div>
+        {showSkipButton === true && (
+          <div className={appearAsNeutralButton} tabIndex={0} role="button" {...pressProps}>
+            {dataDeployVotingToken !== null ? "Next" : "Skip"}
+          </div>
+        )}
       </div>
     </form>
   );

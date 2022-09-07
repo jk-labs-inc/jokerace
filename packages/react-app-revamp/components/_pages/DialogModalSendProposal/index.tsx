@@ -33,7 +33,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
   const { transactionData } = useStoreSubmitProposal();
   const {
     amountOfTokensRequiredToSubmitEntry,
-    currentUserAvailableVotesAmount,
+    currentUserSubmitProposalTokensAmount,
     listProposalsIds,
     currentUserProposalCount,
     contestMaxNumberSubmissionsPerUser,
@@ -45,7 +45,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       //@ts-ignore
       contestPrompt: state.contestPrompt,
       //@ts-ignore
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
       //@ts-ignore
       contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
       //@ts-ignore
@@ -128,7 +128,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     <DialogModal title="Submit your proposal" {...props}>
       {showDeploymentSteps && (
         <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction isSuccess={isSuccess} isError={error !== null} isLoading={isLoading} />
+          <TrackerDeployTransaction textError={error} isSuccess={isSuccess} isError={error !== null} isLoading={isLoading} />
         </div>
       )}
 
@@ -159,7 +159,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
         </>
       )}
 
-      {currentUserAvailableVotesAmount >= amountOfTokensRequiredToSubmitEntry &&
+      {currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry &&
       currentUserProposalCount < contestMaxNumberSubmissionsPerUser &&
       listProposalsIds.length < contestMaxProposalCount &&
       contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
