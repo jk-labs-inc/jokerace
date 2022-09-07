@@ -112,6 +112,18 @@ export function useContest() {
     setSubmitProposalTokenAddress,
     //@ts-ignore
     setSubmitProposalToken,
+    //@ts-ignore
+    setIndexPaginationProposalPerId,
+    //@ts-ignore
+    setTotalPagesPaginationProposals,
+    //@ts-ignore
+    setHasPaginationProposalsNextPage,
+    //@ts-ignore
+    setCurrentPagePaginationProposals,
+    //@ts-ignore
+    setIsPageProposalsLoading,
+    //@ts-ignore
+    setIsPageProposalsError,
   } = useStore();
 
   function onContractError(err: any) {
@@ -557,46 +569,6 @@ export function useContest() {
       increaseCurrentUserProposalCount();
     }
     setProposalData({ id: proposalsIdsRawData[i], data: proposalData });
-  }
-
-  async function fetchAllProposals() {
-    const abi = await getContestContractVersion(address, chainName);
-    if (abi === null) {
-      toast.error("This contract doesn't exist on this chain.");
-      setIsError("This contract doesn't exist on this chain.");
-      setIsSuccess(false);
-      setIsListProposalsSuccess(false);
-      setIsListProposalsLoading(false);
-      setCheckIfUserPassedSnapshotLoading(false);
-      setIsLoading(false);
-      return;
-    }
-
-    const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi,
-      chainId: chainId,
-    };
-    const contractBaseOptions = {};
-    try {
-      setIsListProposalsLoading(true);
-      // Get list of proposals (ids)
-      const proposalsIdsRawData = await readContract({
-        ...contractConfig,
-        ...contractBaseOptions,
-        functionName: "getAllProposalIds",
-      });
-      setListProposalsIds(proposalsIdsRawData);
-    } catch (e) {
-      onContractError(e);
-      console.error(e);
-      setIsLoading(false);
-      setIsSuccess(false);
-      //@ts-ignore
-      setIsListProposalsError(e?.code ?? e);
-      setIsListProposalsLoading(false);
-      setIsListProposalsSuccess(false);
-    }
   }
 
   async function updateCurrentUserVotes() {

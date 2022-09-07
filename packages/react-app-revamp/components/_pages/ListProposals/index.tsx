@@ -13,9 +13,9 @@ import styles from "./styles.module.css";
 import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/Icons";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useAccount } from "wagmi";
+import { useContest } from "@hooks/useContest" 
 import isProposalDeleted from "@helpers/isProposalDeleted";
 import Loader from "@components/Loader";
-import useContest from "@hooks/useContest";
 
 export const ListProposals = () => {
   const {
@@ -32,13 +32,13 @@ export const ListProposals = () => {
     checkIfUserPassedSnapshotLoading,
     downvotingAllowed,
     listProposalsIds,
+    currentUserSubmitProposalTokensAmount,
     hasPaginationProposalsNextPage,
     isPageProposalsLoading,
     isPageProposalsError,
     currentPagePaginationProposals,
     indexPaginationProposals,
     totalPagesPaginationProposals,
-    currentUserSubmitProposalTokensAmount,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -73,6 +73,10 @@ export const ListProposals = () => {
       totalPagesPaginationProposals: state.totalPagesPaginationProposals,
       //@ts-ignore
       currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
+      //@ts-ignore
+      indexPaginationProposals: state.indexPaginationProposals,
+      //@ts-ignore,
+      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
     }),
     shallow,
   );
