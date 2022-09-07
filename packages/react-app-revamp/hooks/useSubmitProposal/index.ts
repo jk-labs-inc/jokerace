@@ -34,7 +34,8 @@ export function useSubmitProposal() {
 
   async function sendProposal(proposalContent: string) {
     const address = asPath.split("/")[3];
-    const abi = await getContestContractVersion(address);
+    const chainName = asPath.split("/")[2];
+    const abi = await getContestContractVersion(address, chainName);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);

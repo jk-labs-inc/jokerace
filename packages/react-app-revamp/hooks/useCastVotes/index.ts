@@ -35,7 +35,8 @@ export function useCastVotes() {
 
   async function castVotes(amount: number, isPositive: boolean) {
     const address = asPath.split("/")[3];
-    const abi = await getContestContractVersion(address);
+    const chainName = asPath.split("/")[2];
+    const abi = await getContestContractVersion(address, chainName);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
