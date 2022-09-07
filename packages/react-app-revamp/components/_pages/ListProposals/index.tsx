@@ -39,6 +39,7 @@ export const ListProposals = () => {
     currentPagePaginationProposals,
     indexPaginationProposals,
     totalPagesPaginationProposals,
+    currentUserSubmitProposalTokensAmount,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -77,6 +78,8 @@ export const ListProposals = () => {
       indexPaginationProposals: state.indexPaginationProposals,
       //@ts-ignore,
       totalPagesPaginationProposals: state.totalPagesPaginationProposals,
+      //@ts-ignore
+      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
     }),
     shallow,
   );

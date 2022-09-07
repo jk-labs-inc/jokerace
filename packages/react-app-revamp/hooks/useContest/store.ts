@@ -67,6 +67,7 @@ export const createStore = () => {
     }),
     setTotalPagesPaginationProposals: (newTotal: number) => set({ totalPagesPaginationProposals: newTotal }),
     setHasPaginationProposalsNextPage: (hasNextPage: boolean) => set({ hasPaginationProposalsNextPage: hasNextPage }),
+    currentUserSubmitProposalTokensAmount: null,
     setDownvotingAllowed: (isAllowed: boolean) => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: (prompt: string | null) => set({ contestPrompt: prompt }),
     setCurrentUserProposalCount: (amount: number) => set({ currentUserProposalCount: amount }),
