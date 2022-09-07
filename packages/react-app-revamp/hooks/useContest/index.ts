@@ -10,7 +10,6 @@ import { isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
-import { parseEther, parseUnits } from "ethers/lib/utils";
 
 export function useContest() {
   const { indexContest } = useContestsIndex();
@@ -22,6 +21,8 @@ export function useContest() {
   const [address, setAddress] = useState(asPath.split("/")[3]);
   const [chainName, setChainName] = useState(asPath.split("/")[2]);
   const {
+    //@ts-ignore
+    setCurrentUserSubmitProposalTokensAmount,
     //@ts-ignore
     setContestName,
     //@ts-ignore
@@ -93,7 +94,11 @@ export function useContest() {
     //@ts-ignore
     setDownvotingAllowed,
     //@ts-ignore
-    currentUserProposalCount,
+    submitProposalToken,
+    //@ts-ignore
+    setSubmitProposalTokenAddress,
+    //@ts-ignore
+    setSubmitProposalToken,
   } = useStore();
 
   function onContractError(err: any) {
@@ -174,35 +179,58 @@ export function useContest() {
           functionName: "proposalThreshold",
         },
       ];
-      //@ts-ignore
       if (abi?.filter(el => el.name === "prompt").length > 0) {
         contracts.push({
           ...contractConfig,
           functionName: "prompt",
         });
       }
-      //@ts-ignore
       if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
         contracts.push({
           ...contractConfig,
           functionName: "downvotingAllowed",
         });
       }
+      if (abi?.filter(el => el.name === "submissionGatingByVotingToken").length > 0) {
+        contracts.push({
+          ...contractConfig,
+          functionName: "submissionGatingByVotingToken",
+        });
+        contracts.push({
+          ...contractConfig,
+          functionName: "submissionToken"
+        })
+      }
 
       const results = await readContracts({ contracts });
-      //@ts-ignore
       if (abi?.filter(el => el.name === "prompt").length > 0) {
         //@ts-ignore
-        const indexToCheck = abi?.filter(el => el.name === "downvotingAllowed").length > 0 ? 2 : 1;
+        const indexToCheck =
+          abi?.filter(el => el.name === "submissionGatingByVotingToken").length > 0
+            ? 4
+            : abi?.filter(el => el.name === "downvotingAllowed").length > 0
+            ? 2
+            : 1;
         setContestPrompt(results[contracts.length - indexToCheck]);
       }
-      //@ts-ignore
       if (abi?.filter(el => el.name === "downvotingAllowed").length > 0) {
-        const isAllowed = parseInt(`${results[contracts.length - 1]}`) === 1 ? true : false;
+        const isAllowed =
+          parseInt(
+            `${
+              results[
+                abi?.filter(el => el.name === "submissionGatingByVotingToken").length > 0
+                  ? contracts.length - 3
+                  : contracts.length - 1
+              ]
+            }`,
+          ) === 1
+            ? true
+            : false;
         setDownvotingAllowed(isAllowed);
       } else {
         setDownvotingAllowed(false);
       }
+
       setContestName(results[0]);
       const contestAuthorEns = await fetchEnsName({
         //@ts-ignore
@@ -215,8 +243,8 @@ export function useContest() {
       setVotingTokenAddress(results[4]);
       // Voting token data (balance, symbol, total supply etc) (for ERC-20 token)
       //@ts-ignore
-      const tokenRawData = await fetchToken({ address: results[4], chainId });
-      setVotingToken(tokenRawData);
+      const votingTokenRawData = await fetchToken({ address: results[4], chainId });
+      setVotingToken(votingTokenRawData);
       //@ts-ignore
       setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
       //@ts-ignore
@@ -240,6 +268,16 @@ export function useContest() {
       //@ts-ignore
       setAmountOfTokensRequiredToSubmitEntry(results[9] / 1e18);
 
+      if (abi?.filter(el => el.name === "submissionGatingByVotingToken").length > 0) {
+        //@ts-ignore
+        const submitProposalTokenRawData = await fetchToken({ address: results[contracts.length - 1 ], chainId });
+        setSubmitProposalTokenAddress(results[contracts.length - 1 ]);
+        setSubmitProposalToken(submitProposalTokenRawData);
+        await checkCurrentUserAmountOfProposalTokens();
+      } else {
+        setSubmitProposalTokenAddress(results[4]);
+        setSubmitProposalToken(votingTokenRawData);
+      }
       // Current user votes
       await updateCurrentUserVotes();
       // Check snapshot
@@ -293,6 +331,40 @@ export function useContest() {
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
       setIsLoading(false);
+      console.error(e);
+    }
+  }
+
+  async function checkCurrentUserAmountOfProposalTokens() {
+    const abi = await getContestContractVersion(address, chainName);
+    if (abi === null) {
+      toast.error("This contract doesn't exist on this chain.");
+      setIsError("This contract doesn't exist on this chain.");
+      setIsSuccess(false);
+      setIsListProposalsSuccess(false);
+      setIsListProposalsLoading(false);
+      setCheckIfUserPassedSnapshotLoading(false);
+      setIsLoading(false);
+      return;
+    }
+
+    const contractConfig = {
+      addressOrName: address,
+      contractInterface: abi,
+    };
+    const contractBaseOptions = {};
+    try {
+      const accountData = await getAccount();
+      const amount = await readContract({
+        ...contractConfig,
+        ...contractBaseOptions,
+        functionName: "getCurrentSubmissionTokenVotes",
+        //@ts-ignore
+        args: [accountData?.address],
+      });
+      //@ts-ignore
+      setCurrentUserSubmitProposalTokensAmount(amount / 1e18);
+    } catch (e) {
       console.error(e);
     }
   }
@@ -541,6 +613,7 @@ export function useContest() {
     isListProposalsError,
     isSuccess,
     isListProposalsSuccess,
+    checkCurrentUserAmountOfProposalTokens,
     updateCurrentUserVotes,
     checkIfCurrentUserQualifyToVote,
     retry: fetchContestInfo,

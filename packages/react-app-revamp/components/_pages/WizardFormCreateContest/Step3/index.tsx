@@ -11,21 +11,23 @@ import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
 import Timeline from "../Timeline";
+import DialogModalMintProposalToken from "./DialogModalMintProposalToken";
 
 export const Step3 = () => {
   const {
     contestDeployedToChain,
     setCurrentStep,
-    dataDeployToken,
+    dataDeployVotingToken,
     modalDeployContestOpen,
     setModalDeployContestOpen,
     dataDeployContest,
+    modalDeploySubmissionTokenOpen,
   } = useStore(
     state => ({
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
       //@ts-ignore
-      dataDeployToken: state.dataDeployToken,
+      dataDeployVotingToken: state.dataDeployVotingToken,
       //@ts-ignore
       modalDeployContestOpen: state.modalDeployContestOpen,
       //@ts-ignore
@@ -36,6 +38,8 @@ export const Step3 = () => {
       contestDeployedToChain: state.contestDeployedToChain,
       //@ts-ignore
       dataDeployContest: state.dataDeployContest,
+      //@ts-ignore
+      modalDeploySubmissionTokenOpen: state.modalDeploySubmissionTokenOpen,
     }),
     shallow,
   );
@@ -49,7 +53,8 @@ export const Step3 = () => {
 
   const form = useForm({
     initialValues: {
-      votingTokenAddress: dataDeployToken?.address ?? null,
+      useSameTokenForSubmissions: true,
+      votingTokenAddress: dataDeployVotingToken?.address ?? null,
       datetimeOpeningSubmissions: new Date(date.getTime() - date.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, -8), // get current local time in ISO format without seconds & milliseconds
@@ -85,6 +90,7 @@ export const Step3 = () => {
         <Timeline />
       </div>
       <Form isDeploying={stateContestDeployment.isLoading} {...form} />
+      {modalDeploySubmissionTokenOpen && <DialogModalMintProposalToken formCreateContestSetFields={form.setFields} />}
       <DialogModalDeployTransaction
         isOpen={modalDeployContestOpen}
         setIsOpen={setModalDeployContestOpen}

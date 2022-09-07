@@ -8,12 +8,14 @@ import { useStore } from "../store";
 
 const appearAsNeutralButton = button({ intent: "neutral-outline", scale: "lg", class: "w-full xs:w-auto" });
 export const TextInstructions = () => {
-  const { dataDeployToken, dataDeployContest, contestDeployedToChain } = useStore(
+  const { dataDeployVotingToken, dataDeploySubmissionToken, dataDeployContest, contestDeployedToChain } = useStore(
     state => ({
       //@ts-ignore
       contestDeployedToChain: state.contestDeployedToChain,
       //@ts-ignore
-      dataDeployToken: state.dataDeployToken,
+      dataDeployVotingToken: state.dataDeployVotingToken,
+      //@ts-ignore
+      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
       //@ts-ignore:
       dataDeployContest: state.dataDeployContest,
     }),
@@ -29,23 +31,44 @@ export const TextInstructions = () => {
             Coinvise.
           </a>
         </h3>
-        {dataDeployToken?.address && (
+        {dataDeployVotingToken?.address && (
           <>
             <p className="text-neutral-11 text-xs mt-3">
-              As a reminder, your token address is: <br />
+              As a reminder, your voting token address is: <br />
               <span className="relative inline-flex focus-within:text-opacity-50 hover:text-opacity-75">
                 <button
-                  onClick={() => copyToClipboard(dataDeployToken?.address ?? "", "Token address copied !")}
+                  onClick={() => copyToClipboard(dataDeployVotingToken?.address ?? "", "Token address copied !")}
                   title="Copy address"
                   className="w-full absolute z-10 inset-0 opacity-0"
                 >
                   Copy address
                 </button>
                 <span className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
-                  {dataDeployToken?.address ?? ""}
+                  {dataDeployVotingToken?.address ?? ""}
                 </span>
                 <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
               </span>
+              {dataDeploySubmissionToken?.address &&
+                dataDeployVotingToken?.address !== dataDeploySubmissionToken?.address && (
+                  <>
+                    and your submission token address is: <br />
+                    <span className="relative inline-flex focus-within:text-opacity-50 hover:text-opacity-75">
+                      <button
+                        onClick={() =>
+                          copyToClipboard(dataDeploySubmissionToken?.address ?? "", "Token address copied !")
+                        }
+                        title="Copy address"
+                        className="w-full absolute z-10 inset-0 opacity-0"
+                      >
+                        Copy address
+                      </button>
+                      <span className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
+                        {dataDeploySubmissionToken?.address ?? ""}
+                      </span>
+                      <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
+                    </span>
+                  </>
+                )}
               <br /> You can always find it on{" "}
               <Link
                 href={{
@@ -79,7 +102,7 @@ export const TextInstructions = () => {
           </li>
           <li>
             Tap <span className="font-bold">&quot;select token&quot;</span> and input your token address{" "}
-            {dataDeployToken?.address && " above"}
+            {dataDeployVotingToken?.address && " above"}
           </li>
           <li>
             Input wallet addresses and number of tokens each one gets — don&apos;t worry, we&apos;ll come back to this

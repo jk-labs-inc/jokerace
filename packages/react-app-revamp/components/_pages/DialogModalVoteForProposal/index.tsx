@@ -80,7 +80,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
     <DialogModal title="Cast your votes" {...props}>
       {showDeploymentSteps && (
         <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction isSuccess={isSuccess} isError={error !== null} isLoading={isLoading} />
+          <TrackerDeployTransaction textError={error} isSuccess={isSuccess} isError={error !== null} isLoading={isLoading} />
         </div>
       )}
 
