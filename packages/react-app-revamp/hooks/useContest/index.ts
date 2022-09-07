@@ -95,19 +95,7 @@ export function useContest() {
     //@ts-ignore
     setDownvotingAllowed,
     //@ts-ignore
-    setIndexPaginationProposalPerId,
-    //@ts-ignore
-    setTotalPagesPaginationProposals,
-    //@ts-ignore
     setHasPaginationProposalsNextPage,
-    //@ts-ignore
-    setCurrentPagePaginationProposals,
-    //@ts-ignore
-    setIsPageProposalsLoading,
-    //@ts-ignore
-    setIsPageProposalsError,
-    //@ts-ignore
-    submitProposalToken,
     //@ts-ignore
     setSubmitProposalTokenAddress,
     //@ts-ignore
@@ -116,8 +104,6 @@ export function useContest() {
     setIndexPaginationProposalPerId,
     //@ts-ignore
     setTotalPagesPaginationProposals,
-    //@ts-ignore
-    setHasPaginationProposalsNextPage,
     //@ts-ignore
     setCurrentPagePaginationProposals,
     //@ts-ignore
@@ -312,7 +298,7 @@ export function useContest() {
       // Get list of proposals (ids)
       const proposalsIdsRawData = await readContract({
         ...contractConfig,
-        functionName: "allProposalTotalVotes",
+        functionName: abi?.filter(el => el.name === "allProposalTotalVotes").length > 0 ? "allProposalTotalVotes" : "getAllProposalIds",
       });
       setListProposalsIds(proposalsIdsRawData);
       setIsListProposalsLoading(false);
