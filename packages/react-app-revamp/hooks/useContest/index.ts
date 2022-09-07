@@ -428,40 +428,6 @@ export function useContest() {
       toast.error(e?.message ?? e);
      }
   }
-  
-  async function checkCurrentUserAmountOfProposalTokens() {
-    const abi = await getContestContractVersion(address, chainName);
-    if (abi === null) {
-      toast.error("This contract doesn't exist on this chain.");
-      setIsError("This contract doesn't exist on this chain.");
-      setIsSuccess(false);
-      setIsListProposalsSuccess(false);
-      setIsListProposalsLoading(false);
-      setCheckIfUserPassedSnapshotLoading(false);
-      setIsLoading(false);
-      return;
-    }
-
-    const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi,
-    };
-    const contractBaseOptions = {};
-    try {
-      const accountData = await getAccount();
-      const amount = await readContract({
-        ...contractConfig,
-        ...contractBaseOptions,
-        functionName: "getCurrentSubmissionTokenVotes",
-        //@ts-ignore
-        args: [accountData?.address],
-      });
-      //@ts-ignore
-      setCurrentUserSubmitProposalTokensAmount(amount / 1e18);
-    } catch (e) {
-      console.error(e);
-    }
-  }
 
   async function checkCurrentUserAmountOfProposalTokens() {
     const abi = await getContestContractVersion(address, chainName);
