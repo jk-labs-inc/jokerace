@@ -12,6 +12,8 @@ import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
+import { useId } from "react";
+import { InformationCircleIcon, ShieldExclamationIcon } from "@heroicons/react/outline";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -26,15 +28,18 @@ interface FormProps {
 }
 
 export const Form = (props: FormProps) => {
+  const formId = useId();
   const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { setCurrentStep, dataDeployToken } = useStore(
+  const { dataDeploySubmissionToken, setCurrentStep, setModalDeploySubmissionTokenOpen } = useStore(
     state => ({
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
       //@ts-ignore
-      dataDeployToken: state.dataDeployToken,
+      setModalDeploySubmissionTokenOpen: state.setModalDeploySubmissionTokenOpen,
+      //@ts-ignore
+      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
     }),
     shallow,
   );
@@ -76,7 +81,7 @@ export const Form = (props: FormProps) => {
   });
 
   return (
-    <form ref={form} className="w-full">
+    <form ref={form} id={formId} className="w-full">
       <fieldset>
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
@@ -143,7 +148,7 @@ export const Form = (props: FormProps) => {
           <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
               <FormField.Label hasError={errors().votingTokenAddress?.length > 0 === true} htmlFor="votingTokenAddress">
-                Voting token address{" "}
+                Voting token address
               </FormField.Label>
               <FormField.Description id="input-votingtokenaddress-description">
                 The Ethereum address of your voting token
@@ -158,9 +163,13 @@ export const Form = (props: FormProps) => {
                 name="votingTokenAddress"
                 id="votingTokenAddress"
                 hasError={errors().votingTokenAddress?.length > 0 === true}
-                aria-describedby="input-votingtokenaddress-description input-votingtokenaddress-helpblock"
+                aria-describedby="input-votingtokenaddress-description input-votingtokenaddress-helpblock input-votingtokenaddress-note"
               />
             </FormField.InputField>
+            <p id="input-votingtokenaddress-note" className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center">
+              <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5"/>
+              The token must be minted on our platform or implement the &nbsp;<span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
+            </p>
             <FormField.HelpBlock
               hasError={errors().votingTokenAddress?.length > 0 === true}
               id="input-votingtokenaddress-helpblock"
@@ -263,9 +272,99 @@ export const Form = (props: FormProps) => {
 
           <FormRadioGroup
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+            value={data()?.useSameTokenForSubmissions}
+            onChange={(e: boolean) => {
+              if (e === true) {
+                resetField("submissionTokenAddress");
+              } else {
+                setData("submissionOpenToAll", false)
+              }
+              setData("useSameTokenForSubmissions", e);
+            }}
+          >
+            <RadioGroup.Label className="sr-only">
+              Does your contest require a different token for submitting proposals and voting ?
+            </RadioGroup.Label>
+            <FormRadioOption value={true}>Use the same token for both submitting proposals and voting</FormRadioOption>
+            <FormRadioOption value={false}>
+              <div className="flex items-center flex-wrap">
+                <span className="pie-1ex">Require separate submission token</span>
+                <div className="flex-grow py-1">
+                  <FormInput
+                    disabled={
+                      data()?.useSameTokenForSubmissions ||
+                      !isConnected ||
+                      chain?.unsupported === true ||
+                      isDeploying === true
+                    }
+                    aria-invalid={
+                      data()?.useSameTokenForSubmissions === false &&
+                      touched()?.submissionTokenAddress &&
+                      (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
+                        ? "true"
+                        : "false"
+                    }
+                    value={data()?.useSameTokenForSubmissions ? dataDeploySubmissionToken?.address : data()?.submissionTokenAddress}
+                    required={data()?.useSameTokenForSubmissions === true}
+                    className="w-full"
+                    placeholder="0x..."
+                    scale="sm"
+                    name="submissionTokenAddress"
+                    id="submissionTokenAddress"
+                    hasError={
+                      data()?.useSameTokenForSubmissions === false &&
+                      touched()?.submissionTokenAddress &&
+                      (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
+                    }
+                    aria-describedby={`input-submissionTokenAddress-helpblock ${data()?.useSameTokenForSubmissions === false ? "input-submissionTokenAddress-note" : ""}`}
+                  />
+                  {data()?.useSameTokenForSubmissions === false && <p id="input-submissionTokenAddress-note" className="text-2xs pt-2 font-normal text-secondary-11 pis-1 flex flex-wrap items-center">
+              <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5"/>
+              The token must be minted on our platform or implement the &nbsp;<span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
+            </p>}
+                  <FormField.HelpBlock
+                    hasError={
+                      errors().submissionTokenAddress?.length > 0 === true ||
+                      (data()?.useSameTokenForSubmissions === false &&
+                        touched()?.submissionTokenAddress &&
+                        (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === ""))
+                    }
+                    id="input-submissionTokenAddress-helpblock"
+                  >
+                    Please type a valid Ethereum address.
+                  </FormField.HelpBlock>
+                </div>
+                <div className="flex items-center w-full pt-3">
+                  <span className="text-neutral-11 pie-1ex">Or&nbsp;</span>
+                  <Button
+                    onClick={() => setModalDeploySubmissionTokenOpen(true)}
+                    disabled={
+                      data()?.useSameTokenForSubmissions ||
+                      !isConnected ||
+                      chain?.unsupported === true ||
+                      isDeploying === true
+                    }
+                    className="w-full 2xs:w-fit-content"
+                    type="button"
+                    scale="xs"
+                  >
+                    Mint new token
+                  </Button>
+                </div>
+              </div>
+            </FormRadioOption>
+          </FormRadioGroup>
+
+          <FormRadioGroup
+            disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.submissionOpenToAll}
             onChange={(e: boolean) => {
               if (e === true) {
+                // If submissions are open to everyone
+                // then the contest will use the same token for proposals and submissions
+                // this will be reflected in the UI
+                // aka "Use the same token for both submitting proposals and voting" will be selected 
+                setData("useSameTokenForSubmissions", true)
                 resetField("requiredNumberOfTokenToSubmit");
               }
               setData("submissionOpenToAll", e);
@@ -617,15 +716,17 @@ export const Form = (props: FormProps) => {
           //@ts-ignore
           intent="neutral-oultine"
           disabled={
+            !isValid() ||
+            interacted() === null ||
             !isConnected ||
             chain?.unsupported === true ||
             isDeploying === true ||
-            isValid() === false ||
-            interacted() === null ||
             !isRequiredNumberOfTokenToSubmitValid ||
             !isSubmissionNumberLimitValid ||
             (data()?.datetimeClosingVoting && !isDateClosingVotesValid) ||
             (data()?.datetimeOpeningVoting && !isDateOpeningVotesValid) ||
+            (data()?.useSameTokenForSubmissions === false && !data()?.submissionTokenAddress) ||
+            (data()?.useSameTokenForSubmissions === false && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid)
           }
           type="submit"
@@ -634,7 +735,7 @@ export const Form = (props: FormProps) => {
         </Button>
 
         <div className={button({ intent: "neutral-outline" })} tabIndex={0} role="button" {...pressProps}>
-          {dataDeployToken !== null ? "Next" : "Skip"}
+          Next
         </div>
       </div>
     </form>

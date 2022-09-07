@@ -14,6 +14,8 @@ export const createStore = () => {
     votesClose: null,
     votingToken: null,
     votingTokenAddress: null,
+    submitProposalToken: null,
+    submitProposalTokenAddress: null,
     amountOfTokensRequiredToSubmitEntry: 0,
     currentUserAvailableVotesAmount: null,
     currentUserTotalVotesCast: null,
@@ -33,6 +35,7 @@ export const createStore = () => {
     snapshotTaken: false,
     currentUserProposalCount: 0,
     downvotingAllowed: false,
+    currentUserSubmitProposalTokensAmount: null,
     setDownvotingAllowed: (isAllowed: boolean) => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: (prompt: string | null) => set({ contestPrompt: prompt }),
     setCurrentUserProposalCount: (amount: number) => set({ currentUserProposalCount: amount }),
@@ -44,15 +47,20 @@ export const createStore = () => {
     setContestMaxProposalCount: (amount: number | null) => set({ contestMaxProposalCount: amount }),
     setContestMaxNumberSubmissionsPerUser: (amount: number | null) =>
       set({ contestMaxNumberSubmissionsPerUser: amount }),
+    setCurrentUserSubmitProposalTokensAmount: (amount: number | null) =>
+      set({ currentUserSubmitProposalTokensAmount: amount }),
     setContestStatus: (status: number) => set({ contestStatus: status }),
     setContestName: (name: string) => set({ contestName: name }),
-    setContestAuthor: (author: string, address: string) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
+    setContestAuthor: (author: string, address: string) =>
+      set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
     setSubmissionsOpen: (datetime: string) => set({ submissionsOpen: datetime }),
     setDidUserPassSnapshotAndCanVote: (isQualified: boolean) => set({ didUserPassSnapshotAndCanVote: isQualified }),
     setVotesOpen: (datetime: string) => set({ votesOpen: datetime }),
     setVotesClose: (datetime: string) => set({ votesClose: datetime }),
     setVotingToken: (token: any) => set({ votingToken: token }),
     setVotingTokenAddress: (address: any) => set({ votingTokenAddress: address }),
+    setSubmitProposalToken: (token: any) => set({ submitProposalToken: token }),
+    setSubmitProposalTokenAddress: (address: any) => set({ submitProposalTokenAddress: address }),
     setCurrentUserAvailableVotesAmount: (amount: number) => set({ currentUserAvailableVotesAmount: amount }),
     setCurrentUserTotalVotesCast: (amount: number) => set({ currentUserTotalVotesCast: amount }),
     setUsersQualifyToVoteIfTheyHoldTokenAtTime: (datetime: string) =>
@@ -97,20 +105,20 @@ export const createStore = () => {
           },
         },
       })),
+    //@ts-ignore
+    softDeleteProposal: id =>
+      set(state => ({
+        ...state,
+        listProposalsData: {
           //@ts-ignore
-    softDeleteProposal: (id) =>
-    set(state => ({
-      ...state,
-      listProposalsData: {
-        //@ts-ignore
-        ...state.listProposalsData,
-        [id]: {
-          //@ts-ignore
-          ...state.listProposalsData[id],
-          content: 'This proposal has been deleted by the creator of the contest.',
-          isContentImage: false,
+          ...state.listProposalsData,
+          [id]: {
+            //@ts-ignore
+            ...state.listProposalsData[id],
+            content: "This proposal has been deleted by the creator of the contest.",
+            isContentImage: false,
+          },
         },
-      },
-    })),
+      })),
   }));
 };

@@ -35,7 +35,6 @@ export const Sidebar = (props: any) => {
   const {
     listProposalsData,
     amountOfTokensRequiredToSubmitEntry,
-    currentUserAvailableVotesAmount,
     listProposalsIds,
     currentUserProposalCount,
     contestMaxNumberSubmissionsPerUser,
@@ -44,6 +43,7 @@ export const Sidebar = (props: any) => {
     votesOpen,
     votesClose,
     contestStatus,
+    currentUserSubmitProposalTokensAmount,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -57,8 +57,6 @@ export const Sidebar = (props: any) => {
       //@ts-ignore
       votesClose: state.votesClose,
       //@ts-ignore
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-      //@ts-ignore
       contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
       //@ts-ignore
       contestMaxProposalCount: state.contestMaxProposalCount,
@@ -68,6 +66,8 @@ export const Sidebar = (props: any) => {
       listProposalsIds: state.listProposalsIds,
       //@ts-ignore
       amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
+      //@ts-ignore
+      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
     }),
     shallow,
   );
@@ -137,7 +137,7 @@ export const Sidebar = (props: any) => {
             onClick={() => stateSubmitProposal.setIsModalOpen(true)}
             className="animate-appear fixed md:static z-10  md:mt-3 aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
             intent={
-              currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
+              currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
               listProposalsIds.length >= contestMaxProposalCount ||
               contestStatus !== CONTEST_STATUS.SUBMISSIONS_OPEN ||
@@ -150,8 +150,8 @@ export const Sidebar = (props: any) => {
                 : "primary"
             }
             disabled={
-              listProposalsIds.length > Object.keys(listProposalsData).length || 
-              currentUserAvailableVotesAmount < amountOfTokensRequiredToSubmitEntry ||
+              listProposalsIds.length > Object.keys(listProposalsData).length ||
+              currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
               listProposalsIds.length >= contestMaxProposalCount ||
               contestStatus !== CONTEST_STATUS.SUBMISSIONS_OPEN ||
