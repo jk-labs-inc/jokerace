@@ -108,6 +108,7 @@ export function useContest() {
     ...paginatedIndexesConfig(    
       index => ({
         addressOrName: address,
+        //@ts-ignore
         contractInterface: abiState?.value,
         functionName: "proposalVotes",
         args: listProposalsIds[index],
@@ -122,6 +123,7 @@ export function useContest() {
     ...paginatedIndexesConfig(    
       index => ({
         addressOrName: address,
+        //@ts-ignore
         contractInterface: abiState?.value,
         functionName: "getProposal",
         args: listProposalsIds[index],
