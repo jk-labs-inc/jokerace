@@ -111,6 +111,7 @@ export function useContest() {
     //@ts-ignore
     setIsPageProposalsError,
   } = useStore();
+
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
     if (err.code === "CALL_EXCEPTION") toastMessage = "This contract doesn't exist on this chain.";
@@ -457,69 +458,6 @@ export function useContest() {
     }
   }
 
-  async function checkIfCurrentUserQualifyToVote() {
-    const abi = await getContestContractVersion(address, chainName);
-    if (abi === null) {
-      toast.error("This contract doesn't exist on this chain.");
-      setIsError("This contract doesn't exist on this chain.");
-      setIsSuccess(false);
-      setIsListProposalsSuccess(false);
-      setIsListProposalsLoading(false);
-      setCheckIfUserPassedSnapshotLoading(false);
-      setIsLoading(false);
-      return;
-    }
-
-    const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi,
-      chainId: chainId,
-    };
-    const contractBaseOptions = {};
-    setCheckIfUserPassedSnapshotLoading(true);
-
-    try {
-      const accountData = await getAccount();
-
-      // Timestamp from when a user can vote
-      // depending on the amount of voting token they're holding at a given timestamp (snapshot)
-      const timestampSnapshotRawData = await readContract({
-        ...contractConfig,
-        ...contractBaseOptions,
-        functionName: "contestSnapshot",
-      });
-
-      //@ts-ignore
-      setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
-      //@ts-ignore
-      if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
-        setSnapshotTaken(true);
-        const delayedCurrentTimestamp = Date.now() - 59; // Delay by 59 seconds to make sure we're looking at a block that has been mined
-
-        const timestampToCheck =
-          //@ts-ignore
-          delayedCurrentTimestamp >= timestampSnapshotRawData ? timestampSnapshotRawData : delayedCurrentTimestamp;
-
-        const tokenUserWasHoldingAtSnapshotRawData = await readContract({
-          ...contractConfig,
-          ...contractBaseOptions,
-          functionName: "getVotes",
-          //@ts-ignore
-          args: [accountData?.address, timestampToCheck],
-        });
-        //@ts-ignore
-        setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
-      } else {
-        setSnapshotTaken(false);
-      }
-
-      setCheckIfUserPassedSnapshotLoading(false);
-    } catch (e) {
-      console.error(e);
-      setCheckIfUserPassedSnapshotLoading(false);
-    }
-  }
-
   async function fetchProposal(i: number, results: any[], proposalsIdsRawData: any) {
     const accountData = await getAccount();
     // Create an array of proposals
@@ -610,6 +548,69 @@ export function useContest() {
       );
     } catch (e) {
       console.error(e);
+    }
+  }
+
+  async function checkIfCurrentUserQualifyToVote() {
+    const abi = await getContestContractVersion(address, chainName);
+    if (abi === null) {
+      toast.error("This contract doesn't exist on this chain.");
+      setIsError("This contract doesn't exist on this chain.");
+      setIsSuccess(false);
+      setIsListProposalsSuccess(false);
+      setIsListProposalsLoading(false);
+      setCheckIfUserPassedSnapshotLoading(false);
+      setIsLoading(false);
+      return;
+    }
+
+    const contractConfig = {
+      addressOrName: address,
+      contractInterface: abi,
+      chainId: chainId,
+    };
+    const contractBaseOptions = {};
+    setCheckIfUserPassedSnapshotLoading(true);
+
+    try {
+      const accountData = await getAccount();
+
+      // Timestamp from when a user can vote
+      // depending on the amount of voting token they're holding at a given timestamp (snapshot)
+      const timestampSnapshotRawData = await readContract({
+        ...contractConfig,
+        ...contractBaseOptions,
+        functionName: "contestSnapshot",
+      });
+
+      //@ts-ignore
+      setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
+      //@ts-ignore
+      if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
+        setSnapshotTaken(true);
+        const delayedCurrentTimestamp = Date.now() - 59; // Delay by 59 seconds to make sure we're looking at a block that has been mined
+
+        const timestampToCheck =
+          //@ts-ignore
+          delayedCurrentTimestamp >= timestampSnapshotRawData ? timestampSnapshotRawData : delayedCurrentTimestamp;
+
+        const tokenUserWasHoldingAtSnapshotRawData = await readContract({
+          ...contractConfig,
+          ...contractBaseOptions,
+          functionName: "getVotes",
+          //@ts-ignore
+          args: [accountData?.address, timestampToCheck],
+        });
+        //@ts-ignore
+        setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
+      } else {
+        setSnapshotTaken(false);
+      }
+
+      setCheckIfUserPassedSnapshotLoading(false);
+    } catch (e) {
+      console.error(e);
+      setCheckIfUserPassedSnapshotLoading(false);
     }
   }
 

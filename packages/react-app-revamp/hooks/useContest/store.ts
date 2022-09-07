@@ -55,6 +55,18 @@ export const createStore = () => {
     setTotalPagesPaginationProposals: (newTotal: number) => set({ totalPagesPaginationProposals: newTotal }),
     setHasPaginationProposalsNextPage: (hasNextPage: boolean) => set({ hasPaginationProposalsNextPage: hasNextPage }),
     currentUserSubmitProposalTokensAmount: null,
+    setIsPageProposalsLoading: (value: boolean) => set({ isPageProposalsLoading: value }),
+    setIsPageProposalsSuccess: (value: boolean) => set({ isPageProposalsSuccess: value }),
+    setIsPageProposalsError: (value: boolean) => set({ isPageProposalsError: value }),
+
+    setCurrentPagePaginationProposals: (currentPage: number) => set({
+      currentPagePaginationProposals: currentPage
+    }),
+    setIndexPaginationProposalPerId: (proposalsPages: Array<any>) => set({
+      indexPaginationProposals: proposalsPages,
+    }),
+    setTotalPagesPaginationProposals: (newTotal: number) => set({ totalPagesPaginationProposals: newTotal }),
+    setHasPaginationProposalsNextPage: (hasNextPage: boolean) => set({ hasPaginationProposalsNextPage: hasNextPage }),
     setDownvotingAllowed: (isAllowed: boolean) => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: (prompt: string | null) => set({ contestPrompt: prompt }),
     setCurrentUserProposalCount: (amount: number) => set({ currentUserProposalCount: amount }),
