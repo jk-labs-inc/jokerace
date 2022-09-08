@@ -22,11 +22,10 @@ export const VotingToken = () => {
     <>
       <div className="font-black leading-snug flex flex-wrap space-i-1ex md:space-i-0 md:flex-col items-center slashed-zero tabular-nums">
         <span className="text-sm font-bold pb-0.5">
-          {isBefore(new Date(), votesOpen)
+          {isBefore(new Date(), votesClose)
             ? "Your available votes"
-            : isAfter(new Date(), votesClose)
-            ? "Your used votes:"
-            : "Your remaining votes:"}
+            : "Your remaining votes:"
+          }
         </span>
         {isBefore(new Date(), votesOpen) ? (
           <>
