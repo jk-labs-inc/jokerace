@@ -13,7 +13,7 @@ import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
 import { useId } from "react";
-import { InformationCircleIcon, ShieldExclamationIcon } from "@heroicons/react/outline";
+import { ShieldExclamationIcon } from "@heroicons/react/outline";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -304,7 +304,7 @@ export const Form = (props: FormProps) => {
                         ? "true"
                         : "false"
                     }
-                    value={data()?.useSameTokenForSubmissions ? dataDeploySubmissionToken?.address : data()?.submissionTokenAddress}
+                    value={data()?.useSameTokenForSubmissions ? "" : data()?.submissionTokenAddress}
                     required={data()?.useSameTokenForSubmissions === true}
                     className="w-full"
                     placeholder="0x..."
