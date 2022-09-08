@@ -343,7 +343,7 @@ export function useContest() {
       const paginationChunks = arrayToChunks(proposalsIds, PROPOSALS_PER_PAGE)
       setTotalPagesPaginationProposals(paginationChunks.length)
       setIndexPaginationProposalPerId(paginationChunks)
-      await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length)
+      if(proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length)
       
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&

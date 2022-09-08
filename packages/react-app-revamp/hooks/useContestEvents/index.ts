@@ -1,5 +1,5 @@
 import isUrlToImage from "@helpers/isUrlToImage";
-import { chain, fetchEnsName, readContract } from "@wagmi/core";
+import { chain, fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useContractEvent } from "wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
@@ -18,6 +18,8 @@ export function useContestEvents() {
     setProposalVotes,
     //@ts-ignore,
     softDeleteProposal,
+    //@ts-ignore
+    listProposalsData,
   } = useStoreContest();
 
   useContractEvent({
@@ -73,12 +75,36 @@ export function useContestEvents() {
         args: proposalId,
       });
 
-      //@ts-ignore
-      setProposalVotes({
-        id: proposalId,
+      if(listProposalsData[proposalId]) {
         //@ts-ignore
-        votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
-      });
+        setProposalVotes({
+          id: proposalId,
+          //@ts-ignore
+          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+        });
+      } else {
+        const proposal = await readContract({
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+          functionName: "getProposal",
+          args: proposalId,
+        });
+        const author = await fetchEnsName({
+          address: proposal[0],
+          chainId: chain.mainnet.id,
+        });
+        const proposalData: any = {
+          authorEthereumAddress: proposal[0],
+          author: author ?? proposal[0],
+          content: proposal[1],
+          isContentImage: isUrlToImage(proposal[1]) ? true : false,
+          exists: proposal[2],
+          //@ts-ignore
+          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+        };
+  
+        setProposalData({ id: proposalId, data: proposalData });
+      }
     },
   });
 
