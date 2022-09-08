@@ -4,11 +4,11 @@ export const FormRadioOption = (props: any) => {
   return (
     <RadioGroup.Option className={`${props.disabled ? "cursor-not-allowed" : "cursor-pointer"}`} {...rest}>
       {({ checked }) => (
-        <div className={`flex items-center ${classNameWrapper ?? ""}`}>
+        <div className={`flex items-baseline ${classNameWrapper ?? ""}`}>
           <span
             className={`${classNameCheckbox ?? ""} ${
               checked ? "bg-primary-10 ring-2 ring-primary-9 border-neutral-0 border-4" : "border-2 border-neutral-5"
-            } inline-flex mie-2 w-4 h-4 rounded-full border-solid`}
+            } translate-y-0.5 inline-flex mie-2 w-4 h-4 rounded-full border-solid`}
           />
           <span
             className={`flex-wrap items-center pie-3 flex w-full  text-true-white ${
