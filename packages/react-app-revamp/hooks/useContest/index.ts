@@ -52,8 +52,6 @@ export function useContest() {
     //@ts-ignore
     setIsLoading,
     //@ts-ignore
-    setIsListProposalsError,
-    //@ts-ignore
     setIsListProposalsLoading,
     //@ts-ignore
     setVotesClose,
