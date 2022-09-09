@@ -1,5 +1,5 @@
 import isUrlToImage from "@helpers/isUrlToImage";
-import { chain, fetchEnsName, getAccount, readContract } from "@wagmi/core";
+import { chain, fetchEnsName, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useContractEvent } from "wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";

@@ -165,6 +165,7 @@ const LayoutViewContest = (props: any) => {
     <>
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
         <div className="container mx-auto">
+          {/* @ts-ignore */}
           <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
         </div>
       </div>
@@ -196,11 +197,11 @@ const LayoutViewContest = (props: any) => {
               </div>
             ))}
 
-              {account?.address && chain?.id !== chainId && (
-                <div className="animate-appear flex text-center flex-col mt-10 mx-auto">
+              {account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose)) &&(
+                <div className="animate-appear flex text-center flex-col my-10 mx-auto">
                   <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
                   <p className="mt-2 mb-4 text-neutral-11 text-xs">
-                    You need to use {asPath.split("/")[2]} to check this contest.
+                    You need to use {asPath.split("/")[2]} to interact with this contest.
                   </p>
                   <Button
                     onClick={() => {

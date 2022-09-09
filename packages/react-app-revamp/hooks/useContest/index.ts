@@ -292,59 +292,19 @@ export function useContest() {
       await updateCurrentUserVotes();
       // Check snapshot
       await checkIfCurrentUserQualifyToVote();
-      // List of proposals for this contest
-      setIsListProposalsLoading(true);
-      // Get list of proposals (ids)
-      const useLegacyGetAllProposalsIdFn = abi?.filter(el => el.name === "allProposalTotalVotes")?.length > 0 ? false : true
-      const proposalsIdsRawData = await readContract({
-        ...contractConfig,
-        functionName: !useLegacyGetAllProposalsIdFn ? "allProposalTotalVotes" : "getAllProposalIds",
-      });
-      //@ts-ignore
-      let proposalsIds
-      if(!useLegacyGetAllProposalsIdFn) {
-        //@ts-ignore
-        proposalsIds = []
-        proposalsIdsRawData[0].map((data: any, index: number) => {
-          proposalsIds.push({
-            votes: proposalsIdsRawData[1][index][0] / 1e18,
-            id: data
-          })
-        })
-        //@ts-ignore
-        proposalsIds = proposalsIds.sort((a, b) => {
-          if (a.votes > b.votes) {
-            return -1;
-          }
-          if (a.votes < b.votes) {
-            return 1;
-          }
-          return 0;
-        })
-        //@ts-ignore
-        .map(proposal => proposal.id)
-        setListProposalsIds(proposalsIds)
+      // If current page is proposal, fetch proposal with id
+      if(asPath.includes('/proposal/')) {
+        await fetchProposalsPage(0, [asPath.split("/")[5]], 1)
+        fetchProposalsIdsList(abi)
       } else {
-        proposalsIds= proposalsIdsRawData
-        setListProposalsIds(proposalsIds);
+      // otherwise, fetch proposals
+        // List of proposals for this contest
+        await fetchProposalsIdsList(abi)
       }
-      
       setIsListProposalsLoading(false);
-      setIsListProposalsSuccess(true);
       setIsError(null);
       setIsSuccess(true);
-      setIsLoading(false);
-      
-      // Pagination
-      const totalPagesPaginationProposals = Math.ceil(proposalsIdsRawData?.length / PROPOSALS_PER_PAGE)
-      setTotalPagesPaginationProposals(totalPagesPaginationProposals)
-      setCurrentPagePaginationProposals(0)
-      //@ts-ignore
-      const paginationChunks = arrayToChunks(proposalsIds, PROPOSALS_PER_PAGE)
-      setTotalPagesPaginationProposals(paginationChunks.length)
-      setIndexPaginationProposalPerId(paginationChunks)
-      if(proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length)
-      
+      setIsLoading(false);      
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
         process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -426,6 +386,13 @@ export function useContest() {
       //@ts-ignore
       setCurrentUserSubmitProposalTokensAmount(amount / 1e18);
     } catch (e) {
+      onContractError(e);
+      //@ts-ignore
+      setIsError(e?.code ?? e);
+      setIsSuccess(false);
+      setIsListProposalsSuccess(false);
+      setIsListProposalsLoading(false);
+      setIsLoading(false);
       console.error(e);
     }
   }
@@ -493,6 +460,66 @@ export function useContest() {
     }
   }
 
+  async function fetchProposalsIdsList(abi: any) {
+    setIsListProposalsLoading(true);
+
+    try {
+      // Get list of proposals (ids)
+      //@ts-ignore
+      const useLegacyGetAllProposalsIdFn = abi?.filter(el => el.name === "allProposalTotalVotes")?.length > 0 ? false : true
+      const contractConfig = {
+        addressOrName: address,
+        contractInterface: abi,
+        chainId: chainId,
+      };  
+      const proposalsIdsRawData = await readContract({
+        ...contractConfig,
+        functionName: !useLegacyGetAllProposalsIdFn ? "allProposalTotalVotes" : "getAllProposalIds",
+      });
+      //@ts-ignore
+      let proposalsIds
+      if(!useLegacyGetAllProposalsIdFn) {
+        //@ts-ignore
+        proposalsIds = []
+        proposalsIdsRawData[0].map((data: any, index: number) => {
+          proposalsIds.push({
+            votes: proposalsIdsRawData[1][index][0] / 1e18,
+            id: data
+          })
+        })
+        //@ts-ignore
+        proposalsIds = proposalsIds.sort((a, b) => {
+          if (a.votes > b.votes) {
+            return -1;
+          }
+          if (a.votes < b.votes) {
+            return 1;
+          }
+          return 0;
+        })
+        //@ts-ignore
+        .map(proposal => proposal.id)
+        setListProposalsIds(proposalsIds)
+      } else {
+        proposalsIds= proposalsIdsRawData
+        setListProposalsIds(proposalsIds);
+      }
+      setIsListProposalsSuccess(true);
+      // Pagination
+      const totalPagesPaginationProposals = Math.ceil(proposalsIdsRawData?.length / PROPOSALS_PER_PAGE)
+      setTotalPagesPaginationProposals(totalPagesPaginationProposals)
+      setCurrentPagePaginationProposals(0)
+      //@ts-ignore
+      const paginationChunks = arrayToChunks(proposalsIds, PROPOSALS_PER_PAGE)
+      setTotalPagesPaginationProposals(paginationChunks.length)
+      setIndexPaginationProposalPerId(paginationChunks)
+      if(proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length)
+
+    } catch(e) {
+      console.error(e)
+    }
+  }
+
   async function fetchProposal(i: number, results: any[], proposalsIdsRawData: any) {
     const accountData = await getAccount();
     // Create an array of proposals
@@ -546,6 +573,7 @@ export function useContest() {
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
+        chainId: chainId,
       };
       const contracts: any = [];
 
@@ -658,8 +686,11 @@ export function useContest() {
     checkCurrentUserAmountOfProposalTokens,
     updateCurrentUserVotes,
     checkIfCurrentUserQualifyToVote,
+    setChainName,
     retry: fetchContestInfo,
-    onSearch: (addr: string) => {
+    onSearch: (addr: string, chainName: string) => {
+      setChainName(chainName)
+      setChainId(chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id)
       setIsLoading(true);
       setIsListProposalsLoading(true);
       setListProposalsIds([]);

@@ -54,7 +54,6 @@ const Page: NextPage = (props: PageProps) => {
     setIsModalOpen(true);
   }
 
-
   return (
     <>
       <Head>
