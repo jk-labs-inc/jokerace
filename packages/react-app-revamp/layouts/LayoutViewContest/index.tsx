@@ -75,6 +75,7 @@ const LayoutViewContest = (props: any) => {
     onSearch,
     chainId,
     setChainId,
+    checkCurrentUserAmountOfProposalTokens,
   } = useContest();
 
   const {
@@ -152,19 +153,27 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     const verifySnapshot = async () => {
-      await checkIfCurrentUserQualifyToVote();
+      if(account?.address) await checkIfCurrentUserQualifyToVote();
     };
 
     if (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING) updateSnapshotProgress();
     if ([CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus)) {
       verifySnapshot();
     }
-  }, [contestStatus]);
+  }, [contestStatus, account?.address]);
 
+  useEffect(() => {
+    if(isListProposalsLoading && account?.address) {
+      checkIfCurrentUserQualifyToVote();
+      checkCurrentUserAmountOfProposalTokens();
+      checkIfCurrentUserQualifyToVote();
+    }
+  }, [chainId, account?.address, isListProposalsLoading])
   return (
     <>
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
         <div className="container mx-auto">
+          {/* @ts-ignore */}
           <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
         </div>
       </div>
@@ -190,15 +199,17 @@ const LayoutViewContest = (props: any) => {
           {
             ((isLoading || isListProposalsLoading) && (
               <div className="animate-appear">
-                <Loader scale="page" />
+                <Loader scale="page">
+                  Loading contest info...
+                </Loader>
               </div>
             ))}
 
-              {account?.address && chain?.id !== chainId && (
-                <div className="animate-appear flex text-center flex-col mt-10 mx-auto">
+              {account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose)) &&(
+                <div className="animate-appear flex text-center flex-col my-10 mx-auto">
                   <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
                   <p className="mt-2 mb-4 text-neutral-11 text-xs">
-                    You need to use {asPath.split("/")[2]} to check this contest.
+                    You need to use {asPath.split("/")[2]} to interact with this contest.
                   </p>
                   <Button
                     onClick={() => {
@@ -300,15 +311,14 @@ const LayoutViewContest = (props: any) => {
                   <DialogModal isOpen={isTimelineModalOpen} setIsOpen={setIsTimelineModalOpen} title="Contest timeline">
                     {!isLoading &&
                       isSuccess &&
-                      chain?.id === chainId &&
                       isDate(submissionsOpen) &&
                       isDate(votesOpen) &&
                       isDate(votesClose) && (
                         <>
                           <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
-                          <div className="mb-4">
+                          {account?.address && <div className="mb-4">
                             <VotingToken />
-                          </div>
+                          </div>}
                           <Timeline />
                         </>
                       )}

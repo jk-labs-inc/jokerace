@@ -12,34 +12,29 @@ import { getNetwork } from "@wagmi/core";
 
 interface FormSearchContestProps {
   isInline?: boolean;
-  onSubmit?: (address: string) => void;
+  onSubmit?: (address: string, chainName?: string) => void;
   retry?: any;
 }
 
 export const FormSearchContest = (props: FormSearchContestProps) => {
-  const { isInline, onSubmit, retry } = props;
+  const { isInline, onSubmit } = props;
   const { chain } = useNetwork();
   const { asPath, push, pathname, events } = useRouter();
   const [showLoader, setShowLoader] = useState(false);
-  const { form, errors } = useForm({
+  const { form, errors, data } = useForm({
     extend: validator({ schema }),
-    onSubmit: values => {
+    onSubmit: async (values) => {
       const contestAddress = asPath.split("/")[3];
-      if (!chain || chain.unsupported === true) return;
+      if (chain?.unsupported === true) return;
       const currentChain = asPath.split("/")[2];
+      const currentNetwork =  await getNetwork()
+      ?.chain?.name.toLowerCase()
+      .replace(" ", "")
+
+      const chainName = !currentNetwork ? currentChain : currentNetwork
       push(
         ROUTE_VIEW_CONTEST,
-        `/contest/${
-          !currentChain ||
-          currentChain !==
-            getNetwork()
-              ?.chain?.name.toLowerCase()
-              .replace(" ", "")
-            ? getNetwork()
-                ?.chain?.name.toLowerCase()
-                .replace(" ", "")
-            : currentChain
-        }/${values.contestAddress}`,
+        `/contest/${chainName}/${values.contestAddress}`,
         {
           shallow: true,
         },
@@ -47,13 +42,13 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
       if (contestAddress && contestAddress === values.contestAddress) return;
       if (pathname !== ROUTE_VIEW_CONTESTS) {
         //@ts-ignore
-        onSubmit(values.contestAddress);
+        onSubmit(values.contestAddress, chainName);
       }
     },
   });
   const [buttonLabel, setButtonLabel] = useState("Search");
   useEffect(() => {
-    setButtonLabel(!chain ? "Connect your wallet" : chain.unsupported ? "Unsupported network" : "Search");
+    setButtonLabel(chain?.unsupported ? "Unsupported network" : "Search");
   }, [chain]);
 
   useEffect(() => {
@@ -103,11 +98,12 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
           isLoading={showLoader}
           scale={isInline ? "xs" : "default"}
           className={`${isInline ? "h-full whitespace-nowrap min-h-8" : " mx-auto mt-3"} ${
-            !chain || chain.unsupported === true ? "pointer-events-none opacity-50" : ""
+            (showLoader || data()?.contestAddress === '' || errors().contestAddress?.length > 0 === true || chain?.unsupported === true) ? "pointer-events-none opacity-50" : ""
           }`}
           intent="neutral-outline"
+          disabled={(!asPath.includes('/contest/') && (!chain || chain?.unsupported === true)) || (data()?.contestAddress === '' || errors().contestAddress?.length > 0 === true || chain?.unsupported === true)}
         >
-          {buttonLabel}
+          {(!asPath.includes('/contest/') && (!chain || chain?.unsupported === true)) ? 'Connect your wallet' : buttonLabel}
         </Button>
       </form>
     </>
