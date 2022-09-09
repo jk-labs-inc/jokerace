@@ -111,15 +111,20 @@ export function useContest() {
     setHasPaginationProposalsNextPage,
   } = useStore();
 
+  /**
+   * Display an error toast in the UI for any contract related error
+  */
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
     if (err.code === "CALL_EXCEPTION") toastMessage = "This contract doesn't exist on this chain.";
     toast.error(toastMessage);
   }
 
+  /**
+   * Fetch all info of a contest (title, prompt, list of proposals etc.)
+  */
   async function fetchContestInfo() {
     setIsLoading(true);
-    setIsListProposalsLoading(true);
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error("This contract doesn't exist on this chain.");
@@ -356,6 +361,9 @@ export function useContest() {
     }
   }
 
+  /**
+   * Check how many proposal tokens of this contest the current user holds
+  */
   async function checkCurrentUserAmountOfProposalTokens() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
@@ -397,6 +405,9 @@ export function useContest() {
     }
   }
 
+  /**
+   * Check if the current user qualify to vote for this contest
+  */
   async function checkIfCurrentUserQualifyToVote() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
@@ -460,6 +471,10 @@ export function useContest() {
     }
   }
 
+  /**
+   * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
+   * @param abi - ABI to use 
+  */
   async function fetchProposalsIdsList(abi: any) {
     setIsListProposalsLoading(true);
 
@@ -505,6 +520,8 @@ export function useContest() {
         setListProposalsIds(proposalsIds);
       }
       setIsListProposalsSuccess(true);
+      setIsListProposalsLoading(false);
+
       // Pagination
       const totalPagesPaginationProposals = Math.ceil(proposalsIdsRawData?.length / PROPOSALS_PER_PAGE)
       setTotalPagesPaginationProposals(totalPagesPaginationProposals)
@@ -516,11 +533,24 @@ export function useContest() {
       if(proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length)
 
     } catch(e) {
-      console.error(e)
+      onContractError(e);
+      //@ts-ignore
+      setIsError(e?.code ?? e);
+      setIsSuccess(false);
+      setIsListProposalsSuccess(false);
+      setIsListProposalsLoading(false);
+      setIsLoading(false);
+      console.error(e);
     }
   }
 
-  async function fetchProposal(i: number, results: any[], proposalsIdsRawData: any) {
+  /** 
+   * Set proposal data in zustand store
+   * @param i - index of the proposal id to be fetched
+   * @param results - array of smart contracts calls results (returned by `readContracts`)
+   * @param listIdsProposalsToBeFetched - array of proposals ids to be fetched
+  */
+  async function fetchProposal(i: number, results: Array<any>, listIdsProposalsToBeFetched: Array<any>) {
     const accountData = await getAccount();
     // Create an array of proposals
     // A proposal is a pair of data
@@ -554,9 +584,15 @@ export function useContest() {
     if (data[0] === accountData?.address) {
       increaseCurrentUserProposalCount();
     }
-    setProposalData({ id: proposalsIdsRawData[i], data: proposalData });
+    setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
   }
 
+  /** 
+   * Fetch the data of each proposals in page X
+   * @param pageIndex - index of the page of proposals to fetch
+   * @param slice - Array of proposals ids to be fetched
+   * @param totalPagesPaginationProposals - total of pages in the pagination
+  */
   async function fetchProposalsPage(pageIndex: number, slice: Array<any>, totalPagesPaginationProposals: number) {
     setCurrentPagePaginationProposals(pageIndex)
     setIsPageProposalsLoading(true);
@@ -613,6 +649,9 @@ export function useContest() {
      }
   }
 
+  /** 
+   * Update the amount of votes casted in this contest by the current user
+  */
   async function updateCurrentUserVotes() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
