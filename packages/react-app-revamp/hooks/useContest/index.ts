@@ -136,6 +136,7 @@ export function useContest() {
       setIsLoading(false);
       return;
     }
+    const accountData = await getAccount();
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
@@ -288,15 +289,17 @@ export function useContest() {
         const submitProposalTokenRawData = await fetchToken({ address: results[contracts.length - 1 ], chainId });
         setSubmitProposalTokenAddress(results[contracts.length - 1 ]);
         setSubmitProposalToken(submitProposalTokenRawData);
-        await checkCurrentUserAmountOfProposalTokens();
+        if(accountData?.address) await checkCurrentUserAmountOfProposalTokens();
       } else {
         setSubmitProposalTokenAddress(results[4]);
         setSubmitProposalToken(votingTokenRawData);
       }
-      // Current user votes
-      await updateCurrentUserVotes();
-      // Check snapshot
-      await checkIfCurrentUserQualifyToVote();
+      if(accountData?.address) {
+        // Current user votes
+        await updateCurrentUserVotes();
+        // Check snapshot
+        await checkIfCurrentUserQualifyToVote();
+      }
       // If current page is proposal, fetch proposal with id
       if(asPath.includes('/proposal/')) {
         await fetchProposalsPage(0, [asPath.split("/")[5]], 1)
@@ -426,7 +429,6 @@ export function useContest() {
       contractInterface: abi,
       chainId: chainId,
     };
-    const contractBaseOptions = {};
     setCheckIfUserPassedSnapshotLoading(true);
 
     try {
@@ -436,7 +438,6 @@ export function useContest() {
       // depending on the amount of voting token they're holding at a given timestamp (snapshot)
       const timestampSnapshotRawData = await readContract({
         ...contractConfig,
-        ...contractBaseOptions,
         functionName: "contestSnapshot",
       });
 
@@ -453,7 +454,6 @@ export function useContest() {
 
         const tokenUserWasHoldingAtSnapshotRawData = await readContract({
           ...contractConfig,
-          ...contractBaseOptions,
           functionName: "getVotes",
           //@ts-ignore
           args: [accountData?.address, timestampToCheck],
