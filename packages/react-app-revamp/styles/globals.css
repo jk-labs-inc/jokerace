@@ -33,10 +33,7 @@
   *:not(.normal-case, .uppercase, input, textarea) {
     text-transform: lowercase !important;
   }
-  .prose,
-  .prose * {
-    text-transform: initial !important;
-  }
+
   html {
     --brand: theme("colors.primary.10");
     scrollbar-color: var(--brand) Canvas;
@@ -97,6 +94,14 @@
   .prose :where(hr):not(:where([class~="not-prose"] *)) {
     margin-top: 1.5em !important;
     margin-bottom: 1.5em !important;
+  }
+  .prose,
+  .prose * {
+    text-transform: initial !important;
+  }
+  .prose :where(blockquote p:first-of-type):not(:where([class~="not-prose"] *))::before,
+  .prose :where(blockquote p:first-of-type):not(:where([class~="not-prose"] *))::after {
+    content: none !important;
   }
 }
 

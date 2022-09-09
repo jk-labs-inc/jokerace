@@ -7,7 +7,7 @@ import { useStore } from '@hooks/useContest/store'
 import Steps from '@layouts/LayoutViewContest/Timeline/Steps'
 import { format } from 'date-fns'
 import { CONTEST_STATUS } from '@helpers/contestStatus'
-import { useNetwork } from 'wagmi'
+import { useRouter } from 'next/router'
 
 interface PageProps {
   address: string,
@@ -15,7 +15,7 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
-  const { chain } = useNetwork()
+  const { asPath } = useRouter()
   const { contestState, checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName, submitProposalToken } = useStore(state =>  ({ 
     //@ts-ignore
     votingToken: state.votingToken,
@@ -82,7 +82,7 @@ const Page: NextPage = (props: PageProps) => {
       <ul className='list-disc pis-4 leading-loose'>
         <li title={`$${submitProposalToken.symbol}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Symbol: <span className='font-bold normal-case'>${submitProposalToken.symbol}</span></span></li>
         <li title={`${new Intl.NumberFormat().format(submitProposalToken.totalSupply.formatted)}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Total supply: <span className='font-bold'>{new Intl.NumberFormat().format(submitProposalToken.totalSupply.formatted)}</span></span></li>
-        <li title={submitProposalToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${chain?.blockExplorers?.default?.url}/address/${submitProposalToken.address}`.replace('//address', '/address')}>{submitProposalToken.address}</a></span></li>
+        <li title={submitProposalToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${chains.filter(chain => chain.name.replace(' ', '').toLowerCase() === asPath.split("/")[2])[0].blockExplorers?.default.url}/address/${submitProposalToken.address}`.replace('//address', '/address')}>{submitProposalToken.address}</a></span></li>
       </ul>
      </section>
      <section>
@@ -90,7 +90,7 @@ const Page: NextPage = (props: PageProps) => {
       <ul className='list-disc pis-4 leading-loose'>
         <li title={`$${votingToken.symbol}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Symbol: <span className='font-bold normal-case'>${votingToken.symbol}</span></span></li>
         <li title={`${new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Total supply: <span className='font-bold'>{new Intl.NumberFormat().format(votingToken.totalSupply.formatted)}</span></span></li>
-        <li title={votingToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${chain?.blockExplorers?.default?.url}/address/${votingToken.address}`.replace('//address', '/address')}>{votingToken.address}</a></span></li>
+        <li title={votingToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${chains.filter(chain => chain.name.replace(' ', '').toLowerCase() === asPath.split("/")[2])[0].blockExplorers?.default.url}/address/${votingToken.address}`.replace('//address', '/address')}>{votingToken.address}</a></span></li>
       </ul>
      </section>
      <section>

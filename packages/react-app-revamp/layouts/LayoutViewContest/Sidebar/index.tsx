@@ -1,7 +1,7 @@
 import shallow from "zustand/shallow";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useNetwork } from "wagmi";
+import { useNetwork, useAccount } from "wagmi";
 import { isDate } from "date-fns";
 import { HomeIcon } from "@heroicons/react/solid";
 import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
@@ -22,6 +22,7 @@ import styles from "./styles.module.css";
 export const Sidebar = (props: any) => {
   const { query, pathname } = useRouter();
   const { chain } = useNetwork();
+  const account = useAccount();
   const {
     isLoading,
     isListProposalsLoading,
@@ -187,15 +188,14 @@ export const Sidebar = (props: any) => {
       </Button>
       {!isLoading &&
         isSuccess &&
-        chain?.id === chainId &&
         isDate(submissionsOpen) &&
         isDate(votesOpen) &&
         isDate(votesClose) && (
           <>
-            <div className="hidden md:my-4 md:block">
+            {account?.address && <div className="hidden md:my-4 md:block">
               <VotingToken />
-            </div>
-            <div className="hidden md:block">
+            </div>}
+            <div className={`hidden md:block ${!account?.address ? "md:mt-4" : ""}`}>
               <Timeline />
             </div>
           </>
