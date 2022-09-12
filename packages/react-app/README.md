@@ -40,5 +40,3 @@ yarn deploy
 
  ---
  JokeDAO V2 front-end is hosted on [Vercel](https://vercel.com?utm_source=jokedao&utm_campaign=oss)
- 
- [![Vercel](./images/powered-by-vercel.svg)](https://vercel.com?utm_source=jokedao&utm_campaign=oss)
