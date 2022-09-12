@@ -31,9 +31,9 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-# Development Notes
+## Development Notes
 
-## Updating bytecode
+### Updating bytecode
 
 In order to generate and/or update the bytecode of your project, you first need to run 
 
