@@ -180,7 +180,7 @@ export const Form = (props: FormProps) => {
         </div>
       </fieldset>
 
-      <fieldset className="my-12">
+      <fieldset className="mt-12">
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
@@ -456,7 +456,7 @@ export const Form = (props: FormProps) => {
         </div>
       </fieldset>
 
-      <fieldset>
+      <fieldset className="mt-12">
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
@@ -712,7 +712,64 @@ export const Form = (props: FormProps) => {
           </FormField>
         </div>
       </fieldset>
-      <div className="pt-8 md:pt-12 flex flex-col space-y-5">
+      <fieldset className="my-12">
+        <legend
+          className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
+            !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
+          }`}
+        >
+          Rewards
+        </legend>
+        <div className="space-y-6">
+        <FormRadioGroup
+            disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+            value={data()?.hasRewards}
+            onChange={(e: boolean) => {
+              setData("hasRewards", e);
+            }}
+          >
+            <RadioGroup.Label className="sr-only">
+              Does your contest have rewards ?
+            </RadioGroup.Label>
+            <FormRadioOption value={false}>No rewards</FormRadioOption>
+            <FormRadioOption value={true}>Rewards given to winner</FormRadioOption>
+          </FormRadioGroup>
+          {data()?.hasRewards === true && <div className="animate-appear">
+            {data()?.rewards.map((reward, i) => <div key={`reward-${i}`}>
+              <FormField  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+            <FormField.InputField>
+              <FormField.Label hasError={errors().rewardTokenAddress?.length > 0 === true} htmlFor="rewardTokenAddress">
+                Address of token used for rewards
+              </FormField.Label>
+              <FormField.Description id="input-contesttile-description">
+                The Ethereum address of the ERC20 token you want to give as a reward.
+              </FormField.Description>
+              <FormInput
+                required
+                disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                aria-invalid={errors().rewardTokenAddress?.length > 0 === true ? "true" : "false"}
+                className="max-w-full w-auto 2xs:w-full"
+                placeholder="0x..."
+                type="text"
+                name="rewardTokenAddress"
+                hasError={errors().rewardTokenAddress?.length > 0 === true}
+                aria-describedby="input-rewardTokenAddress-description input-rewardTokenAddress-helpblock"
+              />
+            </FormField.InputField>
+            <FormField.HelpBlock hasError={errors().rewardTokenAddress?.length > 0 === true} id="input-rewardTokenAddress-helpblock">
+              The reward token address must be a valid Ethereum address
+            </FormField.HelpBlock>
+          </FormField>
+
+            
+            </div>)}
+            <Button intent="primary-outline" scale="sm" type="button" className="mt-4">
+              Add another winning rank
+            </Button>
+          </div>}
+        </div>
+      </fieldset>
+      <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
         <Button
           className="sm:w-fit-content"
           isLoading={isDeploying === true}

@@ -67,6 +67,12 @@ export const Step3 = () => {
       submissionPerUserMaxNumber: 1,
       usersQualifyToVoteIfTheyHoldTokenOnVoteStart: true,
       downvoting: false,
+      hasRewards: false,
+      rewards: [{
+        rewardTokenAddress: "",
+        winningRank: "",
+        rewardTokenAmount: "",
+      }],
     },
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values),
