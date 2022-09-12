@@ -23,7 +23,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 ```
 ## Getting Started
 
-First, run the development server:
+First, navigate to the top directory of this repo and run the development server with
 
 ```bash
 yarn dev
