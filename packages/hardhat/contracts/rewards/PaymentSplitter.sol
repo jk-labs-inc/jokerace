@@ -6,6 +6,7 @@ pragma solidity ^0.8.0;
 import "../token/ERC20/utils/SafeERC20.sol";
 import "../utils/Address.sol";
 import "../utils/Context.sol";
+import "../governance/Governor.sol";
 
 /**
  * @title PaymentSplitter
@@ -25,7 +26,7 @@ import "../utils/Context.sol";
  * tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you
  * to run tests before sending real value to this contract.
  */
-contract PaymentSplitter is Context {
+abstract contract PaymentSplitter is Context, Governor {
     event PayeeAdded(address account, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
@@ -66,7 +67,7 @@ contract PaymentSplitter is Context {
      * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback
      * functions].
      */
-    receive() external payable virtual {
+    receive() external payable virtual override {
         emit PaymentReceived(_msgSender(), msg.value);
     }
 
