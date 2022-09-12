@@ -55,9 +55,10 @@ export function useDeployContest(form: any) {
         values.usersQualifyToVoteIfTheyHoldTokenOnVoteStart === true
           ? getUnixTime(new Date(values.datetimeOpeningVoting))
           : getUnixTime(new Date(values.usersQualifyToVoteAtAnotherDatetime));
-      const proposalThreshold = values.submissionOpenToAll ? 0 : values.requiredNumberOfTokenToSubmit;
+      const proposalThreshold = values?.whoCanSubmit === "anybody" ? 0 : values.requiredNumberOfTokenToSubmit;
       const numAllowedProposalSubmissions =
         values.noSubmissionLimitPerUser === true ? 10000000 : values.submissionPerUserMaxNumber;
+      const useSameTokenForSubmissions = ["anybody", "mustHaveVotingTokens"].includes(values?.whoCanSubmit)
       const contestParameters = [
         // UNIX timestamp of when submissions open
         getUnixTime(new Date(values.datetimeOpeningSubmissions)),
@@ -78,14 +79,14 @@ export function useDeployContest(form: any) {
         values?.downvotingAllowed === true ? 1 : 0,
         // same tokens: if this contest allows proposals to be sent for holders of the voting token or of another token
         // 0 = false; 1 = true
-        values?.useSameTokenForSubmissions === true ? 1 : 0,
+        useSameTokenForSubmissions === true ? 1 : 0,
       ];
 
       const contract = await factory.deploy(
         values.contestTitle,
         values.contestDescription,
         values.votingTokenAddress,
-        values.useSameTokenForSubmissions === true ? values.votingTokenAddress : values.submissionTokenAddress,
+        useSameTokenForSubmissions === true ? values.votingTokenAddress : values.submissionTokenAddress,
         contestParameters,
       );
       const receipt = await waitForTransaction({

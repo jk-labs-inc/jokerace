@@ -1,5 +1,5 @@
 import { object, string, number, boolean } from "zod";
-import { isDate, isPast } from "date-fns";
+import { isPast } from "date-fns";
 export interface DataStep3 {
   contestTitle: string;
   contestDescription: string;
@@ -26,7 +26,7 @@ export const schema = object({
   contestDescription: string()
     .trim()
     .min(1),
-  useSameTokenForSubmissions: boolean(),
+  whoCanSubmit: string(),
   submissionTokenAddress: string()
     .regex(/^0x[a-fA-F0-9]{40}$/)
     .or(string().max(0)),
