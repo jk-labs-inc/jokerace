@@ -53,7 +53,7 @@ export const Step3 = () => {
 
   const form = useForm({
     initialValues: {
-      useSameTokenForSubmissions: true,
+      whoCanSubmit: "anybody",
       votingTokenAddress: dataDeployVotingToken?.address ?? null,
       datetimeOpeningSubmissions: new Date(date.getTime() - date.getTimezoneOffset() * 60000)
         .toISOString()

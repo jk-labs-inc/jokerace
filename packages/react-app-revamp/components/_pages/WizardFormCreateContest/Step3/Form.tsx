@@ -32,7 +32,7 @@ export const Form = (props: FormProps) => {
   const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { dataDeploySubmissionToken, setCurrentStep, setModalDeploySubmissionTokenOpen } = useStore(
+  const { setCurrentStep, setModalDeploySubmissionTokenOpen } = useStore(
     state => ({
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
@@ -272,60 +272,116 @@ export const Form = (props: FormProps) => {
 
           <FormRadioGroup
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-            value={data()?.useSameTokenForSubmissions}
-            onChange={(e: boolean) => {
-              if (e === true) {
-                resetField("submissionTokenAddress");
-              } else {
-                setData("submissionOpenToAll", false)
-              }
-              setData("useSameTokenForSubmissions", e);
+            value={data()?.whoCanSubmit}
+            onChange={(e: string) => {
+              setData("whoCanSubmit", e)
+              setData("submissionOpenToAll", e === "anybody")
+              resetField("requiredNumberOfTokenToSubmit");
             }}
           >
-            <RadioGroup.Label className="sr-only">
-              Does your contest require a different token for submitting proposals and voting ?
-            </RadioGroup.Label>
-            <FormRadioOption value={true}>Use the same token for both submitting proposals and voting</FormRadioOption>
-            <FormRadioOption value={false}>
-              <div className="flex items-center flex-wrap">
-                <span className="pie-1ex">Require separate submission token</span>
+            <RadioGroup.Label className="sr-only">Can anybody send submission to your contest ?</RadioGroup.Label>
+            <FormRadioOption value="anybody">
+              Anybody can submit a proposal <span className="text-2xs pis-1ex text-neutral-10">(recommended)</span>
+            </FormRadioOption>
+            <FormRadioOption value="mustHaveVotingTokens">
+              <>
+                Must have{" "}
+                <FormInput
+                  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                  aria-invalid={
+                    touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveVotingTokens" && !isRequiredNumberOfTokenToSubmitValid ? "true" : "false"
+                  }
+                  placeholder="200"
+                  required={data()?.whoCanSubmit === "mustHaveVotingTokens"}
+                  className="mx-2 max-w-auto w-[12ex]"
+                  scale="sm"
+                  type="number"
+                  name="requiredNumberOfTokenToSubmit"
+                  min={0.00000001}
+                  step={0.00000001}
+                  hasError={touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveVotingTokens" && !isRequiredNumberOfTokenToSubmitValid}
+                  aria-describedby="input-requirednumberoftoken-voting-helpblock"
+                />{" "}
+                voting token(s) to submit a proposal
+              </>
+              <FormField.HelpBlock
+            className="!mt-1"
+            hasError={touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveVotingTokens" && !isRequiredNumberOfTokenToSubmitValid}
+            id="input-requirednumberoftoken-voting-helpblock"
+          >
+            Type a positive number to specify the required number of tokens.
+          </FormField.HelpBlock>
+            </FormRadioOption>
+            <FormRadioOption value="mustHaveSubmissionTokens">
+              <>
+                Must have{" "}
+                <FormInput
+                  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                  aria-invalid={
+                    touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !isRequiredNumberOfTokenToSubmitValid ? "true" : "false"
+                  }
+                  placeholder="200"
+                  required={data()?.whoCanSubmit === "mustHaveSubmissionTokens"}
+                  className="mx-2 max-w-auto w-[12ex]"
+                  scale="sm"
+                  type="number"
+                  name="requiredNumberOfTokenToSubmit"
+                  min={0.00000001}
+                  step={0.00000001}
+                  hasError={touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !isRequiredNumberOfTokenToSubmitValid}
+                  aria-describedby="input-requirednumberoftoken-submissions-helpblock"
+                />{" "}
+                submission token(s) to submit a proposal
+              </>
+              <FormField.HelpBlock
+            className="!mt-1"
+            hasError={touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !isRequiredNumberOfTokenToSubmitValid}
+            id="input-requirednumberoftoken-submissions-helpblock"
+          >
+            Type a positive number to specify the required number of tokens.
+          </FormField.HelpBlock>
+
+            </FormRadioOption>
+          </FormRadioGroup>
+          <div className={`${data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ? "pointer-events-none opacity-75" : ""} pis-6 text-sm !mt-0.5 flex items-center flex-wrap`}>
+                <span className="pie-1ex">Address of the submission token</span>
                 <div className="flex-grow py-1">
                   <FormInput
                     disabled={
-                      data()?.useSameTokenForSubmissions ||
+                      data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ||
                       !isConnected ||
                       chain?.unsupported === true ||
                       isDeploying === true
                     }
                     aria-invalid={
-                      data()?.useSameTokenForSubmissions === false &&
+                      data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
                       touched()?.submissionTokenAddress &&
                       (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
                         ? "true"
                         : "false"
                     }
-                    value={data()?.useSameTokenForSubmissions ? "" : data()?.submissionTokenAddress}
-                    required={data()?.useSameTokenForSubmissions === true}
+                    value={data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ? "" : data()?.submissionTokenAddress}
+                    required={data()?.whoCanSubmit === "mustHaveSubmissionTokens"}
                     className="w-full"
                     placeholder="0x..."
                     scale="sm"
                     name="submissionTokenAddress"
                     id="submissionTokenAddress"
                     hasError={
-                      data()?.useSameTokenForSubmissions === false &&
+                      data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
                       touched()?.submissionTokenAddress &&
                       (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
                     }
-                    aria-describedby={`input-submissionTokenAddress-helpblock ${data()?.useSameTokenForSubmissions === false ? "input-submissionTokenAddress-note" : ""}`}
+                    aria-describedby={`input-submissionTokenAddress-helpblock ${data()?.whoCanSubmit === "mustHaveSubmissionTokens" ? "input-submissionTokenAddress-note" : ""}`}
                   />
-                  {data()?.useSameTokenForSubmissions === false && <p id="input-submissionTokenAddress-note" className="text-2xs pt-2 font-normal text-secondary-11 pis-1 flex flex-wrap items-center">
+                  {data()?.whoCanSubmit === "mustHaveSubmissionTokens" && <p id="input-submissionTokenAddress-note" className="text-2xs pt-2 font-normal text-secondary-11 pis-1 flex flex-wrap items-center">
               <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5"/>
               The token must be minted on our platform or implement the &nbsp;<span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
             </p>}
                   <FormField.HelpBlock
                     hasError={
                       errors().submissionTokenAddress?.length > 0 === true ||
-                      (data()?.useSameTokenForSubmissions === false &&
+                      (data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
                         touched()?.submissionTokenAddress &&
                         (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === ""))
                     }
@@ -334,12 +390,12 @@ export const Form = (props: FormProps) => {
                     Please type a valid Ethereum address.
                   </FormField.HelpBlock>
                 </div>
-                <div className="flex items-center w-full pt-3">
+                <div className="flex items-center w-full pt-1">
                   <span className="text-neutral-11 pie-1ex">Or&nbsp;</span>
                   <Button
                     onClick={() => setModalDeploySubmissionTokenOpen(true)}
                     disabled={
-                      data()?.useSameTokenForSubmissions ||
+                      data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ||
                       !isConnected ||
                       chain?.unsupported === true ||
                       isDeploying === true
@@ -351,61 +407,7 @@ export const Form = (props: FormProps) => {
                     Mint new token
                   </Button>
                 </div>
-              </div>
-            </FormRadioOption>
-          </FormRadioGroup>
-
-          <FormRadioGroup
-            disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-            value={data()?.submissionOpenToAll}
-            onChange={(e: boolean) => {
-              if (e === true) {
-                // If submissions are open to everyone
-                // then the contest will use the same token for proposals and submissions
-                // this will be reflected in the UI
-                // aka "Use the same token for both submitting proposals and voting" will be selected 
-                setData("useSameTokenForSubmissions", true)
-                resetField("requiredNumberOfTokenToSubmit");
-              }
-              setData("submissionOpenToAll", e);
-            }}
-          >
-            <RadioGroup.Label className="sr-only">Can anybody send submission to your contest ?</RadioGroup.Label>
-            <FormRadioOption value={true}>
-              Anybody can submit <span className="text-2xs pis-1ex text-neutral-10">(recommended)</span>
-            </FormRadioOption>
-            <FormRadioOption value={false}>
-              <>
-                Must have{" "}
-                <FormInput
-                  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-                  aria-invalid={
-                    touched()?.requiredNumberOfTokenToSubmit && !isRequiredNumberOfTokenToSubmitValid ? "true" : "false"
-                  }
-                  placeholder="200"
-                  required={data()?.submissionOpenToAll === false}
-                  className="mx-2 max-w-auto w-[12ex]"
-                  scale="sm"
-                  type="number"
-                  name="requiredNumberOfTokenToSubmit"
-                  id="requiredNumberOfTokenToSubmit"
-                  min={1}
-                  step={1}
-                  hasError={touched()?.requiredNumberOfTokenToSubmit && !isRequiredNumberOfTokenToSubmitValid}
-                  aria-describedby="input-requirednumberoftoken-helpblock"
-                />{" "}
-                token(s) to submit
-              </>
-            </FormRadioOption>
-          </FormRadioGroup>
-          <FormField.HelpBlock
-            className="!mt-1"
-            hasError={touched()?.requiredNumberOfTokenToSubmit && !isRequiredNumberOfTokenToSubmitValid}
-            id="input-requirednumberoftoken-helpblock"
-          >
-            Type a positive number to specify the required number of tokens.
-          </FormField.HelpBlock>
-
+              </div>          
           <FormRadioGroup
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.noSubmissionLimitPerUser}
@@ -725,8 +727,8 @@ export const Form = (props: FormProps) => {
             !isSubmissionNumberLimitValid ||
             (data()?.datetimeClosingVoting && !isDateClosingVotesValid) ||
             (data()?.datetimeOpeningVoting && !isDateOpeningVotesValid) ||
-            (data()?.useSameTokenForSubmissions === false && !data()?.submissionTokenAddress) ||
-            (data()?.useSameTokenForSubmissions === false && data()?.submissionTokenAddress === "") ||
+            (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !data()?.submissionTokenAddress) ||
+            (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid)
           }
           type="submit"
