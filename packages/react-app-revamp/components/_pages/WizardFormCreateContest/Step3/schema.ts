@@ -1,5 +1,5 @@
 import { object, string, number, boolean, array } from "zod";
-import { isDate, isPast } from "date-fns";
+import { isPast } from "date-fns";
 export interface DataStep3 {
   contestTitle: string;
   contestDescription: string;
@@ -18,12 +18,11 @@ export interface DataStep3 {
   usersQualifyToVoteAtAnotherDatetime: string;
   downvoting: boolean;
   hasRewards: boolean;
-  rewards: Array<any>
+  rewardTokenAddress: string;
+  rewards: Array<any>;
 }
 
 const Reward = object({
-  rewardTokenAddress: string()
-  .regex(/^0x[a-fA-F0-9]{40}$/),
   winningRank: number().positive(),
   rewardTokenAmount: number().positive(),
 });
@@ -56,5 +55,7 @@ export const schema = object({
   usersQualifyToVoteAtAnotherDatetime: string().optional(),
   downvoting: boolean(),
   hasRewards: boolean(),
+  rewardTokenAddress: string()
+  .regex(/^0x[a-fA-F0-9]{40}$/),
   rewards: array(Reward)
 });

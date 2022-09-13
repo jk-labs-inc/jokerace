@@ -23,7 +23,11 @@ interface FormProps {
   setData: any;
   setFields: any;
 }
+<<<<<<< HEAD
 const appearAsNeutralButton = button({ intent: "ghost-neutral", scale: "sm", class: "sm:w-fit-content" });
+=======
+const appearAsNeutralButton = button({ intent: "ghost-neutral" });
+>>>>>>> 00fb06b (wip: add rewards settings in contest rules form)
 
 export const Form = (props: FormProps) => {
   const formId = useId();

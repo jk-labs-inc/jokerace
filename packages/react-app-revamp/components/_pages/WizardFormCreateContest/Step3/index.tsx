@@ -68,8 +68,8 @@ export const Step3 = () => {
       usersQualifyToVoteIfTheyHoldTokenOnVoteStart: true,
       downvoting: false,
       hasRewards: false,
+      rewardTokenAddress: "",
       rewards: [{
-        rewardTokenAddress: "",
         winningRank: "",
         rewardTokenAmount: "",
       }],

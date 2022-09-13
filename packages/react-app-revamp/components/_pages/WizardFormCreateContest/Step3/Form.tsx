@@ -14,6 +14,7 @@ import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
 import { useId } from "react";
 import { ShieldExclamationIcon } from "@heroicons/react/outline";
+import FormSelect from "@components/FormSelect";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -734,18 +735,18 @@ export const Form = (props: FormProps) => {
             <FormRadioOption value={false}>No rewards</FormRadioOption>
             <FormRadioOption value={true}>Rewards given to winner</FormRadioOption>
           </FormRadioGroup>
-          {data()?.hasRewards === true && <div className="animate-appear">
-            {data()?.rewards.map((reward, i) => <div key={`reward-${i}`}>
-              <FormField  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+          {data()?.hasRewards === true && <div className="!mt-3 animate-appear space-y-6 pis-6">
+          <FormField  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>
-              <FormField.Label hasError={errors().rewardTokenAddress?.length > 0 === true} htmlFor="rewardTokenAddress">
+              <FormField.Label className="text-sm" hasError={errors().rewardTokenAddress?.length > 0 === true} htmlFor="rewardTokenAddress">
                 Address of token used for rewards
               </FormField.Label>
-              <FormField.Description id="input-contesttile-description">
+              <FormField.Description id="input-rewardTokenAmount-description">
                 The Ethereum address of the ERC20 token you want to give as a reward.
               </FormField.Description>
               <FormInput
                 required
+                scale="sm"
                 disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                 aria-invalid={errors().rewardTokenAddress?.length > 0 === true ? "true" : "false"}
                 className="max-w-full w-auto 2xs:w-full"
@@ -760,10 +761,82 @@ export const Form = (props: FormProps) => {
               The reward token address must be a valid Ethereum address
             </FormField.HelpBlock>
           </FormField>
+            {data()?.rewards.map((reward: any, i: number) => <div key={`reward-${i}`} className="text-sm p-4 border-neutral-4 border-solid border rounded-md space-y-6">
+            <FormField  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+            <FormField.InputField>
+              <FormField.Label className="text-sm" hasError={errors().rewardTokenAmount?.length > 0 === true} htmlFor="rewardTokenAmount">
+                Winning rank that earns tokens
+              </FormField.Label>
+              <FormField.Description id="input-rewardTokenAmount-description">
+                The rank eligible to earn a reward
+              </FormField.Description>
+              <FormSelect
+                required
+                scale="sm"
+                disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                aria-invalid={errors().winningRank?.length > 0 === true ? "true" : "false"}
+                className="max-w-full w-auto 2xs:w-full"
+                placeholder="100"
+                name="winningRank"
+                hasError={errors().winningRank?.length > 0 === true}
+                aria-describedby="input-winningRank-description input-winningRank-helpblock"
+                onChange={(e) => {
+                  const rewards= data()?.rewards
+                  rewards[i].winningRank = e.currentTarget.value
+                  setData("rewards", rewards)
+                }}
+              >
+                <option value="" disabled >Select a rank</option>
+                {["1st", "2nd", "3rd", "4th", "5th", "Last"].map((rank) => <option key={`option-${rank}-${i}`} value={rank}>
+                  {rank}
+                </option>)}
+              </FormSelect>
+            </FormField.InputField>
+            <FormField.HelpBlock hasError={errors().rewardTokenAmount?.length > 0 === true} id="input-rewardTokenAmount-helpblock">
+              The reward amount must be a positive number.
+            </FormField.HelpBlock>
+          </FormField>
 
-            
+          <FormField  disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+            <FormField.InputField>
+              <FormField.Label className="text-sm" hasError={errors().rewardTokenAmount?.length > 0 === true} htmlFor="rewardTokenAmount">
+                The amount of tokens to be rewarded.
+              </FormField.Label>
+              <FormField.Description id="input-rewardTokenAmount-description">
+                The amount of tokens you want to give as a reward.
+              </FormField.Description>
+              <FormInput
+                required
+                scale="sm"
+                disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                aria-invalid={errors().rewardTokenAmount?.length > 0 === true ? "true" : "false"}
+                className="max-w-full w-auto 2xs:w-full"
+                placeholder="100"
+                type="number"
+                min={0.0000001}
+                step={0.0000001}
+                name="rewardTokenAmount"
+                hasError={errors().rewardTokenAmount?.length > 0 === true}
+                aria-describedby="input-rewardTokenAmount-description input-rewardTokenAmount-helpblock"
+                onChange={(e) => {
+                  const rewards= data()?.rewards
+                  rewards[i].rewardTokenAmount = e.currentTarget.value
+                  setData("rewards", rewards)
+                }}
+
+              />
+            </FormField.InputField>
+            <FormField.HelpBlock hasError={errors().rewardTokenAmount?.length > 0 === true} id="input-rewardTokenAmount-helpblock">
+              The reward amount must be a positive number.
+            </FormField.HelpBlock>
+          </FormField>
             </div>)}
-            <Button intent="primary-outline" scale="sm" type="button" className="mt-4">
+            <Button onClick={() => {
+              setData("rewards", [...data()?.rewards, {
+                winningRank: "",
+                rewardTokenAmount: "",        
+              }])
+            }} intent="primary-outline" scale="sm" type="button" className="mt-4">
               Add another winning rank
             </Button>
           </div>}
@@ -793,7 +866,7 @@ export const Form = (props: FormProps) => {
           Create contest
         </Button>
 
-        <div className={button({ intent: "ghost-neutral", scale: "sm", class: "sm:w-fit-content" })} tabIndex={0} role="button" {...pressProps}>
+        <div className={button({ intent: "ghost-neutral" })} tabIndex={0} role="button" {...pressProps}>
           Next
         </div>
       </div>
