@@ -27,6 +27,7 @@
     "node": "yarn workspace @scaffold-eth/hardhat chain",
     "test": "yarn workspace @scaffold-eth/hardhat test",
     "start": "yarn workspace @scaffold-eth/react-app start",
+    "dev": "yarn workspace @scaffold-eth/react-app-revamp dev",
     "compile": "yarn workspace @scaffold-eth/hardhat compile",
     "deploy": "yarn workspace @scaffold-eth/hardhat deploy",
     "verify": "yarn workspace @scaffold-eth/hardhat verify",
