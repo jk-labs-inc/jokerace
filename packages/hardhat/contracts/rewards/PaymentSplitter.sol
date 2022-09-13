@@ -46,10 +46,10 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
     uint256[] private _rankedProposalIds;
 
     /**
-     * @dev Creates an instance of `PaymentSplitter` where each account in `payees` is assigned the number of shares at
+     * @dev Creates an instance of `PaymentSplitter` where each ranking in `payees` is assigned the number of shares at
      * the matching position in the `shares` array.
      *
-     * All addresses in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
+     * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
     constructor(uint256[] memory payees, uint256[] memory shares_) payable {
@@ -97,7 +97,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
     }
 
     /**
-     * @dev Getter for the amount of shares held by an account.
+     * @dev Getter for the amount of shares held by a ranking.
      */
     function shares(uint256 ranking) public view returns (uint256) {
         return _shares[ranking];
@@ -143,7 +143,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
     }
 
     /**
-     * @dev Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the
+     * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
      */
     function release(uint256 ranking) public virtual {
@@ -164,8 +164,8 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
         if (_rankedProposalIds.length == 0) {
             _rankedProposalIds = rankedProposals();
         }
-        require(ranking < _rankedProposalIds.length, "PaymentSplitter: there are not enough proposals for that ranking to exist");
-        address payable proposalAuthor = payable(getProposal(_rankedProposalIds[ranking]).author);
+        require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
+        address payable proposalAuthor = payable(getProposal(_rankedProposalIds[ranking - 1]).author);
 
         require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
 
@@ -174,7 +174,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
     }
 
     /**
-     * @dev Triggers a transfer to `account` of the amount of `token` tokens they are owed, according to their
+     * @dev Triggers a transfer to `ranking` of the amount of `token` tokens they are owed, according to their
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
      * contract.
      */
@@ -197,8 +197,8 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
         if (_rankedProposalIds.length == 0) {
             _rankedProposalIds = rankedProposals();
         }
-        require(ranking < _rankedProposalIds.length, "PaymentSplitter: there are not enough proposals for that ranking to exist");
-        address payable proposalAuthor = payable(getProposal(_rankedProposalIds[ranking]).author);
+        require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
+        address payable proposalAuthor = payable(getProposal(_rankedProposalIds[ranking - 1]).author);
 
         require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
 
@@ -207,7 +207,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
     }
 
     /**
-     * @dev internal logic for computing the pending payment of an `account` given the token historical balances and
+     * @dev internal logic for computing the pending payment of a `ranking` given the token historical balances and
      * already released amounts.
      */
     function _pendingPayment(
