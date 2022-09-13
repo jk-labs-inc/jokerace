@@ -76,6 +76,42 @@ abstract contract GovernorCountingSimple is Governor {
         }
         return (proposalIds, proposalVoteCountsArray);
     }
+
+    function sort_item(uint pos, int256[] memory netProposalVotes, uint256[] memory proposalIds) internal pure returns (bool) {
+        uint w_min = pos;
+        for(uint i = pos;i < netProposalVotes.length;i++) {
+            if(netProposalVotes[i] < netProposalVotes[w_min]) {
+                w_min = i;
+            }
+        }
+        if(w_min == pos) return false;
+        int votesTmp = netProposalVotes[pos];
+        netProposalVotes[pos] = netProposalVotes[w_min];
+        netProposalVotes[w_min] = votesTmp;
+        uint proposalIdsTmp = proposalIds[pos];
+        proposalIds[pos] = proposalIds[w_min];
+        proposalIds[w_min] = proposalIdsTmp;
+        return true;
+    }
+
+    function rankedProposals()
+        public
+        view
+        virtual
+        returns (
+            uint256[] memory sortedProposalIdsReturn
+        )
+    {
+        (uint256[] memory proposalIdList, VoteCounts[] memory proposalVoteCountsArray) = allProposalTotalVotes();
+        int256[] memory netProposalVotes = new int256[](proposalIdList.length);
+        for(uint i = 0; i < proposalVoteCountsArray.length-1; i++) {
+            netProposalVotes[i] = int256(proposalVoteCountsArray[i].forVotes) - int256(proposalVoteCountsArray[i].againstVotes);
+        }
+        for(uint i = 0;i < proposalIdList.length-1;i++) {
+            sort_item(i, netProposalVotes, proposalIdList);
+        }
+        return proposalIdList;
+    }
     
     /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.

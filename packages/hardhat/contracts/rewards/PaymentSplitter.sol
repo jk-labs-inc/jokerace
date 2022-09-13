@@ -7,6 +7,7 @@ import "../token/ERC20/utils/SafeERC20.sol";
 import "../utils/Address.sol";
 import "../utils/Context.sol";
 import "../governance/Governor.sol";
+import "../governance/extensions/GovernorCountingSimple.sol";
 
 /**
  * @title PaymentSplitter
@@ -26,8 +27,8 @@ import "../governance/Governor.sol";
  * tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you
  * to run tests before sending real value to this contract.
  */
-abstract contract PaymentSplitter is Context, Governor {
-    event PayeeAdded(address account, uint256 shares);
+abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
+    event PayeeAdded(uint256 ranking, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
@@ -35,12 +36,14 @@ abstract contract PaymentSplitter is Context, Governor {
     uint256 private _totalShares;
     uint256 private _totalReleased;
 
-    mapping(address => uint256) private _shares;
-    mapping(address => uint256) private _released;
-    address[] private _payees;
+    mapping(uint256 => uint256) private _shares;
+    mapping(uint256 => uint256) private _released;
+    uint256[] private _payees;
 
     mapping(IERC20 => uint256) private _erc20TotalReleased;
-    mapping(IERC20 => mapping(address => uint256)) private _erc20Released;
+    mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
+    
+    uint256[] private _rankedProposalIds;
 
     /**
      * @dev Creates an instance of `PaymentSplitter` where each account in `payees` is assigned the number of shares at
@@ -49,7 +52,7 @@ abstract contract PaymentSplitter is Context, Governor {
      * All addresses in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(address[] memory payees, uint256[] memory shares_) payable {
+    constructor(uint256[] memory payees, uint256[] memory shares_) payable {
         require(payees.length == shares_.length, "PaymentSplitter: payees and shares length mismatch");
         require(payees.length > 0, "PaymentSplitter: no payees");
 
@@ -96,57 +99,58 @@ abstract contract PaymentSplitter is Context, Governor {
     /**
      * @dev Getter for the amount of shares held by an account.
      */
-    function shares(address account) public view returns (uint256) {
-        return _shares[account];
+    function shares(uint256 ranking) public view returns (uint256) {
+        return _shares[ranking];
     }
 
     /**
      * @dev Getter for the amount of Ether already released to a payee.
      */
-    function released(address account) public view returns (uint256) {
-        return _released[account];
+    function released(uint256 ranking) public view returns (uint256) {
+        return _released[ranking];
     }
 
     /**
      * @dev Getter for the amount of `token` tokens already released to a payee. `token` should be the address of an
      * IERC20 contract.
      */
-    function released(IERC20 token, address account) public view returns (uint256) {
-        return _erc20Released[token][account];
+    function released(IERC20 token, uint256 ranking) public view returns (uint256) {
+        return _erc20Released[token][ranking];
     }
 
     /**
      * @dev Getter for the address of the payee number `index`.
      */
-    function payee(uint256 index) public view returns (address) {
+    function payee(uint256 index) public view returns (uint256) {
         return _payees[index];
     }
 
     /**
      * @dev Getter for the amount of payee's releasable Ether.
      */
-    function releasable(address account) public view returns (uint256) {
+    function releasable(uint256 ranking) public view returns (uint256) {
         uint256 totalReceived = address(this).balance + totalReleased();
-        return _pendingPayment(account, totalReceived, released(account));
+        return _pendingPayment(ranking, totalReceived, released(ranking));
     }
 
     /**
      * @dev Getter for the amount of payee's releasable `token` tokens. `token` should be the address of an
      * IERC20 contract.
      */
-    function releasable(IERC20 token, address account) public view returns (uint256) {
+    function releasable(IERC20 token, uint256 ranking) public view returns (uint256) {
         uint256 totalReceived = token.balanceOf(address(this)) + totalReleased(token);
-        return _pendingPayment(account, totalReceived, released(token, account));
+        return _pendingPayment(ranking, totalReceived, released(token, ranking));
     }
 
     /**
      * @dev Triggers a transfer to `account` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
      */
-    function release(address payable account) public virtual {
-        require(_shares[account] > 0, "PaymentSplitter: account has no shares");
+    function release(uint256 ranking) public virtual {
+        require(state() == ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
+        require(_shares[ranking] > 0, "PaymentSplitter: ranking has no shares");
 
-        uint256 payment = releasable(account);
+        uint256 payment = releasable(ranking);
 
         require(payment != 0, "PaymentSplitter: account is not due payment");
 
@@ -154,11 +158,16 @@ abstract contract PaymentSplitter is Context, Governor {
         // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
         _totalReleased += payment;
         unchecked {
-            _released[account] += payment;
+            _released[ranking] += payment;
         }
 
-        Address.sendValue(account, payment);
-        emit PaymentReleased(account, payment);
+        uint256[] memory sortedProposalIds = rankedProposals();
+        address payable proposalAuthor = payable(getProposal(sortedProposalIds[ranking]).author);
+
+        require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
+
+        Address.sendValue(proposalAuthor, payment);
+        emit PaymentReleased(proposalAuthor, payment);
     }
 
     /**
@@ -166,10 +175,11 @@ abstract contract PaymentSplitter is Context, Governor {
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
      * contract.
      */
-    function release(IERC20 token, address account) public virtual {
-        require(_shares[account] > 0, "PaymentSplitter: account has no shares");
+    function release(IERC20 token, uint256 ranking) public virtual {
+        require(state() == ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
+        require(_shares[ranking] > 0, "PaymentSplitter: account has no shares");
 
-        uint256 payment = releasable(token, account);
+        uint256 payment = releasable(token, ranking);
 
         require(payment != 0, "PaymentSplitter: account is not due payment");
 
@@ -178,11 +188,16 @@ abstract contract PaymentSplitter is Context, Governor {
         // cannot overflow.
         _erc20TotalReleased[token] += payment;
         unchecked {
-            _erc20Released[token][account] += payment;
+            _erc20Released[token][ranking] += payment;
         }
 
-        SafeERC20.safeTransfer(token, account, payment);
-        emit ERC20PaymentReleased(token, account, payment);
+        uint256[] memory sortedProposalIds = rankedProposals();
+        address payable proposalAuthor = payable(getProposal(sortedProposalIds[ranking]).author);
+
+        require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
+
+        SafeERC20.safeTransfer(token, proposalAuthor, payment);
+        emit ERC20PaymentReleased(token, proposalAuthor, payment);
     }
 
     /**
@@ -190,26 +205,27 @@ abstract contract PaymentSplitter is Context, Governor {
      * already released amounts.
      */
     function _pendingPayment(
-        address account,
+        uint256 ranking,
         uint256 totalReceived,
         uint256 alreadyReleased
     ) private view returns (uint256) {
-        return (totalReceived * _shares[account]) / _totalShares - alreadyReleased;
+        return (totalReceived * _shares[ranking]) / _totalShares - alreadyReleased;
     }
 
     /**
      * @dev Add a new payee to the contract.
-     * @param account The address of the payee to add.
+     * @param ranking The ranking of the payee to add.
      * @param shares_ The number of shares owned by the payee.
      */
-    function _addPayee(address account, uint256 shares_) private {
-        require(account != address(0), "PaymentSplitter: account is the zero address");
+    function _addPayee(uint256 ranking, uint256 shares_) private {
+        require(ranking > 0, "PaymentSplitter: ranking is 0, must be greater");
         require(shares_ > 0, "PaymentSplitter: shares are 0");
-        require(_shares[account] == 0, "PaymentSplitter: account already has shares");
+        require(_shares[ranking] == 0, "PaymentSplitter: account already has shares");
+        require(_shares[ranking] == 0, "PaymentSplitter: account already has shares");
 
-        _payees.push(account);
-        _shares[account] = shares_;
+        _payees.push(ranking);
+        _shares[ranking] = shares_;
         _totalShares = _totalShares + shares_;
-        emit PayeeAdded(account, shares_);
+        emit PayeeAdded(ranking, shares_);
     }
 }
