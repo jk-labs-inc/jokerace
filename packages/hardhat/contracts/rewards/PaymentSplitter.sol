@@ -162,6 +162,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
         }
 
         uint256[] memory sortedProposalIds = rankedProposals();
+        require(ranking < sortedProposalIds.length, "PaymentSplitter: there are not enough proposals for that ranking to exist");
         address payable proposalAuthor = payable(getProposal(sortedProposalIds[ranking]).author);
 
         require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
@@ -192,6 +193,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
         }
 
         uint256[] memory sortedProposalIds = rankedProposals();
+        require(ranking < sortedProposalIds.length, "PaymentSplitter: there are not enough proposals for that ranking to exist");
         address payable proposalAuthor = payable(getProposal(sortedProposalIds[ranking]).author);
 
         require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
