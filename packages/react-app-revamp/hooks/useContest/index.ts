@@ -12,7 +12,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
 import arrayToChunks from "@helpers/arrayToChunks";
 
-const PROPOSALS_PER_PAGE = 12
+const PROPOSALS_PER_PAGE = 12;
 export function useContest() {
   const { indexContest } = useContestsIndex();
   const provider = useProvider();
@@ -113,7 +113,7 @@ export function useContest() {
 
   /**
    * Display an error toast in the UI for any contract related error
-  */
+   */
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
     if (err.code === "CALL_EXCEPTION") toastMessage = "This contract doesn't exist on this chain.";
@@ -122,7 +122,7 @@ export function useContest() {
 
   /**
    * Fetch all info of a contest (title, prompt, list of proposals etc.)
-  */
+   */
   async function fetchContestInfo() {
     setIsLoading(true);
     const abi = await getContestContractVersion(address, chainName);
@@ -214,8 +214,8 @@ export function useContest() {
         });
         contracts.push({
           ...contractConfig,
-          functionName: "submissionToken"
-        })
+          functionName: "submissionToken",
+        });
       }
 
       const results = await readContracts({ contracts });
@@ -286,34 +286,31 @@ export function useContest() {
 
       if (abi?.filter(el => el.name === "submissionGatingByVotingToken").length > 0) {
         //@ts-ignore
-        const submitProposalTokenRawData = await fetchToken({ address: results[contracts.length - 1 ], chainId });
-        setSubmitProposalTokenAddress(results[contracts.length - 1 ]);
+        const submitProposalTokenRawData = await fetchToken({ address: results[contracts.length - 1], chainId });
+        setSubmitProposalTokenAddress(results[contracts.length - 1]);
         setSubmitProposalToken(submitProposalTokenRawData);
-        if(accountData?.address) await checkCurrentUserAmountOfProposalTokens();
+        if (accountData?.address) await checkCurrentUserAmountOfProposalTokens();
       } else {
         setSubmitProposalTokenAddress(results[4]);
         setSubmitProposalToken(votingTokenRawData);
       }
-      // Check snapshot
-      await checkIfCurrentUserQualifyToVote();
-
-      if(accountData?.address) {
+      if (accountData?.address) {
         // Current user votes
         await updateCurrentUserVotes();
       }
       // If current page is proposal, fetch proposal with id
-      if(asPath.includes('/proposal/')) {
-        await fetchProposalsPage(0, [asPath.split("/")[5]], 1)
-        fetchProposalsIdsList(abi)
+      if (asPath.includes("/proposal/")) {
+        await fetchProposalsPage(0, [asPath.split("/")[5]], 1);
+        fetchProposalsIdsList(abi);
       } else {
-      // otherwise, fetch proposals
+        // otherwise, fetch proposals
         // List of proposals for this contest
-        await fetchProposalsIdsList(abi)
+        await fetchProposalsIdsList(abi);
       }
       setIsListProposalsLoading(false);
       setIsError(null);
       setIsSuccess(true);
-      setIsLoading(false);      
+      setIsLoading(false);
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
         process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -367,7 +364,7 @@ export function useContest() {
 
   /**
    * Check how many proposal tokens of this contest the current user holds
-  */
+   */
   async function checkCurrentUserAmountOfProposalTokens() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
@@ -411,7 +408,7 @@ export function useContest() {
 
   /**
    * Check if the current user qualify to vote for this contest
-  */
+   */
   async function checkIfCurrentUserQualifyToVote() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
@@ -478,66 +475,67 @@ export function useContest() {
 
   /**
    * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
-   * @param abi - ABI to use 
-  */
+   * @param abi - ABI to use
+   */
   async function fetchProposalsIdsList(abi: any) {
     setIsListProposalsLoading(true);
 
     try {
       // Get list of proposals (ids)
-      //@ts-ignore
-      const useLegacyGetAllProposalsIdFn = abi?.filter(el => el.name === "allProposalTotalVotes")?.length > 0 ? false : true
+      const useLegacyGetAllProposalsIdFn =
+        //@ts-ignore
+        abi?.filter(el => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
         chainId: chainId,
-      };  
+      };
       const proposalsIdsRawData = await readContract({
         ...contractConfig,
         functionName: !useLegacyGetAllProposalsIdFn ? "allProposalTotalVotes" : "getAllProposalIds",
       });
       //@ts-ignore
-      let proposalsIds
-      if(!useLegacyGetAllProposalsIdFn) {
+      let proposalsIds;
+      if (!useLegacyGetAllProposalsIdFn) {
         //@ts-ignore
-        proposalsIds = []
+        proposalsIds = [];
         proposalsIdsRawData[0].map((data: any, index: number) => {
           proposalsIds.push({
             votes: proposalsIdsRawData[1][index][0] / 1e18,
-            id: data
+            id: data,
+          });
+        });
+        //@ts-ignore
+        proposalsIds = proposalsIds
+          .sort((a, b) => {
+            if (a.votes > b.votes) {
+              return -1;
+            }
+            if (a.votes < b.votes) {
+              return 1;
+            }
+            return 0;
           })
-        })
-        //@ts-ignore
-        proposalsIds = proposalsIds.sort((a, b) => {
-          if (a.votes > b.votes) {
-            return -1;
-          }
-          if (a.votes < b.votes) {
-            return 1;
-          }
-          return 0;
-        })
-        //@ts-ignore
-        .map(proposal => proposal.id)
-        setListProposalsIds(proposalsIds)
+          //@ts-ignore
+          .map(proposal => proposal.id);
+        setListProposalsIds(proposalsIds);
       } else {
-        proposalsIds= proposalsIdsRawData
+        proposalsIds = proposalsIdsRawData;
         setListProposalsIds(proposalsIds);
       }
       setIsListProposalsSuccess(true);
       setIsListProposalsLoading(false);
 
       // Pagination
-      const totalPagesPaginationProposals = Math.ceil(proposalsIdsRawData?.length / PROPOSALS_PER_PAGE)
-      setTotalPagesPaginationProposals(totalPagesPaginationProposals)
-      setCurrentPagePaginationProposals(0)
+      const totalPagesPaginationProposals = Math.ceil(proposalsIdsRawData?.length / PROPOSALS_PER_PAGE);
+      setTotalPagesPaginationProposals(totalPagesPaginationProposals);
+      setCurrentPagePaginationProposals(0);
       //@ts-ignore
-      const paginationChunks = arrayToChunks(proposalsIds, PROPOSALS_PER_PAGE)
-      setTotalPagesPaginationProposals(paginationChunks.length)
-      setIndexPaginationProposalPerId(paginationChunks)
-      if(proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length)
-
-    } catch(e) {
+      const paginationChunks = arrayToChunks(proposalsIds, PROPOSALS_PER_PAGE);
+      setTotalPagesPaginationProposals(paginationChunks.length);
+      setIndexPaginationProposalPerId(paginationChunks);
+      if (proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
+    } catch (e) {
       onContractError(e);
       //@ts-ignore
       setIsError(e?.code ?? e);
@@ -549,12 +547,12 @@ export function useContest() {
     }
   }
 
-  /** 
+  /**
    * Set proposal data in zustand store
    * @param i - index of the proposal id to be fetched
    * @param results - array of smart contracts calls results (returned by `readContracts`)
    * @param listIdsProposalsToBeFetched - array of proposals ids to be fetched
-  */
+   */
   async function fetchProposal(i: number, results: Array<any>, listIdsProposalsToBeFetched: Array<any>) {
     const accountData = await getAccount();
     // Create an array of proposals
@@ -592,14 +590,14 @@ export function useContest() {
     setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
   }
 
-  /** 
+  /**
    * Fetch the data of each proposals in page X
    * @param pageIndex - index of the page of proposals to fetch
    * @param slice - Array of proposals ids to be fetched
    * @param totalPagesPaginationProposals - total of pages in the pagination
-  */
+   */
   async function fetchProposalsPage(pageIndex: number, slice: Array<any>, totalPagesPaginationProposals: number) {
-    setCurrentPagePaginationProposals(pageIndex)
+    setCurrentPagePaginationProposals(pageIndex);
     setIsPageProposalsLoading(true);
     setIsPageProposalsError(null);
     try {
@@ -610,7 +608,7 @@ export function useContest() {
         setIsPageProposalsLoading(false);
         return;
       }
-  
+
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
@@ -644,19 +642,19 @@ export function useContest() {
       await Promise.all(proposalFetchPromises);
       setIsPageProposalsLoading(false);
       setIsPageProposalsError(null);
-      setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals)
-     } catch(e) {
+      setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals);
+    } catch (e) {
       setIsPageProposalsLoading(false);
       //@ts-ignore
       setIsPageProposalsError(e?.message ?? e);
       //@ts-ignore
       toast.error(e?.message ?? e);
-     }
+    }
   }
 
-  /** 
+  /**
    * Update the amount of votes casted in this contest by the current user
-  */
+   */
   async function updateCurrentUserVotes() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
@@ -733,8 +731,8 @@ export function useContest() {
     setChainName,
     retry: fetchContestInfo,
     onSearch: (addr: string, chainName: string) => {
-      setChainName(chainName)
-      setChainId(chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id)
+      setChainName(chainName);
+      setChainId(chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id);
       setIsLoading(true);
       setIsListProposalsLoading(true);
       setListProposalsIds([]);
