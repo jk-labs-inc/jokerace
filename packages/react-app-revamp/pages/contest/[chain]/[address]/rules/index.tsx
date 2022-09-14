@@ -79,11 +79,13 @@ const Page: NextPage = (props: PageProps) => {
      </section>
      <section>
       <h2 className='uppercase font-bold mb-2'>Submission token</h2>
-      <ul className='list-disc pis-4 leading-loose'>
+      {submitProposalToken?.address !== votingToken?.address ? <ul className='list-disc pis-4 leading-loose'>
         <li title={`$${submitProposalToken.symbol}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Symbol: <span className='font-bold normal-case'>${submitProposalToken.symbol}</span></span></li>
         <li title={`${new Intl.NumberFormat().format(submitProposalToken.totalSupply.formatted)}`} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Total supply: <span className='font-bold'>{new Intl.NumberFormat().format(submitProposalToken.totalSupply.formatted)}</span></span></li>
         <li title={submitProposalToken.address} className='list-item'><span className='block whitespace-nowrap overflow-hidden text-ellipsis'>Contract: <a className='link' target="_blank" rel="noreferrer nofollow" href={`${chains.filter(chain => chain.name.replace(' ', '').toLowerCase() === asPath.split("/")[2])[0].blockExplorers?.default.url}/address/${submitProposalToken.address}`.replace('//address', '/address')}>{submitProposalToken.address}</a></span></li>
-      </ul>
+      </ul> : <p className='italic text-neutral-11'>
+        No submission token for this contest
+      </p>}
      </section>
      <section>
       <h2 className='uppercase font-bold mb-2'>Voting token</h2>
