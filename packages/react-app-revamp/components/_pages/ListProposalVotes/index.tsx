@@ -117,7 +117,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
           </table>
           {isPageVotesLoading && Object.keys(listProposalsData)?.length > 1 && (
             <Loader scale="component" classNameWrapper="my-3">
-              Loading proposals...
+              Loading votes...
             </Loader>
           )}
           {hasPaginationVotesNextPage && !isPageVotesLoading && (
