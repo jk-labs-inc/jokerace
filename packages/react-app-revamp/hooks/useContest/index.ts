@@ -294,11 +294,12 @@ export function useContest() {
         setSubmitProposalTokenAddress(results[4]);
         setSubmitProposalToken(votingTokenRawData);
       }
+      await checkIfCurrentUserQualifyToVote();
+
       if(accountData?.address) {
         // Current user votes
         await updateCurrentUserVotes();
         // Check snapshot
-        await checkIfCurrentUserQualifyToVote();
       }
       // If current page is proposal, fetch proposal with id
       if(asPath.includes('/proposal/')) {
@@ -451,15 +452,19 @@ export function useContest() {
         const timestampToCheck =
           //@ts-ignore
           delayedCurrentTimestamp >= timestampSnapshotRawData ? timestampSnapshotRawData : delayedCurrentTimestamp;
+          if(accountData?.address) {
+            const tokenUserWasHoldingAtSnapshotRawData = await readContract({
+              ...contractConfig,
+              functionName: "getVotes",
+              //@ts-ignore
+              args: [accountData?.address, timestampToCheck],
+            });
+            //@ts-ignore
+            setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);    
+          } else {
+            setDidUserPassSnapshotAndCanVote(false)
+          }
 
-        const tokenUserWasHoldingAtSnapshotRawData = await readContract({
-          ...contractConfig,
-          functionName: "getVotes",
-          //@ts-ignore
-          args: [accountData?.address, timestampToCheck],
-        });
-        //@ts-ignore
-        setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
       } else {
         setSnapshotTaken(false);
       }
