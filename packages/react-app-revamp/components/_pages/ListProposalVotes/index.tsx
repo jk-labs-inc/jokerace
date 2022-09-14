@@ -4,6 +4,7 @@ import useProposalVotes from "@hooks/useProposalVotes";
 import { useStore as useStoreProposalVotes } from "@hooks/useProposalVotes/store";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import shallow from "zustand/shallow";
+import { useAccount } from "wagmi";
 
 interface ListProposalVotesProps {
   id: number | string;
@@ -11,6 +12,7 @@ interface ListProposalVotesProps {
 
 export const ListProposalVotes = (props: ListProposalVotesProps) => {
   const { id } = props;
+  const accountData = useAccount();
   const { isLoading, isSuccess, isError, retry, fetchVotesPage } = useProposalVotes(id);
   const { listProposalsData } = useStoreContest(
     state => ({
@@ -92,27 +94,50 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
               </tr>
             </thead>
             <tbody>
-              {Object.keys(votesPerAddress).map(address => (
-                <tr
-                  className="animate-appear"
-                  key={`${votesPerAddress[address].displayAddress}-${votesPerAddress[address].votes}`}
-                >
-                  <td title={address} className="relative text-ellipsis font-mono overflow-hidden p-2">
+              {accountData?.address && Object.keys(votesPerAddress)?.includes(accountData?.address) && (
+                <tr className="animate-appear">
+                  <td title={accountData?.address} className="relative text-ellipsis font-mono overflow-hidden p-2">
                     <a
                       className="top-0 left-0 absolute w-full h-full z-10 cursor-pointer opacity-0"
                       target="_blank"
                       rel="nofollow noreferrer"
-                      href={`https://debank.com/profile/${address}`}
+                      href={`https://debank.com/profile/${accountData?.address}`}
                     >
                       Click to view this address on Debank
                     </a>
-                    {votesPerAddress[address].displayAddress}:
+                    {votesPerAddress[accountData?.address].displayAddress}:
                   </td>
                   <td className="p-2 font-bold">
-                    {new Intl.NumberFormat().format(parseFloat(votesPerAddress[address].votes.toFixed(2)))}
+                    {new Intl.NumberFormat().format(parseFloat(votesPerAddress[accountData?.address].votes.toFixed(2)))}
                   </td>
                 </tr>
-              ))}
+              )}
+              {Object.keys(votesPerAddress)
+                .filter(address => {
+                  if (!accountData?.address) return address;
+                  if (address !== accountData?.address) return address;
+                })
+                .map((address: string) => (
+                  <tr
+                    className="animate-appear"
+                    key={`${votesPerAddress[address].displayAddress}-${votesPerAddress[address].votes}`}
+                  >
+                    <td title={address} className="relative text-ellipsis font-mono overflow-hidden p-2">
+                      <a
+                        className="top-0 left-0 absolute w-full h-full z-10 cursor-pointer opacity-0"
+                        target="_blank"
+                        rel="nofollow noreferrer"
+                        href={`https://debank.com/profile/${address}`}
+                      >
+                        Click to view this address on Debank
+                      </a>
+                      {votesPerAddress[address].displayAddress}:
+                    </td>
+                    <td className="p-2 font-bold">
+                      {new Intl.NumberFormat().format(parseFloat(votesPerAddress[address].votes.toFixed(2)))}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
           {isPageVotesLoading && Object.keys(listProposalsData)?.length > 1 && (

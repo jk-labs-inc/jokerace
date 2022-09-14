@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
 import { chain as wagmiChain, useAccount, useContractEvent } from "wagmi";
-import { fetchEnsName, readContract } from "@wagmi/core";
+import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { chains } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
@@ -89,6 +89,7 @@ export function useProposalVotes(id: number | string) {
       return;
     }
     try {
+      const accountData = await getAccount();
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
@@ -101,12 +102,20 @@ export function useProposalVotes(id: number | string) {
         args: id,
       });
 
+      const usersListWithCurrentUserFirst = Array.from(list);
+      // Make sure that current user address appears first in the list
+      if (accountData?.address && list.includes(accountData?.address)) {
+        const indexToSwitch = list.indexOf(accountData?.address);
+        const addressToBeSwitchedPositionWith = usersListWithCurrentUserFirst[0];
+        usersListWithCurrentUserFirst[0] = accountData?.address;
+        usersListWithCurrentUserFirst[indexToSwitch] = addressToBeSwitchedPositionWith;
+      }
       // Pagination
       const totalPagesPaginationVotes = Math.ceil(list?.length / VOTES_PER_PAGE);
       setTotalPagesPaginationVotes(totalPagesPaginationVotes);
       setCurrentPagePaginationVotes(0);
       //@ts-ignore
-      const paginationChunks = arrayToChunks(list, VOTES_PER_PAGE);
+      const paginationChunks = arrayToChunks(usersListWithCurrentUserFirst, VOTES_PER_PAGE);
       setTotalPagesPaginationVotes(paginationChunks.length);
       setIndexPaginationVotesPerId(paginationChunks);
       if (list.length > 0) await fetchVotesPage(0, paginationChunks[0], paginationChunks.length);
@@ -140,7 +149,6 @@ export function useProposalVotes(id: number | string) {
           await fetchVotesOfAddress(userAddress);
         }),
       );
-
       setIsPageVotesLoading(false);
       setIsPageVotesError(null);
       setHasPaginationVotesNextPage(pageIndex + 1 < totalPagesPaginationVotes);
