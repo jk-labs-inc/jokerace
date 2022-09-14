@@ -11,7 +11,7 @@ interface ListProposalVotesProps {
 
 export const ListProposalVotes = (props: ListProposalVotesProps) => {
   const { id } = props;
-  const { isLoading, isSuccess, isError, retry } = useProposalVotes(id);
+  const { isLoading, isSuccess, isError, retry, fetchVotesPage } = useProposalVotes(id);
   const { listProposalsData } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -19,12 +19,30 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
     }),
     shallow,
   );
-  const { votesPerAddress } = useStoreProposalVotes(
+  const {
+    votesPerAddress,
+    isPageVotesLoading,
+    currentPagePaginationVotes,
+    isPageVotesError,
+    indexPaginationVotes,
+    totalPagesPaginationVotes,
+    hasPaginationVotesNextPage,
+  } = useStoreProposalVotes(
     state => ({
       //@ts-ignore
       votesPerAddress: state.votesPerAddress,
       //@ts-ignore
-      isListVotersLoading: state.isListVotersLoading,
+      isPageVotesLoading: state.isPageVotesLoading,
+      //@ts-ignore
+      currentPagePaginationVotes: state.currentPagePaginationVotes,
+      //@ts-ignore
+      isPageVotesError: state.isPageVotesError,
+      //@ts-ignore
+      indexPaginationVotes: state.indexPaginationVotes,
+      //@ts-ignore
+      totalPagesPaginationVotes: state.totalPagesPaginationVotes,
+      //@ts-ignore
+      hasPaginationVotesNextPage: state.hasPaginationVotesNextPage,
     }),
     shallow,
   );
@@ -97,6 +115,29 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
               ))}
             </tbody>
           </table>
+          {isPageVotesLoading && Object.keys(listProposalsData)?.length > 1 && (
+            <Loader scale="component" classNameWrapper="my-3">
+              Loading proposals...
+            </Loader>
+          )}
+          {hasPaginationVotesNextPage && !isPageVotesLoading && (
+            <div className="pt-8 flex animate-appear">
+              <Button
+                intent="neutral-outline"
+                scale="sm"
+                className="mx-auto animate-appear"
+                onClick={() =>
+                  fetchVotesPage(
+                    currentPagePaginationVotes + 1,
+                    indexPaginationVotes[currentPagePaginationVotes + 1],
+                    totalPagesPaginationVotes,
+                  )
+                }
+              >
+                {isPageVotesError ? "Try again" : "Show more votes"}
+              </Button>
+            </div>
+          )}
         </section>
       )}
     </>

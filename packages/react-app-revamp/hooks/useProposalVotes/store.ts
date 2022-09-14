@@ -7,6 +7,26 @@ export const createStore = () => {
     isListVotersError: null,
     isListVotersLoading: true,
     votesPerAddress: {},
+    isPageVotesLoading: false,
+    isPageVotesSuccess: false,
+    isPageVotesError: null,
+    indexPaginationVotes: [],
+    totalPagesPaginationVotes: 0,
+    currentPagePaginationVotes: 0,
+    hasPaginationVotesNextPage: false,
+    setIsPageVotesLoading: (value: boolean) => set({ isPageVotesLoading: value }),
+    setIsPageVotesSuccess: (value: boolean) => set({ isPageVotesSuccess: value }),
+    setIsPageVotesError: (value: boolean) => set({ isPageVotesError: value }),
+    setCurrentPagePaginationVotes: (currentPage: number) =>
+      set({
+        currentPagePaginationVotes: currentPage,
+      }),
+    setIndexPaginationVotesPerId: (votesPages: Array<any>) =>
+      set({
+        indexPaginationVotes: votesPages,
+      }),
+    setTotalPagesPaginationVotes: (newTotal: number) => set({ totalPagesPaginationVotes: newTotal }),
+    setHasPaginationVotesNextPage: (hasNextPage: boolean) => set({ hasPaginationVotesNextPage: hasNextPage }),
     //@ts-ignore
     setVotesPerAddress: ({ address, value }) =>
       set(state => ({
