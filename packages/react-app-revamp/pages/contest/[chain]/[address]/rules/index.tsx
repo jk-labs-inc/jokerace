@@ -8,6 +8,7 @@ import Steps from '@layouts/LayoutViewContest/Timeline/Steps'
 import { format } from 'date-fns'
 import { CONTEST_STATUS } from '@helpers/contestStatus'
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
 
 interface PageProps {
   address: string,
@@ -16,6 +17,7 @@ interface PageProps {
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
   const { asPath } = useRouter()
+  const accountData = useAccount()
   const { contestState, checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName, submitProposalToken } = useStore(state =>  ({ 
     //@ts-ignore
     votingToken: state.votingToken,
@@ -55,9 +57,9 @@ const Page: NextPage = (props: PageProps) => {
     {!isLoading  && isSuccess && <div className='animate-appear space-y-8'>
      {contestState !== CONTEST_STATUS.SNAPSHOT_ONGOING && <section className='animate-appear'>
        <p className={`p-3 mt-4 rounded-md border-solid border mb-5 text-sm font-bold
-       ${(!snapshotTaken || checkIfUserPassedSnapshotLoading ) ? ' border-neutral-4' : didUserPassSnapshotAndCanVote ? 'bg-positive-1 text-positive-10 border-positive-4' : ' bg-primary-1 text-primary-10 border-primary-4'}`
+       ${(!snapshotTaken || checkIfUserPassedSnapshotLoading || !accountData?.address) ? ' border-neutral-4' : didUserPassSnapshotAndCanVote ? 'bg-positive-1 text-positive-10 border-positive-4' : ' bg-primary-1 text-primary-10 border-primary-4'}`
        }>
-         {checkIfUserPassedSnapshotLoading ? 'Checking snapshot...' : !snapshotTaken ? 'Snapshot hasn\'t been taken yet.': didUserPassSnapshotAndCanVote ? 'Congrats ! Your wallet qualified to vote.' : 'Too bad, your wallet didn\'t qualify to vote.'}
+         {!accountData?.address ? "Connect your wallet to see if you qualified to vote." : checkIfUserPassedSnapshotLoading ? 'Checking snapshot...' : !snapshotTaken ? 'Snapshot hasn\'t been taken yet.': didUserPassSnapshotAndCanVote ? 'Congrats ! Your wallet qualified to vote.' : 'Too bad, your wallet didn\'t qualify to vote.'}
        </p>
      </section>}
      <section>
