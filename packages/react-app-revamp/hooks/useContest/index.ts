@@ -294,12 +294,12 @@ export function useContest() {
         setSubmitProposalTokenAddress(results[4]);
         setSubmitProposalToken(votingTokenRawData);
       }
+      // Check snapshot
       await checkIfCurrentUserQualifyToVote();
 
       if(accountData?.address) {
         // Current user votes
         await updateCurrentUserVotes();
-        // Check snapshot
       }
       // If current page is proposal, fetch proposal with id
       if(asPath.includes('/proposal/')) {
