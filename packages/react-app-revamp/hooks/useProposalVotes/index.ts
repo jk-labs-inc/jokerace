@@ -131,7 +131,6 @@ export function useProposalVotes(id: number | string) {
    * @param totalPagesPaginationVotes - total of pages in the pagination
    */
   async function fetchVotesPage(pageIndex: number, slice: Array<any>, totalPagesPaginationVotes: number) {
-    const chainName = asPath.split("/")[2];
     setCurrentPagePaginationVotes(pageIndex);
     setIsPageVotesLoading(true);
     setIsPageVotesError(null);
@@ -154,6 +153,10 @@ export function useProposalVotes(id: number | string) {
     }
   }
 
+  /**
+   * Fetch the data of a votes for a given wallet
+   * @param userAddress - wallet address
+   */
   async function fetchVotesOfAddress(userAddress: string) {
     const chainName = asPath.split("/")[2];
 
