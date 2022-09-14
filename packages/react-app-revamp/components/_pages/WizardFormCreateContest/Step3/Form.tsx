@@ -344,7 +344,7 @@ export const Form = (props: FormProps) => {
             </FormRadioOption>
           </FormRadioGroup>
           <div className={`${data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ? "pointer-events-none opacity-75" : ""} pis-6 text-sm !mt-0.5 flex items-center flex-wrap`}>
-                <span className="pie-1ex">Address of the submission token</span>
+                <span className="pie-1ex">Address of the submission token:</span>
                 <div className="flex-grow py-1">
                   <FormInput
                     disabled={
