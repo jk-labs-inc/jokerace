@@ -1,4 +1,4 @@
-# JokeDAO
+# jokedao
 
 Check out the live site at [jokedao.io](https://jokedao.io)!
 
