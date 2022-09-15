@@ -2,32 +2,25 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
-import { chain as wagmiChain, useAccount, useContractEvent, useNetwork } from "wagmi";
-import { fetchEnsName, readContract } from "@wagmi/core";
+import { chain as wagmiChain, useAccount, useContractEvent } from "wagmi";
+import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useStore as useStoreContest } from "../useContest/store";
 import { chains } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useStore } from "./store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import arrayToChunks from "@helpers/arrayToChunks";
+
+const VOTES_PER_PAGE = 5;
 
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
   const account = useAccount();
-  const { chain } = useNetwork();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
   const [address] = useState(url[3]);
-
-  const { listProposalsData } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-    }),
-    shallow,
-  );
 
   const {
     isListVotersSuccess,
@@ -37,6 +30,12 @@ export function useProposalVotes(id: number | string) {
     setIsListVotersError,
     setVotesPerAddress,
     setIsListVotersSuccess,
+    setIsPageVotesLoading,
+    setIsPageVotesError,
+    setCurrentPagePaginationVotes,
+    setIndexPaginationVotesPerId,
+    setTotalPagesPaginationVotes,
+    setHasPaginationVotesNextPage,
   } = useStore(
     state => ({
       //@ts-ignore
@@ -55,13 +54,31 @@ export function useProposalVotes(id: number | string) {
       setIsListVotersError: state.setIsListVotersError,
       //@ts-ignore
       setIsListVotersSuccess: state.setIsListVotersSuccess,
+      //@ts-ignore
+      setIsPageVotesLoading: state.setIsPageVotesLoading,
+      //@ts-ignore
+      setIsPageVotesSuccess: state.setIsPageVotesSuccess,
+      //@ts-ignore
+      setIsPageVotesError: state.setIsPageVotesError,
+      //@ts-ignore
+      setCurrentPagePaginationVotes: state.setCurrentPagePaginationVotes,
+      //@ts-ignore
+      setIndexPaginationVotesPerId: state.setIndexPaginationVotesPerId,
+      //@ts-ignore
+      setTotalPagesPaginationVotes: state.setTotalPagesPaginationVotes,
+      //@ts-ignore
+      setHasPaginationVotesNextPage: state.setHasPaginationVotesNextPage,
     }),
     shallow,
   );
 
+  /**
+   * Fetch all votes of a given proposals (amount of votes, + detailed list of voters and the amount of votes they casted)
+   */
   async function fetchProposalVotes() {
     setIsListVotersLoading(true);
     const chainName = url[2];
+
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       setIsListVotersLoading(false);
@@ -72,6 +89,7 @@ export function useProposalVotes(id: number | string) {
       return;
     }
     try {
+      const accountData = await getAccount();
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
@@ -84,30 +102,23 @@ export function useProposalVotes(id: number | string) {
         args: id,
       });
 
-      await Promise.all(
-        list.map(async (userAddress: string) => {
-          const data = await readContract({
-            //@ts-ignore
-            ...contractConfig,
-            functionName: "proposalAddressVotes",
-            args: [id, userAddress],
-            chainId,
-          });
-
-          const author = await fetchEnsName({
-            address: userAddress,
-            chainId: wagmiChain.mainnet.id,
-          });
-          setVotesPerAddress({
-            address: userAddress,
-            value: {
-              displayAddress: author ?? shortenEthereumAddress(userAddress),
-              //@ts-ignore
-              votes: data?.forVotes ? data?.forVotes / 1e18 - data?.againstVotes / 1e18 : data / 1e18,
-            },
-          });
-        }),
-      );
+      const usersListWithCurrentUserFirst = Array.from(list);
+      // Make sure that current user address appears first in the list
+      if (accountData?.address && list.includes(accountData?.address)) {
+        const indexToSwitch = list.indexOf(accountData?.address);
+        const addressToBeSwitchedPositionWith = usersListWithCurrentUserFirst[0];
+        usersListWithCurrentUserFirst[0] = accountData?.address;
+        usersListWithCurrentUserFirst[indexToSwitch] = addressToBeSwitchedPositionWith;
+      }
+      // Pagination
+      const totalPagesPaginationVotes = Math.ceil(list?.length / VOTES_PER_PAGE);
+      setTotalPagesPaginationVotes(totalPagesPaginationVotes);
+      setCurrentPagePaginationVotes(0);
+      //@ts-ignore
+      const paginationChunks = arrayToChunks(usersListWithCurrentUserFirst, VOTES_PER_PAGE);
+      setTotalPagesPaginationVotes(paginationChunks.length);
+      setIndexPaginationVotesPerId(paginationChunks);
+      if (list.length > 0) await fetchVotesPage(0, paginationChunks[0], paginationChunks.length);
       setIsListVotersSuccess(true);
       setIsListVotersError(null);
       setIsListVotersLoading(false);
@@ -122,11 +133,82 @@ export function useProposalVotes(id: number | string) {
     }
   }
 
-  useEffect(() => {
-    if (chain?.id === chainId && listProposalsData[id] && listProposalsData[id]?.votes > 0) {
-      fetchProposalVotes();
+  /**
+   * Fetch the data of each vote in page X
+   * @param pageIndex - index of the page of votes to fetch
+   * @param slice - Array of the addresses that have cast a vote for a given proposal
+   * @param totalPagesPaginationVotes - total of pages in the pagination
+   */
+  async function fetchVotesPage(pageIndex: number, slice: Array<any>, totalPagesPaginationVotes: number) {
+    setCurrentPagePaginationVotes(pageIndex);
+    setIsPageVotesLoading(true);
+    setIsPageVotesError(null);
+    try {
+      await Promise.all(
+        slice.map(async (userAddress: string) => {
+          await fetchVotesOfAddress(userAddress);
+        }),
+      );
+      setIsPageVotesLoading(false);
+      setIsPageVotesError(null);
+      setHasPaginationVotesNextPage(pageIndex + 1 < totalPagesPaginationVotes);
+    } catch (e) {
+      setIsPageVotesLoading(false);
+      //@ts-ignore
+      setIsPageVotesError(e?.message ?? e);
+      //@ts-ignore
+      toast.error(e?.message ?? e);
     }
-  }, [chain?.id, chainId, listProposalsData[id]?.votes]);
+  }
+
+  /**
+   * Fetch the data of a votes for a given wallet
+   * @param userAddress - wallet address
+   */
+  async function fetchVotesOfAddress(userAddress: string) {
+    const chainName = asPath.split("/")[2];
+
+    try {
+      const abi = await getContestContractVersion(address, chainName);
+      if (abi === null) {
+        toast.error("This contract doesn't exist on this chain.");
+        setIsPageVotesError("This contract doesn't exist on this chain.");
+        setIsPageVotesLoading(false);
+        return;
+      }
+      const contractConfig = {
+        addressOrName: address,
+        contractInterface: abi,
+        chainId: chainId,
+      };
+
+      const data = await readContract({
+        //@ts-ignore
+        ...contractConfig,
+        functionName: "proposalAddressVotes",
+        args: [id, userAddress],
+        chainId,
+      });
+
+      const author = await fetchEnsName({
+        address: userAddress,
+        chainId: wagmiChain.mainnet.id,
+      });
+
+      setVotesPerAddress({
+        address: userAddress,
+        value: {
+          displayAddress: author ?? shortenEthereumAddress(userAddress),
+          //@ts-ignore
+          votes: data?.forVotes ? data?.forVotes / 1e18 - data?.againstVotes / 1e18 : data / 1e18,
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      //@ts-ignore
+      toast.error(e?.message ?? e);
+    }
+  }
 
   useEffect(() => {
     if (account?.connector) {
@@ -145,8 +227,8 @@ export function useProposalVotes(id: number | string) {
     addressOrName: asPath.split("/")[3],
     contractInterface: DeployedContestContract.abi,
     eventName: "VoteCast",
-    listener: async event => {
-      await fetchProposalVotes();
+    listener: event => {
+      fetchVotesOfAddress(event[0]);
     },
   });
 
@@ -155,6 +237,7 @@ export function useProposalVotes(id: number | string) {
     retry: fetchProposalVotes,
     isSuccess: isListVotersSuccess,
     isError: isListVotersError,
+    fetchVotesPage: fetchVotesPage,
   };
 }
 

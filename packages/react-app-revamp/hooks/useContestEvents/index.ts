@@ -1,10 +1,11 @@
 import isUrlToImage from "@helpers/isUrlToImage";
-import { chain, fetchEnsName, readContract } from "@wagmi/core";
+import { chain, fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useContractEvent } from "wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useStore as useStoreSubmitProposal } from "../useSubmitProposal/store";
 import { useStore as useStoreContest } from "../useContest/store";
+import useContest from "@hooks/useContest";
 
 export function useContestEvents() {
   const { asPath } = useRouter();
@@ -21,6 +22,7 @@ export function useContestEvents() {
     //@ts-ignore
     listProposalsData,
   } = useStoreContest();
+  const { updateCurrentUserVotes } = useContest();
 
   useContractEvent({
     addressOrName: asPath.split("/")[3],
@@ -59,7 +61,7 @@ export function useContestEvents() {
     listener: async event => {
       softDeleteProposal(event[0].toString());
     },
-  })
+  });
 
   useContractEvent({
     addressOrName: asPath.split("/")[3],
@@ -67,6 +69,13 @@ export function useContestEvents() {
     eventName: "VoteCast",
 
     listener: async event => {
+      const accountData = await getAccount();
+      // if the connected wallet is the address that casted votes
+      if (accountData?.address && event[0] === accountData?.address) {
+        // Update the current user available votes
+        updateCurrentUserVotes();
+      }
+
       const proposalId = event[5].args.proposalId;
       const votes = await readContract({
         addressOrName: asPath.split("/")[3],
@@ -75,7 +84,7 @@ export function useContestEvents() {
         args: proposalId,
       });
 
-      if(listProposalsData[proposalId]) {
+      if (listProposalsData[proposalId]) {
         //@ts-ignore
         setProposalVotes({
           id: proposalId,
@@ -102,7 +111,7 @@ export function useContestEvents() {
           //@ts-ignore
           votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
         };
-  
+
         setProposalData({ id: proposalId, data: proposalData });
       }
     },
