@@ -247,7 +247,7 @@ export const ListProposals = () => {
                       </>
                     )}
                   </div>
-                  <div className="relative overflow-visible">
+                  <div className="relative overflow-hidden">
                     {listProposalsData[id].votes > 0 && (
                       <span
                         className={`${styles.rankIndicator} inline-flex 2xs:hidden rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
