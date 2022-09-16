@@ -23,7 +23,7 @@ interface FormProps {
   setData: any;
   setFields: any;
 }
-const appearAsNeutralButton = button({ intent: "neutral-outline" });
+const appearAsNeutralButton = button({ intent: "ghost-neutral" });
 
 export const Form = (props: FormProps) => {
   const formId = useId();
@@ -197,7 +197,6 @@ export const Form = (props: FormProps) => {
         <Button
           isLoading={isDeploying === true}
           //@ts-ignore
-          intent="neutral-oultine"
           disabled={
             !account.isConnected ||
             chain?.unsupported === true ||

@@ -716,7 +716,6 @@ export const Form = (props: FormProps) => {
         <Button
           isLoading={isDeploying === true}
           //@ts-ignore
-          intent="neutral-oultine"
           disabled={
             !isValid() ||
             interacted() === null ||
@@ -736,7 +735,7 @@ export const Form = (props: FormProps) => {
           Create contest
         </Button>
 
-        <div className={button({ intent: "neutral-outline" })} tabIndex={0} role="button" {...pressProps}>
+        <div className={button({ intent: "ghost-neutral" })} tabIndex={0} role="button" {...pressProps}>
           Next
         </div>
       </div>
