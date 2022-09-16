@@ -712,8 +712,9 @@ export const Form = (props: FormProps) => {
           </FormField>
         </div>
       </fieldset>
-      <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
+      <div className="pt-6 flex flex-col space-y-5">
         <Button
+          className="sm:w-fit-content"
           isLoading={isDeploying === true}
           //@ts-ignore
           disabled={
@@ -735,7 +736,7 @@ export const Form = (props: FormProps) => {
           Create contest
         </Button>
 
-        <div className={button({ intent: "ghost-neutral", scale: "sm", class: "min-w-[12ex]" })} tabIndex={0} role="button" {...pressProps}>
+        <div className={button({ intent: "ghost-neutral", scale: "sm", class: "sm:w-fit-content" })} tabIndex={0} role="button" {...pressProps}>
           Next
         </div>
       </div>

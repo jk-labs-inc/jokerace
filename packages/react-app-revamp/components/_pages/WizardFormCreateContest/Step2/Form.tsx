@@ -23,7 +23,7 @@ interface FormProps {
   setData: any;
   setFields: any;
 }
-const appearAsNeutralButton = button({ intent: "ghost-neutral", scale: "sm", class: "min-w-[12ex]" });
+const appearAsNeutralButton = button({ intent: "ghost-neutral", scale: "sm", class: "sm:w-fit-content" });
 
 export const Form = (props: FormProps) => {
   const formId = useId();
@@ -193,8 +193,9 @@ export const Form = (props: FormProps) => {
           />
         </FormField>
       </fieldset>
-      <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
+      <div className="pt-6 flex flex-col space-y-5">
         <Button
+          className="sm:w-fit-content"
           isLoading={isDeploying === true}
           //@ts-ignore
           disabled={
