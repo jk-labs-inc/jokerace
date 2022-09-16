@@ -735,7 +735,7 @@ export const Form = (props: FormProps) => {
           Create contest
         </Button>
 
-        <div className={button({ intent: "ghost-neutral" })} tabIndex={0} role="button" {...pressProps}>
+        <div className={button({ intent: "ghost-neutral", scale: "sm", class: "min-w-[12ex]" })} tabIndex={0} role="button" {...pressProps}>
           Next
         </div>
       </div>

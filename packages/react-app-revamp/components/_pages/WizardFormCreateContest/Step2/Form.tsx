@@ -23,7 +23,7 @@ interface FormProps {
   setData: any;
   setFields: any;
 }
-const appearAsNeutralButton = button({ intent: "ghost-neutral" });
+const appearAsNeutralButton = button({ intent: "ghost-neutral", scale: "sm", class: "min-w-[12ex]" });
 
 export const Form = (props: FormProps) => {
   const formId = useId();
