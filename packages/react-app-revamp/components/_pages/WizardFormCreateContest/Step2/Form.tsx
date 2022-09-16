@@ -193,7 +193,7 @@ export const Form = (props: FormProps) => {
           />
         </FormField>
       </fieldset>
-      <div className="pt-6 flex flex-col space-y-5">
+      <div className="pt-8 md:pt-12 flex flex-col space-y-5">
         <Button
           className="sm:w-fit-content"
           isLoading={isDeploying === true}

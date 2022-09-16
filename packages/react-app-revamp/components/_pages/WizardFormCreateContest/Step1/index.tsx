@@ -25,7 +25,7 @@ export const Step1 = () => {
           To create one, we’ll <span>mint a voting token, set the rules, and then airdrop the token</span> to your
           community.
         </p>
-        <p className="font-bold !mb-6">Sound good ?</p>
+        <p className="font-bold !mb-8 !md:mb-12">Sound good ?</p>
         <Button className="w-full 2xs:w-auto" intent="neutral-outline" onClick={() => setCurrentStep(2)}>
           Let’s do it 🔥
         </Button>
