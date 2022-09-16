@@ -1,5 +1,3 @@
-const colors = require("tailwindcss/colors");
-
 const typography = {
   fontSizeMin: 1.125,
   fontSizeMax: 1.25,
@@ -69,6 +67,7 @@ module.exports = {
       xs: clamp(-1),
       sm: clamp(-0.5),
       base: clamp(0),
+      prose: clamp(0.25),
       md: clamp(0.5),
       lg: clamp(1),
       xl: clamp(2),
@@ -165,6 +164,55 @@ module.exports = {
           css: {
             color: theme("colors.true-white"),
             "--tw-prose-invert-hr": theme("colors.neutral.4"),
+            fontSize: theme("fontSize.base"),
+            p: {
+              fontSize: clamp(0),
+              marginTop: "0.5em",
+              marginBottom: "0.5em",
+              lineHeight: 1.75,
+            },
+            br: {
+              display: 'block',
+              marginBottom: "0.75em"
+            },
+            h1: {
+              fontSize: clamp(3),
+              lineHeight: 1.5,
+              marginTop: "0.7em",
+              marginBottom: "0.7em",
+            },
+            h2: {
+              fontSize: clamp(1.5),
+              lineHeight: 1.5,
+              marginTop: "1em",
+              marginBottom: "1em",
+            },
+            h3: {
+              fontSize: clamp(1.2),
+              lineHeight: 1.5,
+              marginTop: "1em",
+              marginBottom: "1em",
+            },
+            h4: {
+              fontSize: clamp(0.5),
+              lineHeight: 1.5,
+              marginTop: "1em",
+              marginBottom: "1em",
+              fontWeight: theme("fontWeight.bold"),
+            },
+            h5: {
+              fontSize: clamp(0.3),
+              lineHeight: 1.5,
+              marginTop: "1em",
+              marginBottom: "1em",
+              fontWeight: theme("fontWeight.bold"),
+            },
+            li: {
+              p: {
+                marginTop: 0,
+                marginBottom: 0,
+              }
+            }
           },
         },
       }),
