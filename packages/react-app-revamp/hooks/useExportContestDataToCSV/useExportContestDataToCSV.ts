@@ -91,7 +91,7 @@ export function useExportContestDataToCSV() {
       for (let i = 0; i < listProposalsIds.length; i++) {
         const propId = listProposalsIds[i];
         const propTotalVotes = listProposalsData[propId].votes;
-        const propContent = listProposalsData[propId].content;
+        const propContent = listProposalsData[propId]?.content ?? "";
         const proposerAddress = listProposalsData[propId].authorEthereumAddress;
         const addressesVoted = await fetchProposalVoters(propId);
         if (!ensNamesMap.has(proposerAddress)) {
