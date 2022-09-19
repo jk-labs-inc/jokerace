@@ -78,7 +78,7 @@ export function useExportContestDataToCSV() {
   }
 
   async function formatContestCSVData() {
-    stateExportData.setLoadingMessage(null);
+    stateExportData.setLoadingMessage("Formatting contest data, one moment...");
     stateExportData.setIsLoading(true);
     stateExportData.setIsSuccess(false);
     stateExportData.setCsv(null);

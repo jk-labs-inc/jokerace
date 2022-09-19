@@ -289,7 +289,7 @@ export const ListProposals = () => {
               Loading proposals...
             </Loader>
           )}
-          {Object.keys(listProposalsData)?.length < listProposalsIds && !isPageProposalsLoading && (
+          {Object.keys(listProposalsData)?.length < listProposalsIds.length && !isPageProposalsLoading && (
             <div className="pt-8 flex animate-appear">
               <Button
                 intent="neutral-outline"
