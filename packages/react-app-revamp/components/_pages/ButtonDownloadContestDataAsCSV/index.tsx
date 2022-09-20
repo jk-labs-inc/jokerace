@@ -31,33 +31,47 @@ export const ButtonDownloadContestDataAsCSV = () => {
   );
 
   const { stateExportData, formatContestCSVData } = useExportContestDataToCSV();
-  useEffect(() => {
-    const startDownloading = async () => {
-      stateExportData.setLoadingMessage("Loading remaining proposals data...");
-      stateExportData.setIsReady(false);
-      try {
-        if (hasPaginationProposalsNextPage) {
-          const loadAllContestData = [];
-          for (let i = currentPagePaginationProposals; i < totalPagesPaginationProposals - 1; i++) {
-            loadAllContestData.push(
-              fetchProposalsPage(i + 1, indexPaginationProposals[i + 1], totalPagesPaginationProposals),
-            );
-          }
-          await Promise.all(loadAllContestData);
+  async function startDownloading() {
+    stateExportData.setLoadingMessage("Loading remaining proposals data...");
+    stateExportData.setIsReady(false);
+    try {
+      if (hasPaginationProposalsNextPage) {
+        const loadAllContestData = [];
+        for (let i = currentPagePaginationProposals; i < totalPagesPaginationProposals - 1; i++) {
+          loadAllContestData.push(
+            fetchProposalsPage(i + 1, indexPaginationProposals[i + 1], totalPagesPaginationProposals),
+          );
         }
-        stateExportData.setIsReady(true);
-      } catch (e) {
-        stateExportData.setIsReady(false);
-        console.error(e);
+        await Promise.all(loadAllContestData);
       }
-    };
-    startDownloading();
-  }, []);
+      stateExportData.setIsReady(true);
+    } catch (e) {
+      stateExportData.setIsReady(false);
+      console.error(e);
+    }
+  }
+
+  useEffect(() => {
+    if (stateExportData.shouldStart === true) startDownloading();
+  }, [stateExportData.shouldStart]);
 
   useEffect(() => {
     if (stateExportData.isReady === true) formatContestCSVData();
   }, [stateExportData.isReady]);
 
+  if (!stateExportData.shouldStart)
+    return (
+      <>
+        <Button
+          className="animate-appear"
+          intent="neutral-outline"
+          onClick={() => stateExportData.setShouldStart(true)}
+          type="button"
+        >
+          Start exporting data
+        </Button>
+      </>
+    );
   return (
     <>
       {(stateExportData.isLoading || !stateExportData.isReady) && (
@@ -87,11 +101,11 @@ export const ButtonDownloadContestDataAsCSV = () => {
           {/* @ts-ignore */}
           <CSVLink
             filename={`jokedao-contest-data-${format(new Date(), "yyyy-MM-dd")}.csv`}
-            className={button({ intent: "neutral-outline" })}
+            className={button({ intent: "primary-outline" })}
             data={stateExportData.csv}
             headers={CSV_COLUMNS_HEADERS}
           >
-            Export
+            Download CSV file
           </CSVLink>
         </div>
       )}

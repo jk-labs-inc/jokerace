@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { HEADERS_KEYS } from "@config/react-csv/export-contest";
 import { createExportDataStore } from "./store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useEffect } from "react";
 
 const useStoreExportData = createExportDataStore();
 
@@ -23,6 +24,11 @@ export function useExportContestDataToCSV() {
     shallow,
   );
 
+  /**
+   * Fetch the list of voters for a given proposal
+   * @param proposalId - id of the proposal
+   * @returns Array of voters addresses
+   */
   async function fetchProposalVoters(proposalId: number | string) {
     const url = asPath.split("/");
     const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id;
@@ -51,6 +57,12 @@ export function useExportContestDataToCSV() {
     }
   }
 
+  /**
+   * fetch the amount of votes casted by a given address for a given proposal
+   * @param id - id of the proposal
+   * @param userAddress - ethereum address
+   * @returns votes - amount of votes (forVotes - againstVotes for V2 contests ; votes for legacy contests)
+   */
   async function fetchVotesPerAddress(id: number | string, userAddress: string) {
     const url = asPath.split("/");
     const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id;
@@ -71,12 +83,15 @@ export function useExportContestDataToCSV() {
         chainId,
       });
       //@ts-ignore
-      return data / 1e18;
+      return data?.forVotes ? data?.forVotes / 1e18 - data?.againstVotes / 1e18 : data / 1e18;
     } catch (e) {
       console.error(e);
     }
   }
 
+  /**
+   * Format the contest data and create a CSV file with those data
+   */
   async function formatContestCSVData() {
     stateExportData.setLoadingMessage("Formatting contest data, one moment...");
     stateExportData.setIsLoading(true);
@@ -90,83 +105,85 @@ export function useExportContestDataToCSV() {
     try {
       for (let i = 0; i < listProposalsIds.length; i++) {
         const propId = listProposalsIds[i];
-        const propTotalVotes = listProposalsData[propId].votes;
-        const propContent = listProposalsData[propId]?.content ?? "";
-        const proposerAddress = listProposalsData[propId].authorEthereumAddress;
-        const addressesVoted = await fetchProposalVoters(propId);
-        if (!ensNamesMap.has(proposerAddress)) {
-          // Keep a cache of ENS resolutions
-          const ensResolve = await fetchEnsResolver({
-            name: listProposalsData[propId].author,
-            chainId: chain.mainnet.id,
-          });
-          const checkedResult = !ensResolve ? "No reverse record" : listProposalsData[propId].author;
-          ensNamesMap.set(proposerAddress, checkedResult);
-        }
-        const proposerEnsLookupResult = ensNamesMap.get(proposerAddress);
-        const COMMON_DATA = {
-          [HEADERS_KEYS.PROPOSAL_ID]: propId,
-          [HEADERS_KEYS.AUTHOR]: proposerAddress,
-          [HEADERS_KEYS.PROPOSAL_CONTENT]: propContent,
-          [HEADERS_KEYS.TOTAL_VOTES]: propTotalVotes,
-        };
-
-        //@ts-ignore
-        if (addressesVoted.length == 0) {
-          const noVoterDict = {
-            ...COMMON_DATA,
-            [HEADERS_KEYS.VOTER]: "No voters",
-            [HEADERS_KEYS.VOTES]: "No votes",
-            [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: 0,
-            [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:
-              proposerEnsLookupResult === "No reverse record" ? false : true,
-            [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]:
-              proposerEnsLookupResult === "No reverse record" ? "" : proposerEnsLookupResult,
-            [HEADERS_KEYS.VOTER_HAS_ENS_REVERSE_RECORD_SET]: "No voters",
-            [HEADERS_KEYS.VOTER_ENS_REVERSE_RECORD_IF_SET]: "",
-          };
-
-          propArrayToReturn.push(noVoterDict);
-        }
-
-        //@ts-ignore
-        for (let j = 0; j < addressesVoted.length; j++) {
-          //@ts-ignore
-          const address = addressesVoted[j];
-          const addressPropVote = await fetchVotesPerAddress(propId, address);
-
-          if (!ensNamesMap.has(address)) {
+        if (propId) {
+          const propTotalVotes = listProposalsData[propId].votes;
+          const propContent = listProposalsData[propId]?.content ?? "";
+          const proposerAddress = listProposalsData[propId].authorEthereumAddress;
+          const addressesVoted = await fetchProposalVoters(propId);
+          if (!ensNamesMap.has(proposerAddress)) {
             // Keep a cache of ENS resolutions
-            const ensLookupResult = await fetchEnsName({
-              address: address,
+            const ensResolve = await fetchEnsResolver({
+              name: listProposalsData[propId].author,
               chainId: chain.mainnet.id,
             });
-
-            const checkedResult = ensLookupResult === null ? "No reverse record" : ensLookupResult;
-            ensNamesMap.set(address, checkedResult);
+            const checkedResult = !ensResolve ? "No reverse record" : listProposalsData[propId].author;
+            ensNamesMap.set(proposerAddress, checkedResult);
           }
-          const voterEnsLookupResult = ensNamesMap.get(address);
-
-          const voterDict = {
-            ...COMMON_DATA,
-            [HEADERS_KEYS.VOTER]: address,
-            [HEADERS_KEYS.VOTES]: addressPropVote,
-            //@ts-ignore
-            [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: addressPropVote / propTotalVotes,
-            [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:
-              proposerEnsLookupResult == "No reverse record" ? false : true,
-            [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]:
-              proposerEnsLookupResult == "No reverse record" ? "" : proposerEnsLookupResult,
-            [HEADERS_KEYS.VOTER_HAS_ENS_REVERSE_RECORD_SET]: voterEnsLookupResult == "No reverse record" ? false : true,
-            [HEADERS_KEYS.VOTER_ENS_REVERSE_RECORD_IF_SET]:
-              voterEnsLookupResult == "No reverse record" ? "" : voterEnsLookupResult,
+          const proposerEnsLookupResult = ensNamesMap.get(proposerAddress);
+          const COMMON_DATA = {
+            [HEADERS_KEYS.PROPOSAL_ID]: propId,
+            [HEADERS_KEYS.AUTHOR]: proposerAddress,
+            [HEADERS_KEYS.PROPOSAL_CONTENT]: propContent,
+            [HEADERS_KEYS.TOTAL_VOTES]: propTotalVotes,
           };
 
-          propArrayToReturn.push(voterDict);
-        }
+          //@ts-ignore
+          if (addressesVoted.length == 0) {
+            const noVoterDict = {
+              ...COMMON_DATA,
+              [HEADERS_KEYS.VOTER]: "No voters",
+              [HEADERS_KEYS.VOTES]: "No votes",
+              [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: 0,
+              [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:
+                proposerEnsLookupResult === "No reverse record" ? false : true,
+              [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]:
+                proposerEnsLookupResult === "No reverse record" ? "" : proposerEnsLookupResult,
+              [HEADERS_KEYS.VOTER_HAS_ENS_REVERSE_RECORD_SET]: "No voters",
+              [HEADERS_KEYS.VOTER_ENS_REVERSE_RECORD_IF_SET]: "",
+            };
 
-        if (i % tenthPercentile == 0) {
-          stateExportData.setLoadingMessage(`Loading ${i} of ${listProposalsIds.length} entries...`);
+            propArrayToReturn.push(noVoterDict);
+          }
+
+          //@ts-ignore
+          for (let j = 0; j < addressesVoted.length; j++) {
+            //@ts-ignore
+            const address = addressesVoted[j];
+            const addressPropVote = await fetchVotesPerAddress(propId, address);
+            if (!ensNamesMap.has(address)) {
+              // Keep a cache of ENS resolutions
+              const ensLookupResult = await fetchEnsName({
+                address: address,
+                chainId: chain.mainnet.id,
+              });
+
+              const checkedResult = ensLookupResult === null ? "No reverse record" : ensLookupResult;
+              ensNamesMap.set(address, checkedResult);
+            }
+            const voterEnsLookupResult = ensNamesMap.get(address);
+
+            const voterDict = {
+              ...COMMON_DATA,
+              [HEADERS_KEYS.VOTER]: address,
+              [HEADERS_KEYS.VOTES]: addressPropVote,
+              //@ts-ignore
+              [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: addressPropVote / propTotalVotes,
+              [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:
+                proposerEnsLookupResult == "No reverse record" ? false : true,
+              [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]:
+                proposerEnsLookupResult == "No reverse record" ? "" : proposerEnsLookupResult,
+              [HEADERS_KEYS.VOTER_HAS_ENS_REVERSE_RECORD_SET]:
+                voterEnsLookupResult == "No reverse record" ? false : true,
+              [HEADERS_KEYS.VOTER_ENS_REVERSE_RECORD_IF_SET]:
+                voterEnsLookupResult == "No reverse record" ? "" : voterEnsLookupResult,
+            };
+
+            propArrayToReturn.push(voterDict);
+          }
+
+          if (i % tenthPercentile == 0) {
+            stateExportData.setLoadingMessage(`Loading ${i} of ${listProposalsIds.length} entries...`);
+          }
         }
       }
 
@@ -181,6 +198,10 @@ export function useExportContestDataToCSV() {
       stateExportData.setError(e?.message ?? e, true);
     }
   }
+
+  useEffect(() => {
+    stateExportData.resetState();
+  }, []);
 
   return {
     stateExportData,
