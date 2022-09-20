@@ -503,7 +503,8 @@ export function useContest() {
         proposalsIds = [];
         proposalsIdsRawData[0].map((data: any, index: number) => {
           proposalsIds.push({
-            votes: proposalsIdsRawData[1][index][0] / 1e18,
+            // for votes minus against votes if there are against votes
+            votes: proposalsIdsRawData[1][index].length == 1 ? proposalsIdsRawData[1][index][0] / 1e18 : proposalsIdsRawData[1][index][0] / 1e18 - proposalsIdsRawData[1][index][1] / 1e18,
             id: data,
           });
         });

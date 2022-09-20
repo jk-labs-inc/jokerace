@@ -103,6 +103,13 @@
   .prose :where(blockquote p:first-of-type):not(:where([class~="not-prose"] *))::after {
     content: none !important;
   }
+
+  .prose > span:first-child > *:first-child {
+    margin-top: 0 !important;
+  }
+  .prose > span:first-child > *:last-child {
+    margin-bottom: 0 !important;
+  }
 }
 
 @layer components {
