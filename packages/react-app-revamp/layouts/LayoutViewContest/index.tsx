@@ -122,7 +122,7 @@ const LayoutViewContest = (props: any) => {
 
   useContestEvents();
   useEffect(() => {
-      fetchContestInfo();
+    fetchContestInfo();
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
@@ -153,7 +153,7 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     const verifySnapshot = async () => {
-      if(account?.address) await checkIfCurrentUserQualifyToVote();
+      if (account?.address) await checkIfCurrentUserQualifyToVote();
     };
 
     if (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING) updateSnapshotProgress();
@@ -163,12 +163,12 @@ const LayoutViewContest = (props: any) => {
   }, [contestStatus, account?.address]);
 
   useEffect(() => {
-    if(isListProposalsLoading && account?.address) {
+    if (isListProposalsLoading && account?.address) {
       checkIfCurrentUserQualifyToVote();
       checkCurrentUserAmountOfProposalTokens();
       checkIfCurrentUserQualifyToVote();
     }
-  }, [chainId, account?.address, isListProposalsLoading])
+  }, [chainId, account?.address, isListProposalsLoading]);
   return (
     <>
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
@@ -183,7 +183,9 @@ const LayoutViewContest = (props: any) => {
         } flex-grow container mx-auto md:grid md:gap-6 md:grid-cols-12 md:-mb-20`}
       >
         <div
-          className={`md:max-h-[calc(100vh-8rem)] ${styles.navbar} ${styles.withFakeSeparator} z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-4`}
+          className={`md:max-h-[calc(100vh-8rem)] ${styles.navbar} ${styles.withFakeSeparator} ${
+            pathname === ROUTE_CONTEST_PROPOSAL ? "!hidden" : ""
+          } z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-4`}
         >
           <Sidebar
             isLoading={isLoading}
@@ -195,37 +197,37 @@ const LayoutViewContest = (props: any) => {
             setIsTimelineModalOpen={setIsTimelineModalOpen}
           />
         </div>
-        <div className="md:pt-5 md:pb-20 flex flex-col md:col-span-8">
-          {
-            ((isLoading || isListProposalsLoading) && (
-              <div className="animate-appear">
-                <Loader scale="page">
-                  Loading contest info...
-                </Loader>
-              </div>
-            ))}
+        <div
+          className={`md:pt-5 md:pb-20 flex flex-col ${
+            pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-8"
+          }`}
+        >
+          {(isLoading || isListProposalsLoading) && (
+            <div className="animate-appear">
+              <Loader scale="page">Loading contest info...</Loader>
+            </div>
+          )}
 
-              {account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose)) &&(
-                <div className="animate-appear flex text-center flex-col my-10 mx-auto">
-                  <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
-                  <p className="mt-2 mb-4 text-neutral-11 text-xs">
-                    You need to use {asPath.split("/")[2]} to interact with this contest.
-                  </p>
-                  <Button
-                    onClick={() => {
-                      switchNetwork?.({chainId});
-                    }}
-                    className="mx-auto"
-                  >
-                    Switch network
-                  </Button>
-                </div>
-              )}
+          {account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose)) && (
+            <div className="animate-appear flex text-center flex-col my-10 mx-auto">
+              <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
+              <p className="mt-2 mb-4 text-neutral-11 text-xs">
+                You need to use {asPath.split("/")[2]} to interact with this contest.
+              </p>
+              <Button
+                onClick={() => {
+                  switchNetwork?.({ chainId });
+                }}
+                className="mx-auto"
+              >
+                Switch network
+              </Button>
+            </div>
+          )}
 
           {
             <>
-
-              {((account?.address && chain?.id !== chainId) === false)  && isError !== null && !isLoading && (
+              {(account?.address && chain?.id !== chainId) === false && isError !== null && !isLoading && (
                 <div className="my-6 md:my-0 animate-appear flex flex-col">
                   <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                     <p className="text-sm font-bold text-negative-10 text-center">
@@ -309,19 +311,17 @@ const LayoutViewContest = (props: any) => {
                   {children}
 
                   <DialogModal isOpen={isTimelineModalOpen} setIsOpen={setIsTimelineModalOpen} title="Contest timeline">
-                    {!isLoading &&
-                      isSuccess &&
-                      isDate(submissionsOpen) &&
-                      isDate(votesOpen) &&
-                      isDate(votesClose) && (
-                        <>
-                          <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
-                          {account?.address && <div className="mb-4">
+                    {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
+                      <>
+                        <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
+                        {account?.address && (
+                          <div className="mb-4">
                             <VotingToken />
-                          </div>}
-                          <Timeline />
-                        </>
-                      )}
+                          </div>
+                        )}
+                        <Timeline />
+                      </>
+                    )}
                   </DialogModal>
                   {!isLoading &&
                     isSuccess &&
@@ -337,16 +337,14 @@ const LayoutViewContest = (props: any) => {
                         setIsOpen={stateSubmitProposal.setIsModalOpen}
                       />
                     )}
-                  {!isLoading &&
-                    isSuccess &&
-                    chain?.id === chainId &&
+                  {!isLoading && isSuccess && chain?.id === chainId && (
                     <DialogModalDeleteProposal
                       /* @ts-ignore */
                       isOpen={stateDeleteProposasl.isModalOpen}
                       /* @ts-ignore */
                       setIsOpen={stateDeleteProposasl.setIsModalOpen}
                     />
-                  }
+                  )}
                   {!isLoading &&
                     isSuccess &&
                     chain?.id === chainId &&
@@ -374,28 +372,24 @@ const LayoutViewContest = (props: any) => {
 export const getLayout = (page: any) => {
   return getBaseLayout(
     <ErrorBoundary
-    fallbackRender={({error, resetErrorBoundary}) => (
-      <div role="alert" className="container m-auto sm:text-center">
-        <p className='text-2xl font-black mb-3 text-primary-10'>Something went wrong</p>
-        {/*  eslint-disable-next-line react/no-unescaped-entities */}
-        <p className='text-neutral-12 mb-6'>
-          {error?.message ?? error}
-        </p>
-        <Button onClick={resetErrorBoundary}>
-          Try again
-        </Button>
-      </div>
-    )}
-  >
-    <ProviderContest createStore={createStoreContest}>
-      <ProviderSubmitProposal createStore={createStoreSubmitProposal}>
-        <ProviderCastVotes createStore={createStoreCastVotes}>
-          <ProviderDeleteProposal createStore={createStoreDeleteProposal}>
-            <LayoutViewContest>{page}</LayoutViewContest>
-          </ProviderDeleteProposal>
-        </ProviderCastVotes>
-      </ProviderSubmitProposal>
-    </ProviderContest>
+      fallbackRender={({ error, resetErrorBoundary }) => (
+        <div role="alert" className="container m-auto sm:text-center">
+          <p className="text-2xl font-black mb-3 text-primary-10">Something went wrong</p>
+          {/*  eslint-disable-next-line react/no-unescaped-entities */}
+          <p className="text-neutral-12 mb-6">{error?.message ?? error}</p>
+          <Button onClick={resetErrorBoundary}>Try again</Button>
+        </div>
+      )}
+    >
+      <ProviderContest createStore={createStoreContest}>
+        <ProviderSubmitProposal createStore={createStoreSubmitProposal}>
+          <ProviderCastVotes createStore={createStoreCastVotes}>
+            <ProviderDeleteProposal createStore={createStoreDeleteProposal}>
+              <LayoutViewContest>{page}</LayoutViewContest>
+            </ProviderDeleteProposal>
+          </ProviderCastVotes>
+        </ProviderSubmitProposal>
+      </ProviderContest>
     </ErrorBoundary>,
   );
 };
