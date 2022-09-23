@@ -290,7 +290,7 @@ export const ListProposals = () => {
                             intent="ghost-primary"
                             type="button"
                           >
-                            Read more
+                            Read full proposal
                           </Button>
                         )}
 
