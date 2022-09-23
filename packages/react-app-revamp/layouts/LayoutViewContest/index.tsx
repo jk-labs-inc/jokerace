@@ -185,7 +185,7 @@ const LayoutViewContest = (props: any) => {
         <div
           className={`md:max-h-[calc(100vh-8rem)] ${styles.navbar} ${styles.withFakeSeparator} ${
             pathname === ROUTE_CONTEST_PROPOSAL ? "!hidden" : ""
-          } z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-4`}
+          } z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-3`}
         >
           <Sidebar
             isLoading={isLoading}
@@ -199,7 +199,7 @@ const LayoutViewContest = (props: any) => {
         </div>
         <div
           className={`md:pt-5 md:pb-20 flex flex-col ${
-            pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-8"
+            pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
           }`}
         >
           {(isLoading || isListProposalsLoading) && (

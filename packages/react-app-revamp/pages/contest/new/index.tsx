@@ -11,13 +11,11 @@ const Page: NextPage = () => {
         <meta name="description" content="@TODO: change this" />
       </Head>
 
-     <div className="container mx-auto pt-5 ">
+     <div className="container mx-auto pt-5">
         <h1 className='sr-only'>Create a new contest</h1>
-
         <Provider createStore={createStore}> 
           <WizardFormCreateContest />
         </Provider>
-        
      </div>
     </>
   )
