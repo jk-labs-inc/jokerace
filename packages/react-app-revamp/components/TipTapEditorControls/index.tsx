@@ -292,7 +292,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
         type="button"
         className={`${styles.control} ${editor.isActive("image") ? styles["control--active"] : ""}`}
         onClick={() => {
-          const url = window.prompt("Image URL");
+          const url = window.prompt("Your image URL (must end with a valid image extension like .png, .jpeg, .gif ...).");
 
           if (url) {
             editor
