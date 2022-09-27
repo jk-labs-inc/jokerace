@@ -88,7 +88,7 @@ leaveTo="opacity-0 "
     {!isConnected ? "Connect your wallet to create your contest." : chain?.unsupported === true && "We don't support this chain (yet). In the meantime, please switch to another network."}
     </div>}
     <StepIndicator />
-    <div className="w-full">
+    <div className="w-full max-w-screen-md">
       {/* @ts-ignore */}
       {renderStep(currentStep, step)}
     </div>

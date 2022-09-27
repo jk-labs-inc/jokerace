@@ -194,20 +194,18 @@ export const Sidebar = (props: any) => {
         <CalendarIcon className="w-5 2xs:mie-1 md:hidden" />
         <span className="sr-only 2xs:not-sr-only">Timeline</span>
       </Button>
-      {!isLoading &&
-        isSuccess &&
-        isDate(submissionsOpen) &&
-        isDate(votesOpen) &&
-        isDate(votesClose) && (
-          <>
-            {account?.address && <div className="hidden md:my-4 md:block">
+      {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
+        <>
+          {account?.address && (
+            <div className="hidden md:my-4 md:block">
               <VotingToken />
-            </div>}
-            <div className={`hidden md:block ${!account?.address ? "md:mt-4" : ""}`}>
-              <Timeline />
             </div>
-          </>
-        )}
+          )}
+          <div className={`hidden md:block ${!account?.address ? "md:mt-4" : ""}`}>
+            <Timeline />
+          </div>
+        </>
+      )}
     </>
   );
 };

@@ -16,6 +16,7 @@ import { useAccount } from "wagmi";
 import { useContest } from "@hooks/useContest";
 import isProposalDeleted from "@helpers/isProposalDeleted";
 import Loader from "@components/Loader";
+import { TrashIcon } from "@heroicons/react/outline";
 
 export const ListProposals = () => {
   const {
@@ -169,6 +170,16 @@ export const ListProposals = () => {
                     key={id}
                   >
                     <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
+                      {!isProposalDeleted(listProposalsData[id].content) &&
+                        contestAuthorEthereumAddress === accountData?.address && (
+                          <button
+                            onClick={() => onClickProposalDelete(id)}
+                            className="hidden 2xs:flex mb-6 mx-2 2xs:text-2xs rounded-md 2xs:p-2.5 relative z-20 text-negative-12 hover:bg-negative-4 hover:bg-opacity-50 focus:bg-negative-2 focus:border-negative-8 border-negative-6 border border-solid"
+                          >
+                            <span className="sr-only">Delete this proposal</span>
+                            <TrashIcon className="w-4" />
+                          </button>
+                        )}
                       {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
                         <span className="text-3xs text-neutral-11 italic">Vote not open yet</span>
                       ) : (
@@ -255,6 +266,7 @@ export const ListProposals = () => {
                             : truncate(listProposalsData[id].content, 280)
                         }
                       />
+
                       <Link
                         href={{
                           pathname: ROUTE_CONTEST_PROPOSAL,
@@ -270,15 +282,29 @@ export const ListProposals = () => {
                           View proposal #{id}
                         </a>
                       </Link>
-                      {!isProposalDeleted(listProposalsData[id].content) &&
-                        contestAuthorEthereumAddress === accountData?.address && (
-                          <button
-                            onClick={() => onClickProposalDelete(id)}
-                            className="w-full 2xs:w-auto mt-6 text-xs 2xs:text-2xs rounded-md py-1.5 2xs:py-1 px-3 relative z-20 bg-negative-4 hover:bg-opacity-50 focus:bg-opacity-75 text-negative-11 bg-opacity-40"
+                      <div className="flex flex-col space-y-8 mt-6">
+                        {listProposalsData[id].content.length > 280 && (
+                          <Button
+                            className="uppercase 2xs:!px-0 2xs:w-fit-content tracking-widest"
+                            scale="xs"
+                            intent="ghost-primary"
+                            type="button"
                           >
-                            <span className="font-bold">Delete this proposal</span>
-                          </button>
+                            Read full proposal
+                          </Button>
                         )}
+
+                        {!isProposalDeleted(listProposalsData[id].content) &&
+                          contestAuthorEthereumAddress === accountData?.address && (
+                            <button
+                              onClick={() => onClickProposalDelete(id)}
+                              className="flex items-center space-i-2 justify-center 2xs:hidden text-xs rounded-md py-1.5 px-3 relative z-20 text-negative-12 hover:bg-negative-4 hover:bg-opacity-50 focus:bg-negative-2 focus:border-negative-8 border-negative-6 border border-solid"
+                            >
+                              <TrashIcon className="w-4" />
+                              <span className="font-bold">Delete this proposal</span>
+                            </button>
+                          )}
+                      </div>
                     </div>
                   </li>
                 );

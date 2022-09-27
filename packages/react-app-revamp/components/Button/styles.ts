@@ -42,6 +42,12 @@ export const button = cva(
           'text-true-white focus:text-true-black',
           'border-transparent',
           'focus:outline-none'
+        ],
+        'ghost-primary': [
+          'bg-primary-10 bg-opacity-0 hover:bg-opacity-5 focus:bg-opacity-100',
+          'text-primary-10 focus:text-primary-1',
+          'border-transparent',
+          'focus:outline-none'
         ]
       },
       scale: {
