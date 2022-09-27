@@ -63,59 +63,59 @@ export function useContestEvents() {
   //   },
   // });
 
-  useContractEvent({
-    addressOrName: asPath.split("/")[3],
-    contractInterface: DeployedContestContract.abi,
-    eventName: "VoteCast",
+  // useContractEvent({
+  //   addressOrName: asPath.split("/")[3],
+  //   contractInterface: DeployedContestContract.abi,
+  //   eventName: "VoteCast",
 
-    listener: async event => {
-      const accountData = await getAccount();
-      // if the connected wallet is the address that casted votes
-      if (accountData?.address && event[0] === accountData?.address) {
-        // Update the current user available votes
-        updateCurrentUserVotes();
-      }
+  //   listener: async event => {
+  //     const accountData = await getAccount();
+  //     // if the connected wallet is the address that casted votes
+  //     if (accountData?.address && event[0] === accountData?.address) {
+  //       // Update the current user available votes
+  //       updateCurrentUserVotes();
+  //     }
 
-      const proposalId = event[5].args.proposalId;
-      const votes = await readContract({
-        addressOrName: asPath.split("/")[3],
-        contractInterface: DeployedContestContract.abi,
-        functionName: "proposalVotes",
-        args: proposalId,
-      });
+  //     const proposalId = event[5].args.proposalId;
+  //     const votes = await readContract({
+  //       addressOrName: asPath.split("/")[3],
+  //       contractInterface: DeployedContestContract.abi,
+  //       functionName: "proposalVotes",
+  //       args: proposalId,
+  //     });
 
-      if (listProposalsData[proposalId]) {
-        //@ts-ignore
-        setProposalVotes({
-          id: proposalId,
-          //@ts-ignore
-          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
-        });
-      } else {
-        const proposal = await readContract({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
-          functionName: "getProposal",
-          args: proposalId,
-        });
-        const author = await fetchEnsName({
-          address: proposal[0],
-          chainId: chain.mainnet.id,
-        });
-        const proposalData: any = {
-          authorEthereumAddress: proposal[0],
-          author: author ?? proposal[0],
-          content: proposal[1],
-          isContentImage: isUrlToImage(proposal[1]) ? true : false,
-          exists: proposal[2],
-          //@ts-ignore
-          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
-        };
+  //     if (listProposalsData[proposalId]) {
+  //       //@ts-ignore
+  //       setProposalVotes({
+  //         id: proposalId,
+  //         //@ts-ignore
+  //         votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+  //       });
+  //     } else {
+  //       const proposal = await readContract({
+  //         addressOrName: asPath.split("/")[3],
+  //         contractInterface: DeployedContestContract.abi,
+  //         functionName: "getProposal",
+  //         args: proposalId,
+  //       });
+  //       const author = await fetchEnsName({
+  //         address: proposal[0],
+  //         chainId: chain.mainnet.id,
+  //       });
+  //       const proposalData: any = {
+  //         authorEthereumAddress: proposal[0],
+  //         author: author ?? proposal[0],
+  //         content: proposal[1],
+  //         isContentImage: isUrlToImage(proposal[1]) ? true : false,
+  //         exists: proposal[2],
+  //         //@ts-ignore
+  //         votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+  //       };
 
-        setProposalData({ id: proposalId, data: proposalData });
-      }
-    },
-  });
+  //       setProposalData({ id: proposalId, data: proposalData });
+  //     }
+  //   },
+  // });
 
   function updateProposalTransactionData(transactionHash: string, proposalId: string | number) {
     //@ts-ignore
