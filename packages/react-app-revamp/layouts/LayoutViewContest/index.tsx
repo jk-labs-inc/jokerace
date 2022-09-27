@@ -55,6 +55,7 @@ import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgr
 import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 import { switchNetwork } from "@wagmi/core";
 import { ErrorBoundary } from "react-error-boundary";
+import Countdown from "./Timeline/Countdown";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -89,6 +90,8 @@ const LayoutViewContest = (props: any) => {
     contestAuthor,
     contestPrompt,
     contestStatus,
+    contestMaxProposalCount,
+    listProposalsIds,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -111,6 +114,10 @@ const LayoutViewContest = (props: any) => {
       checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
       //@ts-ignore
       didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
+      //@ts-ignore
+      listProposalsIds: state.listProposalsIds,
+      //@ts-ignore
+      contestMaxProposalCount: state.contestMaxProposalCount,
     }),
     shallow,
   );
@@ -135,7 +142,7 @@ const LayoutViewContest = (props: any) => {
         let newRoute = pathname
           .replace("[chain]", chainName)
           .replace("[address]", address)
-          //@ts-ignore
+          //@ts-ignorecontestMaxProposalCount
           .replace("[proposal]", query?.proposal);
         push(pathname, newRoute, { shallow: true });
       }
@@ -182,6 +189,7 @@ const LayoutViewContest = (props: any) => {
           isLoading ? "pointer-events-none" : ""
         } flex-grow container mx-auto md:grid md:gap-6 md:grid-cols-12 md:-mb-20`}
       >
+
         <div
           className={`md:max-h-[calc(100vh-8rem)] ${styles.navbar} ${styles.withFakeSeparator} ${
             pathname === ROUTE_CONTEST_PROPOSAL ? "!hidden" : ""
@@ -197,6 +205,18 @@ const LayoutViewContest = (props: any) => {
             setIsTimelineModalOpen={setIsTimelineModalOpen}
           />
         </div>
+        {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && [CONTEST_STATUS.SUBMISSIONS_OPEN, CONTEST_STATUS.VOTING_OPEN].includes(contestStatus) && <div className="animate-appear text-center text-xs sticky bg-neutral-0 border-b border-neutral-4 border-solid top-10 z-10 font-bold -mx-5 px-5 md:hidden w-screen py-1">
+          <p className="text-center">
+            {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && <>
+              {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && <>
+                {listProposalsIds.length >= contestMaxProposalCount ? "✋ Submissions closed ✋" : "✨ Submissions open ✨"}
+              </>}
+              {contestStatus === CONTEST_STATUS.VOTING_OPEN && <>
+                ✨ Voting open ✨
+              </>}
+            </>}
+          </p>
+        </div>}
         <div
           className={`md:pt-5 md:pb-20 flex flex-col ${
             pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
