@@ -73,6 +73,14 @@ export const Sidebar = (props: any) => {
     shallow,
   );
   const stateSubmitProposal = useStoreSubmitProposal();
+  console.log("currentuser:", currentUserSubmitProposalTokensAmount)
+  console.log("amtrequired:", amountOfTokensRequiredToSubmitEntry)
+
+  console.log("has too little", currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry);
+  console.log("current user prop count at limit", currentUserProposalCount >= contestMaxNumberSubmissionsPerUser)
+  console.log("exceededmaxcount", listProposalsIds.length >= contestMaxProposalCount);
+  console.log("submissions open", contestStatus !== CONTEST_STATUS.SUBMISSIONS_OPEN);
+  console.log("moreidsthankeys", listProposalsIds.length > Object.keys(listProposalsData).length)
 
   return (
     <>
@@ -151,7 +159,7 @@ export const Sidebar = (props: any) => {
                 : "primary"
             }
             disabled={
-              listProposalsIds.length > Object.keys(listProposalsData).length ||
+              //listProposalsIds.length > Object.keys(listProposalsData).length ||
               currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
               listProposalsIds.length >= contestMaxProposalCount ||
