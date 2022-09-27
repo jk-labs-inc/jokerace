@@ -168,7 +168,6 @@ export const Sidebar = (props: any) => {
         disabled={
           isLoading ||
           isError !== null ||
-          chain?.id !== chainId ||
           !isDate(submissionsOpen) ||
           !isDate(votesOpen) ||
           !isDate(votesClose)
