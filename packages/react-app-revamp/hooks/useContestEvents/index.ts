@@ -24,44 +24,44 @@ export function useContestEvents() {
   } = useStoreContest();
   const { updateCurrentUserVotes } = useContest();
 
-  useContractEvent({
-    addressOrName: asPath.split("/")[3],
-    contractInterface: DeployedContestContract.abi,
-    eventName: "ProposalCreated",
-    listener: async event => {
-      const proposalContent = event[3].args.description;
-      const proposalAuthor = event[3].args.proposer;
-      const proposalId = event[3].args.proposalId.toString();
+  // useContractEvent({
+  //   addressOrName: asPath.split("/")[3],
+  //   contractInterface: DeployedContestContract.abi,
+  //   eventName: "ProposalCreated",
+  //   listener: async event => {
+  //     const proposalContent = event[3].args.description;
+  //     const proposalAuthor = event[3].args.proposer;
+  //     const proposalId = event[3].args.proposalId.toString();
 
-      const author = await fetchEnsName({
-        address: proposalAuthor,
-        chainId: chain.mainnet.id,
-      });
+  //     const author = await fetchEnsName({
+  //       address: proposalAuthor,
+  //       chainId: chain.mainnet.id,
+  //     });
 
-      const proposalData = {
-        author: author ?? proposalAuthor,
-        content: proposalContent,
-        isContentImage: isUrlToImage(proposalContent) ? true : false,
-        exists: true,
-        //@ts-ignore
-        votes: 0,
-      };
+  //     const proposalData = {
+  //       author: author ?? proposalAuthor,
+  //       content: proposalContent,
+  //       isContentImage: isUrlToImage(proposalContent) ? true : false,
+  //       exists: true,
+  //       //@ts-ignore
+  //       votes: 0,
+  //     };
 
-      addProposalId(proposalId);
-      setProposalData({ id: proposalId, data: proposalData });
+  //     addProposalId(proposalId);
+  //     setProposalData({ id: proposalId, data: proposalData });
 
-      updateProposalTransactionData(event[3].transactionHash, proposalId);
-    },
-  });
+  //     updateProposalTransactionData(event[3].transactionHash, proposalId);
+  //   },
+  // });
 
-  useContractEvent({
-    addressOrName: asPath.split("/")[3],
-    contractInterface: DeployedContestContract.abi,
-    eventName: "ProposalsDeleted",
-    listener: async event => {
-      softDeleteProposal(event[0].toString());
-    },
-  });
+  // useContractEvent({
+  //   addressOrName: asPath.split("/")[3],
+  //   contractInterface: DeployedContestContract.abi,
+  //   eventName: "ProposalsDeleted",
+  //   listener: async event => {
+  //     softDeleteProposal(event[0].toString());
+  //   },
+  // });
 
   useContractEvent({
     addressOrName: asPath.split("/")[3],
