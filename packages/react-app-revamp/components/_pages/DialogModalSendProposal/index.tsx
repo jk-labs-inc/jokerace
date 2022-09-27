@@ -173,6 +173,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
             <>
               <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>
                 <TipTapEditor editor={editorProposal} />
+                <p className="mt-2 text-neutral-11 text-3xs">Make sure to preview your proposal to check if it renders properly !</p>
                 <Button
                   disabled={proposal.trim().length === 0 || isLoading}
                   type="submit"
