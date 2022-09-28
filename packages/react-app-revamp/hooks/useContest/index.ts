@@ -6,7 +6,7 @@ import { fetchBlockNumber, fetchEnsName, fetchToken, getAccount, readContract, r
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
-import { addHours, differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore, isFuture } from "date-fns";
+import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
