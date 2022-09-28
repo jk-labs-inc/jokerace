@@ -83,7 +83,6 @@ export function useProposalVotes(id: number | string) {
   } = useContract({
     addressOrName: asPath.split("/")[3],
     contractInterface: DeployedContestContract.abi,
-    signerOrProvider: provider
   })
 
   /**
