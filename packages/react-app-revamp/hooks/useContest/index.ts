@@ -6,7 +6,7 @@ import { fetchBlockNumber, fetchEnsName, fetchToken, getAccount, readContract, r
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
-import { isBefore, isFuture } from "date-fns";
+import { addHours, differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
@@ -109,6 +109,8 @@ export function useContest() {
     setIsPageProposalsError,
     //@ts-ignore
     setHasPaginationProposalsNextPage,
+    //@ts-ignore
+    setCanUpdateVotesInRealTime,
   } = useStore();
 
   /**
@@ -260,13 +262,32 @@ export function useContest() {
       // Voting token data (balance, symbol, total supply etc) (for ERC-20 token)
       //@ts-ignore
       const votingTokenRawData = await fetchToken({ address: results[4], chainId });
+      //@ts-ignore
+      const closingVoteDate = new Date(parseInt(results[6]) * 1000)
       setVotingToken(votingTokenRawData);
       //@ts-ignore
       setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
-      //@ts-ignore
-      setVotesClose(new Date(parseInt(results[6]) * 1000));
+      setVotesClose(closingVoteDate);
       //@ts-ignore
       setVotesOpen(new Date(parseInt(results[7]) * 1000));
+      // We want to track VoteCast event only 1H before the end of the contest
+      if(isBefore(new Date(), closingVoteDate)) {
+        if(differenceInHours(closingVoteDate, new Date()) <= 1) {
+          // If the difference between the closing date (end of votes) and now is <= to 1h
+          // reflect this in the state
+          setCanUpdateVotesInRealTime(true)
+        } else {
+          setCanUpdateVotesInRealTime(false)
+          // Otherwise, update the state 1h before the closing date (end of votes)
+          const delayBeforeVotesCanBeUpdated =  differenceInMilliseconds(closingVoteDate, new Date()) - hoursToMilliseconds(1)
+          setTimeout(() => {
+            setCanUpdateVotesInRealTime(true)
+          }, delayBeforeVotesCanBeUpdated)  
+        }  
+      } else {
+        setCanUpdateVotesInRealTime(false)
+      }
+
       if (
         //@ts-ignore
         results[8] === CONTEST_STATUS.SUBMISSIONS_OPEN &&

@@ -36,7 +36,6 @@ export const createStore = () => {
     currentUserProposalCount: 0,
     downvotingAllowed: false,
     currentUserSubmitProposalTokensAmount: null,
-
     isPageProposalsLoading: false,
     isPageProposalsError: null,
     isPageProposalSuccess: false,
@@ -44,6 +43,8 @@ export const createStore = () => {
     totalPagesPaginationProposals: 0,
     currentPagePaginationProposals: 0,
     hasPaginationProposalsNextPage: false,
+    canUpdateVotesInRealTime: false,
+    setCanUpdateVotesInRealTime: (value: boolean) => set({ canUpdateVotesInRealTime: value }),
     setIsPageProposalsLoading: (value: boolean) => set({ isPageProposalsLoading: value }),
     setIsPageProposalsSuccess: (value: boolean) => set({ isPageProposalsSuccess: value }),
     setIsPageProposalsError: (value: boolean) => set({ isPageProposalsError: value }),
