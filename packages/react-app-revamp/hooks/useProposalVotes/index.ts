@@ -223,14 +223,14 @@ export function useProposalVotes(id: number | string) {
     fetchProposalVotes();
   }, []);
 
-  useContractEvent({
-    addressOrName: asPath.split("/")[3],
-    contractInterface: DeployedContestContract.abi,
-    eventName: "VoteCast",
-    listener: event => {
-      fetchVotesOfAddress(event[0]);
-    },
-  });
+  // useContractEvent({
+  //   addressOrName: asPath.split("/")[3],
+  //   contractInterface: DeployedContestContract.abi,
+  //   eventName: "VoteCast",
+  //   listener: event => {
+  //     fetchVotesOfAddress(event[0]);
+  //   },
+  // });
 
   return {
     isLoading: isListVotersLoading,
