@@ -8,8 +8,10 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import { chains } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useStore } from "./store";
+import { useStore as useStoreContest } from "../useContest/store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import arrayToChunks from "@helpers/arrayToChunks";
+import { hoursToMilliseconds, isAfter, isBefore, isEqual } from "date-fns";
 
 const VOTES_PER_PAGE = 5;
 
@@ -71,6 +73,10 @@ export function useProposalVotes(id: number | string) {
     }),
     shallow,
   );
+  const {
+    //@ts-ignore
+    votesClose,
+  } = useStoreContest();
 
   /**
    * Fetch all votes of a given proposals (amount of votes, + detailed list of voters and the amount of votes they casted)
