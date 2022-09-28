@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
-import { chain as wagmiChain, useAccount, useContractEvent } from "wagmi";
+import { chain as wagmiChain, useAccount, useContractEvent, useContract, useProvider } from "wagmi";
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { chains } from "@config/wagmi";
@@ -18,6 +18,7 @@ const VOTES_PER_PAGE = 5;
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
   const account = useAccount();
+  const provider = useProvider();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
@@ -77,6 +78,13 @@ export function useProposalVotes(id: number | string) {
     //@ts-ignore
     votesClose,
   } = useStoreContest();
+  const {
+    removeAllListeners
+  } = useContract({
+    addressOrName: asPath.split("/")[3],
+    contractInterface: DeployedContestContract.abi,
+    signerOrProvider: provider
+  })
 
   /**
    * Fetch all votes of a given proposals (amount of votes, + detailed list of voters and the amount of votes they casted)
@@ -237,6 +245,10 @@ export function useProposalVotes(id: number | string) {
   //     fetchVotesOfAddress(event[0]);
   //   },
   // });
+
+  if (isAfter(new Date(), votesClose)) {
+    removeAllListeners();
+  }
 
   return {
     isLoading: isListVotersLoading,

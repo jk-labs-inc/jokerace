@@ -1,7 +1,7 @@
 import isUrlToImage from "@helpers/isUrlToImage";
 import { chain, fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { useContractEvent } from "wagmi";
+import { useContractEvent, useContract, useProvider } from "wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useStore as useStoreSubmitProposal } from "../useSubmitProposal/store";
 import { useStore as useStoreContest } from "../useContest/store";
@@ -10,6 +10,7 @@ import useContest from "@hooks/useContest";
 
 export function useContestEvents() {
   const { asPath } = useRouter();
+  const provider = useProvider();
   const storeSubmitProposal = useStoreSubmitProposal();
   const {
     //@ts-ignore
@@ -26,6 +27,13 @@ export function useContestEvents() {
     votesClose,
   } = useStoreContest();
   const { updateCurrentUserVotes } = useContest();
+  const {
+    removeAllListeners
+  } = useContract({
+    addressOrName: asPath.split("/")[3],
+    contractInterface: DeployedContestContract.abi,
+    signerOrProvider: provider
+  })
 
   // useContractEvent({
   //   addressOrName: asPath.split("/")[3],
@@ -121,6 +129,10 @@ export function useContestEvents() {
       },
     });
   };
+
+  if (isAfter(new Date(), votesClose)) {
+    removeAllListeners();
+  }
 
   function updateProposalTransactionData(transactionHash: string, proposalId: string | number) {
     //@ts-ignore
