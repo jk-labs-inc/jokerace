@@ -190,7 +190,7 @@ export function useContest() {
                 existsInDb = data?.length > 0 ?? false;
                 shouldAddToDb = data?.length === 0;
                 results = await readContracts({ contracts });
-                existsInDb ? [data?.[0]?.author_address, data?.[0]?.content] : results[1];
+                proposalData = existsInDb ? [data?.[0]?.author_address, data?.[0]?.content] : results[1];
               } else {
                 existsInDb = false;
                 contracts.push({
@@ -201,6 +201,7 @@ export function useContest() {
                 results = await readContracts({ contracts });
                 proposalData = results[1];
               }
+              //@ts-ignore
               fetchProposal(id.toString(), proposalData, results[0], existsInDb, shouldAddToDb);
             } catch (e) {
               console.error(e);
@@ -673,6 +674,7 @@ export function useContest() {
    */
   async function fetchProposal(id: string, data: any, votes: number, existsInDb: boolean, shouldAddToDb: boolean) {
     const accountData = await getAccount();
+<<<<<<< HEAD
     // Create an array of proposals
     // A proposal is a pair of data
     // A pair of a proposal data is [content, votes]
@@ -680,6 +682,13 @@ export function useContest() {
       if (index % 2 === 0) result.push(array.slice(index, index + 2));
       return result;
     }, []);
+=======
+    // proposal author ENS
+    const author = await fetchEnsName({
+      address: data?.[0],
+      chainId: chain.mainnet.id,
+    });
+>>>>>>> 651cbaf (bugfix: index data)
 
     const data = proposalDataPerId[i][0];
     const proposalData = {
