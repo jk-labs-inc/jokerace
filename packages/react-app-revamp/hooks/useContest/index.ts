@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useProvider } from "wagmi";
 import { fetchBlockNumber, fetchToken, getAccount, readContract, readContracts } from "@wagmi/core";
@@ -10,11 +10,16 @@ import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBef
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
+import useContestProposalsIndex from "@hooks/useContestProposalsIndex";
 import arrayToChunks from "@helpers/arrayToChunks";
+import { useQueries } from "@tanstack/react-query";
 
 const PROPOSALS_PER_PAGE = 12;
+
 export function useContest() {
   const { indexContest } = useContestsIndex();
+  const { indexProposal } = useContestProposalsIndex();
+
   const provider = useProvider();
   const { asPath } = useRouter();
   const [chainId, setChainId] = useState(
@@ -22,7 +27,12 @@ export function useContest() {
   );
   const [address, setAddress] = useState(asPath.split("/")[3]);
   const [chainName, setChainName] = useState(asPath.split("/")[2]);
+  const [sliceOfProposalsIdsToFetch, setSliceOfProposalsIdsToFetch] = useState([]);
   const {
+    //@ts-ignore
+    listProposalsData,
+    //@ts-ignore
+    isPageProposalsLoading,
     //@ts-ignore
     setCurrentUserSubmitProposalTokensAmount,
     //@ts-ignore
@@ -112,6 +122,99 @@ export function useContest() {
     //@ts-ignore
     setCanUpdateVotesInRealTime,
   } = useStore();
+
+  /**
+   * Load proposals based on a Array of proposals ids
+   */
+  const queryProposals = useQueries({
+    queries: sliceOfProposalsIdsToFetch?.map((id: string) => {
+      return {
+        queryKey: ["proposal", id.toString()],
+        queryFn: async () => {
+          try {
+            const abi = await getContestContractVersion(address, chainName);
+            if (abi === null) {
+              toast.error("This contract doesn't exist on this chain.");
+              setIsPageProposalsError("This contract doesn't exist on this chain.");
+              setIsPageProposalsLoading(false);
+              return;
+            }
+            const contractConfig = {
+              addressOrName: address,
+              contractInterface: abi,
+              chainId: chainId,
+            };
+            const contracts: any = [
+              // Votes received
+              {
+                ...contractConfig,
+                functionName: "proposalVotes",
+                args: id.toString(),
+              },
+            ];
+            let existsInDb = false;
+            let shouldAddToDb = false;
+            let proposalData;
+            let results;
+            try {
+              if (
+                process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+                process.env.NEXT_PUBLIC_SUPABASE_URL &&
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+                process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+              ) {
+                const config = await import("@config/supabase");
+                const supabase = config.supabase;
+
+                const result = await supabase
+                  .from("proposals")
+                  .select("author_address, content, is_content_image")
+                  .eq("reference", id.toString())
+                  .eq("contest_address", address)
+                  .eq("contest_network_name", chainName);
+
+                const { data, error } = result;
+
+                // If the proposal doesn't exist in the DB (or couldn't be found)
+                // fetch it from the blockchain
+
+                if (data?.length === 0 || error) {
+                  if (error) console.error(error);
+                  contracts.push({
+                    ...contractConfig,
+                    functionName: "getProposal",
+                    args: id.toString(),
+                  });
+                }
+                //@ts-ignore
+                existsInDb = data?.length > 0 ?? false;
+                shouldAddToDb = data?.length === 0;
+                results = await readContracts({ contracts });
+                existsInDb ? [data?.[0]?.author_address, data?.[0]?.content] : results[1];
+              } else {
+                existsInDb = false;
+                contracts.push({
+                  ...contractConfig,
+                  functionName: "getProposal",
+                  args: id.toString(),
+                });
+                results = await readContracts({ contracts });
+                proposalData = results[1];
+              }
+              fetchProposal(id.toString(), proposalData, results[0], existsInDb, shouldAddToDb);
+            } catch (e) {
+              console.error(e);
+              setIsPageProposalsLoading(false);
+              //@ts-ignore
+              setIsPageProposalsError(e?.message ?? e);
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        },
+      };
+    }),
+  });
 
   /**
    * Display an error toast in the UI for any contract related error
@@ -337,35 +440,26 @@ export function useContest() {
       ) {
         const config = await import("@config/supabase");
         const supabase = config.supabase;
-
-        // If this contest doesn't exist in the database, index it
-        //@ts-ignore
-        if (
-          process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-          process.env.NEXT_PUBLIC_SUPABASE_URL &&
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-        ) {
-          const indexingResult = await supabase
-            .from("contests")
-            .select("*")
-            .eq("address", address);
-          if (indexingResult && indexingResult?.data && indexingResult?.data?.length === 0) {
-            indexContest({
-              //@ts-ignore
-              datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
-              //@ts-ignore
-              datetimeOpeningVoting: new Date(parseInt(results[7]) * 1000).toISOString(),
-              //@ts-ignore
-              datetimeClosingVoting: new Date(parseInt(results[6]) * 1000),
-              contestTitle: results[0],
-              daoName: null,
-              contractAddress: address,
-              authorAddress: results[1],
-              votingTokenAddress: results[4],
-              networkName: asPath.split("/")[2],
-            });
-          }
+        const indexingResult = await supabase
+          .from("contests")
+          .select("*")
+          .eq("address", address)
+          .eq("network_name", asPath.split("/")[2]);
+        if (indexingResult && indexingResult?.data && indexingResult?.data?.length === 0) {
+          indexContest({
+            //@ts-ignore
+            datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
+            //@ts-ignore
+            datetimeOpeningVoting: new Date(parseInt(results[7]) * 1000).toISOString(),
+            //@ts-ignore
+            datetimeClosingVoting: new Date(parseInt(results[6]) * 1000),
+            contestTitle: results[0],
+            daoName: null,
+            contractAddress: address,
+            authorAddress: results[1],
+            votingTokenAddress: results[4],
+            networkName: asPath.split("/")[2],
+          });
         }
       }
     } catch (e) {
@@ -571,11 +665,13 @@ export function useContest() {
 
   /**
    * Set proposal data in zustand store
-   * @param i - index of the proposal id to be fetched
-   * @param results - array of smart contracts calls results (returned by `readContracts`)
-   * @param listIdsProposalsToBeFetched - array of proposals ids to be fetched
+   * id - id of proposal
+   * data - data (content, author ENS/Eth address etc) of the proposal
+   * votes - amount of votes received by the proposal
+   * existsInDb - if the proposal is indexed in the database
+   * shouldAddToDb - if the indexing process for this proposal should be triggered
    */
-  async function fetchProposal(i: number, results: Array<any>, listIdsProposalsToBeFetched: Array<any>) {
+  async function fetchProposal(id: string, data: any, votes: number, existsInDb: boolean, shouldAddToDb: boolean) {
     const accountData = await getAccount();
     // Create an array of proposals
     // A proposal is a pair of data
@@ -590,11 +686,12 @@ export function useContest() {
       authorEthereumAddress: data[0],
       content: data[1],
       isContentImage: isUrlToImage(data[1]) ? true : false,
-      exists: data[2],
+      exists: data[2] ?? true,
       //@ts-ignore
-      votes: proposalDataPerId[i][1]?.forVotes
-        ? proposalDataPerId[i][1]?.forVotes / 1e18 - proposalDataPerId[i][1]?.againstVotes / 1e18
-        : proposalDataPerId[i][1] / 1e18,
+      votes: votes?.forVotes
+        ? //@ts-ignore
+          votes?.forVotes / 1e18 - votes?.againstVotes / 1e18
+        : votes / 1e18,
     };
     // Check if that proposal belongs to the current user
     // (Needed to track if the current user can submit a proposal)
@@ -602,7 +699,18 @@ export function useContest() {
     if (data[0] === accountData?.address) {
       increaseCurrentUserProposalCount();
     }
-    setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
+    if (!existsInDb && shouldAddToDb) {
+      indexProposal({
+        id: id.toString(),
+        contestNetworkName: chainName,
+        contestAddress: address,
+        authorAddress: proposalData.authorEthereumAddress,
+        content: proposalData.content,
+        isContentImage: proposalData.isContentImage,
+        exists: proposalData.exists,
+      });
+    }
+    setProposalData({ id, data: proposalData });
   }
 
   /**
@@ -612,58 +720,18 @@ export function useContest() {
    * @param totalPagesPaginationProposals - total of pages in the pagination
    */
   async function fetchProposalsPage(pageIndex: number, slice: Array<any>, totalPagesPaginationProposals: number) {
-    setCurrentPagePaginationProposals(pageIndex);
-    setIsPageProposalsLoading(true);
-    setIsPageProposalsError(null);
     try {
-      const abi = await getContestContractVersion(address, chainName);
-      if (abi === null) {
-        toast.error("This contract doesn't exist on this chain.");
-        setIsPageProposalsError("This contract doesn't exist on this chain.");
-        setIsPageProposalsLoading(false);
-        return;
-      }
-
-      const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
-        chainId: chainId,
-      };
-      const contracts: any = [];
-
-      slice.map((id: number) => {
-        contracts.push(
-          // proposal content
-          {
-            ...contractConfig,
-            functionName: "getProposal",
-            args: id,
-          },
-          // Votes received
-          {
-            ...contractConfig,
-            functionName: "proposalVotes",
-            args: id,
-          },
-        );
-      });
-
-      const results = await readContracts({ contracts });
-      let proposalFetchPromises = [];
-      for (let i = 0; i < slice.length; i++) {
-        // For all proposals, fetch
-        proposalFetchPromises.push(fetchProposal(i, results, slice));
-      }
-      await Promise.all(proposalFetchPromises);
-      setIsPageProposalsLoading(false);
+      setCurrentPagePaginationProposals(pageIndex);
+      setIsPageProposalsLoading(true);
       setIsPageProposalsError(null);
+      //@ts-ignore
+      setSliceOfProposalsIdsToFetch(slice);
       setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals);
     } catch (e) {
+      console.error(e);
       setIsPageProposalsLoading(false);
       //@ts-ignore
       setIsPageProposalsError(e?.message ?? e);
-      //@ts-ignore
-      toast.error(e?.message ?? e);
     }
   }
 
@@ -694,6 +762,7 @@ export function useContest() {
       const currentBlockNumber = await fetchBlockNumber();
       const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 50; // (necessary to avoid block not mined error)
       const accountData = await getAccount();
+
       const contracts = [
         // get current user availables votes now
         {
@@ -726,7 +795,21 @@ export function useContest() {
     }
   }
 
+  useEffect(() => {
+    if (isPageProposalsLoading && sliceOfProposalsIdsToFetch.length > 0) {
+      const lastElementToLoadId = sliceOfProposalsIdsToFetch.slice(-1)[0];
+      const lastElementVotes = listProposalsData?.[lastElementToLoadId]?.votes;
+      const numberOfDataLoaded = sliceOfProposalsIdsToFetch.filter(id => {
+        return listProposalsData?.[id];
+      }).length;
+      if (lastElementVotes >= 0 && numberOfDataLoaded === sliceOfProposalsIdsToFetch.length) {
+        setIsPageProposalsLoading(false);
+      }
+    }
+  }, [listProposalsData, sliceOfProposalsIdsToFetch, isPageProposalsLoading]);
+
   return {
+    queryProposals,
     fetchProposalsPage,
     address,
     fetchContestInfo,
@@ -744,11 +827,16 @@ export function useContest() {
     updateCurrentUserVotes,
     checkIfCurrentUserQualifyToVote,
     setChainName,
+    refreshProposals: async () => {
+      const abi = await getContestContractVersion(address, chainName);
+      fetchProposalsIdsList(abi);
+    },
     retry: fetchContestInfo,
     onSearch: (addr: string, chainName: string) => {
       setChainName(chainName);
       setChainId(chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id);
       setIsLoading(true);
+      setIsPageProposalsLoading(true);
       setIsListProposalsLoading(true);
       setListProposalsIds([]);
       resetListProposals();

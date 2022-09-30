@@ -16,7 +16,7 @@ import { useAccount } from "wagmi";
 import { useContest } from "@hooks/useContest";
 import isProposalDeleted from "@helpers/isProposalDeleted";
 import Loader from "@components/Loader";
-import { TrashIcon } from "@heroicons/react/outline";
+import { RefreshIcon, TrashIcon } from "@heroicons/react/outline";
 
 export const ListProposals = () => {
   const {
@@ -101,7 +101,7 @@ export const ListProposals = () => {
     shallow,
   );
 
-  const { fetchProposalsPage } = useContest();
+  const { fetchProposalsPage, refreshProposals } = useContest();
   function onClickUpVote(proposalId: number | string) {
     setCastPositiveAmountOfVotes(true);
     setPickedProposalToVoteFor(proposalId);
@@ -152,6 +152,16 @@ export const ListProposals = () => {
       }
       return (
         <>
+          <div className="text-neutral-11 flex flex-col space-y-3 2xs:space-y-0 items-center 2xs:items-center 2xs:justify-between 2xs:flex-row mb-8 xs:mb-6">
+            <span className="text-sm font-medium pie-3">
+              {Object.keys(listProposalsData).length} / {listProposalsIds.length} proposals
+            </span>
+            <Button className="w-full 2xs:w-fit-content" onClick={refreshProposals} scale="sm" intent="neutral-outline">
+              <RefreshIcon className="w-4 mie-1ex" />
+              Refresh
+            </Button>
+          </div>
+
           <ul className={`${styles.list} space-y-12`}>
             {Object.keys(listProposalsData)
               .sort((a, b) => {

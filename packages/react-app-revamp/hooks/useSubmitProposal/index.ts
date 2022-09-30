@@ -1,16 +1,21 @@
 import toast from "react-hot-toast";
-import { writeContract, waitForTransaction } from "@wagmi/core";
+import { writeContract, waitForTransaction, getAccount, fetchEnsName } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useStore as useStoreSubmitProposal } from "./store";
 import { useStore as useStoreContest } from "./../useContest/store";
 import { useNetwork } from "wagmi";
 import { useRouter } from "next/router";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-
+import useContestProposalsIndex from "@hooks/useContestProposalsIndex";
+import isUrlToImage from "@helpers/isUrlToImage";
+import { chain as wagmiChain } from "wagmi";
 export function useSubmitProposal() {
+  const { indexProposal } = useContestProposalsIndex();
   const {
     //@ts-ignore
     increaseCurrentUserProposalCount,
+    //@ts-ignore
+    setProposalData,
   } = useStoreContest();
 
   const {
@@ -42,7 +47,7 @@ export function useSubmitProposal() {
     setTransactionData(null);
     const contractConfig = {
       addressOrName: address,
-      contractInterface: abi ? abi : DeployedContestContract.abi,
+      contractInterface: abi ?? DeployedContestContract.abi,
     };
     try {
       const txSendProposal = await writeContract({
@@ -51,6 +56,9 @@ export function useSubmitProposal() {
         args: proposalContent,
       });
 
+      const txReceipt = await txSendProposal.wait();
+      //@ts-ignore
+      const proposalId = txReceipt?.events?.[0]?.args?.proposalId;
       const receipt = await waitForTransaction({
         chainId: chain?.id,
         //@ts-ignore
@@ -66,6 +74,33 @@ export function useSubmitProposal() {
       setIsSuccess(true);
       toast.success(`Your proposal was deployed successfully!`);
       increaseCurrentUserProposalCount();
+
+      const accountData = await getAccount();
+      const authorEthAddress = accountData?.address;
+      const ens = await fetchEnsName({
+        //@ts-ignore
+        address: authorEthAddress,
+        chainId: wagmiChain.mainnet.id,
+      });
+      const proposalData = {
+        author: ens ?? accountData.address,
+        content: proposalContent,
+        isContentImage: isUrlToImage(proposalContent) ? true : false,
+        exists: true,
+        //@ts-ignore
+        votes: 0,
+      };
+      setProposalData({ id: proposalId, data: proposalData });
+
+      indexProposal({
+        id: proposalId.toString(),
+        contestNetworkName: chainName,
+        contestAddress: address,
+        authorAddress: authorEthAddress,
+        content: proposalContent,
+        isContentImage: isUrlToImage(proposalContent),
+        exists: true,
+      });
     } catch (e) {
       toast.error(
         //@ts-ignore

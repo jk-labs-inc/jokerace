@@ -62,7 +62,6 @@ const LayoutViewContest = (props: any) => {
   const { query, asPath, pathname, push } = useRouter();
   const account = useAccount();
   const { chain } = useNetwork();
-
   const {
     isLoading,
     address,
