@@ -9,7 +9,7 @@ const LINK_BUG_REPORT =
   "https://github.com/JokeDAO/JokeDaoV2Dev/issues/new?assignees=&labels=bug&template=bug_report.md&title=%5BBUG%5D";
 const LINK_REQUEST_FEATURE =
   "https://github.com/JokeDAO/JokeDaoV2Dev/issues/new?assignees=&labels=enhancement%2C+question%2C+ux&template=feature_request.md&title=%5BFEAT.%5D";
-const LINK_FAQ = "https://threadreaderapp.com/thread/1549053077046472705.html"
+const LINK_FAQ = "https://joke.mirror.xyz/4wiTHmaeVgwAG_W2gK1XKeIE2NpKYJxrxKoqNdzR_co"
 
 export const FOOTER_LINKS = [
   {
