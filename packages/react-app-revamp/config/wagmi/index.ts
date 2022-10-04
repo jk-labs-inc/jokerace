@@ -10,11 +10,7 @@ const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
 const testnetChains = [
   chain.polygonMumbai,
-  chain.rinkeby,
-  chain.ropsten,
   chain.goerli,
-  chain.arbitrumRinkeby,
-  chain.optimismKovan,
 ];
 
 const defaultChains = [
