@@ -48,7 +48,7 @@ const TipTapEditor = (props: TipTapEditorProps) => {
         </>
       )}
       {showPreview && <TipTapPreview content={editor.getHTML()} />}
-      <div className="my-4">
+      <div className="mt-4">
         <Button
           intent="neutral-outline"
           scale="xs"

@@ -34,7 +34,6 @@ export const Sidebar = (props: any) => {
   } = props;
 
   const {
-    listProposalsData,
     amountOfTokensRequiredToSubmitEntry,
     listProposalsIds,
     currentUserProposalCount,
@@ -47,8 +46,6 @@ export const Sidebar = (props: any) => {
     currentUserSubmitProposalTokensAmount,
   } = useStoreContest(
     state => ({
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
       //@ts-ignore
       contestStatus: state.contestStatus,
       //@ts-ignore
@@ -73,14 +70,6 @@ export const Sidebar = (props: any) => {
     shallow,
   );
   const stateSubmitProposal = useStoreSubmitProposal();
-  console.log("currentuser:", currentUserSubmitProposalTokensAmount)
-  console.log("amtrequired:", amountOfTokensRequiredToSubmitEntry)
-
-  console.log("has too little", currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry);
-  console.log("current user prop count at limit", currentUserProposalCount >= contestMaxNumberSubmissionsPerUser)
-  console.log("exceededmaxcount", listProposalsIds.length >= contestMaxProposalCount);
-  console.log("submissions open", contestStatus !== CONTEST_STATUS.SUBMISSIONS_OPEN);
-  console.log("moreidsthankeys", listProposalsIds.length > Object.keys(listProposalsData).length)
 
   return (
     <>
@@ -138,13 +127,12 @@ export const Sidebar = (props: any) => {
           </a>
         </Link>
       </nav>
-
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
         <>
           <Button
             /* @ts-ignore */
             onClick={() => stateSubmitProposal.setIsModalOpen(true)}
-            className="animate-appear fixed md:static z-10  md:mt-3 aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset"
+            className="animate-appear fixed md:static z-10  md:mt-3 aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset disabled:!opacity-100 disabled:!border-opacity-50 disabled:!text-opacity-50"
             intent={
               currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
@@ -159,7 +147,6 @@ export const Sidebar = (props: any) => {
                 : "primary"
             }
             disabled={
-              //listProposalsIds.length > Object.keys(listProposalsData).length ||
               currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry ||
               currentUserProposalCount >= contestMaxNumberSubmissionsPerUser ||
               listProposalsIds.length >= contestMaxProposalCount ||
@@ -181,7 +168,6 @@ export const Sidebar = (props: any) => {
         disabled={
           isLoading ||
           isError !== null ||
-          chain?.id !== chainId ||
           !isDate(submissionsOpen) ||
           !isDate(votesOpen) ||
           !isDate(votesClose)
@@ -194,21 +180,20 @@ export const Sidebar = (props: any) => {
         <CalendarIcon className="w-5 2xs:mie-1 md:hidden" />
         <span className="sr-only 2xs:not-sr-only">Timeline</span>
       </Button>
-      {!isLoading &&
-        isSuccess &&
-        isDate(submissionsOpen) &&
-        isDate(votesOpen) &&
-        isDate(votesClose) && (
-          <>
-            {account?.address && <div className="hidden md:my-4 md:block">
+      {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
+        <>
+          {account?.address && (
+            <div className="hidden md:my-4 md:block">
               <VotingToken />
-            </div>}
-            <div className={`hidden md:block ${!account?.address ? "md:mt-4" : ""}`}>
-              <Timeline />
             </div>
-          </>
-        )}
+          )}
+          <div className={`hidden md:block ${!account?.address ? "md:mt-4" : ""}`}>
+            <Timeline />
+          </div>
+        </>
+      )}
     </>
+    
   );
 };
 
