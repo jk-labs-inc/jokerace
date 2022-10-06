@@ -107,7 +107,7 @@ export const Sidebar = (props: any) => {
             Rules
           </a>
         </Link>
-        <Link
+        {/* <Link
           href={{
             pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
             //@ts-ignore
@@ -125,7 +125,7 @@ export const Sidebar = (props: any) => {
             <DocumentDownloadIcon className={styles.navLinkIcon} />
             Export data
           </a>
-        </Link>
+        </Link> */}
       </nav>
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
         <>

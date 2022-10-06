@@ -28,13 +28,16 @@ const Page: NextPage = (props: PageProps) => {
       </Head>
     <h1 className='sr-only'>Rules of contest {contestName ? contestName : address} </h1>
     {!isLoading  && isSuccess && <div className='animate-appear mt-4'>
-        <p>Let&apos;s create a spreadsheet of full data from your contest: <br/>
+        <p>
+          This page is currently under development.
+        </p>
+        {/* <p>Let&apos;s create a spreadsheet of full data from your contest: <br/>
             proposals, addresses of submitters, voters, number of votes, etc.
         </p>
         <p className="mt-3 mb-6">
             You can use this to allocate rewards, track contributions, or find correlations among voters.
         </p>
-        <ButtonDownloadContestDataAsCSV />
+        <ButtonDownloadContestDataAsCSV /> */}
     </div>}
   </>
 )}
