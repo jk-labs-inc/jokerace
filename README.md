@@ -54,6 +54,8 @@ Upon a successful deploy to the local development chain, this will copy the gene
 You will also need to do two more things:
   - Make a copy of the bytecode in the versioning folder `packages/react-app-revamp/contracts/bytecodeAndAbi` by copying the content in `Contest.sol`, which is the latest version of bytecode, into `contracts/bytecodeAndAbi` and renaming it following the convention.
   - Update ABI parser code in `packages/react-app-revamp/helpers/getContestContractVersion.ts` following the pattern of adding the last version of the bytecode and a code change that was distinctive to it (so that the front end can identify the version of bytecode it is looking at when trying to decipher a contract on a chain).
+  
+[Here](https://github.com/JokeDAO/JokeDaoV2Dev/pull/111/commits/79072b212e603bcca0418dd5057557379444194f) is an example commit that does all of these steps.
 
 *Make sure to do all of these steps before committing any changes to the contract code to make sure that the bytecode that the site is deploying is the same as what you have written in the `hardhat` package!*
 
