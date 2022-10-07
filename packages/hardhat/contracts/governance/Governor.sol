@@ -296,6 +296,19 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
+     * @dev See {IGovernor-castMultiVote}.
+     */
+    function castMultiVote(uint256[] memory proposalIds, uint8[] memory supportInputs, uint256[] memory numVotes) public virtual override returns (uint256 balance) {
+        address voter = _msgSender();
+        for(uint i=0; i<proposalIds.length; i++){
+            if (i == proposalIds.length - 1) {
+                return _castVote(proposalIds[i], voter, supportInputs[i], numVotes[i], "");
+            }
+            _castVote(proposalIds[i], voter, supportInputs[i], numVotes[i], "");
+        }
+    }
+
+    /**
      * @dev See {IGovernor-castVote}.
      */
     function castVote(uint256 proposalId, uint8 support, uint256 numVotes) public virtual override returns (uint256) {

@@ -184,6 +184,12 @@ abstract contract IGovernor is IERC165 {
     ) public virtual returns (uint256 proposalId);
 
     /**
+     * @dev Cast multivote
+     *
+     */
+    function castMultiVote(uint256[] memory proposalIds, uint8[] memory supportInputs, uint256[] memory numVotes) public virtual returns (uint256 balance);
+
+    /**
      * @dev Cast a vote
      *
      * Emits a {VoteCast} event.
