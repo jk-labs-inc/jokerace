@@ -6,7 +6,7 @@ pragma solidity ^0.8.0;
 import "../token/ERC20/utils/SafeERC20.sol";
 import "../utils/Address.sol";
 import "../utils/Context.sol";
-import "../governance/Governor.sol";
+import "../governance/IGovernor.sol";
 import "../governance/extensions/GovernorCountingSimple.sol";
 
 /**
@@ -27,7 +27,7 @@ import "../governance/extensions/GovernorCountingSimple.sol";
  * tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you
  * to run tests before sending real value to this contract.
  */
-abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
+contract PaymentSplitter is Context {
     event PayeeAdded(uint256 ranking, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
@@ -43,6 +43,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
     
+    GovernorCountingSimple private _underlyingContest;
     uint256[] private _rankedProposalIds;
 
     /**
@@ -52,13 +53,15 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(uint256[] memory payees, uint256[] memory shares_) payable {
+    constructor(uint256[] memory payees, uint256[] memory shares_, GovernorCountingSimple underlyingContest_) payable {
         require(payees.length == shares_.length, "PaymentSplitter: payees and shares length mismatch");
         require(payees.length > 0, "PaymentSplitter: no payees");
 
         for (uint256 i = 0; i < payees.length; i++) {
             _addPayee(payees[i], shares_[i]);
         }
+
+        _underlyingContest = underlyingContest_;
     }
 
     /**
@@ -70,7 +73,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
      * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback
      * functions].
      */
-    receive() external payable virtual override {
+    receive() external payable virtual {
         emit PaymentReceived(_msgSender(), msg.value);
     }
 
@@ -147,7 +150,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
      * total shares and their previous withdrawals.
      */
     function release(uint256 ranking) public virtual {
-        require(state() == ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
+        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
         require(_shares[ranking] > 0, "PaymentSplitter: ranking has no shares");
 
         uint256 payment = releasable(ranking);
@@ -162,10 +165,10 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
         }
 
         if (_rankedProposalIds.length == 0) {
-            _rankedProposalIds = rankedProposals();
+            _rankedProposalIds = _underlyingContest.rankedProposals();
         }
         require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
-        address payable proposalAuthor = payable(getProposal(_rankedProposalIds[ranking - 1]).author);
+        address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
 
         require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
 
@@ -179,7 +182,7 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
      * contract.
      */
     function release(IERC20 token, uint256 ranking) public virtual {
-        require(state() == ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
+        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
         require(_shares[ranking] > 0, "PaymentSplitter: account has no shares");
 
         uint256 payment = releasable(token, ranking);
@@ -195,10 +198,10 @@ abstract contract PaymentSplitter is Context, Governor, GovernorCountingSimple {
         }
 
         if (_rankedProposalIds.length == 0) {
-            _rankedProposalIds = rankedProposals();
+            _rankedProposalIds = _underlyingContest.rankedProposals();
         }
         require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
-        address payable proposalAuthor = payable(getProposal(_rankedProposalIds[ranking - 1]).author);
+        address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
 
         require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
 
