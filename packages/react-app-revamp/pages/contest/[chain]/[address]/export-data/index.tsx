@@ -39,9 +39,9 @@ const Page: NextPage = (props: PageProps) => {
         You can use this to allocate rewards, track contributions, or find correlations among voters.
       </p>
       <ButtonDownloadContestDataAsCSV />
-    </div> : <div className='animate-appear mt-4'>
+    </div> : <div className='mt-4 p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4'>
         <p>
-          Downloading will be available once the contest ends.
+          Contest data will be available once the contest ends.
         </p>
     </div> }
     </>
