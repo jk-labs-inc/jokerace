@@ -2,17 +2,15 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
-import { chain as wagmiChain, useAccount, useContractEvent, useContract, useProvider } from "wagmi";
+import { chain as wagmiChain, useAccount } from "wagmi";
 import { getContract, watchContractEvent } from "@wagmi/core"
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { chains } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useStore } from "./store";
-import { useStore as useStoreContest } from "../useContest/store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import arrayToChunks from "@helpers/arrayToChunks";
-import { hoursToMilliseconds, isAfter, isBefore, isEqual } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 const VOTES_PER_PAGE = 5;
@@ -82,15 +80,6 @@ export function useProposalVotes(id: number | string) {
     }),
     shallow,
   );
-
-  /*
-  const {
-    removeAllListeners
-  } = useContract({
-    addressOrName: asPath.split("/")[3],
-    contractInterface: DeployedContestContract.abi,
-  })
-  */
 
   /**
    * Fetch all votes of a given proposals (amount of votes, + detailed list of voters and the amount of votes they casted)
@@ -265,23 +254,6 @@ export function useProposalVotes(id: number | string) {
   useEffect(() => {
     fetchProposalVotes();
   }, []);
-
-  /*
-  if (isAfter(new Date(), votesClose - hoursToMilliseconds(1)) || isBefore(new Date(), votesClose) || isEqual(new Date(), votesClose)) {
-    useContractEvent({
-      addressOrName: asPath.split("/")[3],
-      contractInterface: DeployedContestContract.abi,
-      eventName: "VoteCast",
-      listener: event => {
-        fetchVotesOfAddress(event[0]);
-      },
-    });
-  };
-
-  if (isAfter(new Date(), votesClose)) {
-    removeAllListeners();
-  }
-  */
 
   return {
     isLoading: isListVotersLoading,
