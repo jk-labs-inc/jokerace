@@ -7,12 +7,22 @@ import { HEADERS_KEYS } from "@config/react-csv/export-contest";
 import { createExportDataStore } from "./store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useEffect } from "react";
+import {
+  useQuery,
+} from "@tanstack/react-query"
+import { makeStorageClient } from "@config/web3storage";
+import { objectToCsv } from '@helpers/objectToCsv'
 
 const useStoreExportData = createExportDataStore();
 
 export function useExportContestDataToCSV() {
   const stateExportData = useStoreExportData();
   const { asPath } = useRouter();
+  const queryContestResults = useQuery(
+    ['contest-result', asPath.split("/")[3]],
+    retrieveContestResultsCid
+  )
+
   //@ts-ignore
   const { listProposalsData, listProposalsIds } = useStoreContest(
     state => ({
@@ -23,6 +33,37 @@ export function useExportContestDataToCSV() {
     }),
     shallow,
   );
+
+  async function retrieveContestResultsCid() {
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      const config = await import('@config/supabase')
+      const supabase = config.supabase
+
+      try {
+        const url = asPath.split("/");
+        const contestAddress = url[3];
+        const chainName = url[2];    
+        const result = await supabase
+        .from("results")
+        .select("cid")
+        .eq("contest_address", contestAddress)
+        .eq("contest_network_name", chainName)
+
+        const { data, error } = result
+        if(error) {
+          throw new Error(error.message)
+        }
+        
+        if (data?.length > 0) {
+          stateExportData.setCid(data[0]?.cid)
+        }
+
+        return data
+      } catch(e) {
+        console.error(e)
+      }
+    }
+  }
 
   /**
    * Fetch the list of voters for a given proposal
@@ -98,6 +139,8 @@ export function useExportContestDataToCSV() {
     stateExportData.setIsSuccess(false);
     stateExportData.setCsv(null);
     stateExportData.setError(null, false);
+    const contestAddress = asPath.split("/")[3]
+    const chainName = asPath.split("/")[2]
 
     const propArrayToReturn = [];
     const tenthPercentile = Math.ceil(listProposalsIds.length / 10);
@@ -189,6 +232,27 @@ export function useExportContestDataToCSV() {
 
       stateExportData.setLoadingMessage(`Loaded ${listProposalsIds.length} out of ${listProposalsIds.length} entries!`);
       stateExportData.setCsv(propArrayToReturn);
+      //@ts-ignore
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        if(queryContestResults.data?.length === 0) {
+          const formatted = objectToCsv(propArrayToReturn)
+          const csv = new File([formatted], `result_contest_${contestAddress}_${chainName}.csv`, { type: 'text/csv' });
+    
+          const config = await import('@config/supabase')
+          const supabase = config.supabase
+          const client = makeStorageClient()
+          const cid = await client.put([csv])
+          stateExportData.setCid(cid)
+
+          await supabase.from("results").insert([
+            {
+              contest_address: contestAddress,
+              contest_network_name: chainName,
+              cid
+            }
+          ])
+        }
+      }
       stateExportData.setIsSuccess(true);
       stateExportData.setIsLoading(false);
     } catch (e) {
@@ -206,5 +270,6 @@ export function useExportContestDataToCSV() {
   return {
     stateExportData,
     formatContestCSVData,
+    queryContestResults,
   };
 }

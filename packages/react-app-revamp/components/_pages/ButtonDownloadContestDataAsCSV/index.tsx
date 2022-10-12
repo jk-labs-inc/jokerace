@@ -9,8 +9,11 @@ import button from "@components/Button/styles";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
 import { format } from "date-fns";
+import { useRouter } from "next/router";
+
 export const ButtonDownloadContestDataAsCSV = () => {
   const { fetchProposalsPage } = useContest();
+  const { asPath } = useRouter()
   const {
     hasPaginationProposalsNextPage,
     indexPaginationProposals,
@@ -30,7 +33,7 @@ export const ButtonDownloadContestDataAsCSV = () => {
     shallow,
   );
 
-  const { stateExportData, formatContestCSVData } = useExportContestDataToCSV();
+  const { stateExportData, formatContestCSVData, queryContestResults } = useExportContestDataToCSV();
   async function startDownloading() {
     stateExportData.setLoadingMessage("Loading remaining proposals data...");
     stateExportData.setIsReady(false);
@@ -58,6 +61,23 @@ export const ButtonDownloadContestDataAsCSV = () => {
   useEffect(() => {
     if (stateExportData.isReady === true) formatContestCSVData();
   }, [stateExportData.isReady]);
+
+  if(queryContestResults.isLoading) return (
+    <div className="animate-appear mb-5">
+      <Loader scale="component">{stateExportData.loadingMessage}</Loader>
+    </div>
+  )
+
+  if(queryContestResults.isSuccess && stateExportData.cid !== null && !stateExportData.isSuccess) 
+    return (
+      <a 
+        className={button({ intent: "primary-outline" })}
+        href={`https://ipfs.io/ipfs/${stateExportData.cid}/result_contest_${asPath.split("/")[3]}_${asPath.split("/")[2]}.csv`}
+        download
+      >
+        Download CSV file
+      </a>
+    )
 
   if (!stateExportData.shouldStart)
     return (

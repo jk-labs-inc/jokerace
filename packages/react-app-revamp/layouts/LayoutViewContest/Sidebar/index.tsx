@@ -107,7 +107,7 @@ export const Sidebar = (props: any) => {
             Rules
           </a>
         </Link>
-        {/* <Link
+        {contestStatus === CONTEST_STATUS.COMPLETED ? <Link
           href={{
             pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
             //@ts-ignore
@@ -125,7 +125,10 @@ export const Sidebar = (props: any) => {
             <DocumentDownloadIcon className={styles.navLinkIcon} />
             Export data
           </a>
-        </Link> */}
+        </Link> : <span className={`${styles.navLink} opacity-30`}>
+            <DocumentDownloadIcon className={styles.navLinkIcon} />
+            Export data
+        </span> }
       </nav>
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
         <>
