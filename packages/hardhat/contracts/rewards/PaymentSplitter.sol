@@ -32,6 +32,8 @@ contract PaymentSplitter is Context {
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
+    event RewardWithdrawn(address by, uint256 amount);
+    event ERC20RewardWithdrawn(IERC20 indexed token, address by, uint256 amount);
 
     uint256 private _totalShares;
     uint256 private _totalReleased;
@@ -44,6 +46,7 @@ contract PaymentSplitter is Context {
     mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
     
     GovernorCountingSimple private _underlyingContest;
+    address private _creator;
     uint256[] private _rankedProposalIds;
 
     /**
@@ -62,6 +65,7 @@ contract PaymentSplitter is Context {
         }
 
         _underlyingContest = underlyingContest_;
+        _creator = msg.sender;
     }
 
     /**
@@ -82,6 +86,13 @@ contract PaymentSplitter is Context {
      */
     function totalShares() public view returns (uint256) {
         return _totalShares;
+    }
+    
+    /**
+     * @dev Getter for the creator of this rewards contract.
+     */
+    function creator() public view returns (address) {
+        return _creator;
     }
 
     /**
@@ -207,6 +218,20 @@ contract PaymentSplitter is Context {
 
         SafeERC20.safeTransfer(token, proposalAuthor, payment);
         emit ERC20PaymentReleased(token, proposalAuthor, payment);
+    }
+
+    function withdrawRewards() public virtual {
+        require(msg.sender == creator());
+
+        Address.sendValue(payable(creator()), address(this).balance);
+        emit RewardWithdrawn(creator(), address(this).balance);
+    }
+
+    function withdrawRewards(IERC20 token) public virtual {
+        require(msg.sender == creator());
+
+        SafeERC20.safeTransfer(token, payable(creator()), token.balanceOf(address(this)));
+        emit ERC20RewardWithdrawn(token, creator(), token.balanceOf(address(this)));
     }
 
     /**
