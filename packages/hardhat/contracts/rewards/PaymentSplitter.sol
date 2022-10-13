@@ -161,6 +161,7 @@ contract PaymentSplitter is Context {
      * total shares and their previous withdrawals.
      */
     function release(uint256 ranking) public virtual {
+        require(ranking != 0, "PaymentSplitter: ranking must be 1 or greater");
         require(_underlyingContest.state() == IGovernor.ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
         require(_shares[ranking] > 0, "PaymentSplitter: ranking has no shares");
 
@@ -178,6 +179,8 @@ contract PaymentSplitter is Context {
         if (_rankedProposalIds.length == 0) {
             _rankedProposalIds = _underlyingContest.rankedProposals(true);
         }
+
+        // Rankings will be indexed starting at 1 so we need to account for this in arrays that are indexed starting at 0
         require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
         address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
 
@@ -193,6 +196,7 @@ contract PaymentSplitter is Context {
      * contract.
      */
     function release(IERC20 token, uint256 ranking) public virtual {
+        require(ranking != 0, "PaymentSplitter: ranking must be 1 or greater");
         require(_underlyingContest.state() == IGovernor.ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
         require(_shares[ranking] > 0, "PaymentSplitter: account has no shares");
 
@@ -211,6 +215,8 @@ contract PaymentSplitter is Context {
         if (_rankedProposalIds.length == 0) {
             _rankedProposalIds = _underlyingContest.rankedProposals(true);
         }
+
+        // Rankings will be indexed starting at 1 so we need to account for this in arrays that are indexed starting at 0
         require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
         address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
 
