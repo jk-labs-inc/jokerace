@@ -77,6 +77,33 @@ abstract contract GovernorCountingSimple is Governor {
         return (proposalIds, proposalVoteCountsArray);
     }
 
+    /**
+     * @dev Accessor to the internal vote counts for a given proposal that excludes deleted proposals.
+     */
+    function allProposalTotalVotesWithoutDeleted()
+        public
+        view
+        virtual
+        returns (
+            uint256[] memory proposalIdsReturn,
+            VoteCounts[] memory proposalVoteCountsArrayReturn
+        )
+    {
+        uint256[] memory proposalIds = getAllProposalIds();
+        uint256[] memory proposalIdsWithoutDeleted;
+        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
+        
+        uint256 newArraysIndexCounter = 0;
+        for (uint256 i = 0; i < proposalIds.length; i++) {
+            if (!(isProposalDeleted(proposalIds[i]) == 1)) {
+                proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIds[i];
+                proposalVoteCountsArray[newArraysIndexCounter] = _proposalVotes[proposalIds[i]].proposalVoteCounts;
+                newArraysIndexCounter += 1;
+            }
+        }
+        return (proposalIdsWithoutDeleted, proposalVoteCountsArray);
+    }
+
     function sort_item(uint pos, int256[] memory netProposalVotes, uint256[] memory proposalIds) internal pure returns (bool) {
         uint w_min = pos;
         for(uint i = pos;i < netProposalVotes.length;i++) {
@@ -94,7 +121,7 @@ abstract contract GovernorCountingSimple is Governor {
         return true;
     }
 
-    function rankedProposals()
+    function rankedProposals(bool excludeDeletedProposals)
         public
         view
         virtual
@@ -102,12 +129,12 @@ abstract contract GovernorCountingSimple is Governor {
             uint256[] memory sortedProposalIdsReturn
         )
     {
-        (uint256[] memory proposalIdList, VoteCounts[] memory proposalVoteCountsArray) = allProposalTotalVotes();
+        (uint256[] memory proposalIdList, VoteCounts[] memory proposalVoteCountsArray) = excludeDeletedProposals ? allProposalTotalVotesWithoutDeleted() : allProposalTotalVotes();
         int256[] memory netProposalVotes = new int256[](proposalIdList.length);
-        for(uint i = 0; i < proposalVoteCountsArray.length-1; i++) {
+        for(uint256 i = 0; i < proposalVoteCountsArray.length; i++) {
             netProposalVotes[i] = int256(proposalVoteCountsArray[i].forVotes) - int256(proposalVoteCountsArray[i].againstVotes);
         }
-        for(uint i = 0;i < proposalIdList.length-1;i++) {
+        for(uint256 i = 0; i < proposalIdList.length - 1; i++) { // Only goes to length minus 1 because sorting the last item would be redundant
             sort_item(i, netProposalVotes, proposalIdList);
         }
         return proposalIdList;

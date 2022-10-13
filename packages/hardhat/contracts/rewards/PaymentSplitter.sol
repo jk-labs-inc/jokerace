@@ -176,7 +176,7 @@ contract PaymentSplitter is Context {
         }
 
         if (_rankedProposalIds.length == 0) {
-            _rankedProposalIds = _underlyingContest.rankedProposals();
+            _rankedProposalIds = _underlyingContest.rankedProposals(true);
         }
         require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
         address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
@@ -209,7 +209,7 @@ contract PaymentSplitter is Context {
         }
 
         if (_rankedProposalIds.length == 0) {
-            _rankedProposalIds = _underlyingContest.rankedProposals();
+            _rankedProposalIds = _underlyingContest.rankedProposals(true);
         }
         require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
         address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);

@@ -35,6 +35,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     uint256[] private _proposalIds;
+    mapping(uint256 => uint256) private _deletedProposalIds;
     string private _name;
     string private _prompt;
     bool private _canceled;
@@ -208,6 +209,13 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
+     * @dev Returns if a proposal has been deleted or not (0 if not, 1 if it has been deleted).
+     */
+    function isProposalDeleted(uint256 proposalId) public view virtual returns (uint256) {
+        return _deletedProposalIds[proposalId];
+    }
+
+    /**
      * @dev Register a vote with a given support and voting weight.
      *
      * Note: Support is generic and can represent various things depending on the voting system used.
@@ -270,7 +278,10 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         require(msg.sender == creator());
         
         for(uint index=0; index<proposalIds.length; index++){
-            _proposals[proposalIds[index]].description = "This proposal has been deleted by the creator of the contest.";
+            if (_deletedProposalIds[proposalIds[index]] != 1) {
+                _deletedProposalIds[proposalIds[index]] = 1;
+                _proposals[proposalIds[index]].description = "This proposal has been deleted by the creator of the contest.";
+            }
         }
 
         emit ProposalsDeleted(proposalIds);
