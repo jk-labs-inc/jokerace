@@ -5,8 +5,9 @@ import "./governance/Governor.sol";
 import "./governance/extensions/GovernorSettings.sol";
 import "./governance/extensions/GovernorCountingSimple.sol";
 import "./governance/extensions/GovernorVotesTimestamp.sol";
+import "./governance/extensions/GovernorModuleRegistry.sol";
 
-contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotesTimestamp {
+contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotesTimestamp, GovernorModuleRegistry {
     constructor(string memory _name, string memory _prompt, IVotesTimestamp _token, IVotesTimestamp _submissionToken, uint256[] memory _constructorIntParams)
         Governor(_name, _prompt)
         GovernorSettings(
