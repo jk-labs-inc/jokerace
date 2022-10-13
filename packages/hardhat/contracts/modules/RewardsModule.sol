@@ -133,10 +133,17 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Getter for the address of the payee number `index`.
+     * @dev Getter for list of rankings that will be paid out.
      */
-    function payee(uint256 index) public view returns (uint256) {
-        return _payees[index];
+    function getPayees() public view returns (uint256[] memory) {
+        return _payees;
+    }
+
+    /**
+     * @dev Getter for the underlying contest.
+     */
+    function underlyingContest() public view returns (GovernorCountingSimple) {
+        return _underlyingContest;
     }
 
     /**
