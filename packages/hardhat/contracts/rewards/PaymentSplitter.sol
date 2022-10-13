@@ -10,7 +10,7 @@ import "../governance/IGovernor.sol";
 import "../governance/extensions/GovernorCountingSimple.sol";
 
 /**
- * @title PaymentSplitter
+ * @title RewardsModule
  * @dev This contract allows to split Ether payments among a group of accounts. The sender does not need to be aware
  * that the Ether will be split in this way, since it is handled transparently by the contract.
  *
@@ -19,7 +19,7 @@ import "../governance/extensions/GovernorCountingSimple.sol";
  * an amount proportional to the percentage of total shares they were assigned. The distribution of shares is set at the
  * time of contract deployment and can't be updated thereafter.
  *
- * `PaymentSplitter` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
+ * `RewardsModule` follows a _pull payment_ model. This means that payments are not automatically forwarded to the
  * accounts but kept in this contract, and the actual transfer is triggered as a separate step by calling the {release}
  * function.
  *
@@ -27,7 +27,7 @@ import "../governance/extensions/GovernorCountingSimple.sol";
  * tokens that apply fees during transfers, are likely to not be supported as expected. If in doubt, we encourage you
  * to run tests before sending real value to this contract.
  */
-contract PaymentSplitter is Context {
+contract RewardsModule is Context {
     event PayeeAdded(uint256 ranking, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
@@ -50,15 +50,15 @@ contract PaymentSplitter is Context {
     uint256[] private _rankedProposalIds;
 
     /**
-     * @dev Creates an instance of `PaymentSplitter` where each ranking in `payees` is assigned the number of shares at
+     * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
      * the matching position in the `shares` array.
      *
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
     constructor(uint256[] memory payees, uint256[] memory shares_, GovernorCountingSimple underlyingContest_) payable {
-        require(payees.length == shares_.length, "PaymentSplitter: payees and shares length mismatch");
-        require(payees.length > 0, "PaymentSplitter: no payees");
+        require(payees.length == shares_.length, "RewardsModule: payees and shares length mismatch");
+        require(payees.length > 0, "RewardsModule: no payees");
 
         for (uint256 i = 0; i < payees.length; i++) {
             _addPayee(payees[i], shares_[i]);
@@ -161,13 +161,13 @@ contract PaymentSplitter is Context {
      * total shares and their previous withdrawals.
      */
     function release(uint256 ranking) public virtual {
-        require(ranking != 0, "PaymentSplitter: ranking must be 1 or greater");
-        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
-        require(_shares[ranking] > 0, "PaymentSplitter: ranking has no shares");
+        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
+        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "RewardsModule: contest must be completed for rewards to be paid out");
+        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
         uint256 payment = releasable(ranking);
 
-        require(payment != 0, "PaymentSplitter: account is not due payment");
+        require(payment != 0, "RewardsModule: account is not due payment");
 
         // _totalReleased is the sum of all values in _released.
         // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
@@ -181,10 +181,10 @@ contract PaymentSplitter is Context {
         }
 
         // Rankings will be indexed starting at 1 so we need to account for this in arrays that are indexed starting at 0
-        require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
+        require(ranking < (_rankedProposalIds.length + 1), "RewardsModule: there are not enough proposals for that ranking to exist");
         address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
 
-        require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
+        require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
         Address.sendValue(proposalAuthor, payment);
         emit PaymentReleased(proposalAuthor, payment);
@@ -196,13 +196,13 @@ contract PaymentSplitter is Context {
      * contract.
      */
     function release(IERC20 token, uint256 ranking) public virtual {
-        require(ranking != 0, "PaymentSplitter: ranking must be 1 or greater");
-        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "PaymentSplitter: contest must be completed for rewards to be paid out");
-        require(_shares[ranking] > 0, "PaymentSplitter: account has no shares");
+        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
+        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "RewardsModule: contest must be completed for rewards to be paid out");
+        require(_shares[ranking] > 0, "RewardsModule: account has no shares");
 
         uint256 payment = releasable(token, ranking);
 
-        require(payment != 0, "PaymentSplitter: account is not due payment");
+        require(payment != 0, "RewardsModule: account is not due payment");
 
         // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
         // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment"
@@ -217,10 +217,10 @@ contract PaymentSplitter is Context {
         }
 
         // Rankings will be indexed starting at 1 so we need to account for this in arrays that are indexed starting at 0
-        require(ranking < (_rankedProposalIds.length + 1), "PaymentSplitter: there are not enough proposals for that ranking to exist");
+        require(ranking < (_rankedProposalIds.length + 1), "RewardsModule: there are not enough proposals for that ranking to exist");
         address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
 
-        require(proposalAuthor != address(0), "PaymentSplitter: account is the zero address");
+        require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
         SafeERC20.safeTransfer(token, proposalAuthor, payment);
         emit ERC20PaymentReleased(token, proposalAuthor, payment);
@@ -258,10 +258,10 @@ contract PaymentSplitter is Context {
      * @param shares_ The number of shares owned by the payee.
      */
     function _addPayee(uint256 ranking, uint256 shares_) private {
-        require(ranking > 0, "PaymentSplitter: ranking is 0, must be greater");
-        require(shares_ > 0, "PaymentSplitter: shares are 0");
-        require(_shares[ranking] == 0, "PaymentSplitter: account already has shares");
-        require(_shares[ranking] == 0, "PaymentSplitter: account already has shares");
+        require(ranking > 0, "RewardsModule: ranking is 0, must be greater");
+        require(shares_ > 0, "RewardsModule: shares are 0");
+        require(_shares[ranking] == 0, "RewardsModule: account already has shares");
+        require(_shares[ranking] == 0, "RewardsModule: account already has shares");
 
         _payees.push(ranking);
         _shares[ranking] = shares_;
