@@ -48,12 +48,14 @@ export const createStore = () => {
     setIsPageProposalsLoading: (value: boolean) => set({ isPageProposalsLoading: value }),
     setIsPageProposalsSuccess: (value: boolean) => set({ isPageProposalsSuccess: value }),
     setIsPageProposalsError: (value: boolean) => set({ isPageProposalsError: value }),
-    setCurrentPagePaginationProposals: (currentPage: number) => set({
-      currentPagePaginationProposals: currentPage
-    }),
-    setIndexPaginationProposalPerId: (proposalsPages: Array<any>) => set({
-      indexPaginationProposals: proposalsPages,
-    }),
+    setCurrentPagePaginationProposals: (currentPage: number) =>
+      set({
+        currentPagePaginationProposals: currentPage,
+      }),
+    setIndexPaginationProposalPerId: (proposalsPages: Array<any>) =>
+      set({
+        indexPaginationProposals: proposalsPages,
+      }),
     setTotalPagesPaginationProposals: (newTotal: number) => set({ totalPagesPaginationProposals: newTotal }),
     setHasPaginationProposalsNextPage: (hasNextPage: boolean) => set({ hasPaginationProposalsNextPage: hasNextPage }),
     setDownvotingAllowed: (isAllowed: boolean) => set({ downvotingAllowed: isAllowed }),
