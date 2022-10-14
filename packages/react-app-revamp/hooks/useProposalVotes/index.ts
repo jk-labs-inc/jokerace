@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
-import { chain as wagmiChain, useAccount, useContractEvent } from "wagmi";
+import { chain as wagmiChain, useAccount } from "wagmi";
+import { getContract, watchContractEvent } from "@wagmi/core"
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { chains } from "@config/wagmi";
@@ -10,12 +11,14 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useStore } from "./store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import arrayToChunks from "@helpers/arrayToChunks";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
 
 const VOTES_PER_PAGE = 5;
 
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
   const account = useAccount();
+  // const provider = useProvider();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
@@ -36,6 +39,8 @@ export function useProposalVotes(id: number | string) {
     setIndexPaginationVotesPerId,
     setTotalPagesPaginationVotes,
     setHasPaginationVotesNextPage,
+    contestStatus,
+    canUpdateVotesInRealTime,
   } = useStore(
     state => ({
       //@ts-ignore
@@ -68,6 +73,10 @@ export function useProposalVotes(id: number | string) {
       setTotalPagesPaginationVotes: state.setTotalPagesPaginationVotes,
       //@ts-ignore
       setHasPaginationVotesNextPage: state.setHasPaginationVotesNextPage,
+      //@ts-ignore
+      canUpdateVotesInRealTime: state.canUpdateVotesInRealTime,
+      //@ts-ignore
+      contestStatus: state.contestStatus,
     }),
     shallow,
   );
@@ -220,17 +229,31 @@ export function useProposalVotes(id: number | string) {
   }, [account?.connector]);
 
   useEffect(() => {
+    if(canUpdateVotesInRealTime === true) {
+      // Only watch VoteCast events when voting is open and we are <=1h before end of voting
+      if(contestStatus === CONTEST_STATUS.VOTING_OPEN) {
+        watchContractEvent({
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+        }, 
+        "VoteCast", (args) => {
+          fetchVotesOfAddress(args[0])
+        })
+      }
+      // When voting closes, remove all event listeners
+      if(contestStatus === CONTEST_STATUS.COMPLETED) {
+        const contract = getContract({
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+        })
+        contract.removeAllListeners()
+      }
+    }
+  }, [canUpdateVotesInRealTime, contestStatus])
+
+  useEffect(() => {
     fetchProposalVotes();
   }, []);
-
-  // useContractEvent({
-  //   addressOrName: asPath.split("/")[3],
-  //   contractInterface: DeployedContestContract.abi,
-  //   eventName: "VoteCast",
-  //   listener: event => {
-  //     fetchVotesOfAddress(event[0]);
-  //   },
-  // });
 
   return {
     isLoading: isListVotersLoading,
