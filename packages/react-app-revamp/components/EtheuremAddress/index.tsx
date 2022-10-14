@@ -33,7 +33,7 @@ export const EtheuremAddress = (props: EtheuremAddressProps) => {
   const queryEns = useEnsName({
     chainId: chain.mainnet.id,
     address: ethereumAddress,
-    enabled: (queryUserProfileLens?.isSuccess || queryUserProfileLens?.isError) && queryUserProfileLens?.data === null ? true : false,
+    enabled: (queryUserProfileLens?.isSuccess && queryUserProfileLens?.data === null ) || queryUserProfileLens?.isError  ? true : false,
   });
 
   if (!displayLensProfile || queryUserProfileLens?.status === "error" || queryUserProfileLens?.data === null) {
