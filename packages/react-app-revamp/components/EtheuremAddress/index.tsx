@@ -37,10 +37,11 @@ export const EtheuremAddress = (props: EtheuremAddressProps) => {
   });
 
   if (!displayLensProfile || queryUserProfileLens?.status === "error" || queryUserProfileLens?.data === null) {
-    if (queryEns?.status === "success" && queryEns?.data !== null) return `${withHyphen === true ? "— " : ""}${queryEns?.data}`
-    return shortenOnFallback === true
+    if (queryEns?.status === "success" && queryEns?.data !== null) return <>{`${withHyphen === true ? "— " : ""}${queryEns?.data}`}</>
+    return <>{shortenOnFallback === true
       ? `${withHyphen === true ? "— " : ""}${shortenEthereumAddress(ethereumAddress)}`
-      : `${withHyphen === true ? "— " : ""}${ethereumAddress}`;
+      : `${withHyphen === true ? "— " : ""}${ethereumAddress}`}
+      </>
   }
 
   if (queryUserProfileLens?.status === "loading")
@@ -76,6 +77,7 @@ export const EtheuremAddress = (props: EtheuremAddressProps) => {
         </a>
       </span>
     );
+    return <>{ethereumAddress}</>
 };
 
 export default EtheuremAddress;

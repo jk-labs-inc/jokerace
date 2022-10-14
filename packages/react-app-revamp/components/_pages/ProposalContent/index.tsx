@@ -55,6 +55,7 @@ export const ProposalContent = (props: ProposalContentProps) => {
       </blockquote>
       {!isProposalDeleted(content) && (
         <figcaption className="pt-5 font-mono overflow-hidden text-neutral-12 text-ellipsis whitespace-nowrap">
+          {/*@ts-ignore*/}
           <EtheuremAddress
             ethereumAddress={author}
             displayLensProfile={true}

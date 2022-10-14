@@ -132,6 +132,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
                       >
                         Click to view this address on Debank
                       </a>
+                      
                       <EtheuremAddress
                         withHyphen={false}
                         ethereumAddress={address}
