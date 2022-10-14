@@ -35,13 +35,12 @@ export const EtheuremAddress = (props: EtheuremAddressProps) => {
     address: ethereumAddress,
     enabled: queryUserProfileLens?.isSuccess && queryUserProfileLens?.data === null ? true : false,
   });
-  console.log(queryEns?.data);
 
   if (!displayLensProfile || queryUserProfileLens?.status === "error" || queryUserProfileLens?.data === null) {
-    if (queryEns?.status === "success" && queryEns?.data !== null) return queryEns?.data;
+    if (queryEns?.status === "success" && queryEns?.data !== null) return `${withHyphen === true ? "— " : ""}${queryEns?.data}`
     return shortenOnFallback === true
-      ? `${withHyphen ? "— " : ""}${shortenEthereumAddress(ethereumAddress)}`
-      : `${withHyphen ? "— " : ""}${ethereumAddress}`;
+      ? `${withHyphen === true ? "— " : ""}${shortenEthereumAddress(ethereumAddress)}`
+      : `${withHyphen === true ? "— " : ""}${ethereumAddress}`;
   }
 
   if (queryUserProfileLens?.status === "loading")
