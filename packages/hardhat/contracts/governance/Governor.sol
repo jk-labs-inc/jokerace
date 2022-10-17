@@ -275,7 +275,8 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
      * Emits a {IGovernor-ProposalsDeleted} event.
      */
     function deleteProposals(uint256[] memory proposalIds) public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "Governor: only the contest creator can delete proposals");
+        require(state() != ContestState.Completed, "Governor: deletion of proposals after the end of a contest is not allowed");
         
         for(uint index=0; index<proposalIds.length; index++){
             if (_deletedProposalIds[proposalIds[index]] != 1) {
