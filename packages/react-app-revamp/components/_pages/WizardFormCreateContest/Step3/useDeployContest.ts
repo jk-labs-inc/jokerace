@@ -58,7 +58,7 @@ export function useDeployContest(form: any) {
       const proposalThreshold = values?.whoCanSubmit === "anybody" ? 0 : values.requiredNumberOfTokenToSubmit;
       const numAllowedProposalSubmissions =
         values.noSubmissionLimitPerUser === true ? 10000000 : values.submissionPerUserMaxNumber;
-      const useSameTokenForSubmissions = ["anybody", "mustHaveVotingTokens"].includes(values?.whoCanSubmit)
+      const useSameTokenForSubmissions = ["anybody", "mustHaveVotingTokens"].includes(values?.whoCanSubmit);
       const contestParameters = [
         // UNIX timestamp of when submissions open
         getUnixTime(new Date(values.datetimeOpeningSubmissions)),

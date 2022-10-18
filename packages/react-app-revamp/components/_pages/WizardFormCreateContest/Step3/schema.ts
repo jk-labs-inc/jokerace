@@ -50,11 +50,11 @@ export const schema = object({
   usersQualifyToVoteAtAnotherDatetime: string().optional(),
   downvoting: boolean(),
   hasRewards: boolean(),
-  rewardTokenAddress: string()
-  .regex(/^0x[a-fA-F0-9]{40}$/),
-  rewards: array(object({
-    winningRank: string(),
-    rewardTokenAmount: number().positive(),
-  })
-  )
+  rewardTokenAddress: string().regex(/^0x[a-fA-F0-9]{40}$/),
+  rewards: array(
+    object({
+      winningRank: string(),
+      rewardTokenAmount: number().positive(),
+    }),
+  ),
 });
