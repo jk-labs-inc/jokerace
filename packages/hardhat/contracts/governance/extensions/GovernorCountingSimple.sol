@@ -90,7 +90,7 @@ abstract contract GovernorCountingSimple is Governor {
         )
     {
         uint256[] memory proposalIds = getAllProposalIds();
-        uint256[] memory proposalIdsWithoutDeleted;
+        uint256[] memory proposalIdsWithoutDeleted = new uint256[](proposalIds.length);
         VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
         
         uint256 newArraysIndexCounter = 0;
