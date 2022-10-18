@@ -5,6 +5,7 @@ import { useStore as useStoreProposalVotes } from "@hooks/useProposalVotes/store
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import shallow from "zustand/shallow";
 import { useAccount } from "wagmi";
+import EtheuremAddress from "@components/EtheuremAddress";
 
 interface ListProposalVotesProps {
   id: number | string;
@@ -131,7 +132,13 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
                       >
                         Click to view this address on Debank
                       </a>
-                      {votesPerAddress[address].displayAddress}:
+                      
+                      <EtheuremAddress
+                        withHyphen={false}
+                        ethereumAddress={address}
+                        shortenOnFallback={true}
+                        displayLensProfile={true}
+                      />
                     </td>
                     <td className="p-2 font-bold">
                       {new Intl.NumberFormat().format(parseFloat(votesPerAddress[address].votes.toFixed(2)))}

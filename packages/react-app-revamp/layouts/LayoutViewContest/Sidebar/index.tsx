@@ -166,11 +166,7 @@ export const Sidebar = (props: any) => {
       <Button
         onClick={() => setIsTimelineModalOpen(true)}
         disabled={
-          isLoading ||
-          isError !== null ||
-          !isDate(submissionsOpen) ||
-          !isDate(votesOpen) ||
-          !isDate(votesClose)
+          isLoading || isError !== null || !isDate(submissionsOpen) || !isDate(votesOpen) || !isDate(votesClose)
         }
         intent="true-solid-outline"
         className={`
@@ -193,7 +189,6 @@ export const Sidebar = (props: any) => {
         </>
       )}
     </>
-    
   );
 };
 

@@ -259,7 +259,7 @@ export const ListProposals = () => {
                         </span>
                       )}
                       <ProposalContent
-                        author={listProposalsData[id].author}
+                        author={listProposalsData[id].authorEthereumAddress}
                         content={
                           listProposalsData[id].isContentImage
                             ? listProposalsData[id].content

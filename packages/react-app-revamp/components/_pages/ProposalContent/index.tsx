@@ -5,6 +5,7 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import styles from "./styles.module.css";
 import isProposalDeleted from "@helpers/isProposalDeleted";
+import EtheuremAddress from "@components/EtheuremAddress";
 interface ProposalContentProps {
   content: string;
   author: string;
@@ -54,7 +55,13 @@ export const ProposalContent = (props: ProposalContentProps) => {
       </blockquote>
       {!isProposalDeleted(content) && (
         <figcaption className="pt-5 font-mono overflow-hidden text-neutral-12 text-ellipsis whitespace-nowrap">
-          — {author}
+          {/*@ts-ignore*/}
+          <EtheuremAddress
+            ethereumAddress={author}
+            displayLensProfile={true}
+            shortenOnFallback={false}
+            withHyphen={true}
+          />
         </figcaption>
       )}
     </>
