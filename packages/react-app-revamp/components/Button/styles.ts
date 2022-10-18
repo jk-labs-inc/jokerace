@@ -42,7 +42,6 @@ export const button = cva(
           'text-true-white hover:text-neutral-1 focus:text-true-black',
           'border-primary-9 hover:border-primary-10 hover:focus:border-primary-10 focus:border-primary-11',
         ],
-<<<<<<< HEAD
         'ghost-neutral': [
           'bg-true-white bg-opacity-0 hover:bg-opacity-5 focus:bg-opacity-100',
           'text-true-white focus:text-true-black',
@@ -54,15 +53,10 @@ export const button = cva(
           'text-primary-10 focus:text-primary-1',
           'border-transparent',
           'focus:outline-none'
-        ]
-=======
-        "ghost-neutral": [
-          "border-transparent bg-true-white bg-opacity-0 text-true-white hover:bg-opacity-10 focus:border-transparent focus:bg-opacity-100 focus:text-true-black focus:outline-none"
         ],
         "ghost-negative": [
           "border-transparent bg-negative-11 bg-opacity-0 text-negative-11 hover:bg-opacity-10 focus:border-transparent focus:bg-opacity-100 focus:text-negative-1 focus:outline-none"
         ],
->>>>>>> 00fb06b (wip: add rewards settings in contest rules form)
       },
       scale: {
         default: ['text-xs', 'py-2 px-4 sm:px-5', 'font-bold', 'border'],

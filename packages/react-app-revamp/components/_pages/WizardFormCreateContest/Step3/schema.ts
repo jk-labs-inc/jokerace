@@ -22,11 +22,6 @@ export interface DataStep3 {
   rewards: Array<any>;
 }
 
-const Reward = object({
-  winningRank: number().positive(),
-  rewardTokenAmount: number().positive(),
-});
-
 export const schema = object({
   contestTitle: string()
     .trim()
@@ -57,5 +52,9 @@ export const schema = object({
   hasRewards: boolean(),
   rewardTokenAddress: string()
   .regex(/^0x[a-fA-F0-9]{40}$/),
-  rewards: array(Reward)
+  rewards: array(object({
+    winningRank: string(),
+    rewardTokenAmount: number().positive(),
+  })
+  )
 });
