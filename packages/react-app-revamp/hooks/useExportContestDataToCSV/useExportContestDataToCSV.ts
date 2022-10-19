@@ -1,7 +1,7 @@
 import { chains } from "@config/wagmi";
 import shallow from "zustand/shallow";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
-import { chain, fetchEnsName, readContract, fetchEnsResolver } from "@wagmi/core";
+import { readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { HEADERS_KEYS } from "@config/react-csv/export-contest";
 import { createExportDataStore } from "./store";
@@ -151,8 +151,6 @@ export function useExportContestDataToCSV() {
       [HEADERS_KEYS.VOTES]: addressPropVote,
       //@ts-ignore
       [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: addressPropVote / propTotalVotes,
-      [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:false,
-      [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]: "",
     };
 
     return voterDict;
