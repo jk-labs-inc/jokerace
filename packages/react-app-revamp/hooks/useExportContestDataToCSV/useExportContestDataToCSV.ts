@@ -231,8 +231,6 @@ export function useExportContestDataToCSV() {
           await Promise.all(arrayToReturn);
         }
       }
-      //@ts-ignore
-      // console.log(addressesVoted.length)
       return await Promise.all(arrayToReturn);
     }
   }
@@ -263,11 +261,10 @@ export function useExportContestDataToCSV() {
 
       const returned = await Promise.all(propArrayToReturn);
       //@ts-ignore
-      const reduced = returned.reduce((accumulator, value) => accumulator.concat(value), [])
-      console.log(reduced)
+      const reducedPropArray = returned.reduce((accumulator, value) => accumulator.concat(value), [])
 
       stateExportData.setLoadingMessage(`Loaded ${listProposalsIds.length} out of ${listProposalsIds.length} entries!`);
-      stateExportData.setCsv(reduced);
+      stateExportData.setCsv(reducedPropArray);
       //@ts-ignore
       // if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       //   if(queryContestResults.data?.length === 0) {
