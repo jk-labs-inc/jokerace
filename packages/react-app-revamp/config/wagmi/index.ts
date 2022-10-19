@@ -20,10 +20,7 @@ const defaultChains = [
   chain.optimism,
 ];
 const appChains = [...defaultChains, ...testnetChains];
-const providers =
-  process.env.NODE_ENV === "development"
-    ? [publicProvider()]
-    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId })];
+const providers = [alchemyProvider({ alchemyId })];
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({

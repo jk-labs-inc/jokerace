@@ -14,6 +14,11 @@ import { makeStorageClient } from "@config/web3storage";
 import { objectToCsv } from '@helpers/objectToCsv'
 import { array } from "zod";
 
+const MAX_PROPOSALS_EXPORTING = 500;
+const MAX_UNIQUE_VOTERS_EXPORTING = 100;
+const PROPOSALS_PER_ASYNC_BATCH = 5; // 5 here
+const VOTERS_PER_ASYNC_BATCH = 100; // and 100 here will usually keep you from getting rate-limited by Alchemy Growth tier (660 CUPS)
+
 const useStoreExportData = createExportDataStore();
 
 export function useExportContestDataToCSV() {
@@ -219,11 +224,16 @@ export function useExportContestDataToCSV() {
 
       const arrayToReturn = [];
       //@ts-ignore
-      for (let j = 0; j < addressesVoted.length; j++) {
+      for (let j = 0; j < Math.min(MAX_UNIQUE_VOTERS_EXPORTING, addressesVoted.length); j++) {
         //@ts-ignore
         arrayToReturn.push(formatVoter(j, propId, propTotalVotes, propContent, proposerAddress, addressesVoted[j]));
+        if (j % VOTERS_PER_ASYNC_BATCH == 0) {
+          await Promise.all(arrayToReturn);
+        }
       }
-      return arrayToReturn;
+      //@ts-ignore
+      // console.log(addressesVoted.length)
+      return await Promise.all(arrayToReturn);
     }
   }
 
@@ -243,8 +253,12 @@ export function useExportContestDataToCSV() {
     const tenthPercentile = Math.ceil(listProposalsIds.length / 10);
     const ensNamesMap = new Map();
     try {
-      for (let i = 0; i < 1; i++) {
-        propArrayToReturn.push(formatProposal(i))
+      for (let i = 0; i < Math.min(MAX_PROPOSALS_EXPORTING, listProposalsIds.length); i++) {
+        propArrayToReturn.push(formatProposal(i));
+
+        if (i % PROPOSALS_PER_ASYNC_BATCH == 0) {
+          await Promise.all(propArrayToReturn);
+        }
       }
 
       const returned = await Promise.all(propArrayToReturn);
@@ -253,7 +267,7 @@ export function useExportContestDataToCSV() {
       console.log(reduced)
 
       stateExportData.setLoadingMessage(`Loaded ${listProposalsIds.length} out of ${listProposalsIds.length} entries!`);
-      stateExportData.setCsv(propArrayToReturn);
+      stateExportData.setCsv(reduced);
       //@ts-ignore
       // if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       //   if(queryContestResults.data?.length === 0) {
