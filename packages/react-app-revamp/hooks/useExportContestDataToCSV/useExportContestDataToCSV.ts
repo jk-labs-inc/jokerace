@@ -12,6 +12,7 @@ import {
 } from "@tanstack/react-query"
 import { makeStorageClient } from "@config/web3storage";
 import { objectToCsv } from '@helpers/objectToCsv'
+import { array } from "zod";
 
 const useStoreExportData = createExportDataStore();
 
@@ -130,6 +131,102 @@ export function useExportContestDataToCSV() {
     }
   }
 
+  async function formatVoter(j: number, propId: number, propTotalVotes: number, propContent: string, proposerAddress: string, addressThatVoted: string) {
+    const addressPropVote = await fetchVotesPerAddress(propId, addressThatVoted);
+
+
+    // if (!ensNamesMap.has(address)) {
+    //   // Keep a cache of ENS resolutions
+    //   const ensLookupResult = null;
+      
+    //   // await fetchEnsName({
+    //   //   address: address,
+    //   //   chainId: chain.mainnet.id,
+    //   // });
+
+    //   const checkedResult = ensLookupResult === null ? "No reverse record" : ensLookupResult;
+    //   ensNamesMap.set(address, checkedResult);
+    // }
+
+    const COMMON_DATA = {
+      [HEADERS_KEYS.PROPOSAL_ID]: propId,
+      [HEADERS_KEYS.AUTHOR]: proposerAddress,
+      [HEADERS_KEYS.PROPOSAL_CONTENT]: propContent,
+      [HEADERS_KEYS.TOTAL_VOTES]: propTotalVotes,
+    };
+    const voterEnsLookupResult = "No reverse record";
+
+    const voterDict = {
+      ...COMMON_DATA,
+      [HEADERS_KEYS.VOTER]: addressThatVoted,
+      [HEADERS_KEYS.VOTES]: addressPropVote,
+      //@ts-ignore
+      [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: addressPropVote / propTotalVotes,
+      [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:false,
+      [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]: "",
+      [HEADERS_KEYS.VOTER_HAS_ENS_REVERSE_RECORD_SET]:
+        voterEnsLookupResult == "No reverse record" ? false : true,
+      [HEADERS_KEYS.VOTER_ENS_REVERSE_RECORD_IF_SET]:
+        voterEnsLookupResult == "No reverse record" ? "" : voterEnsLookupResult,
+    };
+
+    return voterDict;
+  }
+
+  async function formatProposal(i: Number) {
+    const propId = listProposalsIds[i];
+    if (propId) {
+      const propTotalVotes = listProposalsData[propId].votes;
+      const propContent = listProposalsData[propId]?.content ?? "";
+      const proposerAddress = listProposalsData[propId].authorEthereumAddress;
+      const addressesVoted = await fetchProposalVoters(propId);
+      // if (!ensNamesMap.has(proposerAddress)) {
+      //   // Keep a cache of ENS resolutions
+      //   const ensResolve = null;
+        
+      //   // await fetchEnsResolver({
+      //   //   name: listProposalsData[propId].author,
+      //   //   chainId: chain.mainnet.id,
+      //   // });
+      //   const checkedResult = !ensResolve ? "No reverse record" : listProposalsData[propId].author;
+      //   ensNamesMap.set(proposerAddress, checkedResult);
+      // }
+      const proposerEnsLookupResult = "No reverse record";
+      const COMMON_DATA = {
+        [HEADERS_KEYS.PROPOSAL_ID]: propId,
+        [HEADERS_KEYS.AUTHOR]: proposerAddress,
+        [HEADERS_KEYS.PROPOSAL_CONTENT]: propContent,
+        [HEADERS_KEYS.TOTAL_VOTES]: propTotalVotes,
+      };
+
+      //@ts-ignore
+      if (addressesVoted.length == 0) {
+        const noVoterDict = {
+          ...COMMON_DATA,
+          [HEADERS_KEYS.VOTER]: "No voters",
+          [HEADERS_KEYS.VOTES]: "No votes",
+          [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: 0,
+          [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:
+            proposerEnsLookupResult === "No reverse record" ? false : true,
+          [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]:
+            proposerEnsLookupResult === "No reverse record" ? "" : proposerEnsLookupResult,
+          [HEADERS_KEYS.VOTER_HAS_ENS_REVERSE_RECORD_SET]: "No voters",
+          [HEADERS_KEYS.VOTER_ENS_REVERSE_RECORD_IF_SET]: "",
+        };
+
+        return [noVoterDict];
+      }
+
+      const arrayToReturn = [];
+      //@ts-ignore
+      for (let j = 0; j < addressesVoted.length; j++) {
+        //@ts-ignore
+        arrayToReturn.push(formatVoter(j, propId, propTotalVotes, propContent, proposerAddress, addressesVoted[j]));
+      }
+      return arrayToReturn;
+    }
+  }
+
   /**
    * Format the contest data and create a CSV file with those data
    */
@@ -146,113 +243,38 @@ export function useExportContestDataToCSV() {
     const tenthPercentile = Math.ceil(listProposalsIds.length / 10);
     const ensNamesMap = new Map();
     try {
-      for (let i = 0; i < listProposalsIds.length; i++) {
-        const propId = listProposalsIds[i];
-        if (propId) {
-          const propTotalVotes = listProposalsData[propId].votes;
-          const propContent = listProposalsData[propId]?.content ?? "";
-          const proposerAddress = listProposalsData[propId].authorEthereumAddress;
-          const addressesVoted = await fetchProposalVoters(propId);
-          if (!ensNamesMap.has(proposerAddress)) {
-            // Keep a cache of ENS resolutions
-            const ensResolve = await fetchEnsResolver({
-              name: listProposalsData[propId].author,
-              chainId: chain.mainnet.id,
-            });
-            const checkedResult = !ensResolve ? "No reverse record" : listProposalsData[propId].author;
-            ensNamesMap.set(proposerAddress, checkedResult);
-          }
-          const proposerEnsLookupResult = ensNamesMap.get(proposerAddress);
-          const COMMON_DATA = {
-            [HEADERS_KEYS.PROPOSAL_ID]: propId,
-            [HEADERS_KEYS.AUTHOR]: proposerAddress,
-            [HEADERS_KEYS.PROPOSAL_CONTENT]: propContent,
-            [HEADERS_KEYS.TOTAL_VOTES]: propTotalVotes,
-          };
-
-          //@ts-ignore
-          if (addressesVoted.length == 0) {
-            const noVoterDict = {
-              ...COMMON_DATA,
-              [HEADERS_KEYS.VOTER]: "No voters",
-              [HEADERS_KEYS.VOTES]: "No votes",
-              [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: 0,
-              [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:
-                proposerEnsLookupResult === "No reverse record" ? false : true,
-              [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]:
-                proposerEnsLookupResult === "No reverse record" ? "" : proposerEnsLookupResult,
-              [HEADERS_KEYS.VOTER_HAS_ENS_REVERSE_RECORD_SET]: "No voters",
-              [HEADERS_KEYS.VOTER_ENS_REVERSE_RECORD_IF_SET]: "",
-            };
-
-            propArrayToReturn.push(noVoterDict);
-          }
-
-          //@ts-ignore
-          for (let j = 0; j < addressesVoted.length; j++) {
-            //@ts-ignore
-            const address = addressesVoted[j];
-            const addressPropVote = await fetchVotesPerAddress(propId, address);
-            if (!ensNamesMap.has(address)) {
-              // Keep a cache of ENS resolutions
-              const ensLookupResult = await fetchEnsName({
-                address: address,
-                chainId: chain.mainnet.id,
-              });
-
-              const checkedResult = ensLookupResult === null ? "No reverse record" : ensLookupResult;
-              ensNamesMap.set(address, checkedResult);
-            }
-            const voterEnsLookupResult = ensNamesMap.get(address);
-
-            const voterDict = {
-              ...COMMON_DATA,
-              [HEADERS_KEYS.VOTER]: address,
-              [HEADERS_KEYS.VOTES]: addressPropVote,
-              //@ts-ignore
-              [HEADERS_KEYS.PERCENT_OF_SUBMISSION_VOTES]: addressPropVote / propTotalVotes,
-              [HEADERS_KEYS.PROPOSER_HAS_ENS_REVERSE_RECORD_SET]:
-                proposerEnsLookupResult == "No reverse record" ? false : true,
-              [HEADERS_KEYS.PROPOSER_ENS_REVERSE_RECORD_IF_SET]:
-                proposerEnsLookupResult == "No reverse record" ? "" : proposerEnsLookupResult,
-              [HEADERS_KEYS.VOTER_HAS_ENS_REVERSE_RECORD_SET]:
-                voterEnsLookupResult == "No reverse record" ? false : true,
-              [HEADERS_KEYS.VOTER_ENS_REVERSE_RECORD_IF_SET]:
-                voterEnsLookupResult == "No reverse record" ? "" : voterEnsLookupResult,
-            };
-
-            propArrayToReturn.push(voterDict);
-          }
-
-          if (i % tenthPercentile == 0) {
-            stateExportData.setLoadingMessage(`Loading ${i} of ${listProposalsIds.length} entries...`);
-          }
-        }
+      for (let i = 0; i < 1; i++) {
+        propArrayToReturn.push(formatProposal(i))
       }
+
+      const returned = await Promise.all(propArrayToReturn);
+      //@ts-ignore
+      const reduced = returned.reduce((accumulator, value) => accumulator.concat(value), [])
+      console.log(reduced)
 
       stateExportData.setLoadingMessage(`Loaded ${listProposalsIds.length} out of ${listProposalsIds.length} entries!`);
       stateExportData.setCsv(propArrayToReturn);
       //@ts-ignore
-      if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-        if(queryContestResults.data?.length === 0) {
-          const formatted = objectToCsv(propArrayToReturn)
-          const csv = new File([formatted], `result_contest_${contestAddress}_${chainName}.csv`, { type: 'text/csv' });
+      // if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      //   if(queryContestResults.data?.length === 0) {
+      //     const formatted = objectToCsv(propArrayToReturn)
+      //     const csv = new File([formatted], `result_contest_${contestAddress}_${chainName}.csv`, { type: 'text/csv' });
     
-          const config = await import('@config/supabase')
-          const supabase = config.supabase
-          const client = makeStorageClient()
-          const cid = await client.put([csv])
-          stateExportData.setCid(cid)
+      //     const config = await import('@config/supabase')
+      //     const supabase = config.supabase
+      //     const client = makeStorageClient()
+      //     const cid = await client.put([csv])
+      //     stateExportData.setCid(cid)
 
-          await supabase.from("results").insert([
-            {
-              contest_address: contestAddress,
-              contest_network_name: chainName,
-              cid
-            }
-          ])
-        }
-      }
+      //     await supabase.from("results").insert([
+      //       {
+      //         contest_address: contestAddress,
+      //         contest_network_name: chainName,
+      //         cid
+      //       }
+      //     ])
+      //   }
+      // }
       stateExportData.setIsSuccess(true);
       stateExportData.setIsLoading(false);
     } catch (e) {
