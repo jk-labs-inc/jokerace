@@ -156,7 +156,7 @@ export function useExportContestDataToCSV() {
     return voterDict;
   }
 
-  async function formatProposal(i: Number) {
+  async function formatProposal(i: number) {
     const propId = listProposalsIds[i];
     if (propId) {
       const propTotalVotes = listProposalsData[propId].votes;
@@ -188,6 +188,9 @@ export function useExportContestDataToCSV() {
       for (let j = 0; j < Math.min(MAX_UNIQUE_VOTERS_EXPORTING, addressesVoted.length); j++) {
         //@ts-ignore
         arrayToReturn.push(formatVoter(j, propId, propTotalVotes, propContent, proposerAddress, addressesVoted[j]));
+        
+        // Every VOTERS_PER_ASYNC_BATCH unique voters on a proposal, wait for all requests to return before sending out more
+        // Motivation: to prevent rate-limiting by RPC providers
         if (j % VOTERS_PER_ASYNC_BATCH == 0) {
           await Promise.all(arrayToReturn);
         }
@@ -214,9 +217,12 @@ export function useExportContestDataToCSV() {
       for (let i = 0; i < Math.min(MAX_PROPOSALS_EXPORTING, listProposalsIds.length); i++) {
         propArrayToReturn.push(formatProposal(i));
 
+        // Every PROPOSALS_PER_ASYNC_BATCH proposals in a contest, wait for all requests to return before sending out more
+        // Motivation: to prevent rate-limiting by RPC providers 
         if (i % PROPOSALS_PER_ASYNC_BATCH == 0) {
           await Promise.all(propArrayToReturn);
         }
+
         if (i % tenthPercentile == 0) {
           stateExportData.setLoadingMessage(`Loading ${i} of ${listProposalsIds.length} entries...`);
         }
@@ -224,11 +230,12 @@ export function useExportContestDataToCSV() {
 
       const returned = await Promise.all(propArrayToReturn);
       //@ts-ignore
-      const reducedPropArray = returned.reduce((accumulator, value) => accumulator.concat(value), [])
+      const reducedPropArray = returned.reduce((accumulator, value) => accumulator.concat(value), []); // Reduce array of arrays of resolved voter dict Promises to a flat array
 
       stateExportData.setLoadingMessage(`Loaded ${listProposalsIds.length} out of ${listProposalsIds.length} entries!`);
       stateExportData.setCsv(reducedPropArray);
       
+      // Store the loaded data to IPFS via web3storage and then load the reference id into Supabase
       //@ts-ignore
       if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
         if(queryContestResults.data?.length === 0) {
@@ -250,6 +257,7 @@ export function useExportContestDataToCSV() {
           ])
         }
       }
+
       stateExportData.setIsSuccess(true);
       stateExportData.setIsLoading(false);
     } catch (e) {
