@@ -16,7 +16,7 @@ import { objectToCsv } from '@helpers/objectToCsv'
 const MAX_PROPOSALS_EXPORTING = 500;
 const MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING = 500;
 const PROPOSALS_PER_ASYNC_BATCH = 5; // 5 here
-const VOTERS_PER_ASYNC_BATCH = 100; // and 100 here will usually keep you from getting rate-limited by Alchemy Growth tier (660 CUPS)
+const VOTERS_PER_ASYNC_BATCH = 25; // and 100 here will usually keep you from getting rate-limited by Alchemy Growth tier (660 CUPS)
 
 const useStoreExportData = createExportDataStore();
 
@@ -217,15 +217,16 @@ export function useExportContestDataToCSV() {
       for (let i = 0; i < Math.min(MAX_PROPOSALS_EXPORTING, listProposalsIds.length); i++) {
         propArrayToReturn.push(formatProposal(i));
 
+        if (i % tenthPercentile == 0) {
+          stateExportData.setLoadingMessage(`Loading ${i} of ${listProposalsIds.length} entries...`);
+        }
+
         // Every PROPOSALS_PER_ASYNC_BATCH proposals in a contest, wait for all requests to return before sending out more
         // Motivation: to prevent rate-limiting by RPC providers 
         if (i % PROPOSALS_PER_ASYNC_BATCH == 0) {
           await Promise.all(propArrayToReturn);
         }
 
-        if (i % tenthPercentile == 0) {
-          stateExportData.setLoadingMessage(`Loading ${i} of ${listProposalsIds.length} entries...`);
-        }
       }
 
       const returned = await Promise.all(propArrayToReturn);
