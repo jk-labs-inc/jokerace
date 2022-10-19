@@ -14,7 +14,7 @@ import { makeStorageClient } from "@config/web3storage";
 import { objectToCsv } from '@helpers/objectToCsv'
 
 const MAX_PROPOSALS_EXPORTING = 500;
-const MAX_UNIQUE_VOTERS_EXPORTING = 100;
+const MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING = 500;
 const PROPOSALS_PER_ASYNC_BATCH = 5; // 5 here
 const VOTERS_PER_ASYNC_BATCH = 100; // and 100 here will usually keep you from getting rate-limited by Alchemy Growth tier (660 CUPS)
 
@@ -185,7 +185,7 @@ export function useExportContestDataToCSV() {
 
       const arrayToReturn = [];
       //@ts-ignore
-      for (let j = 0; j < Math.min(MAX_UNIQUE_VOTERS_EXPORTING, addressesVoted.length); j++) {
+      for (let j = 0; j < Math.min(MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING, addressesVoted.length); j++) {
         //@ts-ignore
         arrayToReturn.push(formatVoter(j, propId, propTotalVotes, propContent, proposerAddress, addressesVoted[j]));
         
