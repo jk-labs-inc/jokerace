@@ -36,7 +36,6 @@ export const createStore = () => {
     currentUserProposalCount: 0,
     downvotingAllowed: false,
     currentUserSubmitProposalTokensAmount: null,
-
     isPageProposalsLoading: false,
     isPageProposalsError: null,
     isPageProposalSuccess: false,
@@ -44,15 +43,19 @@ export const createStore = () => {
     totalPagesPaginationProposals: 0,
     currentPagePaginationProposals: 0,
     hasPaginationProposalsNextPage: false,
+    canUpdateVotesInRealTime: false,
+    setCanUpdateVotesInRealTime: (value: boolean) => set({ canUpdateVotesInRealTime: value }),
     setIsPageProposalsLoading: (value: boolean) => set({ isPageProposalsLoading: value }),
     setIsPageProposalsSuccess: (value: boolean) => set({ isPageProposalsSuccess: value }),
     setIsPageProposalsError: (value: boolean) => set({ isPageProposalsError: value }),
-    setCurrentPagePaginationProposals: (currentPage: number) => set({
-      currentPagePaginationProposals: currentPage
-    }),
-    setIndexPaginationProposalPerId: (proposalsPages: Array<any>) => set({
-      indexPaginationProposals: proposalsPages,
-    }),
+    setCurrentPagePaginationProposals: (currentPage: number) =>
+      set({
+        currentPagePaginationProposals: currentPage,
+      }),
+    setIndexPaginationProposalPerId: (proposalsPages: Array<any>) =>
+      set({
+        indexPaginationProposals: proposalsPages,
+      }),
     setTotalPagesPaginationProposals: (newTotal: number) => set({ totalPagesPaginationProposals: newTotal }),
     setHasPaginationProposalsNextPage: (hasNextPage: boolean) => set({ hasPaginationProposalsNextPage: hasNextPage }),
     setDownvotingAllowed: (isAllowed: boolean) => set({ downvotingAllowed: isAllowed }),

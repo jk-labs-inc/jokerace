@@ -1,12 +1,12 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { chain, useProvider } from "wagmi";
-import { fetchBlockNumber, fetchEnsName, fetchToken, getAccount, readContract, readContracts } from "@wagmi/core";
+import { useProvider } from "wagmi";
+import { fetchBlockNumber, fetchToken, getAccount, readContract, readContracts } from "@wagmi/core";
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useStore } from "./store";
-import { isBefore, isFuture } from "date-fns";
+import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore, isFuture } from "date-fns";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
@@ -109,6 +109,8 @@ export function useContest() {
     setIsPageProposalsError,
     //@ts-ignore
     setHasPaginationProposalsNextPage,
+    //@ts-ignore
+    setCanUpdateVotesInRealTime,
   } = useStore();
 
   /**
@@ -248,25 +250,40 @@ export function useContest() {
       }
 
       setContestName(results[0]);
-      const contestAuthorEns = await fetchEnsName({
-        //@ts-ignore
-        address: results[1],
-        chainId: chain.mainnet.id,
-      });
-      setContestAuthor(contestAuthorEns && contestAuthorEns !== null ? contestAuthorEns : results[1], results[1]);
+      setContestAuthor(results[1]);
       setContestMaxNumberSubmissionsPerUser(results[2]);
       setContestMaxProposalCount(results[3]);
       setVotingTokenAddress(results[4]);
       // Voting token data (balance, symbol, total supply etc) (for ERC-20 token)
       //@ts-ignore
       const votingTokenRawData = await fetchToken({ address: results[4], chainId });
+      //@ts-ignore
+      const closingVoteDate = new Date(parseInt(results[6]) * 1000);
       setVotingToken(votingTokenRawData);
       //@ts-ignore
       setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
-      //@ts-ignore
-      setVotesClose(new Date(parseInt(results[6]) * 1000));
+      setVotesClose(closingVoteDate);
       //@ts-ignore
       setVotesOpen(new Date(parseInt(results[7]) * 1000));
+      // We want to track VoteCast event only 1H before the end of the contest
+      if (isBefore(new Date(), closingVoteDate)) {
+        if (differenceInHours(closingVoteDate, new Date()) <= 1) {
+          // If the difference between the closing date (end of votes) and now is <= to 1h
+          // reflect this in the state
+          setCanUpdateVotesInRealTime(true);
+        } else {
+          setCanUpdateVotesInRealTime(false);
+          // Otherwise, update the state 1h before the closing date (end of votes)
+          const delayBeforeVotesCanBeUpdated =
+            differenceInMilliseconds(closingVoteDate, new Date()) - hoursToMilliseconds(1);
+          setTimeout(() => {
+            setCanUpdateVotesInRealTime(true);
+          }, delayBeforeVotesCanBeUpdated);
+        }
+      } else {
+        setCanUpdateVotesInRealTime(false);
+      }
+
       if (
         //@ts-ignore
         results[8] === CONTEST_STATUS.SUBMISSIONS_OPEN &&
@@ -294,7 +311,7 @@ export function useContest() {
         setSubmitProposalTokenAddress(results[4]);
         setSubmitProposalToken(votingTokenRawData);
       }
-      await checkIfCurrentUserQualifyToVote()
+      await checkIfCurrentUserQualifyToVote();
       if (accountData?.address) {
         // Current user votes
         await updateCurrentUserVotes();
@@ -451,19 +468,18 @@ export function useContest() {
         const timestampToCheck =
           //@ts-ignore
           delayedCurrentTimestamp >= timestampSnapshotRawData ? timestampSnapshotRawData : delayedCurrentTimestamp;
-          if(accountData?.address) {
-            const tokenUserWasHoldingAtSnapshotRawData = await readContract({
-              ...contractConfig,
-              functionName: "getVotes",
-              //@ts-ignore
-              args: [accountData?.address, timestampToCheck],
-            });
+        if (accountData?.address) {
+          const tokenUserWasHoldingAtSnapshotRawData = await readContract({
+            ...contractConfig,
+            functionName: "getVotes",
             //@ts-ignore
-            setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);    
-          } else {
-            setDidUserPassSnapshotAndCanVote(false)
-          }
-
+            args: [accountData?.address, timestampToCheck],
+          });
+          //@ts-ignore
+          setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
+        } else {
+          setDidUserPassSnapshotAndCanVote(false);
+        }
       } else {
         setSnapshotTaken(false);
       }
@@ -504,7 +520,10 @@ export function useContest() {
         proposalsIdsRawData[0].map((data: any, index: number) => {
           proposalsIds.push({
             // for votes minus against votes if there are against votes
-            votes: proposalsIdsRawData[1][index].length == 1 ? proposalsIdsRawData[1][index][0] / 1e18 : proposalsIdsRawData[1][index][0] / 1e18 - proposalsIdsRawData[1][index][1] / 1e18,
+            votes:
+              proposalsIdsRawData[1][index].length == 1
+                ? proposalsIdsRawData[1][index][0] / 1e18
+                : proposalsIdsRawData[1][index][0] / 1e18 - proposalsIdsRawData[1][index][1] / 1e18,
             id: data,
           });
         });
@@ -567,15 +586,8 @@ export function useContest() {
     }, []);
 
     const data = proposalDataPerId[i][0];
-    // proposal author ENS
-    const author = await fetchEnsName({
-      address: data[0],
-      chainId: chain.mainnet.id,
-    });
-
     const proposalData = {
       authorEthereumAddress: data[0],
-      author: author ?? data[0],
       content: data[1],
       isContentImage: isUrlToImage(data[1]) ? true : false,
       exists: data[2],

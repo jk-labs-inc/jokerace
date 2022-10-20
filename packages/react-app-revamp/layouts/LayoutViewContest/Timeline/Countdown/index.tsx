@@ -14,7 +14,15 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 // 3: Completed
 
 export const Countdown = () => {
-  const { listProposalsIds, contestMaxProposalCount, contestStatus, submissionsOpen, votesOpen, votesClose, setContestStatus } = useStore(
+  const {
+    listProposalsIds,
+    contestMaxProposalCount,
+    contestStatus,
+    submissionsOpen,
+    votesOpen,
+    votesClose,
+    setContestStatus,
+  } = useStore(
     state => ({
       //@ts-ignore
       submissionsOpen: state.submissionsOpen,
@@ -96,8 +104,14 @@ export const Countdown = () => {
   if (countdownUntilVotingOpen.isCountdownRunning || isBefore(new Date(), votesOpen)) {
     return (
       <>
-        <p className={`text-sm font-bold text-center text-true-white mb-1`}>{listProposalsIds.length >= contestMaxProposalCount ? "✋ Submissions closed ✋" : "✨ Submissions open ✨"}</p>
-        {<p className="text-2xs text-neutral-10 text-center mb-4">{listProposalsIds.length}/{contestMaxProposalCount.toString()} proposals submitted</p>}
+        <p className={`text-sm font-bold text-center text-true-white mb-1`}>
+          {listProposalsIds.length >= contestMaxProposalCount ? "✋ Submissions closed ✋" : "✨ Submissions open ✨"}
+        </p>
+        {
+          <p className="text-2xs text-neutral-10 text-center mb-4">
+            {listProposalsIds.length}/{contestMaxProposalCount.toString()} proposals submitted
+          </p>
+        }
         <p className={styles.label}>Voting opens in</p>
         <div className={styles.countdown}>
           {Object.keys(countdownUntilVotingOpen.countdown).map((unit: string) => (
