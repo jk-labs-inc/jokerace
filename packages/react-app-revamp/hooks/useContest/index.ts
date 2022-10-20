@@ -674,23 +674,6 @@ export function useContest() {
    */
   async function fetchProposal(id: string, data: any, votes: number, existsInDb: boolean, shouldAddToDb: boolean) {
     const accountData = await getAccount();
-<<<<<<< HEAD
-    // Create an array of proposals
-    // A proposal is a pair of data
-    // A pair of a proposal data is [content, votes]
-    const proposalDataPerId = results.reduce((result, value, index, array) => {
-      if (index % 2 === 0) result.push(array.slice(index, index + 2));
-      return result;
-    }, []);
-=======
-    // proposal author ENS
-    const author = await fetchEnsName({
-      address: data?.[0],
-      chainId: chain.mainnet.id,
-    });
->>>>>>> 651cbaf (bugfix: index data)
-
-    const data = proposalDataPerId[i][0];
     const proposalData = {
       authorEthereumAddress: data[0],
       content: data[1],
