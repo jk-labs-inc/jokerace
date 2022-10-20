@@ -35,9 +35,16 @@ const Page: NextPage = (props: PageProps) => {
       <p>Let&apos;s create a spreadsheet of full data from your contest: <br/>
             proposals, addresses of submitters, voters, number of votes, etc.
         </p>
-      <p className="mt-3 mb-6">
+      <p className="my-3">
         You can use this to allocate rewards, track contributions, or find correlations among voters.
       </p>
+      <div className='mb-6 text-neutral-12'>
+        <p>Please note:</p>
+        <ul className='mt-2 space-y-3'>
+          <li>The first time a spreadsheet is exported can take a few minutes, so <span className='font-bold'>please be patient and do not reload the page.</span></li>
+          <li>Includes data up to first 500 proposals and first 500 voters per proposal — <span className='font-bold'>please reach out if you need more data</span>.</li>
+        </ul>
+      </div>
       <ButtonDownloadContestDataAsCSV />
     </div> : <div className='mt-4 p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4'>
         <p>
