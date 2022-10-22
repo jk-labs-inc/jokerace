@@ -229,7 +229,17 @@ export function useProposalVotes(id: number | string) {
   }, [account?.connector]);
 
   useEffect(() => {
-    if(canUpdateVotesInRealTime === true) {
+    if(canUpdateVotesInRealTime === false) {
+      if(contestStatus === CONTEST_STATUS.COMPLETED) {
+        const contract = getContract({
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+        })
+        contract.removeAllListeners()
+      }
+    }
+
+    else if (canUpdateVotesInRealTime === true) {
       // Only watch VoteCast events when voting is open and we are <=1h before end of voting
       if(contestStatus === CONTEST_STATUS.VOTING_OPEN) {
         watchContractEvent({
