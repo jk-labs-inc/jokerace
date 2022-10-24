@@ -69,12 +69,7 @@ export const Step3 = () => {
       downvoting: false,
       hasRewards: false,
       rewardTokenAddress: "",
-      rewards: [
-        {
-          winningRank: "",
-          rewardTokenAmount: "",
-        },
-      ],
+      rewards: [],
     },
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values),

@@ -2,7 +2,7 @@ import shallow from "zustand/shallow";
 import { ContractFactory } from "ethers";
 import toast from "react-hot-toast";
 import { useNetwork, useSigner } from "wagmi";
-import { waitForTransaction } from "@wagmi/core";
+import { readContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { parseEther } from "ethers/lib/utils";
 import { getUnixTime, differenceInSeconds } from "date-fns";
 import { useContractFactory } from "@hooks/useContractFactory";
@@ -10,7 +10,6 @@ import { useContractFactory } from "@hooks/useContractFactory";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { useStore } from "../store";
 import useContestsIndex from "@hooks/useContestsIndex";
-
 export function useDeployContest(form: any) {
   const { indexContest } = useContestsIndex();
   const stateContestDeployment = useContractFactory();
@@ -81,18 +80,66 @@ export function useDeployContest(form: any) {
         // 0 = false; 1 = true
         useSameTokenForSubmissions === true ? 1 : 0,
       ];
+      
 
-      const contract = await factory.deploy(
+      const contractContest = await factory.deploy(
         values.contestTitle,
         values.contestDescription,
         values.votingTokenAddress,
         useSameTokenForSubmissions === true ? values.votingTokenAddress : values.submissionTokenAddress,
         contestParameters,
       );
-      const receipt = await waitForTransaction({
+      
+
+      console.log(factory)
+
+      const receiptDeployContest = await waitForTransaction({
         chainId: chain?.id,
-        hash: contract.deployTransaction.hash,
+        hash: contractContest.deployTransaction.hash,
       });
+
+      console.log(contractContest)
+      if(values.hasRewards) {
+        const rewardRanks = values.rewards.map((reward: any) => parseInt(reward.winningRank))
+        const totalRewardsAmount = values.rewards.reduce((sumRewards: number, reward: any) => {
+          return sumRewards + reward.rewardTokenAmount;
+        }, 0);
+        const rewardShares = values.rewards.map((reward: any) => reward.rewardTokenAmount / totalRewardsAmount * 100)
+        
+        
+        const contractConfig = {
+          addressOrName: contractContest.address,
+          contractInterface: DeployedContestContract.abi,
+        };
+
+        const t =  await readContract({
+          ...contractConfig,
+          functionName: "officialRewardsModule",
+        });
+
+        console.log("before", t)
+        const txSetRewardsModule = await writeContract({
+          ...contractConfig,
+          functionName: "setOfficialRewardsModule",
+          args: values.rewardTokenAddress,
+        });
+  
+        const receiptDeployRewardsModule = await waitForTransaction({
+          chainId: chain?.id,
+          //@ts-ignore
+          hash: txSetRewardsModule.hash,
+        });
+
+
+        const b =  await readContract({
+          ...contractConfig,
+          functionName: "officialRewardsModule",
+        });
+
+        console.log("after", b)
+        console.log(receiptDeployRewardsModule)
+      }
+      
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
         process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -101,21 +148,22 @@ export function useDeployContest(form: any) {
       ) {
         indexContest({
           ...values,
-          contractAddress: contract.address,
+          contractAddress: contractContest.address,
           networkName: chain?.name.toLowerCase().replace(" ", ""),
         });
       }
 
       stateContestDeployment.setIsSuccess(true);
       setDeployContestData({
-        hash: receipt.transactionHash,
-        address: contract.address,
+        hash: receiptDeployContest.transactionHash,
+        address: contractContest.address,
       });
       if (modalDeployContestOpen === false)
         toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully!`);
 
       stateContestDeployment.setIsLoading(false);
       form.reset();
+      
     } catch (e) {
       console.error(e);
       if (modalDeployContestOpen === false)

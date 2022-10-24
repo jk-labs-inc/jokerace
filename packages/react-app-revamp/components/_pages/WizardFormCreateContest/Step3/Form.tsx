@@ -12,7 +12,7 @@ import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
-import { useId } from "react";
+import { useEffect, useId } from "react";
 import { ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
 import FormSelect from "@components/FormSelect";
 interface FormProps {
@@ -27,6 +27,8 @@ interface FormProps {
   resetField: any;
   setData: any;
 }
+
+const ranks = [1, 2, 3, 4, 5]
 
 export const Form = (props: FormProps) => {
   const formId = useId();
@@ -767,6 +769,12 @@ export const Form = (props: FormProps) => {
             value={data()?.hasRewards}
             onChange={(e: boolean) => {
               setData("hasRewards", e);
+              e === true ? setData("rewards", [
+                {
+                  winningRank: 1,
+                  rewardTokenAmount: "",
+                },
+              ]) : setData("rewards", [])
             }}
           >
             <RadioGroup.Label className="sr-only">Does your contest have rewards ?</RadioGroup.Label>
@@ -797,9 +805,17 @@ export const Form = (props: FormProps) => {
                     type="text"
                     name="rewardTokenAddress"
                     hasError={errors().rewardTokenAddress?.length > 0 === true}
-                    aria-describedby="input-rewardTokenAddress-description input-rewardTokenAddress-helpblock"
+                    aria-describedby="input-rewardTokenAddress-description input-rewardTokenAddress-note input-rewardTokenAddress-helpblock"
                   />
                 </FormField.InputField>
+                <p
+                    id="input-rewardTokenAddress-note"
+                    className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center"
+                  >
+                    <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
+                    The token must implement the &nbsp;
+                    <span className="font-mono normal-case">ERC20</span>&nbsp; interface
+                  </p>
                 <FormField.HelpBlock
                   hasError={errors().rewardTokenAddress?.length > 0 === true}
                   id="input-rewardTokenAddress-helpblock"
@@ -835,7 +851,6 @@ export const Form = (props: FormProps) => {
                           data()?.rewards.filter((rewardToDelete: any) => rewardToDelete.key === reward.key)[0]
                             ?.winningRank
                         }
-                        name="winningRank"
                         hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
                         aria-describedby="input-winningRank-description input-winningRank-helpblock"
                         onChange={e => {
@@ -847,7 +862,7 @@ export const Form = (props: FormProps) => {
                         <option value="" disabled>
                           Select a rank
                         </option>
-                        {["1st", "2nd", "3rd", "4th", "5th", "Last"].map(rank => (
+                        {ranks.map(rank => (
                           <option key={`option-${rank}-${i}`} value={rank}>
                             {rank}
                           </option>
@@ -884,7 +899,6 @@ export const Form = (props: FormProps) => {
                         type="number"
                         min={0.0000001}
                         step={0.0000001}
-                        name="rewardTokenAmount"
                         hasError={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true}
                         aria-describedby="input-rewardTokenAmount-description input-rewardTokenAmount-helpblock"
                         onChange={e => {
@@ -920,12 +934,15 @@ export const Form = (props: FormProps) => {
                   </Button>
                 </div>
               ))}
-              <Button
+              {data()?.rewards?.length < 5 && <Button
                 onClick={() => {
                   setData("rewards", [
                     ...data()?.rewards,
                     {
-                      winningRank: "",
+                      winningRank: ranks.filter(rank => {
+                        const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank )
+                        return !rewardRanks.includes(rank)
+                      })[0],
                       rewardTokenAmount: "",
                     },
                   ]);
@@ -936,7 +953,7 @@ export const Form = (props: FormProps) => {
                 className="w-full mx-auto xs:w-fit-content mt-4"
               >
                 Add another winning rank
-              </Button>
+              </Button>}
             </div>
           )}
         </div>
@@ -958,7 +975,16 @@ export const Form = (props: FormProps) => {
             (data()?.datetimeOpeningVoting && !isDateOpeningVotesValid) ||
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !data()?.submissionTokenAddress) ||
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && data()?.submissionTokenAddress === "") ||
-            (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid)
+            (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid) ||
+            (data()?.hasRewards === true && (
+              !data()?.rewardTokenAddress 
+              || !data()?.rewards 
+              || data()?.rewards?.length === 0 
+              || data()?.rewards?.filter(
+                  (r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount)
+                )?.length > 0
+              )
+            )
           }
           type="submit"
         >
