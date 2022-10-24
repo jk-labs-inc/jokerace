@@ -86,15 +86,13 @@ export function useContestEvents() {
   }
 
   useEffect(() => {
-    if (canUpdateVotesInRealTime === false) {
-      if(contestStatus === CONTEST_STATUS.COMPLETED) {
-        const contract = getContract({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
+    if (canUpdateVotesInRealTime === false && contestStatus === CONTEST_STATUS.COMPLETED) {
+      const contract = getContract({
+        addressOrName: asPath.split("/")[3],
+        contractInterface: DeployedContestContract.abi,
 
-        })
-        contract.removeAllListeners()
-      }
+      });
+      contract.removeAllListeners();
     }
 
     else if (canUpdateVotesInRealTime === true) {

@@ -229,14 +229,12 @@ export function useProposalVotes(id: number | string) {
   }, [account?.connector]);
 
   useEffect(() => {
-    if(canUpdateVotesInRealTime === false) {
-      if(contestStatus === CONTEST_STATUS.COMPLETED) {
-        const contract = getContract({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
-        })
-        contract.removeAllListeners()
-      }
+    if(canUpdateVotesInRealTime === false && contestStatus === CONTEST_STATUS.COMPLETED) {
+      const contract = getContract({
+        addressOrName: asPath.split("/")[3],
+        contractInterface: DeployedContestContract.abi,
+      });
+      contract.removeAllListeners();
     }
 
     else if (canUpdateVotesInRealTime === true) {
