@@ -12,7 +12,30 @@ import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
 import Timeline from "../Timeline";
 import DialogModalMintProposalToken from "./DialogModalMintProposalToken";
+import { cva } from 'class-variance-authority'
 
+const transaction = cva(
+  [
+    'inline-flex items-center justify-center',
+    'tracking-wide',
+    'rounded-full',
+    'transition-colors transition-500',
+    'disabled:!opacity-50 disabled:pointer-events-none'
+  ],
+  {
+    variants: {
+      state: {
+        default: "text-neutral-11",
+        ongoing: "text-primary-10 animate-pulse",
+        success: "text-positive-11",
+        error: "text-negative-10"
+      },
+    },
+    defaultVariants: {
+      state: 'default',
+    },
+  },
+)
 export const Step3 = () => {
   const {
     contestDeployedToChain,
@@ -22,8 +45,17 @@ export const Step3 = () => {
     setModalDeployContestOpen,
     dataDeployContest,
     modalDeploySubmissionTokenOpen,
+    dataContestRewardsModule,
+    dataDeployRewardsModule,
+    willHaveRewardsModule,
   } = useStore(
     state => ({
+      //@ts-ignore
+      dataContestRewardsModule: state.dataContestRewardsModule,
+      //@ts-ignore
+      dataDeployRewardsModule: state.dataDeployRewardsModule,
+      //@ts-ignore
+      willHaveRewardsModule: state.willHaveRewardsModule,
       //@ts-ignore
       setCurrentStep: state.setCurrentStep,
       //@ts-ignore
@@ -97,16 +129,18 @@ export const Step3 = () => {
       <DialogModalDeployTransaction
         isOpen={modalDeployContestOpen}
         setIsOpen={setModalDeployContestOpen}
-        title="Token deployment transaction"
+        title="Contest deployment transaction"
         isError={stateContestDeployment.isError}
         isLoading={stateContestDeployment.isLoading}
         isSuccess={stateContestDeployment.isSuccess}
         error={stateContestDeployment.error}
         //@ts-ignore
-        transactionHref={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
+        transactionHref={!willHaveRewardsModule && `${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
+        textPending={!willHaveRewardsModule ? "Deploying contest..." : !dataDeployContest?.address ? "Deploying transaction 1/3 : contest creation..." : !dataDeployRewardsModule?.address ? "Deploying transaction 2/3 : rewards module creation.." : "Deploying transaction 3/3 : setting contest rewards module..."}
       >
-        {stateContestDeployment.isSuccess && (
-          <div className="mt-3 animate-appear relative">
+        
+        {dataDeployContest?.address && (
+          <div className="mt-6 font-bold animate-appear relative">
             <Link
               href={{
                 pathname: ROUTE_VIEW_CONTEST,
@@ -123,6 +157,28 @@ export const Step3 = () => {
             </Link>
           </div>
         )}
+
+        {willHaveRewardsModule && <div className="mt-6">
+        <h3 className="font-bold mb-2">Transactions:</h3>
+         {stateContestDeployment.isLoading && <p className="animate-appear mb-2 italic text-neutral-11">Links to your successful transactions will appear below.</p>}
+         <ul className="space-y-3 list-disc pis-3">
+          {dataDeployContest?.hash && <li className="animate-appear">
+            <a rel="nofollow noreferrer" target="_blank" href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}>
+              View contest deployment transaction <span className="link">here</span>
+            </a>
+          </li>}
+          {dataDeployRewardsModule?.hash && <li className="animate-appear">
+              <a rel="nofollow noreferrer" target="_blank" href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployRewardsModule?.hash}`}>
+              View rewards module deployment transaction <span className="link">here</span>
+            </a>
+          </li>}
+          {dataContestRewardsModule?.hash && <li className="animate-appear">
+            <a rel="nofollow noreferrer" target="_blank" href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataContestRewardsModule?.hash}`}>
+              View setting contest module deployment transaction <span className="link">here</span>
+            </a>
+          </li>}
+        </ul>
+        </div>}
 
         <div className="pt-6 flex flex-col space-y-3 xs:flex-row xs:space-y-0 xs:space-i-3">
           <Button

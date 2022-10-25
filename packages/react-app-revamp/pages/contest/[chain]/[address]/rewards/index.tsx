@@ -4,9 +4,10 @@ import { chains } from '@config/wagmi'
 import { getLayout } from '@layouts/LayoutViewContest'
 import type { NextPage } from 'next'
 import { useStore } from '@hooks/useContest/store'
-import { useRouter } from 'next/router'
+import { useRewardsModule } from '@hooks/useRewardsModule'
 import Button from '@components/Button'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
+import Loader from '@components/Loader'
 
 interface PageProps {
   address: string,
@@ -23,6 +24,7 @@ const Page: NextPage = (props: PageProps) => {
     isSuccess: state.isSuccess,
    }), shallow);
 
+  const { supportsRewardsModule, queryContestOfficialRewardsModule, queryRewardsModule } = useRewardsModule()
   return (
     <>
       <Head>
@@ -30,7 +32,16 @@ const Page: NextPage = (props: PageProps) => {
         <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
       </Head>
     <h1 className='sr-only'>Rewards of contest {contestName ? contestName : address} </h1>
-    {!isLoading  && isSuccess && <div className='flex flex-col animate-appear pt-4 space-y-8'>
+    {!isLoading  && isSuccess && <>
+      {queryContestOfficialRewardsModule.isLoading && <>
+        <Loader>
+          Loading rewards module...
+        </Loader>
+      </>}
+
+      {queryContestOfficialRewardsModule.isSuccess && <>
+        {supportsRewardsModule ? <> 
+          <div className='flex flex-col animate-appear pt-4 space-y-8'>
         <ul className='space-y-6'>
             <li>
                 <h2 className='font-bold text-lg mb-1'>1st place</h2>
@@ -66,7 +77,15 @@ const Page: NextPage = (props: PageProps) => {
             <ExclamationCircleIcon className='w-6'/>
 
         </Button>
-    </div>}
+    </div>
+        
+        </> : <>
+          <p className="p-3 mt-4 rounded-md border-solid border mb-5 text-sm font-bold">
+          This contest doesn&apos;t support rewards.
+        </p> 
+        </>}
+      </>}
+    </>}
   </>
 )}
 

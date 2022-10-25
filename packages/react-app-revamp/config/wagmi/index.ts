@@ -1,5 +1,4 @@
 import { chain, configureChains, createClient } from "wagmi";
-import { fantom, avalanche, harmony, gnosis } from "@helpers/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";

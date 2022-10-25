@@ -109,7 +109,7 @@ export const Sidebar = (props: any) => {
             Rules
           </a>
         </Link>
-        {/* <Link
+        { contestStatus === CONTEST_STATUS.COMPLETED ? <Link
           href={{
             pathname: ROUTE_VIEW_CONTEST_REWARDS,
             //@ts-ignore
@@ -123,8 +123,11 @@ export const Sidebar = (props: any) => {
             <IconTrophy className={styles.navLinkIcon} />
             Rewards
           </a>
-        </Link>
-        <Link
+        </Link> : <div className={styles.navLink}>
+            <IconTrophy className={styles.navLinkIcon} />
+            Rewards
+          </div>}
+        {contestStatus === CONTEST_STATUS.COMPLETED  ? <Link
           href={{
             pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
             //@ts-ignore
@@ -142,7 +145,11 @@ export const Sidebar = (props: any) => {
             <DocumentDownloadIcon className={styles.navLinkIcon} />
             Export data
           </a>
-        </Link> */}
+        </Link> : <div className={styles.navLink}>
+        <DocumentDownloadIcon className={styles.navLinkIcon} />
+            Export data
+
+          </div>}
       </nav>
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
         <>

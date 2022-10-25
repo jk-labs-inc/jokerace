@@ -1,5 +1,14 @@
 import styles from "./styles.module.css";
-export const TrackerDeployTransaction = (props: any) => {
+interface TrackerDeployTransactionProps {
+  isError: boolean
+  isLoading: boolean
+  isSuccess: boolean
+  transactionHref?: string
+  textSuccess?: React.ReactNode
+  textError?: React.ReactNode
+  textPending?: React.ReactNode
+}
+export const TrackerDeployTransaction = (props: TrackerDeployTransactionProps) => {
   const { isError, isLoading, isSuccess, transactionHref, textSuccess, textError, textPending } = props;
   return (
     <>
