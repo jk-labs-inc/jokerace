@@ -111,6 +111,8 @@ export function useContest() {
     setHasPaginationProposalsNextPage,
     //@ts-ignore
     setCanUpdateVotesInRealTime,
+    //@ts-ignore
+    setSupportsRewardsModule,
   } = useStore();
 
   /**
@@ -137,6 +139,11 @@ export function useContest() {
       setIsListProposalsLoading(false);
       setIsLoading(false);
       return;
+    }
+    if (abi?.filter(el => el.name === "officialRewardsModule").length > 0) {
+      setSupportsRewardsModule(true);
+    } else {
+      setSupportsRewardsModule(false);
     }
     const accountData = await getAccount();
     const contractConfig = {

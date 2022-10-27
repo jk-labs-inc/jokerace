@@ -46,6 +46,7 @@ export const Sidebar = (props: any) => {
     votesClose,
     contestStatus,
     currentUserSubmitProposalTokensAmount,
+    supportsRewardsModule,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -68,6 +69,8 @@ export const Sidebar = (props: any) => {
       amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
       //@ts-ignore
       currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
+      //@ts-ignore
+      supportsRewardsModule: state.supportsRewardsModule,
     }),
     shallow,
   );
@@ -109,47 +112,62 @@ export const Sidebar = (props: any) => {
             Rules
           </a>
         </Link>
-        { contestStatus === CONTEST_STATUS.COMPLETED ? <Link
-          href={{
-            pathname: ROUTE_VIEW_CONTEST_REWARDS,
-            //@ts-ignore
-            query: {
-              chain: query.chain,
-              address: query.address,
-            },
-          }}
-        >
-          <a className={`${styles.navLink} ${pathname === ROUTE_VIEW_CONTEST_REWARDS ? styles["navLink--active"] : ""}`}>
-            <IconTrophy className={styles.navLinkIcon} />
-            Rewards
-          </a>
-        </Link> : <div className={styles.navLink}>
-            <IconTrophy className={styles.navLinkIcon} />
-            Rewards
-          </div>}
-        {contestStatus === CONTEST_STATUS.COMPLETED  ? <Link
-          href={{
-            pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
-            //@ts-ignore
-            query: {
-              chain: query.chain,
-              address: query.address,
-            },
-          }}
-        >
-          <a
-            className={`${styles.navLink} ${
-              pathname === ROUTE_VIEW_CONTEST_EXPORT_DATA ? styles["navLink--active"] : ""
-            }`}
+        {supportsRewardsModule && (
+          <>
+            {contestStatus === CONTEST_STATUS.COMPLETED ? (
+              <Link
+                href={{
+                  pathname: ROUTE_VIEW_CONTEST_REWARDS,
+                  //@ts-ignore
+                  query: {
+                    chain: query.chain,
+                    address: query.address,
+                  },
+                }}
+              >
+                <a
+                  className={`${styles.navLink} ${
+                    pathname === ROUTE_VIEW_CONTEST_REWARDS ? styles["navLink--active"] : ""
+                  }`}
+                >
+                  <IconTrophy className={styles.navLinkIcon} />
+                  Rewards
+                </a>
+              </Link>
+            ) : (
+              <div className={styles.navLink}>
+                <IconTrophy className={styles.navLinkIcon} />
+                Rewards
+              </div>
+            )}
+          </>
+        )}
+        {contestStatus === CONTEST_STATUS.COMPLETED ? (
+          <Link
+            href={{
+              pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
+              //@ts-ignore
+              query: {
+                chain: query.chain,
+                address: query.address,
+              },
+            }}
           >
+            <a
+              className={`${styles.navLink} ${
+                pathname === ROUTE_VIEW_CONTEST_EXPORT_DATA ? styles["navLink--active"] : ""
+              }`}
+            >
+              <DocumentDownloadIcon className={styles.navLinkIcon} />
+              Export data
+            </a>
+          </Link>
+        ) : (
+          <div className={styles.navLink}>
             <DocumentDownloadIcon className={styles.navLinkIcon} />
             Export data
-          </a>
-        </Link> : <div className={styles.navLink}>
-        <DocumentDownloadIcon className={styles.navLinkIcon} />
-            Export data
-
-          </div>}
+          </div>
+        )}
       </nav>
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
         <>

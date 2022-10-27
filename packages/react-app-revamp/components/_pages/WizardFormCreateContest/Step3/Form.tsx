@@ -1,4 +1,4 @@
-import { useNetwork, useAccount } from "wagmi";
+import { useNetwork, useAccount, useToken } from "wagmi";
 import { usePress } from "@react-aria/interactions";
 import shallow from "zustand/shallow";
 import Button from "@components/Button";
@@ -13,7 +13,7 @@ import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
 import { useEffect, useId } from "react";
-import { ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
+import { CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
 import FormSelect from "@components/FormSelect";
 interface FormProps {
   isDeploying: boolean;
@@ -28,7 +28,7 @@ interface FormProps {
   setData: any;
 }
 
-const ranks = [1, 2, 3, 4, 5]
+const ranks = [1, 2, 3, 4, 5];
 
 export const Form = (props: FormProps) => {
   const formId = useId();
@@ -81,6 +81,11 @@ export const Form = (props: FormProps) => {
 
   const { pressProps } = usePress({
     onPress: () => setCurrentStep(4),
+  });
+
+  const erc20TokenRewards = useToken({
+    address: data()?.rewardTokenAddress,
+    enabled: data()?.rewardTokenAddress && data()?.rewardTokenAddress !== "",
   });
 
   return (
@@ -376,7 +381,7 @@ export const Form = (props: FormProps) => {
           <div
             className={`${
               data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ? "pointer-events-none opacity-75" : ""
-            } pis-6 text-sm !mt-0.5 flex items-center flex-wrap`}
+            } xs:pis-6 text-sm !mt-0.5 flex items-center flex-wrap`}
           >
             <span className="pie-1ex">Address of the submission token:</span>
             <div className="flex-grow py-1">
@@ -769,12 +774,14 @@ export const Form = (props: FormProps) => {
             value={data()?.hasRewards}
             onChange={(e: boolean) => {
               setData("hasRewards", e);
-              e === true ? setData("rewards", [
-                {
-                  winningRank: 1,
-                  rewardTokenAmount: "",
-                },
-              ]) : setData("rewards", [])
+              e === true
+                ? setData("rewards", [
+                    {
+                      winningRank: 1,
+                      rewardTokenAmount: "",
+                    },
+                  ])
+                : setData("rewards", []);
             }}
           >
             <RadioGroup.Label className="sr-only">Does your contest have rewards ?</RadioGroup.Label>
@@ -782,7 +789,7 @@ export const Form = (props: FormProps) => {
             <FormRadioOption value={true}>Rewards given to winner</FormRadioOption>
           </FormRadioGroup>
           {data()?.hasRewards === true && (
-            <div className="!mt-3 animate-appear flex flex-col space-y-6 pis-6">
+            <div className="!mt-3 animate-appear flex flex-col space-y-6 xs:pis-6">
               <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
                 <FormField.InputField>
                   <FormField.Label
@@ -795,20 +802,39 @@ export const Form = (props: FormProps) => {
                   <FormField.Description id="input-rewardTokenAmount-description">
                     The Ethereum address of the ERC20 token you want to give as a reward.
                   </FormField.Description>
+
                   <FormInput
                     required
                     scale="sm"
                     disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-                    aria-invalid={errors().rewardTokenAddress?.length > 0 === true ? "true" : "false"}
+                    aria-invalid={
+                      errors().rewardTokenAddress?.length > 0 === true || erc20TokenRewards?.isError ? "true" : "false"
+                    }
                     className="max-w-full w-auto 2xs:w-full"
                     placeholder="0x..."
                     type="text"
                     name="rewardTokenAddress"
-                    hasError={errors().rewardTokenAddress?.length > 0 === true}
+                    hasError={errors().rewardTokenAddress?.length > 0 === true || erc20TokenRewards?.isError}
                     aria-describedby="input-rewardTokenAddress-description input-rewardTokenAddress-note input-rewardTokenAddress-helpblock"
                   />
                 </FormField.InputField>
-                <p
+                {erc20TokenRewards?.data && (
+                  <div className="pt-2 flex items-center">
+                    <CheckIcon className="mie-2 w-5 shrink-0 text-positive-11" />
+                    <p className="text-neutral-11 text-2xs normal-case font-bold">
+                      {erc20TokenRewards?.data?.name} (${erc20TokenRewards?.data?.symbol})
+                    </p>
+                  </div>
+                )}
+                {erc20TokenRewards?.isError && (
+                  <div className="pt-2 flex items-center">
+                    <ExclamationIcon className="mie-2 w-5 shrink-0 text-negative-11" />
+                    <p className="text-negative-11 text-2xs">{erc20TokenRewards?.error?.message}</p>{" "}
+                  </div>
+                )}
+
+                {!erc20TokenRewards?.data && (
+                  <p
                     id="input-rewardTokenAddress-note"
                     className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center"
                   >
@@ -816,6 +842,7 @@ export const Form = (props: FormProps) => {
                     The token must implement the &nbsp;
                     <span className="font-mono normal-case">ERC20</span>&nbsp; interface
                   </p>
+                )}
                 <FormField.HelpBlock
                   hasError={errors().rewardTokenAddress?.length > 0 === true}
                   id="input-rewardTokenAddress-helpblock"
@@ -934,28 +961,76 @@ export const Form = (props: FormProps) => {
                   </Button>
                 </div>
               ))}
-              {data()?.rewards?.length < 5 && <Button
-                onClick={() => {
-                  setData("rewards", [
-                    ...data()?.rewards,
-                    {
-                      winningRank: ranks.filter(rank => {
-                        const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank )
-                        return !rewardRanks.includes(rank)
-                      })[0],
-                      rewardTokenAmount: "",
-                    },
-                  ]);
-                }}
-                intent="primary-outline"
-                scale="sm"
-                type="button"
-                className="w-full mx-auto xs:w-fit-content mt-4"
-              >
-                Add another winning rank
-              </Button>}
+              {data()?.rewards?.length < 5 && (
+                <Button
+                  onClick={() => {
+                    setData("rewards", [
+                      ...data()?.rewards,
+                      {
+                        winningRank: ranks.filter(rank => {
+                          const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank);
+                          return !rewardRanks.includes(rank);
+                        })[0],
+                        rewardTokenAmount: "",
+                      },
+                    ]);
+                  }}
+                  intent="primary-outline"
+                  scale="sm"
+                  type="button"
+                  className="w-full mx-auto xs:mx-0 xs:w-fit-content mt-4"
+                >
+                  <PlusIcon className="w-4 mie-2" />
+                  <span className="pie-2">Add another winning rank</span>
+                </Button>
+              )}
             </div>
           )}
+          {data()?.hasRewards &&
+            data()?.rewards?.filter((reward: any) => isNaN(reward?.rewardTokenAmount))?.length === 0 && (
+              <div className="animate-appear mis-6 border-t border-solid border-neutral-4 pt-6 mt-3">
+                <p className="font-bold text-sm mb-2">
+                  Total rewards you&apos;re planning to distribute:{" "}
+                  <span className="text-primary-10 normal-case ">
+                    {data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                      return sumRewards + reward.rewardTokenAmount;
+                    }, 0)}{" "}
+                    {erc20TokenRewards?.data?.symbol ? `$${erc20TokenRewards?.data?.symbol}` : "--"}
+                  </span>
+                </p>
+                <ul className="list-disc pis-4">
+                  {data()?.rewards.map((reward: any) => {
+                    const totalRewardsAmount = data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                      return sumRewards + reward.rewardTokenAmount;
+                    }, 0);
+                    const rewardPercentage = isNaN(totalRewardsAmount)
+                      ? 0
+                      : Math.floor((reward.rewardTokenAmount / totalRewardsAmount) * 100);
+                    return (
+                      <li className="animate-appear text-neutral-12 text-xs" key={`rank-distribution-${reward.key}`}>
+                        Proposal with rank {reward.winningRank} will get{" "}
+                        <span className="font-bold">~{rewardPercentage}%</span> of the rewards
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <p className="mt-5 text-neutral-11 text-xs">
+                  You will be able to send funds to your rewards module once both your contest and your rewards module
+                  will be created.
+                </p>
+                <p className="my-1.5 text-neutral-11 text-xs">
+                  Winners will receive a percentage % of the funds you will send, as described in the rewards breakdown
+                  above.
+                </p>
+                <p className="my-1.5 text-neutral-11 text-xs">
+                  Post-contest, anyone can *execute* the transaction on the contest “rewards” page.
+                </p>
+                <p className="text-neutral-11 text-xs">
+                  In case of tie, the transaction will be canceled, so you can pay out manually as you like.
+                </p>
+              </div>
+            )}
         </div>
       </fieldset>
       <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
@@ -976,15 +1051,11 @@ export const Form = (props: FormProps) => {
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !data()?.submissionTokenAddress) ||
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid) ||
-            (data()?.hasRewards === true && (
-              !data()?.rewardTokenAddress 
-              || !data()?.rewards 
-              || data()?.rewards?.length === 0 
-              || data()?.rewards?.filter(
-                  (r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount)
-                )?.length > 0
-              )
-            )
+            (data()?.hasRewards === true &&
+              (!data()?.rewardTokenAddress ||
+                !data()?.rewards ||
+                data()?.rewards?.length === 0 ||
+                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length > 0))
           }
           type="submit"
         >

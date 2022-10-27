@@ -43,13 +43,13 @@ export function useDeployContest(form: any) {
       //@ts-ignore
       setDeployRewardsModule: state.setDeployRewardsModule,
       //@ts-ignore
-      setContestRewardsModule: state.setContestRewardsModule
+      setContestRewardsModule: state.setContestRewardsModule,
     }),
     shallow,
   );
 
   async function handleSubmitForm(values: any) {
-    setWillHaveRewardsModule(values.hasRewards)
+    setWillHaveRewardsModule(values.hasRewards);
     setContestDeployedToChain(chain);
     setModalDeployContestOpen(true);
     stateContestDeployment.setIsLoading(true);
@@ -60,7 +60,11 @@ export function useDeployContest(form: any) {
       // we need to refetch the signer, otherwise an error is triggered
       const signer = await refetch();
       //@ts-ignore
-      const factoryCreateContest = new ContractFactory(DeployedContestContract.abi, DeployedContestContract.bytecode, signer.data);
+      const factoryCreateContest = new ContractFactory(
+        DeployedContestContract.abi,
+        DeployedContestContract.bytecode,
+        signer.data,
+      );
       const chosenContestVotingSnapshot =
         values.usersQualifyToVoteIfTheyHoldTokenOnVoteStart === true
           ? getUnixTime(new Date(values.datetimeOpeningVoting))
@@ -91,7 +95,7 @@ export function useDeployContest(form: any) {
         // 0 = false; 1 = true
         useSameTokenForSubmissions === true ? 1 : 0,
       ];
-      
+
       const contractContest = await factoryCreateContest.deploy(
         values.contestTitle,
         values.contestDescription,
@@ -99,7 +103,7 @@ export function useDeployContest(form: any) {
         useSameTokenForSubmissions === true ? values.votingTokenAddress : values.submissionTokenAddress,
         contestParameters,
       );
-      
+
       const receiptDeployContest = await waitForTransaction({
         chainId: chain?.id,
         hash: contractContest.deployTransaction.hash,
@@ -110,22 +114,28 @@ export function useDeployContest(form: any) {
         address: contractContest.address,
       });
 
-      if(values.hasRewards) {
+      if (values.hasRewards) {
         //@ts-ignore
-        const factoryCreateRewardsModule = new ContractFactory(RewardsModuleContract.abi, RewardsModuleContract.bytecode, signer.data);
-        const rewardsRanks = values.rewards.map((reward: any) => parseInt(reward.winningRank))
+        const factoryCreateRewardsModule = new ContractFactory(
+          RewardsModuleContract.abi,
+          RewardsModuleContract.bytecode,
+          signer.data,
+        );
+        const rewardsRanks = values.rewards.map((reward: any) => parseInt(reward.winningRank));
         const totalRewardsAmount = values.rewards.reduce((sumRewards: number, reward: any) => {
           return sumRewards + reward.rewardTokenAmount;
         }, 0);
-        const rewardsShares = values.rewards.map((reward: any) => Math.ceil(reward.rewardTokenAmount / totalRewardsAmount * 100))
-        
+        const rewardsShares = values.rewards.map((reward: any) =>
+          Math.floor((reward.rewardTokenAmount / totalRewardsAmount) * 100),
+        );
+
         // Deploy the rewards module
         const contractRewardsModule = await factoryCreateRewardsModule.deploy(
           rewardsRanks,
           rewardsShares,
           //@ts-ignore
-          contractContest.address
-        )
+          contractContest.address,
+        );
 
         const receiptDeployRewardsModule = await waitForTransaction({
           chainId: chain?.id,
@@ -135,8 +145,8 @@ export function useDeployContest(form: any) {
 
         setDeployRewardsModule({
           hash: receiptDeployRewardsModule.transactionHash,
-          address: contractRewardsModule.address,  
-        })
+          address: contractRewardsModule.address,
+        });
 
         const contractConfig = {
           addressOrName: contractContest.address,
@@ -148,17 +158,20 @@ export function useDeployContest(form: any) {
           //@ts-ignore
           args: contractRewardsModule.address,
         });
-  
+
         const receiptSetContestRewardsModule = await waitForTransaction({
           chainId: chain?.id,
           //@ts-ignore
           hash: txSetRewardsModule.hash,
         });
         setContestRewardsModule({
+          rewardsModuleAddress: contractRewardsModule.address,
+          tokenRewardsAddress: values?.rewardTokenAddress,
+          rewardsTotalAmount: totalRewardsAmount,
           hash: receiptSetContestRewardsModule.transactionHash,
-        })
+        });
       }
-      
+
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
         process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -179,7 +192,6 @@ export function useDeployContest(form: any) {
 
       stateContestDeployment.setIsLoading(false);
       form.reset();
-      
     } catch (e) {
       console.error(e);
       if (modalDeployContestOpen === false)

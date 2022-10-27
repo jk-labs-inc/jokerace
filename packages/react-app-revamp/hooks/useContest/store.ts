@@ -44,6 +44,8 @@ export const createStore = () => {
     currentPagePaginationProposals: 0,
     hasPaginationProposalsNextPage: false,
     canUpdateVotesInRealTime: false,
+    supportsRewardsModule: false,
+    setSupportsRewardsModule: (value: boolean) => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: (value: boolean) => set({ canUpdateVotesInRealTime: value }),
     setIsPageProposalsLoading: (value: boolean) => set({ isPageProposalsLoading: value }),
     setIsPageProposalsSuccess: (value: boolean) => set({ isPageProposalsSuccess: value }),
