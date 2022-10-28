@@ -71,44 +71,42 @@ export function useRewardsModule() {
       const rewardsModule = await readContracts({
         contracts: contractsRewardsModule,
       });
-      /*
-      if(process.env.NEXT_PUBLIC_ALCHEMY_KEY) {
+
+      let balance;
+      if (process.env.NEXT_PUBLIC_ALCHEMY_KEY) {
         // Get rewards module contract balance
-        // See: https://docs.alchemy.com/docs/how-to-get-all-tokens-owned-by-an-address   
-        const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === contestChainName)[0]  
-        const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`
+        // See: https://docs.alchemy.com/docs/how-to-get-all-tokens-owned-by-an-address
+        const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === contestChainName)[0];
+        const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
         const response = await fetch(alchemyAppUrl, {
-          method: 'POST',
+          method: "POST",
           body: JSON.stringify({
-            "jsonrpc": "2.0",
-            "method": "alchemy_getTokenBalances",
-            "headers": {
-              "Content-Type": "application/json"
+            jsonrpc: "2.0",
+            method: "alchemy_getTokenBalances",
+            headers: {
+              "Content-Type": "application/json",
             },
-            "params": [
-              `${contestRewardModuleAddress}`,
-              "erc20",
-            ],
-            "id": 42
+            params: [`${contestRewardModuleAddress}`, "erc20"],
+            id: 42,
           }),
-          redirect: 'follow',
-        })
-        const result = await response.json()
+          redirect: "follow",
+        });
+        const asJson = await response.json();
         // Remove tokens with zero balance
-        rewardsModuleERC20Balances = result?.tokenBalances?.filter((token: any) => {
-           return token['tokenBalance'] !== '0'
-        })
+        balance = asJson.result?.tokenBalances?.filter((token: any) => {
+          return token["tokenBalance"] !== "0";
+        });
       }
-      */
       setIsLoadingModule(false);
       setRewardsModule({
+        abi: abiRewardsModule,
         contractAddress: contestRewardModuleAddress,
         creator: rewardsModule[0],
         payees: rewardsModule[1],
         totalShares: rewardsModule[2],
         blockExplorers: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]
           ?.blockExplorers?.default,
-        // balances: rewardsModuleERC20Balances
+        balance,
       });
       setIsLoadingModuleSuccess(true);
     } catch (e) {
