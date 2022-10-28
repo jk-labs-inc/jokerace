@@ -9,13 +9,19 @@ import {
   Provider as ProviderRewardsModule,
   createStore as createStoreRewardsModule 
 } from '@hooks/useRewardsModule/store'
+import { 
+  useStore as useStoreFundRewardsModule,
+  Provider as ProviderFundRewardsModule,
+  createStore as createStoreFundRewardsModule 
+} from '@hooks/useFundRewardsModule/store'
 import { useRewardsModule } from '@hooks/useRewardsModule'
 import Button from '@components/Button'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
 import Loader from '@components/Loader'
 import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
-
+import DialogFundRewardsModule from "@components/_pages/DialogFundRewardsModule"
+import RewardsWinner from '@components/_pages/RewardsWinner'
 interface PageProps {
   address: string,
 }
@@ -34,12 +40,13 @@ const Page: NextPage = (props: PageProps) => {
    }), shallow);
 
   const storeRewardsModule = useStoreRewardsModule();
+  const storeFundRewardsModule = useStoreFundRewardsModule()
   const { getContestRewardsModule } = useRewardsModule()
   const currentAccount = useAccount()
   useEffect(() => {
     if(supportsRewardsModule) getContestRewardsModule()
   }, [supportsRewardsModule])
-console.log(storeRewardsModule?.rewardsModule)
+
   return (
     <>
       <Head>
@@ -54,7 +61,7 @@ console.log(storeRewardsModule?.rewardsModule)
         </p>
       </> : <>
         {storeRewardsModule.isLoadingModule && <>
-          <Loader>
+          <Loader scale="component">
             Loading rewards module...
           </Loader>
         </>}
@@ -68,7 +75,7 @@ console.log(storeRewardsModule?.rewardsModule)
             {storeRewardsModule.rewardsModule?.contractAddress}
           </a>
         </p>
-        {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && <Button className='shrink-0 h-fit-content xs:my-auto' intent="ghost-primary">
+        {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && <Button onClick={() => storeFundRewardsModule.setIsModalOpen(true)} scale="sm" className='shrink-0 h-fit-content xs:my-auto' intent="primary-outline">
           Fund rewards module 
         </Button>}  
     
@@ -76,27 +83,17 @@ console.log(storeRewardsModule?.rewardsModule)
     <div className='flex flex-col animate-appear pt-4 space-y-8'>
       
       <ul className='space-y-6'>
-          <li>
-          <h2 className='font-bold text-lg mb-1'>1st place</h2>
-          <p className='mb-2'>Wins {new Intl.NumberFormat().format(4000)} <span className='uppercase text-positive-10'>$USDC</span></p>
-          <Button className="!pis-2 items-center" intent="positive" scale="xs">
-              <CheckCircleIcon className='w-6 mie-1'/>
-              Execute transaction
-          </Button>
-      </li>
-
-      <li>
-          <h2 className='font-bold text-lg mb-1'>2nd place</h2>
-          <p className='mb-2'>Wins {new Intl.NumberFormat().format(2000)} <span className='uppercase text-positive-10'>$USDC</span></p>
-          <p className='text-sm italic font-bold text-negative-11'>Tied winners, transaction canceled</p>
-      </li>
-
-      <li>
-          <h2 className='font-bold text-lg mb-1'>3rd place</h2>
-          <p className='mb-2'>Wins {new Intl.NumberFormat().format(1000)} <span className='uppercase text-positive-10'>$USDC</span></p>
-          <p className='text-sm italic font-bold'>Transaction already executed (<a className="link" target="_blank" rel="nofollow noreferrer" href={`#`} >view on explorer</a>)</p>
-      </li>
-  </ul>
+          {storeRewardsModule.rewardsModule.payees.map(payee =>
+          <li key={`rank-${`${payee}`}`}>
+            <RewardsWinner 
+              payee={payee}
+              erc20Tokens={storeRewardsModule.rewardsModule.balance}
+              contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress} 
+              abiRewardsModule={storeRewardsModule.rewardsModule.abi}
+            />
+          </li>  
+          )}
+      </ul>
   <p className='text-sm'>
       Note: <br />
       In case of ties, corresponding transactions are canceled so the contest creator can decide how to pay out manually.
@@ -110,7 +107,8 @@ console.log(storeRewardsModule?.rewardsModule)
       <ExclamationCircleIcon className='w-6'/>
 
   </Button>
-</div>        
+</div> 
+<DialogFundRewardsModule setIsOpen={storeFundRewardsModule.setIsModalOpen} isOpen={storeFundRewardsModule.isModalOpen} />  
 </>}
       
       </>}
@@ -147,7 +145,9 @@ export async function getStaticProps({ params }: any) {
 export const getLayout = (page: any) => {
   return getLayoutContest(
     <ProviderRewardsModule createStore={createStoreRewardsModule}>
-      {page}
+      <ProviderFundRewardsModule createStore={createStoreFundRewardsModule}>
+        {page}
+      </ProviderFundRewardsModule>
     </ProviderRewardsModule>
   )
 }

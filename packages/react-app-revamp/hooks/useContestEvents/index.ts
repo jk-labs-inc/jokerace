@@ -40,7 +40,7 @@ export function useContestEvents() {
         // Update the current user available votes
         updateCurrentUserVotes();
       }
-  
+
       const proposalId = args[5].args.proposalId;
       const votes = await readContract({
         addressOrName: asPath.split("/")[3],
@@ -48,7 +48,7 @@ export function useContestEvents() {
         functionName: "proposalVotes",
         args: proposalId,
       });
-  
+
       if (listProposalsData[proposalId]) {
         //@ts-ignore
         setProposalVotes({
@@ -76,12 +76,11 @@ export function useContestEvents() {
           //@ts-ignore
           votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
         };
-  
+
         setProposalData({ id: proposalId, data: proposalData });
       }
-  
-    } catch(e) {
-      console.error(e)
+    } catch (e) {
+      console.error(e);
     }
   }
 
@@ -107,18 +106,16 @@ export function useContestEvents() {
         })
       }
       // When voting closes, remove all event listeners
-      if(contestStatus === CONTEST_STATUS.COMPLETED) {
+      if (contestStatus === CONTEST_STATUS.COMPLETED) {
         const contract = getContract({
           addressOrName: asPath.split("/")[3],
           contractInterface: DeployedContestContract.abi,
-  
-        })
-        contract.removeAllListeners()
+        });
+        contract.removeAllListeners();
       }
     }
+  }, [canUpdateVotesInRealTime, contestStatus]);
 
-  }, [canUpdateVotesInRealTime, contestStatus])
-  
   /*
   useContractEvent({
     addressOrName: asPath.split("/")[3],

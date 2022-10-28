@@ -799,7 +799,7 @@ export const Form = (props: FormProps) => {
                   >
                     Address of token used for rewards
                   </FormField.Label>
-                  <FormField.Description id="input-rewardTokenAmount-description">
+                  <FormField.Description id="input-rewardTokenAddress-description">
                     The Ethereum address of the ERC20 token you want to give as a reward.
                   </FormField.Description>
 

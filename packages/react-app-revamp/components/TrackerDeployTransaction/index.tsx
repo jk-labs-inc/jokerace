@@ -1,12 +1,12 @@
 import styles from "./styles.module.css";
 interface TrackerDeployTransactionProps {
-  isError: boolean
-  isLoading: boolean
-  isSuccess: boolean
-  transactionHref?: string
-  textSuccess?: React.ReactNode
-  textError?: React.ReactNode
-  textPending?: React.ReactNode
+  isError: boolean;
+  isLoading: boolean;
+  isSuccess: boolean;
+  transactionHref?: string;
+  textSuccess?: React.ReactNode;
+  textError?: React.ReactNode;
+  textPending?: React.ReactNode;
 }
 export const TrackerDeployTransaction = (props: TrackerDeployTransactionProps) => {
   const { isError, isLoading, isSuccess, transactionHref, textSuccess, textError, textPending } = props;
@@ -26,9 +26,11 @@ export const TrackerDeployTransaction = (props: TrackerDeployTransactionProps) =
         </li>
         <li className={isSuccess === true ? "text-primary-10" : "text-neutral-8"}>{textSuccess ?? "Deployed"}!</li>
       </ol>
-      {isError && textError && <p className="animate-appear mt-3 rounded bor px-4 border border-solid border-negative-4 py-2 text-negative-11 bg-negative-1">
-       {textError} 
-      </p>}
+      {isError && textError && (
+        <p className="animate-appear mt-3 rounded bor px-4 border border-solid border-negative-4 py-2 text-negative-11 bg-negative-1">
+          {textError}
+        </p>
+      )}
       {isSuccess === true && transactionHref && (
         <>
           <a className="mt-5 block" rel="nofollow noreferrer" target="_blank" href={transactionHref}>

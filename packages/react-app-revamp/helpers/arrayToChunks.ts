@@ -7,4 +7,4 @@ export function arrayToChunks(arr: Array<any>, chunkSize: number) {
   return res;
 }
 
-export default arrayToChunks
+export default arrayToChunks;

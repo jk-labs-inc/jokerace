@@ -5,9 +5,8 @@
   background-repeat: no-repeat;
   background-position: 42.5% 50%;
 }
-  
+
 .select:focus ~ .indicator {
   @apply opacity-90;
   transform: rotate(180deg);
 }
-  
