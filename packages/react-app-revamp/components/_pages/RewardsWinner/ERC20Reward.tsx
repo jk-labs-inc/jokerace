@@ -14,11 +14,13 @@ export const PayeeERC20Reward = (props: any) => {
     token: tokenAddress,
   });
   const queryRankRewardsReleasable = useContractRead({
-        addressOrName: contractRewardsModuleAddress,
-        contractInterface: abiRewardsModule,
-        functionName: "releasable",
-        args: [tokenAddress, parseInt(`${payee}`)],
-      
+    addressOrName: contractRewardsModuleAddress,
+    contractInterface: abiRewardsModule,
+    functionName: "releasable",
+    args: [tokenAddress, parseInt(`${payee}`)],  
+    onSuccess(data) {
+        console.log(`Contract read releasable ERC20 token ${queryTokenBalance.data?.symbol} result : ${data}`)
+    },
   })
 
   const queryRankRewardsReleased = useContractRead({
@@ -26,6 +28,10 @@ export const PayeeERC20Reward = (props: any) => {
       contractInterface: abiRewardsModule,
       functionName: "released",
       args: [tokenAddress, parseInt(`${payee}`)],
+      onSuccess(data) {
+        console.log(`Contract read released ERC20 token ${queryTokenBalance.data?.symbol} result : ${data}`)
+    },
+
   })
 
   const contractWriteReleaseERC20Token = useContractWrite({
@@ -81,14 +87,13 @@ export const PayeeERC20Reward = (props: any) => {
       )}
       {queryRankRewardsReleasable.isSuccess && (
         <>
-          <p>Realeasable: {queryRankRewardsReleasable.data}</p>
+          <p>Left to paid: {queryRankRewardsReleasable.data}</p>
         </>
       )}
       {queryRankRewardsReleased.isSuccess && (
         <>
-          {queryRankRewardsReleased.data === null ? <>
-            <Button className="mt-2" intent="positive" scale="xs" onClick={async () => await contractWriteReleaseERC20Token.writeAsync() }>Execute transaction</Button>
-          </> : <p>Released: {queryRankRewardsReleased.data }</p>}
+          <p>Paid: {queryRankRewardsReleased.data }</p>
+          <Button className="mt-2" intent="positive" scale="xs" onClick={async () => await contractWriteReleaseERC20Token.writeAsync() }>Execute transaction</Button>
         </>
       )}
     </section>

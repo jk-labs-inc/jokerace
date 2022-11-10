@@ -11,7 +11,6 @@ interface DialogFundRewardsModuleProps {
 export const DialogFundRewardsModule = (props: DialogFundRewardsModuleProps) => {
   const { ...dialogProps } = props
   const {
-    setIsOpen,
     sendFundsToRewardsModule,
     transactionData,
     isLoading,
@@ -39,7 +38,7 @@ export const DialogFundRewardsModule = (props: DialogFundRewardsModuleProps) => 
       <div className="animate-appear mt-3 mb-6">
         <Form
           isSuccess={isSuccess}
-          setIsModalOpen={setIsOpen}
+          setIsModalOpen={dialogProps.setIsOpen}
           handleSubmit={sendFundsToRewardsModule}
           isLoading={isLoading}
           isError={isError}

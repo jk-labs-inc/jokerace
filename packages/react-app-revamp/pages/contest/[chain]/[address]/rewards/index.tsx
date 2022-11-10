@@ -16,11 +16,13 @@ import {
 } from '@hooks/useFundRewardsModule/store'
 import { useRewardsModule } from '@hooks/useRewardsModule'
 import Button from '@components/Button'
-import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/outline'
+import {  ExclamationCircleIcon } from '@heroicons/react/outline'
 import Loader from '@components/Loader'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAccount } from 'wagmi'
 import DialogFundRewardsModule from "@components/_pages/DialogFundRewardsModule"
+import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule"
+import ButtonWithdrawNativeReward from '@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward'
 import RewardsWinner from '@components/_pages/RewardsWinner'
 interface PageProps {
   address: string,
@@ -42,6 +44,7 @@ const Page: NextPage = (props: PageProps) => {
   const storeRewardsModule = useStoreRewardsModule();
   const storeFundRewardsModule = useStoreFundRewardsModule()
   const { getContestRewardsModule, queryBalanceRewardsModule } = useRewardsModule()
+  const [isWithdrawnFundsDialogOpen, setIsWithdrawFundsDialogOpen] = useState(false)
   const currentAccount = useAccount()
   useEffect(() => {
     if(supportsRewardsModule) getContestRewardsModule()
@@ -75,9 +78,14 @@ const Page: NextPage = (props: PageProps) => {
             {storeRewardsModule.rewardsModule?.contractAddress}
           </a>
         </p>
-        {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && <Button onClick={() => storeFundRewardsModule.setIsModalOpen(true)} scale="sm" className='shrink-0 h-fit-content xs:my-auto' intent="primary-outline">
-          Fund rewards module 
-        </Button>}  
+        {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && <div className='space-y-2 shrink-0 xs:my-auto'>
+            <Button className="w-full" onClick={() => storeFundRewardsModule.setIsModalOpen(true)} scale="sm" intent="primary-outline">
+            Send funds 
+          </Button>
+          <Button className="w-full"  scale="sm" intent="neutral-outline" onClick={() => setIsWithdrawFundsDialogOpen(true)}>
+              Withdraw funds
+          </Button>
+        </div>}
     
         </div>
     <div className='flex flex-col animate-appear pt-4 space-y-8'>
@@ -109,6 +117,9 @@ const Page: NextPage = (props: PageProps) => {
   </Button>
 </div> 
 <DialogFundRewardsModule queryBalanceRewardsModule={queryBalanceRewardsModule} setIsOpen={storeFundRewardsModule.setIsModalOpen} isOpen={storeFundRewardsModule.isModalOpen} />  
+<DialogWithdrawFundsFromRewardsModule isOpen={isWithdrawnFundsDialogOpen} setIsOpen={setIsWithdrawFundsDialogOpen}>
+    <ButtonWithdrawNativeReward contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress} abiRewardsModule={storeRewardsModule.rewardsModule.abi} />
+</DialogWithdrawFundsFromRewardsModule>
 </>}
       
       </>}
