@@ -771,26 +771,28 @@ export const Form = (props: FormProps) => {
         <div className="space-y-6">
           <FormRadioGroup
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-            value={data()?.hasRewards}
-            onChange={(e: boolean) => {
-              setData("hasRewards", e);
-              e === true
+            value={data()?.rewardsType}
+            onChange={(e: string) => {
+              setData("rewardsType", e);
+              e !== "noRewards"
                 ? setData("rewards", [
                     {
                       winningRank: 1,
-                      rewardTokenAmount: "",
+                      rewardTokenAmount: 0,
                     },
                   ])
                 : setData("rewards", []);
             }}
           >
             <RadioGroup.Label className="sr-only">Does your contest have rewards ?</RadioGroup.Label>
-            <FormRadioOption value={false}>No rewards</FormRadioOption>
-            <FormRadioOption value={true}>Rewards given to winner</FormRadioOption>
+            <FormRadioOption value={"noRewards"}>No rewards</FormRadioOption>
+            <FormRadioOption value={"erc20"}>ERC-20 token rewards</FormRadioOption>
+            <FormRadioOption value={"chain"}>Chain native currency rewards ({chain?.nativeCurrency?.symbol})</FormRadioOption>
+
           </FormRadioGroup>
-          {data()?.hasRewards === true && (
+          {data()?.rewardsType !== "noRewards" && (
             <div className="!mt-3 animate-appear flex flex-col space-y-6 xs:pis-6">
-              <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+              {data()?.rewardsType === "erc20" && <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
                 <FormField.InputField>
                   <FormField.Label
                     className="text-sm"
@@ -849,7 +851,7 @@ export const Form = (props: FormProps) => {
                 >
                   The reward token address must be a valid Ethereum address
                 </FormField.HelpBlock>
-              </FormField>
+              </FormField>}
               {data()?.rewards.map((reward: any, i: number) => (
                 <div
                   key={`reward-${reward.key}`}
@@ -953,7 +955,7 @@ export const Form = (props: FormProps) => {
                         (rewardToDelete: any) => rewardToDelete.key !== reward.key,
                       );
                       setData("rewards", updatedRewards);
-                      if (updatedRewards.length === 0) setData("hasRewards", false);
+                      if (updatedRewards.length === 0) setData("rewardsType", "noRewards");
                     }}
                   >
                     <TrashIcon className="w-4" />
@@ -971,7 +973,7 @@ export const Form = (props: FormProps) => {
                           const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank);
                           return !rewardRanks.includes(rank);
                         })[0],
-                        rewardTokenAmount: "",
+                        rewardTokenAmount: 0,
                       },
                     ]);
                   }}
@@ -986,16 +988,21 @@ export const Form = (props: FormProps) => {
               )}
             </div>
           )}
-          {data()?.hasRewards &&
+          {["erc20", "chain"].includes(data()?.rewardsType)  &&
             data()?.rewards?.filter((reward: any) => isNaN(reward?.rewardTokenAmount))?.length === 0 && (
               <div className="animate-appear mis-6 border-t border-solid border-neutral-4 pt-6 mt-3">
                 <p className="font-bold text-sm mb-2">
                   Total rewards you&apos;re planning to distribute:{" "}
                   <span className="text-primary-10 normal-case ">
                     {data()?.rewards.reduce((sumRewards: number, reward: any) => {
-                      return sumRewards + reward.rewardTokenAmount;
+                      //@ts-ignore
+                      return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardTokenAmount ?? 0)
                     }, 0)}{" "}
-                    {erc20TokenRewards?.data?.symbol ? `$${erc20TokenRewards?.data?.symbol}` : "--"}
+                    {data()?.rewardsType === "erc20" && <>
+                      {erc20TokenRewards?.data?.symbol ? `$${erc20TokenRewards?.data?.symbol}` : "--"}
+                    </>}
+                    
+                    {data()?.rewardsType === "chain" && chain?.nativeCurrency?.symbol}
                   </span>
                 </p>
                 <ul className="list-disc pis-4">
@@ -1051,7 +1058,7 @@ export const Form = (props: FormProps) => {
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !data()?.submissionTokenAddress) ||
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid) ||
-            (data()?.hasRewards === true &&
+            (data()?.rewardsType !== "noRewards" &&
               (!data()?.rewardTokenAddress ||
                 !data()?.rewards ||
                 data()?.rewards?.length === 0 ||

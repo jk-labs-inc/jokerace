@@ -41,7 +41,7 @@ const Page: NextPage = (props: PageProps) => {
 
   const storeRewardsModule = useStoreRewardsModule();
   const storeFundRewardsModule = useStoreFundRewardsModule()
-  const { getContestRewardsModule } = useRewardsModule()
+  const { getContestRewardsModule, queryBalanceRewardsModule } = useRewardsModule()
   const currentAccount = useAccount()
   useEffect(() => {
     if(supportsRewardsModule) getContestRewardsModule()
@@ -108,7 +108,7 @@ const Page: NextPage = (props: PageProps) => {
 
   </Button>
 </div> 
-<DialogFundRewardsModule setIsOpen={storeFundRewardsModule.setIsModalOpen} isOpen={storeFundRewardsModule.isModalOpen} />  
+<DialogFundRewardsModule queryBalanceRewardsModule={queryBalanceRewardsModule} setIsOpen={storeFundRewardsModule.setIsModalOpen} isOpen={storeFundRewardsModule.isModalOpen} />  
 </>}
       
       </>}

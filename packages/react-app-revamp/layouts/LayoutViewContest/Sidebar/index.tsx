@@ -78,7 +78,7 @@ export const Sidebar = (props: any) => {
 
   return (
     <>
-      <nav className={`${styles.navbar} md:space-y-1 `}>
+      <nav className={`${styles.navbar} md:shrink-0 md:grow-0 md:space-y-1 `}>
         <Link
           href={{
             pathname: ROUTE_VIEW_CONTEST,

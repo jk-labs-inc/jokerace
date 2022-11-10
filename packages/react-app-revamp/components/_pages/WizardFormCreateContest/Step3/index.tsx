@@ -14,28 +14,6 @@ import Timeline from "../Timeline";
 import DialogModalMintProposalToken from "./DialogModalMintProposalToken";
 import { cva } from "class-variance-authority";
 
-const transaction = cva(
-  [
-    "inline-flex items-center justify-center",
-    "tracking-wide",
-    "rounded-full",
-    "transition-colors transition-500",
-    "disabled:!opacity-50 disabled:pointer-events-none",
-  ],
-  {
-    variants: {
-      state: {
-        default: "text-neutral-11",
-        ongoing: "text-primary-10 animate-pulse",
-        success: "text-positive-11",
-        error: "text-negative-10",
-      },
-    },
-    defaultVariants: {
-      state: "default",
-    },
-  },
-);
 export const Step3 = () => {
   const {
     contestDeployedToChain,
@@ -99,7 +77,7 @@ export const Step3 = () => {
       submissionPerUserMaxNumber: 1,
       usersQualifyToVoteIfTheyHoldTokenOnVoteStart: true,
       downvoting: false,
-      hasRewards: false,
+      hasRewards: "noRewards",
       rewardTokenAddress: "",
       rewards: [],
     },

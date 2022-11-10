@@ -17,7 +17,7 @@ export interface DataStep3 {
   usersQualifyToVoteIfTheyHoldTokenOnVoteStart: boolean;
   usersQualifyToVoteAtAnotherDatetime: string;
   downvoting: boolean;
-  hasRewards: boolean;
+  rewardsType: string;
   rewardTokenAddress: string;
   rewards: Array<any>;
 }
@@ -49,7 +49,7 @@ export const schema = object({
   usersQualifyToVoteIfTheyHoldTokenOnVoteStart: boolean(),
   usersQualifyToVoteAtAnotherDatetime: string().optional(),
   downvoting: boolean(),
-  hasRewards: boolean(),
+  rewardsType: string(),
   rewardTokenAddress: string()
     .regex(/^0x[a-fA-F0-9]{40}$/)
     .or(string().max(0)),

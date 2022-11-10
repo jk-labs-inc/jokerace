@@ -1,4 +1,3 @@
-import Button from "@components/Button";
 import DialogModal from "@components/DialogModal";
 import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
 import useFundRewardsModule from "@hooks/useFundRewardsModule";
@@ -6,10 +5,11 @@ import Form from "./Form";
 
 interface DialogFundRewardsModuleProps {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  setIsOpen: () => void;
 }
 
 export const DialogFundRewardsModule = (props: DialogFundRewardsModuleProps) => {
+  const { ...dialogProps } = props
   const {
     setIsOpen,
     sendFundsToRewardsModule,
@@ -21,7 +21,7 @@ export const DialogFundRewardsModule = (props: DialogFundRewardsModuleProps) => 
   } = useFundRewardsModule();
 
   return (
-    <DialogModal title="Send funds to rewards module" {...props}>
+    <DialogModal title="Send funds to rewards module" {...dialogProps}>
       {(isSuccess === true || isLoading === true || isError === true) && (
         <div className="animate-appear mt-2 mb-4">
           <TrackerDeployTransaction textError={error} isSuccess={isSuccess} isError={isError} isLoading={isLoading} />

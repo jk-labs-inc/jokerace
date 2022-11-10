@@ -49,7 +49,8 @@ export function useDeployContest(form: any) {
   );
 
   async function handleSubmitForm(values: any) {
-    setWillHaveRewardsModule(values.hasRewards);
+    const hasRewards = ["erc20", "chain"].includes(values.rewardsType)
+    setWillHaveRewardsModule(hasRewards);
     setContestDeployedToChain(chain);
     setModalDeployContestOpen(true);
     stateContestDeployment.setIsLoading(true);
@@ -114,7 +115,7 @@ export function useDeployContest(form: any) {
         address: contractContest.address,
       });
 
-      if (values.hasRewards) {
+      if (hasRewards) {
         //@ts-ignore
         const factoryCreateRewardsModule = new ContractFactory(
           RewardsModuleContract.abi,
@@ -166,7 +167,7 @@ export function useDeployContest(form: any) {
         });
         setContestRewardsModule({
           rewardsModuleAddress: contractRewardsModule.address,
-          tokenRewardsAddress: values?.rewardTokenAddress,
+          tokenRewardsAddress: values.rewardsType === 'erc20' ? values?.rewardTokenAddress : 'native',
           rewardsTotalAmount: totalRewardsAmount,
           hash: receiptSetContestRewardsModule.transactionHash,
         });

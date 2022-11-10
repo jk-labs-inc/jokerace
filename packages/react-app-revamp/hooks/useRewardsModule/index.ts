@@ -5,10 +5,12 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
 import { useStore } from "./store";
+import { useBalance, useQuery } from "wagmi";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
   const {
+    rewardsModule,
     //@ts-ignore
     setIsLoadingModule,
     //@ts-ignore
@@ -18,6 +20,44 @@ export function useRewardsModule() {
     //@ts-ignore
     setRewardsModule,
   } = useStore();
+
+  const queryBalanceRewardsModule = useQuery(['balance-rewards-module', rewardsModule?.contractAddress], async() => {
+    try {
+      // Get rewards module contract balance
+      // See: https://docs.alchemy.com/docs/how-to-get-all-tokens-owned-by-an-address
+      const contestChainName = asPath.split("/")[2];
+      const contestRewardModuleAddress = rewardsModule?.contractAddress
+      const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === contestChainName)[0];
+      const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
+      const response = await fetch(alchemyAppUrl, {
+        method: "POST",
+        body: JSON.stringify({
+          jsonrpc: "2.0",
+          method: "alchemy_getTokenBalances",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          params: [`${contestRewardModuleAddress}`, "erc20"],
+          id: 42,
+        }),
+        redirect: "follow",
+      });
+      const asJson = await response.json();
+      // Remove tokens with zero balance
+      const balance = asJson.result?.tokenBalances?.filter((token: any) => {
+        return token["tokenBalance"] !== "0";
+      });
+      setRewardsModule({
+       ...rewardsModule,
+       balance: balance,
+      });
+      return balance
+    } catch(e) {
+      console.error(e)
+    }
+  }, {
+    enabled: (rewardsModule?.contractAddress &&  process.env.NEXT_PUBLIC_ALCHEMY_KEY)  ? true : false
+  })
 
   async function getContestRewardsModule() {
     setIsLoadingModule(true);
@@ -71,32 +111,6 @@ export function useRewardsModule() {
       const rewardsModule = await readContracts({
         contracts: contractsRewardsModule,
       });
-
-      let balance;
-      if (process.env.NEXT_PUBLIC_ALCHEMY_KEY) {
-        // Get rewards module contract balance
-        // See: https://docs.alchemy.com/docs/how-to-get-all-tokens-owned-by-an-address
-        const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === contestChainName)[0];
-        const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
-        const response = await fetch(alchemyAppUrl, {
-          method: "POST",
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "alchemy_getTokenBalances",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            params: [`${contestRewardModuleAddress}`, "erc20"],
-            id: 42,
-          }),
-          redirect: "follow",
-        });
-        const asJson = await response.json();
-        // Remove tokens with zero balance
-        balance = asJson.result?.tokenBalances?.filter((token: any) => {
-          return token["tokenBalance"] !== "0";
-        });
-      }
       setIsLoadingModule(false);
       setRewardsModule({
         abi: abiRewardsModule,
@@ -106,7 +120,6 @@ export function useRewardsModule() {
         totalShares: rewardsModule[2],
         blockExplorers: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]
           ?.blockExplorers?.default,
-        balance,
       });
       setIsLoadingModuleSuccess(true);
     } catch (e) {
@@ -120,6 +133,7 @@ export function useRewardsModule() {
 
   return {
     getContestRewardsModule,
+    queryBalanceRewardsModule,
   };
 }
 
