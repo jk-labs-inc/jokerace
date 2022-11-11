@@ -9,11 +9,10 @@ export const ButtonWithdrawNativeReward = (props) => {
     const queryTokenBalance = useBalance({
       addressOrName: contractRewardsModuleAddress,
     });
-    console.log(contractRewardsModuleAddress, queryTokenBalance.data, )
     const contractWriteWithdrawNativeReward = useContractWrite({
         addressOrName: contractRewardsModuleAddress,
         contractInterface: abiRewardsModule,
-        functionName: "withdrawRewards",
+        functionName: "withdrawRewards()",
         chainId: chain?.id,
         onError(e) {
             toast.error(`${e.cause}: ${e.message}`)
@@ -33,11 +32,12 @@ export const ButtonWithdrawNativeReward = (props) => {
       })
     
     return <Button
+      intent={parseFloat(queryTokenBalance?.data?.formatted) === 0 ? "ghost-primary" : "primary-outline"}
       onClick={() => contractWriteWithdrawNativeReward.write()}
       isLoading={contractWriteWithdrawNativeReward.isLoading}
       disabled={ parseFloat(queryTokenBalance?.data?.formatted) === 0|| contractWriteWithdrawNativeReward.isLoading || contractWriteWithdrawNativeReward.isSuccess}
     >
-        {contractWriteWithdrawNativeReward.isError ? 'Try again' : contractWriteWithdrawNativeReward.isSuccess ? `${chain?.nativeCurrency?.symbol} withdrawn successfully` : contractWriteWithdrawNativeReward.isLoading ? 'Withdrawing...' : `${queryTokenBalance?.data?.formatted} ${chain?.nativeCurrency?.symbol}`}
+        {contractWriteWithdrawNativeReward.isError ? 'Try again' : contractWriteWithdrawNativeReward.isSuccess ? `${chain?.nativeCurrency?.symbol} withdrawn successfully` : contractWriteWithdrawNativeReward.isLoading ? 'Withdrawing...' : parseFloat(queryTokenBalance?.data?.formatted) === 0 ? `${chain?.nativeCurrency?.symbol}` : `${parseFloat(queryTokenBalance?.data?.formatted).toFixed(4)} ${chain?.nativeCurrency?.symbol}`}
     </Button>
 
 }

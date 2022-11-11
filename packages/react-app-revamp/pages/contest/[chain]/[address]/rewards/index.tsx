@@ -23,6 +23,7 @@ import { useAccount } from 'wagmi'
 import DialogFundRewardsModule from "@components/_pages/DialogFundRewardsModule"
 import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule"
 import ButtonWithdrawNativeReward from '@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward'
+import ButtonWithdrawERC20Reward from '@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward'
 import RewardsWinner from '@components/_pages/RewardsWinner'
 interface PageProps {
   address: string,
@@ -118,7 +119,17 @@ const Page: NextPage = (props: PageProps) => {
 </div> 
 <DialogFundRewardsModule queryBalanceRewardsModule={queryBalanceRewardsModule} setIsOpen={storeFundRewardsModule.setIsModalOpen} isOpen={storeFundRewardsModule.isModalOpen} />  
 <DialogWithdrawFundsFromRewardsModule isOpen={isWithdrawnFundsDialogOpen} setIsOpen={setIsWithdrawFundsDialogOpen}>
-    <ButtonWithdrawNativeReward contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress} abiRewardsModule={storeRewardsModule.rewardsModule.abi} />
+    <ul>
+      <li>
+        <ButtonWithdrawNativeReward contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress} abiRewardsModule={storeRewardsModule.rewardsModule.abi} />
+      </li>
+      {storeRewardsModule?.rewardsModule?.balance?.map(token => 
+      <li key={`withdraw-erc20-${token.contractAddress}`}>
+<ButtonWithdrawERC20Reward contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress} abiRewardsModule={storeRewardsModule.rewardsModule.abi} tokenAddress={token.contractAddress} />
+      </li>
+       )}
+    </ul>
+   
 </DialogWithdrawFundsFromRewardsModule>
 </>}
       

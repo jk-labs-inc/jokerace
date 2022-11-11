@@ -1,5 +1,6 @@
 import Button from "@components/Button";
 import Loader from "@components/Loader";
+import { utils } from "ethers";
 import toast from "react-hot-toast";
 import { chain, useBalance, useContractRead, useContractReads, useContractWrite, useNetwork, useToken, useWaitForTransaction } from "wagmi";
 
@@ -16,28 +17,34 @@ export const PayeeERC20Reward = (props: any) => {
   const queryRankRewardsReleasable = useContractRead({
     addressOrName: contractRewardsModuleAddress,
     contractInterface: abiRewardsModule,
-    functionName: "releasable",
+    functionName: "releasable(address,uint256)",
     args: [tokenAddress, parseInt(`${payee}`)],  
+    select: (data) => {
+      return parseFloat(utils.formatEther(data)).toFixed(4)},
     onSuccess(data) {
         console.log(`Contract read releasable ERC20 token ${queryTokenBalance.data?.symbol} result : ${data}`)
     },
+    onError(e) {
+      console.log(e?.message, e?.cause)
+    }
   })
 
   const queryRankRewardsReleased = useContractRead({
       addressOrName: contractRewardsModuleAddress,
       contractInterface: abiRewardsModule,
-      functionName: "released",
+      functionName: "released(address,uint256)",
       args: [tokenAddress, parseInt(`${payee}`)],
-      onSuccess(data) {
-        console.log(`Contract read released ERC20 token ${queryTokenBalance.data?.symbol} result : ${data}`)
-    },
-
+      select: (data) => {
+        return parseFloat(utils.formatEther(data)).toFixed(4)},
+      onError(e) {
+        console.log(e?.message, e?.cause)
+      }
   })
 
   const contractWriteReleaseERC20Token = useContractWrite({
     addressOrName: contractRewardsModuleAddress,
     contractInterface: abiRewardsModule,
-    functionName: "release",
+    functionName: "release(address,uint256)",
     args: [tokenAddress, parseInt(`${payee}`)],
     chainId: chain.id
   })
@@ -48,7 +55,7 @@ export const PayeeERC20Reward = (props: any) => {
       console.error(e)
       toast.error('Something went wrong and the transaction failed :', e?.message)
     },
-    async onSuccess(data) {
+    async onSuccess() {
       await queryRankRewardsReleasable.refetch()
       await queryRankRewardsReleased.refetch()
       toast.success('Transaction successful !')
@@ -79,7 +86,7 @@ export const PayeeERC20Reward = (props: any) => {
           <p>Something went wrong while fetching the reward data.</p>
           <Button onClick={() => {
             queryRankRewardsReleased.refetch()
-            queryRankRewardsReleasable.refetch
+            queryRankRewardsReleasable.refetch()
             }} scale="xs" intent="neutral-outline">
             Try again
           </Button>
@@ -92,8 +99,8 @@ export const PayeeERC20Reward = (props: any) => {
       )}
       {queryRankRewardsReleased.isSuccess && (
         <>
-          <p>Paid: {queryRankRewardsReleased.data }</p>
-          <Button className="mt-2" intent="positive" scale="xs" onClick={async () => await contractWriteReleaseERC20Token.writeAsync() }>Execute transaction</Button>
+          {queryRankRewardsReleased?.data > 0 && <p>Paid: {queryRankRewardsReleased.data }</p>}
+          {queryRankRewardsReleased?.data < queryRankRewardsReleasable.data && <Button className="mt-2" intent="positive" scale="xs" onClick={async () => await contractWriteReleaseERC20Token.writeAsync() }>Execute transaction</Button>}
         </>
       )}
     </section>

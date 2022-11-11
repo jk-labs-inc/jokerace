@@ -1,7 +1,8 @@
 import Button from "@components/Button";
 import Loader from "@components/Loader";
+import { utils } from "ethers";
 import toast from "react-hot-toast";
-import { useBalance, useContractReads, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
+import { useBalance, useContractRead, useContractReads, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 
 export const PayeeNativeReward = (props: any) => {
   const { payee, share, contractRewardsModuleAddress, abiRewardsModule } = props;
@@ -10,28 +11,28 @@ export const PayeeNativeReward = (props: any) => {
     addressOrName: contractRewardsModuleAddress,
   },
   );
-  const queryNativeRankRewards = useContractReads({
-    contracts: [
-      {
-        addressOrName: contractRewardsModuleAddress,
-        contractInterface: abiRewardsModule,
-        functionName: "releasable",
-        args: [parseInt(`${payee}`)],
-      },
-      {
-        addressOrName: contractRewardsModuleAddress,
-        contractInterface: abiRewardsModule,
-        functionName: "released",
-        args: [parseInt(`${payee}`)],
-      },
-    ],
-  });
+  const queryRankRewardsReleasable = useContractRead({
+    addressOrName: contractRewardsModuleAddress,
+    contractInterface: abiRewardsModule,
+    functionName: "releasable(uint256)",
+    args: [payee],  
+    select: (data) => parseFloat(utils.formatEther(data)).toFixed(4),
 
+  })
+
+  const queryRankRewardsReleased = useContractRead({
+      addressOrName: contractRewardsModuleAddress,
+      contractInterface: abiRewardsModule,
+      functionName: "released(uint256)",
+      args: [payee],
+      select: (data) => parseFloat(utils.formatEther(data)).toFixed(4),
+
+  })
   const contractWriteRelease = useContractWrite({
     addressOrName: contractRewardsModuleAddress,
     contractInterface: abiRewardsModule,
-    functionName: "release",
-    args: [parseInt(`${payee}`)],
+    functionName: "release(uint256)",
+    args: [payee],
     chainId: chain.id,
     onError(e) {
       toast.error(`${e.cause} ${e.message}`)
@@ -52,6 +53,7 @@ export const PayeeNativeReward = (props: any) => {
   if (queryTokenBalance.isLoading)
     return <Loader scale="component">Loading native currency info...</Loader>;
 
+    if(parseFloat(queryRankRewardsReleasable.data) === 0) return null
   return (
     <section>
       <span className="font-bold normal-case">
@@ -59,23 +61,28 @@ export const PayeeNativeReward = (props: any) => {
         {((share / 100) * (queryTokenBalance.data?.value / Math.pow(10, queryTokenBalance.data?.decimals))).toFixed(2)}{" "}
         { chain?.nativeCurrency?.symbol}{" "}
       </span>
-      {queryNativeRankRewards.isLoading && <Loader scale="component">Loading reward info...</Loader>}
-      {queryNativeRankRewards.isError && (
+      {(queryRankRewardsReleased.isLoading || queryRankRewardsReleasable.isLoading) && <Loader scale="component">Loading reward info...</Loader>}
+      {queryRankRewardsReleased.isError || queryRankRewardsReleasable.isError && (
         <>
           <p>Something went wrong while fetching reward info: {queryNativeRankRewards.error?.message}</p>
-          <Button onClick={() => queryNativeRankRewards.refetch()} scale="xs" intent="neutral-outline">
+          <Button onClick={() => {
+queryRankRewardsReleased.refetch()
+queryRankRewardsReleasable.refetch()
+
+          }} scale="xs" intent="neutral-outline">
             Try again
           </Button>
         </>
       )}
-      {queryNativeRankRewards.isSuccess && (
+       {queryRankRewardsReleasable.isSuccess && (
         <>
-          <p>Left to pay: {`${queryNativeRankRewards.data?.[0]}`}</p>
-
-          <p>Paid: {queryNativeRankRewards.data?.[1]}</p>
-
-          <Button className="mt-2" intent="positive" scale="xs" onClick={async () => await contractWriteRelease.writeAsync() }>Execute transaction</Button>
-
+          <p>Left to paid: {queryRankRewardsReleasable.data}</p>
+        </>
+      )}
+      {queryRankRewardsReleased.isSuccess && (
+        <>
+          {queryRankRewardsReleased?.data > 0 && <p>Paid: {queryRankRewardsReleased.data }</p>}
+          {queryRankRewardsReleased?.data < queryRankRewardsReleasable.data && <Button className="mt-2" intent="positive" scale="xs" onClick={async () => await contractWriteReleaseERC20Token.writeAsync() }>Execute transaction</Button>}
         </>
       )}
     </section>
