@@ -9,15 +9,8 @@ interface DialogFundRewardsModuleProps {
 }
 
 export const DialogFundRewardsModule = (props: DialogFundRewardsModuleProps) => {
-  const { ...dialogProps } = props
-  const {
-    sendFundsToRewardsModule,
-    transactionData,
-    isLoading,
-    isError,
-    isSuccess,
-    error,
-  } = useFundRewardsModule();
+  const { ...dialogProps } = props;
+  const { sendFundsToRewardsModule, transactionData, isLoading, isError, isSuccess, error } = useFundRewardsModule();
 
   return (
     <DialogModal title="Send funds to rewards module" {...dialogProps}>

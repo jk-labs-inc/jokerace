@@ -77,7 +77,7 @@ export const Step3 = () => {
       submissionPerUserMaxNumber: 1,
       usersQualifyToVoteIfTheyHoldTokenOnVoteStart: true,
       downvoting: false,
-      hasRewards: "noRewards",
+      rewardsType: "noRewards",
       rewardTokenAddress: "",
       rewards: [],
     },

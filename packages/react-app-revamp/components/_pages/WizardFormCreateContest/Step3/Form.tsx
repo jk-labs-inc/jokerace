@@ -32,7 +32,7 @@ const ranks = [1, 2, 3, 4, 5];
 
 export const Form = (props: FormProps) => {
   const formId = useId();
-  const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
+  const { isDeploying, form, touched, data, errors, isValid, warnings, interacted, resetField, setData } = props;
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { setCurrentStep, setModalDeploySubmissionTokenOpen } = useStore(
@@ -85,7 +85,7 @@ export const Form = (props: FormProps) => {
 
   const erc20TokenRewards = useToken({
     address: data()?.rewardTokenAddress,
-    enabled: data()?.rewardTokenAddress && data()?.rewardTokenAddress !== "",
+    enabled: data()?.rewardsType === "erc20" && data()?.rewardTokenAddress && data()?.rewardTokenAddress !== "",
   });
 
   return (
@@ -773,85 +773,92 @@ export const Form = (props: FormProps) => {
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.rewardsType}
             onChange={(e: string) => {
-              setData("rewardsType", e);
-              e !== "noRewards"
-                ? setData("rewards", [
-                    {
-                      winningRank: 1,
-                      rewardTokenAmount: 0,
-                    },
-                  ])
-                : setData("rewards", []);
+              setData("rewardsType", e)
+              resetField('rewardTokenAddress')
+              resetField('rewards')
+              if(e !== "noRewards") {
+                setData("rewards", [
+                  {
+                    winningRank: 1,
+                    rewardTokenAmount: 0,
+                  },
+                ])
+              }
             }}
           >
             <RadioGroup.Label className="sr-only">Does your contest have rewards ?</RadioGroup.Label>
             <FormRadioOption value={"noRewards"}>No rewards</FormRadioOption>
             <FormRadioOption value={"erc20"}>ERC-20 token rewards</FormRadioOption>
-            <FormRadioOption value={"chain"}>Chain native currency rewards ({chain?.nativeCurrency?.symbol})</FormRadioOption>
-
+            <FormRadioOption value={"native"}>
+              Chain native currency rewards ({chain?.nativeCurrency?.symbol})
+            </FormRadioOption>
           </FormRadioGroup>
           {data()?.rewardsType !== "noRewards" && (
             <div className="!mt-3 animate-appear flex flex-col space-y-6 xs:pis-6">
-              {data()?.rewardsType === "erc20" && <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
-                <FormField.InputField>
-                  <FormField.Label
-                    className="text-sm"
-                    hasError={errors().rewardTokenAddress?.length > 0 === true}
-                    htmlFor="rewardTokenAddress"
-                  >
-                    Address of token used for rewards
-                  </FormField.Label>
-                  <FormField.Description id="input-rewardTokenAddress-description">
-                    The Ethereum address of the ERC20 token you want to give as a reward.
-                  </FormField.Description>
+              {data()?.rewardsType === "erc20" && (
+                <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+                  <FormField.InputField>
+                    <FormField.Label
+                      className="text-sm"
+                      hasError={errors().rewardTokenAddress?.length > 0 === true}
+                      htmlFor="rewardTokenAddress"
+                    >
+                      Address of token used for rewards
+                    </FormField.Label>
+                    <FormField.Description id="input-rewardTokenAddress-description">
+                      The Ethereum address of the ERC20 token you want to give as a reward.
+                    </FormField.Description>
 
-                  <FormInput
-                    required
-                    scale="sm"
-                    disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-                    aria-invalid={
-                      errors().rewardTokenAddress?.length > 0 === true || erc20TokenRewards?.isError ? "true" : "false"
-                    }
-                    className="max-w-full w-auto 2xs:w-full"
-                    placeholder="0x..."
-                    type="text"
-                    name="rewardTokenAddress"
-                    hasError={errors().rewardTokenAddress?.length > 0 === true || erc20TokenRewards?.isError}
-                    aria-describedby="input-rewardTokenAddress-description input-rewardTokenAddress-note input-rewardTokenAddress-helpblock"
-                  />
-                </FormField.InputField>
-                {erc20TokenRewards?.data && (
-                  <div className="pt-2 flex items-center">
-                    <CheckIcon className="mie-2 w-5 shrink-0 text-positive-11" />
-                    <p className="text-neutral-11 text-2xs normal-case font-bold">
-                      {erc20TokenRewards?.data?.name} (${erc20TokenRewards?.data?.symbol})
+                    <FormInput
+                      required
+                      scale="sm"
+                      disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                      aria-invalid={
+                        errors().rewardTokenAddress?.length > 0 === true || erc20TokenRewards?.isError
+                          ? "true"
+                          : "false"
+                      }
+                      className="max-w-full w-auto 2xs:w-full"
+                      placeholder="0x..."
+                      type="text"
+                      name="rewardTokenAddress"
+                      hasError={errors().rewardTokenAddress?.length > 0 === true || erc20TokenRewards?.isError}
+                      aria-describedby="input-rewardTokenAddress-description input-rewardTokenAddress-note input-rewardTokenAddress-helpblock"
+                    />
+                  </FormField.InputField>
+                  {erc20TokenRewards?.data && (
+                    <div className="pt-2 flex items-center">
+                      <CheckIcon className="mie-2 w-5 shrink-0 text-positive-11" />
+                      <p className="text-neutral-11 text-2xs normal-case font-bold">
+                        {erc20TokenRewards?.data?.name} (${erc20TokenRewards?.data?.symbol})
+                      </p>
+                    </div>
+                  )}
+                  {erc20TokenRewards?.isError && (
+                    <div className="pt-2 flex items-center">
+                      <ExclamationIcon className="mie-2 w-5 shrink-0 text-negative-11" />
+                      <p className="text-negative-11 text-2xs">{erc20TokenRewards?.error?.message}</p>{" "}
+                    </div>
+                  )}
+
+                  {!erc20TokenRewards?.data && (
+                    <p
+                      id="input-rewardTokenAddress-note"
+                      className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center"
+                    >
+                      <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
+                      The token must implement the &nbsp;
+                      <span className="font-mono normal-case">ERC20</span>&nbsp; interface
                     </p>
-                  </div>
-                )}
-                {erc20TokenRewards?.isError && (
-                  <div className="pt-2 flex items-center">
-                    <ExclamationIcon className="mie-2 w-5 shrink-0 text-negative-11" />
-                    <p className="text-negative-11 text-2xs">{erc20TokenRewards?.error?.message}</p>{" "}
-                  </div>
-                )}
-
-                {!erc20TokenRewards?.data && (
-                  <p
-                    id="input-rewardTokenAddress-note"
-                    className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center"
+                  )}
+                  <FormField.HelpBlock
+                    hasError={errors().rewardTokenAddress?.length > 0 === true}
+                    id="input-rewardTokenAddress-helpblock"
                   >
-                    <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
-                    The token must implement the &nbsp;
-                    <span className="font-mono normal-case">ERC20</span>&nbsp; interface
-                  </p>
-                )}
-                <FormField.HelpBlock
-                  hasError={errors().rewardTokenAddress?.length > 0 === true}
-                  id="input-rewardTokenAddress-helpblock"
-                >
-                  The reward token address must be a valid Ethereum address
-                </FormField.HelpBlock>
-              </FormField>}
+                    The reward token address must be a valid Ethereum address
+                  </FormField.HelpBlock>
+                </FormField>
+              )}
               {data()?.rewards.map((reward: any, i: number) => (
                 <div
                   key={`reward-${reward.key}`}
@@ -988,7 +995,7 @@ export const Form = (props: FormProps) => {
               )}
             </div>
           )}
-          {["erc20", "chain"].includes(data()?.rewardsType)  &&
+          {["erc20", "native"].includes(data()?.rewardsType) &&
             data()?.rewards?.filter((reward: any) => isNaN(reward?.rewardTokenAmount))?.length === 0 && (
               <div className="animate-appear mis-6 border-t border-solid border-neutral-4 pt-6 mt-3">
                 <p className="font-bold text-sm mb-2">
@@ -996,13 +1003,12 @@ export const Form = (props: FormProps) => {
                   <span className="text-primary-10 normal-case ">
                     {data()?.rewards.reduce((sumRewards: number, reward: any) => {
                       //@ts-ignore
-                      return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardTokenAmount ?? 0)
+                      return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardTokenAmount ?? 0);
                     }, 0)}{" "}
-                    {data()?.rewardsType === "erc20" && <>
-                      {erc20TokenRewards?.data?.symbol ? `$${erc20TokenRewards?.data?.symbol}` : "--"}
-                    </>}
-                    
-                    {data()?.rewardsType === "chain" && chain?.nativeCurrency?.symbol}
+                    {data()?.rewardsType === "erc20" && (
+                      <>{erc20TokenRewards?.data?.symbol ? `$${erc20TokenRewards?.data?.symbol}` : "--"}</>
+                    )}
+                    {data()?.rewardsType === "native" && chain?.nativeCurrency?.symbol}
                   </span>
                 </p>
                 <ul className="list-disc pis-4">
@@ -1058,11 +1064,12 @@ export const Form = (props: FormProps) => {
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !data()?.submissionTokenAddress) ||
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid) ||
-            (data()?.rewardsType !== "noRewards" &&
-              (!data()?.rewardTokenAddress ||
-                !data()?.rewards ||
-                data()?.rewards?.length === 0 ||
-                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length > 0))
+            (((data()?.rewardsType === "erc20" && (!data()?.rewardTokenAddress || !erc20TokenRewards?.data?.name ))) ||
+            ((data()?.rewardsType !== "noRewards" && (
+              data()?.rewards?.length === 0 ||
+              data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length > 0
+              )
+            )))
           }
           type="submit"
         >

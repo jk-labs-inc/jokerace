@@ -3,12 +3,11 @@ import DialogModal from "@components/DialogModal";
 interface DialogWithdrawFundsFromRewardsModuleProps {
   isOpen: boolean;
   setIsOpen: () => void;
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export const DialogWithdrawFundsFromRewardsModule = (props: DialogWithdrawFundsFromRewardsModuleProps) => {
-  const { children, ...dialogProps } = props
-  
+  const { children, ...dialogProps } = props;
 
   return (
     <DialogModal title="Withdraw rewards from module" {...dialogProps}>

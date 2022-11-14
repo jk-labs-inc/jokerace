@@ -7,7 +7,7 @@ import { useStore } from "./store";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function useFundRewardsModule() {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const { chain } = useNetwork();
   const {
     //@ts-ignore
@@ -50,28 +50,28 @@ export function useFundRewardsModule() {
       contractInterface: erc20ABI,
     };
     try {
-      let txSendFunds
-      let receipt
-      if(isErc20) {
-      txSendFunds = await writeContract({
-        ...contractConfig,
-        functionName: "transfer",
-        args: [rewardsModule.contractAddress, amount],
-      });
-      receipt = await waitForTransaction({
-        chainId: chain?.id,
-        //@ts-ignore
-        hash: txSendFunds.hash,
-      });
-      ;} else {
+      let txSendFunds;
+      let receipt;
+      if (isErc20) {
+        txSendFunds = await writeContract({
+          ...contractConfig,
+          functionName: "transfer",
+          args: [rewardsModule.contractAddress, amount],
+        });
+        receipt = await waitForTransaction({
+          chainId: chain?.id,
+          //@ts-ignore
+          hash: txSendFunds.hash,
+        });
+      } else {
         txSendFunds = await sendTransaction({
           chainId: chain?.id,
-            request: {
-              from: currentUserAddress,
-              to: rewardsModule.contractAddress,
-              value: amount,
-            }
-        })
+          request: {
+            from: currentUserAddress,
+            to: rewardsModule.contractAddress,
+            value: amount,
+          },
+        });
 
         receipt = await waitForTransaction({
           chainId: chain?.id,
@@ -85,13 +85,13 @@ export function useFundRewardsModule() {
         chainId: chain?.id,
         //@ts-ignore
         transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txSendFunds?.hash}`,
-      })
+      });
 
       await queryClient.invalidateQueries({
-        queryKey: ['balance-rewards-module', rewardsModule?.contractAddress],
+        queryKey: ["balance-rewards-module", rewardsModule?.contractAddress],
         exact: true,
-        refetchType: 'active',
-      })
+        refetchType: "active",
+      });
 
       setIsLoading(false);
       setIsSuccess(true);

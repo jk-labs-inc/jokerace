@@ -49,7 +49,7 @@ export function useDeployContest(form: any) {
   );
 
   async function handleSubmitForm(values: any) {
-    const hasRewards = ["erc20", "chain"].includes(values.rewardsType)
+    const hasRewards = ["erc20", "native"].includes(values.rewardsType);
     setWillHaveRewardsModule(hasRewards);
     setContestDeployedToChain(chain);
     setModalDeployContestOpen(true);
@@ -167,7 +167,7 @@ export function useDeployContest(form: any) {
         });
         setContestRewardsModule({
           rewardsModuleAddress: contractRewardsModule.address,
-          tokenRewardsAddress: values.rewardsType === 'erc20' ? values?.rewardTokenAddress : 'native',
+          tokenRewardsAddress: values.rewardsType === "erc20" ? values?.rewardTokenAddress : "native",
           rewardsTotalAmount: totalRewardsAmount,
           hash: receiptSetContestRewardsModule.transactionHash,
         });
