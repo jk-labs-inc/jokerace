@@ -64,7 +64,7 @@ export const Form = (props: FormProps) => {
       await balance.refetch();
     };
     if (isSuccess === true) {
-      refetchBalance()
+      refetchBalance();
     }
   }, [isSuccess]);
   return (
@@ -76,8 +76,8 @@ export const Form = (props: FormProps) => {
             value={data()?.isErc20}
             onChange={(e: boolean) => {
               setData("isErc20", e);
-              if(e === false) {
-                setData('tokenRewardsAddress', '')
+              if (e === false) {
+                setData("tokenRewardsAddress", "");
               }
             }}
           >

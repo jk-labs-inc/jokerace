@@ -5,7 +5,7 @@ import PayeeERC20Reward from "./ERC20Reward";
 import PayeeNativeReward from "./NativeCurrencyReward";
 import { chains } from "@config/wagmi";
 
-export const RewardsWinner = props => {
+export const RewardsWinner = (props: any) => {
   const { payee, erc20Tokens, contractRewardsModuleAddress, abiRewardsModule } = props;
   const { asPath } = useRouter();
 
@@ -22,7 +22,7 @@ export const RewardsWinner = props => {
 
   return (
     <>
-      <h2 className="font-bold text-md mb-1">Rank {`${payee}`}</h2>
+      <h2 className="font-bold text-lg mb-1">Rank {`${payee}`}</h2>
       {isLoading && !data ? (
         <Loader scale="component">Loading rewards data for rank {`${payee}`}...</Loader>
       ) : (

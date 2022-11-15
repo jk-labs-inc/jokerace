@@ -17,6 +17,7 @@ export const PayeeNativeReward = (props: any) => {
     functionName: "releasable(uint256)",
     args: [payee],
     watch: true,
+    //@ts-ignore
     select: data => parseFloat(utils.formatEther(data)).toFixed(4),
   });
 
@@ -26,6 +27,7 @@ export const PayeeNativeReward = (props: any) => {
     functionName: "released(uint256)",
     watch: true,
     args: [payee],
+    //@ts-ignore
     select: data => parseFloat(utils.formatEther(data)).toFixed(4),
   });
   const contractWriteReleaseToken = useContractWrite({
@@ -33,7 +35,7 @@ export const PayeeNativeReward = (props: any) => {
     contractInterface: abiRewardsModule,
     functionName: "release(uint256)",
     args: [payee],
-    chainId: chain.id,
+    chainId: chain?.id,
     onError(e) {
       toast.error(`${e.cause} ${e.message}`);
     },
@@ -43,6 +45,7 @@ export const PayeeNativeReward = (props: any) => {
     hash: contractWriteReleaseToken?.data?.hash,
     onError(e) {
       console.error(e);
+      //@ts-ignore
       toast.error("Something went wrong and the transaction failed :", e?.message);
     },
     onSuccess(data) {
@@ -50,79 +53,86 @@ export const PayeeNativeReward = (props: any) => {
     },
   });
 
-  async function refresh() {
-    await queryTokenBalance.refetch();
-    await queryRankRewardsReleased.refetch();
-    await queryRankRewardsReleasable.refetch();
-  }
-
   if (queryTokenBalance?.isLoading) return <Loader scale="component">Loading native currency info...</Loader>;
 
   return (
-    <section>
-      {queryRankRewardsReleased?.data < queryRankRewardsReleasable?.data && <span className="font-medium normal-case">
-        wins{" "}
-        {((share / 100) * (queryTokenBalance.data?.value / Math.pow(10, queryTokenBalance.data?.decimals))).toFixed(2)}{" "}
-        {chain?.nativeCurrency?.symbol}{" "}
-      </span>}
+    <section className="animate-appear">
+      <span className="font-bold normal-case animate-appear">
+        {queryTokenBalance?.data?.symbol && `${queryTokenBalance?.data?.symbol} reward `}
+        {/* @ts-ignore */}
+        {queryRankRewardsReleased.data === 0 &&
+          `: ${(
+            (share / 100) *
+            //@ts-ignore
+            (queryTokenBalance.data?.value / Math.pow(10, queryTokenBalance.data?.decimals))
+          ).toFixed(2)}`}{" "}
+      </span>
+
       {(queryRankRewardsReleased?.isLoading || queryRankRewardsReleasable?.isLoading) && (
         <Loader scale="component">Loading reward info...</Loader>
       )}
 
-      {queryRankRewardsReleasable.isError && <><p>
-        Something went wrong and we couldn&apos;t retrieve the amount of releasable rewards.
-      </p>
-      <Button
-              onClick={async () => {
-                await queryRankRewardsReleasable.refetch();
-              }}
-              scale="xs"
-              intent="neutral-outline"
-            >
-              Try again
-            </Button>
-      </>
-      }
-
-      {queryRankRewardsReleased.isError && <><p>
-        Something went wrong and we couldn&apos;t retrieve the amount of released rewards.
-      </p>
-      <Button
-              onClick={async () => {
-                await queryRankRewardsReleased.refetch();
-              }}
-              scale="xs"
-              intent="neutral-outline"
-            >
-              Try again
-            </Button>
-      </>}
-
-      {queryRankRewardsReleased?.data < queryRankRewardsReleasable.data && (
+      {queryRankRewardsReleasable.isError && (
         <>
-          <p>Left to pay: {queryRankRewardsReleasable.data}</p>
+          <p>Something went wrong and we couldn&apos;t retrieve the amount of releasable rewards.</p>
+          <Button
+            onClick={async () => {
+              await queryRankRewardsReleasable.refetch();
+            }}
+            scale="xs"
+            intent="neutral-outline"
+            className="animate-appear"
+          >
+            Try again
+          </Button>
+        </>
+      )}
+      {queryRankRewardsReleased.isError && (
+        <>
+          <p>Something went wrong and we couldn&apos;t retrieve the amount of released rewards.</p>
+          <Button
+            onClick={async () => {
+              await queryRankRewardsReleased.refetch();
+            }}
+            className="animate-appear"
+            scale="xs"
+            intent="neutral-outline"
+          >
+            Try again
+          </Button>
+        </>
+      )}
+      {/* @ts-ignore */}
+      {queryRankRewardsReleasable?.data > 0 && (
+        <>
+          <p className="animate-appear">Left to pay: {queryRankRewardsReleasable.data}</p>
         </>
       )}
       {queryRankRewardsReleased?.isSuccess && (
         <>
+          {/* @ts-ignore */}
           {queryRankRewardsReleased?.data > 0 && <p>Paid: {queryRankRewardsReleased?.data}</p>}
-          {queryRankRewardsReleased?.data < queryRankRewardsReleasable?.data && (
+          {/* @ts-ignore */}
+          {queryRankRewardsReleasable?.data > 0 && (
             <Button
-              className="mt-2"
+              className="mt-2 animate-appear"
               intent="positive"
               scale="xs"
-              isLoading={contractWriteReleaseToken?.isLoading || txRelease?.isLoading ||contractWriteReleaseToken?.isSuccess || txRelease?.isSuccess }
+              isLoading={
+                contractWriteReleaseToken?.isLoading ||
+                txRelease?.isLoading ||
+                contractWriteReleaseToken?.isSuccess ||
+                txRelease?.isSuccess
+              }
               onClick={async () => await contractWriteReleaseToken.writeAsync()}
             >
-              
               {contractWriteReleaseToken?.isError || txRelease?.isError
-        ? "Try again"
-        : txRelease.isSuccess
-        ? `Reward sent successfully`
-        : (contractWriteReleaseToken?.isLoading || txRelease?.isLoading)
-        ? "Sending reward..."
-        : `Execute transaction`}
-
+                ? "Try again"
+                : txRelease.isSuccess
+                ? `Reward sent successfully`
+                : contractWriteReleaseToken?.isLoading || txRelease?.isLoading
+                ? "Sending reward..."
+                : `Execute transaction`}
             </Button>
           )}
         </>

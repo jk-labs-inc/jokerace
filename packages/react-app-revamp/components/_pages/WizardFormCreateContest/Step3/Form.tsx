@@ -773,16 +773,16 @@ export const Form = (props: FormProps) => {
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.rewardsType}
             onChange={(e: string) => {
-              setData("rewardsType", e)
-              resetField('rewardTokenAddress')
-              resetField('rewards')
-              if(e !== "noRewards") {
+              setData("rewardsType", e);
+              resetField("rewardTokenAddress");
+              resetField("rewards");
+              if (e !== "noRewards") {
                 setData("rewards", [
                   {
                     winningRank: 1,
                     rewardTokenAmount: 0,
                   },
-                ])
+                ]);
               }
             }}
           >
@@ -1064,12 +1064,11 @@ export const Form = (props: FormProps) => {
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !data()?.submissionTokenAddress) ||
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid) ||
-            (((data()?.rewardsType === "erc20" && (!data()?.rewardTokenAddress || !erc20TokenRewards?.data?.name ))) ||
-            ((data()?.rewardsType !== "noRewards" && (
-              data()?.rewards?.length === 0 ||
-              data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length > 0
-              )
-            )))
+            (data()?.rewardsType === "erc20" && (!data()?.rewardTokenAddress || !erc20TokenRewards?.data?.name)) ||
+              (data()?.rewardsType !== "noRewards" &&
+                (data()?.rewards?.length === 0 ||
+                  data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length >
+                    0))
           }
           type="submit"
         >

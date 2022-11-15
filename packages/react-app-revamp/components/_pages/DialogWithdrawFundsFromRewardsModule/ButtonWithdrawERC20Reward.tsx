@@ -2,7 +2,7 @@ import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from 
 import Button from "@components/Button";
 import { toast } from "react-hot-toast";
 
-export const ButtonWithdrawERC20Reward = props => {
+export const ButtonWithdrawERC20Reward = (props: any) => {
   const { contractRewardsModuleAddress, tokenAddress, abiRewardsModule } = props;
   const { chain } = useNetwork();
   const queryTokenBalance = useBalance({
@@ -25,6 +25,7 @@ export const ButtonWithdrawERC20Reward = props => {
     hash: contractWriteWithdrawERC20Reward?.data?.hash,
     onError(e) {
       console.error(e);
+      //@ts-ignore
       toast.error("Something went wrong and the funds couldn't be withdrawn  :", e?.message);
     },
     onSuccess(data) {
@@ -33,26 +34,34 @@ export const ButtonWithdrawERC20Reward = props => {
   });
 
   return (
-    <Button
-      intent={parseFloat(queryTokenBalance?.data?.formatted) === 0 ? "ghost-primary" : "primary-outline"}
-      onClick={() => contractWriteWithdrawERC20Reward.write()}
-      isLoading={contractWriteWithdrawERC20Reward.isLoading || txWithdrawERC20.isLoading}
-      disabled={
-        parseFloat(queryTokenBalance?.data?.formatted) === 0 ||
-        txWithdrawERC20.isLoading ||
-        contractWriteWithdrawERC20Reward.isLoading ||
-        contractWriteWithdrawERC20Reward.isSuccess ||
-        txWithdrawERC20.isSuccess
-      }
-    >
-      {contractWriteWithdrawERC20Reward.isError || txWithdrawERC20.isError
-        ? "Try again"
-        : txWithdrawERC20.isSuccess
-        ? `${tokenAddress?.symbol} withdrawn successfully`
-        : (contractWriteWithdrawERC20Reward.isLoading || txWithdrawERC20.isLoading)
-        ? "Withdrawing..."
-        : `Withdraw all ${queryTokenBalance.data?.symbol}`}
-    </Button>
+    <>
+      {/* @ts-ignore */}
+      <p className="mb-1">Current balance: {parseFloat(queryTokenBalance?.data?.formatted).toFixed(4)}</p>
+      <Button
+        intent={
+          //@ts-ignore
+          parseFloat(queryTokenBalance?.data?.formatted).toFixed(4) <= 0.0001 ? "ghost-primary" : "primary-outline"
+        }
+        onClick={() => contractWriteWithdrawERC20Reward.write()}
+        isLoading={contractWriteWithdrawERC20Reward.isLoading || txWithdrawERC20.isLoading}
+        disabled={
+          //@ts-ignore
+          parseFloat(queryTokenBalance?.data?.formatted).toFixed(4) <= 0.0001 ||
+          txWithdrawERC20.isLoading ||
+          contractWriteWithdrawERC20Reward.isLoading ||
+          contractWriteWithdrawERC20Reward.isSuccess ||
+          txWithdrawERC20.isSuccess
+        }
+      >
+        {contractWriteWithdrawERC20Reward.isError || txWithdrawERC20.isError
+          ? "Try again"
+          : txWithdrawERC20.isSuccess
+          ? `${tokenAddress?.symbol} withdrawn successfully`
+          : contractWriteWithdrawERC20Reward.isLoading || txWithdrawERC20.isLoading
+          ? "Withdrawing..."
+          : `Withdraw all ${queryTokenBalance.data?.symbol}`}
+      </Button>
+    </>
   );
 };
 

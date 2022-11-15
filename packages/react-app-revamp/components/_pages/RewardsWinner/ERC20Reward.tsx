@@ -21,11 +21,12 @@ export const PayeeERC20Reward = (props: any) => {
     functionName: "releasable(address,uint256)",
     args: [tokenAddress, parseInt(`${payee}`)],
     watch: true,
+    //@ts-ignore
     select: data => {
       return parseFloat(utils.formatEther(data)).toFixed(4);
     },
     onError(e) {
-      console.log(e?.message, e?.cause);
+      console.error(e?.message, e?.cause);
     },
   });
 
@@ -35,11 +36,12 @@ export const PayeeERC20Reward = (props: any) => {
     functionName: "released(address,uint256)",
     args: [tokenAddress, parseInt(`${payee}`)],
     watch: true,
+    //@ts-ignore
     select: data => {
       return parseFloat(utils.formatEther(data)).toFixed(4);
     },
     onError(e) {
-      console.log(e?.message, e?.cause);
+      console.error(e?.message, e?.cause);
     },
   });
 
@@ -55,6 +57,7 @@ export const PayeeERC20Reward = (props: any) => {
     hash: contractWriteReleaseERC20Token?.data?.hash,
     onError(e) {
       console.error(e);
+      //@ts-ignore
       toast.error("Something went wrong and the transaction failed :", e?.message);
     },
     async onSuccess() {
@@ -77,11 +80,16 @@ export const PayeeERC20Reward = (props: any) => {
       </>
     );
   return (
-    <section>
-      <span className="font-medium normal-case">
-        wins{" "}
-        {((share / 100) * (queryTokenBalance.data?.value / Math.pow(10, queryTokenBalance.data?.decimals))).toFixed(2)}{" "}
-        {queryToken?.data?.symbol}{" "}
+    <section className="animate-appear">
+      <span className="font-bold normal-case animate-appear">
+        {queryToken?.data?.symbol && `${queryToken?.data?.symbol} reward `}
+        {/* @ts-ignore */}
+        {queryRankRewardsReleased.data === 0 &&
+          `: ${(
+            (share / 100) *
+            //@ts-ignore
+            (queryTokenBalance.data?.value / Math.pow(10, queryTokenBalance.data?.decimals))
+          ).toFixed(2)}`}{" "}
       </span>
       {(queryRankRewardsReleased.isLoading || queryRankRewardsReleasable.isLoading) && (
         <Loader scale="component">Loading reward info...</Loader>
@@ -94,6 +102,7 @@ export const PayeeERC20Reward = (props: any) => {
               queryRankRewardsReleased.refetch();
               queryRankRewardsReleasable.refetch();
             }}
+            className="animate-appear"
             scale="xs"
             intent="neutral-outline"
           >
@@ -101,32 +110,38 @@ export const PayeeERC20Reward = (props: any) => {
           </Button>
         </>
       )}
-      {queryRankRewardsReleased?.data < queryRankRewardsReleasable.data && (
+      {/* @ts-ignore */}
+      {queryRankRewardsReleasable.data > 0 && (
         <>
-          <p>Left to pay: {queryRankRewardsReleasable.data}</p>
+          <p className="animate-appear">Left to pay: {queryRankRewardsReleasable.data}</p>
         </>
       )}
       {queryRankRewardsReleased.isSuccess && (
         <>
+          {/* @ts-ignore */}
           {queryRankRewardsReleased?.data > 0 && <p>Paid: {queryRankRewardsReleased.data}</p>}
-          {queryRankRewardsReleased?.data < queryRankRewardsReleasable.data && (
-           <Button
-className="mt-2"
-intent="positive"
-scale="xs"
-isLoading={contractWriteReleaseERC20Token?.isLoading || txRelease?.isLoading ||contractWriteReleaseERC20Token?.isSuccess || txRelease?.isSuccess }
-onClick={async () => await contractWriteReleaseERC20Token.writeAsync()}
->
-
-{contractWriteReleaseERC20Token.isError || txRelease.isError
-? "Try again"
-: txRelease.isSuccess
-? `Reward sent successfully`
-: (contractWriteReleaseERC20Token.isLoading || txRelease.isLoading)
-? "Sending reward..."
-: `Execute transaction`}
-
-</Button>
+          {/* @ts-ignore */}
+          {queryRankRewardsReleasable.data > 0 && (
+            <Button
+              className="mt-2 animate-appear"
+              intent="positive"
+              scale="xs"
+              isLoading={
+                contractWriteReleaseERC20Token?.isLoading ||
+                txRelease?.isLoading ||
+                contractWriteReleaseERC20Token?.isSuccess ||
+                txRelease?.isSuccess
+              }
+              onClick={async () => await contractWriteReleaseERC20Token.writeAsync()}
+            >
+              {contractWriteReleaseERC20Token.isError || txRelease.isError
+                ? "Try again"
+                : txRelease.isSuccess
+                ? `Reward sent successfully`
+                : contractWriteReleaseERC20Token.isLoading || txRelease.isLoading
+                ? "Sending reward..."
+                : `Execute transaction`}
+            </Button>
           )}
         </>
       )}
