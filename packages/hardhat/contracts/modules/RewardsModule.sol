@@ -187,9 +187,10 @@ contract RewardsModule is Context {
             _rankedProposalIds = _underlyingContest.rankedProposals(true);
         }
 
-        // Rankings will be indexed starting at 1 so we need to account for this in arrays that are indexed starting at 0
-        require(ranking < (_rankedProposalIds.length + 1), "RewardsModule: there are not enough proposals for that ranking to exist");
-        address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
+        require(ranking <= (_rankedProposalIds.length), "RewardsModule: there are not enough proposals for that ranking to exist");
+        
+        // _rankedProposalIds is sorted in ascending order (so the proposal with the most votes is the last element in the array)
+        address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[_rankedProposalIds.length - ranking]).author);
 
         require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
@@ -223,9 +224,10 @@ contract RewardsModule is Context {
             _rankedProposalIds = _underlyingContest.rankedProposals(true);
         }
 
-        // Rankings will be indexed starting at 1 so we need to account for this in arrays that are indexed starting at 0
-        require(ranking < (_rankedProposalIds.length + 1), "RewardsModule: there are not enough proposals for that ranking to exist");
-        address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[ranking - 1]).author);
+        require(ranking <= (_rankedProposalIds.length), "RewardsModule: there are not enough proposals for that ranking to exist");
+        
+        // _rankedProposalIds is sorted in ascending order (so the proposal with the most votes is the last element in the array)
+        address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[_rankedProposalIds.length - ranking]).author);
 
         require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
