@@ -3,8 +3,14 @@ import Loader from "@components/Loader";
 import { utils } from "ethers";
 import toast from "react-hot-toast";
 import { useBalance, useContractRead, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
+interface PayeeNativeRewardProps {
+  payee: string | number
+  share: any
+  contractRewardsModuleAddress: string
+  abiRewardsModule: any
+}
 
-export const PayeeNativeReward = (props: any) => {
+export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
   const { payee, share, contractRewardsModuleAddress, abiRewardsModule } = props;
   const { chain } = useNetwork();
   const queryTokenBalance = useBalance({

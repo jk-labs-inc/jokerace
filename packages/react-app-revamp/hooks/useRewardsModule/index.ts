@@ -5,11 +5,12 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
 import { useStore } from "./store";
-import { useBalance, useQuery } from "wagmi";
+import { useQuery } from "wagmi";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
   const {
+    //@ts-ignore
     rewardsModule,
     //@ts-ignore
     setIsLoadingModule,
@@ -30,6 +31,7 @@ export function useRewardsModule() {
         const contestChainName = asPath.split("/")[2];
         const contestRewardModuleAddress = rewardsModule?.contractAddress;
         const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === contestChainName)[0];
+        //@ts-ignore
         const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
         const response = await fetch(alchemyAppUrl, {
           method: "POST",
@@ -86,6 +88,7 @@ export function useRewardsModule() {
         chainId,
         functionName: "officialRewardsModule",
       });
+      //@ts-ignore
       const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, contestChainName);
       if (abiRewardsModule === null) {
         toast.error("The contract of this rewards module doesn't exist on this chain.");
@@ -113,6 +116,7 @@ export function useRewardsModule() {
       ];
 
       const rewardsModule = await readContracts({
+        //@ts-ignore
         contracts: contractsRewardsModule,
       });
       setIsLoadingModule(false);

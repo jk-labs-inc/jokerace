@@ -1,8 +1,12 @@
 import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 import Button from "@components/Button";
 import { toast } from "react-hot-toast";
+interface ButtonWithdrawNativeRewardProps {
+  contractRewardsModuleAddress: string,
+  abiRewardsModule: any
+}
 
-export const ButtonWithdrawNativeReward = (props: any) => {
+export const ButtonWithdrawNativeReward = (props: ButtonWithdrawNativeRewardProps) => {
   const { contractRewardsModuleAddress, abiRewardsModule } = props;
   const { chain } = useNetwork();
   const queryTokenBalance = useBalance({

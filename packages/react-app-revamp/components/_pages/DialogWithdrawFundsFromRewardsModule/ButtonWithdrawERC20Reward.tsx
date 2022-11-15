@@ -2,7 +2,13 @@ import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from 
 import Button from "@components/Button";
 import { toast } from "react-hot-toast";
 
-export const ButtonWithdrawERC20Reward = (props: any) => {
+interface ButtonWithdrawErc20RewardProps {
+  contractRewardsModuleAddress: string
+  abiRewardsModule: any
+  tokenAddress: string
+}
+
+export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps) => {
   const { contractRewardsModuleAddress, tokenAddress, abiRewardsModule } = props;
   const { chain } = useNetwork();
   const queryTokenBalance = useBalance({
@@ -56,7 +62,7 @@ export const ButtonWithdrawERC20Reward = (props: any) => {
         {contractWriteWithdrawERC20Reward.isError || txWithdrawERC20.isError
           ? "Try again"
           : txWithdrawERC20.isSuccess
-          ? `${tokenAddress?.symbol} withdrawn successfully`
+          ? `${queryTokenBalance?.data?.symbol} withdrawn successfully`
           : contractWriteWithdrawERC20Reward.isLoading || txWithdrawERC20.isLoading
           ? "Withdrawing..."
           : `Withdraw all ${queryTokenBalance.data?.symbol}`}

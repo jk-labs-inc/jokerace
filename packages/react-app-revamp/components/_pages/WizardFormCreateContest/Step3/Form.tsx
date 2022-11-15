@@ -32,7 +32,7 @@ const ranks = [1, 2, 3, 4, 5];
 
 export const Form = (props: FormProps) => {
   const formId = useId();
-  const { isDeploying, form, touched, data, errors, isValid, warnings, interacted, resetField, setData } = props;
+  const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { setCurrentStep, setModalDeploySubmissionTokenOpen } = useStore(

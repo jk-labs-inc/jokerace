@@ -3,8 +3,15 @@ import Loader from "@components/Loader";
 import { utils } from "ethers";
 import toast from "react-hot-toast";
 import { useBalance, useContractRead, useContractWrite, useNetwork, useToken, useWaitForTransaction } from "wagmi";
+interface PayeeERC20RewardProps {
+  payee: string | number
+  tokenAddress: string
+  share: any
+  contractRewardsModuleAddress: string
+  abiRewardsModule: any
+}
 
-export const PayeeERC20Reward = (props: any) => {
+export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
   const { payee, tokenAddress, share, contractRewardsModuleAddress, abiRewardsModule } = props;
   const { chain } = useNetwork();
   const queryToken = useToken({

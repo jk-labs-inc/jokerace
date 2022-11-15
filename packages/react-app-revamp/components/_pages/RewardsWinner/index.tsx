@@ -5,7 +5,14 @@ import PayeeERC20Reward from "./ERC20Reward";
 import PayeeNativeReward from "./NativeCurrencyReward";
 import { chains } from "@config/wagmi";
 
-export const RewardsWinner = (props: any) => {
+interface RewardsWinnerProps {
+  payee: any,
+  erc20Tokens: Array<string>
+  contractRewardsModuleAddress: string,
+  abiRewardsModule: any 
+}
+
+export const RewardsWinner = (props: RewardsWinnerProps) => {
   const { payee, erc20Tokens, contractRewardsModuleAddress, abiRewardsModule } = props;
   const { asPath } = useRouter();
 

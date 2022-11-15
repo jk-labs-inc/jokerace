@@ -64,6 +64,7 @@ export function useDeployContest(form: any) {
       const factoryCreateContest = new ContractFactory(
         DeployedContestContract.abi,
         DeployedContestContract.bytecode,
+        //@ts-ignore
         signer.data,
       );
       const chosenContestVotingSnapshot =
@@ -120,6 +121,7 @@ export function useDeployContest(form: any) {
         const factoryCreateRewardsModule = new ContractFactory(
           RewardsModuleContract.abi,
           RewardsModuleContract.bytecode,
+          //@ts-ignore
           signer.data,
         );
         const rewardsRanks = values.rewards.map((reward: any) => parseInt(reward.winningRank));
