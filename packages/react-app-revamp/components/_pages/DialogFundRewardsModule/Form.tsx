@@ -15,7 +15,12 @@ interface FormProps {
   isLoading: boolean;
   isSuccess: boolean;
   isError: any;
-  handleSubmit: (args: { currentUserAddress: string; erc20TokenAddress: string; isErc20: boolean; amount: string; }) => Promise<void>;
+  handleSubmit: (args: {
+    currentUserAddress: string;
+    erc20TokenAddress: string;
+    isErc20: boolean;
+    amount: string;
+  }) => Promise<void>;
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
@@ -192,8 +197,8 @@ export const Form = (props: FormProps) => {
                     data()?.amount >
                       (balance?.data?.decimals === 18
                         ? balance?.data?.formatted
-                        //@ts-ignore
-                        : 10 ** (18 - balance.data.decimals) * balance.data.formatted)
+                        : //@ts-ignore
+                          10 ** (18 - balance.data.decimals) * balance.data.formatted)
                   }
                   htmlFor="amount"
                 >
@@ -216,8 +221,8 @@ export const Form = (props: FormProps) => {
                     data()?.amount >
                       (balance?.data?.decimals === 18
                         ? balance?.data?.formatted
-                        //@ts-ignore
-                        : 10 ** (18 - balance.data.decimals) * balance.data.formatted)
+                        : //@ts-ignore
+                          10 ** (18 - balance.data.decimals) * balance.data.formatted)
                       ? "true"
                       : "false"
                   }
@@ -229,8 +234,8 @@ export const Form = (props: FormProps) => {
                   max={
                     balance?.data?.decimals === 18
                       ? balance?.data?.formatted
-                      //@ts-ignore
-                      : 10 ** (18 - balance.data.decimals) * balance.data.formatted
+                      : //@ts-ignore
+                        10 ** (18 - balance.data.decimals) * balance.data.formatted
                   }
                   id="amount"
                   name="amount"
@@ -247,8 +252,8 @@ export const Form = (props: FormProps) => {
                   Current {balance?.data?.symbol} balance:{" "}
                   {balance?.data?.decimals === 18
                     ? balance?.data?.formatted
-                    //@ts-ignore
-                    : 10 ** (18 - balance.data.decimals) * balance.data.formatted}
+                    : //@ts-ignore
+                      10 ** (18 - balance.data.decimals) * balance.data.formatted}
                 </p>
               )}
               {/* @ts-ignore */}
@@ -259,8 +264,8 @@ export const Form = (props: FormProps) => {
                   data()?.amount >
                     (balance?.data?.decimals === 18
                       ? balance?.data?.formatted
-                      //@ts-ignore
-                      : 10 ** (18 - balance.data.decimals) * balance.data.formatted)
+                      : //@ts-ignore
+                        10 ** (18 - balance.data.decimals) * balance.data.formatted)
                 }
                 id="input-amount-helpblock"
               >
@@ -286,8 +291,8 @@ export const Form = (props: FormProps) => {
                 data()?.amount >
                   (balance?.data?.decimals === 18
                     ? balance?.data?.formatted
-                    //@ts-ignore
-                    : 10 ** (18 - balance.data.decimals) * balance.data.formatted)))
+                    : //@ts-ignore
+                      10 ** (18 - balance.data.decimals) * balance.data.formatted)))
           }
           type="submit"
         >

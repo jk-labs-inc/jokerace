@@ -1,11 +1,11 @@
 import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
-import Button from "@components/Button";
+import ButtonWithdraw from "./ButtonWithdraw";
 import { toast } from "react-hot-toast";
 
 interface ButtonWithdrawErc20RewardProps {
-  contractRewardsModuleAddress: string
-  abiRewardsModule: any
-  tokenAddress: string
+  contractRewardsModuleAddress: string;
+  abiRewardsModule: any;
+  tokenAddress: string;
 }
 
 export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps) => {
@@ -40,34 +40,11 @@ export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps)
   });
 
   return (
-    <>
-      {/* @ts-ignore */}
-      <p className="mb-1">Current balance: {parseFloat(queryTokenBalance?.data?.formatted).toFixed(4)}</p>
-      <Button
-        intent={
-          //@ts-ignore
-          parseFloat(queryTokenBalance?.data?.formatted).toFixed(4) <= 0.0001 ? "ghost-primary" : "primary-outline"
-        }
-        onClick={() => contractWriteWithdrawERC20Reward.write()}
-        isLoading={contractWriteWithdrawERC20Reward.isLoading || txWithdrawERC20.isLoading}
-        disabled={
-          //@ts-ignore
-          parseFloat(queryTokenBalance?.data?.formatted).toFixed(4) <= 0.0001 ||
-          txWithdrawERC20.isLoading ||
-          contractWriteWithdrawERC20Reward.isLoading ||
-          contractWriteWithdrawERC20Reward.isSuccess ||
-          txWithdrawERC20.isSuccess
-        }
-      >
-        {contractWriteWithdrawERC20Reward.isError || txWithdrawERC20.isError
-          ? "Try again"
-          : txWithdrawERC20.isSuccess
-          ? `${queryTokenBalance?.data?.symbol} withdrawn successfully`
-          : contractWriteWithdrawERC20Reward.isLoading || txWithdrawERC20.isLoading
-          ? "Withdrawing..."
-          : `Withdraw all ${queryTokenBalance.data?.symbol}`}
-      </Button>
-    </>
+    <ButtonWithdraw
+      contractWriteWithdraw={contractWriteWithdrawERC20Reward}
+      queryTokenBalance={queryTokenBalance}
+      txWithdraw={txWithdrawERC20}
+    />
   );
 };
 

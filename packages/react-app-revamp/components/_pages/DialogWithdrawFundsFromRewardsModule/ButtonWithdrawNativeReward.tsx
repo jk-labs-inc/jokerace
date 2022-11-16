@@ -1,9 +1,9 @@
 import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
-import Button from "@components/Button";
 import { toast } from "react-hot-toast";
+import ButtonWithdraw from "./ButtonWithdraw";
 interface ButtonWithdrawNativeRewardProps {
-  contractRewardsModuleAddress: string,
-  abiRewardsModule: any
+  contractRewardsModuleAddress: string;
+  abiRewardsModule: any;
 }
 
 export const ButtonWithdrawNativeReward = (props: ButtonWithdrawNativeRewardProps) => {
@@ -36,34 +36,11 @@ export const ButtonWithdrawNativeReward = (props: ButtonWithdrawNativeRewardProp
   });
 
   return (
-    <>
-      {/* @ts-ignore */}
-      <p className="mb-1">Current balance: {parseFloat(queryTokenBalance?.data?.formatted).toFixed(4)}</p>
-      <Button
-        intent={
-          /* @ts-ignore */
-          parseFloat(queryTokenBalance?.data?.formatted).toFixed(4) <= 0.0001 ? "ghost-primary" : "primary-outline"
-        }
-        onClick={() => contractWriteWithdrawNativeReward.write()}
-        isLoading={contractWriteWithdrawNativeReward.isLoading || txWithdrawNative.isLoading}
-        disabled={
-          //@ts-ignore
-          parseFloat(queryTokenBalance?.data?.formatted).toFixed(4) <= 0.0001 ||
-          txWithdrawNative.isLoading ||
-          contractWriteWithdrawNativeReward.isLoading ||
-          contractWriteWithdrawNativeReward.isSuccess ||
-          txWithdrawNative.isSuccess
-        }
-      >
-        {contractWriteWithdrawNativeReward.isError || txWithdrawNative.isError
-          ? "Try again"
-          : txWithdrawNative.isSuccess
-          ? `${chain?.nativeCurrency?.symbol} withdrawn successfully`
-          : contractWriteWithdrawNativeReward.isLoading || txWithdrawNative.isLoading
-          ? "Withdrawing..."
-          : `Withdraw all`}
-      </Button>
-    </>
+    <ButtonWithdraw
+      contractWriteWithdraw={contractWriteWithdrawNativeReward}
+      queryTokenBalance={queryTokenBalance}
+      txWithdraw={txWithdrawNative}
+    />
   );
 };
 

@@ -52,6 +52,7 @@ export const schema = object({
   rewardsType: string(),
   rewardTokenAddress: string()
     .regex(/^0x[a-fA-F0-9]{40}$/)
+    .optional()
     .or(string().max(0)),
   rewards: object({
     winningRank: number().positive(),

@@ -1065,10 +1065,9 @@ export const Form = (props: FormProps) => {
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && data()?.submissionTokenAddress === "") ||
             (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid) ||
             (data()?.rewardsType === "erc20" && (!data()?.rewardTokenAddress || !erc20TokenRewards?.data?.name)) ||
-              (data()?.rewardsType !== "noRewards" &&
-                (data()?.rewards?.length === 0 ||
-                  data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length >
-                    0))
+            (data()?.rewardsType !== "noRewards" &&
+              (data()?.rewards?.length === 0 ||
+                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length > 0))
           }
           type="submit"
         >

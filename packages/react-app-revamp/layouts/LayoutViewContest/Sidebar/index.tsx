@@ -47,6 +47,7 @@ export const Sidebar = (props: any) => {
     contestStatus,
     currentUserSubmitProposalTokensAmount,
     supportsRewardsModule,
+    contestAuthorEthereumAddress,
   } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -71,6 +72,8 @@ export const Sidebar = (props: any) => {
       currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
       //@ts-ignore
       supportsRewardsModule: state.supportsRewardsModule,
+      //@ts-ignore
+      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
     }),
     shallow,
   );
@@ -114,7 +117,7 @@ export const Sidebar = (props: any) => {
         </Link>
         {supportsRewardsModule && (
           <>
-            {contestStatus === CONTEST_STATUS.COMPLETED ? (
+            {account?.address === contestAuthorEthereumAddress || contestStatus === CONTEST_STATUS.COMPLETED ? (
               <Link
                 href={{
                   pathname: ROUTE_VIEW_CONTEST_REWARDS,

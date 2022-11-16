@@ -24,6 +24,7 @@ import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithd
 import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward";
 import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward";
 import RewardsWinner from "@components/_pages/RewardsWinner";
+import { useRouter } from "next/router";
 interface PageProps {
   address: string;
 }
@@ -50,6 +51,8 @@ const Page = (props: PageProps) => {
   const [isWithdrawnFundsDialogOpen, setIsWithdrawFundsDialogOpen] = useState(false);
   const currentAccount = useAccount();
   const { chain } = useNetwork();
+  const { asPath } = useRouter();
+
   useEffect(() => {
     if (supportsRewardsModule) getContestRewardsModule();
   }, [supportsRewardsModule]);
@@ -124,6 +127,11 @@ const Page = (props: PageProps) => {
                       {storeRewardsModule?.rewardsModule?.payees?.map(payee => (
                         <li className="animate-appear" key={`rank-${`${payee}`}`}>
                           <RewardsWinner
+                            chainId={
+                              chains.filter(
+                                chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
+                              )?.[0]?.id
+                            }
                             payee={payee}
                             //@ts-ignore
                             erc20Tokens={storeRewardsModule.rewardsModule.balance}
@@ -165,10 +173,13 @@ const Page = (props: PageProps) => {
                       </Tab.List>
                       <Tab.Panels>
                         <Tab.Panel>
-                          <ul className="flex flex-col space-y-3">
+                          <ul className="flex flex-col items-center space-y-6">
                             {/* @ts-ignore */}
                             {storeRewardsModule?.rewardsModule?.balance?.map(token => (
-                              <li key={`withdraw-erc20-${token.contractAddress}`}>
+                              <li
+                                className="flex flex-col items-center"
+                                key={`withdraw-erc20-${token.contractAddress}`}
+                              >
                                 <ButtonWithdrawERC20Reward
                                   //@ts-ignore
                                   contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress}
@@ -180,9 +191,9 @@ const Page = (props: PageProps) => {
                             ))}
                           </ul>
                         </Tab.Panel>
-                        <Tab.Panel>
+                        <Tab.Panel className="flex flex-col items-center">
                           <ButtonWithdrawNativeReward
-                          //@ts-ignore
+                            //@ts-ignore
                             contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress}
                             //@ts-ignore
                             abiRewardsModule={storeRewardsModule.rewardsModule.abi}
