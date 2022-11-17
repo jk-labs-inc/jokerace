@@ -13,6 +13,7 @@ export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps)
   const { chain } = useNetwork();
   const queryTokenBalance = useBalance({
     token: tokenAddress,
+    chainId: chain?.id,
     addressOrName: contractRewardsModuleAddress,
     watch: true,
   });

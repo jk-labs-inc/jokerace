@@ -20,6 +20,7 @@ import Loader from "@components/Loader";
 import { Fragment, useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import DialogFundRewardsModule from "@components/_pages/DialogFundRewardsModule";
+import DialogCheckBalanceRewardsModule from "@components/_pages/DialogCheckBalanceRewardsModule";
 import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule";
 import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward";
 import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward";
@@ -49,6 +50,7 @@ const Page = (props: PageProps) => {
   const storeFundRewardsModule = useStoreFundRewardsModule();
   const { getContestRewardsModule } = useRewardsModule();
   const [isWithdrawnFundsDialogOpen, setIsWithdrawFundsDialogOpen] = useState(false);
+  const [isDialogCheckBalanceOpen, setIsDialogCheckBalanceOpen] = useState(false);
   const currentAccount = useAccount();
   const { chain } = useNetwork();
   const { asPath } = useRouter();
@@ -83,7 +85,7 @@ const Page = (props: PageProps) => {
               {/* @ts-ignore */}
               {storeRewardsModule.isLoadingModuleSuccess && (
                 <>
-                  <div className="animate-appear flex flex-col space-y-2 xs:flex-row xs:space-y-0 xs:space-i-3">
+                  <div className="animate-appear flex flex-col space-y-2 xs:flex-row xs:items-center xs:space-y-0 xs:space-i-3">
                     <p className="p-3 rounded-md overflow-hidden text-ellipsis border border-solid border-neutral-4 text-sm">
                       {/* @ts-ignore */}
                       Rewards module contract address:{" "}
@@ -98,28 +100,39 @@ const Page = (props: PageProps) => {
                         {storeRewardsModule.rewardsModule?.contractAddress}
                       </a>
                     </p>
-                    {/* @ts-ignore */}
-                    {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && (
-                      <div className="space-y-2 shrink-0 xs:my-auto">
-                        <Button
-                          className="w-full"
-                          //@ts-ignore
-                          onClick={() => storeFundRewardsModule.setIsModalOpen(true)}
-                          scale="sm"
-                          intent="primary-outline"
-                        >
-                          Send funds
-                        </Button>
-                        <Button
-                          className="w-full"
-                          scale="sm"
-                          intent="neutral-outline"
-                          onClick={() => setIsWithdrawFundsDialogOpen(true)}
-                        >
-                          Withdraw funds
-                        </Button>
-                      </div>
-                    )}
+                    <div className="space-y-2 shrink-0 xs:my-auto">
+                      {/* @ts-ignore */}
+                      {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && (
+                        <>
+                          <Button
+                            className="w-full"
+                            //@ts-ignore
+                            onClick={() => storeFundRewardsModule.setIsModalOpen(true)}
+                            scale="sm"
+                            intent="primary-outline"
+                          >
+                            💸 Send funds
+                          </Button>
+                          <Button
+                            className="w-full"
+                            scale="sm"
+                            intent="neutral-outline"
+                            onClick={() => setIsWithdrawFundsDialogOpen(true)}
+                          >
+                            🤑 Withdraw funds
+                          </Button>
+                        </>
+                      )}
+                      <Button
+                        className="w-full"
+                        //@ts-ignore
+                        onClick={() => setIsDialogCheckBalanceOpen(true)}
+                        scale="sm"
+                        intent="ghost-neutral"
+                      >
+                        💰 Check balance
+                      </Button>
+                    </div>
                   </div>
                   <div className="flex flex-col animate-appear pt-4 space-y-8">
                     <ul className="space-y-6">
@@ -144,6 +157,11 @@ const Page = (props: PageProps) => {
                       ))}
                     </ul>
                   </div>
+                  <DialogCheckBalanceRewardsModule
+                    isOpen={isDialogCheckBalanceOpen}
+                    //@ts-ignore
+                    setIsOpen={setIsDialogCheckBalanceOpen}
+                  />
                   <DialogFundRewardsModule
                     //@ts-ignore
                     setIsOpen={storeFundRewardsModule.setIsModalOpen}

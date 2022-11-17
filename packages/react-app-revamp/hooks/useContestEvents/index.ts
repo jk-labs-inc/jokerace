@@ -89,21 +89,21 @@ export function useContestEvents() {
       const contract = getContract({
         addressOrName: asPath.split("/")[3],
         contractInterface: DeployedContestContract.abi,
-
       });
       contract.removeAllListeners();
-    }
-
-    else if (canUpdateVotesInRealTime === true) {
+    } else if (canUpdateVotesInRealTime === true) {
       // Only watch VoteCast events when voting is open and we are <=1h before end of voting
-      if(contestStatus === CONTEST_STATUS.VOTING_OPEN) {
-        watchContractEvent({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
-        }, 
-        "VoteCast", (...args) => {
-          onVoteCast(args)
-        })
+      if (contestStatus === CONTEST_STATUS.VOTING_OPEN) {
+        watchContractEvent(
+          {
+            addressOrName: asPath.split("/")[3],
+            contractInterface: DeployedContestContract.abi,
+          },
+          "VoteCast",
+          (...args) => {
+            onVoteCast(args);
+          },
+        );
       }
       // When voting closes, remove all event listeners
       if (contestStatus === CONTEST_STATUS.COMPLETED) {

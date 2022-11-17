@@ -63,9 +63,11 @@ export function useRewardsModule() {
     {
       enabled: rewardsModule?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
       onError(e) {
-        toast.error(`Something went wrong and the balance of the rewards module couldn't be retrieved. Try to reload the page.`)
-        console.error(e)
-      }
+        toast.error(
+          `Something went wrong and the balance of the rewards module couldn't be retrieved. Try to reload the page.`,
+        );
+        console.error(e);
+      },
     },
   );
 
