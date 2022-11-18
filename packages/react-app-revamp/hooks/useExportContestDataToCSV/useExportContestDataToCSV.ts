@@ -238,7 +238,7 @@ export function useExportContestDataToCSV() {
       
       // Store the loaded data to IPFS via web3storage and then load the reference id into Supabase
       //@ts-ignore
-      if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN && process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN !== "") {
         if(queryContestResults.data?.length === 0) {
           const formatted = objectToCsv(propArrayToReturn)
           const csv = new File([formatted], `result_contest_${contestAddress}_${chainName}.csv`, { type: 'text/csv' });
