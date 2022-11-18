@@ -257,7 +257,7 @@ export function useContest() {
       }
 
       setContestName(results[0]);
-      setContestAuthor(results[1]);
+      setContestAuthor(results[1], results[1]);
       setContestMaxNumberSubmissionsPerUser(results[2]);
       setContestMaxProposalCount(results[3]);
       setVotingTokenAddress(results[4]);
