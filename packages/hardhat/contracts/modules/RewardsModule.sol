@@ -48,6 +48,11 @@ contract RewardsModule is Context {
     GovernorCountingSimple private _underlyingContest;
     address private _creator;
     uint256[] private _sortedProposalIds;
+    bool[] private _isTied; // whether a ranking is tied. index is ranking.
+    uint256[] private _tiedAdjustedRankingPosition; // index is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account 
+    uint256 private _maxRanking;
+
+    // TODO: view functions for all of these that runs it all themselves
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -183,14 +188,20 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
+        // only update _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied once - one the first ever call of release()
         if (_sortedProposalIds.length == 0) {
             _sortedProposalIds = _underlyingContest.sortedProposals(true);
         }
+        if (_tiedAdjustedRankingPosition.length == 0) {
+            _setTiedProposals();
+        }
 
-        require(ranking <= (_sortedProposalIds.length), "RewardsModule: there are not enough proposals for that ranking to exist");
-        
-        // _sortedProposalIds is sorted in ascending order (so the proposal with the most votes is the last element in the array)
-        address payable proposalAuthor = payable(_underlyingContest.getProposal(_sortedProposalIds[_sortedProposalIds.length - ranking]).author);
+        require(ranking <= _maxRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
+
+        // send rewards to creator if ranking is tied, otherwise send to winner
+        address payable proposalAuthor = _isTied[ranking]
+            ? payable(creator())
+            : payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author);
 
         require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
@@ -220,14 +231,20 @@ contract RewardsModule is Context {
             _erc20Released[token][ranking] += payment;
         }
 
+        // only update _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied once - one the first ever call of release()
         if (_sortedProposalIds.length == 0) {
             _sortedProposalIds = _underlyingContest.sortedProposals(true);
         }
+        if (_tiedAdjustedRankingPosition.length == 0) {
+            _setTiedProposals();
+        }
 
-        require(ranking <= (_sortedProposalIds.length), "RewardsModule: there are not enough proposals for that ranking to exist");
-        
-        // _sortedProposalIds is sorted in ascending order (so the proposal with the most votes is the last element in the array)
-        address payable proposalAuthor = payable(_underlyingContest.getProposal(_sortedProposalIds[_sortedProposalIds.length - ranking]).author);
+        require(ranking <= _maxRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
+
+        // send rewards to creator if ranking is tied, otherwise send to winner
+        address payable proposalAuthor = _isTied[ranking]
+            ? payable(creator())
+            : payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author);
 
         require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
@@ -276,5 +293,46 @@ contract RewardsModule is Context {
         _shares[ranking] = shares_;
         _totalShares = _totalShares + shares_;
         emit PayeeAdded(ranking, shares_);
+    }
+
+    /**
+     * @dev Setter for _tiedAdjustedRankingPosition and _isTied. _sortedProposalIds must have been populated before this function is called.
+     * Determines if a ranking is tied and also where the last iteration of a ranking is in the _sortedProposalIds list taking ties into account.
+     */
+    function _setTiedProposals() private {
+        int256 lastTotalVotes;
+        uint256 rankingBeingChecked = 1;
+        for (uint256 i = 0; i < _sortedProposalIds.length; i++) {
+            uint256 lastSortedItemIndex = _sortedProposalIds.length - 1;
+
+            // decrement through the ascending sorted list
+            (uint256 currentForVotes, uint256 currentAgainstVotes) = 
+                _underlyingContest.proposalVotes(_sortedProposalIds[lastSortedItemIndex - i]);
+            int256 currentTotalVotes = int256(currentForVotes) - int256(currentAgainstVotes);
+
+            // if on first item, set lastTotalVotes and continue
+            if (i == 0) {
+                lastTotalVotes = currentTotalVotes;
+                continue;
+            }
+
+            // if there is a tie, mark that this ranking is tied
+            if (currentTotalVotes == lastTotalVotes) {
+                _isTied[rankingBeingChecked] = true;
+            } 
+            else { // otherwise, set the position in the sorted list that the last iteration of this ranking's value appeared, 
+                   // then increment the ranking being checked
+                _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;  // index we last decremented from is the last iteration of the current rank's value
+                rankingBeingChecked++;
+            }
+
+            // if on last item, then the value at the current index the last iteration of the last ranking's value
+            if (i + 1 == _sortedProposalIds.length) {
+                _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i;
+                _maxRanking = rankingBeingChecked;
+            }
+
+            lastTotalVotes = currentTotalVotes;
+        }
     }
 }
