@@ -124,7 +124,7 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Accessor to sorted list of proposalIds in ascending order.
      */
-    function rankedProposals(bool excludeDeletedProposals)
+    function sortedProposals(bool excludeDeletedProposals)
         public
         view
         virtual

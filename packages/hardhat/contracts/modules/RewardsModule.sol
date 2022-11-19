@@ -47,7 +47,7 @@ contract RewardsModule is Context {
     
     GovernorCountingSimple private _underlyingContest;
     address private _creator;
-    uint256[] private _rankedProposalIds;
+    uint256[] private _sortedProposalIds;
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -183,14 +183,14 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
-        if (_rankedProposalIds.length == 0) {
-            _rankedProposalIds = _underlyingContest.rankedProposals(true);
+        if (_sortedProposalIds.length == 0) {
+            _sortedProposalIds = _underlyingContest.sortedProposals(true);
         }
 
-        require(ranking <= (_rankedProposalIds.length), "RewardsModule: there are not enough proposals for that ranking to exist");
+        require(ranking <= (_sortedProposalIds.length), "RewardsModule: there are not enough proposals for that ranking to exist");
         
-        // _rankedProposalIds is sorted in ascending order (so the proposal with the most votes is the last element in the array)
-        address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[_rankedProposalIds.length - ranking]).author);
+        // _sortedProposalIds is sorted in ascending order (so the proposal with the most votes is the last element in the array)
+        address payable proposalAuthor = payable(_underlyingContest.getProposal(_sortedProposalIds[_sortedProposalIds.length - ranking]).author);
 
         require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
@@ -220,14 +220,14 @@ contract RewardsModule is Context {
             _erc20Released[token][ranking] += payment;
         }
 
-        if (_rankedProposalIds.length == 0) {
-            _rankedProposalIds = _underlyingContest.rankedProposals(true);
+        if (_sortedProposalIds.length == 0) {
+            _sortedProposalIds = _underlyingContest.sortedProposals(true);
         }
 
-        require(ranking <= (_rankedProposalIds.length), "RewardsModule: there are not enough proposals for that ranking to exist");
+        require(ranking <= (_sortedProposalIds.length), "RewardsModule: there are not enough proposals for that ranking to exist");
         
-        // _rankedProposalIds is sorted in ascending order (so the proposal with the most votes is the last element in the array)
-        address payable proposalAuthor = payable(_underlyingContest.getProposal(_rankedProposalIds[_rankedProposalIds.length - ranking]).author);
+        // _sortedProposalIds is sorted in ascending order (so the proposal with the most votes is the last element in the array)
+        address payable proposalAuthor = payable(_underlyingContest.getProposal(_sortedProposalIds[_sortedProposalIds.length - ranking]).author);
 
         require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
