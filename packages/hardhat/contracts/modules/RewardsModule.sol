@@ -189,7 +189,7 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
-        // only update _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied once - one the first ever call of release()
+        // only update _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied once - on the first ever call of release()
         if (_sortedProposalIds.length == 0) {
             _sortedProposalIds = _underlyingContest.sortedProposals(true);
         }
@@ -232,7 +232,7 @@ contract RewardsModule is Context {
             _erc20Released[token][ranking] += payment;
         }
 
-        // only update _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied once - one the first ever call of release()
+        // only update _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied once - on the first ever call of release()
         if (_sortedProposalIds.length == 0) {
             _sortedProposalIds = _underlyingContest.sortedProposals(true);
         }
