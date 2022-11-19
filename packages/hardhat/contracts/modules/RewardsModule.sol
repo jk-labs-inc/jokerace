@@ -51,6 +51,7 @@ contract RewardsModule is Context {
     bool[] private _isTied; // whether a ranking is tied. index is ranking.
     uint256[] private _tiedAdjustedRankingPosition; // index is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account 
     uint256 private _maxRanking;
+    bool private _atLeastOnePayeeTied;
 
     // TODO: view functions for all of these that runs it all themselves
 
@@ -199,7 +200,7 @@ contract RewardsModule is Context {
         require(ranking <= _maxRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
 
         // send rewards to creator if ranking is tied, otherwise send to winner
-        address payable proposalAuthor = _isTied[ranking]
+        address payable proposalAuthor = _atLeastOnePayeeTied
             ? payable(creator())
             : payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author);
 
@@ -242,7 +243,7 @@ contract RewardsModule is Context {
         require(ranking <= _maxRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
 
         // send rewards to creator if ranking is tied, otherwise send to winner
-        address payable proposalAuthor = _isTied[ranking]
+        address payable proposalAuthor = _atLeastOnePayeeTied
             ? payable(creator())
             : payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author);
 
@@ -319,6 +320,9 @@ contract RewardsModule is Context {
             // if there is a tie, mark that this ranking is tied
             if (currentTotalVotes == lastTotalVotes) {
                 _isTied[rankingBeingChecked] = true;
+                if (_shares[rankingBeingChecked] > 0) {
+                    _atLeastOnePayeeTied = true;  // if any of the rankings to be paid out are tied, send it all back
+                }
             } 
             else { // otherwise, set the position in the sorted list that the last iteration of this ranking's value appeared, 
                    // then increment the ranking being checked
