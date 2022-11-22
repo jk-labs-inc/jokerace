@@ -100,7 +100,7 @@ const Page = (props: PageProps) => {
                         {storeRewardsModule.rewardsModule?.contractAddress}
                       </a>
                     </p>
-                    <div className="space-y-2 flex flex-col 2xs:justify-evenly 2xs:flex-row md:justify-start md:flex-col md:w-max-content shrink-0 md:my-auto">
+                    <div className="space-y-2 2xs:space-y-0 md:space-y-2 flex flex-col 2xs:justify-evenly 2xs:items-center 2xs:flex-row md:justify-start md:flex-col md:w-max-content shrink-0 md:my-auto">
                       {/* @ts-ignore */}
                       {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && (
                         <>
@@ -209,7 +209,7 @@ const Page = (props: PageProps) => {
                               </li>
                             ))}
                           </ul> : <>
-                              <p className="italic text-neutral-11">No balance found for ERC20 tokens.</p>
+                              <p className="italic animate-appear text-neutral-11">No balance found for ERC20 tokens.</p>
                           </>}
                         </Tab.Panel>
                         <Tab.Panel className="flex flex-col items-center">
