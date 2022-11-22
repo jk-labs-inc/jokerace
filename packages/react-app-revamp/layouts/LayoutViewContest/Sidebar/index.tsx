@@ -116,8 +116,6 @@ export const Sidebar = (props: any) => {
           </a>
         </Link>
         {supportsRewardsModule && (
-          <>
-            {account?.address === contestAuthorEthereumAddress || contestStatus === CONTEST_STATUS.COMPLETED ? (
               <Link
                 href={{
                   pathname: ROUTE_VIEW_CONTEST_REWARDS,
@@ -137,13 +135,7 @@ export const Sidebar = (props: any) => {
                   Rewards
                 </a>
               </Link>
-            ) : (
-              <div className={styles.navLink}>
-                <IconTrophy className={styles.navLinkIcon} />
-                Rewards
-              </div>
-            )}
-          </>
+            
         )}
         {contestStatus === CONTEST_STATUS.COMPLETED ? (
           <Link

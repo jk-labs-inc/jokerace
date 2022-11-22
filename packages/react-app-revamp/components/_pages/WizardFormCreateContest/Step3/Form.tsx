@@ -876,13 +876,16 @@ export const Form = (props: FormProps) => {
                       <FormField.Description id="input-winningRank-description">
                         The rank eligible to earn a reward
                       </FormField.Description>
-                      <FormSelect
+                      <FormInput
                         required
                         scale="sm"
+                        type="number"
+                        step="1"
+                        min={1}
                         disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                         aria-invalid={errors().rewards?.[i]?.winningRank?.length > 0 === true ? "true" : "false"}
                         className="max-w-full w-auto 2xs:w-full"
-                        placeholder="100"
+                        placeholder="1"
                         value={
                           data()?.rewards.filter((rewardToDelete: any) => rewardToDelete.key === reward.key)[0]
                             ?.winningRank
@@ -891,25 +894,16 @@ export const Form = (props: FormProps) => {
                         aria-describedby="input-winningRank-description input-winningRank-helpblock"
                         onChange={e => {
                           const rewards = data()?.rewards;
-                          rewards[i].winningRank = e.currentTarget.value;
+                          rewards[i].winningRank = parseInt(e.currentTarget.value);
                           setData("rewards", rewards);
                         }}
-                      >
-                        <option value="" disabled>
-                          Select a rank
-                        </option>
-                        {ranks.map(rank => (
-                          <option key={`option-${rank}-${i}`} value={rank}>
-                            {rank}
-                          </option>
-                        ))}
-                      </FormSelect>
+                      />
                     </FormField.InputField>
                     <FormField.HelpBlock
                       hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
                       id="input-winningRank-helpblock"
                     >
-                      You must select a rank.
+                      You must type a rank.
                     </FormField.HelpBlock>
                   </FormField>
 
@@ -970,7 +964,6 @@ export const Form = (props: FormProps) => {
                   </Button>
                 </div>
               ))}
-              {data()?.rewards?.length < 5 && (
                 <Button
                   onClick={() => {
                     setData("rewards", [
@@ -992,7 +985,6 @@ export const Form = (props: FormProps) => {
                   <PlusIcon className="w-4 mie-2" />
                   <span className="pie-2">Add another winning rank</span>
                 </Button>
-              )}
             </div>
           )}
           {["erc20", "native"].includes(data()?.rewardsType) &&

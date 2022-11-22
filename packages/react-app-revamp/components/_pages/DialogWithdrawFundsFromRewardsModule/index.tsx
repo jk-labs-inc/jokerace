@@ -11,7 +11,7 @@ export const DialogWithdrawFundsFromRewardsModule = (props: DialogWithdrawFundsF
 
   return (
     <DialogModal title="Withdraw rewards from module" {...dialogProps}>
-      <p className="font-bold mb-4">Withdraw funds from the rewards module</p>
+      <p className="font-bold mb-4 animate-appear">Withdraw funds from the rewards module</p>
       {children}
     </DialogModal>
   );

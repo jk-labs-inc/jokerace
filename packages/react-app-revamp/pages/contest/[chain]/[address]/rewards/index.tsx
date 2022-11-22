@@ -85,7 +85,7 @@ const Page = (props: PageProps) => {
               {/* @ts-ignore */}
               {storeRewardsModule.isLoadingModuleSuccess && (
                 <>
-                  <div className="animate-appear flex flex-col space-y-2 xs:flex-row xs:items-center xs:space-y-0 xs:space-i-3">
+                  <div className="animate-appear flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-i-8">
                     <p className="p-3 rounded-md overflow-hidden text-ellipsis border border-solid border-neutral-4 text-sm">
                       {/* @ts-ignore */}
                       Rewards module contract address:{" "}
@@ -100,12 +100,12 @@ const Page = (props: PageProps) => {
                         {storeRewardsModule.rewardsModule?.contractAddress}
                       </a>
                     </p>
-                    <div className="space-y-2 shrink-0 xs:my-auto">
+                    <div className="space-y-2 flex flex-col 2xs:justify-evenly 2xs:flex-row md:justify-start md:flex-col md:w-max-content shrink-0 md:my-auto">
                       {/* @ts-ignore */}
                       {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && (
                         <>
                           <Button
-                            className="w-full"
+                            className="w-full 2xs:w-fit-content md:w-full"
                             //@ts-ignore
                             onClick={() => storeFundRewardsModule.setIsModalOpen(true)}
                             scale="sm"
@@ -114,7 +114,7 @@ const Page = (props: PageProps) => {
                             💸 Send funds
                           </Button>
                           <Button
-                            className="w-full"
+                            className="w-full 2xs:w-fit-content md:w-full"
                             scale="sm"
                             intent="neutral-outline"
                             onClick={() => setIsWithdrawFundsDialogOpen(true)}
@@ -124,7 +124,7 @@ const Page = (props: PageProps) => {
                         </>
                       )}
                       <Button
-                        className="w-full"
+                        className="w-full 2xs:w-fit-content md:w-full"
                         //@ts-ignore
                         onClick={() => setIsDialogCheckBalanceOpen(true)}
                         scale="sm"
@@ -174,7 +174,7 @@ const Page = (props: PageProps) => {
                     setIsOpen={setIsWithdrawFundsDialogOpen}
                   >
                     <Tab.Group>
-                      <Tab.List className="overflow-hidden text-xs font-medium mb-6 divide-i divide-neutral-4 flex rounded-full border-solid border border-neutral-4">
+                      <Tab.List className="animate-appear overflow-hidden text-xs font-medium mb-6 divide-i divide-neutral-4 flex rounded-full border-solid border border-neutral-4">
                         {["ERC20", chain?.nativeCurrency?.symbol].map(tab => (
                           <Tab key={tab} as={Fragment}>
                             {({ selected }) => (
@@ -191,7 +191,8 @@ const Page = (props: PageProps) => {
                       </Tab.List>
                       <Tab.Panels>
                         <Tab.Panel>
-                          <ul className="flex flex-col items-center space-y-6">
+                          {/* @ts-ignore */}
+                          {storeRewardsModule?.rewardsModule?.balance?.length > 0 ? <ul className="flex flex-col items-center space-y-6">
                             {/* @ts-ignore */}
                             {storeRewardsModule?.rewardsModule?.balance?.map(token => (
                               <li
@@ -207,7 +208,9 @@ const Page = (props: PageProps) => {
                                 />
                               </li>
                             ))}
-                          </ul>
+                          </ul> : <>
+                              <p className="italic text-neutral-11">No balance found for ERC20 tokens.</p>
+                          </>}
                         </Tab.Panel>
                         <Tab.Panel className="flex flex-col items-center">
                           <ButtonWithdrawNativeReward
