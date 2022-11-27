@@ -48,8 +48,8 @@ contract RewardsModule is Context {
     GovernorCountingSimple private _underlyingContest;
     address private _creator;
     uint256[] private _sortedProposalIds;
-    bool[] private _isTied; // whether a ranking is tied. index is ranking.
-    uint256[] private _tiedAdjustedRankingPosition; // index is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account 
+    mapping(uint256 => bool) private _isTied; // whether a ranking is tied. key is ranking.
+    mapping(uint256 => uint256) private _tiedAdjustedRankingPosition; // key is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account 
     uint256 private _maxRanking;
     bool private _atLeastOnePayeeTied;
 
@@ -160,10 +160,17 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Getter for _tiedAdjustedRankingPosition and _sortedProposalIds which is what it references.
+     * @dev Getter for _tiedAdjustedRankingPosition of a ranking.
      */
-    function rankingPositionsAndSortedProposals() public view returns (uint256[] memory, uint256[] memory) {
-        return (_tiedAdjustedRankingPosition, _sortedProposalIds);
+    function rankingPosition(uint256 ranking) public view returns (uint256) {
+        return _tiedAdjustedRankingPosition[ranking];
+    }
+
+    /**
+     * @dev Getter for _sortedProposalIds.
+     */
+    function sortedProposalIds() public view returns (uint256[] memory) {
+        return (_sortedProposalIds);
     }
 
     /**
@@ -220,8 +227,6 @@ contract RewardsModule is Context {
         // only update _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied once - on the first ever call of release()
         if (_sortedProposalIds.length == 0) {
             _sortedProposalIds = _underlyingContest.sortedProposals(true);
-        }
-        if (_tiedAdjustedRankingPosition.length == 0) {
             _setTiedProposals();
         }
 
@@ -263,8 +268,6 @@ contract RewardsModule is Context {
         // only update _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied once - on the first ever call of release()
         if (_sortedProposalIds.length == 0) {
             _sortedProposalIds = _underlyingContest.sortedProposals(true);
-        }
-        if (_tiedAdjustedRankingPosition.length == 0) {
             _setTiedProposals();
         }
 
