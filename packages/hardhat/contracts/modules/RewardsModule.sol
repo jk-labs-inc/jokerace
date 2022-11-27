@@ -302,39 +302,10 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev internal logic for computing the pending payment of a `ranking` given the token historical balances and
-     * already released amounts.
-     */
-    function _pendingPayment(
-        uint256 ranking,
-        uint256 totalReceived,
-        uint256 alreadyReleased
-    ) private view returns (uint256) {
-        return (totalReceived * _shares[ranking]) / _totalShares - alreadyReleased;
-    }
-
-    /**
-     * @dev Add a new payee to the contract.
-     * @param ranking The ranking of the payee to add.
-     * @param shares_ The number of shares owned by the payee.
-     */
-    function _addPayee(uint256 ranking, uint256 shares_) private {
-        require(ranking > 0, "RewardsModule: ranking is 0, must be greater");
-        require(shares_ > 0, "RewardsModule: shares are 0");
-        require(_shares[ranking] == 0, "RewardsModule: account already has shares");
-        require(_shares[ranking] == 0, "RewardsModule: account already has shares");
-
-        _payees.push(ranking);
-        _shares[ranking] = shares_;
-        _totalShares = _totalShares + shares_;
-        emit PayeeAdded(ranking, shares_);
-    }
-
-    /**
      * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied. Will only be called once and only needs to be called once because once the contest is complete these values don't change.
      * Determines if a ranking is tied and also where the last iteration of a ranking is in the _sortedProposalIds list taking ties into account.
      */
-    function setSortedAndTiedProposals() public {
+    function setSortedAndTiedProposals() public virtual {
         require(_underlyingContest.state() == IGovernor.ContestState.Completed, "RewardsModule: contest must be completed for rewards to be paid out");
         require(!_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: this function has already been run and its respective values set (these values will not change once a contest is complete");
         
@@ -379,5 +350,34 @@ contract RewardsModule is Context {
         }
 
         _setSortedAndTiedProposalsHasBeenRun = true;
+    }
+
+    /**
+     * @dev internal logic for computing the pending payment of a `ranking` given the token historical balances and
+     * already released amounts.
+     */
+    function _pendingPayment(
+        uint256 ranking,
+        uint256 totalReceived,
+        uint256 alreadyReleased
+    ) private view returns (uint256) {
+        return (totalReceived * _shares[ranking]) / _totalShares - alreadyReleased;
+    }
+
+    /**
+     * @dev Add a new payee to the contract.
+     * @param ranking The ranking of the payee to add.
+     * @param shares_ The number of shares owned by the payee.
+     */
+    function _addPayee(uint256 ranking, uint256 shares_) private {
+        require(ranking > 0, "RewardsModule: ranking is 0, must be greater");
+        require(shares_ > 0, "RewardsModule: shares are 0");
+        require(_shares[ranking] == 0, "RewardsModule: account already has shares");
+        require(_shares[ranking] == 0, "RewardsModule: account already has shares");
+
+        _payees.push(ranking);
+        _shares[ranking] = shares_;
+        _totalShares = _totalShares + shares_;
+        emit PayeeAdded(ranking, shares_);
     }
 }
