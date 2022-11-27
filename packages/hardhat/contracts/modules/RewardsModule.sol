@@ -153,6 +153,34 @@ contract RewardsModule is Context {
     }
 
     /**
+     * @dev Getter if a given ranking is tied.
+     */
+    function isTied(uint256 ranking) public view returns (bool) {
+        return _isTied[ranking];
+    }
+
+    /**
+     * @dev Getter for _tiedAdjustedRankingPosition and _sortedProposalIds which is what it references.
+     */
+    function rankingPositionsAndSortedProposals() public view returns (uint256[] memory, uint256[] memory) {
+        return (_tiedAdjustedRankingPosition, _sortedProposalIds);
+    }
+
+    /**
+     * @dev Getter for the max ranking.
+     */
+    function maxRanking() public view returns (uint256) {
+        return _maxRanking;
+    }
+
+    /**
+     * @dev Getter for the underlying contest.
+     */
+    function atLeastOnePayeeTied() public view returns (bool) {
+        return _atLeastOnePayeeTied;
+    }
+
+    /**
      * @dev Getter for the amount of payee's releasable Ether.
      */
     function releasable(uint256 ranking) public view returns (uint256) {
