@@ -47,13 +47,14 @@ contract RewardsModule is Context {
     
     GovernorCountingSimple private _underlyingContest;
     address private _creator;
+    uint256 private _lowestPayeeRanking;    
 
     bool private _setSortedAndTiedProposalsHasBeenRun;
     uint256[] private _sortedProposalIds;
     mapping(uint256 => bool) private _isTied; // whether a ranking is tied. key is ranking.
     mapping(uint256 => uint256) private _tiedAdjustedRankingPosition; // key is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account 
-    uint256 private _maxRanking;
-    bool private _atLeastOnePayeeTied;
+    uint256 private _lowestRanking; // highest nominal ranking, lowest ranking (1 is the highest possible ranking, 8 is a lower ranking than 1)
+    bool private _atLeastOneRankingAtOrAboveLowestPayeeRankingTied; // is a ranking above or at the lowest payee ranking tied?
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -177,19 +178,19 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Getter for the max ranking.
+     * @dev Getter for the lowest ranking.
      */
-    function maxRanking() public view returns (uint256) {
+    function lowestRanking() public view returns (uint256) {
         require(!_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value");
-        return _maxRanking;
+        return _lowestRanking;
     }
 
     /**
-     * @dev Getter for the underlying contest.
+     * @dev Getter for whether any rankings being paid out or any of the rankings above them are tied.
      */
-    function atLeastOnePayeeTied() public view returns (bool) {
+    function atLeastOneRankingAtOrAboveLowestPayeeRankingTied() public view returns (bool) {
         require(!_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value");
-        return _atLeastOnePayeeTied;
+        return _atLeastOneRankingAtOrAboveLowestPayeeRankingTied;
     }
 
     /**
@@ -234,10 +235,10 @@ contract RewardsModule is Context {
             setSortedAndTiedProposals();
         }
 
-        require(ranking <= _maxRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
+        require(ranking <= _lowestRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
 
-        // send rewards to creator if ranking is tied, otherwise send to winner
-        address payable proposalAuthor = _atLeastOnePayeeTied
+        // send rewards to creator if any ranking above a ranking being paid out or a payee ranking is tied, otherwise send to winner
+        address payable proposalAuthor = _atLeastOneRankingAtOrAboveLowestPayeeRankingTied
             ? payable(creator())
             : payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author);
 
@@ -274,10 +275,10 @@ contract RewardsModule is Context {
             setSortedAndTiedProposals();
         }
 
-        require(ranking <= _maxRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
+        require(ranking <= _lowestRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
 
-        // send rewards to creator if ranking is tied, otherwise send to winner
-        address payable proposalAuthor = _atLeastOnePayeeTied
+        // send rewards to creator if any ranking above a ranking being paid out or a payee ranking is tied, otherwise send to winner
+        address payable proposalAuthor = _atLeastOneRankingAtOrAboveLowestPayeeRankingTied
             ? payable(creator())
             : payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author);
 
@@ -329,9 +330,11 @@ contract RewardsModule is Context {
 
             // if there is a tie, mark that this ranking is tied
             if (currentTotalVotes == lastTotalVotes) {
-                _isTied[rankingBeingChecked] = true;
-                if (_shares[rankingBeingChecked] > 0) {
-                    _atLeastOnePayeeTied = true;  // if any of the rankings to be paid out are tied, send it all back
+                if (!_isTied[rankingBeingChecked]) { // if this is not already set
+                    _isTied[rankingBeingChecked] = true;
+                }
+                if ((rankingBeingChecked <= _lowestPayeeRanking) && !_atLeastOneRankingAtOrAboveLowestPayeeRankingTied) { // if this is not already set
+                    _atLeastOneRankingAtOrAboveLowestPayeeRankingTied = true;  // if any of the rankings to be paid out or the rankings above them are tied, send it all back
                 }
             } 
             else { // otherwise, set the position in the sorted list that the last iteration of this ranking's value appeared, 
@@ -343,7 +346,7 @@ contract RewardsModule is Context {
             // if on last item, then the value at the current index the last iteration of the last ranking's value
             if (i + 1 == _sortedProposalIds.length) {
                 _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i;
-                _maxRanking = rankingBeingChecked;
+                _lowestRanking = rankingBeingChecked;
             }
 
             lastTotalVotes = currentTotalVotes;
@@ -373,9 +376,9 @@ contract RewardsModule is Context {
         require(ranking > 0, "RewardsModule: ranking is 0, must be greater");
         require(shares_ > 0, "RewardsModule: shares are 0");
         require(_shares[ranking] == 0, "RewardsModule: account already has shares");
-        require(_shares[ranking] == 0, "RewardsModule: account already has shares");
 
         _payees.push(ranking);
+        if (ranking > _lowestPayeeRanking) { _lowestPayeeRanking = ranking; }
         _shares[ranking] = shares_;
         _totalShares = _totalShares + shares_;
         emit PayeeAdded(ranking, shares_);
