@@ -333,7 +333,7 @@ contract RewardsModule is Context {
                     _isTied[rankingBeingChecked] = true;
                 }
                 if (_highestTiedRanking == 0) { // if this is the first tie found, set it as the highest tied ranking
-                    _highestTiedRanking = rankingBeingChecked;  // if any of the rankings to be paid out or the rankings above them are tied, send it all back
+                    _highestTiedRanking = rankingBeingChecked;
                 }
             } 
             else { // otherwise, set the position in the sorted list that the last iteration of this ranking's value appeared, 
