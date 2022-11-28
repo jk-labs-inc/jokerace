@@ -47,14 +47,13 @@ contract RewardsModule is Context {
     
     GovernorCountingSimple private _underlyingContest;
     address private _creator;
-    uint256 private _lowestPayeeRanking;    
 
     bool private _setSortedAndTiedProposalsHasBeenRun;
     uint256[] private _sortedProposalIds;
     mapping(uint256 => bool) private _isTied; // whether a ranking is tied. key is ranking.
     mapping(uint256 => uint256) private _tiedAdjustedRankingPosition; // key is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account 
     uint256 private _lowestRanking; // highest nominal ranking, lowest ranking (1 is the highest possible ranking, 8 is a lower ranking than 1)
-    bool private _atLeastOneRankingAtOrAboveLowestPayeeRankingTied; // is a ranking above or at the lowest payee ranking tied?
+    uint256 private _highestTiedRanking;
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -186,11 +185,11 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Getter for whether any rankings being paid out or any of the rankings above them are tied.
+     * @dev Getter for highest tied ranking.
      */
-    function atLeastOneRankingAtOrAboveLowestPayeeRankingTied() public view returns (bool) {
+    function highestTiedRanking() public view returns (uint256) {
         require(!_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value");
-        return _atLeastOneRankingAtOrAboveLowestPayeeRankingTied;
+        return _highestTiedRanking;
     }
 
     /**
@@ -237,10 +236,10 @@ contract RewardsModule is Context {
 
         require(ranking <= _lowestRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
 
-        // send rewards to creator if any ranking above a ranking being paid out or a payee ranking is tied, otherwise send to winner
-        address payable proposalAuthor = _atLeastOneRankingAtOrAboveLowestPayeeRankingTied
-            ? payable(creator())
-            : payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author);
+        // send rewards to winner only if the ranking is higher than the highest tied ranking
+        address payable proposalAuthor = ranking < _highestTiedRanking
+            ? payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author)
+            : payable(creator());
 
         require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
@@ -277,10 +276,10 @@ contract RewardsModule is Context {
 
         require(ranking <= _lowestRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
 
-        // send rewards to creator if any ranking above a ranking being paid out or a payee ranking is tied, otherwise send to winner
-        address payable proposalAuthor = _atLeastOneRankingAtOrAboveLowestPayeeRankingTied
-            ? payable(creator())
-            : payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author);
+        // send rewards to winner only if the ranking is higher than the highest tied ranking
+        address payable proposalAuthor = ranking < _highestTiedRanking
+            ? payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author)
+            : payable(creator());
 
         require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
 
@@ -333,8 +332,8 @@ contract RewardsModule is Context {
                 if (!_isTied[rankingBeingChecked]) { // if this is not already set
                     _isTied[rankingBeingChecked] = true;
                 }
-                if ((rankingBeingChecked <= _lowestPayeeRanking) && !_atLeastOneRankingAtOrAboveLowestPayeeRankingTied) { // if this is not already set
-                    _atLeastOneRankingAtOrAboveLowestPayeeRankingTied = true;  // if any of the rankings to be paid out or the rankings above them are tied, send it all back
+                if (_highestTiedRanking == 0) { // if this is the first tie found, set it as the highest tied ranking
+                    _highestTiedRanking = rankingBeingChecked;  // if any of the rankings to be paid out or the rankings above them are tied, send it all back
                 }
             } 
             else { // otherwise, set the position in the sorted list that the last iteration of this ranking's value appeared, 
@@ -378,7 +377,6 @@ contract RewardsModule is Context {
         require(_shares[ranking] == 0, "RewardsModule: account already has shares");
 
         _payees.push(ranking);
-        if (ranking > _lowestPayeeRanking) { _lowestPayeeRanking = ranking; }
         _shares[ranking] = shares_;
         _totalShares = _totalShares + shares_;
         emit PayeeAdded(ranking, shares_);
