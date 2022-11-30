@@ -73,6 +73,10 @@ export const Form = (props: FormProps) => {
       refetchBalance();
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    if(query?.tokenRewardsAddress === "native") setData('isErc20', false)
+  }, [query?.tokenRewardsAddress])
   return (
     <form ref={form} id={formId}>
       <fieldset className="mb-6">
@@ -285,7 +289,7 @@ export const Form = (props: FormProps) => {
             isLoading ||
             !isConnected ||
             chain?.unsupported === true ||
-            (data()?.isErc20 &&
+            (data()?.isErc20 === true &&
               (!erc20TokenRewards?.data ||
                 /*@ts-ignore */
                 data()?.amount >

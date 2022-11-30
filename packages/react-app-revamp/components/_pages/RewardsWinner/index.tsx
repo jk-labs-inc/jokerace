@@ -25,14 +25,15 @@ export const RewardsWinner = (props: RewardsWinnerProps) => {
 
   return (
     <>
-      <h2 className="font-bold text-lg mb-1">Rank {`${payee}`}</h2>
       {isLoading && !data ? (
         <Loader scale="component">Loading rewards data for rank {`${payee}`}...</Loader>
       ) : (
         <>
           {isError && "Something went wrong, please reload the page."}
           {data && (
-            <ul className="space-y-3">
+            <>
+            <h2 className="font-bold text-lg mb-1">Rank {`${payee}`}: wins {`${data}`}% of all rewards</h2>
+            <ul>
               <li>
                 <PayeeNativeReward
                   share={data}
@@ -66,6 +67,7 @@ export const RewardsWinner = (props: RewardsWinnerProps) => {
                 </>
               )}
             </ul>
+            </>
           )}
         </>
       )}
