@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useStore as useStoreContest } from "../useContest/store";
 import useContest from "@hooks/useContest";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 /*
 import { useContractEvent } from "wagmi";
@@ -15,17 +15,13 @@ export function useContestEvents() {
   const { asPath } = useRouter();
   // const storeSubmitProposal = useStoreSubmitProposal();
   const {
-    //@ts-ignore
     contestStatus,
-    //@ts-ignore
     setProposalData,
-    //@ts-ignore
     setProposalVotes,
-    //@ts-ignore
     listProposalsData,
-    //@ts-ignore
     canUpdateVotesInRealTime,
-  } = useStoreContest();
+    setCanUpdateVotesInRealTime
+  } : any  = useStoreContest();
   const { updateCurrentUserVotes } = useContest();
 
   /**
@@ -50,7 +46,6 @@ export function useContestEvents() {
       });
 
       if (listProposalsData[proposalId]) {
-        //@ts-ignore
         setProposalVotes({
           id: proposalId,
           //@ts-ignore
@@ -84,6 +79,18 @@ export function useContestEvents() {
     }
   }
 
+  function watchVotesCastEvent() {
+    watchContractEvent(
+      {
+        addressOrName: asPath.split("/")[3],
+        contractInterface: DeployedContestContract.abi,
+      },
+      "VoteCast",
+      (...args) => {
+        onVoteCast(args);
+      },
+    );
+  }
   useEffect(() => {
     if (canUpdateVotesInRealTime === false && contestStatus === CONTEST_STATUS.COMPLETED) {
       const contract = getContract({
@@ -94,16 +101,7 @@ export function useContestEvents() {
     } else if (canUpdateVotesInRealTime === true) {
       // Only watch VoteCast events when voting is open and we are <=1h before end of voting
       if (contestStatus === CONTEST_STATUS.VOTING_OPEN) {
-        watchContractEvent(
-          {
-            addressOrName: asPath.split("/")[3],
-            contractInterface: DeployedContestContract.abi,
-          },
-          "VoteCast",
-          (...args) => {
-            onVoteCast(args);
-          },
-        );
+        watchVotesCastEvent()
       }
       // When voting closes, remove all event listeners
       if (contestStatus === CONTEST_STATUS.COMPLETED) {
@@ -115,6 +113,33 @@ export function useContestEvents() {
       }
     }
   }, [canUpdateVotesInRealTime, contestStatus]);
+
+
+  useEffect(() => {
+    const contract = getContract({
+      addressOrName: asPath.split("/")[3],
+      contractInterface: DeployedContestContract.abi,
+    });
+
+    document.addEventListener("visibilitychange", (e) => {
+      if(document.visibilityState === 'hidden') {
+        // if page content isn't visible to the user
+        // (background tab or minimized window or OS screen lock active)
+        // remove event listeners
+        contract.removeAllListeners();
+      } else {
+        if (contestStatus === CONTEST_STATUS.VOTING_OPEN && canUpdateVotesInRealTime === true) {
+          watchVotesCastEvent()
+        }
+      }
+    })
+    return () => {
+      document.removeEventListener("visibilitychange", () => {
+        contract.removeAllListeners();
+      })
+    }
+  }, []);
+
 
   /*
   useContractEvent({
