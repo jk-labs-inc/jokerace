@@ -788,10 +788,10 @@ export const Form = (props: FormProps) => {
           >
             <RadioGroup.Label className="sr-only">Does your contest have rewards ?</RadioGroup.Label>
             <FormRadioOption value={"noRewards"}>No rewards</FormRadioOption>
-            <FormRadioOption value={"erc20"}>ERC-20 token rewards</FormRadioOption>
             <FormRadioOption value={"native"}>
-              Chain native currency rewards ({chain?.nativeCurrency?.symbol})
+              Reward {chain?.nativeCurrency?.symbol}
             </FormRadioOption>
+            <FormRadioOption value={"erc20"}>Reward another token</FormRadioOption>
           </FormRadioGroup>
           {data()?.rewardsType !== "noRewards" && (
             <div className="!mt-3 animate-appear flex flex-col space-y-6 xs:pis-6">
