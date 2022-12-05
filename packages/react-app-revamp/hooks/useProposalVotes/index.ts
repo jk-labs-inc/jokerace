@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
 import { chain as wagmiChain, useAccount } from "wagmi";
-import { getContract, watchContractEvent } from "@wagmi/core"
+import { getContract, watchContractEvent } from "@wagmi/core";
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { chains } from "@config/wagmi";
@@ -229,35 +229,36 @@ export function useProposalVotes(id: number | string) {
   }, [account?.connector]);
 
   useEffect(() => {
-    if(canUpdateVotesInRealTime === false && contestStatus === CONTEST_STATUS.COMPLETED) {
+    if (canUpdateVotesInRealTime === false && contestStatus === CONTEST_STATUS.COMPLETED) {
       const contract = getContract({
         addressOrName: asPath.split("/")[3],
         contractInterface: DeployedContestContract.abi,
       });
       contract.removeAllListeners();
-    }
-
-    else if (canUpdateVotesInRealTime === true) {
+    } else if (canUpdateVotesInRealTime === true) {
       // Only watch VoteCast events when voting is open and we are <=1h before end of voting
-      if(contestStatus === CONTEST_STATUS.VOTING_OPEN) {
-        watchContractEvent({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
-        }, 
-        "VoteCast", (args) => {
-          fetchVotesOfAddress(args[0])
-        })
+      if (contestStatus === CONTEST_STATUS.VOTING_OPEN) {
+        watchContractEvent(
+          {
+            addressOrName: asPath.split("/")[3],
+            contractInterface: DeployedContestContract.abi,
+          },
+          "VoteCast",
+          args => {
+            fetchVotesOfAddress(args[0]);
+          },
+        );
       }
       // When voting closes, remove all event listeners
-      if(contestStatus === CONTEST_STATUS.COMPLETED) {
+      if (contestStatus === CONTEST_STATUS.COMPLETED) {
         const contract = getContract({
           addressOrName: asPath.split("/")[3],
           contractInterface: DeployedContestContract.abi,
-        })
-        contract.removeAllListeners()
+        });
+        contract.removeAllListeners();
       }
     }
-  }, [canUpdateVotesInRealTime, contestStatus])
+  }, [canUpdateVotesInRealTime, contestStatus]);
 
   useEffect(() => {
     fetchProposalVotes();

@@ -1,5 +1,4 @@
 import { chain, configureChains, createClient } from "wagmi";
-import { fantom, avalanche, harmony, gnosis } from "@helpers/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -14,7 +13,7 @@ const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optim
 const appChains = [...defaultChains, ...testnetChains];
 const providers =
   process.env.NODE_ENV === "development"
-    ? [publicProvider()]
+    ? [alchemyProvider({ alchemyId }), publicProvider()]
     : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId })];
 export const { chains, provider } = configureChains(appChains, providers);
 

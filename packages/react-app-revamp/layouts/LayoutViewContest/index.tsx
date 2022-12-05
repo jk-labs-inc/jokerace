@@ -9,6 +9,7 @@ import {
   ROUTE_CONTEST_PROPOSAL,
   ROUTE_VIEW_CONTEST,
   ROUTE_VIEW_CONTEST_EXPORT_DATA,
+  ROUTE_VIEW_CONTEST_REWARDS,
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
 import Button from "@components/Button";
@@ -322,7 +323,7 @@ const LayoutViewContest = (props: any) => {
                     </span>
                   </h2>
 
-                  {contestPrompt && (
+                  {contestPrompt && !pathname.includes(ROUTE_VIEW_CONTEST_REWARDS) && (
                     <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
                       <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
                     </p>

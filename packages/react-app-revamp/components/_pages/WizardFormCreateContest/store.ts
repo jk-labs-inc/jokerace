@@ -50,6 +50,17 @@ export interface WizardFormState {
   dataDeployContest: null
   setDeployContestData: (data: any) => void
   setModalDeployContestOpen: (isOpen: boolean) => void;
+
+  // Deploy rewards module
+  dataDeployRewardsModule: null
+  setDeployRewardsModule: (data: any) => void
+  
+  // set contest rewards module
+  dataContestRewardsModule: null
+  setContestRewardsModule: (data: any) => void
+
+  willHaveRewardsModule: boolean
+  setWillHaveRewardsModule: (newValue: boolean) => void
 }
 
 export const createStore = () => {
@@ -94,4 +105,13 @@ export const createStore = () => {
     setDeployContestData: (value) => set({ dataDeployContest: value }),
     modalDeployContestOpen: false,
     setModalDeployContestOpen:  (value) => set({ modalDeployContestOpen: value }),
+
+    dataDeployRewardsModule: null,
+    setDeployRewardsModule: (data: any) => set({ dataDeployRewardsModule: data}),
+    
+    dataContestRewardsModule: null,
+    setContestRewardsModule: (data: any) => set({dataContestRewardsModule: data}),
+
+    willHaveRewardsModule: false,
+    setWillHaveRewardsModule: (newValue: boolean) => set({willHaveRewardsModule: newValue}),  
 }))}

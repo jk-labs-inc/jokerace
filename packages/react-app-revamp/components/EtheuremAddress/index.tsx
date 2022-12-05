@@ -33,15 +33,22 @@ export const EtheuremAddress = (props: EtheuremAddressProps) => {
   const queryEns = useEnsName({
     chainId: chain.mainnet.id,
     address: ethereumAddress,
-    enabled: (queryUserProfileLens?.isSuccess && queryUserProfileLens?.data === null ) || queryUserProfileLens?.isError  ? true : false,
+    enabled:
+      (queryUserProfileLens?.isSuccess && queryUserProfileLens?.data === null) || queryUserProfileLens?.isError
+        ? true
+        : false,
   });
 
   if (!displayLensProfile || queryUserProfileLens?.status === "error" || queryUserProfileLens?.data === null) {
-    if (queryEns?.status === "success" && queryEns?.data !== null) return <>{`${withHyphen === true ? "— " : ""}${queryEns?.data}`}</>
-    return <>{shortenOnFallback === true
-      ? `${withHyphen === true ? "— " : ""}${shortenEthereumAddress(ethereumAddress)}`
-      : `${withHyphen === true ? "— " : ""}${ethereumAddress}`}
+    if (queryEns?.status === "success" && queryEns?.data !== null)
+      return <>{`${withHyphen === true ? "— " : ""}${queryEns?.data}`}</>;
+    return (
+      <>
+        {shortenOnFallback === true
+          ? `${withHyphen === true ? "— " : ""}${shortenEthereumAddress(ethereumAddress)}`
+          : `${withHyphen === true ? "— " : ""}${ethereumAddress}`}
       </>
+    );
   }
 
   if (queryUserProfileLens?.status === "loading")
@@ -77,7 +84,7 @@ export const EtheuremAddress = (props: EtheuremAddressProps) => {
         </a>
       </span>
     );
-    return <>{ethereumAddress}</>
+  return <>{ethereumAddress}</>;
 };
 
 export default EtheuremAddress;

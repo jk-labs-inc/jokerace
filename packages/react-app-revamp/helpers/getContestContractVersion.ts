@@ -2,15 +2,17 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import LegacyDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.legacy.1.pre-prompt.sol/Contest.json";
 import PromptDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.legacy.2.prompt.sol/Contest.json";
 import AllProposalTotalVotesDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.legacy.3.allProposalTotalVotes.sol/Contest.json";
-import ProposalVotesDownvotes from "@contracts/bytecodeAndAbi/Contest.legacy.4.proposalVotesDownvotes.sol/Contest.json";
+import ProposalVotesDownvotesContract from "@contracts/bytecodeAndAbi/Contest.legacy.4.proposalVotesDownvotes.sol/Contest.json";
+import SubmissionTokenGatingContract from "@contracts/bytecodeAndAbi/Contest.legacy.5.submissionTokenGating.sol/Contest.json";
+import OfficialRewardsModuleContract from "@contracts/bytecodeAndAbi/Contest.legacy.6.rewards.sol/Contest.json";
+
 import { getProvider } from "@wagmi/core";
 import { utils } from "ethers";
 import { chains } from "@config/wagmi";
 
 export async function getContestContractVersion(address: string, chainName: string) {
-  const chainId = chains
-      .filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;;
-  const provider = await getProvider({chainId: chainId});
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const provider = await getProvider({ chainId: chainId });
   const bytecode = await provider.getCode(address);
 
   if (bytecode.length <= 2) return null;
@@ -21,9 +23,10 @@ export async function getContestContractVersion(address: string, chainName: stri
   } else if (!bytecode.includes(utils.id("downvotingAllowed()").slice(2, 10))) {
     return AllProposalTotalVotesDeployedContestContract.abi;
   } else if (!bytecode.includes(utils.id("submissionGatingByVotingToken()").slice(2, 10))) {
-    return ProposalVotesDownvotes.abi;
+    return ProposalVotesDownvotesContract.abi;
+  } else if (!bytecode.includes(utils.id("officialRewardsModule()").slice(2, 10))) {
+    return SubmissionTokenGatingContract.abi;
   }
-  
   return DeployedContestContract.abi;
 }
 

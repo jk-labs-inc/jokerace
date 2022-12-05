@@ -3,7 +3,7 @@
 }
 
 .navLink {
-  @apply w-max-content xs:w-auto font-bold md:p-1 items-center flex text-center md:text-start;
+  @apply flex-shrink-0 w-max-content xs:w-auto font-bold md:p-1 items-center flex text-center md:text-start;
 }
 
 .navLink--active {
@@ -11,5 +11,5 @@
 }
 
 .navbar {
-  @apply space-i-8 2xs:space-i-10 xs:space-i-20 flex md:flex-col md:space-i-0;
+  @apply -mx-5 pb-2 px-5 space-i-8 overflow-x-auto 2xs:space-i-10 xs:space-i-20 md:pb-0 md:mx-0 md:px-0 flex md:flex-col md:space-i-0;
 }

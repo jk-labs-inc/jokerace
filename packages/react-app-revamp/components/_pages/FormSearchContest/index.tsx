@@ -23,22 +23,18 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
   const [showLoader, setShowLoader] = useState(false);
   const { form, errors, data } = useForm({
     extend: validator({ schema }),
-    onSubmit: async (values) => {
+    onSubmit: async values => {
       const contestAddress = asPath.split("/")[3];
       if (chain?.unsupported === true) return;
       const currentChain = asPath.split("/")[2];
-      const currentNetwork =  await getNetwork()
-      ?.chain?.name.toLowerCase()
-      .replace(" ", "")
+      const currentNetwork = await getNetwork()
+        ?.chain?.name.toLowerCase()
+        .replace(" ", "");
 
-      const chainName = !currentNetwork ? currentChain : currentNetwork
-      push(
-        ROUTE_VIEW_CONTEST,
-        `/contest/${chainName}/${values.contestAddress}`,
-        {
-          shallow: true,
-        },
-      );
+      const chainName = !currentNetwork ? currentChain : currentNetwork;
+      push(ROUTE_VIEW_CONTEST, `/contest/${chainName}/${values.contestAddress}`, {
+        shallow: true,
+      });
       if (contestAddress && contestAddress === values.contestAddress) return;
       if (pathname !== ROUTE_VIEW_CONTESTS) {
         //@ts-ignore
@@ -98,12 +94,24 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
           isLoading={showLoader}
           scale={isInline ? "xs" : "default"}
           className={`${isInline ? "h-full whitespace-nowrap min-h-8" : " mx-auto mt-3"} ${
-            (showLoader || data()?.contestAddress === '' || errors().contestAddress?.length > 0 === true || chain?.unsupported === true) ? "pointer-events-none opacity-50" : ""
+            showLoader ||
+            data()?.contestAddress === "" ||
+            errors().contestAddress?.length > 0 === true ||
+            chain?.unsupported === true
+              ? "pointer-events-none opacity-50"
+              : ""
           }`}
           intent="neutral-outline"
-          disabled={(!asPath.includes('/contest/') && (!chain || chain?.unsupported === true)) || (data()?.contestAddress === '' || errors().contestAddress?.length > 0 === true || chain?.unsupported === true)}
+          disabled={
+            (!asPath.includes("/contest/") && (!chain || chain?.unsupported === true)) ||
+            data()?.contestAddress === "" ||
+            errors().contestAddress?.length > 0 === true ||
+            chain?.unsupported === true
+          }
         >
-          {(!asPath.includes('/contest/') && (!chain || chain?.unsupported === true)) ? 'Connect your wallet' : buttonLabel}
+          {!asPath.includes("/contest/") && (!chain || chain?.unsupported === true)
+            ? "Connect your wallet"
+            : buttonLabel}
         </Button>
       </form>
     </>

@@ -128,7 +128,12 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     <DialogModal title="Submit your proposal" {...props}>
       {showDeploymentSteps && (
         <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction textError={error} isSuccess={isSuccess} isError={error !== null} isLoading={isLoading} />
+          <TrackerDeployTransaction
+            textError={error}
+            isSuccess={isSuccess}
+            isError={error !== null}
+            isLoading={isLoading}
+          />
         </div>
       )}
 
@@ -173,7 +178,9 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
             <>
               <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>
                 <TipTapEditor editor={editorProposal} />
-                <p className="mt-2 text-neutral-11 text-3xs">Make sure to preview your proposal to check if it renders properly !</p>
+                <p className="mt-2 text-neutral-11 text-3xs">
+                  Make sure to preview your proposal to check if it renders properly !
+                </p>
                 <Button
                   disabled={proposal.trim().length === 0 || isLoading}
                   type="submit"
