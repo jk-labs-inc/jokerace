@@ -111,7 +111,7 @@ const Page = (props: PageProps) => {
                             scale="sm"
                             intent="primary-outline"
                           >
-                            💸 Send funds
+                            💸 Add funds
                           </Button>
                           <Button
                             className="w-full 2xs:w-fit-content md:w-full"
