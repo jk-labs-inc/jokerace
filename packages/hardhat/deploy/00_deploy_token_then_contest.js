@@ -35,6 +35,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     waitConfirmations: 5,
   });
 
+  const ContestContract = await ethers.getContract("Contest", deployer);
+  
   await deploy("ERC20VotesTimestampWrapper", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
@@ -42,7 +44,15 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     log: true,
     waitConfirmations: 5,
   });
-
+  
+  await deploy("RewardsModule", {
+    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+    from: deployer,
+    args: [[1, 2, 3], [3, 2, 1], ContestContract.address],
+    log: true,
+    waitConfirmations: 5,
+  });
+  
   // Getting a previously deployed contract
   // const YourContract = await ethers.getContract("YourContract", deployer);
   /*  await YourContract.setPurpose("Hello");

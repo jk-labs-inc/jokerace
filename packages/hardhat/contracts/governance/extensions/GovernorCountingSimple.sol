@@ -76,6 +76,72 @@ abstract contract GovernorCountingSimple is Governor {
         }
         return (proposalIds, proposalVoteCountsArray);
     }
+
+    /**
+     * @dev Accessor to the internal vote counts for a given proposal that excludes deleted proposals.
+     */
+    function allProposalTotalVotesWithoutDeleted()
+        public
+        view
+        virtual
+        returns (
+            uint256[] memory proposalIdsReturn,
+            VoteCounts[] memory proposalVoteCountsArrayReturn
+        )
+    {
+        uint256[] memory proposalIds = getAllProposalIds();
+        uint256[] memory proposalIdsWithoutDeleted = new uint256[](proposalIds.length);
+        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
+        
+        uint256 newArraysIndexCounter = 0;
+        for (uint256 i = 0; i < proposalIds.length; i++) {
+            if (!(isProposalDeleted(proposalIds[i]) == 1)) {
+                proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIds[i];
+                proposalVoteCountsArray[newArraysIndexCounter] = _proposalVotes[proposalIds[i]].proposalVoteCounts;
+                newArraysIndexCounter += 1;
+            }
+        }
+        return (proposalIdsWithoutDeleted, proposalVoteCountsArray);
+    }
+
+    function sort_item(uint pos, int256[] memory netProposalVotes, uint256[] memory proposalIds) internal pure returns (bool) {
+        uint w_min = pos;
+        for(uint i = pos;i < netProposalVotes.length;i++) {
+            if(netProposalVotes[i] < netProposalVotes[w_min]) {
+                w_min = i;
+            }
+        }
+        if(w_min == pos) return false;
+        int votesTmp = netProposalVotes[pos];
+        netProposalVotes[pos] = netProposalVotes[w_min];
+        netProposalVotes[w_min] = votesTmp;
+        uint proposalIdsTmp = proposalIds[pos];
+        proposalIds[pos] = proposalIds[w_min];
+        proposalIds[w_min] = proposalIdsTmp;
+        return true;
+    }
+
+    /**
+     * @dev Accessor to sorted list of proposalIds in ascending order.
+     */
+    function sortedProposals(bool excludeDeletedProposals)
+        public
+        view
+        virtual
+        returns (
+            uint256[] memory sortedProposalIdsReturn
+        )
+    {
+        (uint256[] memory proposalIdList, VoteCounts[] memory proposalVoteCountsArray) = excludeDeletedProposals ? allProposalTotalVotesWithoutDeleted() : allProposalTotalVotes();
+        int256[] memory netProposalVotes = new int256[](proposalIdList.length);
+        for(uint256 i = 0; i < proposalVoteCountsArray.length; i++) {
+            netProposalVotes[i] = int256(proposalVoteCountsArray[i].forVotes) - int256(proposalVoteCountsArray[i].againstVotes);
+        }
+        for(uint256 i = 0; i < proposalIdList.length - 1; i++) { // Only goes to length minus 1 because sorting the last item would be redundant
+            sort_item(i, netProposalVotes, proposalIdList);
+        }
+        return proposalIdList;
+    }
     
     /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.

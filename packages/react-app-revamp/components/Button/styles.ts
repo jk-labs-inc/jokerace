@@ -17,6 +17,11 @@ export const button = cva(
           'text-primary-3',
           'border-transparent',
         ],
+        positive: [
+          'bg-positive-10 hover:bg-positive-9 focus:bg-positive-11 hover:focus:bg-opacity-95',
+          'text-positive-3',
+          'border-transparent',
+        ],
         'neutral': [
           'bg-neutral-2',
           'text-true-white',
@@ -48,7 +53,10 @@ export const button = cva(
           'text-primary-10 focus:text-primary-1',
           'border-transparent',
           'focus:outline-none'
-        ]
+        ],
+        "ghost-negative": [
+          "border-transparent bg-negative-11 bg-opacity-0 text-negative-11 hover:bg-opacity-10 focus:border-transparent focus:bg-opacity-100 focus:text-negative-1 focus:outline-none"
+        ],
       },
       scale: {
         default: ['text-xs', 'py-2 px-4 sm:px-5', 'font-bold', 'border'],

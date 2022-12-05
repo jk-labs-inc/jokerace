@@ -69,23 +69,26 @@ export const TextInstructions = () => {
                     </span>
                   </>
                 )}
-              {dataDeployContest?.address && <>
-                <br /> You can always find it on{" "}
-                <Link
-                  href={{
-                    pathname: ROUTE_VIEW_CONTEST,
-                    //@ts-ignore
-                    query: {
-                      chain: contestDeployedToChain.name.toLowerCase().replace(" ", ""),
-                      address: dataDeployContest?.address,
-                    },
-                  }}
-                >
-                  <a target="_blank" className="link">
-                    the contest page
-                  </a>
-                </Link>.
-              </>}
+              {dataDeployContest?.address && (
+                <>
+                  <br /> You can always find it on{" "}
+                  <Link
+                    href={{
+                      pathname: ROUTE_VIEW_CONTEST,
+                      //@ts-ignore
+                      query: {
+                        chain: contestDeployedToChain.name.toLowerCase().replace(" ", ""),
+                        address: dataDeployContest?.address,
+                      },
+                    }}
+                  >
+                    <a target="_blank" className="link">
+                      the contest page
+                    </a>
+                  </Link>
+                  .
+                </>
+              )}
             </p>
           </>
         )}

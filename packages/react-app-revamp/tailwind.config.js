@@ -172,8 +172,8 @@ module.exports = {
               lineHeight: 1.75,
             },
             br: {
-              display: 'block',
-              marginBottom: "0.75em"
+              display: "block",
+              marginBottom: "0.75em",
             },
             h1: {
               fontSize: clamp(3),
@@ -211,8 +211,8 @@ module.exports = {
               p: {
                 marginTop: 0,
                 marginBottom: 0,
-              }
-            }
+              },
+            },
           },
         },
       }),

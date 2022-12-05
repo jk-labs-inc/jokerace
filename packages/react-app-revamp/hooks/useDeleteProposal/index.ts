@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useDeleteProposal() {
-  const { asPath } = useRouter()
+  const { asPath } = useRouter();
   const { chain } = useNetwork();
   const {
     //@ts-ignore
@@ -19,11 +19,11 @@ export function useDeleteProposal() {
     isError,
     //@ts-ignore
     error,
-    //@ts-ignore  
+    //@ts-ignore
     isSuccess,
-    //@ts-ignore   
+    //@ts-ignore
     transactionData,
-    //@ts-ignore    
+    //@ts-ignore
     setIsLoading,
     //@ts-ignore
     setIsSuccess,
@@ -34,13 +34,13 @@ export function useDeleteProposal() {
     //@ts-ignore
     //@ts-ignore
     pickedProposal,
-  } = useStore()
+  } = useStore();
 
   async function deleteProposal() {
     const address = asPath.split("/")[3];
     const chainName = asPath.split("/")[2];
     const abi = await getContestContractVersion(address, chainName);
-    setIsLoading(true)
+    setIsLoading(true);
     setIsLoading(true);
     setIsSuccess(false);
     setIsError(false, null);
@@ -82,14 +82,14 @@ export function useDeleteProposal() {
   }
 
   useEffect(() => {
-    if(isModalOpen === false) {
-        setIsLoading(false)
-        setIsSuccess(false)
-        setTransactionData({})
-        setIsError(false, null)
+    if (isModalOpen === false) {
+      setIsLoading(false);
+      setIsSuccess(false);
+      setTransactionData({});
+      setIsError(false, null);
     }
-  }, [isModalOpen])
-  
+  }, [isModalOpen]);
+
   return {
     deleteProposal,
     isLoading,
@@ -97,7 +97,7 @@ export function useDeleteProposal() {
     error,
     isSuccess,
     transactionData,
-  }
+  };
 }
 
-export default useDeleteProposal
+export default useDeleteProposal;

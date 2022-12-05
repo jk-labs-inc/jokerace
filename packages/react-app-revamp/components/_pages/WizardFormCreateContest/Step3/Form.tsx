@@ -1,4 +1,4 @@
-import { useNetwork, useAccount } from "wagmi";
+import { useNetwork, useAccount, useToken } from "wagmi";
 import { usePress } from "@react-aria/interactions";
 import shallow from "zustand/shallow";
 import Button from "@components/Button";
@@ -12,8 +12,9 @@ import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
-import { useId } from "react";
-import { ShieldExclamationIcon } from "@heroicons/react/outline";
+import { useEffect, useId } from "react";
+import { CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
+import FormSelect from "@components/FormSelect";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -26,6 +27,8 @@ interface FormProps {
   resetField: any;
   setData: any;
 }
+
+const ranks = [1, 2, 3, 4, 5];
 
 export const Form = (props: FormProps) => {
   const formId = useId();
@@ -78,6 +81,11 @@ export const Form = (props: FormProps) => {
 
   const { pressProps } = usePress({
     onPress: () => setCurrentStep(4),
+  });
+
+  const erc20TokenRewards = useToken({
+    address: data()?.rewardTokenAddress,
+    enabled: data()?.rewardsType === "erc20" && data()?.rewardTokenAddress && data()?.rewardTokenAddress !== "",
   });
 
   return (
@@ -166,9 +174,13 @@ export const Form = (props: FormProps) => {
                 aria-describedby="input-votingtokenaddress-description input-votingtokenaddress-helpblock input-votingtokenaddress-note"
               />
             </FormField.InputField>
-            <p id="input-votingtokenaddress-note" className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center">
-              <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5"/>
-              The token must be minted on our platform or implement the &nbsp;<span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
+            <p
+              id="input-votingtokenaddress-note"
+              className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center"
+            >
+              <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
+              The token must be minted on our platform or implement the &nbsp;
+              <span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
             </p>
             <FormField.HelpBlock
               hasError={errors().votingTokenAddress?.length > 0 === true}
@@ -180,7 +192,7 @@ export const Form = (props: FormProps) => {
         </div>
       </fieldset>
 
-      <fieldset className="my-12">
+      <fieldset className="mt-12">
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
@@ -274,8 +286,8 @@ export const Form = (props: FormProps) => {
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.whoCanSubmit}
             onChange={(e: string) => {
-              setData("whoCanSubmit", e)
-              setData("submissionOpenToAll", e === "anybody")
+              setData("whoCanSubmit", e);
+              setData("submissionOpenToAll", e === "anybody");
               resetField("requiredNumberOfTokenToSubmit");
             }}
           >
@@ -289,7 +301,11 @@ export const Form = (props: FormProps) => {
                 <FormInput
                   disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                   aria-invalid={
-                    touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveVotingTokens" && !isRequiredNumberOfTokenToSubmitValid ? "true" : "false"
+                    touched()?.requiredNumberOfTokenToSubmit &&
+                    data()?.whoCanSubmit === "mustHaveVotingTokens" &&
+                    !isRequiredNumberOfTokenToSubmitValid
+                      ? "true"
+                      : "false"
                   }
                   placeholder="200"
                   required={data()?.whoCanSubmit === "mustHaveVotingTokens"}
@@ -299,18 +315,26 @@ export const Form = (props: FormProps) => {
                   name="requiredNumberOfTokenToSubmit"
                   min={0.00000001}
                   step={0.00000001}
-                  hasError={touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveVotingTokens" && !isRequiredNumberOfTokenToSubmitValid}
+                  hasError={
+                    touched()?.requiredNumberOfTokenToSubmit &&
+                    data()?.whoCanSubmit === "mustHaveVotingTokens" &&
+                    !isRequiredNumberOfTokenToSubmitValid
+                  }
                   aria-describedby="input-requirednumberoftoken-voting-helpblock"
                 />{" "}
                 voting token(s) to submit a proposal
               </>
               <FormField.HelpBlock
-            className="!mt-1"
-            hasError={touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveVotingTokens" && !isRequiredNumberOfTokenToSubmitValid}
-            id="input-requirednumberoftoken-voting-helpblock"
-          >
-            Type a positive number to specify the required number of tokens.
-          </FormField.HelpBlock>
+                className="!mt-1"
+                hasError={
+                  touched()?.requiredNumberOfTokenToSubmit &&
+                  data()?.whoCanSubmit === "mustHaveVotingTokens" &&
+                  !isRequiredNumberOfTokenToSubmitValid
+                }
+                id="input-requirednumberoftoken-voting-helpblock"
+              >
+                Type a positive number to specify the required number of tokens.
+              </FormField.HelpBlock>
             </FormRadioOption>
             <FormRadioOption value="mustHaveSubmissionTokens">
               <>
@@ -318,7 +342,11 @@ export const Form = (props: FormProps) => {
                 <FormInput
                   disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                   aria-invalid={
-                    touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !isRequiredNumberOfTokenToSubmitValid ? "true" : "false"
+                    touched()?.requiredNumberOfTokenToSubmit &&
+                    data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
+                    !isRequiredNumberOfTokenToSubmitValid
+                      ? "true"
+                      : "false"
                   }
                   placeholder="200"
                   required={data()?.whoCanSubmit === "mustHaveSubmissionTokens"}
@@ -328,86 +356,105 @@ export const Form = (props: FormProps) => {
                   name="requiredNumberOfTokenToSubmit"
                   min={0.00000001}
                   step={0.00000001}
-                  hasError={touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !isRequiredNumberOfTokenToSubmitValid}
+                  hasError={
+                    touched()?.requiredNumberOfTokenToSubmit &&
+                    data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
+                    !isRequiredNumberOfTokenToSubmitValid
+                  }
                   aria-describedby="input-requirednumberoftoken-submissions-helpblock"
                 />{" "}
                 submission token(s) to submit a proposal
               </>
               <FormField.HelpBlock
-            className="!mt-1"
-            hasError={touched()?.requiredNumberOfTokenToSubmit && data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !isRequiredNumberOfTokenToSubmitValid}
-            id="input-requirednumberoftoken-submissions-helpblock"
-          >
-            Type a positive number to specify the required number of tokens.
-          </FormField.HelpBlock>
-
+                className="!mt-1"
+                hasError={
+                  touched()?.requiredNumberOfTokenToSubmit &&
+                  data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
+                  !isRequiredNumberOfTokenToSubmitValid
+                }
+                id="input-requirednumberoftoken-submissions-helpblock"
+              >
+                Type a positive number to specify the required number of tokens.
+              </FormField.HelpBlock>
             </FormRadioOption>
           </FormRadioGroup>
-          <div className={`${data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ? "pointer-events-none opacity-75" : ""} pis-6 text-sm !mt-0.5 flex items-center flex-wrap`}>
-                <span className="pie-1ex">Address of the submission token:</span>
-                <div className="flex-grow py-1">
-                  <FormInput
-                    disabled={
-                      data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ||
-                      !isConnected ||
-                      chain?.unsupported === true ||
-                      isDeploying === true
-                    }
-                    aria-invalid={
-                      data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
-                      touched()?.submissionTokenAddress &&
-                      (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
-                        ? "true"
-                        : "false"
-                    }
-                    value={data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ? "" : data()?.submissionTokenAddress}
-                    required={data()?.whoCanSubmit === "mustHaveSubmissionTokens"}
-                    className="w-full"
-                    placeholder="0x..."
-                    scale="sm"
-                    name="submissionTokenAddress"
-                    id="submissionTokenAddress"
-                    hasError={
-                      data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
-                      touched()?.submissionTokenAddress &&
-                      (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
-                    }
-                    aria-describedby={`input-submissionTokenAddress-helpblock ${data()?.whoCanSubmit === "mustHaveSubmissionTokens" ? "input-submissionTokenAddress-note" : ""}`}
-                  />
-                  {data()?.whoCanSubmit === "mustHaveSubmissionTokens" && <p id="input-submissionTokenAddress-note" className="text-2xs pt-2 font-normal text-secondary-11 pis-1 flex flex-wrap items-center">
-              <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5"/>
-              The token must be minted on our platform or implement the &nbsp;<span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
-            </p>}
-                  <FormField.HelpBlock
-                    hasError={
-                      errors().submissionTokenAddress?.length > 0 === true ||
-                      (data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
-                        touched()?.submissionTokenAddress &&
-                        (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === ""))
-                    }
-                    id="input-submissionTokenAddress-helpblock"
-                  >
-                    Please type a valid Ethereum address.
-                  </FormField.HelpBlock>
-                </div>
-                <div className="flex items-center w-full pt-1">
-                  <span className="text-neutral-11 pie-1ex">Or&nbsp;</span>
-                  <Button
-                    onClick={() => setModalDeploySubmissionTokenOpen(true)}
-                    disabled={
-                      data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ||
-                      !isConnected ||
-                      chain?.unsupported === true ||
-                      isDeploying === true
-                    }
-                    className="w-full 2xs:w-fit-content"
-                    type="button"
-                    scale="xs"
-                  >
-                    Mint new token
-                  </Button>
-                </div>
-              </div>          
+          <div
+            className={`${
+              data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ? "pointer-events-none opacity-75" : ""
+            } xs:pis-6 text-sm !mt-0.5 flex items-center flex-wrap`}
+          >
+            <span className="pie-1ex">Address of the submission token:</span>
+            <div className="flex-grow py-1">
+              <FormInput
+                disabled={
+                  data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ||
+                  !isConnected ||
+                  chain?.unsupported === true ||
+                  isDeploying === true
+                }
+                aria-invalid={
+                  data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
+                  touched()?.submissionTokenAddress &&
+                  (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
+                    ? "true"
+                    : "false"
+                }
+                value={data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ? "" : data()?.submissionTokenAddress}
+                required={data()?.whoCanSubmit === "mustHaveSubmissionTokens"}
+                className="w-full"
+                placeholder="0x..."
+                scale="sm"
+                name="submissionTokenAddress"
+                id="submissionTokenAddress"
+                hasError={
+                  data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
+                  touched()?.submissionTokenAddress &&
+                  (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === "")
+                }
+                aria-describedby={`input-submissionTokenAddress-helpblock ${
+                  data()?.whoCanSubmit === "mustHaveSubmissionTokens" ? "input-submissionTokenAddress-note" : ""
+                }`}
+              />
+              {data()?.whoCanSubmit === "mustHaveSubmissionTokens" && (
+                <p
+                  id="input-submissionTokenAddress-note"
+                  className="text-2xs pt-2 font-normal text-secondary-11 pis-1 flex flex-wrap items-center"
+                >
+                  <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
+                  The token must be minted on our platform or implement the &nbsp;
+                  <span className="font-mono normal-case">IERC20VotesTimestamp</span>&nbsp; interface
+                </p>
+              )}
+              <FormField.HelpBlock
+                hasError={
+                  errors().submissionTokenAddress?.length > 0 === true ||
+                  (data()?.whoCanSubmit === "mustHaveSubmissionTokens" &&
+                    touched()?.submissionTokenAddress &&
+                    (!data()?.submissionTokenAddress || data()?.submissionTokenAddress === ""))
+                }
+                id="input-submissionTokenAddress-helpblock"
+              >
+                Please type a valid Ethereum address.
+              </FormField.HelpBlock>
+            </div>
+            <div className="flex items-center w-full pt-1">
+              <span className="text-neutral-11 pie-1ex">Or&nbsp;</span>
+              <Button
+                onClick={() => setModalDeploySubmissionTokenOpen(true)}
+                disabled={
+                  data()?.whoCanSubmit !== "mustHaveSubmissionTokens" ||
+                  !isConnected ||
+                  chain?.unsupported === true ||
+                  isDeploying === true
+                }
+                className="w-full 2xs:w-fit-content"
+                type="button"
+                scale="xs"
+              >
+                Mint new token
+              </Button>
+            </div>
+          </div>
           <FormRadioGroup
             disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
             value={data()?.noSubmissionLimitPerUser}
@@ -456,7 +503,7 @@ export const Form = (props: FormProps) => {
         </div>
       </fieldset>
 
-      <fieldset>
+      <fieldset className="mt-12">
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
@@ -712,7 +759,286 @@ export const Form = (props: FormProps) => {
           </FormField>
         </div>
       </fieldset>
-      <div className="pt-8 md:pt-12 flex flex-col space-y-5">
+
+      <fieldset className="my-12">
+        <legend
+          className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
+            !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
+          }`}
+        >
+          Rewards
+        </legend>
+        <div className="space-y-6">
+          <FormRadioGroup
+            disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+            value={data()?.rewardsType}
+            onChange={(e: string) => {
+              setData("rewardsType", e);
+              resetField("rewardTokenAddress");
+              resetField("rewards");
+              if (e !== "noRewards") {
+                setData("rewards", [
+                  {
+                    winningRank: 1,
+                    rewardTokenAmount: 0,
+                  },
+                ]);
+              }
+            }}
+          >
+            <RadioGroup.Label className="sr-only">Does your contest have rewards ?</RadioGroup.Label>
+            <FormRadioOption value={"noRewards"}>No rewards</FormRadioOption>
+            <FormRadioOption value={"native"}>
+              Reward {chain?.nativeCurrency?.symbol}
+            </FormRadioOption>
+            <FormRadioOption value={"erc20"}>Reward another token</FormRadioOption>
+          </FormRadioGroup>
+          {data()?.rewardsType !== "noRewards" && (
+            <div className="!mt-3 animate-appear flex flex-col space-y-6 xs:pis-6">
+              {data()?.rewardsType === "erc20" && (
+                <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+                  <FormField.InputField>
+                    <FormField.Label
+                      className="text-sm"
+                      hasError={errors().rewardTokenAddress?.length > 0 === true}
+                      htmlFor="rewardTokenAddress"
+                    >
+                      Address of token used for rewards
+                    </FormField.Label>
+                    <FormField.Description id="input-rewardTokenAddress-description">
+                      The Ethereum address of the ERC20 token you want to give as a reward.
+                    </FormField.Description>
+
+                    <FormInput
+                      required
+                      scale="sm"
+                      disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                      aria-invalid={
+                        errors().rewardTokenAddress?.length > 0 === true || erc20TokenRewards?.isError
+                          ? "true"
+                          : "false"
+                      }
+                      className="max-w-full w-auto 2xs:w-full"
+                      placeholder="0x..."
+                      type="text"
+                      name="rewardTokenAddress"
+                      hasError={errors().rewardTokenAddress?.length > 0 === true || erc20TokenRewards?.isError}
+                      aria-describedby="input-rewardTokenAddress-description input-rewardTokenAddress-note input-rewardTokenAddress-helpblock"
+                    />
+                  </FormField.InputField>
+                  {erc20TokenRewards?.data && (
+                    <div className="pt-2 flex items-center">
+                      <CheckIcon className="mie-2 w-5 shrink-0 text-positive-11" />
+                      <p className="text-neutral-11 text-2xs normal-case font-bold">
+                        {erc20TokenRewards?.data?.name} (${erc20TokenRewards?.data?.symbol})
+                      </p>
+                    </div>
+                  )}
+                  {erc20TokenRewards?.isError && (
+                    <div className="pt-2 flex items-center">
+                      <ExclamationIcon className="mie-2 w-5 shrink-0 text-negative-11" />
+                      <p className="text-negative-11 text-2xs">{erc20TokenRewards?.error?.message}</p>{" "}
+                    </div>
+                  )}
+
+                  {!erc20TokenRewards?.data && (
+                    <p
+                      id="input-rewardTokenAddress-note"
+                      className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center"
+                    >
+                      <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
+                      The token must implement the &nbsp;
+                      <span className="font-mono normal-case">ERC20</span>&nbsp; interface
+                    </p>
+                  )}
+                  <FormField.HelpBlock
+                    hasError={errors().rewardTokenAddress?.length > 0 === true}
+                    id="input-rewardTokenAddress-helpblock"
+                  >
+                    The reward token address must be a valid Ethereum address
+                  </FormField.HelpBlock>
+                </FormField>
+              )}
+              {data()?.rewards.map((reward: any, i: number) => (
+                <div
+                  key={`reward-${reward.key}`}
+                  className="text-sm p-4 border-neutral-4 border-solid border rounded-md space-y-6 relative"
+                >
+                  <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+                    <FormField.InputField>
+                      <FormField.Label
+                        className="text-sm"
+                        hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
+                        htmlFor="rewardTokenAmount"
+                      >
+                        Winning rank that earns tokens
+                      </FormField.Label>
+                      <FormField.Description id="input-winningRank-description">
+                        The rank eligible to earn a reward
+                      </FormField.Description>
+                      <FormInput
+                        required
+                        scale="sm"
+                        type="number"
+                        step="1"
+                        min={1}
+                        disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                        aria-invalid={errors().rewards?.[i]?.winningRank?.length > 0 === true ? "true" : "false"}
+                        className="max-w-full w-auto 2xs:w-full"
+                        placeholder="1"
+                        value={
+                          data()?.rewards.filter((rewardToDelete: any) => rewardToDelete.key === reward.key)[0]
+                            ?.winningRank
+                        }
+                        hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
+                        aria-describedby="input-winningRank-description input-winningRank-helpblock"
+                        onChange={e => {
+                          const rewards = data()?.rewards;
+                          rewards[i].winningRank = parseInt(e.currentTarget.value);
+                          setData("rewards", rewards);
+                        }}
+                      />
+                    </FormField.InputField>
+                    <FormField.HelpBlock
+                      hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
+                      id="input-winningRank-helpblock"
+                    >
+                      You must type a rank.
+                    </FormField.HelpBlock>
+                  </FormField>
+
+                  <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
+                    <FormField.InputField>
+                      <FormField.Label
+                        className="text-sm"
+                        hasError={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true}
+                        htmlFor="rewardTokenAmount"
+                      >
+                        The amount of tokens to be rewarded.
+                      </FormField.Label>
+                      <FormField.Description id="input-rewardTokenAmount-description">
+                        The amount of tokens you want to give as a reward.
+                      </FormField.Description>
+                      <FormInput
+                        required
+                        scale="sm"
+                        disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                        aria-invalid={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true ? "true" : "false"}
+                        className="max-w-full w-auto 2xs:w-full"
+                        placeholder="100"
+                        type="number"
+                        min={0.0000001}
+                        step={0.0000001}
+                        hasError={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true}
+                        aria-describedby="input-rewardTokenAmount-description input-rewardTokenAmount-helpblock"
+                        onChange={e => {
+                          const rewards = data()?.rewards;
+                          rewards[i].rewardTokenAmount = parseFloat(e.currentTarget.value);
+                          setData("rewards", rewards);
+                        }}
+                      />
+                    </FormField.InputField>
+                    <FormField.HelpBlock
+                      hasError={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true}
+                      id="input-rewardTokenAmount-helpblock"
+                    >
+                      The reward amount must be a positive number.
+                    </FormField.HelpBlock>
+                  </FormField>
+
+                  <Button
+                    className="w-full xs:w-auto space-i-3"
+                    scale="xs"
+                    intent="ghost-negative"
+                    type="button"
+                    onClick={() => {
+                      const updatedRewards = data()?.rewards.filter(
+                        (rewardToDelete: any) => rewardToDelete.key !== reward.key,
+                      );
+                      setData("rewards", updatedRewards);
+                      if (updatedRewards.length === 0) setData("rewardsType", "noRewards");
+                    }}
+                  >
+                    <TrashIcon className="w-4" />
+                    <span className="font-bold">Delete this reward</span>
+                  </Button>
+                </div>
+              ))}
+                <Button
+                  onClick={() => {
+                    setData("rewards", [
+                      ...data()?.rewards,
+                      {
+                        winningRank: ranks.filter(rank => {
+                          const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank);
+                          return !rewardRanks.includes(rank);
+                        })[0],
+                        rewardTokenAmount: 0,
+                      },
+                    ]);
+                  }}
+                  intent="primary-outline"
+                  scale="sm"
+                  type="button"
+                  className="w-full mx-auto xs:mx-0 xs:w-fit-content mt-4"
+                >
+                  <PlusIcon className="w-4 mie-2" />
+                  <span className="pie-2">Add another winning rank</span>
+                </Button>
+            </div>
+          )}
+          {["erc20", "native"].includes(data()?.rewardsType) &&
+            data()?.rewards?.filter((reward: any) => isNaN(reward?.rewardTokenAmount))?.length === 0 && (
+              <div className="animate-appear mis-6 border-t border-solid border-neutral-4 pt-6 mt-3">
+                <p className="font-bold text-sm mb-2">
+                  Total rewards you&apos;re planning to distribute:{" "}
+                  <span className="text-primary-10 normal-case ">
+                    {data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                      //@ts-ignore
+                      return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardTokenAmount ?? 0);
+                    }, 0)}{" "}
+                    {data()?.rewardsType === "erc20" && (
+                      <>{erc20TokenRewards?.data?.symbol ? `$${erc20TokenRewards?.data?.symbol}` : "--"}</>
+                    )}
+                    {data()?.rewardsType === "native" && chain?.nativeCurrency?.symbol}
+                  </span>
+                </p>
+                <ul className="list-disc pis-4">
+                  {data()?.rewards.map((reward: any) => {
+                    const totalRewardsAmount = data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                      return sumRewards + reward.rewardTokenAmount;
+                    }, 0);
+                    const rewardPercentage = isNaN(totalRewardsAmount)
+                      ? 0
+                      : Math.floor((reward.rewardTokenAmount / totalRewardsAmount) * 100);
+                    return (
+                      <li className="animate-appear text-neutral-12 text-xs" key={`rank-distribution-${reward.key}`}>
+                        Proposal with rank {reward.winningRank} will get{" "}
+                        <span className="font-bold">~{rewardPercentage}%</span> of the rewards
+                      </li>
+                    );
+                  })}
+                </ul>
+
+                <p className="mt-5 text-neutral-11 text-xs">
+                  You will be able to send funds to your rewards module once both your contest and your rewards module
+                  will be created.
+                </p>
+                <p className="my-1.5 text-neutral-11 text-xs">
+                  Winners will receive a percentage % of the funds you will send, as described in the rewards breakdown
+                  above.
+                </p>
+                <p className="my-1.5 text-neutral-11 text-xs">
+                  Post-contest, anyone can *execute* the transaction on the contest “rewards” page.
+                </p>
+                <p className="text-neutral-11 text-xs">
+                  In case of tie, the transaction will be canceled, so you can pay out manually as you like.
+                </p>
+              </div>
+            )}
+        </div>
+      </fieldset>
+      <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
         <Button
           className="sm:w-fit-content"
           isLoading={isDeploying === true}
@@ -729,14 +1055,18 @@ export const Form = (props: FormProps) => {
             (data()?.datetimeOpeningVoting && !isDateOpeningVotesValid) ||
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && !data()?.submissionTokenAddress) ||
             (data()?.whoCanSubmit === "mustHaveSubmissionTokens" && data()?.submissionTokenAddress === "") ||
-            (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid)
+            (data()?.usersQualifyToVoteAtAnotherDatetime && !isDateUsersQualifyToVoteAtAnotherValid) ||
+            (data()?.rewardsType === "erc20" && (!data()?.rewardTokenAddress || !erc20TokenRewards?.data?.name)) ||
+            (data()?.rewardsType !== "noRewards" &&
+              (data()?.rewards?.length === 0 ||
+                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length > 0))
           }
           type="submit"
         >
           Create contest
         </Button>
 
-        <div className={button({ intent: "ghost-neutral", scale: "sm", class: "sm:w-fit-content" })} tabIndex={0} role="button" {...pressProps}>
+        <div className={button({ intent: "ghost-neutral" })} tabIndex={0} role="button" {...pressProps}>
           Next
         </div>
       </div>
