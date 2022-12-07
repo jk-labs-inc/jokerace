@@ -17,7 +17,6 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
     addressOrName: contractRewardsModuleAddress,
     chainId,
     token: tokenAddress,
-    watch: true,
   });
   const queryRankRewardsReleasable = useContractRead({
     addressOrName: contractRewardsModuleAddress,
@@ -25,7 +24,6 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
     chainId,
     functionName: "releasable(address,uint256)",
     args: [tokenAddress, parseInt(`${payee}`)],
-    watch: true,
     //@ts-ignore
     select: data => {
       return parseFloat(utils.formatEther(data)).toFixed(4);
@@ -41,7 +39,6 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
     chainId,
     functionName: "released(address,uint256)",
     args: [tokenAddress, parseInt(`${payee}`)],
-    watch: true,
     //@ts-ignore
     select: data => {
       return parseFloat(utils.formatEther(data)).toFixed(4);

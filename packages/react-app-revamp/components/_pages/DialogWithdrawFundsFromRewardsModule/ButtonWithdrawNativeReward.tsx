@@ -12,7 +12,6 @@ export const ButtonWithdrawNativeReward = (props: ButtonWithdrawNativeRewardProp
   const queryTokenBalance = useBalance({
     addressOrName: contractRewardsModuleAddress,
     chainId: chain?.id,
-    watch: true,
   });
   const contractWriteWithdrawNativeReward = useContractWrite({
     addressOrName: contractRewardsModuleAddress,

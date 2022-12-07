@@ -23,7 +23,6 @@ export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewards
     addressOrName: storeRewardsModule.rewardsModule?.contractAddress,
     chainId: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id,
     token: inputRewardsModuleBalanceCheck,
-    watch: true,
     //@ts-ignore
     enabled: inputRewardsModuleBalanceCheck !== "" && inputRewardsModuleBalanceCheck?.match(/^0x[a-fA-F0-9]{40}$/),
     onSuccess(data) {

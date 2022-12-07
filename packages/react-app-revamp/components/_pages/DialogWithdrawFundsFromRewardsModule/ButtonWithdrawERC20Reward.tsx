@@ -15,7 +15,6 @@ export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps)
     token: tokenAddress,
     chainId: chain?.id,
     addressOrName: contractRewardsModuleAddress,
-    watch: true,
   });
   const contractWriteWithdrawERC20Reward = useContractWrite({
     addressOrName: contractRewardsModuleAddress,

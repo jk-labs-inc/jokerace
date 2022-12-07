@@ -16,7 +16,6 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
   const queryTokenBalance = useBalance({
     addressOrName: contractRewardsModuleAddress,
     chainId,
-    watch: true,
   });
   const queryRankRewardsReleasable = useContractRead({
     addressOrName: contractRewardsModuleAddress,
@@ -24,7 +23,6 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     functionName: "releasable(uint256)",
     chainId,
     args: [payee],
-    watch: true,
     //@ts-ignore
     select: data => parseFloat(utils.formatEther(data)).toFixed(4),
   });
@@ -34,7 +32,6 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     contractInterface: abiRewardsModule,
     functionName: "released(uint256)",
     chainId,
-    watch: true,
     args: [payee],
     //@ts-ignore
     select: data => parseFloat(utils.formatEther(data)).toFixed(4),
