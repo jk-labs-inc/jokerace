@@ -97,7 +97,11 @@ export function useRewardsModule() {
       //@ts-ignore
       const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, contestChainName);
       if (abiRewardsModule === null) {
-        toast.error("The contract of this rewards module doesn't exist on this chain.");
+        if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
+          toast.error("There is no rewards module for this contest.");
+        } else {
+          toast.error("The address that this contest has as its linked rewards module doesn't exist on this chain.");
+        }
         return;
       }
 
