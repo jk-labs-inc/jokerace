@@ -1010,7 +1010,7 @@ export const Form = (props: FormProps) => {
                     }, 0);
                     const rewardPercentage = isNaN(totalRewardsAmount)
                       ? 0
-                      : Math.floor((reward.rewardTokenAmount / totalRewardsAmount) * 100);
+                      : ((reward.rewardTokenAmount / totalRewardsAmount) * 100).toFixed(2);
                     return (
                       <li className="animate-appear text-neutral-12 text-xs" key={`rank-distribution-${reward.key}`}>
                         Proposal with rank {reward.winningRank} will get{" "}
