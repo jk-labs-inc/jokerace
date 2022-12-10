@@ -152,6 +152,8 @@ const Page = (props: PageProps) => {
                             contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress}
                             //@ts-ignore
                             abiRewardsModule={storeRewardsModule.rewardsModule.abi}
+                            //@ts-ignore
+                            totalShares={storeRewardsModule.rewardsModule.totalShares}
                           />
                         </li>
                       ))}
