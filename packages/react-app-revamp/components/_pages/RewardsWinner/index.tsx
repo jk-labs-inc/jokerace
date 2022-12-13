@@ -10,10 +10,11 @@ interface RewardsWinnerProps {
   contractRewardsModuleAddress: string;
   abiRewardsModule: any;
   chainId: number;
+  totalShares: number;
 }
 
 export const RewardsWinner = (props: RewardsWinnerProps) => {
-  const { payee, erc20Tokens, contractRewardsModuleAddress, abiRewardsModule } = props;
+  const { payee, erc20Tokens, contractRewardsModuleAddress, abiRewardsModule, totalShares } = props;
   const { asPath } = useRouter();
   const { data, isError, isLoading } = useContractRead({
     addressOrName: contractRewardsModuleAddress,
@@ -32,7 +33,7 @@ export const RewardsWinner = (props: RewardsWinnerProps) => {
           {isError && "Something went wrong, please reload the page."}
           {data && (
             <>
-            <h2 className="font-bold text-lg mb-1">Rank {`${payee}`}: wins {`${data}`}% of all rewards</h2>
+            <h2 className="font-bold text-lg mb-1">Rank {`${payee}`}: wins {`${((data.toNumber() * 100) / totalShares).toFixed(2)}`}% of all rewards</h2>
             <ul>
               <li>
                 <PayeeNativeReward

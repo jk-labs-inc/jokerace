@@ -129,7 +129,7 @@ export function useDeployContest(form: any) {
           return sumRewards + reward.rewardTokenAmount;
         }, 0);
         const rewardsShares = values.rewards.map((reward: any) =>
-          Math.floor((reward.rewardTokenAmount / totalRewardsAmount) * 100),
+          reward.rewardTokenAmount * 100000000, // be able to handle decimals
         );
 
         // Deploy the rewards module
