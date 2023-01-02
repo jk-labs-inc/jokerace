@@ -26,21 +26,19 @@ import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFr
 import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward";
 import RewardsWinner from "@components/_pages/RewardsWinner";
 import { useRouter } from "next/router";
+import { isBefore } from "date-fns";
 interface PageProps {
   address: string;
 }
 //@ts-ignore
 const Page = (props: PageProps) => {
   const { address } = props;
-  const { isSuccess, isLoading, contestName, supportsRewardsModule } = useStoreContest(
-    state => ({
-      //@ts-ignore
+  const { votesClose, isSuccess, isLoading, contestName, supportsRewardsModule } = useStoreContest(
+    (state: any) => ({
+      votesClose: state.votesClose,
       isLoading: state.isLoading,
-      //@ts-ignore
       contestName: state.contestName,
-      //@ts-ignore
       isSuccess: state.isSuccess,
-      //@ts-ignore
       supportsRewardsModule: state.supportsRewardsModule,
     }),
     shallow,
@@ -85,6 +83,9 @@ const Page = (props: PageProps) => {
               {/* @ts-ignore */}
               {storeRewardsModule.isLoadingModuleSuccess && (
                 <>
+               {isBefore(new Date(), new Date(votesClose)) && <p className="animate-appear p-3 mt-4 rounded-md bg-primary-1 text-primary-10 border-primary-4 mb-5 text-sm font-bold">
+                 Contest must end to send rewards.
+                </p>}
                   <div className="animate-appear flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-i-8">
                     <p className="p-3 rounded-md overflow-hidden text-ellipsis border border-solid border-neutral-4 text-sm">
                       {/* @ts-ignore */}
