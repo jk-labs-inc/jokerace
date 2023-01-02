@@ -13,7 +13,7 @@ export const DialogModal = (props: DialogModalProps) => {
   const { isOpen, setIsOpen, title, children } = props;
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
-      <div className="fixed inset-0 bg-true-black bg-opacity-50" aria-hidden="true" />
+      <div className="fixed inset-0 bg-true-black bg-opacity-80" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         {/* Container to center the panel */}
