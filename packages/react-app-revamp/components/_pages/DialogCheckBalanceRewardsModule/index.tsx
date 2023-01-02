@@ -54,7 +54,7 @@ export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewards
               className="text-sm"
               htmlFor="inputRewardsModuleBalanceCheck"
             >
-              Paste the address of the ERC20 token you want to check the balance of
+             Don&apos;t see a token you expected? Add the address below to refresh balances on this page
             </FormField.Label>
             <FormField.Description id="inputRewardsModuleBalanceCheck-description">
               The Ethereum address of the ERC20 token you want to check the balance of
@@ -93,14 +93,14 @@ export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewards
               className="text-2xs pt-2 text-secondary-11 flex flex-wrap items-center"
             >
               <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
-              The token must implement the &nbsp;
-              <span className="font-mono normal-case">ERC20</span>&nbsp; interface <br />
+              The token must be a valid &nbsp;
+              <span className="font-mono normal-case">ERC20</span>&nbsp;  token on this chain<br />
               <a
                 target="_blank"
                 rel="nofollow noreferrer"
                 href="https://metamask.zendesk.com/hc/en-us/articles/360059683451-How-to-find-a-token-contract-address"
               >
-                Check this article to know out how to find a ERC20 token address
+               Check <span className="link">this article</span> on how to find token addresses
               </a>
             </p>
           )}
