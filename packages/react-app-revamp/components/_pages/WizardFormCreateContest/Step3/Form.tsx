@@ -1038,7 +1038,7 @@ export const Form = (props: FormProps) => {
             )}
         </div>
       </fieldset>
-      <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
+      <div className="pt-6 flex flex-col gap-8">
         <Button
           className="sm:w-fit-content"
           isLoading={isDeploying === true}
@@ -1065,10 +1065,13 @@ export const Form = (props: FormProps) => {
         >
           Create contest
         </Button>
-
-        <div className={button({ intent: "ghost-neutral" })} tabIndex={0} role="button" {...pressProps}>
-          Next
+        <div>
+        <span className="text-2xs text-neutral-9 font-medium pie-1ex">or</span> 
+        <div className={button({ intent: "ghost-neutral", scale: "xs",  class: "w-fit-content" })} tabIndex={0} role="button" {...pressProps}>
+          Skip
         </div>
+        </div>
+
       </div>
     </form>
   );
