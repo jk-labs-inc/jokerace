@@ -86,8 +86,8 @@ const Page = (props: PageProps) => {
                {isBefore(new Date(), new Date(votesClose)) && <p className="animate-appear p-3 mt-4 rounded-md bg-primary-1 text-primary-10 border-primary-4 mb-5 text-sm font-bold">
                  Contest must end to send rewards.
                 </p>}
-                  <div className="animate-appear flex flex-col space-y-2 md:flex-row md:items-center md:space-y-0 md:space-i-8">
-                    <p className="p-3 rounded-md overflow-hidden text-ellipsis border border-solid border-neutral-4 text-sm">
+                <div className="animate-appear flex flex-col gap-4 p-3 rounded-md border border-solid border-neutral-4 text-sm">
+                    <p className="overflow-hidden text-ellipsis">
                       {/* @ts-ignore */}
                       Rewards module contract address:{" "}
                       <a
@@ -101,31 +101,31 @@ const Page = (props: PageProps) => {
                         {storeRewardsModule.rewardsModule?.contractAddress}
                       </a>
                     </p>
-                    <div className="space-y-2 2xs:space-y-0 md:space-y-2 flex flex-col 2xs:justify-evenly 2xs:items-center 2xs:flex-row md:justify-start md:flex-col md:w-max-content shrink-0 md:my-auto">
+                    <div className="flex justify-center flex-wrap gap-3">
                       {/* @ts-ignore */}
                       {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && (
                         <>
                           <Button
-                            className="w-full 2xs:w-fit-content md:w-full"
+                            className="w-full 2xs:w-fit-content"
                             //@ts-ignore
                             onClick={() => storeFundRewardsModule.setIsModalOpen(true)}
                             scale="sm"
                             intent="primary-outline"
                           >
-                            💸 Add funds
+                            💸 Add funds <span className="sr-only xs:not-sr-only">to pool</span>
                           </Button>
                           <Button
-                            className="w-full 2xs:w-fit-content md:w-full"
+                            className="w-full 2xs:w-fit-content"
                             scale="sm"
                             intent="neutral-outline"
                             onClick={() => setIsWithdrawFundsDialogOpen(true)}
                           >
-                            🤑 Withdraw funds
+                            🤑 Withdraw funds <span className="sr-only xs:not-sr-only">from pool</span>
                           </Button>
                         </>
                       )}
                       <Button
-                        className="w-full 2xs:w-fit-content md:w-full"
+                        className="w-full 2xs:w-fit-content"
                         //@ts-ignore
                         onClick={() => setIsDialogCheckBalanceOpen(true)}
                         scale="sm"
@@ -134,6 +134,7 @@ const Page = (props: PageProps) => {
                         💰 Check balance
                       </Button>
                     </div>
+
                   </div>
                   <div className="flex flex-col animate-appear pt-4 space-y-8">
                     <ul className="space-y-6">
