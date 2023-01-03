@@ -794,7 +794,7 @@ export const Form = (props: FormProps) => {
             <FormRadioOption value={"erc20"}>Reward another token on {chain?.name}</FormRadioOption>
           </FormRadioGroup>
           {data()?.rewardsType !== "noRewards" && (
-            <div className="!mt-3 animate-appear flex flex-col space-y-6 xs:pis-6">
+            <div className="!mt-3 animate-appear max-w-[90%] 2xs:max-w-unset flex flex-col space-y-6 xs:pis-6">
               {data()?.rewardsType === "erc20" && (
                 <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
                   <FormField.InputField>
@@ -803,7 +803,7 @@ export const Form = (props: FormProps) => {
                       hasError={errors().rewardTokenAddress?.length > 0 === true}
                       htmlFor="rewardTokenAddress"
                     >
-                      Token address
+                      Token address:
                     </FormField.Label>
                     <FormField.Description id="input-rewardTokenAddress-description">
                       The Ethereum address of the ERC20 token you want to give as a reward.
@@ -872,7 +872,7 @@ export const Form = (props: FormProps) => {
                         hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
                         htmlFor="rewardTokenAmount"
                       >
-                        Winning rank that earns tokens
+                        Winning rank that earns tokens:
                       </FormField.Label>
                       <FormField.Description id="input-winningRank-description">
                         The rank eligible to earn a reward
@@ -886,7 +886,7 @@ export const Form = (props: FormProps) => {
                         min={1}
                         disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                         aria-invalid={errors().rewards?.[i]?.winningRank?.length > 0 === true ? "true" : "false"}
-                        className="max-w-full pie-9 w-auto 2xs:w-full"
+                        className="max-w-full pie-12 w-auto 2xs:w-full"
                         placeholder="1"
                         value={
                           data()?.rewards.filter((rewardToDelete: any) => rewardToDelete.key === reward.key)[0]
@@ -901,7 +901,7 @@ export const Form = (props: FormProps) => {
                           setData("rewards", rewards);
                         }}
                       />
-                      <span className="absolute inline-end-0 top-0 h-full bg-neutral-2 text-xs border border-neutral-4 rounded-ie-md px-2 py-1  text-neutral-11">{ordinalize(data()?.rewards[i].winningRank)?.suffix}</span>
+                      <span className="absolute w-10 inline-end-0 top-0 h-full bg-neutral-2 text-xs border border-neutral-4 rounded-ie-md  flex justify-center items-center text-neutral-11">{ordinalize(data()?.rewards[i].winningRank)?.suffix}</span>
                     </div>
                     </FormField.InputField>
                     <FormField.HelpBlock
@@ -994,7 +994,7 @@ export const Form = (props: FormProps) => {
           )}
           {["erc20", "native"].includes(data()?.rewardsType) &&
             data()?.rewards?.filter((reward: any) => isNaN(reward?.rewardTokenAmount))?.length === 0 && (
-              <div className="animate-appear mis-6 border-t border-solid border-neutral-4 pt-6 mt-3">
+              <div className="max-w-[90%] 2xs:max-w-unset animate-appear xs:mis-6 border-t border-solid border-neutral-4 pt-6 mt-3">
                 <p className="font-bold text-sm mb-2">
                   Total rewards:&nbsp;
                   <span className="text-primary-10 normal-case ">
