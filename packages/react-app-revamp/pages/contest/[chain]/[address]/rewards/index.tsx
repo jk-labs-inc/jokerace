@@ -126,15 +126,6 @@ const Page = (props: PageProps) => {
                           </Button>
                         </>
                       )}
-                      <Button
-                        className="w-full 2xs:w-fit-content"
-                        //@ts-ignore
-                        onClick={() => setIsDialogCheckBalanceOpen(true)}
-                        scale="sm"
-                        intent="ghost-neutral"
-                      >
-                        💰 Check balance
-                      </Button>
                     </div>
                   </div>
                   <div className="flex flex-col animate-appear pt-4 space-y-8">
@@ -161,6 +152,19 @@ const Page = (props: PageProps) => {
                         </li>
                       ))}
                     </ul>
+                  </div>
+                  <div className="pt-12 flex flex-col items-center gap-1 justify-center animate-appear">
+                    <p className="text-neutral-10 text-xs">Don&apos;t see a token you&apos;re expecting?</p>
+                  <Button
+                        className="w-full 2xs:w-fit-content"
+                        //@ts-ignore
+                        onClick={() => setIsDialogCheckBalanceOpen(true)}
+                        scale="sm"
+                        intent="ghost-neutral"
+                      >
+                        💰 Check it manually
+                      </Button>
+
                   </div>
                   <DialogCheckBalanceRewardsModule
                     isOpen={isDialogCheckBalanceOpen}
