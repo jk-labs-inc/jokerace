@@ -829,7 +829,8 @@ export const Form = (props: FormProps) => {
                     <div className="pt-2 flex items-center">
                       <CheckIcon className="mie-2 w-5 shrink-0 text-positive-11" />
                       <p className="text-neutral-11 text-2xs normal-case font-bold">
-                        {erc20TokenRewards?.data?.name} <span className="uppercase">(${erc20TokenRewards?.data?.symbol})</span>
+                        {erc20TokenRewards?.data?.name}{" "}
+                        <span className="uppercase">(${erc20TokenRewards?.data?.symbol})</span>
                       </p>
                     </div>
                   )}
@@ -846,7 +847,7 @@ export const Form = (props: FormProps) => {
                       className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center"
                     >
                       <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
-                      Must be a valid  &nbsp;
+                      Must be a valid &nbsp;
                       <span className="font-mono normal-case">ERC20</span>&nbsp; token on this chain
                     </p>
                   )}
@@ -963,27 +964,27 @@ export const Form = (props: FormProps) => {
                   </Button>
                 </div>
               ))}
-                <Button
-                  onClick={() => {
-                    setData("rewards", [
-                      ...data()?.rewards,
-                      {
-                        winningRank: ranks.filter(rank => {
-                          const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank);
-                          return !rewardRanks.includes(rank);
-                        })[0],
-                        rewardTokenAmount: 0,
-                      },
-                    ]);
-                  }}
-                  intent="primary-outline"
-                  scale="sm"
-                  type="button"
-                  className="w-full mx-auto xs:mx-0 xs:w-fit-content mt-4"
-                >
-                  <PlusIcon className="w-4 mie-2" />
-                  <span className="pie-2">Add another winning rank</span>
-                </Button>
+              <Button
+                onClick={() => {
+                  setData("rewards", [
+                    ...data()?.rewards,
+                    {
+                      winningRank: ranks.filter(rank => {
+                        const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank);
+                        return !rewardRanks.includes(rank);
+                      })[0],
+                      rewardTokenAmount: 0,
+                    },
+                  ]);
+                }}
+                intent="primary-outline"
+                scale="sm"
+                type="button"
+                className="w-full mx-auto xs:mx-0 xs:w-fit-content mt-4"
+              >
+                <PlusIcon className="w-4 mie-2" />
+                <span className="pie-2">Add another winning rank</span>
+              </Button>
             </div>
           )}
           {["erc20", "native"].includes(data()?.rewardsType) &&
@@ -1012,26 +1013,27 @@ export const Form = (props: FormProps) => {
                       : ((reward.rewardTokenAmount / totalRewardsAmount) * 100).toFixed(2);
                     return (
                       <li className="animate-appear text-neutral-12 text-xs" key={`rank-distribution-${reward.key}`}>
-                        Proposal with rank {reward.winningRank} will get{" "}
-                        {/* @ts-ignore */}
-                        <span className="font-bold">~{isNaN(rewardPercentage) ? 0 : rewardPercentage}%</span> of the rewards
+                        Proposal with rank {reward.winningRank} will get {/* @ts-ignore */}
+                        <span className="font-bold">~{isNaN(rewardPercentage) ? 0 : rewardPercentage}%</span> of the
+                        rewards
                       </li>
                     );
                   })}
                 </ul>
                 <p className="text-neutral-11 mt-2.5 text-2xs">
-                Please note: in the case of ties, rewards will be canceled for all affected ranks and returned to your account to handle manually.
+                  Please note: in the case of ties, rewards will be canceled for all affected ranks and returned to your
+                  account to handle manually.
                 </p>
                 <p className="mt-5 mb-1.5 text-neutral-11 text-xs">
-                In a moment, you’ll create a rewards pool to fund winners, proportionately to the % set above.
+                  In a moment, you’ll create a rewards pool to fund winners, proportionately to the % set above.
                 </p>
                 <p className="mb-1.5 text-neutral-11 text-xs">
-                After, you can fund the pool by sending it tokens (the pool&apos;s address is on the &quot;rewards&quot; page).
+                  After, you can fund the pool by sending it tokens (the pool&apos;s address is on the
+                  &quot;rewards&quot; page).
                 </p>
                 <p className="text-neutral-11 text-xs">
                   Post-contest, anyone can *execute* the transaction on the contest &quot;rewards&quot; page.
                 </p>
-
               </div>
             )}
         </div>
@@ -1064,12 +1066,16 @@ export const Form = (props: FormProps) => {
           Create contest
         </Button>
         <div>
-        <span className="text-2xs text-neutral-9 font-medium pie-1ex">or</span> 
-        <div className={button({ intent: "ghost-neutral", scale: "xs",  class: "w-fit-content" })} tabIndex={0} role="button" {...pressProps}>
-          Skip
+          <span className="text-2xs text-neutral-9 font-medium pie-1ex">or</span>
+          <div
+            className={button({ intent: "ghost-neutral", scale: "xs", class: "w-fit-content" })}
+            tabIndex={0}
+            role="button"
+            {...pressProps}
+          >
+            Skip
+          </div>
         </div>
-        </div>
-
       </div>
     </form>
   );
