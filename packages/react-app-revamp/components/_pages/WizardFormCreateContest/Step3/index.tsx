@@ -86,7 +86,6 @@ export const Step3 = () => {
     onSubmit: values => handleSubmitForm(values),
   });
   const { handleSubmitForm, stateContestDeployment } = useDeployContest(form);
-  console.log(willHaveRewardsModule);
 
   return (
     <>

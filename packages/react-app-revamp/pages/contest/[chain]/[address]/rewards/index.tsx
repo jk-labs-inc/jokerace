@@ -83,13 +83,15 @@ const Page = (props: PageProps) => {
               {/* @ts-ignore */}
               {storeRewardsModule.isLoadingModuleSuccess && (
                 <>
-               {isBefore(new Date(), new Date(votesClose)) && <p className="animate-appear p-3 mt-4 rounded-md bg-primary-1 text-primary-10 border-primary-4 mb-5 text-sm font-bold">
-                 Contest must end to send rewards.
-                </p>}
-                <div className="animate-appear flex flex-col gap-4 p-3 rounded-md border border-solid border-neutral-4 text-sm">
-                    <p className="overflow-hidden text-ellipsis">
+                  {isBefore(new Date(), new Date(votesClose)) && (
+                    <p className="animate-appear p-3 mt-4 rounded-md bg-primary-1 text-primary-10 border-primary-4 mb-5 text-sm font-bold">
+                      Contest must end to send rewards.
+                    </p>
+                  )}
+                  <div className="animate-appear flex flex-col gap-4 p-3 rounded-md border border-solid border-neutral-4 text-sm">
+                    <p className="overflow-hidden text-start sm:text-center text-ellipsis">
                       {/* @ts-ignore */}
-                      Rewards module contract address:{" "}
+                      Rewards module contract address:{" "}<br/>
                       <a
                         className="link"
                         //@ts-ignore
@@ -101,7 +103,7 @@ const Page = (props: PageProps) => {
                         {storeRewardsModule.rewardsModule?.contractAddress}
                       </a>
                     </p>
-                    <div className="flex justify-center flex-wrap gap-3">
+                    <div className="flex sm:justify-center flex-wrap gap-3">
                       {/* @ts-ignore */}
                       {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && (
                         <>
@@ -112,7 +114,7 @@ const Page = (props: PageProps) => {
                             scale="sm"
                             intent="primary-outline"
                           >
-                            💸 Add funds <span className="sr-only xs:not-sr-only">to pool</span>
+                            💸 Add funds&nbsp; <span className="sr-only xs:not-sr-only">to pool</span>
                           </Button>
                           <Button
                             className="w-full 2xs:w-fit-content"
@@ -120,7 +122,7 @@ const Page = (props: PageProps) => {
                             intent="neutral-outline"
                             onClick={() => setIsWithdrawFundsDialogOpen(true)}
                           >
-                            🤑 Withdraw funds <span className="sr-only xs:not-sr-only">from pool</span>
+                            🤑 Withdraw funds&nbsp; <span className="sr-only xs:not-sr-only">from pool</span>
                           </Button>
                         </>
                       )}
@@ -134,7 +136,6 @@ const Page = (props: PageProps) => {
                         💰 Check balance
                       </Button>
                     </div>
-
                   </div>
                   <div className="flex flex-col animate-appear pt-4 space-y-8">
                     <ul className="space-y-6">
@@ -196,25 +197,31 @@ const Page = (props: PageProps) => {
                       <Tab.Panels>
                         <Tab.Panel>
                           {/* @ts-ignore */}
-                          {storeRewardsModule?.rewardsModule?.balance?.length > 0 ? <ul className="flex flex-col items-center space-y-6">
-                            {/* @ts-ignore */}
-                            {storeRewardsModule?.rewardsModule?.balance?.map(token => (
-                              <li
-                                className="flex flex-col items-center"
-                                key={`withdraw-erc20-${token.contractAddress}`}
-                              >
-                                <ButtonWithdrawERC20Reward
-                                  //@ts-ignore
-                                  contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress}
-                                  //@ts-ignore
-                                  abiRewardsModule={storeRewardsModule.rewardsModule.abi}
-                                  tokenAddress={token.contractAddress}
-                                />
-                              </li>
-                            ))}
-                          </ul> : <>
-                              <p className="italic animate-appear text-neutral-11">No balance found for ERC20 tokens.</p>
-                          </>}
+                          {storeRewardsModule?.rewardsModule?.balance?.length > 0 ? (
+                            <ul className="flex flex-col items-center space-y-6">
+                              {/* @ts-ignore */}
+                              {storeRewardsModule?.rewardsModule?.balance?.map(token => (
+                                <li
+                                  className="flex flex-col items-center"
+                                  key={`withdraw-erc20-${token.contractAddress}`}
+                                >
+                                  <ButtonWithdrawERC20Reward
+                                    //@ts-ignore
+                                    contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress}
+                                    //@ts-ignore
+                                    abiRewardsModule={storeRewardsModule.rewardsModule.abi}
+                                    tokenAddress={token.contractAddress}
+                                  />
+                                </li>
+                              ))}
+                            </ul>
+                          ) : (
+                            <>
+                              <p className="italic animate-appear text-neutral-11">
+                                No balance found for ERC20 tokens.
+                              </p>
+                            </>
+                          )}
                         </Tab.Panel>
                         <Tab.Panel className="flex flex-col items-center">
                           <ButtonWithdrawNativeReward
