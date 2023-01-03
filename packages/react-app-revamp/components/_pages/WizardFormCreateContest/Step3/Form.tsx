@@ -14,6 +14,7 @@ import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
 import { useId } from "react";
 import { CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
+import ordinalize from "@helpers/ordinalize";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -876,6 +877,7 @@ export const Form = (props: FormProps) => {
                       <FormField.Description id="input-winningRank-description">
                         The rank eligible to earn a reward
                       </FormField.Description>
+                      <div className="relative flex">
                       <FormInput
                         required
                         scale="sm"
@@ -884,12 +886,13 @@ export const Form = (props: FormProps) => {
                         min={1}
                         disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
                         aria-invalid={errors().rewards?.[i]?.winningRank?.length > 0 === true ? "true" : "false"}
-                        className="max-w-full w-auto 2xs:w-full"
+                        className="max-w-full pie-9 w-auto 2xs:w-full"
                         placeholder="1"
                         value={
                           data()?.rewards.filter((rewardToDelete: any) => rewardToDelete.key === reward.key)[0]
                             ?.winningRank
                         }
+                        
                         hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
                         aria-describedby="input-winningRank-description input-winningRank-helpblock"
                         onChange={e => {
@@ -898,6 +901,8 @@ export const Form = (props: FormProps) => {
                           setData("rewards", rewards);
                         }}
                       />
+                      <span className="absolute inline-end-0 top-0 h-full bg-neutral-2 text-xs border border-neutral-4 rounded-ie-md px-2 py-1  text-neutral-11">{ordinalize(data()?.rewards[i].winningRank)?.suffix}</span>
+                    </div>
                     </FormField.InputField>
                     <FormField.HelpBlock
                       hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
