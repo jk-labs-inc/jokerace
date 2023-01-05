@@ -275,7 +275,7 @@ export function useContest() {
       setVotesOpen(new Date(parseInt(results[7]) * 1000));
       // We want to track VoteCast event only 1H before the end of the contest
       if (isBefore(new Date(), closingVoteDate)) {
-        if (differenceInHours(closingVoteDate, new Date()) <= 1) {
+        if (differenceInHours(closingVoteDate, new Date()) <= 48) {
           // If the difference between the closing date (end of votes) and now is <= to 1h
           // reflect this in the state
           setCanUpdateVotesInRealTime(true);
