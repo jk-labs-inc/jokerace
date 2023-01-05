@@ -1029,20 +1029,21 @@ export const Form = (props: FormProps) => {
                   Please note: in the case of ties, rewards will be canceled for all affected ranks and returned to your
                   account to handle manually.
                 </p>
-                <ul className="border-t border-neutral-4 list-disc pt-5 px-3 gap-1.5 flex flex-col text-xs text-neutral-12 mt-5">
-
-                <li >
-                  In a moment, you’ll create a rewards pool to fund winners, proportionately to the % set above.
-                </li>
-                <li >
-                  After, you can fund the pool by sending it tokens (the pool&apos;s address is on the
-                  &quot;rewards&quot; page).
-                </li>
-                <li>
-                  Post-contest, anyone can *execute* the transaction on the contest &quot;rewards&quot; page.
-                </li>
-                </ul>
-
+                <section className="border-t pt-5 mt-5 border-neutral-4 ">
+                  <h2 className="text-white text-xs font-semibold">Next steps:</h2>
+                  <ul className="list-disc px-3 gap-1.5flex flex-col text-xs text-neutral-12">
+                    <li>
+                      In a moment, you’ll create a rewards pool to fund winners, proportionately to the % set above.
+                    </li>
+                    <li >
+                      After, you can fund the pool by sending it tokens (the pool&apos;s address is on the
+                      &quot;rewards&quot; page).
+                    </li>
+                    <li>
+                      Post-contest, anyone can *execute* the transaction on the contest &quot;rewards&quot; page.
+                    </li>
+                  </ul>
+                </section>
               </div>
             )}
         </div>
