@@ -34,7 +34,7 @@ export const RewardsWinner = (props: RewardsWinnerProps) => {
           {isError && "Something went wrong, please reload the page."}
           {data && (
             <>
-            <h2 className="font-bold text-lg mb-1">{`${ordinalize(payee)?.label}`} place {`${payee}`}: wins {`${((data.toNumber() * 100) / totalShares).toFixed(2)}`}% of all rewards</h2>
+            <h2 className="font-bold text-lg mb-1">{`${ordinalize(payee)?.label}`} place: wins {`${((data.toNumber() * 100) / totalShares).toFixed(2)}`}% of all rewards</h2>
             <ul>
               <li>
                 <PayeeNativeReward
