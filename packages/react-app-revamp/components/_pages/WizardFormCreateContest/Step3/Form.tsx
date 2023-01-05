@@ -760,7 +760,7 @@ export const Form = (props: FormProps) => {
         </div>
       </fieldset>
 
-      <fieldset className="my-12">
+      <fieldset className="mt-12">
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
@@ -1043,7 +1043,7 @@ export const Form = (props: FormProps) => {
             )}
         </div>
       </fieldset>
-      <div className="pt-6 flex flex-col gap-8">
+      <div className="pt-8 md:pt-12 flex flex-col gap-8">
         <Button
           className="sm:w-fit-content"
           isLoading={isDeploying === true}
@@ -1073,7 +1073,7 @@ export const Form = (props: FormProps) => {
         <div>
           <span className="text-2xs text-neutral-9 font-medium pie-1ex">or</span>
           <div
-            className={button({ intent: "ghost-neutral", scale: "xs", class: "w-fit-content" })}
+            className={button({ intent: "ghost-neutral", scale: "xs", class: "opacity-75 hover:opacity-90 focus:opacity-100 w-fit-content" })}
             tabIndex={0}
             role="button"
             {...pressProps}
