@@ -1018,7 +1018,7 @@ export const Form = (props: FormProps) => {
                       : ((reward.rewardTokenAmount / totalRewardsAmount) * 100).toFixed(2);
                     return (
                       <li className="animate-appear text-neutral-12 text-xs" key={`rank-distribution-${reward.key}`}>
-                        Proposal with rank {reward.winningRank} will get {/* @ts-ignore */}
+                        {ordinalize(parseInt(reward.winningRank))?.label} place will get {/* @ts-ignore */}
                         <span className="font-bold">~{isNaN(rewardPercentage) ? 0 : rewardPercentage}%</span> of the
                         rewards
                       </li>
@@ -1026,8 +1026,7 @@ export const Form = (props: FormProps) => {
                   })}
                 </ul>
                 <p className="text-neutral-11 mt-2.5 text-xs">
-                  Please note: in the case of ties, rewards will be canceled for all affected ranks and returned to your
-                  account to handle manually.
+                  Please note: in the case of ties, rewards will be canceled for all affected ranks, so you can withdraw the money to your account to handle manually.
                 </p>
                 <section className="border-t pt-5 mt-5 border-neutral-4 ">
                   <h2 className="text-white text-xs font-semibold">Next steps:</h2>
