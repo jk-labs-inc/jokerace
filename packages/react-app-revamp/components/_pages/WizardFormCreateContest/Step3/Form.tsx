@@ -849,7 +849,7 @@ export const Form = (props: FormProps) => {
                     >
                       <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
                       Must be a valid &nbsp;
-                      <span className="font-mono normal-case">ERC20</span>&nbsp; token on this chain
+                      <span className="font-mono normal-case">ERC20</span>&nbsp; token on {chain?.name}
                     </p>
                   )}
                   <FormField.HelpBlock

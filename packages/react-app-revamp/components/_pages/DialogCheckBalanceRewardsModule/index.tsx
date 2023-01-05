@@ -5,7 +5,7 @@ import { chains } from "@config/wagmi";
 import { CheckIcon, ExclamationIcon, ShieldExclamationIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useBalance } from "wagmi";
+import { useBalance, useNetwork } from "wagmi";
 import { useStore as useStoreRewardsModule } from "@hooks/useRewardsModule/store";
 
 interface DialogCheckBalanceRewardsModuleProps {
@@ -17,7 +17,7 @@ export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewards
   const storeRewardsModule = useStoreRewardsModule();
   const { asPath } = useRouter();
   const [inputRewardsModuleBalanceCheck, setInputRewardsModuleBalanceCheck] = useState("");
-
+  const { chain } = useNetwork()
   const queryTokenBalance = useBalance({
     //@ts-ignore
     addressOrName: storeRewardsModule.rewardsModule?.contractAddress,
@@ -94,7 +94,7 @@ export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewards
             >
               <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
               The token must be a valid &nbsp;
-              <span className="font-mono normal-case">ERC20</span>&nbsp;  token on this chain<br />
+              <span className="font-mono normal-case">ERC20</span>&nbsp; token on {chain?.name}<br />
               <a
                 target="_blank"
                 rel="nofollow noreferrer"
