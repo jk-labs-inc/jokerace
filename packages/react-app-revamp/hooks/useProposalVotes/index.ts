@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
 import shallow from "zustand/shallow";
-import { chain as wagmiChain, useAccount } from "wagmi";
+import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
 import { getContract, watchContractEvent } from "@wagmi/core";
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
@@ -18,7 +18,7 @@ const VOTES_PER_PAGE = 5;
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
   const account = useAccount();
-  // const provider = useProvider();
+  const provider = useProvider();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
@@ -260,8 +260,27 @@ export function useProposalVotes(id: number | string) {
     }
   }, [canUpdateVotesInRealTime, contestStatus]);
 
+
+
   useEffect(() => {
     fetchProposalVotes();
+    const onVisibilityChangeHandler = () => {
+      if (document.visibilityState === 'hidden') {
+        provider.removeAllListeners()
+      } 
+    };
+
+    document.addEventListener(
+      'visibilitychange',
+      onVisibilityChangeHandler,
+    );
+
+    return () => {
+      document.removeEventListener(
+        'visibilitychange',
+        onVisibilityChangeHandler,
+      );
+    };
   }, []);
 
   return {

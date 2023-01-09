@@ -107,47 +107,47 @@ export function useContestEvents() {
 
   }, [canUpdateVotesInRealTime, contestStatus]);
 
-useEffect(() => {
-  watchContractEvent(
-    {
-      addressOrName: asPath.split("/")[3],
-      contractInterface: DeployedContestContract.abi,
-    },
-    "VoteCast",
-    (...args) => {
-      onVoteCast(args);
-    },
-  );
-
-  const onVisibilityChangeHandler = () => {
-    if (document.visibilityState === 'hidden') {
-
-      provider.removeAllListeners()
-
-    } else {
-      if (contestStatus === CONTEST_STATUS.VOTING_OPEN && canUpdateVotesInRealTime === true) {
-              provider.addListener( "VoteCast",
+  useEffect(() => {
+    watchContractEvent(
+      {
+        addressOrName: asPath.split("/")[3],
+        contractInterface: DeployedContestContract.abi,
+      },
+      "VoteCast",
       (...args) => {
         onVoteCast(args);
-      },)
+      },
+    );
 
+    const onVisibilityChangeHandler = () => {
+      if (document.visibilityState === 'hidden') {
+
+        provider.removeAllListeners()
+
+      } else {
+        if (contestStatus === CONTEST_STATUS.VOTING_OPEN && canUpdateVotesInRealTime === true) {
+                provider.addListener( "VoteCast",
+        (...args) => {
+          onVoteCast(args);
+        },)
+
+        }
       }
-    }
-};
+    };
 
-document.addEventListener(
-    'visibilitychange',
-    onVisibilityChangeHandler,
-);
-
-return () => {
-  document.removeEventListener(
+    document.addEventListener(
       'visibilitychange',
       onVisibilityChangeHandler,
-  );
-};
+    );
 
-}, [])
+    return () => {
+      document.removeEventListener(
+        'visibilitychange',
+        onVisibilityChangeHandler,
+      );
+    };
+
+  }, [])
   /*
   useContractEvent({
     addressOrName: asPath.split("/")[3],
