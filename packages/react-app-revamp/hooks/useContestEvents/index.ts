@@ -34,7 +34,6 @@ export function useContestEvents() {
    * @param args - Array of the following values: from, to, value, event|event[]
    */
   async function onVoteCast(args: Array<any>) {
-    console.log(new Date(), "vote cast event")
     try {
       const accountData = await getAccount();
       // if the connected wallet is the address that casted votes
@@ -88,7 +87,7 @@ export function useContestEvents() {
 
   useEffect(() => {
     if (canUpdateVotesInRealTime === false || contestStatus === CONTEST_STATUS.COMPLETED) {
-      provider.removeAllListeners("VoteCast")
+      provider.removeAllListeners()
 
     } else  {
       // Only watch VoteCast events when voting is open and we are <=1h before end of voting
@@ -121,11 +120,9 @@ useEffect(() => {
   );
 
   const onVisibilityChangeHandler = () => {
-    console.log("running", document.visibilityState, new Date())
     if (document.visibilityState === 'hidden') {
 
-      provider.removeAllListeners("VoteCast")
-
+      provider.removeAllListeners()
 
     } else {
       if (contestStatus === CONTEST_STATUS.VOTING_OPEN && canUpdateVotesInRealTime === true) {
