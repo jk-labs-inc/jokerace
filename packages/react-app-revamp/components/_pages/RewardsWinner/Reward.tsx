@@ -84,7 +84,7 @@ export const Reward = (props: RewardProps) => {
       {queryRankRewardsReleasable.data > 0 && parseFloat(queryTokenBalance?.data?.formatted) > 0 && (
         <div className="mb-2">
           <p className="animate-appear">
-            Available to reward: {queryRankRewardsReleasable.data}{" "}
+          waiting to be sent: {queryRankRewardsReleasable.data}{" "}
             <span className="normal-case">{queryTokenBalance?.data?.symbol}</span>
           </p>
         </div>
@@ -93,7 +93,7 @@ export const Reward = (props: RewardProps) => {
         <>
           {queryRankRewardsReleased?.data > 0 && (
             <p className="animate-appear mb-2">
-              Already rewarded: {queryRankRewardsReleased.data}{" "}
+              Already sent: {queryRankRewardsReleased.data}{" "}
               <span className="normal-case">{queryTokenBalance?.data?.symbol}</span>
             </p>
           )}

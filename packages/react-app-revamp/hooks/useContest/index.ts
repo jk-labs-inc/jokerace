@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useProvider } from "wagmi";
+import { useNetwork, useProvider } from "wagmi";
 import { fetchBlockNumber, fetchToken, getAccount, readContract, readContracts } from "@wagmi/core";
 import { chains } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
@@ -17,6 +17,7 @@ export function useContest() {
   const { indexContest } = useContestsIndex();
   const provider = useProvider();
   const { asPath } = useRouter();
+  const { chain } = useNetwork()
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
   );
@@ -120,7 +121,7 @@ export function useContest() {
    */
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
-    if (err.code === "CALL_EXCEPTION") toastMessage = "This contract doesn't exist on this chain.";
+    if (err.code === "CALL_EXCEPTION") toastMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
     toast.error(toastMessage);
   }
 
@@ -131,8 +132,8 @@ export function useContest() {
     setIsLoading(true);
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
-      toast.error("This contract doesn't exist on this chain.");
-      setIsError("This contract doesn't exist on this chain.");
+      toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+      setIsError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
       setIsSuccess(false);
       setCheckIfUserPassedSnapshotLoading(false);
       setIsListProposalsSuccess(false);
@@ -393,8 +394,8 @@ export function useContest() {
   async function checkCurrentUserAmountOfProposalTokens() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
-      toast.error("This contract doesn't exist on this chain.");
-      setIsError("This contract doesn't exist on this chain.");
+      toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+      setIsError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -438,8 +439,8 @@ export function useContest() {
   async function checkIfCurrentUserQualifyToVote() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
-      toast.error("This contract doesn't exist on this chain.");
-      setIsError("This contract doesn't exist on this chain.");
+      toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+      setIsError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -625,8 +626,8 @@ export function useContest() {
     try {
       const abi = await getContestContractVersion(address, chainName);
       if (abi === null) {
-        toast.error("This contract doesn't exist on this chain.");
-        setIsPageProposalsError("This contract doesn't exist on this chain.");
+        toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+        setIsPageProposalsError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
         setIsPageProposalsLoading(false);
         return;
       }
@@ -680,8 +681,8 @@ export function useContest() {
   async function updateCurrentUserVotes() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
-      toast.error("This contract doesn't exist on this chain.");
-      setIsError("This contract doesn't exist on this chain.");
+      toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+      setIsError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
