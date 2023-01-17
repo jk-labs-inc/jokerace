@@ -72,7 +72,7 @@ export const ButtonDownloadContestDataAsCSV = () => {
     return (
       <a 
         className={button({ intent: "primary-outline" })}
-        href={`https://ipfs.io/ipfs/${stateExportData.cid}/result_contest_${asPath.split("/")[3]}_${asPath.split("/")[2]}.csv`}
+        href={`https://${stateExportData.cid}.ipfs.w3s.link/result_contest_${asPath.split("/")[3]}_${asPath.split("/")[2]}.csv`}
         download
       >
         Download CSV file
@@ -95,9 +95,14 @@ export const ButtonDownloadContestDataAsCSV = () => {
   return (
     <>
       {(stateExportData.isLoading || !stateExportData.isReady) && (
-        <div className="animate-appear mb-5">
-          <Loader scale="component">{stateExportData.loadingMessage}</Loader>
-        </div>
+        <>
+          <p className='animate-appear p-3 mt-4 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4'>
+            Make sure to not leave this page until the export is complete.
+          </p>
+          <div className="animate-appear mb-5">
+            <Loader scale="component">{stateExportData.loadingMessage}</Loader>
+          </div>
+        </>
       )}
       {stateExportData.isSuccess ? (
         <div className="animate-appear">
