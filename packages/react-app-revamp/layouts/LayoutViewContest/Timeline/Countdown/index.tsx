@@ -50,8 +50,17 @@ export const Countdown = () => {
     if (contestStatus !== null) {
       if (
         !countdownUntilSubmissionsOpen.isCountdownRunning &&
+        (isBefore(new Date(), submissionsOpen) || isEqual(new Date(), submissionsOpen))
+      ) {
+        countdownUntilVotingOpen.setIsCountdownRunning(true);
+        setContestStatus(CONTEST_STATUS.SUBMISSIONS_NOT_OPEN);
+      }
+
+      if (
+        !countdownUntilSubmissionsOpen.isCountdownRunning &&
         !countdownUntilVotingOpen.isCountdownRunning &&
-        isBefore(new Date(), votesOpen)
+        isBefore(new Date(), votesOpen) &&
+        isAfter(new Date(), submissionsOpen)
       ) {
         countdownUntilVotingOpen.setIsCountdownRunning(true);
         setContestStatus(CONTEST_STATUS.SUBMISSIONS_OPEN);
