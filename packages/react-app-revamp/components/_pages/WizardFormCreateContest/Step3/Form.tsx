@@ -13,7 +13,7 @@ import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
 import { useId } from "react";
-import { CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
+import { CameraIcon, CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
 import ordinalize from "@helpers/ordinalize";
 interface FormProps {
   isDeploying: boolean;
@@ -152,6 +152,85 @@ export const Form = (props: FormProps) => {
               Please add a description to your contest.
             </FormField.HelpBlock>
           </FormField>
+          <FormField>
+              <FormField.InputField>
+                <div className="flex flex-col lg:justify-between lg:flex-row lg:space-i-6">
+                  <div>
+                    <FormField.Label
+                      hasError={errors()?.contestImageFile?.length ? true : false}
+                      htmlFor="contestImageFile"
+                    >
+                      Your contest image
+                    </FormField.Label>
+                    <FormField.Description id="input-contestImageFile-description">
+                      Click on the picture to upload an image from your files.
+                    </FormField.Description>
+                    <FormField.HelpBlock
+                      hasError={false}
+                      className="not-sr-only text-neutral-11 text-2xs"
+                      id="input-contestImageFile-helpblock"
+                    >
+                      Your image should have a 1:1 ratio with a recommended size of 1200px x 1200px.
+                    </FormField.HelpBlock>
+                  </div>
+                  <div className="mt-3 relative lg:mt-0">
+                    <div className="w-full lg:w-56 aspect-square rounded-md overflow-hidden relative bg-neutral-1">
+                      <input
+                        disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                        onChange={async (e) => {
+                          //@ts-ignore
+                          const src = URL.createObjectURL(e.target.files[0])
+                          //@ts-ignore
+                          setData('contestImageFile', e.target.files[0])
+                          setData('contestImageSrc', src)
+                        }}
+                        className="absolute w-full h-full block inset-0 z-30 cursor-pointer opacity-0"
+                        type="file"
+                        accept="image/*"
+                        name="contestImageFile"
+                        id="contestImageFile"
+                        required
+                        aria-describedby="input-contestImageFile-description input-contestImageFile-helpblock"
+                      />
+                      <div className="absolute w-full h-full rounded-md inset-0 z-20 bg-neutral-3 bg-opacity-20 flex items-center justify-center">
+                        <CameraIcon className="w-10 text-primary-10" />
+                      </div>
+
+                      {data()?.contestImageSrc && (
+                        <img
+                          alt=""
+                          loading="lazy"
+                          width="112"
+                          height="112"
+                          className="absolute w-full h-full object-cover block z-10 inset-0"
+                          src={
+                            !data()?.contestImageFile
+                              ? `https://ipfs.io/ipfs/${data()?.contestImageSrc}`
+                              : data()?.contestImageSrc
+                          }
+                        />
+                      )}
+                    </div>
+
+                    {data()?.contestImageSrc && (
+                      <Button
+                        disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                        type="button"
+                        className="mt-2 w-full"
+                        intent="ghost-negative"
+                        scale="xs"
+                        onClick={() => {
+                          setData('contestImageSrc')
+                          setData('contestImageFile')
+                        }}
+                      >
+                        Delete image
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </FormField.InputField>
+            </FormField>
 
           <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
             <FormField.InputField>

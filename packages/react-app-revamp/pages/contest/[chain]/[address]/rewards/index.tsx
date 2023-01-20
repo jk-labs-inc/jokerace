@@ -27,12 +27,17 @@ import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFro
 import RewardsWinner from "@components/_pages/RewardsWinner";
 import { useRouter } from "next/router";
 import { isBefore } from "date-fns";
+import getContestById from "@services/jokedao/supabase/getContestById";
 interface PageProps {
-  address: string;
+  address: string
+  chainName: string
+  data: {
+    title: string
+  }
 }
 //@ts-ignore
 const Page = (props: PageProps) => {
-  const { address } = props;
+  const { address, data, chainName } = props;
   const { votesClose, isSuccess, isLoading, contestName, supportsRewardsModule } = useStoreContest(
     (state: any) => ({
       votesClose: state.votesClose,
@@ -60,9 +65,20 @@ const Page = (props: PageProps) => {
   return (
     <>
       <Head>
-        <title>Contest {contestName ? contestName : ""} rewards - JokeDAO</title>
-        <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
+        <title>Rewards / {data?.title} - jokedao</title>
+        <meta name="description" content={`Participate to ${data?.title} on jokedao`} />
+        <meta property="og:title" content={`${data?.title} - jokedao 🃏`} />
+        <meta property='og:url'  content={`https://jokedao.io/contest/${chainName}/${address}`} />
+        <meta property="og:description" content={`Participate to ${data?.title} on jokedao`} />
+        <meta property="twitter:description" content={`Participate to ${data?.title} on jokedao`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:image" content="https://jokedao.io/card.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@jokedao_" />
+        <meta name="twitter:image" content="https://jokedao.io/card.png" />
       </Head>
+
       <h1 className="sr-only">Rewards of contest {contestName ? contestName : address} </h1>
       {!isLoading && isSuccess && (
         <>
@@ -264,14 +280,20 @@ export async function getStaticProps({ params }: any) {
   }
 
   try {
+    const { data } = await getContestById( {
+      contestId: address,
+      chainName: chain
+    })
     return {
       props: {
+        chainName: chain,
         address,
-      },
-    };
+        data
+      }
+    }
   } catch (error) {
-    console.error(error);
-    return { notFound: true };
+    console.error(error)
+    return { notFound: true }
   }
 }
 

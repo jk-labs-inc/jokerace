@@ -1,4 +1,4 @@
-import { object, string, number, boolean, array } from "zod";
+import { object, string, number, boolean, array, any } from "zod";
 import { isPast } from "date-fns";
 export interface DataStep3 {
   contestTitle: string;
@@ -23,6 +23,8 @@ export interface DataStep3 {
 }
 
 export const schema = object({
+  contestImageFile: any(),
+  contestImageSrc: string().optional(),
   contestTitle: string()
     .trim()
     .min(1),

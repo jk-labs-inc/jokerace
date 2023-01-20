@@ -1,5 +1,4 @@
 import shallow from 'zustand/shallow'
-import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { chains } from '@config/wagmi'
 import { useStore as useStoreContest } from '@hooks/useContest/store'
@@ -12,14 +11,19 @@ import { CONTEST_STATUS } from '@helpers/contestStatus'
 import type { NextPage } from 'next'
 import Button from '@components/Button'
 import isProposalDeleted from '@helpers/isProposalDeleted'
+import getContestById from '@services/jokedao/supabase/getContestById'
 
 interface PageProps {
-  address: string,
+  address: string
+  chain: string
   proposal: string
+  data: {
+    title: string
+  }
 }
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
-  const { query: { proposal, address }} = useRouter()
+  const { data, address, chain, proposal } = props
   const { checkIfUserPassedSnapshotLoading, didUserPassSnapshotAndCanVote, currentUserAvailableVotesAmount, listProposalsData, contestName, contestStatus } = useStoreContest(state =>  ({ 
     //@ts-ignore
     contestStatus: state.contestStatus,
@@ -57,8 +61,18 @@ const Page: NextPage = (props: PageProps) => {
   return (
     <>
       <Head>
-        <title>Proposal {proposal} - Contest {contestName ? contestName : address} - JokeDAO</title>
-        <meta name="description" content="@TODO: change this" />
+        <title>Proposal {proposal} / {data?.title} - jokedao</title>
+        <meta name="description" content={`Participate to ${data?.title} on jokedao`} />
+        <meta property="og:title" content={`${data?.title} - jokedao 🃏`} />
+        <meta property='og:url'  content={`https://jokedao.io/contest/${chain}/${address}/proposal/${proposal}`} />
+        <meta property="og:description" content={`Participate to ${data?.title} on jokedao`} />
+        <meta property="twitter:description" content={`Participate to ${data?.title} on jokedao`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:image" content="https://jokedao.io/card.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@jokedao_" />
+        <meta name="twitter:image" content="https://jokedao.io/card.png" />
       </Head>
     <h1 className='sr-only'>Proposal {proposal} - Contest {contestName ? contestName : address} </h1>
     {listProposalsData[proposal] && <div className='mt-6 animate-appear'>
@@ -93,19 +107,29 @@ const Page: NextPage = (props: PageProps) => {
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/
 
 export async function getStaticPaths() {
-  return { paths: [], fallback: true }
+  return { paths: [], fallback: true };
 }
 
 export async function getStaticProps({ params }: any) {
-  const { chain, address } = params
-  if (!REGEX_ETHEREUM_ADDRESS.test(address) || chains.filter(c => c.name.toLowerCase().replace(' ', '') === chain).length === 0 ) {
-    return { notFound: true }
+  const { chain, address, proposal } = params;
+  if (
+    !REGEX_ETHEREUM_ADDRESS.test(address) ||
+    chains.filter(c => c.name.toLowerCase().replace(" ", "") === chain).length === 0
+  ) {
+    return { notFound: true };
   }
 
   try {
+    const { data } = await getContestById( {
+      contestId: address,
+      chainName: chain
+    })
     return {
       props: {
+        proposal,
+        chain,
         address,
+        data
       }
     }
   } catch (error) {
@@ -113,6 +137,7 @@ export async function getStaticProps({ params }: any) {
     return { notFound: true }
   }
 }
+
 //@ts-ignore
 Page.getLayout = getLayout
 

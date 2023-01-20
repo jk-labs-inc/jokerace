@@ -79,8 +79,19 @@ const Page: NextPage = (props) => {
   return (
     <>
       <Head>
-        <title>Live contests - JokeDAO</title>
-        <meta name="description" content="Live contests on JokeDAO." />
+        <title>Live contests - jokedao</title>
+        <meta name="description" content="Check live contests on jokedao, the open-source collaborative decision-making platform." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://jokedao.io/contests/live" />
+        <meta property="og:title" content="Live contests on jokedao 🃏" />
+        <meta property="og:description" content="Check live contests on jokedao, the open-source collaborative decision-making platform." />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:image" content="https://jokedao.io/card.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@jokedao_" />
+        <meta name="twitter:description" content="Check live contests on jokedao, the open-source collaborative decision-making platform." />
+        <meta name="twitter:image" content="https://jokedao.io/card.png" />
+
       </Head>
 
      <div className="container mx-auto pt-10">

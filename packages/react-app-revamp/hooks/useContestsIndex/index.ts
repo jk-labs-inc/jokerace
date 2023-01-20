@@ -28,6 +28,7 @@ export function useContestsIndex() {
             token_address: values.votingTokenAddress,
             token_symbol: tokenRawData.symbol,
             network_name: values.networkName,
+            cover_image_src_uri: values?.coverSrc ?? null,
           },
         ]);
         if (error) {

@@ -4,14 +4,18 @@ import { chains } from '@config/wagmi'
 import { getLayout } from '@layouts/LayoutViewContest'
 import type { NextPage } from 'next'
 import { useStore } from '@hooks/useContest/store'
-import ButtonDownloadContestDataAsCSV from '@components/_pages/ButtonDownloadContestDataAsCSV'
+import getContestById from '@services/jokedao/supabase/getContestById'
 
 interface PageProps {
-  address: string,
+  address: string
+  chain: string
+  data: {
+    title: string
+  }
 }
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
-  const { address } = props
+  const { address, chain, data } = props
   const { isSuccess, isLoading, contestName } = useStore(state =>  ({ 
     //@ts-ignore
     isLoading: state.isLoading,
@@ -23,11 +27,21 @@ const Page: NextPage = (props: PageProps) => {
   return (
     <>
       <Head>
-        <title>Contest {contestName ? contestName : ""} rules - JokeDAO</title>
-        <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
+        <title>Export data / {data?.title} - jokedao</title>
+        <meta name="description" content={`Export the proposals data of ${data?.title} on jokedao`} />
+        <meta property="og:title" content={`Export data / ${data?.title} - jokedao 🃏`} />
+        <meta property='og:url'  content={`https://jokedao.io/contest/${chain}/${address}`} />
+        <meta property="og:description" content={`Export the proposals data of"${data?.title}" on jokedao`} />
+        <meta property="twitter:description" content={`Export the proposals data of"${data?.title}" on jokedao`} />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="en_US" />
+        <meta property="og:image" content="https://jokedao.io/card.png" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@jokedao_" />
+        <meta name="twitter:image" content="https://jokedao.io/card.png" />
       </Head>
-    <h1 className='sr-only'>Rules of contest {contestName ? contestName : address} </h1>
-    {!isLoading  && isSuccess && <div className='animate-appear mt-4'>
+      <h1 className='sr-only'>Rules of contest {contestName ? contestName : address} </h1>
+      {!isLoading  && isSuccess && <div className='animate-appear mt-4'>
         <p>
           This page is currently under development.
         </p>
@@ -55,9 +69,15 @@ export async function getStaticProps({ params }: any) {
   }
 
   try {
+    const { data } = await getContestById( {
+      contestId: address,
+      chainName: chain
+    })
     return {
       props: {
+        chain,
         address,
+        data
       }
     }
   } catch (error) {
@@ -65,6 +85,7 @@ export async function getStaticProps({ params }: any) {
     return { notFound: true }
   }
 }
+
 //@ts-ignore
 Page.getLayout = getLayout
 

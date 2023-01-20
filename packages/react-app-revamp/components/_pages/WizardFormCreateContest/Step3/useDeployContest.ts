@@ -9,9 +9,11 @@ import { useContractFactory } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
-
 import { useStore } from "../store";
 import useContestsIndex from "@hooks/useContestsIndex";
+import { useMutation } from "@tanstack/react-query";
+import { makeStorageClient } from "@config/web3storage";
+
 export function useDeployContest(form: any) {
   const { indexContest } = useContestsIndex();
   const stateContestDeployment = useContractFactory();
@@ -47,6 +49,22 @@ export function useDeployContest(form: any) {
     }),
     shallow,
   );
+
+/**
+   * Upload our image file to IPFS (using web3 storage)
+   */
+const mutationUploadImageFile = useMutation(async (file) => {
+  try {
+    const client = makeStorageClient()
+    //@ts-ignore
+    const cid = await client.put([file])
+    return cid
+  } catch (e) {
+    console.error(e)
+    //@ts-ignore
+    toast.error(e?.message ?? e)
+  }
+})
 
   async function handleSubmitForm(values: any) {
     const hasRewards = ["erc20", "native"].includes(values.rewardsType);
@@ -174,6 +192,7 @@ export function useDeployContest(form: any) {
           hash: receiptSetContestRewardsModule.transactionHash,
         });
       }
+      console.log(values?.contestImageFile)
 
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
@@ -181,10 +200,13 @@ export function useDeployContest(form: any) {
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
         process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
       ) {
+        let cid = null
+        if(values?.contestImageFile && process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN && process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN !== "") cid = await mutationUploadImageFile.mutateAsync(values?.contestImageFile)  
         indexContest({
           ...values,
           contractAddress: contractContest.address,
           networkName: chain?.name.toLowerCase().replace(" ", ""),
+          coverSrc: cid !== null ? `ipfs://${cid}/${values?.contestImageFile?.name}` : cid,
         });
       }
 
