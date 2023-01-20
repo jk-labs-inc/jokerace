@@ -58,11 +58,7 @@ const Page: NextPage = (props: PageProps) => {
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/
 
-export async function getStaticPaths() {
-  return { paths: [], fallback: true }
-}
-
-export async function getStaticProps({ params }: any) {
+export async function getServerSideProps({ params }: any) {
   const { chain, address } = params
   if (!REGEX_ETHEREUM_ADDRESS.test(address) || chains.filter(c => c.name.toLowerCase().replace(' ', '') === chain).length === 0 ) {
     return { notFound: true }

@@ -25,7 +25,7 @@ const queryClient = new QueryClient(
 
 function MyApp({ Component, pageProps }: AppProps) {
   //@ts-ignore
-  const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase>
+  const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase {...pageProps}>
       {page}
     </LayoutBase>)
 
@@ -49,7 +49,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         theme={jokeDAOTheme}
       >
         <QueryClientProvider client={queryClient}>
-        {getLayout(<Component {...pageProps} />)}
+        {getLayout(<Component />, pageProps)}
         </QueryClientProvider>
         {/* @ts-ignore */}
         <Toaster position="bottom-right" toastOptions={toastOptions} />

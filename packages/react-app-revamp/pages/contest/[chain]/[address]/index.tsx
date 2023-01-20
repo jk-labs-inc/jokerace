@@ -1,5 +1,4 @@
 import shallow from 'zustand/shallow'
-import Head from 'next/head'
 import { chains } from '@config/wagmi'
 import { getLayout } from '@layouts/LayoutViewContest'
 import type { NextPage } from 'next'
@@ -27,20 +26,6 @@ const Page: NextPage = (props: PageProps) => {
    }), shallow);
   return (
     <>
-      <Head>
-        <title>{data?.title} - jokedao</title>
-        <meta name="description" content={`Participate to "${data?.title}" on jokedao`} />
-        <meta property="og:title" content={`${data?.title} - jokedao 🃏`} />
-        <meta property='og:url'  content={`https://jokedao.io/contest/${chain}/${address}`} />
-        <meta property="og:description" content={`Participate to "${data?.title}" on jokedao`} />
-        <meta property="twitter:description" content={`Participate to "${data?.title}" on jokedao`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:image" content={data?.cover_image_src_uri === null ? "https://jokedao.io/card.png" : data?.cover_image_src_uri?.replace('ipfs://', 'https://ipfs.io/ipfs/')} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@jokedao_" />
-        <meta name="twitter:image" content={data?.cover_image_src_uri === null ? "https://jokedao.io/card.png" : data?.cover_image_src_uri?.replace('ipfs://', 'https://ipfs.io/ipfs/')} />
-      </Head>
     <h1 className='sr-only'>Contest {contestName ? contestName : address} </h1>
     {!isLoading && !isListProposalsLoading && isSuccess && isListProposalsSuccess && <div className='animate-appear mt-8'>
       <ListProposals />

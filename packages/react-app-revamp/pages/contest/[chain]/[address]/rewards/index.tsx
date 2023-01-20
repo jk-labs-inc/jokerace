@@ -1,5 +1,4 @@
 import shallow from "zustand/shallow";
-import Head from "next/head";
 import { Tab } from "@headlessui/react";
 import { chains } from "@config/wagmi";
 import { getLayout as getLayoutContest } from "@layouts/LayoutViewContest";
@@ -64,21 +63,6 @@ const Page = (props: PageProps) => {
 
   return (
     <>
-      <Head>
-        <title>Rewards / {data?.title} - jokedao</title>
-        <meta name="description" content={`Participate to ${data?.title} on jokedao`} />
-        <meta property="og:title" content={`${data?.title} - jokedao 🃏`} />
-        <meta property='og:url'  content={`https://jokedao.io/contest/${chainName}/${address}`} />
-        <meta property="og:description" content={`Participate to ${data?.title} on jokedao`} />
-        <meta property="twitter:description" content={`Participate to ${data?.title} on jokedao`} />
-        <meta property="og:type" content="website" />
-        <meta property="og:locale" content="en_US" />
-        <meta property="og:image" content="https://jokedao.io/card.png" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@jokedao_" />
-        <meta name="twitter:image" content="https://jokedao.io/card.png" />
-      </Head>
-
       <h1 className="sr-only">Rewards of contest {contestName ? contestName : address} </h1>
       {!isLoading && isSuccess && (
         <>
@@ -266,11 +250,7 @@ const Page = (props: PageProps) => {
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
-export async function getStaticPaths() {
-  return { paths: [], fallback: true };
-}
-
-export async function getStaticProps({ params }: any) {
+export async function getServerSideProps({ params }: any) {
   const { chain, address } = params;
   if (
     !REGEX_ETHEREUM_ADDRESS.test(address) ||
@@ -297,11 +277,12 @@ export async function getStaticProps({ params }: any) {
   }
 }
 
-export const getLayout = (page: any) => {
+export const getLayout = (page: any, pageProps: any) => {
   return getLayoutContest(
     <ProviderRewardsModule createStore={createStoreRewardsModule}>
       <ProviderFundRewardsModule createStore={createStoreFundRewardsModule}>{page}</ProviderFundRewardsModule>
     </ProviderRewardsModule>,
+    pageProps
   );
 };
 //@ts-ignore
