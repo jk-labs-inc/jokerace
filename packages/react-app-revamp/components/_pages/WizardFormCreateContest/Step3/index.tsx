@@ -232,7 +232,7 @@ export const Step3 = () => {
                       chain: contestDeployedToChain?.name.toLowerCase().replace(" ", ""),
                       address: dataDeployContest?.address,
                       tokenRewardsAddress: dataContestRewardsModule.tokenRewardsAddress,
-                      totalRewards: dataContestRewardsModule.rewardsTotalAmount,
+                      totalRewards: 0,
                     },
                   }}
                 >

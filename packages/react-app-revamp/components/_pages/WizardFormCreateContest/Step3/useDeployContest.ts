@@ -125,11 +125,8 @@ export function useDeployContest(form: any) {
           signer.data,
         );
         const rewardsRanks = values.rewards.map((reward: any) => parseInt(reward.winningRank));
-        const totalRewardsAmount = values.rewards.reduce((sumRewards: number, reward: any) => {
-          return sumRewards + reward.rewardTokenAmount;
-        }, 0);
         const rewardsShares = values.rewards.map(
-          (reward: any) => reward.rewardTokenAmount * 100000000, // be able to handle decimals
+          (reward: any) => reward.rewardPercentageAmount
         );
 
         // Deploy the rewards module
@@ -170,7 +167,6 @@ export function useDeployContest(form: any) {
         setContestRewardsModule({
           rewardsModuleAddress: contractRewardsModule.address,
           tokenRewardsAddress: values.rewardsType === "erc20" ? values?.rewardTokenAddress : "native",
-          rewardsTotalAmount: totalRewardsAmount,
           hash: receiptSetContestRewardsModule.transactionHash,
         });
       }

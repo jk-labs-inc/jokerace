@@ -56,7 +56,7 @@ export const schema = object({
     .or(string().max(0)),
   rewards: object({
     winningRank: number().positive(),
-    rewardTokenAmount: number().positive(),
+    rewardPercentageAmount: number().positive(),
   })
     .array()
     .optional(),
