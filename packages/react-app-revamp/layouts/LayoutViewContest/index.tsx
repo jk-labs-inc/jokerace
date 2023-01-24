@@ -57,10 +57,11 @@ import DialogModalDeleteProposal from "@components/_pages/DialogModalDeletePropo
 import { switchNetwork } from "@wagmi/core";
 import { ErrorBoundary } from "react-error-boundary";
 import EtheuremAddress from "@components/EtheuremAddress";
+import { RefreshIcon } from "@heroicons/react/outline";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
-  const { query, asPath, pathname, push } = useRouter();
+  const { query, asPath, pathname, push, reload } = useRouter();
   const account = useAccount();
   const { chain } = useNetwork();
 
@@ -127,8 +128,8 @@ const LayoutViewContest = (props: any) => {
   const stateSubmitProposal = useStoreSubmitProposal();
   const stateCastVotes = useStoreCastVotes();
   const stateDeleteProposasl = useStoreDeleteProposal();
+  const { displayReloadBanner } = useContestEvents();
 
-  useContestEvents();
   useEffect(() => {
     fetchContestInfo();
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
@@ -228,6 +229,7 @@ const LayoutViewContest = (props: any) => {
               </p>
             </div>
           )}
+
         <div
           className={`md:pt-5 md:pb-20 flex flex-col ${
             pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
@@ -286,119 +288,135 @@ const LayoutViewContest = (props: any) => {
               )}
 
               {isSuccess && isError === null && !isLoading && (
-                <div className="animate-appear pt-3 md:pt-0">
-                  {pathname === ROUTE_CONTEST_PROPOSAL && (
-                    <div>
-                      <Link
-                        href={{
-                          pathname: ROUTE_VIEW_CONTEST,
-                          //@ts-ignore
-                          query: {
-                            chain: query.chain,
-                            address: query.address,
-                          },
-                        }}
-                      >
-                        <a className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs">
-                          <ArrowLeftIcon className="mie-1 w-4" />
-                          Back to contest
-                        </a>
-                      </Link>
+                <>
+                  {displayReloadBanner === true && (
+                    <div className="mt-4 animate-appear justify-center xs:justify-between items-center p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-wrap gap-y-3 gap-x-6 text-sm font-bold">
+                      <p className="text-center">Refresh the page to see the updated votes.</p>
+                      <Button intent="primary-outline" scale="sm" onClick={() => reload()}>
+                        <RefreshIcon className="mie-1ex w-4" />
+                        Refresh
+                      </Button>
                     </div>
                   )}
-                  <h2
-                    className={`flex flex-wrap items-baseline text-neutral-11 font-bold ${
-                      contestPrompt ? "mb-3" : "mb-6"
-                    }`}
-                  >
-                    <span className="uppercase tracking-wide pie-1ex">{contestName}</span>{" "}
-                    <span className="text-xs overflow-hidden text-neutral-8 text-ellipsis">
-                      by &nbsp;
-                      <EtheuremAddress
-                        withHyphen={false}
-                        ethereumAddress={contestAuthor}
-                        shortenOnFallback={false}
-                        displayLensProfile={false}
+                  <div className="animate-appear pt-3 md:pt-0">
+                    {pathname === ROUTE_CONTEST_PROPOSAL && (
+                      <div>
+                        <Link
+                          href={{
+                            pathname: ROUTE_VIEW_CONTEST,
+                            //@ts-ignore
+                            query: {
+                              chain: query.chain,
+                              address: query.address,
+                            },
+                          }}
+                        >
+                          <a className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs">
+                            <ArrowLeftIcon className="mie-1 w-4" />
+                            Back to contest
+                          </a>
+                        </Link>
+                      </div>
+                    )}
+
+                    <h2
+                      className={`flex flex-wrap items-baseline text-neutral-11 font-bold ${
+                        contestPrompt ? "mb-3" : "mb-6"
+                      }`}
+                    >
+                      <span className="uppercase tracking-wide pie-1ex">{contestName}</span>{" "}
+                      <span className="text-xs overflow-hidden text-neutral-8 text-ellipsis">
+                        by &nbsp;
+                        <EtheuremAddress
+                          withHyphen={false}
+                          ethereumAddress={contestAuthor}
+                          shortenOnFallback={false}
+                          displayLensProfile={false}
+                        />
+                      </span>
+                    </h2>
+
+                    {contestPrompt && !pathname.includes(ROUTE_VIEW_CONTEST_REWARDS) && (
+                      <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
+                        <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
+                      </p>
+                    )}
+
+                    {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
+                      <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
+                        <p>Snapshot ongoing, voting will be open in 30sec-1min, please wait... </p>
+                      </div>
+                    )}
+
+                    {snapshotTaken &&
+                      !checkIfUserPassedSnapshotLoading &&
+                      !didUserPassSnapshotAndCanVote &&
+                      contestStatus === CONTEST_STATUS.VOTING_OPEN &&
+                      ![ROUTE_VIEW_CONTEST_RULES, ROUTE_VIEW_CONTEST_EXPORT_DATA].includes(pathname) && (
+                        <section className="animate-appear">
+                          <p className="mt-4 p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
+                            Too bad, your wallet didn&apos;t qualify to vote.
+                          </p>
+                        </section>
+                      )}
+
+                    {children}
+
+                    <DialogModal
+                      isOpen={isTimelineModalOpen}
+                      setIsOpen={setIsTimelineModalOpen}
+                      title="Contest timeline"
+                    >
+                      {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
+                        <>
+                          <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
+                          {account?.address && (
+                            <div className="mb-4">
+                              <VotingToken />
+                            </div>
+                          )}
+                          <Timeline />
+                        </>
+                      )}
+                    </DialogModal>
+                    {!isLoading &&
+                      isSuccess &&
+                      chain?.id === chainId &&
+                      isDate(submissionsOpen) &&
+                      isAfter(new Date(), submissionsOpen) &&
+                      isDate(votesOpen) &&
+                      isBefore(new Date(), votesOpen) && (
+                        <DialogModalSendProposal
+                          /* @ts-ignore */
+                          isOpen={stateSubmitProposal.isModalOpen}
+                          /* @ts-ignore */
+                          setIsOpen={stateSubmitProposal.setIsModalOpen}
+                        />
+                      )}
+                    {!isLoading && isSuccess && chain?.id === chainId && (
+                      <DialogModalDeleteProposal
+                        /* @ts-ignore */
+                        isOpen={stateDeleteProposasl.isModalOpen}
+                        /* @ts-ignore */
+                        setIsOpen={stateDeleteProposasl.setIsModalOpen}
                       />
-                    </span>
-                  </h2>
-
-                  {contestPrompt && !pathname.includes(ROUTE_VIEW_CONTEST_REWARDS) && (
-                    <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
-                      <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
-                    </p>
-                  )}
-
-                  {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
-                    <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
-                      <p>Snapshot ongoing, voting will be open in 30sec-1min, please wait... </p>
-                    </div>
-                  )}
-
-                  {snapshotTaken &&
-                    !checkIfUserPassedSnapshotLoading &&
-                    !didUserPassSnapshotAndCanVote &&
-                    contestStatus === CONTEST_STATUS.VOTING_OPEN &&
-                    ![ROUTE_VIEW_CONTEST_RULES, ROUTE_VIEW_CONTEST_EXPORT_DATA].includes(pathname) && (
-                      <section className="animate-appear">
-                        <p className="mt-4 p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
-                          Too bad, your wallet didn&apos;t qualify to vote.
-                        </p>
-                      </section>
                     )}
-
-                  {children}
-
-                  <DialogModal isOpen={isTimelineModalOpen} setIsOpen={setIsTimelineModalOpen} title="Contest timeline">
-                    {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
-                      <>
-                        <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
-                        {account?.address && (
-                          <div className="mb-4">
-                            <VotingToken />
-                          </div>
-                        )}
-                        <Timeline />
-                      </>
-                    )}
-                  </DialogModal>
-                  {!isLoading &&
-                    isSuccess &&
-                    chain?.id === chainId &&
-                    isDate(submissionsOpen) &&
-                    isAfter(new Date(), submissionsOpen) &&
-                    isDate(votesOpen) &&
-                    isBefore(new Date(), votesOpen) && (
-                      <DialogModalSendProposal
-                        /* @ts-ignore */
-                        isOpen={stateSubmitProposal.isModalOpen}
-                        /* @ts-ignore */
-                        setIsOpen={stateSubmitProposal.setIsModalOpen}
-                      />
-                    )}
-                  {!isLoading && isSuccess && chain?.id === chainId && (
-                    <DialogModalDeleteProposal
-                      /* @ts-ignore */
-                      isOpen={stateDeleteProposasl.isModalOpen}
-                      /* @ts-ignore */
-                      setIsOpen={stateDeleteProposasl.setIsModalOpen}
-                    />
-                  )}
-                  {!isLoading &&
-                    isSuccess &&
-                    chain?.id === chainId &&
-                    isDate(votesOpen) &&
-                    isAfter(new Date(), votesOpen) &&
-                    isDate(votesClose) &&
-                    isBefore(new Date(), votesClose) && (
-                      <DialogModalVoteForProposal
-                        /* @ts-ignore */
-                        isOpen={stateCastVotes.isModalOpen}
-                        /* @ts-ignore */
-                        setIsOpen={stateCastVotes.setIsModalOpen}
-                      />
-                    )}
-                </div>
+                    {!isLoading &&
+                      isSuccess &&
+                      chain?.id === chainId &&
+                      isDate(votesOpen) &&
+                      isAfter(new Date(), votesOpen) &&
+                      isDate(votesClose) &&
+                      isBefore(new Date(), votesClose) && (
+                        <DialogModalVoteForProposal
+                          /* @ts-ignore */
+                          isOpen={stateCastVotes.isModalOpen}
+                          /* @ts-ignore */
+                          setIsOpen={stateCastVotes.setIsModalOpen}
+                        />
+                      )}
+                  </div>
+                </>
               )}
             </>
           }

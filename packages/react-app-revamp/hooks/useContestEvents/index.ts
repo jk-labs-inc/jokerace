@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useStore as useStoreContest } from "../useContest/store";
 import useContest from "@hooks/useContest";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useProvider } from "wagmi";
 /*
@@ -14,7 +14,7 @@ import { useStore as useStoreSubmitProposal } from "../useSubmitProposal/store";
 
 export function useContestEvents() {
   const { asPath } = useRouter();
-  const provider = useProvider()
+  const provider = useProvider();
   // const storeSubmitProposal = useStoreSubmitProposal();
   const {
     //@ts-ignore
@@ -29,6 +29,9 @@ export function useContestEvents() {
     canUpdateVotesInRealTime,
   } = useStoreContest();
   const { updateCurrentUserVotes } = useContest();
+  const [displayReloadBanner, setDisplayReloadBanner] = useState(false);
+  const contestStatusRef = useRef(contestStatus);
+
   /**
    * Callback function triggered on "VoteCast" event
    * @param args - Array of the following values: from, to, value, event|event[]
@@ -86,10 +89,11 @@ export function useContestEvents() {
   }
 
   useEffect(() => {
+    contestStatusRef.current = contestStatus;
     if (canUpdateVotesInRealTime === false || contestStatus === CONTEST_STATUS.COMPLETED) {
-      provider.removeAllListeners()
-
-    } else  {
+      provider.removeAllListeners();
+      setDisplayReloadBanner(false);
+    } else {
       // Only watch VoteCast events when voting is open and we are <=1h before end of voting
       if (contestStatus === CONTEST_STATUS.VOTING_OPEN && canUpdateVotesInRealTime === true) {
         watchContractEvent(
@@ -104,9 +108,20 @@ export function useContestEvents() {
         );
       }
     }
-
   }, [canUpdateVotesInRealTime, contestStatus]);
 
+  function onVisibilityChangeHandler() {
+    if (document.visibilityState === "hidden") {
+      provider.removeAllListeners();
+      if (contestStatusRef.current === CONTEST_STATUS.VOTING_OPEN) setDisplayReloadBanner(true);
+    } else {
+      if (contestStatusRef.current === CONTEST_STATUS.VOTING_OPEN && canUpdateVotesInRealTime === true) {
+        provider.addListener("VoteCast", (...args) => {
+          onVoteCast(args);
+        });
+      }
+    }
+  }
   useEffect(() => {
     watchContractEvent(
       {
@@ -119,35 +134,12 @@ export function useContestEvents() {
       },
     );
 
-    const onVisibilityChangeHandler = () => {
-      if (document.visibilityState === 'hidden') {
-
-        provider.removeAllListeners()
-
-      } else {
-        if (contestStatus === CONTEST_STATUS.VOTING_OPEN && canUpdateVotesInRealTime === true) {
-                provider.addListener( "VoteCast",
-        (...args) => {
-          onVoteCast(args);
-        },)
-
-        }
-      }
-    };
-
-    document.addEventListener(
-      'visibilitychange',
-      onVisibilityChangeHandler,
-    );
-
+    document.addEventListener("visibilitychange", onVisibilityChangeHandler);
     return () => {
-      document.removeEventListener(
-        'visibilitychange',
-        onVisibilityChangeHandler,
-      );
+      document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
     };
+  }, []);
 
-  }, [])
   /*
   useContractEvent({
     addressOrName: asPath.split("/")[3],
@@ -200,6 +192,9 @@ export function useContestEvents() {
     }
   }
   */
+  return {
+    displayReloadBanner,
+  };
 }
 
 export default useContestEvents;
