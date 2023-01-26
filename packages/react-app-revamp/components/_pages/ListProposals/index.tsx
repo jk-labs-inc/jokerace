@@ -167,10 +167,10 @@ export const ListProposals = () => {
               .map((id, i) => {
                 return (
                   <li
-                    className={`${styles.listElement} animate-appear px-5 pt-5 pb-3 rounded-md 2xs:rounded-none 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
+                    className={`${styles.listElement} animate-appear px-5 pt-5 pb-3 rounded-md 2xs:p-0 border border-solid border-neutral-1 relative overflow-hidden text-sm ${styles.wrapper}`}
                     key={id}
                   >
-                    <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
+                    <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:py-5">
                       {!isProposalDeleted(listProposalsData[id].content) &&
                         contestAuthorEthereumAddress === accountData?.address && (
                           <button
@@ -188,7 +188,7 @@ export const ListProposals = () => {
                         <>
                           {listProposalsData[id].votes > 0 && (
                             <span
-                              className={`${styles.rankIndicator} hidden 2xs:flex rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
+                              className={`${styles.rankIndicator} hidden 2xs:flex rounded-full items-center justify-center text-opacity-100 mb-3`}
                             >
                               #{i + 1}
                             </span>
@@ -252,10 +252,10 @@ export const ListProposals = () => {
                         </>
                       )}
                     </div>
-                    <div className="relative overflow-hidden">
+                    <div className="relative 2xs:py-5 overflow-hidden">
                       {listProposalsData[id].votes > 0 && (
                         <span
-                          className={`${styles.rankIndicator} inline-flex 2xs:hidden rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
+                          className={`${styles.rankIndicator} inline-flex 2xs:hidden rounded-full items-center justify-center text-opacity-100 mb-3`}
                         >
                           #{i + 1}
                         </span>

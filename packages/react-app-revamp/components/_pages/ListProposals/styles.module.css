@@ -4,11 +4,11 @@
 }
 
 .list .listElement:first-child .rankIndicator {
-  @apply bg-primary-10 text-primary-1 text-xs p-2;
+  @apply bg-primary-10 text-primary-1 w-9 h-9 text-xs;
 }
 
 .list .listElement:not(:first-child) .rankIndicator {
-  @apply p-1.5 text-2xs;
+  @apply w-8 h-8 text-2xs;
 }
 
 .list .listElement:nth-child(2) .rankIndicator {
