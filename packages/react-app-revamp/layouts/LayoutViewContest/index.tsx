@@ -290,9 +290,12 @@ const LayoutViewContest = (props: any) => {
               {isSuccess && isError === null && !isLoading && (
                 <>
                   {displayReloadBanner === true && (
-                    <div className="mt-4 animate-appear justify-center xs:justify-between items-center p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-wrap gap-y-3 gap-x-6 text-sm font-bold">
-                      <p className="text-center">Refresh the page to see the updated votes.</p>
-                      <Button intent="primary-outline" scale="sm" onClick={() => reload()}>
+                    <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-col gap-y-3 text-sm font-bold">
+                      <div className="flex gap-1.5 flex-col">
+                        <span>Let&apos;s refresh!</span>
+                        <p className="font-normal">Looks like live updates were frozen.</p>
+                      </div>
+                      <Button className="w-full 2xs:w-fit-content" intent="primary-outline" scale="xs" onClick={() => reload()}>
                         <RefreshIcon className="mie-1ex w-4" />
                         Refresh
                       </Button>

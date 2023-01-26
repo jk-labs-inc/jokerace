@@ -260,26 +260,18 @@ export function useProposalVotes(id: number | string) {
     }
   }, [canUpdateVotesInRealTime, contestStatus]);
 
-
-
   useEffect(() => {
     fetchProposalVotes();
     const onVisibilityChangeHandler = () => {
-      if (document.visibilityState === 'hidden') {
-        provider.removeAllListeners()
-      } 
+      if (document.visibilityState === "hidden") {
+        provider.removeAllListeners();
+      }
     };
 
-    document.addEventListener(
-      'visibilitychange',
-      onVisibilityChangeHandler,
-    );
+    document.addEventListener("visibilitychange", onVisibilityChangeHandler);
 
     return () => {
-      document.removeEventListener(
-        'visibilitychange',
-        onVisibilityChangeHandler,
-      );
+      document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
     };
   }, []);
 
