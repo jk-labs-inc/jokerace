@@ -180,20 +180,36 @@ const LayoutViewContest = (props: any) => {
   return (
     <>
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
-        <div className="container mx-auto">
-          {/* @ts-ignore */}
-          <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
+        <div className="container mx-auto flex justify-center">
+          <div className="w-full 2xl:w-[49.5rem]">
+            {/* @ts-ignore */}
+            <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
+          </div>
         </div>
       </div>
       <div
         className={`${
           isLoading ? "pointer-events-none" : ""
-        } flex-grow container mx-auto md:grid md:gap-6 md:grid-cols-12 md:-mb-20`}
-      >
+        } flex-grow container mx-auto !2xl:max-w-prose md:grid md:gap-6 md:grid-cols-12 2xl:flex 2xl:justify-center md:-mb-20`}
+      >        
         <div
-          className={`md:max-h-[calc(100vh-8rem)] ${styles.navbar} ${styles.withFakeSeparator} ${
+          className={`md:h-screen ${styles.navbar} ${styles.withFakeSeparator} ${
             pathname === ROUTE_CONTEST_PROPOSAL ? "!hidden" : ""
-          } z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-3`}
+          } 
+          
+          z-10 justify-center border-neutral-4
+          md:h-full md:max-h-[calc(100vh-8rem)] 2xl:h-screen 2xl:max-h-screen
+          md:justify-start md:pie-3 md:border-ie md:overflow-y-auto 
+          sticky 2xl:fixed 
+          inline-start-0 2xl:inline-start-0 
+          top-0 md:top-1 2xl:top-0
+          bg-true-black 2xl:bg-neutral-1
+          py-2 md:pt-0 2xl:pt-[8.5rem] md:pb-10
+          md:px-6 2xl:px-3 
+          md:mt-5 2xl:mt-0
+          2xl:min-w-[15.125rem] 
+          md:col-span-3
+          `}
         >
           <Sidebar
             isLoading={isLoading}
