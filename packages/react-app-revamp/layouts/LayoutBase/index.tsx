@@ -51,7 +51,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
 
   return (
     <>
-      <header className="relative z-20 border-b bg-true-black border-neutral-2 border-solid">
+      <header className="relative z-20 border-b border-neutral-2 border-solid">
         <div className="py-2 container flex items-center mx-auto">
           <Link href="/">
             <a className="text-4xl xs:text-xl">
