@@ -337,13 +337,13 @@ contract RewardsModule is Context {
                     _highestTiedRanking = rankingBeingChecked;
                 }
             } 
-            else { // otherwise, set the position in the sorted list that the last iteration of this ranking's value appeared, 
+            else { // otherwise, mark that the last iteration of this ranking's value is at the index above the current index in the sorted list, 
                    // then increment the ranking being checked
                 _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;  // index we last decremented from is the last iteration of the current rank's value
                 rankingBeingChecked++;
             }
 
-            // if on last item, then the value at the current index the last iteration of the last ranking's value
+            // if on last item, then the value at the current index is the last iteration of the last ranking's value
             if (i + 1 == _sortedProposalIds.length) {
                 _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i;
                 _lowestRanking = rankingBeingChecked;
