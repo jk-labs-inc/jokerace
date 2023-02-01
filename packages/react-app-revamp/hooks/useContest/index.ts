@@ -141,11 +141,7 @@ export function useContest() {
       setIsLoading(false);
       return;
     }
-    if (abi?.filter(el => el.name === "officialRewardsModule").length > 0) {
-      setSupportsRewardsModule(true);
-    } else {
-      setSupportsRewardsModule(false);
-    }
+
     const accountData = await getAccount();
     const contractConfig = {
       addressOrName: address,
@@ -153,6 +149,20 @@ export function useContest() {
       chainId: chainId,
     };
     try {
+      if (abi?.filter(el => el.name === "officialRewardsModule").length > 0) {
+        const contestRewardModuleAddress = await readContract({
+          ...contractConfig,
+          functionName: "officialRewardsModule",
+        });
+        if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
+          setSupportsRewardsModule(false);
+        } else {
+          setSupportsRewardsModule(true);
+        }
+
+      } else {
+        setSupportsRewardsModule(false);
+      }
       const contracts = [
         // Contest name
         {
