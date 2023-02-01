@@ -1,4 +1,4 @@
-import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
+import { sendTransaction, UserRejectedRequestError, waitForTransaction, writeContract } from "@wagmi/core";
 import toast from "react-hot-toast";
 import { useNetwork, erc20ABI } from "wagmi";
 import { useStore as useStoreRewardsModule } from "@hooks/useRewardsModule/store";
@@ -97,12 +97,15 @@ export function useFundRewardsModule() {
       setIsSuccess(true);
       toast.success(`Funds sent to the rewards module successfully !`);
     } catch (e) {
+      setIsLoading(false);
+      if (e instanceof UserRejectedRequestError) {
+        return;
+      }
       toast.error(
         //@ts-ignore
         e?.data?.message ?? "Something went wrong while sending funds to the rewards module.",
       );
       console.error(e);
-      setIsLoading(false);
       //@ts-ignore
       setIsError(true, e?.data?.message ?? "Something went wrong while sending funds to the rewards module.");
     }

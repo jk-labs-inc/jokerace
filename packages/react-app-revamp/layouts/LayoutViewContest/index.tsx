@@ -54,7 +54,7 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 import Sidebar from "./Sidebar";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
 import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
-import { switchNetwork } from "@wagmi/core";
+import { switchNetwork, UserRejectedRequestError } from "@wagmi/core";
 import { ErrorBoundary } from "react-error-boundary";
 import EtheuremAddress from "@components/EtheuremAddress";
 
@@ -411,14 +411,20 @@ const LayoutViewContest = (props: any) => {
 export const getLayout = (page: any) => {
   return getBaseLayout(
     <ErrorBoundary
-      fallbackRender={({ error, resetErrorBoundary }) => (
-        <div role="alert" className="container m-auto sm:text-center">
-          <p className="text-2xl font-black mb-3 text-primary-10">Something went wrong</p>
-          {/*  eslint-disable-next-line react/no-unescaped-entities */}
-          <p className="text-neutral-12 mb-6">{error?.message ?? error}</p>
-          <Button onClick={resetErrorBoundary}>Try again</Button>
-        </div>
-      )}
+      fallbackRender={({ error, resetErrorBoundary }) => {
+        if (error instanceof UserRejectedRequestError) {
+          // automatically reset error boundary state when the error is provoked by the user rejecting a transaction in their wallet
+          resetErrorBoundary();
+        }
+        return (
+          <div role="alert" className="container m-auto sm:text-center">
+            <p className="text-2xl font-black mb-3 text-primary-10">Something went wrong</p>
+            {/*  eslint-disable-next-line react/no-unescaped-entities */}
+            <p className="text-neutral-12 mb-6">{error?.message}</p>
+            <Button onClick={resetErrorBoundary}>Try again</Button>
+          </div>
+        );
+      }}
     >
       <ProviderContest createStore={createStoreContest}>
         <ProviderSubmitProposal createStore={createStoreSubmitProposal}>

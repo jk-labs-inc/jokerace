@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { writeContract, waitForTransaction } from "@wagmi/core";
+import { writeContract, waitForTransaction, UserRejectedRequestError } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useStore as useStoreCastVotes } from "./store";
 import { useNetwork } from "wagmi";
@@ -69,12 +69,15 @@ export function useCastVotes() {
       setIsSuccess(true);
       toast.success(`Your votes were cast successfully!`);
     } catch (e) {
+      setIsLoading(false);
+      if (e instanceof UserRejectedRequestError) {
+        return;
+      }
       toast.error(
         //@ts-ignore
         e?.data?.message ?? "Something went wrong while casting your votes.",
       );
       console.error(e);
-      setIsLoading(false);
       setError(e);
     }
   }

@@ -1,4 +1,4 @@
-import { waitForTransaction, writeContract } from "@wagmi/core";
+import { UserRejectedRequestError, waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useNetwork } from "wagmi";
@@ -70,12 +70,15 @@ export function useDeleteProposal() {
       setIsSuccess(true);
       toast.success(`Proposal deleted successfully!`);
     } catch (e) {
+      setIsLoading(false);
+      if (e instanceof UserRejectedRequestError) {
+        return;
+      }
       toast.error(
         //@ts-ignore
         e?.data?.message ?? "Something went wrong while deleting this proposal.",
       );
       console.error(e);
-      setIsLoading(false);
       //@ts-ignore
       setIsError(true, e?.data?.message ?? "Something went wrong while deleting this proposal.");
     }

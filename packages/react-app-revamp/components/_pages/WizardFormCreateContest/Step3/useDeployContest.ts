@@ -2,7 +2,7 @@ import shallow from "zustand/shallow";
 import { ContractFactory } from "ethers";
 import toast from "react-hot-toast";
 import { useNetwork, useSigner } from "wagmi";
-import { waitForTransaction, writeContract } from "@wagmi/core";
+import { UserRejectedRequestError, waitForTransaction, writeContract } from "@wagmi/core";
 import { parseEther } from "ethers/lib/utils";
 import { getUnixTime, differenceInSeconds } from "date-fns";
 import { useContractFactory } from "@hooks/useContractFactory";
@@ -196,13 +196,16 @@ export function useDeployContest(form: any) {
       stateContestDeployment.setIsLoading(false);
       form.reset();
     } catch (e) {
+      stateContestDeployment.setIsLoading(false);
+      if (e instanceof UserRejectedRequestError) {
+        return;
+      }
       console.error(e);
       if (modalDeployContestOpen === false)
         toast.error(`The contract for your contest ("${values.contestTitle}") couldn't be deployed.`);
       stateContestDeployment.setIsError(true);
       //@ts-ignore
       stateContestDeployment.setErrorMessage(e?.message);
-      stateContestDeployment.setIsLoading(false);
     }
   }
 
