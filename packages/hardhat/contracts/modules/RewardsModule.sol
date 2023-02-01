@@ -229,7 +229,7 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied
+        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking
         if (!_setSortedAndTiedProposalsHasBeenRun) {
             setSortedAndTiedProposals();
         }
@@ -269,7 +269,7 @@ contract RewardsModule is Context {
             _erc20Released[token][ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied
+        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking
         if (!_setSortedAndTiedProposalsHasBeenRun) {
             setSortedAndTiedProposals();
         }
@@ -302,8 +302,8 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied. Will only be called once and only needs to be called once because once the contest is complete these values don't change.
-     * Determines if a ranking is tied and also where the last iteration of a ranking is in the _sortedProposalIds list taking ties into account.
+     * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking. Will only be called once and only needs to be called once because once the contest 
+     * is complete these values don't change. Determines if a ranking is tied and also where the last iteration of a ranking is in the _sortedProposalIds list taking ties into account.
      */
     function setSortedAndTiedProposals() public virtual {
         require(_underlyingContest.state() == IGovernor.ContestState.Completed, "RewardsModule: contest must be completed for rewards to be paid out");
