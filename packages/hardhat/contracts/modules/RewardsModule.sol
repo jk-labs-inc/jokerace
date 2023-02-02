@@ -229,7 +229,7 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied
+        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking
         if (!_setSortedAndTiedProposalsHasBeenRun) {
             setSortedAndTiedProposals();
         }
@@ -269,7 +269,7 @@ contract RewardsModule is Context {
             _erc20Released[token][ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied
+        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking
         if (!_setSortedAndTiedProposalsHasBeenRun) {
             setSortedAndTiedProposals();
         }
@@ -302,8 +302,8 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, and _isTied. Will only be called once and only needs to be called once because once the contest is complete these values don't change.
-     * Determines if a ranking is tied and also where the last iteration of a ranking is in the _sortedProposalIds list taking ties into account.
+     * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking. Will only be called once and only needs to be called once because once the contest 
+     * is complete these values don't change. Determines if a ranking is tied and also where the last iteration of a ranking is in the _sortedProposalIds list taking ties into account.
      */
     function setSortedAndTiedProposals() public virtual {
         require(_underlyingContest.state() == IGovernor.ContestState.Completed, "RewardsModule: contest must be completed for rewards to be paid out");
@@ -337,13 +337,13 @@ contract RewardsModule is Context {
                     _highestTiedRanking = rankingBeingChecked;
                 }
             } 
-            else { // otherwise, set the position in the sorted list that the last iteration of this ranking's value appeared, 
+            else { // otherwise, mark that the last iteration of this ranking's value is at the index above the current index in the sorted list, 
                    // then increment the ranking being checked
                 _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;  // index we last decremented from is the last iteration of the current rank's value
                 rankingBeingChecked++;
             }
 
-            // if on last item, then the value at the current index the last iteration of the last ranking's value
+            // if on last item, then the value at the current index is the last iteration of the last ranking's value
             if (i + 1 == _sortedProposalIds.length) {
                 _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i;
                 _lowestRanking = rankingBeingChecked;
