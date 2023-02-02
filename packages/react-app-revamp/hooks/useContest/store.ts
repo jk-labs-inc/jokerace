@@ -9,6 +9,7 @@ export const createStore = () => {
     contestPrompt: null,
     contestAuthorEthereumAddress: null,
     contestAuthor: null,
+    contestStatus: null,
     submissionsOpen: null,
     votesOpen: null,
     votesClose: null,

@@ -116,26 +116,25 @@ export const Sidebar = (props: any) => {
           </a>
         </Link>
         {supportsRewardsModule && (
-              <Link
-                href={{
-                  pathname: ROUTE_VIEW_CONTEST_REWARDS,
-                  //@ts-ignore
-                  query: {
-                    chain: query.chain,
-                    address: query.address,
-                  },
-                }}
-              >
-                <a
-                  className={`${styles.navLink} ${
-                    pathname === ROUTE_VIEW_CONTEST_REWARDS ? styles["navLink--active"] : ""
-                  }`}
-                >
-                  <IconTrophy className={styles.navLinkIcon} />
-                  Rewards
-                </a>
-              </Link>
-            
+          <Link
+            href={{
+              pathname: ROUTE_VIEW_CONTEST_REWARDS,
+              //@ts-ignore
+              query: {
+                chain: query.chain,
+                address: query.address,
+              },
+            }}
+          >
+            <a
+              className={`${styles.navLink} ${
+                pathname === ROUTE_VIEW_CONTEST_REWARDS ? styles["navLink--active"] : ""
+              }`}
+            >
+              <IconTrophy className={styles.navLinkIcon} />
+              Rewards
+            </a>
+          </Link>
         )}
         {contestStatus === CONTEST_STATUS.COMPLETED ? (
           <Link

@@ -124,7 +124,6 @@ export const Reward = (props: RewardProps) => {
               )}
             </>
           )}
-          
         </>
       )}
     </section>
