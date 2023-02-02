@@ -23,7 +23,7 @@ export const ListProposals = () => {
     query: { chain, address },
   } = useRouter();
   const accountData = useAccount();
-  const network = useNetwork()
+  const network = useNetwork();
   const {
     contestAuthorEthereumAddress,
     amountOfTokensRequiredToSubmitEntry,
@@ -174,7 +174,7 @@ export const ListProposals = () => {
                       {!isProposalDeleted(listProposalsData[id].content) &&
                         contestAuthorEthereumAddress === accountData?.address && (
                           <button
-                            disabled={network?.chain?.name?.toLowerCase()?.replace(' ', "") !== chain ? true : false}
+                            disabled={network?.chain?.name?.toLowerCase()?.replace(" ", "") !== chain ? true : false}
                             onClick={() => onClickProposalDelete(id)}
                             className="hidden 2xs:flex mb-6 mx-2 2xs:text-2xs rounded-md 2xs:p-2.5 relative z-20 text-negative-12 hover:bg-negative-4 hover:bg-opacity-50 focus:bg-negative-2 focus:border-negative-8 border-negative-6 border border-solid disabled:opacity-50 disabled:cursor-not-allowed"
                           >
@@ -299,7 +299,7 @@ export const ListProposals = () => {
                         {!isProposalDeleted(listProposalsData[id].content) &&
                           contestAuthorEthereumAddress === accountData?.address && (
                             <button
-                              disabled={network?.chain?.name?.toLowerCase()?.replace(' ', "") !== chain ? true : false}
+                              disabled={network?.chain?.name?.toLowerCase()?.replace(" ", "") !== chain ? true : false}
                               onClick={() => onClickProposalDelete(id)}
                               className="flex items-center space-i-2 justify-center 2xs:hidden text-xs rounded-md py-1.5 px-3 relative z-20 text-negative-12 hover:bg-negative-4 hover:bg-opacity-50 focus:bg-negative-2 focus:border-negative-8 border-negative-6 border border-solid disabled:opacity-50 disabled:cursor-not-allowed"
                             >
