@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { writeContract, waitForTransaction } from "@wagmi/core";
+import { writeContract, waitForTransaction, UserRejectedRequestError } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useStore as useStoreSubmitProposal } from "./store";
 import { useStore as useStoreContest } from "./../useContest/store";
@@ -67,13 +67,18 @@ export function useSubmitProposal() {
       toast.success(`Your proposal was deployed successfully!`);
       increaseCurrentUserProposalCount();
     } catch (e) {
-      toast.error(
-        //@ts-ignore
-        e?.data?.message ?? "Something went wrong while deploying your proposal. Please try again.",
-      );
-      console.error(e);
       setIsLoading(false);
-      setError(e);
+
+      if (e instanceof UserRejectedRequestError) {
+        setError("Transaction was cancelled by the user");
+      } else {
+        //@ts-ignore
+        let errorMessage = e?.data?.message || "Something went wrong while deploying your proposal. Please try again.";
+        toast.error(errorMessage);
+        //@ts-ignore
+        setError(e.message);
+      }
+      console.error(e);
     }
   }
 
