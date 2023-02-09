@@ -101,7 +101,17 @@ const Page = (props: PageProps) => {
                       >
                         {/* @ts-ignore */}
                         {storeRewardsModule.rewardsModule?.contractAddress}
-                      </a>
+                      </a><br/>
+                      {"Note: this code has not been audited yet, but can be verified on our "}
+                      <a
+                        className="link"
+                        //@ts-ignore
+                        href="https://github.com/JokeDAO/JokeDaoV2Dev"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        GitHub
+                      </a>.
                     </p>
                     <div className="flex sm:justify-center flex-wrap gap-3">
                       {/* @ts-ignore */}
