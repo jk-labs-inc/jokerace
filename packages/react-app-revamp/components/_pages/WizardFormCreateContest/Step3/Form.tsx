@@ -960,13 +960,13 @@ export const Form = (props: FormProps) => {
                     {data()?.rewards.reduce((sumRewards: number, reward: any) => {
                       //@ts-ignore
                       return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
-                    }, 0) > 100 && (
+                    }, 0) != 100 && (
                       <FormField.HelpBlock
                         hasError={true}
                         className="pt-2 !block text-negative-11 text-2xs !not-sr-only"
                         id="input-rewardPercentageAmount-helpblock"
                       >
-                        The total percentage can&apos;t be greater than 100
+                        The total percentage must equal 100
                       </FormField.HelpBlock>
                     )}
 
@@ -1080,8 +1080,11 @@ export const Form = (props: FormProps) => {
             (data()?.rewardsType === "erc20" && (!data()?.rewardTokenAddress || !erc20TokenRewards?.data?.name)) ||
             (data()?.rewardsType !== "noRewards" &&
               (data()?.rewards?.length === 0 ||
-                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardPercentageAmount))?.length >
-                  0))
+                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardPercentageAmount))?.length > 0 || 
+                  data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                    //@ts-ignore
+                    return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
+                  }, 0) != 100))
           }
           type="submit"
         >
