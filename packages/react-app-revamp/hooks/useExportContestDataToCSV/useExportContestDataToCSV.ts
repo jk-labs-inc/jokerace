@@ -160,7 +160,7 @@ export function useExportContestDataToCSV() {
     const propId = listProposalsIds[i];
     if (propId) {
       const propTotalVotes = listProposalsData[propId].votes;
-      const propContent = listProposalsData[propId]?.content ?? "";
+      const propContent = "jokedao.io"+asPath.slice(0, asPath.indexOf("export-data"))+"proposal/"+propId.toString();
       const proposerAddress = listProposalsData[propId].authorEthereumAddress;
       const addressesVoted = await fetchProposalVoters(propId);
 
