@@ -75,8 +75,8 @@ export const Form = (props: FormProps) => {
   }, [isSuccess]);
 
   useEffect(() => {
-    if(query?.tokenRewardsAddress === "native") setData('isErc20', false)
-  }, [query?.tokenRewardsAddress])
+    if (query?.tokenRewardsAddress === "native") setData("isErc20", false);
+  }, [query?.tokenRewardsAddress]);
   return (
     <form ref={form} id={formId}>
       <fieldset className="mb-6">

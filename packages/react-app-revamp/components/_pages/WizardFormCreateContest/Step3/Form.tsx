@@ -12,9 +12,9 @@ import { RadioGroup } from "@headlessui/react";
 import FormRadioOption from "@components/FormRadioOption";
 import FormRadioGroup from "@components/FormRadioGroup";
 import ToggleSwitch from "@components/ToggleSwitch";
-import { useEffect, useId } from "react";
+import { useId } from "react";
 import { CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
-import FormSelect from "@components/FormSelect";
+import ordinalize from "@helpers/ordinalize";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -760,7 +760,7 @@ export const Form = (props: FormProps) => {
         </div>
       </fieldset>
 
-      <fieldset className="my-12">
+      <fieldset className="mt-12">
         <legend
           className={`text-neutral-12 uppercase font-bold tracking-wider text-md mb-3 ${
             !isConnected || chain?.unsupported === true || isDeploying === true ? "text-opacity-50" : ""
@@ -780,7 +780,7 @@ export const Form = (props: FormProps) => {
                 setData("rewards", [
                   {
                     winningRank: 1,
-                    rewardTokenAmount: 0,
+                    rewardPercentageAmount: 0,
                   },
                 ]);
               }
@@ -788,13 +788,11 @@ export const Form = (props: FormProps) => {
           >
             <RadioGroup.Label className="sr-only">Does your contest have rewards ?</RadioGroup.Label>
             <FormRadioOption value={"noRewards"}>No rewards</FormRadioOption>
-            <FormRadioOption value={"native"}>
-              Reward {chain?.nativeCurrency?.symbol}
-            </FormRadioOption>
+            <FormRadioOption value={"native"}>Reward {chain?.nativeCurrency?.symbol}</FormRadioOption>
             <FormRadioOption value={"erc20"}>Reward another token</FormRadioOption>
           </FormRadioGroup>
           {data()?.rewardsType !== "noRewards" && (
-            <div className="!mt-3 animate-appear flex flex-col space-y-6 xs:pis-6">
+            <div className="!mt-3 animate-appear max-w-[90%] 2xs:max-w-unset flex flex-col space-y-6 xs:pis-6">
               {data()?.rewardsType === "erc20" && (
                 <FormField disabled={!isConnected || chain?.unsupported === true || isDeploying === true}>
                   <FormField.InputField>
@@ -803,7 +801,7 @@ export const Form = (props: FormProps) => {
                       hasError={errors().rewardTokenAddress?.length > 0 === true}
                       htmlFor="rewardTokenAddress"
                     >
-                      Address of token used for rewards
+                      Token address:
                     </FormField.Label>
                     <FormField.Description id="input-rewardTokenAddress-description">
                       The Ethereum address of the ERC20 token you want to give as a reward.
@@ -830,7 +828,8 @@ export const Form = (props: FormProps) => {
                     <div className="pt-2 flex items-center">
                       <CheckIcon className="mie-2 w-5 shrink-0 text-positive-11" />
                       <p className="text-neutral-11 text-2xs normal-case font-bold">
-                        {erc20TokenRewards?.data?.name} (${erc20TokenRewards?.data?.symbol})
+                        {erc20TokenRewards?.data?.name}{" "}
+                        <span className="uppercase">(${erc20TokenRewards?.data?.symbol})</span>
                       </p>
                     </div>
                   )}
@@ -847,8 +846,8 @@ export const Form = (props: FormProps) => {
                       className="text-2xs pt-2 text-secondary-11 pis-1 flex flex-wrap items-center"
                     >
                       <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
-                      The token must implement the &nbsp;
-                      <span className="font-mono normal-case">ERC20</span>&nbsp; interface
+                      Must be a valid &nbsp;
+                      <span className="font-mono normal-case">ERC20</span>&nbsp; token on {chain?.name}
                     </p>
                   )}
                   <FormField.HelpBlock
@@ -869,35 +868,40 @@ export const Form = (props: FormProps) => {
                       <FormField.Label
                         className="text-sm"
                         hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
-                        htmlFor="rewardTokenAmount"
+                        htmlFor="rewardPercentageAmount"
                       >
-                        Winning rank that earns tokens
+                        Winning rank that earns tokens:
                       </FormField.Label>
                       <FormField.Description id="input-winningRank-description">
                         The rank eligible to earn a reward
                       </FormField.Description>
-                      <FormInput
-                        required
-                        scale="sm"
-                        type="number"
-                        step="1"
-                        min={1}
-                        disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-                        aria-invalid={errors().rewards?.[i]?.winningRank?.length > 0 === true ? "true" : "false"}
-                        className="max-w-full w-auto 2xs:w-full"
-                        placeholder="1"
-                        value={
-                          data()?.rewards.filter((rewardToDelete: any) => rewardToDelete.key === reward.key)[0]
-                            ?.winningRank
-                        }
-                        hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
-                        aria-describedby="input-winningRank-description input-winningRank-helpblock"
-                        onChange={e => {
-                          const rewards = data()?.rewards;
-                          rewards[i].winningRank = parseInt(e.currentTarget.value);
-                          setData("rewards", rewards);
-                        }}
-                      />
+                      <div className="relative flex">
+                        <FormInput
+                          required
+                          scale="sm"
+                          type="number"
+                          step="1"
+                          min={1}
+                          disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                          aria-invalid={errors().rewards?.[i]?.winningRank?.length > 0 === true ? "true" : "false"}
+                          className="max-w-full pie-12 w-auto 2xs:w-full"
+                          placeholder="1"
+                          value={
+                            data()?.rewards.filter((rewardToDelete: any) => rewardToDelete.key === reward.key)[0]
+                              ?.winningRank
+                          }
+                          hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
+                          aria-describedby="input-winningRank-description input-winningRank-helpblock"
+                          onChange={e => {
+                            const rewards = data()?.rewards;
+                            rewards[i].winningRank = parseInt(e.currentTarget.value);
+                            setData("rewards", rewards);
+                          }}
+                        />
+                        <span className="absolute w-10 inline-end-0 top-0 h-full bg-neutral-2 text-xs border border-neutral-4 rounded-ie-md  flex justify-center items-center text-neutral-11">
+                          {ordinalize(data()?.rewards[i].winningRank)?.suffix}
+                        </span>
+                      </div>
                     </FormField.InputField>
                     <FormField.HelpBlock
                       hasError={errors().rewards?.[i]?.winningRank?.length > 0 === true}
@@ -911,36 +915,64 @@ export const Form = (props: FormProps) => {
                     <FormField.InputField>
                       <FormField.Label
                         className="text-sm"
-                        hasError={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true}
-                        htmlFor="rewardTokenAmount"
+                        hasError={errors().rewards?.[i]?.rewardPercentageAmount?.length > 0 === true}
+                        htmlFor="rewardPercentageAmount"
                       >
-                        The amount of tokens to be rewarded.
+                        Percentage of the rewards this rank wins:
                       </FormField.Label>
-                      <FormField.Description id="input-rewardTokenAmount-description">
+                      <FormField.Description id="input-rewardPercentageAmount-description">
                         The amount of tokens you want to give as a reward.
                       </FormField.Description>
-                      <FormInput
-                        required
-                        scale="sm"
-                        disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-                        aria-invalid={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true ? "true" : "false"}
-                        className="max-w-full w-auto 2xs:w-full"
-                        placeholder="100"
-                        type="number"
-                        min={0.0000001}
-                        step={0.0000001}
-                        hasError={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true}
-                        aria-describedby="input-rewardTokenAmount-description input-rewardTokenAmount-helpblock"
-                        onChange={e => {
-                          const rewards = data()?.rewards;
-                          rewards[i].rewardTokenAmount = parseFloat(e.currentTarget.value);
-                          setData("rewards", rewards);
-                        }}
-                      />
+
+                      <div className="relative flex">
+                        <FormInput
+                          required
+                          scale="sm"
+                          disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
+                          aria-invalid={
+                            errors().rewards?.[i]?.rewardPercentageAmount?.length > 0 === true ? "true" : "false"
+                          }
+                          className="max-w-full w-auto 2xs:w-full"
+                          placeholder="100"
+                          type="number"
+                          min={0}
+                          step={1}
+                          max={100}
+                          hasError={
+                            errors().rewards?.[i]?.rewardPercentageAmount?.length > 0 === true ||
+                            data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                              //@ts-ignore
+                              return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
+                            }, 0) >= 100
+                          }
+                          aria-describedby="input-rewardPercentageAmount-description input-rewardPercentageAmount-helpblock"
+                          onChange={e => {
+                            const rewards = data()?.rewards;
+                            rewards[i].rewardPercentageAmount = parseFloat(e.currentTarget.value);
+                            setData("rewards", rewards);
+                          }}
+                        />
+                        <span className="absolute w-10 inline-end-0 top-0 h-full bg-neutral-2 text-2xs border border-neutral-4 rounded-ie-md flex justify-center items-center text-neutral-11">
+                          %
+                        </span>
+                      </div>
                     </FormField.InputField>
+                    {data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                      //@ts-ignore
+                      return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
+                    }, 0) != 100 && (
+                      <FormField.HelpBlock
+                        hasError={true}
+                        className="pt-2 !block text-negative-11 text-2xs !not-sr-only"
+                        id="input-rewardPercentageAmount-helpblock"
+                      >
+                        The total percentage must equal 100
+                      </FormField.HelpBlock>
+                    )}
+
                     <FormField.HelpBlock
-                      hasError={errors().rewards?.[i]?.rewardTokenAmount?.length > 0 === true}
-                      id="input-rewardTokenAmount-helpblock"
+                      hasError={errors().rewards?.[i]?.rewardPercentageAmount?.length > 0 === true}
+                      id="input-rewardPercentageAmount-helpblock"
                     >
                       The reward amount must be a positive number.
                     </FormField.HelpBlock>
@@ -960,85 +992,74 @@ export const Form = (props: FormProps) => {
                     }}
                   >
                     <TrashIcon className="w-4" />
-                    <span className="font-bold">Delete this reward</span>
+                    <span className="font-bold">Remove</span>
                   </Button>
                 </div>
               ))}
-                <Button
-                  onClick={() => {
-                    setData("rewards", [
-                      ...data()?.rewards,
-                      {
-                        winningRank: ranks.filter(rank => {
-                          const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank);
-                          return !rewardRanks.includes(rank);
-                        })[0],
-                        rewardTokenAmount: 0,
-                      },
-                    ]);
-                  }}
-                  intent="primary-outline"
-                  scale="sm"
-                  type="button"
-                  className="w-full mx-auto xs:mx-0 xs:w-fit-content mt-4"
-                >
-                  <PlusIcon className="w-4 mie-2" />
-                  <span className="pie-2">Add another winning rank</span>
-                </Button>
+              <Button
+                disabled={
+                  data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                    //@ts-ignore
+                    return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
+                  }, 0) >= 100
+                }
+                onClick={() => {
+                  setData("rewards", [
+                    ...data()?.rewards,
+                    {
+                      winningRank: ranks.filter(rank => {
+                        const rewardRanks = data()?.rewards?.map((r: any) => r.winningRank);
+                        return !rewardRanks.includes(rank);
+                      })[0],
+                      rewardPercentageAmount: 0,
+                    },
+                  ]);
+                }}
+                intent="primary-outline"
+                scale="sm"
+                type="button"
+                className="w-full mx-auto xs:mx-0 xs:w-fit-content mt-4"
+              >
+                <PlusIcon className="w-4 mie-2" />
+                <span className="pie-2">Add another winning rank</span>
+              </Button>
             </div>
           )}
           {["erc20", "native"].includes(data()?.rewardsType) &&
-            data()?.rewards?.filter((reward: any) => isNaN(reward?.rewardTokenAmount))?.length === 0 && (
-              <div className="animate-appear mis-6 border-t border-solid border-neutral-4 pt-6 mt-3">
-                <p className="font-bold text-sm mb-2">
-                  Total rewards you&apos;re planning to distribute:{" "}
-                  <span className="text-primary-10 normal-case ">
-                    {data()?.rewards.reduce((sumRewards: number, reward: any) => {
-                      //@ts-ignore
-                      return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardTokenAmount ?? 0);
-                    }, 0)}{" "}
-                    {data()?.rewardsType === "erc20" && (
-                      <>{erc20TokenRewards?.data?.symbol ? `$${erc20TokenRewards?.data?.symbol}` : "--"}</>
-                    )}
-                    {data()?.rewardsType === "native" && chain?.nativeCurrency?.symbol}
-                  </span>
-                </p>
+            data()?.rewards?.filter((reward: any) => isNaN(reward?.rewardPercentageAmount))?.length === 0 && (
+              <div className="max-w-[90%] 2xs:max-w-unset animate-appear xs:mis-6 border-t border-solid border-neutral-4 pt-6 mt-3">
                 <ul className="list-disc pis-4">
                   {data()?.rewards.map((reward: any) => {
-                    const totalRewardsAmount = data()?.rewards.reduce((sumRewards: number, reward: any) => {
-                      return sumRewards + reward.rewardTokenAmount;
-                    }, 0);
-                    const rewardPercentage = isNaN(totalRewardsAmount)
-                      ? 0
-                      : ((reward.rewardTokenAmount / totalRewardsAmount) * 100).toFixed(2);
                     return (
                       <li className="animate-appear text-neutral-12 text-xs" key={`rank-distribution-${reward.key}`}>
-                        Proposal with rank {reward.winningRank} will get{" "}
-                        <span className="font-bold">~{rewardPercentage}%</span> of the rewards
+                        {ordinalize(parseInt(reward.winningRank))?.label} place will get {/* @ts-ignore */}
+                        <span className="font-bold">~{reward?.rewardPercentageAmount}%</span> of the rewards
                       </li>
                     );
                   })}
                 </ul>
-
-                <p className="mt-5 text-neutral-11 text-xs">
-                  You will be able to send funds to your rewards module once both your contest and your rewards module
-                  will be created.
+                <p className="text-neutral-11 mt-2.5 text-xs">
+                  Please note: in the case of ties, rewards will be canceled for all affected ranks, so you can withdraw
+                  the money to your account to handle manually.
                 </p>
-                <p className="my-1.5 text-neutral-11 text-xs">
-                  Winners will receive a percentage % of the funds you will send, as described in the rewards breakdown
-                  above.
-                </p>
-                <p className="my-1.5 text-neutral-11 text-xs">
-                  Post-contest, anyone can *execute* the transaction on the contest “rewards” page.
-                </p>
-                <p className="text-neutral-11 text-xs">
-                  In case of tie, the transaction will be canceled, so you can pay out manually as you like.
-                </p>
+                <section className="border-t pt-5 mt-5 border-neutral-4 ">
+                  <h2 className="text-white text-xs font-semibold">Next steps:</h2>
+                  <ul className="list-disc px-3 gap-1.5flex flex-col text-xs text-neutral-12">
+                    <li>
+                      In a moment, you’ll create a rewards pool to fund winners, proportionately to the % set above.
+                    </li>
+                    <li>
+                      After, you can fund the pool by sending it tokens (the pool&apos;s address is on the
+                      &quot;rewards&quot; page).
+                    </li>
+                    <li>Post-contest, anyone can *execute* the transaction on the contest &quot;rewards&quot; page.</li>
+                  </ul>
+                </section>
               </div>
             )}
         </div>
       </fieldset>
-      <div className="pt-6 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
+      <div className="pt-8 md:pt-12 flex flex-col gap-8">
         <Button
           className="sm:w-fit-content"
           isLoading={isDeploying === true}
@@ -1059,15 +1080,30 @@ export const Form = (props: FormProps) => {
             (data()?.rewardsType === "erc20" && (!data()?.rewardTokenAddress || !erc20TokenRewards?.data?.name)) ||
             (data()?.rewardsType !== "noRewards" &&
               (data()?.rewards?.length === 0 ||
-                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardTokenAmount))?.length > 0))
+                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardPercentageAmount))?.length > 0 || 
+                  data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                    //@ts-ignore
+                    return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
+                  }, 0) != 100))
           }
           type="submit"
         >
           Create contest
         </Button>
-
-        <div className={button({ intent: "ghost-neutral" })} tabIndex={0} role="button" {...pressProps}>
-          Next
+        <div>
+          <span className="text-2xs text-neutral-9 font-medium pie-1ex">or</span>
+          <div
+            className={button({
+              intent: "ghost-neutral",
+              scale: "xs",
+              class: "opacity-75 hover:opacity-90 focus:opacity-100 w-fit-content",
+            })}
+            tabIndex={0}
+            role="button"
+            {...pressProps}
+          >
+            Skip
+          </div>
         </div>
       </div>
     </form>

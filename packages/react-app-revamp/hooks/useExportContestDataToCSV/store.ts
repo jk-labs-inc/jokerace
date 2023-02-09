@@ -9,6 +9,8 @@ interface ExportDataState {
   loadingMessage: string | null;
   error: null | string;
   csv: any;
+  cid: string | null;
+  setCid: (cid: string) => void;
   setCsv: (data: any) => void;
   setIsSuccess: (isSuccess: boolean) => void;
   setError: (err: string | null, isErr: boolean) => void;
@@ -29,6 +31,8 @@ export const createExportDataStore = () =>
     error: null,
     loadingMessage: null,
     isReady: false,
+    cid: null,
+    setCid: cid => set(() => ({ cid })),
     setCsv: data => set(() => ({ csv: data })),
     setIsSuccess: value => set(() => ({ isSuccess: value })),
     setError: (err, isErr) => set(() => ({ error: err, isError: isErr })),
@@ -40,6 +44,7 @@ export const createExportDataStore = () =>
       set(() => ({
         shouldStart: false,
         csv: null,
+        cid: null,
         isSuccess: false,
         isError: false,
         isLoading: false,

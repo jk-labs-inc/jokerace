@@ -193,7 +193,7 @@ export const Form = (props: FormProps) => {
           />
         </FormField>
       </fieldset>
-      <div className="pt-8 md:pt-12 flex flex-col space-y-5">
+      <div className="pt-8 md:pt-12 flex flex-col gap-8">
         <Button
           className="sm:w-fit-content"
           isLoading={isDeploying === true}
@@ -211,8 +211,12 @@ export const Form = (props: FormProps) => {
         </Button>
 
         {showSkipButton === true && (
-          <div className={appearAsNeutralButton} tabIndex={0} role="button" {...pressProps}>
+          <div>
+          <span className="text-2xs text-neutral-9 font-medium pie-1ex">or</span>
+          <div className={`${appearAsNeutralButton} ${dataDeployVotingToken === null ? 'opacity-75 hover:opacity-90 focus:opacity-100' : ''}`} tabIndex={0} role="button" {...pressProps}>
             {dataDeployVotingToken !== null ? "Next" : "Skip"}
+          </div>
+
           </div>
         )}
       </div>

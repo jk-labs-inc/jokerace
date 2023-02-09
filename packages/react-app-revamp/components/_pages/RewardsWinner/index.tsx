@@ -4,6 +4,7 @@ import { useContractRead } from "wagmi";
 import PayeeERC20Reward from "./ERC20Reward";
 import PayeeNativeReward from "./NativeCurrencyReward";
 import { chains } from "@config/wagmi";
+import ordinalize from "@helpers/ordinalize";
 interface RewardsWinnerProps {
   payee: any;
   erc20Tokens: Array<string>;
@@ -33,41 +34,43 @@ export const RewardsWinner = (props: RewardsWinnerProps) => {
           {isError && "Something went wrong, please reload the page."}
           {data && (
             <>
-            <h2 className="font-bold text-lg mb-1">Rank {`${payee}`}: wins {`${((data.toNumber() * 100) / totalShares).toFixed(2)}`}% of all rewards</h2>
-            <ul>
-              <li>
-                <PayeeNativeReward
-                  share={data}
-                  payee={payee}
-                  chainId={
-                    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
-                      ?.id
-                  }
-                  contractRewardsModuleAddress={contractRewardsModuleAddress}
-                  abiRewardsModule={abiRewardsModule}
-                />
-              </li>
-              {erc20Tokens?.length > 0 && (
-                <>
-                  {erc20Tokens.map((token: any) => (
-                    <li key={`payee-rank-${`${payee}`}-reward-token-${token.contractAddress}`}>
-                      <PayeeERC20Reward
-                        share={data}
-                        payee={payee}
-                        chainId={
-                          chains.filter(
-                            chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
-                          )?.[0]?.id
-                        }
-                        tokenAddress={token.contractAddress}
-                        contractRewardsModuleAddress={contractRewardsModuleAddress}
-                        abiRewardsModule={abiRewardsModule}
-                      />
-                    </li>
-                  ))}
-                </>
-              )}
-            </ul>
+              <h2 className="font-bold text-lg mb-1">
+                Rank {`${payee}`}: wins {`${((data.toNumber() * 100) / totalShares).toFixed(2)}`}% of all rewards
+              </h2>
+              <ul>
+                <li>
+                  <PayeeNativeReward
+                    share={data}
+                    payee={payee}
+                    chainId={
+                      chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
+                        ?.id
+                    }
+                    contractRewardsModuleAddress={contractRewardsModuleAddress}
+                    abiRewardsModule={abiRewardsModule}
+                  />
+                </li>
+                {erc20Tokens?.length > 0 && (
+                  <>
+                    {erc20Tokens.map((token: any) => (
+                      <li key={`payee-rank-${`${payee}`}-reward-token-${token.contractAddress}`}>
+                        <PayeeERC20Reward
+                          share={data}
+                          payee={payee}
+                          chainId={
+                            chains.filter(
+                              chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
+                            )?.[0]?.id
+                          }
+                          tokenAddress={token.contractAddress}
+                          contractRewardsModuleAddress={contractRewardsModuleAddress}
+                          abiRewardsModule={abiRewardsModule}
+                        />
+                      </li>
+                    ))}
+                  </>
+                )}
+              </ul>
             </>
           )}
         </>
