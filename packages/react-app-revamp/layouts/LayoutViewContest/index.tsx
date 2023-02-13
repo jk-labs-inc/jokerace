@@ -340,7 +340,7 @@ const LayoutViewContest = (props: any) => {
                     </h2>
 
                     {contestPrompt && !pathname.includes(ROUTE_VIEW_CONTEST_REWARDS) && (
-                      <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
+                      <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4 break-words">
                         <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
                       </p>
                     )}
