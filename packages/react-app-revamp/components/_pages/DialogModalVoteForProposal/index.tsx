@@ -192,10 +192,10 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
                 id="input-contestaddress-helpblock-1"
                 hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
               >
-                <span>Available: {currentUserAvailableVotesAmount}</span>
+                <span>Available: {new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}</span>
                 {pickedProposal !== null && (
                   <span>
-                    Votes on submission: {new Intl.NumberFormat().format(listProposalsData[pickedProposal].votes)}{" "}
+                    Votes on submission: {new Intl.NumberFormat("en-US").format(listProposalsData[pickedProposal].votes)}{" "}
                   </span>
                 )}
               </FormField.HelpBlock>
