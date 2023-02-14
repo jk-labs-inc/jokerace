@@ -1,3 +1,5 @@
+import { memo } from "react";
+import FunFact from "./FunFact";
 import { loaderText, loaderIcon, loaderWrapper } from "./styles";
 interface LoaderProps {
   children?: React.ReactNode;
@@ -5,10 +7,12 @@ interface LoaderProps {
   classNameIcon?: string;
   classNameWrapper?: string;
   classNameText?: string;
+  withFunFact?: boolean;
 }
 
 export const Loader = (props: LoaderProps) => {
-  const { children, scale, classNameText, classNameWrapper, classNameIcon } = props;
+  const { children, scale, classNameText, classNameWrapper, classNameIcon, withFunFact } = props;
+
   return (
     /* @ts-ignore */
     <div className={loaderWrapper({ scale: scale ?? "page", class: classNameWrapper ?? "" })}>
@@ -20,7 +24,11 @@ export const Loader = (props: LoaderProps) => {
       <div className={loaderText({ scale: scale ?? "page", class: classNameText ?? "" })}>
         {children ?? "Loading, one moment please..."}
       </div>
+
+      {withFunFact && <FunFact />}
     </div>
   );
 };
-export default Loader;
+
+// add useMemo on Loader
+export default memo(Loader);

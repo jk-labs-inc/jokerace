@@ -237,7 +237,7 @@ const LayoutViewContest = (props: any) => {
         >
           {(isLoading || isListProposalsLoading) && (
             <div className="animate-appear">
-              <Loader scale="page">Loading contest info...</Loader>
+              <Loader scale="page" withFunFact>Loading contest info...</Loader>
             </div>
           )}
 
