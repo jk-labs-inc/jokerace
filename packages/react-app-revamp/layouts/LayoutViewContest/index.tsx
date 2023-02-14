@@ -241,7 +241,7 @@ const LayoutViewContest = (props: any) => {
             </div>
           )}
 
-          {account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose)) && (
+          {!isLoading && account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose)) && (
             <div className="animate-appear flex text-center flex-col my-10 mx-auto">
               <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
               <p className="mt-2 mb-4 text-neutral-11 text-xs">
