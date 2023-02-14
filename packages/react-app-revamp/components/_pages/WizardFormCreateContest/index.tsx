@@ -14,74 +14,74 @@ import { Transition } from "@headlessui/react";
 import Loader from "@components/Loader";
 
 function renderStep(step: WizardFormStep, urlParam: string | undefined) {
-    const stepToRender = urlParam ? parseInt(urlParam) : step 
-    switch(stepToRender) {
-        case 1:
-            return (
-               <Step1 />
-            );
-          case 2:
-            return (
+  const stepToRender = urlParam ? parseInt(urlParam) : step;
+  return (
+      <>
+          <div className={stepToRender === 1 ? '' : 'hidden'}>
+              <Step1 />
+          </div>
+          <div className={stepToRender === 2 ? '' : 'hidden'}>
               <Step2 />
-            );
-          case 3:
-            return (
+          </div>
+          <div className={stepToRender === 3 ? '' : 'hidden'}>
               <Step3 />
-            );
-          case 4:
-            return (
+          </div>
+          <div className={stepToRender === 4 ? '' : 'hidden'}>
               <Step4 />
-            );
-    }
-  }
+          </div>
+      </>
+  );
+}
+
 export const WizardFormCreateContest = () => {
-    const { currentStep, setCurrentStep } = useStore(state =>  ({ 
-      //@ts-ignore
-      currentStep: state.currentStep, 
-      //@ts-ignore
-      setCurrentStep: state.setCurrentStep, 
-     }), shallow);
+  const { currentStep, setCurrentStep } = useStore(state =>  ({ 
+    //@ts-ignore
+    currentStep: state.currentStep, 
+    //@ts-ignore
+    setCurrentStep: state.setCurrentStep, 
+  }), shallow);
+  
+  const { query: { step }, isReady } = useRouter()
+  const { isConnected, isConnecting, isReconnecting } = useAccount()
+  const { chain } = useNetwork()
+
+  useEffect(() => {
+    //@ts-ignore
+    if(isReady && step && parseInt(step) !== currentStep) setCurrentStep(parseInt(step))
+  },[step, isReady])
+
+  useEffect(() => {
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  }, [currentStep])
+
+  return <>
+    <Transition 
+      show={!isReady || isConnecting || isReconnecting}
+      as={Fragment}
+      enter="ease-out duration-200"
+      enterFrom="opacity-0"
+      enterTo="opacity-100"
+      leave="ease-in duration-200"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
     
-    const { query: { step }, isReady } = useRouter()
-    const { isConnected, isConnecting, isReconnecting } = useAccount()
-    const { chain } = useNetwork()
+    >
+      <div>
+        <Loader scale="page" />
+      </div>
+    </Transition>
 
-    useEffect(() => {
-      //@ts-ignore
-      if(isReady && step && parseInt(step) !== currentStep) setCurrentStep(parseInt(step))
-    },[step, isReady])
-
-    useEffect(() => {
-      document.body.scrollTop = 0; // For Safari
-      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-    }, [currentStep])
-
- return <>
-   <Transition 
-    show={!isReady || isConnecting || isReconnecting}
-    as={Fragment}
-    enter="ease-out duration-200"
-    enterFrom="opacity-0"
-    enterTo="opacity-100"
-    leave="ease-in duration-200"
-    leaveFrom="opacity-100"
-    leaveTo="opacity-0"
-    
-   >
-    <div>
-      <Loader scale="page" />
-    </div>
-   </Transition>
-   <Transition
-show={isReady && !isConnecting && !isReconnecting}
-as={Fragment}
-enter="ease-out duration-300 delay-300"
-enterFrom="opacity-0"
-enterTo="opacity-100"
-leave="ease-in duration-300"
-leaveFrom="opacity-100"
-leaveTo="opacity-0 "
->
+    <Transition
+      show={isReady && !isConnecting && !isReconnecting}
+      as={Fragment}
+      enter="ease-out duration-300 delay-300"
+      enterFrom="opacity-0"
+      enterTo="opacity-100"
+      leave="ease-in duration-300"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0 "
+    >
 <div>
     {(isReady && (!isConnected || chain?.unsupported === true)) && <div className='mb-5 text-sm font-bold flex items-center bg-primary-1 text-primary-10 p-3 rounded-md border-solid border border-primary-4'>
     <ExclamationCircleIcon className="w-6 mie-1ex" />
@@ -94,7 +94,7 @@ leaveTo="opacity-0 "
     </div>
   </div>
   </Transition>
- </> 
+</> 
 
 }
 
