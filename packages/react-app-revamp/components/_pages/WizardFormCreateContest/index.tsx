@@ -50,15 +50,11 @@ function renderStep(step: WizardFormStep, urlParam: string | undefined) {
 }
 
 export const WizardFormCreateContest = () => {
-  const { currentStep, setCurrentStep, newTokenAddress, setNewTokenAddress } = useStore(state =>  ({ 
+  const { currentStep, setCurrentStep } = useStore(state =>  ({ 
     //@ts-ignore
     currentStep: state.currentStep, 
     //@ts-ignore
     setCurrentStep: state.setCurrentStep, 
-    //@ts-ignore
-    newTokenAddress: state.newTokenAddress,
-    //@ts-ignore
-    setNewTokenAddress: state.setNewTokenAddress,
   }), shallow);
   
   const { query: { step }, isReady } = useRouter()
