@@ -7,10 +7,15 @@ export interface DialogModalProps {
   setIsOpen: (isOpen: boolean) => void;
   title: string;
   children: React.ReactNode;
+  maxWidth?: "2xs" | "xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "7xl" | "8xl" | "9xl" | "full";
 }
 
 export const DialogModal = (props: DialogModalProps) => {
   const { isOpen, setIsOpen, title, children } = props;
+
+  // generate maxWidth class example: max-w-screen-<maxWidth>, default is max-w-screen-2xs
+  const maxWidthClassName = props.maxWidth ? `max-w-screen-${props.maxWidth}` : "max-w-screen-2xs";
+
   return (
     <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
       <div className="fixed inset-0 pointer-events-none bg-true-black bg-opacity-80" aria-hidden="true" />
@@ -19,7 +24,7 @@ export const DialogModal = (props: DialogModalProps) => {
         {/* Container to center the panel */}
         <div className="flex min-h-full w-full items-center justify-center">
           {/* The actual dialog panel  */}
-          <Dialog.Panel className="text-sm mx-auto min-h-screen  max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-neutral-4 bg-neutral-0 2xs:rounded-lg">
+          <Dialog.Panel className={`text-sm mx-auto min-h-screen  max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full ${maxWidthClassName} border px-4 pt-4 pb-6 border-neutral-4 bg-neutral-0 2xs:rounded-lg`}>
             <Dialog.Title className="sr-only">{title}</Dialog.Title>
             <div className="p-2 relative">
               <button

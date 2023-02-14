@@ -93,20 +93,6 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     if (isLoading === true || error !== null || isSuccess === true) setShowDeploymentSteps(true);
   }, [isSuccess, isLoading, error]);
 
-  useEffect(() => {
-    if (props.isOpen === false && !isLoading) {
-      setProposal("");
-      setShowForm(true);
-      setShowForm(true);
-      editorProposal?.setOptions({
-        ...editorProposal.options,
-        editable: true,
-      });
-      editorProposal?.commands.clearContent();
-      setShowDeploymentSteps(false);
-    }
-  }, [props.isOpen, isLoading]);
-
   function onSubmitProposal(e: any) {
     e.preventDefault();
     editorProposal?.setEditable(false);
@@ -124,86 +110,131 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     setShowDeploymentSteps(false);
   }
 
+  const [isOpenExitConfirmation, setIsOpenExitConfirmation] = useState<boolean>(false);
+  function handleSetIsOpen(isOpen:boolean){
+    if (isOpen === false && !isLoading) {
+      // Close directly if proposal is empty
+      if(!proposal){
+        handleClose()
+      }else{
+        setIsOpenExitConfirmation(true)
+      }
+    }
+  }
+
+  function handleClose(){
+    setIsOpenExitConfirmation(false)
+    props.setIsOpen(false);
+    setProposal("");
+    setShowForm(true);
+    setShowForm(true);
+    editorProposal?.setOptions({
+      ...editorProposal.options,
+      editable: true,
+    });
+    editorProposal?.commands.clearContent();
+    setShowDeploymentSteps(false);
+  }
+
   return (
-    <DialogModal title="Submit your proposal" {...props}>
-      {showDeploymentSteps && (
-        <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction
-            textError={error}
-            isSuccess={isSuccess}
-            isError={error !== null}
-            isLoading={isLoading}
-          />
-        </div>
-      )}
+    <>
+      <DialogModal title="Submit your proposal" isOpen={props.isOpen} setIsOpen={handleSetIsOpen} maxWidth="lg" >
+        {showDeploymentSteps && (
+          <div className="animate-appear mt-2 mb-4">
+            <TrackerDeployTransaction
+              textError={error}
+              isSuccess={isSuccess}
+              isError={error !== null}
+              isLoading={isLoading}
+            />
+          </div>
+        )}
 
-      {showDeploymentSteps && transactionData?.proposalId && (
-        <div className="mt-2 mb-4 animate-appear relative">
-          <Link
-            href={{
-              pathname: ROUTE_CONTEST_PROPOSAL,
-              //@ts-ignore
-              query: {
-                chain: asPath.split("/")[2],
-                address: asPath.split("/")[3],
-                proposal: transactionData.proposalId,
-              },
-            }}
-          >
-            <a target="_blank">
-              View proposal <span className="link">here</span>
-            </a>
-          </Link>
-        </div>
-      )}
-      {error !== null && !isSuccess && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
-        <>
-          <Button onClick={onSubmitProposal} intent="neutral-outline" type="submit" className="mx-auto my-3">
-            Try again
-          </Button>
-        </>
-      )}
+        {showDeploymentSteps && transactionData?.proposalId && (
+          <div className="mt-2 mb-4 animate-appear relative">
+            <Link
+              href={{
+                pathname: ROUTE_CONTEST_PROPOSAL,
+                //@ts-ignore
+                query: {
+                  chain: asPath.split("/")[2],
+                  address: asPath.split("/")[3],
+                  proposal: transactionData.proposalId,
+                },
+              }}
+            >
+              <a target="_blank">
+                View proposal <span className="link">here</span>
+              </a>
+            </Link>
+          </div>
+        )}
+        {error !== null && !isSuccess && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
+          <>
+            <Button onClick={onSubmitProposal} intent="neutral-outline" type="submit" className="mx-auto my-3">
+              Try again
+            </Button>
+          </>
+        )}
 
-      {currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry &&
-      currentUserProposalCount < contestMaxNumberSubmissionsPerUser &&
-      listProposalsIds.length < contestMaxProposalCount &&
-      contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
-        <>
-          {contestPrompt && (
-            <p className="mb-4 text-neutral-12 leading-tight text-2xs font-medium with-link-highlighted">
-              <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
-            </p>
-          )}
-          {showForm === true ? (
-            <>
-              <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>
-                <TipTapEditor editor={editorProposal} />
-                <p className="mt-2 text-neutral-11 text-3xs">
-                  Make sure to preview your proposal to check if it renders properly !
-                </p>
-                <Button
-                  disabled={proposal.trim().length === 0 || isLoading}
-                  type="submit"
-                  className={isLoading || error !== null ? "hidden" : "mt-3"}
-                >
-                  Submit!
+        {currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry &&
+        currentUserProposalCount < contestMaxNumberSubmissionsPerUser &&
+        listProposalsIds.length < contestMaxProposalCount &&
+        contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
+          <>
+            {contestPrompt && (
+              <p className="mb-4 text-neutral-12 leading-normal text-2xs font-medium with-link-highlighted">
+                <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
+              </p>
+            )}
+            {showForm === true ? (
+              <>
+                <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>
+                  <TipTapEditor editor={editorProposal} />
+                  <p className="mt-2 text-neutral-11 text-3xs">
+                    Make sure to preview your proposal to check if it renders properly !
+                  </p>
+                  <Button
+                    disabled={proposal.trim().length === 0 || isLoading}
+                    type="submit"
+                    className={isLoading || error !== null ? "hidden" : "mt-3"}
+                  >
+                    Submit!
+                  </Button>
+                </form>
+              </>
+            ) : (
+              <div className="flex pt-3 items-center justify-center animate-appear">
+                <Button intent="neutral-outline" onClick={onClickSubmitAnotherProposal}>
+                  Submit another proposal
                 </Button>
-              </form>
-            </>
-          ) : (
-            <div className="flex pt-3 items-center justify-center animate-appear">
-              <Button intent="neutral-outline" onClick={onClickSubmitAnotherProposal}>
-                Submit another proposal
-              </Button>
-            </div>
-          )}
-        </>
-      ) : (
-        <>
-          <p className="italic font-bold text-neutral-11">You can&apos;t submit more proposals.</p>
-        </>
-      )}
-    </DialogModal>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <p className="italic font-bold text-neutral-11">You can&apos;t submit more proposals.</p>
+          </>
+        )}
+      </DialogModal>
+
+      <DialogModal title="Exit confirmation" isOpen={isOpenExitConfirmation} setIsOpen={setIsOpenExitConfirmation}>
+        <div>
+          <p className="mb-4 mt-2 text-neutral-12 leading-normal text-xs font-medium with-link-highlighted">
+            You have unsaved changes, are you sure you want to exit?
+          </p>
+
+          <div className="flex flex-row items-center gap-4 justify-end mt-5">
+            <Button intent="ghost-negative" onClick={handleClose}>
+              Yes
+            </Button>
+            <Button intent="neutral-outline" onClick={() => setIsOpenExitConfirmation(false)}>
+              No
+            </Button>
+          </div>
+        </div>
+      </DialogModal>
+    </>
   );
 };
 
