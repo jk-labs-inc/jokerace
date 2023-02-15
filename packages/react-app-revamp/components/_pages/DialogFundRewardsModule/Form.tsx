@@ -289,14 +289,13 @@ export const Form = (props: FormProps) => {
             isLoading ||
             !isConnected ||
             chain?.unsupported === true ||
-            (data()?.isErc20 === true &&
-              (!erc20TokenRewards?.data ||
-                /*@ts-ignore */
-                data()?.amount >
-                  (balance?.data?.decimals === 18
-                    ? balance?.data?.formatted
-                    : //@ts-ignore
-                      10 ** (18 - balance.data.decimals) * balance.data.formatted)))
+            (data()?.isErc20 === true && !erc20TokenRewards?.data) ||
+            /*@ts-ignore */
+            data()?.amount >
+              (balance?.data?.decimals === 18
+                ? balance?.data?.formatted
+                : //@ts-ignore
+                  10 ** (18 - balance.data.decimals) * balance.data.formatted)
           }
           type="submit"
         >
