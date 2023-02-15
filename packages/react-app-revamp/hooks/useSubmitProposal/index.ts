@@ -69,11 +69,12 @@ export function useSubmitProposal() {
     } catch (e) {
       toast.error(
         //@ts-ignore
-        e?.data?.message ?? "Something went wrong while deploying your proposal. Please try again.",
+        e?.message ?? "Something went wrong while deploying your proposal. Please try again.",
       );
       console.error(e);
       setIsLoading(false);
-      setError(e);
+      //@ts-ignore
+      setError(e?.message);
     }
   }
 

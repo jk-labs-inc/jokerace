@@ -71,11 +71,12 @@ export function useCastVotes() {
     } catch (e) {
       toast.error(
         //@ts-ignore
-        e?.data?.message ?? "Something went wrong while casting your votes.",
+        e?.message ?? "Something went wrong while casting your votes.",
       );
       console.error(e);
       setIsLoading(false);
-      setError(e);
+      //@ts-ignore
+      setError(e?.message);
     }
   }
 
