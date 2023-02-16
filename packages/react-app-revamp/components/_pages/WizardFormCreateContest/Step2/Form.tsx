@@ -8,6 +8,7 @@ import ToggleSwitch from "@components/ToggleSwitch";
 import button from "@components/Button/styles";
 import { useStore } from "../store";
 import { useId } from "react";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 interface FormProps {
   showSkipButton: boolean;
@@ -28,7 +29,13 @@ const appearAsNeutralButton = button({ intent: "ghost-neutral", scale: "sm", cla
 export const Form = (props: FormProps) => {
   const formId = useId();
   const { isDeploying, form, data, errors, isValid, interacted, setData, setFields, showSkipButton } = props;
-  const account = useAccount();
+  const account = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const { chain } = useNetwork();
   const { setCurrentStep, dataDeployVotingToken } = useStore(
     state => ({

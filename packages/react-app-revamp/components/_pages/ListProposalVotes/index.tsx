@@ -6,6 +6,7 @@ import { useStore as useStoreContest } from "@hooks/useContest/store";
 import shallow from "zustand/shallow";
 import { useAccount } from "wagmi";
 import EtheuremAddress from "@components/EtheuremAddress";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 interface ListProposalVotesProps {
   id: number | string;
@@ -13,7 +14,13 @@ interface ListProposalVotesProps {
 
 export const ListProposalVotes = (props: ListProposalVotesProps) => {
   const { id } = props;
-  const accountData = useAccount();
+  const accountData = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const { isLoading, isSuccess, isError, retry, fetchVotesPage } = useProposalVotes(id);
   const { listProposalsData } = useStoreContest(
     state => ({

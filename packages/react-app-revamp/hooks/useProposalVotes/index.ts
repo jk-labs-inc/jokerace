@@ -12,12 +12,19 @@ import { useStore } from "./store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 const VOTES_PER_PAGE = 5;
 
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
-  const account = useAccount();
+  const account = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const provider = useProvider();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(

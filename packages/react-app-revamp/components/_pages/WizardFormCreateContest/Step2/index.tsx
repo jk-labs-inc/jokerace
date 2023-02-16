@@ -10,6 +10,7 @@ import { useStore } from "../store";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployToken } from "./useDeployToken";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 export const Step2 = () => {
   const {
@@ -38,7 +39,13 @@ export const Step2 = () => {
     onSubmit: values => handleSubmitForm(values, false),
   });
   const { handleSubmitForm, stateContractDeployment } = useDeployToken(form);
-  const { isConnected } = useAccount();
+  const { isConnected } = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   return (
     <>
       <div className="tracking-wide pb-8">

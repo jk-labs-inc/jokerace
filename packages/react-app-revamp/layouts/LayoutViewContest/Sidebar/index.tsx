@@ -20,11 +20,18 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 import Timeline from "../Timeline";
 import VotingToken from "../VotingToken";
 import styles from "./styles.module.css";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 export const Sidebar = (props: any) => {
   const { query, pathname } = useRouter();
   const { chain } = useNetwork();
-  const account = useAccount();
+  const account = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const {
     isLoading,
     isListProposalsLoading,

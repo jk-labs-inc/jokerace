@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { useEffect, useId } from "react";
 import { useAccount, useBalance, useNetwork, useToken } from "wagmi";
 import { schema } from "./schema";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 interface FormProps {
   isLoading: boolean;
@@ -27,7 +28,13 @@ interface FormProps {
 export const Form = (props: FormProps) => {
   const formId = useId();
   const { isLoading, isError, isSuccess, handleSubmit, setIsModalOpen } = props;
-  const { isConnected, address } = useAccount();
+  const { isConnected, address } = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const { chain } = useNetwork();
   const { query } = useRouter();
   const { form, setData, data, errors, isValid } = useForm({
