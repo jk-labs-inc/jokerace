@@ -10,6 +10,7 @@ const LINK_BUG_REPORT =
 const LINK_REQUEST_FEATURE =
   "https://github.com/JokeDAO/JokeDaoV2Dev/issues/new?assignees=&labels=enhancement%2C+question%2C+ux&template=feature_request.md&title=%5BFEAT.%5D";
 const LINK_FAQ = "https://joke.mirror.xyz/4wiTHmaeVgwAG_W2gK1XKeIE2NpKYJxrxKoqNdzR_co";
+const LINK_TOS = "https://github.com/JokeDAO/JokeDaoV2Dev/blob/main/TOS.md";
 
 export const FOOTER_LINKS = [
   {
@@ -52,5 +53,9 @@ export const FOOTER_LINKS = [
   {
     label: "Report a bug",
     href: LINK_BUG_REPORT,
+  },
+  {
+    label: "Terms of Service",
+    href: LINK_TOS,
   },
 ];
