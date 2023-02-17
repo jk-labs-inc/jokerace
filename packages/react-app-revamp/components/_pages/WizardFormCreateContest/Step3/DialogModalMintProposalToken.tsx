@@ -12,12 +12,19 @@ import Form from "../Step2/Form";
 import { schema } from "../Step2/schema";
 import useDeployToken from "../Step2/useDeployToken";
 import { useStore } from "../store";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 interface DialogModalMintProposalTokenProps {
   formCreateContestSetFields: any;
 }
 export const DialogModalMintProposalToken = (props: DialogModalMintProposalTokenProps) => {
-  const { isConnected } = useAccount();
+  const { isConnected } = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const { formCreateContestSetFields } = props;
   const {
     tokenDeployedToChain,

@@ -27,6 +27,7 @@ import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFro
 import RewardsWinner from "@components/_pages/RewardsWinner";
 import { useRouter } from "next/router";
 import { isBefore } from "date-fns";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 interface PageProps {
   address: string;
 }
@@ -49,7 +50,13 @@ const Page = (props: PageProps) => {
   const { getContestRewardsModule } = useRewardsModule();
   const [isWithdrawnFundsDialogOpen, setIsWithdrawFundsDialogOpen] = useState(false);
   const [isDialogCheckBalanceOpen, setIsDialogCheckBalanceOpen] = useState(false);
-  const currentAccount = useAccount();
+  const currentAccount = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const { chain } = useNetwork();
   const { asPath } = useRouter();
 

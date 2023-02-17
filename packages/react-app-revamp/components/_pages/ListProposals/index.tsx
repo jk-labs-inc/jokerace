@@ -17,12 +17,19 @@ import { useContest } from "@hooks/useContest";
 import isProposalDeleted from "@helpers/isProposalDeleted";
 import Loader from "@components/Loader";
 import { TrashIcon } from "@heroicons/react/outline";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 export const ListProposals = () => {
   const {
     query: { chain, address },
   } = useRouter();
-  const accountData = useAccount();
+  const accountData = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const network = useNetwork();
   const {
     contestAuthorEthereumAddress,

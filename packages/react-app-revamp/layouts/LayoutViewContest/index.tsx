@@ -58,11 +58,18 @@ import { switchNetwork } from "@wagmi/core";
 import { ErrorBoundary } from "react-error-boundary";
 import EtheuremAddress from "@components/EtheuremAddress";
 import { RefreshIcon } from "@heroicons/react/outline";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
   const { query, asPath, pathname, push, reload } = useRouter();
-  const account = useAccount();
+  const account = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const { chain } = useNetwork();
 
   const {

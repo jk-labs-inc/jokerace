@@ -12,6 +12,7 @@ import type { WizardFormStep } from './store'
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import { Transition } from "@headlessui/react";
 import Loader from "@components/Loader";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 function renderStep(step: WizardFormStep, urlParam: string | undefined) {
     const stepToRender = urlParam ? parseInt(urlParam) : step 
@@ -43,7 +44,11 @@ export const WizardFormCreateContest = () => {
      }), shallow);
     
     const { query: { step }, isReady } = useRouter()
-    const { isConnected, isConnecting, isReconnecting } = useAccount()
+    const { isConnected, isConnecting, isReconnecting } = useAccount({
+      onConnect({ address }) {
+        console.log('Connected', { address })
+      },
+    })
     const { chain } = useNetwork()
 
     useEffect(() => {

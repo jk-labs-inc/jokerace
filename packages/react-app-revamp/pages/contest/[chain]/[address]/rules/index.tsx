@@ -9,6 +9,7 @@ import { format } from 'date-fns'
 import { CONTEST_STATUS } from '@helpers/contestStatus'
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 interface PageProps {
   address: string,
@@ -17,7 +18,13 @@ interface PageProps {
 const Page: NextPage = (props: PageProps) => {
   const { address } = props
   const { asPath } = useRouter()
-  const accountData = useAccount()
+  const accountData = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  })
   const { contestState, checkIfUserPassedSnapshotLoading, snapshotTaken, didUserPassSnapshotAndCanVote, usersQualifyToVoteIfTheyHoldTokenAtTime, votingToken, contestMaxNumberSubmissionsPerUser,  amountOfTokensRequiredToSubmitEntry, contestMaxProposalCount, isSuccess, isLoading, contestName, submitProposalToken } = useStore(state =>  ({ 
     //@ts-ignore
     votingToken: state.votingToken,

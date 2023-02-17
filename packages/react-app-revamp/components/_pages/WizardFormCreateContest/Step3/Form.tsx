@@ -15,6 +15,7 @@ import ToggleSwitch from "@components/ToggleSwitch";
 import { useId } from "react";
 import { CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
 import ordinalize from "@helpers/ordinalize";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -33,7 +34,13 @@ const ranks = [1, 2, 3, 4, 5];
 export const Form = (props: FormProps) => {
   const formId = useId();
   const { isDeploying, form, touched, data, errors, isValid, interacted, resetField, setData } = props;
-  const { isConnected } = useAccount();
+  const { isConnected } = useAccount({
+    onConnect({ address }) {
+      if (address != undefined && ofacAddresses.includes(address?.toString())) {
+        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+      }
+    },
+  });
   const { chain } = useNetwork();
   const { setCurrentStep, setModalDeploySubmissionTokenOpen } = useStore(
     state => ({
