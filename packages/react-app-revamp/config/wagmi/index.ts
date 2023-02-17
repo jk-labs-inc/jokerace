@@ -1,4 +1,5 @@
 import { chain, configureChains, createClient } from "wagmi";
+import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -7,7 +8,7 @@ import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rai
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
-const testnetChains = [chain.polygonMumbai, chain.goerli];
+const testnetChains = [chain.polygonMumbai, chain.goerli, polygonZkTestnet];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];
 const appChains = [...defaultChains, ...testnetChains];
@@ -61,4 +62,5 @@ export const chainsImages = {
   kovan: "/ethereum.svg",
   polygon: "/polygon.svg",
   polygonmumbai: "/polygon.svg",
+  polygonzktestnet: "/polygon.svg",
 };
