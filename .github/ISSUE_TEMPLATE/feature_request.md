@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for JokeDAO !
-title: "[FEAT.]"
+title: "enhancement: "
 labels: enhancement, question, ux
 assignees: ''
 
