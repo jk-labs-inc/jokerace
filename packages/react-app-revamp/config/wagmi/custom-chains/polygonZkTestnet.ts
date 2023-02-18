@@ -2,7 +2,7 @@ import { Chain } from '@wagmi/core'
 
 export const polygonZkTestnet = {
   id: 1422,
-  name: 'Polygon Zk Testnet',
+  name: 'PolygonZkTestnet',
   network: 'polygonZkTestnet',
   nativeCurrency: {
     decimals: 18,
