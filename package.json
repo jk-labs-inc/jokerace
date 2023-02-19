@@ -37,19 +37,7 @@
     "clean": "cd packages/hardhat && npx hardhat clean",
     "postinstall": "husky install"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ],
-    "nohoist": [
-      "**/@graphprotocol/graph-ts",
-      "**/@graphprotocol/graph-ts/**",
-      "**/hardhat",
-      "**/hardhat/**",
-      "**/hardhat-ts",
-      "**/hardhat-ts/**"
-    ]
-  },
+  "workspaces": ["packages/*"],
   "dependencies": {},
   "devDependencies": {
     "husky": "^7.0.2"
