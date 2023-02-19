@@ -67,13 +67,10 @@ export function useSubmitProposal() {
       toast.success(`Your proposal was deployed successfully!`);
       increaseCurrentUserProposalCount();
     } catch (e) {
-      toast.error(
-        //@ts-ignore
-        e?.data?.message ?? "Something went wrong while deploying your proposal. Please try again.",
-      );
-      console.error(e);
-      setIsLoading(false);
+      //@ts-ignore
+      toast.error(e?.message);
       setError(e);
+      setIsLoading(false);
     }
   }
 

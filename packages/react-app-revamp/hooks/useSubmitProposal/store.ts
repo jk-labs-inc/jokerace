@@ -1,3 +1,4 @@
+import { CustomError } from "types/error";
 import create from "zustand";
 import createContext from "zustand/context";
 
@@ -12,7 +13,7 @@ export const createStore = () => {
     setIsModalOpen: (value: boolean) => set({ isModalOpen: value }),
     setIsLoading: (value: boolean) => set({ isLoading: value }),
     setIsSuccess: (value: boolean) => set({ isSuccess: value }),
-    setError: (value: null | string) => set({ error: value }),
+    setError: (value: CustomError | null) => set({ error: value }),
   }));
 };
 

@@ -128,12 +128,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     <DialogModal title="Submit your proposal" {...props}>
       {showDeploymentSteps && (
         <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction
-            textError={error}
-            isSuccess={isSuccess}
-            isError={error !== null}
-            isLoading={isLoading}
-          />
+          <TrackerDeployTransaction isSuccess={isSuccess} error={error} isLoading={isLoading} />
         </div>
       )}
 
@@ -156,13 +151,6 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
           </Link>
         </div>
       )}
-      {error !== null && !isSuccess && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
-        <>
-          <Button onClick={onSubmitProposal} intent="neutral-outline" type="submit" className="mx-auto my-3">
-            Try again
-          </Button>
-        </>
-      )}
 
       {currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry &&
       currentUserProposalCount < contestMaxNumberSubmissionsPerUser &&
@@ -184,7 +172,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
                 <Button
                   disabled={proposal.trim().length === 0 || isLoading}
                   type="submit"
-                  className={isLoading || error !== null ? "hidden" : "mt-3"}
+                  className={isLoading ? "hidden" : "mt-3"}
                 >
                   Submit!
                 </Button>
