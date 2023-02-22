@@ -1,6 +1,7 @@
 import { chain, configureChains, createClient } from "wagmi";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
 import { zkEraMainnet } from "./custom-chains/zkEraMainnet";
+import { sepolia } from "./custom-chains/sepolia";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -9,7 +10,7 @@ import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rai
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
-const testnetChains = [chain.polygonMumbai, chain.goerli, polygonZkTestnet, zkEraMainnet];
+const testnetChains = [chain.polygonMumbai, chain.goerli, sepolia, polygonZkTestnet, zkEraMainnet];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];
 const appChains = [...defaultChains, ...testnetChains];
