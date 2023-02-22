@@ -8,8 +8,8 @@ export const sepolia = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    public: 'https://rpc.sepolia.dev',
-    default: 'https://rpc.sepolia.dev',
+    public: 'https://rpc.sepolia.org/',
+    default: 'https://rpc.sepolia.org/',
   },
   blockExplorers: {
     etherscan: { name: 'Sepolia Etherscan', url: 'https://sepolia.etherscan.io' },
