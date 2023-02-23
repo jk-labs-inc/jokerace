@@ -1,5 +1,3 @@
-import { Chain } from '@wagmi/core'
-
 export const polygonZkTestnet = {
   id: 1422,
   name: 'PolygonZkTestnet',
