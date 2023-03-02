@@ -46,7 +46,8 @@
     "urql": "^3.0.3",
     "wagmi": "^0.5.8",
     "web3.storage": "^4.4.0",
-    "zod": "^3.17.3"
+    "zod": "^3.17.3",
+    "zustand": "4.3.5"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^2.13.7",

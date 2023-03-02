@@ -1,15 +1,15 @@
-import shallow from "zustand/shallow";
 import Button from "@components/Button";
 import DialogModal from "@components/DialogModal";
 import FormField from "@components/FormField";
 import FormInput from "@components/FormInput";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import { useStore as useStoreCastVotes } from "@hooks/useCastVotes/store";
-import { useEffect, useState } from "react";
 import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
-import useCastVotes from "@hooks/useCastVotes";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { RadioGroup } from "@headlessui/react";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
+import useCastVotes from "@hooks/useCastVotes";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useEffect, useState } from "react";
+import shallow from "zustand/shallow";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -17,24 +17,13 @@ interface DialogModalVoteForProposalProps {
 }
 
 export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProps) => {
-  const {
-    pickedProposal,
-    transactionData,
-    castPositiveAmountOfVotes,
-    setCastPositiveAmountOfVotes,
-  } = useStoreCastVotes(
-    state => ({
-      //@ts-ignore
+  const { pickedProposal, transactionData, castPositiveAmountOfVotes, setCastPositiveAmountOfVotes } =
+    useCastVotesStore(state => ({
       pickedProposal: state.pickedProposal,
-      //@ts-ignore
       transactionData: state.transactionData,
-      //@ts-ignore
       castPositiveAmountOfVotes: state.castPositiveAmountOfVotes,
-      //@ts-ignore
       setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
-    }),
-    shallow,
-  );
+    }));
   const { downvotingAllowed, listProposalsData, contestStatus, currentUserAvailableVotesAmount } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -48,7 +37,6 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
     }),
     shallow,
   );
-  //@ts-ignore
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
   const [votesToCast, setVotesToCast] = useState(
@@ -69,7 +57,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
       setShowForm(true);
       setShowDeploymentSteps(false);
     }
-  }, [props.isOpen, isLoading]);
+  }, [props.isOpen, isLoading, currentUserAvailableVotesAmount]);
 
   function onSubmitCastVotes(e: any) {
     e.preventDefault();

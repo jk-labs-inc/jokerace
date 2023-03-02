@@ -20,23 +20,11 @@ import {
   Provider as ProviderContest,
   createStore as createStoreContest,
 } from "@hooks/useContest/store";
-import {
-  useStore as useStoreSubmitProposal,
-  Provider as ProviderSubmitProposal,
-  createStore as createStoreSubmitProposal,
-} from "@hooks/useSubmitProposal/store";
+import { useSubmitProposalStore, SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
 
-import {
-  useStore as useStoreCastVotes,
-  Provider as ProviderCastVotes,
-  createStore as createStoreCastVotes,
-} from "@hooks/useCastVotes/store";
+import { useCastVotesStore, CastVotesWrapper } from "@hooks/useCastVotes/store";
 
-import {
-  useStore as useStoreDeleteProposal,
-  Provider as ProviderDeleteProposal,
-  createStore as createStoreDeleteProposal,
-} from "@hooks/useDeleteProposal/store";
+import { DeleteProposalWrapper, useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
 
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
@@ -58,7 +46,7 @@ import { switchNetwork } from "@wagmi/core";
 import { ErrorBoundary } from "react-error-boundary";
 import EtheuremAddress from "@components/EtheuremAddress";
 import { RefreshIcon } from "@heroicons/react/outline";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -66,7 +54,7 @@ const LayoutViewContest = (props: any) => {
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -132,9 +120,18 @@ const LayoutViewContest = (props: any) => {
   );
   const { updateSnapshotProgress } = useCheckSnapshotProgress();
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
-  const stateSubmitProposal = useStoreSubmitProposal();
-  const stateCastVotes = useStoreCastVotes();
-  const stateDeleteProposasl = useStoreDeleteProposal();
+  const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
+    isSubmitProposalModalOpen: state.isModalOpen,
+    setIsSubmitProposalModalOpen: state.setIsModalOpen,
+  }));
+  const { isCastVotesModalOpen, setIsCastVotesModalOpen } = useCastVotesStore(state => ({
+    isCastVotesModalOpen: state.isModalOpen,
+    setIsCastVotesModalOpen: state.setIsModalOpen,
+  }));
+  const { isDeleteProposalModalOpen, setIsDeleteProposalModalOpen } = useDeleteProposalStore(state => ({
+    isDeleteProposalModalOpen: state.isModalOpen,
+    setIsDeleteProposalModalOpen: state.setIsModalOpen,
+  }));
   const { displayReloadBanner } = useContestEvents();
 
   useEffect(() => {
@@ -302,7 +299,12 @@ const LayoutViewContest = (props: any) => {
                         <span>Let&apos;s refresh!</span>
                         <p className="font-normal">Looks like live updates were frozen.</p>
                       </div>
-                      <Button className="w-full 2xs:w-fit-content" intent="primary-outline" scale="xs" onClick={() => reload()}>
+                      <Button
+                        className="w-full 2xs:w-fit-content"
+                        intent="primary-outline"
+                        scale="xs"
+                        onClick={() => reload()}
+                      >
                         <RefreshIcon className="mie-1ex w-4" />
                         Refresh
                       </Button>
@@ -397,18 +399,14 @@ const LayoutViewContest = (props: any) => {
                       isDate(votesOpen) &&
                       isBefore(new Date(), votesOpen) && (
                         <DialogModalSendProposal
-                          /* @ts-ignore */
-                          isOpen={stateSubmitProposal.isModalOpen}
-                          /* @ts-ignore */
-                          setIsOpen={stateSubmitProposal.setIsModalOpen}
+                          isOpen={isSubmitProposalModalOpen}
+                          setIsOpen={setIsSubmitProposalModalOpen}
                         />
                       )}
                     {!isLoading && isSuccess && chain?.id === chainId && (
                       <DialogModalDeleteProposal
-                        /* @ts-ignore */
-                        isOpen={stateDeleteProposasl.isModalOpen}
-                        /* @ts-ignore */
-                        setIsOpen={stateDeleteProposasl.setIsModalOpen}
+                        isOpen={isDeleteProposalModalOpen}
+                        setIsOpen={setIsDeleteProposalModalOpen}
                       />
                     )}
                     {!isLoading &&
@@ -418,12 +416,7 @@ const LayoutViewContest = (props: any) => {
                       isAfter(new Date(), votesOpen) &&
                       isDate(votesClose) &&
                       isBefore(new Date(), votesClose) && (
-                        <DialogModalVoteForProposal
-                          /* @ts-ignore */
-                          isOpen={stateCastVotes.isModalOpen}
-                          /* @ts-ignore */
-                          setIsOpen={stateCastVotes.setIsModalOpen}
-                        />
+                        <DialogModalVoteForProposal isOpen={isCastVotesModalOpen} setIsOpen={setIsCastVotesModalOpen} />
                       )}
                   </div>
                 </>
@@ -449,13 +442,13 @@ export const getLayout = (page: any) => {
       )}
     >
       <ProviderContest createStore={createStoreContest}>
-        <ProviderSubmitProposal createStore={createStoreSubmitProposal}>
-          <ProviderCastVotes createStore={createStoreCastVotes}>
-            <ProviderDeleteProposal createStore={createStoreDeleteProposal}>
+        <SubmitProposalWrapper>
+          <CastVotesWrapper>
+            <DeleteProposalWrapper>
               <LayoutViewContest>{page}</LayoutViewContest>
-            </ProviderDeleteProposal>
-          </ProviderCastVotes>
-        </ProviderSubmitProposal>
+            </DeleteProposalWrapper>
+          </CastVotesWrapper>
+        </SubmitProposalWrapper>
       </ProviderContest>
     </ErrorBoundary>,
   );

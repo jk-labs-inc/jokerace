@@ -7,15 +7,10 @@ import useContest from "@hooks/useContest";
 import { useEffect, useRef, useState } from "react";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useProvider } from "wagmi";
-/*
-import { useContractEvent } from "wagmi";
-import { useStore as useStoreSubmitProposal } from "../useSubmitProposal/store";
-*/
 
 export function useContestEvents() {
   const { asPath } = useRouter();
   const provider = useProvider();
-  // const storeSubmitProposal = useStoreSubmitProposal();
   const {
     //@ts-ignore
     contestStatus,
@@ -140,58 +135,6 @@ export function useContestEvents() {
     };
   }, []);
 
-  /*
-  useContractEvent({
-    addressOrName: asPath.split("/")[3],
-    contractInterface: DeployedContestContract.abi,
-    eventName: "ProposalsDeleted",
-    listener: async event => {
-      softDeleteProposal(event[0].toString());
-    },
-  });
-  
-  useContractEvent({
-    addressOrName: asPath.split("/")[3],
-    contractInterface: DeployedContestContract.abi,
-    eventName: "ProposalCreated",
-    listener: async event => {
-      const proposalContent = event[3].args.description;
-      const proposalAuthor = event[3].args.proposer;
-      const proposalId = event[3].args.proposalId.toString();
-
-      const author = await fetchEnsName({
-        address: proposalAuthor,
-        chainId: chain.mainnet.id,
-      });
-
-      const proposalData = {
-        author: author ?? proposalAuthor,
-        content: proposalContent,
-        isContentImage: isUrlToImage(proposalContent) ? true : false,
-        exists: true,
-        //@ts-ignore
-        votes: 0,
-      };
-
-      addProposalId(proposalId);
-      setProposalData({ id: proposalId, data: proposalData });
-
-      updateProposalTransactionData(event[3].transactionHash, proposalId);
-    },
-  });
-
-  function updateProposalTransactionData(transactionHash: string, proposalId: string | number) {
-    //@ts-ignore
-    if (storeSubmitProposal.transactionData?.hash === transactionHash) {
-      //@ts-ignore
-      storeSubmitProposal.setTransactionData({
-        //@ts-ignore
-        ...storeSubmitProposal.transactionData,
-        proposalId,
-      });
-    }
-  }
-  */
   return {
     displayReloadBanner,
   };

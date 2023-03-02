@@ -1,11 +1,11 @@
-import toast from "react-hot-toast";
-import { writeContract, waitForTransaction } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useStore as useStoreSubmitProposal } from "./store";
-import { useStore as useStoreContest } from "./../useContest/store";
-import { useNetwork } from "wagmi";
-import { useRouter } from "next/router";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { waitForTransaction, writeContract } from "@wagmi/core";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import { useNetwork } from "wagmi";
+import { useStore as useStoreContest } from "./../useContest/store";
+import { useSubmitProposalStore } from "./store";
 
 export function useSubmitProposal() {
   const {
@@ -13,22 +13,16 @@ export function useSubmitProposal() {
     increaseCurrentUserProposalCount,
   } = useStoreContest();
 
-  const {
-    //@ts-ignore
-    isLoading,
-    //@ts-ignore
-    isSuccess,
-    //@ts-ignore
-    error,
-    //@ts-ignore
-    setIsLoading,
-    //@ts-ignore
-    setIsSuccess,
-    //@ts-ignore
-    setError,
-    //@ts-ignore
-    setTransactionData,
-  } = useStoreSubmitProposal();
+  const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
+    useSubmitProposalStore(state => ({
+      isLoading: state.isLoading,
+      isSuccess: state.isSuccess,
+      error: state.error,
+      setIsLoading: state.setIsLoading,
+      setIsSuccess: state.setIsSuccess,
+      setError: state.setError,
+      setTransactionData: state.setTransactionData,
+    }));
   const { chain } = useNetwork();
   const { asPath } = useRouter();
 
@@ -53,7 +47,6 @@ export function useSubmitProposal() {
 
       const receipt = await waitForTransaction({
         chainId: chain?.id,
-        //@ts-ignore
         hash: txSendProposal.hash,
       });
       setTransactionData({
@@ -67,13 +60,12 @@ export function useSubmitProposal() {
       toast.success(`Your proposal was deployed successfully!`);
       increaseCurrentUserProposalCount();
     } catch (e) {
-      toast.error(
-        //@ts-ignore
-        e?.data?.message ?? "Something went wrong while deploying your proposal. Please try again.",
-      );
-      console.error(e);
-      setIsLoading(false);
+      if (!e) return;
+      //@ts-ignore
+      const message = e?.message;
+      toast.error(message);
       setError(e);
+      setIsLoading(false);
     }
   }
 

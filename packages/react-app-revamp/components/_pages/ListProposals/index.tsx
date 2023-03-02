@@ -1,23 +1,23 @@
+import Button from "@components/Button";
+import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/Icons";
+import Loader from "@components/Loader";
+import ProposalContent from "@components/_pages/ProposalContent";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
+import isProposalDeleted from "@helpers/isProposalDeleted";
+import truncate from "@helpers/truncate";
+import { TrashIcon } from "@heroicons/react/outline";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useContest } from "@hooks/useContest";
+import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import shallow from "zustand/shallow";
-import Button from "@components/Button";
-import ProposalContent from "@components/_pages/ProposalContent";
-import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
-import truncate from "@helpers/truncate";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
-import { useStore as useStoreCastVotes } from "@hooks/useCastVotes/store";
-import { useStore as useStoreDeleteProposal } from "@hooks/useDeleteProposal/store";
-import styles from "./styles.module.css";
-import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/Icons";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useAccount, useNetwork } from "wagmi";
-import { useContest } from "@hooks/useContest";
-import isProposalDeleted from "@helpers/isProposalDeleted";
-import Loader from "@components/Loader";
-import { TrashIcon } from "@heroicons/react/outline";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import shallow from "zustand/shallow";
+import styles from "./styles.module.css";
 
 export const ListProposals = () => {
   const {
@@ -26,7 +26,7 @@ export const ListProposals = () => {
   const accountData = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -86,39 +86,32 @@ export const ListProposals = () => {
     }),
     shallow,
   );
-  const stateSubmitProposal = useStoreSubmitProposal();
-  const { setCastPositiveAmountOfVotes, setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useStoreCastVotes(
+  const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
+    setIsSubmitProposalModalOpen: state.setIsModalOpen,
+  }));
+  const { setCastPositiveAmountOfVotes, setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useCastVotesStore(
     state => ({
-      //@ts-ignore
       setPickedProposalToVoteFor: state.setPickedProposal,
-      //@ts-ignore
       setIsModalCastVotesOpen: state.setIsModalOpen,
-      //@ts-ignore
       setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
     }),
-    shallow,
   );
 
-  const { setPickedProposalToDelete, setIsModalDeleteProposalOpen } = useStoreDeleteProposal(
-    state => ({
-      //@ts-ignore
-      setPickedProposalToDelete: state.setPickedProposal,
-      //@ts-ignore
-      setIsModalDeleteProposalOpen: state.setIsModalOpen,
-    }),
-    shallow,
-  );
+  const { setPickedProposalToDelete, setIsModalDeleteProposalOpen } = useDeleteProposalStore(state => ({
+    setPickedProposalToDelete: state.setPickedProposal,
+    setIsModalDeleteProposalOpen: state.setIsModalOpen,
+  }));
 
   const { fetchProposalsPage } = useContest();
   function onClickUpVote(proposalId: number | string) {
     setCastPositiveAmountOfVotes(true);
-    setPickedProposalToVoteFor(proposalId);
+    setPickedProposalToVoteFor(proposalId.toString());
     setIsModalCastVotesOpen(true);
   }
 
   function onClickDownVote(proposalId: number | string) {
     setCastPositiveAmountOfVotes(false);
-    setPickedProposalToVoteFor(proposalId);
+    setPickedProposalToVoteFor(proposalId.toString());
     setIsModalCastVotesOpen(true);
   }
 
@@ -149,8 +142,7 @@ export const ListProposals = () => {
           {/* @ts-ignore */}
           {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
             currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry && (
-              //@ts-ignore
-              <Button onClick={() => stateSubmitProposal.setIsModalOpen(true)}>Submit a proposal</Button>
+              <Button onClick={() => setIsSubmitProposalModalOpen(true)}>Submit a proposal</Button>
             )}
         </div>
       );

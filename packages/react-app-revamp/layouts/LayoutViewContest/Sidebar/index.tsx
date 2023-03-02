@@ -15,12 +15,12 @@ import {
 import Button from "@components/Button";
 import { IconTrophy } from "@components/Icons";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
-import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import Timeline from "../Timeline";
 import VotingToken from "../VotingToken";
 import styles from "./styles.module.css";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 
 export const Sidebar = (props: any) => {
   const { query, pathname } = useRouter();
@@ -28,7 +28,7 @@ export const Sidebar = (props: any) => {
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -84,7 +84,9 @@ export const Sidebar = (props: any) => {
     }),
     shallow,
   );
-  const stateSubmitProposal = useStoreSubmitProposal();
+  const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
+    setIsSubmitProposalModalOpen: state.setIsModalOpen,
+  }));
 
   return (
     <>
@@ -173,8 +175,7 @@ export const Sidebar = (props: any) => {
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
         <>
           <Button
-            /* @ts-ignore */
-            onClick={() => stateSubmitProposal.setIsModalOpen(true)}
+            onClick={() => setIsSubmitProposalModalOpen(true)}
             className="animate-appear fixed md:static z-10  md:mt-3 aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset disabled:!opacity-100 disabled:!border-opacity-50 disabled:!text-opacity-50"
             intent={
               currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry ||

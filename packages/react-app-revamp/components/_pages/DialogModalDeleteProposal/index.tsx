@@ -1,9 +1,8 @@
-import shallow from "zustand/shallow";
 import Button from "@components/Button";
 import DialogModal from "@components/DialogModal";
 import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
-import { useStore as useStoreDeleteProposal } from "@hooks/useDeleteProposal/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
+import { useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
 
 interface DialogDeleteProposalProps {
   isOpen: boolean;
@@ -11,13 +10,9 @@ interface DialogDeleteProposalProps {
 }
 
 export const DialogModalDeleteProposal = (props: DialogDeleteProposalProps) => {
-  const { transactionData } = useStoreDeleteProposal(
-    state => ({
-      //@ts-ignore
-      transactionData: state.transactionData,
-    }),
-    shallow,
-  );
+  const { transactionData } = useDeleteProposalStore(state => ({
+    transactionData: state.transactionData,
+  }));
 
   const { deleteProposal, isLoading, isError, isSuccess, error } = useDeleteProposal();
   return (

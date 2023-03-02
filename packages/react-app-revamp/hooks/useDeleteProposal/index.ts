@@ -1,40 +1,43 @@
+import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNetwork } from "wagmi";
-import { useStore } from "./store";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useEffect } from "react";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useDeleteProposalStore } from "./store";
 
 export function useDeleteProposal() {
   const { asPath } = useRouter();
   const { chain } = useNetwork();
+
   const {
-    //@ts-ignore
-    isModalOpen,
-    //@ts-ignore
     isLoading,
-    //@ts-ignore
     isError,
-    //@ts-ignore
     error,
-    //@ts-ignore
     isSuccess,
-    //@ts-ignore
     transactionData,
-    //@ts-ignore
-    setIsLoading,
-    //@ts-ignore
-    setIsSuccess,
-    //@ts-ignore
-    setIsError,
-    //@ts-ignore
-    setTransactionData,
-    //@ts-ignore
-    //@ts-ignore
     pickedProposal,
-  } = useStore();
+    isModalOpen,
+    setIsLoading,
+    setIsSuccess,
+    setIsError,
+    setTransactionData,
+  } = useDeleteProposalStore(state => ({
+    isLoading: state.isLoading,
+    isError: state.isError,
+    error: state.error,
+    isSuccess: state.isSuccess,
+    transactionData: state.transactionData,
+    pickedProposal: state.pickedProposal,
+    isModalOpen: state.isModalOpen,
+    setIsModalOpen: state.setIsModalOpen,
+    setPickedProposal: state.setPickedProposal,
+    setIsLoading: state.setIsLoading,
+    setIsSuccess: state.setIsSuccess,
+    setIsError: state.setIsError,
+    setTransactionData: state.setTransactionData,
+  }));
 
   async function deleteProposal() {
     const address = asPath.split("/")[3];
@@ -57,14 +60,12 @@ export function useDeleteProposal() {
       });
       const receipt = await waitForTransaction({
         chainId: chain?.id,
-        //@ts-ignore
         hash: txCastVotes.hash,
       });
       setTransactionData({
         hash: receipt.transactionHash,
         chainId: chain?.id,
-        //@ts-ignore
-        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
+        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
       });
       setIsLoading(false);
       setIsSuccess(true);
@@ -72,12 +73,12 @@ export function useDeleteProposal() {
     } catch (e) {
       toast.error(
         //@ts-ignore
-        e?.data?.message ?? "Something went wrong while deleting this proposal.",
+        e?.message ?? "Something went wrong while deleting this proposal.",
       );
       console.error(e);
       setIsLoading(false);
       //@ts-ignore
-      setIsError(true, e?.data?.message ?? "Something went wrong while deleting this proposal.");
+      setIsError(true, e?.message ?? "Something went wrong while deleting this proposal.");
     }
   }
 

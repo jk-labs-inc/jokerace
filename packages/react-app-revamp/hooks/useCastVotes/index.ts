@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import { writeContract, waitForTransaction } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useStore as useStoreCastVotes } from "./store";
+import { useCastVotesStore } from "./store";
 import { useNetwork } from "wagmi";
 import { useRouter } from "next/router";
 import { parseUnits } from "ethers/lib/utils";
@@ -10,25 +10,26 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export function useCastVotes() {
   const {
-    //@ts-ignore
     castPositiveAmountOfVotes,
-    //@ts-ignore
     pickedProposal,
-    //@ts-ignore
     isLoading,
-    //@ts-ignore
     isSuccess,
-    //@ts-ignore
     error,
-    //@ts-ignore
     setIsLoading,
-    //@ts-ignore
     setIsSuccess,
-    //@ts-ignore
     setError,
-    //@ts-ignore
     setTransactionData,
-  } = useStoreCastVotes();
+  } = useCastVotesStore(state => ({
+    castPositiveAmountOfVotes: state.castPositiveAmountOfVotes,
+    pickedProposal: state.pickedProposal,
+    isLoading: state.isLoading,
+    isSuccess: state.isSuccess,
+    error: state.error,
+    setIsLoading: state.setIsLoading,
+    setIsSuccess: state.setIsSuccess,
+    setError: state.setError,
+    setTransactionData: state.setTransactionData,
+  }));
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useContest();
@@ -55,7 +56,6 @@ export function useCastVotes() {
       });
       const receipt = await waitForTransaction({
         chainId: chain?.id,
-        //@ts-ignore
         hash: txCastVotes.hash,
         //@ts-ignore
         transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
@@ -71,11 +71,11 @@ export function useCastVotes() {
     } catch (e) {
       toast.error(
         //@ts-ignore
-        e?.data?.message ?? "Something went wrong while casting your votes.",
+        e?.message ?? "Something went wrong while casting your votes.",
       );
-      console.error(e);
       setIsLoading(false);
-      setError(e);
+      //@ts-ignore
+      setError(e?.message);
     }
   }
 
