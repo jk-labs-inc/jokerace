@@ -5,7 +5,7 @@ export function useContestsIndex() {
     try {
       const { address } = getAccount();
       //@ts-ignore
-      const { chainId } = await getNetwork();
+      const { chainId } = getNetwork();
       const tokenRawData = await fetchToken({ address: values.votingTokenAddress, chainId });
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&

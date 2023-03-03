@@ -17,7 +17,7 @@ export function useContest() {
   const { indexContest } = useContestsIndex();
   const provider = useProvider();
   const { asPath } = useRouter();
-  const { chain } = useNetwork()
+  const { chain } = useNetwork();
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
   );
@@ -128,6 +128,7 @@ export function useContest() {
   /**
    * Fetch all info of a contest (title, prompt, list of proposals etc.)
    */
+
   async function fetchContestInfo() {
     setIsLoading(true);
     const abi = await getContestContractVersion(address, chainName);
@@ -142,7 +143,7 @@ export function useContest() {
       return;
     }
 
-    const accountData = await getAccount();
+    const accountData = getAccount();
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
@@ -159,7 +160,6 @@ export function useContest() {
         } else {
           setSupportsRewardsModule(true);
         }
-
       } else {
         setSupportsRewardsModule(false);
       }
@@ -364,10 +364,7 @@ export function useContest() {
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
         ) {
-          const indexingResult = await supabase
-            .from("contests")
-            .select("*")
-            .eq("address", address);
+          const indexingResult = await supabase.from("contests").select("*").eq("address", address);
           if (indexingResult && indexingResult?.data && indexingResult?.data?.length === 0) {
             indexContest({
               //@ts-ignore
@@ -421,7 +418,7 @@ export function useContest() {
     };
     const contractBaseOptions = {};
     try {
-      const accountData = await getAccount();
+      const accountData = getAccount();
       const amount = await readContract({
         ...contractConfig,
         ...contractBaseOptions,
@@ -594,7 +591,7 @@ export function useContest() {
    * @param listIdsProposalsToBeFetched - array of proposals ids to be fetched
    */
   async function fetchProposal(i: number, results: Array<any>, listIdsProposalsToBeFetched: Array<any>) {
-    const accountData = await getAccount();
+    const accountData = getAccount();
     // Create an array of proposals
     // A proposal is a pair of data
     // A pair of a proposal data is [content, votes]

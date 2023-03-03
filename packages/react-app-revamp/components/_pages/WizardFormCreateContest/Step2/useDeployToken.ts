@@ -4,13 +4,13 @@ import { parseEther } from "ethers/lib/utils";
 import toast from "react-hot-toast";
 import { useNetwork, useSigner } from "wagmi";
 import { waitForTransaction } from "@wagmi/core";
-import { useContractFactory } from "@hooks/useContractFactory";
+import { useStoreFactoryStore } from "@hooks/useContractFactory";
 //@ts-ignore
 import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 import { useStore } from "../store";
 
 export function useDeployToken(form: any) {
-  const stateContractDeployment = useContractFactory();
+  const stateContractDeployment = useStoreFactoryStore(state => state);
   const { chain } = useNetwork();
   const { refetch } = useSigner();
   const {

@@ -1,4 +1,5 @@
-import create from "zustand";
+import { createContext, useContext } from "react";
+import { createStore, useStore } from "zustand";
 
 export interface StoreFactoryState {
   isLoading: boolean;
@@ -13,23 +14,28 @@ export interface StoreFactoryState {
   setErrorMessage: (value: any) => void;
 }
 
-const useStore = create<StoreFactoryState>(set => ({
-  isLoading: false,
-  isSuccess: false,
-  isError: false,
-  error: null,
-  data: null,
+export const createStoreFactoryStore = () =>
+  createStore<StoreFactoryState>(set => ({
+    isLoading: false,
+    isSuccess: false,
+    isError: false,
+    error: null,
+    data: null,
 
-  setIsSuccess: (value: boolean) => set({ isSuccess: value }),
-  setIsLoading: (value: boolean) => set({ isLoading: value }),
-  setData: (value: any) => set({ data: value }),
-  setIsError: (value: boolean) => set({ isError: value }),
-  setErrorMessage: (value: string | null) => set({ error: value }),
-}));
+    setIsSuccess: (value: boolean) => set({ isSuccess: value }),
+    setIsLoading: (value: boolean) => set({ isLoading: value }),
+    setData: (value: any) => set({ data: value }),
+    setIsError: (value: boolean) => set({ isError: value }),
+    setErrorMessage: (value: string | null) => set({ error: value }),
+  }));
 
-export function useContractFactory(): StoreFactoryState {
-  const state = useStore();
-  return state;
+export const StoreFactoryContext = createContext<ReturnType<typeof createStoreFactoryStore> | null>(null);
+
+export function useStoreFactoryStore<T>(selector: (state: StoreFactoryState) => T) {
+  const store = useContext(StoreFactoryContext);
+  if (store === null) {
+    throw new Error("Missing Wrapper in the tree");
+  }
+  const value = useStore(store, selector);
+  return value;
 }
-
-export default useContractFactory;

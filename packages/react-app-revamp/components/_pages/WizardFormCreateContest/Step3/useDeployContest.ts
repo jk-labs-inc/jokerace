@@ -5,8 +5,7 @@ import { useNetwork, useSigner } from "wagmi";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { parseEther } from "ethers/lib/utils";
 import { getUnixTime, differenceInSeconds } from "date-fns";
-import { useContractFactory } from "@hooks/useContractFactory";
-//@ts-ignore
+import { useStoreFactoryStore } from "@hooks/useContractFactory";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 
@@ -14,10 +13,9 @@ import { useStore } from "../store";
 import useContestsIndex from "@hooks/useContestsIndex";
 export function useDeployContest(form: any) {
   const { indexContest } = useContestsIndex();
-  const stateContestDeployment = useContractFactory();
+  const stateContestDeployment = useStoreFactoryStore(state => state);
   const { chain } = useNetwork();
   const { refetch } = useSigner();
-  //@ts-ignore
   const {
     modalDeployContestOpen,
     setModalDeployContestOpen,
@@ -125,9 +123,7 @@ export function useDeployContest(form: any) {
           signer.data,
         );
         const rewardsRanks = values.rewards.map((reward: any) => parseInt(reward.winningRank));
-        const rewardsShares = values.rewards.map(
-          (reward: any) => reward.rewardPercentageAmount
-        );
+        const rewardsShares = values.rewards.map((reward: any) => reward.rewardPercentageAmount);
 
         // Deploy the rewards module
         const contractRewardsModule = await factoryCreateRewardsModule.deploy(

@@ -1,4 +1,5 @@
-import create from "zustand";
+import { createContext, useContext } from "react";
+import { createStore, useStore } from "zustand";
 
 interface ExportDataState {
   shouldStart: boolean;
@@ -7,7 +8,7 @@ interface ExportDataState {
   isError: boolean;
   isLoading: boolean;
   loadingMessage: string | null;
-  error: null | string;
+  error: string | null;
   csv: any;
   cid: string | null;
   setCid: (cid: string) => void;
@@ -22,7 +23,7 @@ interface ExportDataState {
 }
 
 export const createExportDataStore = () =>
-  create<ExportDataState>(set => ({
+  createStore<ExportDataState>(set => ({
     shouldStart: false,
     csv: null,
     isSuccess: false,
@@ -53,3 +54,14 @@ export const createExportDataStore = () =>
         isReady: false,
       })),
   }));
+
+export const ExportDataContext = createContext<ReturnType<typeof createExportDataStore> | null>(null);
+
+export function useExportDataStore<T>(selector: (state: ExportDataState) => T) {
+  const store = useContext(ExportDataContext);
+  if (store === null) {
+    throw new Error("Missing Wrapper in the tree");
+  }
+  const value = useStore(store, selector);
+  return value;
+}

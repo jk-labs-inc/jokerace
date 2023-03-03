@@ -3,34 +3,24 @@ import toast from "react-hot-toast";
 import { useNetwork, erc20ABI } from "wagmi";
 import { useStore as useStoreRewardsModule } from "@hooks/useRewardsModule/store";
 import { useEffect } from "react";
-import { useStore } from "./store";
+import { useFundRewardsStore } from "./store";
 import { useQueryClient } from "@tanstack/react-query";
 
 export function useFundRewardsModule() {
   const queryClient = useQueryClient();
   const { chain } = useNetwork();
   const {
-    //@ts-ignore
     isModalOpen,
-    //@ts-ignore
     isLoading,
-    //@ts-ignore
     isError,
-    //@ts-ignore
     error,
-    //@ts-ignore
     isSuccess,
-    //@ts-ignore
     transactionData,
-    //@ts-ignore
     setIsLoading,
-    //@ts-ignore
     setIsSuccess,
-    //@ts-ignore
     setIsError,
-    //@ts-ignore
     setTransactionData,
-  } = useStore();
+  } = useFundRewardsStore(state => state);
   //@ts-ignore
   const { rewardsModule } = useStoreRewardsModule();
   async function sendFundsToRewardsModule(args: {

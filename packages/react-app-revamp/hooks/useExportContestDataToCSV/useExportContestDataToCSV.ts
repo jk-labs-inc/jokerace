@@ -4,68 +4,63 @@ import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { HEADERS_KEYS } from "@config/react-csv/export-contest";
-import { createExportDataStore } from "./store";
+import { useExportDataStore } from "./store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useEffect } from "react";
-import {
-  useQuery,
-} from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query";
 import { makeStorageClient } from "@config/web3storage";
-import { objectToCsv } from '@helpers/objectToCsv'
+import { objectToCsv } from "@helpers/objectToCsv";
 
 const MAX_PROPOSALS_EXPORTING = 500;
 const MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING = 500;
 const PROPOSALS_PER_ASYNC_BATCH = 5; // 5 here
 const VOTERS_PER_ASYNC_BATCH = 25; // and 100 here will usually keep you from getting rate-limited by Alchemy Growth tier (660 CUPS)
 
-const useStoreExportData = createExportDataStore();
-
 export function useExportContestDataToCSV() {
-  const stateExportData = useStoreExportData();
+  const stateExportData = useExportDataStore(state => state);
   const { asPath } = useRouter();
-  const queryContestResults = useQuery(
-    ['contest-result', asPath.split("/")[3]],
-    retrieveContestResultsCid
-  )
+  const queryContestResults = useQuery(["contest-result", asPath.split("/")[3]], retrieveContestResultsCid);
 
   //@ts-ignore
-  const { listProposalsData, listProposalsIds } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-    }),
-    shallow,
-  );
+  const { listProposalsData, listProposalsIds } = useStoreContest(state => ({
+    //@ts-ignore
+    listProposalsData: state.listProposalsData,
+    //@ts-ignore
+    listProposalsIds: state.listProposalsIds,
+  }));
 
   async function retrieveContestResultsCid() {
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      const config = await import('@config/supabase')
-      const supabase = config.supabase
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    ) {
+      const config = await import("@config/supabase");
+      const supabase = config.supabase;
 
       try {
         const url = asPath.split("/");
         const contestAddress = url[3];
-        const chainName = url[2];    
+        const chainName = url[2];
         const result = await supabase
-        .from("results")
-        .select("cid")
-        .eq("contest_address", contestAddress)
-        .eq("contest_network_name", chainName)
+          .from("results")
+          .select("cid")
+          .eq("contest_address", contestAddress)
+          .eq("contest_network_name", chainName);
 
-        const { data, error } = result
-        if(error) {
-          throw new Error(error.message)
+        const { data, error } = result;
+        if (error) {
+          throw new Error(error.message);
         }
-        
+
         if (data?.length > 0) {
-          stateExportData.setCid(data[0]?.cid)
+          stateExportData.setCid(data[0]?.cid);
         }
 
-        return data
-      } catch(e) {
-        console.error(e)
+        return data;
+      } catch (e) {
+        console.error(e);
       }
     }
   }
@@ -135,7 +130,14 @@ export function useExportContestDataToCSV() {
     }
   }
 
-  async function formatVoter(j: number, propId: number, propTotalVotes: number, propContent: string, proposerAddress: string, addressThatVoted: string) {
+  async function formatVoter(
+    j: number,
+    propId: number,
+    propTotalVotes: number,
+    propContent: string,
+    proposerAddress: string,
+    addressThatVoted: string,
+  ) {
     const addressPropVote = await fetchVotesPerAddress(propId, addressThatVoted);
 
     const COMMON_DATA = {
@@ -160,7 +162,8 @@ export function useExportContestDataToCSV() {
     const propId = listProposalsIds[i];
     if (propId) {
       const propTotalVotes = listProposalsData[propId].votes;
-      const propContent = "jokedao.io"+asPath.slice(0, asPath.indexOf("export-data"))+"proposal/"+propId.toString();
+      const propContent =
+        "jokedao.io" + asPath.slice(0, asPath.indexOf("export-data")) + "proposal/" + propId.toString();
       const proposerAddress = listProposalsData[propId].authorEthereumAddress;
       const addressesVoted = await fetchProposalVoters(propId);
 
@@ -188,7 +191,7 @@ export function useExportContestDataToCSV() {
       for (let j = 0; j < Math.min(MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING, addressesVoted.length); j++) {
         //@ts-ignore
         arrayToReturn.push(formatVoter(j, propId, propTotalVotes, propContent, proposerAddress, addressesVoted[j]));
-        
+
         // Every VOTERS_PER_ASYNC_BATCH unique voters on a proposal, wait for all requests to return before sending out more
         // Motivation: to prevent rate-limiting by RPC providers
         if (j % VOTERS_PER_ASYNC_BATCH == 0) {
@@ -208,8 +211,8 @@ export function useExportContestDataToCSV() {
     stateExportData.setIsSuccess(false);
     stateExportData.setCsv(null);
     stateExportData.setError(null, false);
-    const contestAddress = asPath.split("/")[3]
-    const chainName = asPath.split("/")[2]
+    const contestAddress = asPath.split("/")[3];
+    const chainName = asPath.split("/")[2];
 
     const propArrayToReturn = [];
     const tenthPercentile = Math.ceil(listProposalsIds.length / 10);
@@ -222,11 +225,10 @@ export function useExportContestDataToCSV() {
         }
 
         // Every PROPOSALS_PER_ASYNC_BATCH proposals in a contest, wait for all requests to return before sending out more
-        // Motivation: to prevent rate-limiting by RPC providers 
+        // Motivation: to prevent rate-limiting by RPC providers
         if (i % PROPOSALS_PER_ASYNC_BATCH == 0) {
           await Promise.all(propArrayToReturn);
         }
-
       }
 
       const returned = await Promise.all(propArrayToReturn);
@@ -235,27 +237,34 @@ export function useExportContestDataToCSV() {
 
       stateExportData.setLoadingMessage(`Loaded ${listProposalsIds.length} out of ${listProposalsIds.length} entries!`);
       stateExportData.setCsv(reducedPropArray);
-      
+
       // Store the loaded data to IPFS via web3storage and then load the reference id into Supabase
       //@ts-ignore
-      if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN && process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN !== "") {
-        if(queryContestResults.data?.length === 0) {
-          const formatted = objectToCsv(propArrayToReturn)
-          const csv = new File([formatted], `result_contest_${contestAddress}_${chainName}.csv`, { type: 'text/csv' });
-    
-          const config = await import('@config/supabase')
-          const supabase = config.supabase
-          const client = makeStorageClient()
-          const cid = await client.put([csv])
-          stateExportData.setCid(cid)
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+        process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN &&
+        process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN !== ""
+      ) {
+        if (queryContestResults.data?.length === 0) {
+          const formatted = objectToCsv(propArrayToReturn);
+          const csv = new File([formatted], `result_contest_${contestAddress}_${chainName}.csv`, { type: "text/csv" });
+
+          const config = await import("@config/supabase");
+          const supabase = config.supabase;
+          const client = makeStorageClient();
+          const cid = await client.put([csv]);
+          stateExportData.setCid(cid);
 
           await supabase.from("results").insert([
             {
               contest_address: contestAddress,
               contest_network_name: chainName,
-              cid
-            }
-          ])
+              cid,
+            },
+          ]);
         }
       }
 

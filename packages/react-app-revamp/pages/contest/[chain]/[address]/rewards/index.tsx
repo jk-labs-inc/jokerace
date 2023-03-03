@@ -9,11 +9,7 @@ import {
   Provider as ProviderRewardsModule,
   createStore as createStoreRewardsModule,
 } from "@hooks/useRewardsModule/store";
-import {
-  useStore as useStoreFundRewardsModule,
-  Provider as ProviderFundRewardsModule,
-  createStore as createStoreFundRewardsModule,
-} from "@hooks/useFundRewardsModule/store";
+import { useFundRewardsStore, FundRewardsWrapper } from "@hooks/useFundRewardsModule/store";
 import { useRewardsModule } from "@hooks/useRewardsModule";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
@@ -27,7 +23,7 @@ import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFro
 import RewardsWinner from "@components/_pages/RewardsWinner";
 import { useRouter } from "next/router";
 import { isBefore } from "date-fns";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 interface PageProps {
   address: string;
 }
@@ -46,14 +42,14 @@ const Page = (props: PageProps) => {
   );
 
   const storeRewardsModule = useStoreRewardsModule();
-  const storeFundRewardsModule = useStoreFundRewardsModule();
+  const fundRewardsStore = useFundRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const [isWithdrawnFundsDialogOpen, setIsWithdrawFundsDialogOpen] = useState(false);
   const [isDialogCheckBalanceOpen, setIsDialogCheckBalanceOpen] = useState(false);
   const currentAccount = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -98,7 +94,7 @@ const Page = (props: PageProps) => {
                   <div className="animate-appear flex flex-col gap-4 p-3 rounded-md border border-solid border-neutral-4 text-sm">
                     <p className="overflow-hidden text-start sm:text-center text-ellipsis">
                       {/* @ts-ignore */}
-                      Rewards module contract address:{" "}<br/>
+                      Rewards module contract address: <br />
                       <a
                         className="link"
                         //@ts-ignore
@@ -108,7 +104,8 @@ const Page = (props: PageProps) => {
                       >
                         {/* @ts-ignore */}
                         {storeRewardsModule.rewardsModule?.contractAddress}
-                      </a><br/>
+                      </a>
+                      <br />
                       {"Note: this code has not been audited yet, but can be verified on our "}
                       <a
                         className="link"
@@ -118,7 +115,8 @@ const Page = (props: PageProps) => {
                         rel="noopener noreferrer"
                       >
                         GitHub
-                      </a>.
+                      </a>
+                      .
                     </p>
                     <div className="flex sm:justify-center flex-wrap gap-3">
                       {/* @ts-ignore */}
@@ -127,7 +125,7 @@ const Page = (props: PageProps) => {
                           <Button
                             className="w-full 2xs:w-fit-content"
                             //@ts-ignore
-                            onClick={() => storeFundRewardsModule.setIsModalOpen(true)}
+                            onClick={() => fundRewardsStore.setIsModalOpen(true)}
                             scale="sm"
                             intent="primary-outline"
                           >
@@ -172,16 +170,15 @@ const Page = (props: PageProps) => {
                   </div>
                   <div className="pt-12 flex flex-col items-center gap-1 justify-center animate-appear">
                     <p className="text-neutral-10 text-xs">Don&apos;t see a token you&apos;re expecting?</p>
-                  <Button
-                        className="w-full 2xs:w-fit-content"
-                        //@ts-ignore
-                        onClick={() => setIsDialogCheckBalanceOpen(true)}
-                        scale="sm"
-                        intent="ghost-neutral"
-                      >
-                        💰 Check it manually
-                      </Button>
-
+                    <Button
+                      className="w-full 2xs:w-fit-content"
+                      //@ts-ignore
+                      onClick={() => setIsDialogCheckBalanceOpen(true)}
+                      scale="sm"
+                      intent="ghost-neutral"
+                    >
+                      💰 Check it manually
+                    </Button>
                   </div>
                   <DialogCheckBalanceRewardsModule
                     isOpen={isDialogCheckBalanceOpen}
@@ -190,9 +187,9 @@ const Page = (props: PageProps) => {
                   />
                   <DialogFundRewardsModule
                     //@ts-ignore
-                    setIsOpen={storeFundRewardsModule.setIsModalOpen}
+                    setIsOpen={fundRewardsStore.setIsModalOpen}
                     //@ts-ignore
-                    isOpen={storeFundRewardsModule.isModalOpen}
+                    isOpen={fundRewardsStore.isModalOpen}
                   />
                   <DialogWithdrawFundsFromRewardsModule
                     isOpen={isWithdrawnFundsDialogOpen}
@@ -295,7 +292,7 @@ export async function getStaticProps({ params }: any) {
 export const getLayout = (page: any) => {
   return getLayoutContest(
     <ProviderRewardsModule createStore={createStoreRewardsModule}>
-      <ProviderFundRewardsModule createStore={createStoreFundRewardsModule}>{page}</ProviderFundRewardsModule>
+      <FundRewardsWrapper>{page}</FundRewardsWrapper>
     </ProviderRewardsModule>,
   );
 };
