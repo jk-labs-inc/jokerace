@@ -19,17 +19,7 @@ export function useCastVotes() {
     setIsSuccess,
     setError,
     setTransactionData,
-  } = useCastVotesStore(state => ({
-    castPositiveAmountOfVotes: state.castPositiveAmountOfVotes,
-    pickedProposal: state.pickedProposal,
-    isLoading: state.isLoading,
-    isSuccess: state.isSuccess,
-    error: state.error,
-    setIsLoading: state.setIsLoading,
-    setIsSuccess: state.setIsSuccess,
-    setError: state.setError,
-    setTransactionData: state.setTransactionData,
-  }));
+  } = useCastVotesStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useContest();

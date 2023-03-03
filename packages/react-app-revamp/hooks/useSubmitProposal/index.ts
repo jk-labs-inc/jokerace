@@ -14,15 +14,7 @@ export function useSubmitProposal() {
   } = useStoreContest();
 
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
-    useSubmitProposalStore(state => ({
-      isLoading: state.isLoading,
-      isSuccess: state.isSuccess,
-      error: state.error,
-      setIsLoading: state.setIsLoading,
-      setIsSuccess: state.setIsSuccess,
-      setError: state.setError,
-      setTransactionData: state.setTransactionData,
-    }));
+    useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
 

@@ -10,20 +10,18 @@ interface DialogDeleteProposalProps {
 }
 
 export const DialogModalDeleteProposal = (props: DialogDeleteProposalProps) => {
-  const { transactionData } = useDeleteProposalStore(state => ({
-    transactionData: state.transactionData,
-  }));
+  const { transactionData } = useDeleteProposalStore(state => state);
 
   const { deleteProposal, isLoading, isError, isSuccess, error } = useDeleteProposal();
   return (
     <DialogModal title="Delete this proposal" {...props}>
-      {(isSuccess === true || isLoading === true || isError === true) && (
+      {(isSuccess || isLoading || isError) && (
         <div className="animate-appear mt-2 mb-4">
           <TrackerDeployTransaction textError={error} isSuccess={isSuccess} isError={isError} isLoading={isLoading} />
         </div>
       )}
 
-      {isSuccess === true && transactionData?.transactionHref && (
+      {isSuccess && transactionData?.transactionHref && (
         <div className="my-2 animate-appear">
           <a rel="nofollow noreferrer" target="_blank" href={transactionData?.transactionHref}>
             View transaction <span className="link">here</span>

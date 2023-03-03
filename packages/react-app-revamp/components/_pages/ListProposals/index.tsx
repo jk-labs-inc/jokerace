@@ -16,7 +16,6 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAccount, useNetwork } from "wagmi";
-import shallow from "zustand/shallow";
 import styles from "./styles.module.css";
 
 export const ListProposals = () => {
@@ -47,45 +46,42 @@ export const ListProposals = () => {
     currentPagePaginationProposals,
     indexPaginationProposals,
     totalPagesPaginationProposals,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      currentPagePaginationProposals: state.currentPagePaginationProposals,
-      //@ts-ignore
-      isPageProposalsLoading: state.isPageProposalsLoading,
-      //@ts-ignore
-      isPageProposalsError: state.isPageProposalsError,
-      //@ts-ignore
-      downvotingAllowed: state.downvotingAllowed,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-      //@ts-ignore
-      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-      //@ts-ignore
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-      //@ts-ignore
-      amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
-      //@ts-ignore
-      didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
-      //@ts-ignore
-      checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
-      //@ts-ignore
-      indexPaginationProposals: state.indexPaginationProposals,
-      //@ts-ignore,
-      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
-      //@ts-ignore
-      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
-      //@ts-ignore
-      indexPaginationProposals: state.indexPaginationProposals,
-      //@ts-ignore,
-      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
-    }),
-    shallow,
-  );
+  } = useStoreContest(state => ({
+    //@ts-ignore
+    currentPagePaginationProposals: state.currentPagePaginationProposals,
+    //@ts-ignore
+    isPageProposalsLoading: state.isPageProposalsLoading,
+    //@ts-ignore
+    isPageProposalsError: state.isPageProposalsError,
+    //@ts-ignore
+    downvotingAllowed: state.downvotingAllowed,
+    //@ts-ignore
+    listProposalsIds: state.listProposalsIds,
+    //@ts-ignore
+    contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
+    //@ts-ignore
+    contestStatus: state.contestStatus,
+    //@ts-ignore
+    listProposalsData: state.listProposalsData,
+    //@ts-ignore
+    currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+    //@ts-ignore
+    amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
+    //@ts-ignore
+    didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
+    //@ts-ignore
+    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
+    //@ts-ignore
+    indexPaginationProposals: state.indexPaginationProposals,
+    //@ts-ignore,
+    totalPagesPaginationProposals: state.totalPagesPaginationProposals,
+    //@ts-ignore
+    currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
+    //@ts-ignore
+    indexPaginationProposals: state.indexPaginationProposals,
+    //@ts-ignore,
+    totalPagesPaginationProposals: state.totalPagesPaginationProposals,
+  }));
   const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
@@ -130,7 +126,7 @@ export const ListProposals = () => {
       );
     }
     // Empty state
-    if (listProposalsIds.length === 0) {
+    if (!listProposalsIds.length) {
       return (
         <div className="flex flex-col text-center items-center">
           <p className="text-neutral-9 italic mb-6">
@@ -139,7 +135,6 @@ export const ListProposals = () => {
               ? "You can't submit a proposal for this contest."
               : "It seems no one submitted a proposal for this contest."}
           </p>
-          {/* @ts-ignore */}
           {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
             currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry && (
               <Button onClick={() => setIsSubmitProposalModalOpen(true)}>Submit a proposal</Button>
@@ -147,7 +142,7 @@ export const ListProposals = () => {
         </div>
       );
     } else {
-      if (isPageProposalsLoading && Object.keys(listProposalsData)?.length === 0) {
+      if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
         return <Loader scale="component">Loading proposals...</Loader>;
       }
       return (
@@ -232,7 +227,7 @@ export const ListProposals = () => {
                               didUserPassSnapshotAndCanVote &&
                               contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                               currentUserAvailableVotesAmount > 0 &&
-                              downvotingAllowed === true && (
+                              downvotingAllowed && (
                                 <button
                                   onClick={() => onClickDownVote(id)}
                                   disabled={
@@ -312,7 +307,7 @@ export const ListProposals = () => {
                 );
               })}
           </ul>
-          {isPageProposalsLoading && Object.keys(listProposalsData)?.length > 1 && (
+          {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
             <Loader scale="component" classNameWrapper="my-3">
               Loading proposals...
             </Loader>

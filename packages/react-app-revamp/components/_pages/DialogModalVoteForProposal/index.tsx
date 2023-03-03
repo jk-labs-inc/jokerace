@@ -18,12 +18,7 @@ interface DialogModalVoteForProposalProps {
 
 export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProps) => {
   const { pickedProposal, transactionData, castPositiveAmountOfVotes, setCastPositiveAmountOfVotes } =
-    useCastVotesStore(state => ({
-      pickedProposal: state.pickedProposal,
-      transactionData: state.transactionData,
-      castPositiveAmountOfVotes: state.castPositiveAmountOfVotes,
-      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
-    }));
+    useCastVotesStore(state => state);
   const { downvotingAllowed, listProposalsData, contestStatus, currentUserAvailableVotesAmount } = useStoreContest(
     state => ({
       //@ts-ignore
@@ -47,12 +42,12 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
 
   useEffect(() => {
     if (isSuccess) setShowForm(false);
-    if (isLoading || error !== null) setShowForm(true);
-    if (isLoading === true || error !== null || isSuccess === true) setShowDeploymentSteps(true);
+    if (isLoading || error) setShowForm(true);
+    if (isLoading || error || isSuccess) setShowDeploymentSteps(true);
   }, [isSuccess, isLoading, error]);
 
   useEffect(() => {
-    if (props.isOpen === false && !isLoading) {
+    if (!props.isOpen && !isLoading) {
       setVotesToCast(currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1);
       setShowForm(true);
       setShowDeploymentSteps(false);
@@ -92,18 +87,15 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
           </div>
         ))}
 
-      {currentUserAvailableVotesAmount > 0 &&
-        error !== null &&
-        !isSuccess &&
-        contestStatus === CONTEST_STATUS.VOTING_OPEN && (
-          <>
-            <Button onClick={onSubmitCastVotes} intent="neutral-outline" type="submit" className="mx-auto my-3">
-              Try again
-            </Button>
-          </>
-        )}
+      {currentUserAvailableVotesAmount > 0 && error && !isSuccess && contestStatus === CONTEST_STATUS.VOTING_OPEN && (
+        <>
+          <Button onClick={onSubmitCastVotes} intent="neutral-outline" type="submit" className="mx-auto my-3">
+            Try again
+          </Button>
+        </>
+      )}
 
-      {showForm === true && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 && (
+      {showForm && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 && (
         <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitCastVotes}>
           {downvotingAllowed === true && (
             <RadioGroup
@@ -149,7 +141,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
               Cast votes
             </FormField.Label>
             <div className="flex items-center">
-              {downvotingAllowed === true && (
+              {downvotingAllowed && (
                 <span className="text-neutral-9 font-bold text-lg pie-1ex">
                   {castPositiveAmountOfVotes ? "+" : "-"}
                 </span>
@@ -170,7 +162,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
                 name="votesToCast"
                 id="votesToCast"
                 disabled={isLoading}
-                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount === true}
+                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
                 aria-describedby="input-votesToCast-helpblock-1 input-votesToCast-helpblock-2"
               />
             </div>
@@ -181,14 +173,14 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
                 hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
               >
                 <span>Available: {currentUserAvailableVotesAmount}</span>
-                {pickedProposal !== null && (
+                {pickedProposal && (
                   <span>
                     Votes on submission: {new Intl.NumberFormat().format(listProposalsData[pickedProposal].votes)}{" "}
                   </span>
                 )}
               </FormField.HelpBlock>
               <FormField.HelpBlock
-                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount === true}
+                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
                 id="input-contestaddress-helpblock-2"
               >
                 Your amount of votes must be positive and not superior to the number of voting tokens you hold.

@@ -1,24 +1,23 @@
-import shallow from "zustand/shallow";
 import Button from "@components/Button";
 import DialogModal from "@components/DialogModal";
+import Iframe from "@components/tiptap/Iframe";
+import TipTapEditor from "@components/TipTapEditor";
 import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { useStore as useStoreContest } from "@hooks/useContest/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import Image from "@tiptap/extension-image";
+import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
+import Placeholder from "@tiptap/extension-placeholder";
+import { useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useEffect, useState } from "react";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Image from "@tiptap/extension-image";
-import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
-import Iframe from "@components/tiptap/Iframe";
-import Placeholder from "@tiptap/extension-placeholder";
-import TipTapEditor from "@components/TipTapEditor";
 
 interface DialogModalSendProposalProps {
   isOpen: boolean;
@@ -30,7 +29,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
   //@ts-ignore
   const { sendProposal, isLoading, error, isSuccess } = useSubmitProposal();
   //@ts-ignore
-  const { transactionData } = useSubmitProposalStore(state => ({ transactionData: state.transactionData }));
+  const { transactionData } = useSubmitProposalStore(state => state);
   const {
     amountOfTokensRequiredToSubmitEntry,
     currentUserSubmitProposalTokensAmount,
@@ -40,27 +39,24 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     contestMaxProposalCount,
     contestStatus,
     contestPrompt,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestPrompt: state.contestPrompt,
-      //@ts-ignore
-      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
-      //@ts-ignore
-      contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
-      //@ts-ignore
-      contestMaxProposalCount: state.contestMaxProposalCount,
-      //@ts-ignore
-      currentUserProposalCount: state.currentUserProposalCount,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-      //@ts-ignore
-      amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-    }),
-    shallow,
-  );
+  } = useStoreContest(state => ({
+    //@ts-ignore
+    contestPrompt: state.contestPrompt,
+    //@ts-ignore
+    currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
+    //@ts-ignore
+    contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
+    //@ts-ignore
+    contestMaxProposalCount: state.contestMaxProposalCount,
+    //@ts-ignore
+    currentUserProposalCount: state.currentUserProposalCount,
+    //@ts-ignore
+    listProposalsIds: state.listProposalsIds,
+    //@ts-ignore
+    amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
+    //@ts-ignore
+    contestStatus: state.contestStatus,
+  }));
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
   const [proposal, setProposal] = useState("");
@@ -89,12 +85,12 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
 
   useEffect(() => {
     if (isSuccess) setShowForm(false);
-    if (isLoading || error !== null) setShowForm(true);
-    if (isLoading === true || error !== null || isSuccess === true) setShowDeploymentSteps(true);
+    if (isLoading || error) setShowForm(true);
+    if (isLoading || error || isSuccess) setShowDeploymentSteps(true);
   }, [isSuccess, isLoading, error]);
 
   useEffect(() => {
-    if (props.isOpen === false && !isLoading) {
+    if (!props.isOpen && !isLoading) {
       setProposal("");
       setShowForm(true);
       setShowForm(true);
@@ -162,15 +158,15 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
               <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
             </p>
           )}
-          {showForm === true ? (
+          {showForm ? (
             <>
-              <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>
+              <form className={isLoading ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitProposal}>
                 <TipTapEditor editor={editorProposal} />
                 <p className="mt-2 text-neutral-11 text-3xs">
                   Make sure to preview your proposal to check if it renders properly !
                 </p>
                 <Button
-                  disabled={proposal.trim().length === 0 || isLoading}
+                  disabled={!proposal.trim().length || isLoading}
                   type="submit"
                   className={isLoading ? "hidden" : "mt-3"}
                 >

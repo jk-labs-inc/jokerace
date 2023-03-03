@@ -54,10 +54,7 @@ const Page: NextPage = (props: PageProps) => {
     shallow,
   );
 
-  const { setPickedProposal, setIsModalOpen } = useCastVotesStore(state => ({
-    setPickedProposal: state.setPickedProposal,
-    setIsModalOpen: state.setIsModalOpen,
-  }));
+  const { setPickedProposal, setIsModalOpen } = useCastVotesStore(state => state);
 
   function onClickProposalVote() {
     const proposalId = Array.isArray(proposal) ? proposal[0] : proposal;

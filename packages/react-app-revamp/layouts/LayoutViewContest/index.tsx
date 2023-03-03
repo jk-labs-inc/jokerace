@@ -264,7 +264,7 @@ const LayoutViewContest = (props: any) => {
 
           {
             <>
-              {(account?.address && chain?.id !== chainId) === false && isError !== null && !isLoading && (
+              {!(account?.address && chain?.id !== chainId) && isError && !isLoading && (
                 <div className="my-6 md:my-0 animate-appear flex flex-col">
                   <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                     <p className="text-sm font-bold text-negative-10 text-center">
@@ -280,7 +280,6 @@ const LayoutViewContest = (props: any) => {
                     </div>
                   ) : (
                     <Button
-                      /* @ts-ignore */
                       onClick={() => retry()}
                       className="mt-5 mb-8 w-full mx-auto py-1 xs:w-auto xs:min-w-fit-content"
                       intent="neutral-outline"
@@ -291,7 +290,7 @@ const LayoutViewContest = (props: any) => {
                 </div>
               )}
 
-              {isSuccess && isError === null && !isLoading && (
+              {isSuccess && !isError && !isLoading && (
                 <>
                   {displayReloadBanner === true && (
                     <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-col gap-y-3 text-sm font-bold">
@@ -435,7 +434,6 @@ export const getLayout = (page: any) => {
       fallbackRender={({ error, resetErrorBoundary }) => (
         <div role="alert" className="container m-auto sm:text-center">
           <p className="text-2xl font-black mb-3 text-primary-10">Something went wrong</p>
-          {/*  eslint-disable-next-line react/no-unescaped-entities */}
           <p className="text-neutral-12 mb-6">{error?.message ?? error}</p>
           <Button onClick={resetErrorBoundary}>Try again</Button>
         </div>

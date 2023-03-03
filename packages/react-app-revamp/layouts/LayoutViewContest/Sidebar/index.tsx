@@ -149,7 +149,6 @@ export const Sidebar = (props: any) => {
           <Link
             href={{
               pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
-              //@ts-ignore
               query: {
                 chain: query.chain,
                 address: query.address,
@@ -209,9 +208,7 @@ export const Sidebar = (props: any) => {
       )}
       <Button
         onClick={() => setIsTimelineModalOpen(true)}
-        disabled={
-          isLoading || isError !== null || !isDate(submissionsOpen) || !isDate(votesOpen) || !isDate(votesClose)
-        }
+        disabled={isLoading || isError || !isDate(submissionsOpen) || !isDate(votesOpen) || !isDate(votesClose)}
         intent="true-solid-outline"
         className={`
   ${contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? "bottom-32" : "bottom-16"}

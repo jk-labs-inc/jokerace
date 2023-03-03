@@ -23,21 +23,7 @@ export function useDeleteProposal() {
     setIsSuccess,
     setIsError,
     setTransactionData,
-  } = useDeleteProposalStore(state => ({
-    isLoading: state.isLoading,
-    isError: state.isError,
-    error: state.error,
-    isSuccess: state.isSuccess,
-    transactionData: state.transactionData,
-    pickedProposal: state.pickedProposal,
-    isModalOpen: state.isModalOpen,
-    setIsModalOpen: state.setIsModalOpen,
-    setPickedProposal: state.setPickedProposal,
-    setIsLoading: state.setIsLoading,
-    setIsSuccess: state.setIsSuccess,
-    setIsError: state.setIsError,
-    setTransactionData: state.setTransactionData,
-  }));
+  } = useDeleteProposalStore(state => state);
 
   async function deleteProposal() {
     const address = asPath.split("/")[3];
@@ -83,7 +69,7 @@ export function useDeleteProposal() {
   }
 
   useEffect(() => {
-    if (isModalOpen === false) {
+    if (!isModalOpen) {
       setIsLoading(false);
       setIsSuccess(false);
       setTransactionData({});
