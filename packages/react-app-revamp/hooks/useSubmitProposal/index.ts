@@ -19,34 +19,36 @@ export function useSubmitProposal() {
   const { asPath } = useRouter();
 
   async function sendProposal(proposalContent: string) {
-    const address = asPath.split("/")[3];
-    const chainName = asPath.split("/")[2];
+    const [chainName, address] = asPath.split("/").slice(2, 4);
     const abi = await getContestContractVersion(address, chainName);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
-    const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi ? abi : DeployedContestContract.abi,
-    };
+
     try {
+      const contractConfig = {
+        addressOrName: address,
+        contractInterface: abi || DeployedContestContract.abi,
+      };
+
       const txSendProposal = await writeContract({
         ...contractConfig,
         functionName: "propose",
-        args: proposalContent,
+        args: [proposalContent],
       });
 
       const receipt = await waitForTransaction({
         chainId: chain?.id,
         hash: txSendProposal.hash,
       });
+
       setTransactionData({
         chainId: chain?.id,
         hash: receipt.transactionHash,
-        //@ts-ignore
-        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
+        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
       });
+
       setIsLoading(false);
       setIsSuccess(true);
       toast.success(`Your proposal was deployed successfully!`);

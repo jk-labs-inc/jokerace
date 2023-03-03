@@ -1,6 +1,6 @@
 import DialogModal from "@components/DialogModal";
 import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
-import useFundRewardsModule from "@hooks/useFundRewardsModule";
+import useFundRewardsModule from "@hooks/useFundRewards";
 import Form from "./Form";
 
 interface DialogFundRewardsModuleProps {

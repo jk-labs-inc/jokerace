@@ -23,11 +23,11 @@ export const createFundRewardsStore = () =>
     isSuccess: false,
     transactionData: null,
     isModalOpen: false,
-    setIsModalOpen: (isOpen: boolean) => set({ isModalOpen: isOpen }),
-    setIsLoading: (value: boolean) => set({ isLoading: value }),
-    setIsSuccess: (value: boolean) => set({ isSuccess: value }),
-    setIsError: (isError: boolean, error: string | null) => set({ isError: isError, error }),
-    setTransactionData: (data: any) => set({ transactionData: data }),
+    setIsModalOpen: isOpen => set({ isModalOpen: isOpen }),
+    setIsLoading: value => set({ isLoading: value }),
+    setIsSuccess: value => set({ isSuccess: value }),
+    setIsError: (isError, error) => set({ isError: isError, error }),
+    setTransactionData: data => set({ transactionData: data }),
   }));
 
 export const FundRewardsContext = createContext<ReturnType<typeof createFundRewardsStore> | null>(null);

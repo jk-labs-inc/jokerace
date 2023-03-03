@@ -25,20 +25,17 @@ export function useCastVotes() {
   const { updateCurrentUserVotes } = useContest();
 
   async function castVotes(amount: number, isPositive: boolean) {
-    const address = asPath.split("/")[3];
-    const chainName = asPath.split("/")[2];
-    const abi = await getContestContractVersion(address, chainName);
+    const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
+    const abi = await getContestContractVersion(id, chainId);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
     const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi ? abi : DeployedContestContract.abi,
+      addressOrName: id,
+      contractInterface: abi ?? DeployedContestContract.abi,
     };
     try {
-      // args are (*in this order!*): proposalId, support, numVotes
-
       const txCastVotes = await writeContract({
         ...contractConfig,
         functionName: "castVote",
@@ -48,21 +45,18 @@ export function useCastVotes() {
         chainId: chain?.id,
         hash: txCastVotes.hash,
         //@ts-ignore
-        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
+        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
       });
       setTransactionData({
         hash: receipt.transactionHash,
       });
       await updateCurrentUserVotes();
-
       setIsLoading(false);
       setIsSuccess(true);
       toast.success(`Your votes were cast successfully!`);
     } catch (e) {
-      toast.error(
-        //@ts-ignore
-        e?.message ?? "Something went wrong while casting your votes.",
-      );
+      //@ts-ignore
+      toast.error(e?.message ?? "Something went wrong while casting your votes.");
       setIsLoading(false);
       //@ts-ignore
       setError(e?.message);

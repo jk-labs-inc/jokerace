@@ -1,7 +1,7 @@
 import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
 import toast from "react-hot-toast";
 import { useNetwork, erc20ABI } from "wagmi";
-import { useStore as useStoreRewardsModule } from "@hooks/useRewardsModule/store";
+import { useRewardsStore } from "@hooks/useRewards/store";
 import { useEffect } from "react";
 import { useFundRewardsStore } from "./store";
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,8 +21,8 @@ export function useFundRewardsModule() {
     setIsError,
     setTransactionData,
   } = useFundRewardsStore(state => state);
-  //@ts-ignore
-  const { rewardsModule } = useStoreRewardsModule();
+  const { rewards } = useRewardsStore(state => state);
+
   async function sendFundsToRewardsModule(args: {
     currentUserAddress: string;
     erc20TokenAddress: string;
@@ -30,7 +30,6 @@ export function useFundRewardsModule() {
     amount: string;
   }) {
     const { currentUserAddress, erc20TokenAddress, amount, isErc20 } = args;
-    setIsLoading(true);
     setIsLoading(true);
     setIsSuccess(false);
     setIsError(false, null);
@@ -46,7 +45,7 @@ export function useFundRewardsModule() {
         txSendFunds = await writeContract({
           ...contractConfig,
           functionName: "transfer",
-          args: [rewardsModule.contractAddress, amount],
+          args: [rewards.contractAddress, amount],
         });
         receipt = await waitForTransaction({
           chainId: chain?.id,
@@ -58,14 +57,13 @@ export function useFundRewardsModule() {
           chainId: chain?.id,
           request: {
             from: currentUserAddress,
-            to: rewardsModule.contractAddress,
+            to: rewards.contractAddress,
             value: amount,
           },
         });
 
         receipt = await waitForTransaction({
           chainId: chain?.id,
-          //@ts-ignore
           hash: txSendFunds.hash,
         });
       }
@@ -73,12 +71,11 @@ export function useFundRewardsModule() {
       setTransactionData({
         hash: receipt.transactionHash,
         chainId: chain?.id,
-        //@ts-ignore
-        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txSendFunds?.hash}`,
+        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendFunds?.hash}`,
       });
 
       await queryClient.invalidateQueries({
-        queryKey: ["balance-rewards-module", rewardsModule?.contractAddress],
+        queryKey: ["balance-rewards-module", rewards?.contractAddress],
         exact: true,
         refetchType: "active",
       });

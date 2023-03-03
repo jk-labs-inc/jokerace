@@ -30,7 +30,6 @@ export function useDeleteProposal() {
     const chainName = asPath.split("/")[2];
     const abi = await getContestContractVersion(address, chainName);
     setIsLoading(true);
-    setIsLoading(true);
     setIsSuccess(false);
     setIsError(false, null);
     setTransactionData(null);

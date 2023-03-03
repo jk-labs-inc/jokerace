@@ -1,47 +1,39 @@
-import shallow from "zustand/shallow";
-import Head from "next/head";
-import { Tab } from "@headlessui/react";
-import { chains } from "@config/wagmi";
-import { getLayout as getLayoutContest } from "@layouts/LayoutViewContest";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import {
-  useStore as useStoreRewardsModule,
-  Provider as ProviderRewardsModule,
-  createStore as createStoreRewardsModule,
-} from "@hooks/useRewardsModule/store";
-import { useFundRewardsStore, FundRewardsWrapper } from "@hooks/useFundRewardsModule/store";
-import { useRewardsModule } from "@hooks/useRewardsModule";
 import Button from "@components/Button";
 import Loader from "@components/Loader";
+import DialogCheckBalanceRewardsModule from "@components/_pages/DialogCheckBalanceRewardsModule";
+import DialogFundRewardsModule from "@components/_pages/DialogFundRewardsModule";
+import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule";
+import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward";
+import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward";
+import RewardsWinner from "@components/_pages/RewardsWinner";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { chains } from "@config/wagmi";
+import { Tab } from "@headlessui/react";
+import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { FundRewardsWrapper, useFundRewardsStore } from "@hooks/useFundRewards/store";
+import { useRewardsModule } from "@hooks/useRewards";
+import { RewardsWrapper, useRewardsStore } from "@hooks/useRewards/store";
+import { getLayout as getLayoutContest } from "@layouts/LayoutViewContest";
+import { isBefore } from "date-fns";
+import Head from "next/head";
+import { useRouter } from "next/router";
 import { Fragment, useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
-import DialogFundRewardsModule from "@components/_pages/DialogFundRewardsModule";
-import DialogCheckBalanceRewardsModule from "@components/_pages/DialogCheckBalanceRewardsModule";
-import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule";
-import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward";
-import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward";
-import RewardsWinner from "@components/_pages/RewardsWinner";
-import { useRouter } from "next/router";
-import { isBefore } from "date-fns";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 interface PageProps {
   address: string;
 }
-//@ts-ignore
+
 const Page = (props: PageProps) => {
   const { address } = props;
-  const { votesClose, isSuccess, isLoading, contestName, supportsRewardsModule } = useStoreContest(
-    (state: any) => ({
-      votesClose: state.votesClose,
-      isLoading: state.isLoading,
-      contestName: state.contestName,
-      isSuccess: state.isSuccess,
-      supportsRewardsModule: state.supportsRewardsModule,
-    }),
-    shallow,
-  );
+  const { votesClose, isSuccess, isLoading, contestName, supportsRewardsModule } = useStoreContest((state: any) => ({
+    votesClose: state.votesClose,
+    isLoading: state.isLoading,
+    contestName: state.contestName,
+    isSuccess: state.isSuccess,
+    supportsRewardsModule: state.supportsRewardsModule,
+  }));
 
-  const storeRewardsModule = useStoreRewardsModule();
+  const rewardsStore = useRewardsStore(state => state);
   const fundRewardsStore = useFundRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const [isWithdrawnFundsDialogOpen, setIsWithdrawFundsDialogOpen] = useState(false);
@@ -60,6 +52,9 @@ const Page = (props: PageProps) => {
     if (supportsRewardsModule) getContestRewardsModule();
   }, [supportsRewardsModule]);
 
+  console.log({ rewardsStore });
+  console.log({ fundRewardsStore });
+
   return (
     <>
       <Head>
@@ -77,14 +72,12 @@ const Page = (props: PageProps) => {
             </>
           ) : (
             <>
-              {/* @ts-ignore */}
-              {storeRewardsModule.isLoadingModule && (
+              {rewardsStore.isLoading && (
                 <>
                   <Loader scale="component">Loading rewards module...</Loader>
                 </>
               )}
-              {/* @ts-ignore */}
-              {storeRewardsModule.isLoadingModuleSuccess && (
+              {rewardsStore.isSuccess && (
                 <>
                   {isBefore(new Date(), new Date(votesClose)) && (
                     <p className="animate-appear p-3 mt-4 rounded-md bg-primary-1 text-primary-10 border-primary-4 mb-5 text-sm font-bold">
@@ -93,23 +86,19 @@ const Page = (props: PageProps) => {
                   )}
                   <div className="animate-appear flex flex-col gap-4 p-3 rounded-md border border-solid border-neutral-4 text-sm">
                     <p className="overflow-hidden text-start sm:text-center text-ellipsis">
-                      {/* @ts-ignore */}
                       Rewards module contract address: <br />
                       <a
                         className="link"
-                        //@ts-ignore
-                        href={`${storeRewardsModule?.rewardsModule?.blockExplorers?.url}/address/${storeRewardsModule.rewardsModule?.contractAddress}`}
+                        href={`${rewardsStore?.rewards?.blockExplorers?.url}/address/${rewardsStore?.rewards?.contractAddress}`}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
-                        {/* @ts-ignore */}
-                        {storeRewardsModule.rewardsModule?.contractAddress}
+                        {rewardsStore?.rewards?.contractAddress}
                       </a>
                       <br />
                       {"Note: this code has not been audited yet, but can be verified on our "}
                       <a
                         className="link"
-                        //@ts-ignore
                         href="https://github.com/JokeDAO/JokeDaoV2Dev"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -119,12 +108,10 @@ const Page = (props: PageProps) => {
                       .
                     </p>
                     <div className="flex sm:justify-center flex-wrap gap-3">
-                      {/* @ts-ignore */}
-                      {storeRewardsModule.rewardsModule?.creator === currentAccount?.address && (
+                      {rewardsStore?.rewards?.creator === currentAccount?.address && (
                         <>
                           <Button
                             className="w-full 2xs:w-fit-content"
-                            //@ts-ignore
                             onClick={() => fundRewardsStore.setIsModalOpen(true)}
                             scale="sm"
                             intent="primary-outline"
@@ -145,8 +132,7 @@ const Page = (props: PageProps) => {
                   </div>
                   <div className="flex flex-col animate-appear pt-4 space-y-8">
                     <ul className="space-y-6">
-                      {/* @ts-ignore */}
-                      {storeRewardsModule?.rewardsModule?.payees?.map(payee => (
+                      {rewardsStore?.rewards?.payees?.map((payee: any) => (
                         <li className="animate-appear" key={`rank-${`${payee}`}`}>
                           <RewardsWinner
                             chainId={
@@ -155,14 +141,10 @@ const Page = (props: PageProps) => {
                               )?.[0]?.id
                             }
                             payee={payee}
-                            //@ts-ignore
-                            erc20Tokens={storeRewardsModule.rewardsModule.balance}
-                            //@ts-ignore
-                            contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress}
-                            //@ts-ignore
-                            abiRewardsModule={storeRewardsModule.rewardsModule.abi}
-                            //@ts-ignore
-                            totalShares={storeRewardsModule.rewardsModule.totalShares}
+                            erc20Tokens={rewardsStore.rewards.balance}
+                            contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                            abiRewardsModule={rewardsStore.rewards.abi}
+                            totalShares={rewardsStore.rewards.totalShares}
                           />
                         </li>
                       ))}
@@ -172,7 +154,6 @@ const Page = (props: PageProps) => {
                     <p className="text-neutral-10 text-xs">Don&apos;t see a token you&apos;re expecting?</p>
                     <Button
                       className="w-full 2xs:w-fit-content"
-                      //@ts-ignore
                       onClick={() => setIsDialogCheckBalanceOpen(true)}
                       scale="sm"
                       intent="ghost-neutral"
@@ -214,20 +195,16 @@ const Page = (props: PageProps) => {
                       </Tab.List>
                       <Tab.Panels>
                         <Tab.Panel>
-                          {/* @ts-ignore */}
-                          {storeRewardsModule?.rewardsModule?.balance?.length > 0 ? (
+                          {rewardsStore?.rewards?.balance?.length ? (
                             <ul className="flex flex-col items-center space-y-6">
-                              {/* @ts-ignore */}
-                              {storeRewardsModule?.rewardsModule?.balance?.map(token => (
+                              {rewardsStore?.rewards?.balance?.map((token: { contractAddress: string }) => (
                                 <li
                                   className="flex flex-col items-center"
                                   key={`withdraw-erc20-${token.contractAddress}`}
                                 >
                                   <ButtonWithdrawERC20Reward
-                                    //@ts-ignore
-                                    contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress}
-                                    //@ts-ignore
-                                    abiRewardsModule={storeRewardsModule.rewardsModule.abi}
+                                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                                    abiRewardsModule={rewardsStore.rewards.abi}
                                     tokenAddress={token.contractAddress}
                                   />
                                 </li>
@@ -243,10 +220,8 @@ const Page = (props: PageProps) => {
                         </Tab.Panel>
                         <Tab.Panel className="flex flex-col items-center">
                           <ButtonWithdrawNativeReward
-                            //@ts-ignore
-                            contractRewardsModuleAddress={storeRewardsModule.rewardsModule.contractAddress}
-                            //@ts-ignore
-                            abiRewardsModule={storeRewardsModule.rewardsModule.abi}
+                            contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                            abiRewardsModule={rewardsStore.rewards.abi}
                           />
                         </Tab.Panel>
                       </Tab.Panels>
@@ -291,12 +266,11 @@ export async function getStaticProps({ params }: any) {
 
 export const getLayout = (page: any) => {
   return getLayoutContest(
-    <ProviderRewardsModule createStore={createStoreRewardsModule}>
+    <RewardsWrapper>
       <FundRewardsWrapper>{page}</FundRewardsWrapper>
-    </ProviderRewardsModule>,
+    </RewardsWrapper>,
   );
 };
-//@ts-ignore
 Page.getLayout = getLayout;
 
 export default Page;

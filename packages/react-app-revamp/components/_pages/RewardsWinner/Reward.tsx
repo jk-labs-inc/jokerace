@@ -84,7 +84,7 @@ export const Reward = (props: RewardProps) => {
       {queryRankRewardsReleasable.data > 0 && parseFloat(queryTokenBalance?.data?.formatted) > 0 && (
         <div className="mb-2">
           <p className="animate-appear">
-          waiting to be sent: {queryRankRewardsReleasable.data}{" "}
+            waiting to be sent: {queryRankRewardsReleasable.data}{" "}
             <span className="normal-case">{queryTokenBalance?.data?.symbol}</span>
           </p>
         </div>
