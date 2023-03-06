@@ -1,4 +1,4 @@
-import Loader from "@components/Loader";
+import Loader from "@components/UI/Loader";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { chainsImages } from "@config/wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
