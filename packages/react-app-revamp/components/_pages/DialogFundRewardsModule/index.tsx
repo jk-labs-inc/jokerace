@@ -5,22 +5,22 @@ import Form from "./Form";
 
 interface DialogFundRewardsModuleProps {
   isOpen: boolean;
-  setIsOpen: () => void;
+  setIsOpen: (value: boolean) => void;
 }
 
 export const DialogFundRewardsModule = (props: DialogFundRewardsModuleProps) => {
   const { ...dialogProps } = props;
-  const { sendFundsToRewardsModule, transactionData, isLoading, isError, isSuccess, error } = useFundRewardsModule();
+  const { sendFundsToRewardsModule, transactionData, isLoading, isSuccess, error } = useFundRewardsModule();
 
   return (
     <DialogModal title="Send funds to rewards module" {...dialogProps}>
-      {(isSuccess === true || isLoading === true || isError === true) && (
+      {(isSuccess || isLoading || error) && (
         <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction textError={error} isSuccess={isSuccess} isError={isError} isLoading={isLoading} />
+          <TrackerDeployTransaction isSuccess={isSuccess} error={error} isLoading={isLoading} />
         </div>
       )}
 
-      {isSuccess === true && transactionData?.transactionHref && (
+      {isSuccess && transactionData?.transactionHref && (
         <div className="my-2 animate-appear">
           <a rel="nofollow noreferrer" target="_blank" href={transactionData?.transactionHref}>
             View transaction <span className="link">here</span>
@@ -34,7 +34,6 @@ export const DialogFundRewardsModule = (props: DialogFundRewardsModuleProps) => 
           setIsModalOpen={dialogProps.setIsOpen}
           handleSubmit={sendFundsToRewardsModule}
           isLoading={isLoading}
-          isError={isError}
         />
       </div>
     </DialogModal>

@@ -3,6 +3,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useStore as useStoreContest } from "./../useContest/store";
 import { useSubmitProposalStore } from "./store";
@@ -54,11 +55,16 @@ export function useSubmitProposal() {
       toast.success(`Your proposal was deployed successfully!`);
       increaseCurrentUserProposalCount();
     } catch (e) {
-      if (!e) return;
-      //@ts-ignore
-      const message = e?.message;
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      const message = customError.message || "Something went wrong while submitting your proposal.";
       toast.error(message);
-      setError(e);
+      setError({
+        code: customError.code,
+        message,
+      });
       setIsLoading(false);
     }
   }

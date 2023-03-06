@@ -55,11 +55,11 @@ export const ButtonDownloadContestDataAsCSV = () => {
   }
 
   useEffect(() => {
-    if (stateExportData.shouldStart === true) startDownloading();
+    if (stateExportData.shouldStart) startDownloading();
   }, [stateExportData.shouldStart]);
 
   useEffect(() => {
-    if (stateExportData.isReady === true) formatContestCSVData();
+    if (stateExportData.isReady) formatContestCSVData();
   }, [stateExportData.isReady]);
 
   if (queryContestResults.isLoading)
@@ -112,7 +112,7 @@ export const ButtonDownloadContestDataAsCSV = () => {
           <p className={`font-bold text-sm text-primary-10`}>{stateExportData.loadingMessage}</p>
         </div>
       ) : (
-        stateExportData.isError && (
+        stateExportData.error && (
           <div className="animate-appear">
             <p className="text-sm font-bold mb-5 text-negative-10">
               Something went wrong while preparing the data. Please try again.

@@ -1,10 +1,10 @@
 import React, { createContext, useRef, useContext } from "react";
+import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface DeleteProposalState {
   isLoading: boolean;
-  isError: boolean;
-  error: string | null;
+  error: CustomError | null;
   isSuccess: boolean;
   transactionData: any;
   pickedProposal: any;
@@ -13,14 +13,13 @@ interface DeleteProposalState {
   setPickedProposal: (id: any) => void;
   setIsLoading: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
-  setIsError: (isError: boolean, error: string | null) => void;
+  setError: (value: CustomError | null) => void;
   setTransactionData: (data: any) => void;
 }
 
 export const createDeleteProposalStore = () =>
   createStore<DeleteProposalState>(set => ({
     isLoading: false,
-    isError: false,
     error: null,
     isSuccess: false,
     transactionData: null,
@@ -30,7 +29,7 @@ export const createDeleteProposalStore = () =>
     setPickedProposal: id => set({ pickedProposal: id }),
     setIsLoading: value => set({ isLoading: value }),
     setIsSuccess: value => set({ isSuccess: value }),
-    setIsError: (isError, error) => set({ isError: isError, error }),
+    setError: value => set({ error: value }),
     setTransactionData: data => set({ transactionData: data }),
   }));
 

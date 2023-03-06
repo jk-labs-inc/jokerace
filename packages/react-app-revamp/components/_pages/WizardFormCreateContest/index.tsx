@@ -1,10 +1,10 @@
 import Loader from "@components/UI/Loader";
 import { Transition } from "@headlessui/react";
 import { ExclamationCircleIcon } from "@heroicons/react/outline";
+import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { useRouter } from "next/router";
 import { Fragment, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
-import shallow from "zustand/shallow";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
@@ -27,15 +27,12 @@ function renderStep(step: WizardFormStep, urlParam: string | undefined) {
   }
 }
 export const WizardFormCreateContest = () => {
-  const { currentStep, setCurrentStep } = useStore(
-    state => ({
-      //@ts-ignore
-      currentStep: state.currentStep,
-      //@ts-ignore
-      setCurrentStep: state.setCurrentStep,
-    }),
-    shallow,
-  );
+  const { currentStep, setCurrentStep } = useStore(state => ({
+    //@ts-ignore
+    currentStep: state.currentStep,
+    //@ts-ignore
+    setCurrentStep: state.setCurrentStep,
+  }));
 
   const {
     query: { step },
@@ -55,7 +52,7 @@ export const WizardFormCreateContest = () => {
   }, [currentStep]);
 
   return (
-    <>
+    <ContractFactoryWrapper>
       <Transition
         show={!isReady || isConnecting || isReconnecting}
         as={Fragment}
@@ -97,7 +94,7 @@ export const WizardFormCreateContest = () => {
           </div>
         </div>
       </Transition>
-    </>
+    </ContractFactoryWrapper>
   );
 };
 

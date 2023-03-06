@@ -1,12 +1,13 @@
-import toast from "react-hot-toast";
-import { writeContract, waitForTransaction } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useCastVotesStore } from "./store";
-import { useNetwork } from "wagmi";
-import { useRouter } from "next/router";
-import { parseUnits } from "ethers/lib/utils";
-import useContest from "@hooks/useContest";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import useContest from "@hooks/useContest";
+import { waitForTransaction, writeContract } from "@wagmi/core";
+import { parseUnits } from "ethers/lib/utils";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import { CustomError } from "types/error";
+import { useNetwork } from "wagmi";
+import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
   const {
@@ -55,11 +56,17 @@ export function useCastVotes() {
       setIsSuccess(true);
       toast.success(`Your votes were cast successfully!`);
     } catch (e) {
-      //@ts-ignore
-      toast.error(e?.message ?? "Something went wrong while casting your votes.");
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      const message = customError.message || "Something went wrong while casting your votes";
+      toast.error(message);
+      setError({
+        code: customError.code,
+        message,
+      });
       setIsLoading(false);
-      //@ts-ignore
-      setError(e?.message);
     }
   }
 

@@ -1,10 +1,11 @@
-import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
-import toast from "react-hot-toast";
-import { useNetwork, erc20ABI } from "wagmi";
 import { useRewardsStore } from "@hooks/useRewards/store";
-import { useEffect } from "react";
-import { useFundRewardsStore } from "./store";
 import { useQueryClient } from "@tanstack/react-query";
+import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+import { CustomError } from "types/error";
+import { erc20ABI, useNetwork } from "wagmi";
+import { useFundRewardsStore } from "./store";
 
 export function useFundRewardsModule() {
   const queryClient = useQueryClient();
@@ -12,13 +13,12 @@ export function useFundRewardsModule() {
   const {
     isModalOpen,
     isLoading,
-    isError,
     error,
     isSuccess,
     transactionData,
     setIsLoading,
     setIsSuccess,
-    setIsError,
+    setError,
     setTransactionData,
   } = useFundRewardsStore(state => state);
   const { rewards } = useRewardsStore(state => state);
@@ -32,7 +32,7 @@ export function useFundRewardsModule() {
     const { currentUserAddress, erc20TokenAddress, amount, isErc20 } = args;
     setIsLoading(true);
     setIsSuccess(false);
-    setIsError(false, null);
+    setError(null);
     setTransactionData(null);
     const contractConfig = {
       addressOrName: erc20TokenAddress,
@@ -49,7 +49,6 @@ export function useFundRewardsModule() {
         });
         receipt = await waitForTransaction({
           chainId: chain?.id,
-          //@ts-ignore
           hash: txSendFunds.hash,
         });
       } else {
@@ -84,30 +83,32 @@ export function useFundRewardsModule() {
       setIsSuccess(true);
       toast.success(`Funds sent to the rewards module successfully !`);
     } catch (e) {
-      toast.error(
-        //@ts-ignore
-        e?.data?.message ?? "Something went wrong while sending funds to the rewards module.",
-      );
-      console.error(e);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      const message = customError.message || "Something went wrong while sending funds to the rewards module.";
+      toast.error(message);
+      setError({
+        code: customError.code,
+        message,
+      });
       setIsLoading(false);
-      //@ts-ignore
-      setIsError(true, e?.data?.message ?? "Something went wrong while sending funds to the rewards module.");
     }
   }
 
   useEffect(() => {
-    if (isModalOpen === false) {
+    if (!isModalOpen) {
       setIsLoading(false);
       setIsSuccess(false);
       setTransactionData({});
-      setIsError(false, null);
+      setError(null);
     }
   }, [isModalOpen]);
 
   return {
     sendFundsToRewardsModule,
     isLoading,
-    isError,
     error,
     isSuccess,
     transactionData,

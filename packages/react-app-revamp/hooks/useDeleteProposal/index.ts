@@ -4,6 +4,7 @@ import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useDeleteProposalStore } from "./store";
 
@@ -13,7 +14,6 @@ export function useDeleteProposal() {
 
   const {
     isLoading,
-    isError,
     error,
     isSuccess,
     transactionData,
@@ -21,7 +21,7 @@ export function useDeleteProposal() {
     isModalOpen,
     setIsLoading,
     setIsSuccess,
-    setIsError,
+    setError,
     setTransactionData,
   } = useDeleteProposalStore(state => state);
 
@@ -31,7 +31,7 @@ export function useDeleteProposal() {
     const abi = await getContestContractVersion(address, chainName);
     setIsLoading(true);
     setIsSuccess(false);
-    setIsError(false, null);
+    setError(null);
     setTransactionData(null);
     const contractConfig = {
       addressOrName: address,
@@ -56,14 +56,17 @@ export function useDeleteProposal() {
       setIsSuccess(true);
       toast.success(`Proposal deleted successfully!`);
     } catch (e) {
-      toast.error(
-        //@ts-ignore
-        e?.message ?? "Something went wrong while deleting this proposal.",
-      );
-      console.error(e);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      const message = customError.message || "Something went wrong while deleting your proposal.";
+      toast.error(message);
+      setError({
+        code: customError.code,
+        message,
+      });
       setIsLoading(false);
-      //@ts-ignore
-      setIsError(true, e?.message ?? "Something went wrong while deleting this proposal.");
     }
   }
 
@@ -72,14 +75,13 @@ export function useDeleteProposal() {
       setIsLoading(false);
       setIsSuccess(false);
       setTransactionData({});
-      setIsError(false, null);
+      setError(null);
     }
   }, [isModalOpen]);
 
   return {
     deleteProposal,
     isLoading,
-    isError,
     error,
     isSuccess,
     transactionData,

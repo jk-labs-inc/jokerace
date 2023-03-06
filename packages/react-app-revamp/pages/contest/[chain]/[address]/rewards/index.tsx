@@ -163,18 +163,14 @@ const Page = (props: PageProps) => {
                   </div>
                   <DialogCheckBalanceRewardsModule
                     isOpen={isDialogCheckBalanceOpen}
-                    //@ts-ignore
                     setIsOpen={setIsDialogCheckBalanceOpen}
                   />
                   <DialogFundRewardsModule
-                    //@ts-ignore
                     setIsOpen={fundRewardsStore.setIsModalOpen}
-                    //@ts-ignore
                     isOpen={fundRewardsStore.isModalOpen}
                   />
                   <DialogWithdrawFundsFromRewardsModule
                     isOpen={isWithdrawnFundsDialogOpen}
-                    //@ts-ignore
                     setIsOpen={setIsWithdrawFundsDialogOpen}
                   >
                     <Tab.Group>

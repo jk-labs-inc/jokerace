@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { makeStorageClient } from "@config/web3storage";
 import { objectToCsv } from "@helpers/objectToCsv";
+import { CustomError } from "types/error";
+import toast from "react-hot-toast";
 
 const MAX_PROPOSALS_EXPORTING = 500;
 const MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING = 500;
@@ -85,7 +87,6 @@ export function useExportContestDataToCSV() {
         contractInterface: abi,
         chainId: chainId,
       };
-      //@ts-ignore
       const list = await readContract({
         ...contractConfig,
         functionName: "proposalAddressesHaveVoted",
@@ -116,7 +117,6 @@ export function useExportContestDataToCSV() {
 
     try {
       const data = await readContract({
-        //@ts-ignore
         addressOrName: address,
         contractInterface: abi,
         functionName: "proposalAddressVotes",
@@ -174,8 +174,7 @@ export function useExportContestDataToCSV() {
         [HEADERS_KEYS.TOTAL_VOTES]: propTotalVotes,
       };
 
-      //@ts-ignore
-      if (addressesVoted.length == 0) {
+      if (addressesVoted?.length == 0) {
         const noVoterDict = {
           ...COMMON_DATA,
           [HEADERS_KEYS.VOTER]: "No voters",
@@ -210,7 +209,7 @@ export function useExportContestDataToCSV() {
     stateExportData.setIsLoading(true);
     stateExportData.setIsSuccess(false);
     stateExportData.setCsv(null);
-    stateExportData.setError(null, false);
+    stateExportData.setError(null);
     const contestAddress = asPath.split("/")[3];
     const chainName = asPath.split("/")[2];
 
@@ -239,7 +238,6 @@ export function useExportContestDataToCSV() {
       stateExportData.setCsv(reducedPropArray);
 
       // Store the loaded data to IPFS via web3storage and then load the reference id into Supabase
-      //@ts-ignore
       if (
         process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
         process.env.NEXT_PUBLIC_SUPABASE_URL &&
@@ -271,10 +269,16 @@ export function useExportContestDataToCSV() {
       stateExportData.setIsSuccess(true);
       stateExportData.setIsLoading(false);
     } catch (e) {
-      console.error(e);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+      const message = customError.message || "Something went wrong with the export.";
+      toast.error(message);
+      stateExportData.setError({
+        code: customError.code,
+        message,
+      });
       stateExportData.setIsLoading(false);
-      //@ts-ignore
-      stateExportData.setError(e?.message ?? e, true);
     }
   }
 

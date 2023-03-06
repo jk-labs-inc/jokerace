@@ -56,13 +56,12 @@ export const Step2 = () => {
         isOpen={modalDeployTokenOpen}
         setIsOpen={setModalDeployTokenOpen}
         title="Token deployment transaction"
-        isError={stateContractDeployment.isError}
         isLoading={stateContractDeployment.isLoading}
         isSuccess={stateContractDeployment.isSuccess}
         error={stateContractDeployment.error}
         transactionHref={`${tokenDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployVotingToken?.hash}`}
       >
-        {stateContractDeployment.isSuccess === true && (
+        {stateContractDeployment.isSuccess && (
           <div className="mt-3 animate-appear relative">
             <span className="font-bold">Token address:</span>
             <div className="relative focus-within:text-opacity-50 hover:text-opacity-75">
@@ -90,7 +89,7 @@ export const Step2 = () => {
           >
             Next
           </Button>
-          {stateContractDeployment.isError && (
+          {stateContractDeployment.error && (
             <Button
               onClick={() => {
                 handleSubmitForm(form.data(), false);

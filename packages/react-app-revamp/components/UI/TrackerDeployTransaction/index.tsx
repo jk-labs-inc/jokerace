@@ -2,7 +2,7 @@ import { FC } from "react";
 import { CustomError, ErrorCodes } from "types/error";
 import styles from "./styles.module.css";
 interface TrackerDeployTransactionProps {
-  error: CustomError;
+  error: CustomError | null;
   isLoading: boolean;
   isSuccess: boolean;
   transactionHref?: string;

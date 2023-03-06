@@ -10,7 +10,7 @@ import { useRewardsStore } from "@hooks/useRewards/store";
 
 interface DialogCheckBalanceRewardsModuleProps {
   isOpen: boolean;
-  setIsOpen: () => void;
+  setIsOpen: (value: boolean) => void;
 }
 export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewardsModuleProps) => {
   const { ...dialogProps } = props;

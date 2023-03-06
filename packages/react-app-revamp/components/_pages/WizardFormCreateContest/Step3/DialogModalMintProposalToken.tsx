@@ -8,7 +8,6 @@ import { copyToClipboard } from "@helpers/copyToClipboard";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import shallow from "zustand/shallow";
 import Form from "../Step2/Form";
 import { schema } from "../Step2/schema";
 import useDeployToken from "../Step2/useDeployToken";
@@ -31,23 +30,20 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
     dataDeploySubmissionToken,
     setModalDeploySubmissionTokenOpen,
     modalDeploySubmissionTokenOpen,
-  } = useStore(
-    state => ({
-      //@ts-ignore
-      setCurrentStep: state.setCurrentStep,
-      //@ts-ignore
-      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
-      //@ts-ignore
-      modalDeploySubmissionTokenOpen: state.modalDeploySubmissionTokenOpen,
-      //@ts-ignore
-      setModalDeploySubmissionTokenOpen: state.setModalDeploySubmissionTokenOpen,
-      //@ts-ignore
-      tokenDeployedToChain: state.tokenDeployedToChain,
-      //@ts-ignore
-      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
-    }),
-    shallow,
-  );
+  } = useStore(state => ({
+    //@ts-ignore
+    setCurrentStep: state.setCurrentStep,
+    //@ts-ignore
+    dataDeploySubmissionToken: state.dataDeploySubmissionToken,
+    //@ts-ignore
+    modalDeploySubmissionTokenOpen: state.modalDeploySubmissionTokenOpen,
+    //@ts-ignore
+    setModalDeploySubmissionTokenOpen: state.setModalDeploySubmissionTokenOpen,
+    //@ts-ignore
+    tokenDeployedToChain: state.tokenDeployedToChain,
+    //@ts-ignore
+    dataDeploySubmissionToken: state.dataDeploySubmissionToken,
+  }));
   const form = useForm({
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values, true),
@@ -82,8 +78,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
     setShowDeploymentSteps(false);
     stateContractDeployment.setIsLoading(false);
     stateContractDeployment.setIsSuccess(false);
-    stateContractDeployment.setIsError(false);
-    stateContractDeployment.setErrorMessage(null);
+    stateContractDeployment.setError(null);
   }, []);
 
   return (
@@ -95,8 +90,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
       <div className="animate-appear">
         {showDeploymentSteps && (
           <TrackerDeployTransaction
-            textError={stateContractDeployment.error}
-            isError={stateContractDeployment.isError}
+            error={stateContractDeployment.error}
             isLoading={stateContractDeployment.isLoading}
             isSuccess={stateContractDeployment.isSuccess}
             transactionHref={tokenDeployedToChain.transactionHref}
@@ -134,7 +128,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
               Go back to contest creation
             </Button>
           )}
-          {stateContractDeployment.isError && (
+          {stateContractDeployment.error && (
             <Button
               onClick={() => {
                 handleSubmitForm(form.data(), true);

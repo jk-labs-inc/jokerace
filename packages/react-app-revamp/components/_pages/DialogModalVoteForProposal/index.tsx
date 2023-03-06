@@ -9,7 +9,6 @@ import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useEffect, useState } from "react";
-import shallow from "zustand/shallow";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -30,7 +29,6 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
       //@ts-ignore
       contestStatus: state.contestStatus,
     }),
-    shallow,
   );
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
@@ -63,12 +61,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
     <DialogModal title="Cast your votes" {...props}>
       {showDeploymentSteps && (
         <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction
-            textError={error}
-            isSuccess={isSuccess}
-            isError={error !== null}
-            isLoading={isLoading}
-          />
+          <TrackerDeployTransaction error={error} isSuccess={isSuccess} isLoading={isLoading} />
         </div>
       )}
 
@@ -86,14 +79,6 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
             <Button onClick={() => props.setIsOpen(false)}>Go back</Button>
           </div>
         ))}
-
-      {currentUserAvailableVotesAmount > 0 && error && !isSuccess && contestStatus === CONTEST_STATUS.VOTING_OPEN && (
-        <>
-          <Button onClick={onSubmitCastVotes} intent="neutral-outline" type="submit" className="mx-auto my-3">
-            Try again
-          </Button>
-        </>
-      )}
 
       {showForm && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 && (
         <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitCastVotes}>
@@ -189,7 +174,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
           </FormField>
           <Button
             disabled={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount || isLoading}
-            className={isLoading || error !== null ? "hidden" : "mt-3"}
+            className={isLoading ? "hidden" : "mt-3"}
             type="submit"
           >
             Vote!

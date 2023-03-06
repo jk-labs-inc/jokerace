@@ -1,21 +1,20 @@
 import Button from "@components/UI/Button";
 import FormField from "@components/UI/FormField";
 import FormInput from "@components/UI/FormInput";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
 import { RadioGroup } from "@headlessui/react";
 import { CheckIcon, ExclamationIcon, ShieldExclamationIcon } from "@heroicons/react/outline";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
-import { useEffect, useId } from "react";
+import { FC, useEffect, useId } from "react";
 import { useAccount, useBalance, useNetwork, useToken } from "wagmi";
 import { schema } from "./schema";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 
 interface FormProps {
   isLoading: boolean;
   isSuccess: boolean;
-  isError: any;
   handleSubmit: (args: {
     currentUserAddress: string;
     erc20TokenAddress: string;
@@ -25,9 +24,8 @@ interface FormProps {
   setIsModalOpen: (isOpen: boolean) => void;
 }
 
-export const Form = (props: FormProps) => {
+export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsModalOpen }) => {
   const formId = useId();
-  const { isLoading, isError, isSuccess, handleSubmit, setIsModalOpen } = props;
   const { isConnected, address } = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
@@ -307,7 +305,7 @@ export const Form = (props: FormProps) => {
           }
           type="submit"
         >
-          {isError ? "Try again" : "Send"}
+          Send
         </Button>
         <Button intent="neutral-outline" type="button" onClick={() => setIsModalOpen(false)}>
           Go back

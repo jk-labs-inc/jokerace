@@ -1,24 +1,23 @@
 import { createContext, useContext, useRef } from "react";
+import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface FundRewardsState {
   isLoading: boolean;
-  isError: boolean;
-  error: string | null;
+  error: CustomError | null;
   isSuccess: boolean;
   transactionData: any;
   isModalOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   setIsLoading: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
-  setIsError: (isError: boolean, error: string | null) => void;
+  setError: (value: CustomError | null) => void;
   setTransactionData: (data: any) => void;
 }
 
 export const createFundRewardsStore = () =>
   createStore<FundRewardsState>(set => ({
     isLoading: false,
-    isError: false,
     error: null,
     isSuccess: false,
     transactionData: null,
@@ -26,7 +25,7 @@ export const createFundRewardsStore = () =>
     setIsModalOpen: isOpen => set({ isModalOpen: isOpen }),
     setIsLoading: value => set({ isLoading: value }),
     setIsSuccess: value => set({ isSuccess: value }),
-    setIsError: (isError, error) => set({ isError: isError, error }),
+    setError: value => set({ error: value }),
     setTransactionData: data => set({ transactionData: data }),
   }));
 

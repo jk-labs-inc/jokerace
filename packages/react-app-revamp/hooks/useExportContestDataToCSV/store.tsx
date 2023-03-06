@@ -1,24 +1,24 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useRef } from "react";
+import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface ExportDataState {
   shouldStart: boolean;
-  isReady: boolean;
-  isSuccess: boolean;
-  isError: boolean;
-  isLoading: boolean;
-  loadingMessage: string | null;
-  error: string | null;
   csv: any;
-  cid: string | null;
-  setCid: (cid: string) => void;
+  isSuccess: boolean;
+  isLoading: boolean;
+  error: CustomError | null;
+  loadingMessage: string | null;
+  isReady: boolean;
+  cid: any;
+  setCid: (cid: any) => void;
   setCsv: (data: any) => void;
-  setIsSuccess: (isSuccess: boolean) => void;
-  setError: (err: string | null, isErr: boolean) => void;
-  setIsLoading: (isLoading: boolean) => void;
+  setIsSuccess: (value: boolean) => void;
+  setError: (value: CustomError | null) => void;
+  setIsLoading: (value: boolean) => void;
+  setIsReady: (value: boolean) => void;
   setLoadingMessage: (message: string | null) => void;
-  setIsReady: (isReady: boolean) => void;
-  setShouldStart: (shouldStart: boolean) => void;
+  setShouldStart: (value: boolean) => void;
   resetState: () => void;
 }
 
@@ -27,7 +27,6 @@ export const createExportDataStore = () =>
     shouldStart: false,
     csv: null,
     isSuccess: false,
-    isError: false,
     isLoading: false,
     error: null,
     loadingMessage: null,
@@ -36,7 +35,7 @@ export const createExportDataStore = () =>
     setCid: cid => set(() => ({ cid })),
     setCsv: data => set(() => ({ csv: data })),
     setIsSuccess: value => set(() => ({ isSuccess: value })),
-    setError: (err, isErr) => set(() => ({ error: err, isError: isErr })),
+    setError: value => set(() => ({ error: value })),
     setIsLoading: value => set(() => ({ isLoading: value })),
     setIsReady: value => set(() => ({ isReady: value })),
     setLoadingMessage: message => set(() => ({ loadingMessage: message })),
@@ -47,7 +46,6 @@ export const createExportDataStore = () =>
         csv: null,
         cid: null,
         isSuccess: false,
-        isError: false,
         isLoading: false,
         error: null,
         loadingMessage: null,
@@ -56,6 +54,14 @@ export const createExportDataStore = () =>
   }));
 
 export const ExportDataContext = createContext<ReturnType<typeof createExportDataStore> | null>(null);
+
+export function ExportDataWrapper({ children }: { children: React.ReactNode }) {
+  const storeRef = useRef<ReturnType<typeof createExportDataStore>>();
+  if (!storeRef.current) {
+    storeRef.current = createExportDataStore();
+  }
+  return <ExportDataContext.Provider value={storeRef.current}>{children}</ExportDataContext.Provider>;
+}
 
 export function useExportDataStore<T>(selector: (state: ExportDataState) => T) {
   const store = useContext(ExportDataContext);

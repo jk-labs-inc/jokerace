@@ -1,24 +1,25 @@
 import { createContext, useContext, useRef } from "react";
+import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 interface RewardsState {
   isLoading: boolean;
-  isError: any;
   isSuccess: boolean;
+  error: CustomError | null;
   rewards: any;
   setIsLoading: (isLoading: boolean) => void;
-  setIsError: (value: string | null) => void;
   setIsSuccess: (value: boolean) => void;
+  setError: (value: CustomError | null) => void;
   setRewards: (rewards: any) => void;
 }
 
 export const createRewardsStore = () =>
   createStore<RewardsState>(set => ({
     isLoading: true,
-    isError: null,
     isSuccess: false,
+    error: null,
     rewards: {},
     setIsLoading: value => set({ isLoading: value }),
-    setIsError: value => set({ isError: value }),
+    setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
     setRewards: rewards => set({ rewards }),
   }));

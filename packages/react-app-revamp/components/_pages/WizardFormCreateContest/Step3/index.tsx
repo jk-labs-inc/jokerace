@@ -1,4 +1,4 @@
-import stylesStepperTxTracker from "@components/TrackerDeployTransaction/styles.module.css";
+import stylesStepperTxTracker from "@components/UI/TrackerDeployTransaction/styles.module.css";
 import Button from "@components/UI/Button";
 import DialogModal from "@components/UI/DialogModal";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_REWARDS } from "@config/routes";
@@ -112,11 +112,9 @@ export const Step3 = () => {
             isOpen={modalDeployContestOpen}
             setIsOpen={setModalDeployContestOpen}
             title="Contest deployment transaction"
-            isError={stateContestDeployment.isError}
             isLoading={stateContestDeployment.isLoading}
             isSuccess={stateContestDeployment.isSuccess}
             error={stateContestDeployment.error}
-            //@ts-ignore
             transactionHref={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
             textPending="Deploying contest..."
           >

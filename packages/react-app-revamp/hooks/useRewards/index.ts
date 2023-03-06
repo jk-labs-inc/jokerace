@@ -6,12 +6,13 @@ import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVe
 import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
 import { useRewardsStore } from "./store";
 import { useNetwork, useQuery } from "wagmi";
+import { CustomError } from "types/error";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
   const { chain } = useNetwork();
 
-  const { rewards, setRewards, setIsLoading, setIsError, setIsSuccess } = useRewardsStore(state => state);
+  const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
 
   const queryBalanceRewardsModule = useQuery(
     ["balance-rewards-module", rewards?.contractAddress],
@@ -54,17 +55,24 @@ export function useRewardsModule() {
     {
       enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
       onError(e) {
-        toast.error(
-          `Something went wrong and the balance of the rewards module couldn't be retrieved. Try to reload the page.`,
-        );
-        console.error(e);
+        const customError = e as CustomError;
+
+        if (!customError) return;
+        const message =
+          customError.message ||
+          "Something went wrong and the balance of the rewards module couldn't be retrieved. Try to reload the page.";
+        toast.error(message);
+        setError({
+          code: customError.code,
+          message,
+        });
       },
     },
   );
 
   async function getContestRewardsModule() {
     setIsLoading(true);
-    setIsError(null);
+    setError(null);
     setIsSuccess(false);
 
     try {
@@ -74,7 +82,9 @@ export function useRewardsModule() {
       const abiContest = await getContestContractVersion(contestAddress, contestChainName);
       if (abiContest === null) {
         setIsLoading(false);
-        setIsError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+        setError({
+          message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.`,
+        });
         setIsSuccess(false);
         toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
         return;
@@ -132,11 +142,17 @@ export function useRewardsModule() {
       });
       setIsSuccess(true);
     } catch (e) {
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      const message = customError.message || "Something went wrong.";
+      toast.error(message);
+      setError({
+        code: customError.code,
+        message,
+      });
       setIsLoading(false);
-      //@ts-ignore
-      setIsError(e?.message ?? e);
-      setIsSuccess(false);
-      console.error(e);
     }
   }
 

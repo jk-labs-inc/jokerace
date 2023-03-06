@@ -2,6 +2,7 @@ import ButtonDownloadContestDataAsCSV from "@components/_pages/ButtonDownloadCon
 import { chains } from "@config/wagmi";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useStore } from "@hooks/useContest/store";
+import { ExportDataWrapper } from "@hooks/useExportContestDataToCSV/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -52,7 +53,9 @@ const Page: NextPage = (props: PageProps) => {
                   </li>
                 </ul>
               </div>
-              <ButtonDownloadContestDataAsCSV />
+              <ExportDataWrapper>
+                <ButtonDownloadContestDataAsCSV />
+              </ExportDataWrapper>
             </div>
           ) : (
             <div className="mt-4 p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
