@@ -6,9 +6,9 @@ interface FormTextAreaProps extends TextAreaProps {
 
 export const FormTextarea = (props: FormTextAreaProps) => {
   const { className, hasError, ...rest } = props;
-  //@ts-ignore
   return (
     <textarea
+      //@ts-ignore
       className={input({ scale: "default", variant: hasError === true ? "error" : "default", class: className ?? "" })}
       {...rest}
     />
