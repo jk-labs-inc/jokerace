@@ -1,10 +1,6 @@
-import shallow from "zustand/shallow";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { useNetwork, useAccount } from "wagmi";
-import { isDate } from "date-fns";
-import { HomeIcon } from "@heroicons/react/solid";
-import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
+import Button from "@components/UI/Button";
+import { IconTrophy } from "@components/UI/Icons";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import {
   ROUTE_CONTEST_PROPOSAL,
   ROUTE_VIEW_CONTEST,
@@ -12,15 +8,19 @@ import {
   ROUTE_VIEW_CONTEST_REWARDS,
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
-import Button from "@components/Button";
-import { IconTrophy } from "@components/Icons";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
+import { HomeIcon } from "@heroicons/react/solid";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { isDate } from "date-fns";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useAccount, useNetwork } from "wagmi";
+import shallow from "zustand/shallow";
 import Timeline from "../Timeline";
 import VotingToken from "../VotingToken";
 import styles from "./styles.module.css";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 
 export const Sidebar = (props: any) => {
   const { query, pathname } = useRouter();

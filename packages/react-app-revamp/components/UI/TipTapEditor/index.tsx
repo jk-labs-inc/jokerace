@@ -1,11 +1,10 @@
-import Button from "@components/Button";
-import TipTapEditorControls from "@components/TipTapEditorControls";
-import { EditorContent } from "@tiptap/react";
-import { useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import Iframe from "@components/tiptap/Iframe";
+import Button from "@components/UI/Button";
+import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
-import Iframe from "@components/tiptap/Iframe";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
 import { useState } from "react";
 
 interface TipTapEditorProps {

@@ -1,8 +1,8 @@
-import Button from "@components/Button";
-import DialogModal from "@components/DialogModal";
-import FormField from "@components/FormField";
-import FormInput from "@components/FormInput";
-import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
+import FormField from "@components/UI/FormField";
+import FormInput from "@components/UI/FormInput";
+import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import { RadioGroup } from "@headlessui/react";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import useCastVotes from "@hooks/useCastVotes";

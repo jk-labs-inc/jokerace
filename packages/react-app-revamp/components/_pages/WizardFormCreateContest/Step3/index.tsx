@@ -1,19 +1,19 @@
-import shallow from "zustand/shallow";
-import Button from "@components/Button";
+import stylesStepperTxTracker from "@components/TrackerDeployTransaction/styles.module.css";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_REWARDS } from "@config/routes";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
 import { addMinutes } from "date-fns";
 import Link from "next/link";
+import shallow from "zustand/shallow";
 import { DialogModalDeployTransaction } from "../DialogModalDeployTransaction";
 import { useStore } from "../store";
+import Timeline from "../Timeline";
+import DialogModalMintProposalToken from "./DialogModalMintProposalToken";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
-import Timeline from "../Timeline";
-import DialogModalMintProposalToken from "./DialogModalMintProposalToken";
-import stylesStepperTxTracker from "@components/TrackerDeployTransaction/styles.module.css";
-import DialogModal from "@components/DialogModal";
 
 export const Step3 = () => {
   const {

@@ -47,7 +47,7 @@ export function DeleteProposalWrapper({ children }: { children: React.ReactNode 
 export function useDeleteProposalStore<T>(selector: (state: DeleteProposalState) => T) {
   const store = useContext(DeleteProposalContext);
   if (store === null) {
-    throw new Error("Missing Wrapper in the tree");
+    throw new Error("Missing DeleteProposalWrapper in the tree");
   }
   const value = useStore(store, selector);
   return value;

@@ -1,6 +1,6 @@
-import Button from "@components/Button";
-import DialogModal from "@components/DialogModal";
-import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
+import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import { useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
 

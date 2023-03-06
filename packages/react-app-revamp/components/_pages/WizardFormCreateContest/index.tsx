@@ -1,18 +1,17 @@
-import shallow from "zustand/shallow";
+import Loader from "@components/UI/Loader";
+import { Transition } from "@headlessui/react";
+import { ExclamationCircleIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import { Fragment, useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
-import { useStore } from "./store";
+import shallow from "zustand/shallow";
 import Step1 from "./Step1";
 import Step2 from "./Step2";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
 import StepIndicator from "./StepIndicator";
 import type { WizardFormStep } from "./store";
-import { ExclamationCircleIcon } from "@heroicons/react/outline";
-import { Transition } from "@headlessui/react";
-import Loader from "@components/Loader";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { useStore } from "./store";
 
 function renderStep(step: WizardFormStep, urlParam: string | undefined) {
   const stepToRender = urlParam ? parseInt(urlParam) : step;

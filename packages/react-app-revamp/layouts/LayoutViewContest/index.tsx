@@ -1,10 +1,6 @@
-import { useEffect, useState } from "react";
-import shallow from "zustand/shallow";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { useAccount, useNetwork } from "wagmi";
-import { isAfter, isBefore, isDate } from "date-fns";
-import { ArrowLeftIcon } from "@heroicons/react/solid";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
+import Loader from "@components/UI/Loader";
 import {
   ROUTE_CONTEST_PROPOSAL,
   ROUTE_VIEW_CONTEST,
@@ -12,41 +8,45 @@ import {
   ROUTE_VIEW_CONTEST_REWARDS,
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
-import Button from "@components/Button";
-import Loader from "@components/Loader";
-import DialogModal from "@components/DialogModal";
+import { ArrowLeftIcon } from "@heroicons/react/solid";
 import {
-  useStore as useStoreContest,
-  Provider as ProviderContest,
   createStore as createStoreContest,
+  Provider as ProviderContest,
+  useStore as useStoreContest,
 } from "@hooks/useContest/store";
-import { useSubmitProposalStore, SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
+import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { isAfter, isBefore, isDate } from "date-fns";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useAccount, useNetwork } from "wagmi";
+import shallow from "zustand/shallow";
 
-import { useCastVotesStore, CastVotesWrapper } from "@hooks/useCastVotes/store";
+import { CastVotesWrapper, useCastVotesStore } from "@hooks/useCastVotes/store";
 
 import { DeleteProposalWrapper, useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
 
-import { Interweave } from "interweave";
-import { UrlMatcher } from "interweave-autolink";
-import { useContest } from "@hooks/useContest";
-import { getLayout as getBaseLayout } from "./../LayoutBase";
-import Timeline from "./Timeline";
-import VotingToken from "./VotingToken";
-import styles from "./styles.module.css";
-import FormSearchContest from "@components/_pages/FormSearchContest";
+import EtheuremAddress from "@components/UI/EtheuremAddress";
+import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import DialogModalVoteForProposal from "@components/_pages/DialogModalVoteForProposal";
-import useContestEvents from "@hooks/useContestEvents";
+import FormSearchContest from "@components/_pages/FormSearchContest";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import Sidebar from "./Sidebar";
-import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
-import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
-import { switchNetwork } from "@wagmi/core";
-import { ErrorBoundary } from "react-error-boundary";
-import EtheuremAddress from "@components/EtheuremAddress";
 import { RefreshIcon } from "@heroicons/react/outline";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { useContest } from "@hooks/useContest";
+import useContestEvents from "@hooks/useContestEvents";
+import { switchNetwork } from "@wagmi/core";
+import { Interweave } from "interweave";
+import { UrlMatcher } from "interweave-autolink";
+import { ErrorBoundary } from "react-error-boundary";
+import { getLayout as getBaseLayout } from "./../LayoutBase";
+import Sidebar from "./Sidebar";
+import styles from "./styles.module.css";
+import Timeline from "./Timeline";
+import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
+import VotingToken from "./VotingToken";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;

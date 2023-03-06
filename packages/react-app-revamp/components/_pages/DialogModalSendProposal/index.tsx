@@ -1,8 +1,8 @@
-import Button from "@components/Button";
-import DialogModal from "@components/DialogModal";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
 import Iframe from "@components/tiptap/Iframe";
-import TipTapEditor from "@components/TipTapEditor";
-import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
+import TipTapEditor from "@components/UI/TipTapEditor";
+import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useStore as useStoreContest } from "@hooks/useContest/store";

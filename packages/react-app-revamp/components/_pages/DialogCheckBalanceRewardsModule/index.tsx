@@ -1,6 +1,6 @@
-import DialogModal from "@components/DialogModal";
-import FormField from "@components/FormField";
-import FormInput from "@components/FormInput";
+import DialogModal from "@components/UI/DialogModal";
+import FormField from "@components/UI/FormField";
+import FormInput from "@components/UI/FormInput";
 import { chains } from "@config/wagmi";
 import { CheckIcon, ExclamationIcon, ShieldExclamationIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";

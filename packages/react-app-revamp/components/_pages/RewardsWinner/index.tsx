@@ -1,4 +1,4 @@
-import Loader from "@components/Loader";
+import Loader from "@components/UI/Loader";
 import { chains } from "@config/wagmi";
 import { useRouter } from "next/router";
 import { useContractRead } from "wagmi";

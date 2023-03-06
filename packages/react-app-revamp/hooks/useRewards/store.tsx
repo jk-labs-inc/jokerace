@@ -36,7 +36,7 @@ export function RewardsWrapper({ children }: { children: React.ReactNode }) {
 export function useRewardsStore<T>(selector: (state: RewardsState) => T) {
   const store = useContext(RewardsContext);
   if (store === null) {
-    throw new Error("Missing Wrapper in the tree");
+    throw new Error("Missing RewardsWrapper in the tree");
   }
   const value = useStore(store, selector);
   return value;

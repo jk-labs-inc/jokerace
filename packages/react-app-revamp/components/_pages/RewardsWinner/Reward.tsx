@@ -1,8 +1,8 @@
 import shallow from "zustand/shallow";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import Button from "@components/Button";
-import Loader from "@components/Loader";
+import Button from "@components/UI/Button";
+import Loader from "@components/UI/Loader";
 import { useNetwork } from "wagmi";
 
 interface RewardProps {

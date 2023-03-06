@@ -1,6 +1,6 @@
-import Button from "@components/Button";
-import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/Icons";
-import Loader from "@components/Loader";
+import Button from "@components/UI/Button";
+import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/UI/Icons";
+import Loader from "@components/UI/Loader";
 import ProposalContent from "@components/_pages/ProposalContent";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";

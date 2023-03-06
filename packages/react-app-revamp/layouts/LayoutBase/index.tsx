@@ -1,7 +1,5 @@
-import { forwardRef, Fragment } from "react";
-import { useRouter } from "next/router";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import Link from "next/link";
+import { IconPoweredByVercel } from "@components/UI/Icons";
+import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CONTEST_PROPOSAL,
   ROUTE_CREATE_CONTEST,
@@ -9,10 +7,12 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
-import { FOOTER_LINKS } from "@config/links";
 import { Menu, Transition } from "@headlessui/react";
-import { XIcon, MenuIcon } from "@heroicons/react/solid";
-import { IconPoweredByVercel } from "@components/Icons";
+import { MenuIcon, XIcon } from "@heroicons/react/solid";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { forwardRef, Fragment } from "react";
 
 interface MenuLinkBaseProps {
   href: string;

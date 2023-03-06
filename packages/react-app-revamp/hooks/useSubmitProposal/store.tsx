@@ -42,7 +42,7 @@ export function SubmitProposalWrapper({ children }: { children: React.ReactNode 
 export function useSubmitProposalStore<T>(selector: (state: SubmitProposalState) => T) {
   const store = useContext(SubmitProposalContext);
   if (store === null) {
-    throw new Error("Missing Wrapper in the tree");
+    throw new Error("Missing SubmitProposalWrapper in the tree");
   }
   const value = useStore(store, selector);
   return value;

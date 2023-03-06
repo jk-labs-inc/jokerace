@@ -1,4 +1,4 @@
-import Button from "@components/Button";
+import Button from "@components/UI/Button";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import ProposalContent from "@components/_pages/ProposalContent";
 import { chains } from "@config/wagmi";
@@ -14,7 +14,6 @@ import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import shallow from "zustand/shallow";
 
 interface PageProps {
   address: string;
@@ -32,27 +31,24 @@ const Page: NextPage = (props: PageProps) => {
     listProposalsData,
     contestName,
     contestStatus,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      contestName: state.contestName,
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votesClose: state.votesClose,
-      //@ts-ignore
-      didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
-      //@ts-ignore
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-      //@ts-ignore
-      checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
-    }),
-    shallow,
-  );
+  } = useStoreContest(state => ({
+    //@ts-ignore
+    contestStatus: state.contestStatus,
+    //@ts-ignore
+    contestName: state.contestName,
+    //@ts-ignore
+    listProposalsData: state.listProposalsData,
+    //@ts-ignore
+    votesOpen: state.votesOpen,
+    //@ts-ignore
+    votesClose: state.votesClose,
+    //@ts-ignore
+    didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
+    //@ts-ignore
+    currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
+    //@ts-ignore
+    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
+  }));
 
   const { setPickedProposal, setIsModalOpen } = useCastVotesStore(state => state);
 

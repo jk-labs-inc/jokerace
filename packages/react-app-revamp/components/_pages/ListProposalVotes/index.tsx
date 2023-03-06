@@ -1,12 +1,12 @@
-import Button from "@components/Button";
-import Loader from "@components/Loader";
+import Button from "@components/UI/Button";
+import EtheuremAddress from "@components/UI/EtheuremAddress";
+import Loader from "@components/UI/Loader";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { useStore as useStoreContest } from "@hooks/useContest/store";
 import useProposalVotes from "@hooks/useProposalVotes";
 import { useStore as useStoreProposalVotes } from "@hooks/useProposalVotes/store";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import shallow from "zustand/shallow";
 import { useAccount } from "wagmi";
-import EtheuremAddress from "@components/EtheuremAddress";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import shallow from "zustand/shallow";
 
 interface ListProposalVotesProps {
   id: number | string;
@@ -17,7 +17,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
   const accountData = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });

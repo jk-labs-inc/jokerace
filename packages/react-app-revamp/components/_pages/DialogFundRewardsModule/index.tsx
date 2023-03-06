@@ -1,5 +1,5 @@
-import DialogModal from "@components/DialogModal";
-import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
+import DialogModal from "@components/UI/DialogModal";
+import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import Form from "./Form";
 

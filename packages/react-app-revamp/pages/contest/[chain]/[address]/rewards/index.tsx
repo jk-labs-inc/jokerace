@@ -1,5 +1,5 @@
-import Button from "@components/Button";
-import Loader from "@components/Loader";
+import Button from "@components/UI/Button";
+import Loader from "@components/UI/Loader";
 import DialogCheckBalanceRewardsModule from "@components/_pages/DialogCheckBalanceRewardsModule";
 import DialogFundRewardsModule from "@components/_pages/DialogFundRewardsModule";
 import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule";

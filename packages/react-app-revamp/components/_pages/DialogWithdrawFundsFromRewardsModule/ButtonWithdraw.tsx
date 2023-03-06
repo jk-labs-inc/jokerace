@@ -1,8 +1,8 @@
-import Button from "@components/Button";
-import shallow from "zustand/shallow";
+import Button from "@components/UI/Button";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useStore as useStoreContest } from "@hooks/useContest/store";
 import { useAccount } from "wagmi";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import shallow from "zustand/shallow";
 
 interface ButtonWithdrawErc20RewardProps {
   queryTokenBalance: any;
@@ -15,7 +15,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   const accountData = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });

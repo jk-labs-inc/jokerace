@@ -60,7 +60,7 @@ export const ExportDataContext = createContext<ReturnType<typeof createExportDat
 export function useExportDataStore<T>(selector: (state: ExportDataState) => T) {
   const store = useContext(ExportDataContext);
   if (store === null) {
-    throw new Error("Missing Wrapper in the tree");
+    throw new Error("Missing ExportDataWrapper in the tree");
   }
   const value = useStore(store, selector);
   return value;

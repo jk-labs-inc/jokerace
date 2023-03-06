@@ -1,4 +1,4 @@
-import Button from "@components/Button";
+import Button from "@components/UI/Button";
 import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,

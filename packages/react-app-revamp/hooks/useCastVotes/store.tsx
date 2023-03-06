@@ -49,7 +49,7 @@ export function CastVotesWrapper({ children }: { children: React.ReactNode }) {
 export function useCastVotesStore<T>(selector: (state: CastVotesState) => T) {
   const store = useContext(CastVotesContext);
   if (store === null) {
-    throw new Error("Missing Wrapper in the tree");
+    throw new Error("Missing CastVotesWrapper in the tree");
   }
   const value = useStore(store, selector);
   return value;

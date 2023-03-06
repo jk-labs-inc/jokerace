@@ -43,7 +43,7 @@ export function FundRewardsWrapper({ children }: { children: React.ReactNode }) 
 export function useFundRewardsStore<T>(selector: (state: FundRewardsState) => T) {
   const store = useContext(FundRewardsContext);
   if (store === null) {
-    throw new Error("Missing Wrapper in the tree");
+    throw new Error("Missing FundRewardsWrapper in the tree");
   }
   const value = useStore(store, selector);
   return value;
