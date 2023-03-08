@@ -1,4 +1,4 @@
-export const EvmosMainnet = {
+export const evmosMainnet = {
   id: 9001,
   name: 'EvmosMainnet',
   network: 'EvmosMainnet',
