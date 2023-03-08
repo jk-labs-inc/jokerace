@@ -1,7 +1,7 @@
 export const evmosMainnet = {
   id: 9001,
   name: 'EvmosMainnet',
-  network: 'EvmosMainnet',
+  network: 'evmosMainnet',
   nativeCurrency: {
     decimals: 18,
     name: 'Evmos',
