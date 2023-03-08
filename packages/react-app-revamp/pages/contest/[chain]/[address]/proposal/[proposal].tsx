@@ -5,11 +5,13 @@ import { chains } from "@config/wagmi";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import isProposalDeleted from "@helpers/isProposalDeleted";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { useProposalStore } from "@hooks/useProposal/store";
 import {
   createStore as createStoreProposalVotes,
   Provider as ProviderProposalVotes,
 } from "@hooks/useProposalVotes/store";
+import { useUserStore } from "@hooks/useUser/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -24,31 +26,10 @@ const Page: NextPage = (props: PageProps) => {
   const {
     query: { proposal, address },
   } = useRouter();
-  const {
-    checkIfUserPassedSnapshotLoading,
-    didUserPassSnapshotAndCanVote,
-    currentUserAvailableVotesAmount,
-    listProposalsData,
-    contestName,
-    contestStatus,
-  } = useStoreContest(state => ({
-    //@ts-ignore
-    contestStatus: state.contestStatus,
-    //@ts-ignore
-    contestName: state.contestName,
-    //@ts-ignore
-    listProposalsData: state.listProposalsData,
-    //@ts-ignore
-    votesOpen: state.votesOpen,
-    //@ts-ignore
-    votesClose: state.votesClose,
-    //@ts-ignore
-    didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
-    //@ts-ignore
-    currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-    //@ts-ignore
-    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
-  }));
+  const { checkIfUserPassedSnapshotLoading, didUserPassSnapshotAndCanVote, currentUserAvailableVotesAmount } =
+    useUserStore(state => state);
+  const { listProposalsData } = useProposalStore(state => state);
+  const { contestName, contestStatus } = useContestStore(state => state);
 
   const { setPickedProposal, setIsModalOpen } = useCastVotesStore(state => state);
 

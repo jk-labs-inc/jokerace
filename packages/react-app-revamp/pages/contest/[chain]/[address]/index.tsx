@@ -1,6 +1,7 @@
 import ListProposals from "@components/_pages/ListProposals";
 import { chains } from "@config/wagmi";
-import { useStore } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -11,18 +12,9 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props;
-  const { isSuccess, isLoading, isListProposalsLoading, isListProposalsSuccess, contestName } = useStore(state => ({
-    //@ts-ignore
-    isLoading: state.isLoading,
-    //@ts-ignore
-    isListProposalsLoading: state.isListProposalsLoading,
-    //@ts-ignore
-    isListProposalsSuccess: state.isListProposalsSuccess,
-    //@ts-ignore
-    contestName: state.contestName,
-    //@ts-ignore
-    isSuccess: state.isSuccess,
-  }));
+  const { isLoading, isSuccess, contestName } = useContestStore(state => state);
+  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
+
   return (
     <>
       <Head>

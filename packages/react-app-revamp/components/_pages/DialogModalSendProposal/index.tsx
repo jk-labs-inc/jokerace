@@ -1,13 +1,15 @@
+import Iframe from "@components/tiptap/Iframe";
 import Button from "@components/UI/Button";
 import DialogModal from "@components/UI/DialogModal";
-import Iframe from "@components/tiptap/Iframe";
 import TipTapEditor from "@components/UI/TipTapEditor";
 import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { useProposalStore } from "@hooks/useProposal/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { useUserStore } from "@hooks/useUser/store";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -26,37 +28,17 @@ interface DialogModalSendProposalProps {
 
 export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => {
   const { asPath } = useRouter();
-  //@ts-ignore
   const { sendProposal, isLoading, error, isSuccess } = useSubmitProposal();
-  //@ts-ignore
   const { transactionData } = useSubmitProposalStore(state => state);
+  const { contestPrompt, contestStatus, contestMaxProposalCount } = useContestStore(state => state);
+  const { listProposalsIds } = useProposalStore(state => state);
   const {
     amountOfTokensRequiredToSubmitEntry,
     currentUserSubmitProposalTokensAmount,
-    listProposalsIds,
     currentUserProposalCount,
     contestMaxNumberSubmissionsPerUser,
-    contestMaxProposalCount,
-    contestStatus,
-    contestPrompt,
-  } = useStoreContest(state => ({
-    //@ts-ignore
-    contestPrompt: state.contestPrompt,
-    //@ts-ignore
-    currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
-    //@ts-ignore
-    contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
-    //@ts-ignore
-    contestMaxProposalCount: state.contestMaxProposalCount,
-    //@ts-ignore
-    currentUserProposalCount: state.currentUserProposalCount,
-    //@ts-ignore
-    listProposalsIds: state.listProposalsIds,
-    //@ts-ignore
-    amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
-    //@ts-ignore
-    contestStatus: state.contestStatus,
-  }));
+  } = useUserStore(state => state);
+
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
   const [proposal, setProposal] = useState("");

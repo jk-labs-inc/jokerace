@@ -1,30 +1,18 @@
-import { useStore } from "@hooks/useContest/store";
-import { isAfter, isBefore } from "date-fns";
-import shallow from "zustand/shallow";
+import { useContestStore } from "@hooks/useContest/store";
+import { useUserStore } from "@hooks/useUser/store";
+import { isBefore } from "date-fns";
 
 export const VotingToken = () => {
-  const { currentUserTotalVotesCast, votingToken, votesClose, votesOpen, currentUserAvailableVotesAmount } = useStore(
-    state => ({
-      //@ts-ignore,
-      votesClose: state.votesClose,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votingToken: state.votingToken,
-      //@ts-ignore
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-      //@ts-ignore
-      currentUserTotalVotesCast: state.currentUserTotalVotesCast,
-    }),
-    shallow,
-  );
+  const { votingToken, votesClose, votesOpen } = useContestStore(state => state);
+  const { currentUserTotalVotesCast, currentUserAvailableVotesAmount } = useUserStore(state => state);
+
   return (
     <>
       <div className="font-black leading-snug flex flex-col text-center items-center slashed-zero tabular-nums">
         <span className="text-sm font-bold pb-0.5">
-          {isBefore(new Date(), votesClose) ? "Your available votes" : "Your remaining votes:"}
+          {isBefore(new Date(), votesClose ?? 0) ? "Your available votes" : "Your remaining votes:"}
         </span>
-        {isBefore(new Date(), votesOpen) ? (
+        {isBefore(new Date(), votesOpen ?? 0) ? (
           <>
             <span
               title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}
@@ -35,13 +23,13 @@ export const VotingToken = () => {
                   ? new Intl.NumberFormat("en-US", {
                       notation: "compact",
                       maximumFractionDigits: 3,
-                    }).format(parseFloat(currentUserAvailableVotesAmount))
+                    }).format(currentUserAvailableVotesAmount)
                   : parseFloat(currentUserAvailableVotesAmount.toFixed(5))}
               </span>
               <span className="md:hidden">{parseFloat(currentUserAvailableVotesAmount.toFixed(5))}</span>
             </span>
           </>
-        ) : isBefore(new Date(), votesClose) ? (
+        ) : isBefore(new Date(), votesClose ?? 0) ? (
           <>
             <span title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)} className="text-lg">
               <span aria-hidden="true" className="hidden md:inline-block">
@@ -49,8 +37,8 @@ export const VotingToken = () => {
                   ? Intl.NumberFormat("en-US", {
                       notation: "compact",
                       maximumFractionDigits: 3,
-                    }).format(parseFloat(currentUserAvailableVotesAmount))
-                  : parseFloat(currentUserAvailableVotesAmount.toFixed(5))}
+                    }).format(currentUserAvailableVotesAmount)
+                  : currentUserAvailableVotesAmount.toFixed(5)}
               </span>
               <span className="md:hidden">
                 {new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}
@@ -66,7 +54,7 @@ export const VotingToken = () => {
                   ? new Intl.NumberFormat("en-US", {
                       notation: "compact",
                       maximumFractionDigits: 3,
-                    }).format(parseFloat(currentUserAvailableVotesAmount + currentUserTotalVotesCast))
+                    }).format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)
                   : new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}
               </span>
               <span className="md:hidden">
@@ -82,7 +70,7 @@ export const VotingToken = () => {
                   ? Intl.NumberFormat("en-US", {
                       notation: "compact",
                       maximumFractionDigits: 3,
-                    }).format(parseFloat(currentUserAvailableVotesAmount))
+                    }).format(currentUserAvailableVotesAmount)
                   : new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount)}
               </span>
               <span className="md:hidden">
@@ -99,7 +87,7 @@ export const VotingToken = () => {
                   ? new Intl.NumberFormat("en-US", {
                       notation: "compact",
                       maximumFractionDigits: 3,
-                    }).format(parseFloat(currentUserAvailableVotesAmount + currentUserTotalVotesCast))
+                    }).format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)
                   : new Intl.NumberFormat("en-US").format(currentUserAvailableVotesAmount + currentUserTotalVotesCast)}
               </span>
               <span className="md:hidden">

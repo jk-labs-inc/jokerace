@@ -1,4 +1,4 @@
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
 
 import { IconSpinner } from "@components/UI/Icons";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
@@ -6,10 +6,7 @@ import Countdown from "./Countdown";
 import Steps from "./Steps";
 
 export const Timeline = () => {
-  const { contestStatus } = useStoreContest(state => ({
-    //@ts-ignore
-    contestStatus: state.contestStatus,
-  }));
+  const { contestStatus } = useContestStore(state => state);
 
   if (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING)
     return (

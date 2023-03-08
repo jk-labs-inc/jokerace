@@ -1,37 +1,24 @@
-import { useEffect } from "react";
-import shallow from "zustand/shallow";
-import { useExportContestDataToCSV } from "@hooks/useExportContestDataToCSV/useExportContestDataToCSV";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import useContest from "@hooks/useContest";
-import { CSV_COLUMNS_HEADERS } from "@config/react-csv/export-contest";
-import { CSVLink } from "react-csv";
-import button from "@components/UI/Button/styles";
 import Button from "@components/UI/Button";
+import button from "@components/UI/Button/styles";
 import Loader from "@components/UI/Loader";
+import { CSV_COLUMNS_HEADERS } from "@config/react-csv/export-contest";
+import { useExportContestDataToCSV } from "@hooks/useExportContestDataToCSV/useExportContestDataToCSV";
+import useProposal from "@hooks/useProposal";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { format } from "date-fns";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { CSVLink } from "react-csv";
 
 export const ButtonDownloadContestDataAsCSV = () => {
-  const { fetchProposalsPage } = useContest();
+  const { fetchProposalsPage } = useProposal();
   const { asPath } = useRouter();
   const {
     hasPaginationProposalsNextPage,
     indexPaginationProposals,
     totalPagesPaginationProposals,
     currentPagePaginationProposals,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
-      //@ts-ignore
-      currentPagePaginationProposals: state.currentPagePaginationProposals,
-      //@ts-ignore
-      indexPaginationProposals: state.indexPaginationProposals,
-      //@ts-ignore
-      hasPaginationProposalsNextPage: state.hasPaginationProposalsNextPage,
-    }),
-    shallow,
-  );
+  } = useProposalStore(state => state);
 
   const { stateExportData, formatContestCSVData, queryContestResults } = useExportContestDataToCSV();
   async function startDownloading() {

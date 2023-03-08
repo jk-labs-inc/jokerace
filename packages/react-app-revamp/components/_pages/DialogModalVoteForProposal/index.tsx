@@ -7,7 +7,9 @@ import { RadioGroup } from "@headlessui/react";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { useProposalStore } from "@hooks/useProposal/store";
+import { useUserStore } from "@hooks/useUser/store";
 import { useEffect, useState } from "react";
 
 interface DialogModalVoteForProposalProps {
@@ -18,18 +20,10 @@ interface DialogModalVoteForProposalProps {
 export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProps) => {
   const { pickedProposal, transactionData, castPositiveAmountOfVotes, setCastPositiveAmountOfVotes } =
     useCastVotesStore(state => state);
-  const { downvotingAllowed, listProposalsData, contestStatus, currentUserAvailableVotesAmount } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      downvotingAllowed: state.downvotingAllowed,
-      //@ts-ignore
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-    }),
-  );
+  const { downvotingAllowed, contestStatus } = useContestStore(state => state);
+  const { listProposalsData } = useProposalStore(state => state);
+  const { currentUserAvailableVotesAmount } = useUserStore(state => state);
+
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
   const [votesToCast, setVotesToCast] = useState(

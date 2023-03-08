@@ -2,7 +2,7 @@ import Button from "@components/UI/Button";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useProposalStore } from "@hooks/useProposal/store";
 import useProposalVotes from "@hooks/useProposalVotes";
 import { useStore as useStoreProposalVotes } from "@hooks/useProposalVotes/store";
 import { useAccount } from "wagmi";
@@ -22,13 +22,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
     },
   });
   const { isLoading, isSuccess, isError, retry, fetchVotesPage } = useProposalVotes(id);
-  const { listProposalsData } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-    }),
-    shallow,
-  );
+  const { listProposalsData } = useProposalStore(state => state);
   const {
     votesPerAddress,
     isPageVotesLoading,

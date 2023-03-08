@@ -12,7 +12,7 @@ import { useStore } from "./store";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 
 const VOTES_PER_PAGE = 5;
 
@@ -21,7 +21,7 @@ export function useProposalVotes(id: number | string) {
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -105,7 +105,7 @@ export function useProposalVotes(id: number | string) {
       return;
     }
     try {
-      const accountData = await getAccount();
+      const accountData = getAccount();
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,

@@ -1,29 +1,23 @@
+import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
 import isUrlToImage from "@helpers/isUrlToImage";
+import { useProposalStore } from "@hooks/useProposal/store";
+import useUser from "@hooks/useUser";
 import { chain, fetchEnsName, getAccount, readContract, watchContractEvent } from "@wagmi/core";
 import { useRouter } from "next/router";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useStore as useStoreContest } from "../useContest/store";
-import useContest from "@hooks/useContest";
 import { useEffect, useRef, useState } from "react";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useProvider } from "wagmi";
+import { useContestStore } from "../useContest/store";
 
 export function useContestEvents() {
   const { asPath } = useRouter();
   const provider = useProvider();
-  const {
-    //@ts-ignore
-    contestStatus,
-    //@ts-ignore
-    setProposalData,
-    //@ts-ignore
-    setProposalVotes,
-    //@ts-ignore
-    listProposalsData,
-    //@ts-ignore
-    canUpdateVotesInRealTime,
-  } = useStoreContest();
-  const { updateCurrentUserVotes } = useContest();
+  const { contestStatus } = useContestStore(state => state);
+  const { setProposalData, setProposalVotes, listProposalsData, canUpdateVotesInRealTime } = useProposalStore(
+    state => state,
+  );
+
+  const { updateCurrentUserVotes } = useUser();
   const [displayReloadBanner, setDisplayReloadBanner] = useState(false);
   const contestStatusRef = useRef(contestStatus);
 

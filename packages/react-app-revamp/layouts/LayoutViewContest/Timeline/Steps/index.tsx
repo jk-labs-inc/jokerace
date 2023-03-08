@@ -1,8 +1,7 @@
-import shallow from "zustand/shallow";
-import { format } from "date-fns";
-import { useStore } from "@hooks/useContest/store";
-import styles from "./styles.module.css";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { useContestStore } from "@hooks/useContest/store";
+import { format } from "date-fns";
+import styles from "./styles.module.css";
 // - Contest status
 // 0: Voting open
 // 1: Contest cancelled
@@ -10,19 +9,7 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 // 3: Completed
 
 export const Steps = () => {
-  const { submissionsOpen, votesOpen, votesClose, contestStatus } = useStore(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      submissionsOpen: state.submissionsOpen,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votesClose: state.votesClose,
-    }),
-    shallow,
-  );
+  const { submissionsOpen, votesClose, votesOpen, contestStatus } = useContestStore(state => state);
 
   return (
     <ol

@@ -1,6 +1,7 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContest from "@hooks/useContest";
+import useUser from "@hooks/useUser";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
@@ -23,7 +24,7 @@ export function useCastVotes() {
   } = useCastVotesStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
-  const { updateCurrentUserVotes } = useContest();
+  const { updateCurrentUserVotes } = useUser();
 
   async function castVotes(amount: number, isPositive: boolean) {
     const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];

@@ -1,17 +1,16 @@
+import { HEADERS_KEYS } from "@config/react-csv/export-contest";
 import { chains } from "@config/wagmi";
-import shallow from "zustand/shallow";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { makeStorageClient } from "@config/web3storage";
+import getContestContractVersion from "@helpers/getContestContractVersion";
+import { objectToCsv } from "@helpers/objectToCsv";
+import { useProposalStore } from "@hooks/useProposal/store";
+import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { HEADERS_KEYS } from "@config/react-csv/export-contest";
-import { useExportDataStore } from "./store";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { makeStorageClient } from "@config/web3storage";
-import { objectToCsv } from "@helpers/objectToCsv";
-import { CustomError } from "types/error";
 import toast from "react-hot-toast";
+import { CustomError } from "types/error";
+import { useExportDataStore } from "./store";
 
 const MAX_PROPOSALS_EXPORTING = 500;
 const MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING = 500;
@@ -23,13 +22,7 @@ export function useExportContestDataToCSV() {
   const { asPath } = useRouter();
   const queryContestResults = useQuery(["contest-result", asPath.split("/")[3]], retrieveContestResultsCid);
 
-  //@ts-ignore
-  const { listProposalsData, listProposalsIds } = useStoreContest(state => ({
-    //@ts-ignore
-    listProposalsData: state.listProposalsData,
-    //@ts-ignore
-    listProposalsIds: state.listProposalsIds,
-  }));
+  const { listProposalsData, listProposalsIds } = useProposalStore(state => state);
 
   async function retrieveContestResultsCid() {
     if (

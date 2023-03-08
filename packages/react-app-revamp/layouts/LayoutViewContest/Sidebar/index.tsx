@@ -11,13 +11,14 @@ import {
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
 import { HomeIcon } from "@heroicons/react/solid";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { useUserStore } from "@hooks/useUser/store";
 import { isDate } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAccount, useNetwork } from "wagmi";
-import shallow from "zustand/shallow";
 import Timeline from "../Timeline";
 import VotingToken from "../VotingToken";
 import styles from "./styles.module.css";
@@ -44,46 +45,14 @@ export const Sidebar = (props: any) => {
 
   const {
     amountOfTokensRequiredToSubmitEntry,
-    listProposalsIds,
     currentUserProposalCount,
     contestMaxNumberSubmissionsPerUser,
-    contestMaxProposalCount,
-    submissionsOpen,
-    votesOpen,
-    votesClose,
-    contestStatus,
     currentUserSubmitProposalTokensAmount,
-    supportsRewardsModule,
-    contestAuthorEthereumAddress,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      submissionsOpen: state.submissionsOpen,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votesClose: state.votesClose,
-      //@ts-ignore
-      contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
-      //@ts-ignore
-      contestMaxProposalCount: state.contestMaxProposalCount,
-      //@ts-ignore
-      currentUserProposalCount: state.currentUserProposalCount,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-      //@ts-ignore
-      amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
-      //@ts-ignore
-      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
-      //@ts-ignore
-      supportsRewardsModule: state.supportsRewardsModule,
-      //@ts-ignore
-      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
-    }),
-    shallow,
-  );
+  } = useUserStore(state => state);
+  const { listProposalsIds } = useProposalStore(state => state);
+  const { contestMaxProposalCount, submissionsOpen, votesOpen, votesClose, contestStatus, supportsRewardsModule } =
+    useContestStore(state => state);
+
   const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));

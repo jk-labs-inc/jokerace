@@ -12,15 +12,20 @@ import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rai
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
-const testnetChains = [chain.polygonMumbai, chain.goerli, sepolia, polygonZkTestnet, zkEraMainnet, baseTestnet,
-                       scrollGoerli];
+const testnetChains = [
+  chain.polygonMumbai,
+  chain.goerli,
+  sepolia,
+  polygonZkTestnet,
+  zkEraMainnet,
+  baseTestnet,
+  scrollGoerli,
+];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];
 const appChains = [...defaultChains, ...testnetChains];
 const providers =
-  process.env.NODE_ENV === "development"
-    ? [alchemyProvider({ alchemyId }), publicProvider()]
-    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
+  process.env.NODE_ENV === "development" ? [publicProvider()] : [infuraProvider({ infuraId }), publicProvider()];
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({

@@ -9,7 +9,7 @@ import RewardsWinner from "@components/_pages/RewardsWinner";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { Tab } from "@headlessui/react";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { FundRewardsWrapper, useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { useRewardsModule } from "@hooks/useRewards";
 import { RewardsWrapper, useRewardsStore } from "@hooks/useRewards/store";
@@ -25,13 +25,7 @@ interface PageProps {
 
 const Page = (props: PageProps) => {
   const { address } = props;
-  const { votesClose, isSuccess, isLoading, contestName, supportsRewardsModule } = useStoreContest((state: any) => ({
-    votesClose: state.votesClose,
-    isLoading: state.isLoading,
-    contestName: state.contestName,
-    isSuccess: state.isSuccess,
-    supportsRewardsModule: state.supportsRewardsModule,
-  }));
+  const { votesClose, isSuccess, isLoading, contestName, supportsRewardsModule } = useContestStore(state => state);
 
   const rewardsStore = useRewardsStore(state => state);
   const fundRewardsStore = useFundRewardsStore(state => state);
@@ -51,9 +45,6 @@ const Page = (props: PageProps) => {
   useEffect(() => {
     if (supportsRewardsModule) getContestRewardsModule();
   }, [supportsRewardsModule]);
-
-  console.log({ rewardsStore });
-  console.log({ fundRewardsStore });
 
   return (
     <>
@@ -79,7 +70,7 @@ const Page = (props: PageProps) => {
               )}
               {rewardsStore.isSuccess && (
                 <>
-                  {isBefore(new Date(), new Date(votesClose)) && (
+                  {isBefore(new Date(), new Date(votesClose ?? "")) && (
                     <p className="animate-appear p-3 mt-4 rounded-md bg-primary-1 text-primary-10 border-primary-4 mb-5 text-sm font-bold">
                       Contest must end to send rewards.
                     </p>

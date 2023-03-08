@@ -9,10 +9,12 @@ import isProposalDeleted from "@helpers/isProposalDeleted";
 import truncate from "@helpers/truncate";
 import { TrashIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useContest } from "@hooks/useContest";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
+import useProposal from "@hooks/useProposal";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { useUserStore } from "@hooks/useUser/store";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAccount, useNetwork } from "wagmi";
@@ -30,58 +32,26 @@ export const ListProposals = () => {
     },
   });
   const network = useNetwork();
+  const { fetchProposalsPage } = useProposal();
+
   const {
-    contestAuthorEthereumAddress,
-    amountOfTokensRequiredToSubmitEntry,
-    listProposalsData,
-    currentUserAvailableVotesAmount,
-    contestStatus,
-    didUserPassSnapshotAndCanVote,
-    checkIfUserPassedSnapshotLoading,
-    downvotingAllowed,
     listProposalsIds,
-    currentUserSubmitProposalTokensAmount,
     isPageProposalsLoading,
     isPageProposalsError,
     currentPagePaginationProposals,
     indexPaginationProposals,
     totalPagesPaginationProposals,
-  } = useStoreContest(state => ({
-    //@ts-ignore
-    currentPagePaginationProposals: state.currentPagePaginationProposals,
-    //@ts-ignore
-    isPageProposalsLoading: state.isPageProposalsLoading,
-    //@ts-ignore
-    isPageProposalsError: state.isPageProposalsError,
-    //@ts-ignore
-    downvotingAllowed: state.downvotingAllowed,
-    //@ts-ignore
-    listProposalsIds: state.listProposalsIds,
-    //@ts-ignore
-    contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
-    //@ts-ignore
-    contestStatus: state.contestStatus,
-    //@ts-ignore
-    listProposalsData: state.listProposalsData,
-    //@ts-ignore
-    currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-    //@ts-ignore
-    amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
-    //@ts-ignore
-    didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
-    //@ts-ignore
-    checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
-    //@ts-ignore
-    indexPaginationProposals: state.indexPaginationProposals,
-    //@ts-ignore,
-    totalPagesPaginationProposals: state.totalPagesPaginationProposals,
-    //@ts-ignore
-    currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
-    //@ts-ignore
-    indexPaginationProposals: state.indexPaginationProposals,
-    //@ts-ignore,
-    totalPagesPaginationProposals: state.totalPagesPaginationProposals,
-  }));
+    listProposalsData,
+  } = useProposalStore(state => state);
+  const { contestAuthorEthereumAddress, contestStatus, downvotingAllowed } = useContestStore(state => state);
+  const {
+    amountOfTokensRequiredToSubmitEntry,
+    currentUserAvailableVotesAmount,
+    didUserPassSnapshotAndCanVote,
+    checkIfUserPassedSnapshotLoading,
+    currentUserSubmitProposalTokensAmount,
+  } = useUserStore(state => state);
+
   const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
@@ -98,7 +68,6 @@ export const ListProposals = () => {
     setIsModalDeleteProposalOpen: state.setIsModalOpen,
   }));
 
-  const { fetchProposalsPage } = useContest();
   function onClickUpVote(proposalId: number | string) {
     setCastPositiveAmountOfVotes(true);
     setPickedProposalToVoteFor(proposalId.toString());

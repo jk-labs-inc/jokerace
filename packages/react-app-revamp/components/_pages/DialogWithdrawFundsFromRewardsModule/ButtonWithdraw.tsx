@@ -1,8 +1,7 @@
 import Button from "@components/UI/Button";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { useAccount } from "wagmi";
-import shallow from "zustand/shallow";
 
 interface ButtonWithdrawErc20RewardProps {
   queryTokenBalance: any;
@@ -19,13 +18,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
       }
     },
   });
-  const { contestAuthorEthereumAddress } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
-    }),
-    shallow,
-  );
+  const { contestAuthorEthereumAddress } = useContestStore(state => state);
 
   return (
     <>

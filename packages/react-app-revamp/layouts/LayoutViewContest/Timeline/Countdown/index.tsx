@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { isBefore, isAfter, isEqual } from "date-fns";
-import shallow from "zustand/shallow";
-import { useStore } from "@hooks/useContest/store";
-import { useCountdown } from "@hooks/useCountdown";
-import styles from "./styles.module.css";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { useContestStore } from "@hooks/useContest/store";
+import { useCountdown } from "@hooks/useCountdown";
+import { useProposalStore } from "@hooks/useProposal/store";
+import { isAfter, isBefore, isEqual } from "date-fns";
+import { useEffect } from "react";
+import styles from "./styles.module.css";
 
 // - Contest status
 // -1: Submissions not opened yet
@@ -14,35 +14,11 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 // 3: Completed
 
 export const Countdown = () => {
-  const {
-    listProposalsIds,
-    contestMaxProposalCount,
-    contestStatus,
-    submissionsOpen,
-    votesOpen,
-    votesClose,
-    setContestStatus,
-  } = useStore(
-    state => ({
-      //@ts-ignore
-      submissionsOpen: state.submissionsOpen,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votesClose: state.votesClose,
-      //@ts-ignore,
-      setContestStatus: state.setContestStatus,
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-      //@ts-ignore
-      contestMaxProposalCount: state.contestMaxProposalCount,
-    }),
-    shallow,
-  );
+  const { listProposalsIds } = useProposalStore(state => state);
+  const { contestStatus, submissionsOpen, votesOpen, votesClose, setContestStatus, contestMaxProposalCount } =
+    useContestStore(state => state);
 
-  const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen);
+  const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen ?? new Date());
   const countdownUntilVotingOpen = useCountdown(submissionsOpen, votesOpen);
   const countdownUntilVotingClose = useCountdown(votesOpen, votesClose);
 

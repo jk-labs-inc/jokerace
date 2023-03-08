@@ -1,18 +1,15 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
-import { useStore as useStoreContest } from "./../useContest/store";
 import { useSubmitProposalStore } from "./store";
 
 export function useSubmitProposal() {
-  const {
-    //@ts-ignore
-    increaseCurrentUserProposalCount,
-  } = useStoreContest();
+  const { increaseCurrentUserProposalCount } = useUserStore(state => state);
 
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);

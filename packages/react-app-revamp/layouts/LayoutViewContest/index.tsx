@@ -9,18 +9,16 @@ import {
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
-import {
-  createStore as createStoreContest,
-  Provider as ProviderContest,
-  useStore as useStoreContest,
-} from "@hooks/useContest/store";
+import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
+import { ProposalWrapper, useProposalStore } from "@hooks/useProposal/store";
+import { UserWrapper, useUserStore } from "@hooks/useUser/store";
+
 import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { isAfter, isBefore, isDate } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
-import shallow from "zustand/shallow";
 
 import { CastVotesWrapper, useCastVotesStore } from "@hooks/useCastVotes/store";
 
@@ -37,6 +35,7 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { RefreshIcon } from "@heroicons/react/outline";
 import { useContest } from "@hooks/useContest";
 import useContestEvents from "@hooks/useContestEvents";
+import useUser from "@hooks/useUser";
 import { switchNetwork } from "@wagmi/core";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
@@ -60,66 +59,28 @@ const LayoutViewContest = (props: any) => {
   });
   const { chain } = useNetwork();
 
-  const {
-    isLoading,
-    address,
-    fetchContestInfo,
-    checkIfCurrentUserQualifyToVote,
-    isListProposalsLoading,
-    isSuccess,
-    isError,
-    isListProposalsError,
-    retry,
-    onSearch,
-    chainId,
-    setChainId,
-    checkCurrentUserAmountOfProposalTokens,
-  } = useContest();
+  const { checkIfCurrentUserQualifyToVote, checkCurrentUserAmountOfProposalTokens } = useUser();
+
+  const { isLoading, address, fetchContestInfo, isSuccess, isError, retry, onSearch, chainId, setChainId } =
+    useContest();
 
   const {
-    didUserPassSnapshotAndCanVote,
     snapshotTaken,
-    checkIfUserPassedSnapshotLoading,
     submissionsOpen,
-    votesOpen,
     votesClose,
-    contestName,
+    votesOpen,
     contestAuthor,
-    contestPrompt,
     contestStatus,
+    contestPrompt,
+    contestName,
     contestMaxProposalCount,
-    listProposalsIds,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      contestName: state.contestName,
-      //@ts-ignore
-      contestPrompt: state.contestPrompt,
-      //@ts-ignore
-      contestAuthor: state.contestAuthor,
-      //@ts-ignore
-      submissionsOpen: state.submissionsOpen,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votesClose: state.votesClose,
-      //@ts-ignore
-      snapshotTaken: state.snapshotTaken,
-      //@ts-ignore
-      checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
-      //@ts-ignore
-      didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-      //@ts-ignore
-      contestMaxProposalCount: state.contestMaxProposalCount,
-    }),
-    shallow,
-  );
+  } = useContestStore(state => state);
+  const { didUserPassSnapshotAndCanVote, checkIfUserPassedSnapshotLoading } = useUserStore(state => state);
+
   const { updateSnapshotProgress } = useCheckSnapshotProgress();
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
+  const { isListProposalsLoading, isListProposalsError, listProposalsIds } = useProposalStore(state => state);
+
   const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
@@ -245,7 +206,7 @@ const LayoutViewContest = (props: any) => {
             </div>
           )}
 
-          {account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose)) && (
+          {account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose ?? "")) && (
             <div className="animate-appear flex text-center flex-col my-10 mx-auto">
               <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
               <p className="mt-2 mb-4 text-neutral-11 text-xs">
@@ -394,9 +355,9 @@ const LayoutViewContest = (props: any) => {
                       isSuccess &&
                       chain?.id === chainId &&
                       isDate(submissionsOpen) &&
-                      isAfter(new Date(), submissionsOpen) &&
+                      isAfter(new Date(), submissionsOpen ?? new Date()) &&
                       isDate(votesOpen) &&
-                      isBefore(new Date(), votesOpen) && (
+                      isBefore(new Date(), votesOpen ?? new Date()) && (
                         <DialogModalSendProposal
                           isOpen={isSubmitProposalModalOpen}
                           setIsOpen={setIsSubmitProposalModalOpen}
@@ -412,9 +373,9 @@ const LayoutViewContest = (props: any) => {
                       isSuccess &&
                       chain?.id === chainId &&
                       isDate(votesOpen) &&
-                      isAfter(new Date(), votesOpen) &&
+                      isAfter(new Date(), votesOpen ?? new Date()) &&
                       isDate(votesClose) &&
-                      isBefore(new Date(), votesClose) && (
+                      isBefore(new Date(), votesClose ?? new Date()) && (
                         <DialogModalVoteForProposal isOpen={isCastVotesModalOpen} setIsOpen={setIsCastVotesModalOpen} />
                       )}
                   </div>
@@ -439,15 +400,19 @@ export const getLayout = (page: any) => {
         </div>
       )}
     >
-      <ProviderContest createStore={createStoreContest}>
-        <SubmitProposalWrapper>
-          <CastVotesWrapper>
-            <DeleteProposalWrapper>
-              <LayoutViewContest>{page}</LayoutViewContest>
-            </DeleteProposalWrapper>
-          </CastVotesWrapper>
-        </SubmitProposalWrapper>
-      </ProviderContest>
+      <ContestWrapper>
+        <ProposalWrapper>
+          <UserWrapper>
+            <SubmitProposalWrapper>
+              <CastVotesWrapper>
+                <DeleteProposalWrapper>
+                  <LayoutViewContest>{page}</LayoutViewContest>
+                </DeleteProposalWrapper>
+              </CastVotesWrapper>
+            </SubmitProposalWrapper>
+          </UserWrapper>
+        </ProposalWrapper>
+      </ContestWrapper>
     </ErrorBoundary>,
   );
 };
