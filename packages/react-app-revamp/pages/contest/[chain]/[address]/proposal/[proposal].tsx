@@ -48,7 +48,7 @@ const Page: NextPage = (props: PageProps) => {
       <h1 className="sr-only">
         Proposal {proposal} - Contest {contestName ? contestName : address}{" "}
       </h1>
-      {listProposalsData[proposal] && (
+      {typeof proposal === "string" && listProposalsData[proposal] && (
         <div className="mt-6 animate-appear">
           <ProposalContent
             author={listProposalsData[proposal]?.authorEthereumAddress}
