@@ -4,9 +4,8 @@ import Loader from "@components/UI/Loader";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useProposalVotes from "@hooks/useProposalVotes";
-import { useStore as useStoreProposalVotes } from "@hooks/useProposalVotes/store";
+import { useProposalVotesStore } from "@hooks/useProposalVotes/store";
 import { useAccount } from "wagmi";
-import shallow from "zustand/shallow";
 
 interface ListProposalVotesProps {
   id: number | string;
@@ -31,25 +30,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
     indexPaginationVotes,
     totalPagesPaginationVotes,
     hasPaginationVotesNextPage,
-  } = useStoreProposalVotes(
-    state => ({
-      //@ts-ignore
-      votesPerAddress: state.votesPerAddress,
-      //@ts-ignore
-      isPageVotesLoading: state.isPageVotesLoading,
-      //@ts-ignore
-      currentPagePaginationVotes: state.currentPagePaginationVotes,
-      //@ts-ignore
-      isPageVotesError: state.isPageVotesError,
-      //@ts-ignore
-      indexPaginationVotes: state.indexPaginationVotes,
-      //@ts-ignore
-      totalPagesPaginationVotes: state.totalPagesPaginationVotes,
-      //@ts-ignore
-      hasPaginationVotesNextPage: state.hasPaginationVotesNextPage,
-    }),
-    shallow,
-  );
+  } = useProposalVotesStore(state => state);
   return (
     <>
       {isLoading && (

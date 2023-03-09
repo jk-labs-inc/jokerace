@@ -7,10 +7,7 @@ import isProposalDeleted from "@helpers/isProposalDeleted";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import {
-  createStore as createStoreProposalVotes,
-  Provider as ProviderProposalVotes,
-} from "@hooks/useProposalVotes/store";
+import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
@@ -93,12 +90,12 @@ const Page: NextPage = (props: PageProps) => {
               </div>
             )}
           {[CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus) && (
-            <ProviderProposalVotes createStore={createStoreProposalVotes}>
+            <ProposalVotesWrapper>
               <div className="mt-8 text-sm">
                 {/* @ts-ignore */}
                 <ListProposalVotes id={proposal} />
               </div>
-            </ProviderProposalVotes>
+            </ProposalVotesWrapper>
           )}
         </div>
       )}

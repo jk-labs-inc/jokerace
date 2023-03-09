@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { useRouter } from "next/router";
-import shallow from "zustand/shallow";
-import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
-import { getContract, watchContractEvent } from "@wagmi/core";
-import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { useStore } from "./store";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import getContestContractVersion from "@helpers/getContestContractVersion";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { useContestStore } from "@hooks/useContest/store";
+import { fetchEnsName, getAccount, getContract, readContract, watchContractEvent } from "@wagmi/core";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
+import { useProposalVotesStore } from "./store";
 
 const VOTES_PER_PAGE = 5;
 
@@ -32,6 +31,8 @@ export function useProposalVotes(id: number | string) {
   );
   const [address] = useState(url[3]);
 
+  const { contestStatus, canUpdateVotesInRealTime } = useContestStore(state => state);
+
   const {
     isListVotersSuccess,
     isListVotersError,
@@ -46,47 +47,7 @@ export function useProposalVotes(id: number | string) {
     setIndexPaginationVotesPerId,
     setTotalPagesPaginationVotes,
     setHasPaginationVotesNextPage,
-    contestStatus,
-    canUpdateVotesInRealTime,
-  } = useStore(
-    state => ({
-      //@ts-ignore
-      version: state.version,
-      //@ts-ignore
-      isListVotersSuccess: state.isListVotersSuccess,
-      //@ts-ignore
-      isListVotersError: state.isListVotersError,
-      //@ts-ignore
-      isListVotersLoading: state.isListVotersLoading,
-      //@ts-ignore
-      setVotesPerAddress: state.setVotesPerAddress,
-      //@ts-ignore
-      setIsListVotersLoading: state.setIsListVotersLoading,
-      //@ts-ignore
-      setIsListVotersError: state.setIsListVotersError,
-      //@ts-ignore
-      setIsListVotersSuccess: state.setIsListVotersSuccess,
-      //@ts-ignore
-      setIsPageVotesLoading: state.setIsPageVotesLoading,
-      //@ts-ignore
-      setIsPageVotesSuccess: state.setIsPageVotesSuccess,
-      //@ts-ignore
-      setIsPageVotesError: state.setIsPageVotesError,
-      //@ts-ignore
-      setCurrentPagePaginationVotes: state.setCurrentPagePaginationVotes,
-      //@ts-ignore
-      setIndexPaginationVotesPerId: state.setIndexPaginationVotesPerId,
-      //@ts-ignore
-      setTotalPagesPaginationVotes: state.setTotalPagesPaginationVotes,
-      //@ts-ignore
-      setHasPaginationVotesNextPage: state.setHasPaginationVotesNextPage,
-      //@ts-ignore
-      canUpdateVotesInRealTime: state.canUpdateVotesInRealTime,
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-    }),
-    shallow,
-  );
+  } = useProposalVotesStore(state => state);
 
   /**
    * Fetch all votes of a given proposals (amount of votes, + detailed list of voters and the amount of votes they casted)
@@ -188,7 +149,7 @@ export function useProposalVotes(id: number | string) {
       const abi = await getContestContractVersion(address, chainName);
       if (abi === null) {
         toast.error("This contract doesn't exist on this chain.");
-        setIsPageVotesError("This contract doesn't exist on this chain.");
+        setIsPageVotesError({ message: "This contract doesn't exist on this chain." });
         setIsPageVotesLoading(false);
         return;
       }
