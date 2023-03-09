@@ -1,7 +1,7 @@
 import ButtonDownloadContestDataAsCSV from "@components/_pages/ButtonDownloadContestDataAsCSV";
 import { chains } from "@config/wagmi";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { useStore } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { ExportDataWrapper } from "@hooks/useExportContestDataToCSV/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
@@ -12,16 +12,8 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props;
-  const { isSuccess, isLoading, contestName, contestStatus } = useStore(state => ({
-    //@ts-ignore
-    isLoading: state.isLoading,
-    //@ts-ignore
-    contestName: state.contestName,
-    //@ts-ignore
-    isSuccess: state.isSuccess,
-    //@ts-ignore
-    contestStatus: state.contestStatus,
-  }));
+  const { isSuccess, isLoading, contestName, contestStatus } = useContestStore(state => state);
+
   return (
     <>
       <Head>
