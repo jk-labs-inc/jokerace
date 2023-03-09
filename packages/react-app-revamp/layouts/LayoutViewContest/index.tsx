@@ -61,8 +61,7 @@ const LayoutViewContest = (props: any) => {
 
   const { checkIfCurrentUserQualifyToVote, checkCurrentUserAmountOfProposalTokens } = useUser();
 
-  const { isLoading, address, fetchContestInfo, isSuccess, isError, retry, onSearch, chainId, setChainId } =
-    useContest();
+  const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, setChainId } = useContest();
 
   const {
     snapshotTaken,
@@ -120,7 +119,7 @@ const LayoutViewContest = (props: any) => {
     if (account?.connector) {
       account?.connector.on("change", data => {
         //@ts-ignore
-        setChainId(data.chain.id);
+        setChainId(data?.chain?.id);
       });
     }
   }, [account?.connector]);
@@ -165,7 +164,7 @@ const LayoutViewContest = (props: any) => {
             isLoading={isLoading}
             isListProposalsLoading={isListProposalsLoading}
             isSuccess={isSuccess}
-            isError={isError}
+            isError={error}
             isListProposalsError={isListProposalsError}
             chainId={chainId}
             setIsTimelineModalOpen={setIsTimelineModalOpen}
@@ -225,14 +224,14 @@ const LayoutViewContest = (props: any) => {
 
           {
             <>
-              {!(account?.address && chain?.id !== chainId) && isError && !isLoading && (
+              {!(account?.address && chain?.id !== chainId) && error && !isLoading && (
                 <div className="my-6 md:my-0 animate-appear flex flex-col">
                   <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                     <p className="text-sm font-bold text-negative-10 text-center">
                       Something went wrong while fetching this contest.
                     </p>
                   </div>
-                  {isError === "CALL_EXCEPTION" ? (
+                  {error?.message === "CALL_EXCEPTION" ? (
                     <div className="animate-appear text-center my-3 space-y-3">
                       <p>
                         Looks like this contract doesn&apos;t exist on {chain?.name}. <br /> Try switching to another
@@ -251,7 +250,7 @@ const LayoutViewContest = (props: any) => {
                 </div>
               )}
 
-              {isSuccess && !isError && !isLoading && (
+              {isSuccess && !error && !isLoading && (
                 <>
                   {displayReloadBanner === true && (
                     <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-col gap-y-3 text-sm font-bold">
@@ -339,7 +338,7 @@ const LayoutViewContest = (props: any) => {
                       setIsOpen={setIsTimelineModalOpen}
                       title="Contest timeline"
                     >
-                      {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
+                      {!isLoading && isSuccess && submissionsOpen && votesOpen && votesClose && (
                         <>
                           <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
                           {account?.address && (
@@ -354,10 +353,10 @@ const LayoutViewContest = (props: any) => {
                     {!isLoading &&
                       isSuccess &&
                       chain?.id === chainId &&
-                      isDate(submissionsOpen) &&
-                      isAfter(new Date(), submissionsOpen ?? new Date()) &&
-                      isDate(votesOpen) &&
-                      isBefore(new Date(), votesOpen ?? new Date()) && (
+                      submissionsOpen &&
+                      isAfter(new Date(), submissionsOpen) &&
+                      votesOpen &&
+                      isBefore(new Date(), votesOpen) && (
                         <DialogModalSendProposal
                           isOpen={isSubmitProposalModalOpen}
                           setIsOpen={setIsSubmitProposalModalOpen}
@@ -372,10 +371,10 @@ const LayoutViewContest = (props: any) => {
                     {!isLoading &&
                       isSuccess &&
                       chain?.id === chainId &&
-                      isDate(votesOpen) &&
-                      isAfter(new Date(), votesOpen ?? new Date()) &&
-                      isDate(votesClose) &&
-                      isBefore(new Date(), votesClose ?? new Date()) && (
+                      votesOpen &&
+                      isAfter(new Date(), votesOpen) &&
+                      votesClose &&
+                      isBefore(new Date(), votesClose) && (
                         <DialogModalVoteForProposal isOpen={isCastVotesModalOpen} setIsOpen={setIsCastVotesModalOpen} />
                       )}
                   </div>

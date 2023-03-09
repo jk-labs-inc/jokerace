@@ -1,4 +1,5 @@
 import { createContext, useContext, useRef } from "react";
+import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 export interface ContestState {
@@ -7,15 +8,15 @@ export interface ContestState {
   contestAuthorEthereumAddress: string;
   contestAuthor: string;
   contestStatus: number;
-  submissionsOpen: Date;
-  votesOpen: Date;
-  votesClose: Date;
+  submissionsOpen: Date | null;
+  votesOpen: Date | null;
+  votesClose: Date | null;
   votingToken: any | null;
   votingTokenAddress: any | null;
   submitProposalToken: any | null;
   submitProposalTokenAddress: any | null;
   isLoading: boolean;
-  isError: string | null;
+  error: CustomError | null;
   isSuccess: boolean;
   contestMaxProposalCount: number;
   snapshotTaken: boolean;
@@ -40,7 +41,7 @@ export interface ContestState {
   setSubmitProposalTokenAddress: (address: any) => void;
   setSnapshotTaken: (value: boolean) => void;
   setIsLoading: (value: boolean) => void;
-  setIsError: (value: string | null) => void;
+  setError: (value: CustomError | null) => void;
   setIsSuccess: (value: boolean) => void;
 }
 
@@ -51,44 +52,43 @@ export const createContestStore = () =>
     contestAuthorEthereumAddress: "",
     contestAuthor: "",
     contestStatus: 0,
-    submissionsOpen: new Date(),
-    votesOpen: new Date(),
-    votesClose: new Date(),
+    submissionsOpen: null,
+    votesOpen: null,
+    votesClose: null,
     votingToken: null,
     votingTokenAddress: null,
     submitProposalToken: null,
     submitProposalTokenAddress: null,
     isLoading: true,
-    isError: null,
+    error: null,
     isSuccess: false,
     contestMaxProposalCount: 0,
     snapshotTaken: false,
     downvotingAllowed: false,
     canUpdateVotesInRealTime: false,
     supportsRewardsModule: false,
-    setSupportsRewardsModule: (value: boolean) => set({ supportsRewardsModule: value }),
-    setCanUpdateVotesInRealTime: (value: boolean) => set({ canUpdateVotesInRealTime: value }),
+    setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
+    setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
 
-    setDownvotingAllowed: (isAllowed: boolean) => set({ downvotingAllowed: isAllowed }),
-    setContestPrompt: (prompt: string) => set({ contestPrompt: prompt }),
+    setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
+    setContestPrompt: prompt => set({ contestPrompt: prompt }),
 
-    setContestMaxProposalCount: (amount: number) => set({ contestMaxProposalCount: amount }),
+    setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
 
-    setContestStatus: (status: number) => set({ contestStatus: status }),
-    setContestName: (name: string) => set({ contestName: name }),
-    setContestAuthor: (author: string, address: string) =>
-      set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
-    setSubmissionsOpen: (datetime: Date) => set({ submissionsOpen: datetime }),
-    setVotesOpen: (datetime: Date) => set({ votesOpen: datetime }),
-    setVotesClose: (datetime: Date) => set({ votesClose: datetime }),
-    setVotingToken: (token: any) => set({ votingToken: token }),
-    setVotingTokenAddress: (address: any) => set({ votingTokenAddress: address }),
-    setSubmitProposalToken: (token: any) => set({ submitProposalToken: token }),
-    setSubmitProposalTokenAddress: (address: any) => set({ submitProposalTokenAddress: address }),
-    setSnapshotTaken: (value: boolean) => set({ snapshotTaken: value }),
-    setIsLoading: (value: boolean) => set({ isLoading: value }),
-    setIsError: (value: string | null) => set({ isError: value }),
-    setIsSuccess: (value: boolean) => set({ isSuccess: value }),
+    setContestStatus: status => set({ contestStatus: status }),
+    setContestName: name => set({ contestName: name }),
+    setContestAuthor: (author, address) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
+    setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
+    setVotesOpen: datetime => set({ votesOpen: datetime }),
+    setVotesClose: datetime => set({ votesClose: datetime }),
+    setVotingToken: token => set({ votingToken: token }),
+    setVotingTokenAddress: address => set({ votingTokenAddress: address }),
+    setSubmitProposalToken: token => set({ submitProposalToken: token }),
+    setSubmitProposalTokenAddress: address => set({ submitProposalTokenAddress: address }),
+    setSnapshotTaken: value => set({ snapshotTaken: value }),
+    setIsLoading: value => set({ isLoading: value }),
+    setError: value => set({ error: value }),
+    setIsSuccess: value => set({ isSuccess: value }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

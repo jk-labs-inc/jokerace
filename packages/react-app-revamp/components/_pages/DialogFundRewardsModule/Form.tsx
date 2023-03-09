@@ -301,7 +301,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                   (balance?.data?.decimals === 18
                     ? balance?.data?.formatted
                     : //@ts-ignore
-                      10 ** (18 - balance.data.decimals) * balance.data.formatted)))
+                      10 ** (18 - balance?.data?.decimals) * balance?.data?.formatted)))
           }
           type="submit"
         >

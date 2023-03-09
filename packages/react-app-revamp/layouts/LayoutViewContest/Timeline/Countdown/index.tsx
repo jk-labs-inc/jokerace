@@ -3,31 +3,31 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useCountdown } from "@hooks/useCountdown";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { isAfter, isBefore, isEqual } from "date-fns";
-import { useEffect } from "react";
+import { FC, useEffect, useMemo } from "react";
 import styles from "./styles.module.css";
 
-// - Contest status
+// Contest status
 // -1: Submissions not opened yet
-// 0: Voting open
-// 1: Contest cancelled
-// 2: Submissions open
-// 3: Completed
+//  0: Voting open
+//  1: Contest cancelled
+//  2: Submissions open
+//  3: Completed
 
 export const Countdown = () => {
   const { listProposalsIds } = useProposalStore(state => state);
-  const { contestStatus, submissionsOpen, votesOpen, votesClose, setContestStatus, contestMaxProposalCount } =
+  const { contestStatus, setContestStatus, contestMaxProposalCount, submissionsOpen, votesOpen, votesClose } =
     useContestStore(state => state);
 
-  const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen ?? new Date());
-  const countdownUntilVotingOpen = useCountdown(submissionsOpen, votesOpen);
-  const countdownUntilVotingClose = useCountdown(votesOpen, votesClose);
+  const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen!);
+  const countdownUntilVotingOpen = useCountdown(submissionsOpen!, votesOpen!);
+  const countdownUntilVotingClose = useCountdown(votesOpen ?? new Date(), votesClose!);
 
   useEffect(() => {
-    if (contestStatus !== null) {
+    if (contestStatus) {
       if (
         !countdownUntilSubmissionsOpen.isCountdownRunning &&
         !countdownUntilVotingOpen.isCountdownRunning &&
-        isBefore(new Date(), votesOpen)
+        isBefore(new Date(), votesOpen!)
       ) {
         countdownUntilVotingOpen.setIsCountdownRunning(true);
         setContestStatus(CONTEST_STATUS.SUBMISSIONS_OPEN);
@@ -38,8 +38,8 @@ export const Countdown = () => {
         !countdownUntilVotingOpen.isCountdownRunning &&
         !countdownUntilVotingClose.isCountdownRunning &&
         contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-        (isAfter(new Date(), votesOpen) || isEqual(new Date(), votesOpen)) &&
-        isBefore(new Date(), votesClose)
+        (isAfter(new Date(), votesOpen!) || isEqual(new Date(), votesOpen ?? new Date())) &&
+        isBefore(new Date(), votesClose!)
       ) {
         countdownUntilVotingClose.setIsCountdownRunning(true);
         setContestStatus(CONTEST_STATUS.SNAPSHOT_ONGOING);
@@ -48,11 +48,12 @@ export const Countdown = () => {
         !countdownUntilSubmissionsOpen.isCountdownRunning &&
         !countdownUntilVotingOpen.isCountdownRunning &&
         !countdownUntilVotingClose.isCountdownRunning &&
-        isAfter(new Date(), votesClose)
+        isAfter(new Date(), votesClose!)
       ) {
         setContestStatus(CONTEST_STATUS.COMPLETED);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     countdownUntilVotingOpen.isCountdownRunning,
     countdownUntilSubmissionsOpen.isCountdownRunning,
@@ -77,7 +78,7 @@ export const Countdown = () => {
     );
   }
 
-  if (countdownUntilVotingOpen.isCountdownRunning || isBefore(new Date(), votesOpen)) {
+  if (countdownUntilVotingOpen.isCountdownRunning || isBefore(new Date(), votesOpen!)) {
     return (
       <>
         <p className={`text-sm font-bold text-center text-true-white mb-1`}>
@@ -102,7 +103,7 @@ export const Countdown = () => {
     );
   }
 
-  if (countdownUntilVotingClose.isCountdownRunning || isBefore(new Date(), votesClose)) {
+  if (countdownUntilVotingClose.isCountdownRunning || isBefore(new Date(), votesClose!)) {
     return (
       <>
         <p className={`text-xs font-bold text-center text-neutral-10`}>Submissions closed</p>

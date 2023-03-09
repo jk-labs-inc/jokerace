@@ -1,4 +1,5 @@
 import { createContext, useContext, useRef } from "react";
+import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface ProposalState {
@@ -6,9 +7,9 @@ interface ProposalState {
   listProposalsData: any;
   isListProposalsLoading: boolean;
   isListProposalsSuccess: boolean;
-  isListProposalsError: string | null;
+  isListProposalsError: CustomError | null;
   isPageProposalsLoading: boolean;
-  isPageProposalsError: string | null;
+  isPageProposalsError: CustomError | null;
   isPageProposalSuccess: boolean;
   indexPaginationProposals: Array<any[]>;
   totalPagesPaginationProposals: number;
@@ -20,13 +21,13 @@ interface ProposalState {
   setListProposalsIds: (list: string[]) => void;
   setIsListProposalsLoading: (value: boolean) => void;
   setIsListProposalsSuccess: (value: boolean) => void;
-  setIsListProposalsError: (value: string | null) => void;
+  setIsListProposalsError: (value: CustomError | null) => void;
   setProposalData: (proposal: any) => void;
   setProposalVotes: (id: any, votes: any) => void;
   softDeleteProposal: (id: string) => void;
   resetListProposals: () => void;
   setIsPageProposalsLoading: (value: boolean) => void;
-  setIsPageProposalsError: (value: string | null) => void;
+  setIsPageProposalsError: (value: CustomError | null) => void;
   setIsPageProposalsSuccess: (value: boolean) => void;
   setIndexPaginationProposalPerId: (proposals: any[]) => void;
   setTotalPagesPaginationProposals: (value: number) => void;

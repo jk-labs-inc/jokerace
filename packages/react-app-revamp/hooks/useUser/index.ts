@@ -2,6 +2,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagmi/core";
+import { isFuture } from "date-fns";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 import { useNetwork, useProvider } from "wagmi";
@@ -18,7 +19,7 @@ export function useUser() {
     setUsersQualifyToVoteIfTheyHoldTokenAtTime,
   } = useUserStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
-  const { setIsSuccess, setIsLoading, setSnapshotTaken, setIsError } = useContestStore(state => state);
+  const { setIsSuccess, setIsLoading, setSnapshotTaken, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
@@ -28,7 +29,7 @@ export function useUser() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
-      setIsError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+      setError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
       setIsSuccess(false);
       setCheckIfUserPassedSnapshotLoading(false);
       setIsListProposalsSuccess(false);
@@ -66,10 +67,12 @@ export function useUser() {
       //@ts-ignore
       setCurrentUserSubmitProposalTokensAmount(amount / 1e18);
     } catch (e) {
-      console.log("error");
       // onContractError(e);
       //@ts-ignore
-      setIsError(e?.code ?? e);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+      setError(customError);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);

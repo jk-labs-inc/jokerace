@@ -11,6 +11,7 @@ import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBef
 import { useRouter } from "next/router";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
 
@@ -24,9 +25,9 @@ export function useContest() {
   const [address, setAddress] = useState(asPath.split("/")[3]);
   const [chainName, setChainName] = useState(asPath.split("/")[2]);
   const {
-    setIsError,
+    setError,
     isLoading,
-    isError,
+    error,
     isSuccess,
     setIsSuccess,
     setIsLoading,
@@ -117,7 +118,7 @@ export function useContest() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
-      setIsError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+      setError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
       setIsSuccess(false);
       setCheckIfUserPassedSnapshotLoading(false);
       setIsListProposalsSuccess(false);
@@ -172,8 +173,43 @@ export function useContest() {
       // List of proposals for this contest
       await fetchProposalsIdsList(contractConfig.contractInterface);
 
+      setContestName(results[0].toString());
+      setContestAuthor(results[1].toString(), results[1].toString());
+      //@ts-ignore
+      setContestMaxNumberSubmissionsPerUser(results[3]);
+      //@ts-ignore
+      setContestMaxProposalCount(results[3]);
+      setVotingTokenAddress(results[4]);
+      // Voting token data (balance, symbol, total supply etc) (for ERC-20 token)
+
+      const votingTokenRawData = await fetchToken({ address: results[4].toString(), chainId });
+      //@ts-ignore
+      const closingVoteDate = new Date(parseInt(results[6]) * 1000);
+      setVotingToken(votingTokenRawData);
+      //@ts-ignore
+      setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
+      //@ts-ignore
+      setVotesOpen(new Date(parseInt(results[7]) * 1000));
+      setVotesClose(closingVoteDate);
+
+      if (
+        //@ts-ignore
+        results[8] === CONTEST_STATUS.SUBMISSIONS_OPEN &&
+        //@ts-ignore
+        isBefore(new Date(), new Date(parseInt(results[5]) * 1000))
+      ) {
+        // If the contest status is marked as open
+        // but the current date is before the opening of submissions
+        // Then we use a special status on the frontend
+        // This way we can display a countdown until submissions open
+        setContestStatus(CONTEST_STATUS.SUBMISSIONS_NOT_OPEN);
+      } else {
+        //@ts-ignore
+        setContestStatus(results[8]);
+      }
+
       setIsListProposalsLoading(false);
-      setIsError(null);
+      setError(null);
       setIsSuccess(true);
       setIsLoading(false);
 
@@ -196,20 +232,6 @@ export function useContest() {
           : false,
       );
 
-      setContestName(results[0].toString());
-      setContestAuthor(results[1].toString(), results[1].toString());
-      setContestMaxNumberSubmissionsPerUser(parseFloat(results[3].toString()));
-      setContestMaxProposalCount(parseFloat(results[3].toString()));
-      setVotingTokenAddress(results[4]);
-      // Voting token data (balance, symbol, total supply etc) (for ERC-20 token)
-
-      const votingTokenRawData = await fetchToken({ address: results[4].toString(), chainId });
-      const closingVoteDate = new Date(parseInt(results[6].toString()) * 1000);
-      setVotingToken(votingTokenRawData);
-      setSubmissionsOpen(new Date(parseInt(results[5].toString()) * 1000));
-      setVotesClose(closingVoteDate);
-      //@ts-ignore
-      setVotesOpen(new Date(parseInt(results[7]) * 1000));
       // We want to track VoteCast event only 1H before the end of the contest
       if (isBefore(new Date(), closingVoteDate)) {
         if (differenceInHours(closingVoteDate, new Date()) <= 1) {
@@ -229,20 +251,6 @@ export function useContest() {
         setCanUpdateVotesInRealTime(false);
       }
 
-      if (
-        //@ts-ignore
-        results[8] === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-        //@ts-ignore
-        isBefore(new Date(), new Date(parseInt(results[5]) * 1000))
-      ) {
-        // If the contest status is marked as open
-        // but the current date is before the opening of submissions
-        // Then we use a special status on the frontend
-        // This way we can display a countdown until submissions open
-        setContestStatus(CONTEST_STATUS.SUBMISSIONS_NOT_OPEN);
-      } else {
-        setContestStatus(parseFloat(results[8].toString()));
-      }
       //@ts-ignore
       setAmountOfTokensRequiredToSubmitEntry(results[9] / 1e18);
 
@@ -298,16 +306,17 @@ export function useContest() {
         }
       }
     } catch (e) {
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
       onContractError(e);
-      //@ts-ignore
-      setIsError(e?.code ?? e);
+      setError(customError);
       setIsSuccess(false);
-      console.log("error");
 
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
       setIsLoading(false);
-      console.error(e);
     }
   }
 
@@ -321,7 +330,7 @@ export function useContest() {
     chainName,
     setChainId,
     isLoading,
-    isError,
+    error,
     isSuccess,
     setChainName,
     retry: fetchContestInfo,

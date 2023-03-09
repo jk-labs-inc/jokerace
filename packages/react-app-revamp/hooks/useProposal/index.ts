@@ -7,6 +7,7 @@ import { getAccount, readContract } from "@wagmi/core";
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { CustomError } from "types/error";
 import { readContracts, useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
 
@@ -28,7 +29,7 @@ export function useProposal() {
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
 
-  const { setIsLoading, setIsSuccess, setIsError } = useContestStore(state => state);
+  const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
 
@@ -53,7 +54,7 @@ export function useProposal() {
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
         toast.error(errorMsg);
-        setIsPageProposalsError(errorMsg);
+        setIsPageProposalsError({ message: errorMsg });
         setIsPageProposalsLoading(false);
         return;
       }
@@ -87,10 +88,16 @@ export function useProposal() {
       setIsPageProposalsError(null);
       setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals);
     } catch (e) {
-      setIsPageProposalsLoading(false);
-      setIsPageProposalsError(e?.message ?? e);
+      const customError = e as CustomError;
 
-      toast.error(e?.message ?? e);
+      if (!customError) return;
+
+      const message = customError.message || "Something went wrong while getting proposals.";
+      toast.error(message);
+      setIsPageProposalsError({
+        code: customError.code,
+        message,
+      });
     }
   }
 
@@ -191,13 +198,16 @@ export function useProposal() {
       setIndexPaginationProposalPerId(paginationChunks);
       if (proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
       onContractError(e);
-      setIsError(e?.code ?? e);
+      setError(customError);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
       setIsLoading(false);
-      console.error(e);
     }
   }
 

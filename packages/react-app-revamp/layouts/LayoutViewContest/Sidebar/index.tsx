@@ -18,12 +18,32 @@ import { useUserStore } from "@hooks/useUser/store";
 import { isDate } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { FC } from "react";
+import { CustomError } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import Timeline from "../Timeline";
 import VotingToken from "../VotingToken";
 import styles from "./styles.module.css";
 
-export const Sidebar = (props: any) => {
+interface SidebarProps {
+  isLoading: boolean;
+  isListProposalsLoading: boolean;
+  isSuccess: boolean;
+  isError: CustomError | null;
+  isListProposalsError: CustomError | null;
+  chainId: number;
+  setIsTimelineModalOpen: (isOpen: boolean) => void;
+}
+
+export const Sidebar: FC<SidebarProps> = ({
+  isLoading,
+  isListProposalsLoading,
+  isSuccess,
+  isError,
+  isListProposalsError,
+  chainId,
+  setIsTimelineModalOpen,
+}) => {
   const { query, pathname } = useRouter();
   const { chain } = useNetwork();
   const account = useAccount({
@@ -33,15 +53,6 @@ export const Sidebar = (props: any) => {
       }
     },
   });
-  const {
-    isLoading,
-    isListProposalsLoading,
-    isSuccess,
-    isError,
-    isListProposalsError,
-    chainId,
-    setIsTimelineModalOpen,
-  } = props;
 
   const {
     amountOfTokensRequiredToSubmitEntry,
@@ -177,7 +188,9 @@ export const Sidebar = (props: any) => {
       )}
       <Button
         onClick={() => setIsTimelineModalOpen(true)}
-        disabled={isLoading || isError || !isDate(submissionsOpen) || !isDate(votesOpen) || !isDate(votesClose)}
+        disabled={
+          isLoading || isError !== null || !isDate(submissionsOpen) || !isDate(votesOpen) || !isDate(votesClose)
+        }
         intent="true-solid-outline"
         className={`
   ${contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? "bottom-32" : "bottom-16"}
@@ -186,7 +199,7 @@ export const Sidebar = (props: any) => {
         <CalendarIcon className="w-5 2xs:mie-1 md:hidden" />
         <span className="sr-only 2xs:not-sr-only">Timeline</span>
       </Button>
-      {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
+      {!isLoading && isSuccess && submissionsOpen && votesOpen && votesClose && (
         <>
           {account?.address && (
             <div className="hidden md:my-4 md:block">
