@@ -1,5 +1,5 @@
 export const evmosTestnet = {
-    id: 9001,
+    id: 9000,
     name: 'EvmosTestnet',
     network: 'evmosTestnet',
     nativeCurrency: {
