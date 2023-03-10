@@ -5,7 +5,7 @@ import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagm
 import { isFuture } from "date-fns";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import { useNetwork, useProvider } from "wagmi";
+import { useContractRead, useNetwork, useProvider } from "wagmi";
 import { useUserStore } from "./store";
 
 export function useUser() {
@@ -23,6 +23,15 @@ export function useUser() {
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
+
+  /**
+   * Display an error toast in the UI for any contract related error
+   */
+  function onContractError(err: any) {
+    let toastMessage = err?.message ?? err;
+    if (err.code === "CALL_EXCEPTION") toastMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
+    toast.error(toastMessage);
+  }
 
   // Generate config for the contract
   async function getContractConfig() {
@@ -52,9 +61,7 @@ export function useUser() {
    */
   async function checkCurrentUserAmountOfProposalTokens() {
     const contractConfig = await getContractConfig();
-
     if (!contractConfig) return;
-
     const accountData = getAccount();
     const contractBaseOptions = {};
     try {
@@ -67,10 +74,9 @@ export function useUser() {
       //@ts-ignore
       setCurrentUserSubmitProposalTokensAmount(amount / 1e18);
     } catch (e) {
-      // onContractError(e);
+      onContractError(e);
       //@ts-ignore
       const customError = e as CustomError;
-
       if (!customError) return;
       setError(customError);
       setIsSuccess(false);
@@ -86,7 +92,6 @@ export function useUser() {
    */
   async function checkIfCurrentUserQualifyToVote() {
     const contractConfig = await getContractConfig();
-
     if (!contractConfig) return;
     setCheckIfUserPassedSnapshotLoading(true);
     const accountData = getAccount();
@@ -98,14 +103,12 @@ export function useUser() {
         ...contractConfig,
         functionName: "contestSnapshot",
       });
-
       //@ts-ignore
       setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
       //@ts-ignore
       if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
         setSnapshotTaken(true);
         const delayedCurrentTimestamp = Date.now() - 59; // Delay by 59 seconds to make sure we're looking at a block that has been mined
-
         const timestampToCheck =
           //@ts-ignore
           delayedCurrentTimestamp >= timestampSnapshotRawData ? timestampSnapshotRawData : delayedCurrentTimestamp;
@@ -124,7 +127,6 @@ export function useUser() {
       } else {
         setSnapshotTaken(false);
       }
-
       setCheckIfUserPassedSnapshotLoading(false);
     } catch (e) {
       console.error(e);

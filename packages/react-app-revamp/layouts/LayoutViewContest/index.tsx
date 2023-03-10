@@ -137,7 +137,6 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     if (isListProposalsLoading && account?.address) {
-      checkIfCurrentUserQualifyToVote();
       checkCurrentUserAmountOfProposalTokens();
       checkIfCurrentUserQualifyToVote();
     }
@@ -224,7 +223,7 @@ const LayoutViewContest = (props: any) => {
 
           {
             <>
-              {!(account?.address && chain?.id !== chainId) && error && !isLoading && (
+              {(account?.address && chain?.id !== chainId) === false && error && !isLoading && (
                 <div className="my-6 md:my-0 animate-appear flex flex-col">
                   <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                     <p className="text-sm font-bold text-negative-10 text-center">
