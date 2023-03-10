@@ -192,6 +192,11 @@ export function useContest() {
       setVotesOpen(new Date(parseInt(results[7]) * 1000));
       setVotesClose(closingVoteDate);
 
+      setError(null);
+      setIsSuccess(true);
+      setIsLoading(false);
+      setIsListProposalsLoading(false);
+
       if (
         //@ts-ignore
         results[8] === CONTEST_STATUS.SUBMISSIONS_OPEN &&
@@ -207,11 +212,6 @@ export function useContest() {
         //@ts-ignore
         setContestStatus(results[8]);
       }
-
-      setIsListProposalsLoading(false);
-      setError(null);
-      setIsSuccess(true);
-      setIsLoading(false);
 
       const promptFilter = contractConfig.contractInterface?.filter(el => el.name === "prompt");
       const submissionGatingFilter = contractConfig.contractInterface?.filter(

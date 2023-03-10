@@ -153,32 +153,34 @@ export function useProposalVotes(id: number | string) {
         setIsPageVotesLoading(false);
         return;
       }
+
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
-        chainId: chainId,
+        chainId,
       };
 
       const data = await readContract({
-        //@ts-ignore
         ...contractConfig,
         functionName: "proposalAddressVotes",
         args: [id, userAddress],
         chainId,
       });
 
+      const { forVotes, againstVotes } = data ?? {};
+
       const author = await fetchEnsName({
         address: userAddress,
         chainId: wagmiChain.mainnet.id,
       });
 
+      const displayAddress = author ?? shortenEthereumAddress(userAddress);
+      // @ts-ignore
+      const votes = (forVotes ? forVotes / 1e18 - againstVotes / 1e18 : data / 1e18) ?? 0;
+
       setVotesPerAddress({
         address: userAddress,
-        value: {
-          displayAddress: author ?? shortenEthereumAddress(userAddress),
-          //@ts-ignore
-          votes: data?.forVotes ? data?.forVotes / 1e18 - data?.againstVotes / 1e18 : data / 1e18,
-        },
+        value: { displayAddress, votes },
       });
     } catch (e) {
       console.error(e);
@@ -229,18 +231,23 @@ export function useProposalVotes(id: number | string) {
   }, [canUpdateVotesInRealTime, contestStatus]);
 
   useEffect(() => {
-    fetchProposalVotes();
-    const onVisibilityChangeHandler = () => {
-      if (document.visibilityState === "hidden") {
-        provider.removeAllListeners();
-      }
+    const fetchProposalVotesAndListenForEvents = async () => {
+      await fetchProposalVotes();
+
+      const onVisibilityChangeHandler = () => {
+        if (document.visibilityState === "hidden") {
+          provider.removeAllListeners();
+        }
+      };
+
+      document.addEventListener("visibilitychange", onVisibilityChangeHandler);
+
+      return () => {
+        document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
+      };
     };
 
-    document.addEventListener("visibilitychange", onVisibilityChangeHandler);
-
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
-    };
+    fetchProposalVotesAndListenForEvents();
   }, []);
 
   return {

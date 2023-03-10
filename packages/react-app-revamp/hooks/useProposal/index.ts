@@ -49,8 +49,10 @@ export function useProposal() {
     setCurrentPagePaginationProposals(pageIndex);
     setIsPageProposalsLoading(true);
     setIsPageProposalsError(null);
+
     try {
       const abi = await getContestContractVersion(address, chainName);
+
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
         toast.error(errorMsg);
@@ -82,7 +84,9 @@ export function useProposal() {
 
       const results = await readContracts({ contracts });
 
-      await Promise.allSettled(slice.map((id: number, index: number) => fetchProposal(index, results, slice)));
+      for (let i = 0; i < slice.length; i++) {
+        await fetchProposal(i, results, slice);
+      }
 
       setIsPageProposalsLoading(false);
       setIsPageProposalsError(null);
@@ -118,10 +122,12 @@ export function useProposal() {
     }, []);
 
     const data = proposalDataPerId[i][0];
+    const content = data[1];
+    const isContentImage = isUrlToImage(data[1]) ? true : false;
     const proposalData = {
       authorEthereumAddress: data[0],
-      content: data[1],
-      isContentImage: isUrlToImage(data[1]) ? true : false,
+      content,
+      isContentImage,
       exists: data[2],
       votes: proposalDataPerId[i][1]?.forVotes
         ? proposalDataPerId[i][1]?.forVotes / 1e18 - proposalDataPerId[i][1]?.againstVotes / 1e18
