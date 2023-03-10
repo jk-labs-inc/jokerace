@@ -5,7 +5,7 @@ import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagm
 import { isFuture } from "date-fns";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
-import { useContractRead, useNetwork, useProvider } from "wagmi";
+import { useNetwork, useProvider } from "wagmi";
 import { useUserStore } from "./store";
 
 export function useUser() {
