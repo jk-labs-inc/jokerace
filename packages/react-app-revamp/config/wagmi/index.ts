@@ -4,6 +4,8 @@ import { zkEraMainnet } from "./custom-chains/zkEraMainnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { scrollGoerli } from "./custom-chains/scrollGoerli";
+import { evmosTestnet } from "./custom-chains/evmosTestnet";
+import { evmosMainnet } from "./custom-chains/evmosMainnet";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -20,12 +22,16 @@ const testnetChains = [
   zkEraMainnet,
   baseTestnet,
   scrollGoerli,
+  evmosTestnet,
+  evmosMainnet,
 ];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];
 const appChains = [...defaultChains, ...testnetChains];
 const providers =
-  process.env.NODE_ENV === "development" ? [publicProvider()] : [infuraProvider({ infuraId }), publicProvider()];
+  process.env.NODE_ENV === "development"
+    ? [alchemyProvider({ alchemyId }), publicProvider()]
+    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({
