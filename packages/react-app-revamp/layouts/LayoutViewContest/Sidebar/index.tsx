@@ -20,7 +20,7 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 import Timeline from "../Timeline";
 import VotingToken from "../VotingToken";
 import styles from "./styles.module.css";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 
 export const Sidebar = (props: any) => {
   const { query, pathname } = useRouter();
@@ -28,7 +28,7 @@ export const Sidebar = (props: any) => {
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -142,32 +142,6 @@ export const Sidebar = (props: any) => {
               Rewards
             </a>
           </Link>
-        )}
-        {contestStatus === CONTEST_STATUS.COMPLETED ? (
-          <Link
-            href={{
-              pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
-              //@ts-ignore
-              query: {
-                chain: query.chain,
-                address: query.address,
-              },
-            }}
-          >
-            <a
-              className={`${styles.navLink} ${
-                pathname === ROUTE_VIEW_CONTEST_EXPORT_DATA ? styles["navLink--active"] : ""
-              }`}
-            >
-              <DocumentDownloadIcon className={styles.navLinkIcon} />
-              Export data
-            </a>
-          </Link>
-        ) : (
-          <div className={styles.navLink}>
-            <DocumentDownloadIcon className={styles.navLinkIcon} />
-            Export data
-          </div>
         )}
       </nav>
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
