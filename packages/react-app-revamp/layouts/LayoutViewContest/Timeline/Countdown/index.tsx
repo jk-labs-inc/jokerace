@@ -24,10 +24,6 @@ export const Countdown = () => {
 
   useEffect(() => {
     if (contestStatus !== null) {
-      console.log("submission open running", countdownUntilSubmissionsOpen.isCountdownRunning);
-      console.log("voting open running", countdownUntilVotingOpen.isCountdownRunning);
-      console.log("voting close running", countdownUntilVotingClose.isCountdownRunning);
-      console.log(isAfter(new Date(), votesClose!));
       if (
         !countdownUntilSubmissionsOpen.isCountdownRunning &&
         !countdownUntilVotingOpen.isCountdownRunning &&

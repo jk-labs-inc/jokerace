@@ -15,7 +15,6 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { isDate } from "date-fns";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC } from "react";
@@ -188,9 +187,7 @@ export const Sidebar: FC<SidebarProps> = ({
       )}
       <Button
         onClick={() => setIsTimelineModalOpen(true)}
-        disabled={
-          isLoading || isError !== null || !isDate(submissionsOpen) || !isDate(votesOpen) || !isDate(votesClose)
-        }
+        disabled={isLoading || isError !== null || !submissionsOpen || !votesOpen || !votesClose}
         intent="true-solid-outline"
         className={`
   ${contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? "bottom-32" : "bottom-16"}
