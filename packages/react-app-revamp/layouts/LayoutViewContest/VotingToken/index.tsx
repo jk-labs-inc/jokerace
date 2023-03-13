@@ -1,10 +1,11 @@
+import { IconSpinner } from "@components/UI/Icons";
 import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { isBefore } from "date-fns";
 
 export const VotingToken = () => {
   const { votingToken, votesClose, votesOpen } = useContestStore(state => state);
-  const { currentUserTotalVotesCast, currentUserAvailableVotesAmount } = useUserStore(state => state);
+  const { currentUserTotalVotesCast, currentUserAvailableVotesAmount, isLoading } = useUserStore(state => state);
 
   return (
     <>
@@ -12,7 +13,10 @@ export const VotingToken = () => {
         <span className="text-sm font-bold pb-0.5">
           {isBefore(new Date(), votesClose ?? 0) ? "Your available votes" : "Your remaining votes:"}
         </span>
-        {isBefore(new Date(), votesOpen ?? 0) ? (
+
+        {isLoading ? (
+          <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
+        ) : isBefore(new Date(), votesOpen ?? 0) ? (
           <>
             <span
               title={new Intl.NumberFormat().format(currentUserAvailableVotesAmount)}

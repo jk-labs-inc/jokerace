@@ -61,12 +61,12 @@ export function useProposal() {
         return;
       }
 
-      if (!chains) return;
-
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
-        chainId: chains.find(c => c.name.toLowerCase() === chainName)?.id,
+        chainId: chains.find(
+          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
+        )?.id,
       };
 
       const contracts = slice.flatMap((id: number) => [
@@ -161,7 +161,9 @@ export function useProposal() {
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
-        chainId: chains.find(c => c.name.toLowerCase() === chainName)?.id,
+        chainId: chains.find(
+          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
+        )?.id,
       };
       const proposalsIdsRawData = await readContract({
         ...contractConfig,

@@ -53,6 +53,7 @@ export function useContest() {
     setCheckIfUserPassedSnapshotLoading,
     setContestMaxNumberSubmissionsPerUser,
     setAmountOfTokensRequiredToSubmitEntry,
+    setIsLoading: setIsUserStoreLoading,
   } = useUserStore(state => state);
   const { checkCurrentUserAmountOfProposalTokens, checkIfCurrentUserQualifyToVote, updateCurrentUserVotes } = useUser();
   const { fetchProposalsIdsList, fetchProposalsPage } = useProposal();
@@ -141,6 +142,7 @@ export function useContest() {
    */
   async function fetchContestInfo() {
     setIsLoading(true);
+    setIsUserStoreLoading(true);
     const contractConfig = await getContractConfig();
 
     if (!contractConfig) return;
@@ -268,6 +270,7 @@ export function useContest() {
       if (accountData?.address) {
         // Current user votes
         await updateCurrentUserVotes();
+        setIsUserStoreLoading(false);
       }
 
       if (

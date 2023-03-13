@@ -1,4 +1,5 @@
 import { createContext, useContext, useRef } from "react";
+import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface UserState {
@@ -11,6 +12,9 @@ interface UserState {
   didUserPassSnapshotAndCanVote: boolean;
   checkIfUserPassedSnapshotLoading: boolean;
   currentUserSubmitProposalTokensAmount: number;
+  isLoading: boolean;
+  isSuccess: boolean;
+  error: CustomError | null;
 
   setCurrentUserAvailableVotesAmount: (amount: number) => void;
   setCurrentUserTotalVotesCast: (amount: number) => void;
@@ -22,6 +26,9 @@ interface UserState {
   setCheckIfUserPassedSnapshotLoading: (value: boolean) => void;
   setCurrentUserSubmitProposalTokensAmount: (amount: number) => void;
   increaseCurrentUserProposalCount: () => void;
+  setIsLoading: (value: boolean) => void;
+  setIsSuccess: (value: boolean) => void;
+  setError: (value: CustomError | null) => void;
 }
 
 export const createUserStore = () =>
@@ -35,6 +42,9 @@ export const createUserStore = () =>
     didUserPassSnapshotAndCanVote: false,
     checkIfUserPassedSnapshotLoading: true,
     currentUserSubmitProposalTokensAmount: 0,
+    isLoading: false,
+    isSuccess: false,
+    error: null,
 
     setCurrentUserAvailableVotesAmount: amount => set({ currentUserAvailableVotesAmount: amount }),
     setCurrentUserTotalVotesCast: amount => set({ currentUserTotalVotesCast: amount }),
@@ -47,6 +57,9 @@ export const createUserStore = () =>
     setCurrentUserSubmitProposalTokensAmount: amount => set({ currentUserSubmitProposalTokensAmount: amount }),
     increaseCurrentUserProposalCount: () =>
       set(state => ({ currentUserProposalCount: state.currentUserProposalCount + 1 })),
+    setIsLoading: value => set({ isLoading: value }),
+    setIsSuccess: value => set({ isSuccess: value }),
+    setError: value => set({ error: value }),
   }));
 
 export const UserContext = createContext<ReturnType<typeof createUserStore> | null>(null);

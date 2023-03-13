@@ -5,6 +5,7 @@ import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagm
 import { isFuture } from "date-fns";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { CustomError } from "types/error";
 import { useNetwork, useProvider } from "wagmi";
 import { useUserStore } from "./store";
 
@@ -19,7 +20,12 @@ export function useUser() {
     setUsersQualifyToVoteIfTheyHoldTokenAtTime,
   } = useUserStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
-  const { setIsSuccess, setIsLoading, setSnapshotTaken, setError } = useContestStore(state => state);
+  const {
+    setIsSuccess: setIsContestSuccess,
+    setIsLoading: setIsContestLoading,
+    setSnapshotTaken,
+    setError: setContestError,
+  } = useContestStore(state => state);
   const { chain, chains } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
@@ -38,21 +44,21 @@ export function useUser() {
     const abi = await getContestContractVersion(address, chainName);
     if (abi === null) {
       toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
-      setError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
-      setIsSuccess(false);
+      setContestError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
+      setIsContestSuccess(false);
       setCheckIfUserPassedSnapshotLoading(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
-      setIsLoading(false);
+      setIsContestLoading(false);
       return;
     }
-
-    if (!chains) return;
 
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
-      chainId: chains.find(c => c.name.toLowerCase() === chainName)?.id,
+      chainId: chains.find(
+        c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
+      )?.id,
     };
 
     return contractConfig;
@@ -78,14 +84,13 @@ export function useUser() {
       setCurrentUserSubmitProposalTokensAmount(amount / 1e18);
     } catch (e) {
       onContractError(e);
-      //@ts-ignore
       const customError = e as CustomError;
       if (!customError) return;
-      setError(customError);
-      setIsSuccess(false);
+      setContestError(customError);
+      setIsContestSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
-      setIsLoading(false);
+      setIsContestLoading(false);
       console.error(e);
     }
   }
@@ -95,7 +100,9 @@ export function useUser() {
    */
   async function checkIfCurrentUserQualifyToVote() {
     const contractConfig = await getContractConfig();
+
     if (!contractConfig) return;
+
     setCheckIfUserPassedSnapshotLoading(true);
     const accountData = getAccount();
 

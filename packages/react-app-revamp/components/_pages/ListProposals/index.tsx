@@ -50,6 +50,7 @@ export const ListProposals = () => {
     didUserPassSnapshotAndCanVote,
     checkIfUserPassedSnapshotLoading,
     currentUserSubmitProposalTokensAmount,
+    isLoading: isUserStoreLoading,
   } = useUserStore(state => state);
 
   const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
@@ -133,7 +134,7 @@ export const ListProposals = () => {
                     className={`${styles.listElement} animate-appear px-5 pt-5 pb-3 rounded-md 2xs:rounded-none 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
                     key={id}
                   >
-                    <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
+                    <div className="text-center 2xs:border-isLoading: isUserStoreLoading-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
                       {!isProposalDeleted(listProposalsData[id].content) &&
                         contestAuthorEthereumAddress === accountData?.address && (
                           <button
@@ -163,8 +164,7 @@ export const ListProposals = () => {
                               ))}
                             {!isProposalDeleted(listProposalsData[id].content) &&
                               didUserPassSnapshotAndCanVote &&
-                              contestStatus === CONTEST_STATUS.VOTING_OPEN &&
-                              currentUserAvailableVotesAmount > 0 && (
+                              contestStatus === CONTEST_STATUS.VOTING_OPEN && (
                                 <button
                                   onClick={() => onClickUpVote(id)}
                                   disabled={
@@ -175,8 +175,15 @@ export const ListProposals = () => {
                                   }
                                   className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center"
                                 >
-                                  <IconCaretUp className="text-2xs mie-2 2xs:mie-0" />
-                                  <span className="2xs:sr-only">Up vote</span>
+                                  {isUserStoreLoading ? (
+                                    <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
+                                  ) : (
+                                    <>
+                                      {" "}
+                                      <IconCaretUp className="text-2xs mie-2 2xs:mie-0" />
+                                      <span className="2xs:sr-only">Up vote</span>
+                                    </>
+                                  )}
                                 </button>
                               )}
                             <span className="flex 2xs:flex-col">
