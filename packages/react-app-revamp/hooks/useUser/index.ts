@@ -20,7 +20,7 @@ export function useUser() {
   } = useUserStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
   const { setIsSuccess, setIsLoading, setSnapshotTaken, setError } = useContestStore(state => state);
-  const { chain } = useNetwork();
+  const { chain, chains } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
 
@@ -47,10 +47,12 @@ export function useUser() {
       return;
     }
 
+    if (!chains) return;
+
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
-      chainId: chain?.id,
+      chainId: chains.find(c => c.name.toLowerCase() === chainName)?.id,
     };
 
     return contractConfig;
@@ -64,6 +66,7 @@ export function useUser() {
     if (!contractConfig) return;
     const accountData = getAccount();
     const contractBaseOptions = {};
+
     try {
       const amount = await readContract({
         ...contractConfig,

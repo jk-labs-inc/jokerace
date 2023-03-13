@@ -30,7 +30,7 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
 
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
-  const { chain } = useNetwork();
+  const { chain, chains } = useNetwork();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
 
   function onContractError(err: any) {
@@ -61,10 +61,12 @@ export function useProposal() {
         return;
       }
 
+      if (!chains) return;
+
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
-        chainId: chain?.id,
+        chainId: chains.find(c => c.name.toLowerCase() === chainName)?.id,
       };
 
       const contracts = slice.flatMap((id: number) => [
@@ -153,10 +155,13 @@ export function useProposal() {
       const useLegacyGetAllProposalsIdFn =
         //@ts-ignore
         abi?.filter(el => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
+
+      if (!chains) return;
+
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
-        chainId: chain?.id,
+        chainId: chains.find(c => c.name.toLowerCase() === chainName)?.id,
       };
       const proposalsIdsRawData = await readContract({
         ...contractConfig,
