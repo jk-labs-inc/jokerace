@@ -134,7 +134,7 @@ export const ListProposals = () => {
                     className={`${styles.listElement} animate-appear px-5 pt-5 pb-3 rounded-md 2xs:rounded-none 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
                     key={id}
                   >
-                    <div className="text-center 2xs:border-isLoading: isUserStoreLoading-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
+                    <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
                       {!isProposalDeleted(listProposalsData[id].content) &&
                         contestAuthorEthereumAddress === accountData?.address && (
                           <button
