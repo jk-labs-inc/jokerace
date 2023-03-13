@@ -86,7 +86,7 @@ const Page: NextPage = (props: PageProps) => {
                   <>
                     <span className="font-bold">
                       {new Intl.NumberFormat().format(amountOfTokensRequiredToSubmitEntry)}{" "}
-                      <span className="normal-case">${submitProposalToken.symbol}</span> required
+                      <span className="normal-case">${submitProposalToken?.symbol}</span> required
                     </span>{" "}
                     to submit a proposal
                   </>

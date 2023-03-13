@@ -176,7 +176,7 @@ export function useContest() {
       setContestName(results[0].toString());
       setContestAuthor(results[1].toString(), results[1].toString());
       //@ts-ignore
-      setContestMaxNumberSubmissionsPerUser(results[3]);
+      setContestMaxNumberSubmissionsPerUser(results[2]);
       //@ts-ignore
       setContestMaxProposalCount(results[3]);
       setVotingTokenAddress(results[4]);
