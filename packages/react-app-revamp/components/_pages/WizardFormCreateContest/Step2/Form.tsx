@@ -1,14 +1,14 @@
-import shallow from "zustand/shallow";
-import { useNetwork, useAccount } from "wagmi";
+import Button from "@components/UI/Button";
+import button from "@components/UI/Button/styles";
+import FormField from "@components/UI/FormField";
+import FormInput from "@components/UI/FormInput";
+import ToggleSwitch from "@components/UI/ToggleSwitch";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { usePress } from "@react-aria/interactions";
-import FormField from "@components/FormField";
-import FormInput from "@components/FormInput";
-import Button from "@components/Button";
-import ToggleSwitch from "@components/ToggleSwitch";
-import button from "@components/Button/styles";
-import { useStore } from "../store";
 import { useId } from "react";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import { useAccount, useNetwork } from "wagmi";
+import shallow from "zustand/shallow";
+import { useStore } from "../store";
 
 interface FormProps {
   showSkipButton: boolean;
@@ -32,7 +32,7 @@ export const Form = (props: FormProps) => {
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -219,11 +219,17 @@ export const Form = (props: FormProps) => {
 
         {showSkipButton === true && (
           <div>
-          <span className="text-2xs text-neutral-9 font-medium pie-1ex">or</span>
-          <div className={`${appearAsNeutralButton} ${dataDeployVotingToken === null ? 'opacity-75 hover:opacity-90 focus:opacity-100' : ''}`} tabIndex={0} role="button" {...pressProps}>
-            {dataDeployVotingToken !== null ? "Next" : "Skip"}
-          </div>
-
+            <span className="text-2xs text-neutral-9 font-medium pie-1ex">or</span>
+            <div
+              className={`${appearAsNeutralButton} ${
+                dataDeployVotingToken === null ? "opacity-75 hover:opacity-90 focus:opacity-100" : ""
+              }`}
+              tabIndex={0}
+              role="button"
+              {...pressProps}
+            >
+              {dataDeployVotingToken !== null ? "Next" : "Skip"}
+            </div>
           </div>
         )}
       </div>

@@ -5,17 +5,16 @@ export function useContestsIndex() {
     try {
       const { address } = getAccount();
       //@ts-ignore
-      const { chainId } = await getNetwork();
-      const tokenRawData = await fetchToken({ address: values.votingTokenAddress, chainId });
-      if (
-        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      ) {
-        const config = await import("@config/supabase");
-        const supabase = config.supabase;
-        const { error, data } = await supabase.from("contests").insert([
+      const { chainId } = getNetwork();
+
+      const [tokenRawData, supabaseConfig] = await Promise.all([
+        fetchToken({ address: values.votingTokenAddress, chainId }),
+        import("@config/supabase").then(config => config.supabase),
+      ]);
+
+      const { NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY } = process.env;
+      if (NEXT_PUBLIC_SUPABASE_URL && NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+        const { error, data } = await supabaseConfig.from("contests").insert([
           {
             created_at: new Date().toISOString(),
             start_at: new Date(values.datetimeOpeningSubmissions).toISOString(),

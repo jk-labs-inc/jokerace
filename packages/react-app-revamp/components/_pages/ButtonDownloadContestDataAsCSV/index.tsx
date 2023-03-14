@@ -1,37 +1,24 @@
-import { useEffect } from "react";
-import shallow from "zustand/shallow";
-import { useExportContestDataToCSV } from "@hooks/useExportContestDataToCSV/useExportContestDataToCSV";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import useContest from "@hooks/useContest";
+import Button from "@components/UI/Button";
+import button from "@components/UI/Button/styles";
+import Loader from "@components/UI/Loader";
 import { CSV_COLUMNS_HEADERS } from "@config/react-csv/export-contest";
-import { CSVLink } from "react-csv";
-import button from "@components/Button/styles";
-import Button from "@components/Button";
-import Loader from "@components/Loader";
+import { useExportContestDataToCSV } from "@hooks/useExportContestDataToCSV/useExportContestDataToCSV";
+import useProposal from "@hooks/useProposal";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { format } from "date-fns";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
+import { CSVLink } from "react-csv";
 
 export const ButtonDownloadContestDataAsCSV = () => {
-  const { fetchProposalsPage } = useContest();
-  const { asPath } = useRouter()
+  const { fetchProposalsPage } = useProposal();
+  const { asPath } = useRouter();
   const {
     hasPaginationProposalsNextPage,
     indexPaginationProposals,
     totalPagesPaginationProposals,
     currentPagePaginationProposals,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
-      //@ts-ignore
-      currentPagePaginationProposals: state.currentPagePaginationProposals,
-      //@ts-ignore
-      indexPaginationProposals: state.indexPaginationProposals,
-      //@ts-ignore
-      hasPaginationProposalsNextPage: state.hasPaginationProposalsNextPage,
-    }),
-    shallow,
-  );
+  } = useProposalStore(state => state);
 
   const { stateExportData, formatContestCSVData, queryContestResults } = useExportContestDataToCSV();
   async function startDownloading() {
@@ -55,29 +42,32 @@ export const ButtonDownloadContestDataAsCSV = () => {
   }
 
   useEffect(() => {
-    if (stateExportData.shouldStart === true) startDownloading();
+    if (stateExportData.shouldStart) startDownloading();
   }, [stateExportData.shouldStart]);
 
   useEffect(() => {
-    if (stateExportData.isReady === true) formatContestCSVData();
+    if (stateExportData.isReady) formatContestCSVData();
   }, [stateExportData.isReady]);
 
-  if(queryContestResults.isLoading) return (
-    <div className="animate-appear mb-5">
-      <Loader scale="component">{stateExportData.loadingMessage}</Loader>
-    </div>
-  )
-
-  if(queryContestResults.isSuccess && stateExportData.cid !== null && !stateExportData.isSuccess) 
+  if (queryContestResults.isLoading)
     return (
-      <a 
+      <div className="animate-appear mb-5">
+        <Loader scale="component">{stateExportData.loadingMessage}</Loader>
+      </div>
+    );
+
+  if (queryContestResults.isSuccess && stateExportData.cid !== null && !stateExportData.isSuccess)
+    return (
+      <a
         className={button({ intent: "primary-outline" })}
-        href={`https://${stateExportData.cid}.ipfs.w3s.link/result_contest_${asPath.split("/")[3]}_${asPath.split("/")[2]}.csv`}
+        href={`https://${stateExportData.cid}.ipfs.w3s.link/result_contest_${asPath.split("/")[3]}_${
+          asPath.split("/")[2]
+        }.csv`}
         download
       >
         Download CSV file
       </a>
-    )
+    );
 
   if (!stateExportData.shouldStart)
     return (
@@ -96,7 +86,7 @@ export const ButtonDownloadContestDataAsCSV = () => {
     <>
       {(stateExportData.isLoading || !stateExportData.isReady) && (
         <>
-          <p className='animate-appear p-3 mt-4 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4'>
+          <p className="animate-appear p-3 mt-4 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
             Make sure to not leave this page until the export is complete.
           </p>
           <div className="animate-appear mb-5">
@@ -109,7 +99,7 @@ export const ButtonDownloadContestDataAsCSV = () => {
           <p className={`font-bold text-sm text-primary-10`}>{stateExportData.loadingMessage}</p>
         </div>
       ) : (
-        stateExportData.isError && (
+        stateExportData.error && (
           <div className="animate-appear">
             <p className="text-sm font-bold mb-5 text-negative-10">
               Something went wrong while preparing the data. Please try again.

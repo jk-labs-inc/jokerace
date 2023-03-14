@@ -1,16 +1,15 @@
-import shallow from "zustand/shallow";
+import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
+import { useContractFactoryStore } from "@hooks/useContractFactory";
+import { waitForTransaction } from "@wagmi/core";
 import { ContractFactory } from "ethers";
 import { parseEther } from "ethers/lib/utils";
 import toast from "react-hot-toast";
+import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
-import { waitForTransaction } from "@wagmi/core";
-import { useContractFactory } from "@hooks/useContractFactory";
-//@ts-ignore
-import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
 import { useStore } from "../store";
 
 export function useDeployToken(form: any) {
-  const stateContractDeployment = useContractFactory();
+  const stateContractDeployment = useContractFactoryStore(state => state);
   const { chain } = useNetwork();
   const { refetch } = useSigner();
   const {
@@ -20,28 +19,24 @@ export function useDeployToken(form: any) {
     setTokenDeployedToChain,
     setModalDeployTokenOpen,
     setDeployTokenData,
-  } = useStore(
-    state => ({
-      //@ts-ignore
-      setTokenDeployedToChain: state.setTokenDeployedToChain,
-      //@ts-ignore
-      setModalDeployTokenOpen: state.setModalDeployTokenOpen,
-      //@ts-ignore
-      setDeployTokenData: state.setDeployTokenData,
-      //@ts-ignore
-      modalDeployTokenOpen: state.modalDeployTokenOpen,
-      //@ts-ignore
-      modalDeploySubmissionTokenOpen: state.modalDeploySubmissionTokenOpen,
-      //@ts-ignore
-      setDeploySubmissionTokenData: state.setDeploySubmissionTokenData,
-    }),
-    shallow,
-  );
+  } = useStore(state => ({
+    //@ts-ignore
+    setTokenDeployedToChain: state.setTokenDeployedToChain,
+    //@ts-ignore
+    setModalDeployTokenOpen: state.setModalDeployTokenOpen,
+    //@ts-ignore
+    setDeployTokenData: state.setDeployTokenData,
+    //@ts-ignore
+    modalDeployTokenOpen: state.modalDeployTokenOpen,
+    //@ts-ignore
+    modalDeploySubmissionTokenOpen: state.modalDeploySubmissionTokenOpen,
+    //@ts-ignore
+    setDeploySubmissionTokenData: state.setDeploySubmissionTokenData,
+  }));
 
   async function handleSubmitForm(values: any, isDeployingSubmissionToken: boolean) {
     stateContractDeployment.setIsSuccess(false);
-    stateContractDeployment.setIsError(false);
-    stateContractDeployment.setErrorMessage(null);
+    stateContractDeployment.setError(null);
 
     //@ts-ignore
     setTokenDeployedToChain(chain);
@@ -87,17 +82,23 @@ export function useDeployToken(form: any) {
       }
       stateContractDeployment.setIsLoading(false);
       stateContractDeployment.setIsSuccess(true);
-      stateContractDeployment.setIsError(false);
-      stateContractDeployment.setErrorMessage(null);
+      stateContractDeployment.setError(null);
       form.reset();
     } catch (e) {
-      console.error(e);
-      if (modalDeployTokenOpen === false && modalDeploySubmissionTokenOpen === false)
-        toast.error(`The contract for your token ${values.tokenName} ($${values.tokenSymbol}) couldn't be deployed.`);
-      stateContractDeployment.setIsError(true);
-      //@ts-ignore
-      stateContractDeployment.setErrorMessage(e.message);
-      stateContractDeployment.setIsLoading(false);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+      if (!modalDeployTokenOpen && !modalDeploySubmissionTokenOpen) {
+        const message =
+          customError?.message ||
+          `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) couldn't be deployed.`;
+        toast.error(message);
+        stateContractDeployment.setError({
+          code: customError.code,
+          message,
+        });
+        stateContractDeployment.setIsLoading(false);
+      }
     }
   }
 

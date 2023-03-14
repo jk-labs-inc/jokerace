@@ -1,39 +1,35 @@
-import DialogModal from "@components/DialogModal";
-import FormField from "@components/FormField";
-import FormInput from "@components/FormInput";
+import DialogModal from "@components/UI/DialogModal";
+import FormField from "@components/UI/FormField";
+import FormInput from "@components/UI/FormInput";
 import { chains } from "@config/wagmi";
 import { CheckIcon, ExclamationIcon, ShieldExclamationIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useBalance, useNetwork } from "wagmi";
-import { useStore as useStoreRewardsModule } from "@hooks/useRewardsModule/store";
+import { useRewardsStore } from "@hooks/useRewards/store";
 
 interface DialogCheckBalanceRewardsModuleProps {
   isOpen: boolean;
-  setIsOpen: () => void;
+  setIsOpen: (value: boolean) => void;
 }
 export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewardsModuleProps) => {
   const { ...dialogProps } = props;
-  const storeRewardsModule = useStoreRewardsModule();
+  const rewardsStore = useRewardsStore(state => state);
   const { asPath } = useRouter();
   const [inputRewardsModuleBalanceCheck, setInputRewardsModuleBalanceCheck] = useState("");
-  const { chain } = useNetwork()
+  const { chain } = useNetwork();
   const queryTokenBalance = useBalance({
-    //@ts-ignore
-    addressOrName: storeRewardsModule.rewardsModule?.contractAddress,
+    addressOrName: rewardsStore?.rewards?.contractAddress,
     chainId: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id,
     token: inputRewardsModuleBalanceCheck,
     //@ts-ignore
     enabled: inputRewardsModuleBalanceCheck !== "" && inputRewardsModuleBalanceCheck?.match(/^0x[a-fA-F0-9]{40}$/),
     onSuccess(data) {
       if (parseFloat(data?.formatted) > 0) {
-        //@ts-ignore
-        storeRewardsModule.setRewardsModule({
-          //@ts-ignore
-          ...storeRewardsModule.rewardsModule,
+        rewardsStore.setRewards({
+          ...rewardsStore.rewards,
           balance: {
-            //@ts-ignore
-            ...storeRewardsModule.rewardsModule.balance,
+            ...rewardsStore.rewards.balance,
             contractAddress: inputRewardsModuleBalanceCheck,
             tokenBalance: data?.formatted,
           },
@@ -54,7 +50,7 @@ export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewards
               className="text-sm"
               htmlFor="inputRewardsModuleBalanceCheck"
             >
-             Don&apos;t see a token you expected? Add the address below to refresh balances on this page
+              Don&apos;t see a token you expected? Add the address below to refresh balances on this page
             </FormField.Label>
             <FormField.Description id="inputRewardsModuleBalanceCheck-description">
               The Ethereum address of the ERC20 token you want to check the balance of
@@ -94,13 +90,14 @@ export const DialogCheckBalanceRewardsModule = (props: DialogCheckBalanceRewards
             >
               <ShieldExclamationIcon className="text-secondary-11 mie-1ex w-5" />
               The token must be a valid &nbsp;
-              <span className="font-mono normal-case">ERC20</span>&nbsp; token on {chain?.name}<br />
+              <span className="font-mono normal-case">ERC20</span>&nbsp; token on {chain?.name}
+              <br />
               <a
                 target="_blank"
                 rel="nofollow noreferrer"
                 href="https://metamask.zendesk.com/hc/en-us/articles/360059683451-How-to-find-a-token-contract-address"
               >
-               Check <span className="link">this article</span> on how to find token addresses
+                Check <span className="link">this article</span> on how to find token addresses
               </a>
             </p>
           )}

@@ -1,21 +1,21 @@
-import { useNetwork, useAccount, useToken } from "wagmi";
-import { usePress } from "@react-aria/interactions";
-import shallow from "zustand/shallow";
-import Button from "@components/Button";
-import button from "@components/Button/styles";
-import FormField from "@components/FormField";
-import FormInput from "@components/FormInput";
-import FormTextarea from "@components/FormTextarea";
-import { useStore } from "../store";
-import { isAfter, isBefore, isFuture } from "date-fns";
+import Button from "@components/UI/Button";
+import button from "@components/UI/Button/styles";
+import FormField from "@components/UI/FormField";
+import FormInput from "@components/UI/FormInput";
+import FormRadioGroup from "@components/UI/FormRadioGroup";
+import FormRadioOption from "@components/UI/FormRadioOption";
+import FormTextarea from "@components/UI/FormTextarea";
+import ToggleSwitch from "@components/UI/ToggleSwitch";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { RadioGroup } from "@headlessui/react";
-import FormRadioOption from "@components/FormRadioOption";
-import FormRadioGroup from "@components/FormRadioGroup";
-import ToggleSwitch from "@components/ToggleSwitch";
-import { useId } from "react";
-import { CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
 import ordinalize from "@helpers/ordinalize";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import { CheckIcon, ExclamationIcon, PlusIcon, ShieldExclamationIcon, TrashIcon } from "@heroicons/react/outline";
+import { usePress } from "@react-aria/interactions";
+import { isAfter, isBefore, isFuture } from "date-fns";
+import { useId } from "react";
+import { useAccount, useNetwork, useToken } from "wagmi";
+import shallow from "zustand/shallow";
+import { useStore } from "../store";
 interface FormProps {
   isDeploying: boolean;
   // the following are returned by felte hook useForm()
@@ -37,7 +37,7 @@ export const Form = (props: FormProps) => {
   const { isConnected } = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -1087,11 +1087,12 @@ export const Form = (props: FormProps) => {
             (data()?.rewardsType === "erc20" && (!data()?.rewardTokenAddress || !erc20TokenRewards?.data?.name)) ||
             (data()?.rewardsType !== "noRewards" &&
               (data()?.rewards?.length === 0 ||
-                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardPercentageAmount))?.length > 0 || 
-                  data()?.rewards.reduce((sumRewards: number, reward: any) => {
-                    //@ts-ignore
-                    return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
-                  }, 0) != 100))
+                data()?.rewards?.filter((r: any) => isNaN(r?.winningRank) || isNaN(r?.rewardPercentageAmount))?.length >
+                  0 ||
+                data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                  //@ts-ignore
+                  return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
+                }, 0) != 100))
           }
           type="submit"
         >

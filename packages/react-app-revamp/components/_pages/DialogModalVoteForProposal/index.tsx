@@ -1,15 +1,16 @@
-import shallow from "zustand/shallow";
-import Button from "@components/Button";
-import DialogModal from "@components/DialogModal";
-import FormField from "@components/FormField";
-import FormInput from "@components/FormInput";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import { useStore as useStoreCastVotes } from "@hooks/useCastVotes/store";
-import { useEffect, useState } from "react";
-import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
-import useCastVotes from "@hooks/useCastVotes";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
+import FormField from "@components/UI/FormField";
+import FormInput from "@components/UI/FormInput";
+import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import { RadioGroup } from "@headlessui/react";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
+import useCastVotes from "@hooks/useCastVotes";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { useProposalStore } from "@hooks/useProposal/store";
+import { useUserStore } from "@hooks/useUser/store";
+import { useEffect, useState } from "react";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -17,38 +18,12 @@ interface DialogModalVoteForProposalProps {
 }
 
 export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProps) => {
-  const {
-    pickedProposal,
-    transactionData,
-    castPositiveAmountOfVotes,
-    setCastPositiveAmountOfVotes,
-  } = useStoreCastVotes(
-    state => ({
-      //@ts-ignore
-      pickedProposal: state.pickedProposal,
-      //@ts-ignore
-      transactionData: state.transactionData,
-      //@ts-ignore
-      castPositiveAmountOfVotes: state.castPositiveAmountOfVotes,
-      //@ts-ignore
-      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
-    }),
-    shallow,
-  );
-  const { downvotingAllowed, listProposalsData, contestStatus, currentUserAvailableVotesAmount } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      downvotingAllowed: state.downvotingAllowed,
-      //@ts-ignore
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-    }),
-    shallow,
-  );
-  //@ts-ignore
+  const { pickedProposal, transactionData, castPositiveAmountOfVotes, setCastPositiveAmountOfVotes } =
+    useCastVotesStore(state => state);
+  const { downvotingAllowed, contestStatus } = useContestStore(state => state);
+  const { listProposalsData } = useProposalStore(state => state);
+  const { currentUserAvailableVotesAmount } = useUserStore(state => state);
+
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
   const [votesToCast, setVotesToCast] = useState(
@@ -59,17 +34,17 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
 
   useEffect(() => {
     if (isSuccess) setShowForm(false);
-    if (isLoading || error !== null) setShowForm(true);
-    if (isLoading === true || error !== null || isSuccess === true) setShowDeploymentSteps(true);
+    if (isLoading || error) setShowForm(true);
+    if (isLoading || error || isSuccess) setShowDeploymentSteps(true);
   }, [isSuccess, isLoading, error]);
 
   useEffect(() => {
-    if (props.isOpen === false && !isLoading) {
+    if (!props.isOpen && !isLoading) {
       setVotesToCast(currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1);
       setShowForm(true);
       setShowDeploymentSteps(false);
     }
-  }, [props.isOpen, isLoading]);
+  }, [props.isOpen, isLoading, currentUserAvailableVotesAmount]);
 
   function onSubmitCastVotes(e: any) {
     e.preventDefault();
@@ -80,12 +55,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
     <DialogModal title="Cast your votes" {...props}>
       {showDeploymentSteps && (
         <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction
-            textError={error}
-            isSuccess={isSuccess}
-            isError={error !== null}
-            isLoading={isLoading}
-          />
+          <TrackerDeployTransaction error={error} isSuccess={isSuccess} isLoading={isLoading} />
         </div>
       )}
 
@@ -104,18 +74,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
           </div>
         ))}
 
-      {currentUserAvailableVotesAmount > 0 &&
-        error !== null &&
-        !isSuccess &&
-        contestStatus === CONTEST_STATUS.VOTING_OPEN && (
-          <>
-            <Button onClick={onSubmitCastVotes} intent="neutral-outline" type="submit" className="mx-auto my-3">
-              Try again
-            </Button>
-          </>
-        )}
-
-      {showForm === true && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 && (
+      {showForm && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 && (
         <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitCastVotes}>
           {downvotingAllowed === true && (
             <RadioGroup
@@ -161,7 +120,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
               Cast votes
             </FormField.Label>
             <div className="flex items-center">
-              {downvotingAllowed === true && (
+              {downvotingAllowed && (
                 <span className="text-neutral-9 font-bold text-lg pie-1ex">
                   {castPositiveAmountOfVotes ? "+" : "-"}
                 </span>
@@ -182,7 +141,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
                 name="votesToCast"
                 id="votesToCast"
                 disabled={isLoading}
-                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount === true}
+                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
                 aria-describedby="input-votesToCast-helpblock-1 input-votesToCast-helpblock-2"
               />
             </div>
@@ -193,14 +152,14 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
                 hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
               >
                 <span>Available: {currentUserAvailableVotesAmount}</span>
-                {pickedProposal !== null && (
+                {pickedProposal && (
                   <span>
                     Votes on submission: {new Intl.NumberFormat().format(listProposalsData[pickedProposal].votes)}{" "}
                   </span>
                 )}
               </FormField.HelpBlock>
               <FormField.HelpBlock
-                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount === true}
+                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
                 id="input-contestaddress-helpblock-2"
               >
                 Your amount of votes must be positive and not superior to the number of voting tokens you hold.
@@ -209,7 +168,7 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
           </FormField>
           <Button
             disabled={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount || isLoading}
-            className={isLoading || error !== null ? "hidden" : "mt-3"}
+            className={isLoading ? "hidden" : "mt-3"}
             type="submit"
           >
             Vote!

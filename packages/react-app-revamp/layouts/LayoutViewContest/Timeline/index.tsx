@@ -1,19 +1,12 @@
-import shallow from "zustand/shallow";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
 
+import { IconSpinner } from "@components/UI/Icons";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
 import Countdown from "./Countdown";
 import Steps from "./Steps";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { IconSpinner } from "@components/Icons";
 
 export const Timeline = () => {
-  const { contestStatus } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-    }),
-    shallow,
-  );
+  const { contestStatus } = useContestStore(state => state);
 
   if (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING)
     return (

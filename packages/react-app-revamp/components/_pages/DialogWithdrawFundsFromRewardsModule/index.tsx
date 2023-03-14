@@ -1,8 +1,8 @@
-import DialogModal from "@components/DialogModal";
+import DialogModal from "@components/UI/DialogModal";
 
 interface DialogWithdrawFundsFromRewardsModuleProps {
   isOpen: boolean;
-  setIsOpen: () => void;
+  setIsOpen: (value: boolean) => void;
   children: React.ReactNode;
 }
 

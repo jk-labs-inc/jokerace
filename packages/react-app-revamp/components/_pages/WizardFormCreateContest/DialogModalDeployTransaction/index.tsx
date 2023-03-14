@@ -1,29 +1,38 @@
-import DialogModal from "@components/DialogModal";
-import type { DialogModalProps } from '@components/DialogModal'
-import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
+import type { DialogModalProps } from "@components/UI/DialogModal";
+import DialogModal from "@components/UI/DialogModal";
+import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
+import { FC } from "react";
+import { CustomError } from "types/error";
 
-interface DialogModalDeployTransaction extends DialogModalProps {
-  transactionHref?: string
-  textPending?: string
-  error?: React.ReactNode
-  isError: boolean
-  isLoading: boolean
-  isSuccess: boolean
+interface DialogModalDeployTransactionProps extends DialogModalProps {
+  transactionHref?: string;
+  textPending?: string;
+  error: CustomError | null;
+  isLoading: boolean;
+  isSuccess: boolean;
 }
 
-export const DialogModalDeployTransaction = (props: DialogModalDeployTransaction) => {
-    const { children, isError, isLoading, isSuccess, error, textPending, transactionHref, ...rest } = props
-    return <DialogModal {...rest}>
-        <TrackerDeployTransaction
-          textError={error}
-          isError={isError}
-          isLoading={isLoading}
-          isSuccess={isSuccess}
-          textPending={textPending}
-          transactionHref={transactionHref}
-        />
-        {children}
+export const DialogModalDeployTransaction: FC<DialogModalDeployTransactionProps> = ({
+  children,
+  isLoading,
+  isSuccess,
+  error,
+  textPending,
+  transactionHref,
+  ...rest
+}) => {
+  return (
+    <DialogModal {...rest}>
+      <TrackerDeployTransaction
+        error={error}
+        isLoading={isLoading}
+        isSuccess={isSuccess}
+        textPending={textPending}
+        transactionHref={transactionHref}
+      />
+      {children}
     </DialogModal>
-}
+  );
+};
 
-export default DialogModalDeployTransaction
+export default DialogModalDeployTransaction;

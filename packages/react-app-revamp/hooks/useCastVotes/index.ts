@@ -1,53 +1,43 @@
-import toast from "react-hot-toast";
-import { writeContract, waitForTransaction } from "@wagmi/core";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useStore as useStoreCastVotes } from "./store";
-import { useNetwork } from "wagmi";
-import { useRouter } from "next/router";
-import { parseUnits } from "ethers/lib/utils";
-import useContest from "@hooks/useContest";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import useContest from "@hooks/useContest";
+import useUser from "@hooks/useUser";
+import { waitForTransaction, writeContract } from "@wagmi/core";
+import { parseUnits } from "ethers/lib/utils";
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
+import { CustomError } from "types/error";
+import { useNetwork } from "wagmi";
+import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
   const {
-    //@ts-ignore
     castPositiveAmountOfVotes,
-    //@ts-ignore
     pickedProposal,
-    //@ts-ignore
     isLoading,
-    //@ts-ignore
     isSuccess,
-    //@ts-ignore
     error,
-    //@ts-ignore
     setIsLoading,
-    //@ts-ignore
     setIsSuccess,
-    //@ts-ignore
     setError,
-    //@ts-ignore
     setTransactionData,
-  } = useStoreCastVotes();
+  } = useCastVotesStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
-  const { updateCurrentUserVotes } = useContest();
+  const { updateCurrentUserVotes } = useUser();
 
   async function castVotes(amount: number, isPositive: boolean) {
-    const address = asPath.split("/")[3];
-    const chainName = asPath.split("/")[2];
-    const abi = await getContestContractVersion(address, chainName);
+    const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
+    const abi = await getContestContractVersion(id, chainId);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
     const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi ? abi : DeployedContestContract.abi,
+      addressOrName: id,
+      contractInterface: abi ?? DeployedContestContract.abi,
     };
     try {
-      // args are (*in this order!*): proposalId, support, numVotes
-
       const txCastVotes = await writeContract({
         ...contractConfig,
         functionName: "castVote",
@@ -55,27 +45,29 @@ export function useCastVotes() {
       });
       const receipt = await waitForTransaction({
         chainId: chain?.id,
-        //@ts-ignore
         hash: txCastVotes.hash,
         //@ts-ignore
-        transactionHref: `${chain.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
+        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
       });
       setTransactionData({
         hash: receipt.transactionHash,
       });
       await updateCurrentUserVotes();
-
       setIsLoading(false);
       setIsSuccess(true);
       toast.success(`Your votes were cast successfully!`);
     } catch (e) {
-      toast.error(
-        //@ts-ignore
-        e?.data?.message ?? "Something went wrong while casting your votes.",
-      );
-      console.error(e);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      const message = customError.message || "Something went wrong while casting your votes";
+      toast.error(message);
+      setError({
+        code: customError.code,
+        message,
+      });
       setIsLoading(false);
-      setError(e);
     }
   }
 

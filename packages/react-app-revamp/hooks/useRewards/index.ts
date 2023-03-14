@@ -4,34 +4,24 @@ import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
-import { useStore } from "./store";
+import { useRewardsStore } from "./store";
 import { useNetwork, useQuery } from "wagmi";
+import { CustomError } from "types/error";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
-  const { chain } = useNetwork()
+  const { chain } = useNetwork();
 
-  const {
-    //@ts-ignore
-    rewardsModule,
-    //@ts-ignore
-    setIsLoadingModule,
-    //@ts-ignore
-    setIsLoadingModuleError,
-    //@ts-ignore
-    setIsLoadingModuleSuccess,
-    //@ts-ignore
-    setRewardsModule,
-  } = useStore();
+  const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
 
   const queryBalanceRewardsModule = useQuery(
-    ["balance-rewards-module", rewardsModule?.contractAddress],
+    ["balance-rewards-module", rewards?.contractAddress],
     async () => {
       try {
         // Get rewards module contract balance
         // See: https://docs.alchemy.com/docs/how-to-get-all-tokens-owned-by-an-address
         const contestChainName = asPath.split("/")[2];
-        const contestRewardModuleAddress = rewardsModule?.contractAddress;
+        const contestRewardModuleAddress = rewards?.contractAddress;
         const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === contestChainName)[0];
         //@ts-ignore
         const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
@@ -53,8 +43,8 @@ export function useRewardsModule() {
         const balance = asJson.result?.tokenBalances?.filter((token: any) => {
           return token["tokenBalance"] !== "0";
         });
-        setRewardsModule({
-          ...rewardsModule,
+        setRewards({
+          ...rewards,
           balance: balance,
         });
         return balance;
@@ -63,20 +53,27 @@ export function useRewardsModule() {
       }
     },
     {
-      enabled: rewardsModule?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
+      enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
       onError(e) {
-        toast.error(
-          `Something went wrong and the balance of the rewards module couldn't be retrieved. Try to reload the page.`,
-        );
-        console.error(e);
+        const customError = e as CustomError;
+
+        if (!customError) return;
+        const message =
+          customError.message ||
+          "Something went wrong and the balance of the rewards module couldn't be retrieved. Try to reload the page.";
+        toast.error(message);
+        setError({
+          code: customError.code,
+          message,
+        });
       },
     },
   );
 
   async function getContestRewardsModule() {
-    setIsLoadingModule(true);
-    setIsLoadingModuleError(null);
-    setIsLoadingModuleSuccess(false);
+    setIsLoading(true);
+    setError(null);
+    setIsSuccess(false);
 
     try {
       const contestAddress = asPath.split("/")[3];
@@ -84,9 +81,11 @@ export function useRewardsModule() {
       const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]?.id;
       const abiContest = await getContestContractVersion(contestAddress, contestChainName);
       if (abiContest === null) {
-        setIsLoadingModule(false);
-        setIsLoadingModuleError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
-        setIsLoadingModuleSuccess(false);
+        setIsLoading(false);
+        setError({
+          message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.`,
+        });
+        setIsSuccess(false);
         toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
         return;
       }
@@ -131,8 +130,8 @@ export function useRewardsModule() {
         //@ts-ignore
         contracts: contractsRewardsModule,
       });
-      setIsLoadingModule(false);
-      setRewardsModule({
+      setIsLoading(false);
+      setRewards({
         abi: abiRewardsModule,
         contractAddress: contestRewardModuleAddress,
         creator: rewardsModule[0],
@@ -141,13 +140,19 @@ export function useRewardsModule() {
         blockExplorers: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]
           ?.blockExplorers?.default,
       });
-      setIsLoadingModuleSuccess(true);
+      setIsSuccess(true);
     } catch (e) {
-      setIsLoadingModule(false);
-      // @ts-ignore
-      setIsLoadingModuleError(e?.message ?? e);
-      setIsLoadingModuleSuccess(false);
-      console.error(e);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      const message = customError.message || "Something went wrong.";
+      toast.error(message);
+      setError({
+        code: customError.code,
+        message,
+      });
+      setIsLoading(false);
     }
   }
 
