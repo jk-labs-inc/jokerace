@@ -1,4 +1,4 @@
-import Loader from "@components/Loader";
+import Loader from "@components/UI/Loader";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { chainsImages } from "@config/wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
@@ -31,10 +31,7 @@ export const ListContests = (props: ListContestsProps) => {
       ) : (
         <>
           {result?.count === 0 ? (
-            <div className="text-neutral-9 text-center italic mb-6 animate-appear">
-              No contests found
-              {/* @ts-ignore */}
-            </div>
+            <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
             <div className="animate-appear">
               <div className="font-bold mb-4 text-md flex items-center pie-1ex">

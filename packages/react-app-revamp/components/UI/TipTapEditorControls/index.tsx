@@ -4,7 +4,6 @@ import {
   IconEditorClearFormat,
   IconEditorCode,
   IconEditorCodeBlock,
-  IconEditorDivider,
   IconEditorH1,
   IconEditorH2,
   IconEditorH3,
@@ -20,7 +19,7 @@ import {
   IconEditorRemoveAnchor,
   IconEditorStrike,
   IconEditorUndo,
-} from "@components/Icons";
+} from "@components/UI/Icons";
 import styles from "./styles.module.css";
 
 const Separator = () => {
@@ -45,13 +44,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
     <div className="flex flex-wrap space-i-1">
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleBold()
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleBold().run()}
         className={`${styles.control} ${editor.isActive("bold") ? styles["control--active"] : ""} `}
       >
         <IconEditorBold />
@@ -59,13 +52,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleItalic()
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleItalic().run()}
         className={`${styles.control} ${editor.isActive("italic") ? styles["control--active"] : ""}`}
       >
         <IconEditorItalic />
@@ -73,13 +60,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleStrike()
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleStrike().run()}
         className={`${styles.control} ${editor.isActive("strike") ? styles["control--active"] : ""}`}
       >
         <IconEditorStrike />
@@ -87,13 +68,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleCode()
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleCode().run()}
         className={`${styles.control} ${editor.isActive("code") ? styles["control--active"] : ""}`}
       >
         <IconEditorCode />
@@ -102,13 +77,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       <Separator />
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .setParagraph()
-            .run()
-        }
+        onClick={() => editor.chain().focus().setParagraph().run()}
         className={`${styles.control} ${editor.isActive("paragraph") ? styles["control--active"] : ""}`}
       >
         <IconEditorParagraph />
@@ -116,13 +85,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleHeading({ level: 1 })
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
         className={`${styles.control} ${editor.isActive("heading", { level: 1 }) ? styles["control--active"] : ""}`}
       >
         <IconEditorH1 />
@@ -130,13 +93,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleHeading({ level: 2 })
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         className={`${styles.control} ${editor.isActive("heading", { level: 2 }) ? styles["control--active"] : ""}`}
       >
         <IconEditorH2 />
@@ -144,13 +101,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleHeading({ level: 3 })
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         className={`${styles.control} ${editor.isActive("heading", { level: 3 }) ? styles["control--active"] : ""}`}
       >
         <IconEditorH3 />
@@ -158,13 +109,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleHeading({ level: 4 })
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
         className={`${styles.control} ${editor.isActive("heading", { level: 4 }) ? styles["control--active"] : ""}`}
       >
         <IconEditorH4 />
@@ -172,13 +117,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleHeading({ level: 5 })
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
         className={`${styles.control} ${editor.isActive("heading", { level: 5 }) ? styles["control--active"] : ""}`}
       >
         <IconEditorH5 />
@@ -196,22 +135,12 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
 
           // empty
           if (url === "") {
-            editor
-              .chain()
-              .focus()
-              .extendMarkRange("link")
-              .unsetLink()
-              .run();
+            editor.chain().focus().extendMarkRange("link").unsetLink().run();
             return;
           }
 
           // update link
-          editor
-            .chain()
-            .focus()
-            .extendMarkRange("link")
-            .setLink({ href: url, target: "_blank" })
-            .run();
+          editor.chain().focus().extendMarkRange("link").setLink({ href: url, target: "_blank" }).run();
         }}
         title="Link"
       >
@@ -234,13 +163,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
 
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleBulletList()
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={`${styles.control} ${editor.isActive("bulletList") ? styles["control--active"] : ""}`}
       >
         <IconEditorListUnordered />
@@ -248,13 +171,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleOrderedList()
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleOrderedList().run()}
         className={`${styles.control} ${editor.isActive("orderedList") ? styles["control--active"] : ""}`}
       >
         <IconEditorListOrdered />
@@ -262,13 +179,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleCodeBlock()
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         className={`${styles.control} ${editor.isActive("codeBlock") ? styles["control--active"] : ""}`}
       >
         <IconEditorCodeBlock />
@@ -276,13 +187,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
       <button
         type="button"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleBlockquote()
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleBlockquote().run()}
         className={`${styles.control} ${editor.isActive("blockquote") ? styles["control--active"] : ""}`}
       >
         <IconEditorQuote />
@@ -297,11 +202,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
           );
 
           if (url) {
-            editor
-              .chain()
-              .focus()
-              .setImage({ src: url })
-              .run();
+            editor.chain().focus().setImage({ src: url }).run();
           }
         }}
       >
@@ -312,57 +213,21 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       <button
         type="button"
         className={`${styles.text} ${styles.control}`}
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .setHorizontalRule()
-            .run()
-        }
+        onClick={() => editor.chain().focus().setHorizontalRule().run()}
       >
         <span className="text-2xs">Divider</span>
         <span className="sr-only">Add a divider</span>
       </button>
       <Separator />
-      <button
-        type="button"
-        className={styles.control}
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .undo()
-            .run()
-        }
-      >
+      <button type="button" className={styles.control} onClick={() => editor.chain().focus().undo().run()}>
         <IconEditorUndo />
         <span className="sr-only">Undo previous action</span>
       </button>
-      <button
-        type="button"
-        className={styles.control}
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .redo()
-            .run()
-        }
-      >
+      <button type="button" className={styles.control} onClick={() => editor.chain().focus().redo().run()}>
         <IconEditorRedo />
         <span className="sr-only">Redo previous action</span>
       </button>
-      <button
-        type="button"
-        className={styles.control}
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .clearNodes()
-            .run()
-        }
-      >
+      <button type="button" className={styles.control} onClick={() => editor.chain().focus().clearNodes().run()}>
         <IconEditorClearFormat />
         <span className="sr-only">Clear all formatting in seleted text</span>
       </button>

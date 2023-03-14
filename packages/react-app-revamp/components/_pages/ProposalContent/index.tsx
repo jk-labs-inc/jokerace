@@ -5,7 +5,7 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import styles from "./styles.module.css";
 import isProposalDeleted from "@helpers/isProposalDeleted";
-import EtheuremAddress from "@components/EtheuremAddress";
+import EtheuremAddress from "@components/UI/EtheuremAddress";
 interface ProposalContentProps {
   content: string;
   author: string;

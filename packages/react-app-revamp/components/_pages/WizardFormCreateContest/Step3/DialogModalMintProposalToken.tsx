@@ -1,18 +1,17 @@
-import { useAccount } from "wagmi";
-import shallow from "zustand/shallow";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
+import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
-import Button from "@components/Button";
-import DialogModal from "@components/DialogModal";
-import TrackerDeployTransaction from "@components/TrackerDeployTransaction";
 import { copyToClipboard } from "@helpers/copyToClipboard";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import Form from "../Step2/Form";
 import { schema } from "../Step2/schema";
 import useDeployToken from "../Step2/useDeployToken";
 import { useStore } from "../store";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 interface DialogModalMintProposalTokenProps {
   formCreateContestSetFields: any;
@@ -21,7 +20,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
   const { isConnected } = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -31,23 +30,20 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
     dataDeploySubmissionToken,
     setModalDeploySubmissionTokenOpen,
     modalDeploySubmissionTokenOpen,
-  } = useStore(
-    state => ({
-      //@ts-ignore
-      setCurrentStep: state.setCurrentStep,
-      //@ts-ignore
-      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
-      //@ts-ignore
-      modalDeploySubmissionTokenOpen: state.modalDeploySubmissionTokenOpen,
-      //@ts-ignore
-      setModalDeploySubmissionTokenOpen: state.setModalDeploySubmissionTokenOpen,
-      //@ts-ignore
-      tokenDeployedToChain: state.tokenDeployedToChain,
-      //@ts-ignore
-      dataDeploySubmissionToken: state.dataDeploySubmissionToken,
-    }),
-    shallow,
-  );
+  } = useStore(state => ({
+    //@ts-ignore
+    setCurrentStep: state.setCurrentStep,
+    //@ts-ignore
+    dataDeploySubmissionToken: state.dataDeploySubmissionToken,
+    //@ts-ignore
+    modalDeploySubmissionTokenOpen: state.modalDeploySubmissionTokenOpen,
+    //@ts-ignore
+    setModalDeploySubmissionTokenOpen: state.setModalDeploySubmissionTokenOpen,
+    //@ts-ignore
+    tokenDeployedToChain: state.tokenDeployedToChain,
+    //@ts-ignore
+    dataDeploySubmissionToken: state.dataDeploySubmissionToken,
+  }));
   const form = useForm({
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values, true),
@@ -82,8 +78,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
     setShowDeploymentSteps(false);
     stateContractDeployment.setIsLoading(false);
     stateContractDeployment.setIsSuccess(false);
-    stateContractDeployment.setIsError(false);
-    stateContractDeployment.setErrorMessage(null);
+    stateContractDeployment.setError(null);
   }, []);
 
   return (
@@ -95,8 +90,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
       <div className="animate-appear">
         {showDeploymentSteps && (
           <TrackerDeployTransaction
-            textError={stateContractDeployment.error}
-            isError={stateContractDeployment.isError}
+            error={stateContractDeployment.error}
             isLoading={stateContractDeployment.isLoading}
             isSuccess={stateContractDeployment.isSuccess}
             transactionHref={tokenDeployedToChain.transactionHref}
@@ -134,7 +128,7 @@ export const DialogModalMintProposalToken = (props: DialogModalMintProposalToken
               Go back to contest creation
             </Button>
           )}
-          {stateContractDeployment.isError && (
+          {stateContractDeployment.error && (
             <Button
               onClick={() => {
                 handleSubmitForm(form.data(), true);

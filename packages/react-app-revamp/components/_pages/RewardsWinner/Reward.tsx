@@ -1,8 +1,7 @@
-import shallow from "zustand/shallow";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import Button from "@components/UI/Button";
+import Loader from "@components/UI/Loader";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import Button from "@components/Button";
-import Loader from "@components/Loader";
+import { useContestStore } from "@hooks/useContest/store";
 import { useNetwork } from "wagmi";
 
 interface RewardProps {
@@ -25,13 +24,7 @@ export const Reward = (props: RewardProps) => {
     queryRankRewardsReleased,
   } = props;
   const { chain } = useNetwork();
-  const { contestStatus } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-    }),
-    shallow,
-  );
+  const { contestStatus } = useContestStore(state => state);
 
   if (queryTokenBalance.isLoading) return <Loader scale="component">Loading ERC20 token info...</Loader>;
   if (queryTokenBalance?.isError)
@@ -84,7 +77,7 @@ export const Reward = (props: RewardProps) => {
       {queryRankRewardsReleasable.data > 0 && parseFloat(queryTokenBalance?.data?.formatted) > 0 && (
         <div className="mb-2">
           <p className="animate-appear">
-          waiting to be sent: {queryRankRewardsReleasable.data}{" "}
+            waiting to be sent: {queryRankRewardsReleasable.data}{" "}
             <span className="normal-case">{queryTokenBalance?.data?.symbol}</span>
           </p>
         </div>

@@ -1,10 +1,6 @@
-import { useEffect, useState } from "react";
-import shallow from "zustand/shallow";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { useAccount, useNetwork } from "wagmi";
-import { isAfter, isBefore, isDate } from "date-fns";
-import { ArrowLeftIcon } from "@heroicons/react/solid";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
+import Loader from "@components/UI/Loader";
 import {
   ROUTE_CONTEST_PROPOSAL,
   ROUTE_VIEW_CONTEST,
@@ -12,53 +8,44 @@ import {
   ROUTE_VIEW_CONTEST_REWARDS,
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
-import Button from "@components/Button";
-import Loader from "@components/Loader";
-import DialogModal from "@components/DialogModal";
-import {
-  useStore as useStoreContest,
-  Provider as ProviderContest,
-  createStore as createStoreContest,
-} from "@hooks/useContest/store";
-import {
-  useStore as useStoreSubmitProposal,
-  Provider as ProviderSubmitProposal,
-  createStore as createStoreSubmitProposal,
-} from "@hooks/useSubmitProposal/store";
+import { ArrowLeftIcon } from "@heroicons/react/solid";
+import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
+import { ProposalWrapper, useProposalStore } from "@hooks/useProposal/store";
+import { UserWrapper, useUserStore } from "@hooks/useUser/store";
 
-import {
-  useStore as useStoreCastVotes,
-  Provider as ProviderCastVotes,
-  createStore as createStoreCastVotes,
-} from "@hooks/useCastVotes/store";
+import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { isAfter, isBefore, isDate } from "date-fns";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useAccount, useNetwork } from "wagmi";
 
-import {
-  useStore as useStoreDeleteProposal,
-  Provider as ProviderDeleteProposal,
-  createStore as createStoreDeleteProposal,
-} from "@hooks/useDeleteProposal/store";
+import { CastVotesWrapper, useCastVotesStore } from "@hooks/useCastVotes/store";
 
-import { Interweave } from "interweave";
-import { UrlMatcher } from "interweave-autolink";
-import { useContest } from "@hooks/useContest";
-import { getLayout as getBaseLayout } from "./../LayoutBase";
-import Timeline from "./Timeline";
-import VotingToken from "./VotingToken";
-import styles from "./styles.module.css";
-import FormSearchContest from "@components/_pages/FormSearchContest";
+import { DeleteProposalWrapper, useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
+
+import EtheuremAddress from "@components/UI/EtheuremAddress";
+import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import DialogModalVoteForProposal from "@components/_pages/DialogModalVoteForProposal";
-import useContestEvents from "@hooks/useContestEvents";
+import FormSearchContest from "@components/_pages/FormSearchContest";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import Sidebar from "./Sidebar";
-import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
-import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
-import { switchNetwork } from "@wagmi/core";
-import { ErrorBoundary } from "react-error-boundary";
-import EtheuremAddress from "@components/EtheuremAddress";
 import { RefreshIcon } from "@heroicons/react/outline";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import { useContest } from "@hooks/useContest";
+import useContestEvents from "@hooks/useContestEvents";
+import useUser from "@hooks/useUser";
+import { switchNetwork } from "@wagmi/core";
+import { Interweave } from "interweave";
+import { UrlMatcher } from "interweave-autolink";
+import { ErrorBoundary } from "react-error-boundary";
+import { getLayout as getBaseLayout } from "./../LayoutBase";
+import Sidebar from "./Sidebar";
+import styles from "./styles.module.css";
+import Timeline from "./Timeline";
+import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
+import VotingToken from "./VotingToken";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -66,75 +53,45 @@ const LayoutViewContest = (props: any) => {
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
   const { chain } = useNetwork();
 
-  const {
-    isLoading,
-    address,
-    fetchContestInfo,
-    checkIfCurrentUserQualifyToVote,
-    isListProposalsLoading,
-    isSuccess,
-    isError,
-    isListProposalsError,
-    retry,
-    onSearch,
-    chainId,
-    setChainId,
-    checkCurrentUserAmountOfProposalTokens,
-  } = useContest();
+  const { checkIfCurrentUserQualifyToVote, checkCurrentUserAmountOfProposalTokens } = useUser();
+
+  const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, setChainId } = useContest();
 
   const {
-    didUserPassSnapshotAndCanVote,
     snapshotTaken,
-    checkIfUserPassedSnapshotLoading,
     submissionsOpen,
-    votesOpen,
     votesClose,
-    contestName,
+    votesOpen,
     contestAuthor,
-    contestPrompt,
     contestStatus,
+    contestPrompt,
+    contestName,
     contestMaxProposalCount,
-    listProposalsIds,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      contestName: state.contestName,
-      //@ts-ignore
-      contestPrompt: state.contestPrompt,
-      //@ts-ignore
-      contestAuthor: state.contestAuthor,
-      //@ts-ignore
-      submissionsOpen: state.submissionsOpen,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votesClose: state.votesClose,
-      //@ts-ignore
-      snapshotTaken: state.snapshotTaken,
-      //@ts-ignore
-      checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
-      //@ts-ignore
-      didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-      //@ts-ignore
-      contestMaxProposalCount: state.contestMaxProposalCount,
-    }),
-    shallow,
-  );
+  } = useContestStore(state => state);
+  const { didUserPassSnapshotAndCanVote, checkIfUserPassedSnapshotLoading } = useUserStore(state => state);
+
   const { updateSnapshotProgress } = useCheckSnapshotProgress();
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
-  const stateSubmitProposal = useStoreSubmitProposal();
-  const stateCastVotes = useStoreCastVotes();
-  const stateDeleteProposasl = useStoreDeleteProposal();
+  const { isListProposalsLoading, isListProposalsError, listProposalsIds } = useProposalStore(state => state);
+
+  const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
+    isSubmitProposalModalOpen: state.isModalOpen,
+    setIsSubmitProposalModalOpen: state.setIsModalOpen,
+  }));
+  const { isCastVotesModalOpen, setIsCastVotesModalOpen } = useCastVotesStore(state => ({
+    isCastVotesModalOpen: state.isModalOpen,
+    setIsCastVotesModalOpen: state.setIsModalOpen,
+  }));
+  const { isDeleteProposalModalOpen, setIsDeleteProposalModalOpen } = useDeleteProposalStore(state => ({
+    isDeleteProposalModalOpen: state.isModalOpen,
+    setIsDeleteProposalModalOpen: state.setIsModalOpen,
+  }));
   const { displayReloadBanner } = useContestEvents();
 
   useEffect(() => {
@@ -162,7 +119,7 @@ const LayoutViewContest = (props: any) => {
     if (account?.connector) {
       account?.connector.on("change", data => {
         //@ts-ignore
-        setChainId(data.chain.id);
+        setChainId(data?.chain?.id);
       });
     }
   }, [account?.connector]);
@@ -180,7 +137,6 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     if (isListProposalsLoading && account?.address) {
-      checkIfCurrentUserQualifyToVote();
       checkCurrentUserAmountOfProposalTokens();
       checkIfCurrentUserQualifyToVote();
     }
@@ -207,7 +163,7 @@ const LayoutViewContest = (props: any) => {
             isLoading={isLoading}
             isListProposalsLoading={isListProposalsLoading}
             isSuccess={isSuccess}
-            isError={isError}
+            isError={error}
             isListProposalsError={isListProposalsError}
             chainId={chainId}
             setIsTimelineModalOpen={setIsTimelineModalOpen}
@@ -215,9 +171,9 @@ const LayoutViewContest = (props: any) => {
         </div>
         {!isLoading &&
           isSuccess &&
-          isDate(submissionsOpen) &&
-          isDate(votesOpen) &&
-          isDate(votesClose) &&
+          submissionsOpen &&
+          votesOpen &&
+          votesClose &&
           [CONTEST_STATUS.SUBMISSIONS_OPEN, CONTEST_STATUS.VOTING_OPEN].includes(contestStatus) && (
             <div className="animate-appear text-center text-xs sticky bg-neutral-0 border-b border-neutral-4 border-solid top-10 z-10 font-bold -mx-5 px-5 md:hidden w-screen py-1">
               <p className="text-center">
@@ -248,7 +204,7 @@ const LayoutViewContest = (props: any) => {
             </div>
           )}
 
-          {account?.address && chain?.id !== chainId && isBefore(new Date(), new Date(votesClose)) && (
+          {account?.address && chain?.id !== chainId && votesClose && isBefore(new Date(), votesClose) && (
             <div className="animate-appear flex text-center flex-col my-10 mx-auto">
               <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
               <p className="mt-2 mb-4 text-neutral-11 text-xs">
@@ -267,14 +223,14 @@ const LayoutViewContest = (props: any) => {
 
           {
             <>
-              {(account?.address && chain?.id !== chainId) === false && isError !== null && !isLoading && (
+              {(account?.address && chain?.id !== chainId) === false && error && !isLoading && (
                 <div className="my-6 md:my-0 animate-appear flex flex-col">
                   <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                     <p className="text-sm font-bold text-negative-10 text-center">
                       Something went wrong while fetching this contest.
                     </p>
                   </div>
-                  {isError === "CALL_EXCEPTION" ? (
+                  {error?.message === "CALL_EXCEPTION" ? (
                     <div className="animate-appear text-center my-3 space-y-3">
                       <p>
                         Looks like this contract doesn&apos;t exist on {chain?.name}. <br /> Try switching to another
@@ -283,7 +239,6 @@ const LayoutViewContest = (props: any) => {
                     </div>
                   ) : (
                     <Button
-                      /* @ts-ignore */
                       onClick={() => retry()}
                       className="mt-5 mb-8 w-full mx-auto py-1 xs:w-auto xs:min-w-fit-content"
                       intent="neutral-outline"
@@ -294,7 +249,7 @@ const LayoutViewContest = (props: any) => {
                 </div>
               )}
 
-              {isSuccess && isError === null && !isLoading && (
+              {isSuccess && !error && !isLoading && (
                 <>
                   {displayReloadBanner === true && (
                     <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-col gap-y-3 text-sm font-bold">
@@ -302,7 +257,12 @@ const LayoutViewContest = (props: any) => {
                         <span>Let&apos;s refresh!</span>
                         <p className="font-normal">Looks like live updates were frozen.</p>
                       </div>
-                      <Button className="w-full 2xs:w-fit-content" intent="primary-outline" scale="xs" onClick={() => reload()}>
+                      <Button
+                        className="w-full 2xs:w-fit-content"
+                        intent="primary-outline"
+                        scale="xs"
+                        onClick={() => reload()}
+                      >
                         <RefreshIcon className="mie-1ex w-4" />
                         Refresh
                       </Button>
@@ -377,7 +337,7 @@ const LayoutViewContest = (props: any) => {
                       setIsOpen={setIsTimelineModalOpen}
                       title="Contest timeline"
                     >
-                      {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
+                      {!isLoading && isSuccess && submissionsOpen && votesOpen && votesClose && (
                         <>
                           <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
                           {account?.address && (
@@ -392,38 +352,29 @@ const LayoutViewContest = (props: any) => {
                     {!isLoading &&
                       isSuccess &&
                       chain?.id === chainId &&
-                      isDate(submissionsOpen) &&
+                      submissionsOpen &&
                       isAfter(new Date(), submissionsOpen) &&
-                      isDate(votesOpen) &&
+                      votesOpen &&
                       isBefore(new Date(), votesOpen) && (
                         <DialogModalSendProposal
-                          /* @ts-ignore */
-                          isOpen={stateSubmitProposal.isModalOpen}
-                          /* @ts-ignore */
-                          setIsOpen={stateSubmitProposal.setIsModalOpen}
+                          isOpen={isSubmitProposalModalOpen}
+                          setIsOpen={setIsSubmitProposalModalOpen}
                         />
                       )}
                     {!isLoading && isSuccess && chain?.id === chainId && (
                       <DialogModalDeleteProposal
-                        /* @ts-ignore */
-                        isOpen={stateDeleteProposasl.isModalOpen}
-                        /* @ts-ignore */
-                        setIsOpen={stateDeleteProposasl.setIsModalOpen}
+                        isOpen={isDeleteProposalModalOpen}
+                        setIsOpen={setIsDeleteProposalModalOpen}
                       />
                     )}
                     {!isLoading &&
                       isSuccess &&
                       chain?.id === chainId &&
-                      isDate(votesOpen) &&
+                      votesOpen &&
                       isAfter(new Date(), votesOpen) &&
-                      isDate(votesClose) &&
+                      votesClose &&
                       isBefore(new Date(), votesClose) && (
-                        <DialogModalVoteForProposal
-                          /* @ts-ignore */
-                          isOpen={stateCastVotes.isModalOpen}
-                          /* @ts-ignore */
-                          setIsOpen={stateCastVotes.setIsModalOpen}
-                        />
+                        <DialogModalVoteForProposal isOpen={isCastVotesModalOpen} setIsOpen={setIsCastVotesModalOpen} />
                       )}
                   </div>
                 </>
@@ -442,21 +393,24 @@ export const getLayout = (page: any) => {
       fallbackRender={({ error, resetErrorBoundary }) => (
         <div role="alert" className="container m-auto sm:text-center">
           <p className="text-2xl font-black mb-3 text-primary-10">Something went wrong</p>
-          {/*  eslint-disable-next-line react/no-unescaped-entities */}
           <p className="text-neutral-12 mb-6">{error?.message ?? error}</p>
           <Button onClick={resetErrorBoundary}>Try again</Button>
         </div>
       )}
     >
-      <ProviderContest createStore={createStoreContest}>
-        <ProviderSubmitProposal createStore={createStoreSubmitProposal}>
-          <ProviderCastVotes createStore={createStoreCastVotes}>
-            <ProviderDeleteProposal createStore={createStoreDeleteProposal}>
-              <LayoutViewContest>{page}</LayoutViewContest>
-            </ProviderDeleteProposal>
-          </ProviderCastVotes>
-        </ProviderSubmitProposal>
-      </ProviderContest>
+      <ContestWrapper>
+        <ProposalWrapper>
+          <UserWrapper>
+            <SubmitProposalWrapper>
+              <CastVotesWrapper>
+                <DeleteProposalWrapper>
+                  <LayoutViewContest>{page}</LayoutViewContest>
+                </DeleteProposalWrapper>
+              </CastVotesWrapper>
+            </SubmitProposalWrapper>
+          </UserWrapper>
+        </ProposalWrapper>
+      </ContestWrapper>
     </ErrorBoundary>,
   );
 };

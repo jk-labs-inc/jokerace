@@ -1,71 +1,61 @@
+import { HEADERS_KEYS } from "@config/react-csv/export-contest";
 import { chains } from "@config/wagmi";
-import shallow from "zustand/shallow";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
+import { makeStorageClient } from "@config/web3storage";
+import getContestContractVersion from "@helpers/getContestContractVersion";
+import { objectToCsv } from "@helpers/objectToCsv";
+import { useProposalStore } from "@hooks/useProposal/store";
+import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { HEADERS_KEYS } from "@config/react-csv/export-contest";
-import { createExportDataStore } from "./store";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useEffect } from "react";
-import {
-  useQuery,
-} from "@tanstack/react-query"
-import { makeStorageClient } from "@config/web3storage";
-import { objectToCsv } from '@helpers/objectToCsv'
+import toast from "react-hot-toast";
+import { CustomError } from "types/error";
+import { useExportDataStore } from "./store";
 
 const MAX_PROPOSALS_EXPORTING = 500;
 const MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING = 500;
 const PROPOSALS_PER_ASYNC_BATCH = 5; // 5 here
 const VOTERS_PER_ASYNC_BATCH = 25; // and 100 here will usually keep you from getting rate-limited by Alchemy Growth tier (660 CUPS)
 
-const useStoreExportData = createExportDataStore();
-
 export function useExportContestDataToCSV() {
-  const stateExportData = useStoreExportData();
+  const stateExportData = useExportDataStore(state => state);
   const { asPath } = useRouter();
-  const queryContestResults = useQuery(
-    ['contest-result', asPath.split("/")[3]],
-    retrieveContestResultsCid
-  )
+  const queryContestResults = useQuery(["contest-result", asPath.split("/")[3]], retrieveContestResultsCid);
 
-  //@ts-ignore
-  const { listProposalsData, listProposalsIds } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-    }),
-    shallow,
-  );
+  const { listProposalsData, listProposalsIds } = useProposalStore(state => state);
 
   async function retrieveContestResultsCid() {
-    if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      const config = await import('@config/supabase')
-      const supabase = config.supabase
+    if (
+      process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+      process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    ) {
+      const config = await import("@config/supabase");
+      const supabase = config.supabase;
 
       try {
         const url = asPath.split("/");
         const contestAddress = url[3];
-        const chainName = url[2];    
+        const chainName = url[2];
         const result = await supabase
-        .from("results")
-        .select("cid")
-        .eq("contest_address", contestAddress)
-        .eq("contest_network_name", chainName)
+          .from("results")
+          .select("cid")
+          .eq("contest_address", contestAddress)
+          .eq("contest_network_name", chainName);
 
-        const { data, error } = result
-        if(error) {
-          throw new Error(error.message)
+        const { data, error } = result;
+        if (error) {
+          throw new Error(error.message);
         }
-        
+
         if (data?.length > 0) {
-          stateExportData.setCid(data[0]?.cid)
+          stateExportData.setCid(data[0]?.cid);
         }
 
-        return data
-      } catch(e) {
-        console.error(e)
+        return data;
+      } catch (e) {
+        console.error(e);
       }
     }
   }
@@ -90,7 +80,6 @@ export function useExportContestDataToCSV() {
         contractInterface: abi,
         chainId: chainId,
       };
-      //@ts-ignore
       const list = await readContract({
         ...contractConfig,
         functionName: "proposalAddressesHaveVoted",
@@ -121,7 +110,6 @@ export function useExportContestDataToCSV() {
 
     try {
       const data = await readContract({
-        //@ts-ignore
         addressOrName: address,
         contractInterface: abi,
         functionName: "proposalAddressVotes",
@@ -135,7 +123,14 @@ export function useExportContestDataToCSV() {
     }
   }
 
-  async function formatVoter(j: number, propId: number, propTotalVotes: number, propContent: string, proposerAddress: string, addressThatVoted: string) {
+  async function formatVoter(
+    j: number,
+    propId: number,
+    propTotalVotes: number,
+    propContent: string,
+    proposerAddress: string,
+    addressThatVoted: string,
+  ) {
     const addressPropVote = await fetchVotesPerAddress(propId, addressThatVoted);
 
     const COMMON_DATA = {
@@ -160,7 +155,8 @@ export function useExportContestDataToCSV() {
     const propId = listProposalsIds[i];
     if (propId) {
       const propTotalVotes = listProposalsData[propId].votes;
-      const propContent = "jokedao.io"+asPath.slice(0, asPath.indexOf("export-data"))+"proposal/"+propId.toString();
+      const propContent =
+        "jokedao.io" + asPath.slice(0, asPath.indexOf("export-data")) + "proposal/" + propId.toString();
       const proposerAddress = listProposalsData[propId].authorEthereumAddress;
       const addressesVoted = await fetchProposalVoters(propId);
 
@@ -171,8 +167,7 @@ export function useExportContestDataToCSV() {
         [HEADERS_KEYS.TOTAL_VOTES]: propTotalVotes,
       };
 
-      //@ts-ignore
-      if (addressesVoted.length == 0) {
+      if (addressesVoted?.length == 0) {
         const noVoterDict = {
           ...COMMON_DATA,
           [HEADERS_KEYS.VOTER]: "No voters",
@@ -188,7 +183,7 @@ export function useExportContestDataToCSV() {
       for (let j = 0; j < Math.min(MAX_UNIQUE_VOTERS_PER_PROPOSAL_EXPORTING, addressesVoted.length); j++) {
         //@ts-ignore
         arrayToReturn.push(formatVoter(j, propId, propTotalVotes, propContent, proposerAddress, addressesVoted[j]));
-        
+
         // Every VOTERS_PER_ASYNC_BATCH unique voters on a proposal, wait for all requests to return before sending out more
         // Motivation: to prevent rate-limiting by RPC providers
         if (j % VOTERS_PER_ASYNC_BATCH == 0) {
@@ -207,9 +202,9 @@ export function useExportContestDataToCSV() {
     stateExportData.setIsLoading(true);
     stateExportData.setIsSuccess(false);
     stateExportData.setCsv(null);
-    stateExportData.setError(null, false);
-    const contestAddress = asPath.split("/")[3]
-    const chainName = asPath.split("/")[2]
+    stateExportData.setError(null);
+    const contestAddress = asPath.split("/")[3];
+    const chainName = asPath.split("/")[2];
 
     const propArrayToReturn = [];
     const tenthPercentile = Math.ceil(listProposalsIds.length / 10);
@@ -222,11 +217,10 @@ export function useExportContestDataToCSV() {
         }
 
         // Every PROPOSALS_PER_ASYNC_BATCH proposals in a contest, wait for all requests to return before sending out more
-        // Motivation: to prevent rate-limiting by RPC providers 
+        // Motivation: to prevent rate-limiting by RPC providers
         if (i % PROPOSALS_PER_ASYNC_BATCH == 0) {
           await Promise.all(propArrayToReturn);
         }
-
       }
 
       const returned = await Promise.all(propArrayToReturn);
@@ -235,37 +229,49 @@ export function useExportContestDataToCSV() {
 
       stateExportData.setLoadingMessage(`Loaded ${listProposalsIds.length} out of ${listProposalsIds.length} entries!`);
       stateExportData.setCsv(reducedPropArray);
-      
+
       // Store the loaded data to IPFS via web3storage and then load the reference id into Supabase
-      //@ts-ignore
-      if (process.env.NEXT_PUBLIC_SUPABASE_URL !== '' && process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== '' && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY && process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN && process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN !== "") {
-        if(queryContestResults.data?.length === 0) {
-          const formatted = objectToCsv(propArrayToReturn)
-          const csv = new File([formatted], `result_contest_${contestAddress}_${chainName}.csv`, { type: 'text/csv' });
-    
-          const config = await import('@config/supabase')
-          const supabase = config.supabase
-          const client = makeStorageClient()
-          const cid = await client.put([csv])
-          stateExportData.setCid(cid)
+      if (
+        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+        process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN &&
+        process.env.NEXT_PUBLIC_WEB3STORAGE_TOKEN !== ""
+      ) {
+        if (queryContestResults.data?.length === 0) {
+          const formatted = objectToCsv(propArrayToReturn);
+          const csv = new File([formatted], `result_contest_${contestAddress}_${chainName}.csv`, { type: "text/csv" });
+
+          const config = await import("@config/supabase");
+          const supabase = config.supabase;
+          const client = makeStorageClient();
+          const cid = await client.put([csv]);
+          stateExportData.setCid(cid);
 
           await supabase.from("results").insert([
             {
               contest_address: contestAddress,
               contest_network_name: chainName,
-              cid
-            }
-          ])
+              cid,
+            },
+          ]);
         }
       }
 
       stateExportData.setIsSuccess(true);
       stateExportData.setIsLoading(false);
     } catch (e) {
-      console.error(e);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+      const message = customError.message || "Something went wrong with the export.";
+      toast.error(message);
+      stateExportData.setError({
+        code: customError.code,
+        message,
+      });
       stateExportData.setIsLoading(false);
-      //@ts-ignore
-      stateExportData.setError(e?.message ?? e, true);
     }
   }
 

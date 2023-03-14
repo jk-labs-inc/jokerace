@@ -1,9 +1,9 @@
-import shallow from "zustand/shallow";
-import button from "@components/Button/styles";
+import button from "@components/UI/Button/styles";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { copyToClipboard } from "@helpers/copyToClipboard";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import Link from "next/link";
+import shallow from "zustand/shallow";
 import { useStore } from "../store";
 
 const appearAsNeutralButton = button({ intent: "neutral-outline", scale: "lg", class: "w-full xs:w-auto" });

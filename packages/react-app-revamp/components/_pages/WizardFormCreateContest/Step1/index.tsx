@@ -1,5 +1,5 @@
+import Button from "@components/UI/Button";
 import shallow from "zustand/shallow";
-import Button from "@components/Button";
 import { useStore } from "../store";
 export const Step1 = () => {
   const { setCurrentStep } = useStore(

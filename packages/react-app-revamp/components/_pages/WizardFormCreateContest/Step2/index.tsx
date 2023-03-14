@@ -1,39 +1,34 @@
-import shallow from "zustand/shallow";
-import Button from "@components/Button";
+import Button from "@components/UI/Button";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
 import { copyToClipboard } from "@helpers/copyToClipboard";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import { useAccount } from "wagmi";
+import shallow from "zustand/shallow";
 import { DialogModalDeployTransaction } from "../DialogModalDeployTransaction";
 import { useStore } from "../store";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployToken } from "./useDeployToken";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
 
 export const Step2 = () => {
-  const {
-    tokenDeployedToChain,
-    setCurrentStep,
-    dataDeployVotingToken,
-    modalDeployTokenOpen,
-    setModalDeployTokenOpen,
-  } = useStore(
-    state => ({
-      //@ts-ignore
-      setCurrentStep: state.setCurrentStep,
-      //@ts-ignore
-      dataDeployVotingToken: state.dataDeployVotingToken,
-      //@ts-ignore
-      modalDeployTokenOpen: state.modalDeployTokenOpen,
-      //@ts-ignore
-      setModalDeployTokenOpen: state.setModalDeployTokenOpen,
-      //@ts-ignore
-      tokenDeployedToChain: state.tokenDeployedToChain,
-    }),
-    shallow,
-  );
+  const { tokenDeployedToChain, setCurrentStep, dataDeployVotingToken, modalDeployTokenOpen, setModalDeployTokenOpen } =
+    useStore(
+      state => ({
+        //@ts-ignore
+        setCurrentStep: state.setCurrentStep,
+        //@ts-ignore
+        dataDeployVotingToken: state.dataDeployVotingToken,
+        //@ts-ignore
+        modalDeployTokenOpen: state.modalDeployTokenOpen,
+        //@ts-ignore
+        setModalDeployTokenOpen: state.setModalDeployTokenOpen,
+        //@ts-ignore
+        tokenDeployedToChain: state.tokenDeployedToChain,
+      }),
+      shallow,
+    );
   const form = useForm({
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values, false),
@@ -42,7 +37,7 @@ export const Step2 = () => {
   const { isConnected } = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -61,13 +56,12 @@ export const Step2 = () => {
         isOpen={modalDeployTokenOpen}
         setIsOpen={setModalDeployTokenOpen}
         title="Token deployment transaction"
-        isError={stateContractDeployment.isError}
         isLoading={stateContractDeployment.isLoading}
         isSuccess={stateContractDeployment.isSuccess}
         error={stateContractDeployment.error}
         transactionHref={`${tokenDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployVotingToken?.hash}`}
       >
-        {stateContractDeployment.isSuccess === true && (
+        {stateContractDeployment.isSuccess && (
           <div className="mt-3 animate-appear relative">
             <span className="font-bold">Token address:</span>
             <div className="relative focus-within:text-opacity-50 hover:text-opacity-75">
@@ -95,7 +89,7 @@ export const Step2 = () => {
           >
             Next
           </Button>
-          {stateContractDeployment.isError && (
+          {stateContractDeployment.error && (
             <Button
               onClick={() => {
                 handleSubmitForm(form.data(), false);

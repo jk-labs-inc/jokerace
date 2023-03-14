@@ -1,6 +1,7 @@
-import { IconClose } from "@components/Icons";
+import { IconClose } from "@components/UI/Icons";
 import { Dialog } from "@headlessui/react";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { FC, useCallback } from "react";
 
 export interface DialogModalProps {
   isOpen: boolean;
@@ -9,10 +10,13 @@ export interface DialogModalProps {
   children: React.ReactNode;
 }
 
-export const DialogModal = (props: DialogModalProps) => {
-  const { isOpen, setIsOpen, title, children } = props;
+const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children }) => {
+  const handleClose = useCallback(() => {
+    setIsOpen(false);
+  }, [setIsOpen]);
+
   return (
-    <Dialog open={isOpen} onClose={() => setIsOpen(false)} className="relative z-50">
+    <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <div className="fixed inset-0 pointer-events-none bg-true-black bg-opacity-80" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
@@ -23,7 +27,7 @@ export const DialogModal = (props: DialogModalProps) => {
             <Dialog.Title className="sr-only">{title}</Dialog.Title>
             <div className="p-2 relative">
               <button
-                onClick={() => setIsOpen(false)}
+                onClick={handleClose}
                 title="Close this"
                 className="absolute z-10 top-0 inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-2 hover:scale-[1.1] text-neutral-11"
               >
