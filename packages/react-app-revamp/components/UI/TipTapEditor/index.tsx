@@ -3,12 +3,12 @@ import Button from "@components/UI/Button";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface TipTapEditorProps {
-  editor: any;
+  editor: Editor | null;
 }
 
 export const TipTapPreview = (props: any) => {
@@ -30,12 +30,18 @@ const TipTapEditor = (props: TipTapEditorProps) => {
   const { editor } = props;
   const [showPreview, setShowPreview] = useState(false);
 
+  useEffect(() => {
+    if (!editor) return;
+
+    editor.commands.focus();
+  }, [editor]);
+
   return (
     <>
       {!showPreview && (
         <>
-          <div className="flex flex-col min-h-[12rem] rounded-md border border-solid border-true-white border-opacity-20 hover:border-opacity-25 focus-within:border-opacity-40">
-            <div className="relative px-1 py-1 border-b-2 border-b-true-white border-opacity-20">
+          <div className="flex flex-col min-h-[12rem] rounded-md ">
+            <div className="relative px-1 py-1 border-b-2 border-b-true-white border-opacity-10">
               <TipTapEditorControls editor={editor} />
             </div>
 
@@ -46,7 +52,7 @@ const TipTapEditor = (props: TipTapEditorProps) => {
           </div>
         </>
       )}
-      {showPreview && <TipTapPreview content={editor.getHTML()} />}
+      {showPreview && <TipTapPreview content={editor?.getHTML()} />}
       <div className="mt-4">
         <Button
           intent="neutral-outline"

@@ -8,9 +8,10 @@ export interface DialogModalProps {
   setIsOpen: (isOpen: boolean) => void;
   title: string;
   children: React.ReactNode;
+  className?: string;
 }
 
-const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children }) => {
+const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children, className }) => {
   const handleClose = useCallback(() => {
     setIsOpen(false);
   }, [setIsOpen]);
@@ -23,7 +24,9 @@ const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children 
         {/* Container to center the panel */}
         <div className="flex min-h-full w-full items-center justify-center">
           {/* The actual dialog panel  */}
-          <Dialog.Panel className="text-sm mx-auto min-h-screen  max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-neutral-4 bg-neutral-0 2xs:rounded-lg">
+          <Dialog.Panel
+            className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-primary-10 bg-neutral-0 2xs:rounded-lg ${className}`}
+          >
             <Dialog.Title className="sr-only">{title}</Dialog.Title>
             <div className="p-2 relative">
               <button

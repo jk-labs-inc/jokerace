@@ -110,6 +110,15 @@
   .prose > span:first-child > *:last-child {
     margin-bottom: 0 !important;
   }
+
+  /* Placeholder (at the top) */
+  .ProseMirror p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
 }
 
 @layer components {
