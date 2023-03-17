@@ -10,7 +10,6 @@ import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { FC, useEffect, useId } from "react";
 import { useAccount, useBalance, useNetwork, useToken } from "wagmi";
-import FundRewards from "./components/Send";
 import { schema } from "./schema";
 
 interface FormProps {
@@ -65,11 +64,20 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
   });
   const balance = useBalance({
     addressOrName: address,
-    //@ts-ignore
     enabled: address && (!data()?.isErc20 || (data()?.isErc20 && erc20TokenRewards?.data?.address)) ? true : false,
     //@ts-ignore
     token: data()?.isErc20 ? data()?.tokenRewardsAddress : undefined,
   });
+
+  const isErc20InsufficientBalance =
+    (data()?.amount ?? 0) >
+    (balance?.data?.decimals === 18
+      ? balance?.data?.formatted
+      : //@ts-ignore
+        10 ** (18 - balance?.data?.decimals) * balance?.data?.formatted);
+
+  const isSendButtonDisabled =
+    !isValid() || isLoading || !isConnected || chain?.unsupported || isErc20InsufficientBalance;
 
   useEffect(() => {
     const refetchBalance = async () => {
@@ -93,7 +101,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
             value={data()?.isErc20}
             onChange={(e: boolean) => {
               setData("isErc20", e);
-              if (e === false) {
+              if (!e) {
                 setData("tokenRewardsAddress", "");
               }
             }}
@@ -286,14 +294,9 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
         </div>
       </fieldset>
       <div className="mb-4 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
-        <FundRewards
-          isValid={isValid}
-          isLoading={isLoading}
-          isConnected={isConnected}
-          chain={chain}
-          data={data}
-          balance={balance}
-        />
+        <Button className="sm:w-fit-content" isLoading={isLoading} disabled={isSendButtonDisabled} type="submit">
+          Send
+        </Button>
         <Button intent="neutral-outline" type="button" onClick={() => setIsModalOpen(false)}>
           Go back
         </Button>
