@@ -25,7 +25,7 @@ const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children,
         <div className="flex min-h-full w-full items-center justify-center">
           {/* The actual dialog panel  */}
           <Dialog.Panel
-            className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-primary-10 bg-neutral-0 2xs:rounded-lg ${className}`}
+            className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-primary-10 border-opacity-40 bg-neutral-0 2xs:rounded-lg ${className}`}
           >
             <Dialog.Title className="sr-only">{title}</Dialog.Title>
             <div className="p-2 relative">
