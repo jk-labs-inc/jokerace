@@ -1,23 +1,24 @@
+import Button from "@components/UI/Button";
+import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/UI/Icons";
+import Loader from "@components/UI/Loader";
+import ProposalContent from "@components/_pages/ProposalContent";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
+import { CONTEST_STATUS } from "@helpers/contestStatus";
+import isProposalDeleted from "@helpers/isProposalDeleted";
+import truncate from "@helpers/truncate";
+import { TrashIcon } from "@heroicons/react/outline";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useContestStore } from "@hooks/useContest/store";
+import { useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
+import useProposal from "@hooks/useProposal";
+import { useProposalStore } from "@hooks/useProposal/store";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { useUserStore } from "@hooks/useUser/store";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import shallow from "zustand/shallow";
-import Button from "@components/Button";
-import ProposalContent from "@components/_pages/ProposalContent";
-import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
-import truncate from "@helpers/truncate";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
-import { useStore as useStoreCastVotes } from "@hooks/useCastVotes/store";
-import { useStore as useStoreDeleteProposal } from "@hooks/useDeleteProposal/store";
-import styles from "./styles.module.css";
-import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/Icons";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useAccount, useNetwork } from "wagmi";
-import { useContest } from "@hooks/useContest";
-import isProposalDeleted from "@helpers/isProposalDeleted";
-import Loader from "@components/Loader";
-import { TrashIcon } from "@heroicons/react/outline";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import styles from "./styles.module.css";
 
 export const ListProposals = () => {
   const {
@@ -26,99 +27,57 @@ export const ListProposals = () => {
   const accountData = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
   const network = useNetwork();
+  const { fetchProposalsPage } = useProposal();
+
   const {
-    contestAuthorEthereumAddress,
-    amountOfTokensRequiredToSubmitEntry,
-    listProposalsData,
-    currentUserAvailableVotesAmount,
-    contestStatus,
-    didUserPassSnapshotAndCanVote,
-    checkIfUserPassedSnapshotLoading,
-    downvotingAllowed,
     listProposalsIds,
-    currentUserSubmitProposalTokensAmount,
     isPageProposalsLoading,
     isPageProposalsError,
     currentPagePaginationProposals,
     indexPaginationProposals,
     totalPagesPaginationProposals,
-  } = useStoreContest(
+    listProposalsData,
+  } = useProposalStore(state => state);
+  const { contestAuthorEthereumAddress, contestStatus, downvotingAllowed } = useContestStore(state => state);
+  const {
+    amountOfTokensRequiredToSubmitEntry,
+    currentUserAvailableVotesAmount,
+    didUserPassSnapshotAndCanVote,
+    checkIfUserPassedSnapshotLoading,
+    currentUserSubmitProposalTokensAmount,
+    isLoading: isUserStoreLoading,
+  } = useUserStore(state => state);
+
+  const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
+    setIsSubmitProposalModalOpen: state.setIsModalOpen,
+  }));
+  const { setCastPositiveAmountOfVotes, setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useCastVotesStore(
     state => ({
-      //@ts-ignore
-      currentPagePaginationProposals: state.currentPagePaginationProposals,
-      //@ts-ignore
-      isPageProposalsLoading: state.isPageProposalsLoading,
-      //@ts-ignore
-      isPageProposalsError: state.isPageProposalsError,
-      //@ts-ignore
-      downvotingAllowed: state.downvotingAllowed,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-      //@ts-ignore
-      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      listProposalsData: state.listProposalsData,
-      //@ts-ignore
-      currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount,
-      //@ts-ignore
-      amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
-      //@ts-ignore
-      didUserPassSnapshotAndCanVote: state.didUserPassSnapshotAndCanVote,
-      //@ts-ignore
-      checkIfUserPassedSnapshotLoading: state.checkIfUserPassedSnapshotLoading,
-      //@ts-ignore
-      indexPaginationProposals: state.indexPaginationProposals,
-      //@ts-ignore,
-      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
-      //@ts-ignore
-      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
-      //@ts-ignore
-      indexPaginationProposals: state.indexPaginationProposals,
-      //@ts-ignore,
-      totalPagesPaginationProposals: state.totalPagesPaginationProposals,
-    }),
-    shallow,
-  );
-  const stateSubmitProposal = useStoreSubmitProposal();
-  const { setCastPositiveAmountOfVotes, setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useStoreCastVotes(
-    state => ({
-      //@ts-ignore
       setPickedProposalToVoteFor: state.setPickedProposal,
-      //@ts-ignore
       setIsModalCastVotesOpen: state.setIsModalOpen,
-      //@ts-ignore
       setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
     }),
-    shallow,
   );
 
-  const { setPickedProposalToDelete, setIsModalDeleteProposalOpen } = useStoreDeleteProposal(
-    state => ({
-      //@ts-ignore
-      setPickedProposalToDelete: state.setPickedProposal,
-      //@ts-ignore
-      setIsModalDeleteProposalOpen: state.setIsModalOpen,
-    }),
-    shallow,
-  );
+  const { setPickedProposalToDelete, setIsModalDeleteProposalOpen } = useDeleteProposalStore(state => ({
+    setPickedProposalToDelete: state.setPickedProposal,
+    setIsModalDeleteProposalOpen: state.setIsModalOpen,
+  }));
 
-  const { fetchProposalsPage } = useContest();
   function onClickUpVote(proposalId: number | string) {
     setCastPositiveAmountOfVotes(true);
-    setPickedProposalToVoteFor(proposalId);
+    setPickedProposalToVoteFor(proposalId.toString());
     setIsModalCastVotesOpen(true);
   }
 
   function onClickDownVote(proposalId: number | string) {
     setCastPositiveAmountOfVotes(false);
-    setPickedProposalToVoteFor(proposalId);
+    setPickedProposalToVoteFor(proposalId.toString());
     setIsModalCastVotesOpen(true);
   }
 
@@ -137,7 +96,7 @@ export const ListProposals = () => {
       );
     }
     // Empty state
-    if (listProposalsIds.length === 0) {
+    if (!listProposalsIds.length) {
       return (
         <div className="flex flex-col text-center items-center">
           <p className="text-neutral-9 italic mb-6">
@@ -146,16 +105,14 @@ export const ListProposals = () => {
               ? "You can't submit a proposal for this contest."
               : "It seems no one submitted a proposal for this contest."}
           </p>
-          {/* @ts-ignore */}
           {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
             currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry && (
-              //@ts-ignore
-              <Button onClick={() => stateSubmitProposal.setIsModalOpen(true)}>Submit a proposal</Button>
+              <Button onClick={() => setIsSubmitProposalModalOpen(true)}>Submit a proposal</Button>
             )}
         </div>
       );
     } else {
-      if (isPageProposalsLoading && Object.keys(listProposalsData)?.length === 0) {
+      if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
         return <Loader scale="component">Loading proposals...</Loader>;
       }
       return (
@@ -207,8 +164,7 @@ export const ListProposals = () => {
                               ))}
                             {!isProposalDeleted(listProposalsData[id].content) &&
                               didUserPassSnapshotAndCanVote &&
-                              contestStatus === CONTEST_STATUS.VOTING_OPEN &&
-                              currentUserAvailableVotesAmount > 0 && (
+                              contestStatus === CONTEST_STATUS.VOTING_OPEN && (
                                 <button
                                   onClick={() => onClickUpVote(id)}
                                   disabled={
@@ -219,8 +175,15 @@ export const ListProposals = () => {
                                   }
                                   className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center"
                                 >
-                                  <IconCaretUp className="text-2xs mie-2 2xs:mie-0" />
-                                  <span className="2xs:sr-only">Up vote</span>
+                                  {isUserStoreLoading ? (
+                                    <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
+                                  ) : (
+                                    <>
+                                      {" "}
+                                      <IconCaretUp className="text-2xs mie-2 2xs:mie-0" />
+                                      <span className="2xs:sr-only">Up vote</span>
+                                    </>
+                                  )}
                                 </button>
                               )}
                             <span className="flex 2xs:flex-col">
@@ -240,7 +203,7 @@ export const ListProposals = () => {
                               didUserPassSnapshotAndCanVote &&
                               contestStatus === CONTEST_STATUS.VOTING_OPEN &&
                               currentUserAvailableVotesAmount > 0 &&
-                              downvotingAllowed === true && (
+                              downvotingAllowed && (
                                 <button
                                   onClick={() => onClickDownVote(id)}
                                   disabled={
@@ -320,7 +283,7 @@ export const ListProposals = () => {
                 );
               })}
           </ul>
-          {isPageProposalsLoading && Object.keys(listProposalsData)?.length > 1 && (
+          {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
             <Loader scale="component" classNameWrapper="my-3">
               Loading proposals...
             </Loader>

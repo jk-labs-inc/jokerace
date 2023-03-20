@@ -1,23 +1,21 @@
-import shallow from "zustand/shallow";
-import { ContractFactory } from "ethers";
-import toast from "react-hot-toast";
-import { useNetwork, useSigner } from "wagmi";
-import { waitForTransaction, writeContract } from "@wagmi/core";
-import { parseEther } from "ethers/lib/utils";
-import { getUnixTime, differenceInSeconds } from "date-fns";
-import { useContractFactory } from "@hooks/useContractFactory";
-//@ts-ignore
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
+import { useContractFactoryStore } from "@hooks/useContractFactory";
+import { waitForTransaction, writeContract } from "@wagmi/core";
+import { differenceInSeconds, getUnixTime } from "date-fns";
+import { ContractFactory } from "ethers";
+import { parseEther } from "ethers/lib/utils";
+import toast from "react-hot-toast";
+import { useNetwork, useSigner } from "wagmi";
 
-import { useStore } from "../store";
 import useContestsIndex from "@hooks/useContestsIndex";
+import { CustomError } from "types/error";
+import { useStore } from "../store";
 export function useDeployContest(form: any) {
   const { indexContest } = useContestsIndex();
-  const stateContestDeployment = useContractFactory();
+  const stateContestDeployment = useContractFactoryStore(state => state);
   const { chain } = useNetwork();
   const { refetch } = useSigner();
-  //@ts-ignore
   const {
     modalDeployContestOpen,
     setModalDeployContestOpen,
@@ -26,27 +24,24 @@ export function useDeployContest(form: any) {
     setDeployRewardsModule,
     setContestRewardsModule,
     setWillHaveRewardsModule,
-  } = useStore(
-    state => ({
-      //@ts-ignore
-      setWillHaveRewardsModule: state.setWillHaveRewardsModule,
-      //@ts-ignore
-      modalDeployContestOpen: state.modalDeployContestOpen,
-      //@ts-ignore
-      setModalDeployContestOpen: state.setModalDeployContestOpen,
-      //@ts-ignore
-      setModalDeployContestOpen: state.setModalDeployContestOpen,
-      //@ts-ignore
-      setDeployContestData: state.setDeployContestData,
-      //@ts-ignore
-      setContestDeployedToChain: state.setContestDeployedToChain,
-      //@ts-ignore
-      setDeployRewardsModule: state.setDeployRewardsModule,
-      //@ts-ignore
-      setContestRewardsModule: state.setContestRewardsModule,
-    }),
-    shallow,
-  );
+  } = useStore(state => ({
+    //@ts-ignore
+    setWillHaveRewardsModule: state.setWillHaveRewardsModule,
+    //@ts-ignore
+    modalDeployContestOpen: state.modalDeployContestOpen,
+    //@ts-ignore
+    setModalDeployContestOpen: state.setModalDeployContestOpen,
+    //@ts-ignore
+    setModalDeployContestOpen: state.setModalDeployContestOpen,
+    //@ts-ignore
+    setDeployContestData: state.setDeployContestData,
+    //@ts-ignore
+    setContestDeployedToChain: state.setContestDeployedToChain,
+    //@ts-ignore
+    setDeployRewardsModule: state.setDeployRewardsModule,
+    //@ts-ignore
+    setContestRewardsModule: state.setContestRewardsModule,
+  }));
 
   async function handleSubmitForm(values: any) {
     const hasRewards = ["erc20", "native"].includes(values.rewardsType);
@@ -55,8 +50,7 @@ export function useDeployContest(form: any) {
     setModalDeployContestOpen(true);
     stateContestDeployment.setIsLoading(true);
     stateContestDeployment.setIsSuccess(false);
-    stateContestDeployment.setIsError(false);
-    stateContestDeployment.setErrorMessage(null);
+    stateContestDeployment.setError(null);
     try {
       // we need to refetch the signer, otherwise an error is triggered
       const signer = await refetch();
@@ -125,9 +119,7 @@ export function useDeployContest(form: any) {
           signer.data,
         );
         const rewardsRanks = values.rewards.map((reward: any) => parseInt(reward.winningRank));
-        const rewardsShares = values.rewards.map(
-          (reward: any) => reward.rewardPercentageAmount
-        );
+        const rewardsShares = values.rewards.map((reward: any) => reward.rewardPercentageAmount);
 
         // Deploy the rewards module
         const contractRewardsModule = await factoryCreateRewardsModule.deploy(
@@ -192,13 +184,19 @@ export function useDeployContest(form: any) {
       stateContestDeployment.setIsLoading(false);
       form.reset();
     } catch (e) {
-      console.error(e);
-      if (modalDeployContestOpen === false)
-        toast.error(`The contract for your contest ("${values.contestTitle}") couldn't be deployed.`);
-      stateContestDeployment.setIsError(true);
-      //@ts-ignore
-      stateContestDeployment.setErrorMessage(e?.message);
-      stateContestDeployment.setIsLoading(false);
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      if (!modalDeployContestOpen) {
+        const message =
+          customError?.message || `The contract for your contest ("${values.contestTitle}") couldn't be deployed.`;
+        stateContestDeployment.setError({
+          code: customError.code,
+          message,
+        });
+        stateContestDeployment.setIsLoading(false);
+      }
     }
   }
 

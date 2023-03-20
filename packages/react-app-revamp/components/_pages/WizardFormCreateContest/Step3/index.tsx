@@ -1,19 +1,19 @@
-import shallow from "zustand/shallow";
-import Button from "@components/Button";
+import stylesStepperTxTracker from "@components/UI/TrackerDeployTransaction/styles.module.css";
+import Button from "@components/UI/Button";
+import DialogModal from "@components/UI/DialogModal";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_REWARDS } from "@config/routes";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
 import { addMinutes } from "date-fns";
 import Link from "next/link";
+import shallow from "zustand/shallow";
 import { DialogModalDeployTransaction } from "../DialogModalDeployTransaction";
 import { useStore } from "../store";
+import Timeline from "../Timeline";
+import DialogModalMintProposalToken from "./DialogModalMintProposalToken";
 import Form from "./Form";
 import { schema } from "./schema";
 import { useDeployContest } from "./useDeployContest";
-import Timeline from "../Timeline";
-import DialogModalMintProposalToken from "./DialogModalMintProposalToken";
-import stylesStepperTxTracker from "@components/TrackerDeployTransaction/styles.module.css";
-import DialogModal from "@components/DialogModal";
 
 export const Step3 = () => {
   const {
@@ -112,11 +112,9 @@ export const Step3 = () => {
             isOpen={modalDeployContestOpen}
             setIsOpen={setModalDeployContestOpen}
             title="Contest deployment transaction"
-            isError={stateContestDeployment.isError}
             isLoading={stateContestDeployment.isLoading}
             isSuccess={stateContestDeployment.isSuccess}
             error={stateContestDeployment.error}
-            //@ts-ignore
             transactionHref={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
             textPending="Deploying contest..."
           >
@@ -148,7 +146,7 @@ export const Step3 = () => {
               >
                 Next
               </Button>
-              {stateContestDeployment.isError && (
+              {stateContestDeployment.error && (
                 <Button
                   onClick={() => {
                     handleSubmitForm(form.data());
@@ -173,47 +171,41 @@ export const Step3 = () => {
           >
             <ol className={`space-y-4 leading-[1.75] font-bold ${stylesStepperTxTracker.stepper}`}>
               <li
-                className={`${stateContestDeployment.isError === true ? "text-negative-11" : "text-primary-10"} ${
+                className={`${stateContestDeployment.error ? "text-negative-11" : "text-primary-10"} ${
                   stateContestDeployment.isLoading === true && !dataDeployContest?.address ? "animate-pulse" : ""
                 }`}
               >
-                {stateContestDeployment.isError ? "Something went wrong during deployment." : "Deploying contest..."}
+                {stateContestDeployment.error ? "Something went wrong during deployment." : "Deploying contest..."}
               </li>
               <li
                 className={`${
-                  stateContestDeployment.isError === true
+                  stateContestDeployment.error
                     ? "text-negative-11"
                     : !dataDeployContest?.address
                     ? "text-neutral-8"
                     : "text-primary-10"
                 } ${
-                  stateContestDeployment.isLoading === true &&
-                  dataDeployContest?.address &&
-                  !dataDeployRewardsModule?.address
+                  stateContestDeployment.isLoading && dataDeployContest?.address && !dataDeployRewardsModule?.address
                     ? "animate-pulse"
                     : ""
                 }`}
               >
-                {stateContestDeployment.isError
-                  ? "Something went wrong during deployment."
-                  : "Deploying rewards pool..."}
+                {stateContestDeployment.error ? "Something went wrong during deployment." : "Deploying rewards pool..."}
               </li>
               <li
                 className={`${
-                  stateContestDeployment.isError === true
+                  stateContestDeployment.error
                     ? "text-negative-11"
                     : !dataDeployContest?.address || !dataDeployRewardsModule?.address
                     ? "text-neutral-8"
                     : "text-primary-10"
                 } ${
-                  stateContestDeployment.isLoading === true &&
-                  dataDeployContest?.address &&
-                  dataDeployRewardsModule?.address
+                  stateContestDeployment.isLoading && dataDeployContest?.address && dataDeployRewardsModule?.address
                     ? "animate-pulse"
                     : ""
                 }`}
               >
-                {stateContestDeployment.isError
+                {stateContestDeployment.error
                   ? "Something went wrong during deployment."
                   : "Connecting pool to contest..."}
               </li>
@@ -227,7 +219,6 @@ export const Step3 = () => {
                 <Link
                   href={{
                     pathname: ROUTE_VIEW_CONTEST_REWARDS,
-                    //@ts-ignore
                     query: {
                       chain: contestDeployedToChain?.name.toLowerCase().replace(" ", ""),
                       address: dataDeployContest?.address,
@@ -294,7 +285,7 @@ export const Step3 = () => {
               >
                 Next
               </Button>
-              {stateContestDeployment.isError && (
+              {stateContestDeployment.error && (
                 <Button
                   onClick={() => {
                     handleSubmitForm(form.data());

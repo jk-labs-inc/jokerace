@@ -1,14 +1,14 @@
-import { useNetwork } from "wagmi";
-import { useRouter } from "next/router";
-import Button from "@components/Button";
-import FormInput from "@components/FormInput";
+import Button from "@components/UI/Button";
+import FormField from "@components/UI/FormField";
+import FormInput from "@components/UI/FormInput";
+import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
-import { schema } from "./schema";
-import FormField from "@components/FormField";
-import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
-import { useEffect, useState } from "react";
 import { getNetwork } from "@wagmi/core";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useNetwork } from "wagmi";
+import { schema } from "./schema";
 
 interface FormSearchContestProps {
   isInline?: boolean;
@@ -27,9 +27,7 @@ export const FormSearchContest = (props: FormSearchContestProps) => {
       const contestAddress = asPath.split("/")[3];
       if (chain?.unsupported === true) return;
       const currentChain = asPath.split("/")[2];
-      const currentNetwork = await getNetwork()
-        ?.chain?.name.toLowerCase()
-        .replace(" ", "");
+      const currentNetwork = await getNetwork()?.chain?.name.toLowerCase().replace(" ", "");
 
       const chainName = !currentNetwork ? currentChain : currentNetwork;
       push(ROUTE_VIEW_CONTEST, `/contest/${chainName}/${values.contestAddress}`, {

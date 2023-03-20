@@ -1,8 +1,8 @@
-import shallow from "zustand/shallow";
-import { format } from "date-fns";
-import { useStore } from "@hooks/useContest/store";
-import styles from "./styles.module.css";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { useContestStore } from "@hooks/useContest/store";
+import { format } from "date-fns";
+import { FC } from "react";
+import styles from "./styles.module.css";
 // - Contest status
 // 0: Voting open
 // 1: Contest cancelled
@@ -10,19 +10,7 @@ import { CONTEST_STATUS } from "@helpers/contestStatus";
 // 3: Completed
 
 export const Steps = () => {
-  const { submissionsOpen, votesOpen, votesClose, contestStatus } = useStore(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      submissionsOpen: state.submissionsOpen,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votesClose: state.votesClose,
-    }),
-    shallow,
-  );
+  const { contestStatus, submissionsOpen, votesOpen, votesClose } = useContestStore(state => state);
 
   return (
     <ol
@@ -50,7 +38,7 @@ export const Steps = () => {
         }`}
       >
         <div className="flex flex-col">
-          <span className="font-bold">{format(submissionsOpen, "PPP p")}</span> <span>Submissions open</span>
+          <span className="font-bold">{format(submissionsOpen!, "PPP p")}</span> <span>Submissions open</span>
         </div>
       </li>
       <li
@@ -63,7 +51,7 @@ export const Steps = () => {
         }`}
       >
         <div className="flex flex-col">
-          <span className="font-bold">{format(votesOpen, "PPP p")}</span> <span>voting opens</span>
+          <span className="font-bold">{format(votesOpen!, "PPP p")}</span> <span>voting opens</span>
         </div>
       </li>
       <li
@@ -72,7 +60,7 @@ export const Steps = () => {
         }`}
       >
         <div className="flex flex-col">
-          <span className="font-bold">{format(votesClose, "PPP p")}</span> <span>voting closes</span>
+          <span className="font-bold">{format(votesClose!, "PPP p")}</span> <span>voting closes</span>
         </div>
       </li>
     </ol>

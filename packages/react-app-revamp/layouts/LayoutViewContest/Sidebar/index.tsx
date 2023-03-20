@@ -1,10 +1,6 @@
-import shallow from "zustand/shallow";
-import { useRouter } from "next/router";
-import Link from "next/link";
-import { useNetwork, useAccount } from "wagmi";
-import { isDate } from "date-fns";
-import { HomeIcon } from "@heroicons/react/solid";
-import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
+import Button from "@components/UI/Button";
+import { IconTrophy } from "@components/UI/Icons";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import {
   ROUTE_CONTEST_PROPOSAL,
   ROUTE_VIEW_CONTEST,
@@ -12,17 +8,41 @@ import {
   ROUTE_VIEW_CONTEST_REWARDS,
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
-import Button from "@components/Button";
-import { IconTrophy } from "@components/Icons";
-import { useStore as useStoreContest } from "@hooks/useContest/store";
-import { useStore as useStoreSubmitProposal } from "@hooks/useSubmitProposal/store";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
+import { HomeIcon } from "@heroicons/react/solid";
+import { useContestStore } from "@hooks/useContest/store";
+import { useProposalStore } from "@hooks/useProposal/store";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { useUserStore } from "@hooks/useUser/store";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { FC } from "react";
+import { CustomError } from "types/error";
+import { useAccount, useNetwork } from "wagmi";
 import Timeline from "../Timeline";
 import VotingToken from "../VotingToken";
 import styles from "./styles.module.css";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 
-export const Sidebar = (props: any) => {
+interface SidebarProps {
+  isLoading: boolean;
+  isListProposalsLoading: boolean;
+  isSuccess: boolean;
+  isError: CustomError | null;
+  isListProposalsError: CustomError | null;
+  chainId: number;
+  setIsTimelineModalOpen: (isOpen: boolean) => void;
+}
+
+export const Sidebar: FC<SidebarProps> = ({
+  isLoading,
+  isListProposalsLoading,
+  isSuccess,
+  isError,
+  isListProposalsError,
+  chainId,
+  setIsTimelineModalOpen,
+}) => {
   const { query, pathname } = useRouter();
   const { chain } = useNetwork();
   const account = useAccount({
@@ -32,59 +52,20 @@ export const Sidebar = (props: any) => {
       }
     },
   });
-  const {
-    isLoading,
-    isListProposalsLoading,
-    isSuccess,
-    isError,
-    isListProposalsError,
-    chainId,
-    setIsTimelineModalOpen,
-  } = props;
 
   const {
     amountOfTokensRequiredToSubmitEntry,
-    listProposalsIds,
     currentUserProposalCount,
     contestMaxNumberSubmissionsPerUser,
-    contestMaxProposalCount,
-    submissionsOpen,
-    votesOpen,
-    votesClose,
-    contestStatus,
     currentUserSubmitProposalTokensAmount,
-    supportsRewardsModule,
-    contestAuthorEthereumAddress,
-  } = useStoreContest(
-    state => ({
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-      //@ts-ignore
-      submissionsOpen: state.submissionsOpen,
-      //@ts-ignore
-      votesOpen: state.votesOpen,
-      //@ts-ignore
-      votesClose: state.votesClose,
-      //@ts-ignore
-      contestMaxNumberSubmissionsPerUser: state.contestMaxNumberSubmissionsPerUser,
-      //@ts-ignore
-      contestMaxProposalCount: state.contestMaxProposalCount,
-      //@ts-ignore
-      currentUserProposalCount: state.currentUserProposalCount,
-      //@ts-ignore
-      listProposalsIds: state.listProposalsIds,
-      //@ts-ignore
-      amountOfTokensRequiredToSubmitEntry: state.amountOfTokensRequiredToSubmitEntry,
-      //@ts-ignore
-      currentUserSubmitProposalTokensAmount: state.currentUserSubmitProposalTokensAmount,
-      //@ts-ignore
-      supportsRewardsModule: state.supportsRewardsModule,
-      //@ts-ignore
-      contestAuthorEthereumAddress: state.contestAuthorEthereumAddress,
-    }),
-    shallow,
-  );
-  const stateSubmitProposal = useStoreSubmitProposal();
+  } = useUserStore(state => state);
+  const { listProposalsIds } = useProposalStore(state => state);
+  const { contestMaxProposalCount, submissionsOpen, votesOpen, votesClose, contestStatus, supportsRewardsModule } =
+    useContestStore(state => state);
+
+  const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
+    setIsSubmitProposalModalOpen: state.setIsModalOpen,
+  }));
 
   return (
     <>
@@ -143,12 +124,36 @@ export const Sidebar = (props: any) => {
             </a>
           </Link>
         )}
+        {contestStatus === CONTEST_STATUS.COMPLETED ? (
+          <Link
+            href={{
+              pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
+              query: {
+                chain: query.chain,
+                address: query.address,
+              },
+            }}
+          >
+            <a
+              className={`${styles.navLink} ${
+                pathname === ROUTE_VIEW_CONTEST_EXPORT_DATA ? styles["navLink--active"] : ""
+              }`}
+            >
+              <DocumentDownloadIcon className={styles.navLinkIcon} />
+              Export data
+            </a>
+          </Link>
+        ) : (
+          <div className={styles.navLink}>
+            <DocumentDownloadIcon className={styles.navLinkIcon} />
+            Export data
+          </div>
+        )}
       </nav>
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
         <>
           <Button
-            /* @ts-ignore */
-            onClick={() => stateSubmitProposal.setIsModalOpen(true)}
+            onClick={() => setIsSubmitProposalModalOpen(true)}
             className="animate-appear fixed md:static z-10  md:mt-3 aspect-square 2xs:aspect-auto bottom-16 inline-end-5 md:bottom-unset md:inline-end-unset disabled:!opacity-100 disabled:!border-opacity-50 disabled:!text-opacity-50"
             intent={
               currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry ||
@@ -182,9 +187,7 @@ export const Sidebar = (props: any) => {
       )}
       <Button
         onClick={() => setIsTimelineModalOpen(true)}
-        disabled={
-          isLoading || isError !== null || !isDate(submissionsOpen) || !isDate(votesOpen) || !isDate(votesClose)
-        }
+        disabled={isLoading || isError !== null || !submissionsOpen || !votesOpen || !votesClose}
         intent="true-solid-outline"
         className={`
   ${contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? "bottom-32" : "bottom-16"}
@@ -193,7 +196,7 @@ export const Sidebar = (props: any) => {
         <CalendarIcon className="w-5 2xs:mie-1 md:hidden" />
         <span className="sr-only 2xs:not-sr-only">Timeline</span>
       </Button>
-      {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
+      {!isLoading && isSuccess && submissionsOpen && votesOpen && votesClose && (
         <>
           {account?.address && (
             <div className="hidden md:my-4 md:block">

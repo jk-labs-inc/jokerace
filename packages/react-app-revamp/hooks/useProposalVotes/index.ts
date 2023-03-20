@@ -1,18 +1,17 @@
-import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import { useRouter } from "next/router";
-import shallow from "zustand/shallow";
-import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
-import { getContract, watchContractEvent } from "@wagmi/core";
-import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { useStore } from "./store";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses"
+import getContestContractVersion from "@helpers/getContestContractVersion";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { useContestStore } from "@hooks/useContest/store";
+import { fetchEnsName, getAccount, getContract, readContract, watchContractEvent } from "@wagmi/core";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
+import { useProposalVotesStore } from "./store";
 
 const VOTES_PER_PAGE = 5;
 
@@ -21,7 +20,7 @@ export function useProposalVotes(id: number | string) {
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href='https://www.google.com/search?q=what+are+ofac+sanctions';
+        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
       }
     },
   });
@@ -31,6 +30,8 @@ export function useProposalVotes(id: number | string) {
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
   const [address] = useState(url[3]);
+
+  const { contestStatus, canUpdateVotesInRealTime } = useContestStore(state => state);
 
   const {
     isListVotersSuccess,
@@ -46,47 +47,7 @@ export function useProposalVotes(id: number | string) {
     setIndexPaginationVotesPerId,
     setTotalPagesPaginationVotes,
     setHasPaginationVotesNextPage,
-    contestStatus,
-    canUpdateVotesInRealTime,
-  } = useStore(
-    state => ({
-      //@ts-ignore
-      version: state.version,
-      //@ts-ignore
-      isListVotersSuccess: state.isListVotersSuccess,
-      //@ts-ignore
-      isListVotersError: state.isListVotersError,
-      //@ts-ignore
-      isListVotersLoading: state.isListVotersLoading,
-      //@ts-ignore
-      setVotesPerAddress: state.setVotesPerAddress,
-      //@ts-ignore
-      setIsListVotersLoading: state.setIsListVotersLoading,
-      //@ts-ignore
-      setIsListVotersError: state.setIsListVotersError,
-      //@ts-ignore
-      setIsListVotersSuccess: state.setIsListVotersSuccess,
-      //@ts-ignore
-      setIsPageVotesLoading: state.setIsPageVotesLoading,
-      //@ts-ignore
-      setIsPageVotesSuccess: state.setIsPageVotesSuccess,
-      //@ts-ignore
-      setIsPageVotesError: state.setIsPageVotesError,
-      //@ts-ignore
-      setCurrentPagePaginationVotes: state.setCurrentPagePaginationVotes,
-      //@ts-ignore
-      setIndexPaginationVotesPerId: state.setIndexPaginationVotesPerId,
-      //@ts-ignore
-      setTotalPagesPaginationVotes: state.setTotalPagesPaginationVotes,
-      //@ts-ignore
-      setHasPaginationVotesNextPage: state.setHasPaginationVotesNextPage,
-      //@ts-ignore
-      canUpdateVotesInRealTime: state.canUpdateVotesInRealTime,
-      //@ts-ignore
-      contestStatus: state.contestStatus,
-    }),
-    shallow,
-  );
+  } = useProposalVotesStore(state => state);
 
   /**
    * Fetch all votes of a given proposals (amount of votes, + detailed list of voters and the amount of votes they casted)
@@ -105,7 +66,7 @@ export function useProposalVotes(id: number | string) {
       return;
     }
     try {
-      const accountData = await getAccount();
+      const accountData = getAccount();
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
@@ -188,36 +149,38 @@ export function useProposalVotes(id: number | string) {
       const abi = await getContestContractVersion(address, chainName);
       if (abi === null) {
         toast.error("This contract doesn't exist on this chain.");
-        setIsPageVotesError("This contract doesn't exist on this chain.");
+        setIsPageVotesError({ message: "This contract doesn't exist on this chain." });
         setIsPageVotesLoading(false);
         return;
       }
+
       const contractConfig = {
         addressOrName: address,
         contractInterface: abi,
-        chainId: chainId,
+        chainId,
       };
 
       const data = await readContract({
-        //@ts-ignore
         ...contractConfig,
         functionName: "proposalAddressVotes",
         args: [id, userAddress],
         chainId,
       });
 
+      const { forVotes, againstVotes } = data ?? {};
+
       const author = await fetchEnsName({
         address: userAddress,
         chainId: wagmiChain.mainnet.id,
       });
 
+      const displayAddress = author ?? shortenEthereumAddress(userAddress);
+      // @ts-ignore
+      const votes = (forVotes ? forVotes / 1e18 - againstVotes / 1e18 : data / 1e18) ?? 0;
+
       setVotesPerAddress({
         address: userAddress,
-        value: {
-          displayAddress: author ?? shortenEthereumAddress(userAddress),
-          //@ts-ignore
-          votes: data?.forVotes ? data?.forVotes / 1e18 - data?.againstVotes / 1e18 : data / 1e18,
-        },
+        value: { displayAddress, votes },
       });
     } catch (e) {
       console.error(e);
@@ -268,18 +231,23 @@ export function useProposalVotes(id: number | string) {
   }, [canUpdateVotesInRealTime, contestStatus]);
 
   useEffect(() => {
-    fetchProposalVotes();
-    const onVisibilityChangeHandler = () => {
-      if (document.visibilityState === "hidden") {
-        provider.removeAllListeners();
-      }
+    const fetchProposalVotesAndListenForEvents = async () => {
+      await fetchProposalVotes();
+
+      const onVisibilityChangeHandler = () => {
+        if (document.visibilityState === "hidden") {
+          provider.removeAllListeners();
+        }
+      };
+
+      document.addEventListener("visibilitychange", onVisibilityChangeHandler);
+
+      return () => {
+        document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
+      };
     };
 
-    document.addEventListener("visibilitychange", onVisibilityChangeHandler);
-
-    return () => {
-      document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
-    };
+    fetchProposalVotesAndListenForEvents();
   }, []);
 
   return {

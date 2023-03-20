@@ -1,10 +1,9 @@
+import Loader from "@components/UI/Loader";
+import { chains } from "@config/wagmi";
 import { useRouter } from "next/router";
-import Loader from "@components/Loader";
 import { useContractRead } from "wagmi";
 import PayeeERC20Reward from "./ERC20Reward";
 import PayeeNativeReward from "./NativeCurrencyReward";
-import { chains } from "@config/wagmi";
-import ordinalize from "@helpers/ordinalize";
 interface RewardsWinnerProps {
   payee: any;
   erc20Tokens: Array<string>;
