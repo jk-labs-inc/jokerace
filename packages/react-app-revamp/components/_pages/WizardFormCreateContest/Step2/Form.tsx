@@ -185,7 +185,7 @@ export const Form = (props: FormProps) => {
           <ToggleSwitch
             label="Non-transferable"
             disabled={!account.isConnected || chain?.unsupported || isDeploying}
-            checked={data().nonTransferable}
+            checked={data().nonTransferable ?? false}
             onChange={(e: boolean) => {
               setData("nonTransferable", e);
             }}
