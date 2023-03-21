@@ -8,10 +8,10 @@ import { parseEther } from "ethers/lib/utils";
 import toast from "react-hot-toast";
 import { useNetwork, useSigner } from "wagmi";
 
+import { removeFromLocalStorage } from "@helpers/localStorage";
 import useContestsIndex from "@hooks/useContestsIndex";
 import { CustomError } from "types/error";
 import { useStore } from "../store";
-import { removeFromLocalStorage } from "@helpers/localStorage";
 export function useDeployContest(form: any) {
   const { indexContest } = useContestsIndex();
   const stateContestDeployment = useContractFactoryStore(state => state);
@@ -177,6 +177,8 @@ export function useDeployContest(form: any) {
         });
       }
 
+      form.reset();
+      removeFromLocalStorage("form-step-3");
       stateContestDeployment.setIsSuccess(true);
 
       if (modalDeployContestOpen === false) {
@@ -184,14 +186,12 @@ export function useDeployContest(form: any) {
       }
 
       stateContestDeployment.setIsLoading(false);
-      form.reset();
-      removeFromLocalStorage("form-step-3");
     } catch (e) {
       const customError = e as CustomError;
 
       if (!customError) return;
 
-      if (!modalDeployContestOpen) {
+      if (modalDeployContestOpen) {
         const message =
           customError?.message || `The contract for your contest ("${values.contestTitle}") couldn't be deployed.`;
         stateContestDeployment.setError({

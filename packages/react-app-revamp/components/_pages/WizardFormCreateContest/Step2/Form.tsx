@@ -203,10 +203,7 @@ export const Form = (props: FormProps) => {
         <Button
           className="sm:w-fit-content"
           isLoading={isDeploying}
-          //@ts-ignore
-          disabled={
-            !account.isConnected || chain?.unsupported || isDeploying || isValid() === false || interacted() === null
-          }
+          disabled={!account.isConnected || chain?.unsupported || isDeploying || isValid() === false}
           type="submit"
         >
           Mint

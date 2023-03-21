@@ -758,7 +758,7 @@ export const Form = (props: FormProps) => {
             <ToggleSwitch
               label="Downvoting"
               disabled={!isConnected || chain?.unsupported === true || isDeploying === true}
-              checked={data().downvotingAllowed}
+              checked={data().downvotingAllowed ?? false}
               onChange={(e: boolean) => {
                 setData("downvotingAllowed", e);
               }}

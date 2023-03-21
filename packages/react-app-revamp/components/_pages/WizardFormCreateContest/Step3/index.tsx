@@ -5,6 +5,7 @@ import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_REWARDS } from "@config/routes";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
 import { loadFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
+import { isObjectEmpty } from "@helpers/object";
 import { addMinutes } from "date-fns";
 import Link from "next/link";
 import { useEffect } from "react";
@@ -56,6 +57,7 @@ export const Step3 = () => {
     }),
     shallow,
   );
+
   /*
     add 10min to the current datetime to anticipate
     the user actions on the form and prevent 
@@ -67,7 +69,9 @@ export const Step3 = () => {
     whoCanSubmit: "anybody",
     datetimeOpeningVoting: "",
     datetimeClosingVoting: "",
+    datetimeOpeningSubmissions: new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, -8), // get current local time in ISO format without seconds & milliseconds
     submissionOpenToAll: true,
+    votingTokenAddress: dataDeployVotingToken?.address ?? null,
     noSubmissionLimitPerUser: false,
     submissionMaxNumber: 200,
     requiredNumberOfTokensToSubmit: 1,
@@ -78,16 +82,9 @@ export const Step3 = () => {
     rewardTokenAddress: "",
     rewards: [],
   };
-  const cachedInputs = loadFromLocalStorage("form-step-3", defaultFormValues);
 
   const form = useForm({
-    initialValues: {
-      ...cachedInputs,
-      datetimeOpeningSubmissions: new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-        .toISOString()
-        .slice(0, -8), // get current local time in ISO format without seconds & milliseconds
-      votingTokenAddress: dataDeployVotingToken?.address ?? null,
-    },
+    initialValues: defaultFormValues,
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values),
   });
@@ -98,6 +95,22 @@ export const Step3 = () => {
   };
 
   useEffect(() => {
+    const savedInputs = loadFromLocalStorage("form-step-3", defaultFormValues);
+
+    if (savedInputs.votingTokenAddress === dataDeployVotingToken?.address) {
+      form.setFields(savedInputs);
+    } else {
+      form.setFields(defaultFormValues);
+    }
+  }, [dataDeployVotingToken?.address]);
+
+  useEffect(() => {
+    // In case of resetting, we do not initalize localStorage again.
+    if (isObjectEmpty(form.data())) {
+      form.setFields(defaultFormValues);
+      return;
+    }
+
     saveInputValues();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.data()]);
