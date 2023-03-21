@@ -865,7 +865,7 @@ export const Form = (props: FormProps) => {
                   </FormField.HelpBlock>
                 </FormField>
               )}
-              {data()?.rewards.map((reward: any, i: number) => (
+              {data()?.rewards?.map((reward: any, i: number) => (
                 <div
                   key={`reward-${reward.key}`}
                   className="text-sm p-4 border-neutral-4 border-solid border rounded-md space-y-6 relative"
@@ -1005,7 +1005,7 @@ export const Form = (props: FormProps) => {
               ))}
               <Button
                 disabled={
-                  data()?.rewards.reduce((sumRewards: number, reward: any) => {
+                  data()?.rewards?.reduce((sumRewards: number, reward: any) => {
                     //@ts-ignore
                     return parseFloat(sumRewards ?? 0) + parseFloat(reward?.rewardPercentageAmount ?? 0);
                   }, 0) >= 100

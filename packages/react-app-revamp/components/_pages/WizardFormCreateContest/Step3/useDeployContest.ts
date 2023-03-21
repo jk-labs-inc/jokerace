@@ -11,6 +11,7 @@ import { useNetwork, useSigner } from "wagmi";
 import useContestsIndex from "@hooks/useContestsIndex";
 import { CustomError } from "types/error";
 import { useStore } from "../store";
+import { removeFromLocalStorage } from "@helpers/localStorage";
 export function useDeployContest(form: any) {
   const { indexContest } = useContestsIndex();
   const stateContestDeployment = useContractFactoryStore(state => state);
@@ -178,11 +179,13 @@ export function useDeployContest(form: any) {
 
       stateContestDeployment.setIsSuccess(true);
 
-      if (modalDeployContestOpen === false)
+      if (modalDeployContestOpen === false) {
         toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully!`);
+      }
 
       stateContestDeployment.setIsLoading(false);
       form.reset();
+      removeFromLocalStorage("form-step-3");
     } catch (e) {
       const customError = e as CustomError;
 

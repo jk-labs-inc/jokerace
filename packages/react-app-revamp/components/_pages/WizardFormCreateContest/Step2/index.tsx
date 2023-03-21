@@ -3,7 +3,9 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
 import { copyToClipboard } from "@helpers/copyToClipboard";
+import { loadFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
 import { DuplicateIcon } from "@heroicons/react/outline";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import shallow from "zustand/shallow";
 import { DialogModalDeployTransaction } from "../DialogModalDeployTransaction";
@@ -29,9 +31,13 @@ export const Step2 = () => {
       }),
       shallow,
     );
+  const cachedInputs = loadFromLocalStorage("form-step-2");
   const form = useForm({
     extend: validator({ schema }),
-    onSubmit: values => handleSubmitForm(values, false),
+    initialValues: cachedInputs,
+    onSubmit: values => {
+      handleSubmitForm(values, false);
+    },
   });
   const { handleSubmitForm, stateContractDeployment } = useDeployToken(form);
   const { isConnected } = useAccount({
@@ -41,6 +47,16 @@ export const Step2 = () => {
       }
     },
   });
+
+  const saveInputValues = () => {
+    saveToLocalStorage("form-step-2", form.data());
+  };
+
+  useEffect(() => {
+    saveInputValues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.data()]);
+
   return (
     <>
       <div className="tracking-wide pb-8">

@@ -1,11 +1,13 @@
-import stylesStepperTxTracker from "@components/UI/TrackerDeployTransaction/styles.module.css";
 import Button from "@components/UI/Button";
 import DialogModal from "@components/UI/DialogModal";
+import stylesStepperTxTracker from "@components/UI/TrackerDeployTransaction/styles.module.css";
 import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_REWARDS } from "@config/routes";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
+import { loadFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
 import { addMinutes } from "date-fns";
 import Link from "next/link";
+import { useEffect } from "react";
 import shallow from "zustand/shallow";
 import { DialogModalDeployTransaction } from "../DialogModalDeployTransaction";
 import { useStore } from "../store";
@@ -61,31 +63,44 @@ export const Step3 = () => {
     the user is finished filling up the form
   */
   const date = addMinutes(new Date(), 10);
+  const defaultFormValues = {
+    whoCanSubmit: "anybody",
+    datetimeOpeningVoting: "",
+    datetimeClosingVoting: "",
+    submissionOpenToAll: true,
+    noSubmissionLimitPerUser: false,
+    submissionMaxNumber: 200,
+    requiredNumberOfTokensToSubmit: 1,
+    submissionPerUserMaxNumber: 1,
+    usersQualifyToVoteIfTheyHoldTokenOnVoteStart: true,
+    downvoting: false,
+    rewardsType: "noRewards",
+    rewardTokenAddress: "",
+    rewards: [],
+  };
+  const cachedInputs = loadFromLocalStorage("form-step-3", defaultFormValues);
 
   const form = useForm({
     initialValues: {
-      whoCanSubmit: "anybody",
-      votingTokenAddress: dataDeployVotingToken?.address ?? null,
+      ...cachedInputs,
       datetimeOpeningSubmissions: new Date(date.getTime() - date.getTimezoneOffset() * 60000)
         .toISOString()
         .slice(0, -8), // get current local time in ISO format without seconds & milliseconds
-      datetimeOpeningVoting: "",
-      datetimeClosingVoting: "",
-      submissionOpenToAll: true,
-      noSubmissionLimitPerUser: false,
-      submissionMaxNumber: 200,
-      requiredNumberOfTokensToSubmit: 1,
-      submissionPerUserMaxNumber: 1,
-      usersQualifyToVoteIfTheyHoldTokenOnVoteStart: true,
-      downvoting: false,
-      rewardsType: "noRewards",
-      rewardTokenAddress: "",
-      rewards: [],
+      votingTokenAddress: dataDeployVotingToken?.address ?? null,
     },
     extend: validator({ schema }),
     onSubmit: values => handleSubmitForm(values),
   });
   const { handleSubmitForm, stateContestDeployment } = useDeployContest(form);
+
+  const saveInputValues = () => {
+    saveToLocalStorage("form-step-3", form.data());
+  };
+
+  useEffect(() => {
+    saveInputValues();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.data()]);
 
   return (
     <>
