@@ -9,7 +9,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { fetchEnsName, getAccount, getContract, readContract, watchContractEvent } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
 import { useProposalVotesStore } from "./store";
 

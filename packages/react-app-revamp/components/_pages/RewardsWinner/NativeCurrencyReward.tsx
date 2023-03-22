@@ -1,6 +1,6 @@
 import { utils } from "ethers";
-import toast from "react-hot-toast";
-import { useBalance, useContractRead, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
+import { toast } from "react-toastify";
+import { useBalance, useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import Reward from "./Reward";
 
 interface PayeeNativeRewardProps {
@@ -52,8 +52,7 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     chainId,
     onError(e) {
       console.error(e);
-      //@ts-ignore
-      toast.error("Something went wrong and the transaction failed :", e?.message);
+      toast.error(`Something went wrong and the transaction failed :", ${e?.message}`);
     },
     onSuccess() {
       toast.success("Transaction successful !");

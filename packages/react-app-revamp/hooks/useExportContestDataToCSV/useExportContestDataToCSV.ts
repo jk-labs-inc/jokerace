@@ -8,7 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useExportDataStore } from "./store";
 

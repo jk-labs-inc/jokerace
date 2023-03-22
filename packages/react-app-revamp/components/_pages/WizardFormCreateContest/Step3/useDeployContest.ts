@@ -5,12 +5,12 @@ import { waitForTransaction, writeContract } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
 import { parseEther } from "ethers/lib/utils";
-import toast from "react-hot-toast";
 import { useNetwork, useSigner } from "wagmi";
 
 import useContestsIndex from "@hooks/useContestsIndex";
 import { CustomError } from "types/error";
 import { useStore } from "../store";
+import { toast } from "react-toastify";
 export function useDeployContest(form: any) {
   const { indexContest } = useContestsIndex();
   const stateContestDeployment = useContractFactoryStore(state => state);
