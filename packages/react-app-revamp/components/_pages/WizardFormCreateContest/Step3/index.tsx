@@ -133,37 +133,37 @@ export const Step3 = () => {
       </div>
       <Form isDeploying={stateContestDeployment.isLoading} {...form} />
       {modalDeploySubmissionTokenOpen && <DialogModalMintProposalToken formCreateContestSetFields={form.setFields} />}
-      {willHaveRewardsModule === false || !willHaveRewardsModule ? (
-        <>
-          <DialogModalDeployTransaction
-            isOpen={modalDeployContestOpen}
-            setIsOpen={setModalDeployContestOpen}
-            title="Contest deployment transaction"
-            isLoading={stateContestDeployment.isLoading}
-            isSuccess={stateContestDeployment.isSuccess}
-            error={stateContestDeployment.error}
-            transactionHref={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
-            textPending="Deploying contest..."
-          >
-            {dataDeployContest?.address && (
-              <div className="mt-6 font-bold animate-appear relative">
-                <Link
-                  href={{
-                    pathname: ROUTE_VIEW_CONTEST,
-                    //@ts-ignore
-                    query: {
-                      chain: contestDeployedToChain?.name.toLowerCase().replace(" ", ""),
-                      address: dataDeployContest?.address,
-                    },
-                  }}
-                >
-                  <a target="_blank">
-                    View contest <span className="link">here</span>
-                  </a>
-                </Link>
-              </div>
-            )}
+      {!willHaveRewardsModule ? (
+        <DialogModalDeployTransaction
+          isOpen={modalDeployContestOpen}
+          setIsOpen={setModalDeployContestOpen}
+          title="Contest deployment transaction"
+          isLoading={stateContestDeployment.isLoading}
+          isSuccess={stateContestDeployment.isSuccess}
+          error={stateContestDeployment.error}
+          transactionHref={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
+          textPending="Deploying contest..."
+        >
+          {dataDeployContest?.address && (
+            <div className="mt-6 font-bold animate-appear relative">
+              <Link
+                href={{
+                  pathname: ROUTE_VIEW_CONTEST,
+                  //@ts-ignore
+                  query: {
+                    chain: contestDeployedToChain?.name.toLowerCase().replace(" ", ""),
+                    address: dataDeployContest?.address,
+                  },
+                }}
+              >
+                <a target="_blank">
+                  View contest <span className="link">here</span>
+                </a>
+              </Link>
+            </div>
+          )}
 
+          {stateContestDeployment.isSuccess && (
             <div className="pt-6 flex flex-col space-y-3 xs:flex-row xs:space-y-0 xs:space-i-3">
               <Button
                 className="w-full py-1 xs:min-w-fit-content xs:w-auto"
@@ -173,136 +173,123 @@ export const Step3 = () => {
               >
                 Next
               </Button>
-              {stateContestDeployment.error && (
-                <Button
-                  onClick={() => {
-                    handleSubmitForm(form.data());
-                  }}
-                  className="w-full py-1 xs:w-auto xs:min-w-fit-content"
-                  disabled={stateContestDeployment.isLoading}
-                  intent="neutral-outline"
-                  type="submit"
-                >
-                  Try again
-                </Button>
-              )}
             </div>
-          </DialogModalDeployTransaction>
-        </>
+          )}
+        </DialogModalDeployTransaction>
       ) : (
-        <>
-          <DialogModal
-            isOpen={modalDeployContestOpen}
-            setIsOpen={setModalDeployContestOpen}
-            title="Contest deployment transaction"
-          >
-            <ol className={`space-y-4 leading-[1.75] font-bold ${stylesStepperTxTracker.stepper}`}>
-              <li
-                className={`${stateContestDeployment.error ? "text-negative-11" : "text-primary-10"} ${
-                  stateContestDeployment.isLoading === true && !dataDeployContest?.address ? "animate-pulse" : ""
-                }`}
-              >
-                {stateContestDeployment.error ? "Something went wrong during deployment." : "Deploying contest..."}
-              </li>
-              <li
-                className={`${
-                  stateContestDeployment.error
-                    ? "text-negative-11"
-                    : !dataDeployContest?.address
-                    ? "text-neutral-8"
-                    : "text-primary-10"
-                } ${
-                  stateContestDeployment.isLoading && dataDeployContest?.address && !dataDeployRewardsModule?.address
-                    ? "animate-pulse"
-                    : ""
-                }`}
-              >
-                {stateContestDeployment.error ? "Something went wrong during deployment." : "Deploying rewards pool..."}
-              </li>
-              <li
-                className={`${
-                  stateContestDeployment.error
-                    ? "text-negative-11"
-                    : !dataDeployContest?.address || !dataDeployRewardsModule?.address
-                    ? "text-neutral-8"
-                    : "text-primary-10"
-                } ${
-                  stateContestDeployment.isLoading && dataDeployContest?.address && dataDeployRewardsModule?.address
-                    ? "animate-pulse"
-                    : ""
-                }`}
-              >
-                {stateContestDeployment.error
-                  ? "Something went wrong during deployment."
-                  : "Connecting pool to contest..."}
-              </li>
+        <DialogModal
+          isOpen={modalDeployContestOpen}
+          setIsOpen={setModalDeployContestOpen}
+          title="Contest deployment transaction"
+        >
+          <ol className={`space-y-4 leading-[1.75] font-bold ${stylesStepperTxTracker.stepper}`}>
+            <li
+              className={`${stateContestDeployment.error ? "text-negative-11" : "text-primary-10"} ${
+                stateContestDeployment.isLoading === true && !dataDeployContest?.address ? "animate-pulse" : ""
+              }`}
+            >
+              {stateContestDeployment.error ? "Something went wrong during deployment." : "Deploying contest..."}
+            </li>
+            <li
+              className={`${
+                stateContestDeployment.error
+                  ? "text-negative-11"
+                  : !dataDeployContest?.address
+                  ? "text-neutral-8"
+                  : "text-primary-10"
+              } ${
+                stateContestDeployment.isLoading && dataDeployContest?.address && !dataDeployRewardsModule?.address
+                  ? "animate-pulse"
+                  : ""
+              }`}
+            >
+              {stateContestDeployment.error ? "Something went wrong during deployment." : "Deploying rewards pool..."}
+            </li>
+            <li
+              className={`${
+                stateContestDeployment.error
+                  ? "text-negative-11"
+                  : !dataDeployContest?.address || !dataDeployRewardsModule?.address
+                  ? "text-neutral-8"
+                  : "text-primary-10"
+              } ${
+                stateContestDeployment.isLoading && dataDeployContest?.address && dataDeployRewardsModule?.address
+                  ? "animate-pulse"
+                  : ""
+              }`}
+            >
+              {stateContestDeployment.error
+                ? "Something went wrong during deployment."
+                : "Connecting pool to contest..."}
+            </li>
 
-              <li className={stateContestDeployment.isSuccess === true ? "text-primary-10" : "text-neutral-8"}>
-                Deployed!
-              </li>
-            </ol>
-            {dataDeployContest?.address && dataContestRewardsModule?.hash && (
-              <div className="mt-6 flex font-bold animate-appear relative">
-                <Link
-                  href={{
-                    pathname: ROUTE_VIEW_CONTEST_REWARDS,
-                    query: {
-                      chain: contestDeployedToChain?.name.toLowerCase().replace(" ", ""),
-                      address: dataDeployContest?.address,
-                      tokenRewardsAddress: dataContestRewardsModule.tokenRewardsAddress,
-                      totalRewards: 0,
-                    },
-                  }}
-                >
-                  <a target="_blank">
-                    Add funds to your contest rewards module <span className="link">here</span>.
-                  </a>
-                </Link>
-              </div>
-            )}
-            <div className="mt-6">
-              <h3 className="font-bold mb-2">Transactions:</h3>
-              {stateContestDeployment.isLoading && (
-                <p className="animate-appear mb-2 italic text-neutral-11">
-                  Links to your successful transactions will appear below.
-                </p>
-              )}
-              <ul className="space-y-3 list-disc pis-3">
-                {dataDeployContest?.hash && (
-                  <li className="animate-appear">
-                    <a
-                      rel="nofollow noreferrer"
-                      target="_blank"
-                      href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
-                    >
-                      View contest deployment transaction <span className="link">here</span>
-                    </a>
-                  </li>
-                )}
-                {dataDeployRewardsModule?.hash && (
-                  <li className="animate-appear">
-                    <a
-                      rel="nofollow noreferrer"
-                      target="_blank"
-                      href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployRewardsModule?.hash}`}
-                    >
-                      View rewards pool deployment transaction <span className="link">here</span>
-                    </a>
-                  </li>
-                )}
-                {dataContestRewardsModule?.hash && (
-                  <li className="animate-appear">
-                    <a
-                      rel="nofollow noreferrer"
-                      target="_blank"
-                      href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataContestRewardsModule?.hash}`}
-                    >
-                      View connecting rewards pool to contest transaction <span className="link">here</span>
-                    </a>
-                  </li>
-                )}
-              </ul>
+            <li className={stateContestDeployment.isSuccess === true ? "text-primary-10" : "text-neutral-8"}>
+              Deployed!
+            </li>
+          </ol>
+          {dataDeployContest?.address && dataContestRewardsModule?.hash && (
+            <div className="mt-6 flex font-bold animate-appear relative">
+              <Link
+                href={{
+                  pathname: ROUTE_VIEW_CONTEST_REWARDS,
+                  query: {
+                    chain: contestDeployedToChain?.name.toLowerCase().replace(" ", ""),
+                    address: dataDeployContest?.address,
+                    tokenRewardsAddress: dataContestRewardsModule.tokenRewardsAddress,
+                    totalRewards: 0,
+                  },
+                }}
+              >
+                <a target="_blank">
+                  Add funds to your contest rewards module <span className="link">here</span>.
+                </a>
+              </Link>
             </div>
+          )}
+          <div className="mt-6">
+            <h3 className="font-bold mb-2">Transactions:</h3>
+            {stateContestDeployment.isLoading && (
+              <p className="animate-appear mb-2 italic text-neutral-11">
+                Links to your successful transactions will appear below.
+              </p>
+            )}
+            <ul className="space-y-3 list-disc pis-3">
+              {dataDeployContest?.hash && (
+                <li className="animate-appear">
+                  <a
+                    rel="nofollow noreferrer"
+                    target="_blank"
+                    href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployContest?.hash}`}
+                  >
+                    View contest deployment transaction <span className="link">here</span>
+                  </a>
+                </li>
+              )}
+              {dataDeployRewardsModule?.hash && (
+                <li className="animate-appear">
+                  <a
+                    rel="nofollow noreferrer"
+                    target="_blank"
+                    href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployRewardsModule?.hash}`}
+                  >
+                    View rewards pool deployment transaction <span className="link">here</span>
+                  </a>
+                </li>
+              )}
+              {dataContestRewardsModule?.hash && (
+                <li className="animate-appear">
+                  <a
+                    rel="nofollow noreferrer"
+                    target="_blank"
+                    href={`${contestDeployedToChain?.blockExplorers?.default?.url}/tx/${dataContestRewardsModule?.hash}`}
+                  >
+                    View connecting rewards pool to contest transaction <span className="link">here</span>
+                  </a>
+                </li>
+              )}
+            </ul>
+          </div>
+          {stateContestDeployment.isSuccess && (
             <div className="pt-6 flex flex-col space-y-3 xs:flex-row xs:space-y-0 xs:space-i-3">
               <Button
                 className="w-full py-1 xs:min-w-fit-content xs:w-auto"
@@ -312,22 +299,9 @@ export const Step3 = () => {
               >
                 Next
               </Button>
-              {stateContestDeployment.error && (
-                <Button
-                  onClick={() => {
-                    handleSubmitForm(form.data());
-                  }}
-                  className="w-full py-1 xs:w-auto xs:min-w-fit-content"
-                  disabled={stateContestDeployment.isLoading}
-                  intent="neutral-outline"
-                  type="submit"
-                >
-                  Try again
-                </Button>
-              )}
             </div>
-          </DialogModal>
-        </>
+          )}
+        </DialogModal>
       )}
     </>
   );

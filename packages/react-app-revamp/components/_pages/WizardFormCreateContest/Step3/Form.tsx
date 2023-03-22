@@ -1073,7 +1073,6 @@ export const Form = (props: FormProps) => {
           //@ts-ignore
           disabled={
             !isValid() ||
-            interacted() === null ||
             !isConnected ||
             chain?.unsupported === true ||
             isDeploying === true ||

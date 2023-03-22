@@ -33,8 +33,6 @@ export function useDeployContest(form: any) {
     //@ts-ignore
     setModalDeployContestOpen: state.setModalDeployContestOpen,
     //@ts-ignore
-    setModalDeployContestOpen: state.setModalDeployContestOpen,
-    //@ts-ignore
     setDeployContestData: state.setDeployContestData,
     //@ts-ignore
     setContestDeployedToChain: state.setContestDeployedToChain,
@@ -46,6 +44,7 @@ export function useDeployContest(form: any) {
 
   async function handleSubmitForm(values: any) {
     const hasRewards = ["erc20", "native"].includes(values.rewardsType);
+
     setWillHaveRewardsModule(hasRewards);
     setContestDeployedToChain(chain);
     setModalDeployContestOpen(true);
@@ -191,15 +190,17 @@ export function useDeployContest(form: any) {
 
       if (!customError) return;
 
-      if (modalDeployContestOpen) {
-        const message =
-          customError?.message || `The contract for your contest ("${values.contestTitle}") couldn't be deployed.`;
-        stateContestDeployment.setError({
-          code: customError.code,
-          message,
-        });
-        stateContestDeployment.setIsLoading(false);
-      }
+      const message =
+        customError?.message || `The contract for your contest ("${values.contestTitle}") couldn't be deployed.`;
+
+      toast.error(message);
+
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setError({
+        code: customError.code,
+        message,
+      });
+      setModalDeployContestOpen(false);
     }
   }
 
