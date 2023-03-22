@@ -7,7 +7,7 @@ import "@styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { Slide, ToastContainer } from "react-toastify";
+import { ToastContainer, Zoom } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { WagmiConfig } from "wagmi";
 
@@ -58,14 +58,15 @@ function MyApp({ Component, pageProps }: AppProps) {
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer
             position="bottom-right"
-            autoClose={5000}
+            autoClose={4000}
+            hideProgressBar={true}
             closeOnClick
             rtl={false}
             pauseOnFocusLoss
             draggable
             pauseOnHover
             theme="dark"
-            transition={Slide}
+            transition={Zoom}
             bodyClassName={() => "text-xs flex items-center"}
           />
         </RainbowKitProvider>
