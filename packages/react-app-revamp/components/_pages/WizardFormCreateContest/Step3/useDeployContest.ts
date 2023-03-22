@@ -8,6 +8,7 @@ import { parseEther } from "ethers/lib/utils";
 import toast from "react-hot-toast";
 import { useNetwork, useSigner } from "wagmi";
 
+import { removeFromLocalStorage } from "@helpers/localStorage";
 import useContestsIndex from "@hooks/useContestsIndex";
 import { CustomError } from "types/error";
 import { useStore } from "../store";
@@ -32,8 +33,6 @@ export function useDeployContest(form: any) {
     //@ts-ignore
     setModalDeployContestOpen: state.setModalDeployContestOpen,
     //@ts-ignore
-    setModalDeployContestOpen: state.setModalDeployContestOpen,
-    //@ts-ignore
     setDeployContestData: state.setDeployContestData,
     //@ts-ignore
     setContestDeployedToChain: state.setContestDeployedToChain,
@@ -45,6 +44,7 @@ export function useDeployContest(form: any) {
 
   async function handleSubmitForm(values: any) {
     const hasRewards = ["erc20", "native"].includes(values.rewardsType);
+
     setWillHaveRewardsModule(hasRewards);
     setContestDeployedToChain(chain);
     setModalDeployContestOpen(true);
@@ -176,27 +176,31 @@ export function useDeployContest(form: any) {
         });
       }
 
+      form.reset();
+      removeFromLocalStorage("form-step-3");
       stateContestDeployment.setIsSuccess(true);
 
-      if (modalDeployContestOpen === false)
+      if (modalDeployContestOpen === false) {
         toast.success(`The contract for your contest ("${values.contestTitle}") was deployed successfully!`);
+      }
 
       stateContestDeployment.setIsLoading(false);
-      form.reset();
     } catch (e) {
       const customError = e as CustomError;
 
       if (!customError) return;
 
-      if (!modalDeployContestOpen) {
-        const message =
-          customError?.message || `The contract for your contest ("${values.contestTitle}") couldn't be deployed.`;
-        stateContestDeployment.setError({
-          code: customError.code,
-          message,
-        });
-        stateContestDeployment.setIsLoading(false);
-      }
+      const message =
+        customError?.message || `The contract for your contest ("${values.contestTitle}") couldn't be deployed.`;
+
+      toast.error(message);
+
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setError({
+        code: customError.code,
+        message,
+      });
+      setModalDeployContestOpen(false);
     }
   }
 
