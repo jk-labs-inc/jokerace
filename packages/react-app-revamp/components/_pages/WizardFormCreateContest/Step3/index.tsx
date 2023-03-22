@@ -84,9 +84,11 @@ export const Step3 = () => {
   };
 
   const form = useForm({
-    initialValues: defaultFormValues,
     extend: validator({ schema }),
-    onSubmit: values => handleSubmitForm(values),
+    onSubmit: values => {
+      console.log;
+      handleSubmitForm(values);
+    },
   });
   const { handleSubmitForm, stateContestDeployment } = useDeployContest(form);
 
@@ -97,10 +99,10 @@ export const Step3 = () => {
   useEffect(() => {
     const savedInputs = loadFromLocalStorage("form-step-3", defaultFormValues);
 
-    if (savedInputs.votingTokenAddress === dataDeployVotingToken?.address) {
-      form.setFields(savedInputs);
-    } else {
+    if (dataDeployVotingToken?.address && savedInputs.votingTokenAddress !== dataDeployVotingToken?.address) {
       form.setFields(defaultFormValues);
+    } else {
+      form.setFields(savedInputs);
     }
   }, [dataDeployVotingToken?.address]);
 
