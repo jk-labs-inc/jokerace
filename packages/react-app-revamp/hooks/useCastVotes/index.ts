@@ -5,7 +5,7 @@ import useUser from "@hooks/useUser";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";

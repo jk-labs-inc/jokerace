@@ -3,7 +3,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useDeleteProposalStore } from "./store";

@@ -1,5 +1,5 @@
+import { toast } from "react-toastify";
 import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
-import { toast } from "react-hot-toast";
 import ButtonWithdraw from "./ButtonWithdraw";
 interface ButtonWithdrawNativeRewardProps {
   contractRewardsModuleAddress: string;
@@ -28,7 +28,7 @@ export const ButtonWithdrawNativeReward = (props: ButtonWithdrawNativeRewardProp
     onError(e) {
       console.error(e);
       //@ts-ignore
-      toast.error("Something went wrong and the funds couldn't be withdrawn  :", e?.message);
+      toast.error(`Something went wrong and the funds couldn't be withdrawn  :", ${e?.message}`);
     },
     onSuccess() {
       toast.success("Funds withdrawn successfully !");

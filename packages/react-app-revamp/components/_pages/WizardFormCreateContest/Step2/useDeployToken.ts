@@ -1,9 +1,10 @@
 import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
+import { removeFromLocalStorage } from "@helpers/localStorage";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { ContractFactory } from "ethers";
 import { parseEther } from "ethers/lib/utils";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
 import { useStore } from "../store";
@@ -84,6 +85,7 @@ export function useDeployToken(form: any) {
       stateContractDeployment.setIsSuccess(true);
       stateContractDeployment.setError(null);
       form.reset();
+      removeFromLocalStorage("form-step-2");
     } catch (e) {
       const customError = e as CustomError;
 

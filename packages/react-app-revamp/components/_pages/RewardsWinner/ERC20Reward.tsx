@@ -1,5 +1,5 @@
 import { utils } from "ethers";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { useBalance, useContractRead, useContractWrite, useNetwork, useToken, useWaitForTransaction } from "wagmi";
 import Reward from "./Reward";
 interface PayeeERC20RewardProps {
@@ -61,8 +61,7 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
     chainId,
     onError(e) {
       console.error(e);
-      //@ts-ignore
-      toast.error("Something went wrong and the transaction failed :", e?.message);
+      toast.error(`Something went wrong and the transaction failed :", ${e?.message}`);
     },
     async onSuccess() {
       await queryTokenBalance.refetch();

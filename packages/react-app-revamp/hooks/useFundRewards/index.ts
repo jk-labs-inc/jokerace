@@ -2,7 +2,7 @@ import { useRewardsStore } from "@hooks/useRewards/store";
 import { useQueryClient } from "@tanstack/react-query";
 import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
 import { useEffect } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { erc20ABI, useNetwork } from "wagmi";
 import { useFundRewardsStore } from "./store";

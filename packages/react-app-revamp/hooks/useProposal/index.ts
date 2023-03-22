@@ -6,7 +6,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { getAccount, readContract } from "@wagmi/core";
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { readContracts, useNetwork } from "wagmi";
 import { useProposalStore } from "./store";

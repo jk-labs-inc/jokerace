@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
@@ -7,6 +6,7 @@ import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
 import { useRewardsStore } from "./store";
 import { useNetwork, useQuery } from "wagmi";
 import { CustomError } from "types/error";
+import { toast } from "react-toastify";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();

@@ -10,7 +10,7 @@ import { fetchToken, getAccount, readContract, readContracts } from "@wagmi/core
 import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore } from "date-fns";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";

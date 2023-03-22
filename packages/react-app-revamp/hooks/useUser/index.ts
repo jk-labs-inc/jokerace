@@ -4,7 +4,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagmi/core";
 import { isFuture } from "date-fns";
 import { useRouter } from "next/router";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork, useProvider } from "wagmi";
 import { useUserStore } from "./store";

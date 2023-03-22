@@ -1,15 +1,15 @@
-import "@styles/globals.css";
-import "@rainbow-me/rainbowkit/styles.css";
-import { WagmiConfig } from "wagmi";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { chains, client } from "@config/wagmi";
 import { jokeDAOTheme } from "@config/rainbowkit";
+import { chains, client } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
-import { Toaster } from "react-hot-toast";
-import { toastOptions } from "@config/react-hot-toast";
-import Head from "next/head";
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
+import "@styles/globals.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
+import Head from "next/head";
+import { ToastContainer, Zoom } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
+import { WagmiConfig } from "wagmi";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,8 +56,19 @@ function MyApp({ Component, pageProps }: AppProps) {
           theme={jokeDAOTheme}
         >
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
-          {/* @ts-ignore */}
-          <Toaster position="bottom-right" toastOptions={toastOptions} />
+          <ToastContainer
+            position="bottom-right"
+            autoClose={4000}
+            hideProgressBar={true}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+            transition={Zoom}
+            bodyClassName={() => "text-xs flex items-center"}
+          />
         </RainbowKitProvider>
       </WagmiConfig>
     </>

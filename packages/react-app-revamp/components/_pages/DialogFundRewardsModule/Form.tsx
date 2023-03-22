@@ -64,17 +64,26 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
   });
   const balance = useBalance({
     addressOrName: address,
-    //@ts-ignore
     enabled: address && (!data()?.isErc20 || (data()?.isErc20 && erc20TokenRewards?.data?.address)) ? true : false,
     //@ts-ignore
     token: data()?.isErc20 ? data()?.tokenRewardsAddress : undefined,
   });
 
+  const isErc20InsufficientBalance =
+    (data()?.amount ?? 0) >
+    (balance?.data?.decimals === 18
+      ? balance?.data?.formatted
+      : //@ts-ignore
+        10 ** (18 - balance?.data?.decimals) * balance?.data?.formatted);
+
+  const isSendButtonDisabled =
+    !isValid() || isLoading || !isConnected || chain?.unsupported || isErc20InsufficientBalance;
+
   useEffect(() => {
     const refetchBalance = async () => {
       await balance.refetch();
     };
-    if (isSuccess === true) {
+    if (isSuccess) {
       refetchBalance();
     }
   }, [isSuccess]);
@@ -82,6 +91,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
   useEffect(() => {
     if (query?.tokenRewardsAddress === "native") setData("isErc20", false);
   }, [query?.tokenRewardsAddress]);
+
   return (
     <form ref={form} id={formId}>
       <fieldset className="mb-6">
@@ -91,7 +101,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
             value={data()?.isErc20}
             onChange={(e: boolean) => {
               setData("isErc20", e);
-              if (e === false) {
+              if (!e) {
                 setData("tokenRewardsAddress", "");
               }
             }}
@@ -130,11 +140,11 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
             </RadioGroup.Option>
           </RadioGroup>{" "}
           {data()?.isErc20 && (
-            <FormField disabled={!isConnected || chain?.unsupported === true || isLoading === true}>
+            <FormField disabled={!isConnected || chain?.unsupported || isLoading}>
               <FormField.InputField>
                 <FormField.Label
                   className="text-sm"
-                  hasError={errors().tokenRewardsAddress?.length > 0 === true}
+                  hasError={errors().tokenRewardsAddress?.length > 0}
                   htmlFor="tokenRewardsAddress"
                 >
                   Address of token used for rewards
@@ -144,16 +154,16 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                 </FormField.Description>
                 <FormInput
                   required
-                  disabled={!isConnected || chain?.unsupported === true || isLoading === true}
+                  disabled={!isConnected || chain?.unsupported || isLoading}
                   aria-invalid={
-                    errors().tokenRewardsAddress?.length > 0 === true || erc20TokenRewards?.isError ? "true" : "false"
+                    errors().tokenRewardsAddress?.length > 0 || erc20TokenRewards?.isError ? "true" : "false"
                   }
                   className="max-w-full w-auto 2xs:w-full"
                   placeholder="0x..."
                   type="text"
                   id="tokenRewardsAddress"
                   name="tokenRewardsAddress"
-                  hasError={errors().tokenRewardsAddress?.length > 0 === true || erc20TokenRewards?.isError}
+                  hasError={errors().tokenRewardsAddress?.length > 0 || erc20TokenRewards?.isError}
                   aria-describedby="input-tokenRewardsAddress-description input-tokenRewardsAddress-note input-tokenRewardsAddress-helpblock"
                 />
               </FormField.InputField>
@@ -189,7 +199,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                 </p>
               )}
               <FormField.HelpBlock
-                hasError={errors().tokenRewardsAddress?.length > 0 === true}
+                hasError={errors().tokenRewardsAddress?.length > 0}
                 id="input-tokenRewardsAddress-helpblock"
               >
                 The reward token address must be a valid Ethereum address
@@ -197,12 +207,11 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
             </FormField>
           )}
           {balance?.data?.formatted && (
-            <FormField disabled={!isConnected || chain?.unsupported === true || isLoading === true}>
+            <FormField disabled={!isConnected || chain?.unsupported || isLoading}>
               <FormField.InputField>
-                {/* @ts-ignore */}
                 <FormField.Label
                   hasError={
-                    errors().amount?.length > 0 === true ||
+                    errors().amount?.length > 0 ||
                     data()?.amount >
                       (balance?.data?.decimals === 18
                         ? balance?.data?.formatted
@@ -220,13 +229,13 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                   required
                   disabled={
                     !isConnected ||
-                    chain?.unsupported === true ||
-                    isLoading === true ||
+                    chain?.unsupported ||
+                    isLoading ||
                     (data()?.isErc20 && !erc20TokenRewards?.data?.address)
                   }
                   /* @ts-ignore */
                   aria-invalid={
-                    errors().amount?.length > 0 === true ||
+                    errors().amount?.length > 0 ||
                     data()?.amount >
                       (balance?.data?.decimals === 18
                         ? balance?.data?.formatted
@@ -269,7 +278,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
 
               <FormField.HelpBlock
                 hasError={
-                  errors().amount?.length > 0 === true ||
+                  errors().amount?.length > 0 ||
                   data()?.amount >
                     (balance?.data?.decimals === 18
                       ? balance?.data?.formatted
@@ -285,26 +294,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
         </div>
       </fieldset>
       <div className="mb-4 flex flex-col xs:flex-row space-y-3 xs:space-y-0 xs:space-i-3">
-        <Button
-          className="sm:w-fit-content"
-          isLoading={isLoading === true || isLoading}
-          //@ts-ignore
-          disabled={
-            !isValid() ||
-            isLoading ||
-            !isConnected ||
-            chain?.unsupported === true ||
-            (data()?.isErc20 === true &&
-              (!erc20TokenRewards?.data ||
-                /*@ts-ignore */
-                data()?.amount >
-                  (balance?.data?.decimals === 18
-                    ? balance?.data?.formatted
-                    : //@ts-ignore
-                      10 ** (18 - balance?.data?.decimals) * balance?.data?.formatted)))
-          }
-          type="submit"
-        >
+        <Button className="sm:w-fit-content" isLoading={isLoading} disabled={isSendButtonDisabled} type="submit">
           Send
         </Button>
         <Button intent="neutral-outline" type="button" onClick={() => setIsModalOpen(false)}>

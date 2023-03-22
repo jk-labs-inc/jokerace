@@ -49,6 +49,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       Image,
       TiptapExtensionLink,
       Placeholder.configure({
+        emptyEditorClass: "is-editor-empty",
         placeholder: "Your proposal …",
       }),
       Iframe,
@@ -66,44 +67,43 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
   });
 
   useEffect(() => {
-    if (isSuccess) setShowForm(false);
+    if (isSuccess) {
+      setShowForm(false);
+      editorProposal?.commands.clearContent();
+    }
     if (isLoading || error) setShowForm(true);
     if (isLoading || error || isSuccess) setShowDeploymentSteps(true);
   }, [isSuccess, isLoading, error]);
 
   useEffect(() => {
     if (!props.isOpen && !isLoading) {
-      setProposal("");
       setShowForm(true);
-      setShowForm(true);
+      editorProposal?.commands.focus();
       editorProposal?.setOptions({
         ...editorProposal.options,
         editable: true,
       });
-      editorProposal?.commands.clearContent();
       setShowDeploymentSteps(false);
     }
   }, [props.isOpen, isLoading]);
 
-  function onSubmitProposal(e: any) {
+  const onSubmitProposal = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    editorProposal?.setEditable(false);
     sendProposal(proposal.trim());
-  }
+  };
 
-  function onClickSubmitAnotherProposal() {
+  const onClickSubmitAnotherProposal = () => {
     setProposal("");
     setShowForm(true);
     editorProposal?.setOptions({
       ...editorProposal.options,
       editable: true,
     });
-    editorProposal?.commands.clearContent();
     setShowDeploymentSteps(false);
-  }
+  };
 
   return (
-    <DialogModal title="Submit your proposal" {...props}>
+    <DialogModal title="Submit your proposal" {...props} className="max-w-screen-lg">
       {showDeploymentSteps && (
         <div className="animate-appear mt-2 mb-4">
           <TrackerDeployTransaction isSuccess={isSuccess} error={error} isLoading={isLoading} />
