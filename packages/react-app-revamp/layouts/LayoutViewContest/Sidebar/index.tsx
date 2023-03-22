@@ -4,12 +4,11 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import {
   ROUTE_CONTEST_PROPOSAL,
   ROUTE_VIEW_CONTEST,
-  ROUTE_VIEW_CONTEST_EXPORT_DATA,
   ROUTE_VIEW_CONTEST_REWARDS,
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { CalendarIcon, ClipboardListIcon, DocumentDownloadIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
+import { CalendarIcon, ClipboardListIcon, PaperAirplaneIcon } from "@heroicons/react/outline";
 import { HomeIcon } from "@heroicons/react/solid";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -123,31 +122,6 @@ export const Sidebar: FC<SidebarProps> = ({
               Rewards
             </a>
           </Link>
-        )}
-        {contestStatus === CONTEST_STATUS.COMPLETED ? (
-          <Link
-            href={{
-              pathname: ROUTE_VIEW_CONTEST_EXPORT_DATA,
-              query: {
-                chain: query.chain,
-                address: query.address,
-              },
-            }}
-          >
-            <a
-              className={`${styles.navLink} ${
-                pathname === ROUTE_VIEW_CONTEST_EXPORT_DATA ? styles["navLink--active"] : ""
-              }`}
-            >
-              <DocumentDownloadIcon className={styles.navLinkIcon} />
-              Export data
-            </a>
-          </Link>
-        ) : (
-          <div className={styles.navLink}>
-            <DocumentDownloadIcon className={styles.navLinkIcon} />
-            Export data
-          </div>
         )}
       </nav>
       {!isLoading && contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (

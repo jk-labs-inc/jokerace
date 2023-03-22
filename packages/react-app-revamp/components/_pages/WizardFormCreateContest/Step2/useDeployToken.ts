@@ -1,4 +1,5 @@
 import DeployedGenericVotesTimestampTokenContract from "@contracts/bytecodeAndAbi/GenericVotesTimestampToken.sol/GenericVotesTimestampToken.json";
+import { removeFromLocalStorage } from "@helpers/localStorage";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { ContractFactory } from "ethers";
@@ -84,6 +85,7 @@ export function useDeployToken(form: any) {
       stateContractDeployment.setIsSuccess(true);
       stateContractDeployment.setError(null);
       form.reset();
+      removeFromLocalStorage("form-step-2");
     } catch (e) {
       const customError = e as CustomError;
 
