@@ -20,6 +20,7 @@ import {
   IconEditorStrike,
   IconEditorUndo,
 } from "@components/UI/Icons";
+import { Editor } from "@tiptap/react";
 import styles from "./styles.module.css";
 
 const Separator = () => {
@@ -31,7 +32,7 @@ const Separator = () => {
 };
 
 interface TipTapEditorControlsProps {
-  editor: any;
+  editor: Editor | null;
 }
 
 export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
