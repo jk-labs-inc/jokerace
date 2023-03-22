@@ -1,7 +1,6 @@
+import { toast } from "react-toastify";
 import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 import ButtonWithdraw from "./ButtonWithdraw";
-import { toast } from "react-hot-toast";
-
 interface ButtonWithdrawErc20RewardProps {
   contractRewardsModuleAddress: string;
   abiRewardsModule: any;
@@ -32,7 +31,7 @@ export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps)
     onError(e) {
       console.error(e);
       //@ts-ignore
-      toast.error("Something went wrong and the funds couldn't be withdrawn  :", e?.message);
+      toast.error(`Something went wrong and the funds couldn't be withdrawn  :", ${e?.message}`);
     },
     onSuccess(data) {
       toast.success("Funds withdrawn successfully !");

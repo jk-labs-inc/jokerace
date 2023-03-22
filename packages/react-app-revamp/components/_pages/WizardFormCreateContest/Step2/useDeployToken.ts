@@ -4,7 +4,7 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { ContractFactory } from "ethers";
 import { parseEther } from "ethers/lib/utils";
-import toast from "react-hot-toast";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
 import { useStore } from "../store";
