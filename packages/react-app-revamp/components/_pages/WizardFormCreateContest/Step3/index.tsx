@@ -85,10 +85,7 @@ export const Step3 = () => {
 
   const form = useForm({
     extend: validator({ schema }),
-    onSubmit: values => {
-      console.log;
-      handleSubmitForm(values);
-    },
+    onSubmit: values => handleSubmitForm(values),
   });
   const { handleSubmitForm, stateContestDeployment } = useDeployContest(form);
 
