@@ -74,8 +74,8 @@
 }
 
 .fadeOut {
-  -webkit-animation: fadeOut 1s ease-out both;
-  animation: fadeOut 1s ease-out both;
+  -webkit-animation: fadeOut 2s ease-out both;
+  animation: fadeOut 2s ease-out both;
 }
 
 @tailwind base;
