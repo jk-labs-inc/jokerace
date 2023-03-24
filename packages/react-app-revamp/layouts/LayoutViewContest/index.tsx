@@ -16,7 +16,7 @@ import { UserWrapper, useUserStore } from "@hooks/useUser/store";
 import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { isAfter, isBefore, isDate } from "date-fns";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 
@@ -141,14 +141,19 @@ const LayoutViewContest = (props: any) => {
       checkIfCurrentUserQualifyToVote();
     }
   }, [chainId, account?.address, isListProposalsLoading]);
+
+  const onSubmitTitle = (title: string) => {
+    router.push(`/contests?title=${title}`);
+  };
+
   return (
     <>
       <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
         <div className="container mx-auto">
-          {/* @ts-ignore */}
-          <FormSearchContest onSubmit={onSearch} retry={retry} isInline={true} />
+          <FormSearchContest onSubmitTitle={onSubmitTitle} isInline={true} />
         </div>
       </div>
+
       <div
         className={`${
           isLoading ? "pointer-events-none" : ""

@@ -47,7 +47,7 @@ export const ListContests = (props: ListContestsProps) => {
                 {result.data.map(contest => {
                   return (
                     <li
-                      className="relative border border-solid border-neutral-4 bg-true-white bg-opacity-2.5 p-3 rounded-md"
+                      className="relative border border-solid border-neutral-4 bg-true-white bg-opacity-2.5 p-3 rounded-md hover:border-neutral-6 hover:bg-opacity-10 transition-all duration-200"
                       key={`live-contest-${contest.id}`}
                     >
                       <div className="flex items-center space-i-6">
@@ -85,7 +85,6 @@ export const ListContests = (props: ListContestsProps) => {
                       <Link
                         href={{
                           pathname: ROUTE_VIEW_CONTEST,
-                          //@ts-ignore
                           query: {
                             chain: contest.network_name,
                             address: contest.address,
