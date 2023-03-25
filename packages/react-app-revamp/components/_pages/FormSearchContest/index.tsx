@@ -3,7 +3,7 @@ import FormField from "@components/UI/FormField";
 import FormInput from "@components/UI/FormInput";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { schema } from "./schema";
 
 interface FormSearchContestProps {
@@ -14,7 +14,7 @@ interface FormSearchContestProps {
 export const FormSearchContest: FC<FormSearchContestProps> = ({ isInline, onSubmitTitle }) => {
   const { form, errors, data } = useForm({
     extend: validator({ schema }),
-    onSubmit: async values => {
+    onSubmit: values => {
       onSubmitTitle?.(values.contestTitle);
     },
   });
@@ -27,7 +27,7 @@ export const FormSearchContest: FC<FormSearchContestProps> = ({ isInline, onSubm
     >
       <FormField className={isInline ? "w-full h-full min-h-8" : ""}>
         <label htmlFor="contestTitle" className="sr-only">
-          Contest address
+          Contest title
         </label>
         <FormInput
           required
