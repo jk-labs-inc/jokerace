@@ -1,4 +1,5 @@
 import { jokeDAOTheme } from "@config/rainbowkit";
+import { fadeInOut } from "@config/react-toastify/animations/FadeInOut.tsx";
 import { chains, client } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
@@ -7,7 +8,7 @@ import "@styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { ToastContainer, Zoom } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { WagmiConfig } from "wagmi";
 
@@ -59,14 +60,14 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ToastContainer
             position="bottom-right"
             autoClose={4000}
-            hideProgressBar={true}
+            hideProgressBar
             closeOnClick
             rtl={false}
             pauseOnFocusLoss
             draggable
             pauseOnHover
             theme="dark"
-            transition={Zoom}
+            transition={fadeInOut}
             bodyClassName={() => "text-xs flex items-center"}
           />
         </RainbowKitProvider>
