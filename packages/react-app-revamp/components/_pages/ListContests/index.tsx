@@ -20,7 +20,7 @@ export const ListContests = (props: ListContestsProps) => {
   const { error, status, result, page, setPage, itemsPerPage, isFetching } = props;
   return (
     <>
-      {status === "loading" ? (
+      {status === "loading" || isFetching ? (
         <div className="animate-appear">
           <Loader />
         </div>
