@@ -178,6 +178,11 @@
   .container {
     @apply px-5 lg:px-3 max-w-screen-lg;
   }
+
+  .no-marker li::marker {
+    content: "";
+  }
+
   .form-field--disabled {
     @apply opacity-50 cursor-not-allowed;
   }
