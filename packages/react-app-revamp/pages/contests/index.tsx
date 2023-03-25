@@ -54,7 +54,7 @@ const Page: NextPage = () => {
         <FormSearchContest onSubmitTitle={setTitle} isInline={title.length ? true : false} />
       </div>
 
-      {!isFetching && title.length > 0 && (
+      {title.length > 0 && (
         <div className="container mx-auto pt-10">
           <h1 className="sr-only">Searched contests</h1>
           {process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
