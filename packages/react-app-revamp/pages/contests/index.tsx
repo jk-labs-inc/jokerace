@@ -27,6 +27,7 @@ const Page: NextPage = () => {
 
   const adjustPaddingForInline = title.length > 0 ? "p-3" : "p-20";
 
+  // If the user is on the /contests page, and they search for a contest, we want to update the URL to reflect that.
   useEffect(() => {
     if (!router.query.title) return;
 

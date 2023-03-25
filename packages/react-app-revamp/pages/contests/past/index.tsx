@@ -25,7 +25,6 @@ function useContests(initialData: any) {
   );
 
   return {
-    ITEMS_PER_PAGE,
     page,
     setPage,
     status,
@@ -42,7 +41,6 @@ const Page: NextPage = props => {
     status,
     data,
     error,
-    ITEMS_PER_PAGE,
     isFetching,
     //@ts-ignore
   } = useContests(initialData?.data);
