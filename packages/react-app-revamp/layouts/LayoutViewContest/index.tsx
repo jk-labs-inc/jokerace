@@ -24,6 +24,7 @@ import { CastVotesWrapper, useCastVotesStore } from "@hooks/useCastVotes/store";
 
 import { DeleteProposalWrapper, useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
 
+import ShareDropdown from "@components/Share";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
@@ -61,7 +62,8 @@ const LayoutViewContest = (props: any) => {
 
   const { checkIfCurrentUserQualifyToVote, checkCurrentUserAmountOfProposalTokens } = useUser();
 
-  const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, setChainId } = useContest();
+  const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, chainName, setChainId } =
+    useContest();
 
   const {
     snapshotTaken,
@@ -289,7 +291,7 @@ const LayoutViewContest = (props: any) => {
                       </div>
                     )}
 
-                    <h2
+                    <div
                       className={`flex flex-wrap items-baseline text-neutral-11 font-bold ${
                         contestPrompt ? "mb-3" : "mb-6"
                       }`}
@@ -304,7 +306,10 @@ const LayoutViewContest = (props: any) => {
                           displayLensProfile={false}
                         />
                       </span>
-                    </h2>
+                      <div className="ml-auto">
+                        <ShareDropdown contestAddress={address} chain={chainName} />
+                      </div>
+                    </div>
 
                     {contestPrompt && !pathname.includes(ROUTE_VIEW_CONTEST_REWARDS) && (
                       <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
