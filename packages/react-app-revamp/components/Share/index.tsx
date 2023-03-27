@@ -17,8 +17,8 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button>
-          <ShareIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        <Menu.Button className="flex items-center gap-2 text-true-white">
+          Share <img src="/forward.png" alt="share" className="ml-1" width={20} />
         </Menu.Button>
       </div>
 
@@ -32,7 +32,6 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
         leaveTo="transform opacity-0 scale-95"
       >
         <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-neutral-0 shadow-lg ring-1 ring-inset ring-primary-9 ring-opacity-10 focus:outline-none">
-          <div className="text-neutral-11 px-4 py-2 border-b border-neutral-3 text-center">Share contest</div>
           <Menu.Item>
             {({ active }) => (
               <a
@@ -40,11 +39,12 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
                 href={generateLensShareUrl(contestAddress, chain)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center justify-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
+                  "flex items-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
                 )}
                 rel="noreferrer"
               >
-                <img src="/socials/lens.svg" alt="Lens" width={24} className="inline-block align-middle" />
+                <img src="/socials/lens.svg" alt="Lens" width={24} height={24} className="object-fit-cover mr-2" />
+                <span className="text-left">share on Lens</span>
               </a>
             )}
           </Menu.Item>
@@ -55,11 +55,18 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
                 target="_blank"
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center justify-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-90 border-b border-neutral-3",
+                  "flex items-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
                 )}
                 rel="noreferrer"
               >
-                <img src="/socials/twitter.svg" alt="Lens" width={30} className="inline-block align-middle" />
+                <img
+                  src="/socials/twitter.png"
+                  alt="Twitter"
+                  width={24}
+                  height={24}
+                  className="object-fit-cover mr-2"
+                />
+                <span className="text-left">share on Twitter</span>
               </a>
             )}
           </Menu.Item>
@@ -69,10 +76,11 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
                 onClick={() => generateUrlToCopy(contestAddress, chain)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center justify-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-90 cursor-pointer",
+                  "flex items-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
                 )}
               >
-                <DuplicateIcon className="-mr-1 h-7 w-10 text-gray-400" />
+                <DuplicateIcon className="h-6 w-6 text-gray-400 mr-2" />
+                <span className="text-left">copy link</span>
               </a>
             )}
           </Menu.Item>
