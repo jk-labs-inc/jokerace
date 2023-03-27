@@ -18,7 +18,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button>
-          <ShareIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
+          <ShareIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
         </Menu.Button>
       </div>
 
