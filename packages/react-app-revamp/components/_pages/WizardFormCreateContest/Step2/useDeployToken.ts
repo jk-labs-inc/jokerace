@@ -90,17 +90,16 @@ export function useDeployToken(form: any) {
       const customError = e as CustomError;
 
       if (!customError) return;
-      if (!modalDeployTokenOpen && !modalDeploySubmissionTokenOpen) {
-        const message =
-          customError?.message ||
-          `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) couldn't be deployed.`;
-        toast.error(message);
-        stateContractDeployment.setError({
-          code: customError.code,
-          message,
-        });
-        stateContractDeployment.setIsLoading(false);
-      }
+      const message =
+        customError?.message ||
+        `The contract for your token ${values.tokenName} ($${values.tokenSymbol}) couldn't be deployed.`;
+      toast.error(message);
+      stateContractDeployment.setError({
+        code: customError.code,
+        message,
+      });
+      stateContractDeployment.setIsLoading(false);
+      setModalDeployTokenOpen(false);
     }
   }
 
