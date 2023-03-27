@@ -17,7 +17,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="flex items-center gap-2 text-true-white">
+        <Menu.Button className="flex items-center gap-2 text-true-white text-sm">
           Share <img src="/forward.png" alt="share" className="ml-1" width={20} />
         </Menu.Button>
       </div>
@@ -60,7 +60,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
                 rel="noreferrer"
               >
                 <img
-                  src="/socials/twitter.png"
+                  src="/socials/twitter.svg"
                   alt="Twitter"
                   width={24}
                   height={24}
