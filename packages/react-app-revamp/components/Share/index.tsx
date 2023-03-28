@@ -9,11 +9,12 @@ function classNames(...classes: string[]) {
 }
 
 interface ShareDropdownProps {
+  contestName: string;
   contestAddress: string;
   chain: string;
 }
 
-const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
+const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, chain }) => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -36,7 +37,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
             {({ active }) => (
               <a
                 target="_blank"
-                href={generateLensShareUrl(contestAddress, chain)}
+                href={generateLensShareUrl(contestName, contestAddress, chain)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                   "flex items-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
@@ -51,7 +52,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestAddress, chain }) => {
           <Menu.Item>
             {({ active }) => (
               <a
-                href={generateTwitterShareUrl(contestAddress, chain)}
+                href={generateTwitterShareUrl(contestName, contestAddress, chain)}
                 target="_blank"
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
