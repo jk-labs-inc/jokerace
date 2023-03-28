@@ -20,7 +20,7 @@ export const ListContests = (props: ListContestsProps) => {
   const { error, status, result, page, setPage, itemsPerPage, isFetching } = props;
   return (
     <>
-      {status === "loading" ? (
+      {status === "loading" || isFetching ? (
         <div className="animate-appear">
           <Loader />
         </div>
@@ -30,7 +30,7 @@ export const ListContests = (props: ListContestsProps) => {
         </div>
       ) : (
         <>
-          {result?.count === 0 ? (
+          {!isFetching && result?.count === 0 ? (
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
             <div className="animate-appear">
@@ -43,11 +43,10 @@ export const ListContests = (props: ListContestsProps) => {
                 {isFetching && <span className="sr-only">Loading</span>}
               </div>
               <ul className="space-y-6">
-                {/* @ts-ignore */}
-                {result.data.map(contest => {
+                {result.data.map((contest: any) => {
                   return (
                     <li
-                      className="relative border border-solid border-neutral-4 bg-true-white bg-opacity-2.5 p-3 rounded-md"
+                      className="relative border border-solid border-neutral-4 bg-true-white bg-opacity-2.5 p-3 rounded-md hover:border-neutral-6 hover:bg-opacity-10 transition-all duration-200"
                       key={`live-contest-${contest.id}`}
                     >
                       <div className="flex items-center space-i-6">
@@ -85,7 +84,6 @@ export const ListContests = (props: ListContestsProps) => {
                       <Link
                         href={{
                           pathname: ROUTE_VIEW_CONTEST,
-                          //@ts-ignore
                           query: {
                             chain: contest.network_name,
                             address: contest.address,
