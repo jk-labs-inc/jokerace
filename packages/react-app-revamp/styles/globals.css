@@ -25,6 +25,59 @@
   font-display: swap;
 }
 
+/* Edit toastify styles */
+.Toastify__toast--error {
+  box-shadow: 0 -2px 4px rgba(239, 68, 68, 0.5), 0 2px 4px rgba(239, 68, 68, 0.5), 0 1px 2px rgba(239, 68, 68, 0.3) !important;
+}
+
+.Toastify__toast--success {
+  box-shadow: 0 -2px 4px rgba(52, 211, 153, 0.5), 0 2px 4px rgba(52, 211, 153, 0.5), 0 1px 2px rgba(52, 211, 153, 0.3) !important;
+}
+
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fadeIn {
+  -webkit-animation: fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  animation: fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+}
+
+.fadeOut {
+  -webkit-animation: fadeOut 2s ease-out both;
+  animation: fadeOut 2s ease-out both;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -125,6 +178,11 @@
   .container {
     @apply px-5 lg:px-3 max-w-screen-lg;
   }
+
+  .no-marker li::marker {
+    content: "";
+  }
+
   .form-field--disabled {
     @apply opacity-50 cursor-not-allowed;
   }

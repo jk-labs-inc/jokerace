@@ -1,6 +1,6 @@
 import { chain, configureChains, createClient } from "wagmi";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
-import { zkEraMainnet } from "./custom-chains/zkEraMainnet";
+import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { scrollGoerli } from "./custom-chains/scrollGoerli";
@@ -19,7 +19,7 @@ const testnetChains = [
   chain.goerli,
   sepolia,
   polygonZkTestnet,
-  zkEraMainnet,
+  polygonZkMainnet,
   baseTestnet,
   scrollGoerli,
   evmosTestnet,

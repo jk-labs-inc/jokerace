@@ -85,47 +85,35 @@ export const Step2 = () => {
         transactionHref={`${tokenDeployedToChain?.blockExplorers?.default?.url}/tx/${dataDeployVotingToken?.hash}`}
       >
         {stateContractDeployment.isSuccess && (
-          <div className="mt-3 animate-appear relative">
-            <span className="font-bold">Token address:</span>
-            <div className="relative focus-within:text-opacity-50 hover:text-opacity-75">
-              <button
-                onClick={() => copyToClipboard(dataDeployVotingToken?.address, "Token address copied !")}
-                title="Copy address"
-                className="w-full absolute z-10 inset-0 opacity-0"
-              >
-                Copy address
-              </button>
-              <p className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
-                {dataDeployVotingToken?.address}
-              </p>
-              <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
+          <>
+            <div className="mt-3 animate-appear relative">
+              <span className="font-bold">Token address:</span>
+              <div className="relative focus-within:text-opacity-50 hover:text-opacity-75">
+                <button
+                  onClick={() => copyToClipboard(dataDeployVotingToken?.address, "Token address copied !")}
+                  title="Copy address"
+                  className="w-full absolute z-10 inset-0 opacity-0"
+                >
+                  Copy address
+                </button>
+                <p className="pie-6 text-opacity-[inherit] text-neutral-12 font-mono overflow-hidden text-ellipsis">
+                  {dataDeployVotingToken?.address}
+                </p>
+                <DuplicateIcon className="absolute w-5 top-1/2 inline-end-0 -translate-y-1/2" />
+              </div>
             </div>
-          </div>
+            <div className="pt-6 flex flex-col space-y-3 xs:flex-row xs:space-y-0 xs:space-i-3">
+              <Button
+                className="w-full py-1 xs:min-w-fit-content xs:w-auto"
+                onClick={() => setCurrentStep(3)}
+                disabled={!stateContractDeployment.isSuccess}
+                intent="neutral-outline"
+              >
+                Next
+              </Button>
+            </div>
+          </>
         )}
-
-        <div className="pt-6 flex flex-col space-y-3 xs:flex-row xs:space-y-0 xs:space-i-3">
-          <Button
-            className="w-full py-1 xs:min-w-fit-content xs:w-auto"
-            onClick={() => setCurrentStep(3)}
-            disabled={!stateContractDeployment.isSuccess}
-            intent="neutral-outline"
-          >
-            Next
-          </Button>
-          {stateContractDeployment.error && (
-            <Button
-              onClick={() => {
-                handleSubmitForm(form.data(), false);
-              }}
-              className="w-full py-1 xs:w-auto xs:min-w-fit-content"
-              disabled={stateContractDeployment.isLoading || !isConnected}
-              intent="neutral-outline"
-              type="submit"
-            >
-              Try again
-            </Button>
-          )}
-        </div>
       </DialogModalDeployTransaction>
     </>
   );
