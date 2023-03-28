@@ -1,14 +1,51 @@
+import { isSupabaseConfigured } from "@helpers/database";
 import getPagination from "@helpers/getPagination";
+import { SearchOptions } from "types/search";
 
 export const ITEMS_PER_PAGE = 7;
 
+// Search for contests based on the search options provided, table is contests by default and column is title by default
+export async function searchContests(options: SearchOptions = {}) {
+  const {
+    searchColumn = "title",
+    searchString = "",
+    pagination = { currentPage: 1, itemsPerPage: ITEMS_PER_PAGE },
+    sorting = { orderBy: "created_at", ascending: false },
+    table = "contests",
+    language = "english",
+  } = options;
+
+  const { currentPage = 1, itemsPerPage = ITEMS_PER_PAGE } = pagination;
+  const { orderBy = "created_at", ascending = false } = sorting;
+
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
+    try {
+      const result = await supabase
+        .from(table)
+        .select("*", { count: "exact" })
+        .textSearch(searchColumn, `${searchString}`, {
+          type: "websearch",
+          config: language,
+        })
+        .range(from, to)
+        .order(orderBy, { ascending });
+
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
+      return { data, count };
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
 export async function getContestByTitle(title: string, currentPage: number, itemsPerPage: number) {
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
+  if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(currentPage, itemsPerPage);
@@ -36,12 +73,7 @@ export async function getContestByTitle(title: string, currentPage: number, item
 }
 
 export async function getLiveContests(currentPage: number, itemsPerPage: number) {
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
+  if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(currentPage, itemsPerPage);
@@ -67,12 +99,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number)
 }
 
 export async function getPastContests(currentPage: number, itemsPerPage: number) {
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
+  if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(currentPage, itemsPerPage);
@@ -96,12 +123,7 @@ export async function getPastContests(currentPage: number, itemsPerPage: number)
 }
 
 export async function getUpcomingContests(currentPage: number, itemsPerPage: number) {
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
+  if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(currentPage, itemsPerPage);

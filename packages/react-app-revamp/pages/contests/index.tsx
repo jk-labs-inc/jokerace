@@ -1,8 +1,9 @@
 import FormSearchContest from "@components/_pages/FormSearchContest";
 import ListContests from "@components/_pages/ListContests";
+import { isSupabaseConfigured } from "@helpers/database";
 import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
-import { getContestByTitle, ITEMS_PER_PAGE } from "lib/contests";
+import { ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -23,7 +24,20 @@ const Page: NextPage = () => {
     data: queryData,
     error,
     isFetching,
-  } = useQuery(["searchedContests", title, page], () => getContestByTitle(title, page, ITEMS_PER_PAGE), queryOptions);
+  } = useQuery(
+    ["searchedContests", title, page],
+    () =>
+      searchContests({
+        searchString: title,
+        pagination: {
+          currentPage: page,
+        },
+      }),
+    {
+      ...queryOptions,
+      enabled: title !== "",
+    },
+  );
 
   const adjustPaddingForInline = title.length > 0 ? "p-3" : "p-20";
 
@@ -57,10 +71,7 @@ const Page: NextPage = () => {
       {title.length > 0 && (
         <div className="container mx-auto pt-10">
           <h1 className="sr-only">Searched contests</h1>
-          {process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-          process.env.NEXT_PUBLIC_SUPABASE_URL &&
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? (
+          {isSupabaseConfigured ? (
             <ListContests
               isFetching={isFetching}
               itemsPerPage={ITEMS_PER_PAGE}
