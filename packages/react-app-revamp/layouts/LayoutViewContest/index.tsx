@@ -312,7 +312,7 @@ const LayoutViewContest = (props: any) => {
                         />
                       </span>
                       <div className="ml-auto">
-                        <ShareDropdown contestAddress={address} chain={chainName} />
+                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                       </div>
                     </div>
 
