@@ -6,6 +6,7 @@ import { baseTestnet } from "./custom-chains/baseTestnet";
 import { scrollGoerli } from "./custom-chains/scrollGoerli";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { evmosMainnet } from "./custom-chains/evmosMainnet";
+import { avaxCChain } from "./custom-chains/avaxCChain";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -24,6 +25,7 @@ const testnetChains = [
   scrollGoerli,
   evmosTestnet,
   evmosMainnet,
+  avaxCChain,
 ];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];

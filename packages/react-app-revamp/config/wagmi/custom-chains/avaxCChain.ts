@@ -1,7 +1,7 @@
-export const avaxMainnet = {
+export const avaxCChain = {
 	id: 43114,
 	name: 'Avalanche',
-	network: 'AVAX C-Chain',
+	network: 'avaxCChain',
 	nativeCurrency: {
 	  decimals: 18,
 	  name: 'AVAX',
@@ -13,7 +13,7 @@ export const avaxMainnet = {
 	},
 	blockExplorers: {
 	  escan: { name: 'Snowtrace', url: 'https://snowtrace.io/' },
-	  default: { name: 'Snowtracee', url: 'https://snowtrace.io/' },
+	  default: { name: 'Snowtrace', url: 'https://snowtrace.io/' },
 	},
   }
   
