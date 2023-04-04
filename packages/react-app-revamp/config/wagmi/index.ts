@@ -1,11 +1,12 @@
 import { chain, configureChains, createClient } from "wagmi";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
-import { zkEraMainnet } from "./custom-chains/zkEraMainnet";
+import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { scrollGoerli } from "./custom-chains/scrollGoerli";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { evmosMainnet } from "./custom-chains/evmosMainnet";
+import { avaxCChain } from "./custom-chains/avaxCChain";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -19,11 +20,12 @@ const testnetChains = [
   chain.goerli,
   sepolia,
   polygonZkTestnet,
-  zkEraMainnet,
+  polygonZkMainnet,
   baseTestnet,
   scrollGoerli,
   evmosTestnet,
   evmosMainnet,
+  avaxCChain,
 ];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];

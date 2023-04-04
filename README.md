@@ -31,6 +31,9 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+### Usage Note
+If you are not running Supabase, then the search functionality will not work. You can still access contests and the full functionality of the site, though, by visiting the URL with the format http://localhost:3000/contest/{chain}/{contest_address} where `chain` is the name of the chain that the contest is on as specified [here](https://github.com/JokeDAO/JokeDaoV2Dev/blob/staging/packages/react-app-revamp/config/wagmi/index.ts), and `contest_address` is the address of the contest contract on that chain.
+
 ## Development Notes
 
 ### Updating bytecode
