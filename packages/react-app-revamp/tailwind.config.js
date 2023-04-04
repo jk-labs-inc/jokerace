@@ -6,6 +6,15 @@ const typography = {
   lineHeight: 1.6,
 };
 
+// 2xl = 1536px
+// xl = 1280px
+// lg = 1024px
+// md = 768px
+// sm = 640px
+// xs = 480px
+// 2xs = 320px
+// min = 320px
+
 const screensRem = {
   min: 20,
   "2xs": 30,
@@ -14,7 +23,7 @@ const screensRem = {
   md: 48,
   lg: 64,
   xl: 80,
-  "2xl": 85.364,
+  "2xl": 84.375,
 };
 
 const fsMin = typography.fontSizeMin;
@@ -58,6 +67,7 @@ module.exports = {
       "2xl": remToPx(screensRem["2xl"]),
     },
     fontFamily: {
+      sabo: ['"Sabo", sans-serif'],
       sans: ['"Lato", sans-serif'],
       mono: ["monospace"],
     },
@@ -111,7 +121,7 @@ module.exports = {
         8: "#7938b2",
         9: "#8e4ec6",
         10: "#9d5bd2",
-        11: "#bf7af0",
+        11: "#BB65FF",
         12: "#f7ecfc",
       },
       positive: {
@@ -154,7 +164,7 @@ module.exports = {
         8: "#504f57",
         9: "#706f78",
         10: "#7e7d86",
-        11: "#a09fa6",
+        11: "#E5E5E5",
         12: "#ededef",
       },
     },
@@ -261,9 +271,9 @@ module.exports = {
         unset: "unset",
       }),
       opacity: {
-        "2.5": "0.025",
-        "3.5": "0.035",
-        "7.5": "0.075",
+        2.5: "0.025",
+        3.5: "0.035",
+        7.5: "0.075",
       },
       spacing: {
         "7/12": `${(7 / 12) * 100}%`,

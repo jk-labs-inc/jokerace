@@ -1,6 +1,15 @@
 /*
   font-face rules (custom fonts declarations)
 */
+
+@font-face {
+  src: url("/Sabo-Filled.otf") format("opentype");
+  font-family: "Sabo";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 @font-face {
   src: url("/Lato-Regular.woff2") format("woff2");
   font-family: "Lato";
@@ -76,6 +85,44 @@
 .fadeOut {
   -webkit-animation: fadeOut 2s ease-out both;
   animation: fadeOut 2s ease-out both;
+}
+
+.custom-text-shadow {
+  text-shadow: 1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, -1px -1px 0 #fff, 1px -1px 0 #fff,
+    -1px 1px 0 #fff, 1px 1px 0 #fff, 0 0 2px #fff, 0px 0px 3px #fff, 1px 0px 3px #fff, 0px 0px 1px #fff,
+    1px 1px 1px #fff;
+}
+
+.borderTopLeftDotted {
+  border-radius: 50%;
+  border-left: dotted theme("colors.primary.10");
+  border-top: dotted theme("colors.primary.10");
+}
+
+.borderBottomLeftDotted {
+  border-radius: 50%;
+  border-left: dotted theme("colors.primary.10");
+  border-bottom: dotted theme("colors.primary.10");
+}
+
+.borderBottomRight {
+  border-radius: 50%;
+  border-right: dotted theme("colors.positive.11");
+  border-bottom: dotted theme("colors.positive.11");
+}
+
+/* CircularProgressBar.css */
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.circle-progress {
+  transform-origin: center;
 }
 
 @tailwind base;
@@ -177,6 +224,10 @@
 @layer components {
   .container {
     @apply px-5 lg:px-3 max-w-screen-lg;
+  }
+
+  .needle {
+    @apply -mt-0.5 -ml-0.5;
   }
 
   .no-marker li::marker {

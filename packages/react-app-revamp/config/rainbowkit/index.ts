@@ -1,10 +1,11 @@
 // @ts-ignore
+import { Theme } from "@rainbow-me/rainbowkit";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "./../../tailwind.config";
 
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
-export const jokeDAOTheme = {
+export const jokeDAOTheme: Theme = {
   fonts: {
     body: tailwindTheme.fontFamily.sans.toString(),
   },
@@ -17,7 +18,6 @@ export const jokeDAOTheme = {
     connectButtonBackground: tailwindTheme.colors.neutral[2],
     connectButtonBackgroundError: tailwindTheme.colors.negative[1],
     connectButtonTextError: tailwindTheme.colors.negative[11],
-    modalText: tailwindTheme.colors["true-white"],
     modalTextDim: tailwindTheme.colors.neutral[10],
     modalTextSecondary: tailwindTheme.colors.neutral[11],
     closeButtonBackground: tailwindTheme.colors.neutral[0],
@@ -33,10 +33,10 @@ export const jokeDAOTheme = {
     standby: tailwindTheme.colors.primary[11],
   },
   radii: {
-    actionButton: tailwindTheme.borderRadius.full,
-    connectButton: tailwindTheme.borderRadius.full,
-    menuButton: tailwindTheme.borderRadius.md,
-    modal: tailwindTheme.borderRadius.lg,
-    modalMobile: tailwindTheme.borderRadius.lg,
+    actionButton: tailwindTheme.borderRadius.xl,
+    connectButton: tailwindTheme.borderRadius.xl,
+    menuButton: tailwindTheme.borderRadius.xl,
+    modal: tailwindTheme.borderRadius.xl,
+    modalMobile: tailwindTheme.borderRadius.xl,
   },
 };
