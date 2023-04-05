@@ -20,18 +20,18 @@ const Page: NextPage = () => {
           </p>
         </div>
 
-        <div className="flex justify-between w-4/6">
-          <div className="w-1/3">
+        <div className="grid grid-cols-4">
+          <div>
             <div className="text-[16px] font-bold  mb-1">stage one</div>
             <div className="h-1 bg-secondary-11"></div>
             <div className="text-[16px]  font-bold mt-1 text-secondary-11">creator asks a prompt</div>
           </div>
-          <div className="w-1/3">
+          <div>
             <div className="text-[16px] font-bold   mb-1">stage two</div>
             <div className="h-1 bg-primary-10"></div>
             <div className="text-[16px]  font-bold mt-1 text-primary-10">submitters respond</div>
           </div>
-          <div className="w-1/3">
+          <div>
             <div className="text-[16px] font-bold  mb-1">stage three</div>
             <div className="h-1 bg-positive-11"></div>
             <div className="text-[16px] font-bold mt-1 text-positive-11">voters pick top submmissions</div>
@@ -236,7 +236,7 @@ const Page: NextPage = () => {
         </div>
         <div className="flex flex-row items-center">
           <div className="flex flex-col gap-6">
-            <div className="p-10 w-[490px] h-[446px] borderTopLeftDotted">
+            <div className="p-10  borderTopLeftDotted">
               <p className="uppercase font-sabo text-[20px] text-center">
                 grants,
                 <br /> hackathons, <br /> bounties, music contests
@@ -256,7 +256,7 @@ const Page: NextPage = () => {
                 </div>
               </div>
             </div>
-            <div className="p-10 w-[490px] h-[446px] borderBottomLeftDotted">
+            <div className="p-10  borderBottomLeftDotted">
               <p className="uppercase font-sabo text-[20px] text-center">
                 proposals, <br />
                 budgets, roadmaps
@@ -277,7 +277,7 @@ const Page: NextPage = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center p-10 gap-9 w-[490px] h-[446px] borderBottomRight">
+          <div className="flex flex-col items-center justify-center p-10 gap-9  borderBottomRight">
             <p className="uppercase font-sabo text-[20px] text-center">
               elections,
               <br /> feature requests, <br /> pulse checks, giveaways

@@ -226,6 +226,11 @@
     @apply px-5 lg:px-3 max-w-screen-lg;
   }
 
+  .full-width-grid-cols {
+    @apply grid;
+    grid-template-columns: 3fr 2fr 2fr 1fr;
+  }
+
   .needle {
     @apply -mt-0.5 -ml-0.5;
   }

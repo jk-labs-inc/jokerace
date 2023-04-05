@@ -11,6 +11,15 @@ import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
 
+type ChainNativeToken = {
+  symbol: string;
+  tokenAddress: string;
+};
+
+type ChainsNativeTokens = {
+  [key: string]: ChainNativeToken;
+};
+
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
@@ -79,4 +88,5 @@ export const chainsImages = {
   polygon: "/polygon.svg",
   polygonmumbai: "/polygon.svg",
   polygonzktestnet: "/polygon.svg",
+  scrollgoerli: "/scroll.png",
 };

@@ -1,10 +1,12 @@
 import Loader from "@components/UI/Loader";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { chainsImages } from "@config/wagmi";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
+import { ArrowLeftIcon, ArrowRightIcon, ClockIcon } from "@heroicons/react/outline";
 import { format, getUnixTime } from "date-fns";
 import Link from "next/link";
+import router from "next/router";
 import { Pagination } from "react-headless-pagination";
+import Contest from "./Contest";
 
 interface ListContestsProps {
   status: "error" | "loading" | "success";
@@ -18,6 +20,7 @@ interface ListContestsProps {
 
 export const ListContests = (props: ListContestsProps) => {
   const { error, status, result, page, setPage, itemsPerPage, isFetching } = props;
+
   return (
     <>
       {status === "loading" || isFetching ? (
@@ -42,60 +45,11 @@ export const ListContests = (props: ListContestsProps) => {
 
                 {isFetching && <span className="sr-only">Loading</span>}
               </div>
-              <ul className="space-y-6">
+              <div className="grid grid-rows-7 text-[16px]">
                 {result.data.map((contest: any) => {
-                  return (
-                    <li
-                      className="relative border border-solid border-neutral-4 bg-true-white bg-opacity-2.5 p-3 rounded-md hover:border-neutral-6 hover:bg-opacity-10 transition-all duration-200"
-                      key={`live-contest-${contest.id}`}
-                    >
-                      <div className="flex items-center space-i-6">
-                        {/* @ts-ignore */}
-                        <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
-                        <div className="flex flex-col">
-                          <span className="font-bold text-md">{contest.title}</span>
-                          <span className="roman">${contest.token_symbol}</span>
-                          {getUnixTime(new Date()) < getUnixTime(new Date(contest.start_at)) && (
-                            <time className="text-sm text-neutral-10 italic">
-                              Starts {format(new Date(contest.start_at), "MMMM dd ppp")}
-                            </time>
-                          )}
-                          {getUnixTime(new Date()) > getUnixTime(new Date(contest.end_at)) && (
-                            <time className="text-sm text-neutral-10 italic">
-                              Finished {format(new Date(contest.end_at), "MMMM dd ppp")}
-                            </time>
-                          )}
-                          {getUnixTime(new Date()) > getUnixTime(new Date(contest.start_at)) &&
-                            getUnixTime(new Date()) >= getUnixTime(new Date(contest.vote_start_at)) &&
-                            getUnixTime(new Date()) <= getUnixTime(new Date(contest.end_at)) && (
-                              <time className="text-sm text-neutral-11">
-                                Voting open until {format(new Date(contest.end_at), "MMMM dd ppp")}
-                              </time>
-                            )}
-                          {getUnixTime(new Date()) >= getUnixTime(new Date(contest.start_at)) &&
-                            getUnixTime(new Date()) < getUnixTime(new Date(contest.vote_start_at)) &&
-                            getUnixTime(new Date()) < getUnixTime(new Date(contest.end_at)) && (
-                              <time className="text-sm text-neutral-11">
-                                Submissions open until {format(new Date(contest.vote_start_at), "MMMM dd ppp")}
-                              </time>
-                            )}
-                        </div>
-                      </div>
-                      <Link
-                        href={{
-                          pathname: ROUTE_VIEW_CONTEST,
-                          query: {
-                            chain: contest.network_name,
-                            address: contest.address,
-                          },
-                        }}
-                      >
-                        <a className="absolute top-0 left-0 w-full h-full z-10 opacity-0">View contest</a>
-                      </Link>
-                    </li>
-                  );
+                  return <Contest key={`live-contest-${contest.id}`} contest={contest} />;
                 })}
-              </ul>
+              </div>
               {Math.ceil(result.count / itemsPerPage) > 1 && (
                 <Pagination
                   currentPage={page}
