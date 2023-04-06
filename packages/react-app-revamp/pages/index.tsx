@@ -1,3 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
+/* eslint-disable @next/next/no-img-element */
 import Search from "@components/Search";
 import Sort from "@components/Sort";
 import Button from "@components/UI/Button";

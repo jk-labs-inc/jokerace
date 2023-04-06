@@ -1,10 +1,5 @@
 import Loader from "@components/UI/Loader";
-import { ROUTE_VIEW_CONTEST } from "@config/routes";
-import { chainsImages } from "@config/wagmi";
-import { ArrowLeftIcon, ArrowRightIcon, ClockIcon } from "@heroicons/react/outline";
-import { format, getUnixTime } from "date-fns";
-import Link from "next/link";
-import router from "next/router";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
 import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";
 

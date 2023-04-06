@@ -1,9 +1,7 @@
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
 import { CheckIcon, XIcon } from "@heroicons/react/outline";
-import { useUserBalance } from "@hooks/useUserBalance";
 import { getAccount } from "@wagmi/core";
-import { fetchUserBalance } from "lib/fetchUserBalance";
 import moment from "moment";
 import router from "next/router";
 import { FC, useEffect, useState } from "react";
@@ -18,12 +16,6 @@ const Contest: FC<ContestProps> = ({ contest }) => {
   const chain = chains.find(
     c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
   );
-  const { qualified: qualifiedToVote, loading: loadingWithToken } = useUserBalance(
-    address ?? "",
-    chain?.id ?? 0,
-    contest.token_address,
-  );
-  const { qualified: qualifiedToSubmit, loading: loadingWithoutToken } = useUserBalance(address ?? "", chain?.id ?? 0);
   const [submissionStatus, setSubmissionStatus] = useState("");
   const [votingStatus, setVotingStatus] = useState("");
   const handleClick = (contest: any) => {
@@ -77,7 +69,7 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       return "text-neutral-9";
     }
 
-    if (qualifiedToSubmit || !address) {
+    if (contest.qualifiedToSubmit || !address) {
       if (submissionStatus === "Submissions are open") {
         return "text-primary-10";
       }
@@ -93,7 +85,7 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       return "text-neutral-9";
     }
 
-    if (qualifiedToVote || !address) {
+    if (contest.qualifiedToVote || !address) {
       if (votingStatus === "Voting is open") {
         return "text-positive-11";
       }
@@ -109,7 +101,7 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       return null;
     }
 
-    if (qualifiedToSubmit) {
+    if (contest.qualifiedToSubmit) {
       return (
         <div className="flex flex-nowrap items-center gap-1">
           <CheckIcon className="w-5 mt-1" />
@@ -138,7 +130,7 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       return null;
     }
 
-    if (qualifiedToVote) {
+    if (contest.qualifiedToVote) {
       return (
         <div className="flex flex-nowrap items-center gap-1">
           <CheckIcon className="w-5 mt-1" />
@@ -213,13 +205,13 @@ const Contest: FC<ContestProps> = ({ contest }) => {
 
         {votingMessage}
       </div>
-
       {contest.rewards ? (
         <div className="flex flex-col">
           <p>
-            1000 <span className="uppercase">$JOKE</span>
+            {parseInt(contest.rewards.token.value, 10)}{" "}
+            <span className="uppercase">${contest.rewards.token.symbol}</span>
           </p>
-          <p>to 3 winners</p>
+          <p>to {contest.rewards.winners} winners</p>
         </div>
       ) : (
         <p className="text-neutral-9">no rewards</p>
