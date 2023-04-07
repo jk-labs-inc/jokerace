@@ -1,21 +1,21 @@
-import Head from "next/head";
-import { getLayout } from "@layouts/LayoutContests";
-import type { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import getPagination from "@helpers/getPagination";
 import ListContests from "@components/_pages/ListContests";
+import getPagination from "@helpers/getPagination";
+import { getLayout } from "@layouts/LayoutContests";
+import { useQuery } from "@tanstack/react-query";
 import { getLiveContests, ITEMS_PER_PAGE } from "lib/contests";
+import type { NextPage } from "next";
+import Head from "next/head";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 
 function useContests(initialData: any) {
   const [page, setPage] = useState(0);
   const { address } = useAccount();
-
   const queryOptions = {
     keepPreviousData: true,
     staleTime: 5000,
   };
+
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
@@ -34,6 +34,7 @@ function useContests(initialData: any) {
     isFetching,
   };
 }
+
 const Page: NextPage = props => {
   const initialData = props;
   const {

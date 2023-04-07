@@ -55,6 +55,20 @@ const fetchTokenBalances = async (contest: any, contestRewardModuleAddress: stri
   }
 };
 
+const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: number, tokenAddress: string) => {
+  try {
+    const firstToken = await fetchBalance({
+      addressOrName: contestRewardModuleAddress.toString(),
+      chainId: chainId,
+      token: tokenAddress,
+    });
+    return firstToken;
+  } catch (error) {
+    console.error("Error fetching first token balance:", error);
+    return null;
+  }
+};
+
 async function processContestData(contest: any, userAddress: string) {
   const chain = chains.find(
     c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
@@ -79,20 +93,6 @@ async function processContestData(contest: any, userAddress: string) {
         qualifiedToVote: false,
         qualifiedToSubmit: false,
       };
-    }
-  };
-
-  const fetchFirstToken = async (contestRewardModuleAddress: string, tokenAddress: string) => {
-    try {
-      const firstToken = await fetchBalance({
-        addressOrName: contestRewardModuleAddress.toString(),
-        chainId: chain?.id,
-        token: tokenAddress,
-      });
-      return firstToken;
-    } catch (error) {
-      console.error("Error fetching first token balance:", error);
-      return null;
     }
   };
 
@@ -133,6 +133,7 @@ async function processContestData(contest: any, userAddress: string) {
         if (tokenBalances && tokenBalances.length > 0) {
           const firstToken = await fetchFirstToken(
             contestRewardModuleAddress.toString(),
+            chain?.id ?? 0,
             tokenBalances[0].contractAddress,
           );
 
@@ -158,7 +159,7 @@ async function processContestData(contest: any, userAddress: string) {
 }
 
 // Search for contests based on the search options provided, table is contests by default and column is title by default
-export async function searchContests(options: SearchOptions = {}) {
+export async function searchContests(options: SearchOptions = {}, userAddress?: string) {
   const {
     searchColumn = "title",
     searchString = "",
@@ -190,7 +191,9 @@ export async function searchContests(options: SearchOptions = {}) {
       if (error) {
         throw new Error(error.message);
       }
-      return { data, count };
+
+      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+      return { data: processedData, count };
     } catch (e) {
       console.error(e);
     }
@@ -216,6 +219,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
       }
 
       const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+
       return { data: processedData, count };
     } catch (e) {
       console.error(e);

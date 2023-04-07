@@ -173,12 +173,12 @@ const Contest: FC<ContestProps> = ({ contest }) => {
     >
       <div className="flex items-center gap-4">
         <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
-        <p>{contest.title}</p>
+        <p className="font-bold">{contest.title}</p>
       </div>
 
       <div className="flex items-center gap-4">
         <div className={`flex flex-col ${submissionClass}`}>
-          <p>
+          <p className="font-bold">
             {submissionStatus}{" "}
             {submissionStatus.includes("in:") && (
               <Countdown
@@ -193,7 +193,7 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       </div>
 
       <div className={`flex flex-col ${votingClass}`}>
-        <p>
+        <p className="font-bold">
           {votingStatus}{" "}
           {votingStatus.includes("in:") && (
             <Countdown
@@ -207,14 +207,14 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       </div>
       {contest.rewards ? (
         <div className="flex flex-col">
-          <p>
+          <p className="font-bold">
             {parseInt(contest.rewards.token.value, 10)}{" "}
             <span className="uppercase">${contest.rewards.token.symbol}</span>
           </p>
           <p>to {contest.rewards.winners} winners</p>
         </div>
       ) : (
-        <p className="text-neutral-9">no rewards</p>
+        <p className="text-neutral-9 font-bold">no rewards</p>
       )}
     </div>
   );

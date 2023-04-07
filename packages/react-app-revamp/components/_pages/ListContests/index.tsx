@@ -1,5 +1,7 @@
+import Sort, { Sorting } from "@components/Sort";
 import Loader from "@components/UI/Loader";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
+import { FC, useEffect, useState } from "react";
 import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";
 
@@ -13,8 +15,99 @@ interface ListContestsProps {
   itemsPerPage: number;
 }
 
-export const ListContests = (props: ListContestsProps) => {
-  const { error, status, result, page, setPage, itemsPerPage, isFetching } = props;
+export const ListContests: FC<ListContestsProps> = ({
+  error,
+  status,
+  result,
+  page,
+  setPage,
+  itemsPerPage,
+  isFetching,
+}) => {
+  const [sortedData, setSortedData] = useState<any[]>([]);
+  const [sorting, setSorting] = useState<Sorting | null>(null);
+  const [fadeBg, setFadeBg] = useState(false);
+  useEffect(() => {
+    if (!result) return;
+
+    setSortedData(result.data);
+  }, [result]);
+
+  useEffect(() => {
+    handleSort();
+  }, [sorting]);
+
+  const handleSort = () => {
+    if (!result) return;
+
+    if (!sorting) {
+      setSortedData(result.data); // Reset sorted data
+      return;
+    }
+
+    const { property, ascending } = sorting;
+    const sorted = [...result.data].sort((a, b) => {
+      let valueA;
+      let valueB;
+      let reverseOrder = false;
+
+      switch (property) {
+        case "rewards":
+          valueA = a.rewards;
+          valueB = b.rewards;
+          break;
+        case "qualified":
+          valueA = a.qualifiedToSubmit || a.qualifiedToVote ? 1 : 0;
+          valueB = b.qualifiedToSubmit || b.qualifiedToVote ? 1 : 0;
+          break;
+        case "closest_deadline":
+          const aTimestamps = [
+            new Date(a.start_at).getTime(),
+            new Date(a.vote_start_at).getTime(),
+            new Date(a.end_at).getTime(),
+          ].filter(timestamp => timestamp >= Date.now());
+          const bTimestamps = [
+            new Date(b.start_at).getTime(),
+            new Date(b.vote_start_at).getTime(),
+            new Date(b.end_at).getTime(),
+          ].filter(timestamp => timestamp >= Date.now());
+
+          valueA = aTimestamps.length > 0 ? Math.min(...aTimestamps) : Infinity;
+          valueB = bTimestamps.length > 0 ? Math.min(...bTimestamps) : Infinity;
+          reverseOrder = true;
+          break;
+        case "can_submit":
+          valueA =
+            (a.qualifiedToSubmit ? 2 : 1) *
+            (new Date(a.start_at).getTime() <= Date.now() && Date.now() <= new Date(a.vote_start_at).getTime() ? 1 : 0);
+          valueB =
+            (b.qualifiedToSubmit ? 2 : 1) *
+            (new Date(b.start_at).getTime() <= Date.now() && Date.now() <= new Date(b.vote_start_at).getTime() ? 1 : 0);
+          break;
+        case "can_vote":
+          valueA =
+            (a.qualifiedToVote ? 2 : 1) *
+            (new Date(a.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(a.end_at).getTime() ? 1 : 0);
+          valueB =
+            (b.qualifiedToVote ? 2 : 1) *
+            (new Date(b.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(b.end_at).getTime() ? 1 : 0);
+          break;
+        default:
+          valueA = a[property];
+          valueB = b[property];
+      }
+
+      if (valueA < valueB) {
+        return ascending ? (reverseOrder ? 1 : -1) : reverseOrder ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return ascending ? (reverseOrder ? -1 : 1) : reverseOrder ? 1 : -1;
+      }
+      return 0;
+    });
+
+    setSortedData(sorted);
+  };
 
   return (
     <>
@@ -32,16 +125,23 @@ export const ListContests = (props: ListContestsProps) => {
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
             <div className="animate-appear">
-              <div className="font-bold mb-4 text-md flex items-center pie-1ex">
+              <div className="font-bold mb-4 text-md full-width-grid-cols items-center pie-1ex p-3">
                 <span aria-hidden="true" className={`${isFetching ? "animate-card-rotation" : "opacity-90"}`}>
                   🃏
+                  <span className={`pis-1ex text-[20px] ${isFetching && "animate-pulse"}`}>
+                    {result.count} contests
+                  </span>
                 </span>
-                <span className={`pis-1ex ${isFetching && "animate-pulse"}`}>{result.count} contests</span>
+                <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
 
                 {isFetching && <span className="sr-only">Loading</span>}
               </div>
-              <div className="grid grid-rows-7 text-[16px]">
-                {result.data.map((contest: any) => {
+              <div
+                className={`grid grid-rows-7 ${
+                  fadeBg ? "opacity-50" : "opacity-100"
+                } text-[16px] transition-opacity duration-300 ease-in-out`}
+              >
+                {sortedData.map((contest: any) => {
                   return <Contest key={`live-contest-${contest.id}`} contest={contest} />;
                 })}
               </div>

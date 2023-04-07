@@ -8,11 +8,13 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 const Page: NextPage = () => {
   const [page, setPage] = useState(0);
   const [title, setTitle] = useState<string>("");
   const router = useRouter();
+  const { address } = useAccount();
 
   const queryOptions = {
     keepPreviousData: true,
@@ -27,12 +29,15 @@ const Page: NextPage = () => {
   } = useQuery(
     ["searchedContests", title, page],
     () =>
-      searchContests({
-        searchString: title,
-        pagination: {
-          currentPage: page,
+      searchContests(
+        {
+          searchString: title,
+          pagination: {
+            currentPage: page,
+          },
         },
-      }),
+        address,
+      ),
     {
       ...queryOptions,
       enabled: title !== "",
