@@ -1,69 +1,88 @@
-import React, { useEffect, useRef } from "react";
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
-import ChangingProgressProvider from "./Progress";
+import React, { useEffect, useState, useRef } from "react";
 
-interface ClockProps {
-  type: "hours" | "minutes";
+interface CircularProgressBarProps {
   value: number;
+  type: "hours" | "minutes";
+  size: number;
+  strokeWidth: number;
+  color?: string;
 }
 
-const Clock: React.FC<ClockProps> = ({ type, value }) => {
-  const needleRef = useRef<HTMLDivElement | null>(null);
+const CircularProgressBar: React.FC<CircularProgressBarProps> = ({ value, type, size, strokeWidth, color }) => {
+  const [animatedProgress, setAnimatedProgress] = useState(0);
+  const [remainingValue, setRemainingValue] = useState(value);
+  const startTimeRef = useRef<number | null>(null);
+  const frameRef = useRef<number | null>(null);
 
-  const getDuration = () => {
-    switch (type) {
-      case "hours":
-        return 3600 * value;
-      case "minutes":
-        return 60 * value;
-      default:
-        return value;
+  const duration = type === "hours" ? 3600000 : 60000; // one hour or one minute in ms
+
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (animatedProgress / 100) * circumference;
+
+  const animateProgress = (timestamp: number) => {
+    if (startTimeRef.current === null) {
+      startTimeRef.current = timestamp;
+    }
+
+    const elapsedTime = timestamp - startTimeRef.current;
+    const progressFraction = elapsedTime / duration;
+    const newProgress = progressFraction * 100;
+
+    setAnimatedProgress(Math.min(newProgress, 100));
+
+    if (newProgress < 100) {
+      frameRef.current = requestAnimationFrame(animateProgress);
+    } else {
+      startTimeRef.current = null;
+      setAnimatedProgress(0);
+      if (remainingValue > 0) {
+        setRemainingValue(remainingValue - 1);
+      }
     }
   };
 
   useEffect(() => {
-    const durationInSeconds = getDuration();
-    const endTime = new Date().getTime() + durationInSeconds * 1000;
-    let degree = 0;
+    if (remainingValue > 0) {
+      frameRef.current = requestAnimationFrame(animateProgress);
+    }
 
-    const animate = () => {
-      if (needleRef.current) {
-        const currentTime = new Date().getTime();
-        const timePassed = endTime - currentTime;
-        const progress = 1 - timePassed / (durationInSeconds * 1000);
-        degree = progress * 360 * value;
-        needleRef.current.style.transform = `translateX(-50%) rotate(${degree}deg)`;
-      }
-
-      if (degree < 360 * value) {
-        requestAnimationFrame(animate);
-      }
-    };
-
-    animate();
-    // Cleanup function to stop the animation when the component is unmounted
     return () => {
-      degree = 360 * value;
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
     };
-  }, [type, value]);
+  }, [remainingValue, duration]);
+
+  const angle = 2 * Math.PI * (animatedProgress / 100) - Math.PI / 2;
+  const dotX = size / 2 + radius * Math.cos(angle);
+  const dotY = size / 2 + radius * Math.sin(angle);
 
   return (
-    <ChangingProgressProvider interval={1000} values={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}>
-      {percentage => (
-        <CircularProgressbar
-          className="w-16 h-16"
-          value={percentage}
-          maxValue={10}
-          text={`1 min left`}
-          styles={buildStyles({
-            pathTransitionDuration: 0.15,
-            pathColor: "#ffef5c",
-            textColor: "#ffef5c",
-            strokeLinecap: "round",
-          })}
+    <div>
+      <svg width={size} height={size}>
+        <circle cx={size / 2} cy={size / 2} r={radius} stroke="lightgray" strokeWidth={strokeWidth} fill="none" />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          stroke={`${color}`}
+          strokeWidth={strokeWidth}
+          fill="none"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          transform={`rotate(-90, ${size / 2}, ${size / 2})`}
         />
-      )}
-    </ChangingProgressProvider>
+        <circle cx={dotX} cy={dotY} r={strokeWidth} fill={`${color}`} />
+      </svg>
+      <div className={`text-[11px] text-center text-[${color}] -mt-[41px]`}>
+        {remainingValue}
+        {type === "hours" ? "hrs" : "m"} <br />
+        left
+      </div>
+    </div>
   );
 };
-export default Clock;
+
+export default CircularProgressBar;

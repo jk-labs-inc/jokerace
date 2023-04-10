@@ -1,3 +1,4 @@
+import CircularProgressBar from "@components/Clock";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
 import { CheckIcon, XIcon } from "@heroicons/react/outline";
@@ -18,6 +19,9 @@ const Contest: FC<ContestProps> = ({ contest }) => {
   );
   const [submissionStatus, setSubmissionStatus] = useState("");
   const [votingStatus, setVotingStatus] = useState("");
+  const [submissionTimeLeft, setSubmissionTimeLeft] = useState(0);
+  const [votingTimeLeft, setVotingTimeLeft] = useState(0);
+
   const handleClick = (contest: any) => {
     const query = {
       chain: contest.network_name,
@@ -37,6 +41,11 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       setSubmissionStatus("Submissions open in:");
     } else if (now.isBefore(moment(contest.vote_start_at))) {
       setSubmissionStatus("Submissions are open");
+
+      const minutesLeft = moment(contest.vote_start_at).diff(now, "minutes");
+      if (minutesLeft < 60) {
+        setSubmissionTimeLeft(minutesLeft);
+      }
     } else {
       setSubmissionStatus("Submissions closed");
     }
@@ -45,6 +54,11 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       setVotingStatus("Voting opens in:");
     } else if (now.isBefore(moment(contest.end_at))) {
       setVotingStatus("Voting is open");
+
+      const minutesLeft = moment(contest.end_at).diff(now, "minutes");
+      if (minutesLeft < 60) {
+        setVotingTimeLeft(minutesLeft);
+      }
     } else {
       setVotingStatus("Voting closed");
     }
@@ -177,33 +191,54 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <div className={`flex flex-col ${submissionClass}`}>
-          <p className="font-bold">
-            {submissionStatus}{" "}
-            {submissionStatus.includes("in:") && (
-              <Countdown
-                date={moment(contest.start_at).toDate()}
-                renderer={props => renderer(props, moment(contest.start_at))}
+        <div className={`flex items-center ${submissionClass} justify-between gap-3`}>
+          <div>
+            <p className="font-bold">
+              {submissionStatus}{" "}
+              {submissionStatus.includes("in:") && (
+                <Countdown
+                  date={moment(contest.start_at).toDate()}
+                  renderer={props => renderer(props, moment(contest.start_at))}
+                />
+              )}
+            </p>
+            {submissionMessage}
+          </div>
+          {submissionTimeLeft ? (
+            <div className="flex items-center gap-2">
+              <CircularProgressBar
+                value={submissionTimeLeft}
+                type="minutes"
+                size={50}
+                strokeWidth={4}
+                color="#FFE25B"
               />
-            )}
-          </p>
-
-          {submissionMessage}
+            </div>
+          ) : null}
         </div>
       </div>
 
-      <div className={`flex flex-col ${votingClass}`}>
-        <p className="font-bold">
-          {votingStatus}{" "}
-          {votingStatus.includes("in:") && (
-            <Countdown
-              date={moment(contest.vote_start_at).toDate()}
-              renderer={props => renderer(props, moment(contest.vote_start_at))}
-            />
-          )}
-        </p>
-
-        {votingMessage}
+      <div className={`flex items-center gap-4`}>
+        <div className={`flex items-center ${votingClass} justify-between gap-3`}>
+          <div>
+            {" "}
+            <p className="font-bold">
+              {votingStatus}{" "}
+              {votingStatus.includes("in:") && (
+                <Countdown
+                  date={moment(contest.vote_start_at).toDate()}
+                  renderer={props => renderer(props, moment(contest.vote_start_at))}
+                />
+              )}
+            </p>
+            {votingMessage}
+          </div>
+        </div>
+        {votingTimeLeft ? (
+          <div className="flex items-center gap-2">
+            <CircularProgressBar value={votingTimeLeft} type="minutes" size={50} strokeWidth={4} color="#78FFC6" />
+          </div>
+        ) : null}
       </div>
       {contest.rewards ? (
         <div className="flex flex-col">

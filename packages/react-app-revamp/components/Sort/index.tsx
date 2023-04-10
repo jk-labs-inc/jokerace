@@ -65,21 +65,23 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
             >
               <Menu.Button className="flex items-center justify-between pl-2 pr-2 w-[100%] h-[100%] cursor-default">
                 {label ? label : "Sort"}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6 transform rotate-180 cursor-pointer"
-                  onClick={e => onAscendingClick(e)}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
-                  />
-                </svg>
+                {selectedOption && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6 transform rotate-180 cursor-pointer"
+                    onClick={e => onAscendingClick(e)}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
+                    />
+                  </svg>
+                )}
                 <ChevronDownIcon className="w-5 cursor-pointer" />{" "}
               </Menu.Button>
             </div>
