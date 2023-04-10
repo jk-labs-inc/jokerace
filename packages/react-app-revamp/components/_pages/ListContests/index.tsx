@@ -37,24 +37,16 @@ export const ListContests: FC<ListContestsProps> = ({
     handleSort();
   }, [sorting]);
 
-  const handleSort = () => {
-    if (!result) return;
-
-    if (!sorting) {
-      setSortedData(result.data); // Reset sorted data
-      return;
-    }
-
-    const { property, ascending } = sorting;
-    const sorted = [...result.data].sort((a, b) => {
+  const sortData = (data: any, property: string, order: string) => {
+    return data.sort((a: any, b: any) => {
       let valueA;
       let valueB;
       let reverseOrder = false;
 
       switch (property) {
         case "rewards":
-          valueA = a.rewards;
-          valueB = b.rewards;
+          valueA = a.rewards ? 1 : 0;
+          valueB = b.rewards ? 1 : 0;
           break;
         case "qualified":
           valueA = a.qualifiedToSubmit || a.qualifiedToVote ? 1 : 0;
@@ -98,14 +90,26 @@ export const ListContests: FC<ListContestsProps> = ({
       }
 
       if (valueA < valueB) {
-        return ascending ? (reverseOrder ? 1 : -1) : reverseOrder ? -1 : 1;
+        return order === "ascending" ? (reverseOrder ? 1 : -1) : reverseOrder ? -1 : 1;
       }
       if (valueA > valueB) {
-        return ascending ? (reverseOrder ? -1 : 1) : reverseOrder ? 1 : -1;
+        return order === "ascending" ? (reverseOrder ? -1 : 1) : reverseOrder ? 1 : -1;
       }
       return 0;
     });
+  };
 
+  const handleSort = () => {
+    if (!result) return;
+
+    if (!sorting) {
+      setSortedData(result.data); // Reset sorted data
+      return;
+    }
+
+    const { property, ascending } = sorting;
+    const order = ascending ? "ascending" : "descending";
+    const sorted = sortData([...result.data], property, order);
     setSortedData(sorted);
   };
 

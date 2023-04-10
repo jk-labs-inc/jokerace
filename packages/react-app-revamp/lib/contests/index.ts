@@ -83,9 +83,14 @@ async function processContestData(contest: any, userAddress: string) {
 
       const [balanceToVote, balanceToSubmit] = await Promise.all([balanceToVotePromise, balanceToSubmitPromise]);
 
+      const isSubmissionOpen =
+        new Date(contest.start_at).getTime() <= Date.now() && Date.now() <= new Date(contest.vote_start_at).getTime();
+      const isVotingOpen =
+        new Date(contest.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(contest.end_at).getTime();
+
       return {
-        qualifiedToVote: balanceToVote.value.gt(0),
-        qualifiedToSubmit: balanceToSubmit.value.gt(0),
+        qualifiedToVote: isVotingOpen && balanceToVote.value.gt(0),
+        qualifiedToSubmit: isSubmissionOpen && balanceToSubmit.value.gt(0),
       };
     } catch (error) {
       console.error("Error fetching balances:", error);

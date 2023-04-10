@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
+import { ArrowsExpandIcon, ArrowSmUpIcon, ChevronDoubleUpIcon, ChevronDownIcon, XIcon } from "@heroicons/react/outline";
 import { FC, Fragment, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -18,18 +18,37 @@ export interface SortProps {
 
 const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [label, setLabel] = useState<string | null>(null);
+  const [ascending, setAscending] = useState<boolean>(false);
 
-  const handleSortChange = (property: string) => {
+  const handleSortChange = (property: string, label: string) => {
     setSelectedOption(property);
+    setLabel(label);
     onSortChange?.({ property, ascending: false });
   };
 
   const handleResetSort = (event: React.MouseEvent, close: () => void) => {
     event.stopPropagation();
     setSelectedOption(null);
+    setLabel(null);
     onSortChange?.(null);
 
     close(); // Close the menu
+  };
+
+  const onAscendingClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+
+    if (selectedOption) {
+      setAscending(prevAscending => {
+        const newAscending = !prevAscending;
+        onSortChange?.({
+          property: selectedOption,
+          ascending: newAscending,
+        });
+        return newAscending;
+      });
+    }
   };
 
   return (
@@ -44,8 +63,24 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 selectedOption || open ? "border-primary-10" : "border-neutral-9"
               }`}
             >
-              <Menu.Button className="flex items-center justify-between pl-2 pr-2 w-[100%] h-[100%]">
-                Sort <ChevronDownIcon className="w-5" />{" "}
+              <Menu.Button className="flex items-center justify-between pl-2 pr-2 w-[100%] h-[100%] cursor-default">
+                {label ? label : "Sort"}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6 transform rotate-180 cursor-pointer"
+                  onClick={e => onAscendingClick(e)}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
+                  />
+                </svg>
+                <ChevronDownIcon className="w-5 cursor-pointer" />{" "}
               </Menu.Button>
             </div>
 
@@ -64,8 +99,8 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                     { property: "rewards", label: "rewards" },
                     { property: "qualified", label: "what i qualify for" },
                     { property: "closest_deadline", label: "closest deadline" },
-                    { property: "can_submit", label: "can submit now" },
-                    { property: "can_vote", label: "can vote now" },
+                    { property: "can_submit", label: "submissions open" },
+                    { property: "can_vote", label: "voting open" },
                   ].map(({ property, label }) => (
                     <Menu.Item key={property}>
                       {({ active, close }) => (
@@ -74,7 +109,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                             active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                             "flex items-center gap-1 px-4 py-2 text-[18px] font-normal hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
                           )}
-                          onClick={() => handleSortChange(property)}
+                          onClick={() => handleSortChange(property, label)}
                         >
                           <span className="text-left">{label}</span>
 
