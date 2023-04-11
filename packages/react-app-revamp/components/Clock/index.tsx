@@ -56,8 +56,6 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
         setRemainingValue(remainingValue - 1);
       }
 
-      console.log(remainingValue, value);
-
       // Call requestAnimationFrame only if the remaining value is greater than 0
       if (remainingValue - 1 > 0) {
         frameRef.current = requestAnimationFrame(animateProgress);
