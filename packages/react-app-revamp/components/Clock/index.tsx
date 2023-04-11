@@ -83,11 +83,23 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
     <div>
       {remainingValue > 0 ? (
         <>
-          <svg width={size} height={size}>
-            <circle cx={size / 2} cy={size / 2} r={radius} stroke="lightgray" strokeWidth={strokeWidth} fill="none" />
+          <svg width={size + strokeWidth * 2} height={size + strokeWidth * 2}>
+            <defs>
+              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="1" dy="1" stdDeviation="3" flood-color={color} flood-opacity="1" />
+              </filter>
+            </defs>
             <circle
-              cx={size / 2}
-              cy={size / 2}
+              cx={size / 2 + strokeWidth}
+              cy={size / 2 + strokeWidth}
+              r={radius}
+              stroke="#D9D9D9"
+              strokeWidth={strokeWidth}
+              fill="none"
+            />
+            <circle
+              cx={size / 2 + strokeWidth}
+              cy={size / 2 + strokeWidth}
               r={radius}
               stroke={`${color}`}
               strokeWidth={strokeWidth}
@@ -95,11 +107,18 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={offset}
-              transform={`rotate(-90, ${size / 2}, ${size / 2})`}
+              transform={`rotate(-90, ${size / 2 + strokeWidth}, ${size / 2 + strokeWidth})`}
             />
-            <circle cx={dotX} cy={dotY} r={strokeWidth * 1.3} fill={`${color}`} />
+            <circle
+              cx={dotX + strokeWidth}
+              cy={dotY + strokeWidth}
+              r={strokeWidth * 1.3}
+              fill={`${color}`}
+              filter="url(#shadow)"
+              className="blink-shadow"
+            />
           </svg>
-          <div className={`text-[11px] text-center text-[${color}] -mt-[41px]`}>
+          <div style={{ color: color }} className={`text-[11px] text-center -mt-[45px] font-bold`}>
             {remainingValue}
             {type === "hours" ? "h" : "m"} <br />
             left

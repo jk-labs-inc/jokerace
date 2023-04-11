@@ -1,5 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
-import { ArrowsExpandIcon, ArrowSmUpIcon, ChevronDoubleUpIcon, ChevronDownIcon, XIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
 import { FC, Fragment, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -52,7 +52,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-left text-[18px] w-[100%]">
+    <Menu as="div" className="relative inline-block text-left text-[18px] w-[80%]">
       {({ open }) => {
         onMenuStateChange?.(open);
 
@@ -63,8 +63,10 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 selectedOption || open ? "border-primary-10" : "border-neutral-9"
               }`}
             >
-              <Menu.Button className="flex items-center justify-between pl-2 pr-2 w-[100%] h-[100%] cursor-default">
-                {label ? label : "Sort"}
+              <Menu.Button className="flex items-center justify-between pl-2 pr-2 w-[100%] h-[100%] cursor-default text-[18px]">
+                <span className={`${selectedOption ? `text-true-white` : `text-neutral-9`}`}>
+                  {label ? label : "Sort"}
+                </span>
                 {selectedOption && (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -113,7 +115,9 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                           )}
                           onClick={() => handleSortChange(property, label)}
                         >
-                          <span className="text-left">{label}</span>
+                          <span className={`text-left ${property === selectedOption ? `font-bold` : `font-normal`}`}>
+                            {label}
+                          </span>
 
                           {selectedOption === property && (
                             <button onClick={e => handleResetSort(e, close)} className="ml-auto">

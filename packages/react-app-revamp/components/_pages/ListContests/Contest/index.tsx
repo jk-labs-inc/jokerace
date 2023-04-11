@@ -225,7 +225,7 @@ const Contest: FC<ContestProps> = ({ contest }) => {
 
       <div className="flex items-center gap-4">
         <div className={`flex items-center ${submissionClass} justify-between gap-3`}>
-          <div>
+          <div className="min-w-[185px]">
             <p className="font-bold">
               {submissionStatus}{" "}
               {submissionStatus.includes("in:") && (
@@ -255,7 +255,7 @@ const Contest: FC<ContestProps> = ({ contest }) => {
 
       <div className={`flex items-center gap-4`}>
         <div className={`flex items-center ${votingClass} justify-between gap-3`}>
-          <div>
+          <div className="min-w-[185px]">
             {" "}
             <p className="font-bold">
               {votingStatus}{" "}

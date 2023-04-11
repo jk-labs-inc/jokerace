@@ -77,6 +77,20 @@
   }
 }
 
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.8;
+  }
+}
+
+.blink-shadow {
+  animation: blink 1.5s ease-in-out infinite;
+}
+
 .fadeIn {
   -webkit-animation: fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
   animation: fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
@@ -228,7 +242,8 @@
 
   .full-width-grid-cols {
     @apply grid;
-    grid-template-columns: 3fr 2fr 2fr 0.7fr;
+    grid-template-columns: repeat(3, minmax(auto, 1fr)) 0.4fr;
+    gap: 1rem;
   }
 
   .dropdownBorder {
