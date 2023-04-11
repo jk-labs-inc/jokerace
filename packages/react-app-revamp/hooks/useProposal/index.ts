@@ -1,3 +1,4 @@
+import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
@@ -30,7 +31,7 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
 
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
-  const { chain, chains } = useNetwork();
+  const { chain } = useNetwork();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
 
   function onContractError(err: any) {

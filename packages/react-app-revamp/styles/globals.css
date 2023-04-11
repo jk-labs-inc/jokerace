@@ -179,8 +179,8 @@
     @apply px-5 lg:px-3 max-w-screen-lg;
   }
 
-  .no-marker li::marker {
-    content: "";
+  .no-marker li {
+    list-style: none;
   }
 
   .form-field--disabled {
