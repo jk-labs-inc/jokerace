@@ -12,6 +12,11 @@ interface ContestProps {
   contest: any;
 }
 
+type TimeLeft = {
+  value: number;
+  type: "hours" | "minutes";
+};
+
 const Contest: FC<ContestProps> = ({ contest }) => {
   const { address } = getAccount();
   const chain = chains.find(
@@ -19,8 +24,20 @@ const Contest: FC<ContestProps> = ({ contest }) => {
   );
   const [submissionStatus, setSubmissionStatus] = useState("");
   const [votingStatus, setVotingStatus] = useState("");
-  const [submissionTimeLeft, setSubmissionTimeLeft] = useState(0);
-  const [votingTimeLeft, setVotingTimeLeft] = useState(0);
+  const [submissionTimeLeft, setSubmissionTimeLeft] = useState<TimeLeft>({
+    value: 0,
+    type: "minutes",
+  });
+  const [votingTimeLeft, setVotingTimeLeft] = useState<TimeLeft>({
+    value: 0,
+    type: "minutes",
+  });
+  const [initialSubmissionMinutes, setInitialSubmissionMinutes] = useState(0);
+
+  const [initialVotingMinutes, setInitialVotingMinutes] = useState(0);
+
+  const [initialSubmissionSeconds, setInitialSubmissionSeconds] = useState(0);
+  const [initialVotingSeconds, setInitialVotingSeconds] = useState(0);
 
   const handleClick = (contest: any) => {
     const query = {
@@ -43,8 +60,16 @@ const Contest: FC<ContestProps> = ({ contest }) => {
       setSubmissionStatus("Submissions are open");
 
       const minutesLeft = moment(contest.vote_start_at).diff(now, "minutes");
+      const hoursLeft = Math.floor(minutesLeft / 60);
+      const secondsLeft = moment(contest.vote_start_at).diff(now, "seconds");
+
+      setInitialSubmissionMinutes(minutesLeft % 60);
+      setInitialSubmissionSeconds(secondsLeft % 60);
+
       if (minutesLeft < 60) {
-        setSubmissionTimeLeft(minutesLeft);
+        setSubmissionTimeLeft({ value: minutesLeft, type: "minutes" });
+      } else if (hoursLeft < 24) {
+        setSubmissionTimeLeft({ value: hoursLeft, type: "hours" });
       }
     } else {
       setSubmissionStatus("Submissions closed");
@@ -55,9 +80,17 @@ const Contest: FC<ContestProps> = ({ contest }) => {
     } else if (now.isBefore(moment(contest.end_at))) {
       setVotingStatus("Voting is open");
 
+      const secondsLeft = moment(contest.end_at).diff(now, "seconds");
       const minutesLeft = moment(contest.end_at).diff(now, "minutes");
+      const hoursLeft = Math.floor(minutesLeft / 60);
+
+      setInitialVotingMinutes(minutesLeft % 60);
+      setInitialVotingSeconds(secondsLeft % 60);
+
       if (minutesLeft < 60) {
-        setVotingTimeLeft(minutesLeft);
+        setVotingTimeLeft({ value: minutesLeft, type: "minutes" });
+      } else if (hoursLeft < 24) {
+        setVotingTimeLeft({ value: hoursLeft, type: "hours" });
       }
     } else {
       setVotingStatus("Voting closed");
@@ -204,14 +237,16 @@ const Contest: FC<ContestProps> = ({ contest }) => {
             </p>
             {submissionMessage}
           </div>
-          {submissionTimeLeft ? (
+          {submissionTimeLeft.value ? (
             <div className="flex items-center gap-2">
               <CircularProgressBar
-                value={submissionTimeLeft}
-                type="minutes"
+                value={submissionTimeLeft.value}
+                type={submissionTimeLeft.type}
                 size={50}
-                strokeWidth={4}
+                strokeWidth={3}
                 color="#FFE25B"
+                initialMinutes={initialSubmissionMinutes}
+                initialSeconds={initialSubmissionSeconds}
               />
             </div>
           ) : null}
@@ -234,9 +269,17 @@ const Contest: FC<ContestProps> = ({ contest }) => {
             {votingMessage}
           </div>
         </div>
-        {votingTimeLeft ? (
+        {votingTimeLeft.value ? (
           <div className="flex items-center gap-2">
-            <CircularProgressBar value={votingTimeLeft} type="minutes" size={50} strokeWidth={4} color="#78FFC6" />
+            <CircularProgressBar
+              value={votingTimeLeft.value}
+              type={votingTimeLeft.type}
+              size={50}
+              strokeWidth={3}
+              color="#78FFC6"
+              initialMinutes={initialVotingMinutes}
+              initialSeconds={initialVotingSeconds}
+            />
           </div>
         ) : null}
       </div>
