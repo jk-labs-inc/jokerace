@@ -123,6 +123,12 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
             return ContestState.Canceled;
         }
 
+        uint256 contestStartTimestamp = contestStart();
+
+        if (contestStartTimestamp >= block.timestamp) {
+            return ContestState.NotStarted;
+        }
+
         uint256 voteStartTimestamp = voteStart();
 
         if (voteStartTimestamp >= block.timestamp) {
