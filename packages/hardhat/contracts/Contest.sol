@@ -4,12 +4,11 @@ pragma solidity ^0.8.4;
 import "./governance/Governor.sol";
 import "./governance/extensions/GovernorSettings.sol";
 import "./governance/extensions/GovernorCountingSimple.sol";
-import "./governance/extensions/GovernorVotesTimestamp.sol";
 import "./governance/extensions/GovernorModuleRegistry.sol";
 
-contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorVotesTimestamp, GovernorModuleRegistry {
-    constructor(string memory _name, string memory _prompt, IVotesTimestamp _token, IVotesTimestamp _submissionToken, uint256[] memory _constructorIntParams)
-        Governor(_name, _prompt)
+contract Contest is Governor, GovernorSettings, GovernorCountingSimple, GovernorModuleRegistry {
+    constructor(string memory _name, string memory _prompt, bytes32 _submissionMerkleRoot, bytes32 _votingMerkleRoot, uint256[] memory _constructorIntParams)
+        Governor(_name, _prompt, _submissionMerkleRoot, _votingMerkleRoot)
         GovernorSettings(
             _constructorIntParams[0], // _initialContestStart
             _constructorIntParams[1], // _initialVotingDelay, 
@@ -21,7 +20,6 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
             _constructorIntParams[7], // _initialDownvotingAllowed
             _constructorIntParams[8]  // _initialSubmissionGatingByVotingToken
         )
-        GovernorVotesTimestamp(_token, _submissionToken)
     {}
 
     // The following functions are overrides required by Solidity.
@@ -89,15 +87,6 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         return super.downvotingAllowed();
     }
 
-    function submissionGatingByVotingToken()
-        public
-        view
-        override(Governor, GovernorSettings)
-        returns (uint256)
-    {
-        return super.submissionGatingByVotingToken();
-    }
-
     function creator()
         public
         view
@@ -105,32 +94,5 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
         returns (address)
     {
         return super.creator();
-    }
-
-    function getVotes(address account, uint256 timestamp)
-        public
-        view
-        override(IGovernor, GovernorVotesTimestamp)
-        returns (uint256)
-    {
-        return super.getVotes(account, timestamp);
-    }
-
-    function getCurrentVotes(address account)
-        public
-        view
-        override(IGovernor, GovernorVotesTimestamp)
-        returns (uint256)
-    {
-        return super.getCurrentVotes(account);
-    }
-
-    function getCurrentSubmissionTokenVotes(address account)
-        public
-        view
-        override(IGovernor, GovernorVotesTimestamp)
-        returns (uint256)
-    {
-        return super.getCurrentSubmissionTokenVotes(account);
     }
 }

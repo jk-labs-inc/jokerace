@@ -117,13 +117,6 @@ abstract contract GovernorSettings is Governor {
     }
 
     /**
-     * @dev If submission gating is done by voting token in this contest.
-     */
-    function submissionGatingByVotingToken() public view virtual override returns (uint256) {
-        return _submissionGatingByVotingToken;
-    }
-
-    /**
      * @dev See {IGovernor-creator}.
      */
     function creator() public view virtual override returns (address) {

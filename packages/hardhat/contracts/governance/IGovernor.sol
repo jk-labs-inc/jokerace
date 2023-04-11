@@ -149,32 +149,25 @@ abstract contract IGovernor is IERC165 {
      */
     function creator() public view virtual returns (address);
 
+    // TODO: document this
     /**
      * @notice module:reputation
-     * @dev Voting power of an `account` at a specific `timestamp`.
+     * @dev Voting power of an `account`.
      *
      * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
      * multiple), {ERC20Votes} tokens.
      */
-    function getVotes(address account, uint256 timestamp) public view virtual returns (uint256);
+    function verifySubmitter(address account, bytes32[] calldata proof) public virtual returns (bool);
 
+    // TODO: document this
     /**
      * @notice module:reputation
-     * @dev Voting power of an `account` at the current block.
+     * @dev Voting power of an `account`.
      *
      * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
      * multiple), {ERC20Votes} tokens.
      */
-    function getCurrentVotes(address account) public view virtual returns (uint256);
-
-    /**
-     * @notice module:reputation
-     * @dev Voting power of an `account` at the current block for a token for submission gating.
-     *
-     * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
-     * multiple), {ERC20Votes} tokens.
-     */
-    function getCurrentSubmissionTokenVotes(address account) public view virtual returns (uint256);
+    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof) public virtual returns (bool);
 
     /**
      * @dev Create a new proposal. Vote start {IGovernor-votingDelay} blocks after the proposal is created and ends
@@ -183,7 +176,7 @@ abstract contract IGovernor is IERC165 {
      * Emits a {ProposalCreated} event.
      */
     function propose(
-        string memory proposalDescription
+        string memory proposalDescription, bytes32[] calldata proof
     ) public virtual returns (uint256 proposalId);
 
     /**
@@ -191,7 +184,14 @@ abstract contract IGovernor is IERC165 {
      *
      * Emits a {VoteCast} event.
      */
-    function castVote(uint256 proposalId, uint8 support, uint256 numVotes) public virtual returns (uint256 balance);
+    function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof) public virtual returns (uint256 balance);
+
+    /**
+     * @dev Cast a vote without including the merkle root
+     *
+     * Emits a {VoteCast} event.
+     */
+    function castVoteWithoutRoot(uint256 proposalId, uint8 support, uint256 numVotes) public virtual returns (uint256 balance);
 
     /**
      * @dev Cast a vote with a reason

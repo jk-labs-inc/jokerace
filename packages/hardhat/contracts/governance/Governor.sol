@@ -10,6 +10,7 @@ import "../utils/math/SafeCast.sol";
 import "../utils/Address.sol";
 import "../utils/Context.sol";
 import "./IGovernor.sol";
+import "./extensions/GovernorMerkleVotes.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
@@ -22,11 +23,14 @@ import "./IGovernor.sol";
  *
  * _Available since v4.3._
  */
-abstract contract Governor is Context, ERC165, EIP712, IGovernor {
+abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
-
+    uint8   public constant AMOUNT_FOR_SUMBITTER_PROOF = 1;
+    mapping(address => uint256) public addressTotalVotes;
+    mapping(address => bool) private addressTotalVotesVerified;
+    mapping(address => bool) private addressSubmitterVerified;
 
     struct ProposalCore {
         address author;
@@ -56,7 +60,10 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     /**
      * @dev Sets the value for {name} and {version}
      */
-    constructor(string memory name_, string memory prompt_) EIP712(name_, version()) {
+    constructor(string memory name_, string memory prompt_, bytes32 submissionMerkleRoot_, bytes32 votingMerkleRoot_) 
+        GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_)
+        EIP712(name_, version()) 
+    {
         _name = name_;
         _prompt = prompt_;
     }
@@ -194,13 +201,6 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     }
 
     /**
-     * @dev If submission gating is done by voting token in this contest.
-     */
-    function submissionGatingByVotingToken() public view virtual returns (uint256) {
-        return 1; // 0 == false, 1 == true
-    }
-
-    /**
      * @dev Retrieve proposal data"_.
      */
     function getProposal(uint256 proposalId) public view virtual returns (ProposalCore memory) {
@@ -233,29 +233,39 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         uint256 numVotes,
         uint256 totalVotes
     ) internal virtual;
+    
+    //TODO: update docs for everything
+    // verify function that takes root -> checks if addressTotalVotes already stored. 
+    //     *if not, verify against the root and store results (bool if stored -> amount in accttotalvotes) -> return true if good. error if not.
+    //     *if so, return true
+
+    function verifySubmitter(address account, bytes32[] calldata proof) public override returns (bool verified) {
+        if (!addressSubmitterVerified[account]) {
+            checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
+            addressSubmitterVerified[account] = true;
+        }
+        return true;
+    }
+
+    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof) public override returns (bool verified) {
+        if (!addressTotalVotesVerified[account]) {
+            checkProof(account, totalVotes, proof, false); // will revert with NotInMerkle if not valid
+            addressTotalVotes[account] = totalVotes;
+            addressTotalVotesVerified[account] = true;
+        }
+        return true;
+    }
 
     /**
      * @dev See {IGovernor-propose}.
      */
     function propose(
-        string memory proposalDescription
+        string memory proposalDescription, bytes32[] calldata proof
     ) public virtual override returns (uint256) {
         require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
         require(_numSubmissions[msg.sender] < numAllowedProposalSubmissions(), "Governor: the same cannot submit more than the numAllowedProposalSubmissions for this contest");
         require(_proposalIds.length < maxProposalCount(), "Governor: the max number of proposals have been submitted");
-        if (submissionGatingByVotingToken() == 1) {
-            require(
-                getCurrentVotes(msg.sender) >= proposalThreshold(),
-                "GovernorCompatibilityBravo: proposer votes below proposal threshold"
-            );
-        } else if (submissionGatingByVotingToken() == 0) {
-            require(
-                getCurrentSubmissionTokenVotes(msg.sender) >= proposalThreshold(),
-                "GovernorCompatibilityBravo: proposer submission gating token votes below proposal threshold"
-            );
-        } else {
-            revert("submissionGatingByVotingToken must be set to either true (1) or false (0)");
-        }
+        require(verifySubmitter(msg.sender, proof), "Governor: address is not permissioned to submit");
 
         require(bytes(proposalDescription).length != 0, "Governor: empty proposal");
 
@@ -316,47 +326,24 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     /**
      * @dev See {IGovernor-castVote}.
      */
-    function castVote(uint256 proposalId, uint8 support, uint256 numVotes) public virtual override returns (uint256) {
+    function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof) public virtual override returns (uint256) {
         address voter = _msgSender();
+        verifyTotalVotes(voter, totalVotes, proof);
         return _castVote(proposalId, voter, support, numVotes, "");
     }
 
     /**
-     * @dev See {IGovernor-castVoteWithReason}.
+     * @dev See {IGovernor-castVoteWithoutRoot}.
      */
-    function castVoteWithReason(
-        uint256 proposalId,
-        uint8 support,
-        uint256 numVotes,
-        string calldata reason
-    ) public virtual override returns (uint256) {
+    function castVoteWithoutRoot(uint256 proposalId, uint8 support, uint256 numVotes) public virtual override returns (uint256) {
         address voter = _msgSender();
-        return _castVote(proposalId, voter, support, numVotes, reason);
-    }
-
-    /**
-     * @dev See {IGovernor-castVoteBySig}.
-     */
-    function castVoteBySig(
-        uint256 proposalId,
-        uint8 support,
-        uint256 numVotes,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) public virtual override returns (uint256) {
-        address voter = ECDSA.recover(
-            _hashTypedDataV4(keccak256(abi.encode(BALLOT_TYPEHASH, proposalId, support))),
-            v,
-            r,
-            s
-        );
+        require(addressTotalVotesVerified[voter], "Governor: you need to cast a vote with the root at least once and you haven't yet");
         return _castVote(proposalId, voter, support, numVotes, "");
     }
 
     /**
      * @dev Internal vote casting mechanism: Check that the vote is pending, that it has not been cast yet, retrieve
-     * voting weight using {IGovernor-getVotes} and call the {_countVote} internal function.
+     * voting weight using addressTotalVotes() and call the {_countVote} internal function.
      *
      * Emits a {IGovernor-VoteCast} event.
      */
@@ -368,17 +355,15 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
         string memory reason
     ) internal virtual returns (uint256) {
         require(state() == ContestState.Active, "Governor: vote not currently active");
-        require(numVotes > 0, "GovernorVotingSimple: cannot vote with 0 or fewer votes");
+        require(numVotes > 0, "Governor: cannot vote with 0 or fewer votes");
 
-        uint256 totalVotes = getVotes(account, contestSnapshot());
-        require(totalVotes > 0, "GovernorVotingSimple: you must have greater than 0 delegated votes at the snapshot in order to vote");
-
-        _countVote(proposalId, account, support, numVotes, totalVotes);
+        require(addressTotalVotesVerified[account], "Governor: not sure how you got here but you need to verify your number of votes against the merkle root first");
+        _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);
 
         emit VoteCast(account, proposalId, support, numVotes, reason);
 
-        return totalVotes;
-    }
+        return addressTotalVotes[account];
+   }
 
     /**
      * @dev Address through which the governor executes action. Will be overloaded by module that execute actions
