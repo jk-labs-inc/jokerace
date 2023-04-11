@@ -3,6 +3,7 @@ import PromptDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.leg
 import AllProposalTotalVotesDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.legacy.3.allProposalTotalVotes.sol/Contest.json";
 import ProposalVotesDownvotesContract from "@contracts/bytecodeAndAbi/Contest.legacy.4.proposalVotesDownvotes.sol/Contest.json";
 import SubmissionTokenGatingContract from "@contracts/bytecodeAndAbi/Contest.legacy.5.submissionTokenGating.sol/Contest.json";
+import RewardsContract from "@contracts/bytecodeAndAbi/Contest.legacy.6.rewards.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 
 import { chains } from "@config/wagmi";
