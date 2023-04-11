@@ -10,7 +10,6 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import "react-circular-progressbar/dist/styles.css";
 
 import { WagmiConfig } from "wagmi";
 
