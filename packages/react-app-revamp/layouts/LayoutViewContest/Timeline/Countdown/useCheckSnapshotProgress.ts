@@ -37,6 +37,8 @@ export function useCheckSnapshotProgress() {
         setIsSnapshotTaken(true);
         //@ts-ignore
         setContestStatus(statusRawData);
+        console.log(statusRawData);
+
         setSnapshotTaken(true);
         return;
       }
