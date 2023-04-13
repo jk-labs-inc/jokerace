@@ -1,6 +1,7 @@
 import { chains } from "@config/wagmi";
 import LegacyDeployedRewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.1.first.sol/RewardsModule.json";
 import NumberedVersioningRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.3.numberedVersioning.sol/RewardsModule.json";
+import GateSubmissionsOpenRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.4.gateSubmissionsOpen.sol/RewardsModule.json";
 import { getProvider } from "@wagmi/core";
 import { ethers } from "ethers";
 
@@ -17,6 +18,8 @@ export async function getRewardsModuleContractVersion(address: string, chainName
       return LegacyDeployedRewardsModuleContract.abi;
     } else if (version === "2.3") {
       return NumberedVersioningRewards.abi;
+    } else if (version === "2.4") {
+      return GateSubmissionsOpenRewards.abi;
     } else {
       return LegacyDeployedRewardsModuleContract.abi;
     }
