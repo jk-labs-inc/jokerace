@@ -9,19 +9,19 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 
 import { chains } from "@config/wagmi";
 import { getProvider } from "@wagmi/core";
-import { utils } from "ethers";
+import { ethers, utils } from "ethers";
 
 export async function getContestContractVersion(address: string, chainName: string) {
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const provider = getProvider({ chainId: chainId });
+  const contract = new ethers.Contract(address, NumberedVersioning.abi, provider);
+  const version = await contract.version();
 
-  // TODO: Add logic "check version and if 2.8, use NumberedVersioning"
-  
+  if (version == 2.8) {
+    return NumberedVersioning.abi;
+  }
 
-  // The below is here to catch legacy contract versions that aren't versioned with numbers and whose version function equals 1.
-
-  // TODO: Add logic "If version is 1, then check the below"
-  // if (version == 1) {
-    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-    const provider = getProvider({ chainId: chainId });
+  if (version == 1) {
     const bytecode = await provider.getCode(address);
     if (bytecode.length <= 2) return null;
     if (!bytecode.includes(utils.id("prompt()").slice(2, 10))) {
@@ -41,12 +41,11 @@ export async function getContestContractVersion(address: string, chainName: stri
       // And because we have no really feasible way of differintating and also because the function calls are the same, we'll go with 2.6 in this case.
       return RewardsContract.abi;
     }
-  // }
+  }
 
   // If the version isn't 1 and also isn't any that we have noted (this should not happen if we are versioning smart contract code releases correctly),
   // then fall back to the latest version of bytecode and ABI.
   return DeployedContestContract.abi;
-
 }
 
 export default getContestContractVersion;
