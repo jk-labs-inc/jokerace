@@ -43,6 +43,8 @@
   box-shadow: 0 -2px 4px rgba(52, 211, 153, 0.5), 0 2px 4px rgba(52, 211, 153, 0.5), 0 1px 2px rgba(52, 211, 153, 0.3) !important;
 }
 
+/* ANIMATIONS */
+
 @-webkit-keyframes fadeIn {
   0% {
     opacity: 0;
@@ -100,6 +102,8 @@
   -webkit-animation: fadeOut 2s ease-out both;
   animation: fadeOut 2s ease-out both;
 }
+
+/* Custom text shadow */
 
 .custom-text-shadow {
   text-shadow: 1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, -1px -1px 0 #fff, 1px -1px 0 #fff,
@@ -247,7 +251,7 @@
   }
 
   .dropdownBorder {
-    @apply border border-primary-10;
+    @apply border-2 border-primary-10;
   }
 
   .needle {

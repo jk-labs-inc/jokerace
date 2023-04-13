@@ -59,9 +59,9 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
         return (
           <>
             <div
-              className={`bg-true-black rounded-xl border border-neutral-9 h-10 ${
+              className={`bg-true-black rounded-xl border-2 h-10 ${
                 selectedOption || open ? "border-primary-10" : "border-neutral-9"
-              }`}
+              } transition-colors duration-300 ease-in-out`}
             >
               <Menu.Button className="flex items-center justify-between pl-2 pr-2 w-[100%] h-[100%] cursor-default text-[18px]">
                 <span className={`${selectedOption ? `text-true-white` : `text-neutral-9`}`}>
@@ -98,7 +98,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 z-10 mt-4 w-[100%] origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder focus:outline-none">
+                <Menu.Items className="absolute right-0 z-10 mt-4 w-[100%] origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
                   {[
                     { property: "rewards", label: "rewards" },
                     { property: "qualified", label: "what i qualify for" },
@@ -111,7 +111,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                         <div
                           className={classNames(
                             active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                            "flex items-center gap-1 px-4 py-2 text-[18px] font-normal hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
+                            "flex items-center gap-1 px-4 py-2 text-[18px] font-normal hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-300 ease-in-out",
                           )}
                           onClick={() => handleSortChange(property, label)}
                         >
@@ -121,7 +121,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
 
                           {selectedOption === property && (
                             <button onClick={e => handleResetSort(e, close)} className="ml-auto">
-                              <XIcon className="w-7 h-7 text-negative-11" />
+                              <XIcon className="w-6 h-6 text-negative-11" />
                             </button>
                           )}
                         </div>

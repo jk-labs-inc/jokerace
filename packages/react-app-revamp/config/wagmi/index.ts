@@ -83,5 +83,7 @@ export const chainsImages: ChainImages = {
   polygon: "/polygon.svg",
   polygonmumbai: "/polygon.svg",
   polygonzktestnet: "/polygon.svg",
+  polygonzkmainnet: "/polygon.svg",
   scrollgoerli: "/scroll.png",
+  basetestnet: "/base.svg",
 };

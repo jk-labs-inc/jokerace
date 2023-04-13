@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getLiveContests, ITEMS_PER_PAGE } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 function useContests(initialData: any) {
@@ -19,7 +19,7 @@ function useContests(initialData: any) {
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
-  const { status, data, error, isFetching } = useQuery(
+  const { status, data, error, isFetching, refetch } = useQuery(
     ["liveContests", page, address],
     () => getLiveContests(page, ITEMS_PER_PAGE, address),
     queryOptions,
@@ -32,6 +32,7 @@ function useContests(initialData: any) {
     data,
     error,
     isFetching,
+    refetch,
   };
 }
 
@@ -44,8 +45,13 @@ const Page: NextPage = props => {
     data,
     error,
     isFetching,
+    refetch,
     //@ts-ignore
   } = useContests(initialData?.data);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return (
     <>

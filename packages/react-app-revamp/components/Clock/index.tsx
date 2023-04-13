@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 
 interface CircularProgressBarProps {
   value: number;
-  type: "hours" | "minutes";
+  type: "days" | "hours" | "minutes";
   size: number;
   strokeWidth: number;
   color?: string;
+  initialHours: number;
   initialMinutes: number;
   initialSeconds: number;
 }
@@ -16,11 +17,17 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
   size,
   strokeWidth,
   color,
+  initialHours,
   initialMinutes,
   initialSeconds,
 }) => {
+  const [clockType, setClockType] = useState(type);
   const initialProgressPercentage =
-    type === "hours" ? 100 - (initialMinutes / 60) * 100 : 100 - (initialSeconds / 60) * 100;
+    clockType === "days"
+      ? 100 - (initialHours / 24) * 100
+      : clockType === "hours"
+      ? 100 - (initialMinutes / 60) * 100
+      : 100 - (initialSeconds / 60) * 100;
   const [progressPercentage, setProgressPercentage] = useState(initialProgressPercentage);
 
   const [animatedProgress, setAnimatedProgress] = useState(initialProgressPercentage);
@@ -28,7 +35,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
   const startTimeRef = useRef<number | null>(null);
   const frameRef = useRef<number | null>(null);
 
-  const duration = type === "hours" ? 3600000 : 60000;
+  const duration = clockType === "days" ? 86400000 : clockType === "hours" ? 3600000 : 60000;
 
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -120,7 +127,8 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
           </svg>
           <div style={{ color: color }} className={`text-[11px] text-center -mt-[45px] font-bold`}>
             {remainingValue}
-            {type === "hours" ? "h" : "m"} <br />
+            {clockType === "days" ? "d" : clockType === "hours" ? "h" : "m"}
+            <br />
             left
           </div>
         </>

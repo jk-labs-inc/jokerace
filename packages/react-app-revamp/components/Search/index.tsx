@@ -15,7 +15,7 @@ const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
   };
 
   return (
-    <div className="flex items-center h-10 bg-true-black text-[16px]  border-b border-neutral-10">
+    <div className="flex items-center h-10 bg-true-black text-[16px] w-[80%] border-b border-neutral-10">
       <span className="text-neutral-11">
         <SearchIcon className="w-5" color="gray" />
       </span>
