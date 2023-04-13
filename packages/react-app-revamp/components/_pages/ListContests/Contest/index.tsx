@@ -84,9 +84,9 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         submissionHours: hoursLeft % 24,
       });
 
-      if (minutesLeft < 60) {
+      if (minutesLeft < 60 && hoursLeft < 1) {
         setSubmissionTimeLeft({ value: minutesLeft, type: "minutes" });
-      } else if (hoursLeft < 24) {
+      } else if (hoursLeft < 24 || (hoursLeft === 24 && minutesLeft > 0)) {
         setSubmissionTimeLeft({ value: hoursLeft, type: "hours" });
       } else {
         setSubmissionTimeLeft({ value: daysLeft, type: "days" });
@@ -112,9 +112,9 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         votingHours: hoursLeft % 24,
       });
 
-      if (minutesLeft < 60) {
+      if (minutesLeft < 60 && hoursLeft < 1) {
         setVotingTimeLeft({ value: minutesLeft, type: "minutes" });
-      } else if (hoursLeft < 24) {
+      } else if (hoursLeft < 24 || (hoursLeft === 24 && minutesLeft > 0)) {
         setVotingTimeLeft({ value: hoursLeft, type: "hours" });
       } else {
         setVotingTimeLeft({ value: daysLeft, type: "days" });
