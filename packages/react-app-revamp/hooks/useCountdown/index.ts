@@ -13,10 +13,12 @@ const useCountdown = (startDate: Date, endDate: Date) => {
       setCountdown({ h: 0, min: 0, sec: 0 });
     } else {
       setIsCountdownRunning(true);
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-      setCountdown({ h: hours, min: minutes, sec: seconds });
+      const totalSeconds = Math.floor(distance / 1000);
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const minutes = totalMinutes % 60;
+      const seconds = totalSeconds % 60;
+      const totalRemainingHours = Math.floor(distance / (1000 * 60 * 60));
+      setCountdown({ h: totalRemainingHours, min: minutes, sec: seconds });
     }
   };
 
