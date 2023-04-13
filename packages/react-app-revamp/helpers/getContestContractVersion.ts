@@ -15,13 +15,13 @@ export async function getContestContractVersion(address: string, chainName: stri
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const provider = getProvider({ chainId: chainId });
   const contract = new ethers.Contract(address, NumberedVersioning.abi, provider);
-  const version = await contract.version();
+  const version: string = await contract.version();
 
-  if (version == 2.8) {
+  if (version == "2.8") {
     return NumberedVersioning.abi;
   }
 
-  if (version == 1) {
+  if (version == "1") {
     const bytecode = await provider.getCode(address);
     if (bytecode.length <= 2) return null;
     if (!bytecode.includes(utils.id("prompt()").slice(2, 10))) {
