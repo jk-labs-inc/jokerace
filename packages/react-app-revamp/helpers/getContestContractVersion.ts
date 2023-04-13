@@ -17,11 +17,11 @@ export async function getContestContractVersion(address: string, chainName: stri
   const contract = new ethers.Contract(address, NumberedVersioning.abi, provider);
   const version: string = await contract.version();
 
-  if (version == "2.8") {
+  if (version === "2.8") {
     return NumberedVersioning.abi;
   }
 
-  if (version == "1") {
+  if (version === "1") {
     const bytecode = await provider.getCode(address);
     if (bytecode.length <= 2) return null;
     if (!bytecode.includes(utils.id("prompt()").slice(2, 10))) {
