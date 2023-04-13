@@ -88,6 +88,13 @@ contract RewardsModule is Context {
     }
 
     /**
+     * @dev Version of the rewards module. Default: "1"
+     */
+    function version() public view virtual returns (string memory) {
+        return "2.3";
+    }
+
+    /**
      * @dev Getter for the total shares held by payees.
      */
     function totalShares() public view returns (uint256) {

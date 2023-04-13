@@ -1,18 +1,28 @@
-import LegacyDeployedRewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.legacy.1.first.sol/RewardsModule.json";
-import DeployedRewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
-
 import { chains } from "@config/wagmi";
+import LegacyDeployedRewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.1.first.sol/RewardsModule.json";
+import NumberedVersioningRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.3.numberedVersioning.sol/RewardsModule.json";
 import { getProvider } from "@wagmi/core";
-import { utils } from "ethers";
+import { ethers } from "ethers";
 
 export async function getRewardsModuleContractVersion(address: string, chainName: string) {
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const provider = await getProvider({ chainId: chainId });
-  const bytecode = await provider.getCode(address);
+  const contract = new ethers.Contract(address, NumberedVersioningRewards.abi, provider);
 
-  if (bytecode.length <= 2) return null;
+  try {
+    const version: string = await contract.version();
 
-  return DeployedRewardsModuleContract.abi;
+    if (version === "1") {
+      return LegacyDeployedRewardsModuleContract.abi;
+    } else if (version === "2.3") {
+      return NumberedVersioningRewards.abi;
+    } else {
+      return LegacyDeployedRewardsModuleContract.abi;
+    }
+  } catch (error) {
+    // If the version method does not exist, use the legacy ABI
+    return LegacyDeployedRewardsModuleContract.abi;
+  }
 }
 
 export default getRewardsModuleContractVersion;
