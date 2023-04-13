@@ -206,6 +206,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                   <Skeleton width={150} />
                 ) : (
                   <>
+                    {/* TODO - if contests ends, it does not apply */}
                     {votingStatus}{" "}
                     {votingStatus.includes("in:") && (
                       <Countdown
