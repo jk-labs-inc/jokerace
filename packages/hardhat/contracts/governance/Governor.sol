@@ -93,7 +93,7 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "2.8";
+        return "2.9";
     }
 
     /**
@@ -121,6 +121,12 @@ abstract contract Governor is Context, ERC165, EIP712, IGovernor {
     function state() public view virtual override returns (ContestState) {
         if (_canceled) {
             return ContestState.Canceled;
+        }
+
+        uint256 contestStartTimestamp = contestStart();
+
+        if (contestStartTimestamp >= block.timestamp) {
+            return ContestState.NotStarted;
         }
 
         uint256 voteStartTimestamp = voteStart();

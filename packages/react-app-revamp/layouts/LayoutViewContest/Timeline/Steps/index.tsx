@@ -1,7 +1,6 @@
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useContestStore } from "@hooks/useContest/store";
 import { format } from "date-fns";
-import { FC } from "react";
 import styles from "./styles.module.css";
 // - Contest status
 // 0: Voting open
