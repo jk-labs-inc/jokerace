@@ -187,35 +187,9 @@ abstract contract IGovernor is IERC165 {
     function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof) public virtual returns (uint256 balance);
 
     /**
-     * @dev Cast a vote without including the merkle root
+     * @dev Cast a vote without including the merkle proof
      *
      * Emits a {VoteCast} event.
      */
-    function castVoteWithoutRoot(uint256 proposalId, uint8 support, uint256 numVotes) public virtual returns (uint256 balance);
-
-    /**
-     * @dev Cast a vote with a reason
-     *
-     * Emits a {VoteCast} event.
-     */
-    function castVoteWithReason(
-        uint256 proposalId,
-        uint8 support,
-        uint256 numVotes,
-        string calldata reason
-    ) public virtual returns (uint256 balance);
-
-    /**
-     * @dev Cast a vote using the user cryptographic signature.
-     *
-     * Emits a {VoteCast} event.
-     */
-    function castVoteBySig(
-        uint256 proposalId,
-        uint8 support,
-        uint256 numVotes,
-        uint8 v,
-        bytes32 r,
-        bytes32 s
-    ) public virtual returns (uint256 balance);
+    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes) public virtual returns (uint256 balance);
 }

@@ -100,7 +100,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "2.9";
+        return "3.1";
     }
 
     /**
@@ -333,11 +333,11 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev See {IGovernor-castVoteWithoutRoot}.
+     * @dev See {IGovernor-castVoteWithoutProof}.
      */
-    function castVoteWithoutRoot(uint256 proposalId, uint8 support, uint256 numVotes) public virtual override returns (uint256) {
+    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes) public virtual override returns (uint256) {
         address voter = _msgSender();
-        require(addressTotalVotesVerified[voter], "Governor: you need to cast a vote with the root at least once and you haven't yet");
+        require(addressTotalVotesVerified[voter], "Governor: you need to cast a vote with the proof at least once and you haven't yet");
         return _castVote(proposalId, voter, support, numVotes, "");
     }
 

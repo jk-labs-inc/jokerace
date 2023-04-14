@@ -7,6 +7,7 @@ import RewardsContract from "@contracts/bytecodeAndAbi/Contest.2.6.rewards.sol/C
 import NumberedVersioningContract from "@contracts/bytecodeAndAbi/Contest.2.8.numberedVersioning.sol/Contest.json";
 import GateSubmissionsOpenContract from "@contracts/bytecodeAndAbi/Contest.2.9.gateSubmissionsOpen.sol/Contest.json";
 import BetterRewardsNotesContract from "@contracts/bytecodeAndAbi/Contest.2.10.betterRewardsNotes.sol/Contest.json";
+import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVotes.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 
 import { chains } from "@config/wagmi";
@@ -25,6 +26,8 @@ export async function getContestContractVersion(address: string, chainName: stri
     return GateSubmissionsOpenContract.abi;
   } else if (version === "2.10") {
     return BetterRewardsNotesContract.abi;
+  } else if (version === "3.1") {
+    return MerkleVotesContract.abi;
   }
 
   if (version === "1") {
