@@ -12,8 +12,6 @@ require("hardhat-gas-reporter");
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 
-require("hardhat-contract-sizer");
-
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 
 /*
