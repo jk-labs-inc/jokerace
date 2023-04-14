@@ -1,28 +1,44 @@
-import { useState } from "react";
-import { useInterval, useBoolean } from "react-use";
-import { isWithinInterval, isBefore, isAfter } from "date-fns";
-import updateCountdown from "@helpers/updateCountdown";
+import { useState, useEffect } from "react";
 
-export function useCountdown(startDate: Date, endDate: Date) {
-  const [countdown, setCountdown] = useState(updateCountdown(endDate));
-  const [isCountdownRunning, setIsCountdownRunning] = useBoolean(
-    isAfter(new Date(), startDate) && isBefore(new Date(), endDate),
-  );
+const useCountdown = (startDate: Date, endDate: Date) => {
+  const [countdown, setCountdown] = useState({ h: 0, min: 0, sec: 0 });
+  const [isCountdownRunning, setIsCountdownRunning] = useState(false);
 
-  useInterval(
-    () => {
-      setCountdown(updateCountdown(isBefore(new Date(), startDate) ? startDate : endDate));
-      isWithinInterval(new Date(), {
-        start: startDate,
-        end: endDate,
-      }) === false && setIsCountdownRunning(false);
-    },
-    isCountdownRunning ? 1000 : null,
-  );
+  const calculateCountdown = () => {
+    const now = new Date();
+    const distance = endDate.getTime() - now.getTime();
 
-  return {
-    countdown,
-    isCountdownRunning,
-    setIsCountdownRunning,
+    if (distance <= 0) {
+      setIsCountdownRunning(false);
+      setCountdown({ h: 0, min: 0, sec: 0 });
+    } else {
+      setIsCountdownRunning(true);
+      const totalSeconds = Math.floor(distance / 1000);
+      const totalMinutes = Math.floor(totalSeconds / 60);
+      const minutes = totalMinutes % 60;
+      const seconds = totalSeconds % 60;
+      const totalRemainingHours = Math.floor(distance / (1000 * 60 * 60));
+      setCountdown({ h: totalRemainingHours, min: minutes, sec: seconds });
+    }
   };
-}
+
+  useEffect(() => {
+    const now = new Date();
+    if (now >= startDate && now < endDate) {
+      setIsCountdownRunning(true);
+      calculateCountdown();
+    } else {
+      setIsCountdownRunning(false);
+    }
+
+    const interval = setInterval(() => {
+      calculateCountdown();
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startDate, endDate]);
+
+  return { countdown, isCountdownRunning };
+};
+
+export default useCountdown;

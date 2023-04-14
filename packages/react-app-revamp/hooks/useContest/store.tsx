@@ -8,9 +8,9 @@ export interface ContestState {
   contestAuthorEthereumAddress: string;
   contestAuthor: string;
   contestStatus: number;
-  submissionsOpen: Date | null;
-  votesOpen: Date | null;
-  votesClose: Date | null;
+  submissionsOpen: Date;
+  votesOpen: Date;
+  votesClose: Date;
   votingToken: any | null;
   votingTokenAddress: any | null;
   submitProposalToken: any | null;
@@ -52,9 +52,9 @@ export const createContestStore = () =>
     contestAuthorEthereumAddress: "",
     contestAuthor: "",
     contestStatus: 0,
-    submissionsOpen: null,
-    votesOpen: null,
-    votesClose: null,
+    submissionsOpen: new Date(),
+    votesOpen: new Date(),
+    votesClose: new Date(),
     votingToken: null,
     votingTokenAddress: null,
     submitProposalToken: null,
