@@ -17,7 +17,7 @@
     "react-app-revamp:start": "yarn workspace @scaffold-eth/react-app-revamp start",
     "react-app-revamp:test": "yarn workspace @scaffold-eth/react-app-revamp test",
     "dev": "yarn workspace @scaffold-eth/react-app-revamp dev",
-    "deploy": "yarn workspace @scaffold-eth/forge build",
+    "build": "yarn workspace @scaffold-eth/forge build",
     "postinstall": "husky install"
   },
   "workspaces": [
