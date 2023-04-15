@@ -10,7 +10,6 @@ import "../../modules/RewardsModule.sol";
  *
  */
 abstract contract GovernorModuleRegistry is Governor {
-
     event OfficialRewardsModuleSet(RewardsModule oldOfficialRewardsModule, RewardsModule newOfficialRewardsModule);
 
     RewardsModule private _officialRewardsModule;
@@ -31,5 +30,4 @@ abstract contract GovernorModuleRegistry is Governor {
         _officialRewardsModule = officialRewardsModule_;
         emit OfficialRewardsModuleSet(oldOfficialRewardsModule, _officialRewardsModule);
     }
-
 }
