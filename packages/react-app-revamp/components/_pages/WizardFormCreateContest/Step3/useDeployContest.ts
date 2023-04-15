@@ -1,4 +1,4 @@
-import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
+import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction, writeContract } from "@wagmi/core";
@@ -57,7 +57,7 @@ export function useDeployContest(form: any) {
       //@ts-ignore
       const factoryCreateContest = new ContractFactory(
         DeployedContestContract.abi,
-        DeployedContestContract.bytecode,
+        DeployedContestContract.bytecode.object,
         //@ts-ignore
         signer.data,
       );
@@ -114,7 +114,7 @@ export function useDeployContest(form: any) {
         //@ts-ignore
         const factoryCreateRewardsModule = new ContractFactory(
           RewardsModuleContract.abi,
-          RewardsModuleContract.bytecode,
+          RewardsModuleContract.bytecode.object,
           //@ts-ignore
           signer.data,
         );
