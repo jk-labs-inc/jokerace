@@ -1,5 +1,4 @@
 {
-   "solidity.packageDefaultDependenciesDirectory": "packages/forge/lib/",
    "solidity-va.test.defaultUnittestTemplate": "forge",
    "files.exclude": {
       "**/.git": true,
@@ -32,8 +31,4 @@
       "**/yarn-error.log": true,
       "**/yarn.lock": true
    },
-   "solidity.packageDefaultDependenciesContractsDirectory": "lib",
-   "solidity.remappings": [
-      "@openzeppelin/=packages/forge/lib/openzeppelin-contracts/contracts/"
-   ]
 }

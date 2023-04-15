@@ -3,12 +3,12 @@
 
 pragma solidity ^0.8.0;
 
-import "../utils/cryptography/ECDSA.sol";
-import "../utils/cryptography/draft-EIP712.sol";
-import "../utils/introspection/ERC165.sol";
-import "../utils/math/SafeCast.sol";
-import "../utils/Address.sol";
-import "../utils/Context.sol";
+import "@openzeppelin/utils/cryptography/ECDSA.sol";
+import "@openzeppelin/utils/cryptography/draft-EIP712.sol";
+import "@openzeppelin/utils/introspection/ERC165.sol";
+import "@openzeppelin/utils/math/SafeCast.sol";
+import "@openzeppelin/utils/Address.sol";
+import "@openzeppelin/utils/Context.sol";
 import "./IGovernor.sol";
 import "./extensions/GovernorMerkleVotes.sol";
 
@@ -29,8 +29,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
     uint8   public constant AMOUNT_FOR_SUMBITTER_PROOF = 1;
     mapping(address => uint256) public addressTotalVotes;
-    mapping(address => bool) private addressTotalVotesVerified;
-    mapping(address => bool) private addressSubmitterVerified;
+    mapping(address => bool) private _addressTotalVotesVerified;
+    mapping(address => bool) private _addressSubmitterVerified;
 
     struct ProposalCore {
         address author;
@@ -240,18 +240,18 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     //     *if so, return true
 
     function verifySubmitter(address account, bytes32[] calldata proof) public override returns (bool verified) {
-        if (!addressSubmitterVerified[account]) {
+        if (!_addressSubmitterVerified[account]) {
             checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
-            addressSubmitterVerified[account] = true;
+            _addressSubmitterVerified[account] = true;
         }
         return true;
     }
 
     function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof) public override returns (bool verified) {
-        if (!addressTotalVotesVerified[account]) {
+        if (!_addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, false); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
-            addressTotalVotesVerified[account] = true;
+            _addressTotalVotesVerified[account] = true;
         }
         return true;
     }
@@ -337,7 +337,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes) public virtual override returns (uint256) {
         address voter = _msgSender();
-        require(addressTotalVotesVerified[voter], "Governor: you need to cast a vote with the proof at least once and you haven't yet");
+        require(_addressTotalVotesVerified[voter], "Governor: you need to cast a vote with the proof at least once and you haven't yet");
         return _castVote(proposalId, voter, support, numVotes, "");
     }
 
@@ -357,7 +357,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         require(state() == ContestState.Active, "Governor: vote not currently active");
         require(numVotes > 0, "Governor: cannot vote with 0 or fewer votes");
 
-        require(addressTotalVotesVerified[account], "Governor: not sure how you got here but you need to verify your number of votes against the merkle root first");
+        require(_addressTotalVotesVerified[account], "Governor: not sure how you got here but you need to verify your number of votes against the merkle root first");
         _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);
 
         emit VoteCast(account, proposalId, support, numVotes, reason);

@@ -3,9 +3,9 @@
 
 pragma solidity ^0.8.0;
 
-import "../token/ERC20/utils/SafeERC20.sol";
-import "../utils/Address.sol";
-import "../utils/Context.sol";
+import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/utils/Address.sol";
+import "@openzeppelin/utils/Context.sol";
 import "../governance/IGovernor.sol";
 import "../governance/extensions/GovernorCountingSimple.sol";
 

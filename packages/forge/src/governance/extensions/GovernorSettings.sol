@@ -4,7 +4,7 @@
 pragma solidity ^0.8.0;
 
 import "../Governor.sol";
-import "../../utils/Timers.sol";
+import "@openzeppelin/utils/Timers.sol";
 
 /**
  * @dev Extension of {Governor} for settings updatable through governance.

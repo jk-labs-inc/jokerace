@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 
 /// ============ Imports ============
 
-import { MerkleProof } from "../../utils/cryptography/MerkleProof.sol"; // OZ: MerkleProof
+import { MerkleProof } from "@openzeppelin/utils/cryptography/MerkleProof.sol"; // OZ: MerkleProof
 
 /// @title GovernorMerkleVotes
 abstract contract GovernorMerkleVotes {
