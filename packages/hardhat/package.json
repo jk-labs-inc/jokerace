@@ -35,7 +35,6 @@
     "test": "hardhat test --network hardhat",
     "compile": "hardhat compile",
     "deploy": "hardhat deploy && copyfiles -u 2 artifacts/contracts/**/*.json ../react-app-revamp/contracts/bytecodeAndAbi && copyfiles -u 2 artifacts/contracts/modules/**/*.json ../react-app-revamp/contracts/bytecodeAndAbi",
-    "postdeploy": "hardhat run scripts/publish.js",
     "watch": "node scripts/watch.js",
     "accounts": "hardhat accounts",
     "balance": "hardhat balance",
