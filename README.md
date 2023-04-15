@@ -51,7 +51,7 @@ Upon a successful `forge build` of the smart contract code, this will copy the g
 You will also need to do two more things if the ABI is changed:
   - Make a copy of the bytecode and abi in the versioning folder `packages/react-app-revamp/contracts/bytecodeAndAbi` by copying the content in `Contest.sol`, which is the latest version of bytecode, into a new folder in `contracts/bytecodeAndAbi` and renaming that folder  with the incremented version following the convention.
   - Update ABI parser code in `packages/react-app-revamp/helpers/getContestContractVersion.ts` to use the new version if a contract's `version()` function returns the value of your newly incremented version.
-  - Repeat the above 2 steps for `RewardsModule.sol` as well, as that is updated every time that `Contest.sol` is.
+  - Repeat the above 2 steps for `RewardsModule.sol` as well if that has changed.
   
 [Here](https://github.com/JokeDAO/JokeDaoV2Dev/pull/111/commits/79072b212e603bcca0418dd5057557379444194f) is an example PR that does all of these steps.
 
