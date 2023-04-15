@@ -27,7 +27,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     using SafeCast for uint256;
 
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
-    uint8   public constant AMOUNT_FOR_SUMBITTER_PROOF = 1;
+    uint8 public constant AMOUNT_FOR_SUMBITTER_PROOF = 1;
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) private addressTotalVotesVerified;
     mapping(address => bool) private addressSubmitterVerified;
@@ -46,7 +46,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
 
-
     /**
      * @dev Restrict access of functions to the governance executor, which may be the Governor itself or a timelock
      * contract, as specified by {_executor}. This generally means that function with this modifier must be voted on and
@@ -60,9 +59,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev Sets the value for {name} and {version}
      */
-    constructor(string memory name_, string memory prompt_, bytes32 submissionMerkleRoot_, bytes32 votingMerkleRoot_) 
+    constructor(string memory name_, string memory prompt_, bytes32 submissionMerkleRoot_, bytes32 votingMerkleRoot_)
         GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_)
-        EIP712(name_, version()) 
+        EIP712(name_, version())
     {
         _name = name_;
         _prompt = prompt_;
@@ -116,9 +115,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * accross multiple networks. This also means that in order to execute the same operation twice (on the same
      * governor) the proposer will have to change the description in order to avoid proposal id conflicts.
      */
-    function hashProposal(
-        string memory proposalDescription
-    ) public pure virtual override returns (uint256) {
+    function hashProposal(string memory proposalDescription) public pure virtual override returns (uint256) {
         return uint256(keccak256(abi.encode(proposalDescription)));
     }
 
@@ -150,7 +147,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
 
         return ContestState.Completed;
     }
-    
+
     /**
      * @dev Return all proposals.
      */
@@ -226,16 +223,12 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      *
      * Note: Support is generic and can represent various things depending on the voting system used.
      */
-    function _countVote(
-        uint256 proposalId,
-        address account,
-        uint8 support,
-        uint256 numVotes,
-        uint256 totalVotes
-    ) internal virtual;
-    
+    function _countVote(uint256 proposalId, address account, uint8 support, uint256 numVotes, uint256 totalVotes)
+        internal
+        virtual;
+
     //TODO: update docs for everything
-    // verify function that takes root -> checks if addressTotalVotes already stored. 
+    // verify function that takes root -> checks if addressTotalVotes already stored.
     //     *if not, verify against the root and store results (bool if stored -> amount in accttotalvotes) -> return true if good. error if not.
     //     *if so, return true
 
@@ -247,7 +240,11 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         return true;
     }
 
-    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof) public override returns (bool verified) {
+    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
+        public
+        override
+        returns (bool verified)
+    {
         if (!addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, false); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
@@ -259,11 +256,17 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev See {IGovernor-propose}.
      */
-    function propose(
-        string memory proposalDescription, bytes32[] calldata proof
-    ) public virtual override returns (uint256) {
+    function propose(string memory proposalDescription, bytes32[] calldata proof)
+        public
+        virtual
+        override
+        returns (uint256)
+    {
         require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
-        require(_numSubmissions[msg.sender] < numAllowedProposalSubmissions(), "Governor: the same cannot submit more than the numAllowedProposalSubmissions for this contest");
+        require(
+            _numSubmissions[msg.sender] < numAllowedProposalSubmissions(),
+            "Governor: the same cannot submit more than the numAllowedProposalSubmissions for this contest"
+        );
         require(_proposalIds.length < maxProposalCount(), "Governor: the max number of proposals have been submitted");
         require(verifySubmitter(msg.sender, proof), "Governor: address is not permissioned to submit");
 
@@ -276,11 +279,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         _proposals[proposalId] = ProposalCore({author: msg.sender, description: proposalDescription, exists: true});
         _numSubmissions[msg.sender] += 1;
 
-        emit ProposalCreated(
-            proposalId,
-            proposalDescription,
-            _msgSender()
-        );
+        emit ProposalCreated(proposalId, proposalDescription, _msgSender());
 
         return proposalId;
     }
@@ -292,12 +291,16 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function deleteProposals(uint256[] memory proposalIds) public virtual {
         require(msg.sender == creator(), "Governor: only the contest creator can delete proposals");
-        require(state() != ContestState.Completed, "Governor: deletion of proposals after the end of a contest is not allowed");
-        
-        for(uint index=0; index<proposalIds.length; index++){
+        require(
+            state() != ContestState.Completed,
+            "Governor: deletion of proposals after the end of a contest is not allowed"
+        );
+
+        for (uint256 index = 0; index < proposalIds.length; index++) {
             if (_deletedProposalIds[proposalIds[index]] != 1) {
                 _deletedProposalIds[proposalIds[index]] = 1;
-                _proposals[proposalIds[index]].description = "This proposal has been deleted by the creator of the contest.";
+                _proposals[proposalIds[index]].description =
+                    "This proposal has been deleted by the creator of the contest.";
             }
         }
 
@@ -305,19 +308,16 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev 
+     * @dev
      *
      * Emits a {IGovernor-ContestCanceled} event.
      */
     function cancel() public virtual {
         require(msg.sender == creator());
-        
+
         ContestState status = state();
-        
-        require(
-            status != ContestState.Canceled && status != ContestState.Completed,
-            "Governor: contest not active"
-        );
+
+        require(status != ContestState.Canceled && status != ContestState.Completed, "Governor: contest not active");
         _canceled = true;
 
         emit ContestCanceled();
@@ -326,7 +326,12 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev See {IGovernor-castVote}.
      */
-    function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof) public virtual override returns (uint256) {
+    function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof)
+        public
+        virtual
+        override
+        returns (uint256)
+    {
         address voter = _msgSender();
         verifyTotalVotes(voter, totalVotes, proof);
         return _castVote(proposalId, voter, support, numVotes, "");
@@ -335,9 +340,17 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev See {IGovernor-castVoteWithoutProof}.
      */
-    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes) public virtual override returns (uint256) {
+    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes)
+        public
+        virtual
+        override
+        returns (uint256)
+    {
         address voter = _msgSender();
-        require(addressTotalVotesVerified[voter], "Governor: you need to cast a vote with the proof at least once and you haven't yet");
+        require(
+            addressTotalVotesVerified[voter],
+            "Governor: you need to cast a vote with the proof at least once and you haven't yet"
+        );
         return _castVote(proposalId, voter, support, numVotes, "");
     }
 
@@ -347,23 +360,24 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      *
      * Emits a {IGovernor-VoteCast} event.
      */
-    function _castVote(
-        uint256 proposalId,
-        address account,
-        uint8 support,
-        uint256 numVotes,
-        string memory reason
-    ) internal virtual returns (uint256) {
+    function _castVote(uint256 proposalId, address account, uint8 support, uint256 numVotes, string memory reason)
+        internal
+        virtual
+        returns (uint256)
+    {
         require(state() == ContestState.Active, "Governor: vote not currently active");
         require(numVotes > 0, "Governor: cannot vote with 0 or fewer votes");
 
-        require(addressTotalVotesVerified[account], "Governor: not sure how you got here but you need to verify your number of votes against the merkle root first");
+        require(
+            addressTotalVotesVerified[account],
+            "Governor: not sure how you got here but you need to verify your number of votes against the merkle root first"
+        );
         _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);
 
         emit VoteCast(account, proposalId, support, numVotes, reason);
 
         return addressTotalVotes[account];
-   }
+    }
 
     /**
      * @dev Address through which the governor executes action. Will be overloaded by module that execute actions

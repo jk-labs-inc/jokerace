@@ -28,10 +28,14 @@ abstract contract GovernorSettings is Governor {
     event VotingPeriodSet(uint256 oldVotingPeriod, uint256 newVotingPeriod);
     event ContestSnapshotSet(uint256 oldContestSnapshot, uint256 newContestSnapshot);
     event ProposalThresholdSet(uint256 oldProposalThreshold, uint256 newProposalThreshold);
-    event NumAllowedProposalSubmissionsSet(uint256 oldNumAllowedProposalSubmissions, uint256 newNumAllowedProposalSubmissions);
+    event NumAllowedProposalSubmissionsSet(
+        uint256 oldNumAllowedProposalSubmissions, uint256 newNumAllowedProposalSubmissions
+    );
     event MaxProposalCountSet(uint256 oldMaxProposalCount, uint256 newMaxProposalCount);
     event DownvotingAllowedSet(uint256 oldDownvotingAllowed, uint256 newDownvotingAllowed);
-    event SubmissionGatingByVotingTokenSet(uint256 oldSubmissionGatingByVotingToken, uint256 newSubmissionGatingByVotingToken);
+    event SubmissionGatingByVotingTokenSet(
+        uint256 oldSubmissionGatingByVotingToken, uint256 newSubmissionGatingByVotingToken
+    );
     event CreatorSet(address oldCreator, address newCreator);
 
     /**

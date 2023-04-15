@@ -46,9 +46,7 @@ library Base64 {
             for {
                 let dataPtr := data
                 let endPtr := add(data, mload(data))
-            } lt(dataPtr, endPtr) {
-
-            } {
+            } lt(dataPtr, endPtr) {} {
                 // Advance 3 bytes
                 dataPtr := add(dataPtr, 3)
                 let input := mload(dataPtr)
@@ -81,9 +79,7 @@ library Base64 {
                 mstore8(sub(resultPtr, 1), 0x3d)
                 mstore8(sub(resultPtr, 2), 0x3d)
             }
-            case 2 {
-                mstore8(sub(resultPtr, 1), 0x3d)
-            }
+            case 2 { mstore8(sub(resultPtr, 1), 0x3d) }
         }
 
         return result;

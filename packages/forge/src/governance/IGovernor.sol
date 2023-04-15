@@ -22,18 +22,12 @@ abstract contract IGovernor is IERC165 {
     /**
      * @dev Emitted when a proposal is created.
      */
-    event ProposalCreated(
-        uint256 proposalId,
-        string description,
-        address proposer
-    );
+    event ProposalCreated(uint256 proposalId, string description, address proposer);
 
     /**
      * @dev Emitted when proposals are deleted.
      */
-    event ProposalsDeleted(
-        uint256[] proposalIds
-    );
+    event ProposalsDeleted(uint256[] proposalIds);
 
     /**
      * @dev Emitted when a contest is canceled.
@@ -88,9 +82,7 @@ abstract contract IGovernor is IERC165 {
      * @notice module:core
      * @dev Hashing function used to (re)build the proposal id from the proposal details..
      */
-    function hashProposal(
-        string memory proposalDescription
-    ) public pure virtual returns (uint256);
+    function hashProposal(string memory proposalDescription) public pure virtual returns (uint256);
 
     /**
      * @notice module:core
@@ -167,7 +159,10 @@ abstract contract IGovernor is IERC165 {
      * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
      * multiple), {ERC20Votes} tokens.
      */
-    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof) public virtual returns (bool);
+    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
+        public
+        virtual
+        returns (bool);
 
     /**
      * @dev Create a new proposal. Vote start {IGovernor-votingDelay} blocks after the proposal is created and ends
@@ -175,21 +170,28 @@ abstract contract IGovernor is IERC165 {
      *
      * Emits a {ProposalCreated} event.
      */
-    function propose(
-        string memory proposalDescription, bytes32[] calldata proof
-    ) public virtual returns (uint256 proposalId);
+    function propose(string memory proposalDescription, bytes32[] calldata proof)
+        public
+        virtual
+        returns (uint256 proposalId);
 
     /**
      * @dev Cast a vote
      *
      * Emits a {VoteCast} event.
      */
-    function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof) public virtual returns (uint256 balance);
+    function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof)
+        public
+        virtual
+        returns (uint256 balance);
 
     /**
      * @dev Cast a vote without including the merkle proof
      *
      * Emits a {VoteCast} event.
      */
-    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes) public virtual returns (uint256 balance);
+    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes)
+        public
+        virtual
+        returns (uint256 balance);
 }

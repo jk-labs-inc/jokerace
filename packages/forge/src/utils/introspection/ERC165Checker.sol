@@ -22,9 +22,8 @@ library ERC165Checker {
     function supportsERC165(address account) internal view returns (bool) {
         // Any contract that implements ERC165 must explicitly indicate support of
         // InterfaceId_ERC165 and explicitly indicate non-support of InterfaceId_Invalid
-        return
-            _supportsERC165Interface(account, type(IERC165).interfaceId) &&
-            !_supportsERC165Interface(account, _INTERFACE_ID_INVALID);
+        return _supportsERC165Interface(account, type(IERC165).interfaceId)
+            && !_supportsERC165Interface(account, _INTERFACE_ID_INVALID);
     }
 
     /**

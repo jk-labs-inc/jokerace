@@ -44,14 +44,14 @@ contract RewardsModule is Context {
 
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
-    
+
     GovernorCountingSimple private _underlyingContest;
     address private _creator;
 
     bool private _setSortedAndTiedProposalsHasBeenRun = false;
     uint256[] private _sortedProposalIds;
     mapping(uint256 => bool) private _isTied; // whether a ranking is tied. key is ranking.
-    mapping(uint256 => uint256) private _tiedAdjustedRankingPosition; // key is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account 
+    mapping(uint256 => uint256) private _tiedAdjustedRankingPosition; // key is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account
     uint256 private _lowestRanking; // highest nominal ranking, lowest ranking (1 is the highest possible ranking, 8 is a lower ranking than 1)
     uint256 private _highestTiedRanking;
 
@@ -100,7 +100,7 @@ contract RewardsModule is Context {
     function totalShares() public view returns (uint256) {
         return _totalShares;
     }
-    
+
     /**
      * @dev Getter for the creator of this rewards contract.
      */
@@ -163,7 +163,10 @@ contract RewardsModule is Context {
      * @dev Getter if a given ranking is tied.
      */
     function isTied(uint256 ranking) public view returns (bool) {
-        require(_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value");
+        require(
+            _setSortedAndTiedProposalsHasBeenRun,
+            "RewardsModule: run setSortedAndTiedProposals() to populate this value"
+        );
         return _isTied[ranking];
     }
 
@@ -171,7 +174,10 @@ contract RewardsModule is Context {
      * @dev Getter for _tiedAdjustedRankingPosition of a ranking.
      */
     function rankingPosition(uint256 ranking) public view returns (uint256) {
-        require(_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value");
+        require(
+            _setSortedAndTiedProposalsHasBeenRun,
+            "RewardsModule: run setSortedAndTiedProposals() to populate this value"
+        );
         return _tiedAdjustedRankingPosition[ranking];
     }
 
@@ -179,7 +185,10 @@ contract RewardsModule is Context {
      * @dev Getter for _sortedProposalIds.
      */
     function sortedProposalIds() public view returns (uint256[] memory) {
-        require(_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value");
+        require(
+            _setSortedAndTiedProposalsHasBeenRun,
+            "RewardsModule: run setSortedAndTiedProposals() to populate this value"
+        );
         return (_sortedProposalIds);
     }
 
@@ -187,7 +196,10 @@ contract RewardsModule is Context {
      * @dev Getter for the lowest ranking.
      */
     function lowestRanking() public view returns (uint256) {
-        require(_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value");
+        require(
+            _setSortedAndTiedProposalsHasBeenRun,
+            "RewardsModule: run setSortedAndTiedProposals() to populate this value"
+        );
         return _lowestRanking;
     }
 
@@ -195,7 +207,10 @@ contract RewardsModule is Context {
      * @dev Getter for highest tied ranking.
      */
     function highestTiedRanking() public view returns (uint256) {
-        require(_setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value");
+        require(
+            _setSortedAndTiedProposalsHasBeenRun,
+            "RewardsModule: run setSortedAndTiedProposals() to populate this value"
+        );
         return _highestTiedRanking;
     }
 
@@ -222,7 +237,10 @@ contract RewardsModule is Context {
      */
     function release(uint256 ranking) public virtual {
         require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
-        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "RewardsModule: contest must be completed for rewards to be paid out");
+        require(
+            _underlyingContest.state() == IGovernor.ContestState.Completed,
+            "RewardsModule: contest must be completed for rewards to be paid out"
+        );
         require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
         uint256 payment = releasable(ranking);
@@ -241,7 +259,10 @@ contract RewardsModule is Context {
             setSortedAndTiedProposals();
         }
 
-        require(ranking <= _lowestRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
+        require(
+            ranking <= _lowestRanking,
+            "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
+        );
 
         // send rewards to winner only if the ranking is higher than the highest tied ranking
         address payable proposalAuthor = ranking < _highestTiedRanking
@@ -261,7 +282,10 @@ contract RewardsModule is Context {
      */
     function release(IERC20 token, uint256 ranking) public virtual {
         require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
-        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "RewardsModule: contest must be completed for rewards to be paid out");
+        require(
+            _underlyingContest.state() == IGovernor.ContestState.Completed,
+            "RewardsModule: contest must be completed for rewards to be paid out"
+        );
         require(_shares[ranking] > 0, "RewardsModule: account has no shares");
 
         uint256 payment = releasable(token, ranking);
@@ -281,7 +305,10 @@ contract RewardsModule is Context {
             setSortedAndTiedProposals();
         }
 
-        require(ranking <= _lowestRanking, "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account");
+        require(
+            ranking <= _lowestRanking,
+            "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
+        );
 
         // send rewards to winner only if the ranking is higher than the highest tied ranking
         address payable proposalAuthor = ranking < _highestTiedRanking
@@ -309,13 +336,19 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking. Will only be called once and only needs to be called once because once the contest 
+     * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking. Will only be called once and only needs to be called once because once the contest
      * is complete these values don't change. Determines if a ranking is tied and also where the last iteration of a ranking is in the _sortedProposalIds list taking ties into account.
      */
     function setSortedAndTiedProposals() public virtual {
-        require(_underlyingContest.state() == IGovernor.ContestState.Completed, "RewardsModule: contest must be completed for rewards to be paid out");
-        require(_setSortedAndTiedProposalsHasBeenRun == false, "RewardsModule: this function has already been run and its respective values set (these values will not change once a contest is complete");
-        
+        require(
+            _underlyingContest.state() == IGovernor.ContestState.Completed,
+            "RewardsModule: contest must be completed for rewards to be paid out"
+        );
+        require(
+            _setSortedAndTiedProposalsHasBeenRun == false,
+            "RewardsModule: this function has already been run and its respective values set (these values will not change once a contest is complete"
+        );
+
         _sortedProposalIds = _underlyingContest.sortedProposals(true);
 
         int256 lastTotalVotes;
@@ -325,7 +358,7 @@ contract RewardsModule is Context {
             uint256 lastSortedItemIndex = _sortedProposalIds.length - 1;
 
             // decrement through the ascending sorted list
-            (uint256 currentForVotes, uint256 currentAgainstVotes) = 
+            (uint256 currentForVotes, uint256 currentAgainstVotes) =
                 _underlyingContest.proposalVotes(_sortedProposalIds[lastSortedItemIndex - i]);
             int256 currentTotalVotes = int256(currentForVotes) - int256(currentAgainstVotes);
 
@@ -337,16 +370,18 @@ contract RewardsModule is Context {
 
             // if there is a tie, mark that this ranking is tied
             if (currentTotalVotes == lastTotalVotes) {
-                if (!_isTied[rankingBeingChecked]) { // if this is not already set
+                if (!_isTied[rankingBeingChecked]) {
+                    // if this is not already set
                     _isTied[rankingBeingChecked] = true;
                 }
-                if (_highestTiedRanking == _sortedProposalIds.length + 1) { // if this is the first tie found, set it as the highest tied ranking
+                if (_highestTiedRanking == _sortedProposalIds.length + 1) {
+                    // if this is the first tie found, set it as the highest tied ranking
                     _highestTiedRanking = rankingBeingChecked;
                 }
-            } 
-            else { // otherwise, mark that the last iteration of this ranking's value is at the index above the current index in the sorted list, 
-                   // then increment the ranking being checked
-                _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;  // index we last decremented from is the last iteration of the current rank's value
+            } else {
+                // otherwise, mark that the last iteration of this ranking's value is at the index above the current index in the sorted list,
+                // then increment the ranking being checked
+                _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1; // index we last decremented from is the last iteration of the current rank's value
                 rankingBeingChecked++;
             }
 
@@ -366,11 +401,11 @@ contract RewardsModule is Context {
      * @dev internal logic for computing the pending payment of a `ranking` given the token historical balances and
      * already released amounts.
      */
-    function _pendingPayment(
-        uint256 ranking,
-        uint256 totalReceived,
-        uint256 alreadyReleased
-    ) private view returns (uint256) {
+    function _pendingPayment(uint256 ranking, uint256 totalReceived, uint256 alreadyReleased)
+        private
+        view
+        returns (uint256)
+    {
         return (totalReceived * _shares[ranking]) / _totalShares - alreadyReleased;
     }
 
