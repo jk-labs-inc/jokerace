@@ -133,23 +133,13 @@ abstract contract IGovernor is IERC165 {
      */
     function creator() public view virtual returns (address);
 
-    // TODO: document this
     /**
-     * @notice module:reputation
-     * @dev Voting power of an `account`.
-     *
-     * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
-     * multiple), {ERC20Votes} tokens.
+     * @dev Verifies that `account` is permissioned to submit via merkle proof.
      */
     function verifySubmitter(address account, bytes32[] calldata proof) public virtual returns (bool);
 
-    // TODO: document this
     /**
-     * @notice module:reputation
-     * @dev Voting power of an `account`.
-     *
-     * Note: this can be implemented in a number of ways, for example by reading the delegated balance from one (or
-     * multiple), {ERC20Votes} tokens.
+     * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
      */
     function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
         public
@@ -168,7 +158,7 @@ abstract contract IGovernor is IERC165 {
         returns (uint256 proposalId);
 
     /**
-     * @dev Cast a vote
+     * @dev Cast a vote with a merkle proof.
      *
      * Emits a {VoteCast} event.
      */
@@ -178,7 +168,7 @@ abstract contract IGovernor is IERC165 {
         returns (uint256 balance);
 
     /**
-     * @dev Cast a vote without including the merkle proof
+     * @dev Cast a vote without including the merkle proof.
      *
      * Emits a {VoteCast} event.
      */

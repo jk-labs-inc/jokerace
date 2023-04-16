@@ -220,11 +220,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         internal
         virtual;
 
-    //TODO: update docs for everything
-    // verify function that takes root -> checks if addressTotalVotes already stored.
-    //     *if not, verify against the root and store results (bool if stored -> amount in accttotalvotes) -> return true if good. error if not.
-    //     *if so, return true
-
+    /**
+     * @dev See {IGovernor-verifySubmitter}.
+     */
     function verifySubmitter(address account, bytes32[] calldata proof) public override returns (bool verified) {
         if (!_addressSubmitterVerified[account]) {
             checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
@@ -233,6 +231,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         return true;
     }
 
+    /**
+     * @dev See {IGovernor-verifyTotalVotes}.
+     */
     function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
         public
         override
