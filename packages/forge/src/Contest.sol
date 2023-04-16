@@ -21,7 +21,7 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
             _constructorIntParams[2], // _initialVotingPeriod,
             _constructorIntParams[3], // _initialNumAllowedProposalSubmissions,
             _constructorIntParams[4], // _initialMaxProposalCount
-            _constructorIntParams[5]  // _initialDownvotingAllowed
+            _constructorIntParams[5] // _initialDownvotingAllowed
         )
     {}
 
