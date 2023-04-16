@@ -15,27 +15,19 @@ abstract contract GovernorSettings is Governor {
     uint256 private _contestStart;
     uint256 private _votingDelay;
     uint256 private _votingPeriod;
-    uint256 private _contestSnapshot;
-    uint256 private _proposalThreshold;
     uint256 private _numAllowedProposalSubmissions;
     uint256 private _maxProposalCount;
     uint256 private _downvotingAllowed;
-    uint256 private _submissionGatingByVotingToken;
     address private _creator;
 
     event ContestStartSet(uint256 oldContestStart, uint256 newContestStart);
     event VotingDelaySet(uint256 oldVotingDelay, uint256 newVotingDelay);
     event VotingPeriodSet(uint256 oldVotingPeriod, uint256 newVotingPeriod);
-    event ContestSnapshotSet(uint256 oldContestSnapshot, uint256 newContestSnapshot);
-    event ProposalThresholdSet(uint256 oldProposalThreshold, uint256 newProposalThreshold);
     event NumAllowedProposalSubmissionsSet(
         uint256 oldNumAllowedProposalSubmissions, uint256 newNumAllowedProposalSubmissions
     );
     event MaxProposalCountSet(uint256 oldMaxProposalCount, uint256 newMaxProposalCount);
     event DownvotingAllowedSet(uint256 oldDownvotingAllowed, uint256 newDownvotingAllowed);
-    event SubmissionGatingByVotingTokenSet(
-        uint256 oldSubmissionGatingByVotingToken, uint256 newSubmissionGatingByVotingToken
-    );
     event CreatorSet(address oldCreator, address newCreator);
 
     /**
@@ -45,22 +37,16 @@ abstract contract GovernorSettings is Governor {
         uint256 initialContestStart,
         uint256 initialVotingDelay,
         uint256 initialVotingPeriod,
-        uint256 initialContestSnapshot,
-        uint256 initialProposalThreshold,
         uint256 initialNumAllowedProposalSubmissions,
         uint256 initialMaxProposalCount,
-        uint256 initialDownvotingAllowed,
-        uint256 initialSubmissionGatingByVotingToken
+        uint256 initialDownvotingAllowed
     ) {
         _setContestStart(initialContestStart);
         _setVotingDelay(initialVotingDelay);
         _setVotingPeriod(initialVotingPeriod);
-        _setContestSnapshot(initialContestSnapshot);
-        _setProposalThreshold(initialProposalThreshold);
         _setNumAllowedProposalSubmissions(initialNumAllowedProposalSubmissions);
         _setMaxProposalCount(initialMaxProposalCount);
         _setDownvotingAllowed(initialDownvotingAllowed);
-        _setSubmissionGatingByVotingToken(initialSubmissionGatingByVotingToken);
         _setCreator(msg.sender);
     }
 
@@ -83,20 +69,6 @@ abstract contract GovernorSettings is Governor {
      */
     function votingPeriod() public view virtual override returns (uint256) {
         return _votingPeriod;
-    }
-
-    /**
-     * @dev See {IGovernor-contestSnapshot}.
-     */
-    function contestSnapshot() public view virtual override returns (uint256) {
-        return _contestSnapshot;
-    }
-
-    /**
-     * @dev See {Governor-proposalThreshold}.
-     */
-    function proposalThreshold() public view virtual override returns (uint256) {
-        return _proposalThreshold;
     }
 
     /**
@@ -160,26 +132,6 @@ abstract contract GovernorSettings is Governor {
     }
 
     /**
-     * @dev Internal setter for the contestStart.
-     *
-     * Emits a {ContestSnapshotSet} event.
-     */
-    function _setContestSnapshot(uint256 newContestSnapshot) internal virtual {
-        emit ContestSnapshotSet(_contestSnapshot, newContestSnapshot);
-        _contestSnapshot = newContestSnapshot;
-    }
-
-    /**
-     * @dev Internal setter for the proposal threshold.
-     *
-     * Emits a {ProposalThresholdSet} event.
-     */
-    function _setProposalThreshold(uint256 newProposalThreshold) internal virtual {
-        emit ProposalThresholdSet(_proposalThreshold, newProposalThreshold);
-        _proposalThreshold = newProposalThreshold;
-    }
-
-    /**
      * @dev Internal setter for the number of allowed proposal submissions per permissioned address.
      *
      * Emits a {NumAllowedProposalSubmissionsSet} event.
@@ -207,16 +159,6 @@ abstract contract GovernorSettings is Governor {
     function _setDownvotingAllowed(uint256 newDownvotingAllowed) internal virtual {
         emit DownvotingAllowedSet(_downvotingAllowed, newDownvotingAllowed);
         _downvotingAllowed = newDownvotingAllowed;
-    }
-
-    /**
-     * @dev Internal setter for if submission gating is done by voting token in this contest.
-     *
-     * Emits a {SubmissionGatingByVotingTokenSet} event.
-     */
-    function _setSubmissionGatingByVotingToken(uint256 newSubmissionGatingByVotingToken) internal virtual {
-        emit SubmissionGatingByVotingTokenSet(_submissionGatingByVotingToken, newSubmissionGatingByVotingToken);
-        _submissionGatingByVotingToken = newSubmissionGatingByVotingToken;
     }
 
     /**

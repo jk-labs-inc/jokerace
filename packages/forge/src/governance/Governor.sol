@@ -27,7 +27,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     using SafeCast for uint256;
 
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
-    uint8 public constant AMOUNT_FOR_SUMBITTER_PROOF = 1;
+    uint64 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) private _addressTotalVotesVerified;
     mapping(address => bool) private _addressSubmitterVerified;
@@ -170,14 +170,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev Part of the Governor Bravo's interface: _"The number of votes required in order for a voter to become a proposer"_.
-     */
-    function proposalThreshold() public view virtual returns (uint256) {
-        return 0;
-    }
-
-    /**
-     * @dev _"The number of proposals that a proposer who meets the proposalThreshold can submit for this contest"_.
+     * @dev _"The number of proposals that an address who is qualified to propose can submit for this contest"_.
      */
     function numAllowedProposalSubmissions() public view virtual returns (uint256) {
         return 1;

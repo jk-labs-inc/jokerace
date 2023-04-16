@@ -19,12 +19,9 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
             _constructorIntParams[0], // _initialContestStart
             _constructorIntParams[1], // _initialVotingDelay,
             _constructorIntParams[2], // _initialVotingPeriod,
-            _constructorIntParams[3], // _initialContestSnapshot,
-            _constructorIntParams[4], // _initialProposalThreshold,
-            _constructorIntParams[5], // _initialNumAllowedProposalSubmissions,
-            _constructorIntParams[6], // _initialMaxProposalCount
-            _constructorIntParams[7], // _initialDownvotingAllowed
-            _constructorIntParams[8] // _initialSubmissionGatingByVotingToken
+            _constructorIntParams[3], // _initialNumAllowedProposalSubmissions,
+            _constructorIntParams[4], // _initialMaxProposalCount
+            _constructorIntParams[5]  // _initialDownvotingAllowed
         )
     {}
 
@@ -40,10 +37,6 @@ contract Contest is Governor, GovernorSettings, GovernorCountingSimple, Governor
 
     function votingPeriod() public view override(IGovernor, GovernorSettings) returns (uint256) {
         return super.votingPeriod();
-    }
-
-    function proposalThreshold() public view override(Governor, GovernorSettings) returns (uint256) {
-        return super.proposalThreshold();
     }
 
     function numAllowedProposalSubmissions() public view override(Governor, GovernorSettings) returns (uint256) {

@@ -129,14 +129,6 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Timestamp used to retrieve user's votes and quorum. As per Compound's Comp and OpenZeppelin's
-     * ERC20Votes, the snapshot is performed at the end of this block with this timestamp. Hence, voting for this proposal starts at the
-     * beginning of the following block.
-     */
-    function contestSnapshot() public view virtual returns (uint256);
-
-    /**
-     * @notice module:core
      * @dev Creator of the contest, has the power to cancel the contest and delete proposals in it.
      */
     function creator() public view virtual returns (address);
