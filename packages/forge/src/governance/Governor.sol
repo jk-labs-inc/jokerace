@@ -68,7 +68,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev Function to receive ETH that will be handled by the governor (disabled if executor is a third party contract)
+     * @dev Function to receive ETH that will be handled by the governor
+     * (disabled if executor is a third party contract)
      */
     receive() external payable virtual {
         require(_executor() == address(this));
@@ -364,7 +365,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
 
         require(
             _addressTotalVotesVerified[account],
-            "Governor: not sure how you got here but you need to verify your number of votes against the merkle root first"
+            "Governor: you need to verify your number of votes against the merkle root first"
         );
         _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);
 

@@ -17,7 +17,12 @@
     "react-app-revamp:start": "yarn workspace @scaffold-eth/react-app-revamp start",
     "react-app-revamp:test": "yarn workspace @scaffold-eth/react-app-revamp test",
     "dev": "yarn workspace @scaffold-eth/react-app-revamp dev",
+    "format": "yarn workspace @scaffold-eth/forge forgeformat",
+    "lint": "yarn workspace @scaffold-eth/forge forgelint",
+    "test": "yarn workspace @scaffold-eth/forge forgetest",
     "deploy": "yarn workspace @scaffold-eth/forge forgebuild",
+    "coverage": "yarn workspace @scaffold-eth/forge forgecoverage",
+    "smartcheck": "yarn format && yarn lint && yarn test && yarn deploy && yarn coverage",
     "postinstall": "husky install"
   },
   "workspaces": [

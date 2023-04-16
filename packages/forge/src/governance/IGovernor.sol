@@ -61,9 +61,10 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:voting
-     * @dev A description of the possible `support` values for {castVote} and the way these votes are counted, meant to
-     * be consumed by UIs to show correct vote options and interpret the results. The string is a URL-encoded sequence of
-     * key-value pairs that each describe one aspect, for example `support=bravo&quorum=for,abstain`.
+     * @dev A description of the possible `support` values for {castVote} and the way these votes are counted,
+     * meant to be consumed by UIs to show correct vote options and interpret the results. The string is
+     * a URL-encoded sequence of key-value pairs that each describe one aspect, for example
+     * `support=bravo&quorum=for,abstain`.
      *
      * There are 2 standard keys: `support` and `quorum`.
      *

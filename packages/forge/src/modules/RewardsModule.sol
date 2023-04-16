@@ -50,9 +50,17 @@ contract RewardsModule is Context {
 
     bool private _setSortedAndTiedProposalsHasBeenRun = false;
     uint256[] private _sortedProposalIds;
-    mapping(uint256 => bool) private _isTied; // whether a ranking is tied. key is ranking.
-    mapping(uint256 => uint256) private _tiedAdjustedRankingPosition; // key is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account
-    uint256 private _lowestRanking; // highest nominal ranking, lowest ranking (1 is the highest possible ranking, 8 is a lower ranking than 1)
+
+    // whether a ranking is tied. key is ranking.
+    mapping(uint256 => bool) private _isTied;
+
+    // key is ranking, value is index of the last iteration of that ranking's
+    // value in the _sortedProposalIds array taking ties into account
+    mapping(uint256 => uint256) private _tiedAdjustedRankingPosition;
+
+    // highest nominal ranking, lowest ranking (1 is the highest possible ranking, 8 is a lower ranking than 1)
+    uint256 private _lowestRanking;
+
     uint256 private _highestTiedRanking;
 
     /**
@@ -254,7 +262,8 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking
+        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
+        // _lowestRanking, and _highestTiedRanking
         if (!_setSortedAndTiedProposalsHasBeenRun) {
             setSortedAndTiedProposals();
         }
@@ -293,14 +302,16 @@ contract RewardsModule is Context {
         require(payment != 0, "RewardsModule: account is not due payment");
 
         // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment"
+        // If "_erc20TotalReleased[token] += payment" does not overflow, then
+        // "_erc20Released[token][account] += payment"
         // cannot overflow.
         _erc20TotalReleased[token] += payment;
         unchecked {
             _erc20Released[token][ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking
+        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
+        // _lowestRanking, and _highestTiedRanking
         if (!_setSortedAndTiedProposalsHasBeenRun) {
             setSortedAndTiedProposals();
         }
@@ -336,8 +347,10 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking, and _highestTiedRanking. Will only be called once and only needs to be called once because once the contest
-     * is complete these values don't change. Determines if a ranking is tied and also where the last iteration of a ranking is in the _sortedProposalIds list taking ties into account.
+     * @dev Setter for _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied, _lowestRanking,
+     * and _highestTiedRanking. Will only be called once and only needs to be called once because once the contest
+     * is complete these values don't change. Determines if a ranking is tied and also where the last
+     * iteration of a ranking is in the _sortedProposalIds list taking ties into account.
      */
     function setSortedAndTiedProposals() public virtual {
         require(
@@ -346,14 +359,14 @@ contract RewardsModule is Context {
         );
         require(
             _setSortedAndTiedProposalsHasBeenRun == false,
-            "RewardsModule: this function has already been run and its respective values set (these values will not change once a contest is complete"
+            "RewardsModule: this function has already been run and its respective values set"
         );
 
         _sortedProposalIds = _underlyingContest.sortedProposals(true);
 
         int256 lastTotalVotes;
         uint256 rankingBeingChecked = 1;
-        _highestTiedRanking = _sortedProposalIds.length + 1; // set this as the default value so that it isn't 0 if there are no ties found
+        _highestTiedRanking = _sortedProposalIds.length + 1; // set as default so that it isn't 0 if no ties are found
         for (uint256 i = 0; i < _sortedProposalIds.length; i++) {
             uint256 lastSortedItemIndex = _sortedProposalIds.length - 1;
 
@@ -378,10 +391,12 @@ contract RewardsModule is Context {
                     // if this is the first tie found, set it as the highest tied ranking
                     _highestTiedRanking = rankingBeingChecked;
                 }
-            } else {
-                // otherwise, mark that the last iteration of this ranking's value is at the index above the current index in the sorted list,
-                // then increment the ranking being checked
-                _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1; // index we last decremented from is the last iteration of the current rank's value
+            }
+            // otherwise, mark that the last iteration of this ranking's value is at the index
+            // above the current index in the sorted list, then increment the ranking being checked
+            if (!(currentTotalVotes == lastTotalVotes)) {
+                // index we last decremented from is the last iteration of the current rank's value
+                _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;
                 rankingBeingChecked++;
             }
 
