@@ -1,7 +1,7 @@
+/* eslint-disable @next/next/no-img-element */
 import CircularProgressBar from "@components/Clock";
 import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
-import { CheckIcon, XIcon } from "@heroicons/react/outline";
 import useContestInfo from "@hooks/useContestInfo";
 import { getAccount } from "@wagmi/core";
 import moment from "moment";
@@ -143,7 +143,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
       <div
-        className="full-width-grid-cols border-t border-neutral-9 py-6 items-center p-3 hover:bg-neutral-0 transition-colors duration-300 ease-in-out cursor-pointer"
+        className="grid grid-cols-1 items-center gap-5 md:full-width-grid-cols md:items-center border-t border-neutral-9 py-6 p-3 
+        hover:bg-neutral-0 transition-colors duration-300 ease-in-out cursor-pointer"
         key={`live-contest-${contest.id}`}
         onClick={() => handleClick(contest)}
       >
@@ -157,18 +158,18 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className={`flex items-start ${submissionClass} justify-between gap-3`}>
+          <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
             <div className="min-w-[185px]">
               <p className="font-bold">
                 {loading ? (
-                  <Skeleton width={150} />
+                  <Skeleton width={185} />
                 ) : (
                   <>
                     {submissionStatus}{" "}
                     {submissionStatus.includes("in:") && (
                       <Countdown
                         date={moment(contest.start_at).toDate()}
-                        renderer={props => renderer(props, moment(contest.start_at))}
+                        renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.start_at))}
                         onComplete={() => setOnCountdownComplete(true)}
                       />
                     )}
@@ -198,12 +199,12 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           </div>
         </div>
 
-        <div className={`grid ${compact ? `grid-cols-[1fr,0.5fr]` : `grid-cols-[1fr,auto]`}  items-start`}>
-          <div className={`flex items-center ${votingClass} justify-between gap-3`}>
-            <div>
+        <div className="flex items-center gap-4">
+          <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
+            <div className="min-w-[185px]">
               <p className="font-bold">
                 {loading ? (
-                  <Skeleton width={150} />
+                  <Skeleton width={185} />
                 ) : (
                   <>
                     {/* TODO - if contests ends, it does not apply */}
@@ -211,7 +212,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                     {votingStatus.includes("in:") && (
                       <Countdown
                         date={moment(contest.vote_start_at).toDate()}
-                        renderer={props => renderer(props, moment(contest.vote_start_at))}
+                        renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.vote_start_at))}
                         onComplete={() => setOnCountdownComplete(true)}
                       />
                     )}
@@ -244,7 +245,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           <div className="flex flex-col">
             <p className="font-bold">
               {loading ? (
-                <Skeleton width={100} />
+                <Skeleton />
               ) : (
                 <>
                   {parseInt(contest.rewards.token.value, 10)}{" "}

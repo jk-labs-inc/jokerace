@@ -1,5 +1,6 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @next/next/no-img-element */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/no-unescaped-entities */
 import Button from "@components/UI/Button";
 import ListContests from "@components/_pages/ListContests";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
@@ -56,15 +57,15 @@ const Page: NextPage = props => {
         <title>JokeDAO - open-source, collaborative decision-making platform</title>
         <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
       </Head>
-      <div className="pl-16 pr-16 mt-6 max-w-[1350px] 2xl:pl-28 2xl:pr-0">
-        <div className="mb-12">
+      <div className="pl-16 pr-16 mt-6 max-w-[1350px] 2xl:pl-28 2xl:pr-0 ">
+        <div className="mb-12 fadeInLanding">
           <p className="text-[24px] font-bold">
             contests for communities to make, <br />
             execute, and reward decisions
           </p>
         </div>
 
-        <div className="full-width-grid-cols gap-0">
+        <div className="full-width-grid-cols gap-0 fadeInLanding">
           <div>
             <div className="text-[16px] font-bold  mb-1">stage one</div>
             <div className="h-1 bg-secondary-11"></div>
@@ -119,8 +120,8 @@ const Page: NextPage = props => {
           </Link>
         </div>
       </div>
-      <div className="flex pl-16 pr-16 2xl:pl-28 2xl:pr-0 gap-10 mt-32 ">
-        <div className="flex flex-col gap-10">
+      <div className="flex flex-col pl-16 pr-16 gap-10 mt-32 2xl:pl-28 2xl:pr-0 2xl:flex-row">
+        <div className="flex gap-10 2xl:flex-col">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
               1
@@ -156,7 +157,11 @@ const Page: NextPage = props => {
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
               4
             </div>
-            <p className="text-[24px] text-primary-10 font-bold">reward the winners</p>
+            <p className="text-[24px] leading-5  text-primary-10 font-bold">
+              <span className="text-[16px]">optional</span>
+              <br />
+              reward the winners
+            </p>
             <ul className="list-disc list-inside text-[16px] font-bold">
               <li>set a rewards pool to winners,</li>
               <li>decide what percent each rank gets</li>
@@ -166,58 +171,67 @@ const Page: NextPage = props => {
         </div>
         <div className="flex flex-row items-center">
           <div className="flex flex-col gap-6">
-            <div className="p-10  borderTopLeftDotted">
+            <div className="p-10 bg-[url('/explainer/bg-1.png')] bg-no-repeat">
               <p className="uppercase font-sabo text-[20px] text-center">
                 grants,
-                <br /> hackathons, <br /> bounties, music contests
+                <br /> hackathons, <br /> bounties, remix contests
               </p>
               <div className="flex items-center flex-col mt-6">
                 <div className="flex items-center gap-3">
-                  <img src="/explainer/first-slice/submission-ellipse.png" width={180} />
-                  <img src="/explainer/arrow.png" width={50} height={35} />
-                  <p className="text-[16px] font-bold">anyone submits (grants, projects, ideas, art, etc) </p>
+                  <img src="/explainer/Ellipse5.svg" alt="donut" />
+                  <img src="/explainer/Arrow2.svg" width={50} alt="donut" />
+                  <p className="text-[16px] font-bold">
+                    anyone submits (grants, <br />
+                    projects, ideas, art, etc){" "}
+                  </p>
                 </div>
                 <div className="flex items-center gap-5">
-                  <img src="/explainer/first-slice/vote-ellipse.png" width={80} />
-                  <img src="/explainer/arrow.png" width={30} height={35} />
+                  <img src="/explainer/Ellipse3.svg" alt="donut" />
+                  <img src="/explainer/Arrow3.svg" width={30} height={35} alt="donut" />
                   <p className="text-[16px] font-bold">
                     jury votes <br /> on favorites{" "}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="p-10  borderBottomLeftDotted">
+            <div className="p-10 bg-[url('/explainer/bg-3.png')] bg-no-repeat ml-5">
               <p className="uppercase font-sabo text-[20px] text-center">
                 proposals, <br />
-                budgets, roadmaps
+                budgets, drafts, <br />
+                amendments
               </p>
               <div className="flex items-center flex-col mt-6">
-                <div className="flex items-center gap-3">
-                  <img src="/explainer/first-slice/submission-ellipse.png" width={180} />
-                  <img src="/explainer/arrow.png" width={50} height={35} />
-                  <p className="text-[16px] font-bold">anyone submits (grants, projects, ideas, art, etc) </p>
-                </div>
-                <div className="flex items-center gap-5">
-                  <img src="/explainer/first-slice/vote-ellipse.png" width={80} />
-                  <img src="/explainer/arrow.png" width={30} height={35} />
-                  <p className="text-[16px] font-bold">
-                    jury votes <br /> on favorites{" "}
-                  </p>
+                <div className="flex gap-6">
+                  <div className="flex flex-col items-center gap-6">
+                    <p className="text-[16px] font-bold">
+                      a core team or creator submits <br />
+                      (proposals, drafts of work, etc)
+                    </p>
+                    <img src="/explainer/Arrow1.svg" width={20} alt="donut" />
+                    <img src="/explainer/Ellipse1.svg" width={90} alt="donut" />
+                  </div>
+                  <div className="flex flex-col items-center gap-6">
+                    <p className="text-[16px] font-bold">
+                      the community votes on <br /> which gets implemented
+                    </p>
+                    <img src="/explainer/Arrow4.svg" width={20} alt="donut" />
+                    <img src="/explainer/Ellipse2.svg" height={180} alt="donut" className="-mt-[60px] -ml-[20px]" />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center p-10 gap-9  borderBottomRight">
+          <div className="flex flex-col items-center justify-center p-10 gap-9 bg-[url('/explainer/bg-2.png')] bg-no-repeat bg-center">
             <p className="uppercase font-sabo text-[20px] text-center">
               elections,
               <br /> feature requests, <br /> pulse checks, giveaways
             </p>
             <p className="text-[16px] font-bold text-center">
-              your community submits (requests for jobs, features, classes, content, etc) and then they vote on
-              favorites
+              your community submits (requests for <br />
+              jobs, features, classes, content, etc) <br /> and then they vote on favorites
             </p>
-            <img src="/explainer/arrow.png" width={50} className="rotate-[243deg]" />
-            <img src="/explainer/last-slice/donut.png" width={200} />
+            <img src="/explainer/Arrow5.svg" width={20} alt="donut" />
+            <img src="/explainer/Ellipse4.svg" alt="donut" className="-mt-[60px]" />
           </div>
         </div>
       </div>

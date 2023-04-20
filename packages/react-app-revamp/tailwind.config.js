@@ -246,6 +246,7 @@ module.exports = {
           },
         },
       },
+
       animation: {
         "card-rotation": "card-rotation 2000ms linear infinite",
         appear: "appear 300ms ease-in forwards",

@@ -1,4 +1,3 @@
-// src/components/Header.tsx
 import React from "react";
 import { useRouter } from "next/router";
 import LandingHeader from "./LandingHeader";

@@ -22,7 +22,9 @@ const MainHeader: React.FC = () => {
     <header className="relative z-20 border-b border-neutral-2 border-solid">
       <div className="py-2 container flex items-center mx-auto">
         <Link href="/">
-          <a className="text-4xl xs:text-xl font-sabo text-primary-10">JOKERACE</a>
+          <a className="text-4xl xs:text-xl">
+            🃏 <span className="sr-only">Home</span>
+          </a>
         </Link>
         <nav className="hidden xs:flex xs:mis-4 space-i-0.5">
           <Link href={ROUTE_CREATE_CONTEST}>

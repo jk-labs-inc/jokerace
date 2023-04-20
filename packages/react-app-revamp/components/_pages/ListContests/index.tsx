@@ -1,10 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Search from "@components/Search";
 import Sort, { Sorting } from "@components/Sort";
-import Loader from "@components/UI/Loader";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
 import { FC, useEffect, useState } from "react";
 import { Pagination } from "react-headless-pagination";
-import Skeleton from "react-loading-skeleton";
 import Contest from "./Contest";
 
 interface ListContestsProps {
@@ -160,7 +159,7 @@ export const ListContests: FC<ListContestsProps> = ({
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
             <div className="animate-appear">
-              <div className="font-bold mb-4 text-md full-width-grid-cols items-center pie-1ex p-3">
+              <div className="grid grid-cols-2  md:full-width-grid-cols items-center mb-4 font-bold text-[18px] pie-1ex p-3">
                 <span aria-hidden="true">
                   🃏
                   <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>

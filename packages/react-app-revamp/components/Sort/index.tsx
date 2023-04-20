@@ -52,7 +52,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-left text-[18px] w-[80%]">
+    <Menu as="div" className="relative inline-block text-left text-[18px]">
       {({ open }) => {
         onMenuStateChange?.(open);
 
