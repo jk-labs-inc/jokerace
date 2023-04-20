@@ -120,7 +120,7 @@ const Page: NextPage = props => {
           </Link>
         </div>
       </div>
-      <div className="flex flex-col pl-16 pr-16 gap-10 mt-32 2xl:pl-28 2xl:pr-0 2xl:flex-row">
+      <div className="flex flex-col pl-16 pr-16 gap-10 mt-32 2xl:pl-28 2xl:pr-0 2xl:flex-row fadeInLanding">
         <div className="flex gap-10 2xl:flex-col">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
@@ -128,7 +128,7 @@ const Page: NextPage = props => {
             </div>
             <p className="text-[24px] text-primary-10 font-bold">create a prompt</p>
             <ul className="list-disc list-inside text-[16px] font-bold">
-              <li>"submit a new grant proposal"</li>
+              <li>"submit a proposal"</li>
               <li>"design our new logo"</li>
               <li>"what features should we build?"</li>
             </ul>
@@ -137,7 +137,7 @@ const Page: NextPage = props => {
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
               2
             </div>
-            <p className="text-[24px] text-primary-10 font-bold">pick who submits</p>
+            <p className="text-[24px] text-primary-10 font-bold">pick who can submit</p>
             <ul className="list-disc list-inside text-[16px] font-bold">
               <li>let anyone submit responses—</li>
               <li>or set requirements for who gets to respond.</li>
@@ -147,7 +147,7 @@ const Page: NextPage = props => {
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
               3
             </div>
-            <p className="text-[24px] text-primary-10 font-bold">pick who votes</p>
+            <p className="text-[24px] text-primary-10 font-bold">pick who can vote</p>
             <ul className="list-disc list-inside text-[16px] font-bold">
               <li>set requirements for who gets to vote</li>
               <li>pick how many votes they each get.</li>
@@ -207,7 +207,7 @@ const Page: NextPage = props => {
                       a core team or creator submits <br />
                       (proposals, drafts of work, etc)
                     </p>
-                    <img src="/explainer/Arrow1.svg" width={20} alt="donut" />
+                    <img src="/explainer/Arrow1.svg" width={20} alt="donut" className="rotate-12" />
                     <img src="/explainer/Ellipse1.svg" width={90} alt="donut" />
                   </div>
                   <div className="flex flex-col items-center gap-6">
