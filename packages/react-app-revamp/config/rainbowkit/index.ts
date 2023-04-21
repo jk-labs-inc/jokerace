@@ -1,10 +1,10 @@
-import { Theme } from "@rainbow-me/rainbowkit";
+//@ts-ignore
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "./../../tailwind.config";
 
-const tailwindTheme: any = resolveConfig(tailwindConfig).theme;
+const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
-export const jokeDAOTheme: Partial<Theme> = {
+export const jokeDAOTheme = {
   fonts: {
     body: tailwindTheme.fontFamily.sans.toString(),
   },
@@ -30,13 +30,6 @@ export const jokeDAOTheme: Partial<Theme> = {
     modalBackdrop: "rgba(0, 0, 0, 0.5)",
     connectionIndicator: tailwindTheme.colors.positive[11],
     standby: tailwindTheme.colors.primary[11],
-    connectButtonText: tailwindTheme.colors.primary[11], // example value, adjust as needed
-    modalText: tailwindTheme.colors.neutral[11], // example value, adjust as needed
-    profileAction: tailwindTheme.colors.primary[11], // example value, adjust as needed
-    profileActionHover: tailwindTheme.colors.primary[9], // example value, adjust as needed
-    profileForeground: tailwindTheme.colors.primary[1], // example value, adjust as needed
-    selectedOptionBorder: tailwindTheme.colors.primary[11], // example value, adjust as needed
-    actionButtonBorderMobile: "transparent",
   },
   radii: {
     actionButton: "12px",
