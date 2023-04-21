@@ -169,7 +169,7 @@ const Page: NextPage = props => {
             </ul>
           </div>
         </div>
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row items-center gap-20">
           <div className="flex flex-col gap-6">
             <div className="p-10 bg-[url('/explainer/bg-1.png')] bg-no-repeat transform hover:scale-120 transition-transform duration-500">
               <p className="uppercase font-sabo text-[20px] text-center">
@@ -221,7 +221,7 @@ const Page: NextPage = props => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center p-10 gap-3 bg-[url('/explainer/bg-2.png')] bg-no-repeat bg-center transform hover:scale-120 transition-transform duration-500">
+          <div className="flex flex-col items-center p-20 gap-3 bg-[url('/explainer/bg-2.png')] bg-no-repeat transform hover:scale-120 transition-transform duration-500">
             <p className="uppercase font-sabo text-[20px] text-center">
               elections,
               <br /> feature requests, <br /> pulse checks, giveaways

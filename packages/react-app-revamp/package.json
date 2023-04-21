@@ -14,7 +14,7 @@
     "@felte/react": "^1.2.2",
     "@felte/validator-zod": "^1.0.10",
     "@graphql-codegen/fragment-matcher": "^3.3.1",
-    "@headlessui/react": "^1.6.4",
+    "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^1.0.6",
     "@rainbow-me/rainbowkit": "^0.4.1",
     "@supabase/supabase-js": "^1.35.4",

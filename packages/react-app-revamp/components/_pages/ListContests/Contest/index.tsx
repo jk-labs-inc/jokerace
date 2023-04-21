@@ -154,7 +154,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           ) : (
             <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
           )}
-          <p className="font-bold">{loading ? <Skeleton width={200} /> : contest.title}</p>
+          <p className="font-bold w-full">{loading ? <Skeleton /> : contest.title}</p>
         </div>
 
         <div className="flex items-center gap-4">
@@ -162,7 +162,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             <div className="min-w-[185px]">
               <p className="font-bold">
                 {loading ? (
-                  <Skeleton width={185} />
+                  <Skeleton />
                 ) : (
                   <>
                     {submissionStatus}{" "}
@@ -176,7 +176,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                   </>
                 )}
               </p>
-              {loading ? <Skeleton width={185} /> : submissionMessage}
+              {loading ? <Skeleton /> : submissionMessage}
             </div>
             {loading ? (
               <Skeleton circle height={50} width={50} />
@@ -204,7 +204,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             <div className="min-w-[185px]">
               <p className="font-bold">
                 {loading ? (
-                  <Skeleton width={185} />
+                  <Skeleton />
                 ) : (
                   <>
                     {/* TODO - if contests ends, it does not apply */}
@@ -219,7 +219,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                   </>
                 )}
               </p>
-              {loading ? <Skeleton width={185} /> : votingMessage}
+              {loading ? <Skeleton /> : votingMessage}
             </div>
           </div>
           {loading ? (
@@ -243,7 +243,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         </div>
         {contest.rewards ? (
           <div className="flex flex-col">
-            <p className="font-bold">
+            <p className="font-bold w-full">
               {loading ? (
                 <Skeleton />
               ) : (
@@ -253,10 +253,10 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                 </>
               )}
             </p>
-            <p>{loading ? <Skeleton width={100} /> : `to ${contest.rewards.winners} winners`}</p>
+            <p>{loading ? <Skeleton /> : `to ${contest.rewards.winners} winners`}</p>
           </div>
         ) : (
-          <p className="text-neutral-9 font-bold">{loading ? <Skeleton width={70} /> : "no rewards"}</p>
+          <p className="text-neutral-9 font-bold">{loading ? <Skeleton /> : "no rewards"}</p>
         )}
       </div>
     </SkeletonTheme>

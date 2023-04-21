@@ -185,6 +185,7 @@ export const ListContests: FC<ListContestsProps> = ({
                       />
                     ))}
               </div>
+
               {Math.ceil(result?.count / itemsPerPage) > 1 && (
                 <Pagination
                   currentPage={page}
