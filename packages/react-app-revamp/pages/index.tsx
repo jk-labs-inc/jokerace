@@ -58,14 +58,14 @@ const Page: NextPage = props => {
         <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
       </Head>
       <div className="pl-16 pr-16 mt-6 max-w-[1350px] 2xl:pl-28 2xl:pr-0 ">
-        <div className="mb-12 fadeInLanding">
+        <div className="mb-12 animate-fadeInLanding">
           <p className="text-[24px] font-bold">
             contests for communities to make, <br />
             execute, and reward decisions
           </p>
         </div>
 
-        <div className="full-width-grid-cols gap-0 fadeInLanding">
+        <div className="full-width-grid-cols gap-0 animate-fadeInLanding">
           <div>
             <div className="text-[16px] font-bold  mb-1">stage one</div>
             <div className="h-1 bg-secondary-11"></div>
@@ -120,8 +120,8 @@ const Page: NextPage = props => {
           </Link>
         </div>
       </div>
-      <div className="flex flex-col pl-16 pr-16 gap-10 mt-32 2xl:pl-28 2xl:pr-0 2xl:flex-row fadeInLanding">
-        <div className="flex gap-10 2xl:flex-col">
+      <div className="pl-16 pr-16 gap-10 mt-32 md:flex md:flex-col 2xl:pl-28 2xl:pr-0 2xl:flex-row animate-fadeInLanding">
+        <div className="grid grid-cols-2 md:flex gap-10 2xl:flex-col">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
               1
@@ -171,7 +171,7 @@ const Page: NextPage = props => {
         </div>
         <div className="flex flex-row items-center">
           <div className="flex flex-col gap-6">
-            <div className="p-10 bg-[url('/explainer/bg-1.png')] bg-no-repeat">
+            <div className="p-10 bg-[url('/explainer/bg-1.png')] bg-no-repeat transform hover:scale-120 transition-transform duration-500">
               <p className="uppercase font-sabo text-[20px] text-center">
                 grants,
                 <br /> hackathons, <br /> bounties, remix contests
@@ -179,7 +179,7 @@ const Page: NextPage = props => {
               <div className="flex items-center flex-col mt-6">
                 <div className="flex items-center gap-3">
                   <img src="/explainer/Ellipse5.svg" alt="donut" />
-                  <img src="/explainer/Arrow2.svg" width={50} alt="donut" />
+                  <img src="/explainer/Arrow2.svg" alt="donut" />
                   <p className="text-[16px] font-bold">
                     anyone submits (grants, <br />
                     projects, ideas, art, etc){" "}
@@ -187,41 +187,41 @@ const Page: NextPage = props => {
                 </div>
                 <div className="flex items-center gap-5">
                   <img src="/explainer/Ellipse3.svg" alt="donut" />
-                  <img src="/explainer/Arrow3.svg" width={30} height={35} alt="donut" />
+                  <img src="/explainer/Arrow3.svg" alt="donut" />
                   <p className="text-[16px] font-bold">
                     jury votes <br /> on favorites{" "}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="p-10 bg-[url('/explainer/bg-3.png')] bg-no-repeat ml-5">
+            <div className="p-10 bg-[url('/explainer/bg-3.png')] bg-no-repeat ml-5 transform hover:scale-120 transition-transform duration-500">
               <p className="uppercase font-sabo text-[20px] text-center">
                 proposals, <br />
                 budgets, drafts, <br />
                 amendments
               </p>
               <div className="flex items-center flex-col mt-6">
-                <div className="flex gap-6">
-                  <div className="flex flex-col items-center gap-6">
+                <div className="flex gap-3">
+                  <div className="flex flex-col items-center gap-3">
                     <p className="text-[16px] font-bold">
                       a core team or creator submits <br />
                       (proposals, drafts of work, etc)
                     </p>
-                    <img src="/explainer/Arrow1.svg" width={20} alt="donut" className="rotate-12" />
-                    <img src="/explainer/Ellipse1.svg" width={90} alt="donut" />
+                    <img src="/explainer/Arrow1.svg" alt="donut" className="rotate-12" />
+                    <img src="/explainer/Ellipse1.svg" alt="donut" />
                   </div>
-                  <div className="flex flex-col items-center gap-6">
+                  <div className="flex flex-col items-center gap-3">
                     <p className="text-[16px] font-bold">
                       the community votes on <br /> which gets implemented
                     </p>
-                    <img src="/explainer/Arrow4.svg" width={20} alt="donut" />
-                    <img src="/explainer/Ellipse2.svg" height={180} alt="donut" className="-mt-[60px] -ml-[20px]" />
+                    <img src="/explainer/Arrow4.svg" alt="donut" />
+                    <img src="/explainer/Ellipse2.svg" alt="donut" className="-mt-[60px] -ml-[20px]" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center justify-center p-10 gap-9 bg-[url('/explainer/bg-2.png')] bg-no-repeat bg-center">
+          <div className="flex flex-col items-center p-10 gap-3 bg-[url('/explainer/bg-2.png')] bg-no-repeat bg-center transform hover:scale-120 transition-transform duration-500">
             <p className="uppercase font-sabo text-[20px] text-center">
               elections,
               <br /> feature requests, <br /> pulse checks, giveaways
@@ -230,7 +230,7 @@ const Page: NextPage = props => {
               your community submits (requests for <br />
               jobs, features, classes, content, etc) <br /> and then they vote on favorites
             </p>
-            <img src="/explainer/Arrow5.svg" width={20} alt="donut" />
+            <img src="/explainer/Arrow5.svg" alt="donut" />
             <img src="/explainer/Ellipse4.svg" alt="donut" className="-mt-[60px]" />
           </div>
         </div>

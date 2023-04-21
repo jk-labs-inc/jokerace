@@ -93,7 +93,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
           <svg width={size + strokeWidth * 2} height={size + strokeWidth * 2}>
             <defs>
               <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="1" dy="1" stdDeviation="3" flood-color={color} flood-opacity="1" />
+                <feDropShadow dx="1" dy="1" stdDeviation="3" floodColor={color} floodOpacity="1" />
               </filter>
             </defs>
             <circle
@@ -122,7 +122,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
               r={strokeWidth * 1.3}
               fill={`${color}`}
               filter="url(#shadow)"
-              className="blink-shadow"
+              className="animate-blink-shadow"
             />
           </svg>
           <div style={{ color: color }} className={`text-[11px] text-center -mt-[45px] font-bold`}>

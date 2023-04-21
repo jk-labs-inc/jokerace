@@ -55,6 +55,11 @@ const remToPx = rem => {
 
 module.exports = {
   content: ["./components/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{js,jsx,ts,tsx}", "./layouts/**/*.{js,jsx,ts,tsx}"],
+  purge: {
+    options: {
+      safelist: ["animate-fadeIn", "animate-fadeOut"],
+    },
+  },
   theme: {
     screens: {
       min: remToPx(screensRem.min),
@@ -245,12 +250,35 @@ module.exports = {
             transform: "translateY(0)",
           },
         },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        fadeOut: {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        blink: {
+          "0%": { opacity: "1" },
+          "60%": { opacity: "0.8" },
+          "100%": { opacity: "1" },
+        },
       },
-
+      scale: {
+        120: "1.2",
+      },
+      transitionProperty: {
+        transform: "transform",
+      },
       animation: {
         "card-rotation": "card-rotation 2000ms linear infinite",
         appear: "appear 300ms ease-in forwards",
+        fadeIn: "fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both",
+        fadeInLanding: "fadeIn 3s cubic-bezier(0.39, 0.575, 0.565, 1) both",
+        fadeOut: "fadeOut 2s ease-out both",
+        "blink-shadow": "blink 1.5s ease-in-out infinite",
       },
+
       height: {
         "fit-content": "fit-content",
       },
@@ -283,7 +311,10 @@ module.exports = {
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      scale: ["hover"],
+      transform: ["hover"],
+    },
   },
   plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography")],
 };

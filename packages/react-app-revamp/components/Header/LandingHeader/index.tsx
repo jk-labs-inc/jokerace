@@ -22,7 +22,10 @@ const LandingHeader = () => {
 
       <div className="flex items-center gap-5">
         <Link href={ROUTE_CREATE_CONTEST}>
-          <Button className="h-10 text-[18px] font-bold" intent={`${isConnected ? "primary" : "neutral-outline"}`}>
+          <Button
+            className="hidden xs:flex h-10 text-[18px] font-bold"
+            intent={`${isConnected ? "primary" : "neutral-outline"}`}
+          >
             Create contest
           </Button>
         </Link>
