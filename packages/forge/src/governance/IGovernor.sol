@@ -19,10 +19,34 @@ abstract contract IGovernor is IERC165 {
         Completed
     }
 
+    uint8 public constant METADATAS_COUNT = 2;
+
+    enum Metadatas {
+        Target,
+        Safe
+    }
+
+    struct TargetMetadata {
+        address targetAddress;
+    }
+
+    struct SafeMetadata {
+        address[] signers;
+        uint256 threshold;
+    }
+
+    struct ProposalCore {
+        address author;
+        string description;
+        bool exists;
+        TargetMetadata targetMetadata;
+        SafeMetadata safeMetadata;
+    }
+
     /**
      * @dev Emitted when a proposal is created.
      */
-    event ProposalCreated(uint256 proposalId, string description, address proposer);
+    event ProposalCreated(uint256 proposalId, address proposer);
 
     /**
      * @dev Emitted when proposals are deleted.
@@ -83,7 +107,7 @@ abstract contract IGovernor is IERC165 {
      * @notice module:core
      * @dev Hashing function used to (re)build the proposal id from the proposal details..
      */
-    function hashProposal(string memory proposalDescription) public pure virtual returns (uint256);
+    function hashProposal(ProposalCore memory proposal) public pure virtual returns (uint256);
 
     /**
      * @notice module:core
@@ -140,12 +164,9 @@ abstract contract IGovernor is IERC165 {
     function verifySubmitter(address account, bytes32[] calldata proof) public virtual returns (bool);
 
     /**
-     * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
+     * @dev Verifies that all of the metadata in the proposal are valid.
      */
-    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
-        public
-        virtual
-        returns (bool);
+    function validateProposalData(ProposalCore memory proposal) public virtual returns (bool);
 
     /**
      * @dev Create a new proposal. Vote start {IGovernor-votingDelay} blocks after the proposal is created and ends
@@ -153,10 +174,26 @@ abstract contract IGovernor is IERC165 {
      *
      * Emits a {ProposalCreated} event.
      */
-    function propose(string memory proposalDescription, bytes32[] calldata proof)
+    function propose(ProposalCore memory proposal, bytes32[] calldata proof)
         public
         virtual
         returns (uint256 proposalId);
+
+    /**
+     * @dev Create a new proposal. Vote start {IGovernor-votingDelay} blocks after the proposal is created and ends
+     * {IGovernor-votingPeriod} blocks after the voting starts.
+     *
+     * Emits a {ProposalCreated} event.
+     */
+    function proposeWithoutProof(ProposalCore memory proposal) public virtual returns (uint256 proposalId);
+
+    /**
+     * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
+     */
+    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
+        public
+        virtual
+        returns (bool);
 
     /**
      * @dev Cast a vote with a merkle proof.

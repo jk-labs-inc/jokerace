@@ -29,14 +29,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
     uint64 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     mapping(address => uint256) public addressTotalVotes;
-    mapping(address => bool) private _addressTotalVotesVerified;
-    mapping(address => bool) private _addressSubmitterVerified;
-
-    struct ProposalCore {
-        address author;
-        string description;
-        bool exists;
-    }
+    mapping(address => bool) public addressTotalVotesVerified;
+    mapping(address => bool) public addressSubmitterVerified;
 
     uint256[] private _proposalIds;
     mapping(uint256 => uint256) private _deletedProposalIds;
@@ -116,8 +110,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * accross multiple networks. This also means that in order to execute the same operation twice (on the same
      * governor) the proposer will have to change the description in order to avoid proposal id conflicts.
      */
-    function hashProposal(string memory proposalDescription) public pure virtual override returns (uint256) {
-        return uint256(keccak256(abi.encode(proposalDescription)));
+    function hashProposal(ProposalCore memory proposal) public pure virtual override returns (uint256) {
+        return uint256(keccak256(abi.encode(proposal)));
     }
 
     /**
@@ -225,56 +219,80 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-verifySubmitter}.
      */
     function verifySubmitter(address account, bytes32[] calldata proof) public override returns (bool verified) {
-        if (!_addressSubmitterVerified[account]) {
+        if (!addressSubmitterVerified[account]) {
             checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
-            _addressSubmitterVerified[account] = true;
+            addressSubmitterVerified[account] = true;
         }
         return true;
     }
 
     /**
-     * @dev See {IGovernor-verifyTotalVotes}.
+     * @dev See {IGovernor-validateProposalData}.
      */
-    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
-        public
-        override
-        returns (bool verified)
-    {
-        if (!_addressTotalVotesVerified[account]) {
-            checkProof(account, totalVotes, proof, false); // will revert with NotInMerkle if not valid
-            addressTotalVotes[account] = totalVotes;
-            _addressTotalVotesVerified[account] = true;
+    function validateProposalData(ProposalCore memory proposal) public virtual override returns (bool dataValidated) {
+        for (uint256 index = 0; index < METADATAS_COUNT; index++) {
+            Metadatas currentMetadata = Metadatas(index);
+            if (currentMetadata == Metadatas.Target) {
+                continue; // Nothing to check here since strictly typed to address
+            } else if (currentMetadata == Metadatas.Safe) {
+                require(
+                    proposal.safeMetadata.signers.length != 0,
+                    "GovernorMetadataValidation: there cannot be zero signers in safeMetadata"
+                );
+                require(
+                    proposal.safeMetadata.threshold != 0,
+                    "GovernorMetadataValidation: threshold cannot be zero in safeMetadata"
+                );
+                require(proposal.safeMetadata.signers.length != 0);
+            } else {
+                // TODO: revert with an error
+            }
         }
+        // TODO: make this more robust? or just replicate similar logic above?
+        require(bytes(proposal.description).length != 0, "Governor: empty proposal");
         return true;
     }
 
     /**
      * @dev See {IGovernor-propose}.
      */
-    function propose(string memory proposalDescription, bytes32[] calldata proof)
+    function propose(ProposalCore memory proposal, bytes32[] calldata proof)
         public
         virtual
         override
         returns (uint256)
     {
+        require(verifySubmitter(msg.sender, proof), "Governor: address is not permissioned to submit");
+        validateProposalData(proposal);
+        return _castProposal(proposal);
+    }
+
+    /**
+     * @dev See {IGovernor-proposeWithoutProof}.
+     */
+    function proposeWithoutProof(ProposalCore memory proposal) public virtual override returns (uint256) {
+        require(addressSubmitterVerified[msg.sender], "Governor: address is not permissioned to submit");
+        validateProposalData(proposal);
+        return _castProposal(proposal);
+    }
+
+    // TODO: make sure I didn't lose any logic here
+    function _castProposal(ProposalCore memory proposal) internal virtual returns (uint256) {
         require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
         require(
             _numSubmissions[msg.sender] < numAllowedProposalSubmissions(),
             "Governor: the same cannot submit more than the numAllowedProposalSubmissions for this contest"
         );
         require(_proposalIds.length < maxProposalCount(), "Governor: the max number of proposals have been submitted");
-        require(verifySubmitter(msg.sender, proof), "Governor: address is not permissioned to submit");
 
-        require(bytes(proposalDescription).length != 0, "Governor: empty proposal");
-
-        uint256 proposalId = hashProposal(proposalDescription);
+        uint256 proposalId = hashProposal(proposal);
         require(!_proposals[proposalId].exists, "Governor: duplicate proposals not allowed");
 
         _proposalIds.push(proposalId);
-        _proposals[proposalId] = ProposalCore({author: msg.sender, description: proposalDescription, exists: true});
+        _proposals[proposalId] = proposal;
         _numSubmissions[msg.sender] += 1;
 
-        emit ProposalCreated(proposalId, proposalDescription, _msgSender());
+        emit ProposalCreated(proposalId, _msgSender());
 
         return proposalId;
     }
@@ -319,6 +337,22 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
+     * @dev See {IGovernor-verifyTotalVotes}.
+     */
+    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
+        public
+        override
+        returns (bool verified)
+    {
+        if (!addressTotalVotesVerified[account]) {
+            checkProof(account, totalVotes, proof, false); // will revert with NotInMerkle if not valid
+            addressTotalVotes[account] = totalVotes;
+            addressTotalVotesVerified[account] = true;
+        }
+        return true;
+    }
+
+    /**
      * @dev See {IGovernor-castVote}.
      */
     function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof)
@@ -343,7 +377,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     {
         address voter = _msgSender();
         require(
-            _addressTotalVotesVerified[voter],
+            addressTotalVotesVerified[voter],
             "Governor: you need to cast a vote with the proof at least once and you haven't yet"
         );
         return _castVote(proposalId, voter, support, numVotes, "");
@@ -364,7 +398,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         require(numVotes > 0, "Governor: cannot vote with 0 or fewer votes");
 
         require(
-            _addressTotalVotesVerified[account],
+            addressTotalVotesVerified[account],
             "Governor: you need to verify your number of votes against the merkle root first"
         );
         _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);

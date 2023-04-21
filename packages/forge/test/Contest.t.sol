@@ -7,16 +7,33 @@ import "../src/Contest.sol";
 contract ContestTest is Test {
     Contest public contest;
     uint256[] public numParams;
-    bytes32[] public proof;
-
-    address public constant PERMISSIONED_ADDRESS = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
-
     uint64 public constant CONTEST_START = 1681650000;
     uint64 public constant VOTING_DELAY = 10000;
     uint64 public constant VOTING_PERIOD = 10000;
     uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 2;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
+
+    address public constant PERMISSIONED_ADDRESS = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
+    bytes32[] public proof = [bytes32(0x005a0033b5a1ac5c2872d7689e0f064ad6d2287ab98439e44c822e1c46530033)];
+
+    address public constant DEFAULT_TARGET_ADDRESS = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
+    address[] public safeSigners = [address(0)];
+    uint8 public constant SAFE_THRESHOLD = 1;
+    IGovernor.ProposalCore public proposal = IGovernor.ProposalCore({
+        author: msg.sender,
+        description: "proposalDescription",
+        exists: true,
+        targetMetadata: IGovernor.TargetMetadata({targetAddress: DEFAULT_TARGET_ADDRESS}),
+        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+    });
+    IGovernor.ProposalCore public secondProposal = IGovernor.ProposalCore({
+        author: msg.sender,
+        description: "secondProposalDescription",
+        exists: true,
+        targetMetadata: IGovernor.TargetMetadata({targetAddress: DEFAULT_TARGET_ADDRESS}),
+        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+    });
 
     function setUp() public {
         numParams.push(CONTEST_START);
@@ -75,26 +92,41 @@ contract ContestTest is Test {
             }
         }
     */
-    function testPropose() public {
-        proof = [bytes32(0x005a0033b5a1ac5c2872d7689e0f064ad6d2287ab98439e44c822e1c46530033)];
+    function testValidate() public {
+        bool validated = contest.validateProposalData(proposal);
 
+        assertEq(validated, true);
+    }
+
+    function testPropose() public {
         vm.startPrank(PERMISSIONED_ADDRESS);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose("proposalDescription", proof);
+        uint256 proposalId = contest.propose(proposal, proof);
 
         vm.stopPrank();
 
-        assertEq(proposalId, 97841183246694117049131835047498378131093565157767228515338175708860829108582);
+        assertEq(proposalId, 2901242392636705081991988272742551360295662537271695090215194041398924040922);
     }
 
-    function testVote() public {
-        proof = [bytes32(0x005a0033b5a1ac5c2872d7689e0f064ad6d2287ab98439e44c822e1c46530033)];
-
+    function testProposeWithoutProof() public {
         vm.startPrank(PERMISSIONED_ADDRESS);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose("proposalDescription", proof);
+        uint256 firstProposalId = contest.propose(proposal, proof);
+        uint256 secondProposalId = contest.proposeWithoutProof(secondProposal);
+
+        vm.stopPrank();
+
+        assertEq(firstProposalId, 2901242392636705081991988272742551360295662537271695090215194041398924040922);
+        assertEq(secondProposalId, 103496870058056576765841579243895962431381781568664359263565324319479366224263);
+    }
+
+    function testVote() public {
+        vm.startPrank(PERMISSIONED_ADDRESS);
+
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(proposal, proof);
         vm.warp(1681660001);
         uint256 totalVotes = contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof);
 
@@ -104,12 +136,10 @@ contract ContestTest is Test {
     }
 
     function testVoteWithoutProof() public {
-        proof = [bytes32(0x005a0033b5a1ac5c2872d7689e0f064ad6d2287ab98439e44c822e1c46530033)];
-
         vm.startPrank(PERMISSIONED_ADDRESS);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose("proposalDescription", proof);
+        uint256 proposalId = contest.propose(proposal, proof);
         vm.warp(1681660001);
         contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof);
         uint256 totalVotesWithoutProof = contest.castVoteWithoutProof(proposalId, 0, 1000000000000000000);

@@ -15,6 +15,7 @@
     "forgelint": "yarn solhint 'src/**/*.sol'",
     "forgetest": "forge test",
     "forgecoverage": "forge coverage",
-    "forgebuild": "forge build && copyfiles -u 1 out/Contest.sol/*.json ../react-app-revamp/contracts/bytecodeAndAbi && copyfiles -u 1 out/RewardsModule.sol/*.json ../react-app-revamp/contracts/bytecodeAndAbi/modules/"
+    "forgebuild": "forge build",
+    "forgebuildandcopy": "forge build && copyfiles -u 1 out/Contest.sol/*.json ../react-app-revamp/contracts/bytecodeAndAbi && copyfiles -u 1 out/RewardsModule.sol/*.json ../react-app-revamp/contracts/bytecodeAndAbi/modules/"
   }
 }
