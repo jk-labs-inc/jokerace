@@ -1,11 +1,9 @@
-// @ts-ignore
-import { Theme } from "@rainbow-me/rainbowkit";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "./../../tailwind.config";
 
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
-export const jokeDAOTheme: Theme = {
+export const jokeDAOTheme = {
   fonts: {
     body: tailwindTheme.fontFamily.sans.toString(),
   },
@@ -33,10 +31,10 @@ export const jokeDAOTheme: Theme = {
     standby: tailwindTheme.colors.primary[11],
   },
   radii: {
-    actionButton: tailwindTheme.borderRadius.xl,
-    connectButton: tailwindTheme.borderRadius.xl,
-    menuButton: tailwindTheme.borderRadius.xl,
-    modal: tailwindTheme.borderRadius.xl,
-    modalMobile: tailwindTheme.borderRadius.xl,
+    actionButton: "12px",
+    connectButton: "12px",
+    menuButton: "12px",
+    modal: "12px",
+    modalMobile: "12px",
   },
 };
