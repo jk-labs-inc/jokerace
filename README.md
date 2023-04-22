@@ -38,7 +38,7 @@ If you are not running Supabase, then the search functionality will not work. Yo
 
 ### Updating bytecode
 
-Whenever you make a change to smart contracts, increment the version by x.1. Then generate the bytecode and version it as described below.
+Whenever you make a change to smart contracts, increment the version by `x.1`. Then generate the bytecode and version it as described below.
 
 In order to generate and/or update the bytecode of your project, run 
 
@@ -55,7 +55,7 @@ You will also need to do two more things if the ABI is changed:
   
 [Here](https://github.com/JokeDAO/JokeDaoV2Dev/pull/111/commits/79072b212e603bcca0418dd5057557379444194f) is an example PR that does all of these steps.
 
-*Make sure to do all of these steps before committing any changes to the contract code to make sure that the bytecode that the site is deploying is the same as what you have written in the `hardhat` package! And also so that the site is able to correctly version a given deployed contract's ABI when reading from it.*
+*Make sure to do all of these steps before committing any changes to the contract code to make sure that the bytecode that the site is deploying is the same as what you have written in the `forge` package! And also so that the site is able to correctly version a given deployed contract's ABI when reading from it.*
 
 ## Built with
 - NextJS
