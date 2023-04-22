@@ -47,6 +47,7 @@ contract RewardsModule is Context {
 
     GovernorCountingSimple private _underlyingContest;
     address private _creator;
+    bool private _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
 
     bool private _setSortedAndTiedProposalsHasBeenRun = false;
     uint256[] private _sortedProposalIds;
@@ -70,7 +71,12 @@ contract RewardsModule is Context {
      * All rankings in `payees` must be non-zero. Both arrays must have the same non-zero length, and there must be no
      * duplicates in `payees`.
      */
-    constructor(uint256[] memory payees, uint256[] memory shares_, GovernorCountingSimple underlyingContest_) payable {
+    constructor(
+        uint256[] memory payees,
+        uint256[] memory shares_,
+        GovernorCountingSimple underlyingContest_,
+        bool paysOutTarget_
+    ) payable {
         require(payees.length == shares_.length, "RewardsModule: payees and shares length mismatch");
         require(payees.length > 0, "RewardsModule: no payees");
 
@@ -78,6 +84,7 @@ contract RewardsModule is Context {
             _addPayee(payees[i], shares_[i]);
         }
 
+        _paysOutTarget = paysOutTarget_;
         _underlyingContest = underlyingContest_;
         _creator = msg.sender;
     }
@@ -158,6 +165,13 @@ contract RewardsModule is Context {
      */
     function getPayees() public view returns (uint256[] memory) {
         return _payees;
+    }
+
+    /**
+     * @dev Getter for whether this pays out the target address or author of a proposal.
+     */
+    function paysOutTarget() public view returns (bool) {
+        return _paysOutTarget;
     }
 
     /**
@@ -273,15 +287,18 @@ contract RewardsModule is Context {
             "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
         );
 
+        IGovernor.ProposalCore memory rankingProposal =
+            _underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]);
+
         // send rewards to winner only if the ranking is higher than the highest tied ranking
-        address payable proposalAuthor = ranking < _highestTiedRanking
-            ? payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author)
+        address payable addressToPayOut = ranking < _highestTiedRanking
+            ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
             : payable(creator());
 
-        require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
+        require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
-        Address.sendValue(proposalAuthor, payment);
-        emit PaymentReleased(proposalAuthor, payment);
+        Address.sendValue(addressToPayOut, payment);
+        emit PaymentReleased(addressToPayOut, payment);
     }
 
     /**
@@ -295,7 +312,7 @@ contract RewardsModule is Context {
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
-        require(_shares[ranking] > 0, "RewardsModule: account has no shares");
+        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
         uint256 payment = releasable(token, ranking);
 
@@ -321,15 +338,18 @@ contract RewardsModule is Context {
             "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
         );
 
+        IGovernor.ProposalCore memory rankingProposal =
+            _underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]);
+
         // send rewards to winner only if the ranking is higher than the highest tied ranking
-        address payable proposalAuthor = ranking < _highestTiedRanking
-            ? payable(_underlyingContest.getProposal(_sortedProposalIds[_tiedAdjustedRankingPosition[ranking]]).author)
+        address payable addressToPayOut = ranking < _highestTiedRanking
+            ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
             : payable(creator());
 
-        require(proposalAuthor != address(0), "RewardsModule: account is the zero address");
+        require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
-        SafeERC20.safeTransfer(token, proposalAuthor, payment);
-        emit ERC20PaymentReleased(token, proposalAuthor, payment);
+        SafeERC20.safeTransfer(token, addressToPayOut, payment);
+        emit ERC20PaymentReleased(token, addressToPayOut, payment);
     }
 
     function withdrawRewards() public virtual {
