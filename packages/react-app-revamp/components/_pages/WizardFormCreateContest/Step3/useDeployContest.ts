@@ -8,6 +8,7 @@ import { parseEther } from "ethers/lib/utils";
 import { useNetwork, useSigner } from "wagmi";
 
 import { removeFromLocalStorage } from "@helpers/localStorage";
+import { isSupabaseConfigured } from "@helpers/database";
 import useContestsIndex from "@hooks/useContestsIndex";
 import { CustomError } from "types/error";
 import { useStore } from "../store";
@@ -163,12 +164,7 @@ export function useDeployContest(form: any) {
         });
       }
 
-      if (
-        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      ) {
+      if (isSupabaseConfigured) {
         indexContest({
           ...values,
           contractAddress: contractContest.address,

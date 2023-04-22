@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import getPagination from "@helpers/getPagination";
 import ListContests from "@components/_pages/ListContests";
 import { getPastContests, ITEMS_PER_PAGE } from "lib/contests";
+import { isSupabaseConfigured } from "@helpers/database";
 
 function useContests(initialData: any) {
   const [page, setPage] = useState(0);
@@ -54,10 +55,7 @@ const Page: NextPage = props => {
 
       <div className="container mx-auto pt-10">
         <h1 className="sr-only">Past contests</h1>
-        {process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? (
+        {isSupabaseConfigured ? (
           <ListContests
             isFetching={isFetching}
             itemsPerPage={ITEMS_PER_PAGE}
@@ -88,12 +86,7 @@ const Page: NextPage = props => {
 };
 
 export async function getStaticProps() {
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
+  if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(0, 7);
