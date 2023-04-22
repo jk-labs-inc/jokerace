@@ -59,8 +59,8 @@ contract ContestTest is Test {
 
         contest = new Contest("test",
                               "hello world",
-                              bytes32(0xd0aa6a4e5b4e13462921d7518eebdb7b297a7877d6cfe078b0c318827392fb55),
-                              bytes32(0xd0aa6a4e5b4e13462921d7518eebdb7b297a7877d6cfe078b0c318827392fb55),
+                              SUB_AND_VOTING_MERKLE_ROOT,
+                              SUB_AND_VOTING_MERKLE_ROOT,
                               numParams);
     }
 
