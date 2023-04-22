@@ -219,9 +219,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         virtual;
 
     /**
-     * @dev See {IGovernor-verifySubmitter}.
+     * @dev See {IGovernor-verifyProposer}.
      */
-    function verifySubmitter(address account, bytes32[] calldata proof) public override returns (bool verified) {
+    function verifyProposer(address account, bytes32[] calldata proof) public override returns (bool verified) {
         if (!addressSubmitterVerified[account]) {
             checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
             addressSubmitterVerified[account] = true;
@@ -264,7 +264,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         override
         returns (uint256)
     {
-        require(verifySubmitter(msg.sender, proof), "Governor: address is not permissioned to submit");
+        require(verifyProposer(msg.sender, proof), "Governor: address is not permissioned to submit");
         validateProposalData(proposal);
         return _castProposal(proposal);
     }
@@ -338,9 +338,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev See {IGovernor-verifyTotalVotes}.
+     * @dev See {IGovernor-verifyVoter}.
      */
-    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
+    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof)
         public
         override
         returns (bool verified)
@@ -363,7 +363,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         returns (uint256)
     {
         address voter = _msgSender();
-        verifyTotalVotes(voter, totalVotes, proof);
+        verifyVoter(voter, totalVotes, proof);
         return _castVote(proposalId, voter, support, numVotes, "");
     }
 

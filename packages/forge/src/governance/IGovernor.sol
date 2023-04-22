@@ -159,9 +159,9 @@ abstract contract IGovernor is IERC165 {
     function creator() public view virtual returns (address);
 
     /**
-     * @dev Verifies that `account` is permissioned to submit via merkle proof.
+     * @dev Verifies that `account` is permissioned to propose via merkle proof.
      */
-    function verifySubmitter(address account, bytes32[] calldata proof) public virtual returns (bool);
+    function verifyProposer(address account, bytes32[] calldata proof) public virtual returns (bool);
 
     /**
      * @dev Verifies that all of the metadata in the proposal is valid.
@@ -190,10 +190,7 @@ abstract contract IGovernor is IERC165 {
     /**
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
      */
-    function verifyTotalVotes(address account, uint256 totalVotes, bytes32[] calldata proof)
-        public
-        virtual
-        returns (bool);
+    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public virtual returns (bool);
 
     /**
      * @dev Cast a vote with a merkle proof.
