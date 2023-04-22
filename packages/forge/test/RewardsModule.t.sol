@@ -76,12 +76,12 @@ contract RewardsModuleTest is Test {
 
         rewardsModulePaysTarget = new RewardsModule(payees,
                                           shares,
-                                          GovernorCountingSimple(contest),
+                                          GovernorSorting(contest),
                                           true);
 
         rewardsModulePaysAuthor = new RewardsModule(payees,
                                           shares,
-                                          GovernorCountingSimple(contest),
+                                          GovernorSorting(contest),
                                           false);
     }
 

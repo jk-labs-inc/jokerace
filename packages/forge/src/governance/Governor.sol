@@ -10,7 +10,7 @@ import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
 import "@openzeppelin/utils/Context.sol";
 import "./IGovernor.sol";
-import "./extensions/GovernorMerkleVotes.sol";
+import "./GovernorMerkleVotes.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
