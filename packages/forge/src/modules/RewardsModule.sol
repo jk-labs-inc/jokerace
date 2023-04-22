@@ -398,6 +398,14 @@ contract RewardsModule is Context {
             // if on first item, set lastTotalVotes and continue
             if (i == 0) {
                 lastTotalVotes = currentTotalVotes;
+                
+                // if on last item, then the value at the current index is 
+                // the last iteration of the last ranking's value
+                if (i + 1 == _sortedProposalIds.length) {
+                    _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i;
+                    _lowestRanking = rankingBeingChecked;
+                }
+
                 continue;
             }
 
@@ -414,7 +422,7 @@ contract RewardsModule is Context {
             }
             // otherwise, mark that the last iteration of this ranking's value is at the index
             // above the current index in the sorted list, then increment the ranking being checked
-            if (!(currentTotalVotes == lastTotalVotes)) {
+            if (currentTotalVotes != lastTotalVotes) {
                 // index we last decremented from is the last iteration of the current rank's value
                 _tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;
                 rankingBeingChecked++;
