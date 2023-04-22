@@ -10,19 +10,14 @@
   ],
   "private": true,
   "scripts": {
-    "react-app-revamp:build": "yarn workspace @scaffold-eth/react-app-revamp build",
-    "react-app-revamp:export": "yarn workspace @scaffold-eth/react-app-revamp export",
-    "react-app-revamp:dev": "yarn workspace @scaffold-eth/react-app-revamp dev",
-    "react-app-revamp:lint": "yarn workspace @scaffold-eth/react-app-revamp lint",
-    "react-app-revamp:start": "yarn workspace @scaffold-eth/react-app-revamp start",
-    "react-app-revamp:test": "yarn workspace @scaffold-eth/react-app-revamp test",
     "dev": "yarn workspace @scaffold-eth/react-app-revamp dev",
     "format": "yarn workspace @scaffold-eth/forge forgeformat",
     "test": "yarn workspace @scaffold-eth/forge forgetest",
     "forgebuild": "yarn workspace @scaffold-eth/forge forgebuild",
     "deploy": "yarn workspace @scaffold-eth/forge forgebuildandcopy",
     "coverage": "yarn workspace @scaffold-eth/forge forgecoverage",
-    "smartcheck": "yarn format && yarn test && yarn deploy",
+    "smartcheck": "yarn format && yarn test -vv && yarn deploy",
+    "fecheck": "turbo build",
     "postinstall": "husky install"
   },
   "workspaces": [
