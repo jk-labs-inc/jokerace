@@ -40,6 +40,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
 
+    /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
+    error TooManyMetadatas();
+
     /**
      * @dev Restrict access of functions to the governance executor, which may be the Governor itself or a timelock
      * contract, as specified by {_executor}. This generally means that function with this modifier must be voted on and
@@ -245,10 +248,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
                 );
                 require(proposal.safeMetadata.signers.length != 0);
             } else {
-                // TODO: revert with an error
+                revert TooManyMetadatas();
             }
         }
-        // TODO: make this more robust? or just replicate similar logic above?
         require(bytes(proposal.description).length != 0, "Governor: empty proposal");
         return true;
     }
@@ -276,7 +278,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         return _castProposal(proposal);
     }
 
-    // TODO: make sure I didn't lose any logic here
     function _castProposal(ProposalCore memory proposal) internal virtual returns (uint256) {
         require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
         require(

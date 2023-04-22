@@ -164,7 +164,7 @@ abstract contract IGovernor is IERC165 {
     function verifySubmitter(address account, bytes32[] calldata proof) public virtual returns (bool);
 
     /**
-     * @dev Verifies that all of the metadata in the proposal are valid.
+     * @dev Verifies that all of the metadata in the proposal is valid.
      */
     function validateProposalData(ProposalCore memory proposal) public virtual returns (bool);
 
