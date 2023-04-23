@@ -1,4 +1,4 @@
-# jokedao
+# jokedao • [![Forge Tests](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml) ![Vercel Build](https://vercelbadge.vercel.app/api/JokeDAO/JokeDaoV2Dev)
 
 Check out the live site at [jokedao.io](https://jokedao.io)!
 
@@ -7,7 +7,6 @@ You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io).
 ## Pre-requisites
 - `yarn` installed
 - `node` version >= `17.0.0`
-- Have an Ethereum wallet (like MetaMask for instance)
 ## Before you start
 - Navigate to `packages/react-app-revamp` (the v2 site package)
 - Install dependencies with `yarn install`
@@ -64,4 +63,5 @@ You will also need to do two more things if the ABI is changed:
 - zustand
 - [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
 
+JokeDAO V2 front-end is hosted on [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
 JokeDAO V2 front-end is hosted on [Vercel](https://vercel.com/?utm_source=jokedao&utm_campaign=oss).
