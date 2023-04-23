@@ -197,7 +197,9 @@ contract RewardsModule is Context {
 
         uint256 payment = releasable(ranking);
 
-        require(payment != 0, "RewardsModule: account is not due payment");
+        require(
+            payment != 0, "RewardsModule: account isn't due payment as there aren't any native in the module to pay out"
+        );
 
         // _totalReleased is the sum of all values in _released.
         // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
@@ -247,7 +249,9 @@ contract RewardsModule is Context {
 
         uint256 payment = releasable(token, ranking);
 
-        require(payment != 0, "RewardsModule: account is not due payment");
+        require(
+            payment != 0, "RewardsModule: account isn't due payment as there aren't any native in the module to pay out"
+        );
 
         // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
         // If "_erc20TotalReleased[token] += payment" does not overflow, then

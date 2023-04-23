@@ -35,24 +35,39 @@ contract ContestTest is Test {
         bytes32(0xd0aa6a4e5b4e13462921d7518eebdb7b297a7877d6cfe078b0c318827392fb55);
     address public constant PERMISSIONED_ADDRESS_1 = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
     address public constant PERMISSIONED_ADDRESS_2 = 0x185a4dc360CE69bDCceE33b3784B0282f7961aea;
+    address public constant UNPERMISSIONED_ADDRESS_1 = 0xd698e31229aB86334924ed9DFfd096a71C686900;
     bytes32[] public proof1 = [bytes32(0x005a0033b5a1ac5c2872d7689e0f064ad6d2287ab98439e44c822e1c46530033)];
     bytes32[] public proof2 = [bytes32(0xceeae64152a2deaf8c661fccd5645458ba20261b16d2f6e090fe908b0ac9ca88)];
 
-    address public constant TARGET_ADDRESS = PERMISSIONED_ADDRESS_1;
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
-    IGovernor.ProposalCore public firstProposal = IGovernor.ProposalCore({
+
+    IGovernor.ProposalCore public firstProposalPA1 = IGovernor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
-        description: "proposalDescription",
+        description: "firstProposalPA1",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: TARGET_ADDRESS}),
+        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
-    IGovernor.ProposalCore public secondProposal = IGovernor.ProposalCore({
-        author: PERMISSIONED_ADDRESS_2,
-        description: "secondProposalDescription",
+    IGovernor.ProposalCore public secondProposalPA1 = IGovernor.ProposalCore({
+        author: PERMISSIONED_ADDRESS_1,
+        description: "secondProposalPA1",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: TARGET_ADDRESS}),
+        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
+        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+    });
+    IGovernor.ProposalCore public firstProposalPA2 = IGovernor.ProposalCore({
+        author: PERMISSIONED_ADDRESS_2,
+        description: "firstProposalPA2",
+        exists: true,
+        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
+        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+    });
+    IGovernor.ProposalCore public unpermissionedAuthorProposal1 = IGovernor.ProposalCore({
+        author: UNPERMISSIONED_ADDRESS_1,
+        description: "unpermissionedAuthorProposal1",
+        exists: true,
+        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
 
@@ -99,40 +114,52 @@ contract ContestTest is Test {
     // PROPOSING AND VOTING
 
     function testValidate() public {
-        bool validated = contest.validateProposalData(firstProposal);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        bool validated = contest.validateProposalData(firstProposalPA1);
 
         assertEq(validated, true);
     }
 
     function testPropose() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal, proof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, proof1);
 
-        vm.stopPrank();
-
-        assertEq(proposalId, 9149144462388457807795671981091534450435894905692715172341444439264072116108);
+        assertEq(proposalId, 15258975670772814556071403711766991884286016301895103318170288180735769227159);
     }
 
     function testProposeWithoutProof() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-
         vm.warp(1681650001);
-        uint256 firstProposalId = contest.propose(firstProposal, proof1);
-        uint256 secondProposalId = contest.proposeWithoutProof(secondProposal);
-
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        uint256 firstProposalId = contest.propose(firstProposalPA1, proof1);
+        uint256 secondProposalId = contest.proposeWithoutProof(secondProposalPA1);
         vm.stopPrank();
 
-        assertEq(firstProposalId, 9149144462388457807795671981091534450435894905692715172341444439264072116108);
-        assertEq(secondProposalId, 37850683397201321462788695266385473490590773890100139196129748091543628730883);
+        assertEq(firstProposalId, 15258975670772814556071403711766991884286016301895103318170288180735769227159);
+        assertEq(secondProposalId, 108189191310393546759417693285315713017966124403504491979578796487893421625041);
+    }
+
+    function testProposeAuthorIsntSender() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        vm.expectRevert(bytes("Governor: the proposal author must be msg.sender"));
+        contest.propose(unpermissionedAuthorProposal1, proof1);
+    }
+
+    function testProposeWithoutProofAuthorIsntSender() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, proof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        vm.expectRevert(bytes("Governor: the proposal author must be msg.sender"));
+        contest.proposeWithoutProof(unpermissionedAuthorProposal1);
     }
 
     function testVote() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal, proof1);
+        uint256 proposalId = contest.propose(firstProposalPA1, proof1);
         vm.warp(1681660001);
         uint256 totalVotes = contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof1);
 
@@ -145,7 +172,7 @@ contract ContestTest is Test {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal, proof1);
+        uint256 proposalId = contest.propose(firstProposalPA1, proof1);
         vm.warp(1681660001);
         contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof1);
         uint256 totalVotesWithoutProof = contest.castVoteWithoutProof(proposalId, 0, 1000000000000000000);

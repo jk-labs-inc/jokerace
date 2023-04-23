@@ -233,6 +233,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-validateProposalData}.
      */
     function validateProposalData(ProposalCore memory proposal) public virtual override returns (bool dataValidated) {
+        require(proposal.author == msg.sender, "Governor: the proposal author must be msg.sender");
         for (uint256 index = 0; index < METADATAS_COUNT; index++) {
             Metadatas currentMetadata = Metadatas(index);
             if (currentMetadata == Metadatas.Target) {

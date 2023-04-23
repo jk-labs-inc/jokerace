@@ -43,16 +43,16 @@ contract RewardsModuleTest is Test {
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
 
-    IGovernor.ProposalCore public firstProposal = IGovernor.ProposalCore({
+    IGovernor.ProposalCore public firstProposalPA1 = IGovernor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
-        description: "proposalDescription",
+        description: "firstProposalPA1",
         exists: true,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
-    IGovernor.ProposalCore public secondProposal = IGovernor.ProposalCore({
+    IGovernor.ProposalCore public firstProposalPA2 = IGovernor.ProposalCore({
         author: PERMISSIONED_ADDRESS_2,
-        description: "secondProposalDescription",
+        description: "firstProposalPA2",
         exists: true,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
@@ -93,7 +93,7 @@ contract RewardsModuleTest is Test {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal, proof1);
+        uint256 proposalId = contest.propose(firstProposalPA1, proof1);
         vm.warp(1681660001);
         contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof1);
 
@@ -111,7 +111,7 @@ contract RewardsModuleTest is Test {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposal, proof1);
+        uint256 proposalId = contest.propose(firstProposalPA1, proof1);
         vm.warp(1681660001);
         contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof1);
 
@@ -128,9 +128,9 @@ contract RewardsModuleTest is Test {
     function testReleaseToAuthor2() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposal, proof1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, proof1);
         vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(secondProposal, proof2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, proof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.castVote(proposalId1, 0, 10000000000000000000, 1000000000000000000, proof1);
@@ -148,9 +148,9 @@ contract RewardsModuleTest is Test {
     function testReleaseToTarget2() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposal, proof1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, proof1);
         vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(secondProposal, proof2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, proof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.castVote(proposalId1, 0, 10000000000000000000, 1000000000000000000, proof1);
