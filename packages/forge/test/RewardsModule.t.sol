@@ -33,24 +33,26 @@ contract RewardsModuleTest is Test {
             }
         }
     */
-    address public constant PERMISSIONED_ADDRESS = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
     bytes32 public constant SUB_AND_VOTING_MERKLE_ROOT =
         bytes32(0xd0aa6a4e5b4e13462921d7518eebdb7b297a7877d6cfe078b0c318827392fb55);
-    bytes32[] public proof = [bytes32(0x005a0033b5a1ac5c2872d7689e0f064ad6d2287ab98439e44c822e1c46530033)];
+    address public constant PERMISSIONED_ADDRESS_1 = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
+    address public constant PERMISSIONED_ADDRESS_2 = 0x185a4dc360CE69bDCceE33b3784B0282f7961aea;
+    bytes32[] public proof1 = [bytes32(0x005a0033b5a1ac5c2872d7689e0f064ad6d2287ab98439e44c822e1c46530033)];
+    bytes32[] public proof2 = [bytes32(0xceeae64152a2deaf8c661fccd5645458ba20261b16d2f6e090fe908b0ac9ca88)];
 
-    address public constant TARGET_ADDRESS = 0xd698e31229aB86334924ed9DFfd096a71C686900;
+    address public constant TARGET_ADDRESS = PERMISSIONED_ADDRESS_1;
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
 
     IGovernor.ProposalCore public proposal = IGovernor.ProposalCore({
-        author: PERMISSIONED_ADDRESS,
+        author: PERMISSIONED_ADDRESS_1,
         description: "proposalDescription",
         exists: true,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: TARGET_ADDRESS}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
     IGovernor.ProposalCore public secondProposal = IGovernor.ProposalCore({
-        author: PERMISSIONED_ADDRESS,
+        author: PERMISSIONED_ADDRESS_2,
         description: "secondProposalDescription",
         exists: true,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: TARGET_ADDRESS}),
@@ -66,7 +68,7 @@ contract RewardsModuleTest is Test {
     // SETUP
 
     function setUp() public {
-        vm.prank(PERMISSIONED_ADDRESS);
+        vm.prank(PERMISSIONED_ADDRESS_1);
 
         contest = new Contest("test",
                               "hello world",
@@ -88,12 +90,12 @@ contract RewardsModuleTest is Test {
     // REWARDS
 
     function testReleaseToAuthor1() public {
-        vm.startPrank(PERMISSIONED_ADDRESS);
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(proposal, proof);
+        uint256 proposalId = contest.propose(proposal, proof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof);
+        contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -101,16 +103,16 @@ contract RewardsModuleTest is Test {
 
         vm.stopPrank();
 
-        assertEq(PERMISSIONED_ADDRESS.balance, 50);
+        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
     function testReleaseToTarget1() public {
-        vm.startPrank(PERMISSIONED_ADDRESS);
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(proposal, proof);
+        uint256 proposalId = contest.propose(proposal, proof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof);
+        contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
