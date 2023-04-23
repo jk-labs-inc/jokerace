@@ -1,4 +1,4 @@
-name: forge_test
+name: forge_tests
 
 on: push
 
