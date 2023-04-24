@@ -136,8 +136,8 @@ const Page: NextPage = props => {
           </Link>
         </div>
       </div>
-      <div className="pl-16 pr-16 gap-28 mt-32 md:flex md:flex-col 2xl:pl-28 2xl:pr-0 2xl:flex-row animate-fadeInLanding">
-        <div className="grid grid-cols-2 md:flex gap-10 2xl:flex-col">
+      <div className="pl-16 gap-10 mt-32 md:flex md:flex-col 2xl:pl-28  2xl:flex-row animate-fadeInLanding">
+        <div className="w-1/4 md:w-full 2xl:w-1/5 md:flex gap-10 2xl:flex-col">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
               1
@@ -185,12 +185,12 @@ const Page: NextPage = props => {
             </ul>
           </div>
         </div>
-        <div className="flex flex-row items-center gap-10">
-          <div className="flex flex-col gap-6">
-            <div className="p-10 bg-[url('/explainer/bg-1.png')] bg-no-repeat transform hover:scale-120 transition-transform duration-500">
+        <div className="w-full md:w-full 2xl:w-4/5 flex flex-row items-center">
+          <div className="flex flex-col">
+            <div className="p-14 bg-[url('/explainer/bg-1.png')] bg-no-repeat bg-contain  transform hover:scale-120 transition-transform duration-500">
               <p className="uppercase font-sabo text-[20px] text-center">
                 grants,
-                <br /> hackathons, <br /> bounties, remix contests
+                <br /> hackathons, awards <br /> bounties, remix contests
               </p>
               <div className="flex items-center flex-col mt-6">
                 <div className="flex items-center gap-3">
@@ -210,14 +210,14 @@ const Page: NextPage = props => {
                 </div>
               </div>
             </div>
-            <div className="p-10 bg-[url('/explainer/bg-3.png')] bg-no-repeat ml-5 transform hover:scale-120 transition-transform duration-500">
+            <div className="p-14 bg-[url('/explainer/bg-3.png')] bg-no-repeat bg-contain ml-8 transform hover:scale-120 transition-transform duration-500">
               <p className="uppercase font-sabo text-[20px] text-center">
                 proposals, <br />
                 budgets, drafts, <br />
                 amendments
               </p>
               <div className="flex items-center flex-col mt-6">
-                <div className="flex gap-3">
+                <div className="flex">
                   <div className="flex flex-col items-center gap-3">
                     <p className="text-[16px] font-bold">
                       a core team or creator submits <br />
@@ -237,19 +237,17 @@ const Page: NextPage = props => {
               </div>
             </div>
           </div>
-          <div className="bg-[url('/explainer/bg-2.png')] bg-no-repeat bg-auto transform hover:scale-120 transition-transform duration-500">
-            <div className="flex flex-col items-center p-20 gap-3">
-              <p className="uppercase font-sabo text-[20px] text-center">
-                elections,
-                <br /> feature requests, <br /> pulse checks, giveaways
-              </p>
-              <p className="text-[16px] font-bold text-center">
-                your community submits (requests for <br />
-                jobs, features, classes, content, etc) <br /> and then they vote on favorites
-              </p>
-              <img src="/explainer/Arrow5.svg" alt="donut" />
-              <img src="/explainer/Ellipse4.svg" alt="donut" className="-mt-[60px]" />
-            </div>
+          <div className="p-14 flex flex-col items-center gap-3 bg-[url('/explainer/bg-2.png')] bg-no-repeat bg-contain  transform hover:scale-120 transition-transform duration-500">
+            <p className="uppercase font-sabo text-[20px] text-center">
+              elections,
+              <br /> feature requests, <br /> pulse checks, giveaways
+            </p>
+            <p className="text-[16px] font-bold text-center">
+              your community submits (requests for <br />
+              jobs, features, classes, content, etc) <br /> and then they vote on favorites
+            </p>
+            <img src="/explainer/Arrow5.svg" alt="donut" />
+            <img src="/explainer/Ellipse4.svg" alt="donut" className="-mt-[60px]" />
           </div>
         </div>
       </div>
