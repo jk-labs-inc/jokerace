@@ -1,4 +1,4 @@
-# jokedao • [![Forge Tests](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml) ![Vercel Build](https://vercelbadge.vercel.app/api/JokeDAO/JokeDaoV2Dev)
+# jokedao • [![Forge Tests](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml)
 
 Check out the live site at [jokedao.io](https://jokedao.io)!
 
