@@ -1,3 +1,4 @@
+import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -26,7 +27,7 @@ export function useUser() {
     setSnapshotTaken,
     setError: setContestError,
   } = useContestStore(state => state);
-  const { chain, chains } = useNetwork();
+  const { chain } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
 

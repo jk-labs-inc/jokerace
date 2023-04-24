@@ -182,7 +182,11 @@ const LayoutViewContest = (props: any) => {
           votesOpen &&
           votesClose &&
           [CONTEST_STATUS.SUBMISSIONS_OPEN, CONTEST_STATUS.VOTING_OPEN].includes(contestStatus) && (
-            <div className="animate-appear text-center text-xs sticky bg-neutral-0 border-b border-neutral-4 border-solid top-10 z-10 font-bold -mx-5 px-5 md:hidden w-screen py-1">
+            <div
+              className={`animate-appear text-center text-xs sticky bg-neutral-0 border-b border-neutral-4 border-solid ${
+                pathname === ROUTE_CONTEST_PROPOSAL ? "top-0" : "top-10"
+              } z-10 font-bold -mx-5 px-5 md:hidden w-screen py-1`}
+            >
               <p className="text-center">
                 {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
                   <>
@@ -312,7 +316,7 @@ const LayoutViewContest = (props: any) => {
                         />
                       </span>
                       <div className="ml-auto">
-                        <ShareDropdown contestAddress={address} chain={chainName} />
+                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                       </div>
                     </div>
 

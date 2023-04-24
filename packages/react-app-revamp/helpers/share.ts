@@ -1,24 +1,22 @@
 import { copyToClipboard } from "./copyToClipboard";
 
-export const generateLensShareUrl = (contestAddress: string, chain: string) => {
+export const generateLensShareUrl = (contestName: string, contestAddress: string, chain: string) => {
   const baseLensterUrl = "https://lenster.xyz/?";
-  const text = encodeURIComponent("come check out this contest on jokedao!");
+  const text = encodeURIComponent(`just launched a contest on joke, ${contestName} — come play to win`);
   const shareUrl = encodeURIComponent(`https://jokedao.io/contest/${chain}/${contestAddress}`);
-  const hashtags = encodeURIComponent("jokedao,lens,web3");
 
-  const lensShareUrl = `${baseLensterUrl}text=${text}&url=${shareUrl}&hashtags=${hashtags}`;
+  const lensShareUrl = `${baseLensterUrl}text=${text}&url=${shareUrl}`;
 
   return lensShareUrl;
 };
 
-export const generateTwitterShareUrl = (contestAddress: string, chain: string) => {
+export const generateTwitterShareUrl = (contestName: string, contestAddress: string, chain: string) => {
   const baseTwitterUrl = "https://twitter.com/intent/tweet?";
-  const text = encodeURIComponent("come check out this contest on jokedao!");
+  const text = encodeURIComponent(`just launched a contest on joke, ${contestName} — come play to win`);
   const shareUrl = encodeURIComponent(`https://jokedao.io/contest/${chain}/${contestAddress}`);
-  const hashtags = encodeURIComponent("jokedao,web3");
   const viaParam = encodeURIComponent("jokedao_");
 
-  const twitterShareUrl = `${baseTwitterUrl}text=${text}&url=${shareUrl}&hashtags=${hashtags}&via=${viaParam}`;
+  const twitterShareUrl = `${baseTwitterUrl}text=${text}&url=${shareUrl}&via=${viaParam}`;
 
   return twitterShareUrl;
 };

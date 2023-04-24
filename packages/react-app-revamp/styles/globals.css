@@ -175,8 +175,8 @@
     @apply -mt-0.5 -ml-0.5;
   }
 
-  .no-marker li::marker {
-    content: "";
+  .no-marker li {
+    list-style: none;
   }
 
   .form-field--disabled {
