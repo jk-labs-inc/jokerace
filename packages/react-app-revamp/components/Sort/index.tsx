@@ -54,7 +54,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
     }
   };
 
-  if (pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return;
+  if (pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
 
   return (
     <Menu as="div" className="relative inline-block text-left text-[18px]">
