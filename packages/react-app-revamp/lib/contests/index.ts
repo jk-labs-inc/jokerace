@@ -4,6 +4,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { alchemyRpcUrls, fetchBalance, readContract } from "@wagmi/core";
+import { BigNumber } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
 import { SearchOptions } from "types/search";
 
@@ -69,97 +70,148 @@ const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: numb
   }
 };
 
-async function processContestData(contest: any, userAddress: string) {
-  const chain = chains.find(
-    c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
-  );
+const processContestData = async (contest: any, userAddress: string) => {
+  try {
+    const chain = chains.find(
+      c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
+    );
 
-  const contractConfigPromise = getContractConfig(contest.address, contest.network_name, chain?.id ?? 0);
+    const contractConfigPromise = getContractConfig(contest.address, contest.network_name, chain?.id ?? 0).catch(
+      error => {
+        console.error("Error getting contract config:", error);
+        return null;
+      },
+    );
 
-  const fetchBalances = async () => {
-    try {
-      const balanceToVotePromise = fetchUserBalance(userAddress, chain?.id ?? 0, contest.token_address);
-      const balanceToSubmitPromise = fetchUserBalance(userAddress, chain?.id ?? 0);
+    const fetchBalances = async () => {
+      if (!userAddress) {
+        return {
+          qualifiedToVote: false,
+          qualifiedToSubmit: false,
+        };
+      }
 
-      const [balanceToVote, balanceToSubmit] = await Promise.all([balanceToVotePromise, balanceToSubmitPromise]);
+      try {
+        const balanceToVotePromise = fetchUserBalance(userAddress, chain?.id ?? 0, contest.token_address).catch(
+          error => {
+            console.error("Error fetching user balance to vote:", error);
+            return { value: BigNumber.from(0) };
+          },
+        );
+        const balanceToSubmitPromise = fetchUserBalance(userAddress, chain?.id ?? 0).catch(error => {
+          console.error("Error fetching user balance to submit:", error);
+          return { value: BigNumber.from(0) };
+        });
 
-      const isSubmissionOpen =
-        new Date(contest.start_at).getTime() <= Date.now() && Date.now() <= new Date(contest.vote_start_at).getTime();
+        const [balanceToVote, balanceToSubmit] = await Promise.all([balanceToVotePromise, balanceToSubmitPromise]);
 
-      return {
-        qualifiedToVote: balanceToVote.value.gt(0),
-        qualifiedToSubmit: isSubmissionOpen && balanceToSubmit.value.gt(0),
-      };
-    } catch (error) {
-      console.error("Error fetching balances:", error);
-      return {
-        qualifiedToVote: false,
-        qualifiedToSubmit: false,
-      };
-    }
-  };
+        const isSubmissionOpen =
+          new Date(contest.start_at).getTime() <= Date.now() && Date.now() <= new Date(contest.vote_start_at).getTime();
 
-  const [contractConfig, { qualifiedToVote, qualifiedToSubmit }] = await Promise.all([
-    contractConfigPromise,
-    fetchBalances(),
-  ]);
+        return {
+          qualifiedToVote: balanceToVote.value.gt(0),
+          qualifiedToSubmit: isSubmissionOpen && balanceToSubmit.value.gt(0),
+        };
+      } catch (error) {
+        console.error("Error fetching balances:", error);
+        return {
+          qualifiedToVote: false,
+          qualifiedToSubmit: false,
+        };
+      }
+    };
 
-  if (
-    contractConfig &&
-    contractConfig.contractInterface?.filter(el => el.name === "officialRewardsModule").length > 0
-  ) {
-    const contestRewardModuleAddress = await readContract({
-      ...contractConfig,
-      functionName: "officialRewardsModule",
-    });
-    if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
-      contest.rewards = null;
-    } else {
-      const abiRewardsModule = await getRewardsModuleContractVersion(
-        contestRewardModuleAddress.toString(),
-        contest.network_name,
-      );
+    const [contractConfig, { qualifiedToVote, qualifiedToSubmit }] = await Promise.all([
+      contractConfigPromise,
+      fetchBalances(),
+    ]);
 
-      if (abiRewardsModule === null) {
+    if (
+      contractConfig &&
+      contractConfig.contractInterface?.filter(el => el.name === "officialRewardsModule").length > 0
+    ) {
+      const contestRewardModuleAddress = await readContract({
+        ...contractConfig,
+        functionName: "officialRewardsModule",
+      }).catch(error => {
+        console.error("Error reading contract:", error);
+        return "0x0000000000000000000000000000000000000000";
+      });
+      if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
         contest.rewards = null;
       } else {
-        const [winners, tokenBalances] = await Promise.all([
-          readContract({
-            addressOrName: contestRewardModuleAddress.toString(),
-            contractInterface: abiRewardsModule,
-            chainId: chain?.id,
-            functionName: "getPayees",
-          }),
-          fetchTokenBalances(contest, contestRewardModuleAddress.toString()),
-        ]);
+        const abiRewardsModule = await getRewardsModuleContractVersion(
+          contestRewardModuleAddress.toString(),
+          contest.network_name,
+        ).catch(error => {
+          console.error("Error getting rewards module contract version:", error);
+          return null;
+        });
 
-        if (tokenBalances && tokenBalances.length > 0) {
-          const firstToken = await fetchFirstToken(
-            contestRewardModuleAddress.toString(),
-            chain?.id ?? 0,
-            tokenBalances[0].contractAddress,
-          );
+        if (abiRewardsModule === null) {
+          contest.rewards = null;
+        } else {
+          const [winners, tokenBalances] = await Promise.all([
+            readContract({
+              addressOrName: contestRewardModuleAddress.toString(),
+              contractInterface: abiRewardsModule,
+              chainId: chain?.id,
+              functionName: "getPayees",
+            }).catch(error => {
+              console.error("Error reading contract for winners:", error);
+              return [];
+            }),
+            fetchTokenBalances(contest, contestRewardModuleAddress.toString()).catch(error => {
+              console.error("Error fetching token balances:", error);
+              return [];
+            }),
+          ]);
 
-          contest.rewards = {
-            token: {
-              symbol: firstToken?.symbol,
-              value: firstToken?.formatted,
-            },
-            winners: winners.length,
-            numberOfTokens: tokenBalances.length,
-          };
+          if (tokenBalances && tokenBalances.length > 0) {
+            const firstToken = await fetchFirstToken(
+              contestRewardModuleAddress.toString(),
+              chain?.id ?? 0,
+              tokenBalances[0].contractAddress,
+            ).catch(error => {
+              console.error("Error fetching first token balance:", error);
+              return null;
+            });
+
+            if (firstToken) {
+              contest.rewards = {
+                token: {
+                  symbol: firstToken?.symbol,
+                  value: firstToken?.formatted,
+                },
+                winners: winners.length,
+                numberOfTokens: tokenBalances.length,
+              };
+            } else {
+              contest.rewards = null;
+            }
+          } else {
+            contest.rewards = null;
+          }
         }
       }
+    } else {
+      contest.rewards = null;
     }
-  } else {
-    contest.rewards = null;
+
+    contest.qualifiedToVote = qualifiedToVote;
+    contest.qualifiedToSubmit = qualifiedToSubmit;
+
+    return contest;
+  } catch (error) {
+    console.error("Error processing contest data:", error);
+    return {
+      ...contest,
+      rewards: null,
+      qualifiedToVote: false,
+      qualifiedToSubmit: false,
+    };
   }
-
-  contest.qualifiedToVote = qualifiedToVote;
-  contest.qualifiedToSubmit = qualifiedToSubmit;
-
-  return contest;
-}
+};
 
 // Search for contests based on the search options provided, table is contests by default and column is title by default
 export async function searchContests(options: SearchOptions = {}, userAddress?: string) {
@@ -216,6 +268,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
         .gte("end_at", new Date().toISOString())
         .order("end_at", { ascending: true })
         .range(from, to);
+
       const { data, count, error } = result;
       if (error) {
         throw new Error(error.message);
@@ -223,7 +276,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
 
       const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
 
-      return { data: processedData, count };
+      return { data: data, count };
     } catch (e) {
       console.error(e);
     }
