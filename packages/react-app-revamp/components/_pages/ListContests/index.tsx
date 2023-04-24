@@ -8,13 +8,14 @@ import Contest from "./Contest";
 
 interface ListContestsProps {
   status: "error" | "loading" | "success";
-  result?: any;
-  error?: any;
   page: number;
   setPage: any;
   isFetching: boolean;
   itemsPerPage: number;
+  result?: any;
+  error?: any;
   compact?: boolean;
+  onSearchChange?: (value: string) => void;
 }
 
 export const ListContests: FC<ListContestsProps> = ({
@@ -26,6 +27,7 @@ export const ListContests: FC<ListContestsProps> = ({
   itemsPerPage,
   isFetching,
   compact = false,
+  onSearchChange,
 }) => {
   const [sortedData, setSortedData] = useState<any[]>([]);
   const [sorting, setSorting] = useState<Sorting | null>(null);
@@ -125,24 +127,28 @@ export const ListContests: FC<ListContestsProps> = ({
       <>
         <div className="font-bold text-md full-width-grid-cols items-center pie-1ex p-3">
           <h2 className="text-[20px] font-bold font-sabo">Featured Contests</h2>
-          <Search />
+          <Search onSearchChange={onSearchChange} />
           <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
         </div>
-        <div
-          className={`grid ${
-            fadeBg ? "opacity-50" : "opacity-100"
-          } text-[16px] transition-opacity duration-300 ease-in-out`}
-        >
-          {loading
-            ? placeholders.map((_, index) => (
-                <Contest key={`placeholder-contest-${index}`} contest={{}} compact={compact} loading={loading} />
-              ))
-            : sortedData
-                .slice(0, 4)
-                .map((contest: any) => (
-                  <Contest key={`live-contest-${contest.id}`} contest={contest} compact={compact} loading={loading} />
-                ))}
-        </div>
+        {!isFetching && result?.count === 0 ? (
+          <div className="text-neutral-9 text-center italic mb-6 animate-appear mt-12">No contests found</div>
+        ) : (
+          <div
+            className={`grid ${
+              fadeBg ? "opacity-50" : "opacity-100"
+            } text-[16px] transition-opacity duration-300 ease-in-out`}
+          >
+            {loading
+              ? placeholders.map((_, index) => (
+                  <Contest key={`placeholder-contest-${index}`} contest={{}} compact={compact} loading={loading} />
+                ))
+              : sortedData
+                  .slice(0, 4)
+                  .map((contest: any) => (
+                    <Contest key={`live-contest-${contest.id}`} contest={contest} compact={compact} loading={loading} />
+                  ))}
+          </div>
+        )}
       </>
     );
   }
@@ -164,7 +170,6 @@ export const ListContests: FC<ListContestsProps> = ({
                   🃏
                   <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>
                 </span>
-                {compact ? <Search /> : null}
                 <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
               </div>
               <div

@@ -15,17 +15,14 @@ const LandingHeader = () => {
     <header className="py-4 pl-8 pr-8 max-w-[1350px] flex items-center gap-20 2xl:pl-16">
       <Link href="/">
         <div>
-          <h1 className="font-sabo text-primary-10 text-5xl md:text-7xl">JOKERACE</h1>
+          <h1 className="font-sabo text-primary-10 text-5xl md:text-[80px]">JOKERACE</h1>
           <p className="text-primary-10 text-700 pl-12 font-bold mt-[-10px] text-[24px]">noun. US /dʒoʊ·​kreɪs/</p>
         </div>
       </Link>
 
-      <div className="flex items-center gap-5">
+      <div className="flex items-center gap-5 text-[18px] font-bold">
         <Link href={ROUTE_CREATE_CONTEST}>
-          <Button
-            className="hidden xs:flex h-10 text-[18px] font-bold"
-            intent={`${isConnected ? "primary" : "neutral-outline"}`}
-          >
+          <Button className="hidden xs:flex h-10" intent={`${isConnected ? "primary" : "neutral-outline"}`}>
             Create contest
           </Button>
         </Link>

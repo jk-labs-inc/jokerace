@@ -1,10 +1,11 @@
 //@ts-ignore
+import { Theme } from "@rainbow-me/rainbowkit";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "./../../tailwind.config";
 
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
-export const jokeDAOTheme = {
+export const jokeDAOTheme: Theme = {
   fonts: {
     body: tailwindTheme.fontFamily.sans.toString(),
   },

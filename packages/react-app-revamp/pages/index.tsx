@@ -5,22 +5,35 @@ import Button from "@components/UI/Button";
 import ListContests from "@components/_pages/ListContests";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { useQuery } from "@tanstack/react-query";
-import { getLiveContests, ITEMS_PER_PAGE } from "lib/contests";
+import { getLiveContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
-function useContests(initialData: any) {
+function useContests(initialData: any, searchValue: string) {
   const [page, setPage] = useState(0);
   const { address } = useAccount();
 
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
-  const { status, data, error, isFetching, refetch } = useQuery(["liveContests", page, address], () =>
-    getLiveContests(page, 4, address),
+  const { status, data, error, isFetching, refetch } = useQuery(
+    [searchValue ? "searchedContests" : "liveContests", page, address, searchValue],
+    () =>
+      searchValue
+        ? searchContests(
+            {
+              searchString: searchValue,
+              pagination: {
+                currentPage: page,
+                itemsPerPage: 4,
+              },
+            },
+            address,
+          )
+        : getLiveContests(page, 4, address),
   );
 
   return {
@@ -36,6 +49,8 @@ function useContests(initialData: any) {
 
 const Page: NextPage = props => {
   const initialData = props;
+  const [searchValue, setSearchValue] = useState("");
+
   const {
     page,
     setPage,
@@ -45,7 +60,7 @@ const Page: NextPage = props => {
     isFetching,
     refetch,
     //@ts-ignore
-  } = useContests(initialData?.data);
+  } = useContests(initialData?.data, searchValue);
 
   useEffect(() => {
     refetch();
@@ -97,6 +112,7 @@ const Page: NextPage = props => {
               setPage={setPage}
               result={data}
               compact={true}
+              onSearchChange={setSearchValue}
             />
           ) : (
             <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
@@ -120,14 +136,14 @@ const Page: NextPage = props => {
           </Link>
         </div>
       </div>
-      <div className="pl-16 pr-16 gap-10 mt-32 md:flex md:flex-col 2xl:pl-28 2xl:pr-0 2xl:flex-row animate-fadeInLanding">
+      <div className="pl-16 pr-16 gap-28 mt-32 md:flex md:flex-col 2xl:pl-28 2xl:pr-0 2xl:flex-row animate-fadeInLanding">
         <div className="grid grid-cols-2 md:flex gap-10 2xl:flex-col">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
               1
             </div>
             <p className="text-[24px] text-primary-10 font-bold">create a prompt</p>
-            <ul className="list-disc list-inside text-[16px] font-bold">
+            <ul className="list-disc list-inside text-[16px] font-bold list-explainer">
               <li>"submit a proposal"</li>
               <li>"design our new logo"</li>
               <li>"what features should we build?"</li>
@@ -138,7 +154,7 @@ const Page: NextPage = props => {
               2
             </div>
             <p className="text-[24px] text-primary-10 font-bold">pick who can submit</p>
-            <ul className="list-disc list-inside text-[16px] font-bold">
+            <ul className="list-disc list-inside text-[16px] font-bold list-explainer">
               <li>let anyone submit responses—</li>
               <li>or set requirements for who gets to respond.</li>
             </ul>
@@ -148,7 +164,7 @@ const Page: NextPage = props => {
               3
             </div>
             <p className="text-[24px] text-primary-10 font-bold">pick who can vote</p>
-            <ul className="list-disc list-inside text-[16px] font-bold">
+            <ul className="list-disc list-inside text-[16px] font-bold list-explainer">
               <li>set requirements for who gets to vote</li>
               <li>pick how many votes they each get.</li>
             </ul>
@@ -162,14 +178,14 @@ const Page: NextPage = props => {
               <br />
               reward the winners
             </p>
-            <ul className="list-disc list-inside text-[16px] font-bold">
+            <ul className="list-disc list-inside text-[16px] font-bold list-explainer">
               <li>set a rewards pool to winners,</li>
               <li>decide what percent each rank gets</li>
               <li>invite others to fund the pool too</li>
             </ul>
           </div>
         </div>
-        <div className="flex flex-row items-center gap-20">
+        <div className="flex flex-row items-center gap-10">
           <div className="flex flex-col gap-6">
             <div className="p-10 bg-[url('/explainer/bg-1.png')] bg-no-repeat transform hover:scale-120 transition-transform duration-500">
               <p className="uppercase font-sabo text-[20px] text-center">
@@ -221,17 +237,19 @@ const Page: NextPage = props => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center p-20 gap-3 bg-[url('/explainer/bg-2.png')] bg-no-repeat transform hover:scale-120 transition-transform duration-500">
-            <p className="uppercase font-sabo text-[20px] text-center">
-              elections,
-              <br /> feature requests, <br /> pulse checks, giveaways
-            </p>
-            <p className="text-[16px] font-bold text-center">
-              your community submits (requests for <br />
-              jobs, features, classes, content, etc) <br /> and then they vote on favorites
-            </p>
-            <img src="/explainer/Arrow5.svg" alt="donut" />
-            <img src="/explainer/Ellipse4.svg" alt="donut" className="-mt-[60px]" />
+          <div className="bg-[url('/explainer/bg-2.png')] bg-no-repeat bg-auto transform hover:scale-120 transition-transform duration-500">
+            <div className="flex flex-col items-center p-20 gap-3">
+              <p className="uppercase font-sabo text-[20px] text-center">
+                elections,
+                <br /> feature requests, <br /> pulse checks, giveaways
+              </p>
+              <p className="text-[16px] font-bold text-center">
+                your community submits (requests for <br />
+                jobs, features, classes, content, etc) <br /> and then they vote on favorites
+              </p>
+              <img src="/explainer/Arrow5.svg" alt="donut" />
+              <img src="/explainer/Ellipse4.svg" alt="donut" className="-mt-[60px]" />
+            </div>
           </div>
         </div>
       </div>

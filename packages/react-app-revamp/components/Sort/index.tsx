@@ -1,5 +1,7 @@
+import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
+import { useRouter } from "next/router";
 import { FC, Fragment, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -20,6 +22,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [label, setLabel] = useState<string | null>(null);
   const [ascending, setAscending] = useState<boolean>(false);
+  const { pathname } = useRouter();
 
   const handleSortChange = (property: string, label: string) => {
     setSelectedOption(property);
@@ -50,6 +53,8 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
       });
     }
   };
+
+  if (pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return;
 
   return (
     <Menu as="div" className="relative inline-block text-left text-[18px]">

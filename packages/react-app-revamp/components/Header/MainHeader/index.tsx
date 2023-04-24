@@ -107,7 +107,7 @@ const MainHeader: React.FC = () => {
           </Menu>
         </div>
 
-        <div className="text-sm mis-auto">
+        <div className="text-sm mis-auto text-[18px] font-bold">
           <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
         </div>
       </div>

@@ -265,7 +265,7 @@ module.exports = {
         },
       },
       scale: {
-        120: "1.2",
+        120: "1.1",
       },
       transitionProperty: {
         transform: "transform",
