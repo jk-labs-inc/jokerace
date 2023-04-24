@@ -1,4 +1,3 @@
-//@ts-ignore
 import { Theme } from "@rainbow-me/rainbowkit";
 import resolveConfig from "tailwindcss/resolveConfig";
 import tailwindConfig from "./../../tailwind.config";
@@ -6,6 +5,9 @@ import tailwindConfig from "./../../tailwind.config";
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
 export const jokeDAOTheme: Theme = {
+  blurs: {
+    modalOverlay: "...",
+  },
   fonts: {
     body: tailwindTheme.fontFamily.sans.toString(),
   },
@@ -31,6 +33,13 @@ export const jokeDAOTheme: Theme = {
     modalBackdrop: "rgba(0, 0, 0, 0.5)",
     connectionIndicator: tailwindTheme.colors.positive[11],
     standby: tailwindTheme.colors.primary[11],
+    actionButtonBorderMobile: "...",
+    connectButtonText: "...",
+    modalText: "...",
+    profileAction: "...",
+    profileActionHover: "...",
+    profileForeground: "...",
+    selectedOptionBorder: "...",
   },
   radii: {
     actionButton: "12px",
@@ -38,5 +47,13 @@ export const jokeDAOTheme: Theme = {
     menuButton: "12px",
     modal: "12px",
     modalMobile: "12px",
+  },
+  shadows: {
+    connectButton: "...",
+    dialog: "...",
+    profileDetailsAction: "...",
+    selectedOption: "...",
+    selectedWallet: "...",
+    walletLogo: "...",
   },
 };
