@@ -58,6 +58,11 @@
   background-repeat: no-repeat;
   margin-right: 10px;
   vertical-align: middle;
+  transition: transform 0.3s ease; /* Add a transition for smooth rotation */
+}
+
+.list-explainer li:hover::before {
+  transform: rotate(15deg);
 }
 
 @tailwind base;

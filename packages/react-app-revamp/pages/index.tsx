@@ -136,8 +136,8 @@ const Page: NextPage = props => {
           </Link>
         </div>
       </div>
-      <div className="pl-16 gap-10 mt-32 md:flex md:flex-col 2xl:pl-28  2xl:flex-row animate-fadeInLanding">
-        <div className="w-1/4 md:w-full 2xl:w-1/5 md:flex gap-10 2xl:flex-col">
+      <div className="pl-16 mt-32 gap-20 md:flex md:flex-col 2xl:pl-28 2xl:flex-row animate-fadeInLanding">
+        <div className="md:flex gap-10 2xl:flex-col">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
               1
@@ -185,9 +185,9 @@ const Page: NextPage = props => {
             </ul>
           </div>
         </div>
-        <div className="w-full md:w-full 2xl:w-4/5 flex flex-row items-center">
-          <div className="flex flex-col">
-            <div className="p-14 bg-[url('/explainer/bg-1.png')] bg-no-repeat bg-contain  transform hover:scale-120 transition-transform duration-500">
+        <div className="grid items-center" style={{ gridTemplateColumns: "auto auto" }}>
+          <div>
+            <div className="bg-[url('/explainer/bg-1.svg')] bg-no-repeat pt-7 w-[520px] transform hover:scale-120 transition-transform duration-500">
               <p className="uppercase font-sabo text-[20px] text-center">
                 grants,
                 <br /> hackathons, awards <br /> bounties, remix contests
@@ -196,21 +196,21 @@ const Page: NextPage = props => {
                 <div className="flex items-center gap-3">
                   <img src="/explainer/Ellipse5.svg" alt="donut" />
                   <img src="/explainer/Arrow2.svg" alt="donut" />
-                  <p className="text-[16px] font-bold">
+                  <p className="text-[16px] font-bold pt-12">
                     anyone submits (grants, <br />
                     projects, ideas, art, etc){" "}
                   </p>
                 </div>
                 <div className="flex items-center gap-5">
-                  <img src="/explainer/Ellipse3.svg" alt="donut" />
+                  <img src="/explainer/Ellipse3.svg" alt="donut" className="-mt-[60px] -mr-[25px]" />
                   <img src="/explainer/Arrow3.svg" alt="donut" />
-                  <p className="text-[16px] font-bold">
+                  <p className="text-[16px] font-bold self-end">
                     jury votes <br /> on favorites{" "}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="p-14 bg-[url('/explainer/bg-3.png')] bg-no-repeat bg-contain ml-8 transform hover:scale-120 transition-transform duration-500">
+            <div className="bg-[url('/explainer/bg-3.svg')] bg-no-repeat pt-32 w-[520px]  ml-8 transform hover:scale-120 transition-transform duration-500">
               <p className="uppercase font-sabo text-[20px] text-center">
                 proposals, <br />
                 budgets, drafts, <br />
@@ -223,21 +223,21 @@ const Page: NextPage = props => {
                       a core team or creator submits <br />
                       (proposals, drafts of work, etc)
                     </p>
-                    <img src="/explainer/Arrow1.svg" alt="donut" className="rotate-12" />
-                    <img src="/explainer/Ellipse1.svg" alt="donut" />
+                    <img src="/explainer/Arrow1.svg" alt="donut" className="-rotate-[21deg]" />
+                    <img src="/explainer/Ellipse1.svg" alt="donut" className="self-end" />
                   </div>
                   <div className="flex flex-col items-center gap-3">
                     <p className="text-[16px] font-bold">
                       the community votes on <br /> which gets implemented
                     </p>
-                    <img src="/explainer/Arrow4.svg" alt="donut" />
-                    <img src="/explainer/Ellipse2.svg" alt="donut" className="-mt-[60px] -ml-[20px]" />
+                    <img src="/explainer/Arrow4.svg" alt="donut" className="-rotate-[16deg]" />
+                    <img src="/explainer/Ellipse2.svg" alt="donut" className="-mt-[60px]" />
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div className="p-14 flex flex-col items-center gap-3 bg-[url('/explainer/bg-2.png')] bg-no-repeat bg-contain  transform hover:scale-120 transition-transform duration-500">
+          <div className="flex flex-col items-center gap-3 bg-[url('/explainer/bg-2.svg')] bg-no-repeat w-[600px] bg-contain pt-[120px] pl-[100px] -ml-[100px]  transform hover:scale-120 transition-transform duration-500">
             <p className="uppercase font-sabo text-[20px] text-center">
               elections,
               <br /> feature requests, <br /> pulse checks, giveaways
