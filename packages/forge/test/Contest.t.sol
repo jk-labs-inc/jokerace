@@ -12,6 +12,7 @@ contract ContestTest is Test {
     uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 2;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
+    uint256 public constant ONE_ETH_IN_WEI = 1000000000000000000;
     uint256[] public numParams = [
         CONTEST_START,
         VOTING_DELAY,
@@ -161,11 +162,11 @@ contract ContestTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, proof1);
         vm.warp(1681660001);
-        uint256 totalVotes = contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof1);
+        uint256 totalVotes = contest.castVote(proposalId, 0, 10 * ONE_ETH_IN_WEI, 1 * ONE_ETH_IN_WEI, proof1);
 
         vm.stopPrank();
 
-        assertEq(totalVotes, 10000000000000000000);
+        assertEq(totalVotes, 10 * ONE_ETH_IN_WEI);
     }
 
     function testVoteWithoutProof() public {
@@ -174,11 +175,11 @@ contract ContestTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, proof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10000000000000000000, 1000000000000000000, proof1);
-        uint256 totalVotesWithoutProof = contest.castVoteWithoutProof(proposalId, 0, 1000000000000000000);
+        contest.castVote(proposalId, 0, 10 * ONE_ETH_IN_WEI, 1 * ONE_ETH_IN_WEI, proof1);
+        uint256 totalVotesWithoutProof = contest.castVoteWithoutProof(proposalId, 0, 1 * ONE_ETH_IN_WEI);
 
         vm.stopPrank();
 
-        assertEq(totalVotesWithoutProof, 10000000000000000000);
+        assertEq(totalVotesWithoutProof, 10 * ONE_ETH_IN_WEI);
     }
 }
