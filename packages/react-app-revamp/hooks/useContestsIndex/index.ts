@@ -1,4 +1,5 @@
 import { fetchToken, getAccount, getNetwork } from "@wagmi/core";
+import { isSupabaseConfigured } from "@helpers/database";
 
 export function useContestsIndex() {
   async function indexContest(values: any) {
@@ -7,12 +8,7 @@ export function useContestsIndex() {
       //@ts-ignore
       const { chainId } = getNetwork();
       const tokenRawData = await fetchToken({ address: values.votingTokenAddress, chainId });
-      if (
-        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      ) {
+      if (isSupabaseConfigured) {
         const config = await import("@config/supabase");
         const supabase = config.supabase;
         const { error, data } = await supabase.from("contests").insert([
