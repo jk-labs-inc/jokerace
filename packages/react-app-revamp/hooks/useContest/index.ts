@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
+import { isSupabaseConfigured } from "@helpers/database";
 
 export function useContest() {
   const { indexContest } = useContestsIndex();
@@ -278,12 +279,7 @@ export function useContest() {
       }
 
       // If this contest doesn't exist in the database, index it
-      if (
-        process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-      ) {
+      if (isSupabaseConfigured) {
         const indexingResult = await supabase.from("contests").select("*").eq("address", address);
         if (indexingResult && indexingResult?.data && indexingResult?.data?.length === 0) {
           indexContest({
