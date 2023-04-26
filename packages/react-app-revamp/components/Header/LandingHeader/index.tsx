@@ -12,15 +12,17 @@ const LandingHeader = () => {
   const { isConnected } = useAccount();
 
   return (
-    <header className="py-4 pl-8 pr-8 max-w-[1350px] flex items-center gap-20 2xl:pl-16">
+    <header className="flex items-center flex-col md:flex-row gap-5 md:gap-20 py-4 pl-4 pr-4 md:pl-8 md:pr-8 max-w-[1350px] 2xl:pl-16">
       <Link href="/">
         <div>
-          <h1 className="font-sabo text-primary-10 text-[80px]">JOKERACE</h1>
-          <p className="text-primary-10 text-700 pl-12 font-bold mt-[-10px] text-[24px]">noun. US /dʒoʊ·​kreɪs/</p>
+          <h1 className="font-sabo text-primary-10 text-[60px] md:text-[80px]">JOKERACE</h1>
+          <p className="text-primary-10 text-700 text-center md:text-left md:pl-12 font-bold mt-[-10px] text-[24px]">
+            noun. US /dʒoʊ·​kreɪs/
+          </p>
         </div>
       </Link>
 
-      <div className="flex items-center gap-5 text-[18px] font-bold">
+      <div className="flex items-center gap-5  text-[18px] font-bold">
         <Link href={ROUTE_CREATE_CONTEST}>
           <Button className="hidden xs:flex h-10" intent={`${isConnected ? "primary" : "neutral-outline"}`}>
             Create contest
