@@ -125,7 +125,7 @@ export const ListContests: FC<ListContestsProps> = ({
   if (compact) {
     return (
       <>
-        <div className="font-bold text-md full-width-grid-cols items-center pie-1ex p-3">
+        <div className="font-bold text-md grid-cols-1 grid gap-5 md:full-width-grid-cols items-center pie-1ex p-3">
           <h2 className="text-[20px] font-bold font-sabo">Featured Contests</h2>
           <Search onSearchChange={onSearchChange} />
           <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
