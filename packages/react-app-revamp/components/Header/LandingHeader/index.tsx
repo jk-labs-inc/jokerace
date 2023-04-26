@@ -15,7 +15,7 @@ const LandingHeader = () => {
     <header className="py-4 pl-8 pr-8 max-w-[1350px] flex items-center gap-20 2xl:pl-16">
       <Link href="/">
         <div>
-          <h1 className="font-sabo text-primary-10 text-5xl md:text-[80px]">JOKERACE</h1>
+          <h1 className="font-sabo text-primary-10 text-[80px]">JOKERACE</h1>
           <p className="text-primary-10 text-700 pl-12 font-bold mt-[-10px] text-[24px]">noun. US /dʒoʊ·​kreɪs/</p>
         </div>
       </Link>
