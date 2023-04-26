@@ -16,7 +16,7 @@ const LandingHeader = () => {
       <Link href="/">
         <div>
           <h1 className="font-sabo text-primary-10 text-[55px] md:text-[80px]">JOKERACE</h1>
-          <p className="text-primary-10 text-700 text-center md:text-left md:pl-12 font-bold mt-[-10px] text-[24px]">
+          <p className="text-primary-10 text-700 text-center md:text-left md:pl-12 font-bold mt-[-10px] text-[20px] md:text-[24px]">
             noun. US /dʒoʊ·​kreɪs/
           </p>
         </div>
