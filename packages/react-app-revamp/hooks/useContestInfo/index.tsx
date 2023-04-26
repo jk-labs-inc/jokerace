@@ -91,14 +91,21 @@ const useContestInfo = ({
       if (!address) {
         return (
           <p>
-            for <span className="uppercase">${chain?.nativeCurrency?.symbol}</span> holders
+            for{" "}
+            <span className="uppercase">
+              ${contest.submissionGatingByVotingToken ? contest.token_symbol : chain?.nativeCurrency?.symbol}
+            </span>{" "}
+            holders
           </p>
         );
       }
 
       return (
         <p>
-          you need <span className="uppercase">${chain?.nativeCurrency?.symbol}</span>
+          you need{" "}
+          <span className="uppercase">
+            ${contest.submissionGatingByVotingToken ? contest.token_symbol : chain?.nativeCurrency?.symbol}
+          </span>
         </p>
       );
     })();
@@ -145,7 +152,18 @@ const useContestInfo = ({
 
     setSubmissionMessage(newSubmissionMessage);
     setVotingMessage(newVotingMessage);
-  }, [loading, submissionStatus, votingStatus, contest.qualifiedToSubmit, contest.qualifiedToVote, address, chains]);
+  }, [
+    loading,
+    submissionStatus,
+    votingStatus,
+    contest.qualifiedToSubmit,
+    contest.qualifiedToVote,
+    contest.submissionGatingByVotingToken,
+    address,
+    chains,
+    contest.token_symbol,
+    contest.network_name,
+  ]);
 
   return { submissionClass, votingClass, submissionMessage, votingMessage };
 };

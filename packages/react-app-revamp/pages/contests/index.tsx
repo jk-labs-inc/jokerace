@@ -15,6 +15,7 @@ const Page: NextPage = () => {
   const [title, setTitle] = useState<string>("");
   const router = useRouter();
   const { address } = useAccount();
+  const [initialTitle, setInitialTitle] = useState<string>("");
 
   const queryOptions = {
     keepPreviousData: true,
@@ -51,6 +52,7 @@ const Page: NextPage = () => {
     if (!router.query.title) return;
 
     setTitle(router.query.title as string);
+    setInitialTitle(router.query.title as string);
   }, [router.query]);
 
   return (
@@ -70,7 +72,11 @@ const Page: NextPage = () => {
           </h1>
         )}
 
-        <FormSearchContest onSubmitTitle={setTitle} isInline={title.length ? true : false} />
+        <FormSearchContest
+          onSubmitTitle={setTitle}
+          isInline={title.length ? true : false}
+          initialTitle={initialTitle}
+        />
       </div>
 
       {title.length > 0 && (

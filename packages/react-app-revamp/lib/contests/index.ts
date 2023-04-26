@@ -3,7 +3,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { alchemyRpcUrls, fetchBalance, readContract } from "@wagmi/core";
+import { alchemyRpcUrls, fetchBalance, readContract, readContracts } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
 import { SearchOptions } from "types/search";
@@ -70,6 +70,64 @@ const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: numb
   }
 };
 
+const fetchBalances = async (userAddress: string, chainId: number, contest: any, contractConfig: any) => {
+  const submissionContracts = [
+    {
+      ...contractConfig,
+      functionName: "submissionGatingByVotingToken",
+    },
+    {
+      ...contractConfig,
+      functionName: "proposalThreshold",
+    },
+  ];
+
+  const handleFetchUserBalanceError = (error: any, context: string) => {
+    console.error(`Error fetching user balance ${context}:`, error);
+    return { value: BigNumber.from(0) };
+  };
+
+  if (!userAddress) {
+    const submissionData = await readContracts({ contracts: submissionContracts });
+    return {
+      submissionGatingByVotingToken: submissionData[0] && submissionData[1].gt(0),
+      qualifiedToVote: false,
+      qualifiedToSubmit: false,
+    };
+  }
+
+  try {
+    const submissionData = await readContracts({ contracts: submissionContracts });
+
+    const [balanceToVote, balanceToSubmit] = await Promise.all([
+      fetchUserBalance(userAddress, chainId, contest.token_address).catch(error =>
+        handleFetchUserBalanceError(error, "to vote"),
+      ),
+      fetchUserBalance(
+        userAddress,
+        chainId,
+        submissionData[0] && submissionData[1].gt(0) ? contest.token_address : null,
+      ).catch(error => handleFetchUserBalanceError(error, "to submit")),
+    ]);
+
+    const isSubmissionOpen =
+      new Date(contest.start_at).getTime() <= Date.now() && Date.now() <= new Date(contest.vote_start_at).getTime();
+
+    return {
+      submissionGatingByVotingToken: submissionData[0] && submissionData[1].gt(0),
+      qualifiedToVote: balanceToVote.value.gt(0),
+      qualifiedToSubmit: isSubmissionOpen && balanceToSubmit.value.gt(0),
+    };
+  } catch (error) {
+    console.error("Error fetching balances:", error);
+    return {
+      submissionGatingByVotingToken: false,
+      qualifiedToVote: false,
+      qualifiedToSubmit: false,
+    };
+  }
+};
+
 const processContestData = async (contest: any, userAddress: string) => {
   try {
     const chain = chains.find(
@@ -83,48 +141,14 @@ const processContestData = async (contest: any, userAddress: string) => {
       },
     );
 
-    const fetchBalances = async () => {
-      if (!userAddress) {
-        return {
-          qualifiedToVote: false,
-          qualifiedToSubmit: false,
-        };
-      }
-
-      try {
-        const balanceToVotePromise = fetchUserBalance(userAddress, chain?.id ?? 0, contest.token_address).catch(
-          error => {
-            console.error("Error fetching user balance to vote:", error);
-            return { value: BigNumber.from(0) };
-          },
-        );
-        const balanceToSubmitPromise = fetchUserBalance(userAddress, chain?.id ?? 0).catch(error => {
-          console.error("Error fetching user balance to submit:", error);
-          return { value: BigNumber.from(0) };
-        });
-
-        const [balanceToVote, balanceToSubmit] = await Promise.all([balanceToVotePromise, balanceToSubmitPromise]);
-
-        const isSubmissionOpen =
-          new Date(contest.start_at).getTime() <= Date.now() && Date.now() <= new Date(contest.vote_start_at).getTime();
-
-        return {
-          qualifiedToVote: balanceToVote.value.gt(0),
-          qualifiedToSubmit: isSubmissionOpen && balanceToSubmit.value.gt(0),
-        };
-      } catch (error) {
-        console.error("Error fetching balances:", error);
-        return {
-          qualifiedToVote: false,
-          qualifiedToSubmit: false,
-        };
-      }
-    };
-
-    const [contractConfig, { qualifiedToVote, qualifiedToSubmit }] = await Promise.all([
+    const [contractConfig, balances] = await Promise.all([
       contractConfigPromise,
-      fetchBalances(),
+      fetchBalances(userAddress, chain?.id ?? 0, contest, await contractConfigPromise),
     ]);
+
+    contest.submissionGatingByVotingToken = balances.submissionGatingByVotingToken;
+    contest.qualifiedToVote = balances.qualifiedToVote;
+    contest.qualifiedToSubmit = balances.qualifiedToSubmit;
 
     if (
       contractConfig &&
@@ -137,6 +161,7 @@ const processContestData = async (contest: any, userAddress: string) => {
         console.error("Error reading contract:", error);
         return "0x0000000000000000000000000000000000000000";
       });
+
       if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
         contest.rewards = null;
       } else {
@@ -197,9 +222,6 @@ const processContestData = async (contest: any, userAddress: string) => {
     } else {
       contest.rewards = null;
     }
-
-    contest.qualifiedToVote = qualifiedToVote;
-    contest.qualifiedToSubmit = qualifiedToSubmit;
 
     return contest;
   } catch (error) {
@@ -276,7 +298,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
 
       const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
 
-      return { data: data, count };
+      return { data: processedData, count };
     } catch (e) {
       console.error(e);
     }

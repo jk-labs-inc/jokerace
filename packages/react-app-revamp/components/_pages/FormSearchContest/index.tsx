@@ -3,21 +3,34 @@ import FormField from "@components/UI/FormField";
 import FormInput from "@components/UI/FormInput";
 import { useForm } from "@felte/react";
 import { validator } from "@felte/validator-zod";
-import { FC } from "react";
+import { FC, useEffect, useRef } from "react";
 import { schema } from "./schema";
 
 interface FormSearchContestProps {
+  initialTitle?: string;
   isInline?: boolean;
   onSubmitTitle?: (title: string) => void;
 }
 
-export const FormSearchContest: FC<FormSearchContestProps> = ({ isInline, onSubmitTitle }) => {
-  const { form, errors, data } = useForm({
+export const FormSearchContest: FC<FormSearchContestProps> = ({ initialTitle, isInline, onSubmitTitle }) => {
+  const initialRef = useRef(true);
+
+  const { form, errors, data, setFields } = useForm({
+    initialValues: { contestTitle: initialTitle || "" },
     extend: validator({ schema }),
     onSubmit: values => {
       onSubmitTitle?.(values.contestTitle);
     },
   });
+
+  useEffect(() => {
+    console.log(initialTitle);
+    if (initialRef.current) {
+      initialRef.current = false;
+    } else {
+      setFields({ contestTitle: initialTitle || "" });
+    }
+  }, [initialTitle]);
 
   return (
     <form

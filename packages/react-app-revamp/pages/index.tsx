@@ -9,6 +9,7 @@ import { getLiveContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
+import router from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
@@ -28,7 +29,6 @@ function useContests(initialData: any, searchValue: string) {
               searchString: searchValue,
               pagination: {
                 currentPage: page,
-                itemsPerPage: 4,
               },
             },
             address,
@@ -65,6 +65,14 @@ const Page: NextPage = props => {
   useEffect(() => {
     refetch();
   }, []);
+
+  const onViewAll = () => {
+    if (searchValue) {
+      router.push(`/contests?title=${searchValue}`);
+    } else {
+      router.push(ROUTE_VIEW_LIVE_CONTESTS);
+    }
+  };
 
   return (
     <>
@@ -131,9 +139,9 @@ const Page: NextPage = props => {
           )}
         </div>
         <div className="flex justify-end mt-5">
-          <Link href={ROUTE_VIEW_LIVE_CONTESTS}>
-            <Button className="bg-primary-10 text-[18px] w-[146px] font-bold">View all</Button>
-          </Link>
+          <Button className="bg-primary-10 text-[18px] w-[146px] font-bold" onClick={onViewAll}>
+            View all
+          </Button>
         </div>
       </div>
       <div className="pl-16 mt-32 gap-20 md:flex md:flex-col 2xl:pl-28 2xl:flex-row animate-fadeInLanding">
