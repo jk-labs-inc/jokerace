@@ -80,7 +80,7 @@ const Page: NextPage = props => {
         <title>JokeDAO - open-source, collaborative decision-making platform</title>
         <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
       </Head>
-      <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-6 max-w-[1350px] 2xl:pl-28 2xl:pr-0 ">
+      <div className="pl-8 md:pl-16 mt-6 max-w-[1350px] 2xl:pl-28 2xl:pr-0 ">
         <div className="mb-12 animate-fadeInLanding">
           <p className="text-[20px] md:text-[24px] font-bold">
             contests for communities to make, <br />
@@ -144,7 +144,7 @@ const Page: NextPage = props => {
           </Button>
         </div>
       </div>
-      <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-16 md:mt-32 gap-20 md:flex md:flex-col 2xl:pl-28 2xl:pr-0 2xl:flex-row animate-fadeInLanding">
+      <div className="pl-8  md:pl-16  mt-16 md:mt-32 gap-20 md:flex md:flex-col 2xl:pl-28 2xl:pr-0 2xl:flex-row animate-fadeInLanding">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 2xl:grid-cols-1">
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">

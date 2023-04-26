@@ -12,7 +12,7 @@ const LandingHeader = () => {
   const { isConnected } = useAccount();
 
   return (
-    <header className="flex items-center flex-col md:flex-row gap-5 md:gap-20 py-4 pl-4 pr-4 md:pl-8 md:pr-8 max-w-[1350px] 2xl:pl-16">
+    <header className="flex items-center flex-col md:flex-row gap-5 md:gap-20 py-4 pl-4  md:pl-8 max-w-[1350px] 2xl:pl-16">
       <Link href="/">
         <div>
           <h1 className="font-sabo text-primary-10 text-[60px] md:text-[80px]">JOKERACE</h1>
