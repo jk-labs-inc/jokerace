@@ -51,13 +51,22 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
         });
         return newAscending;
       });
+    } else {
+      setAscending(prevAscending => {
+        const newAscending = !prevAscending;
+        onSortChange?.({
+          property: "all",
+          ascending: newAscending,
+        });
+        return newAscending;
+      });
     }
   };
 
   if (pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
 
   return (
-    <Menu as="div" className="relative inline-block text-left text-[18px]">
+    <Menu as="div" className="relative inline-block text-left w-[250px] text-[18px]">
       {({ open }) => {
         onMenuStateChange?.(open);
 
@@ -68,28 +77,26 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 selectedOption || open ? "border-primary-10" : "border-neutral-9"
               } transition-colors duration-300 ease-in-out`}
             >
-              <Menu.Button className="flex items-center justify-between pl-2 pr-2 w-[100%] h-[100%] cursor-default text-[18px]">
-                <span className={`${selectedOption ? `text-true-white` : `text-neutral-9`}`}>
+              <Menu.Button className="flex items-center gap-3 pl-2 pr-2 w-[100%] h-[100%] cursor-default text-[18px]">
+                <span className={`${selectedOption || open ? `text-true-white` : `text-neutral-9`}`}>
                   {label ? label : "Sort"}
                 </span>
-                {selectedOption && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6 transform rotate-180 cursor-pointer"
-                    onClick={e => onAscendingClick(e)}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
-                    />
-                  </svg>
-                )}
-                <ChevronDownIcon className="w-5 cursor-pointer" />{" "}
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke={selectedOption || open ? "#fff" : "#706f78"}
+                  className="w-6 h-6 transform rotate-180 cursor-pointer transition-colors duration-300 ease-in-out"
+                  onClick={e => onAscendingClick(e)}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
+                  />
+                </svg>
+                <ChevronDownIcon className="w-5 cursor-pointer ml-auto" />{" "}
               </Menu.Button>
             </div>
 
@@ -103,7 +110,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute right-0 z-10 mt-4 w-[100%] origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
+                <Menu.Items className="absolute w-[250px] z-10 mt-4 origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
                   {[
                     { property: "rewards", label: "rewards" },
                     { property: "qualified", label: "what i qualify for" },

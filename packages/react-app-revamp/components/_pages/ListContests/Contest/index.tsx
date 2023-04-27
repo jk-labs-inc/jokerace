@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import CircularProgressBar from "@components/Clock";
-import { ROUTE_VIEW_CONTEST } from "@config/routes";
+import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
 import useContestInfo from "@hooks/useContestInfo";
 import { getAccount } from "@wagmi/core";
@@ -52,16 +52,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     votingSeconds: 0,
   });
 
-  const handleClick = (contest: any) => {
-    const query = {
-      chain: contest.network_name,
-      address: contest.address,
-    };
-
-    router.push({
-      pathname: ROUTE_VIEW_CONTEST,
-      query: query,
-    });
+  const getContestUrl = (contest: { network_name: string; address: string }) => {
+    return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", contest.network_name).replace("[address]", contest.address);
   };
 
   useEffect(() => {
@@ -142,123 +134,124 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
-      <div
-        className="grid grid-cols-1 items-center gap-5 md:full-width-grid-cols md:items-center border-t border-neutral-9 py-6 p-3 
+      <a href={getContestUrl(contest)}>
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-6 p-3 
         hover:bg-neutral-0 transition-colors duration-300 ease-in-out cursor-pointer"
-        key={`live-contest-${contest.id}`}
-        onClick={() => handleClick(contest)}
-      >
-        <div className="flex items-center gap-4">
-          {loading ? (
-            <Skeleton circle height={32} width={32} />
-          ) : (
-            <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
-          )}
-          <p className="font-bold w-full">{loading ? <Skeleton /> : contest.title}</p>
-        </div>
+          key={`live-contest-${contest.id}`}
+        >
+          <div className="flex items-center gap-4">
+            {loading ? (
+              <Skeleton circle height={32} width={32} />
+            ) : (
+              <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
+            )}
+            <p className="font-bold w-full">{loading ? <Skeleton /> : contest.title}</p>
+          </div>
 
-        <div className="flex items-center gap-4">
-          <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
-            <div className="min-w-[185px]">
-              <p className="font-bold">
-                {loading ? (
-                  <Skeleton />
-                ) : (
-                  <>
-                    {submissionStatus}{" "}
-                    {submissionStatus.includes("in:") && (
-                      <Countdown
-                        date={moment(contest.start_at).toDate()}
-                        renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.start_at))}
-                        onComplete={() => setOnCountdownComplete(true)}
-                      />
-                    )}
-                  </>
-                )}
-              </p>
-              {loading ? <Skeleton /> : submissionMessage}
+          <div className="flex items-center gap-4">
+            <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
+              <div className="min-w-[185px]">
+                <p className="font-bold">
+                  {loading ? (
+                    <Skeleton />
+                  ) : (
+                    <>
+                      {submissionStatus}{" "}
+                      {submissionStatus.includes("in:") && (
+                        <Countdown
+                          date={moment(contest.start_at).toDate()}
+                          renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.start_at))}
+                          onComplete={() => setOnCountdownComplete(true)}
+                        />
+                      )}
+                    </>
+                  )}
+                </p>
+                {loading ? <Skeleton /> : submissionMessage}
+              </div>
+              {loading ? (
+                <Skeleton circle height={50} width={50} />
+              ) : submissionTimeLeft.value ? (
+                <div className="flex items-center gap-2">
+                  <CircularProgressBar
+                    value={submissionTimeLeft.value}
+                    type={submissionTimeLeft.type}
+                    size={50}
+                    strokeWidth={3}
+                    color="#FFE25B"
+                    initialHours={timerValues.submissionHours}
+                    initialMinutes={timerValues.submissionMinutes}
+                    initialSeconds={timerValues.submissionSeconds}
+                  />
+                </div>
+              ) : (
+                <div className="w-50 h-50"></div>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
+              <div className="min-w-[185px]">
+                <p className="font-bold">
+                  {loading ? (
+                    <Skeleton />
+                  ) : (
+                    <>
+                      {/* TODO - if contests ends, it does not apply */}
+                      {votingStatus}{" "}
+                      {votingStatus.includes("in:") && (
+                        <Countdown
+                          date={moment(contest.vote_start_at).toDate()}
+                          renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.vote_start_at))}
+                          onComplete={() => setOnCountdownComplete(true)}
+                        />
+                      )}
+                    </>
+                  )}
+                </p>
+                {loading ? <Skeleton /> : votingMessage}
+              </div>
             </div>
             {loading ? (
               <Skeleton circle height={50} width={50} />
-            ) : submissionTimeLeft.value ? (
+            ) : votingTimeLeft.value ? (
               <div className="flex items-center gap-2">
                 <CircularProgressBar
-                  value={submissionTimeLeft.value}
-                  type={submissionTimeLeft.type}
+                  value={votingTimeLeft.value}
+                  type={votingTimeLeft.type}
                   size={50}
                   strokeWidth={3}
-                  color="#FFE25B"
-                  initialHours={timerValues.submissionHours}
-                  initialMinutes={timerValues.submissionMinutes}
-                  initialSeconds={timerValues.submissionSeconds}
+                  color="#78FFC6"
+                  initialHours={timerValues.votingHours}
+                  initialMinutes={timerValues.votingMinutes}
+                  initialSeconds={timerValues.votingSeconds}
                 />
               </div>
             ) : (
               <div className="w-50 h-50"></div>
             )}
           </div>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
-            <div className="min-w-[185px]">
-              <p className="font-bold">
+          {contest.rewards ? (
+            <div className="flex flex-col">
+              <p className="font-bold w-full">
                 {loading ? (
                   <Skeleton />
                 ) : (
                   <>
-                    {/* TODO - if contests ends, it does not apply */}
-                    {votingStatus}{" "}
-                    {votingStatus.includes("in:") && (
-                      <Countdown
-                        date={moment(contest.vote_start_at).toDate()}
-                        renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.vote_start_at))}
-                        onComplete={() => setOnCountdownComplete(true)}
-                      />
-                    )}
+                    {parseInt(contest.rewards.token.value, 10)}{" "}
+                    <span className="uppercase">${contest.rewards.token.symbol}</span>
                   </>
                 )}
               </p>
-              {loading ? <Skeleton /> : votingMessage}
-            </div>
-          </div>
-          {loading ? (
-            <Skeleton circle height={50} width={50} />
-          ) : votingTimeLeft.value ? (
-            <div className="flex items-center gap-2">
-              <CircularProgressBar
-                value={votingTimeLeft.value}
-                type={votingTimeLeft.type}
-                size={50}
-                strokeWidth={3}
-                color="#78FFC6"
-                initialHours={timerValues.votingHours}
-                initialMinutes={timerValues.votingMinutes}
-                initialSeconds={timerValues.votingSeconds}
-              />
+              <p>{loading ? <Skeleton /> : `to ${contest.rewards.winners} winners`}</p>
             </div>
           ) : (
-            <div className="w-50 h-50"></div>
+            <p className="text-neutral-9 font-bold">{loading ? <Skeleton /> : "no rewards"}</p>
           )}
         </div>
-        {contest.rewards ? (
-          <div className="flex flex-col">
-            <p className="font-bold w-full">
-              {loading ? (
-                <Skeleton />
-              ) : (
-                <>
-                  {parseInt(contest.rewards.token.value, 10)}{" "}
-                  <span className="uppercase">${contest.rewards.token.symbol}</span>
-                </>
-              )}
-            </p>
-            <p>{loading ? <Skeleton /> : `to ${contest.rewards.winners} winners`}</p>
-          </div>
-        ) : (
-          <p className="text-neutral-9 font-bold">{loading ? <Skeleton /> : "no rewards"}</p>
-        )}
-      </div>
+      </a>
     </SkeletonTheme>
   );
 };

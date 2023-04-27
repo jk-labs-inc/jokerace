@@ -1,6 +1,6 @@
 import Button from "@components/UI/Button";
 import MenuLink from "@components/UI/Menu/Link";
-import { ROUTE_CREATE_CONTEST } from "@config/routes";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -12,11 +12,11 @@ const LandingHeader = () => {
   const { isConnected } = useAccount();
 
   return (
-    <header className="flex items-center flex-col md:flex-row gap-5 md:gap-20 py-4 md:pl-8 md:pr-8 max-w-[1350px] 2xl:pl-16">
+    <header className="flex items-center flex-col lg:flex-row gap-5 lg:gap-20 py-4 lg:pl-8 lg:pr-8 max-w-[1350px] 2xl:pl-16">
       <Link href="/">
         <div>
           <h1 className="font-sabo text-primary-10 text-[55px] md:text-[80px]">JOKERACE</h1>
-          <p className="text-primary-10 text-700 text-center md:text-left md:pl-12 font-bold mt-[-10px] text-[20px] md:text-[24px]">
+          <p className="text-primary-10 text-700 text-center lg:text-left lg:pl-12 font-bold mt-[-10px] text-[20px] md:text-[24px]">
             noun. US /dʒoʊ·​kreɪs/
           </p>
         </div>
@@ -72,6 +72,13 @@ const LandingHeader = () => {
                       {({ active }) => (
                         <MenuLink active={active} href={ROUTE_CREATE_CONTEST}>
                           Create contest
+                        </MenuLink>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <MenuLink active={active} href={ROUTE_VIEW_CONTESTS}>
+                          View contests
                         </MenuLink>
                       )}
                     </Menu.Item>

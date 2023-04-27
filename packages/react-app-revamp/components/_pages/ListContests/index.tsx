@@ -93,6 +93,11 @@ export const ListContests: FC<ListContestsProps> = ({
             (b.qualifiedToVote ? 2 : 1) *
             (new Date(b.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(b.end_at).getTime() ? 1 : 0);
           break;
+        case "all":
+          valueA = data.indexOf(a);
+          valueB = data.indexOf(b);
+          reverseOrder = true;
+          break;
         default:
           valueA = a[property];
           valueB = b[property];
@@ -165,7 +170,7 @@ export const ListContests: FC<ListContestsProps> = ({
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
             <div className="animate-appear">
-              <div className="grid grid-cols-2  md:full-width-grid-cols items-center mb-4 font-bold text-[18px] pie-1ex p-3">
+              <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols md:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
                 <span aria-hidden="true">
                   🃏
                   <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>

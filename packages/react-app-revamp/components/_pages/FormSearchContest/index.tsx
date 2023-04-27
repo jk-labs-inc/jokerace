@@ -24,7 +24,6 @@ export const FormSearchContest: FC<FormSearchContestProps> = ({ initialTitle, is
   });
 
   useEffect(() => {
-    console.log(initialTitle);
     if (initialRef.current) {
       initialRef.current = false;
     } else {
