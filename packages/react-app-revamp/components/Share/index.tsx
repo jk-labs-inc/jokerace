@@ -1,7 +1,7 @@
-/* eslint-disable @next/next/no-img-element */
 import { Menu, Transition } from "@headlessui/react";
 import { generateLensShareUrl, generateTwitterShareUrl, generateUrlToCopy } from "@helpers/share";
-import { DuplicateIcon, ShareIcon } from "@heroicons/react/outline";
+import { DuplicateIcon } from "@heroicons/react/outline";
+import Image from "next/image";
 import { FC, Fragment } from "react";
 
 function classNames(...classes: string[]) {
@@ -19,7 +19,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
     <Menu as="div" className="relative inline-block text-left">
       <div>
         <Menu.Button className="flex items-center gap-2 text-true-white text-sm">
-          Share <img src="/forward.png" alt="share" className="ml-1" width={20} />
+          Share <Image src="/forward.png" alt="share" className="ml-1 w-5" width={20} height={20} />
         </Menu.Button>
       </div>
 
@@ -44,7 +44,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 )}
                 rel="noreferrer"
               >
-                <img src="/socials/lens.svg" alt="Lens" width={24} height={24} className="object-fit-cover mr-2" />
+                <Image src="/socials/lens.svg" alt="Lens" width={24} height={24} className="object-fit-cover mr-2" />
                 <span className="text-left">share on Lens</span>
               </a>
             )}
@@ -60,7 +60,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 )}
                 rel="noreferrer"
               >
-                <img
+                <Image
                   src="/socials/twitter.svg"
                   alt="Twitter"
                   width={24}

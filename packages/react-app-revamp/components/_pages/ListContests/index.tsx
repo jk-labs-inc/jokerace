@@ -3,6 +3,7 @@ import { ROUTE_VIEW_CONTEST } from "@config/routes";
 import { chainsImages } from "@config/wagmi";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
 import { format, getUnixTime } from "date-fns";
+import Image from "next/image";
 import Link from "next/link";
 import { Pagination } from "react-headless-pagination";
 
@@ -50,8 +51,14 @@ export const ListContests = (props: ListContestsProps) => {
                       key={`live-contest-${contest.id}`}
                     >
                       <div className="flex items-center space-i-6">
-                        {/* @ts-ignore */}
-                        <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
+                        <Image
+                          className="w-8 h-auto"
+                          width={200}
+                          height={200}
+                          /* @ts-ignore */
+                          src={chainsImages[contest.network_name]}
+                          alt="Chain"
+                        />
                         <div className="flex flex-col">
                           <span className="font-bold text-md">{contest.title}</span>
                           <span className="roman">${contest.token_symbol}</span>
@@ -82,6 +89,7 @@ export const ListContests = (props: ListContestsProps) => {
                         </div>
                       </div>
                       <Link
+                        className="absolute top-0 left-0 w-full h-full z-10 opacity-0"
                         href={{
                           pathname: ROUTE_VIEW_CONTEST,
                           query: {
@@ -90,7 +98,7 @@ export const ListContests = (props: ListContestsProps) => {
                           },
                         }}
                       >
-                        <a className="absolute top-0 left-0 w-full h-full z-10 opacity-0">View contest</a>
+                        View contest
                       </Link>
                     </li>
                   );

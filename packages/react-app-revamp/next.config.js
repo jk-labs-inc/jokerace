@@ -6,6 +6,9 @@ const nextConfig = {
     defaultLocale: "en-US",
     dir: "ltr",
   },
+  images: {
+    domains: ["lens.infura-ipfs.io"],
+  },
 };
 
 module.exports = nextConfig;
