@@ -2,6 +2,7 @@ import Explainer from "@components/Explainer";
 import Button from "@components/UI/Button";
 import ListContests from "@components/_pages/ListContests";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery } from "@tanstack/react-query";
 import { getLiveContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
@@ -47,6 +48,7 @@ function useContests(initialData: any, searchValue: string) {
 const Page: NextPage = props => {
   const initialData = props;
   const [searchValue, setSearchValue] = useState("");
+  const { isConnected } = useAccount();
 
   const {
     page,
@@ -77,12 +79,18 @@ const Page: NextPage = props => {
         <title>JokeDAO - open-source, collaborative decision-making platform</title>
         <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
       </Head>
-      <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-6 max-w-[1350px] 2xl:pl-28 2xl:pr-0 ">
+      <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-4 md:mt-14 lg:mt-6 max-w-[1350px] 2xl:pl-28 2xl:pr-0 ">
         <div className="mb-12 animate-fadeInLanding">
-          <p className="text-[18px] md:text-[24px] font-bold">
+          <p className="hidden lg:flex text-[18px] md:text-[24px] font-bold">
             contests for communities to make, <br />
             execute, and reward decisions
           </p>
+          <div className="flex items-center gap-5 text-[18px] font-bold lg:hidden">
+            <Button intent={`${isConnected ? "primary" : "neutral-outline"}`} className="hidden xs:flex">
+              Create contest
+            </Button>
+            <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-3 md:full-width-grid-cols md:gap-0 animate-fadeInLanding">

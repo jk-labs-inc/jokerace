@@ -1,11 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import CircularProgressBar from "@components/Clock";
-import { ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
+import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
 import useContestInfo from "@hooks/useContestInfo";
 import { getAccount } from "@wagmi/core";
 import moment from "moment";
-import router from "next/router";
 import { FC, useEffect, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -29,19 +28,21 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     value: 0,
     type: "minutes",
   });
+
   const [votingTimeLeft, setVotingTimeLeft] = useState<TimeLeft>({
     value: 0,
     type: "minutes",
   });
   const [onCountdownComplete, setOnCountdownComplete] = useState(false);
-  const { submissionClass, votingClass, submissionMessage, votingMessage } = useContestInfo({
-    loading,
-    submissionStatus,
-    votingStatus,
-    contest,
-    address,
-    chains,
-  });
+  const { submissionClass, votingClass, submissionMessage, votingMessage, submissionPlainMessage, votingPlainMessage } =
+    useContestInfo({
+      loading,
+      submissionStatus,
+      votingStatus,
+      contest,
+      address,
+      chains,
+    });
 
   const [timerValues, setTimerValues] = useState({
     submissionHours: 0,
@@ -132,11 +133,22 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     }
   };
 
+  const getStatusText = (startDate: Date, endDate: Date) => {
+    const currentDate = moment();
+    const start = moment(startDate);
+
+    if (currentDate.isBefore(start)) {
+      return "runs";
+    } else {
+      return "run";
+    }
+  };
+
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
       <a href={getContestUrl(contest)}>
         <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-5 lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-6 p-3 
+          className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-6 p-3 
         hover:bg-neutral-0 transition-colors duration-300 ease-in-out cursor-pointer"
           key={`live-contest-${contest.id}`}
         >
@@ -250,6 +262,112 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           ) : (
             <p className="text-neutral-9 font-bold">{loading ? <Skeleton /> : "no rewards"}</p>
           )}
+        </div>
+        {/*  Mobile */}
+        <div
+          className="mb-4 flex flex-col gap-2 border-t border-neutral-9 py-8 p-3 
+        hover:bg-neutral-0 transition-colors duration-300 ease-in-out cursor-pointer lg:hidden"
+        >
+          <div className="flex items-center gap-9">
+            {loading ? (
+              <Skeleton circle height={32} width={32} />
+            ) : (
+              <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
+            )}
+            <p className="font-bold w-full uppercase">{loading ? <Skeleton /> : contest.title}</p>
+          </div>
+          <div className="flex flex-row pl-12">
+            <ul className="list-disc list-inside text-[16px]  list-explainer w-full">
+              {loading ? (
+                <Skeleton count={3} />
+              ) : (
+                <>
+                  {!address ? (
+                    <li>
+                      <span className="text-positive-11">connect</span> a wallet to see if you qualify
+                    </li>
+                  ) : null}
+
+                  {submissionPlainMessage ? <li>{submissionPlainMessage}</li> : null}
+                  {votingPlainMessage ? <li>{votingPlainMessage}</li> : null}
+
+                  <li>
+                    {submissionTimeLeft.value ? (
+                      <>
+                        submissions {getStatusText(contest.start_at, contest.vote_start_at)}{" "}
+                        {moment(contest.start_at).format("MMM D")} - {moment(contest.vote_start_at).format("MMM D")}
+                      </>
+                    ) : (
+                      "submissions closed"
+                    )}
+                  </li>
+                  <li>
+                    {votingTimeLeft.value || votingStatus.includes("in:") ? (
+                      <>
+                        voting {getStatusText(contest.vote_start_at, contest.end_at)}{" "}
+                        {moment(contest.vote_start_at).format("MMM D")} - {moment(contest.end_at).format("MMM D")}
+                      </>
+                    ) : (
+                      "voting closed"
+                    )}
+                  </li>
+                  {contest.rewards ? (
+                    <li>
+                      {loading ? (
+                        <Skeleton />
+                      ) : (
+                        <>
+                          {parseInt(contest.rewards.token.value, 10)}{" "}
+                          <span className="uppercase">${contest.rewards.token.symbol}</span>
+                        </>
+                      )}
+
+                      {loading ? <Skeleton /> : ` to ${contest.rewards.winners} winners`}
+                    </li>
+                  ) : null}
+                </>
+              )}
+            </ul>
+          </div>
+
+          <div className="flex items-center gap-5 -ml-[10px] mt-5">
+            {loading ? (
+              <Skeleton circle width={50} height={50} />
+            ) : submissionTimeLeft.value ? (
+              <CircularProgressBar
+                value={submissionTimeLeft.value}
+                type={submissionTimeLeft.type}
+                size={50}
+                strokeWidth={3}
+                color="#FFE25B"
+                initialHours={timerValues.submissionHours}
+                initialMinutes={timerValues.submissionMinutes}
+                initialSeconds={timerValues.submissionSeconds}
+              />
+            ) : votingTimeLeft.value ? (
+              <div className="flex items-center gap-2">
+                <CircularProgressBar
+                  value={votingTimeLeft.value}
+                  type={votingTimeLeft.type}
+                  size={50}
+                  strokeWidth={3}
+                  color="#78FFC6"
+                  initialHours={timerValues.votingHours}
+                  initialMinutes={timerValues.votingMinutes}
+                  initialSeconds={timerValues.votingSeconds}
+                />
+              </div>
+            ) : null}
+            <p className="w-full uppercase">
+              {loading ? (
+                <Skeleton />
+              ) : submissionTimeLeft.value ? (
+                "submissions open"
+              ) : votingTimeLeft.value ? (
+                "voting open"
+              ) : null}
+            </p>
+          </div>
         </div>
       </a>
     </SkeletonTheme>
