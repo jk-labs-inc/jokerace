@@ -172,7 +172,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
   };
 
   const getTextRequirementForMobiles = () => {
-    if (!address) "";
+    if (!address) return "";
 
     if (submissionTimeLeft.value) {
       if (contest.qualifiedToSubmit) {
