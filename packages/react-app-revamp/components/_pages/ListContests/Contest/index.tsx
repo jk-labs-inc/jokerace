@@ -182,7 +182,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
       } else {
         return "you don't qualify :(";
       }
-    } else if (contest.qualifiedToVote) {
+    } else if (votingTimeLeft.value) {
       if (contest.qualifiedToVote) {
         return (
           <span className="flex items-center gap-1">
