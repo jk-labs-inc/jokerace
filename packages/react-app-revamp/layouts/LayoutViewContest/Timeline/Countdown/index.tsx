@@ -4,14 +4,13 @@ import { useContestStore } from "@hooks/useContest/store";
 import useCountdown from "@hooks/useCountdown";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { isAfter, isBefore, isEqual } from "date-fns";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import styles from "./styles.module.css";
 
 export const Countdown = () => {
   const { listProposalsIds } = useProposalStore(state => state);
   const { contestStatus, setContestStatus, contestMaxProposalCount, submissionsOpen, votesOpen, votesClose } =
     useContestStore(state => state);
-  const currentDate = useMemo(() => new Date(), []);
 
   const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen);
   const countdownUntilVotingOpen = useCountdown(submissionsOpen, votesOpen);
