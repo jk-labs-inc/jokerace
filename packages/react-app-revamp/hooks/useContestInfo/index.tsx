@@ -1,5 +1,7 @@
-import { CheckIcon, XIcon } from "@heroicons/react/outline";
-import { FC, useEffect, useState } from "react";
+import CheckmarkIcon from "@components/UI/Icons/Checkmark";
+import CrossIcon from "@components/UI/Icons/Cross";
+import { TimeLeft } from "@components/_pages/ListContests/Contest";
+import { useEffect, useState } from "react";
 import { Chain } from "wagmi";
 
 interface ContestInfoProps {
@@ -9,6 +11,8 @@ interface ContestInfoProps {
   contest: any;
   chains: Chain[];
   address?: string;
+  submissionTimeLeft: TimeLeft;
+  votingTimeLeft: TimeLeft;
 }
 
 type UseContestInfoReturn = {
@@ -16,8 +20,6 @@ type UseContestInfoReturn = {
   votingClass: string;
   submissionMessage: React.ReactNode;
   votingMessage: React.ReactNode;
-  submissionPlainMessage: string | React.ReactNode;
-  votingPlainMessage: string | React.ReactNode;
 };
 
 const useContestInfo = ({
@@ -27,13 +29,13 @@ const useContestInfo = ({
   contest,
   address = "",
   chains,
+  submissionTimeLeft,
+  votingTimeLeft,
 }: ContestInfoProps): UseContestInfoReturn => {
   const [submissionClass, setSubmissionClass] = useState("");
   const [votingClass, setVotingClass] = useState("");
   const [submissionMessage, setSubmissionMessage] = useState<React.ReactNode>(null);
   const [votingMessage, setVotingMessage] = useState<React.ReactNode>(null);
-  const [submissionPlainMessage, setSubmissionPlainMessage] = useState<string | React.ReactNode>("");
-  const [votingPlainMessage, setVotingPlainMessage] = useState<string | React.ReactNode>("");
 
   useEffect(() => {
     const newSubmissionClass = (() => {
@@ -80,15 +82,13 @@ const useContestInfo = ({
         c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
       );
       if (submissionStatus === "Submissions closed") {
-        setSubmissionPlainMessage("");
         return null;
       }
 
       if (contest.qualifiedToSubmit) {
-        setSubmissionPlainMessage("you qualify to submit");
         return (
           <div className="flex flex-nowrap items-center gap-1">
-            <CheckIcon className="w-5 mt-1" />
+            <CheckmarkIcon color={submissionTimeLeft.value ? `#FFE25B` : `#FFFF`} />
             <p>you qualify</p>
           </div>
         );
@@ -106,16 +106,6 @@ const useContestInfo = ({
         );
       }
 
-      setSubmissionPlainMessage(() => (
-        <span>
-          you need{" "}
-          <span className="uppercase">
-            ${contest.submissionGatingByVotingToken ? contest.token_symbol : chain?.nativeCurrency?.symbol}
-          </span>{" "}
-          to submit
-        </span>
-      ));
-
       return (
         <p>
           you need{" "}
@@ -128,15 +118,12 @@ const useContestInfo = ({
 
     const newVotingMessage = (() => {
       if (votingStatus === "Voting closed") {
-        setVotingPlainMessage("");
         return null;
       }
-
       if (contest.qualifiedToVote) {
-        setVotingPlainMessage("you qualify to vote");
         return (
           <div className="flex flex-nowrap items-center gap-1">
-            <CheckIcon className="w-5 mt-1" />
+            <CheckmarkIcon color={votingTimeLeft.value ? `#78FFC6` : `#FFFF`} />
             <p>you qualify</p>
           </div>
         );
@@ -151,34 +138,15 @@ const useContestInfo = ({
       }
 
       if (votingStatus === "Voting is open") {
-        setVotingPlainMessage(
-          (() => (
-            <span>
-              {"you needed "}
-              <span className="uppercase">${contest.token_symbol}</span>
-              {" to vote"}
-            </span>
-          ))(),
-        );
         return (
           <div className="flex flex-nowrap items-center gap-1">
-            <XIcon className="w-5 mt-1" />
+            <CrossIcon />
             <p>
               you needed <span className="uppercase">${contest.token_symbol}</span>
             </p>
           </div>
         );
       }
-
-      setVotingPlainMessage(
-        (() => (
-          <span>
-            {"you need "}
-            <span className="uppercase">${contest.token_symbol}</span>
-            {" to vote"}
-          </span>
-        ))(),
-      );
 
       return (
         <p>
@@ -202,7 +170,7 @@ const useContestInfo = ({
     contest.network_name,
   ]);
 
-  return { submissionClass, votingClass, submissionMessage, votingMessage, submissionPlainMessage, votingPlainMessage };
+  return { submissionClass, votingClass, submissionMessage, votingMessage };
 };
 
 export default useContestInfo;

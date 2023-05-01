@@ -110,13 +110,10 @@ const fetchBalances = async (userAddress: string, chainId: number, contest: any,
       ).catch(error => handleFetchUserBalanceError(error, "to submit")),
     ]);
 
-    const isSubmissionOpen =
-      new Date(contest.start_at).getTime() <= Date.now() && Date.now() <= new Date(contest.vote_start_at).getTime();
-
     return {
       submissionGatingByVotingToken: submissionData[0] && submissionData[1].gt(0),
       qualifiedToVote: balanceToVote.value.gt(0),
-      qualifiedToSubmit: isSubmissionOpen && balanceToSubmit.value.gt(0),
+      qualifiedToSubmit: balanceToSubmit.value.gt(0),
     };
   } catch (error) {
     console.error("Error fetching balances:", error);

@@ -1,5 +1,7 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @next/next/no-img-element */
 import CircularProgressBar from "@components/Clock";
+import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
 import useContestInfo from "@hooks/useContestInfo";
@@ -15,7 +17,7 @@ interface ContestProps {
   loading: boolean;
 }
 
-type TimeLeft = {
+export type TimeLeft = {
   value: number;
   type: "days" | "hours" | "minutes";
 };
@@ -34,15 +36,16 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     type: "minutes",
   });
   const [onCountdownComplete, setOnCountdownComplete] = useState(false);
-  const { submissionClass, votingClass, submissionMessage, votingMessage, submissionPlainMessage, votingPlainMessage } =
-    useContestInfo({
-      loading,
-      submissionStatus,
-      votingStatus,
-      contest,
-      address,
-      chains,
-    });
+  const { submissionClass, votingClass, submissionMessage, votingMessage } = useContestInfo({
+    loading,
+    submissionStatus,
+    votingStatus,
+    contest,
+    address,
+    chains,
+    submissionTimeLeft,
+    votingTimeLeft,
+  });
 
   const [timerValues, setTimerValues] = useState({
     submissionHours: 0,
@@ -141,6 +144,56 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
       return "runs";
     } else {
       return "run";
+    }
+  };
+
+  const getTextClassForMobiles = () => {
+    if (!address) {
+      if (submissionTimeLeft.value) {
+        return "text-primary-10";
+      } else {
+        return "text-positive-11";
+      }
+    } else if (submissionTimeLeft.value) {
+      if (contest.qualifiedToSubmit) {
+        return "text-primary-10";
+      } else {
+        return "text-negative-10";
+      }
+    } else if (votingTimeLeft.value) {
+      if (contest.qualifiedToVote) {
+        return "text-positive-11";
+      } else {
+        return "text-negative-10";
+      }
+    }
+  };
+
+  const getTextRequirementForMobiles = () => {
+    if (!address) return null;
+
+    if (submissionTimeLeft.value) {
+      if (contest.qualifiedToSubmit) {
+        return (
+          <span className="flex items-center gap-1">
+            you qualify! <CheckmarkIcon />
+          </span>
+        );
+      } else {
+        return "you don't qualify :(";
+      }
+    } else if (contest.qualifiedToVote) {
+      if (contest.qualifiedToVote) {
+        return (
+          <span className="flex items-center gap-1">
+            you qualify! <CheckmarkIcon />
+          </span>
+        );
+      } else {
+        return "you don't qualify :(";
+      }
+    } else {
+      return null;
     }
   };
 
@@ -265,7 +318,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         </div>
         {/*  Mobile */}
         <div
-          className="mb-4 flex flex-col gap-2 border-t border-neutral-9 py-8 p-3 
+          className="mb-4 flex flex-col gap-2 border-t border-neutral-9 pt-8 p-3 
         hover:bg-neutral-0 transition-colors duration-300 ease-in-out cursor-pointer lg:hidden"
         >
           <div className="flex items-center gap-9">
@@ -287,9 +340,6 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                       <span className="text-positive-11">connect</span> a wallet to see if you qualify
                     </li>
                   ) : null}
-
-                  {submissionPlainMessage ? <li>{submissionPlainMessage}</li> : null}
-                  {votingPlainMessage ? <li>{votingPlainMessage}</li> : null}
 
                   <li>
                     {submissionTimeLeft.value ? (
@@ -330,43 +380,50 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             </ul>
           </div>
 
-          <div className="flex items-center gap-5 -ml-[10px] mt-5">
-            {loading ? (
-              <Skeleton circle width={50} height={50} />
-            ) : submissionTimeLeft.value ? (
-              <CircularProgressBar
-                value={submissionTimeLeft.value}
-                type={submissionTimeLeft.type}
-                size={50}
-                strokeWidth={3}
-                color="#FFE25B"
-                initialHours={timerValues.submissionHours}
-                initialMinutes={timerValues.submissionMinutes}
-                initialSeconds={timerValues.submissionSeconds}
-              />
-            ) : votingTimeLeft.value ? (
-              <div className="flex items-center gap-2">
+          <div className={`${!submissionTimeLeft.value && !votingTimeLeft.value && !loading ? "hidden" : ""}`}>
+            <div className={`flex ${address ? `items-baseline` : "items-center"} gap-5 -ml-[10px] mt-5`}>
+              {loading ? (
+                <Skeleton circle width={50} height={50} />
+              ) : submissionTimeLeft.value ? (
                 <CircularProgressBar
-                  value={votingTimeLeft.value}
-                  type={votingTimeLeft.type}
+                  value={submissionTimeLeft.value}
+                  type={submissionTimeLeft.type}
                   size={50}
                   strokeWidth={3}
-                  color="#78FFC6"
-                  initialHours={timerValues.votingHours}
-                  initialMinutes={timerValues.votingMinutes}
-                  initialSeconds={timerValues.votingSeconds}
+                  color="#FFE25B"
+                  initialHours={timerValues.submissionHours}
+                  initialMinutes={timerValues.submissionMinutes}
+                  initialSeconds={timerValues.submissionSeconds}
                 />
-              </div>
-            ) : null}
-            <p className="w-full uppercase">
-              {loading ? (
-                <Skeleton />
-              ) : submissionTimeLeft.value ? (
-                "submissions open"
               ) : votingTimeLeft.value ? (
-                "voting open"
+                <div className="flex items-center gap-2">
+                  <CircularProgressBar
+                    value={votingTimeLeft.value}
+                    type={votingTimeLeft.type}
+                    size={50}
+                    strokeWidth={3}
+                    color="#78FFC6"
+                    initialHours={timerValues.votingHours}
+                    initialMinutes={timerValues.votingMinutes}
+                    initialSeconds={timerValues.votingSeconds}
+                  />
+                </div>
               ) : null}
-            </p>
+              <div className="flex flex-col w-full">
+                <p className={`w-full uppercase ${getTextClassForMobiles()}`}>
+                  {loading ? (
+                    <Skeleton />
+                  ) : submissionTimeLeft.value ? (
+                    "submissions open"
+                  ) : votingTimeLeft.value ? (
+                    "voting open"
+                  ) : null}
+                </p>
+                <p className={`w-full ${getTextClassForMobiles()}`}>
+                  {loading ? <Skeleton /> : getTextRequirementForMobiles()}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </a>
