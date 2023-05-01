@@ -166,6 +166,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
       } else {
         return "text-negative-10";
       }
+    } else {
+      return null;
     }
   };
 
