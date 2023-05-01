@@ -1,21 +1,23 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useContestStore } from "@hooks/useContest/store";
 import useCountdown from "@hooks/useCountdown";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { isAfter, isBefore, isEqual } from "date-fns";
-import { useEffect } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import styles from "./styles.module.css";
 
 export const Countdown = () => {
   const { listProposalsIds } = useProposalStore(state => state);
   const { contestStatus, setContestStatus, contestMaxProposalCount, submissionsOpen, votesOpen, votesClose } =
     useContestStore(state => state);
+  const currentDate = useMemo(() => new Date(), []);
 
   const countdownUntilSubmissionsOpen = useCountdown(new Date(), submissionsOpen);
   const countdownUntilVotingOpen = useCountdown(submissionsOpen, votesOpen);
   const countdownUntilVotingClose = useCountdown(votesOpen, votesClose);
 
-  useEffect(() => {
+  const updateContestStatus = useCallback(() => {
     if (countdownUntilSubmissionsOpen.isCountdownRunning) {
       setContestStatus(CONTEST_STATUS.SUBMISSIONS_NOT_OPEN);
       return;
@@ -49,6 +51,10 @@ export const Countdown = () => {
     countdownUntilVotingClose.isCountdownRunning,
     contestStatus,
   ]);
+
+  useEffect(() => {
+    updateContestStatus();
+  }, [updateContestStatus]);
 
   if (countdownUntilSubmissionsOpen.isCountdownRunning) {
     return (

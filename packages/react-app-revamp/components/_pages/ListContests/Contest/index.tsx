@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 import CircularProgressBar from "@components/Clock";
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
-import { ROUTE_VIEW_CONTEST_BASE_PATH } from "@config/routes";
+import { ROUTE_VIEW_CONTEST_BASE_PATH, ROUTE_VIEW_UPCOMING_CONTESTS } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
 import useContestInfo from "@hooks/useContestInfo";
 import { getAccount } from "@wagmi/core";
@@ -172,7 +172,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
   };
 
   const getTextRequirementForMobiles = () => {
-    if (!address) return null;
+    if (!address) "";
 
     if (submissionTimeLeft.value) {
       if (contest.qualifiedToSubmit) {
@@ -195,7 +195,19 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         return "you don't qualify :(";
       }
     } else {
-      return null;
+      return "";
+    }
+  };
+
+  const getQualificationMessage = () => {
+    if (contest.qualifiedToSubmit && contest.qualifiedToVote) {
+      return "you qualify to submit & vote";
+    } else if (contest.qualifiedToSubmit) {
+      return "you qualify to submit but not vote";
+    } else if (contest.qualifiedToVote) {
+      return "you don't qualify to submit but you can vote";
+    } else {
+      return "you don't qualify to submit & vote";
     }
   };
 
@@ -342,6 +354,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                       <span className="text-positive-11">connect</span> a wallet to see if you qualify
                     </li>
                   ) : null}
+
+                  {ROUTE_VIEW_UPCOMING_CONTESTS ? <li>{getQualificationMessage()}</li> : null}
 
                   <li>
                     {submissionTimeLeft.value ? (
