@@ -87,7 +87,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke={selectedOption || open ? "#fff" : "#706f78"}
-                  className="w-6 h-6 transform rotate-180 cursor-pointer transition-colors duration-300 ease-in-out"
+                  className="w-6 h-6 transform rotate-180 cursor-pointer transition-colors  hover:stroke-true-white duration-300 ease-in-out"
                   onClick={e => onAscendingClick(e)}
                 >
                   <path
