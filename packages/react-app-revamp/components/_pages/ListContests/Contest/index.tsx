@@ -216,7 +216,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
       <a href={getContestUrl(contest)}>
         <div
           className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-6 p-3 
-        hover:bg-neutral-3 transition-colors duration-300 ease-in-out cursor-pointer"
+        hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer"
           key={`live-contest-${contest.id}`}
         >
           <div className="flex items-center gap-4">
