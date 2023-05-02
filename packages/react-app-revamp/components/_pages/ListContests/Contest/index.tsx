@@ -223,17 +223,17 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             {loading ? (
               <Skeleton circle height={32} width={32} />
             ) : (
-              <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
+              <img className="w-8 h-8" src={chainsImages[contest.network_name]} alt="" />
             )}
             <p className="font-bold w-full">{loading ? <Skeleton /> : contest.title}</p>
           </div>
 
           <div className="flex items-center gap-4">
             <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
-              <div className="min-w-[185px]">
+              <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
                 <p className="font-bold">
                   {loading ? (
-                    <Skeleton />
+                    <Skeleton width={185} />
                   ) : (
                     <>
                       {submissionStatus}{" "}
@@ -247,12 +247,12 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                     </>
                   )}
                 </p>
-                {loading ? <Skeleton /> : submissionMessage}
+                {loading ? <Skeleton width={185} /> : submissionMessage}
               </div>
               {loading ? (
                 <Skeleton circle height={50} width={50} />
               ) : submissionTimeLeft.value ? (
-                <div className="flex items-center gap-2">
+                <div className="flex gap-2">
                   <CircularProgressBar
                     value={submissionTimeLeft.value}
                     type={submissionTimeLeft.type}
@@ -272,10 +272,10 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
 
           <div className="flex items-center gap-4">
             <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
-              <div className="min-w-[185px]">
+              <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
                 <p className="font-bold">
                   {loading ? (
-                    <Skeleton />
+                    <Skeleton width={185} />
                   ) : (
                     <>
                       {/* TODO - if contests ends, it does not apply */}
@@ -290,13 +290,13 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                     </>
                   )}
                 </p>
-                {loading ? <Skeleton /> : votingMessage}
+                {loading ? <Skeleton width={185} /> : votingMessage}
               </div>
             </div>
             {loading ? (
               <Skeleton circle height={50} width={50} />
             ) : votingTimeLeft.value ? (
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2">
                 <CircularProgressBar
                   value={votingTimeLeft.value}
                   type={votingTimeLeft.type}

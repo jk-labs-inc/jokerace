@@ -103,7 +103,7 @@ const Explainer = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-start md:items-center gap-3 md:bg-[url('/explainer/bg-2.svg')] bg-no-repeat md:w-[600px] bg-contain md:pt-[120px] md:pl-[100px] md:-ml-[100px]  transform md:hover:scale-120 transition-transform duration-500">
+        <div className="flex flex-col items-start md:items-center gap-3 md:bg-[url('/explainer/bg-2.svg')] bg-no-repeat md:w-[580px] bg-contain md:pt-[120px] md:pl-[100px] md:-ml-[100px]  transform md:hover:scale-120 transition-transform duration-500">
           <p className="uppercase font-sabo text-[20px] text-left md:text-center">
             elections,
             <br /> feature requests, <br /> pulse checks, giveaways

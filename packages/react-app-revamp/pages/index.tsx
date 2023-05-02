@@ -4,7 +4,7 @@ import ListContests from "@components/_pages/ListContests";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery } from "@tanstack/react-query";
-import { getLiveContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { getFeaturedContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import router from "next/router";
@@ -19,7 +19,7 @@ function useContests(initialData: any, searchValue: string) {
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
   const { status, data, error, isFetching, refetch } = useQuery(
-    [searchValue ? "searchedContests" : "liveContests", page, address, searchValue],
+    [searchValue ? "featuredContests" : "liveContests", page, address, searchValue],
     () =>
       searchValue
         ? searchContests(
@@ -31,7 +31,7 @@ function useContests(initialData: any, searchValue: string) {
             },
             address,
           )
-        : getLiveContests(page, 4, address),
+        : getFeaturedContests(page, 4, address),
   );
 
   return {
@@ -107,7 +107,7 @@ const Page: NextPage = props => {
           <div>
             <div className="text-[16px] font-bold  mb-1">stage three</div>
             <div className="h-1 bg-positive-11"></div>
-            <div className="text-[16px] font-bold mt-1 text-positive-11">voters pick top submmissions</div>
+            <div className="text-[16px] font-bold mt-1 text-positive-11">voters pick top submissions</div>
           </div>
         </div>
 

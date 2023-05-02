@@ -274,6 +274,33 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
   }
 }
 
+export async function getFeaturedContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
+    try {
+      const result = await supabase
+        .from("contests")
+        .select("*", { count: "exact" })
+        .is("featured", true)
+        .range(from, to);
+
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+
+      return { data: processedData, count };
+    } catch (e) {
+      console.error(e);
+    }
+    return { data: [], count: 0 };
+  }
+}
+
 export async function getLiveContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
   if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
@@ -292,6 +319,8 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
       if (error) {
         throw new Error(error.message);
       }
+
+      console.log(result);
 
       const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
 

@@ -77,7 +77,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 selectedOption || open ? "border-primary-10" : "border-neutral-9"
               } transition-colors duration-300 ease-in-out`}
             >
-              <Menu.Button className="flex items-center gap-3 pl-2 pr-2 w-[100%] h-[100%] cursor-default text-[18px]">
+              <Menu.Button className="flex items-center gap-3 pl-2 pr-2 w-[100%] h-[100%] cursor-pointer text-[18px]">
                 <span className={`${selectedOption || open ? `text-true-white` : `text-neutral-9`}`}>
                   {label ? label : "Sort"}
                 </span>
