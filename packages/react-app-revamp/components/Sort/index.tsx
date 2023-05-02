@@ -21,7 +21,6 @@ export interface SortProps {
 const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [label, setLabel] = useState<string | null>(null);
-  const [ascending, setAscending] = useState<boolean>(false);
   const { pathname } = useRouter();
 
   const handleSortChange = (property: string, label: string) => {
@@ -37,30 +36,6 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
     onSortChange?.(null);
 
     close(); // Close the menu
-  };
-
-  const onAscendingClick = (event: React.MouseEvent) => {
-    event.stopPropagation();
-
-    if (selectedOption) {
-      setAscending(prevAscending => {
-        const newAscending = !prevAscending;
-        onSortChange?.({
-          property: selectedOption,
-          ascending: newAscending,
-        });
-        return newAscending;
-      });
-    } else {
-      setAscending(prevAscending => {
-        const newAscending = !prevAscending;
-        onSortChange?.({
-          property: "all",
-          ascending: newAscending,
-        });
-        return newAscending;
-      });
-    }
   };
 
   if (pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
@@ -81,21 +56,6 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 <span className={`${selectedOption || open ? `text-true-white` : `text-neutral-9`}`}>
                   {label ? label : "Sort"}
                 </span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke={selectedOption || open ? "#fff" : "#706f78"}
-                  className="w-6 h-6 transform rotate-180 cursor-pointer transition-colors  hover:stroke-true-white duration-300 ease-in-out"
-                  onClick={e => onAscendingClick(e)}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 7.5L7.5 3m0 0L12 7.5M7.5 3v13.5m13.5 0L16.5 21m0 0L12 16.5m4.5 4.5V7.5"
-                  />
-                </svg>
                 <ChevronDownIcon className="w-5 cursor-pointer ml-auto" />{" "}
               </Menu.Button>
             </div>

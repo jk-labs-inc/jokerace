@@ -93,11 +93,6 @@ export const ListContests: FC<ListContestsProps> = ({
             (b.qualifiedToVote ? 2 : 1) *
             (new Date(b.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(b.end_at).getTime() ? 1 : 0);
           break;
-        case "all":
-          valueA = data.indexOf(a);
-          valueB = data.indexOf(b);
-          reverseOrder = true;
-          break;
         default:
           valueA = a[property];
           valueB = b[property];

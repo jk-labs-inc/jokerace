@@ -6,6 +6,7 @@ const typography = {
   lineHeight: 1.6,
 };
 
+// 3xl = 1500px
 // 2xl = 1350px
 // xl = 1280px
 // lg = 1024px
@@ -24,6 +25,7 @@ const screensRem = {
   lg: 64,
   xl: 80,
   "2xl": 84.375,
+  "3xl": 93.75,
 };
 
 const fsMin = typography.fontSizeMin;
@@ -70,6 +72,7 @@ module.exports = {
       lg: remToPx(screensRem.lg),
       xl: remToPx(screensRem.xl),
       "2xl": remToPx(screensRem["2xl"]),
+      "3xl": remToPx(screensRem["3xl"]),
     },
     fontFamily: {
       sabo: ['"Sabo", sans-serif'],
