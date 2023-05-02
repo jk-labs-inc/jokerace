@@ -333,7 +333,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         {/*  Mobile */}
         <div
           className="mb-4 flex flex-col gap-2 border-t border-neutral-9 pt-8 p-3 
-        hover:bg-neutral-0 transition-colors duration-300 ease-in-out cursor-pointer lg:hidden"
+          hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer lg:hidden"
         >
           <div className="flex items-center gap-9">
             {loading ? (
