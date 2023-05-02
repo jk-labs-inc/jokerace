@@ -44,10 +44,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="twitter:site" content="@jokedao_" />
         <meta name="twitter:description" content="JokeDAO is an open-source, collaborative decision-making platform." />
         <meta name="twitter:image" content="https://jokedao.io/card.png" />
-        <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" />
-        <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" />
-        <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" />
-        <link rel="preload" href="/Lato-Black.woff2" as="font" type="font/woff2" />
+        <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
+        <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/Lato-Black.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/avalanche.png" as="image" />
         <link rel="preload" href="/harmony.png" as="image" />
         <link rel="preload" href="/fantom.png" as="image" />
