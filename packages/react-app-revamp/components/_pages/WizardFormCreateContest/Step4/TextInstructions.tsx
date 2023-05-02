@@ -73,6 +73,8 @@ export const TextInstructions = () => {
                 <>
                   <br /> You can always find it on{" "}
                   <Link
+                    className="link"
+                    target={"_blank"}
                     href={{
                       pathname: ROUTE_VIEW_CONTEST,
                       //@ts-ignore
@@ -82,9 +84,7 @@ export const TextInstructions = () => {
                       },
                     }}
                   >
-                    <a target="_blank" className="link">
-                      the contest page
-                    </a>
+                    the contest page
                   </Link>
                   .
                 </>
@@ -191,18 +191,17 @@ export const TextInstructions = () => {
       {/*@ts-ignore */}
       {dataDeployContest?.address && (
         <Link
+          className={appearAsNeutralButton}
+          target={"_blank"}
           href={{
             pathname: ROUTE_VIEW_CONTEST,
-            //@ts-ignore
             query: {
               chain: contestDeployedToChain.name.toLowerCase().replace(" ", ""),
               address: dataDeployContest?.address,
             },
           }}
         >
-          <a className={appearAsNeutralButton} target="_blank">
-            Go to contest page
-          </a>
+          Go to contest page
         </Link>
       )}
     </div>

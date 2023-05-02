@@ -283,19 +283,17 @@ const LayoutViewContest = (props: any) => {
                     {pathname === ROUTE_CONTEST_PROPOSAL && (
                       <div>
                         <Link
+                          className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs"
                           href={{
                             pathname: ROUTE_VIEW_CONTEST,
-                            //@ts-ignore
                             query: {
                               chain: query.chain,
                               address: query.address,
                             },
                           }}
                         >
-                          <a className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs">
-                            <ArrowLeftIcon className="mie-1 w-4" />
-                            Back to contest
-                          </a>
+                          <ArrowLeftIcon className="mie-1 w-4" />
+                          Back to contest
                         </Link>
                       </div>
                     )}
