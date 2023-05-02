@@ -21,19 +21,19 @@ const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
 
   return (
     <div
-      className={`flex items-center h-10 bg-true-black text-[16px] w-[250px] border-2 rounded-xl ${
+      className={`flex items-center h-10 bg-true-black text-[16px] pl-2 w-[220px] border-2 rounded-xl ${
         searchValue ? "border-primary-10" : "border-neutral-9"
       } transition-colors duration-300 ease-in-out`}
     >
       <span className="text-neutral-11">
         <SearchIcon
-          className={`w-5 ml-2 transition-colors duration-300 ease-in-out ${
+          className={`w-5  transition-colors duration-300 ease-in-out ${
             searchValue ? "text-true-white" : "text-neutral-9"
           }`}
         />
       </span>
       <input
-        className="bg-transparent text-true-white ml-3 outline-none placeholder-neutral-10"
+        className="bg-transparent text-true-white ml-3 outline-none placeholder-neutral-10 w-[220px]"
         type="text"
         placeholder="search contests"
         value={searchValue}

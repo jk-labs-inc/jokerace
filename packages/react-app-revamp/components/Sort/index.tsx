@@ -41,7 +41,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
   if (pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
 
   return (
-    <Menu as="div" className="relative inline-block text-left w-[250px] text-[18px]">
+    <Menu as="div" className="relative inline-block text-left w-[220px] text-[16px]">
       {({ open }) => {
         onMenuStateChange?.(open);
 
@@ -52,7 +52,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 selectedOption || open ? "border-primary-10" : "border-neutral-9"
               } transition-colors duration-300 ease-in-out`}
             >
-              <Menu.Button className="flex items-center gap-3 pl-2 pr-2 w-[100%] h-[100%] cursor-pointer text-[18px]">
+              <Menu.Button className="flex items-center gap-3 pl-2 pr-2 w-[100%] h-[100%] cursor-pointer text-[16px]">
                 <span className={`${selectedOption || open ? `text-true-white` : `text-neutral-9`}`}>
                   {label ? label : "Sort"}
                 </span>
@@ -70,7 +70,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute w-[250px] z-10 mt-4 origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
+                <Menu.Items className="absolute w-[220px] z-10 mt-4 origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
                   {[
                     { property: "rewards", label: "rewards" },
                     { property: "qualified", label: "what i qualify for" },
@@ -83,7 +83,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                         <div
                           className={classNames(
                             active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                            "flex items-center gap-1 px-4 py-2 text-[18px] font-normal hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-300 ease-in-out",
+                            "flex items-center gap-1 px-4 py-2 text-[16px] font-normal hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-300 ease-in-out",
                           )}
                           onClick={() => handleSortChange(property, label)}
                         >
