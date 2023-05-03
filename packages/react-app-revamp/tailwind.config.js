@@ -57,11 +57,6 @@ const remToPx = rem => {
 
 module.exports = {
   content: ["./components/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{js,jsx,ts,tsx}", "./layouts/**/*.{js,jsx,ts,tsx}"],
-  purge: {
-    options: {
-      safelist: ["animate-fadeIn", "animate-fadeOut"],
-    },
-  },
   theme: {
     screens: {
       min: remToPx(screensRem.min),
