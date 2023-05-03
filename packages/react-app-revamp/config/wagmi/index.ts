@@ -12,6 +12,10 @@ import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
 
+type ChainImages = {
+  [key: string]: string;
+};
+
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
@@ -61,7 +65,7 @@ export const client = createClient({
   provider,
 });
 
-export const chainsImages = {
+export const chainsImages: ChainImages = {
   avalanche: "/avalanche.png",
   fantom: "/fantom.png",
   gnosis: "/gnosis.png",
@@ -81,4 +85,7 @@ export const chainsImages = {
   polygon: "/polygon.svg",
   polygonmumbai: "/polygon.svg",
   polygonzktestnet: "/polygon.svg",
+  polygonzkmainnet: "/polygon.svg",
+  scrollgoerli: "/scroll.png",
+  basetestnet: "/base.svg",
 };
