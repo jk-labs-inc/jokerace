@@ -21,33 +21,29 @@ const MainHeader: React.FC = () => {
   return (
     <header className="relative z-20 border-b border-neutral-2 border-solid">
       <div className="py-2 container flex items-center mx-auto">
-        <Link href="/">
-          <a className="text-4xl xs:text-xl">
-            🃏 <span className="sr-only">Home</span>
-          </a>
+        <Link href="/" className="text-4xl xs:text-xl">
+          🃏 <span className="sr-only">Home</span>
         </Link>
         <nav className="hidden xs:flex xs:mis-4 space-i-0.5">
-          <Link href={ROUTE_CREATE_CONTEST}>
-            <a
-              className={`navLink-desktop ${
-                pathname === ROUTE_CREATE_CONTEST ? "navLink-desktop--active" : "navLink-desktop--inactive"
-              }`}
-            >
-              Create contest
-            </a>
+          <Link
+            href={ROUTE_CREATE_CONTEST}
+            className={`navLink-desktop ${
+              pathname === ROUTE_CREATE_CONTEST ? "navLink-desktop--active" : "navLink-desktop--inactive"
+            }`}
+          >
+            Create contest
           </Link>
-          <Link href={ROUTE_VIEW_CONTESTS}>
-            <a
-              className={`navLink-desktop ${
-                [ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS, ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST_RULES].includes(
-                  pathname,
-                )
-                  ? "navLink-desktop--active"
-                  : "navLink-desktop--inactive"
-              }`}
-            >
-              View contests
-            </a>
+          <Link
+            href={ROUTE_VIEW_CONTESTS}
+            className={`navLink-desktop ${
+              [ROUTE_VIEW_CONTEST, ROUTE_VIEW_CONTESTS, ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST_RULES].includes(
+                pathname,
+              )
+                ? "navLink-desktop--active"
+                : "navLink-desktop--inactive"
+            }`}
+          >
+            View contests
           </Link>
         </nav>
         <div className="xs:hidden">
