@@ -46,7 +46,7 @@ const MainHeader: React.FC = () => {
             View contests
           </Link>
         </nav>
-        <div className="xs:hidden">
+        <div className="xs:hidden z-10">
           <Menu>
             {({ open }) => (
               <>
@@ -103,7 +103,7 @@ const MainHeader: React.FC = () => {
           </Menu>
         </div>
 
-        <div className="text-sm mis-auto text-[18px] font-bold">
+        <div className="mis-auto text-[18px] font-bold">
           <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
         </div>
       </div>

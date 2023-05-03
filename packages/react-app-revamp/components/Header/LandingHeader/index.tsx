@@ -38,7 +38,7 @@ const LandingHeader = () => {
       </div>
 
       {/* Mobile */}
-      <div className="xs:hidden">
+      <div className="xs:hidden z-10">
         <Menu>
           {({ open }) => (
             <>
