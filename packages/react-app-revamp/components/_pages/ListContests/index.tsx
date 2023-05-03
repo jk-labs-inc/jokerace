@@ -1,30 +1,161 @@
-import Loader from "@components/UI/Loader";
-import { ROUTE_VIEW_CONTEST } from "@config/routes";
-import { chainsImages } from "@config/wagmi";
+/* eslint-disable react-hooks/exhaustive-deps */
+import Search from "@components/Search";
+import Sort, { Sorting } from "@components/Sort";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
-import { format, getUnixTime } from "date-fns";
-import Link from "next/link";
+import { FC, useEffect, useState } from "react";
 import { Pagination } from "react-headless-pagination";
+import Contest from "./Contest";
 
 interface ListContestsProps {
   status: "error" | "loading" | "success";
-  result?: any;
-  error?: any;
   page: number;
   setPage: any;
   isFetching: boolean;
   itemsPerPage: number;
+  result?: any;
+  error?: any;
+  compact?: boolean;
+  onSearchChange?: (value: string) => void;
 }
 
-export const ListContests = (props: ListContestsProps) => {
-  const { error, status, result, page, setPage, itemsPerPage, isFetching } = props;
+export const ListContests: FC<ListContestsProps> = ({
+  error,
+  status,
+  result,
+  page,
+  setPage,
+  itemsPerPage,
+  isFetching,
+  compact = false,
+  onSearchChange,
+}) => {
+  const [sortedData, setSortedData] = useState<any[]>([]);
+  const [sorting, setSorting] = useState<Sorting | null>(null);
+  const [fadeBg, setFadeBg] = useState(false);
+  const loading = status === "loading" || isFetching;
+  const placeholderCount = compact ? 4 : 7;
+  const placeholders = new Array(placeholderCount).fill(null);
+
+  useEffect(() => {
+    if (!result) return;
+
+    setSortedData(result.data);
+  }, [result]);
+
+  useEffect(() => {
+    handleSort();
+  }, [sorting]);
+
+  const sortData = (data: any, property: string, order: string) => {
+    return data.sort((a: any, b: any) => {
+      let valueA;
+      let valueB;
+      let reverseOrder = false;
+
+      switch (property) {
+        case "rewards":
+          valueA = a.rewards ? 1 : 0;
+          valueB = b.rewards ? 1 : 0;
+          break;
+        case "qualified":
+          valueA = a.qualifiedToSubmit || a.qualifiedToVote ? 1 : 0;
+          valueB = b.qualifiedToSubmit || b.qualifiedToVote ? 1 : 0;
+          break;
+        case "closest_deadline":
+          const aTimestamps = [
+            new Date(a.start_at).getTime(),
+            new Date(a.vote_start_at).getTime(),
+            new Date(a.end_at).getTime(),
+          ].filter(timestamp => timestamp >= Date.now());
+          const bTimestamps = [
+            new Date(b.start_at).getTime(),
+            new Date(b.vote_start_at).getTime(),
+            new Date(b.end_at).getTime(),
+          ].filter(timestamp => timestamp >= Date.now());
+
+          valueA = aTimestamps.length > 0 ? Math.min(...aTimestamps) : Infinity;
+          valueB = bTimestamps.length > 0 ? Math.min(...bTimestamps) : Infinity;
+          reverseOrder = true;
+          break;
+        case "can_submit":
+          valueA =
+            (a.qualifiedToSubmit ? 2 : 1) *
+            (new Date(a.start_at).getTime() <= Date.now() && Date.now() <= new Date(a.vote_start_at).getTime() ? 1 : 0);
+          valueB =
+            (b.qualifiedToSubmit ? 2 : 1) *
+            (new Date(b.start_at).getTime() <= Date.now() && Date.now() <= new Date(b.vote_start_at).getTime() ? 1 : 0);
+          break;
+        case "can_vote":
+          valueA =
+            (a.qualifiedToVote ? 2 : 1) *
+            (new Date(a.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(a.end_at).getTime() ? 1 : 0);
+          valueB =
+            (b.qualifiedToVote ? 2 : 1) *
+            (new Date(b.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(b.end_at).getTime() ? 1 : 0);
+          break;
+        default:
+          valueA = a[property];
+          valueB = b[property];
+      }
+
+      if (valueA < valueB) {
+        return order === "ascending" ? (reverseOrder ? 1 : -1) : reverseOrder ? -1 : 1;
+      }
+      if (valueA > valueB) {
+        return order === "ascending" ? (reverseOrder ? -1 : 1) : reverseOrder ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
+  const handleSort = () => {
+    if (!result) return;
+
+    if (!sorting) {
+      setSortedData(result.data); // Reset sorted data
+      return;
+    }
+
+    const { property, ascending } = sorting;
+    const order = ascending ? "ascending" : "descending";
+    const sorted = sortData([...result.data], property, order);
+    setSortedData(sorted);
+  };
+
+  if (compact) {
+    return (
+      <>
+        <div className="font-bold text-md grid-cols-1 grid gap-5 md:full-width-grid-cols items-center pie-1ex p-3">
+          <h2 className="text-[20px] font-bold font-sabo">Featured Contests</h2>
+          <Search onSearchChange={onSearchChange} />
+          <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
+        </div>
+        {!isFetching && result?.count === 0 ? (
+          <div className="text-neutral-9 text-center italic mb-6 animate-appear mt-12">No contests found</div>
+        ) : (
+          <div
+            className={`grid ${
+              fadeBg ? "opacity-50" : "opacity-100"
+            } text-[16px] transition-opacity duration-300 ease-in-out`}
+          >
+            {loading
+              ? placeholders.map((_, index) => (
+                  <Contest key={`placeholder-contest-${index}`} contest={{}} compact={compact} loading={loading} />
+                ))
+              : sortedData
+                  .slice(0, 4)
+                  .map((contest: any) => (
+                    <Contest key={`live-contest-${contest.id}`} contest={contest} compact={compact} loading={loading} />
+                  ))}
+          </div>
+        )}
+      </>
+    );
+  }
+
   return (
     <>
-      {status === "loading" || isFetching ? (
-        <div className="animate-appear">
-          <Loader />
-        </div>
-      ) : status === "error" ? (
+      {status === "error" ? (
         <div className="animate-appear bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
           <p className="text-sm font-bold text-negative-10 text-center">Something went wrong: {error?.message}</p>
         </div>
@@ -34,69 +165,33 @@ export const ListContests = (props: ListContestsProps) => {
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
             <div className="animate-appear">
-              <div className="font-bold mb-4 text-md flex items-center pie-1ex">
-                <span aria-hidden="true" className={`${isFetching ? "animate-card-rotation" : "opacity-90"}`}>
+              <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols md:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
+                <span aria-hidden="true">
                   🃏
+                  <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>
                 </span>
-                <span className={`pis-1ex ${isFetching && "animate-pulse"}`}>{result.count} contests</span>
-
-                {isFetching && <span className="sr-only">Loading</span>}
+                <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
               </div>
-              <ul className="space-y-6">
-                {result.data.map((contest: any) => {
-                  return (
-                    <li
-                      className="relative border border-solid border-neutral-4 bg-true-white bg-opacity-2.5 p-3 rounded-md hover:border-neutral-6 hover:bg-opacity-10 transition-all duration-200"
-                      key={`live-contest-${contest.id}`}
-                    >
-                      <div className="flex items-center space-i-6">
-                        {/* @ts-ignore */}
-                        <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
-                        <div className="flex flex-col">
-                          <span className="font-bold text-md">{contest.title}</span>
-                          <span className="roman">${contest.token_symbol}</span>
-                          {getUnixTime(new Date()) < getUnixTime(new Date(contest.start_at)) && (
-                            <time className="text-sm text-neutral-10 italic">
-                              Starts {format(new Date(contest.start_at), "MMMM dd ppp")}
-                            </time>
-                          )}
-                          {getUnixTime(new Date()) > getUnixTime(new Date(contest.end_at)) && (
-                            <time className="text-sm text-neutral-10 italic">
-                              Finished {format(new Date(contest.end_at), "MMMM dd ppp")}
-                            </time>
-                          )}
-                          {getUnixTime(new Date()) > getUnixTime(new Date(contest.start_at)) &&
-                            getUnixTime(new Date()) >= getUnixTime(new Date(contest.vote_start_at)) &&
-                            getUnixTime(new Date()) <= getUnixTime(new Date(contest.end_at)) && (
-                              <time className="text-sm text-neutral-11">
-                                Voting open until {format(new Date(contest.end_at), "MMMM dd ppp")}
-                              </time>
-                            )}
-                          {getUnixTime(new Date()) >= getUnixTime(new Date(contest.start_at)) &&
-                            getUnixTime(new Date()) < getUnixTime(new Date(contest.vote_start_at)) &&
-                            getUnixTime(new Date()) < getUnixTime(new Date(contest.end_at)) && (
-                              <time className="text-sm text-neutral-11">
-                                Submissions open until {format(new Date(contest.vote_start_at), "MMMM dd ppp")}
-                              </time>
-                            )}
-                        </div>
-                      </div>
-                      <Link
-                        href={{
-                          pathname: ROUTE_VIEW_CONTEST,
-                          query: {
-                            chain: contest.network_name,
-                            address: contest.address,
-                          },
-                        }}
-                      >
-                        <a className="absolute top-0 left-0 w-full h-full z-10 opacity-0">View contest</a>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-              {Math.ceil(result.count / itemsPerPage) > 1 && (
+              <div
+                className={`grid ${
+                  fadeBg ? "opacity-50" : "opacity-100"
+                } text-[16px] transition-opacity duration-300 ease-in-out`}
+              >
+                {loading
+                  ? placeholders.map((_, index) => (
+                      <Contest key={`placeholder-contest-${index}`} contest={{}} compact={compact} loading={loading} />
+                    ))
+                  : sortedData.map((contest: any) => (
+                      <Contest
+                        key={`live-contest-${contest.id}`}
+                        contest={contest}
+                        compact={compact}
+                        loading={loading}
+                      />
+                    ))}
+              </div>
+
+              {Math.ceil(result?.count / itemsPerPage) > 1 && (
                 <Pagination
                   currentPage={page}
                   setCurrentPage={(newPage: number) => setPage(newPage)}

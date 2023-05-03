@@ -70,14 +70,14 @@ export function useRewardsModule() {
     },
   );
 
-  async function getContestRewardsModule() {
+  async function getContestRewardsModule(address?: string, chainName?: string) {
     setIsLoading(true);
     setError(null);
     setIsSuccess(false);
 
     try {
-      const contestAddress = asPath.split("/")[3];
-      const contestChainName = asPath.split("/")[2];
+      const contestAddress = address ?? asPath.split("/")[3];
+      const contestChainName = chainName ?? asPath.split("/")[2];
       const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]?.id;
       const abiContest = await getContestContractVersion(contestAddress, contestChainName);
       if (abiContest === null) {

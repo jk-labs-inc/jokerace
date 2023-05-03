@@ -70,57 +70,45 @@ export const Sidebar: FC<SidebarProps> = ({
     <>
       <nav className={`${styles.navbar} md:shrink-0 md:grow-0 md:space-y-1 `}>
         <Link
+          className={`${styles.navLink} ${
+            [ROUTE_VIEW_CONTEST, ROUTE_CONTEST_PROPOSAL].includes(pathname) ? styles["navLink--active"] : ""
+          }`}
           href={{
             pathname: ROUTE_VIEW_CONTEST,
-            //@ts-ignore
             query: {
               chain: query.chain,
               address: query.address,
             },
           }}
         >
-          <a
-            className={`${styles.navLink} ${
-              [ROUTE_VIEW_CONTEST, ROUTE_CONTEST_PROPOSAL].includes(pathname) ? styles["navLink--active"] : ""
-            }`}
-          >
-            <HomeIcon className={styles.navLinkIcon} /> Contest
-          </a>
+          <HomeIcon className={styles.navLinkIcon} /> Contest
         </Link>
         <Link
+          className={`${styles.navLink} ${pathname === ROUTE_VIEW_CONTEST_RULES ? styles["navLink--active"] : ""}`}
           href={{
             pathname: ROUTE_VIEW_CONTEST_RULES,
-            //@ts-ignore
             query: {
               chain: query.chain,
               address: query.address,
             },
           }}
         >
-          <a className={`${styles.navLink} ${pathname === ROUTE_VIEW_CONTEST_RULES ? styles["navLink--active"] : ""}`}>
-            <ClipboardListIcon className={styles.navLinkIcon} />
-            Rules
-          </a>
+          <ClipboardListIcon className={styles.navLinkIcon} />
+          Rules
         </Link>
         {supportsRewardsModule && (
           <Link
+            className={`${styles.navLink} ${pathname === ROUTE_VIEW_CONTEST_REWARDS ? styles["navLink--active"] : ""}`}
             href={{
               pathname: ROUTE_VIEW_CONTEST_REWARDS,
-              //@ts-ignore
               query: {
                 chain: query.chain,
                 address: query.address,
               },
             }}
           >
-            <a
-              className={`${styles.navLink} ${
-                pathname === ROUTE_VIEW_CONTEST_REWARDS ? styles["navLink--active"] : ""
-              }`}
-            >
-              <IconTrophy className={styles.navLinkIcon} />
-              Rewards
-            </a>
+            <IconTrophy className={styles.navLinkIcon} />
+            Rewards
           </Link>
         )}
       </nav>

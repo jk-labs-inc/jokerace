@@ -42,14 +42,14 @@ const LayoutContests = (props: LayoutContestsProps) => {
       <div className="pt-2">
         <nav className="pb-1 px-3 flex items-center justify-between text-sm sm:container sm:mx-auto overflow-x-auto max-w-screen">
           {navLinks.map(el => (
-            <Link href={el.href} key={el.href}>
-              <a
-                className={`navLink-desktop whitespace-nowrap ${
-                  pathname === el.href ? "navLink-desktop--active" : "navLink-desktop--inactive"
-                }`}
-              >
-                {el.label}
-              </a>
+            <Link
+              href={el.href}
+              key={el.href}
+              className={`navLink-desktop whitespace-nowrap ${
+                pathname === el.href ? "navLink-desktop--active" : "navLink-desktop--inactive"
+              }`}
+            >
+              {el.label}
             </Link>
           ))}
         </nav>

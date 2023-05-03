@@ -1,7 +1,6 @@
 import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useContestStore } from "@hooks/useContest/store";
 import { format } from "date-fns";
-import { FC } from "react";
 import styles from "./styles.module.css";
 // - Contest status
 // 0: Voting open
@@ -31,7 +30,7 @@ export const Steps = () => {
       <li
         className={`${styles.step} ${
           contestStatus === CONTEST_STATUS.CANCELLED || contestStatus === CONTEST_STATUS.SUBMISSIONS_NOT_OPEN
-            ? "text-neutral-11"
+            ? "text-neutral-10"
             : contestStatus === CONTEST_STATUS.COMPLETED
             ? "text-secondary-11"
             : "text-positive-10"
@@ -47,7 +46,7 @@ export const Steps = () => {
             ? "text-positive-10"
             : contestStatus === CONTEST_STATUS.COMPLETED
             ? "text-secondary-11"
-            : "text-neutral-11"
+            : "text-neutral-10"
         }`}
       >
         <div className="flex flex-col">
@@ -56,7 +55,7 @@ export const Steps = () => {
       </li>
       <li
         className={`${styles.step} ${
-          contestStatus === CONTEST_STATUS.COMPLETED ? "text-secondary-11" : "text-neutral-11"
+          contestStatus === CONTEST_STATUS.COMPLETED ? "text-secondary-11" : "text-neutral-10"
         }`}
       >
         <div className="flex flex-col">

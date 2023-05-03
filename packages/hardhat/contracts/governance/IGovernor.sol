@@ -12,6 +12,7 @@ import "../utils/introspection/ERC165.sol";
  */
 abstract contract IGovernor is IERC165 {
     enum ContestState {
+        NotStarted,
         Active,
         Canceled,
         Queued,
@@ -99,13 +100,15 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Timestamp the contest started at.
+     * @dev Timestamp the contest starts at. Submissions open at the end of this block, so it is not possible to propose
+     * during this block.
      */
     function contestStart() public view virtual returns (uint256);
 
     /**
      * @notice module:core
-     * @dev Timestamp the contest vote begins.
+     * @dev Timestamp the contest vote begins. Votes open at the end of this block, so it is possible to propose
+     * during this block.
      */
     function voteStart() public view virtual returns (uint256);
 

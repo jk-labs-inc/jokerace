@@ -113,6 +113,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       {showDeploymentSteps && transactionData?.proposalId && (
         <div className="mt-2 mb-4 animate-appear relative">
           <Link
+            target={"_blank"}
             href={{
               pathname: ROUTE_CONTEST_PROPOSAL,
               //@ts-ignore
@@ -123,9 +124,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
               },
             }}
           >
-            <a target="_blank">
-              View proposal <span className="link">here</span>
-            </a>
+            View proposal <span className="link">here</span>
           </Link>
         </div>
       )}

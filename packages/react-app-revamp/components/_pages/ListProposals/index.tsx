@@ -240,6 +240,8 @@ export const ListProposals = () => {
                       />
 
                       <Link
+                        title={`View proposal #${id}`}
+                        className="absolute opacity-0 inset-0 w-full h-full z-10 "
                         href={{
                           pathname: ROUTE_CONTEST_PROPOSAL,
                           //@ts-ignore
@@ -250,9 +252,7 @@ export const ListProposals = () => {
                           },
                         }}
                       >
-                        <a title={`View proposal #${id}`} className="absolute opacity-0 inset-0 w-full h-full z-10 ">
-                          View proposal #{id}
-                        </a>
+                        View proposal #{id}
                       </Link>
                       <div className="flex flex-col space-y-8 mt-6">
                         {listProposalsData[id].content.length > 280 && (

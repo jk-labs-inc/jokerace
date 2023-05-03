@@ -10,6 +10,8 @@ import type { AppProps } from "next/app";
 import Head from "next/head";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
+import "react-loading-skeleton/dist/skeleton.css";
+
 import { WagmiConfig } from "wagmi";
 
 const queryClient = new QueryClient({
@@ -42,20 +44,17 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="twitter:site" content="@jokedao_" />
         <meta name="twitter:description" content="JokeDAO is an open-source, collaborative decision-making platform." />
         <meta name="twitter:image" content="https://jokedao.io/card.png" />
-        <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" />
-        <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" />
-        <link rel="preload" href="/Lato-Black.woff2" as="font" type="font/woff2" />
+        <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
+        <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/Lato-Black.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/avalanche.png" as="image" />
         <link rel="preload" href="/harmony.png" as="image" />
         <link rel="preload" href="/fantom.png" as="image" />
         <link rel="preload" href="/gnosis.png" as="image" />
       </Head>
       <WagmiConfig client={client}>
-        <RainbowKitProvider
-          chains={chains}
-          /* @ts-ignore */
-          theme={jokeDAOTheme}
-        >
+        <RainbowKitProvider chains={chains} theme={jokeDAOTheme}>
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer
             position="bottom-right"

@@ -81,6 +81,7 @@ export function useUser() {
         functionName: "getCurrentSubmissionTokenVotes",
         args: [accountData?.address],
       });
+
       //@ts-ignore
       setCurrentUserSubmitProposalTokensAmount(amount / 1e18);
     } catch (e) {

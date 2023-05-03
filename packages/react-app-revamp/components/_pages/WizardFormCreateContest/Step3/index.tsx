@@ -149,6 +149,7 @@ export const Step3 = () => {
           {dataDeployContest?.address && (
             <div className="mt-6 font-bold animate-appear relative">
               <Link
+                target={"_blank"}
                 href={{
                   pathname: ROUTE_VIEW_CONTEST,
                   //@ts-ignore
@@ -158,9 +159,7 @@ export const Step3 = () => {
                   },
                 }}
               >
-                <a target="_blank">
-                  View contest <span className="link">here</span>
-                </a>
+                View contest <span className="link">here</span>
               </Link>
             </div>
           )}
@@ -232,6 +231,7 @@ export const Step3 = () => {
           {dataDeployContest?.address && dataContestRewardsModule?.hash && (
             <div className="mt-6 flex font-bold animate-appear relative">
               <Link
+                target={"_blank"}
                 href={{
                   pathname: ROUTE_VIEW_CONTEST_REWARDS,
                   query: {
@@ -242,9 +242,7 @@ export const Step3 = () => {
                   },
                 }}
               >
-                <a target="_blank">
-                  Add funds to your contest rewards module <span className="link">here</span>.
-                </a>
+                Add funds to your contest rewards module <span className="link">here</span>.
               </Link>
             </div>
           )}

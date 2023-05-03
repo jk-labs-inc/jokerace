@@ -1,14 +1,17 @@
-import Head from "next/head";
-import { getLayout } from "@layouts/LayoutContests";
-import type { NextPage } from "next";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import getPagination from "@helpers/getPagination";
 import ListContests from "@components/_pages/ListContests";
+import { isSupabaseConfigured } from "@helpers/database";
+import getPagination from "@helpers/getPagination";
+import { getLayout } from "@layouts/LayoutContests";
+import { useQuery } from "@tanstack/react-query";
 import { getUpcomingContests, ITEMS_PER_PAGE } from "lib/contests";
+import type { NextPage } from "next";
+import Head from "next/head";
+import { useState } from "react";
+import { useAccount } from "wagmi";
 
 function useContests(initialData: any) {
   const [page, setPage] = useState(0);
+  const { address } = useAccount();
 
   const queryOptions = {
     keepPreviousData: true,
@@ -19,8 +22,8 @@ function useContests(initialData: any) {
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
   const { status, data, error, isFetching } = useQuery(
-    ["upcomingContests", page],
-    () => getUpcomingContests(page, ITEMS_PER_PAGE),
+    ["upcomingContests", page, address],
+    () => getUpcomingContests(page, ITEMS_PER_PAGE, address),
     queryOptions,
   );
 
@@ -54,10 +57,7 @@ const Page: NextPage = props => {
 
       <div className="container mx-auto pt-10">
         <h1 className="sr-only">Upcoming contests</h1>
-        {process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_URL &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? (
+        {isSupabaseConfigured ? (
           <ListContests
             isFetching={isFetching}
             itemsPerPage={ITEMS_PER_PAGE}
@@ -70,16 +70,16 @@ const Page: NextPage = props => {
         ) : (
           <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
             This site&apos;s current deployment does not have access to jokedao&apos;s reference database of contests,
-              but you can check out our Supabase backups{" "}
-              <a
-                className="link px-1ex"
-                href="https://github.com/JokeDAO/JokeDaoV2Dev/tree/staging/packages/supabase"
-                target="_blank"
-                rel="noreferrer"
-              >
-                here
-              </a>{" "}
-              for contest chain and address information!
+            but you can check out our Supabase backups{" "}
+            <a
+              className="link px-1ex"
+              href="https://github.com/JokeDAO/JokeDaoV2Dev/tree/staging/packages/supabase"
+              target="_blank"
+              rel="noreferrer"
+            >
+              here
+            </a>{" "}
+            for contest chain and address information!
           </div>
         )}{" "}
       </div>
@@ -88,12 +88,7 @@ const Page: NextPage = props => {
 };
 
 export async function getStaticProps() {
-  if (
-    process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_URL &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  ) {
+  if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(0, 7);
