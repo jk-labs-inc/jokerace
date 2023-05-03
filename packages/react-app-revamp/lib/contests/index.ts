@@ -320,8 +320,6 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
         throw new Error(error.message);
       }
 
-      console.log(result);
-
       const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
 
       return { data: processedData, count };
