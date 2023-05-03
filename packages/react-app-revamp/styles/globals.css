@@ -1,6 +1,15 @@
 /*
   font-face rules (custom fonts declarations)
 */
+
+@font-face {
+  src: url("/Sabo-Filled.otf") format("opentype");
+  font-family: "Sabo";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 @font-face {
   src: url("/Lato-Regular.woff2") format("woff2");
   font-family: "Lato";
@@ -34,48 +43,26 @@
   box-shadow: 0 -2px 4px rgba(52, 211, 153, 0.5), 0 2px 4px rgba(52, 211, 153, 0.5), 0 1px 2px rgba(52, 211, 153, 0.3) !important;
 }
 
-@-webkit-keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
+/* Custom bullet points */
+.list-explainer {
+  list-style: none !important;
 }
 
-@-webkit-keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes fadeOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-  }
+.list-explainer li::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-image: url("/explainer/small-ellipse.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 10px;
+  vertical-align: middle;
+  transition: transform 0.3s ease; /* Add a transition for smooth rotation */
 }
 
-.fadeIn {
-  -webkit-animation: fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-  animation: fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both;
-}
-
-.fadeOut {
-  -webkit-animation: fadeOut 2s ease-out both;
-  animation: fadeOut 2s ease-out both;
+.list-explainer li:hover::before {
+  transform: rotate(15deg);
 }
 
 @tailwind base;
@@ -177,6 +164,20 @@
 @layer components {
   .container {
     @apply px-5 lg:px-3 max-w-screen-lg;
+  }
+
+  .full-width-grid-cols {
+    @apply grid;
+    grid-template-columns: repeat(3, minmax(auto, 1fr)) 0.4fr;
+    gap: 1rem;
+  }
+
+  .dropdownBorder {
+    @apply border-2 border-primary-10;
+  }
+
+  .needle {
+    @apply -mt-0.5 -ml-0.5;
   }
 
   .no-marker li {

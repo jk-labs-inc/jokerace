@@ -6,6 +6,16 @@ const typography = {
   lineHeight: 1.6,
 };
 
+// 3xl = 1500px
+// 2xl = 1350px
+// xl = 1280px
+// lg = 1024px
+// md = 768px
+// sm = 640px
+// xs = 480px
+// 2xs = 320px
+// min = 320px
+
 const screensRem = {
   min: 20,
   "2xs": 30,
@@ -14,7 +24,8 @@ const screensRem = {
   md: 48,
   lg: 64,
   xl: 80,
-  "2xl": 85.364,
+  "2xl": 84.375,
+  "3xl": 93.75,
 };
 
 const fsMin = typography.fontSizeMin;
@@ -56,8 +67,10 @@ module.exports = {
       lg: remToPx(screensRem.lg),
       xl: remToPx(screensRem.xl),
       "2xl": remToPx(screensRem["2xl"]),
+      "3xl": remToPx(screensRem["3xl"]),
     },
     fontFamily: {
+      sabo: ['"Sabo", sans-serif'],
       sans: ['"Lato", sans-serif'],
       mono: ["monospace"],
     },
@@ -96,7 +109,7 @@ module.exports = {
         7: "#594a05",
         8: "#705e00",
         9: "#f5d90a",
-        10: "#ffef5c",
+        10: "#FFE25B",
         11: "#f0c000",
         12: "#fffad1",
       },
@@ -111,7 +124,7 @@ module.exports = {
         8: "#7938b2",
         9: "#8e4ec6",
         10: "#9d5bd2",
-        11: "#bf7af0",
+        11: "#BB65FF",
         12: "#f7ecfc",
       },
       positive: {
@@ -125,7 +138,7 @@ module.exports = {
         8: "#006d5b",
         9: "#70e1c8",
         10: "#95f3d9",
-        11: "#25d0ab",
+        11: "#78FFC6",
         12: "#e7fcf7",
       },
       negative: {
@@ -139,7 +152,7 @@ module.exports = {
         8: "#ae1955",
         9: "#e93d82",
         10: "#f04f88",
-        11: "#f76190",
+        11: "#FF78A9",
         12: "#feecf4",
       },
       neutral: {
@@ -154,7 +167,7 @@ module.exports = {
         8: "#504f57",
         9: "#706f78",
         10: "#7e7d86",
-        11: "#a09fa6",
+        11: "#E5E5E5",
         12: "#ededef",
       },
     },
@@ -227,19 +240,43 @@ module.exports = {
         },
         appear: {
           from: {
-            opacity: 0,
+            opacity: "0",
             transform: "translateY(10px)",
           },
           to: {
-            opacity: 1,
+            opacity: "1",
             transform: "translateY(0)",
           },
         },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        fadeOut: {
+          "0%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        blink: {
+          "0%": { opacity: "1" },
+          "60%": { opacity: "0.8" },
+          "100%": { opacity: "1" },
+        },
+      },
+      scale: {
+        120: "1.1",
+      },
+      transitionProperty: {
+        transform: "transform",
       },
       animation: {
         "card-rotation": "card-rotation 2000ms linear infinite",
         appear: "appear 300ms ease-in forwards",
+        fadeIn: "fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both",
+        fadeInLanding: "fadeIn 3s cubic-bezier(0.39, 0.575, 0.565, 1) both",
+        fadeOut: "fadeOut 2s ease-out both",
+        "blink-shadow": "blink 1.5s ease-in-out infinite",
       },
+
       height: {
         "fit-content": "fit-content",
       },
@@ -261,9 +298,9 @@ module.exports = {
         unset: "unset",
       }),
       opacity: {
-        "2.5": "0.025",
-        "3.5": "0.035",
-        "7.5": "0.075",
+        2.5: "0.025",
+        3.5: "0.035",
+        7.5: "0.075",
       },
       spacing: {
         "7/12": `${(7 / 12) * 100}%`,
@@ -272,7 +309,10 @@ module.exports = {
     },
   },
   variants: {
-    extend: {},
+    extend: {
+      scale: ["hover"],
+      transform: ["hover"],
+    },
   },
   plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography")],
 };

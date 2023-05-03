@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { shortenEthereumAddress } from "@helpers/shortenEthereumAddress";
+import { getDefaultProfile } from "@services/lens/getDefaultProfile";
+import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 import { chain, useEnsName } from "wagmi";
 
 interface EtheuremAddressProps {
@@ -66,7 +67,9 @@ export const EtheuremAddress = (props: EtheuremAddressProps) => {
         >
           {queryUserProfileLens?.data?.picture?.original?.url && (
             <div className="shrink-0 w-10 h-10 mb-3 2xs:mb-0 2xs:mie-3 bg-neutral-5 rounded-full overflow-hidden">
-              <img
+              <Image
+                width={100}
+                height={100}
                 className="w-full h-full object-cover"
                 src={queryUserProfileLens?.data?.picture?.original?.url?.replace(
                   "ipfs://",

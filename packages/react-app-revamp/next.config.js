@@ -4,7 +4,9 @@ const nextConfig = {
   i18n: {
     locales: ["en-US"],
     defaultLocale: "en-US",
-    dir: "ltr",
+  },
+  images: {
+    domains: ["lens.infura-ipfs.io"],
   },
 };
 
