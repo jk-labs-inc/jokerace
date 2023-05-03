@@ -20,7 +20,7 @@ function useContests(initialData: any) {
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
-  const { status, data, error, isFetching, refetch } = useQuery(
+  const { status, data, error, isFetching } = useQuery(
     ["liveContests", page, address],
     () => getLiveContests(page, ITEMS_PER_PAGE, address),
     queryOptions,
@@ -33,7 +33,6 @@ function useContests(initialData: any) {
     data,
     error,
     isFetching,
-    refetch,
   };
 }
 
@@ -46,13 +45,8 @@ const Page: NextPage = props => {
     data,
     error,
     isFetching,
-    refetch,
     //@ts-ignore
   } = useContests(initialData?.data);
-
-  useEffect(() => {
-    refetch();
-  }, []);
 
   return (
     <>

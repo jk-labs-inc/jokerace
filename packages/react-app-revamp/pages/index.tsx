@@ -18,7 +18,7 @@ function useContests(initialData: any, searchValue: string) {
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
-  const { status, data, error, isFetching, refetch } = useQuery(
+  const { status, data, error, isFetching } = useQuery(
     [searchValue ? "featuredContests" : "liveContests", page, address, searchValue],
     () =>
       searchValue
@@ -41,7 +41,6 @@ function useContests(initialData: any, searchValue: string) {
     data,
     error,
     isFetching,
-    refetch,
   };
 }
 
@@ -57,13 +56,8 @@ const Page: NextPage = props => {
     data,
     error,
     isFetching,
-    refetch,
     //@ts-ignore
   } = useContests(initialData?.data, searchValue);
-
-  useEffect(() => {
-    refetch();
-  }, []);
 
   const onViewAll = () => {
     if (searchValue) {
