@@ -4,7 +4,7 @@ import tailwindConfig from "./../../tailwind.config";
 
 const tailwindTheme = resolveConfig(tailwindConfig).theme;
 
-export const jokeRaceTheme: Theme = {
+export const jokeraceTheme: Theme = {
   blurs: {
     modalOverlay: "...",
   },

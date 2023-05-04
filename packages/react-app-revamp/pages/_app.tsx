@@ -11,7 +11,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 
-import { jokeRaceTheme } from "@config/rainbowkit";
+import { jokeraceTheme } from "@config/rainbowkit";
 import { WagmiConfig } from "wagmi";
 
 const queryClient = new QueryClient({
@@ -66,7 +66,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="preload" href="/gnosis.png" as="image" />
       </Head>
       <WagmiConfig client={client}>
-        <RainbowKitProvider chains={chains} theme={jokeRaceTheme}>
+        <RainbowKitProvider chains={chains} theme={jokeraceTheme}>
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer
             position="bottom-right"
