@@ -11,8 +11,12 @@ const Page: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Page not found - JokeDAO</title>
-        <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
+        <title>Page not found - jokerace</title>
+        <meta
+          name="description"
+          content="jokerace - contests for communities to make,
+          execute, and reward decisions"
+        />
       </Head>
       <div className="container m-auto sm:text-center">
         <h1 className="text-4xl font-black mb-3 text-primary-10">Page not found</h1>

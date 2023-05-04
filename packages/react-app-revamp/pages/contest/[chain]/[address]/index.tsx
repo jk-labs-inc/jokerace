@@ -18,7 +18,7 @@ const Page: NextPage = (props: PageProps) => {
   return (
     <>
       <Head>
-        <title>Contest {contestName ? contestName : address} - JokeDAO</title>
+        <title>Contest {contestName ? contestName : address} - jokerace</title>
         <meta name="description" content="@TODO: change this" />
       </Head>
       <h1 className="sr-only">Contest {contestName ? contestName : address} </h1>

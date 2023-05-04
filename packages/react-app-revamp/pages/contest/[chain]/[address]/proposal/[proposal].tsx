@@ -41,7 +41,7 @@ const Page: NextPage = (props: PageProps) => {
     <>
       <Head>
         <title>
-          Proposal {proposal} - Contest {contestName ? contestName : address} - JokeDAO
+          Proposal {proposal} - Contest {contestName ? contestName : address} - jokerace
         </title>
         <meta name="description" content="@TODO: change this" />
       </Head>
