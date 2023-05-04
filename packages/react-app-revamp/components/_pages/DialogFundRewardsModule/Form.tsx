@@ -70,6 +70,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
   });
 
   const isErc20InsufficientBalance =
+    //@ts-ignore
     (data()?.amount ?? 0) >
     (balance?.data?.decimals === 18
       ? balance?.data?.formatted
@@ -144,6 +145,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
               <FormField.InputField>
                 <FormField.Label
                   className="text-sm"
+                  //@ts-ignore
                   hasError={errors().tokenRewardsAddress?.length > 0}
                   htmlFor="tokenRewardsAddress"
                 >
@@ -156,6 +158,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                   required
                   disabled={!isConnected || chain?.unsupported || isLoading}
                   aria-invalid={
+                    //@ts-ignore
                     errors().tokenRewardsAddress?.length > 0 || erc20TokenRewards?.isError ? "true" : "false"
                   }
                   className="max-w-full w-auto 2xs:w-full"
@@ -163,6 +166,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                   type="text"
                   id="tokenRewardsAddress"
                   name="tokenRewardsAddress"
+                  //@ts-ignore
                   hasError={errors().tokenRewardsAddress?.length > 0 || erc20TokenRewards?.isError}
                   aria-describedby="input-tokenRewardsAddress-description input-tokenRewardsAddress-note input-tokenRewardsAddress-helpblock"
                 />
@@ -199,6 +203,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                 </p>
               )}
               <FormField.HelpBlock
+                //@ts-ignore
                 hasError={errors().tokenRewardsAddress?.length > 0}
                 id="input-tokenRewardsAddress-helpblock"
               >
@@ -211,7 +216,9 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
               <FormField.InputField>
                 <FormField.Label
                   hasError={
+                    //@ts-ignore
                     errors().amount?.length > 0 ||
+                    //@ts-ignore
                     data()?.amount >
                       (balance?.data?.decimals === 18
                         ? balance?.data?.formatted
@@ -235,7 +242,9 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                   }
                   /* @ts-ignore */
                   aria-invalid={
+                    //@ts-ignore
                     errors().amount?.length > 0 ||
+                    //@ts-ignore
                     data()?.amount >
                       (balance?.data?.decimals === 18
                         ? balance?.data?.formatted
@@ -257,6 +266,7 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
                   }
                   id="amount"
                   name="amount"
+                  //@ts-ignore
                   hasError={errors().amount?.length > 0 === true}
                   aria-describedby="input-amount-description input-amount-balance-helpblock input-amount-helpblock"
                 />
@@ -278,7 +288,9 @@ export const Form: FC<FormProps> = ({ isLoading, isSuccess, handleSubmit, setIsM
 
               <FormField.HelpBlock
                 hasError={
+                  //@ts-ignore
                   errors().amount?.length > 0 ||
+                  //@ts-ignore
                   data()?.amount >
                     (balance?.data?.decimals === 18
                       ? balance?.data?.formatted
