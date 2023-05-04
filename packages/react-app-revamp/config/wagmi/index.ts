@@ -41,7 +41,7 @@ const providers =
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({
-  appName: "JokeDAO",
+  appName: "jokerace",
   chains,
 });
 
