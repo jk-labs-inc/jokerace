@@ -149,6 +149,7 @@ const processContestData = async (contest: any, userAddress: string) => {
 
     if (
       contractConfig &&
+      //@ts-ignore
       contractConfig.contractInterface?.filter(el => el.name === "officialRewardsModule").length > 0
     ) {
       const contestRewardModuleAddress = await readContract({

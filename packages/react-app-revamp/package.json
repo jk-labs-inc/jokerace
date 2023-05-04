@@ -3,12 +3,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "prettier": "prettier --write \"./**/*.{js,jsx,ts,tsx,css,json}\"",
-    "export": "next export",
-    "lens:generate": "graphql-codegen"
+    "build": "next build"
   },
   "dependencies": {
     "@babel/core": "^7.4.0",

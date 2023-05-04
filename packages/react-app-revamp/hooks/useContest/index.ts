@@ -153,6 +153,7 @@ export function useContest() {
     const accountData = getAccount();
 
     try {
+      //@ts-ignore
       if (contractConfig.contractInterface?.filter(el => el.name === "officialRewardsModule").length > 0) {
         const contestRewardModuleAddress = await readContract({
           ...contractConfig,
@@ -217,10 +218,11 @@ export function useContest() {
         setContestStatus(results[8]);
       }
 
+      //@ts-ignore
       const promptFilter = contractConfig.contractInterface?.filter(el => el.name === "prompt");
-      const submissionGatingFilter = contractConfig.contractInterface?.filter(
-        el => el.name === "submissionGatingByVotingToken",
-      );
+      //@ts-ignore
+      const submissionGatingFilter = contractConfig.contractInterface?.filter(el => el.name === "submissionGatingByVotingToken");
+      //@ts-ignore
       const downvotingFilter = contractConfig.contractInterface?.filter(el => el.name === "downvotingAllowed");
 
       if (promptFilter.length > 0) {
@@ -258,6 +260,7 @@ export function useContest() {
       //@ts-ignore
       setAmountOfTokensRequiredToSubmitEntry(results[9] / 1e18);
 
+      //@ts-ignore
       if (contractConfig.contractInterface?.filter(el => el.name === "submissionGatingByVotingToken").length > 0) {
         //@ts-ignore
         const submitProposalTokenRawData = await fetchToken({ address: results[contracts.length - 1], chainId });
