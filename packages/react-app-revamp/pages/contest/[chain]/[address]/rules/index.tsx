@@ -46,8 +46,12 @@ const Page: NextPage = (props: PageProps) => {
   return (
     <>
       <Head>
-        <title>Contest {contestName ? contestName : ""} rules - JokeDAO</title>
-        <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
+        <title>Contest {contestName ? contestName : ""} rules - jokerace</title>
+        <meta
+          name="description"
+          content="jokerace - contests for communities to make,
+execute, and reward decisions"
+        />
       </Head>
       <h1 className="sr-only">Rules of contest {contestName ? contestName : address} </h1>
       {!isLoading && isSuccess && (

@@ -49,8 +49,12 @@ const Page = (props: PageProps) => {
   return (
     <>
       <Head>
-        <title>Contest {contestName ? contestName : ""} rewards - JokeDAO</title>
-        <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
+        <title>Contest {contestName ? contestName : ""} rewards - jokerace</title>
+        <meta
+          name="description"
+          content="jokerace - contests for communities to make,
+          execute, and reward decisions"
+        />
       </Head>
       <h1 className="sr-only">Rewards of contest {contestName ? contestName : address} </h1>
       {!isLoading && isSuccess && (
@@ -90,7 +94,7 @@ const Page = (props: PageProps) => {
                       {"Note: this code has not been audited yet, but can be verified on our "}
                       <a
                         className="link"
-                        href="https://github.com/JokeDAO/JokeDaoV2Dev"
+                        href="https://github.com/jk-labs-inc/jokerace"
                         target="_blank"
                         rel="noopener noreferrer"
                       >
