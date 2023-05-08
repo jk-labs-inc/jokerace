@@ -8,7 +8,7 @@ import { getFeaturedContests, ITEMS_PER_PAGE, searchContests } from "lib/contest
 import type { NextPage } from "next";
 import Head from "next/head";
 import router from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 
 function useContests(initialData: any, searchValue: string) {
