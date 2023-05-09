@@ -5,7 +5,7 @@ const Explainer = () => {
     <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-16 md:mt-32 gap-20 md:flex md:flex-col 3xl:pl-28 2xl:pr-0 2xl:flex-row animate-fadeInLanding">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 2xl:grid-cols-1">
         <div className="flex flex-col gap-3">
-          <p className="text-[30px] uppercase font-sabo mb-5 md:hidden">how it works</p>
+          <p className="text-[20px] uppercase font-sabo mb-5 md:hidden">how it works</p>
           <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[20px]">
             1
           </div>
