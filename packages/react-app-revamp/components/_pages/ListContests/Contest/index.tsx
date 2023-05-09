@@ -429,7 +429,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                 </div>
               ) : null}
               <div className="flex flex-col w-full">
-                <p className={`w-full uppercase ${getTextClassForMobiles()}`}>
+                <p className={`w-full uppercase ${getTextClassForMobiles()} mt-[5px]`}>
                   {loading ? (
                     <Skeleton />
                   ) : submissionTimeLeft.value ? (
