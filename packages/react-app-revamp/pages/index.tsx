@@ -78,7 +78,7 @@ const Page: NextPage = props => {
         />
       </Head>
       <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-4 md:mt-14 lg:mt-6 max-w-[1350px] 3xl:pl-28 2xl:pr-0 ">
-        <div className="mb-12 animate-fadeInLanding">
+        <div className="mb-8 animate-fadeInLanding">
           <p className="hidden lg:flex text-[18px] md:text-[20px] font-bold">
             contests for communities to make, <br />
             execute, and reward decisions
@@ -109,7 +109,7 @@ const Page: NextPage = props => {
           </div>
         </div>
 
-        <div className="text-[16px] mt-14 -ml-[15px]">
+        <div className="text-[16px] mt-8 -ml-[15px]">
           {process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
           process.env.NEXT_PUBLIC_SUPABASE_URL &&
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
