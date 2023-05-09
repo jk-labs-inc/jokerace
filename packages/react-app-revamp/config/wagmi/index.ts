@@ -36,7 +36,7 @@ const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optim
 const appChains = [...defaultChains, ...testnetChains];
 const providers =
   process.env.NODE_ENV === "development"
-    ? [alchemyProvider({ alchemyId }), publicProvider()]
+    ? [publicProvider(), alchemyProvider({ alchemyId })]
     : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
 export const { chains, provider } = configureChains(appChains, providers);
 
