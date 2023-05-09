@@ -12,18 +12,18 @@ const LandingHeader = () => {
   const { isConnected } = useAccount();
 
   return (
-    <header className="flex items-center flex-col lg:flex-row gap-5 lg:gap-20 py-4 lg:pl-8 lg:pr-8 max-w-[1350px] 3xl:pl-16">
+    <header className="flex items-center flex-col lg:flex-row gap-5 lg:gap-20 lg:pl-8 lg:pr-8 max-w-[1350px] 3xl:pl-16">
       <Link href="/">
         <div>
           <h1 className="font-sabo text-primary-10 text-[55px] md:text-[80px]">JOKERACE</h1>
-          <p className="text-primary-10 text-700 text-center lg:text-left lg:pl-9 3xl:pl-12 font-bold mt-[-10px] text-[20px] md:text-[24px]">
+          <p className="text-primary-10 text-700 text-center lg:text-left lg:pl-9 3xl:pl-12 font-bold mt-[-10px] text-[20px] md:text-[20px]">
             noun. US /dʒoʊ·​kreɪs/
           </p>
         </div>
       </Link>
 
-      <div className="flex items-center gap-5  text-[18px] font-bold">
-        <p className="text-[18px] md:text-[24px] lg:hidden font-bold">
+      <div className="flex items-center gap-5 text-[18px]">
+        <p className="text-[18px] md:text-[20px] lg:hidden font-bold">
           contests for communities to make, <br />
           execute, and reward decisions
         </p>

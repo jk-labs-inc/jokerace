@@ -7,6 +7,7 @@ import { chains, chainsImages } from "@config/wagmi";
 import useContestInfo from "@hooks/useContestInfo";
 import { getAccount } from "@wagmi/core";
 import moment from "moment";
+import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -24,6 +25,8 @@ export type TimeLeft = {
 
 const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
   const { address } = getAccount();
+  const router = useRouter();
+  const isUpcomingContest = router.pathname === ROUTE_VIEW_UPCOMING_CONTESTS;
   const [submissionStatus, setSubmissionStatus] = useState("");
   const [votingStatus, setVotingStatus] = useState("");
   const [submissionTimeLeft, setSubmissionTimeLeft] = useState<TimeLeft>({
@@ -332,14 +335,14 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         </div>
         {/*  Mobile */}
         <div
-          className="mb-4 flex flex-col gap-2 border-t border-neutral-9 pt-8 p-3 
+          className="flex flex-col gap-2 mb-4 pl-3 border-t border-neutral-9 pt-8 p-3 
           hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer lg:hidden"
         >
-          <div className="flex items-center gap-9">
+          <div className="flex items-center gap-6">
             {loading ? (
-              <Skeleton circle height={32} width={32} />
+              <Skeleton circle height={50} width={50} />
             ) : (
-              <img className="w-8 h-auto" src={chainsImages[contest.network_name]} alt="" />
+              <img className="w-[50px] h-auto" src={chainsImages[contest.network_name]} alt="" />
             )}
             <p className="font-bold w-full uppercase">{loading ? <Skeleton /> : contest.title}</p>
           </div>
@@ -355,7 +358,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                     </li>
                   ) : null}
 
-                  {ROUTE_VIEW_UPCOMING_CONTESTS ? <li>{getQualificationMessage()}</li> : null}
+                  {isUpcomingContest && address ? <li>{getQualificationMessage()}</li> : null}
 
                   <li>
                     {submissionTimeLeft.value ? (
@@ -397,27 +400,27 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           </div>
 
           <div className={`${!submissionTimeLeft.value && !votingTimeLeft.value && !loading ? "hidden" : ""}`}>
-            <div className={`flex ${address ? `items-baseline` : "items-center"} gap-5 -ml-[10px] mt-5`}>
+            <div className={`flex items-center gap-6 mt-5`}>
               {loading ? (
                 <Skeleton circle width={50} height={50} />
               ) : submissionTimeLeft.value ? (
                 <CircularProgressBar
                   value={submissionTimeLeft.value}
                   type={submissionTimeLeft.type}
-                  size={50}
-                  strokeWidth={3}
+                  size={48}
+                  strokeWidth={2}
                   color="#FFE25B"
                   initialHours={timerValues.submissionHours}
                   initialMinutes={timerValues.submissionMinutes}
                   initialSeconds={timerValues.submissionSeconds}
                 />
               ) : votingTimeLeft.value ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center">
                   <CircularProgressBar
                     value={votingTimeLeft.value}
                     type={votingTimeLeft.type}
-                    size={50}
-                    strokeWidth={3}
+                    size={48}
+                    strokeWidth={2}
                     color="#78FFC6"
                     initialHours={timerValues.votingHours}
                     initialMinutes={timerValues.votingMinutes}

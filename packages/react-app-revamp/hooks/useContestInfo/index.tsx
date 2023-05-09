@@ -78,9 +78,6 @@ const useContestInfo = ({
     const newSubmissionMessage = (() => {
       if (loading) return;
 
-      const chain = chains.find(
-        c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
-      );
       if (submissionStatus === "Submissions closed") {
         return null;
       }
@@ -95,23 +92,18 @@ const useContestInfo = ({
       }
 
       if (!address) {
-        return (
+        return contest.submissionGatingByVotingToken ? (
           <p>
-            for{" "}
-            <span className="uppercase">
-              ${contest.submissionGatingByVotingToken ? contest.token_symbol : chain?.nativeCurrency?.symbol}
-            </span>{" "}
-            holders
+            for <span className="uppercase">${contest.token_symbol}</span> holders
           </p>
+        ) : (
+          "for everyone"
         );
       }
 
       return (
         <p>
-          you need{" "}
-          <span className="uppercase">
-            ${contest.submissionGatingByVotingToken ? contest.token_symbol : chain?.nativeCurrency?.symbol}
-          </span>
+          you need <span className="uppercase">${contest.token_symbol}</span>
         </p>
       );
     })();
