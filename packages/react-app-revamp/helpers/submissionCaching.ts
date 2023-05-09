@@ -3,7 +3,7 @@ import { loadFromLocalStorage, saveToLocalStorage } from "./localStorage";
 export interface SubmissionCache {
   contestId: string;
   content: string;
-  lastEdited: Date;
+  expiresAt: Date;
 }
 
 export const saveSubmissionToLocalStorage = (key: string, submissionCache: SubmissionCache) => {
@@ -27,10 +27,9 @@ export const loadSubmissionFromLocalStorage = (key: string, contestId: string): 
 
   if (submissionCache) {
     const currentTime = new Date();
-    const lastEdited = new Date(submissionCache.lastEdited);
-    const timeDifferenceInHours = (currentTime.getTime() - lastEdited.getTime()) / (1000 * 60 * 60);
+    const expiresAt = submissionCache.expiresAt;
 
-    if (timeDifferenceInHours > 2) {
+    if (currentTime > expiresAt) {
       removeSubmissionFromLocalStorage(key, contestId);
       return null;
     } else {

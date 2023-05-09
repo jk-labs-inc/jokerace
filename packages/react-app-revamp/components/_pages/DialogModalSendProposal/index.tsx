@@ -36,7 +36,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
   const { asPath } = useRouter();
   const { sendProposal, isLoading, error, isSuccess } = useSubmitProposal();
   const { transactionData } = useSubmitProposalStore(state => state);
-  const { contestPrompt, contestStatus, contestMaxProposalCount } = useContestStore(state => state);
+  const { contestPrompt, contestStatus, contestMaxProposalCount, votesOpen } = useContestStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
   const {
     amountOfTokensRequiredToSubmitEntry,
@@ -75,7 +75,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
       const submissionCache: SubmissionCache = {
         contestId,
         content,
-        lastEdited: new Date(),
+        expiresAt: votesOpen,
       };
       saveSubmissionToLocalStorage("submissions", submissionCache);
     },
