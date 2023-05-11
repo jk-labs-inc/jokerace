@@ -106,7 +106,7 @@ module.exports = {
         4: "#352800",
         5: "#3e3000",
         6: "#493c00",
-        7: "#594a05",
+        7: "#645822",
         8: "#705e00",
         9: "#f5d90a",
         10: "#FFE25B",
@@ -165,7 +165,7 @@ module.exports = {
         6: "#34343a",
         7: "#3e3e44",
         8: "#504f57",
-        9: "#706f78",
+        9: "#6A6A6A",
         10: "#7e7d86",
         11: "#E5E5E5",
         12: "#ededef",
@@ -279,6 +279,20 @@ module.exports = {
 
       height: {
         "fit-content": "fit-content",
+      },
+      backgroundImage: {
+        "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
+      },
+      backgroundSize: {
+        "size-200": "200% 200%",
+      },
+      backgroundPosition: {
+        "pos-0": "0% 0%",
+        "pos-100": "100% 100%",
+      },
+      backgroundColor: {
+        ffdd3e: "#FFDD3E",
+        "78ffc6": "#78FFC6",
       },
       width: {
         "max-content": "max-content",

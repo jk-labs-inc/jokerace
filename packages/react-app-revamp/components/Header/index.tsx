@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import LandingHeader from "./LandingHeader";
 import MainHeader from "./MainHeader";
+import CreateFlowHeader from "./CreateFlowHeader";
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -11,12 +12,8 @@ const Header: React.FC = () => {
     return <LandingHeader />;
   }
 
-  if (pathname === "/create") {
-    return (
-      <header>
-        <h1>About Page Header</h1>
-      </header>
-    );
+  if (pathname.includes("/new")) {
+    return <CreateFlowHeader />;
   }
 
   return <MainHeader />;

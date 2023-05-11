@@ -71,7 +71,7 @@
 
 @layer base {
   *:not(.normal-case, .uppercase, input, textarea) {
-    text-transform: lowercase !important;
+    text-transform: lowercase;
   }
 
   html {
@@ -96,7 +96,12 @@
     @apply text-true-black;
   }
 
-  :is(::-webkit-calendar-picker-indicator, ::-webkit-clear-button, ::-webkit-inner-spin-button, ::-webkit-outer-spin-button) {
+  :is(
+      ::-webkit-calendar-picker-indicator,
+      ::-webkit-clear-button,
+      ::-webkit-inner-spin-button,
+      ::-webkit-outer-spin-button
+    ) {
     color: var(--brand);
   }
   html {
@@ -154,6 +159,14 @@
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-empty:first-child::before {
     color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+  /* Placeholder (at the top) */
+  .ProseMirror p.is-editor-create-flow-empty:first-child::before {
+    color: #6a6a6a;
     content: attr(data-placeholder);
     float: left;
     height: 0;
