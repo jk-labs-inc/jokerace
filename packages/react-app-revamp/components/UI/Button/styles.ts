@@ -57,6 +57,7 @@ export const button = cva(
       scale: {
         default: ["text-xs", "py-2 px-4", "font-bold", "border"],
         lg: ["text-md", "py-1.5 px-4 sm:px-5", "font-bold", "border"],
+        header: ["text-[24px]"],
         sm: ["text-2xs", "py-2 px-2.5", "font-bold", "border"],
         xs: ["text-2xs", "py-0.5 px-3", "font-bold", "border"],
       },

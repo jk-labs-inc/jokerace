@@ -1,6 +1,7 @@
 import Stepper from "./components/Stepper";
 import CreateContestPrompt from "./pages/ContestPrompt";
 import CreateContestSummary from "./pages/ContestSummary";
+import CreateContestTiming from "./pages/ContestTiming";
 import CreateContestTitle from "./pages/ContestTitle";
 import CreateContestType from "./pages/ContestType";
 
@@ -10,7 +11,7 @@ const CreateFlow = () => {
     { title: "contest title", content: <CreateContestTitle /> },
     { title: "summary", content: <CreateContestSummary /> },
     { title: "prompt", content: <CreateContestPrompt /> },
-    { title: "contest title", content: <div>bb</div> },
+    { title: "timing", content: <CreateContestTiming /> },
     { title: "summary", content: <div>ccc</div> },
     { title: "contest type", content: <div>aa</div> },
     { title: "contest title", content: <div>bb</div> },

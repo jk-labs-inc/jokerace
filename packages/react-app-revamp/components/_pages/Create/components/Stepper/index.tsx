@@ -1,4 +1,4 @@
-import React, { useState, FC, ReactElement } from "react";
+import { FC, ReactElement, useEffect, useState } from "react";
 
 interface Step {
   title: string;
@@ -11,6 +11,24 @@ interface StepperProps {
 
 const Stepper: FC<StepperProps> = ({ steps }) => {
   const [currentStep, setCurrentStep] = useState(0);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter" && currentStep < steps.length - 1) {
+        setCurrentStep(prevStep => prevStep + 1);
+      } else if (event.key === "Backspace" && currentStep > 0) {
+        // Only navigate back if the event target is not an input field
+        if ((event.target as HTMLElement).tagName !== "INPUT") {
+          setCurrentStep(prevStep => prevStep - 1);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [currentStep, steps.length]);
 
   const handleStepClick = (index: number) => {
     setCurrentStep(index);
@@ -38,7 +56,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
           </div>
         ))}
       </div>
-      <div className="pl-[185px] mt-[100px]">{steps[currentStep].content}</div>
+      <div className="pl-[100px] mt-[100px]">{steps[currentStep].content}</div>
     </div>
   );
 };

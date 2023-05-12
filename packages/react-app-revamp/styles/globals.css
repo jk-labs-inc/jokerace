@@ -65,6 +65,17 @@
   transform: rotate(15deg);
 }
 
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  display: block;
+  background: url("/create-flow/calendar.png") no-repeat;
+  width: 41px;
+  height: 43px;
+  border-width: thin;
+  cursor: pointer;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

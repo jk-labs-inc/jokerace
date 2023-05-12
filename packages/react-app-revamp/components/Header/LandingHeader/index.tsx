@@ -22,7 +22,7 @@ const LandingHeader = () => {
         </div>
       </Link>
 
-      <div className="flex items-center gap-5  text-[18px] font-bold">
+      <div className="flex items-center gap-5 text-[18px] font-bold">
         <p className="text-[18px] md:text-[24px] lg:hidden font-bold">
           contests for communities to make, <br />
           execute, and reward decisions
