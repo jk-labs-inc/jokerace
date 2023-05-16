@@ -262,6 +262,14 @@ module.exports = {
           "60%": { opacity: "0.8" },
           "100%": { opacity: "1" },
         },
+        "shake-top": {
+          "0%": { transform: "translateY(0)" },
+          "10%, 90%": { transform: "translateY(-2px)" },
+          "20%, 80%": { transform: "translateY(2px)" },
+          "30%, 50%, 70%": { transform: "translateY(-4px)" },
+          "40%, 60%": { transform: "translateY(4px)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
       scale: {
         120: "1.1",
@@ -276,6 +284,7 @@ module.exports = {
         fadeInLanding: "fadeIn 3s cubic-bezier(0.39, 0.575, 0.565, 1) both",
         fadeOut: "fadeOut 2s ease-out both",
         "blink-shadow": "blink 1.5s ease-in-out infinite",
+        "shake-top": "shake-top 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both",
       },
 
       height: {

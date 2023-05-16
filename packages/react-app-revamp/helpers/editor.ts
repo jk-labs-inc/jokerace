@@ -9,16 +9,6 @@ export const DisableEnter = Extension.create({
   },
 });
 
-export const ShiftEnterCreateExtension = Extension.create({
-  addKeyboardShortcuts() {
-    return {
-      "Shift-Enter": ({ editor }) => {
-        return editor.commands.enter();
-      },
-    };
-  },
-});
-
 export const convertDocxToHtml = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
     let reader = new FileReader();

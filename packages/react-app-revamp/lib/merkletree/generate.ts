@@ -12,7 +12,7 @@ export interface Proof {
   data: Buffer;
 }
 
-interface MerkleTreeData {
+export interface MerkleTreeData {
   merkleTree: MerkleTree;
   merkleRoot: string;
   recipients: Recipient[];

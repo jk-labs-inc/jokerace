@@ -1,16 +1,45 @@
 import Button from "@components/UI/Button";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, MouseEventHandler, useEffect, useState } from "react";
 
 interface CreateNextButtonProps {
   step: number;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
-const CreateNextButton: FC<CreateNextButtonProps> = ({ step }) => {
+const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
+  const { errors } = useDeployContestStore(state => state);
+  const [shake, setShake] = useState(false);
+
+  useEffect(() => {
+    // If there's an error for the current step, shake the button
+    if (errors.find(error => error.step === step - 1)) {
+      setShake(true);
+    } else {
+      setShake(false);
+    }
+  }, [errors, step]);
+
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    // If there's an error, shake the button
+    if (errors.find(error => error.step === step - 1)) {
+      setShake(true);
+    }
+
+    if (onClick) {
+      onClick(e);
+    }
+  };
+
   return (
     <div className="flex gap-4 items-start">
       <div className="flex flex-col items-center gap-2">
-        <Button className="bg-gradient-next rounded-[10px] py-2 px-[38px] font-bold" scale="header">
+        <Button
+          className={`bg-gradient-next rounded-[10px] py-2 px-[38px] font-bold ${shake ? "animate-shake-top" : ""}`}
+          scale="header"
+          onClick={handleClick}
+        >
           next
         </Button>
 

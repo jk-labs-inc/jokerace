@@ -1,4 +1,5 @@
-import { FC, ReactElement, useEffect, useState } from "react";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { FC, ReactElement } from "react";
 
 interface Step {
   title: string;
@@ -10,28 +11,19 @@ interface StepperProps {
 }
 
 const Stepper: FC<StepperProps> = ({ steps }) => {
-  const [currentStep, setCurrentStep] = useState(0);
-
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter" && currentStep < steps.length - 1) {
-        setCurrentStep(prevStep => prevStep + 1);
-      } else if (event.key === "Backspace" && currentStep > 0) {
-        // Only navigate back if the event target is not an input field
-        if ((event.target as HTMLElement).tagName !== "INPUT") {
-          setCurrentStep(prevStep => prevStep - 1);
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [currentStep, steps.length]);
+  const { step: currentStep, setStep: setCurrentStep, furthestStep, errors } = useDeployContestStore(state => state);
 
   const handleStepClick = (index: number) => {
-    setCurrentStep(index);
+    // Find the error for the current step
+    const currentStepError = errors.find(error => error.step === currentStep);
+
+    // Prevent navigation if there's an error for the current step and the user is trying to go forward
+    if (currentStepError && index > currentStep) return;
+
+    // Allow navigation if the user is trying to go to a step they have already reached
+    if (index <= furthestStep) {
+      setCurrentStep(index);
+    }
   };
 
   return (

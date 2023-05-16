@@ -1,7 +1,7 @@
 import { Combobox, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/outline";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, useState } from "react";
-import { CONTEST_TYPE_MAX_LENGTH } from "../../constants/length";
 import ErrorMessage from "../Error";
 
 const options = [
@@ -19,14 +19,28 @@ const options = [
 ];
 
 interface CreateDropdownProps {
+  option: string;
+  step: number;
+  maxLength?: number;
+  errorMessage?: string;
   onOptionChange?: (option: string) => void;
   onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const CreateDropdown: FC<CreateDropdownProps> = ({ onOptionChange, onMenuStateChange }) => {
+const CreateDropdown: FC<CreateDropdownProps> = ({
+  option,
+  step,
+  onOptionChange,
+  onMenuStateChange,
+  maxLength = 100,
+  errorMessage = "Input is too long",
+}) => {
+  const { errors, setError } = useDeployContestStore(state => state);
+
   const [selectedOption, setSelectedOption] = useState("");
-  const [query, setQuery] = useState("");
-  const [error, setError] = useState("");
+  const [query, setQuery] = useState(option);
+
+  console.log({ query });
 
   const filteredOptions =
     query === ""
@@ -36,14 +50,17 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ onOptionChange, onMenuStateCh
         });
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value.length);
-    if (event.target.value.length >= CONTEST_TYPE_MAX_LENGTH) {
-      setError("tag should be no more than 20 characters");
+    if (event.target.value.length >= maxLength) {
+      onOptionChange?.(event.target.value);
+      setError(step, { step, message: errorMessage });
     } else {
-      setError("");
+      onOptionChange?.(event.target.value);
       setQuery(event.target.value);
+      setError(step, { step, message: "" });
     }
   };
+
+  const currentError = errors.find(error => error.step === step);
 
   return (
     <div className="relative w-[400px]">
@@ -55,8 +72,9 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ onOptionChange, onMenuStateCh
             <>
               <div className="flex border-b border-neutral-11 w-full">
                 <Combobox.Input
+                  value={option}
                   onChange={handleInputChange}
-                  maxLength={CONTEST_TYPE_MAX_LENGTH}
+                  maxLength={maxLength}
                   className="bg-transparent outline-none w-full placeholder-neutral-9 pb-2"
                   placeholder="eg. “hackathon,” “bounty,” “election”"
                 />
@@ -92,7 +110,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ onOptionChange, onMenuStateCh
           );
         }}
       </Combobox>
-      <ErrorMessage error={error} />
+      <ErrorMessage error={currentError?.message ?? ""} />
     </div>
   );
 };

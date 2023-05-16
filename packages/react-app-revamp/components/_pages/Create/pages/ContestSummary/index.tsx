@@ -1,41 +1,46 @@
-import { useState } from "react";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import CreateNextButton from "../../components/Buttons/Next";
 import Description from "../../components/Description";
 import ErrorMessage from "../../components/Error";
+import CreateTextInput from "../../components/TextInput";
 import TipMessage from "../../components/Tip";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH } from "../../constants/length";
+import { useNextStep } from "../../hooks/useNextStep";
 
 const CreateContestSummary = () => {
-  const [error, setError] = useState("");
+  const { summary, setSummary, step, errors } = useDeployContestStore(state => state);
+  const currentStepError = errors.find(error => error.step === step);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-
-    if (inputValue && (inputValue.length < CONTEST_TITLE_MIN_LENGTH || inputValue.length >= CONTEST_TITLE_MAX_LENGTH)) {
-      setError("contest length should be 10-30 characters");
-    } else {
-      setError("");
+  const onNextStep = useNextStep(() => {
+    if (!summary || summary.length < CONTEST_TITLE_MIN_LENGTH || summary.length >= CONTEST_TITLE_MAX_LENGTH) {
+      return "Contest summary should be 10-30 characters";
     }
+    return "";
+  });
+
+  const handleSummaryChange = (value: string) => {
+    setSummary(value);
   };
+
   return (
     <>
-      <Description step={3} title="what’s a 2-3 word summary of how to participate in your contest?" />
+      <Description step={step + 1} title="what’s a 2-3 word summary of how to participate in your contest?" />
       <div className="mt-7 ml-[70px]">
-        <input
-          type="text"
-          className="border-b border-neutral-11 bg-transparent pb-2 outline-none  placeholder-neutral-9 w-[550px]"
+        <CreateTextInput
+          value={summary}
           placeholder="eg. “submit a project” “propose a delegate” “predict the market”"
           minLength={CONTEST_TITLE_MIN_LENGTH}
           maxLength={CONTEST_TITLE_MAX_LENGTH}
-          onChange={handleInputChange}
+          onChange={value => handleSummaryChange(value)}
+          onNextStep={onNextStep}
         />
-        {error.length ? (
-          <ErrorMessage error={error} />
+        {currentStepError ? (
+          <ErrorMessage error={(currentStepError || { message: "" }).message} />
         ) : (
           <TipMessage tip="we’ll use this to summarize and promote your contest on our site" error={""} />
         )}
         <div className="mt-12">
-          <CreateNextButton step={3} />
+          <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>
     </>

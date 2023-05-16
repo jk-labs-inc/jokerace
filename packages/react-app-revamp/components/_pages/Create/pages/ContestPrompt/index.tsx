@@ -1,6 +1,7 @@
 import Iframe from "@components/tiptap/Iframe";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
-import { convertDocxToHtml, DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
+import { convertDocxToHtml } from "@helpers/editor";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Image as TipTapImage } from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -14,14 +15,13 @@ import FileUpload from "../../components/FileUpload";
 import TipMessage from "../../components/Tip";
 
 const CreateContestPrompt = () => {
-  const [prompt, setPrompt] = useState("");
+  const { prompt, setPrompt } = useDeployContestStore(state => state);
   const [isTextSelected, setIsTextSelected] = useState(false);
 
   const editor = useEditor({
     extensions: [
       StarterKit,
-      ShiftEnterCreateExtension,
-      DisableEnter,
+      // DisableEnter,
       TipTapImage,
       TiptapExtensionLink,
       Placeholder.configure({
