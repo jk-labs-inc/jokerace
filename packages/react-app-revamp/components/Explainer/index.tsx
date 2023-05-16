@@ -5,10 +5,11 @@ const Explainer = () => {
     <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-16 md:mt-32 gap-20 md:flex md:flex-col 3xl:pl-28 2xl:pr-0 2xl:flex-row animate-fadeInLanding">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 2xl:grid-cols-1">
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
+          <p className="text-[20px] uppercase font-sabo mb-5 md:hidden">how it works</p>
+          <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[20px]">
             1
           </div>
-          <p className="text-[24px] text-primary-10 font-bold">create a prompt</p>
+          <p className="text-[20px] text-primary-10 font-bold">create a prompt</p>
           <ul className="list-disc list-inside text-[16px] font-bold list-explainer">
             <li>"submit a proposal"</li>
             <li>"design our new logo"</li>
@@ -16,38 +17,38 @@ const Explainer = () => {
           </ul>
         </div>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
+          <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[20px]">
             2
           </div>
-          <p className="text-[24px] text-primary-10 font-bold">pick who can submit</p>
+          <p className="text-[20px] text-primary-10 font-bold">pick who can submit</p>
           <ul className="list-disc list-inside text-[16px] font-bold list-explainer">
-            <li>let anyone submit responses—</li>
+            <li>let anyone submit responses</li>
             <li>or set requirements for who gets to respond.</li>
           </ul>
         </div>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
+          <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[20px]">
             3
           </div>
-          <p className="text-[24px] text-primary-10 font-bold">pick who can vote</p>
+          <p className="text-[20px] text-primary-10 font-bold">pick who can vote</p>
           <ul className="list-disc list-inside text-[16px] font-bold list-explainer">
-            <li>set requirements for who gets to vote</li>
+            <li>set requirements for who can vote.</li>
             <li>pick how many votes they each get.</li>
           </ul>
         </div>
         <div className="flex flex-col gap-3">
-          <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[24px]">
+          <div className="flex items-center justify-center w-[50px] h-[50px] bg-primary-10 rounded-full text-neutral-0 font-bold text-[20px]">
             4
           </div>
-          <p className="text-[24px] leading-5  text-primary-10 font-bold">
+          <p className="text-[20px] leading-5  text-primary-10 font-bold">
             <span className="text-[16px]">optional</span>
             <br />
             reward the winners
           </p>
           <ul className="list-disc list-inside text-[16px] font-bold list-explainer">
             <li>set a rewards pool to winners,</li>
-            <li>decide what percent each rank gets</li>
-            <li>invite others to fund the pool too</li>
+            <li>decide what percent each rank gets,</li>
+            <li>invite others to fund the pool too!</li>
           </ul>
         </div>
       </div>
