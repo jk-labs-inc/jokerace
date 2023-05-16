@@ -1,8 +1,6 @@
-import { Combobox, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/outline";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { FC, useState } from "react";
-import ErrorMessage from "../Error";
+import { FC, useEffect, useRef, useState } from "react";
+import CreateTextInput from "../TextInput";
 
 const options = [
   "hackathon",
@@ -19,98 +17,110 @@ const options = [
 ];
 
 interface CreateDropdownProps {
-  option: string;
-  step: number;
-  maxLength?: number;
-  errorMessage?: string;
+  value: string;
   onOptionChange?: (option: string) => void;
-  onMenuStateChange?: (isOpen: boolean) => void;
+  onMenuStateChange?: (state: boolean) => void;
 }
 
-const CreateDropdown: FC<CreateDropdownProps> = ({
-  option,
-  step,
-  onOptionChange,
-  onMenuStateChange,
-  maxLength = 100,
-  errorMessage = "Input is too long",
-}) => {
-  const { errors, setError } = useDeployContestStore(state => state);
-
-  const [selectedOption, setSelectedOption] = useState("");
-  const [query, setQuery] = useState(option);
-
-  console.log({ query });
-
+const CreateDropdown: FC<CreateDropdownProps> = ({ value, onOptionChange, onMenuStateChange }) => {
+  const [query, setQuery] = useState(value);
+  const [showOptions, setShowOptions] = useState(true);
+  const [focusedOption, setFocusedOption] = useState(-1);
   const filteredOptions =
     query === ""
       ? options
       : options.filter(option => {
           return option.toLowerCase().includes(query.toLowerCase());
         });
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.value.length >= maxLength) {
-      onOptionChange?.(event.target.value);
-      setError(step, { step, message: errorMessage });
+  useEffect(() => {
+    onMenuStateChange?.(showOptions);
+  }, [showOptions, onMenuStateChange]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setShowOptions(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleInputChange = (value: string) => {
+    setQuery(value);
+    onOptionChange?.(value);
+
+    if (value !== "" && filteredOptions.length > 0) {
+      setShowOptions(true);
     } else {
-      onOptionChange?.(event.target.value);
-      setQuery(event.target.value);
-      setError(step, { step, message: "" });
+      setShowOptions(false);
     }
   };
 
-  const currentError = errors.find(error => error.step === step);
+  const handleOptionClick = (option: string) => {
+    setQuery(option);
+    setShowOptions(false);
+    onOptionChange?.(option);
+  };
+
+  const handleIconClick = () => {
+    setShowOptions(!showOptions);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!showOptions) return;
+
+      switch (event.key) {
+        case "ArrowDown":
+          event.preventDefault();
+          setFocusedOption(prev => (prev < filteredOptions.length - 1 ? prev + 1 : prev));
+          break;
+        case "ArrowUp":
+          event.preventDefault();
+          setFocusedOption(prev => (prev > 0 ? prev - 1 : prev));
+          break;
+        case "Enter":
+          event.preventDefault();
+          if (filteredOptions.length === 1) {
+            handleOptionClick(filteredOptions[0]);
+          } else if (focusedOption !== -1) {
+            handleOptionClick(filteredOptions[focusedOption]);
+          }
+          break;
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showOptions, focusedOption, filteredOptions, handleOptionClick]);
 
   return (
-    <div className="relative w-[400px]">
-      <Combobox value={selectedOption} onChange={setSelectedOption} nullable>
-        {({ open }) => {
-          onMenuStateChange?.(open);
-
-          return (
-            <>
-              <div className="flex border-b border-neutral-11 w-full">
-                <Combobox.Input
-                  value={option}
-                  onChange={handleInputChange}
-                  maxLength={maxLength}
-                  className="bg-transparent outline-none w-full placeholder-neutral-9 pb-2"
-                  placeholder="eg. “hackathon,” “bounty,” “election”"
-                />
-                <Combobox.Button>
-                  <ChevronDownIcon className="w-5 cursor-pointer" />
-                </Combobox.Button>
-              </div>
-
-              <Transition
-                enter="transition duration-100 ease-out"
-                enterFrom="transform scale-95 opacity-0"
-                enterTo="transform scale-100 opacity-100"
-                leave="transition duration-75 ease-out"
-                leaveFrom="transform scale-100 opacity-100"
-                leaveTo="transform scale-95 opacity-0"
-              >
-                <Combobox.Options
-                  className="absolute z-10 flex flex-col gap-2
-             border-2 border-primary-10 w-full rounded-xl pl-4 pt-2 mt-5 pb-2 cursor-pointer bg-white"
-                >
-                  {filteredOptions.map(option => (
-                    <Combobox.Option
-                      key={option}
-                      value={option}
-                      className="text-[18px] font-normal hover:bg-gray-100 transition-colors duration-300 ease-in-out"
-                    >
-                      {option}
-                    </Combobox.Option>
-                  ))}
-                </Combobox.Options>
-              </Transition>
-            </>
-          );
-        }}
-      </Combobox>
-      <ErrorMessage error={currentError?.message ?? ""} />
+    <div className="flex relative" ref={wrapperRef}>
+      <CreateTextInput
+        value={query}
+        onChange={value => handleInputChange(value)}
+        placeholder="eg. “hackathon,” “bounty,” “election”"
+      />
+      <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleIconClick} />
+      {showOptions && (
+        <ul className="flex flex-col gap-2 absolute z-10 mt-14 list-none pt-3 pb-3 pl-4 bg-true-black w-[600px] border border-primary-10 rounded-[10px] animate-appear">
+          {filteredOptions.map(option => (
+            <li
+              className="text-neutral-11 text-[18px] hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-300 ease-in-out"
+              key={option}
+              onClick={() => handleOptionClick(option)}
+            >
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

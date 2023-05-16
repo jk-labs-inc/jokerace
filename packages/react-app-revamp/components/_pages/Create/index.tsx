@@ -19,7 +19,7 @@ const CreateFlow = () => {
   ];
 
   return (
-    <div className="pl-[120px] pr-[60px]">
+    <div className="pl-[80px] pr-[60px]">
       <Stepper steps={steps} />
     </div>
   );

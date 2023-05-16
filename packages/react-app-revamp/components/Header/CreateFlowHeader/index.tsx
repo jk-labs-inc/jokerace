@@ -10,7 +10,7 @@ import { Fragment } from "react";
 const CreateFlowHeader = () => {
   const router = useRouter();
   return (
-    <header className="flex items-center justify-between pl-[120px] pr-[60px] mt-8">
+    <header className="flex items-center justify-between pl-[80px] pr-[60px] mt-8">
       <Link href="/">
         <h1 className="font-sabo text-primary-10 text-[40px]">JOKERACE</h1>
       </Link>
