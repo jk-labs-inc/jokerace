@@ -36,18 +36,14 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="color-scheme" content="dark" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://jokerace.xyz/" />
-        <meta
-          property="og:title"
-          content="jokerace 🃏 contests for communities to make,
-          execute, and reward decisions"
-        />
+        <meta property="og:title" content="jokerace" />
         <meta
           property="og:description"
           content="jokerace - contests for communities to make,
           execute, and reward decisions"
         />
         <meta property="og:locale" content="en_GB" />
-        <meta property="og:image" content="https://jokerace.xyz/card.png" />
+        <meta property="og:image" content="https://jokerace.xyz/jokerace.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@jokedao_" />
         <meta
@@ -55,7 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="jokerace - contests for communities to make,
           execute, and reward decisions."
         />
-        <meta name="twitter:image" content="https://jokerace.xyz/card.png" />
+        <meta name="twitter:image" content="https://jokerace.xyz/jokerace.png" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
