@@ -51,7 +51,6 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     if (value !== "" && filteredOptions.length > 0) {
       setShowOptions(true);
     } else {
-      console.log(value);
       setShowOptions(false);
     }
   };
