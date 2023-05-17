@@ -1,7 +1,6 @@
 import CreateDatePicker from "@components/_pages/Create/components/DatePicker";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import moment from "moment";
-import { FC } from "react";
 
 const CreateSubmissionsOpenDate = () => {
   const { submissionOpen, setSubmissionOpen } = useDeployContestStore(state => state);

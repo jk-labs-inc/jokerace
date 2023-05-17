@@ -11,12 +11,28 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
 import Description from "../../components/Description";
+import ErrorMessage from "../../components/Error";
 import FileUpload from "../../components/FileUpload";
 import TipMessage from "../../components/Tip";
+import { useNextStep } from "../../hooks/useNextStep";
 
 const CreateContestPrompt = () => {
-  const { prompt, setPrompt } = useDeployContestStore(state => state);
+  const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
   const [isTextSelected, setIsTextSelected] = useState(false);
+  const currentStepError = errors.find(error => error.step === step);
+
+  const promptValidation = () => {
+    let parser = new DOMParser();
+    const doc = parser.parseFromString(prompt, "text/html");
+
+    if (!doc.body.textContent?.trim()) {
+      return "Contest prompt length shouldn't be empty";
+    }
+
+    return "";
+  };
+
+  const onNextStep = useNextStep(promptValidation);
 
   const editor = useEditor({
     extensions: [
@@ -86,7 +102,7 @@ const CreateContestPrompt = () => {
   return (
     <>
       <Description
-        step={4}
+        step={step + 1}
         title="what’s the full prompt for your contest?"
         additionalContent="what are the instructions for the contest? what are the rules?"
       />
@@ -100,11 +116,15 @@ const CreateContestPrompt = () => {
           className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-[600px] pb-2"
         />
 
-        <TipMessage tip={tipMessage()} error={""} />
+        {currentStepError ? (
+          <ErrorMessage error={(currentStepError || { message: "" }).message} />
+        ) : (
+          <TipMessage tip={tipMessage()} error={""} />
+        )}
 
         <div className="mt-12 inline-flex flex-col gap-7">
           <FileUpload onFileSelect={onFileSelect} />
-          <CreateNextButton step={4} />
+          <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>
     </>

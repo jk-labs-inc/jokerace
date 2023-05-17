@@ -2,29 +2,16 @@ import { ChevronDownIcon } from "@heroicons/react/outline";
 import { FC, useEffect, useRef, useState } from "react";
 import CreateTextInput from "../TextInput";
 
-const options = [
-  "hackathon",
-  "grants round",
-  "bounty",
-  "pulse check",
-  "amend a proposal",
-  "contest competition",
-  "giveaway",
-  "feature request",
-  "curation",
-  "game",
-  "election",
-];
-
 interface CreateDropdownProps {
   value: string;
-  onOptionChange?: (option: string) => void;
+  options: string[];
+  onChange?: (option: string) => void;
   onMenuStateChange?: (state: boolean) => void;
 }
 
-const CreateDropdown: FC<CreateDropdownProps> = ({ value, onOptionChange, onMenuStateChange }) => {
+const CreateDropdown: FC<CreateDropdownProps> = ({ value, options, onChange, onMenuStateChange }) => {
   const [query, setQuery] = useState(value);
-  const [showOptions, setShowOptions] = useState(true);
+  const [showOptions, setShowOptions] = useState(false);
   const [focusedOption, setFocusedOption] = useState(-1);
   const filteredOptions =
     query === ""
@@ -53,7 +40,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ value, onOptionChange, onMenu
 
   const handleInputChange = (value: string) => {
     setQuery(value);
-    onOptionChange?.(value);
+    onChange?.(value);
 
     if (value !== "" && filteredOptions.length > 0) {
       setShowOptions(true);
@@ -65,7 +52,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ value, onOptionChange, onMenu
   const handleOptionClick = (option: string) => {
     setQuery(option);
     setShowOptions(false);
-    onOptionChange?.(option);
+    onChange?.(option);
   };
 
   const handleIconClick = () => {
@@ -109,10 +96,12 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ value, onOptionChange, onMenu
       />
       <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleIconClick} />
       {showOptions && (
-        <ul className="flex flex-col gap-2 absolute z-10 mt-14 list-none pt-3 pb-3 pl-4 bg-true-black w-[600px] border border-primary-10 rounded-[10px] animate-appear">
+        <ul className="flex flex-col gap-2 absolute z-10 mt-14 list-none  bg-true-black w-[600px] border border-primary-10 rounded-[10px] animate-appear">
           {filteredOptions.map(option => (
             <li
-              className="text-neutral-11 text-[18px] hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-300 ease-in-out"
+              className={`pl-4 pt-1 pb-1 text-neutral-11 text-[18px] hover:bg-neutral-3 ${
+                focusedOption ? "hover:bg-neutral-3" : ""
+              } cursor-pointer transition-colors duration-300 ease-in-out`}
               key={option}
               onClick={() => handleOptionClick(option)}
             >
