@@ -7,12 +7,18 @@ interface CreateDropdownProps {
   options: string[];
   onChange?: (option: string) => void;
   onMenuStateChange?: (state: boolean) => void;
+  onNextStepKeyboard?: () => void;
 }
 
-const CreateDropdown: FC<CreateDropdownProps> = ({ value, options, onChange, onMenuStateChange }) => {
+const CreateDropdown: FC<CreateDropdownProps> = ({
+  value,
+  options,
+  onChange,
+  onMenuStateChange,
+  onNextStepKeyboard,
+}) => {
   const [query, setQuery] = useState(value);
   const [showOptions, setShowOptions] = useState(false);
-  const [focusedOption, setFocusedOption] = useState(-1);
   const filteredOptions =
     query === ""
       ? options
@@ -45,6 +51,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ value, options, onChange, onM
     if (value !== "" && filteredOptions.length > 0) {
       setShowOptions(true);
     } else {
+      console.log(value);
       setShowOptions(false);
     }
   };
@@ -59,33 +66,34 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ value, options, onChange, onM
     setShowOptions(!showOptions);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (!showOptions) return;
+  // Comment keyboard events for now, until we can figure out how to make it work with the new design since enter goes to next step
+  // useEffect(() => {
+  //   const handleKeyDown = (event: KeyboardEvent) => {
+  //     if (!showOptions) return;
 
-      switch (event.key) {
-        case "ArrowDown":
-          event.preventDefault();
-          setFocusedOption(prev => (prev < filteredOptions.length - 1 ? prev + 1 : prev));
-          break;
-        case "ArrowUp":
-          event.preventDefault();
-          setFocusedOption(prev => (prev > 0 ? prev - 1 : prev));
-          break;
-        case "Enter":
-          event.preventDefault();
-          if (filteredOptions.length === 1) {
-            handleOptionClick(filteredOptions[0]);
-          } else if (focusedOption !== -1) {
-            handleOptionClick(filteredOptions[focusedOption]);
-          }
-          break;
-      }
-    };
+  //     switch (event.key) {
+  //       case "ArrowDown":
+  //         event.preventDefault();
+  //         setFocusedOption(prev => (prev < filteredOptions.length - 1 ? prev + 1 : prev));
+  //         break;
+  //       case "ArrowUp":
+  //         event.preventDefault();
+  //         setFocusedOption(prev => (prev > 0 ? prev - 1 : prev));
+  //         break;
+  //       case "Enter":
+  //         event.preventDefault();
+  //         if (filteredOptions.length === 1) {
+  //           handleOptionClick(filteredOptions[0]);
+  //         } else if (focusedOption !== -1) {
+  //           handleOptionClick(filteredOptions[focusedOption]);
+  //         }
+  //         break;
+  //     }
+  //   };
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [showOptions, focusedOption, filteredOptions, handleOptionClick]);
+  //   window.addEventListener("keydown", handleKeyDown);
+  //   return () => window.removeEventListener("keydown", handleKeyDown);
+  // }, [showOptions, focusedOption, filteredOptions, handleOptionClick]);
 
   return (
     <div className="flex relative" ref={wrapperRef}>
@@ -93,15 +101,15 @@ const CreateDropdown: FC<CreateDropdownProps> = ({ value, options, onChange, onM
         value={query}
         onChange={value => handleInputChange(value)}
         placeholder="eg. “hackathon,” “bounty,” “election”"
+        onNextStep={onNextStepKeyboard}
       />
       <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleIconClick} />
       {showOptions && (
-        <ul className="flex flex-col gap-2 absolute z-10 mt-14 list-none  bg-true-black w-[600px] border border-primary-10 rounded-[10px] animate-appear">
+        <ul className="flex flex-col gap-1 absolute z-10 mt-14 list-none  bg-true-black w-[600px] border border-primary-10 rounded-[10px] animate-appear">
           {filteredOptions.map(option => (
             <li
-              className={`pl-4 pt-1 pb-1 text-neutral-11 text-[18px] hover:bg-neutral-3 ${
-                focusedOption ? "hover:bg-neutral-3" : ""
-              } cursor-pointer transition-colors duration-300 ease-in-out`}
+              className="pl-4 pt-1 pb-1  text-neutral-11 text-[18px] hover:bg-neutral-3
+               cursor-pointer transition-colors duration-300 ease-in-out"
               key={option}
               onClick={() => handleOptionClick(option)}
             >

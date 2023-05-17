@@ -20,7 +20,6 @@ const CreateEndContestDate = () => {
       tip="yup: one week builds momentum, but 10-30 minutes lets everyone compete live, so design as you like"
       onChange={onEndContesDateChange}
       defaultTime={localISOTime}
-      invalidDate={invalidDates([submissionOpen, votingOpen], votingClose)}
     />
   );
 };

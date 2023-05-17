@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { DocumentAddIcon } from "@heroicons/react/outline";
 import React, { FC, useRef } from "react";
 
 interface FileUploadProps {
@@ -39,7 +39,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect }) => {
       className="inline-flex items-center gap-6 py-3 px-10 border-2 border-dotted rounded-[10px] cursor-pointer"
     >
       <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileInput} />
-      <Image src="/create-flow/upload.png" alt="upload" width={44} height={44} className="mt-[5px]" />
+      <DocumentAddIcon className="w-[50px]" />
       <p className="text-[16px] font-bold">
         drag & drop <br />{" "}
         <span className="font-normal">

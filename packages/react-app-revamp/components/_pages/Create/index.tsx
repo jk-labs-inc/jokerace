@@ -4,6 +4,7 @@ import CreateContestSummary from "./pages/ContestSummary";
 import CreateContestTiming from "./pages/ContestTiming";
 import CreateContestTitle from "./pages/ContestTitle";
 import CreateContestType from "./pages/ContestType";
+import CreateContestVoting from "./pages/ContestVoting";
 
 const CreateFlow = () => {
   const steps = [
@@ -12,10 +13,9 @@ const CreateFlow = () => {
     { title: "summary", content: <CreateContestSummary /> },
     { title: "prompt", content: <CreateContestPrompt /> },
     { title: "timing", content: <CreateContestTiming /> },
-    { title: "summary", content: <div>ccc</div> },
+    { title: "voting", content: <CreateContestVoting /> },
     { title: "contest type", content: <div>aa</div> },
     { title: "contest title", content: <div>bb</div> },
-    { title: "summary", content: <div>ccc</div> },
   ];
 
   return (

@@ -100,7 +100,7 @@ const CreateContestPrompt = () => {
   };
 
   return (
-    <>
+    <div className="mt-[100px]">
       <Description
         step={step + 1}
         title="what’s the full prompt for your contest?"
@@ -127,7 +127,7 @@ const CreateContestPrompt = () => {
           <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

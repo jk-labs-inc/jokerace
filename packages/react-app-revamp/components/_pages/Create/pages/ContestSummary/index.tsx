@@ -23,7 +23,7 @@ const CreateContestSummary = () => {
   };
 
   return (
-    <>
+    <div className="mt-[100px]">
       <Description step={step + 1} title="what’s a 2-3 word summary of how to participate in your contest?" />
       <div className="mt-7 ml-[70px]">
         <CreateTextInput
@@ -43,7 +43,7 @@ const CreateContestSummary = () => {
           <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

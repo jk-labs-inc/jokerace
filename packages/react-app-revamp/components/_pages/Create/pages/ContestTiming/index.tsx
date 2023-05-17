@@ -14,7 +14,7 @@ const CreateContestTiming = () => {
   };
 
   return (
-    <>
+    <div className="mt-[50px]">
       <Description step={step + 1} title="" />
       <div className="flex flex-col ml-[70px] -mt-[45px] gap-10">
         <CreateSubmissionsOpenDate />
@@ -24,7 +24,7 @@ const CreateContestTiming = () => {
           <CreateNextButton step={step} onClick={onNextStep} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -14,12 +14,6 @@ const CreateVotesOpenDate = () => {
 
   const invalidDate = useMemo<boolean>(() => {
     const isBefore = moment(votingOpen).isBefore(moment(submissionOpen));
-    // if (isBefore) {
-    //   setError({ message: "The voting date cannot be before the submission date." });
-    // } else {
-    //   setError(null);
-    // }
-
     return isBefore;
   }, [submissionOpen, votingOpen]);
 
@@ -30,7 +24,6 @@ const CreateVotesOpenDate = () => {
       onChange={onVotesOpenChange}
       defaultTime={localISOTime}
       minTime={minTime}
-      invalidDate={invalidDate}
     />
   );
 };

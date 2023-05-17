@@ -24,7 +24,7 @@ const CreateContestTitle = () => {
   };
 
   return (
-    <>
+    <div className="mt-[100px]">
       <Description step={step + 1} title="what should we call your contest?" />
       <div className="mt-7 ml-[70px]">
         <CreateTextInput
@@ -44,7 +44,7 @@ const CreateContestTitle = () => {
           <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
