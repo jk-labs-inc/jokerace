@@ -1,17 +1,23 @@
-import { DocumentAddIcon } from "@heroicons/react/outline";
+import { CloudIcon, CloudUploadIcon, DocumentAddIcon } from "@heroicons/react/outline";
 import React, { FC, useRef } from "react";
 
 interface FileUploadProps {
+  icon?: React.ReactNode;
+  type?: "csv" | "docx";
   onFileSelect?: (file: File) => void;
 }
 
-const FileUpload: FC<FileUploadProps> = ({ onFileSelect }) => {
+const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "" }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       onFileSelect?.(files[0]);
+    }
+    // Reset the file input value
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -39,13 +45,13 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect }) => {
       className="inline-flex items-center gap-6 py-3 px-10 border-2 border-dotted rounded-[10px] cursor-pointer"
     >
       <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileInput} />
-      <DocumentAddIcon className="w-[50px]" />
-      <p className="text-[16px] font-bold">
-        drag & drop <br />{" "}
-        <span className="font-normal">
+      <CloudIcon className="w-[50px]" />
+      <div className="text-[16px] flex flex-col">
+        <p className="font-bold">drag & drop {type}</p>
+        <span className="font-normal self-center">
           or <span className="text-positive-11">browse</span>
         </span>
-      </p>
+      </div>
     </div>
   );
 };

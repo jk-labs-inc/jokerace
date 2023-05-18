@@ -1,5 +1,5 @@
-import Papa from "papaparse";
 import { getAddress } from "ethers/lib/utils";
+import Papa from "papaparse";
 
 export type InvalidEntry = {
   address: string;
@@ -14,10 +14,9 @@ export type ParseCsvResult = {
   parseError?: Error;
 };
 
-const processResults = (results: Papa.ParseResult<unknown>): ParseCsvResult => {
-  const requiredHeaders = ["address", "votes"];
+const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
+  const requiredHeaders = ["address", "numberOfVotes"];
   const missingHeaders = requiredHeaders.filter(header => !results.meta.fields?.includes(header));
-
   if (missingHeaders.length > 0) {
     return {
       data: {},
@@ -26,11 +25,11 @@ const processResults = (results: Papa.ParseResult<unknown>): ParseCsvResult => {
     };
   }
 
-  const data = results.data as Array<{ address: string; votes: number }>;
+  const data = results.data as Array<{ address: string; numberOfVotes: number }>;
   const votesData: Record<string, number> = {};
   const invalidEntries: InvalidEntry[] = [];
 
-  for (const { address, votes } of data) {
+  for (const { address, numberOfVotes } of data) {
     let error: InvalidEntry["error"] | null = null;
 
     try {
@@ -39,14 +38,14 @@ const processResults = (results: Papa.ParseResult<unknown>): ParseCsvResult => {
       error = "address";
     }
 
-    if (votes < 0) {
+    if (numberOfVotes < 0) {
       error = error ? "both" : "votes";
     }
 
     if (error) {
-      invalidEntries.push({ address: address, votes: votes, error });
+      invalidEntries.push({ address: address, votes: numberOfVotes, error });
     } else {
-      votesData[address] = votes;
+      votesData[address] = numberOfVotes;
     }
   }
 
@@ -62,8 +61,13 @@ export const parseCsv = (file: File): Promise<ParseCsvResult> => {
       header: true,
       dynamicTyping: true,
       skipEmptyLines: true,
-      transformHeader: header => header.toLowerCase(),
-      complete: results => resolve(processResults(results)),
+      transformHeader: header => {
+        const transformedHeader = header.toLowerCase().replace(/\s/g, "");
+        return transformedHeader === "numberofvotes" ? "numberOfVotes" : transformedHeader;
+      },
+      complete: results => {
+        resolve(processResults(results));
+      },
       error: error => resolve({ data: {}, invalidEntries: [], parseError: error }),
     });
   });

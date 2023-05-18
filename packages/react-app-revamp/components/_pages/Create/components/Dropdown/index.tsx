@@ -104,10 +104,10 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
       />
       <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleIconClick} />
       {showOptions && (
-        <ul className="flex flex-col gap-1 absolute z-10 mt-14 list-none  bg-true-black w-[600px] border border-primary-10 rounded-[10px] animate-appear">
+        <ul className="flex flex-col  absolute z-10 mt-14 list-none  bg-true-black w-[600px] border border-primary-10 rounded-[10px] animate-appear">
           {filteredOptions.map(option => (
             <li
-              className="pl-4 pt-1 pb-1  text-neutral-11 text-[18px] hover:bg-neutral-3
+              className="pl-4 pt-2 pb-2  text-neutral-11 text-[18px] hover:bg-neutral-3
                cursor-pointer transition-colors duration-300 ease-in-out"
               key={option}
               onClick={() => handleOptionClick(option)}
