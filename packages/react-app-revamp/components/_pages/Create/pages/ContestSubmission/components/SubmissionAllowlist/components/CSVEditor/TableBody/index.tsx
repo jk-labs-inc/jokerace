@@ -5,7 +5,7 @@ import TableRow from "../TableRow";
 type TableBodyProps = {
   fields: FieldObject[];
   handlePaste: (index: number, event: React.ClipboardEvent) => void;
-  handleChange: (index: number, field: string, value: string) => void;
+  handleChange: (index: number, value: string) => void;
   handleDelete: (index: number) => void;
 };
 

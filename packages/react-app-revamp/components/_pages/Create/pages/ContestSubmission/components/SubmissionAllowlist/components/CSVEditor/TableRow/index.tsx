@@ -5,7 +5,7 @@ import { FieldObject } from "..";
 type TableRowProps = FieldObject & {
   index: number;
   handlePaste: (index: number, event: React.ClipboardEvent) => void;
-  handleChange: (index: number, field: string, value: string) => void;
+  handleChange: (index: number, value: string) => void;
   handleDelete: (index: number) => void;
 };
 
@@ -18,7 +18,7 @@ const TableRow: FC<TableRowProps> = ({ address, error, index, handlePaste, handl
           className="w-full bg-transparent outline-none border-none p-0"
           value={address}
           onPaste={event => handlePaste(index, event)}
-          onChange={event => handleChange(index, "address", event.target.value)}
+          onChange={event => handleChange(index, event.target.value)}
         />
         <div
           className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"

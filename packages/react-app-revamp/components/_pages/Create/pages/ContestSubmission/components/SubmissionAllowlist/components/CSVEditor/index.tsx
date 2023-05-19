@@ -54,7 +54,6 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
       const address = line.trim();
       const error = validateSubmissionFields(address);
 
-      // Update the field at the specified index if it exists, or create a new field
       if (index + lineIndex < newFields.length) {
         newFields[index + lineIndex] = { address, error };
       } else {
@@ -130,7 +129,8 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
         <div className="flex flex-col text-[16px] mt-5">
           <p className="text-primary-10 font-bold">prefer to upload a csv?</p>
           <p className="text-neutral-11">
-            csv should contain addresses in column A (no headers or additional columns).
+            csv should contain addresses in column <span className="uppercase">A</span> (no headers or additional
+            columns).
           </p>
         </div>
       )}

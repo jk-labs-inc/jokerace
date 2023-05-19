@@ -138,7 +138,8 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
         <div className="flex flex-col text-[16px] mt-5">
           <p className="text-primary-10 font-bold">prefer to upload a csv?</p>
           <p className="text-neutral-11">
-            csv should contain addresses in column A and number of votes in column B (no <br />
+            csv should contain addresses in column <span className="uppercase">A</span> and number of votes in column{" "}
+            <span className="uppercase">B</span> (no <br />
             headers or additional columns).
           </p>
         </div>

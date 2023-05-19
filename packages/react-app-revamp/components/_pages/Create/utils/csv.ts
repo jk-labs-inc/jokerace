@@ -31,8 +31,8 @@ export const validateSubmissionFields = (address: string): boolean => {
 
   try {
     getAddress(address);
-    return true;
-  } catch (e) {
     return false;
+  } catch (e) {
+    return true;
   }
 };
