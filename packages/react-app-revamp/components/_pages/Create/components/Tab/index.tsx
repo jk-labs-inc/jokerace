@@ -8,14 +8,17 @@ type TabOption = {
 
 type TabProps = {
   options: TabOption[];
+  disabledTab?: number;
 };
 
-const CreateTab: React.FC<TabProps> = ({ options }) => {
+const CreateTab: React.FC<TabProps> = ({ options, disabledTab = -1 }) => {
   const [selectedTab, setSelectedTab] = useState<TabOption>(options[0]);
 
   const selectTab = (tab: TabOption) => {
     setSelectedTab(tab);
   };
+
+  const isTabDisabled = (index: number) => index === disabledTab;
 
   return (
     <div>
@@ -40,15 +43,18 @@ const CreateTab: React.FC<TabProps> = ({ options }) => {
 
         <div
           data-tooltip-id="voting-requirements"
-          className={`flex-grow text-[24px] font-bold text-center py-2 cursor-not-allowed flex flex-col items-start ${
-            selectedTab === options[1] ? "text-primary-10" : "text-neutral-9"
-          }`}
+          className={`flex-grow text-[24px] font-bold text-center py-2 ${
+            isTabDisabled(1) ? "cursor-not-allowed" : "cursor-pointer"
+          } flex flex-col items-start ${selectedTab === options[1] ? "text-primary-10" : "text-neutral-9"}`}
+          onClick={() => !isTabDisabled(1) && selectTab(options[1])}
         >
           <p className="indent-6">{options[1].label}</p>
           <div className={`h-1 w-full mt-1 ${selectedTab === options[1] ? "bg-primary-10" : "bg-neutral-9"}`}></div>
-          <Tooltip id="voting-requirements">
-            <p className="text-[16px]">we are working on this feature, stay tuned!</p>
-          </Tooltip>
+          {isTabDisabled(1) && (
+            <Tooltip id="voting-requirements">
+              <p className="text-[16px]">we are working on this feature, stay tuned!</p>
+            </Tooltip>
+          )}
         </div>
       </div>
       <div className="mt-4">{selectedTab.content}</div>

@@ -1,4 +1,5 @@
-import { MerkleTreeData } from "lib/merkletree/generate";
+import { MerkleTreeSubmissionsData } from "lib/merkletree/generateSubmissionsTree";
+import { MerkleTreeVotingData } from "lib/merkletree/generateVotersTree";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
@@ -15,8 +16,8 @@ export interface DeployContestState {
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
-  votingInfo: MerkleTreeData | null;
-  submissionInfo: MerkleTreeData | null;
+  votingInfo: MerkleTreeVotingData | null;
+  submissionInfo: MerkleTreeSubmissionsData | null;
   allowedSubmissionsPerUser: number;
   maxSubmissions: number;
   downvote: boolean;
@@ -33,8 +34,8 @@ export interface DeployContestState {
   setSubmissionOpen: (submissionOpen: Date) => void;
   setVotingOpen: (votingOpen: Date) => void;
   setVotingClose: (votingClose: Date) => void;
-  setVotingInfo: (votingInfo: MerkleTreeData) => void;
-  setSubmissionInfo: (submissionInfo: MerkleTreeData) => void;
+  setVotingInfo: (votingInfo: MerkleTreeVotingData) => void;
+  setSubmissionInfo: (submissionInfo: MerkleTreeSubmissionsData) => void;
   setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
   setMaxSubmissions: (maxSubmissions: number) => void;
   setDownvote: (downvote: boolean) => void;
@@ -81,8 +82,8 @@ export const createDeployContestStore = () =>
       setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
       setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
       setVotingClose: (votingClose: Date) => set({ votingClose }),
-      setVotingInfo: (votingInfo: MerkleTreeData) => set({ votingInfo }),
-      setSubmissionInfo: (submissionInfo: MerkleTreeData) => set({ submissionInfo }),
+      setVotingInfo: (votingInfo: MerkleTreeVotingData) => set({ votingInfo }),
+      setSubmissionInfo: (submissionInfo: MerkleTreeSubmissionsData) => set({ submissionInfo }),
       setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
       setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),
       setDownvote: (downvote: boolean) => set({ downvote }),

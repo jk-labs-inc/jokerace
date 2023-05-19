@@ -5,7 +5,7 @@ import CreateVotingAllowlist from "./components/VotingAllowlist";
 
 const tabOptions = [
   { label: "set allowlist manually", content: <CreateVotingAllowlist /> },
-  { label: "set voting requirements", content: <div className="mt-7 ml-[20px]">Content for Tab 2</div> },
+  { label: "set voting requirements", content: <div className="mt-7 ml-[20px]">voting req tab</div> },
 ];
 
 const CreateContestVoting = () => {
@@ -13,7 +13,7 @@ const CreateContestVoting = () => {
 
   return (
     <div className="mt-[50px]">
-      <Description step={step + 1} additionalContent={<CreateTab options={tabOptions} />} title="" />
+      <Description step={step + 1} additionalContent={<CreateTab options={tabOptions} disabledTab={1} />} title="" />
     </div>
   );
 };

@@ -1,10 +1,10 @@
-import { parseCsv } from "@helpers/parseCsv";
+import FileUpload from "@components/_pages/Create/components/FileUpload";
+import { EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
+import { validateVotingFields } from "@components/_pages/Create/utils/csv";
+import { parseCsvVoting } from "@helpers/parseVotingCsv";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
-import { EMPTY_FIELD } from "../../constants/csv";
-import { validateField } from "../../utils/csv";
-import FileUpload from "../FileUpload";
-import ScrollableTableBody from "./components/TableBody";
+import ScrollableTableBody from "./TableBody";
 
 export type FieldObject = {
   address: string;
@@ -16,17 +16,24 @@ type CSVEditorProps = {
   onChange?: (fields: Array<FieldObject>) => void;
 };
 
-const CSVEditor: FC<CSVEditorProps> = ({ onChange }) => {
-  const [fields, setFields] = useState<Array<FieldObject>>(Array(15).fill(EMPTY_FIELD));
+const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
+  const [fields, setFields] = useState<Array<FieldObject>>(Array(15).fill(EMPTY_FIELDS_VOTING));
 
+  // If user clean the fields, reset the state
   useEffect(() => {
     if (fields.length) return;
 
-    updateFields(Array(15).fill(EMPTY_FIELD));
+    updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
   }, [fields]);
 
   // Update state and propagate changes to parent component
-  const updateFields = (newFields: Array<FieldObject>) => {
+  const updateFields = (newFields: Array<FieldObject>, isDeleting = false) => {
+    if (newFields.length === 100) {
+      newFields.push(EMPTY_FIELDS_VOTING);
+    }
+    if (newFields.length < 100 && !isDeleting) {
+      newFields.push(EMPTY_FIELDS_VOTING);
+    }
     setFields(newFields);
     onChange?.(newFields);
   };
@@ -45,7 +52,7 @@ const CSVEditor: FC<CSVEditorProps> = ({ onChange }) => {
 
     lines.forEach((line, lineIndex) => {
       const [address = "", votes = ""] = line.split("\t").map(str => str.trim());
-      const error = validateField(address, votes);
+      const error = validateVotingFields(address, votes);
 
       // Update the field at the specified index if it exists, or create a new field
       if (index + lineIndex < newFields.length) {
@@ -63,7 +70,7 @@ const CSVEditor: FC<CSVEditorProps> = ({ onChange }) => {
       const newFields = [...prevFields];
       newFields[index] = { ...newFields[index], [field]: value };
 
-      const error = validateField(newFields[index].address, newFields[index].votes);
+      const error = validateVotingFields(newFields[index].address, newFields[index].votes);
 
       newFields[index] = { ...newFields[index], error };
 
@@ -73,10 +80,10 @@ const CSVEditor: FC<CSVEditorProps> = ({ onChange }) => {
     });
   };
 
-  const clearFields = () => updateFields(Array(15).fill(EMPTY_FIELD));
+  const clearFields = () => updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
 
   const onFileSelectHandler = async (file: File) => {
-    const results = await parseCsv(file);
+    const results = await parseCsvVoting(file);
     const validEntries = Object.entries(results.data).map(([address, votes]) => ({
       address,
       votes: String(votes),
@@ -92,14 +99,11 @@ const CSVEditor: FC<CSVEditorProps> = ({ onChange }) => {
   };
 
   const handleDelete = (index: number) => {
-    // Create a copy of the current fields
     const newFields = [...fields];
 
-    // Remove the field at the given index
     newFields.splice(index, 1);
 
-    // Update the fields
-    updateFields(newFields);
+    updateFields(newFields, true);
   };
 
   return (
@@ -118,7 +122,7 @@ const CSVEditor: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      {fields.some(field => field.address !== "" || field.votes !== "") && (
+      {fields.some(field => field.address !== "" || field.votes !== "") ? (
         <div className="flex flex-col text-[16px] animate-fadeIn">
           <div
             className="font-bold text-negative-11 flex gap-2 items-center cursor-pointer hover:opacity-85 transition-opacity duration-300"
@@ -130,6 +134,14 @@ const CSVEditor: FC<CSVEditorProps> = ({ onChange }) => {
 
           <p className="italic text-neutral-11">only first 100 entries of allowlist are visible to preview and edit</p>
         </div>
+      ) : (
+        <div className="flex flex-col text-[16px] mt-5">
+          <p className="text-primary-10 font-bold">prefer to upload a csv?</p>
+          <p className="text-neutral-11">
+            csv should contain addresses in column A and number of votes in column B (no <br />
+            headers or additional columns).
+          </p>
+        </div>
       )}
       <div className="mt-5">
         <FileUpload onFileSelect={onFileSelectHandler} type="csv" />
@@ -138,4 +150,4 @@ const CSVEditor: FC<CSVEditorProps> = ({ onChange }) => {
   );
 };
 
-export default CSVEditor;
+export default CSVEditorVoting;

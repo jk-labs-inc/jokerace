@@ -1,6 +1,6 @@
 import { FC } from "react";
 import Image from "next/image";
-import { FieldObject } from "../..";
+import { FieldObject } from "..";
 
 type TableRowProps = FieldObject & {
   index: number;

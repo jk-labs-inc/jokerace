@@ -55,7 +55,7 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   };
 };
 
-export const parseCsv = (file: File): Promise<ParseCsvResult> => {
+export const parseCsvVoting = (file: File): Promise<ParseCsvResult> => {
   return new Promise(resolve => {
     Papa.parse(file, {
       header: true,

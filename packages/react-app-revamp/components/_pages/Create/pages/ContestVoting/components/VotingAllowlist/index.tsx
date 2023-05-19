@@ -1,23 +1,26 @@
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
-import CSVEditor, { FieldObject } from "@components/_pages/Create/components/CSVEditor";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { createMerkleTreeFromVotes } from "lib/merkletree/generate";
+import { createMerkleTreeFromVotes } from "lib/merkletree/generateVotersTree";
 import { useState } from "react";
+import CSVEditorVoting, { FieldObject } from "./components/CSVEditor";
 
 const CreateVotingAllowlist = () => {
-  const { step } = useDeployContestStore(state => state);
+  const { step, setVotingInfo, setError, setStep } = useDeployContestStore(state => state);
   const [allowList, setAllowList] = useState<Record<string, number>>();
 
   const onAllowListChange = (fields: Array<FieldObject>) => {
-    const hasError = fields.some(field => field.error !== null);
+    // Filter out completely empty fields
+    const nonEmptyFields = fields.filter(field => field.address !== "" || field.votes !== "");
+
+    const hasError = nonEmptyFields.some(field => field.error !== null);
 
     if (hasError) {
       setAllowList(undefined);
       return;
     }
 
-    // Map the array of field objects to a record of string and number
-    const newAllowList = fields.reduce((result, field) => {
+    // Map the array of non-empty field objects to a record of string and number
+    const newAllowList = nonEmptyFields.reduce((result, field) => {
       result[field.address] = Number(field.votes);
       return result;
     }, {} as Record<string, number>);
@@ -28,9 +31,10 @@ const CreateVotingAllowlist = () => {
   const onNextStep = () => {
     if (!allowList) return;
 
-    const merkleStuff = createMerkleTreeFromVotes(18, allowList);
+    const merkleVotesData = createMerkleTreeFromVotes(18, allowList);
 
-    console.log({ merkleStuff });
+    setVotingInfo(merkleVotesData);
+    setStep(step + 1);
   };
 
   return (
@@ -42,7 +46,7 @@ const CreateVotingAllowlist = () => {
           (no limit on line items).
         </p>
       </div>
-      <CSVEditor onChange={onAllowListChange} />
+      <CSVEditorVoting onChange={onAllowListChange} />
 
       <div className="mt-8">
         <CreateNextButton step={step + 1} onClick={onNextStep} />

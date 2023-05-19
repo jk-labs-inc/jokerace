@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { FieldObject } from "../..";
+import { FieldObject } from "..";
 import TableRow from "../TableRow";
 
 type TableBodyProps = {
@@ -19,7 +19,6 @@ const ScrollableTableBody: FC<TableBodyProps> = ({ fields, handlePaste, handleCh
               key={index}
               index={index}
               address={field.address}
-              votes={field.votes}
               error={field.error}
               handlePaste={handlePaste}
               handleChange={handleChange}

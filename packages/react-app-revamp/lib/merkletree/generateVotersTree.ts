@@ -1,5 +1,5 @@
+import { keccak256, parseUnits, solidityKeccak256 } from "ethers/lib/utils";
 import MerkleTree from "merkletreejs";
-import { getAddress, keccak256, parseUnits, solidityKeccak256 } from "ethers/lib/utils";
 
 // Vote recipient addresses and scaled vote values
 export interface Recipient {
@@ -12,7 +12,7 @@ export interface Proof {
   data: Buffer;
 }
 
-export interface MerkleTreeData {
+export interface MerkleTreeVotingData {
   merkleTree: MerkleTree;
   merkleRoot: string;
   recipients: Recipient[];
@@ -67,7 +67,10 @@ const createMerkleTree = (recipients: Recipient[]): MerkleTree => {
  * @param {Record<string, number>} votesData address to vote claim mapping
  * @returns {Promise<void>}
  */
-export const createMerkleTreeFromVotes = (decimals: number = 18, votesData: Record<string, number>): MerkleTreeData => {
+export const createMerkleTreeFromVotes = (
+  decimals: number = 18,
+  votesData: Record<string, number>,
+): MerkleTreeVotingData => {
   const recipients = setupVoteRecipients(decimals, votesData);
   const merkleTree = createMerkleTree(recipients);
   const merkleRoot: string = merkleTree.getHexRoot();

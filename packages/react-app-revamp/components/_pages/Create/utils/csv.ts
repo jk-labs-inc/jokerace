@@ -1,6 +1,10 @@
 import { getAddress } from "ethers/lib/utils";
 
-export const validateField = (address: string, votes: string): "address" | "votes" | "both" | null => {
+export const validateVotingFields = (address: string, votes: string): "address" | "votes" | "both" | null => {
+  // If both address and votes are empty, consider it as a valid case
+  if (address === "" && votes === "") {
+    return null;
+  }
   let error: "address" | "votes" | "both" | null = null;
 
   if (address.trim() === "") {
@@ -18,4 +22,17 @@ export const validateField = (address: string, votes: string): "address" | "vote
   }
 
   return error;
+};
+
+export const validateSubmissionFields = (address: string): boolean => {
+  if (address === "") {
+    return true;
+  }
+
+  try {
+    getAddress(address);
+    return true;
+  } catch (e) {
+    return false;
+  }
 };
