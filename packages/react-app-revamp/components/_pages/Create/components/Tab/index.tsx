@@ -8,10 +8,11 @@ type TabOption = {
 
 type TabProps = {
   options: TabOption[];
+  width?: number;
   disabledTab?: number;
 };
 
-const CreateTab: React.FC<TabProps> = ({ options, disabledTab = -1 }) => {
+const CreateTab: React.FC<TabProps> = ({ options, width = 600, disabledTab = -1 }) => {
   const [selectedTab, setSelectedTab] = useState<TabOption>(options[0]);
 
   const selectTab = (tab: TabOption) => {
@@ -22,7 +23,7 @@ const CreateTab: React.FC<TabProps> = ({ options, disabledTab = -1 }) => {
 
   return (
     <div>
-      <div className="flex justify-between items-end w-[600px]">
+      <div className={`flex justify-between items-end w-[${width}px]`}>
         <div
           className={`flex-grow text-[24px] font-bold text-center py-2 cursor-pointer flex flex-col items-start ${
             selectedTab === options[0] ? "text-primary-10" : "text-neutral-9"

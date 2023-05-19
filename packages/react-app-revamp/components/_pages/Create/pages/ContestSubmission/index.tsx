@@ -13,7 +13,7 @@ const CreateContestSubmissions = () => {
 
   return (
     <div className="mt-[50px]">
-      <Description step={step + 1} additionalContent={<CreateTab options={tabOptions} />} title="" />
+      <Description step={step + 1} additionalContent={<CreateTab width={650} options={tabOptions} />} title="" />
     </div>
   );
 };

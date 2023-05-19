@@ -1,7 +1,6 @@
 import FileUpload from "@components/_pages/Create/components/FileUpload";
 import { EMPTY_FIELDS_SUBMISSION } from "@components/_pages/Create/constants/csv";
 import { validateSubmissionFields } from "@components/_pages/Create/utils/csv";
-import DialogModalVoteForProposal from "@components/_pages/DialogModalVoteForProposal";
 import { parseCsvSubmissions } from "@helpers/parseSubmissionsCsv";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
