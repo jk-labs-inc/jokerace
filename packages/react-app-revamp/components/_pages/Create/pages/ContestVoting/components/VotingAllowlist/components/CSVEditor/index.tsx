@@ -121,8 +121,6 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     updateFields([...invalidEntries, ...currentEntries, ...validEntries]);
   };
 
-  console.log({ fields });
-
   const handleDelete = (index: number) => {
     const newFields = [...fields];
 
