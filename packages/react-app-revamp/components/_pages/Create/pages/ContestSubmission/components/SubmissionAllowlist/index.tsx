@@ -1,33 +1,38 @@
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { createMerkleTreeFromAddresses, Submitter } from "lib/merkletree/generateSubmissionsTree";
-import { useState } from "react";
-import CSVEditor, { SubmissionFieldObject } from "./components/CSVEditor";
+import { useEffect, useState } from "react";
+import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
 
 const CreateSubmissionAllowlist = () => {
-  const { step, setSubmissionMerkle, setError } = useDeployContestStore(state => state);
-  const [allowList, setAllowList] = useState<Submitter[]>();
+  const { step, setSubmissionMerkle, submissionMerkle, setStep } = useDeployContestStore(state => state);
+  const [allowList, setAllowList] = useState<Submitter[]>([]);
+
+  useEffect(() => {
+    if (submissionMerkle && submissionMerkle.merkleTree && submissionMerkle.merkleTree.getLeaves().length > 0) {
+      const newAllowList = submissionMerkle.submitters.map(submitter => ({ address: submitter.address }));
+      setAllowList(newAllowList);
+    }
+  }, [submissionMerkle]);
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
-    // Filter out completely empty fields
     const nonEmptyFields = fields.filter(field => field.address !== "");
 
-    const hasError = nonEmptyFields.some(field => field.error !== null);
+    const hasError = nonEmptyFields.some(field => field.error === true);
 
     if (hasError) {
-      setAllowList(undefined);
+      setAllowList([]);
       return;
     }
 
-    setAllowList(nonEmptyFields);
+    // If there are no errors, map the fields to an array of `Submitter` objects
+    setAllowList(nonEmptyFields.map(field => ({ address: field.address })));
   };
-
   const onNextStep = () => {
-    if (!allowList) return;
+    if (allowList.length === 0) return;
 
-    const merkleSubmissionsData = createMerkleTreeFromAddresses(allowList);
-
-    setSubmissionMerkle(merkleSubmissionsData);
+    setSubmissionMerkle(createMerkleTreeFromAddresses(allowList));
+    setStep(step + 1);
   };
 
   return (
@@ -39,7 +44,7 @@ const CreateSubmissionAllowlist = () => {
           (no limit on line items).
         </p>
       </div>
-      <CSVEditor onChange={onAllowListChange} />
+      <CSVEditorSubmission onChange={onAllowListChange} />
 
       <div className="mt-8">
         <CreateNextButton step={step + 1} onClick={onNextStep} />

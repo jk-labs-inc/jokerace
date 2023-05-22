@@ -270,6 +270,14 @@ module.exports = {
           "40%, 60%": { transform: "translateY(4px)" },
           "100%": { transform: "translateY(0)" },
         },
+        "border-dance": {
+          "0%": {
+            "background-position": "0px 0px, 300px 116px, 0px 150px, 216px 0px",
+          },
+          "100%": {
+            "background-position": "300px 0px, 0px 116px, 0px 0px, 216px 150px",
+          },
+        },
       },
       scale: {
         120: "1.1",
@@ -285,6 +293,7 @@ module.exports = {
         fadeOut: "fadeOut 2s ease-out both",
         "blink-shadow": "blink 1.5s ease-in-out infinite",
         "shake-top": "shake-top 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both",
+        "border-dance": "border-dance 4s infinite linear",
       },
 
       height: {

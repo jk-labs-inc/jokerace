@@ -1,5 +1,5 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
 import Description from "../../components/Description";
 import CreateDropdown from "../../components/Dropdown";
@@ -33,6 +33,20 @@ const CreateContestType = () => {
     return "";
   };
   const onNextStep = useNextStep(typeValidation);
+
+  useEffect(() => {
+    const handleEnterPress = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        onNextStep();
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [onNextStep]);
 
   const additionalContent = (
     <p>

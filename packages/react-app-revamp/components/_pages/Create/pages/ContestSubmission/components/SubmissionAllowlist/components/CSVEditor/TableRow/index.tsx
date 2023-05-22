@@ -11,7 +11,7 @@ type TableRowProps = SubmissionFieldObject & {
 
 const TableRow: FC<TableRowProps> = ({ address, error, index, handlePaste, handleChange, handleDelete }) => (
   <tr className="border-b border-dotted border-neutral-9 text-[16px] group">
-    <td className={` border-dotted border-neutral-9 w-full ${error ? "text-negative-11" : ""}`}>
+    <td className={`border-dotted border-neutral-9 w-full ${error ? "text-negative-11" : ""}`}>
       <div className="flex justify-between items-center">
         <input
           type="text"

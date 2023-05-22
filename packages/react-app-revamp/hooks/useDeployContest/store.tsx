@@ -44,9 +44,9 @@ export interface DeployContestState {
   setVotingRequirements: (votingRequirements: string) => void;
   setSubmissionRequirements: (submissionRequirements: string) => void;
   setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
-  setVotingMerkle: (votingInfo: MerkleTreeVotingData) => void;
+  setVotingMerkle: (votingInfo: MerkleTreeVotingData | null) => void;
   setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) => void;
-  setSubmissionMerkle: (submissionInfo: MerkleTreeSubmissionsData) => void;
+  setSubmissionMerkle: (submissionInfo: MerkleTreeSubmissionsData | null) => void;
   setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
   setMaxSubmissions: (maxSubmissions: number) => void;
   setDownvote: (downvote: boolean) => void;
@@ -99,11 +99,11 @@ export const createDeployContestStore = () =>
       setVotingClose: (votingClose: Date) => set({ votingClose }),
       setVotingRequirements: (votingRequirements: string) => set({ votingRequirements }),
       setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => set({ votingAllowlistFields }),
-      setVotingMerkle: (votingMerkle: MerkleTreeVotingData) => set({ votingMerkle }),
+      setVotingMerkle: (votingMerkle: MerkleTreeVotingData | null) => set({ votingMerkle }),
       setSubmissionRequirements: (submissionRequirements: string) => set({ submissionRequirements }),
       setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) =>
         set({ submissionAllowlistFields }),
-      setSubmissionMerkle: (submissionMerkle: MerkleTreeSubmissionsData) => set({ submissionMerkle }),
+      setSubmissionMerkle: (submissionMerkle: MerkleTreeSubmissionsData | null) => set({ submissionMerkle }),
       setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
       setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),
       setDownvote: (downvote: boolean) => set({ downvote }),

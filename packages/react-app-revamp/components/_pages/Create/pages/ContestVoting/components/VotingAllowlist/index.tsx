@@ -1,39 +1,35 @@
-import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { createMerkleTreeFromVotes } from "lib/merkletree/generateVotersTree";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
+import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 
 const CreateVotingAllowlist = () => {
-  const { step, setVotingMerkle, setError, setStep } = useDeployContestStore(state => state);
-  const [allowList, setAllowList] = useState<Record<string, number>>();
+  const { step, setVotingMerkle, votingMerkle, setStep } = useDeployContestStore(state => state);
+  const [allowList, setAllowList] = useState<Record<string, number>>({});
 
-  const onAllowListChange = (fields: Array<VotingFieldObject>) => {
-    // Filter out completely empty fields
-    const nonEmptyFields = fields.filter(field => field.address !== "" || field.votes !== "");
+  useEffect(() => {
+    if (!votingMerkle || !votingMerkle.merkleTree || votingMerkle.merkleTree.getLeaves.length === 0) return;
 
-    const hasError = nonEmptyFields.some(field => field.error !== null);
-
-    if (hasError) {
-      setAllowList(undefined);
-      return;
-    }
-
-    // Map the array of non-empty field objects to a record of string and number
-    const newAllowList = nonEmptyFields.reduce((result, field) => {
-      result[field.address] = Number(field.votes);
-      return result;
+    const newAllowList = votingMerkle.recipients.reduce((acc, field) => {
+      acc[field.address] = Number(field.numVotes);
+      return acc;
     }, {} as Record<string, number>);
 
     setAllowList(newAllowList);
+  }, [votingMerkle]);
+
+  const handleAllowListChange = (fields: VotingFieldObject[]) => {
+    const nonEmptyFields = fields.filter(({ address, votes }) => address || votes);
+    const newAllowList = nonEmptyFields.reduce((acc, { address, votes }) => ({ ...acc, [address]: Number(votes) }), {});
+
+    nonEmptyFields.some(({ error }) => error !== null) ? setAllowList({}) : setAllowList(newAllowList);
   };
 
-  const onNextStep = () => {
-    if (!allowList) return;
+  const handleNextStep = () => {
+    if (Object.keys(allowList).length === 0) return;
 
-    const merkleVotesData = createMerkleTreeFromVotes(18, allowList);
-
-    setVotingMerkle(merkleVotesData);
+    setVotingMerkle(createMerkleTreeFromVotes(18, allowList));
     setStep(step + 1);
   };
 
@@ -46,10 +42,9 @@ const CreateVotingAllowlist = () => {
           (no limit on line items).
         </p>
       </div>
-      <CSVEditorVoting onChange={onAllowListChange} />
-
+      <CSVEditorVoting onChange={handleAllowListChange} />
       <div className="mt-8">
-        <CreateNextButton step={step + 1} onClick={onNextStep} />
+        <CreateNextButton step={step + 1} onClick={handleNextStep} />
       </div>
     </div>
   );

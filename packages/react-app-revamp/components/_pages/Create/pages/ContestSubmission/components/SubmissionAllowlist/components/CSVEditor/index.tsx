@@ -17,9 +17,11 @@ type CSVEditorProps = {
 };
 
 const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
-  const { submissionAllowlistFields: fields, setSubmissionAllowlistFields: setFields } = useDeployContestStore(
-    state => state,
-  );
+  const {
+    submissionAllowlistFields: fields,
+    setSubmissionAllowlistFields: setFields,
+    setSubmissionMerkle,
+  } = useDeployContestStore(state => state);
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -73,10 +75,19 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     setFields(newFields);
   };
 
-  const clearFields = () => updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
+  const clearFields = () => {
+    updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
+    setSubmissionMerkle(null);
+  };
 
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvSubmissions(file);
+
+    // Get current entries
+    let currentEntries = fields;
+
+    // Filter out the empty fields
+    currentEntries = currentEntries.filter(field => field.address !== "");
     const validEntries = results.data.map(address => ({
       address,
       error: false,
@@ -87,7 +98,8 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
       error,
     }));
 
-    updateFields([...validEntries, ...invalidEntries]);
+    // Prepend invalid entries to the existing ones and then append valid entries
+    updateFields([...invalidEntries, ...currentEntries, ...validEntries]);
   };
 
   const handleDelete = (index: number) => {

@@ -6,6 +6,8 @@ type FileTypes = "csv" | "docx";
 interface FileUploadProps {
   icon?: React.ReactNode;
   type?: FileTypes;
+  isSuccess?: boolean;
+  isError?: boolean;
   onFileSelect?: (file: File) => void;
 }
 
@@ -39,7 +41,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "csv" }) =
     fileInputRef.current?.click();
   };
 
-  // Define your mimeTypes object with the keys being of type FileTypes
+  // Define the mime types for each file type
   const mimeTypes: Record<FileTypes, string> = {
     csv: "text/csv",
     docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -50,14 +52,14 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "csv" }) =
       onClick={handleClick}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="inline-flex items-center gap-6 py-3 px-10 border-2 border-dotted rounded-[10px] cursor-pointer"
+      className="inline-flex items-center gap-6 py-3 px-10 border-2 border-dotted rounded-[10px] cursor-pointer animate-border-dance"
     >
       <input
         ref={fileInputRef}
         type="file"
         style={{ display: "none" }}
         onChange={handleFileInput}
-        accept={mimeTypes[type]} // Now TypeScript knows that type is either 'csv' or 'docx'
+        accept={mimeTypes[type]}
       />
       <CloudIcon className="w-[50px]" />
       <div className="text-[16px] flex flex-col">

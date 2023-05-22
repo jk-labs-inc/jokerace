@@ -18,7 +18,11 @@ type CSVEditorProps = {
 };
 
 const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
-  const { votingAllowlistFields: fields, setVotingAllowlistFields: setFields } = useDeployContestStore(state => state);
+  const {
+    votingAllowlistFields: fields,
+    setVotingAllowlistFields: setFields,
+    setVotingMerkle,
+  } = useDeployContestStore(state => state);
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -79,23 +83,45 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     setFields(newFields);
   };
 
-  const clearFields = () => updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+  const clearFields = () => {
+    updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+    setVotingMerkle(null);
+  };
 
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvVoting(file);
+
+    if (results.missingHeaders?.length) {
+      console.log("missing headers");
+    }
+
+    if (results.invalidEntries?.length) {
+      console.log("invalid entries");
+    }
+
+    // Get current entries
+    let currentEntries = fields;
+
+    // Filter out the empty fields
+    currentEntries = currentEntries.filter(field => field.address !== "" || field.votes !== "");
+
     const validEntries = Object.entries(results.data).map(([address, votes]) => ({
       address,
       votes: String(votes),
       error: null,
     }));
+
     const invalidEntries = results.invalidEntries.map(({ address, votes, error }) => ({
       address,
       votes: String(votes),
       error,
     }));
 
-    updateFields([...validEntries, ...invalidEntries]);
+    // Prepend invalid entries to the existing ones and then append valid entries
+    updateFields([...invalidEntries, ...currentEntries, ...validEntries]);
   };
+
+  console.log({ fields });
 
   const handleDelete = (index: number) => {
     const newFields = [...fields];
