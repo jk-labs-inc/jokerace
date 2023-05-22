@@ -1,8 +1,8 @@
 import { FC } from "react";
 import Image from "next/image";
-import { FieldObject } from "..";
+import { VotingFieldObject } from "..";
 
-type TableRowProps = FieldObject & {
+type TableRowProps = VotingFieldObject & {
   index: number;
   handlePaste: (index: number, event: React.ClipboardEvent) => void;
   handleChange: (index: number, field: string, value: string) => void;

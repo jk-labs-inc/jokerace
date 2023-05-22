@@ -1,3 +1,6 @@
+import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
+import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
+import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { MerkleTreeSubmissionsData } from "lib/merkletree/generateSubmissionsTree";
 import { MerkleTreeVotingData } from "lib/merkletree/generateVotersTree";
 import { createContext, useContext, useRef } from "react";
@@ -16,8 +19,12 @@ export interface DeployContestState {
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
-  votingInfo: MerkleTreeVotingData | null;
-  submissionInfo: MerkleTreeSubmissionsData | null;
+  votingRequirements: string;
+  submissionRequirements: string;
+  votingAllowlistFields: VotingFieldObject[];
+  votingMerkle: MerkleTreeVotingData | null;
+  submissionAllowlistFields: SubmissionFieldObject[];
+  submissionMerkle: MerkleTreeSubmissionsData | null;
   allowedSubmissionsPerUser: number;
   maxSubmissions: number;
   downvote: boolean;
@@ -34,8 +41,12 @@ export interface DeployContestState {
   setSubmissionOpen: (submissionOpen: Date) => void;
   setVotingOpen: (votingOpen: Date) => void;
   setVotingClose: (votingClose: Date) => void;
-  setVotingInfo: (votingInfo: MerkleTreeVotingData) => void;
-  setSubmissionInfo: (submissionInfo: MerkleTreeSubmissionsData) => void;
+  setVotingRequirements: (votingRequirements: string) => void;
+  setSubmissionRequirements: (submissionRequirements: string) => void;
+  setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
+  setVotingMerkle: (votingInfo: MerkleTreeVotingData) => void;
+  setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) => void;
+  setSubmissionMerkle: (submissionInfo: MerkleTreeSubmissionsData) => void;
   setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
   setMaxSubmissions: (maxSubmissions: number) => void;
   setDownvote: (downvote: boolean) => void;
@@ -64,8 +75,12 @@ export const createDeployContestStore = () =>
       submissionOpen: submissionOpen,
       votingOpen: votingOpen,
       votingClose: votingClose,
-      votingInfo: null,
-      submissionInfo: null,
+      votingRequirements: "",
+      submissionRequirements: "anyone",
+      votingAllowlistFields: Array(15).fill(EMPTY_FIELDS_VOTING),
+      votingMerkle: null,
+      submissionAllowlistFields: Array(15).fill(EMPTY_FIELDS_SUBMISSION),
+      submissionMerkle: null,
       allowedSubmissionsPerUser: 0,
       maxSubmissions: 0,
       downvote: false,
@@ -82,8 +97,13 @@ export const createDeployContestStore = () =>
       setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
       setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
       setVotingClose: (votingClose: Date) => set({ votingClose }),
-      setVotingInfo: (votingInfo: MerkleTreeVotingData) => set({ votingInfo }),
-      setSubmissionInfo: (submissionInfo: MerkleTreeSubmissionsData) => set({ submissionInfo }),
+      setVotingRequirements: (votingRequirements: string) => set({ votingRequirements }),
+      setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => set({ votingAllowlistFields }),
+      setVotingMerkle: (votingMerkle: MerkleTreeVotingData) => set({ votingMerkle }),
+      setSubmissionRequirements: (submissionRequirements: string) => set({ submissionRequirements }),
+      setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) =>
+        set({ submissionAllowlistFields }),
+      setSubmissionMerkle: (submissionMerkle: MerkleTreeSubmissionsData) => set({ submissionMerkle }),
       setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
       setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),
       setDownvote: (downvote: boolean) => set({ downvote }),

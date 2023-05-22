@@ -1,13 +1,15 @@
 import { CloudIcon, CloudUploadIcon, DocumentAddIcon } from "@heroicons/react/outline";
 import React, { FC, useRef } from "react";
 
+type FileTypes = "csv" | "docx";
+
 interface FileUploadProps {
   icon?: React.ReactNode;
-  type?: "csv" | "docx";
+  type?: FileTypes;
   onFileSelect?: (file: File) => void;
 }
 
-const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "" }) => {
+const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "csv" }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,6 +39,12 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "" }) => {
     fileInputRef.current?.click();
   };
 
+  // Define your mimeTypes object with the keys being of type FileTypes
+  const mimeTypes: Record<FileTypes, string> = {
+    csv: "text/csv",
+    docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  };
+
   return (
     <div
       onClick={handleClick}
@@ -44,7 +52,13 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "" }) => {
       onDrop={handleDrop}
       className="inline-flex items-center gap-6 py-3 px-10 border-2 border-dotted rounded-[10px] cursor-pointer"
     >
-      <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileInput} />
+      <input
+        ref={fileInputRef}
+        type="file"
+        style={{ display: "none" }}
+        onChange={handleFileInput}
+        accept={mimeTypes[type]} // Now TypeScript knows that type is either 'csv' or 'docx'
+      />
       <CloudIcon className="w-[50px]" />
       <div className="text-[16px] flex flex-col">
         <p className="font-bold">drag & drop {type}</p>

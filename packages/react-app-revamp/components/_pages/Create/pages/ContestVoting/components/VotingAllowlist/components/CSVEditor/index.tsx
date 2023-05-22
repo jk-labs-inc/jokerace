@@ -2,22 +2,23 @@ import FileUpload from "@components/_pages/Create/components/FileUpload";
 import { EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
 import { parseCsvVoting } from "@helpers/parseVotingCsv";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import ScrollableTableBody from "./TableBody";
 
-export type FieldObject = {
+export type VotingFieldObject = {
   address: string;
   votes: string;
   error: "address" | "votes" | "both" | null;
 };
 
 type CSVEditorProps = {
-  onChange?: (fields: Array<FieldObject>) => void;
+  onChange?: (fields: Array<VotingFieldObject>) => void;
 };
 
 const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
-  const [fields, setFields] = useState<Array<FieldObject>>(Array(15).fill(EMPTY_FIELDS_VOTING));
+  const { votingAllowlistFields: fields, setVotingAllowlistFields: setFields } = useDeployContestStore(state => state);
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -27,7 +28,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   }, [fields]);
 
   // Update state and propagate changes to parent component
-  const updateFields = (newFields: Array<FieldObject>, isDeleting = false) => {
+  const updateFields = (newFields: Array<VotingFieldObject>, isDeleting = false) => {
     if (newFields.length === 100) {
       newFields.push(EMPTY_FIELDS_VOTING);
     }
@@ -66,18 +67,16 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   };
 
   const handleChange = (index: number, field: string, value: string) => {
-    setFields(prevFields => {
-      const newFields = [...prevFields];
-      newFields[index] = { ...newFields[index], [field]: value };
+    const newFields = [...fields];
+    newFields[index] = { ...newFields[index], [field]: value };
 
-      const error = validateVotingFields(newFields[index].address, newFields[index].votes);
+    const error = validateVotingFields(newFields[index].address, newFields[index].votes);
 
-      newFields[index] = { ...newFields[index], error };
+    newFields[index] = { ...newFields[index], error };
 
-      onChange?.(newFields);
+    onChange?.(newFields);
 
-      return newFields;
-    });
+    setFields(newFields);
   };
 
   const clearFields = () => updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));

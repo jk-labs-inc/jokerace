@@ -2,21 +2,24 @@ import FileUpload from "@components/_pages/Create/components/FileUpload";
 import { EMPTY_FIELDS_SUBMISSION } from "@components/_pages/Create/constants/csv";
 import { validateSubmissionFields } from "@components/_pages/Create/utils/csv";
 import { parseCsvSubmissions } from "@helpers/parseSubmissionsCsv";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
 import ScrollableTableBody from "./TableBody";
 
-export type FieldObject = {
+export type SubmissionFieldObject = {
   address: string;
   error: boolean;
 };
 
 type CSVEditorProps = {
-  onChange?: (fields: Array<FieldObject>) => void;
+  onChange?: (fields: Array<SubmissionFieldObject>) => void;
 };
 
 const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
-  const [fields, setFields] = useState<Array<FieldObject>>(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
+  const { submissionAllowlistFields: fields, setSubmissionAllowlistFields: setFields } = useDeployContestStore(
+    state => state,
+  );
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -26,7 +29,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   }, [fields]);
 
   // Update state and propagate changes to parent component
-  const updateFields = (newFields: Array<FieldObject>, isDeleting = false) => {
+  const updateFields = (newFields: Array<SubmissionFieldObject>, isDeleting = false) => {
     if (newFields.length === 100) {
       newFields.push(EMPTY_FIELDS_SUBMISSION);
     }
@@ -64,12 +67,10 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   };
 
   const handleChange = (index: number, value: string) => {
-    setFields(prevFields => {
-      const newFields = [...prevFields];
-      newFields[index] = { address: value, error: validateSubmissionFields(value) };
-      onChange?.(newFields);
-      return newFields;
-    });
+    const newFields = [...fields];
+    newFields[index] = { address: value, error: validateSubmissionFields(value) };
+    onChange?.(newFields);
+    setFields(newFields);
   };
 
   const clearFields = () => updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));

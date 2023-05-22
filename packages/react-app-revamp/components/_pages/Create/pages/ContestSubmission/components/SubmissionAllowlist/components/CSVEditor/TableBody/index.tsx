@@ -1,9 +1,9 @@
 import { FC } from "react";
-import { FieldObject } from "..";
+import { SubmissionFieldObject } from "..";
 import TableRow from "../TableRow";
 
 type TableBodyProps = {
-  fields: FieldObject[];
+  fields: SubmissionFieldObject[];
   handlePaste: (index: number, event: React.ClipboardEvent) => void;
   handleChange: (index: number, value: string) => void;
   handleDelete: (index: number) => void;

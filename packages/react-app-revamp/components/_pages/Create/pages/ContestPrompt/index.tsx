@@ -123,7 +123,7 @@ const CreateContestPrompt = () => {
         )}
 
         <div className="mt-12 inline-flex flex-col gap-7">
-          <FileUpload onFileSelect={onFileSelect} />
+          <FileUpload onFileSelect={onFileSelect} type="docx" />
           <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>

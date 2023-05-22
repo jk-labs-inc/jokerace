@@ -1,8 +1,8 @@
 import { FC } from "react";
 import Image from "next/image";
-import { FieldObject } from "..";
+import { SubmissionFieldObject } from "..";
 
-type TableRowProps = FieldObject & {
+type TableRowProps = SubmissionFieldObject & {
   index: number;
   handlePaste: (index: number, event: React.ClipboardEvent) => void;
   handleChange: (index: number, value: string) => void;

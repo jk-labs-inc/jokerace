@@ -7,6 +7,8 @@ interface CreateTextInputProps {
   errorMessage?: string;
   minLength?: number;
   maxLength?: number;
+  readOnly?: boolean;
+  width?: number;
   onChange?: (value: string) => void;
   onNextStep?: () => void;
 }
@@ -16,6 +18,8 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   placeholder,
   minLength = 100,
   maxLength = 100,
+  readOnly = false,
+  width = 600,
   onChange,
   onNextStep,
 }) => {
@@ -45,9 +49,10 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
       ref={inputRef}
       value={value}
       type="text"
-      className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2 w-[600px]"
+      className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2 w-[${width}px]`}
       placeholder={placeholder}
       minLength={minLength}
+      readOnly={readOnly}
       maxLength={maxLength}
       onChange={e => onChange?.(e.target.value)}
     />

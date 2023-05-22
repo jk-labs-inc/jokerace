@@ -54,13 +54,7 @@ const CreateContestType = () => {
         additionalContent={additionalContent}
       />
       <div className="mt-7 ml-[70px]">
-        <CreateDropdown
-          value={type}
-          onChange={onOptionChangeHandler}
-          onMenuStateChange={setFadeBg}
-          options={options}
-          onNextStepKeyboard={onNextStep}
-        />
+        <CreateDropdown value={type} onChange={onOptionChangeHandler} onMenuStateChange={setFadeBg} options={options} />
         {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
         <div className={`mt-12 ${fadeBg ? "opacity-50" : "opacity-100"}  transition-opacity duration-300 ease-in-out `}>
           <CreateNextButton step={step + 1} onClick={onNextStep} />

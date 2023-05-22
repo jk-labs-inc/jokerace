@@ -2,13 +2,13 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { createMerkleTreeFromAddresses, Submitter } from "lib/merkletree/generateSubmissionsTree";
 import { useState } from "react";
-import CSVEditor, { FieldObject } from "./components/CSVEditor";
+import CSVEditor, { SubmissionFieldObject } from "./components/CSVEditor";
 
 const CreateSubmissionAllowlist = () => {
-  const { step, setSubmissionInfo, setError } = useDeployContestStore(state => state);
+  const { step, setSubmissionMerkle, setError } = useDeployContestStore(state => state);
   const [allowList, setAllowList] = useState<Submitter[]>();
 
-  const onAllowListChange = (fields: Array<FieldObject>) => {
+  const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
     // Filter out completely empty fields
     const nonEmptyFields = fields.filter(field => field.address !== "");
 
@@ -27,7 +27,7 @@ const CreateSubmissionAllowlist = () => {
 
     const merkleSubmissionsData = createMerkleTreeFromAddresses(allowList);
 
-    setSubmissionInfo(merkleSubmissionsData);
+    setSubmissionMerkle(merkleSubmissionsData);
   };
 
   return (

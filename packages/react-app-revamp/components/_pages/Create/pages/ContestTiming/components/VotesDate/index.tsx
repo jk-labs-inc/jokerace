@@ -4,7 +4,9 @@ import moment from "moment";
 import { useMemo } from "react";
 
 const CreateVotesOpenDate = () => {
-  const { votingOpen, setVotingOpen, submissionOpen, setError } = useDeployContestStore(state => state);
+  const { votingOpen, setVotingOpen, submissionOpen, errors, step } = useDeployContestStore(state => state);
+  const currentStepError = errors.find(error => error.step === step);
+
   const localISOTime = moment(votingOpen).format("YYYY-MM-DDTHH:mm");
   const minTime = moment(submissionOpen).format("YYYY-MM-DDTHH:mm");
 
