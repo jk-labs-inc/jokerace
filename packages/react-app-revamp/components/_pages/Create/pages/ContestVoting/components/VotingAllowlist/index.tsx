@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
 const CreateVotingAllowlist = () => {
-  const { step, setVotingMerkle, votingMerkle, setStep } = useDeployContestStore(state => state);
+  const { step, setVotingMerkle, votingMerkle, setStep, setError } = useDeployContestStore(state => state);
   const [allowList, setAllowList] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -35,6 +35,7 @@ const CreateVotingAllowlist = () => {
 
     setVotingMerkle(createMerkleTreeFromVotes(18, allowList));
     setStep(step + 1);
+    setError(step, { step, message: "" });
   };
 
   return (

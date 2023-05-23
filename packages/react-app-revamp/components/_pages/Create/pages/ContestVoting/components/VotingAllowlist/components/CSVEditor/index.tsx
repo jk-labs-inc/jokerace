@@ -4,7 +4,7 @@ import { validateVotingFields } from "@components/_pages/Create/utils/csv";
 import { parseCsvVoting } from "@helpers/parseVotingCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import ScrollableTableBody from "./TableBody";
 
 export type VotingFieldObject = {
@@ -22,7 +22,15 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     votingAllowlistFields: fields,
     setVotingAllowlistFields: setFields,
     setVotingMerkle,
+    setError,
+    step,
+    errors,
   } = useDeployContestStore(state => state);
+  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
+  const currentStepError = errors.find(error => error.step === step);
+  const headersError = currentStepError?.message === "headers";
+
+  console.log({ headersError });
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -49,7 +57,6 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     const lines = pasteData.split("\n");
 
     if (lines.length > 100) {
-      console.log("You can only paste up to 100 rows at a time.");
       return;
     }
 
@@ -71,38 +78,47 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   };
 
   const handleChange = (index: number, field: string, value: string) => {
-    const newFields = [...fields];
-    newFields[index] = { ...newFields[index], [field]: value };
+    const fieldToChange = fields[index];
 
-    const error = validateVotingFields(newFields[index].address, newFields[index].votes);
+    // Create a new field object with the changed value
+    const updatedField = { ...fieldToChange, [field]: value };
 
-    newFields[index] = { ...newFields[index], error };
+    const error = validateVotingFields(updatedField.address, updatedField.votes);
 
-    onChange?.(newFields);
+    // Add error to the new field object
+    updatedField.error = error;
 
-    setFields(newFields);
+    // Replace the old field object with the new one in the array
+    const updatedFields = [...fields.slice(0, index), updatedField, ...fields.slice(index + 1)];
+
+    onChange?.(updatedFields);
+
+    setFields(updatedFields);
   };
 
   const clearFields = () => {
     updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
     setVotingMerkle(null);
+    setError(step, { step, message: "" });
+    setUploadSuccess(false);
   };
 
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvVoting(file);
 
     if (results.missingHeaders?.length) {
-      console.log("missing headers");
+      setError(step, { step, message: "headers" });
+      updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+      return;
+    } else if (results.invalidEntries?.length) {
+      setError(step, { step, message: "entries" });
+    } else {
+      setError(step, { step, message: "" });
+      setUploadSuccess(true);
     }
 
-    if (results.invalidEntries?.length) {
-      console.log("invalid entries");
-    }
-
-    // Get current entries
     let currentEntries = fields;
 
-    // Filter out the empty fields
     currentEntries = currentEntries.filter(field => field.address !== "" || field.votes !== "");
 
     const validEntries = Object.entries(results.data).map(([address, votes]) => ({
@@ -134,7 +150,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       <table className="table-fixed border-collapse border-b border-dotted border-neutral-9 w-full max-w-[600px] text-left">
         <thead>
           <tr className="text-[16px] font-bold">
-            <th className="w-3/4 py-2 uppercase ">Address</th>
+            <th className="w-3/4 py-2 uppercase">Address</th>
             <th className="w-1/4 py-2 uppercase">Number of Votes</th>
           </tr>
         </thead>
@@ -145,7 +161,19 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      {fields.some(field => field.address !== "" || field.votes !== "") ? (
+      {headersError ? (
+        <div className="flex flex-col text-[16px] animate-fadeIn">
+          <p className=" text-negative-11">
+            ruh-roh! csv couldn’t be imported.{" "}
+            <span className="font-bold">
+              make sure there are no headers or additional <br />
+              columns.
+            </span>{" "}
+            csv should have 1) only two columns, 2) a first column containing <span className="italic">only</span> valid
+            <br /> EVM addresses, and 3) a second column containing number of votes.
+          </p>
+        </div>
+      ) : fields.some(field => field.address !== "" || field.votes !== "") ? (
         <div className="flex flex-col text-[16px] animate-fadeIn">
           <div
             className="font-bold text-negative-11 flex gap-2 items-center cursor-pointer hover:opacity-85 transition-opacity duration-300"
@@ -154,7 +182,6 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
             <Image src="/create-flow/trashcan.png" width={18} height={18} alt="trashcan" className="mt-[2px]" />
             clear full allowlist (including entries that aren’t visible)
           </div>
-
           <p className="italic text-neutral-11">only first 100 entries of allowlist are visible to preview and edit</p>
         </div>
       ) : (
@@ -167,8 +194,9 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
           </p>
         </div>
       )}
+
       <div className="mt-5">
-        <FileUpload onFileSelect={onFileSelectHandler} type="csv" />
+        <FileUpload onFileSelect={onFileSelectHandler} type="csv" step={step} isSuccess={uploadSuccess} />
       </div>
     </div>
   );

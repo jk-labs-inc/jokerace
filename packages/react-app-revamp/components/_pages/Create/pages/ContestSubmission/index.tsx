@@ -16,7 +16,7 @@ const CreateContestSubmissions = () => {
     <div className="mt-[50px] animate-swingInLeft">
       <div className="flex items-start gap-5 text-[24px]">
         <StepCircle step={step + 1} />
-        <CreateTab width={700} options={tabOptions} />
+        <CreateTab width={650} options={tabOptions} />
       </div>
     </div>
   );

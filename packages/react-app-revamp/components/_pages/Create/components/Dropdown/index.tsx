@@ -15,7 +15,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
   value,
   options,
   searchEnabled = true,
-  width = 600,
+  width,
   onChange,
   onMenuStateChange,
 }) => {
@@ -82,7 +82,9 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
       <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleIconClick} />
       {showOptions && (
         <ul
-          className={`flex flex-col  absolute z-10 mt-14 list-none  bg-true-black w-[${width}px] border border-primary-10 rounded-[10px] animate-appear`}
+          className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black ${
+            width ? `w-[${width}px]` : `w-[600px]`
+          }  border border-primary-10 rounded-[10px] animate-appear`}
         >
           {filteredOptions.map(option => (
             <li

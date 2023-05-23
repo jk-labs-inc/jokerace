@@ -21,7 +21,13 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     submissionAllowlistFields: fields,
     setSubmissionAllowlistFields: setFields,
     setSubmissionMerkle,
+    errors,
+    setError,
+    step,
   } = useDeployContestStore(state => state);
+  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
+  const currentStepError = errors.find(error => error.step === step);
+  const headersError = currentStepError?.message === "headers";
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -78,10 +84,25 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   const clearFields = () => {
     updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
     setSubmissionMerkle(null);
+    setError(step, { step, message: "" });
+    setUploadSuccess(false);
   };
 
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvSubmissions(file);
+
+    console.log(results);
+
+    if (results.missingHeaders?.length) {
+      setError(step, { step, message: "headers" });
+      updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
+      return;
+    } else if (results.invalidEntries?.length) {
+      setError(step, { step, message: "entries" });
+    } else {
+      setError(step, { step, message: "" });
+      setUploadSuccess(true);
+    }
 
     // Get current entries
     let currentEntries = fields;
@@ -147,7 +168,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
         </div>
       )}
       <div className="mt-5">
-        <FileUpload onFileSelect={onFileSelectHandler} type="csv" />
+        <FileUpload onFileSelect={onFileSelectHandler} type="csv" step={step} isSuccess={uploadSuccess} />
       </div>
     </div>
   );

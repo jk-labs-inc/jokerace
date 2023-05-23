@@ -15,7 +15,15 @@ export type ParseCsvResult = {
 
 const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   const requiredHeaders = ["address"];
-  const missingHeaders = requiredHeaders.filter(header => !results.meta.fields?.includes(header));
+  const csvHeaders = results.meta.fields || []; // Default to an empty array if fields are undefined
+  const missingHeaders = requiredHeaders.filter(header => !csvHeaders.includes(header));
+
+  const unnecessaryHeaders = csvHeaders.length > requiredHeaders.length;
+
+  if (unnecessaryHeaders) {
+    missingHeaders.push("Unnecessary headers detected");
+  }
+
   if (missingHeaders.length > 0) {
     return {
       data: [],
