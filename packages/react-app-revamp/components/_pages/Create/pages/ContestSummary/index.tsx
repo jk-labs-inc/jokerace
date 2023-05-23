@@ -1,7 +1,7 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import CreateNextButton from "../../components/Buttons/Next";
-import Description from "../../components/Description";
 import ErrorMessage from "../../components/Error";
+import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
 import TipMessage from "../../components/Tip";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH } from "../../constants/length";
@@ -23,8 +23,11 @@ const CreateContestSummary = () => {
   };
 
   return (
-    <div className="mt-[100px]">
-      <Description step={step + 1} title="what’s a 2-3 word summary of how to participate in your contest?" />
+    <div className="mt-[100px] animate-swingInLeft">
+      <div className="flex items-center gap-5 text-[24px]">
+        <StepCircle step={step + 1} />
+        <p className="text-primary-10 font-bold">what’s a 2-3 word summary of how to participate in your contest?</p>
+      </div>
       <div className="mt-7 ml-[70px]">
         <CreateTextInput
           value={summary}

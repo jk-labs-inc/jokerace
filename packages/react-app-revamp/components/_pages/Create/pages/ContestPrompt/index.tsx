@@ -10,9 +10,9 @@ import StarterKit from "@tiptap/starter-kit";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
-import Description from "../../components/Description";
 import ErrorMessage from "../../components/Error";
 import FileUpload from "../../components/FileUpload";
+import StepCircle from "../../components/StepCircle";
 import TipMessage from "../../components/Tip";
 import { useNextStep } from "../../hooks/useNextStep";
 
@@ -100,12 +100,15 @@ const CreateContestPrompt = () => {
   };
 
   return (
-    <div className="mt-[100px]">
-      <Description
-        step={step + 1}
-        title="what’s the full prompt for your contest?"
-        additionalContent="what are the instructions for the contest? what are the rules?"
-      />
+    <div className="mt-[100px] animate-swingInLeft">
+      <div className="flex items-start gap-5 text-[24px]">
+        <StepCircle step={step + 1} />
+        <div className="flex flex-col gap-5">
+          <p className="text-neutral-11 font-normal">what are the instructions for the contest? what are the rules?</p>
+          <p className="text-primary-10 font-bold">what’s the full prompt for your contest?</p>
+        </div>
+      </div>
+
       <div className="mt-4 ml-[70px]">
         {isTextSelected && (
           <TipTapEditorControls editor={editor} className="rounded-[10px] bg-neutral-2 animate-fadeIn mb-2" />

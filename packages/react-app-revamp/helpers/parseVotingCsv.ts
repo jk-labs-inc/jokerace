@@ -38,7 +38,7 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
       error = "address";
     }
 
-    if (numberOfVotes < 0) {
+    if (typeof numberOfVotes !== "number" || numberOfVotes < 0) {
       error = error ? "both" : "votes";
     }
 

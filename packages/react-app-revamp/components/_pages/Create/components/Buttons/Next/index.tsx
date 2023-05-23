@@ -36,7 +36,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
     <div className="flex gap-4 items-start">
       <div className="flex flex-col items-center gap-2">
         <Button
-          className={`bg-gradient-next rounded-[10px] py-2 px-[38px] font-bold ${shake ? "animate-shake-top" : ""}`}
+          className={`bg-gradient-next rounded-[10px] py-2 px-[38px] font-bold ${shake ? "animate-shakeTop" : ""}`}
           scale="header"
           onClick={handleClick}
         >

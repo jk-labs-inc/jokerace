@@ -1,9 +1,9 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect, useState } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
-import Description from "../../components/Description";
 import CreateDropdown from "../../components/Dropdown";
 import ErrorMessage from "../../components/Error";
+import StepCircle from "../../components/StepCircle";
 import { CONTEST_TYPE_MAX_LENGTH } from "../../constants/length";
 import { useNextStep } from "../../hooks/useNextStep";
 
@@ -48,25 +48,23 @@ const CreateContestType = () => {
     };
   }, [onNextStep]);
 
-  const additionalContent = (
-    <p>
-      contests let people submit responses to a prompt and vote on favorites.
-      <br />
-      you decide who submits, who votes, and how many votes they have.
-    </p>
-  );
-
   const onOptionChangeHandler = (option: string) => {
     setType(option);
   };
 
   return (
-    <div className="mt-[100px]">
-      <Description
-        step={step + 1}
-        title="how would you like your contest to be listed for users to find?"
-        additionalContent={additionalContent}
-      />
+    <div className="mt-[100px] animate-swingInLeft">
+      <div className="flex items-start gap-5 text-[24px]">
+        <StepCircle step={step + 1} />
+        <div className="flex flex-col gap-5">
+          <p className="text-neutral-11 font-normal">
+            contests let people submit responses to a prompt and vote on favorites.
+            <br />
+            you decide who submits, who votes, and how many votes they have.
+          </p>
+          <p className="text-primary-10 font-bold">how would you like your contest to be listed for users to find?</p>
+        </div>
+      </div>
       <div className="mt-7 ml-[70px]">
         <CreateDropdown value={type} onChange={onOptionChangeHandler} onMenuStateChange={setFadeBg} options={options} />
         {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}

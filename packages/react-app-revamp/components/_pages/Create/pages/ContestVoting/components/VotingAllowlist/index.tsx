@@ -1,8 +1,9 @@
+import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { formatUnits } from "ethers/lib/utils";
 import { createMerkleTreeFromVotes } from "lib/merkletree/generateVotersTree";
 import { useEffect, useState } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
-import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 
 const CreateVotingAllowlist = () => {
   const { step, setVotingMerkle, votingMerkle, setStep } = useDeployContestStore(state => state);
@@ -12,7 +13,10 @@ const CreateVotingAllowlist = () => {
     if (!votingMerkle || !votingMerkle.merkleTree || votingMerkle.merkleTree.getLeaves.length === 0) return;
 
     const newAllowList = votingMerkle.recipients.reduce((acc, field) => {
-      acc[field.address] = Number(field.numVotes);
+      // Convert back to 'normal' number from string that represents a BigNumber
+      let numVotes = formatUnits(field.numVotes, 18);
+
+      acc[field.address] = parseFloat(numVotes);
       return acc;
     }, {} as Record<string, number>);
 

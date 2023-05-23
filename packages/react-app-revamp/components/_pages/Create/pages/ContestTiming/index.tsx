@@ -1,7 +1,7 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
-import Description from "../../components/Description";
+import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 import CreateEndContestDate from "./components/EndDate";
 import CreateSubmissionsOpenDate from "./components/SubmissionDate";
@@ -26,9 +26,9 @@ const CreateContestTiming = () => {
   }, [onNextStep]);
 
   return (
-    <div className="mt-[50px]">
-      <Description step={step + 1} title="" />
-      <div className="flex flex-col ml-[70px] -mt-[45px] gap-10">
+    <div className="mt-[50px] flex gap-5 animate-swingInLeft">
+      <StepCircle step={step + 1} />
+      <div className="flex flex-col gap-10">
         <CreateSubmissionsOpenDate />
         <CreateVotesOpenDate />
         <CreateEndContestDate />

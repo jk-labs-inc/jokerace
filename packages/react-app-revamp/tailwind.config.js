@@ -257,12 +257,24 @@ module.exports = {
           "0%": { opacity: "1" },
           "100%": { opacity: "0" },
         },
+        swingInLeft: {
+          "0%": {
+            transform: "rotateY(70deg)",
+            transformOrigin: "left",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "rotateY(0deg)",
+            transformOrigin: "left",
+            opacity: "1",
+          },
+        },
         blink: {
           "0%": { opacity: "1" },
           "60%": { opacity: "0.8" },
           "100%": { opacity: "1" },
         },
-        "shake-top": {
+        shakeTop: {
           "0%": { transform: "translateY(0)" },
           "10%, 90%": { transform: "translateY(-2px)" },
           "20%, 80%": { transform: "translateY(2px)" },
@@ -270,20 +282,13 @@ module.exports = {
           "40%, 60%": { transform: "translateY(4px)" },
           "100%": { transform: "translateY(0)" },
         },
-        "border-dance": {
-          "0%": {
-            "background-position": "0px 0px, 300px 116px, 0px 150px, 216px 0px",
-          },
-          "100%": {
-            "background-position": "300px 0px, 0px 116px, 0px 0px, 216px 150px",
-          },
-        },
       },
       scale: {
         120: "1.1",
       },
       transitionProperty: {
         transform: "transform",
+        "border-color": "border-color",
       },
       animation: {
         "card-rotation": "card-rotation 2000ms linear infinite",
@@ -291,9 +296,9 @@ module.exports = {
         fadeIn: "fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both",
         fadeInLanding: "fadeIn 3s cubic-bezier(0.39, 0.575, 0.565, 1) both",
         fadeOut: "fadeOut 2s ease-out both",
-        "blink-shadow": "blink 1.5s ease-in-out infinite",
-        "shake-top": "shake-top 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both",
-        "border-dance": "border-dance 4s infinite linear",
+        blinkShadow: "blink 1.5s ease-in-out infinite",
+        shakeTop: "shakeTop 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both",
+        swingInLeft: "swingInLeft 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both",
       },
 
       height: {

@@ -33,10 +33,10 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
           <div
             key={index}
             onClick={() => handleStepClick(index)}
-            className="flex flex-col items-center text-[24px] font-bold cursor-pointer"
+            className="flex flex-col items-center text-[24px] font-bold cursor-pointer relative"
           >
             <hr
-              className={`w-32 3xl:w-36 border-2 ${
+              className={`w-32 3xl:w-36 border-2 transition-colors duration-500 ease-in-out ${
                 currentStep === index
                   ? "border-primary-10"
                   : currentStep > index

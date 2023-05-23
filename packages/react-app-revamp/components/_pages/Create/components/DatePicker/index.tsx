@@ -23,7 +23,7 @@ const CreateDatePicker: FC<CreateDatePicker> = ({ title, tip, onChange, minTime,
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[24px] font-normal text-primary-10">{title}</p>
+      <p className="text-[24px] font-bold text-primary-10">{title}</p>
       <input
         type="datetime-local"
         value={dateTime}

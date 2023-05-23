@@ -1,5 +1,5 @@
 import { CloudIcon, CloudUploadIcon, DocumentAddIcon } from "@heroicons/react/outline";
-import React, { FC, useRef } from "react";
+import React, { FC, useRef, useState } from "react";
 
 type FileTypes = "csv" | "docx";
 
@@ -13,6 +13,7 @@ interface FileUploadProps {
 
 const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "csv" }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isDragOver, setIsDragOver] = useState<boolean>(false); // new state
 
   const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -27,6 +28,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "csv" }) =
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
+    setIsDragOver(true); // set drag over state to true
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -35,6 +37,12 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "csv" }) =
     if (files && files.length > 0) {
       onFileSelect?.(files[0]);
     }
+    setIsDragOver(false); // reset drag over state
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragOver(false); // reset drag over state when dragged out
   };
 
   const handleClick = () => {
@@ -47,12 +55,16 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, icon, type = "csv" }) =
     docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
   };
 
+  // Apply border styles based on hover or drag over state
+  const borderStyles = isDragOver ? "border-primary-10 border-solid" : "hover:border-primary-10";
+
   return (
     <div
       onClick={handleClick}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="inline-flex items-center gap-6 py-3 px-10 border-2 border-dotted rounded-[10px] cursor-pointer animate-border-dance"
+      onDragLeave={handleDragLeave}
+      className={`inline-flex items-center gap-6 py-3 px-10 border-2 border-dotted rounded-[10px] cursor-pointer transition-all duration-500 ease-in-out ${borderStyles}`}
     >
       <input
         ref={fileInputRef}
