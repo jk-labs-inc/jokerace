@@ -94,9 +94,7 @@ const CreateContestPrompt = () => {
         editor?.commands.setContent(html);
         setPrompt(html);
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch(err => {});
   };
 
   return (

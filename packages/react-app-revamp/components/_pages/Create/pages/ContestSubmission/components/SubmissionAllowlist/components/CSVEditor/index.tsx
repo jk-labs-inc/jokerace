@@ -54,7 +54,6 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     const lines = pasteData.split("\n");
 
     if (lines.length > 100) {
-      console.log("You can only paste up to 100 rows at a time.");
       return;
     }
 
@@ -90,8 +89,6 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
 
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvSubmissions(file);
-
-    console.log(results);
 
     if (results.missingHeaders?.length) {
       setError(step, { step, message: "headers" });
@@ -146,7 +143,19 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      {fields.some(field => field.address !== "") ? (
+      {headersError ? (
+        <div className="flex flex-col text-[16px] animate-fadeIn">
+          <p className=" text-negative-11">
+            ruh-roh! csv couldn’t be imported.{" "}
+            <span className="font-bold">
+              make sure there are no headers or additional <br />
+              columns.
+            </span>{" "}
+            csv should have 1) only two columns, 2) a first column containing <span className="italic">only</span> valid
+            <br /> EVM addresses, and 3) a second column containing number of votes.
+          </p>
+        </div>
+      ) : fields.some(field => field.address !== "") ? (
         <div className="flex flex-col text-[16px] animate-fadeIn">
           <div
             className="font-bold text-negative-11 flex gap-2 items-center cursor-pointer hover:opacity-85 transition-opacity duration-300"
@@ -155,15 +164,14 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
             <Image src="/create-flow/trashcan.png" width={18} height={18} alt="trashcan" className="mt-[2px]" />
             clear full allowlist (including entries that aren’t visible)
           </div>
-
           <p className="italic text-neutral-11">only first 100 entries of allowlist are visible to preview and edit</p>
         </div>
       ) : (
         <div className="flex flex-col text-[16px] mt-5">
           <p className="text-primary-10 font-bold">prefer to upload a csv?</p>
           <p className="text-neutral-11">
-            csv should contain addresses in column <span className="uppercase">A</span> (no headers or additional
-            columns).
+            csv should contain addresses in column <span className="uppercase">A</span> (no <br />
+            headers or additional columns).
           </p>
         </div>
       )}

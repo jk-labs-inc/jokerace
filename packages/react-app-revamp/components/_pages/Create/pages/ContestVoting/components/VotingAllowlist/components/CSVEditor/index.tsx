@@ -30,8 +30,6 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   const currentStepError = errors.find(error => error.step === step);
   const headersError = currentStepError?.message === "headers";
 
-  console.log({ headersError });
-
   // If user clean the fields, reset the state
   useEffect(() => {
     if (fields.length) return;
