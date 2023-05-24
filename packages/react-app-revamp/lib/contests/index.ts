@@ -113,7 +113,7 @@ const fetchBalances = async (userAddress: string, chainId: number, contest: any,
     return {
       submissionGatingByVotingToken: submissionData[0] && submissionData[1].gt(0),
       qualifiedToVote: balanceToVote.value.gt(0),
-      qualifiedToSubmit: balanceToSubmit.value.gt(0),
+      qualifiedToSubmit: submissionData[0] && submissionData[1].gt(0) ? balanceToSubmit.value.gt(0) : true,
     };
   } catch (error) {
     console.error("Error fetching balances:", error);
