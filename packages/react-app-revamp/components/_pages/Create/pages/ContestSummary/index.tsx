@@ -6,17 +6,13 @@ import CreateTextInput from "../../components/TextInput";
 import TipMessage from "../../components/Tip";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH } from "../../constants/length";
 import { useNextStep } from "../../hooks/useNextStep";
+import { validationFunctions } from "../../utils/validation";
 
 const CreateContestSummary = () => {
   const { summary, setSummary, step, errors } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
-
-  const onNextStep = useNextStep(() => {
-    if (!summary || summary.length < CONTEST_TITLE_MIN_LENGTH || summary.length >= CONTEST_TITLE_MAX_LENGTH) {
-      return "Contest summary should be 10-30 characters";
-    }
-    return "";
-  });
+  const summaryValidation = validationFunctions.get(step);
+  const onNextStep = useNextStep([() => summaryValidation?.[0].validation(summary)]);
 
   const handleSummaryChange = (value: string) => {
     setSummary(value);

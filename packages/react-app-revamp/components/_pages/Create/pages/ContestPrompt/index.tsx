@@ -1,6 +1,5 @@
 import Iframe from "@components/tiptap/Iframe";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
-import { convertDocxToHtml } from "@helpers/editor";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Image as TipTapImage } from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
@@ -11,28 +10,17 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
-import FileUpload from "../../components/FileUpload";
 import StepCircle from "../../components/StepCircle";
 import TipMessage from "../../components/Tip";
 import { useNextStep } from "../../hooks/useNextStep";
+import { validationFunctions } from "../../utils/validation";
 
 const CreateContestPrompt = () => {
   const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
   const [isTextSelected, setIsTextSelected] = useState(false);
   const currentStepError = errors.find(error => error.step === step);
-
-  const promptValidation = () => {
-    let parser = new DOMParser();
-    const doc = parser.parseFromString(prompt, "text/html");
-
-    if (!doc.body.textContent?.trim()) {
-      return "Contest prompt length shouldn't be empty";
-    }
-
-    return "";
-  };
-
-  const onNextStep = useNextStep(promptValidation);
+  const promptValidation = validationFunctions.get(step);
+  const onNextStep = useNextStep([() => promptValidation?.[0].validation(prompt)]);
 
   const editor = useEditor({
     extensions: [
@@ -88,15 +76,6 @@ const CreateContestPrompt = () => {
     );
   };
 
-  const onFileSelect = (file: File) => {
-    convertDocxToHtml(file)
-      .then((html: string) => {
-        editor?.commands.setContent(html);
-        setPrompt(html);
-      })
-      .catch(err => {});
-  };
-
   return (
     <div className="mt-[100px] animate-swingInLeft">
       <div className="flex items-start gap-5 text-[24px]">
@@ -124,7 +103,6 @@ const CreateContestPrompt = () => {
         )}
 
         <div className="mt-12 inline-flex flex-col gap-7">
-          <FileUpload onFileSelect={onFileSelect} type="docx" />
           <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>

@@ -6,18 +6,15 @@ import CreateTextInput from "../../components/TextInput";
 import TipMessage from "../../components/Tip";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH } from "../../constants/length";
 import { useNextStep } from "../../hooks/useNextStep";
+import { validationFunctions } from "../../utils/validation";
 
 const CreateContestTitle = () => {
   const { title, setTitle, step, errors } = useDeployContestStore(state => state);
-  const titleValidation = () => {
-    if (!title || title.length < CONTEST_TITLE_MIN_LENGTH || title.length >= CONTEST_TITLE_MAX_LENGTH) {
-      return "Contest title should be 10-30 characters";
-    }
-    return "";
-  };
-  const currentStepError = errors.find(error => error.step === step);
 
-  const onNextStep = useNextStep(titleValidation);
+  const currentStepError = errors.find(error => error.step === step);
+  const titleValidation = validationFunctions.get(step);
+
+  const onNextStep = useNextStep([() => titleValidation?.[0].validation(title)]);
 
   const handleTitleChange = (value: string) => {
     setTitle(value);

@@ -12,7 +12,7 @@ type TableRowProps = VotingFieldObject & {
 const TableRow: FC<TableRowProps> = ({ address, votes, error, index, handlePaste, handleChange, handleDelete }) => (
   <tr className="border-b border-dotted border-neutral-9 text-[16px] group">
     <td
-      className={`border-r border-dotted border-neutral-9 w-3/4 ${
+      className={`border-r border-dotted border-neutral-9 w-2/3 ${
         error === "address" || error === "both" ? "text-negative-11" : ""
       }`}
     >

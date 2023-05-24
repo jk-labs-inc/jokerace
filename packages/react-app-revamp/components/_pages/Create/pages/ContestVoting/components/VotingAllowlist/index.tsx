@@ -1,4 +1,5 @@
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
+import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { formatUnits } from "ethers/lib/utils";
 import { createMerkleTreeFromVotes } from "lib/merkletree/generateVotersTree";
@@ -6,7 +7,7 @@ import { useEffect, useState } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
 const CreateVotingAllowlist = () => {
-  const { step, setVotingMerkle, votingMerkle, setStep, setError } = useDeployContestStore(state => state);
+  const { step, setVotingMerkle, votingMerkle, setError } = useDeployContestStore(state => state);
   const [allowList, setAllowList] = useState<Record<string, number>>({});
 
   useEffect(() => {
@@ -34,8 +35,7 @@ const CreateVotingAllowlist = () => {
     if (Object.keys(allowList).length === 0) return;
 
     setVotingMerkle(createMerkleTreeFromVotes(18, allowList));
-    setStep(step + 1);
-    setError(step, { step, message: "" });
+    setError(step + 1, { step: step + 1, message: "" });
   };
 
   return (

@@ -1,15 +1,22 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
+import { date } from "zod";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
+import { validationFunctions } from "../../utils/validation";
 import CreateEndContestDate from "./components/EndDate";
 import CreateSubmissionsOpenDate from "./components/SubmissionDate";
 import CreateVotesOpenDate from "./components/VotesDate";
 
 const CreateContestTiming = () => {
-  const { setStep, step } = useDeployContestStore(state => state);
-  const onNextStep = useNextStep(() => "");
+  const { setStep, step, votingOpen, votingClose, submissionOpen } = useDeployContestStore(state => state);
+  const datesValidation = validationFunctions.get(step);
+
+  const onNextStep = useNextStep([
+    () => datesValidation?.[0].validation(votingOpen, submissionOpen),
+    () => datesValidation?.[1].validation(votingClose, votingOpen, submissionOpen),
+  ]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {

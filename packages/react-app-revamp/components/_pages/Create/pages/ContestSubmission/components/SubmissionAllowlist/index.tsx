@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
 
 const CreateSubmissionAllowlist = () => {
-  const { step, setSubmissionMerkle, submissionMerkle, setStep } = useDeployContestStore(state => state);
+  const { step, setSubmissionMerkle, submissionMerkle, setStep, setError } = useDeployContestStore(state => state);
   const [allowList, setAllowList] = useState<Submitter[]>([]);
 
   useEffect(() => {
@@ -33,6 +33,8 @@ const CreateSubmissionAllowlist = () => {
 
     setSubmissionMerkle(createMerkleTreeFromAddresses(allowList));
     setStep(step + 1);
+
+    setError(step + 1, { step: step + 1, message: "" });
   };
 
   return (

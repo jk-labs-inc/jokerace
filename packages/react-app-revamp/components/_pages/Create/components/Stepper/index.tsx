@@ -1,5 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, ReactElement } from "react";
+import { StateKey, validateStep, validationFunctions } from "../../utils/validation";
 
 interface Step {
   title: string;
@@ -11,18 +12,37 @@ interface StepperProps {
 }
 
 const Stepper: FC<StepperProps> = ({ steps }) => {
-  const { step: currentStep, setStep: setCurrentStep, furthestStep, errors } = useDeployContestStore(state => state);
+  const {
+    step: currentStep,
+    setStep: setCurrentStep,
+    furthestStep,
+    setFurthestStep,
+    errors,
+    ...state
+  } = useDeployContestStore(state => state);
 
   const handleStepClick = (index: number) => {
-    // Find the error for the current step
-    const currentStepError = errors.find(error => error.step === currentStep);
-
-    // Prevent navigation if there's an error for the current step and the user is trying to go forward
-    if (currentStepError && index > currentStep) return;
-
-    // Allow navigation if the user is trying to go to a step they have already reached
-    if (index <= furthestStep) {
+    // Navigate backwards always allowed
+    if (index < currentStep) {
       setCurrentStep(index);
+      return;
+    }
+
+    // Navigate forwards, validate each step from the current up to the clicked step
+    for (let stepToValidate = currentStep; stepToValidate <= index; stepToValidate++) {
+      const errorMessage = validateStep(stepToValidate, state);
+
+      // If an error is found, don't proceed and break out of the loop
+      if (errorMessage) {
+        setCurrentStep(stepToValidate);
+        return;
+      }
+    }
+
+    // If no errors found, move to the selected step
+    setCurrentStep(index);
+    if (index > furthestStep) {
+      setFurthestStep(index);
     }
   };
 

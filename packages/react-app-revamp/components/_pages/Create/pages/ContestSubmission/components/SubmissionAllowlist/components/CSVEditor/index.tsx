@@ -26,7 +26,8 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     step,
   } = useDeployContestStore(state => state);
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
-  const currentStepError = errors.find(error => error.step === step);
+  const currentStep = step + 1;
+  const currentStepError = errors.find(error => error.step === currentStep);
   const headersError = currentStepError?.message === "headers";
 
   // If user clean the fields, reset the state
@@ -83,7 +84,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   const clearFields = () => {
     updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
     setSubmissionMerkle(null);
-    setError(step, { step, message: "" });
+    setError(currentStep, { step: currentStep, message: "" });
     setUploadSuccess(false);
   };
 
@@ -91,13 +92,13 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     const results = await parseCsvSubmissions(file);
 
     if (results.missingHeaders?.length) {
-      setError(step, { step, message: "headers" });
+      setError(currentStep, { step: currentStep, message: "headers" });
       updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
       return;
     } else if (results.invalidEntries?.length) {
-      setError(step, { step, message: "entries" });
+      setError(currentStep, { step: currentStep, message: "entries" });
     } else {
-      setError(step, { step, message: "" });
+      setError(currentStep, { step: currentStep, message: "" });
       setUploadSuccess(true);
     }
 
@@ -133,7 +134,21 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
       <table className="table-fixed border-collapse border-b border-dotted border-neutral-9 w-full max-w-[600px] text-left">
         <thead>
           <tr className="text-[16px] font-bold">
-            <th className="w-3/4 py-2 uppercase ">Address</th>
+            <th className="py-2 uppercase ">
+              <div className="flex items-center justify-between">
+                <span className="uppercase">Address</span>
+                {fields.some(field => field.address !== "") && (
+                  <Image
+                    src="/create-flow/trashcan.png"
+                    width={18}
+                    height={18}
+                    alt="trashcan"
+                    className="cursor-pointer"
+                    onClick={clearFields}
+                  />
+                )}
+              </div>
+            </th>
           </tr>
         </thead>
         <ScrollableTableBody
@@ -156,16 +171,9 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
           </p>
         </div>
       ) : fields.some(field => field.address !== "") ? (
-        <div className="flex flex-col text-[16px] animate-fadeIn">
-          <div
-            className="font-bold text-negative-11 flex gap-2 items-center cursor-pointer hover:opacity-85 transition-opacity duration-300"
-            onClick={clearFields}
-          >
-            <Image src="/create-flow/trashcan.png" width={18} height={18} alt="trashcan" className="mt-[2px]" />
-            clear full allowlist (including entries that aren’t visible)
-          </div>
-          <p className="italic text-neutral-11">only first 100 entries of allowlist are visible to preview and edit</p>
-        </div>
+        <p className="italic text-neutral-11 text-[16px] ">
+          only first 100 entries of allowlist are visible to preview and edit
+        </p>
       ) : (
         <div className="flex flex-col text-[16px] mt-5">
           <p className="text-primary-10 font-bold">prefer to upload a csv?</p>
@@ -176,7 +184,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
         </div>
       )}
       <div className="mt-5">
-        <FileUpload onFileSelect={onFileSelectHandler} type="csv" step={step} isSuccess={uploadSuccess} />
+        <FileUpload onFileSelect={onFileSelectHandler} type="csv" step={currentStep} isSuccess={uploadSuccess} />
       </div>
     </div>
   );

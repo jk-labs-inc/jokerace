@@ -4,8 +4,8 @@ import CreateNextButton from "../../components/Buttons/Next";
 import CreateDropdown from "../../components/Dropdown";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
-import { CONTEST_TYPE_MAX_LENGTH } from "../../constants/length";
 import { useNextStep } from "../../hooks/useNextStep";
+import { validationFunctions } from "../../utils/validation";
 
 const options = [
   "hackathon",
@@ -26,13 +26,8 @@ const CreateContestType = () => {
   const currentStepError = errors.find(error => error.step === step);
 
   const [fadeBg, setFadeBg] = useState(false);
-  const typeValidation = () => {
-    if (!type || type.length >= CONTEST_TYPE_MAX_LENGTH) {
-      return "tag should be no more than 20 characters";
-    }
-    return "";
-  };
-  const onNextStep = useNextStep(typeValidation);
+  const typeValidation = validationFunctions.get(step);
+  const onNextStep = useNextStep([() => typeValidation?.[0].validation(type)]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
