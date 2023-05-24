@@ -1,12 +1,16 @@
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
+import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
+import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { createMerkleTreeFromAddresses, Submitter } from "lib/merkletree/generateSubmissionsTree";
 import { useEffect, useState } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
 
 const CreateSubmissionAllowlist = () => {
-  const { step, setSubmissionMerkle, submissionMerkle, setStep, setError } = useDeployContestStore(state => state);
+  const { step, setSubmissionMerkle, submissionMerkle, setError } = useDeployContestStore(state => state);
   const [allowList, setAllowList] = useState<Submitter[]>([]);
+  const submissionValidation = validationFunctions.get(step);
+  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(allowList)]);
 
   useEffect(() => {
     if (submissionMerkle && submissionMerkle.merkleTree && submissionMerkle.merkleTree.getLeaves().length > 0) {
@@ -28,11 +32,12 @@ const CreateSubmissionAllowlist = () => {
     // If there are no errors, map the fields to an array of `Submitter` objects
     setAllowList(nonEmptyFields.map(field => ({ address: field.address })));
   };
-  const onNextStep = () => {
+
+  const handleNextStep = () => {
     if (allowList.length === 0) return;
 
     setSubmissionMerkle(createMerkleTreeFromAddresses(allowList));
-    setStep(step + 1);
+    onNextStep();
 
     setError(step + 1, { step: step + 1, message: "" });
   };
@@ -49,7 +54,7 @@ const CreateSubmissionAllowlist = () => {
       <CSVEditorSubmission onChange={onAllowListChange} />
 
       <div className="mt-8">
-        <CreateNextButton step={step + 1} onClick={onNextStep} />
+        <CreateNextButton step={step + 1} onClick={handleNextStep} />
       </div>
     </div>
   );

@@ -1,7 +1,17 @@
+import { Submitter } from "lib/merkletree/generateSubmissionsTree";
 import moment from "moment";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
-export type StateKey = "type" | "title" | "summary" | "prompt" | "votingOpen" | "votingClose" | "submissionOpen";
+export type StateKey =
+  | "type"
+  | "title"
+  | "summary"
+  | "prompt"
+  | "votingOpen"
+  | "votingClose"
+  | "submissionOpen"
+  | "votingMerkle"
+  | "submissionMerkle";
 
 const titleValidation = (title: string) => {
   if (!title || title.length < CONTEST_TITLE_MIN_LENGTH || title.length >= CONTEST_TITLE_MAX_LENGTH) {
@@ -49,6 +59,22 @@ const votingEndsValidation = (votingEnds: string, votingOpen: string, submission
   return "";
 };
 
+const votingMerkleValidation = (allowList: Record<string, number>) => {
+  if (!allowList || Object.keys(allowList).length === 0) {
+    return "Merkle tree is empty";
+  }
+
+  return "";
+};
+
+const submissionMerkleValidation = (allowList: Submitter[]) => {
+  if (!allowList || allowList.length === 0) {
+    return "Merkle tree is empty";
+  }
+
+  return "";
+};
+
 export const validationFunctions = new Map<number, { validation: (...args: any[]) => string; stateKeys: StateKey[] }[]>(
   [
     [0, [{ validation: typeValidation, stateKeys: ["type"] }]],
@@ -62,6 +88,8 @@ export const validationFunctions = new Map<number, { validation: (...args: any[]
         { validation: votingEndsValidation, stateKeys: ["votingClose", "votingOpen", "submissionOpen"] },
       ],
     ],
+    [5, [{ validation: votingMerkleValidation, stateKeys: ["votingMerkle"] }]],
+    [6, [{ validation: submissionMerkleValidation, stateKeys: ["submissionMerkle"] }]],
   ],
 );
 
