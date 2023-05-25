@@ -56,6 +56,7 @@ export function useContestEvents() {
           functionName: "getProposal",
           args: proposalId,
         });
+
         let author;
         try {
           author = await fetchEnsName({
@@ -63,15 +64,9 @@ export function useContestEvents() {
             chainId: chain.mainnet.id,
           });
         } catch (error: any) {
-          if (error.message.includes("network does not support ENS")) {
-            // Fallback for when ENS is not supported
-            console.log("ENS not supported on this network, using address directly");
-            author = proposal[0];
-          } else {
-            // Handle other errors
-            throw error;
-          }
+          author = proposal[0];
         }
+
         const proposalData: any = {
           authorEthereumAddress: proposal[0],
           author: author ?? proposal[0],

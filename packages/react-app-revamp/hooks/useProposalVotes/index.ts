@@ -176,14 +176,7 @@ export function useProposalVotes(id: number | string) {
           chainId: wagmiChain.mainnet.id,
         });
       } catch (error: any) {
-        if (error.message.includes("network does not support ENS")) {
-          // Fallback for when ENS is not supported
-          console.log("ENS not supported on this network, using address directly");
-          author = userAddress;
-        } else {
-          // Handle other errors
-          console.error("Failed to fetch ENS name for address:", userAddress, error);
-        }
+        author = userAddress;
       }
 
       const displayAddress = author ?? shortenEthereumAddress(userAddress);
