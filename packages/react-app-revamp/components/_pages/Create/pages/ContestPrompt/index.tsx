@@ -19,6 +19,7 @@ import { validationFunctions } from "../../utils/validation";
 const CreateContestPrompt = () => {
   const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
   const [isTextSelected, setIsTextSelected] = useState(false);
+  const [editorInteracted, setEditorInteracted] = useState(false);
   const currentStepError = errors.find(error => error.step === step);
   const promptValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => promptValidation?.[0].validation(prompt)]);
@@ -41,7 +42,14 @@ const CreateContestPrompt = () => {
       attributes: {
         class: "prose prose-invert flex-grow focus:outline-none",
       },
+      handleDOMEvents: {
+        focus: () => {
+          setEditorInteracted(true);
+          return false; // continue with the default focus event
+        },
+      },
     },
+
     onUpdate: ({ editor }) => {
       const content = editor.getHTML();
       setPrompt(content);
@@ -50,7 +58,7 @@ const CreateContestPrompt = () => {
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.shiftKey) {
+      if (event.shiftKey || !editorInteracted) {
         return;
       }
       if (event.key === "Enter") {
@@ -63,7 +71,7 @@ const CreateContestPrompt = () => {
     return () => {
       window.removeEventListener("keydown", handleEnterPress);
     };
-  }, [onNextStep]);
+  }, [onNextStep, editorInteracted]);
 
   useEffect(() => {
     if (editor) {
@@ -112,7 +120,7 @@ const CreateContestPrompt = () => {
 
         <EditorContent
           editor={editor}
-          className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-[600px] pb-2"
+          className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-[600px] overflow-y-auto max-h-[300px] pb-2"
         />
 
         {currentStepError ? (
