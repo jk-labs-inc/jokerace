@@ -53,7 +53,7 @@ const CreateContestPrompt = () => {
 
   // Not ideal approach, but for now the right one since handleDomEvents in editor config is not receiving the prompt at given time
   useEffect(() => {
-    // Ignore "Enter" presses for the first 500ms after the component is mounted
+    // Ignore "Enter" presses for the first 100ms after the component is mounted
     const timeoutId = setTimeout(() => setComponentMounted(true), 100);
 
     return () => {
