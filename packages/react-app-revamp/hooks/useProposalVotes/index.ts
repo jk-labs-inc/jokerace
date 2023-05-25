@@ -169,10 +169,22 @@ export function useProposalVotes(id: number | string) {
 
       const { forVotes, againstVotes } = data ?? {};
 
-      const author = await fetchEnsName({
-        address: userAddress,
-        chainId: wagmiChain.mainnet.id,
-      });
+      let author;
+      try {
+        author = await fetchEnsName({
+          address: userAddress,
+          chainId: wagmiChain.mainnet.id,
+        });
+      } catch (error: any) {
+        if (error.message.includes("network does not support ENS")) {
+          // Fallback for when ENS is not supported
+          console.log("ENS not supported on this network, using address directly");
+          author = userAddress;
+        } else {
+          // Handle other errors
+          console.error("Failed to fetch ENS name for address:", userAddress, error);
+        }
+      }
 
       const displayAddress = author ?? shortenEthereumAddress(userAddress);
       // @ts-ignore
