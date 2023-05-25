@@ -93,6 +93,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     --brand: theme("colors.primary.10");
     scrollbar-color: var(--brand) Canvas;
     color-scheme: dark;
+    overflow-y: scroll;
   }
 
   :root {

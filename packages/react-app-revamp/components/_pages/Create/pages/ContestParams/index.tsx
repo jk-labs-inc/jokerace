@@ -5,8 +5,16 @@ import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
 
 const CreateContestParams = () => {
-  const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step, errors } =
-    useDeployContestStore(state => state);
+  const {
+    setMaxSubmissions,
+    setAllowedSubmissionsPerUser,
+    votingMerkle,
+    maxSubmissions,
+    setDownvote,
+    downvote,
+    step,
+    errors,
+  } = useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
 
   const handleClick = (value: boolean) => {
