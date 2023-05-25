@@ -4,7 +4,6 @@ import type { VariantProps } from "class-variance-authority";
 export const button = cva(
   [
     "inline-flex items-center justify-center",
-    "tracking-wide",
     "rounded-xl",
     "transition-colors transition-500",
     "disabled:!opacity-50 disabled:pointer-events-none",
@@ -57,7 +56,7 @@ export const button = cva(
       scale: {
         default: ["text-xs", "py-2 px-4", "font-bold", "border"],
         lg: ["text-md", "py-1.5 px-4 sm:px-5", "font-bold", "border"],
-        header: ["text-[24px]"],
+        header: ["text-[24px]", "tracking-tighter"],
         sm: ["text-2xs", "py-2 px-2.5", "font-bold", "border"],
         xs: ["text-2xs", "py-0.5 px-3", "font-bold", "border"],
       },

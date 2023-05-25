@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import LandingHeader from "./LandingHeader";
 import MainHeader from "./MainHeader";
 import CreateFlowHeader from "./CreateFlowHeader";
+import { DeployContestWrapper } from "@hooks/useDeployContest/store";
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -13,7 +14,11 @@ const Header: React.FC = () => {
   }
 
   if (pathname.includes("/new")) {
-    return <CreateFlowHeader />;
+    return (
+      <DeployContestWrapper>
+        <CreateFlowHeader />
+      </DeployContestWrapper>
+    );
   }
 
   return <MainHeader />;

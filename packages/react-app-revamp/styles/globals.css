@@ -65,6 +65,10 @@
   transform: rotate(15deg);
 }
 
+.createHeaderShadows {
+  filter: drop-shadow(0px 3px 4px rgba(255, 226, 91, 0.6));
+}
+
 input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   color: rgba(0, 0, 0, 0);
   opacity: 1;

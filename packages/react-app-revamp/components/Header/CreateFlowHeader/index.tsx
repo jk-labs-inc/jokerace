@@ -2,32 +2,33 @@ import MenuLink from "@components/UI/Menu/Link";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Fragment } from "react";
 
 const CreateFlowHeader = () => {
-  const router = useRouter();
+  const { setPageAction, pageAction } = useDeployContestStore(state => state);
   return (
     <header className="flex items-center justify-between pl-[80px] pr-[60px] mt-8">
       <Link href="/">
         <h1 className="font-sabo text-primary-10 text-[40px]">JOKERACE</h1>
       </Link>
 
-      <div className="flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10">
-        <Link
-          href={ROUTE_VIEW_LIVE_CONTESTS}
-          className={router.pathname === ROUTE_VIEW_LIVE_CONTESTS ? "text-primary-10" : "text-neutral-11"}
+      <div className="flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 drop-shadow-2xl">
+        <p
+          onClick={() => setPageAction("play")}
+          className={`cursor-pointer ${pageAction === "play" ? "text-primary-10" : "text-neutral-11"}`}
         >
           play
-        </Link>
-        <Link
-          href={ROUTE_CREATE_CONTEST}
-          className={router.pathname === ROUTE_CREATE_CONTEST ? "text-primary-10" : "text-neutral-11"}
+        </p>
+        <p
+          onClick={() => setPageAction("create")}
+          className={`cursor-pointer ${pageAction === "create" ? "text-primary-10" : "text-neutral-11"}`}
         >
           create
-        </Link>
+        </p>
       </div>
 
       <div className="hidden lg:flex">

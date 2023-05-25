@@ -40,7 +40,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
         <Button
           className={`bg-gradient-create rounded-[10px] py-2 px-[38px] font-bold ${
             shake ? "animate-shakeTop" : ""
-          } tracking-tighter text-true-black`}
+          }  text-true-black`}
           scale="header"
           onClick={handleClick}
         >

@@ -11,7 +11,10 @@ type CustomError = {
   message: string;
 };
 
+type PageAction = "create" | "play";
+
 export interface DeployContestState {
+  pageAction: PageAction;
   type: string;
   title: string;
   summary: string;
@@ -35,6 +38,7 @@ export interface DeployContestState {
   furthestStep: number;
   submissionTab: number;
 
+  setPageAction: (pageAction: PageAction) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
@@ -70,6 +74,7 @@ export const createDeployContestStore = () =>
     votingClose.setDate(votingClose.getDate() + 14);
 
     return {
+      pageAction: "create",
       type: "",
       title: "",
       summary: "",
@@ -93,6 +98,7 @@ export const createDeployContestStore = () =>
       furthestStep: 0,
       submissionTab: 0,
 
+      setPageAction: (pageAction: PageAction) => set({ pageAction }),
       setType: (type: string) => set({ type }),
       setTitle: (title: string) => set({ title }),
       setSummary: (summary: string) => set({ summary }),
