@@ -2,14 +2,14 @@ import Button from "@components/UI/Button";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
-import { FC, MouseEventHandler, useEffect, useState } from "react";
+import { useState, useEffect, MouseEventHandler, FC } from "react";
 
-interface CreateNextButtonProps {
+interface CreateContestButtonProps {
   step: number;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 }
 
-const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
+const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) => {
   const { errors } = useDeployContestStore(state => state);
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
@@ -38,13 +38,13 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
     <div className="flex gap-4 items-start">
       <div className="flex flex-col items-center gap-2">
         <Button
-          className={`bg-gradient-next rounded-[10px] py-2 px-[38px] font-bold ${
+          className={`bg-gradient-create rounded-[10px] py-2 px-[38px] font-bold ${
             shake ? "animate-shakeTop" : ""
-          } text-true-black`}
+          } tracking-tighter text-true-black`}
           scale="header"
           onClick={handleClick}
         >
-          next
+          create contest!
         </Button>
 
         {step > 1 && (
@@ -60,10 +60,9 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
         <p className="text-[16px]">
           press <span className="font-bold capitalize">enter</span>
         </p>
-        <Image src="/create-flow/enter.png" alt="enter" width={14} height={14} />
       </div>
     </div>
   );
 };
 
-export default CreateNextButton;
+export default CreateContestButton;

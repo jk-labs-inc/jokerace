@@ -2,7 +2,8 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, useEffect, useRef } from "react";
 
 interface CreateTextInputProps {
-  value: string;
+  value?: string | number;
+  type?: "text" | "number";
   placeholder?: string;
   errorMessage?: string;
   minLength?: number;
@@ -15,6 +16,7 @@ interface CreateTextInputProps {
 
 const CreateTextInput: FC<CreateTextInputProps> = ({
   value,
+  type = "text",
   placeholder,
   minLength = 100,
   maxLength = 100,
@@ -48,8 +50,9 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
     <input
       ref={inputRef}
       value={value}
-      type="text"
-      className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2 w-[${width}px]`}
+      type={type}
+      className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2`}
+      style={{ width: `${width}px` }}
       placeholder={placeholder}
       minLength={minLength}
       readOnly={readOnly}

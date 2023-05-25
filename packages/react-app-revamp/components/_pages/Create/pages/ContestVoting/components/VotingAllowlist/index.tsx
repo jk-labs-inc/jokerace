@@ -27,6 +27,20 @@ const CreateVotingAllowlist = () => {
     setAllowList(newAllowList);
   }, [votingMerkle]);
 
+  useEffect(() => {
+    const handleEnterPress = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        handleNextStep();
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [onNextStep]);
+
   const handleAllowListChange = (fields: VotingFieldObject[]) => {
     const nonEmptyFields = fields.filter(({ address, votes }) => address || votes);
     const newAllowList = nonEmptyFields.reduce((acc, { address, votes }) => ({ ...acc, [address]: Number(votes) }), {});

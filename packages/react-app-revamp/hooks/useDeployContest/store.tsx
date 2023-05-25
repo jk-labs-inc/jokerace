@@ -33,6 +33,7 @@ export interface DeployContestState {
   errors: CustomError[];
   step: number;
   furthestStep: number;
+  submissionTab: number;
 
   setType: (type: string) => void;
   setTitle: (title: string) => void;
@@ -55,6 +56,7 @@ export interface DeployContestState {
   setError: (step: number, error: CustomError) => void;
   setStep: (step: number) => void;
   setFurthestStep: (furthestStep: number) => void;
+  setSubmissionTab: (tab: number) => void;
 }
 
 export const createDeployContestStore = () =>
@@ -82,13 +84,14 @@ export const createDeployContestStore = () =>
       submissionAllowlistFields: Array(15).fill(EMPTY_FIELDS_SUBMISSION),
       submissionMerkle: null,
       allowedSubmissionsPerUser: 0,
-      maxSubmissions: 0,
-      downvote: false,
+      maxSubmissions: 200,
+      downvote: true,
       isLoading: false,
       isSuccess: false,
       errors: [],
       step: 0,
       furthestStep: 0,
+      submissionTab: 0,
 
       setType: (type: string) => set({ type }),
       setTitle: (title: string) => set({ title }),
@@ -123,6 +126,7 @@ export const createDeployContestStore = () =>
 
       setStep: (step: number) => set({ step }),
       setFurthestStep: (furthestStep: number) => set({ furthestStep }),
+      setSubmissionTab: (submissionTab: number) => set({ submissionTab }),
     };
   });
 

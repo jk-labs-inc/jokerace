@@ -10,13 +10,17 @@ const tabOptions = [
 ];
 
 const CreateContestSubmissions = () => {
-  const { errors, setStep, step } = useDeployContestStore(state => state);
+  const { step, setSubmissionTab, submissionTab } = useDeployContestStore(state => state);
+
+  const onSubmissionTabChange = (tabIndex: number) => {
+    setSubmissionTab(tabIndex);
+  };
 
   return (
     <div className="mt-[50px] animate-swingInLeft">
       <div className="flex items-start gap-5 text-[24px]">
         <StepCircle step={step + 1} />
-        <CreateTab width={650} options={tabOptions} />
+        <CreateTab width={650} options={tabOptions} onSelectTab={onSubmissionTabChange} defaultTab={submissionTab} />
       </div>
     </div>
   );

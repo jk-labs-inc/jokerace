@@ -13,8 +13,6 @@ const CreateVotesOpenDate = () => {
     setVotingOpen(moment(value).toDate());
   };
 
-  console.log({ currentStepError });
-
   return (
     <CreateDatePicker
       title="when time should submissions close— and voting open?"

@@ -2,9 +2,14 @@ import { ChevronDownIcon } from "@heroicons/react/outline";
 import { FC, useEffect, useRef, useState } from "react";
 import CreateTextInput from "../TextInput";
 
+export interface Option {
+  value: string;
+  disabled?: boolean;
+}
+
 interface CreateDropdownProps {
   value: string;
-  options: string[];
+  options: Option[];
   searchEnabled?: boolean;
   width?: number;
   onChange?: (option: string) => void;
@@ -15,7 +20,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
   value,
   options,
   searchEnabled = true,
-  width,
+  width = 600,
   onChange,
   onMenuStateChange,
 }) => {
@@ -25,7 +30,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     !searchEnabled || query === ""
       ? options
       : options.filter(option => {
-          return option.toLowerCase().includes(query.toLowerCase());
+          return option.value.toLowerCase().includes(query.toLowerCase());
         });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -51,7 +56,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     if (searchEnabled) {
       setQuery(value);
       onChange?.(value);
-      const matchingOptions = options.filter(option => option.toLowerCase().startsWith(value.toLowerCase()));
+      const matchingOptions = options.filter(option => option.value.toLowerCase().startsWith(value.toLowerCase()));
       if (value !== "" && matchingOptions.length > 0) {
         setShowOptions(true);
       } else {
@@ -82,18 +87,21 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
       <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleIconClick} />
       {showOptions && (
         <ul
-          className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black ${
-            width ? `w-[${width}px]` : `w-[600px]`
-          }  border border-primary-10 rounded-[10px] animate-appear`}
+          style={{ width: `${width}px` }}
+          className="flex flex-col absolute z-10 mt-14 list-none bg-true-black  border border-primary-10 rounded-[10px] animate-appear"
         >
           {filteredOptions.map(option => (
             <li
-              className="pl-4 pt-2 pb-2  text-neutral-11 text-[18px] hover:bg-neutral-3
-               cursor-pointer transition-colors duration-300 ease-in-out"
-              key={option}
-              onClick={() => handleOptionClick(option)}
+              className={`pl-4 pt-2 pb-2 text-neutral-11 text-[18px] cursor-pointer 
+              ${
+                option.disabled
+                  ? "opacity-50 pointer-events-none"
+                  : "hover:bg-neutral-3 transition-colors duration-300 ease-in-out"
+              }`}
+              key={option.value}
+              onClick={() => handleOptionClick(option.value)}
             >
-              {option}
+              {option.value}
             </li>
           ))}
         </ul>

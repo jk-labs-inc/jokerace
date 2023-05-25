@@ -11,7 +11,8 @@ export type StateKey =
   | "votingClose"
   | "submissionOpen"
   | "votingMerkle"
-  | "submissionMerkle";
+  | "submissionMerkle"
+  | "submissionRequirements";
 
 const titleValidation = (title: string) => {
   if (!title || title.length < CONTEST_TITLE_MIN_LENGTH || title.length >= CONTEST_TITLE_MAX_LENGTH) {
@@ -67,11 +68,17 @@ const votingMerkleValidation = (allowList: Record<string, number>) => {
   return "";
 };
 
-const submissionMerkleValidation = (allowList: Submitter[]) => {
-  if (!allowList || allowList.length === 0) {
+const submissionMerkleValidation = (allowList: Submitter[], submissionTab: string) => {
+  if (submissionTab === "submissionMerkle" && (!allowList || allowList.length === 0)) {
     return "Merkle tree is empty";
   }
+  return "";
+};
 
+const submissionRequirementsValidation = (submissionRequirements: string, submissionTab: string) => {
+  if (submissionTab === "submissionRequirements" && !submissionRequirements) {
+    return "Submission requirements should be a valid field";
+  }
   return "";
 };
 
@@ -89,11 +96,17 @@ export const validationFunctions = new Map<number, { validation: (...args: any[]
       ],
     ],
     [5, [{ validation: votingMerkleValidation, stateKeys: ["votingMerkle"] }]],
-    [6, [{ validation: submissionMerkleValidation, stateKeys: ["submissionMerkle"] }]],
+    [
+      6,
+      [
+        { validation: submissionMerkleValidation, stateKeys: ["submissionMerkle"] },
+        { validation: submissionRequirementsValidation, stateKeys: ["submissionRequirements"] },
+      ],
+    ],
   ],
 );
 
-export const validateStep = (step: number, state: any) => {
+export const validateStep = (step: number, state: any, currentTab?: string) => {
   const validationConfigs = validationFunctions.get(step);
 
   if (!validationConfigs) return;
@@ -101,7 +114,7 @@ export const validateStep = (step: number, state: any) => {
   for (const validationConfig of validationConfigs) {
     const { validation, stateKeys } = validationConfig;
     const stateValues = stateKeys.map(key => state[key as StateKey]);
-    const errorMessage = validation(...stateValues);
+    const errorMessage = validation(...stateValues, currentTab);
 
     if (errorMessage) {
       return errorMessage;

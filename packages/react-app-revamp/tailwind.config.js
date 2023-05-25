@@ -306,6 +306,7 @@ module.exports = {
       },
       backgroundImage: {
         "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
+        "gradient-create": "linear-gradient(90deg, #BB65FF 0%, #FFE25B 96.62%)",
       },
       backgroundSize: {
         "size-200": "200% 200%",

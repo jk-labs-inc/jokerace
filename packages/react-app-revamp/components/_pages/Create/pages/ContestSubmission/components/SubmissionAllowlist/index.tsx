@@ -10,7 +10,7 @@ const CreateSubmissionAllowlist = () => {
   const { step, setSubmissionMerkle, submissionMerkle, setError } = useDeployContestStore(state => state);
   const [allowList, setAllowList] = useState<Submitter[]>([]);
   const submissionValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(allowList)]);
+  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(allowList, "submissionMerkle")]);
 
   useEffect(() => {
     if (submissionMerkle && submissionMerkle.merkleTree && submissionMerkle.merkleTree.getLeaves().length > 0) {
@@ -18,6 +18,20 @@ const CreateSubmissionAllowlist = () => {
       setAllowList(newAllowList);
     }
   }, [submissionMerkle]);
+
+  useEffect(() => {
+    const handleEnterPress = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        handleNextStep();
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [onNextStep]);
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
     const nonEmptyFields = fields.filter(field => field.address !== "");

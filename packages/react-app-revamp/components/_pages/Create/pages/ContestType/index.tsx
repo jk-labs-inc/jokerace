@@ -1,24 +1,24 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect, useState } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
-import CreateDropdown from "../../components/Dropdown";
+import CreateDropdown, { Option } from "../../components/Dropdown";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
 
-const options = [
-  "hackathon",
-  "grants round",
-  "bounty",
-  "pulse check",
-  "amend a proposal",
-  "contest competition",
-  "giveaway",
-  "feature request",
-  "curation",
-  "game",
-  "election",
+const options: Option[] = [
+  { value: "hackathon" },
+  { value: "grants round" },
+  { value: "bounty" },
+  { value: "pulse check" },
+  { value: "amend a proposal" },
+  { value: "contest competition" },
+  { value: "giveaway" },
+  { value: "feature request" },
+  { value: "curation" },
+  { value: "game" },
+  { value: "election" },
 ];
 
 const CreateContestType = () => {
