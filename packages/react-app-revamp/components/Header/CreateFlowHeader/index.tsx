@@ -1,15 +1,15 @@
 import MenuLink from "@components/UI/Menu/Link";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { Fragment } from "react";
 
 const CreateFlowHeader = () => {
   const { setPageAction, pageAction } = useDeployContestStore(state => state);
+
   return (
     <header className="flex items-center justify-between pl-[80px] pr-[60px] mt-8">
       <Link href="/">

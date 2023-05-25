@@ -1,5 +1,6 @@
 import Iframe from "@components/tiptap/Iframe";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
+import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Image as TipTapImage } from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
@@ -25,7 +26,8 @@ const CreateContestPrompt = () => {
   const editor = useEditor({
     extensions: [
       StarterKit,
-      // DisableEnter,
+      ShiftEnterCreateExtension,
+      DisableEnter,
       TipTapImage,
       TiptapExtensionLink,
       Placeholder.configure({
@@ -45,6 +47,23 @@ const CreateContestPrompt = () => {
       setPrompt(content);
     },
   });
+
+  useEffect(() => {
+    const handleEnterPress = (event: KeyboardEvent) => {
+      if (event.shiftKey) {
+        return;
+      }
+      if (event.key === "Enter") {
+        onNextStep();
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [onNextStep]);
 
   useEffect(() => {
     if (editor) {
