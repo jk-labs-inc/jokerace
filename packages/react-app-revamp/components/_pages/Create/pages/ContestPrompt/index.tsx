@@ -19,7 +19,8 @@ import { validationFunctions } from "../../utils/validation";
 const CreateContestPrompt = () => {
   const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
   const [isTextSelected, setIsTextSelected] = useState(false);
-  const [editorInteracted, setEditorInteracted] = useState(false);
+  const [componentMounted, setComponentMounted] = useState(false);
+
   const currentStepError = errors.find(error => error.step === step);
   const promptValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => promptValidation?.[0].validation(prompt)]);
@@ -42,12 +43,6 @@ const CreateContestPrompt = () => {
       attributes: {
         class: "prose prose-invert flex-grow focus:outline-none",
       },
-      handleDOMEvents: {
-        focus: () => {
-          setEditorInteracted(true);
-          return false; // continue with the default focus event
-        },
-      },
     },
 
     onUpdate: ({ editor }) => {
@@ -56,9 +51,19 @@ const CreateContestPrompt = () => {
     },
   });
 
+  // Not ideal approach, but for now the right one since handleDomEvents in editor config is not receiving the prompt at given time
+  useEffect(() => {
+    // Ignore "Enter" presses for the first 500ms after the component is mounted
+    const timeoutId = setTimeout(() => setComponentMounted(true), 100);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.shiftKey || !editorInteracted) {
+      if (event.shiftKey || !componentMounted) {
         return;
       }
       if (event.key === "Enter") {
@@ -71,7 +76,7 @@ const CreateContestPrompt = () => {
     return () => {
       window.removeEventListener("keydown", handleEnterPress);
     };
-  }, [onNextStep, editorInteracted]);
+  }, [onNextStep, componentMounted]);
 
   useEffect(() => {
     if (editor) {
