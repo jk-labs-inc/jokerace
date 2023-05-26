@@ -1,6 +1,6 @@
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
@@ -10,6 +10,20 @@ const CreateContestParams = () => {
   const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
     useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
+
+  useEffect(() => {
+    const handleEnterPress = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        deployContest();
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [deployContest]);
 
   const handleClick = (value: boolean) => {
     setIsEnabled(value);
