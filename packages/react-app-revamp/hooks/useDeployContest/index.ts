@@ -45,9 +45,10 @@ export function useDeployContest() {
 
       const contestInfo = type + "|" + summary + "|" + prompt;
 
-      // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set and we pass "infinity" to the contract
-      const finalAllowedSubmissionsPerUser = !isNaN(allowedSubmissionsPerUser) ? allowedSubmissionsPerUser : 1000000;
-      const finalMaxSubmissions = !isNaN(maxSubmissions) ? maxSubmissions : 1000000;
+      // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
+      const finalAllowedSubmissionsPerUser =
+        !isNaN(allowedSubmissionsPerUser) && allowedSubmissionsPerUser > 0 ? allowedSubmissionsPerUser : 1000000;
+      const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : 1000000;
 
       const contestParameters = [
         getUnixTime(submissionOpen),
