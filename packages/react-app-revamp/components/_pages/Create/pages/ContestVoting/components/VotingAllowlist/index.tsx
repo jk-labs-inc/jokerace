@@ -14,7 +14,7 @@ const CreateVotingAllowlist = () => {
   const [allowList, setAllowList] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    if (!votingMerkle || !votingMerkle.merkleTree || votingMerkle.merkleTree.getLeaves.length === 0) return;
+    if (!votingMerkle) return;
 
     const newAllowList = votingMerkle.recipients.reduce((acc, field) => {
       // Convert back to 'normal' number from string that represents a BigNumber
@@ -51,7 +51,9 @@ const CreateVotingAllowlist = () => {
   const handleNextStep = () => {
     if (Object.keys(allowList).length === 0) return;
 
-    setVotingMerkle(createMerkleTreeFromVotes(18, allowList));
+    const { merkleRoot, recipients } = createMerkleTreeFromVotes(18, allowList);
+
+    setVotingMerkle({ merkleRoot, recipients });
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
   };

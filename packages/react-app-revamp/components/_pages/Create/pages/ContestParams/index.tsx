@@ -1,3 +1,4 @@
+import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useState } from "react";
 import CreateContestButton from "../../components/Buttons/Submit";
@@ -5,16 +6,9 @@ import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
 
 const CreateContestParams = () => {
-  const {
-    setMaxSubmissions,
-    setAllowedSubmissionsPerUser,
-    votingMerkle,
-    maxSubmissions,
-    setDownvote,
-    downvote,
-    step,
-    errors,
-  } = useDeployContestStore(state => state);
+  const { deployContest } = useDeployContest();
+  const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
+    useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
 
   const handleClick = (value: boolean) => {
@@ -30,7 +24,9 @@ const CreateContestParams = () => {
     setMaxSubmissions(parseInt(value));
   };
 
-  const onCreateContest = () => {};
+  const onCreateContest = () => {
+    deployContest();
+  };
 
   return (
     <div className="flex flex-col gap-8 mt-[50px] animate-swingInLeft">
@@ -50,7 +46,7 @@ const CreateContestParams = () => {
           <div className="flex flex-col gap-2">
             <CreateTextInput
               value={maxSubmissions}
-              placeholder="20"
+              placeholder="200"
               width={280}
               type="number"
               onChange={onMaxSubmissionsChange}

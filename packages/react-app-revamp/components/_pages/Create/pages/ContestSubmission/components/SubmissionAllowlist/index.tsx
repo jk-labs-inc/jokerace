@@ -13,7 +13,7 @@ const CreateSubmissionAllowlist = () => {
   const onNextStep = useNextStep([() => submissionValidation?.[0].validation(allowList, "submissionMerkle")]);
 
   useEffect(() => {
-    if (submissionMerkle && submissionMerkle.merkleTree && submissionMerkle.merkleTree.getLeaves().length > 0) {
+    if (submissionMerkle) {
       const newAllowList = submissionMerkle.submitters.map(submitter => ({ address: submitter.address }));
       setAllowList(newAllowList);
     }
@@ -50,7 +50,9 @@ const CreateSubmissionAllowlist = () => {
   const handleNextStep = () => {
     if (allowList.length === 0) return;
 
-    setSubmissionMerkle(createMerkleTreeFromAddresses(allowList));
+    const { merkleRoot, submitters } = createMerkleTreeFromAddresses(allowList);
+
+    setSubmissionMerkle({ merkleRoot, submitters });
     onNextStep();
 
     setError(step + 1, { step: step + 1, message: "" });

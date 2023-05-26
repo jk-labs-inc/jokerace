@@ -1,4 +1,5 @@
 import CreateFlow from "@components/_pages/Create";
+import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { DeployContestWrapper } from "@hooks/useDeployContest/store";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -11,9 +12,11 @@ const Page: NextPage = () => {
         <meta name="description" content="@TODO: change this" />
       </Head>
 
-      <DeployContestWrapper>
-        <CreateFlow />
-      </DeployContestWrapper>
+      <ContractFactoryWrapper>
+        <DeployContestWrapper>
+          <CreateFlow />
+        </DeployContestWrapper>
+      </ContractFactoryWrapper>
     </>
   );
 };
