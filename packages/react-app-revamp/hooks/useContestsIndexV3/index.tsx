@@ -15,7 +15,7 @@ interface ContestValues {
   featured?: boolean;
 }
 
-export function useV3ContestsIndex() {
+export function useContestsIndexV3() {
   async function indexContestV3(values: ContestValues) {
     try {
       const { address } = getAccount();
@@ -50,4 +50,4 @@ export function useV3ContestsIndex() {
   };
 }
 
-export default useV3ContestsIndex;
+export default useContestsIndexV3;

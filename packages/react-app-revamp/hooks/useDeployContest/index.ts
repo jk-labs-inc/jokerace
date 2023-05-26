@@ -25,7 +25,6 @@ export function useDeployContest() {
     maxSubmissions,
     downvote,
     setDeployContestData,
-    ...state
   } = useDeployContestStore(state => state);
   const { chain } = useNetwork();
   const { refetch } = useSigner();
