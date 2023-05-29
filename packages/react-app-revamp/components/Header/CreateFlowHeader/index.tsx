@@ -11,7 +11,7 @@ const CreateFlowHeader = () => {
   const { setPageAction, pageAction } = useDeployContestStore(state => state);
 
   return (
-    <header className="flex flex-col lg:flex-row gap-3 lg:gap-0 items-center lg:justify-between lg:pl-[80px] lg:pr-[60px] mt-8">
+    <header className="flex flex-col lg:flex-row gap-3 md:gap-6 lg:gap-0 items-center lg:justify-between lg:pl-[80px] lg:pr-[60px] mt-8">
       <Link href="/">
         <h1 className="font-sabo text-primary-10 text-[55px] lg:text-[40px]">JOKERACE</h1>
       </Link>
