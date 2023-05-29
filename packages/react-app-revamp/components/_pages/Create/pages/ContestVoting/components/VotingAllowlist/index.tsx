@@ -61,7 +61,7 @@ const CreateVotingAllowlist = () => {
   return (
     <div className="mt-5 lg:ml-[20px]">
       <div className="flex flex-col gap-2 mb-5">
-        <p className="text-[24px] font-bold text-primary-10">who can vote?</p>
+        <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can vote?</p>
         <p className="text-[16px] text-neutral-11">
           copy-paste allowlist into preview box (up to 100 line items) or upload a csv below <br />
           (no limit on line items).

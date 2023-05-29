@@ -56,7 +56,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
           </div>
         )}
       </div>
-      <div className="flex items-center mt-[15px] gap-[2px]">
+      <div className="hidden md:flex items-center mt-[15px] gap-[2px]">
         <p className="text-[16px]">
           press <span className="font-bold capitalize">enter</span>
         </p>

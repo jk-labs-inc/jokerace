@@ -48,7 +48,7 @@ const CreateSubmissionRequirements = () => {
   return (
     <>
       <div className="flex flex-col gap-5">
-        <p className="text-[24px] font-bold text-primary-10">who can submit?</p>
+        <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can submit?</p>
         <CreateDropdown
           value={submissionRequirements}
           options={options}

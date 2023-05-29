@@ -147,7 +147,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <table className="table-fixed border-collapse border-b border-dotted border-neutral-9 w-full max-w-[600px] text-left">
+      <table className="table-fixed border-collapse border-b border-dotted border-neutral-9 w-[300px] md:w-[600px] text-left">
         <thead>
           <tr className="text-[16px] font-bold">
             <th className="w-2/3 py-2 uppercase">Address</th>

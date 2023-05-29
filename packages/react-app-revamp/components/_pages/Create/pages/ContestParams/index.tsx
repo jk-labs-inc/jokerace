@@ -57,10 +57,12 @@ const CreateContestParams = () => {
 
   return (
     <div className="flex flex-col gap-8 mt-[50px] animate-swingInLeft">
-      <div className="flex gap-5">
+      <div className="flex flex-col md:flex-row gap-5">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-5 mt-2">
-          <p className="text-[24px] text-primary-10 font-bold">how many submissions can each player enter?</p>
+          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
+            how many submissions can each player enter?
+          </p>
           <div className="flex flex-col gap-2">
             <CreateTextInput
               placeholder="20"
@@ -72,9 +74,11 @@ const CreateContestParams = () => {
           </div>
         </div>
       </div>
-      <div className="ml-[70px] flex flex-col gap-8">
+      <div className="md:ml-[70px] flex flex-col gap-8">
         <div className="flex flex-col gap-5">
-          <p className="text-[24px] text-primary-10 font-bold">how many total submissions does your contest accept?</p>
+          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
+            how many total submissions does your contest accept?
+          </p>
           <div className="flex flex-col gap-2">
             <CreateTextInput
               value={maxSubmissions}
@@ -87,11 +91,11 @@ const CreateContestParams = () => {
           </div>
         </div>
         <div className="flex flex-col gap-5">
-          <p className="text-[24px] text-primary-10 font-bold">
+          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
             can players downvote—that is, vote <span className="italic">against</span> a submission?
           </p>
           <div className="flex flex-col gap-2">
-            <div className="flex w-[490px]  border border-primary-10 rounded-[25px] overflow-hidden text-[24px]">
+            <div className="flex flex-col md:flex-row w-[300px] md:w-[490px]  border border-primary-10 rounded-[25px] overflow-hidden text-[20px] md:text-[24px]">
               <div
                 className={`w-full px-4 py-1 cursor-pointer ${
                   isEnabled ? "bg-primary-10 text-true-black font-bold" : "bg-true-black text-primary-10"

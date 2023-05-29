@@ -9,7 +9,7 @@ type TabOption = {
 type TabProps = {
   options: TabOption[];
   defaultTab?: number;
-  width?: number;
+  className?: string;
   disabledTab?: number;
   onSelectTab?: (tabIndex: number) => void; // adding callback prop
 };
@@ -17,7 +17,7 @@ type TabProps = {
 const CreateTab: React.FC<TabProps> = ({
   options,
   defaultTab = 0,
-  width = 600,
+  className,
   disabledTab = -1,
   onSelectTab, // receiving callback prop
 }) => {
@@ -32,18 +32,20 @@ const CreateTab: React.FC<TabProps> = ({
 
   return (
     <div>
-      <div className="flex justify-between items-end" style={{ width: `${width}px` }}>
+      <div className={`flex justify-between items-end ${className}`}>
         {options.map((option, index) => (
           <>
             <div
               key={index}
               data-tooltip-id="voting-requirements"
-              className={`flex-grow text-[24px] font-bold text-center py-2 ${
+              className={`flex-grow text-[18px] md:text-[24px] font-bold text-start md:text-center py-2 ${
                 isTabDisabled(index) ? "cursor-not-allowed" : "cursor-pointer"
-              } flex flex-col items-start ${selectedTab === options[index] ? "text-primary-10" : "text-neutral-9"}`}
+              } flex flex-col items-start ${selectedTab === options[index] ? "text-primary-10" : "text-neutral-9"} ${
+                index === 0 ? "text-start md:text-center" : "text-end md:text-center"
+              }`}
               onClick={() => !isTabDisabled(index) && selectTab(option, index)}
             >
-              <p className="indent-6">{option.label}</p>
+              <p className="md:indent-6">{option.label}</p>
               <div
                 className={`h-1 w-full mt-1 ${selectedTab === options[index] ? "bg-primary-10" : "bg-neutral-9"}`}
               ></div>
