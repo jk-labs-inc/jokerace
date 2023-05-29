@@ -48,10 +48,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
         </Button>
 
         {step > 1 && (
-          <div
-            className="hidden lg:flex lg:items-center gap-[2px] -ml-[15px] cursor-pointer group"
-            onClick={onPreviousStep}
-          >
+          <div className="flex items-center gap-[2px] -ml-[15px] cursor-pointer group" onClick={onPreviousStep}>
             <div className="transition-transform duration-200 group-hover:-translate-x-1">
               <Image src="/create-flow/back.png" alt="back" width={20} height={18} className="mt-[1px]" />
             </div>

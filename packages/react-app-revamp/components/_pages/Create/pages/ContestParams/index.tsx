@@ -62,7 +62,12 @@ const CreateContestParams = () => {
         <div className="flex flex-col gap-5 mt-2">
           <p className="text-[24px] text-primary-10 font-bold">how many submissions can each player enter?</p>
           <div className="flex flex-col gap-2">
-            <CreateTextInput placeholder="20" width={280} onChange={onSubmissionsPerUserChange} type="number" />
+            <CreateTextInput
+              placeholder="20"
+              className="w-[280px]"
+              onChange={onSubmissionsPerUserChange}
+              type="number"
+            />
             <p className="text-neutral-11 text-[16px]">leave blank to enable infinite submissions</p>
           </div>
         </div>
@@ -74,7 +79,7 @@ const CreateContestParams = () => {
             <CreateTextInput
               value={maxSubmissions}
               placeholder="200"
-              width={280}
+              className="w-[280px]"
               type="number"
               onChange={onMaxSubmissionsChange}
             />

@@ -48,8 +48,8 @@ const CreateContestType = () => {
   };
 
   return (
-    <div className="mt-[100px] animate-swingInLeft">
-      <div className="flex items-start gap-5 text-[24px]">
+    <div className="mt-16 lg:mt-[100px] animate-swingInLeft">
+      <div className="flex flex-col lg:flex-row items-start gap-5 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-5">
           <p className="text-neutral-11 font-normal">
@@ -60,8 +60,14 @@ const CreateContestType = () => {
           <p className="text-primary-10 font-bold">how would you like your contest to be listed for users to find?</p>
         </div>
       </div>
-      <div className="mt-7 ml-[70px]">
-        <CreateDropdown value={type} onChange={onOptionChangeHandler} onMenuStateChange={setFadeBg} options={options} />
+      <div className="mt-7 lg:ml-[70px]">
+        <CreateDropdown
+          value={type}
+          onChange={onOptionChangeHandler}
+          onMenuStateChange={setFadeBg}
+          options={options}
+          className="w-[300px] md:w-[600px]"
+        />
         {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
         <div className={`mt-12 ${fadeBg ? "opacity-50" : "opacity-100"}  transition-opacity duration-300 ease-in-out `}>
           <CreateNextButton step={step + 1} onClick={onNextStep} />

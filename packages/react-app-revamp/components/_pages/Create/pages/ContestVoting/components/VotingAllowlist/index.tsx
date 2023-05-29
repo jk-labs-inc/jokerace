@@ -59,7 +59,7 @@ const CreateVotingAllowlist = () => {
   };
 
   return (
-    <div className="mt-5 ml-[20px]">
+    <div className="mt-5 lg:ml-[20px]">
       <div className="flex flex-col gap-2 mb-5">
         <p className="text-[24px] font-bold text-primary-10">who can vote?</p>
         <p className="text-[16px] text-neutral-11">

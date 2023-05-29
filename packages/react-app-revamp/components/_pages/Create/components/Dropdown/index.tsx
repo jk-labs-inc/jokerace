@@ -11,7 +11,7 @@ interface CreateDropdownProps {
   value: string;
   options: Option[];
   searchEnabled?: boolean;
-  width?: number;
+  className?: string;
   onChange?: (option: string) => void;
   onMenuStateChange?: (state: boolean) => void;
 }
@@ -20,7 +20,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
   value,
   options,
   searchEnabled = true,
-  width = 600,
+  className,
   onChange,
   onMenuStateChange,
 }) => {
@@ -80,15 +80,14 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
       <CreateTextInput
         value={query}
         readOnly={!searchEnabled}
-        width={width}
+        className={className}
         onChange={value => handleInputChange(value)}
         placeholder="eg. “hackathon,” “bounty,” “election”"
       />
       <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleIconClick} />
       {showOptions && (
         <ul
-          style={{ width: `${width}px` }}
-          className="flex flex-col absolute z-10 mt-14 list-none bg-true-black  border border-primary-10 rounded-[10px] animate-appear"
+          className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black  border border-primary-10 rounded-[10px] animate-appear ${className}`}
         >
           {filteredOptions.map(option => (
             <li

@@ -96,7 +96,7 @@ const CreateContestPrompt = () => {
 
   const tipMessage = () => {
     return (
-      <p className="flex items-center">
+      <p className="hidden md:flex items-center">
         <span className="font-bold flex items-center gap-1 mr-1">
           shift <Image src="/create-flow/shift.png" alt="shift" width={14} height={14} /> + enter{" "}
           <Image src="/create-flow/enter.png" alt="enter" width={14} height={14} />
@@ -109,8 +109,8 @@ const CreateContestPrompt = () => {
   };
 
   return (
-    <div className="mt-[100px] animate-swingInLeft">
-      <div className="flex items-start gap-5 text-[24px]">
+    <div className="mt-16 lg:mt-[100px] animate-swingInLeft">
+      <div className="flex flex-col lg:flex-row items-start gap-5 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-5">
           <p className="text-neutral-11 font-normal">what are the instructions for the contest? what are the rules?</p>
@@ -118,14 +118,14 @@ const CreateContestPrompt = () => {
         </div>
       </div>
 
-      <div className="mt-4 ml-[70px]">
+      <div className="mt-4 lg:ml-[70px]">
         {isTextSelected && (
           <TipTapEditorControls editor={editor} className="rounded-[10px] bg-neutral-2 animate-fadeIn mb-2" />
         )}
 
         <EditorContent
           editor={editor}
-          className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-[600px] overflow-y-auto max-h-[300px] pb-2"
+          className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-[300px] md:w-[600px] overflow-y-auto max-h-[300px] pb-2"
         />
 
         {currentStepError ? (

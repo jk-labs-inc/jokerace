@@ -289,6 +289,7 @@ module.exports = {
       transitionProperty: {
         transform: "transform",
         "border-color": "border-color",
+        gradient: "background-position",
       },
       animation: {
         "card-rotation": "card-rotation 2000ms linear infinite",
@@ -307,13 +308,6 @@ module.exports = {
       backgroundImage: {
         "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
         "gradient-create": "linear-gradient(90deg, #BB65FF 0%, #FFE25B 96.62%)",
-      },
-      backgroundSize: {
-        "size-200": "200% 200%",
-      },
-      backgroundPosition: {
-        "pos-0": "0% 0%",
-        "pos-100": "100% 100%",
       },
       backgroundColor: {
         ffdd3e: "#FFDD3E",

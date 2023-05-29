@@ -9,7 +9,7 @@ interface CreateTextInputProps {
   minLength?: number;
   maxLength?: number;
   readOnly?: boolean;
-  width?: number;
+  className?: string;
   onChange?: (value: string) => void;
   onNextStep?: () => void;
 }
@@ -21,7 +21,7 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   minLength = 100,
   maxLength = 100,
   readOnly = false,
-  width = 600,
+  className,
   onChange,
   onNextStep,
 }) => {
@@ -51,8 +51,7 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
       ref={inputRef}
       value={value}
       type={type}
-      className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2`}
-      style={{ width: `${width}px` }}
+      className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2 ${className}`}
       placeholder={placeholder}
       minLength={minLength}
       readOnly={readOnly}

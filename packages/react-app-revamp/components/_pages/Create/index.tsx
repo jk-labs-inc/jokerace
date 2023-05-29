@@ -24,7 +24,11 @@ const steps = [
 const CreateFlow = () => {
   const { pageAction } = useDeployContestStore(state => state);
 
-  return <div className="pl-[80px] pr-[60px]">{pageAction === "create" ? <Stepper steps={steps} /> : <p>ola</p>}</div>;
+  return (
+    <div className="pl-[40px] pr-[20px] lg:pl-[80px] lg:pr-[60px]">
+      {pageAction === "create" ? <Stepper steps={steps} /> : <p>ola</p>}
+    </div>
+  );
 };
 
 export default CreateFlow;

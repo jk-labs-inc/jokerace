@@ -21,13 +21,14 @@ const CreateContestTitle = () => {
   };
 
   return (
-    <div className="mt-[100px] animate-swingInLeft">
-      <div className="flex items-center gap-5 text-[24px]">
+    <div className="mt-16 lg:mt-[100px] animate-swingInLeft">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center gap-5 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <p className="text-primary-10 font-bold">what should we call your contest?</p>
       </div>
-      <div className="mt-7 ml-[70px]">
+      <div className="mt-7 lg:ml-[70px]">
         <CreateTextInput
+          className="w-[300px] md:w-[600px]"
           value={title}
           placeholder="eg. bundlr bounty contest for devs"
           minLength={CONTEST_TITLE_MIN_LENGTH}
@@ -40,7 +41,7 @@ const CreateContestTitle = () => {
         ) : (
           <TipMessage tip="tip: include your community’s name for higher engagement" error={""} />
         )}
-        <div className="mt-12">
+        <div className="mt-20 md:mt-12">
           <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>
