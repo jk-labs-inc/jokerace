@@ -52,7 +52,7 @@ const CreateSubmissionRequirements = () => {
         <CreateDropdown
           value={submissionRequirements}
           options={options}
-          className="w-[300px]"
+          className="w-full md:w-[300px] text-[20px]"
           searchEnabled={false}
           onChange={onSubmissionRequirementsChange}
         />

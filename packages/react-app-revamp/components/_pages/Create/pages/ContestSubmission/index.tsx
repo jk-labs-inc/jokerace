@@ -24,7 +24,7 @@ const CreateContestSubmissions = () => {
           options={tabOptions}
           onSelectTab={onSubmissionTabChange}
           defaultTab={submissionTab}
-          className="w-[300px] md:w-[600px]"
+          className="w-full md:w-[650px]"
         />
       </div>
     </div>

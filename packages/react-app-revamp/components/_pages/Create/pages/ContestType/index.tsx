@@ -66,7 +66,7 @@ const CreateContestType = () => {
           onChange={onOptionChangeHandler}
           onMenuStateChange={setFadeBg}
           options={options}
-          className="w-[300px] md:w-[600px]"
+          className="w-full md:w-[600px]"
         />
         {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
         <div className={`mt-12 ${fadeBg ? "opacity-50" : "opacity-100"}  transition-opacity duration-300 ease-in-out `}>

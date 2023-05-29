@@ -13,7 +13,7 @@ interface CreateDatePicker {
 
 const CustomInput = forwardRef<HTMLInputElement, { value: string; onClick: () => void }>(({ value, onClick }, ref) => (
   <div
-    className="input-wrapper flex items-center justify-between w-[300px] md:w-[400px] border-b border-neutral-11 bg-transparent outline-none focus:outline-none"
+    className="input-wrapper flex items-center justify-between w-full md:w-[400px] border-b border-neutral-11 bg-transparent outline-none focus:outline-none"
     onClick={onClick}
     ref={ref}
   >

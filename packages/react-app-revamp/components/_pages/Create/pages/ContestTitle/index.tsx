@@ -28,7 +28,7 @@ const CreateContestTitle = () => {
       </div>
       <div className="mt-7 lg:ml-[70px]">
         <CreateTextInput
-          className="w-[300px] md:w-[600px]"
+          className="w-full md:w-[600px]"
           value={title}
           placeholder="eg. bundlr bounty contest for devs"
           minLength={CONTEST_TITLE_MIN_LENGTH}

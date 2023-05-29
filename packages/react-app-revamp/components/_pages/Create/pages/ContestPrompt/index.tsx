@@ -125,7 +125,7 @@ const CreateContestPrompt = () => {
 
         <EditorContent
           editor={editor}
-          className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-[300px] md:w-[600px] overflow-y-auto max-h-[300px] pb-2"
+          className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[600px] overflow-y-auto max-h-[300px] pb-2"
         />
 
         {currentStepError ? (

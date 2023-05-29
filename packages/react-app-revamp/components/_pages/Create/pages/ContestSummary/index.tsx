@@ -26,7 +26,7 @@ const CreateContestSummary = () => {
       </div>
       <div className="mt-7 lg:ml-[70px]">
         <CreateTextInput
-          className="w-[300px] md:w-[600px]"
+          className="w-full md:w-[600px]"
           value={summary}
           placeholder="eg. “submit a project” “propose a delegate” “predict the market”"
           minLength={CONTEST_TITLE_MIN_LENGTH}
