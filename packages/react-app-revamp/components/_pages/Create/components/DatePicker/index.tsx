@@ -54,12 +54,35 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ title, tip, onChange, mi
         <DatePicker
           selected={startDate}
           onChange={handleDateChange}
+          showPopperArrow={false}
           showTimeSelect
           timeFormat="HH:mm"
           timeIntervals={15}
           timeCaption="time"
           dateFormat="MMMM d, yyyy h:mm aa"
           minDate={minDate}
+          popperModifiers={[
+            {
+              name: "offset",
+              options: {
+                offset: [5, 10],
+              },
+            },
+            {
+              name: "preventOverflow",
+              options: {
+                rootBoundary: "viewport",
+                tether: false,
+                altAxis: true,
+              },
+            },
+            {
+              name: "flip",
+              options: {
+                fallbackPlacements: [],
+              },
+            },
+          ]}
           customInput={
             <CustomInput
               value={""}

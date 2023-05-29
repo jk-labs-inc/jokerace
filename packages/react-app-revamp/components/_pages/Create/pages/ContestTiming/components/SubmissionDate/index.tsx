@@ -14,6 +14,7 @@ const CreateSubmissionsOpenDate = () => {
       tip="we recommend opening them now—because why not?"
       onChange={onSubmissionDateChange}
       defaultDate={submissionOpen}
+      minDate={submissionOpen}
     />
   );
 };

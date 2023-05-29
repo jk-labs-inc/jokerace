@@ -39,7 +39,7 @@ const CreateContestTiming = () => {
         <CreateSubmissionsOpenDate />
         <CreateVotesOpenDate />
         <CreateEndContestDate />
-        <div className="mt-3">
+        <div className="mt-10 md:mt-3">
           <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>

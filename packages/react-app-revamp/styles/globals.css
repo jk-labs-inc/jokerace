@@ -69,15 +69,10 @@
   filter: drop-shadow(0px 3px 4px rgba(255, 226, 91, 0.6));
 }
 
-input[type="datetime-local"]::-webkit-calendar-picker-indicator {
-  color: rgba(0, 0, 0, 0);
-  opacity: 1;
-  display: block;
-  background: url("/create-flow/calendar.png") no-repeat;
-  width: 41px;
-  height: 43px;
-  border-width: thin;
-  cursor: pointer;
+.react-datepicker {
+  background-color: #2f2f2f;
+  border-color: #777;
+  color: white;
 }
 
 @tailwind base;
