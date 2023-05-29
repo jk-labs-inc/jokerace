@@ -134,7 +134,7 @@ const CreateContestPrompt = () => {
           <TipMessage tip={tipMessage()} error={""} />
         )}
 
-        <div className="mt-12 w-full inline-flex flex-col gap-7">
+        <div className="mt-12">
           <CreateNextButton step={step + 1} onClick={onNextStep} />
         </div>
       </div>
