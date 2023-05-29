@@ -45,7 +45,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         require(
             setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value"
         );
-        return (_sortedProposalIds);
+        return _sortedProposalIds;
     }
 
     /**

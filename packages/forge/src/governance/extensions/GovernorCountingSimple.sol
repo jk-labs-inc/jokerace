@@ -67,14 +67,14 @@ abstract contract GovernorCountingSimple is Governor {
      */
     function proposalAddressesHaveVoted(uint256 proposalId) public view virtual returns (address[] memory) {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
-        return (proposalvote.addressesVoted);
+        return proposalvote.addressesVoted;
     }
 
     /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.
      */
     function contestAddressTotalVotesCast(address userAddress) public view virtual returns (uint256 totalVotesCast) {
-        return (addressTotalCastVoteCounts[userAddress]);
+        return addressTotalCastVoteCounts[userAddress];
     }
 
     /**
