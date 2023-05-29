@@ -56,10 +56,17 @@ export function useContestEvents() {
           functionName: "getProposal",
           args: proposalId,
         });
-        const author = await fetchEnsName({
-          address: proposal[0],
-          chainId: chain.mainnet.id,
-        });
+
+        let author;
+        try {
+          author = await fetchEnsName({
+            address: proposal[0],
+            chainId: chain.mainnet.id,
+          });
+        } catch (error: any) {
+          author = proposal[0];
+        }
+
         const proposalData: any = {
           authorEthereumAddress: proposal[0],
           author: author ?? proposal[0],

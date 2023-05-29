@@ -70,12 +70,16 @@ const Page: NextPage = props => {
   return (
     <>
       <Head>
-        <title>JokeDAO - open-source, collaborative decision-making platform</title>
-        <meta name="description" content="JokeDAO is an open-source, collaborative decision-making platform." />
+        <title>jokerace - contests for communities to make, execute, and reward decisions</title>
+        <meta
+          name="description"
+          content="jokerace - contests for communities to make,
+          execute, and reward decisions"
+        />
       </Head>
       <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-4 md:mt-14 lg:mt-6 max-w-[1350px] 3xl:pl-28 2xl:pr-0 ">
-        <div className="mb-12 animate-fadeInLanding">
-          <p className="hidden lg:flex text-[18px] md:text-[24px] font-bold">
+        <div className="mb-8 animate-fadeInLanding">
+          <p className="hidden lg:flex text-[18px] md:text-[20px] font-bold">
             contests for communities to make, <br />
             execute, and reward decisions
           </p>
@@ -87,7 +91,7 @@ const Page: NextPage = props => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 md:full-width-grid-cols md:gap-0 animate-fadeInLanding">
+        <div className="hidden lg:full-width-grid-cols lg:gap-0 animate-fadeInLanding">
           <div>
             <div className="text-[16px] font-bold  mb-1">stage one</div>
             <div className="h-1 bg-secondary-11"></div>
@@ -105,7 +109,7 @@ const Page: NextPage = props => {
           </div>
         </div>
 
-        <div className="text-[16px] mt-14 -ml-[15px]">
+        <div className="text-[16px] mt-8 -ml-[15px]">
           {process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
           process.env.NEXT_PUBLIC_SUPABASE_URL &&
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
@@ -123,11 +127,11 @@ const Page: NextPage = props => {
             />
           ) : (
             <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
-              This site&apos;s current deployment does not have access to jokedao&apos;s reference database of contests,
-              but you can check out our Supabase backups{" "}
+              This site&apos;s current deployment does not have access to jokerace&apos;s reference database of
+              contests, but you can check out our Supabase backups{" "}
               <a
                 className="link px-1ex"
-                href="https://github.com/JokeDAO/JokeDaoV2Dev/tree/staging/packages/supabase"
+                href="https://github.com/jk-labs-inc/jokerace/tree/staging/packages/supabase"
                 target="_blank"
                 rel="noreferrer"
               >
