@@ -1,8 +1,7 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
-import { useContestSubmissionIndexV3 } from "@hooks/useContestSubmissionIndexV3";
-import { useContestVotesIndexV3 } from "@hooks/useContestVotesIndexV3";
+import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
@@ -12,8 +11,7 @@ import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
-  const { indexContestVoteV3 } = useContestVotesIndexV3();
-  const { indexContestSubmissionV3 } = useContestSubmissionIndexV3();
+  const { indexContestParticipantsV3 } = useContestParticipantsIndexV3();
 
   const stateContestDeployment = useContractFactoryStore(state => state);
   const {
@@ -120,11 +118,8 @@ export function useDeployContest() {
     tasks.push(indexContestV3(contestData));
 
     if (votingMerkle && votingMerkle.voters.length > 0) {
-      tasks.push(indexContestVoteV3(contestData.contractAddress, votingMerkle.voters));
-    }
-
-    if (submissionMerkle && submissionMerkle.submitters.length > 0) {
-      tasks.push(indexContestSubmissionV3(contestData.contractAddress, submissionMerkle.submitters));
+      const submitters = submissionMerkle ? submissionMerkle.submitters : [];
+      tasks.push(indexContestParticipantsV3(contestData.contractAddress, votingMerkle.voters, submitters));
     }
 
     await Promise.all(tasks);

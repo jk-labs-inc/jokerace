@@ -39,7 +39,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
       <div
         className={`flex ${
           step > 1 ? "flex-row-reverse" : ""
-        } md:flex-col justify-between md:items-center gap-2 w-full md:w-min`}
+        } md:flex-col justify-between md:items-center gap-2 w-full md:w-fit`}
       >
         <Button
           className={`bg-gradient-create rounded-[10px] py-2 px-[38px] font-bold ${
