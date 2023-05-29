@@ -8,7 +8,7 @@ const CreateFlowHeader = () => {
   return (
     <header className="flex flex-col lg:flex-row gap-6 lg:gap-0 items-center lg:justify-between lg:pl-[80px] lg:pr-[60px] mt-8">
       <Link href="/">
-        <h1 className="font-sabo text-primary-10 text-[60px] lg:text-[40px]">JOKERACE</h1>
+        <h1 className="font-sabo text-primary-10 text-[55px] lg:text-[40px]">JOKERACE</h1>
       </Link>
 
       <div className="flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 drop-shadow-2xl">
