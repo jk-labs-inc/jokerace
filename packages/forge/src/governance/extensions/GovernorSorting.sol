@@ -188,7 +188,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
 
                 // if on last item, then the value at the current index is
                 // the last iteration of the last ranking's value
-                if (i + 1 == _sortedProposalIds.length) {
+                if (_sortedProposalIds.length == 1) {
                     tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i;
                     _lowestRanking = rankingBeingChecked;
                 }
