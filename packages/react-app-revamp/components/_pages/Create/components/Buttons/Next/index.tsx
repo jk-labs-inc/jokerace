@@ -36,7 +36,11 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
 
   return (
     <div className="flex gap-4 items-start">
-      <div className="flex flex-col items-center gap-2">
+      <div
+        className={`flex ${
+          step > 1 ? "flex-row-reverse" : ""
+        } md:flex-col justify-between md:items-center gap-2 w-full md:w-min`}
+      >
         <Button
           className={`bg-gradient-next rounded-[10px] py-2 px-[38px] font-bold ${
             shake ? "animate-shakeTop" : ""
@@ -48,7 +52,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
         </Button>
 
         {step > 1 && (
-          <div className="flex items-center gap-[2px] -ml-[15px] cursor-pointer group" onClick={onPreviousStep}>
+          <div className="flex items-center gap-[2px] md:-ml-[15px] cursor-pointer group" onClick={onPreviousStep}>
             <div className="transition-transform duration-200 group-hover:-translate-x-1">
               <Image src="/create-flow/back.png" alt="back" width={20} height={18} className="mt-[1px]" />
             </div>
