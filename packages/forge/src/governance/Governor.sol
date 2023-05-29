@@ -41,16 +41,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     error TooManyMetadatas();
 
     /**
-     * @dev Restrict access of functions to the governance executor, which may be the Governor itself or a timelock
-     * contract, as specified by {_executor}. This generally means that function with this modifier must be voted on and
-     * executed through the governance protocol.
-     */
-    modifier onlyGovernance() {
-        require(_msgSender() == _executor(), "Governor: onlyGovernance");
-        _;
-    }
-
-    /**
      * @dev Sets the value for {name} and {version}
      */
     constructor(string memory name_, string memory prompt_, bytes32 submissionMerkleRoot_, bytes32 votingMerkleRoot_)
@@ -291,7 +281,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         _proposals[proposalId] = proposal;
         _numSubmissions[msg.sender] += 1;
 
-        emit ProposalCreated(proposalId, _msgSender());
+        emit ProposalCreated(proposalId, msg.sender);
 
         return proposalId;
     }
@@ -360,7 +350,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         override
         returns (uint256)
     {
-        address voter = _msgSender();
+        address voter = msg.sender;
         verifyVoter(voter, totalVotes, proof);
         return _castVote(proposalId, voter, support, numVotes, "");
     }
@@ -374,7 +364,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         override
         returns (uint256)
     {
-        address voter = _msgSender();
+        address voter = msg.sender;
         require(
             addressTotalVotesVerified[voter],
             "Governor: you need to cast a vote with the proof at least once and you haven't yet"

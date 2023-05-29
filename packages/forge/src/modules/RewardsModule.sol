@@ -83,7 +83,7 @@ contract RewardsModule is Context {
      * functions].
      */
     receive() external payable virtual {
-        emit PaymentReceived(_msgSender(), msg.value);
+        emit PaymentReceived(msg.sender, msg.value);
     }
 
     /**
