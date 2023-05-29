@@ -1,15 +1,20 @@
-import { useContractFactoryStore } from "@hooks/useContractFactory";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
+import { isSupabaseConfigured } from "@helpers/database";
+import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
+import { useContestSubmissionIndexV3 } from "@hooks/useContestSubmissionIndexV3";
+import { useContestVotesIndexV3 } from "@hooks/useContestVotesIndexV3";
+import { useContractFactoryStore } from "@hooks/useContractFactory";
+import { waitForTransaction } from "@wagmi/core";
+import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
 import { useNetwork, useSigner } from "wagmi";
-import { useDeployContestStore } from "./store";
-import { differenceInSeconds, getUnixTime } from "date-fns";
-import { waitForTransaction } from "@wagmi/core";
-import { isSupabaseConfigured } from "@helpers/database";
-import useV3ContestsIndex from "@hooks/useContestsIndexV3";
+import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
+  const { indexContestVoteV3 } = useContestVotesIndexV3();
+  const { indexContestSubmissionV3 } = useContestSubmissionIndexV3();
+
   const stateContestDeployment = useContractFactoryStore(state => state);
   const {
     type,
@@ -80,23 +85,49 @@ export function useDeployContest() {
 
       setDeployContestData(receiptDeployContest.transactionHash, contractContest.address);
 
-      if (isSupabaseConfigured) {
-        indexContestV3({
-          title: title,
-          info: contestInfo,
-          datetimeOpeningSubmissions: submissionOpen,
-          datetimeOpeningVoting: votingOpen,
-          datetimeClosingVoting: votingClose,
-          votingMerkleTree: votingMerkle,
-          submissionMerkleTree: submissionMerkle,
-          contractAddress: contractContest.address,
-          authorAddress: (await signer.data?.getAddress()) ?? "",
-          networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
-        });
-      }
+      const contestData = {
+        title: title,
+        type: type,
+        summary: summary,
+        prompt: prompt,
+        datetimeOpeningSubmissions: submissionOpen,
+        datetimeOpeningVoting: votingOpen,
+        datetimeClosingVoting: votingClose,
+        votingMerkleTree: votingMerkle,
+        submissionMerkleTree: submissionMerkle,
+        contractAddress: contractContest.address,
+        authorAddress: (await signer.data?.getAddress()) ?? "",
+        networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
+      };
+
+      await indexContest(contestData, votingMerkle, submissionMerkle);
     } catch (error) {
       console.error("Error: ", error); // Log all errors
     }
+  }
+
+  async function indexContest(
+    contestData: ContestValues,
+    votingMerkle: VotingMerkle | null,
+    submissionMerkle: SubmissionMerkle | null,
+  ) {
+    if (!isSupabaseConfigured) {
+      throw new Error("Supabase is not configured");
+    }
+
+    const tasks = [];
+
+    tasks.push(indexContestV3(contestData));
+
+    if (votingMerkle && votingMerkle.voters.length > 0) {
+      tasks.push(indexContestVoteV3(contestData.contractAddress, votingMerkle.voters));
+    }
+
+    if (submissionMerkle && submissionMerkle.submitters.length > 0) {
+      tasks.push(indexContestSubmissionV3(contestData.contractAddress, submissionMerkle.submitters));
+    }
+
+    await Promise.all(tasks);
   }
 
   return {

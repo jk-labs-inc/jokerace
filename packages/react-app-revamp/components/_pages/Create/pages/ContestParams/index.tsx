@@ -1,12 +1,17 @@
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
+import { useAccount, useConnect } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
+  const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+
   const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
     useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
@@ -14,7 +19,7 @@ const CreateContestParams = () => {
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
-        deployContest();
+        handleDeployContest();
       }
     };
 
@@ -38,7 +43,15 @@ const CreateContestParams = () => {
     setMaxSubmissions(parseInt(value));
   };
 
-  const onCreateContest = () => {
+  const handleDeployContest = () => {
+    if (!isConnected) {
+      try {
+        openConnectModal?.();
+      } catch (err) {
+        console.error("Failed to connect wallet", err);
+        return; // If connection fails, don't proceed with deploying contest
+      }
+    }
     deployContest();
   };
 
@@ -94,7 +107,7 @@ const CreateContestParams = () => {
           </div>
         </div>
         <div className="mt-8">
-          <CreateContestButton step={step} onClick={onCreateContest} />
+          <CreateContestButton step={step} onClick={handleDeployContest} />
         </div>
       </div>
     </div>

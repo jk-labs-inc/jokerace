@@ -1,8 +1,8 @@
 import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
-import { MerkleTreeSubmissionsData, Submitter } from "lib/merkletree/generateSubmissionsTree";
-import { MerkleTreeVotingData, Recipient } from "lib/merkletree/generateVotersTree";
+import { Submitter } from "lib/merkletree/generateSubmissionsTree";
+import { Voter } from "lib/merkletree/generateVotersTree";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
@@ -15,7 +15,7 @@ type PageAction = "create" | "play";
 
 export type VotingMerkle = {
   merkleRoot: string;
-  recipients: Recipient[];
+  voters: Voter[];
 };
 
 export type SubmissionMerkle = {

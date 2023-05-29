@@ -48,7 +48,10 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
         </Button>
 
         {step > 1 && (
-          <div className="flex items-center gap-[2px] -ml-[15px] cursor-pointer group" onClick={onPreviousStep}>
+          <div
+            className="hidden lg:flex lg:items-center gap-[2px] -ml-[15px] cursor-pointer group"
+            onClick={onPreviousStep}
+          >
             <div className="transition-transform duration-200 group-hover:-translate-x-1">
               <Image src="/create-flow/back.png" alt="back" width={20} height={18} className="mt-[1px]" />
             </div>
@@ -56,7 +59,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
           </div>
         )}
       </div>
-      <div className="flex items-center mt-[15px] gap-[2px]">
+      <div className="hidden lg:flex lg:items-center mt-[15px] gap-[2px]">
         <p className="text-[16px]">
           press <span className="font-bold capitalize">enter</span>
         </p>

@@ -1,12 +1,14 @@
 import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/store";
 import { getAccount } from "@wagmi/core";
 
-interface ContestValues {
+export interface ContestValues {
   datetimeOpeningSubmissions: Date;
   datetimeOpeningVoting: Date;
   datetimeClosingVoting: Date;
   title: string;
-  info: string;
+  type: string;
+  summary: string;
+  prompt: string;
   contractAddress: string;
   authorAddress?: string;
   networkName: string;
@@ -27,8 +29,10 @@ export function useContestsIndexV3() {
           start_at: values.datetimeOpeningSubmissions.toISOString(),
           vote_start_at: values.datetimeOpeningVoting.toISOString(),
           end_at: values.datetimeClosingVoting.toISOString(),
-          info: values.info,
           title: values.title,
+          type: values.type,
+          summary: values.summary,
+          prompt: values.prompt,
           address: values.contractAddress,
           author_address: values?.authorAddress ?? address,
           network_name: values.networkName,

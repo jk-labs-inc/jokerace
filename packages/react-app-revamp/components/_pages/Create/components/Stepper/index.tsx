@@ -53,7 +53,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
 
   return (
     <div>
-      <div className="flex gap-2 mt-12">
+      <div className="hidden lg:flex gap-2 mt-12">
         {steps.map((step, index) => (
           <div
             key={index}

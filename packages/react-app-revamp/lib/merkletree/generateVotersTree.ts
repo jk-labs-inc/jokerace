@@ -2,7 +2,7 @@ import { keccak256, parseUnits, solidityKeccak256 } from "ethers/lib/utils";
 import MerkleTree from "merkletreejs";
 
 // Vote recipient addresses and scaled vote values
-export interface Recipient {
+export interface Voter {
   address: string;
   numVotes: string;
 }
@@ -15,7 +15,7 @@ export interface Proof {
 export interface MerkleTreeVotingData {
   merkleTree: MerkleTree;
   merkleRoot: string;
-  recipients: Recipient[];
+  voters: Voter[];
 }
 
 /**
@@ -24,18 +24,18 @@ export interface MerkleTreeVotingData {
  * @param {Record<string, number>} votesData address to vote claim mapping
  * @returns {VoteRecipient[]} array of vote recipients
  */
-const setupVoteRecipients = (decimals: number, votesData: Record<string, number>): Recipient[] => {
-  const recipients: Recipient[] = [];
+const setupVoteRecipients = (decimals: number, votesData: Record<string, number>): Voter[] => {
+  const voters: Voter[] = [];
 
   // For each vote entry
   for (const [address, votes] of Object.entries(votesData)) {
-    recipients.push({
+    voters.push({
       address: address,
       numVotes: parseUnits(votes.toString(), decimals).toString(),
     });
   }
 
-  return recipients;
+  return voters;
 };
 
 /**
@@ -53,9 +53,9 @@ const generateLeaf = (address: string, numVotes: string): Buffer => {
  * @param {VoteRecipient[]} recipients array of vote recipients
  * @returns {MerkleTree} merkle tree
  */
-const createMerkleTree = (recipients: Recipient[]): MerkleTree => {
+const createMerkleTree = (voters: Voter[]): MerkleTree => {
   return new MerkleTree(
-    recipients.map(({ address, numVotes }) => generateLeaf(address, numVotes)),
+    voters.map(({ address, numVotes }) => generateLeaf(address, numVotes)),
     keccak256,
     { sortPairs: true },
   );
@@ -71,14 +71,14 @@ export const createMerkleTreeFromVotes = (
   decimals: number = 18,
   votesData: Record<string, number>,
 ): MerkleTreeVotingData => {
-  const recipients = setupVoteRecipients(decimals, votesData);
-  const merkleTree = createMerkleTree(recipients);
+  const voters = setupVoteRecipients(decimals, votesData);
+  const merkleTree = createMerkleTree(voters);
   const merkleRoot: string = merkleTree.getHexRoot();
 
   return {
     merkleTree,
     merkleRoot,
-    recipients,
+    voters,
   };
 };
 
