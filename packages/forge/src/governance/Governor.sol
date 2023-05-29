@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.5.0) (governance/Governor.sol)
 
 pragma solidity ^0.8.0;
 
@@ -20,8 +19,6 @@ import "./GovernorMerkleVotes.sol";
  * - A counting module must implement {quorum}, {_quorumReached}, {_voteSucceeded} and {_countVote}
  * - A voting module must implement {getVotes}
  * - Additionaly, the {votingPeriod} must also be implemented
- *
- * _Available since v4.3._
  */
 abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;

@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.5.0) (governance/IGovernor.sol)
 
 pragma solidity ^0.8.0;
 
@@ -7,8 +6,6 @@ import "@openzeppelin/utils/introspection/ERC165.sol";
 
 /**
  * @dev Interface of the {Governor} core.
- *
- * _Available since v4.3._
  */
 abstract contract IGovernor is IERC165 {
     enum ContestState {
