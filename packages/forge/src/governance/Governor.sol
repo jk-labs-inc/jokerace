@@ -24,7 +24,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     using SafeCast for uint256;
 
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
-    uint64 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
+    uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
     mapping(address => bool) public addressSubmitterVerified;
