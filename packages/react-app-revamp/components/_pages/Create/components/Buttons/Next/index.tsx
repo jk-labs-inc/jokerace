@@ -35,7 +35,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
   };
 
   return (
-    <div className="flex gap-4 items-start pb-5 md:pb-0">
+    <div className="flex gap-4 items-start mb-5">
       <div
         className={`flex ${
           step > 1 ? "flex-row-reverse" : ""
