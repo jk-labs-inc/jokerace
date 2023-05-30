@@ -169,10 +169,15 @@ export function useProposalVotes(id: number | string) {
 
       const { forVotes, againstVotes } = data ?? {};
 
-      const author = await fetchEnsName({
-        address: userAddress,
-        chainId: wagmiChain.mainnet.id,
-      });
+      let author;
+      try {
+        author = await fetchEnsName({
+          address: userAddress,
+          chainId: wagmiChain.mainnet.id,
+        });
+      } catch (error: any) {
+        author = userAddress;
+      }
 
       const displayAddress = author ?? shortenEthereumAddress(userAddress);
       // @ts-ignore
