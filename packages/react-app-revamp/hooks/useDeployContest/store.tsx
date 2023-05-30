@@ -11,8 +11,6 @@ type CustomError = {
   message: string;
 };
 
-type PageAction = "create" | "play";
-
 export type VotingMerkle = {
   merkleRoot: string;
   voters: Voter[];
@@ -24,7 +22,6 @@ export type SubmissionMerkle = {
 };
 
 export interface DeployContestState {
-  pageAction: PageAction;
   deployContestData: {
     hash: string;
     address: string;
@@ -52,7 +49,6 @@ export interface DeployContestState {
   furthestStep: number;
   submissionTab: number;
 
-  setPageAction: (pageAction: PageAction) => void;
   setDeployContestData: (hash: string, address: string) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
@@ -89,7 +85,6 @@ export const createDeployContestStore = () =>
     votingClose.setDate(votingClose.getDate() + 14);
 
     return {
-      pageAction: "create",
       deployContestData: {
         hash: "",
         address: "",
@@ -117,7 +112,6 @@ export const createDeployContestStore = () =>
       furthestStep: 0,
       submissionTab: 0,
 
-      setPageAction: (pageAction: PageAction) => set({ pageAction }),
       setDeployContestData: (hash: string, address: string) => set({ deployContestData: { hash, address } }),
       setType: (type: string) => set({ type }),
       setTitle: (title: string) => set({ title }),

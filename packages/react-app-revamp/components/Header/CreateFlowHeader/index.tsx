@@ -1,14 +1,14 @@
 import MenuLink from "@components/UI/Menu/Link";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
+import { ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
-import { XIcon, MenuIcon } from "@heroicons/react/outline";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MenuIcon, XIcon } from "@heroicons/react/outline";
+import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import { Fragment } from "react";
 
 const CreateFlowHeader = () => {
-  const { setPageAction, pageAction } = useDeployContestStore(state => state);
+  const { pageAction, setPageAction } = usePageActionStore(state => state);
 
   return (
     <header className="flex flex-col lg:flex-row gap-3 md:gap-6 lg:gap-0 items-center lg:justify-between lg:pl-[80px] lg:pr-[60px] mt-8">
@@ -16,16 +16,16 @@ const CreateFlowHeader = () => {
         <h1 className="font-sabo text-primary-10 text-[55px] lg:text-[40px]">JOKERACE</h1>
       </Link>
 
-      <div className="hidden md:flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 drop-shadow-2xl">
+      <div className="hidden md:flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header">
         <p
-          onClick={() => setPageAction("play")}
           className={`cursor-pointer ${pageAction === "play" ? "text-primary-10" : "text-neutral-11"}`}
+          onClick={() => setPageAction("play")}
         >
           play
         </p>
         <p
-          onClick={() => setPageAction("create")}
           className={`cursor-pointer ${pageAction === "create" ? "text-primary-10" : "text-neutral-11"}`}
+          onClick={() => setPageAction("create")}
         >
           create
         </p>

@@ -14,6 +14,7 @@ interface ListContestsProps {
   itemsPerPage: number;
   result?: any;
   error?: any;
+  customTitle?: string;
   compact?: boolean;
   onSearchChange?: (value: string) => void;
 }
@@ -24,6 +25,7 @@ export const ListContests: FC<ListContestsProps> = ({
   result,
   page,
   setPage,
+  customTitle,
   itemsPerPage,
   isFetching,
   compact = false,
@@ -166,10 +168,15 @@ export const ListContests: FC<ListContestsProps> = ({
           ) : (
             <div className="animate-appear">
               <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols md:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
-                <span aria-hidden="true">
-                  🃏
-                  <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>
-                </span>
+                {customTitle ? (
+                  <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
+                ) : (
+                  <span aria-hidden="true">
+                    🃏
+                    <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>
+                  </span>
+                )}
+
                 <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
               </div>
               <div

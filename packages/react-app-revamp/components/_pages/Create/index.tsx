@@ -1,7 +1,8 @@
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useEffect } from "react";
+import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
+import LayoutContests from "@layouts/LayoutContests";
 import Stepper from "./components/Stepper";
 import CreateContestParams from "./pages/ContestParams";
+import ContestPlay from "./pages/ContestPlay";
 import CreateContestPrompt from "./pages/ContestPrompt";
 import CreateContestSubmissions from "./pages/ContestSubmission";
 import CreateContestSummary from "./pages/ContestSummary";
@@ -22,11 +23,11 @@ const steps = [
 ];
 
 const CreateFlow = () => {
-  const { pageAction } = useDeployContestStore(state => state);
+  const pageAction = usePageActionStore(state => state.pageAction);
 
   return (
     <div className="pl-[30px] pr-[20px] lg:pl-[80px] lg:pr-[60px]">
-      {pageAction === "create" ? <Stepper steps={steps} /> : <p>ola</p>}
+      {pageAction === "create" ? <Stepper steps={steps} /> : <ContestPlay />}
     </div>
   );
 };

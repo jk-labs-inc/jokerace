@@ -309,6 +309,9 @@ module.exports = {
         "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
         "gradient-create": "linear-gradient(90deg, #BB65FF 0%, #FFE25B 96.62%)",
       },
+      boxShadow: {
+        "create-header": "0 3px 4px 0 rgba(255, 226, 91, 0.6)",
+      },
       backgroundColor: {
         ffdd3e: "#FFDD3E",
         "78ffc6": "#78FFC6",
