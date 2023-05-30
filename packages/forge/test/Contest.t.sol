@@ -125,7 +125,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, proof1);
 
-        assertEq(proposalId, 15258975670772814556071403711766991884286016301895103318170288180735769227159);
+        assertEq(proposalId, 23908983303022564668190521243102426214381108252970480710578796525208030103048);
     }
 
     function testProposeWithoutProof() public {
@@ -135,8 +135,8 @@ contract ContestTest is Test {
         uint256 secondProposalId = contest.proposeWithoutProof(secondProposalPA1);
         vm.stopPrank();
 
-        assertEq(firstProposalId, 15258975670772814556071403711766991884286016301895103318170288180735769227159);
-        assertEq(secondProposalId, 108189191310393546759417693285315713017966124403504491979578796487893421625041);
+        assertEq(firstProposalId, 23908983303022564668190521243102426214381108252970480710578796525208030103048);
+        assertEq(secondProposalId, 69549311532485292444384863957802353874517660423894990781176389639772664791367);
     }
 
     function testProposeAuthorIsntSender() public {

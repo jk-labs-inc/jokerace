@@ -34,8 +34,8 @@ abstract contract IGovernor is IERC165 {
 
     struct ProposalCore {
         address author;
-        string description;
         bool exists;
+        string description;
         TargetMetadata targetMetadata;
         SafeMetadata safeMetadata;
     }
