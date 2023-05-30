@@ -14,6 +14,7 @@ interface ListContestsProps {
   itemsPerPage: number;
   result?: any;
   error?: any;
+  className?: string;
   customTitle?: string;
   compact?: boolean;
   onSearchChange?: (value: string) => void;
@@ -24,6 +25,7 @@ export const ListContests: FC<ListContestsProps> = ({
   status,
   result,
   page,
+  className,
   setPage,
   customTitle,
   itemsPerPage,
@@ -158,7 +160,7 @@ export const ListContests: FC<ListContestsProps> = ({
   return (
     <>
       {status === "error" ? (
-        <div className="animate-appear bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
+        <div className={`animate-appear bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4`}>
           <p className="text-sm font-bold text-negative-10 text-center">Something went wrong: {error?.message}</p>
         </div>
       ) : (
@@ -166,7 +168,7 @@ export const ListContests: FC<ListContestsProps> = ({
           {!isFetching && result?.count === 0 ? (
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
-            <div className="animate-appear">
+            <div className={`animate-appear ${className}`}>
               <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols md:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
                 {customTitle ? (
                   <span className="text-[20px] font-bold font-sabo">{customTitle}</span>

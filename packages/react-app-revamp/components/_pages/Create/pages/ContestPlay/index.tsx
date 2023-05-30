@@ -21,6 +21,7 @@ const ContestPlay = () => {
     <div className="text-[16px] mt-12 mb-14 w-3/4">
       {isSupabaseConfigured ? (
         <ListContests
+          className="animate-swingInLeft"
           isFetching={isFetching}
           itemsPerPage={ITEMS_PER_PAGE}
           status={status}
