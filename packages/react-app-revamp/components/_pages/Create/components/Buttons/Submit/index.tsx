@@ -42,7 +42,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
         } md:flex-col justify-between md:items-center gap-2 w-full md:w-fit`}
       >
         <Button
-          className={`bg-gradient-create rounded-[10px] py-2 px-[38px] font-bold ${
+          className={`bg-gradient-create rounded-[10px] w-[200px] h-[52px] font-bold ${
             shake ? "animate-shakeTop" : ""
           }  text-true-black`}
           scale="header"

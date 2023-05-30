@@ -42,7 +42,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
         } md:flex-col justify-between md:items-center gap-2 w-full md:w-min`}
       >
         <Button
-          className={`bg-gradient-next rounded-[10px] py-2 px-[38px] font-bold ${
+          className={`bg-gradient-next rounded-[10px] w-[130px] h-[52px] font-bold ${
             shake ? "animate-shakeTop" : ""
           } text-true-black`}
           scale="header"
