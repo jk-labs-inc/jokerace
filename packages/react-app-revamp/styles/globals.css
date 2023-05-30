@@ -69,12 +69,6 @@
   filter: drop-shadow(0px 3px 4px rgba(255, 226, 91, 0.6));
 }
 
-.react-datepicker {
-  background-color: #2f2f2f;
-  border-color: #777;
-  color: white;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
