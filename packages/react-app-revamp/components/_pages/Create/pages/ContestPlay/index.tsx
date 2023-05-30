@@ -14,7 +14,7 @@ const ContestPlay = () => {
   );
 
   return (
-    <div className="text-[16px] mt-12 mb-14 w-2/3">
+    <div className="text-[16px] mt-12 mb-14 w-3/4">
       {isSupabaseConfigured ? (
         <ListContests
           isFetching={isFetching}

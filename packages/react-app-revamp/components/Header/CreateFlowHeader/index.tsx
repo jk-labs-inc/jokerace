@@ -5,10 +5,16 @@ import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 
 const CreateFlowHeader = () => {
   const { pageAction, setPageAction } = usePageActionStore(state => state);
+
+  useEffect(() => {
+    return () => {
+      setPageAction("create");
+    };
+  }, []);
 
   return (
     <header className="flex flex-col lg:flex-row gap-3 md:gap-6 lg:gap-0 items-center lg:justify-between lg:pl-[80px] lg:pr-[60px] mt-8">
