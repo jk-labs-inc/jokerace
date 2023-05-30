@@ -8,7 +8,7 @@ const Page: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Create a new contest - JokeDAO</title>
+        <title>Create a new contest - jokerace</title>
         <meta name="description" content="@TODO: change this" />
       </Head>
 

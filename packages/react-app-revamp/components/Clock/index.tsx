@@ -90,23 +90,23 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
     <div>
       {remainingValue > 0 ? (
         <>
-          <svg width={size + strokeWidth * 2} height={size + strokeWidth * 2}>
+          <svg width={size + strokeWidth} height={size + strokeWidth}>
             <defs>
               <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
                 <feDropShadow dx="1" dy="1" stdDeviation="3" floodColor={color} floodOpacity="1" />
               </filter>
             </defs>
             <circle
-              cx={size / 2 + strokeWidth}
-              cy={size / 2 + strokeWidth}
+              cx={size / 2 + strokeWidth / 2}
+              cy={size / 2 + strokeWidth / 2}
               r={radius}
               stroke="#D9D9D9"
               strokeWidth={strokeWidth}
               fill="none"
             />
             <circle
-              cx={size / 2 + strokeWidth}
-              cy={size / 2 + strokeWidth}
+              cx={size / 2 + strokeWidth / 2}
+              cy={size / 2 + strokeWidth / 2}
               r={radius}
               stroke={`${color}`}
               strokeWidth={strokeWidth}
@@ -114,18 +114,19 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({
               strokeLinecap="round"
               strokeDasharray={circumference}
               strokeDashoffset={offset}
-              transform={`rotate(-90, ${size / 2 + strokeWidth}, ${size / 2 + strokeWidth})`}
+              transform={`rotate(-90, ${size / 2 + strokeWidth / 2}, ${size / 2 + strokeWidth / 2})`}
             />
             <circle
-              cx={dotX + strokeWidth}
-              cy={dotY + strokeWidth}
+              cx={dotX + strokeWidth / 2}
+              cy={dotY + strokeWidth / 2}
               r={strokeWidth * 1.3}
               fill={`${color}`}
               filter="url(#shadow)"
               className="animate-blinkShadow"
             />
           </svg>
-          <div style={{ color: color }} className={`text-[11px] text-center -mt-[45px] font-bold`}>
+
+          <div style={{ color: color }} className={`text-[11px] text-center -mt-[40px] font-bold`}>
             {remainingValue}
             {clockType === "days" ? "d" : clockType === "hours" ? "h" : "m"}
             <br />

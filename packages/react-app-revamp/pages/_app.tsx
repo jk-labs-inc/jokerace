@@ -1,4 +1,3 @@
-import { jokeDAOTheme } from "@config/rainbowkit";
 import { fadeInOut } from "@config/react-toastify/animations/FadeInOut.tsx";
 import { chains, client } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
@@ -8,12 +7,13 @@ import "@styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import "react-datepicker/dist/react-datepicker.css";
+import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import "react-loading-skeleton/dist/skeleton.css";
 import "react-tooltip/dist/react-tooltip.css";
-import "react-datepicker/dist/react-datepicker.css";
 
+import { jokeraceTheme } from "@config/rainbowkit";
 import { WagmiConfig } from "wagmi";
 
 const queryClient = new QueryClient({
@@ -37,15 +37,23 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="theme-color" content="#ffef5c" />
         <meta name="color-scheme" content="dark" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://jokedao.io/" />
-        <meta property="og:title" content="JokeDAO 🃏 An open-source, collaborative decision-making platform." />
-        <meta property="og:description" content="JokeDAO is an open-source, collaborative decision-making platform." />
+        <meta property="og:url" content="https://jokerace.xyz/" />
+        <meta property="og:title" content="jokerace" />
+        <meta
+          property="og:description"
+          content="jokerace - contests for communities to make,
+          execute, and reward decisions"
+        />
         <meta property="og:locale" content="en_GB" />
-        <meta property="og:image" content="https://jokedao.io/card.png" />
+        <meta property="og:image" content="https://jokerace.xyz/jokerace.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@jokedao_" />
-        <meta name="twitter:description" content="JokeDAO is an open-source, collaborative decision-making platform." />
-        <meta name="twitter:image" content="https://jokedao.io/card.png" />
+        <meta
+          name="twitter:description"
+          content="jokerace - contests for communities to make,
+          execute, and reward decisions."
+        />
+        <meta name="twitter:image" content="https://jokerace.xyz/jokerace.png" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
@@ -56,7 +64,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="preload" href="/gnosis.png" as="image" />
       </Head>
       <WagmiConfig client={client}>
-        <RainbowKitProvider chains={chains} theme={jokeDAOTheme}>
+        <RainbowKitProvider chains={chains} theme={jokeraceTheme}>
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer
             position="bottom-right"

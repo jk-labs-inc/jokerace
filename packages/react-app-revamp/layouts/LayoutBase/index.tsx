@@ -8,7 +8,7 @@ interface LayoutBaseProps {
 
 const LayoutBase = (props: LayoutBaseProps) => {
   const { children } = props;
-  const allowedLinks = ["Github", "Mirror", "Uniswap", "OpenSea", "Twitter", "Uniswap"];
+  const allowedLinks = ["Github", "Mirror", "Uniswap", "OpenSea", "Twitter", "Uniswap", "Report a bug"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const router = useRouter();
   const createRoute = router.pathname === "/contest/new";

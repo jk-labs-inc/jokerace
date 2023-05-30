@@ -51,8 +51,8 @@ const Page: NextPage = props => {
   return (
     <>
       <Head>
-        <title>Live contests - JokeDAO</title>
-        <meta name="description" content="Live contests on JokeDAO." />
+        <title>Live contests - jokerace</title>
+        <meta name="description" content="Live contests on jokerace." />
       </Head>
 
       <div className="container mx-auto pt-10">
@@ -69,11 +69,11 @@ const Page: NextPage = props => {
           />
         ) : (
           <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
-            This site&apos;s current deployment does not have access to jokedao&apos;s reference database of contests,
+            This site&apos;s current deployment does not have access to jokerace&apos;s reference database of contests,
             but you can check out our Supabase backups{" "}
             <a
               className="link px-1ex"
-              href="https://github.com/JokeDAO/JokeDaoV2Dev/tree/staging/packages/supabase"
+              href="https://github.com/jk-labs-inc/jokerace/tree/staging/packages/supabase"
               target="_blank"
               rel="noreferrer"
             >

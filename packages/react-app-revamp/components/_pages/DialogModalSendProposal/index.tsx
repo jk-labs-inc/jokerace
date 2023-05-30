@@ -5,6 +5,12 @@ import TipTapEditor from "@components/UI/TipTapEditor";
 import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
+import {
+  loadSubmissionFromLocalStorage,
+  removeSubmissionFromLocalStorage,
+  saveSubmissionToLocalStorage,
+  SubmissionCache,
+} from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
@@ -30,7 +36,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
   const { asPath } = useRouter();
   const { sendProposal, isLoading, error, isSuccess } = useSubmitProposal();
   const { transactionData } = useSubmitProposalStore(state => state);
-  const { contestPrompt, contestStatus, contestMaxProposalCount } = useContestStore(state => state);
+  const { contestPrompt, contestStatus, contestMaxProposalCount, votesOpen } = useContestStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
   const {
     amountOfTokensRequiredToSubmitEntry,
@@ -41,7 +47,9 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
 
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
-  const [proposal, setProposal] = useState("");
+  const contestId = asPath.split("/")[3];
+  const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
+  const [proposal, setProposal] = useState(savedProposal?.content || "");
 
   const editorProposal = useEditor({
     extensions: [
@@ -63,6 +71,13 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     onUpdate: ({ editor }) => {
       const content = editor.getHTML();
       setProposal(content);
+
+      const submissionCache: SubmissionCache = {
+        contestId,
+        content,
+        expiresAt: votesOpen,
+      };
+      saveSubmissionToLocalStorage("submissions", submissionCache);
     },
   });
 
@@ -70,6 +85,7 @@ export const DialogModalSendProposal = (props: DialogModalSendProposalProps) => 
     if (isSuccess) {
       setShowForm(false);
       editorProposal?.commands.clearContent();
+      removeSubmissionFromLocalStorage("submissions", contestId);
     }
     if (isLoading || error) setShowForm(true);
     if (isLoading || error || isSuccess) setShowDeploymentSteps(true);
