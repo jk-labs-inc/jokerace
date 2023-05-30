@@ -99,7 +99,7 @@ const CreateContestPrompt = () => {
       <p className="hidden md:flex items-center">
         <span className="font-bold flex items-center gap-1 mr-1">
           shift <Image src="/create-flow/shift.png" alt="shift" width={14} height={14} /> + enter{" "}
-          <Image src="/create-flow/enter.png" alt="enter" width={14} height={14} />
+          <Image src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
         </span>
         to make a line break.
         <span className="font-bold mr-1 ml-1">select text</span>
