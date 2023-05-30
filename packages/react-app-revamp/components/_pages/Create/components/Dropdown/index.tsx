@@ -72,7 +72,13 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
   };
 
   const handleIconClick = () => {
-    setShowOptions(!showOptions);
+    // Only toggle `showOptions` if there are matching options
+    if (filteredOptions.length > 0) {
+      setShowOptions(!showOptions);
+    } else {
+      // Ensure `showOptions` is false if there are no matching options
+      setShowOptions(false);
+    }
   };
 
   return (

@@ -9,8 +9,12 @@ const ContestPlay = () => {
   const [page, setPage] = useState(0);
   const { address } = useAccount();
 
-  const { status, data, error, isFetching } = useQuery(["liveContests", page, address], () =>
-    getLiveContests(page, 7, address),
+  const { status, data, error, isFetching } = useQuery(
+    ["liveContests", page, address],
+    () => getLiveContests(page, 7, address),
+    {
+      staleTime: 1000 * 60 * 3,
+    },
   );
 
   return (
