@@ -303,6 +303,35 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
   }
 }
 
+export async function getLiveContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
+    try {
+      const result = await supabase
+        .from("contests")
+        .select("*", { count: "exact" })
+        .lte("start_at", new Date().toISOString())
+        .gte("end_at", new Date().toISOString())
+        .order("end_at", { ascending: true })
+        .range(from, to);
+
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+
+      return { data: processedData, count };
+    } catch (e) {
+      console.error(e);
+    }
+    return { data: [], count: 0 };
+  }
+}
+
 export async function getPastContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
   if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
