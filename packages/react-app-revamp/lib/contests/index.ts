@@ -6,6 +6,7 @@ import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVe
 import { alchemyRpcUrls, fetchBalance, readContract, readContracts } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
+import moment from "moment";
 import { SearchOptions } from "types/search";
 
 export const ITEMS_PER_PAGE = 7;
@@ -275,57 +276,29 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
 }
 
 export async function getFeaturedContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    const { from, to } = getPagination(currentPage, itemsPerPage);
-    try {
-      const result = await supabase
-        .from("contests")
-        .select("*", { count: "exact" })
-        .is("featured", true)
-        .range(from, to);
+  if (!isSupabaseConfigured) return { data: [], count: 0 };
 
-      const { data, count, error } = result;
-      if (error) {
-        throw new Error(error.message);
-      }
+  const config = await import("@config/supabase");
+  const { from, to } = getPagination(currentPage, itemsPerPage);
 
-      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+  try {
+    const { data, count, error } = await config.supabase
+      .from("contests")
+      .select("*", { count: "exact" })
+      .is("featured", true)
+      .range(from, to);
 
-      return { data: processedData, count };
-    } catch (e) {
-      console.error(e);
-    }
-    return { data: [], count: 0 };
-  }
-}
+    if (error) throw new Error(error.message);
 
-export async function getLiveContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    const { from, to } = getPagination(currentPage, itemsPerPage);
-    try {
-      const result = await supabase
-        .from("contests")
-        .select("*", { count: "exact" })
-        .lte("start_at", new Date().toISOString())
-        .gte("end_at", new Date().toISOString())
-        .order("end_at", { ascending: true })
-        .range(from, to);
+    const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
 
-      const { data, count, error } = result;
-      if (error) {
-        throw new Error(error.message);
-      }
+    processedData.sort(
+      (a, b) => moment().diff(moment(a.start_at), "seconds") - moment().diff(moment(b.start_at), "seconds"),
+    );
 
-      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
-
-      return { data: processedData, count };
-    } catch (e) {
-      console.error(e);
-    }
+    return { data: processedData, count };
+  } catch (e) {
+    console.error(e);
     return { data: [], count: 0 };
   }
 }
