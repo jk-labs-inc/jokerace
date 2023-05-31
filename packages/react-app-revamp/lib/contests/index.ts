@@ -292,9 +292,23 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
 
     const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
 
-    processedData.sort(
-      (a, b) => moment().diff(moment(a.start_at), "seconds") - moment().diff(moment(b.start_at), "seconds"),
-    );
+    processedData.sort((a, b) => {
+      const now = moment();
+      const aIsHappening = moment(a.created_at).isBefore(now) && moment(a.end_at).isAfter(now);
+      const bIsHappening = moment(b.created_at).isBefore(now) && moment(b.end_at).isAfter(now);
+
+      // both are happening, sort by nearest end date. we could have a 'order' column in the future
+      if (aIsHappening && bIsHappening) {
+        return moment(a.end_at).diff(now) - moment(b.end_at).diff(now);
+      }
+
+      // only one is happening, it comes first
+      if (aIsHappening) return -1;
+      if (bIsHappening) return 1;
+
+      // none are happening, sort by nearest start date
+      return moment(a.created_at).diff(now) - moment(b.created_at).diff(now);
+    });
 
     return { data: processedData, count };
   } catch (e) {
