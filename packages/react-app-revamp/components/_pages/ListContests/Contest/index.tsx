@@ -346,8 +346,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             )}
             <p className="font-bold w-full uppercase">{loading ? <Skeleton /> : contest.title}</p>
           </div>
-          <div className="flex flex-row pl-12">
-            <ul className="list-disc list-inside text-[16px]  list-explainer w-full">
+          <div className="flex flex-row pl-14">
+            <ul className="list-disc list-inside text-[16px] list-explainer w-full">
               {loading ? (
                 <Skeleton count={3} />
               ) : (

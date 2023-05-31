@@ -21,7 +21,7 @@ const CreateContestTitle = () => {
   };
 
   return (
-    <div className="mt-16 lg:mt-[100px] animate-swingInLeft">
+    <div className="mt-12 lg:mt-[100px] animate-swingInLeft">
       <div className="flex flex-col lg:flex-row items-start lg:items-center gap-5 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <p className="text-primary-10 font-bold">what should we call your contest?</p>

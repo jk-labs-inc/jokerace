@@ -2,7 +2,8 @@ import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
-import { useAccount, useConnect } from "wagmi";
+import { useMedia } from "react-use";
+import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
@@ -11,6 +12,7 @@ const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
+  const isMobile = useMedia("(max-width: 768px)");
 
   const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
     useDeployContestStore(state => state);
@@ -56,7 +58,7 @@ const CreateContestParams = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8 mt-[50px] animate-swingInLeft">
+    <div className="flex flex-col gap-8 mt-12 lg:mt-[50px] animate-swingInLeft">
       <div className="flex flex-col md:flex-row gap-5">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-5 mt-2">
@@ -95,14 +97,14 @@ const CreateContestParams = () => {
             can players downvote—that is, vote <span className="italic">against</span> a submission?
           </p>
           <div className="flex flex-col gap-2">
-            <div className="flex flex-col md:flex-row w-full md:w-[490px]  border border-primary-10 rounded-[25px] overflow-hidden text-[20px] md:text-[24px]">
+            <div className="flex w-full md:w-[490px]  border border-primary-10 rounded-[25px] overflow-hidden text-[20px] md:text-[24px]">
               <div
                 className={`w-full px-4 py-1 cursor-pointer ${
                   isEnabled ? "bg-primary-10 text-true-black font-bold" : "bg-true-black text-primary-10"
                 }`}
                 onClick={() => handleClick(true)}
               >
-                Enable Downvoting
+                {isMobile ? "yes" : "enable downvoting"}
               </div>
               <div
                 className={`w-full px-4 py-1 cursor-pointer ${
@@ -110,7 +112,7 @@ const CreateContestParams = () => {
                 }`}
                 onClick={() => handleClick(false)}
               >
-                Disable Downvoting
+                {isMobile ? "no" : "disable downvoting"}
               </div>
             </div>
           </div>

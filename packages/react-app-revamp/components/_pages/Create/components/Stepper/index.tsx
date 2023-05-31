@@ -1,4 +1,5 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { FC, ReactElement } from "react";
 import { StateKey, validateStep, validationFunctions } from "../../utils/validation";
 
