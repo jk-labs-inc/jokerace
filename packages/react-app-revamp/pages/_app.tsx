@@ -7,9 +7,11 @@ import "@styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
+import "react-tooltip/dist/react-tooltip.css";
 
 import { jokeraceTheme } from "@config/rainbowkit";
 import { WagmiConfig } from "wagmi";
@@ -51,6 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="jokerace - contests for communities to make,
           execute, and reward decisions."
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="twitter:image" content="https://jokerace.xyz/jokerace.png" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
