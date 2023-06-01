@@ -168,7 +168,7 @@ export const ListContests: FC<ListContestsProps> = ({
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
-            <div className="order-3 md:order-1">
+            <div className="order-3 md:order-none">
               {customTitle ? (
                 <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
               ) : (
@@ -178,9 +178,13 @@ export const ListContests: FC<ListContestsProps> = ({
                 </span>
               )}
             </div>
-            <div className="order-1 md:order-2">{includeSearch && <Search onSearchChange={onSearchChange} />}</div>
+            {includeSearch && (
+              <div className="order-1 md:order-none">
+                <Search onSearchChange={onSearchChange} />
+              </div>
+            )}
 
-            <div className="order-2 md:order-3">
+            <div className="order-2 md:order-none">
               <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
             </div>
           </div>
