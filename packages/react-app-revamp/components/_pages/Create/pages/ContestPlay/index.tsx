@@ -2,7 +2,7 @@ import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useQuery } from "@tanstack/react-query";
 import { getLiveContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 
 const ContestPlay = () => {
@@ -24,6 +24,12 @@ const ContestPlay = () => {
       : getLiveContests(page, 7, address),
   );
 
+  const customTitle = useMemo(() => {
+    if (!searchValue) return "Live Contests";
+
+    return "All contests";
+  }, [searchValue]);
+
   return (
     <div className="text-[16px] mt-12 mb-14 w-full md:w-5/6">
       {isSupabaseConfigured ? (
@@ -37,7 +43,7 @@ const ContestPlay = () => {
           setPage={setPage}
           includeSearch
           result={data}
-          customTitle="Live Contests"
+          customTitle={customTitle}
           onSearchChange={(value: string) => setSearchValue(value)}
         />
       ) : (

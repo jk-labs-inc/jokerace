@@ -167,24 +167,27 @@ export const ListContests: FC<ListContestsProps> = ({
         </div>
       ) : (
         <>
+          <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
+            <div className="order-3 md:order-1">
+              {customTitle ? (
+                <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
+              ) : (
+                <span aria-hidden="true">
+                  🃏
+                  <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>
+                </span>
+              )}
+            </div>
+            <div className="order-1 md:order-2">{includeSearch && <Search onSearchChange={onSearchChange} />}</div>
+
+            <div className="order-2 md:order-3">
+              <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
+            </div>
+          </div>
           {!isFetching && result?.count === 0 ? (
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
             <div className={`animate-appear ${className}`}>
-              <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
-                {customTitle ? (
-                  <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
-                ) : (
-                  <span aria-hidden="true">
-                    🃏
-                    <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>
-                  </span>
-                )}
-
-                {includeSearch && <Search onSearchChange={onSearchChange} />}
-
-                <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
-              </div>
               <div
                 className={`grid ${
                   fadeBg ? "opacity-50" : "opacity-100"
