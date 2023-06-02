@@ -1,13 +1,25 @@
-import Button from "@components/UI/Button";
+import { useDeployRewardsPool } from "@hooks/useDeployRewards";
+import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import CreateRewardsPoolSubmitButton from "./components/Buttons/Submit";
 import CreateRewardsPoolRecipients from "./components/Recipients";
 
 const CreateRewardsPool = () => {
+  const { setCancel } = useDeployRewardsStore(state => ({ setCancel: state.setCancel }));
+
+  const { deployRewardsPool } = useDeployRewardsPool();
+  const onSubmitRewardsPool = () => {
+    deployRewardsPool();
+  };
+
+  const onCancelCreateRewardsPool = () => {
+    setCancel(true);
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-2">
         <p className="text-[24px] font-bold text-primary-10">now let’s add rewards 👉👈🤑</p>
-        <div className="pl-2">
+        <div className="pl-2 flex flex-col gap-2">
           <p className="text-[16px]">
             a rewards pool incentivizes players, compensates winners, and is <br /> open for{" "}
             <span className="italic">anyone</span> to fund.
@@ -25,7 +37,7 @@ const CreateRewardsPool = () => {
         <CreateRewardsPoolRecipients />
       </div>
       <div className="mt-6">
-        <CreateRewardsPoolSubmitButton />
+        <CreateRewardsPoolSubmitButton onClick={onSubmitRewardsPool} onCancel={onCancelCreateRewardsPool} />
       </div>
     </div>
   );

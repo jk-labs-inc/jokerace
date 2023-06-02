@@ -1,5 +1,6 @@
 import CreateFlow from "@components/_pages/Create";
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
+import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
 import type { NextPage } from "next";
 import Head from "next/head";
 
@@ -12,7 +13,9 @@ const Page: NextPage = () => {
       </Head>
 
       <ContractFactoryWrapper>
-        <CreateFlow />
+        <DeployRewardsWrapper>
+          <CreateFlow />
+        </DeployRewardsWrapper>
       </ContractFactoryWrapper>
     </>
   );

@@ -2,12 +2,11 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import Image from "next/image";
 import { FC, useState } from "react";
 
-interface CreateRewardsPoolSubmitProps {
+interface CreateRewardsFundingPoolSubmitProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
-  onCancel?: (e: React.MouseEvent<HTMLDivElement>) => void;
 }
 
-const CreateRewardsPoolSubmit: FC<CreateRewardsPoolSubmitProps> = ({ onClick, onCancel }) => {
+const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = ({ onClick }) => {
   const [shake, setShake] = useState(false);
 
   //   useEffect(() => {
@@ -33,15 +32,15 @@ const CreateRewardsPoolSubmit: FC<CreateRewardsPoolSubmitProps> = ({ onClick, on
     <div className="flex gap-2 items-start pb-5 md:pb-0">
       <div className={`flex flex-col items-center gap-2`}>
         <ButtonV3 color="bg-gradient-create" size="large" onClick={onClick}>
-          create pool!
+          fund pool!
         </ButtonV3>
 
-        <div className="hidden lg:flex items-center gap-[2px] md:-ml-[15px] cursor-pointer group" onClick={onCancel}>
-          <p className="text-[16px]">cancel</p>
+        <div className="hidden lg:flex items-center gap-[2px] cursor-pointer group">
+          <p className="text-[16px]">i’ll worry about this later</p>
         </div>
       </div>
       <div className="hidden lg:flex lg:items-center mt-[5px] gap-[5px]">
-        <p className="text-[16px]">
+        <p className="text-[16px] ml-[15px]">
           press <span className="font-bold capitalize">enter</span>
         </p>
         <Image src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
@@ -50,4 +49,4 @@ const CreateRewardsPoolSubmit: FC<CreateRewardsPoolSubmitProps> = ({ onClick, on
   );
 };
 
-export default CreateRewardsPoolSubmit;
+export default CreateRewardsFundingPoolSubmit;

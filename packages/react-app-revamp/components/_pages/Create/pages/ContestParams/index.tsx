@@ -7,6 +7,7 @@ import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
+import CreateContestRewards from "../ContestRewards";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
@@ -121,6 +122,7 @@ const CreateContestParams = () => {
           <CreateContestButton step={step} onClick={handleDeployContest} />
         </div>
       </div>
+      <CreateContestRewards />
     </div>
   );
 };

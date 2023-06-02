@@ -6,6 +6,7 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
+import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
@@ -28,6 +29,7 @@ export function useDeployContest() {
     maxSubmissions,
     downvote,
     setDeployContestData,
+    setIsSuccess,
   } = useDeployContestStore(state => state);
   const { chain } = useNetwork();
   const { refetch } = useSigner();
@@ -81,7 +83,10 @@ export function useDeployContest() {
         hash: contractContest.deployTransaction.hash,
       });
 
-      setDeployContestData(receiptDeployContest.transactionHash, contractContest.address);
+      setIsSuccess(true);
+      setDeployContestData(chain?.name ?? "", receiptDeployContest.transactionHash, contractContest.address);
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setIsSuccess(true);
 
       const contestData = {
         title: title,
@@ -100,6 +105,8 @@ export function useDeployContest() {
 
       await indexContest(contestData, votingMerkle, submissionMerkle);
     } catch (error) {
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setError(error as CustomError);
       console.error("Error: ", error); // Log all errors
     }
   }

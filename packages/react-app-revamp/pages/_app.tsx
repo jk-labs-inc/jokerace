@@ -68,7 +68,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <RainbowKitProvider chains={chains} theme={jokeraceTheme}>
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer
-            position="bottom-right"
+            position="top-right"
             autoClose={4000}
             hideProgressBar
             closeOnClick
@@ -78,7 +78,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             pauseOnHover
             theme="dark"
             transition={fadeInOut}
-            bodyClassName={() => "text-xs flex items-center"}
+            bodyClassName={() => "text-[16px] flex items-center"}
           />
         </RainbowKitProvider>
       </WagmiConfig>

@@ -6,7 +6,7 @@ interface ButtonV3Props {
   color?: string;
   size?: ButtonSize;
   children?: React.ReactNode;
-  onClick?: () => void;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const sizes = {
