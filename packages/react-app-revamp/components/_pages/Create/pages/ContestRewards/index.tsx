@@ -38,7 +38,7 @@ const CreateContestRewards = () => {
 
   return (
     <DialogModalV3
-      isOpen={true}
+      isOpen={isOpen}
       setIsOpen={value => setIsOpen(value)}
       title="rewards"
       className="w-[1110px] 3xl:w-[1300px] h-[850px]"
