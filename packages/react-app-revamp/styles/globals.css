@@ -36,11 +36,11 @@
 
 /* Edit toastify styles */
 .Toastify__toast--error {
-  box-shadow: 0 -2px 4px rgba(239, 68, 68, 0.5), 0 2px 4px rgba(239, 68, 68, 0.5), 0 1px 2px rgba(239, 68, 68, 0.3) !important;
+  box-shadow: 0 -2px 4px #ff78a9, 0 2px 4px #ff78a9, 0 1px 2px #ff78a9 !important;
 }
 
 .Toastify__toast--success {
-  box-shadow: 0 -2px 4px rgba(52, 211, 153, 0.5), 0 2px 4px rgba(52, 211, 153, 0.5), 0 1px 2px rgba(52, 211, 153, 0.3) !important;
+  box-shadow: 0 -2px 4px #78ffc6, 0 2px 4px #78ffc6, 0 1px 2px #78ffc6 !important;
 }
 
 /* Custom bullet points */
