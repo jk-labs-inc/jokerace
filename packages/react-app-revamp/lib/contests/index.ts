@@ -6,6 +6,7 @@ import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVe
 import { alchemyRpcUrls, fetchBalance, readContract, readContracts } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
+import moment from "moment";
 import { SearchOptions } from "types/search";
 
 export const ITEMS_PER_PAGE = 7;
@@ -275,28 +276,43 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
 }
 
 export async function getFeaturedContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
-  if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
-    const { from, to } = getPagination(currentPage, itemsPerPage);
-    try {
-      const result = await supabase
-        .from("contests")
-        .select("*", { count: "exact" })
-        .is("featured", true)
-        .range(from, to);
+  if (!isSupabaseConfigured) return { data: [], count: 0 };
 
-      const { data, count, error } = result;
-      if (error) {
-        throw new Error(error.message);
+  const config = await import("@config/supabase");
+  const { from, to } = getPagination(currentPage, itemsPerPage);
+
+  try {
+    const { data, count, error } = await config.supabase
+      .from("contests")
+      .select("*", { count: "exact" })
+      .is("featured", true)
+      .range(from, to);
+
+    if (error) throw new Error(error.message);
+
+    const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+
+    processedData.sort((a, b) => {
+      const now = moment();
+      const aIsHappening = moment(a.created_at).isBefore(now) && moment(a.end_at).isAfter(now);
+      const bIsHappening = moment(b.created_at).isBefore(now) && moment(b.end_at).isAfter(now);
+
+      // both are happening, sort by nearest end date. we could have a 'order' column in the future
+      if (aIsHappening && bIsHappening) {
+        return moment(a.end_at).diff(now) - moment(b.end_at).diff(now);
       }
 
-      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+      // only one is happening, it comes first
+      if (aIsHappening) return -1;
+      if (bIsHappening) return 1;
 
-      return { data: processedData, count };
-    } catch (e) {
-      console.error(e);
-    }
+      // none are happening, sort by nearest start date
+      return moment(a.created_at).diff(now) - moment(b.created_at).diff(now);
+    });
+
+    return { data: processedData, count };
+  } catch (e) {
+    console.error(e);
     return { data: [], count: 0 };
   }
 }
