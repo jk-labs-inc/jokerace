@@ -1,37 +1,44 @@
 import ButtonV3 from "@components/UI/ButtonV3";
+import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
+import useFundRewardsModule from "@hooks/useFundRewards";
+import { useFundRewardsStore } from "@hooks/useFundRewards/store";
+import { ethers } from "ethers";
 import Image from "next/image";
 import { FC, useState } from "react";
+import { useAccount } from "wagmi";
 
 interface CreateRewardsFundingPoolSubmitProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = ({ onClick }) => {
+  const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
+  const { address } = useAccount();
+  const rewards = useFundRewardsStore(state => state.rewards);
+  const deployRewardsData = useDeployRewardsStore(state => state.deployRewardsData);
+
   const [shake, setShake] = useState(false);
 
-  //   useEffect(() => {
-  //     // If there's an error for the current step, shake the button
-  //     if (errors.find(error => error.step === step - 1)) {
-  //       setShake(true);
-  //     } else {
-  //       setShake(false);
-  //     }
-  //   }, [errors, step]);
-
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    // If there's an error, shake the button
-    // if (errors.find(error => error.step === step - 1)) {
-    //   setShake(true);
-    // }
-    // if (onClick) {
-    //   onClick(e);
-    // }
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    const populatedRewards =
+      rewards.length > 0 &&
+      rewards
+        .filter(reward => reward.amount !== "") // Add this line
+        .map(reward => ({
+          ...reward,
+          currentUserAddress: address,
+          tokenAddress: reward.address,
+          isErc20: reward.address.startsWith("0x"),
+          rewardsContractAddress: deployRewardsData.address,
+          amount: ethers.utils.parseUnits(reward.amount, 18).toString(),
+        }));
+    await sendFundsToRewardsModuleV3({ rewards: populatedRewards });
   };
 
   return (
     <div className="flex gap-2 items-start pb-5 md:pb-0">
       <div className={`flex flex-col items-center gap-2`}>
-        <ButtonV3 color="bg-gradient-create" size="large" onClick={onClick}>
+        <ButtonV3 color="bg-gradient-create" size="large" onClick={handleClick}>
           fund pool!
         </ButtonV3>
 

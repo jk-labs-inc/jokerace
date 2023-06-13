@@ -43,10 +43,8 @@ const CreateContestRewards = () => {
   return (
     <DialogModalV3
       isOpen={isOpen}
-      doubleCheckClose={!isRewardsModuleDeployed}
       setIsOpen={value => setIsOpen(value)}
       onClose={handleModalClose}
-      doubleCheckMessage="this action is irreversible and later you won't have chance to add rewards to your contest!"
       title="rewards"
       className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
     >

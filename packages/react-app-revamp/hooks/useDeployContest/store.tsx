@@ -23,6 +23,7 @@ export type SubmissionMerkle = {
 export interface DeployContestState {
   deployContestData: {
     chain: string;
+    chainId: number;
     hash: string;
     address: string;
   };
@@ -49,7 +50,7 @@ export interface DeployContestState {
   furthestStep: number;
   submissionTab: number;
 
-  setDeployContestData: (chain: string, hash: string, address: string) => void;
+  setDeployContestData: (chain: string, chainId: number, hash: string, address: string) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
@@ -86,6 +87,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
   const initialState = {
     deployContestData: {
       chain: "",
+      chainId: 0,
       hash: "",
       address: "",
     },
@@ -116,8 +118,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
   return {
     ...initialState,
 
-    setDeployContestData: (chain: string, hash: string, address: string) =>
-      set({ deployContestData: { chain, hash, address } }),
+    setDeployContestData: (chain: string, chainId: number, hash: string, address: string) =>
+      set({ deployContestData: { chain, chainId, hash, address } }),
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),

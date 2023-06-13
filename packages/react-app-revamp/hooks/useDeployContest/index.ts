@@ -94,7 +94,12 @@ export function useDeployContest() {
         hash: contractContest.deployTransaction.hash,
       });
 
-      setDeployContestData(chain?.name ?? "", receiptDeployContest.transactionHash, contractContest.address);
+      setDeployContestData(
+        chain?.name ?? "",
+        chain?.id ?? 0,
+        receiptDeployContest.transactionHash,
+        contractContest.address,
+      );
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setIsSuccess(true);
 

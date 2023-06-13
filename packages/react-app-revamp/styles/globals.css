@@ -35,6 +35,11 @@
 }
 
 /* Edit toastify styles */
+
+.Toastify__toast-container--top-right {
+  width: 450px !important;
+}
+
 .Toastify__toast--error {
   box-shadow: 0 -2px 4px #ff78a9, 0 2px 4px #ff78a9, 0 1px 2px #ff78a9 !important;
 }
@@ -208,6 +213,11 @@ input[type="number"]::-webkit-outer-spin-button {
     @apply grid;
     grid-template-columns: repeat(3, minmax(auto, 1fr)) 0.4fr;
     gap: 1rem;
+  }
+
+  .rewards-funding-grid {
+    @apply grid;
+    grid-template-columns: 1fr 1.5fr 1fr;
   }
 
   .dropdownBorder {
