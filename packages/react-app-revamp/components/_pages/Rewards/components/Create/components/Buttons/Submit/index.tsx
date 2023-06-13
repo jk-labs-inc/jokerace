@@ -36,8 +36,8 @@ const CreateRewardsPoolSubmit: FC<CreateRewardsPoolSubmitProps> = ({ onClick, on
           create pool!
         </ButtonV3>
 
-        <div className="hidden lg:flex items-center gap-[2px] md:-ml-[15px] cursor-pointer group" onClick={onCancel}>
-          <p className="text-[16px]">cancel</p>
+        <div className="hidden lg:flex items-center gap-[2px] cursor-pointer group">
+          <p className="text-[16px]">i’ll worry about this later</p>
         </div>
       </div>
       <div className="hidden lg:flex lg:items-center mt-[5px] gap-[5px]">

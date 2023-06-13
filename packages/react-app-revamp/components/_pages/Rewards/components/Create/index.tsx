@@ -18,7 +18,11 @@ const CreateRewardsPool = () => {
   return (
     <div>
       <div className="flex flex-col gap-2">
-        <p className="text-[24px] font-bold text-primary-10">now let’s add rewards 👉👈🤑</p>
+        <div className="flex items-center gap-2">
+          <p className="text-[24px] font-bold text-primary-10">now let’s add rewards </p>
+          <p className="-mt-[5px]">👉👈🤑</p>
+        </div>
+
         <div className="pl-2 flex flex-col gap-2">
           <p className="text-[16px]">
             a rewards pool incentivizes players, compensates winners, and is <br /> open for{" "}
