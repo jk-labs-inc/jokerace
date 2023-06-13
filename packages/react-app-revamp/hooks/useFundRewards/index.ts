@@ -25,17 +25,17 @@ export function useFundRewardsModule() {
 
   async function sendFundsToRewardsModule(args: {
     currentUserAddress: string;
-    erc20TokenAddress: string;
+    tokenAddress: string | null;
     isErc20: boolean;
     amount: string;
   }) {
-    const { currentUserAddress, erc20TokenAddress, amount, isErc20 } = args;
+    const { currentUserAddress, tokenAddress, amount, isErc20 } = args;
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
     const contractConfig = {
-      addressOrName: erc20TokenAddress,
+      addressOrName: tokenAddress ?? "",
       contractInterface: erc20ABI,
     };
     try {

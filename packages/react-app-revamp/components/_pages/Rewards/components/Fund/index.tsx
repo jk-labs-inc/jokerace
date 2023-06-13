@@ -24,7 +24,7 @@ const CreateRewardsFunding = () => {
       <div className="mt-8">
         <CreateRewardsFundPool />
       </div>
-      <div className="mt-6">
+      <div className="mt-10">
         <CreateRewardsFundingPoolSubmit onClick={() => console.log("test")} />
       </div>
     </div>

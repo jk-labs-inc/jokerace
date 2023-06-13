@@ -1,4 +1,3 @@
-import { fadeInOut } from "@config/react-toastify/animations/FadeInOut.tsx";
 import { chains, client } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
@@ -77,7 +76,6 @@ function MyApp({ Component, pageProps }: AppProps) {
             draggable
             pauseOnHover
             theme="dark"
-            transition={fadeInOut}
             bodyClassName={() => "text-[16px] flex items-center"}
           />
         </RainbowKitProvider>

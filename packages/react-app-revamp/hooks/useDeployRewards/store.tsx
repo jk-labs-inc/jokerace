@@ -19,28 +19,36 @@ interface DeployRewardsState {
   setCancel: (cancel: boolean) => void;
   setRanks: (rank: number[]) => void;
   setShares: (share: number[]) => void;
+  reset: () => void;
 }
 
 export const createDeployRewardsStore = () =>
-  createStore<DeployRewardsState>(set => ({
-    ranks: [],
-    shares: [],
-    isLoading: false,
-    isSuccess: false,
-    isError: false,
-    cancel: false,
-    deployRewardsData: {
-      hash: "",
-      address: "",
-    },
-    setIsLoading: isLoading => set({ isLoading }),
-    setIsSuccess: isSuccess => set({ isSuccess }),
-    setIsError: isError => set({ isError }),
-    setCancel: cancel => set({ cancel: cancel }),
-    setDeployRewardsData: (hash, address) => set(state => ({ deployRewardsData: { hash, address } })),
-    setRanks: ranks => set({ ranks }),
-    setShares: shares => set({ shares }),
-  }));
+  createStore<DeployRewardsState>(set => {
+    const initialState = {
+      ranks: [],
+      shares: [],
+      isLoading: false,
+      isSuccess: false,
+      isError: false,
+      cancel: false,
+      deployRewardsData: {
+        hash: "",
+        address: "",
+      },
+    };
+
+    return {
+      ...initialState,
+      setIsLoading: isLoading => set({ isLoading }),
+      setIsSuccess: isSuccess => set({ isSuccess }),
+      setIsError: isError => set({ isError }),
+      setCancel: cancel => set({ cancel: cancel }),
+      setDeployRewardsData: (hash, address) => set(state => ({ deployRewardsData: { hash, address } })),
+      setRanks: ranks => set({ ranks }),
+      setShares: shares => set({ shares }),
+      reset: () => set({ ...initialState }),
+    };
+  });
 
 export const DeployRewardsContext = createContext<ReturnType<typeof createDeployRewardsStore> | null>(null);
 

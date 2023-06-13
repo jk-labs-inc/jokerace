@@ -45,7 +45,7 @@ export function useDeployRewardsPool() {
       error: "Error deploying rewards pool",
     });
 
-    // Wait for transaction to be mined
+    // Wait for transaction to be executed
     await contractRewardsModule.deployTransaction.wait();
 
     const contractConfig = {
@@ -57,14 +57,13 @@ export function useDeployRewardsPool() {
     const txSetRewardsModule = await writeContract({
       ...contractConfig,
       functionName: "setOfficialRewardsModule",
-      //@ts-ignore
       args: [contractRewardsModule.address],
     });
 
     // Toast for the second transaction
     toast.promise(txSetRewardsModule.wait(), {
       pending: "Attaching pool to contest 2/2",
-      success: "Pool attached to contest!",
+      success: "congrats! your pool was successfully deployed!",
       error: "Error attaching pool to contest",
     });
 

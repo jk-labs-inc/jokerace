@@ -1,26 +1,48 @@
-import { IconClose } from "@components/UI/Icons";
+/* eslint-disable react/no-unescaped-entities */
 import { Dialog } from "@headlessui/react";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import Image from "next/image";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useState } from "react";
+import ButtonV3 from "../ButtonV3";
 
 interface DialogModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   title: string;
   children: React.ReactNode;
+  onClose?: () => void;
   className?: string;
+  doubleCheckClose?: boolean;
+  doubleCheckMessage?: string;
 }
 
-const DialogModalV3: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children, className }) => {
+const DialogModalV3: FC<DialogModalProps> = ({
+  isOpen,
+  setIsOpen,
+  title,
+  children,
+  onClose,
+  className,
+  doubleCheckClose = false,
+  doubleCheckMessage,
+}) => {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+
   const handleClose = useCallback(() => {
-    setIsOpen(false);
-  }, [setIsOpen]);
+    if (doubleCheckClose && !showConfirmation) {
+      setShowConfirmation(true);
+    } else {
+      setIsOpen(false);
+      if (onClose) {
+        onClose();
+      }
+      setShowConfirmation(false);
+    }
+  }, [setIsOpen, onClose, doubleCheckClose, showConfirmation]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <div className="fixed inset-0 pointer-events-none bg-true-black bg-opacity-80" aria-hidden="true" />
-
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex min-h-full w-full items-center justify-center">
           <Dialog.Panel
@@ -42,7 +64,31 @@ const DialogModalV3: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, childre
                 <Image src="/modal/modal_close.svg" width={39} height={33} alt="close" />
                 <span className="sr-only">Close modal</span>
               </button>
-              <div className="pt-20 2xs:pt-3 pie-3">{children}</div>
+              {showConfirmation && (
+                <div className="w-full h-full flex gap-4 items-start justify-start bg-white bg-opacity-80 pl-[100px] animate-swingInLeft">
+                  <div className="flex flex-col gap-2 p-4 bg-white rounded shadow">
+                    <p className="text-neutral-11">Are you sure you want to close?</p>
+                    <p className="text-neutral-11">{doubleCheckMessage}</p>
+                    <div className="flex gap-4">
+                      <ButtonV3
+                        onClick={() => {
+                          setShowConfirmation(false);
+                          setIsOpen(true);
+                        }}
+                        color="bg-primary-10"
+                      >
+                        Cancel
+                      </ButtonV3>
+                      <ButtonV3 onClick={handleClose} color="bg-negative-11">
+                        close
+                      </ButtonV3>
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className={`pt-20 2xs:pt-3 pie-3 ${showConfirmation ? "opacity-20" : "opacity-100"}`}>
+                {children}
+              </div>
             </div>
           </Dialog.Panel>
         </div>

@@ -6,6 +6,7 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
+import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
@@ -41,6 +42,7 @@ export function useDeployContest() {
 
     try {
       const signer = await refetch();
+
       const factoryCreateContest = new ContractFactory(
         DeployedContestContract.abi,
         DeployedContestContract.bytecode,
@@ -76,14 +78,22 @@ export function useDeployContest() {
         contestParameters,
       );
 
-      await contractContest.deployed();
+      // Toast for the contract deployment transaction
+      toast.promise(contractContest.deployTransaction.wait(), {
+        pending: "contest deployment in progress..",
+        success: "congrats! your contest was successfully deployed!",
+        error: "Error deploying contest",
+      });
+
+      // Wait for transaction to be executed
+      await contractContest.deployTransaction.wait();
+      setIsSuccess(true);
 
       const receiptDeployContest = await waitForTransaction({
         chainId: chain?.id,
         hash: contractContest.deployTransaction.hash,
       });
 
-      setIsSuccess(true);
       setDeployContestData(chain?.name ?? "", receiptDeployContest.transactionHash, contractContest.address);
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setIsSuccess(true);

@@ -4,7 +4,6 @@ import CreateRewardsFunding from "@components/_pages/Rewards/components/Fund";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 const CreateContestRewards = () => {
   const {
@@ -12,7 +11,12 @@ const CreateContestRewards = () => {
     setIsSuccess: setContestDeployed,
     reset: clearContestData,
   } = useDeployContestStore(state => state);
-  const { isSuccess: isRewardsModuleDeployed, cancel: cancelCreateRewardsPool } = useDeployRewardsStore(state => state);
+  const {
+    isSuccess: isRewardsModuleDeployed,
+    cancel: cancelCreateRewardsPool,
+    reset: clearRewardsData,
+  } = useDeployRewardsStore(state => state);
+
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
@@ -25,23 +29,26 @@ const CreateContestRewards = () => {
     if (!isContestDeployed && !isRewardsModuleDeployed) return;
 
     setIsOpen(true);
-    toast.success("congrats! your contest was successfully deployed!");
 
-    return () => {
-      setIsOpen(false);
-      // reset isContestDeployed to false
-      if (isContestDeployed) {
-        setContestDeployed(false);
-      }
-    };
-  }, [isContestDeployed, isRewardsModuleDeployed, setContestDeployed]);
+    if (isContestDeployed) {
+      setContestDeployed(false);
+    }
+  }, [isContestDeployed, isRewardsModuleDeployed]);
+
+  const handleModalClose = () => {
+    clearContestData();
+    clearRewardsData();
+  };
 
   return (
     <DialogModalV3
       isOpen={isOpen}
+      doubleCheckClose={!isRewardsModuleDeployed}
       setIsOpen={value => setIsOpen(value)}
+      onClose={handleModalClose}
+      doubleCheckMessage="this action is irreversible and later you won't have chance to add rewards to your contest!"
       title="rewards"
-      className="w-[1110px] 3xl:w-[1300px] h-[850px]"
+      className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
     >
       <div className="pl-[100px]">
         <div className="pt-[50px]">{isRewardsModuleDeployed ? <CreateRewardsFunding /> : <CreateRewardsPool />}</div>
