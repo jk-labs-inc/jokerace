@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (governance/extensions/GovernorSettings.sol)
 
 pragma solidity ^0.8.0;
 
@@ -8,8 +7,6 @@ import "@openzeppelin/utils/Timers.sol";
 
 /**
  * @dev Extension of {Governor} for settings updatable through governance.
- *
- * _Available since v4.4._
  */
 abstract contract GovernorSettings is Governor {
     uint256 private _contestStart;

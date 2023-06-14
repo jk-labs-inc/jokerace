@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.5.0) (governance/IGovernor.sol)
 
 pragma solidity ^0.8.0;
 
@@ -7,8 +6,6 @@ import "@openzeppelin/utils/introspection/ERC165.sol";
 
 /**
  * @dev Interface of the {Governor} core.
- *
- * _Available since v4.3._
  */
 abstract contract IGovernor is IERC165 {
     enum ContestState {
@@ -19,7 +16,7 @@ abstract contract IGovernor is IERC165 {
         Completed
     }
 
-    uint8 public constant METADATAS_COUNT = 2;
+    uint256 public constant METADATAS_COUNT = 2;
 
     enum Metadatas {
         Target,
@@ -37,8 +34,8 @@ abstract contract IGovernor is IERC165 {
 
     struct ProposalCore {
         address author;
-        string description;
         bool exists;
+        string description;
         TargetMetadata targetMetadata;
         SafeMetadata safeMetadata;
     }

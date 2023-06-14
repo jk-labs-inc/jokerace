@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts v4.4.1 (governance/extensions/GovernorCountingSimple.sol)
 
 pragma solidity ^0.8.0;
 
@@ -7,8 +6,6 @@ import "../Governor.sol";
 
 /**
  * @dev Extension of {Governor} for simple, 3 options, vote counting.
- *
- * _Available since v4.3._
  */
 abstract contract GovernorCountingSimple is Governor {
     /**
@@ -70,14 +67,14 @@ abstract contract GovernorCountingSimple is Governor {
      */
     function proposalAddressesHaveVoted(uint256 proposalId) public view virtual returns (address[] memory) {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
-        return (proposalvote.addressesVoted);
+        return proposalvote.addressesVoted;
     }
 
     /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.
      */
     function contestAddressTotalVotesCast(address userAddress) public view virtual returns (uint256 totalVotesCast) {
-        return (addressTotalCastVoteCounts[userAddress]);
+        return addressTotalCastVoteCounts[userAddress];
     }
 
     /**

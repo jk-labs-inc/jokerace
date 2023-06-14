@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.5.0) (governance/Governor.sol)
 
 pragma solidity ^0.8.0;
 
@@ -20,14 +19,12 @@ import "./GovernorMerkleVotes.sol";
  * - A counting module must implement {quorum}, {_quorumReached}, {_voteSucceeded} and {_countVote}
  * - A voting module must implement {getVotes}
  * - Additionaly, the {votingPeriod} must also be implemented
- *
- * _Available since v4.3._
  */
 abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
-    uint64 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
+    uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
     mapping(address => bool) public addressSubmitterVerified;
@@ -42,16 +39,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
-
-    /**
-     * @dev Restrict access of functions to the governance executor, which may be the Governor itself or a timelock
-     * contract, as specified by {_executor}. This generally means that function with this modifier must be voted on and
-     * executed through the governance protocol.
-     */
-    modifier onlyGovernance() {
-        require(_msgSender() == _executor(), "Governor: onlyGovernance");
-        _;
-    }
 
     /**
      * @dev Sets the value for {name} and {version}
@@ -294,7 +281,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         _proposals[proposalId] = proposal;
         _numSubmissions[msg.sender] += 1;
 
-        emit ProposalCreated(proposalId, _msgSender());
+        emit ProposalCreated(proposalId, msg.sender);
 
         return proposalId;
     }
@@ -363,7 +350,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         override
         returns (uint256)
     {
-        address voter = _msgSender();
+        address voter = msg.sender;
         verifyVoter(voter, totalVotes, proof);
         return _castVote(proposalId, voter, support, numVotes, "");
     }
@@ -377,7 +364,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         override
         returns (uint256)
     {
-        address voter = _msgSender();
+        address voter = msg.sender;
         require(
             addressTotalVotesVerified[voter],
             "Governor: you need to cast a vote with the proof at least once and you haven't yet"

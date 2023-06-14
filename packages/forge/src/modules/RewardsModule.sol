@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v4.7.0) (finance/PaymentSplitter.sol)
 
 pragma solidity ^0.8.0;
 
@@ -84,7 +83,7 @@ contract RewardsModule is Context {
      * functions].
      */
     receive() external payable virtual {
-        emit PaymentReceived(_msgSender(), msg.value);
+        emit PaymentReceived(msg.sender, msg.value);
     }
 
     /**

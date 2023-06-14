@@ -14,7 +14,6 @@ contract RewardsModuleTest is Test {
     uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 2;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
-    uint256 public constant ONE_ETH_IN_WEI = 1000000000000000000;
     uint256[] public numParams = [
         CONTEST_START,
         VOTING_DELAY,
@@ -96,7 +95,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, proof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 * ONE_ETH_IN_WEI, 1 * ONE_ETH_IN_WEI, proof1);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, proof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -114,7 +113,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681650001);
         uint256 proposalId = contest.propose(firstProposalPA1, proof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 * ONE_ETH_IN_WEI, 1 * ONE_ETH_IN_WEI, proof1);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, proof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
@@ -134,9 +133,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, proof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 * ONE_ETH_IN_WEI, 1 * ONE_ETH_IN_WEI, proof1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, proof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 * ONE_ETH_IN_WEI, 5 * ONE_ETH_IN_WEI, proof1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, proof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -154,9 +153,9 @@ contract RewardsModuleTest is Test {
         uint256 proposalId2 = contest.propose(firstProposalPA2, proof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 * ONE_ETH_IN_WEI, 1 * ONE_ETH_IN_WEI, proof1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, proof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 * ONE_ETH_IN_WEI, 5 * ONE_ETH_IN_WEI, proof1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, proof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
