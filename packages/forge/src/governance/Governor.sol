@@ -210,6 +210,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function verifyProposer(address account, bytes32[] calldata proof) public override returns (bool verified) {
         if (!addressSubmitterVerified[account]) {
+            if (submissionMerkleRoot == 0) {
+                // if the submission root is 0, then anyone can submit
+                return true;
+            }
             checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
             addressSubmitterVerified[account] = true;
         }
