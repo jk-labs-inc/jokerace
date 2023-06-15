@@ -40,6 +40,7 @@ const CreateRewardsPool = () => {
       <div className="mt-8">
         <CreateRewardsPoolRecipients />
       </div>
+
       <div className="mt-6">
         <CreateRewardsPoolSubmitButton onClick={onSubmitRewardsPool} onCancel={onCancelCreateRewardsPool} />
       </div>

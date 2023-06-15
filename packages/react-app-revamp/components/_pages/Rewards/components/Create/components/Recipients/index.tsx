@@ -11,11 +11,9 @@ interface Recipient {
 }
 
 const CreateRewardsPoolRecipients: React.FC = () => {
-  const [recipients, setRecipients] = useState<Recipient[]>([{ id: 0, place: 1, proportion: 0 }]);
+  const [recipients, setRecipients] = useState<Recipient[]>([{ id: 0, place: 1, proportion: 100 }]);
   const [nextId, setNextId] = useState(1);
-  const [excessProportion, setExcessProportion] = useState(0);
-
-  const { setRanks, setShares } = useDeployRewardsStore(state => state);
+  const { setRanks, setShares, setValidationError } = useDeployRewardsStore(state => state);
 
   useEffect(() => {
     const sortedRecipients = [...recipients].sort((a, b) => a.place - b.place);
@@ -26,8 +24,27 @@ const CreateRewardsPoolRecipients: React.FC = () => {
       (sum, recipient) => sum + (isNaN(recipient.proportion) ? 0 : recipient.proportion),
       0,
     );
-    const overProportion = totalProportion > 100 ? totalProportion - 100 : 0;
-    setExcessProportion(overProportion);
+
+    let error = {};
+
+    if (totalProportion !== 100) {
+      error = {
+        ...error,
+        invalidTotal: `Total percentage should be exactly 100%, currently it's ${totalProportion}%`,
+      };
+    }
+
+    const uniqueRanks = [...new Set(recipients.map(recipient => recipient.place))];
+    if (uniqueRanks.length < recipients.length) {
+      error = { ...error, duplicateRank: "There can't be duplicate ranks" };
+    }
+
+    const zeroProportionRecipients = recipients.filter(recipient => recipient.proportion === 0);
+    if (zeroProportionRecipients.length > 0) {
+      error = { ...error, zeroProportion: "Recipients with 0% proportion are not allowed" };
+    }
+
+    setValidationError(error);
   }, [recipients]);
 
   const handleAddRecipient = () => {
@@ -66,6 +83,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   };
 
   const totalProportion = recipients.reduce((sum, recipient) => sum + recipient.proportion, 0);
+  const proportionError = totalProportion > 100 ? "over" : totalProportion < 100 ? "under" : null;
 
   return (
     <div className="md:w-[370px]">
@@ -136,12 +154,16 @@ const CreateRewardsPoolRecipients: React.FC = () => {
         <div className="grid grid-cols-2 justify-between border-t border-neutral-10 py-3 font-bold">
           <div>Total</div>
           <div
-            className={`justify-self-center ml-5 text-center ${excessProportion > 0 ? "text-negative-11" : ""} ${
+            className={`justify-self-center ml-5 text-center ${proportionError ? "text-negative-11" : ""} ${
               totalProportion === 100 ? "gradient-100" : ""
             }`}
           >
             {totalProportion.toFixed(2)}% <br />
-            {excessProportion > 0 && <span>{excessProportion.toFixed(2)}% over</span>}
+            {proportionError && (
+              <span>
+                {Math.abs(totalProportion - 100).toFixed(2)}% {proportionError}
+              </span>
+            )}
           </div>
         </div>
       </div>

@@ -4,7 +4,7 @@ export type TokenConfig = {
   address: string | null;
 };
 
-type ChainConfig = {
+export type ChainConfig = {
   name: string;
   id: number;
   tokens: TokenConfig[];

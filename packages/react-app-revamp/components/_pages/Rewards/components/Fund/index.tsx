@@ -1,7 +1,37 @@
+import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
+import useFundRewardsModule from "@hooks/useFundRewards";
+import { useFundRewardsStore } from "@hooks/useFundRewards/store";
+import { ethers } from "ethers";
+import { useAccount } from "wagmi";
 import CreateRewardsFundingPoolSubmit from "./components/Buttons/Submit";
 import CreateRewardsFundPool from "./components/FundPool";
 
 const CreateRewardsFunding = () => {
+  const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
+  const { address } = useAccount();
+  const { rewards, setCancel } = useFundRewardsStore(state => state);
+  const deployRewardsData = useDeployRewardsStore(state => state.deployRewardsData);
+
+  const fundPool = async () => {
+    const populatedRewards =
+      rewards.length > 0 &&
+      rewards
+        .filter(reward => reward.amount !== "")
+        .map(reward => ({
+          ...reward,
+          currentUserAddress: address,
+          tokenAddress: reward.address,
+          isErc20: reward.address.startsWith("0x"),
+          rewardsContractAddress: deployRewardsData.address,
+          amount: ethers.utils.parseUnits(reward.amount, 18).toString(),
+        }));
+    await sendFundsToRewardsModuleV3({ rewards: populatedRewards });
+  };
+
+  const onCancelFundingPool = () => {
+    setCancel(true);
+  };
+
   return (
     <div>
       <div className="flex flex-col gap-2">
@@ -25,7 +55,7 @@ const CreateRewardsFunding = () => {
         <CreateRewardsFundPool />
       </div>
       <div className="mt-10">
-        <CreateRewardsFundingPoolSubmit onClick={() => console.log("test")} />
+        <CreateRewardsFundingPoolSubmit onClick={fundPool} onCancel={onCancelFundingPool} />
       </div>
     </div>
   );

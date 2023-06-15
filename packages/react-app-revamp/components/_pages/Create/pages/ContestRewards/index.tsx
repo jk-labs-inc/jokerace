@@ -3,7 +3,8 @@ import CreateRewardsPool from "@components/_pages/Rewards/components/Create";
 import CreateRewardsFunding from "@components/_pages/Rewards/components/Fund";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
-import { useEffect, useState } from "react";
+import { useFundRewardsStore } from "@hooks/useFundRewards/store";
+import { useEffect, useMemo, useState } from "react";
 
 const CreateContestRewards = () => {
   const {
@@ -12,18 +13,21 @@ const CreateContestRewards = () => {
     reset: clearContestData,
   } = useDeployContestStore(state => state);
   const {
+    displayCreatePool,
     isSuccess: isRewardsModuleDeployed,
     cancel: cancelCreateRewardsPool,
     reset: clearRewardsData,
   } = useDeployRewardsStore(state => state);
 
+  const { cancel: cancelFundingPool } = useFundRewardsStore(state => state);
+
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    if (!cancelCreateRewardsPool) return;
+    if (!cancelCreateRewardsPool && !cancelFundingPool) return;
 
     setIsOpen(false);
-  }, [cancelCreateRewardsPool]);
+  }, [cancelCreateRewardsPool, cancelFundingPool]);
 
   useEffect(() => {
     if (!isContestDeployed && !isRewardsModuleDeployed) return;
@@ -40,6 +44,10 @@ const CreateContestRewards = () => {
     clearRewardsData();
   };
 
+  const handleModalStep = useMemo(() => {
+    if (isRewardsModuleDeployed) return;
+  }, [isRewardsModuleDeployed]);
+
   return (
     <DialogModalV3
       isOpen={isOpen}
@@ -49,7 +57,7 @@ const CreateContestRewards = () => {
       className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
     >
       <div className="md:pl-[100px]">
-        <div className="pt-[50px]">{isRewardsModuleDeployed ? <CreateRewardsFunding /> : <CreateRewardsPool />}</div>
+        <div className="pt-[50px]">{displayCreatePool ? <CreateRewardsPool /> : <CreateRewardsFunding />}</div>
       </div>
     </DialogModalV3>
   );

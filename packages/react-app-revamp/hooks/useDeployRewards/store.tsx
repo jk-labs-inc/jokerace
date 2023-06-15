@@ -1,8 +1,6 @@
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
-type StatusType = "idle" | "success" | "error" | "inProgress";
-
 interface DeployRewardsState {
   ranks: number[];
   shares: number[];
@@ -14,9 +12,14 @@ interface DeployRewardsState {
     hash: string;
     address: string;
   };
-  statusMessage: string;
-  statusType: StatusType;
-  setStatus: (message: string, type: StatusType) => void;
+  validationError: {
+    uniqueRanks?: string;
+    zeroProportion?: string;
+    invalidTotal?: string;
+    duplicateRank?: string;
+  };
+  displayCreatePool: boolean;
+  setValidationError: (validationError: {}) => void;
   setDeployRewardsData: (hash: string, address: string) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
@@ -24,6 +27,7 @@ interface DeployRewardsState {
   setCancel: (cancel: boolean) => void;
   setRanks: (rank: number[]) => void;
   setShares: (share: number[]) => void;
+  setDisplayCreatePool: (displayCreatePool: boolean) => void;
   reset: () => void;
 }
 
@@ -35,9 +39,14 @@ export const createDeployRewardsStore = () =>
       isLoading: false,
       isSuccess: false,
       isError: false,
-      statusMessage: "",
-      statusType: "idle" as StatusType,
       cancel: false,
+      validationError: {
+        uniqueRanks: undefined,
+        zeroProportion: undefined,
+        invalidTotal: undefined,
+        duplicateRank: undefined,
+      },
+      displayCreatePool: true,
       deployRewardsData: {
         hash: "",
         address: "",
@@ -46,7 +55,7 @@ export const createDeployRewardsStore = () =>
 
     return {
       ...initialState,
-      setStatus: (message, type) => set({ statusMessage: message, statusType: type }),
+      setValidationError: error => set({ validationError: error }),
       setIsLoading: isLoading => set({ isLoading }),
       setIsSuccess: isSuccess => set({ isSuccess }),
       setIsError: isError => set({ isError }),
@@ -54,6 +63,7 @@ export const createDeployRewardsStore = () =>
       setDeployRewardsData: (hash, address) => set(state => ({ deployRewardsData: { hash, address } })),
       setRanks: ranks => set({ ranks }),
       setShares: shares => set({ shares }),
+      setDisplayCreatePool: displayCreatePool => set({ displayCreatePool }),
       reset: () => set({ ...initialState }),
     };
   });
