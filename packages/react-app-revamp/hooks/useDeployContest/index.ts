@@ -30,6 +30,7 @@ export function useDeployContest() {
     maxSubmissions,
     downvote,
     setDeployContestData,
+    setIsLoading,
     setIsSuccess,
   } = useDeployContestStore(state => state);
   const { chain } = useNetwork();
@@ -78,6 +79,8 @@ export function useDeployContest() {
         contestParameters,
       );
 
+      setIsLoading(true);
+
       // Toast for the contract deployment transaction
       toast.promise(contractContest.deployTransaction.wait(), {
         pending: "contest deployment in progress..",
@@ -87,7 +90,6 @@ export function useDeployContest() {
 
       // Wait for transaction to be executed
       await contractContest.deployTransaction.wait();
-      setIsSuccess(true);
 
       const receiptDeployContest = await waitForTransaction({
         chainId: chain?.id,
@@ -100,8 +102,6 @@ export function useDeployContest() {
         receiptDeployContest.transactionHash,
         contractContest.address,
       );
-      stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setIsSuccess(true);
 
       const contestData = {
         title: title,
@@ -119,9 +119,15 @@ export function useDeployContest() {
       };
 
       await indexContest(contestData, votingMerkle, submissionMerkle);
+
+      setIsSuccess(true);
+      setIsLoading(false);
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setIsSuccess(true);
     } catch (error) {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setError(error as CustomError);
+      setIsLoading(false);
       console.error("Error: ", error); // Log all errors
     }
   }

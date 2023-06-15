@@ -1,6 +1,8 @@
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
+type StatusType = "idle" | "success" | "error" | "inProgress";
+
 interface DeployRewardsState {
   ranks: number[];
   shares: number[];
@@ -12,6 +14,9 @@ interface DeployRewardsState {
     hash: string;
     address: string;
   };
+  statusMessage: string;
+  statusType: StatusType;
+  setStatus: (message: string, type: StatusType) => void;
   setDeployRewardsData: (hash: string, address: string) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
@@ -30,6 +35,8 @@ export const createDeployRewardsStore = () =>
       isLoading: false,
       isSuccess: false,
       isError: false,
+      statusMessage: "",
+      statusType: "idle" as StatusType,
       cancel: false,
       deployRewardsData: {
         hash: "",
@@ -39,6 +46,7 @@ export const createDeployRewardsStore = () =>
 
     return {
       ...initialState,
+      setStatus: (message, type) => set({ statusMessage: message, statusType: type }),
       setIsLoading: isLoading => set({ isLoading }),
       setIsSuccess: isSuccess => set({ isSuccess }),
       setIsError: isError => set({ isError }),

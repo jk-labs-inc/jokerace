@@ -6,7 +6,7 @@ const CreateRewardsFunding = () => {
     <div>
       <div className="flex flex-col gap-2">
         <p className="text-[24px] font-bold text-primary-10">last step! let’s fund this rewards pool 💸</p>
-        <div className="pl-2 text-[16px] flex flex-col gap-2">
+        <div className="text-[16px] flex flex-col gap-2">
           <p>if you’re ready, let’s fund the rewards pool below.</p>
           <p>
             likewise, <span className="italic">literally anyone</span> (including you!) can always fund it later by{" "}

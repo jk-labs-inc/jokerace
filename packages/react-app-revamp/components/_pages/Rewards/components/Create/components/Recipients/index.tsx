@@ -68,7 +68,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   const totalProportion = recipients.reduce((sum, recipient) => sum + recipient.proportion, 0);
 
   return (
-    <div className="w-[370px]">
+    <div className="md:w-[370px]">
       <div className="flex justify-end">
         <ButtonV3 onClick={handleAddRecipient} color="bg-primary-10">
           + Add recipient

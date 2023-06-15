@@ -75,7 +75,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="dark"
+            theme="colored"
             bodyClassName={() => "text-[16px] flex items-center"}
           />
         </RainbowKitProvider>

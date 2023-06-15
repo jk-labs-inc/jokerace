@@ -98,7 +98,7 @@ const CreateContestParams = () => {
             can players downvote—that is, vote <span className="italic">against</span> a submission?
           </p>
           <div className="flex flex-col gap-2">
-            <div className="flex w-full md:w-[490px]  border border-primary-10 rounded-[25px] overflow-hidden text-[20px] md:text-[24px]">
+            <div className="flex w-full md:w-[380px]  border border-primary-10 rounded-[25px] overflow-hidden text-[20px] md:text-[18px]">
               <div
                 className={`w-full px-4 py-1 cursor-pointer ${
                   isEnabled ? "bg-primary-10 text-true-black font-bold" : "bg-true-black text-primary-10"

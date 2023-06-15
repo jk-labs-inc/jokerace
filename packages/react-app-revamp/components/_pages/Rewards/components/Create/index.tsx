@@ -4,7 +4,7 @@ import CreateRewardsPoolSubmitButton from "./components/Buttons/Submit";
 import CreateRewardsPoolRecipients from "./components/Recipients";
 
 const CreateRewardsPool = () => {
-  const { setCancel } = useDeployRewardsStore(state => ({ setCancel: state.setCancel }));
+  const { setCancel } = useDeployRewardsStore(state => state);
 
   const { deployRewardsPool } = useDeployRewardsPool();
   const onSubmitRewardsPool = () => {
@@ -23,7 +23,7 @@ const CreateRewardsPool = () => {
           <p className="-mt-[5px]">👉👈🤑</p>
         </div>
 
-        <div className="pl-2 flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <p className="text-[16px]">
             a rewards pool incentivizes players, compensates winners, and is <br /> open for{" "}
             <span className="italic">anyone</span> to fund.

@@ -36,7 +36,7 @@ const CreateRewardsPoolSubmit: FC<CreateRewardsPoolSubmitProps> = ({ onClick, on
           create pool!
         </ButtonV3>
 
-        <div className="hidden lg:flex items-center gap-[2px] cursor-pointer group">
+        <div className="flex items-center gap-[2px] cursor-pointer group">
           <p className="text-[16px]">i’ll worry about this later</p>
         </div>
       </div>

@@ -11,8 +11,8 @@ interface ButtonV3Props {
 
 const sizes = {
   small: "w-24",
-  default: "w-[120px]",
-  large: "w-40",
+  default: "w-[120px] h-[32px]",
+  large: "w-40 h-[40px]",
 };
 
 const ButtonV3: React.FC<ButtonV3Props> = ({ color = "yellow", size = "default", onClick, children }) => {
@@ -20,7 +20,7 @@ const ButtonV3: React.FC<ButtonV3Props> = ({ color = "yellow", size = "default",
 
   return (
     <button
-      className={`${color} ${sizeClasses} text-[16px] tracking-tighter p-2 rounded-[10px] text-true-black font-bold`}
+      className={`${color} ${sizeClasses} text-[16px] tracking-tighter rounded-[10px] text-true-black font-bold`}
       onClick={onClick}
     >
       {children}

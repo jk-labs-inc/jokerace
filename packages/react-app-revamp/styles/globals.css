@@ -36,8 +36,10 @@
 
 /* Edit toastify styles */
 
-.Toastify__toast-container--top-right {
-  width: 450px !important;
+.Toastify__toast-theme--colored.Toastify__toast--default {
+  background-color: #28282c !important;
+  color: #e5e5e5 !important;
+  box-shadow: 0 -2px 4px #28282c, 0 2px 4px #28282c, 0 1px 2px #28282c !important;
 }
 
 .Toastify__toast--error {
@@ -50,6 +52,10 @@
 
 .Toastify__toast--info {
   box-shadow: 0 -2px 4px #ffe25b, 0 2px 4px #ffe25b, 0 1px 2px #ffe25b !important;
+}
+
+.Toastify__close-button {
+  color: black !important;
 }
 
 /* Custom bullet points */
@@ -109,9 +115,13 @@ input[type="number"]::-webkit-outer-spin-button {
 
   :root {
     accent-color: var(--brand);
+    --toastify-color-success: #78ffc6 !important;
+    --toastify-color-error: #ff78a9 !important;
     --toastify-icon-color-success: #78ffc6 !important;
     --toastify-icon-color-error: #ff78a9 !important;
     --toastify-icon-color-info: #ffe25b !important;
+    --toastify-text-color-success: black !important;
+    --toastify-text-color-error: black !important;
   }
   :focus-visible {
     outline-color: var(--brand);
@@ -217,7 +227,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
   .rewards-funding-grid {
     @apply grid;
-    grid-template-columns: 1fr 1.5fr 1fr;
+    grid-template-columns: 0.1fr 0.7fr 1.5fr 1fr;
   }
 
   .dropdownBorder {

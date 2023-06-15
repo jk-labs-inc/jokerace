@@ -55,12 +55,6 @@ const DialogModalV3: FC<DialogModalProps> = ({
                 title="Close this"
                 className="absolute z-10 top-0 inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11"
               >
-                <span className="flex items-center 2xs:hidden">
-                  <ArrowLeftIcon aria-hidden="true" className="w-6" />
-                  <span aria-hidden="true" className="px-1ex text-3xs">
-                    Back
-                  </span>
-                </span>
                 <Image src="/modal/modal_close.svg" width={39} height={33} alt="close" />
                 <span className="sr-only">Close modal</span>
               </button>
