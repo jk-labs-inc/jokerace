@@ -56,7 +56,7 @@ const CreateContestRewards = () => {
       title="rewards"
       className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
     >
-      <div className="md:pl-[100px]">
+      <div className="md:pl-[50px] lg:pl-[100px]">
         <div className="pt-[50px]">{displayCreatePool ? <CreateRewardsPool /> : <CreateRewardsFunding />}</div>
       </div>
     </DialogModalV3>

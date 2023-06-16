@@ -25,7 +25,7 @@ const CreateContestDeploying = () => {
   return (
     <div className="flex flex-col gap-4 mt-12 lg:mt-[100px] animate-swingInLeft">
       <p className="text-[24px] font-bold text-primary-10 uppercase font-sabo">
-        You reached the end, congratulations! 🥳
+        congratulations, you reached the end! 🥳
       </p>
       <hr className="w-[60px] border-neutral-10" />
       <p className="text-[18px] text-neutral-11">while we deploy your contest, kindly wait a moment.</p>

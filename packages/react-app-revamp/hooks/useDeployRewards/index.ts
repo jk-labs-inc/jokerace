@@ -78,7 +78,6 @@ export function useDeployRewardsPool() {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setIsSuccess(true);
       setIsSuccess(true);
-      setIsLoading(false);
     } catch (error) {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setIsSuccess(false);
