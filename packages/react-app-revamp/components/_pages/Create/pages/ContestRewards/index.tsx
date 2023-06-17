@@ -47,10 +47,6 @@ const CreateContestRewards = () => {
     clearRewardsData();
   };
 
-  const handleModalStep = useMemo(() => {
-    if (isRewardsModuleDeployed) return;
-  }, [isRewardsModuleDeployed]);
-
   return (
     <DialogModalV3
       isOpen={isOpen}
