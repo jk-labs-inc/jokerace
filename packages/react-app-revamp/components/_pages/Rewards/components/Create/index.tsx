@@ -1,14 +1,46 @@
+import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { useDeployRewardsPool } from "@hooks/useDeployRewards";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
+import { useRef } from "react";
+import { toast } from "react-toastify";
 import CreateRewardsPoolSubmitButton from "./components/Buttons/Submit";
 import CreateRewardsPoolRecipients from "./components/Recipients";
 
 const CreateRewardsPool = () => {
   const { setCancel } = useDeployRewardsStore(state => state);
+  const toastIdRef = useRef<string | number | null>(null);
 
   const { deployRewardsPool } = useDeployRewardsPool();
   const onSubmitRewardsPool = () => {
-    deployRewardsPool();
+    const promises = deployRewardsPool();
+
+    const statusMessages: ToastMessage[] = [
+      {
+        message: "1/2 creating pool...",
+        successMessage: "1/2 pool created!",
+        status: "pending",
+      },
+      {
+        message: "2/2 connecting pool to contest...",
+        successMessage: "2/2 pool connected!",
+        status: "pending",
+      },
+    ];
+
+    toastIdRef.current = toast(
+      <MultiStepToast
+        messages={statusMessages}
+        promises={promises}
+        toastIdRef={toastIdRef}
+        completionMessage="your pool has been deployed!"
+      />,
+      {
+        position: "bottom-center",
+        bodyClassName: "text-[16px] font-bold",
+        autoClose: false,
+        icon: false,
+      },
+    );
   };
 
   const onCancelCreateRewardsPool = () => {
@@ -43,6 +75,11 @@ const CreateRewardsPool = () => {
 
       <div className="mt-6">
         <CreateRewardsPoolSubmitButton onClick={onSubmitRewardsPool} onCancel={onCancelCreateRewardsPool} />
+      </div>
+      <div className="mt-24 text-neutral-11 text-[12px]">
+        note: you’ll have the option to withdraw all funds from the pool, and in case of ties, funds <br />
+        will be reverted to you to distribute manually. please be aware of any obligations you might <br /> face for
+        receiving funds.
       </div>
     </div>
   );

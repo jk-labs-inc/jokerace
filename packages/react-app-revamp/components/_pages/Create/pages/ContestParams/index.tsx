@@ -1,7 +1,9 @@
+import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { useMedia } from "react-use";
 import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
@@ -14,7 +16,7 @@ const CreateContestParams = () => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const isMobile = useMedia("(max-width: 768px)");
-
+  const toastIdRef = useRef<string | number | null>(null);
   const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
     useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
@@ -46,7 +48,7 @@ const CreateContestParams = () => {
     setMaxSubmissions(parseInt(value));
   };
 
-  const handleDeployContest = () => {
+  const handleDeployContest = async () => {
     if (!isConnected) {
       try {
         openConnectModal?.();
@@ -55,7 +57,31 @@ const CreateContestParams = () => {
         return; // If connection fails, don't proceed with deploying contest
       }
     }
-    deployContest();
+
+    const promiseFn = () => deployContest();
+
+    const statusMessages: ToastMessage[] = [
+      {
+        message: "contest is deploying...",
+        successMessage: "contest has been deployed!",
+        status: "pending",
+      },
+    ];
+
+    toastIdRef.current = toast(
+      <MultiStepToast
+        messages={statusMessages}
+        promises={[promiseFn]}
+        toastIdRef={toastIdRef}
+        completionMessage="Your contest has been deployed!"
+      />,
+      {
+        position: "bottom-center",
+        bodyClassName: "text-[16px] font-bold",
+        autoClose: false,
+        icon: false,
+      },
+    );
   };
 
   return (

@@ -39,7 +39,9 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
     <div className="flex gap-4 items-start mb-5">
       <div className={`flex flex-col items-center gap-2`}>
         <ButtonV3
-          color={`bg-gradient-next rounded-[10px] font-bold ${shake ? "animate-shakeTop" : ""} text-true-black`}
+          color={`bg-gradient-next rounded-[10px] font-bold ${
+            shake ? "animate-shakeTop" : ""
+          } text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
           size="large"
           onClick={handleClick}
         >

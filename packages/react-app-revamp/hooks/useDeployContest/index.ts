@@ -81,15 +81,10 @@ export function useDeployContest() {
 
       setIsLoading(true);
 
-      // Toast for the contract deployment transaction
-      toast.promise(contractContest.deployTransaction.wait(), {
-        pending: "contest deployment in progress..",
-        success: "congrats! your contest was successfully deployed!",
-        error: "Error deploying contest",
-      });
+      const transactionPromise = contractContest.deployTransaction.wait();
 
       // Wait for transaction to be executed
-      await contractContest.deployTransaction.wait();
+      await transactionPromise;
 
       const receiptDeployContest = await waitForTransaction({
         chainId: chain?.id,

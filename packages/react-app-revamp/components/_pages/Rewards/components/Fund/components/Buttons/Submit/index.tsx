@@ -47,12 +47,11 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
   }, [shake]);
 
   useEffect(() => {
-    // Define your keydown handler
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        event.stopPropagation(); // Stop event bubbling
-        handleClick(event as any); // Call your handleClick function
+        event.stopPropagation();
+        handleClick(event as any);
       }
     };
 

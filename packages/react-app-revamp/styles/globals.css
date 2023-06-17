@@ -37,21 +37,10 @@
 /* Edit toastify styles */
 
 .Toastify__toast-theme--colored.Toastify__toast--default {
-  background-color: #28282c !important;
+  background-color: white !important;
   color: #e5e5e5 !important;
+  border-radius: 10px !important;
   box-shadow: 0 -2px 4px #28282c, 0 2px 4px #28282c, 0 1px 2px #28282c !important;
-}
-
-.Toastify__toast--error {
-  box-shadow: 0 -2px 4px #ff78a9, 0 2px 4px #ff78a9, 0 1px 2px #ff78a9 !important;
-}
-
-.Toastify__toast--success {
-  box-shadow: 0 -2px 4px #78ffc6, 0 2px 4px #78ffc6, 0 1px 2px #78ffc6 !important;
-}
-
-.Toastify__toast--info {
-  box-shadow: 0 -2px 4px #ffe25b, 0 2px 4px #ffe25b, 0 1px 2px #ffe25b !important;
 }
 
 .Toastify__close-button {
@@ -122,6 +111,8 @@ input[type="number"]::-webkit-outer-spin-button {
     --toastify-icon-color-info: #ffe25b !important;
     --toastify-text-color-success: black !important;
     --toastify-text-color-error: black !important;
+    --toastify-toast-width: 360px !important;
+    --toastify-toast-min-height: 80px !important;
   }
   :focus-visible {
     outline-color: var(--brand);

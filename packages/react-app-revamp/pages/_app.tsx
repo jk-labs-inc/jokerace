@@ -67,7 +67,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <RainbowKitProvider chains={chains} theme={jokeraceTheme}>
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer
-            position="top-right"
+            position="bottom-center"
             autoClose={4000}
             hideProgressBar
             closeOnClick

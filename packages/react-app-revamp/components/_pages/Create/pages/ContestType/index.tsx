@@ -1,6 +1,5 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import CreateNextButton from "../../components/Buttons/Next";
 import CreateDropdown, { Option } from "../../components/Dropdown";
 import ErrorMessage from "../../components/Error";

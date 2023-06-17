@@ -3,8 +3,7 @@ import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModu
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { writeContract } from "@wagmi/core";
-import { ContractFactory } from "ethers";
-import { toast } from "react-toastify";
+import { Contract, ContractFactory } from "ethers";
 import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
 import { useDeployRewardsStore } from "./store";
@@ -17,74 +16,70 @@ export function useDeployRewardsPool() {
   const { chain } = useNetwork();
   const { refetch } = useSigner();
 
-  async function deployRewardsPool() {
-    try {
-      stateContestDeployment.setIsLoading(true);
-      stateContestDeployment.setIsSuccess(false);
-      stateContestDeployment.setError(null);
+  function deployRewardsPool() {
+    setIsLoading(true);
+    setDisplayCreatePool(false);
 
+    let contractRewardsModule: Contract | null = null;
+
+    const rewardsModuleDeployment = async () => {
       const signer = await refetch();
-      setIsLoading(true);
-      setDisplayCreatePool(false);
       const factoryCreateRewardsModule = new ContractFactory(
         RewardsModuleContract.abi,
         RewardsModuleContract.bytecode,
         //@ts-ignore
         signer.data,
       );
-
-      // Deploy the rewards module
-      const contractRewardsModule = await factoryCreateRewardsModule.deploy(
-        ranks,
-        shares,
-        deployContestData.address,
-        true,
-      );
-
-      // Toast for the first transaction
-      toast.promise(contractRewardsModule.deployTransaction.wait(), {
-        pending: "Creating rewards pool 1/2...",
-        success: "Rewards pool created!",
-        error: "Error deploying rewards pool",
-      });
-
-      // Wait for transaction to be executed
+      contractRewardsModule = await factoryCreateRewardsModule.deploy(ranks, shares, deployContestData.address, true);
       await contractRewardsModule.deployTransaction.wait();
 
+      setDeployRewardsData(contractRewardsModule.deployTransaction.hash, contractRewardsModule.address);
+
+      return contractRewardsModule;
+    };
+
+    const rewardsModuleAttachment = async () => {
       const contractConfig = {
         addressOrName: deployContestData.address,
         contractInterface: DeployedContestContract.abi,
       };
-
-      // Define the second promise for attaching the rewards module to the contest
       const txSetRewardsModule = await writeContract({
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
-        args: [contractRewardsModule.address],
+        args: [contractRewardsModule!.address],
       });
-
-      // Toast for the second transaction
-      toast.promise(txSetRewardsModule.wait(), {
-        pending: "Attaching pool to contest 2/2",
-        success: "congrats! your pool was successfully deployed!",
-        error: "Error attaching pool to contest",
-      });
-
-      // Wait for the second transaction to complete
       await txSetRewardsModule.wait();
 
-      setDeployRewardsData(contractRewardsModule.deployTransaction.hash, contractRewardsModule.address);
-
-      stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setIsSuccess(true);
+      setIsLoading(false);
       setIsSuccess(true);
-    } catch (error) {
-      stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setIsSuccess(false);
-      stateContestDeployment.setError(error as CustomError);
-      setIsError(true);
-      setDisplayCreatePool(true);
-    }
+    };
+
+    return [
+      async () => {
+        try {
+          return await rewardsModuleDeployment();
+        } catch (error) {
+          stateContestDeployment.setIsLoading(false);
+          stateContestDeployment.setIsSuccess(false);
+          stateContestDeployment.setError(error as CustomError);
+          setIsError(true);
+          setDisplayCreatePool(true);
+          throw error;
+        }
+      },
+      async () => {
+        try {
+          return await rewardsModuleAttachment();
+        } catch (error) {
+          stateContestDeployment.setIsLoading(false);
+          stateContestDeployment.setIsSuccess(false);
+          stateContestDeployment.setError(error as CustomError);
+          setIsError(true);
+          setDisplayCreatePool(true);
+          throw error;
+        }
+      },
+    ];
   }
 
   return {

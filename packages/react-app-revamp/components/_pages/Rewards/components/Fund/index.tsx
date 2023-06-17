@@ -1,7 +1,10 @@
+import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { ethers } from "ethers";
+import { useRef } from "react";
+import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
 import CreateRewardsFundingPoolSubmit from "./components/Buttons/Submit";
 import CreateRewardsFundPool from "./components/FundPool";
@@ -11,21 +14,50 @@ const CreateRewardsFunding = () => {
   const { address } = useAccount();
   const { rewards, setCancel } = useFundRewardsStore(state => state);
   const deployRewardsData = useDeployRewardsStore(state => state.deployRewardsData);
+  const toastIdRef = useRef<string | number | null>(null);
 
   const fundPool = async () => {
     const populatedRewards =
-      rewards.length > 0 &&
-      rewards
-        .filter(reward => reward.amount !== "")
-        .map(reward => ({
-          ...reward,
-          currentUserAddress: address,
-          tokenAddress: reward.address,
-          isErc20: reward.address.startsWith("0x"),
-          rewardsContractAddress: deployRewardsData.address,
-          amount: ethers.utils.parseUnits(reward.amount, 18).toString(),
-        }));
-    await sendFundsToRewardsModuleV3({ rewards: populatedRewards });
+      rewards.length > 0
+        ? rewards
+            .filter(reward => reward.amount !== "")
+            .map(reward => ({
+              ...reward,
+              currentUserAddress: address,
+              tokenAddress: reward.address,
+              isErc20: reward.address.startsWith("0x"),
+              rewardsContractAddress: deployRewardsData.address,
+              amount: ethers.utils.parseUnits(reward.amount, 18).toString(),
+            }))
+        : [];
+
+    const promises = await sendFundsToRewardsModuleV3({ rewards: populatedRewards });
+
+    // Don't proceed if promises is empty
+    if (!promises || promises.length === 0) {
+      return;
+    }
+
+    const statusMessages: ToastMessage[] = populatedRewards.map((reward, index) => ({
+      message: `Funding reward ${index + 1}/${populatedRewards.length}...`,
+      successMessage: `Funded reward ${index + 1}!`,
+      status: "pending" as "pending",
+    }));
+
+    toastIdRef.current = toast(
+      <MultiStepToast
+        messages={statusMessages}
+        promises={promises}
+        toastIdRef={toastIdRef}
+        completionMessage="All rewards have been funded!"
+      />,
+      {
+        position: "bottom-center",
+        bodyClassName: "text-[16px] font-bold",
+        autoClose: false,
+        icon: false,
+      },
+    );
   };
 
   const onCancelFundingPool = () => {

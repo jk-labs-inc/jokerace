@@ -107,39 +107,30 @@ export function useFundRewardsModule() {
     }
   }
 
-  const sendFundsToRewardsModuleV3 = async ({ rewards }: any) => {
-    setIsLoading(true);
-    setIsSuccess(false);
-    setError(null);
-    setTransactionData(null);
-
-    const results = [];
-
-    for (let i = 0; i < rewards.length; i++) {
-      try {
-        const resultPromise = sendFundsToSingleReward(rewards[i]);
-        const result = await toast.promise(resultPromise, {
-          pending: `Funding pool ${i + 1}/${rewards.length}...`,
-          success: `Funds sent successfully!`,
-          error: `Something went wrong while sending funds for reward ${i + 1}.`,
-        });
-        results.push(result);
-      } catch (e) {
-        const customError = e as CustomError;
-        const message = customError.message || `Something went wrong while sending funds for reward ${i + 1}.`;
-        toast.error(message);
-        setError({
-          code: customError.code,
-          message,
-        });
-        setIsLoading(false);
-        return; // Stop sending if an error occurs
-      }
+  const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
+    if (rewards.length > 4) {
+      toast.warning("number of rewards cannot be more than 4 in one take.");
+      return;
     }
-
-    setTransactionData(results);
-    setIsLoading(false);
-    setIsSuccess(true);
+    const promises = rewards.map((reward: any) => {
+      return () =>
+        sendFundsToSingleReward(reward)
+          .then(result => {
+            setTransactionData((prevData: any) => [...prevData, result]);
+            setIsSuccess(true);
+          })
+          .catch(e => {
+            const customError = e as CustomError;
+            const message = customError.message || `Something went wrong while sending funds for reward ${reward}.`;
+            setError({
+              code: customError.code,
+              message,
+            });
+            setIsLoading(false);
+            throw e; // This will stop the execution of the promises in case of error
+          });
+    });
+    return promises;
   };
 
   const sendFundsToSingleReward = async (args: {

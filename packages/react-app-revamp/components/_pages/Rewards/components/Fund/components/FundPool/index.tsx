@@ -4,7 +4,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Reward, useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { getAddress } from "ethers/lib/utils";
 import Image from "next/image";
-import { ChangeEvent, Fragment, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { useMedia } from "react-use";
 
 const CreateRewardsFundPool = () => {
@@ -141,7 +141,7 @@ const CreateRewardsFundPool = () => {
       ) : (
         <>
           <div className="rewards-funding-grid gap-4 text-[16px] group items-center mb-[15px]">
-            <div className="font-bold text-neutral-11 uppercase">#</div>
+            <div className="font-bold text-neutral-11 uppercase font-sabo">#</div>
             <div className="font-bold text-neutral-11 uppercase">chain</div>
             <div className="font-bold text-neutral-11 uppercase -ml-[5px]">token address</div>
             <div className="font-bold text-neutral-11 uppercase -ml-[10px]">number of tokens</div>
