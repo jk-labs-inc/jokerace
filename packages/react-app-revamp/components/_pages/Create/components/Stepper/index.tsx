@@ -1,7 +1,7 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { FC, ReactElement } from "react";
-import { StateKey, validateStep, validationFunctions } from "../../utils/validation";
+import CreateContestDeploying from "../../pages/ContestDeploying";
+import { validateStep } from "../../utils/validation";
 
 interface Step {
   title: string;
@@ -19,6 +19,8 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
     furthestStep,
     setFurthestStep,
     errors,
+    isLoading,
+    isSuccess,
     ...state
   } = useDeployContestStore(state => state);
 

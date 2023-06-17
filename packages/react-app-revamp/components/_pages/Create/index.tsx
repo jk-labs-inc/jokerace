@@ -1,5 +1,4 @@
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
-import LayoutContests from "@layouts/LayoutContests";
 import Stepper from "./components/Stepper";
 import CreateContestParams from "./pages/ContestParams";
 import ContestPlay from "./pages/ContestPlay";

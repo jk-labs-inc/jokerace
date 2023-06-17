@@ -166,8 +166,8 @@ module.exports = {
         6: "#34343a",
         7: "#3e3e44",
         8: "#504f57",
-        9: "#6A6A6A",
-        10: "#7e7d86",
+        9: "#706f78",
+        10: "#6A6A6A",
         11: "#E5E5E5",
         12: "#ededef",
       },
@@ -239,6 +239,7 @@ module.exports = {
             transform: "rotateY(0)",
           },
         },
+
         appear: {
           from: {
             opacity: "0",
@@ -295,9 +296,10 @@ module.exports = {
         "card-rotation": "card-rotation 2000ms linear infinite",
         appear: "appear 300ms ease-in forwards",
         fadeIn: "fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both",
+        fadeInInfinite: "fadeIn cubic-bezier(0.39, 0.575, 0.565, 1) infinite both",
         fadeInLanding: "fadeIn 3s cubic-bezier(0.39, 0.575, 0.565, 1) both",
         fadeOut: "fadeOut 2s ease-out both",
-        blinkShadow: "blink 1.5s ease-in-out infinite",
+        blinkShadow: "blink 1s ease-in-out infinite",
         shakeTop: "shakeTop 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both",
         swingInLeft: "swingInLeft 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both",
       },

@@ -1,4 +1,5 @@
 import Button from "@components/UI/Button";
+import ButtonV3 from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
@@ -37,15 +38,13 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
   return (
     <div className="flex gap-4 items-start pb-5 md:pb-0">
       <div className={`flex flex-col items-center gap-2`}>
-        <Button
-          className={`bg-gradient-create rounded-[10px] w-[200px] h-[52px] font-bold ${
-            shake ? "animate-shakeTop" : ""
-          }  text-true-black`}
-          scale="header"
+        <ButtonV3
+          color={`bg-gradient-create rounded-[10px] font-bold ${shake ? "animate-shakeTop" : ""}  text-true-black`}
+          size="large"
           onClick={handleClick}
         >
           create contest!
-        </Button>
+        </ButtonV3>
 
         {step > 1 && (
           <div
@@ -59,7 +58,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
           </div>
         )}
       </div>
-      <div className="hidden lg:flex items-center mt-[15px] gap-[2px]">
+      <div className="hidden lg:flex items-center mt-[5px] gap-[2px]">
         <p className="text-[16px]">
           press <span className="font-bold capitalize">enter</span>
         </p>

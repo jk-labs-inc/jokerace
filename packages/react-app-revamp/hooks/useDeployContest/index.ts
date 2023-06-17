@@ -6,6 +6,8 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
+import { toast } from "react-toastify";
+import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
@@ -28,6 +30,8 @@ export function useDeployContest() {
     maxSubmissions,
     downvote,
     setDeployContestData,
+    setIsLoading,
+    setIsSuccess,
   } = useDeployContestStore(state => state);
   const { chain } = useNetwork();
   const { refetch } = useSigner();
@@ -39,6 +43,7 @@ export function useDeployContest() {
 
     try {
       const signer = await refetch();
+
       const factoryCreateContest = new ContractFactory(
         DeployedContestContract.abi,
         DeployedContestContract.bytecode,
@@ -74,14 +79,24 @@ export function useDeployContest() {
         contestParameters,
       );
 
-      await contractContest.deployed();
+      setIsLoading(true);
+
+      const transactionPromise = contractContest.deployTransaction.wait();
+
+      // Wait for transaction to be executed
+      await transactionPromise;
 
       const receiptDeployContest = await waitForTransaction({
         chainId: chain?.id,
         hash: contractContest.deployTransaction.hash,
       });
 
-      setDeployContestData(receiptDeployContest.transactionHash, contractContest.address);
+      setDeployContestData(
+        chain?.name ?? "",
+        chain?.id ?? 0,
+        receiptDeployContest.transactionHash,
+        contractContest.address,
+      );
 
       const contestData = {
         title: title,
@@ -99,7 +114,15 @@ export function useDeployContest() {
       };
 
       await indexContest(contestData, votingMerkle, submissionMerkle);
+
+      setIsSuccess(true);
+      setIsLoading(false);
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setIsSuccess(true);
     } catch (error) {
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setError(error as CustomError);
+      setIsLoading(false);
       console.error("Error: ", error); // Log all errors
     }
   }

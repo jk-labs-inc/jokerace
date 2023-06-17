@@ -22,6 +22,8 @@ export type SubmissionMerkle = {
 
 export interface DeployContestState {
   deployContestData: {
+    chain: string;
+    chainId: number;
     hash: string;
     address: string;
   };
@@ -48,7 +50,7 @@ export interface DeployContestState {
   furthestStep: number;
   submissionTab: number;
 
-  setDeployContestData: (hash: string, address: string) => void;
+  setDeployContestData: (chain: string, chainId: number, hash: string, address: string) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
@@ -71,18 +73,21 @@ export interface DeployContestState {
   setStep: (step: number) => void;
   setFurthestStep: (furthestStep: number) => void;
   setSubmissionTab: (tab: number) => void;
+  reset: () => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
-  const submissionOpen: Date = new Date();
+  const initialSubmissionOpen: Date = new Date();
 
-  const votingOpen: Date = new Date();
-  votingOpen.setDate(votingOpen.getDate() + 7);
+  const initialVotingOpen: Date = new Date();
+  initialVotingOpen.setDate(initialVotingOpen.getDate() + 7);
 
-  const votingClose: Date = new Date();
-  votingClose.setDate(votingClose.getDate() + 14);
+  const initialVotingClose: Date = new Date();
+  initialVotingClose.setDate(initialVotingClose.getDate() + 14);
 
-  return {
+  const initialState = {
     deployContestData: {
+      chain: "",
+      chainId: 0,
       hash: "",
       address: "",
     },
@@ -90,9 +95,9 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     title: "",
     summary: "",
     prompt: "",
-    submissionOpen: submissionOpen,
-    votingOpen: votingOpen,
-    votingClose: votingClose,
+    submissionOpen: initialSubmissionOpen,
+    votingOpen: initialVotingOpen,
+    votingClose: initialVotingClose,
     votingRequirements: "",
     submissionRequirements: "anyone",
     votingAllowlistFields: Array(15).fill(EMPTY_FIELDS_VOTING),
@@ -108,8 +113,13 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     step: 0,
     furthestStep: 0,
     submissionTab: 0,
+  };
 
-    setDeployContestData: (hash: string, address: string) => set({ deployContestData: { hash, address } }),
+  return {
+    ...initialState,
+
+    setDeployContestData: (chain: string, chainId: number, hash: string, address: string) =>
+      set({ deployContestData: { chain, chainId, hash, address } }),
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),
@@ -118,9 +128,9 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
     setVotingClose: (votingClose: Date) => set({ votingClose }),
     setVotingRequirements: (votingRequirements: string) => set({ votingRequirements }),
+    setSubmissionRequirements: (submissionRequirements: string) => set({ submissionRequirements }),
     setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => set({ votingAllowlistFields }),
     setVotingMerkle: (votingMerkle: VotingMerkle | null) => set({ votingMerkle }),
-    setSubmissionRequirements: (submissionRequirements: string) => set({ submissionRequirements }),
     setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) =>
       set({ submissionAllowlistFields }),
     setSubmissionMerkle: (submissionMerkle: SubmissionMerkle | null) => set({ submissionMerkle }),
@@ -140,9 +150,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
 
       set({ errors: errorsCopy });
     },
-
     setStep: (step: number) => set({ step }),
     setFurthestStep: (furthestStep: number) => set({ furthestStep }),
     setSubmissionTab: (submissionTab: number) => set({ submissionTab }),
+
+    reset: () => set({ ...initialState }),
   };
 });

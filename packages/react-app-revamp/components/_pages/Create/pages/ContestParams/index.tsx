@@ -1,19 +1,22 @@
+import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 import { useMedia } from "react-use";
 import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
+import CreateContestRewards from "../ContestRewards";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const isMobile = useMedia("(max-width: 768px)");
-
+  const toastIdRef = useRef<string | number | null>(null);
   const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
     useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
@@ -45,7 +48,7 @@ const CreateContestParams = () => {
     setMaxSubmissions(parseInt(value));
   };
 
-  const handleDeployContest = () => {
+  const handleDeployContest = async () => {
     if (!isConnected) {
       try {
         openConnectModal?.();
@@ -54,7 +57,31 @@ const CreateContestParams = () => {
         return; // If connection fails, don't proceed with deploying contest
       }
     }
-    deployContest();
+
+    const promiseFn = () => deployContest();
+
+    const statusMessages: ToastMessage[] = [
+      {
+        message: "contest is deploying...",
+        successMessage: "contest has been deployed!",
+        status: "pending",
+      },
+    ];
+
+    toastIdRef.current = toast(
+      <MultiStepToast
+        messages={statusMessages}
+        promises={[promiseFn]}
+        toastIdRef={toastIdRef}
+        completionMessage="Your contest has been deployed!"
+      />,
+      {
+        position: "bottom-center",
+        bodyClassName: "text-[16px] font-bold",
+        autoClose: false,
+        icon: false,
+      },
+    );
   };
 
   return (
@@ -97,7 +124,7 @@ const CreateContestParams = () => {
             can players downvote—that is, vote <span className="italic">against</span> a submission?
           </p>
           <div className="flex flex-col gap-2">
-            <div className="flex w-full md:w-[490px]  border border-primary-10 rounded-[25px] overflow-hidden text-[20px] md:text-[24px]">
+            <div className="flex w-full md:w-[380px]  border border-primary-10 rounded-[25px] overflow-hidden text-[20px] md:text-[18px]">
               <div
                 className={`w-full px-4 py-1 cursor-pointer ${
                   isEnabled ? "bg-primary-10 text-true-black font-bold" : "bg-true-black text-primary-10"
@@ -121,6 +148,7 @@ const CreateContestParams = () => {
           <CreateContestButton step={step} onClick={handleDeployContest} />
         </div>
       </div>
+      <CreateContestRewards />
     </div>
   );
 };

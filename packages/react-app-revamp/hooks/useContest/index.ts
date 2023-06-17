@@ -221,7 +221,9 @@ export function useContest() {
       //@ts-ignore
       const promptFilter = contractConfig.contractInterface?.filter(el => el.name === "prompt");
       //@ts-ignore
-      const submissionGatingFilter = contractConfig.contractInterface?.filter(el => el.name === "submissionGatingByVotingToken");
+      const submissionGatingFilter = contractConfig.contractInterface?.filter(
+        (el: { name: string }) => el.name === "submissionGatingByVotingToken",
+      );
       //@ts-ignore
       const downvotingFilter = contractConfig.contractInterface?.filter(el => el.name === "downvotingAllowed");
 

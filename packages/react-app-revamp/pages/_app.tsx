@@ -1,4 +1,3 @@
-import { fadeInOut } from "@config/react-toastify/animations/FadeInOut.tsx";
 import { chains, client } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
@@ -68,7 +67,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <RainbowKitProvider chains={chains} theme={jokeraceTheme}>
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer
-            position="bottom-right"
+            position="bottom-center"
             autoClose={4000}
             hideProgressBar
             closeOnClick
@@ -76,9 +75,8 @@ function MyApp({ Component, pageProps }: AppProps) {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="dark"
-            transition={fadeInOut}
-            bodyClassName={() => "text-xs flex items-center"}
+            theme="colored"
+            bodyClassName={() => "text-[16px] flex items-center"}
           />
         </RainbowKitProvider>
       </WagmiConfig>
