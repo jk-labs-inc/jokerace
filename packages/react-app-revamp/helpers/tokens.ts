@@ -79,6 +79,22 @@ const CHAIN_CONFIGS: ChainConfigs = {
       },
     ],
   },
+  avalanche: {
+    name: "Avalanche",
+    id: 43114,
+    tokens: [
+      {
+        name: "Avalanche",
+        shorthand: "avax",
+        address: null,
+      },
+      {
+        name: "USD Coin",
+        shorthand: "usdc",
+        address: "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+      },
+    ],
+  },
   mumbai: {
     name: "Mumbai",
     id: 80001,
@@ -92,6 +108,70 @@ const CHAIN_CONFIGS: ChainConfigs = {
         name: "USD Coin",
         shorthand: "usdc",
         address: "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747",
+      },
+    ],
+  },
+  goerli: {
+    name: "Goerli",
+    id: 5,
+    tokens: [
+      {
+        name: "Ethereum",
+        shorthand: "eth",
+        address: null,
+      },
+      {
+        name: "USD Coin",
+        shorthand: "usdc",
+        address: "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+      },
+    ],
+  },
+  sepolia: {
+    name: "Sepolia",
+    id: 11155111,
+    tokens: [
+      {
+        name: "Ethereum",
+        shorthand: "eth",
+        address: null,
+      },
+      {
+        name: "USD Coin",
+        shorthand: "usdc",
+        address: "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+      },
+    ],
+  },
+  baseTestNet: {
+    name: "Base Testnet",
+    id: 84531,
+    tokens: [
+      {
+        name: "Ethereum",
+        shorthand: "eth",
+        address: null,
+      },
+      {
+        name: "USD Coin",
+        shorthand: "usdc",
+        address: "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+      },
+    ],
+  },
+  scrollGoerli: {
+    name: "Scroll Goerli",
+    id: 534353,
+    tokens: [
+      {
+        name: "Ethereum",
+        shorthand: "eth",
+        address: null,
+      },
+      {
+        name: "USD Coin",
+        shorthand: "usdc",
+        address: "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
       },
     ],
   },

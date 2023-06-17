@@ -10,6 +10,7 @@ interface DialogModalProps {
   setIsOpen: (isOpen: boolean) => void;
   title: string;
   children: React.ReactNode;
+  disableClose?: boolean;
   onClose?: () => void;
   className?: string;
   doubleCheckClose?: boolean;
@@ -23,6 +24,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
   children,
   onClose,
   className,
+  disableClose,
   doubleCheckClose = false,
   doubleCheckMessage,
 }) => {
@@ -32,13 +34,17 @@ const DialogModalV3: FC<DialogModalProps> = ({
     if (doubleCheckClose && !showConfirmation) {
       setShowConfirmation(true);
     } else {
+      if (disableClose) {
+        return;
+      }
+
       setIsOpen(false);
       if (onClose) {
         onClose();
       }
       setShowConfirmation(false);
     }
-  }, [setIsOpen, onClose, doubleCheckClose, showConfirmation]);
+  }, [setIsOpen, onClose, doubleCheckClose, showConfirmation, disableClose]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
