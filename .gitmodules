@@ -4,4 +4,4 @@
 [submodule "packages/forge/lib/openzeppelin-contracts"]
 	path = packages/forge/lib/openzeppelin-contracts
 	url = https://github.com/OpenZeppelin/openzeppelin-contracts.git
-	branch = master
+	branch = release-v4.9
