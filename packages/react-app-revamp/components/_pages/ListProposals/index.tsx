@@ -15,6 +15,7 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
+import { Interweave } from "interweave";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAccount, useNetwork } from "wagmi";
@@ -117,7 +118,7 @@ export const ListProposals = () => {
       }
       return (
         <>
-          <ul className={`${styles.list} space-y-12`}>
+          <div className="flex flex-col gap-8">
             {Object.keys(listProposalsData)
               .sort((a, b) => {
                 if (listProposalsData[a].votes > listProposalsData[b].votes) {
@@ -130,159 +131,15 @@ export const ListProposals = () => {
               })
               .map((id, i) => {
                 return (
-                  <li
-                    className={`${styles.listElement} animate-appear px-5 pt-5 pb-3 rounded-md 2xs:rounded-none 2xs:p-0 border border-solid border-neutral-1 2xs:border-0 relative overflow-hidden text-sm ${styles.wrapper}`}
+                  <div
+                    className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11"
                     key={id}
                   >
-                    <div className="text-center 2xs:border-is-4 border-solid border-neutral-1 2xs:border-neutral-5 flex flex-col 2xs:items-center pt-2 2xs:pt-0">
-                      {!isProposalDeleted(listProposalsData[id].content) &&
-                        contestAuthorEthereumAddress === accountData?.address && (
-                          <button
-                            disabled={network?.chain?.name?.toLowerCase()?.replace(" ", "") !== chain ? true : false}
-                            onClick={() => onClickProposalDelete(id)}
-                            className="hidden 2xs:flex mb-6 mx-2 2xs:text-2xs rounded-md 2xs:p-2.5 relative z-20 text-negative-12 hover:bg-negative-4 hover:bg-opacity-50 focus:bg-negative-2 focus:border-negative-8 border-negative-6 border border-solid disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <span className="sr-only">Delete this proposal</span>
-                            <TrashIcon className="w-4" />
-                          </button>
-                        )}
-                      {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN ? (
-                        <span className="text-3xs text-neutral-11 italic">Vote not open yet</span>
-                      ) : (
-                        <>
-                          {listProposalsData[id].votes > 0 && (
-                            <span
-                              className={`${styles.rankIndicator} hidden 2xs:flex rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
-                            >
-                              #{i + 1}
-                            </span>
-                          )}
-                          <div className=" text-neutral-12 flex space-y-2 flex-col items-center justify-center font-bold text-2xs">
-                            {(contestStatus === CONTEST_STATUS.VOTING_OPEN && checkIfUserPassedSnapshotLoading) ||
-                              (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
-                                <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
-                              ))}
-                            {!isProposalDeleted(listProposalsData[id].content) &&
-                              didUserPassSnapshotAndCanVote &&
-                              contestStatus === CONTEST_STATUS.VOTING_OPEN && (
-                                <button
-                                  onClick={() => onClickUpVote(id)}
-                                  disabled={
-                                    checkIfUserPassedSnapshotLoading ||
-                                    !didUserPassSnapshotAndCanVote ||
-                                    contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
-                                    currentUserAvailableVotesAmount === 0
-                                  }
-                                  className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center"
-                                >
-                                  {isUserStoreLoading ? (
-                                    <IconSpinner className="text-sm animate-spin mie-2 2xs:mie-0 2xs:mb-1" />
-                                  ) : (
-                                    <>
-                                      {" "}
-                                      <IconCaretUp className="text-2xs mie-2 2xs:mie-0" />
-                                      <span className="2xs:sr-only">Up vote</span>
-                                    </>
-                                  )}
-                                </button>
-                              )}
-                            <span className="flex 2xs:flex-col">
-                              {Intl.NumberFormat("en-US", {
-                                notation: "compact",
-                                maximumFractionDigits: 3,
-                              }).format(parseFloat(listProposalsData[id].votes))}{" "}
-                              <span className="text-neutral-11 pis-1ex 2xs:pis-0 text-3xs">
-                                vote
-                                {(listProposalsData[id].votes > 1 ||
-                                  listProposalsData[id].votes < -1 ||
-                                  listProposalsData[id].votes === 0) &&
-                                  "s"}
-                              </span>
-                            </span>
-                            {!isProposalDeleted(listProposalsData[id].content) &&
-                              didUserPassSnapshotAndCanVote &&
-                              contestStatus === CONTEST_STATUS.VOTING_OPEN &&
-                              currentUserAvailableVotesAmount > 0 &&
-                              downvotingAllowed && (
-                                <button
-                                  onClick={() => onClickDownVote(id)}
-                                  disabled={
-                                    checkIfUserPassedSnapshotLoading ||
-                                    !didUserPassSnapshotAndCanVote ||
-                                    contestStatus !== CONTEST_STATUS.VOTING_OPEN ||
-                                    currentUserAvailableVotesAmount === 0
-                                  }
-                                  className="w-full 2xs:w-auto disabled:text-opacity-50 disabled:cursor-not-allowed disabled:border-none border border-solid border-neutral-5 rounded-md p-2 2xs:p-1.5 flex items-center justify-center"
-                                >
-                                  <IconCaretDown className="text-2xs mie-2 2xs:mie-0" />
-                                  <span className="2xs:sr-only">Down vote</span>
-                                </button>
-                              )}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                    <div className="relative overflow-hidden">
-                      {listProposalsData[id].votes > 0 && (
-                        <span
-                          className={`${styles.rankIndicator} inline-flex 2xs:hidden rounded-full items-center justify-center aspect-square text-opacity-100 mb-3`}
-                        >
-                          #{i + 1}
-                        </span>
-                      )}
-                      <ProposalContent
-                        author={listProposalsData[id].authorEthereumAddress}
-                        content={
-                          listProposalsData[id].isContentImage
-                            ? listProposalsData[id].content
-                            : truncate(listProposalsData[id].content, 280)
-                        }
-                      />
-
-                      <Link
-                        title={`View proposal #${id}`}
-                        className="absolute opacity-0 inset-0 w-full h-full z-10 "
-                        href={{
-                          pathname: ROUTE_CONTEST_PROPOSAL,
-                          //@ts-ignore
-                          query: {
-                            chain,
-                            address,
-                            proposal: id,
-                          },
-                        }}
-                      >
-                        View proposal #{id}
-                      </Link>
-                      <div className="flex flex-col space-y-8 mt-6">
-                        {listProposalsData[id].content.length > 280 && (
-                          <Button
-                            className="uppercase 2xs:!px-0 2xs:w-fit-content tracking-widest"
-                            scale="xs"
-                            intent="ghost-primary"
-                            type="button"
-                          >
-                            Read full proposal
-                          </Button>
-                        )}
-
-                        {!isProposalDeleted(listProposalsData[id].content) &&
-                          contestAuthorEthereumAddress === accountData?.address && (
-                            <button
-                              disabled={network?.chain?.name?.toLowerCase()?.replace(" ", "") !== chain ? true : false}
-                              onClick={() => onClickProposalDelete(id)}
-                              className="flex items-center space-i-2 justify-center 2xs:hidden text-xs rounded-md py-1.5 px-3 relative z-20 text-negative-12 hover:bg-negative-4 hover:bg-opacity-50 focus:bg-negative-2 focus:border-negative-8 border-negative-6 border border-solid disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <TrashIcon className="w-4" />
-                              <span className="font-bold">Delete this proposal</span>
-                            </button>
-                          )}
-                      </div>
-                    </div>
-                  </li>
+                    <ProposalContent content={listProposalsData[id].content} author={contestAuthorEthereumAddress} />
+                  </div>
                 );
               })}
-          </ul>
+          </div>
           {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
             <Loader scale="component" classNameWrapper="my-3">
               Loading proposals...

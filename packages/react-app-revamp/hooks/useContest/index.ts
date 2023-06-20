@@ -50,16 +50,14 @@ export function useContest() {
     setContestName,
     setContestAuthor,
     setContestMaxProposalCount,
-    setVotingTokenAddress,
     setIsV3,
-    setVotingToken,
+    setVotingMerkleRoot,
+    setSubmissionMerkleRoot,
     setVotesClose,
     setVotesOpen,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
     setContestStatus,
-    setSubmitProposalToken,
-    setSubmitProposalTokenAddress,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds, resetListProposals } =
     useProposalStore(state => state);
@@ -158,13 +156,10 @@ export function useContest() {
         setContestMaxNumberSubmissionsPerUser(results[2]);
         //@ts-ignore
         setContestMaxProposalCount(results[3]);
-        setVotingTokenAddress(results[4]);
-        // Voting token data (balance, symbol, total supply etc) (for ERC-20 token)
 
-        const votingTokenRawData = await fetchToken({ address: results[4].toString(), chainId });
         //@ts-ignore
         const closingVoteDate = new Date(parseInt(results[6]) * 1000);
-        setVotingToken(votingTokenRawData);
+
         //@ts-ignore
         setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
         //@ts-ignore
@@ -213,67 +208,6 @@ export function useContest() {
               ) === 1
             : false,
         );
-
-        // We want to track VoteCast event only 1H before the end of the contest
-        if (isBefore(new Date(), closingVoteDate)) {
-          if (differenceInHours(closingVoteDate, new Date()) <= 1) {
-            // If the difference between the closing date (end of votes) and now is <= to 1h
-            // reflect this in the state
-            setCanUpdateVotesInRealTime(true);
-          } else {
-            setCanUpdateVotesInRealTime(false);
-            // Otherwise, update the state 1h before the closing date (end of votes)
-            const delayBeforeVotesCanBeUpdated =
-              differenceInMilliseconds(closingVoteDate, new Date()) - hoursToMilliseconds(1);
-            setTimeout(() => {
-              setCanUpdateVotesInRealTime(true);
-            }, delayBeforeVotesCanBeUpdated);
-          }
-        } else {
-          setCanUpdateVotesInRealTime(false);
-        }
-
-        //@ts-ignore
-        setAmountOfTokensRequiredToSubmitEntry(results[9] / 1e18);
-
-        //@ts-ignore
-        if (contractConfig.contractInterface?.filter(el => el.name === "submissionGatingByVotingToken").length > 0) {
-          //@ts-ignore
-          const submitProposalTokenRawData = await fetchToken({ address: results[contracts.length - 1], chainId });
-          setSubmitProposalTokenAddress(results[contracts.length - 1]);
-          setSubmitProposalToken(submitProposalTokenRawData);
-          if (accountData?.address) await checkCurrentUserAmountOfProposalTokens();
-        } else {
-          setSubmitProposalTokenAddress(results[4]);
-          setSubmitProposalToken(votingTokenRawData);
-        }
-        await checkIfCurrentUserQualifyToVote();
-        if (accountData?.address) {
-          // Current user votes
-          await updateCurrentUserVotes();
-          setIsUserStoreLoading(false);
-        }
-
-        // If this contest doesn't exist in the database, index it
-        if (isSupabaseConfigured) {
-          const indexingResult = await supabase.from("contests").select("*").eq("address", address);
-          if (indexingResult && indexingResult?.data && indexingResult?.data?.length === 0) {
-            indexContest({
-              //@ts-ignore
-              datetimeOpeningSubmissions: new Date(parseInt(results[5]) * 1000).toISOString(),
-              //@ts-ignore
-              datetimeOpeningVoting: new Date(parseInt(results[7]) * 1000).toISOString(),
-              //@ts-ignore
-              datetimeClosingVoting: new Date(parseInt(results[6]) * 1000),
-              contestTitle: results[0],
-              daoName: null,
-              contractAddress: address,
-              authorAddress: results[1],
-              votingTokenAddress: results[4],
-              networkName: asPath.split("/")[2],
-            });
-          }
-        }
       } catch (e) {
         const customError = e as CustomError;
 
@@ -294,7 +228,6 @@ export function useContest() {
 
         setIsV3(true);
 
-        // If current page is proposal, fetch proposal with id
         if (asPath.includes("/proposal/")) {
           await fetchProposalsPage(0, [asPath.split("/")[5]], 1);
         }
@@ -339,7 +272,10 @@ export function useContest() {
 
         setContestPrompt(results[8].toString());
         //@ts-ignore
-        setDownvotingAllowed(results[9] === 1);
+        setSubmissionMerkleRoot(results[9].toString());
+        setVotingMerkleRoot(results[10].toString());
+        //@ts-ignore
+        setDownvotingAllowed(results[11] === 1);
 
         // We want to track VoteCast event only 1H before the end of the contest
         if (isBefore(new Date(), closingVoteDate)) {

@@ -49,7 +49,6 @@ const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ contestAddress, chain, 
           <ShareDropdown contestAddress={contestAddress} chain={chain} contestName={contestName} />
         </div>
       </div>
-      {/* {tabs.map(tab => renderContent(tab))} */}
     </div>
   );
 };

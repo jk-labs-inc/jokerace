@@ -11,10 +11,6 @@ export interface ContestState {
   submissionsOpen: Date;
   votesOpen: Date;
   votesClose: Date;
-  votingToken: any | null;
-  votingTokenAddress: any | null;
-  submitProposalToken: any | null;
-  submitProposalTokenAddress: any | null;
   isLoading: boolean;
   error: CustomError | null;
   isSuccess: boolean;
@@ -24,7 +20,8 @@ export interface ContestState {
   downvotingAllowed: boolean;
   canUpdateVotesInRealTime: boolean;
   supportsRewardsModule: boolean;
-
+  submissionMerkleRoot: string;
+  votingMerkleRoot: string;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -36,10 +33,8 @@ export interface ContestState {
   setSubmissionsOpen: (datetime: Date) => void;
   setVotesOpen: (datetime: Date) => void;
   setVotesClose: (datetime: Date) => void;
-  setVotingToken: (token: any) => void;
-  setVotingTokenAddress: (address: any) => void;
-  setSubmitProposalToken: (token: any) => void;
-  setSubmitProposalTokenAddress: (address: any) => void;
+  setVotingMerkleRoot: (merkleRoot: string) => void;
+  setSubmissionMerkleRoot: (merkleRoot: string) => void;
   setSnapshotTaken: (value: boolean) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: CustomError | null) => void;
@@ -57,10 +52,8 @@ export const createContestStore = () =>
     submissionsOpen: new Date(),
     votesOpen: new Date(),
     votesClose: new Date(),
-    votingToken: null,
-    votingTokenAddress: null,
-    submitProposalToken: null,
-    submitProposalTokenAddress: null,
+    submissionMerkleRoot: "",
+    votingMerkleRoot: "",
     isLoading: true,
     error: null,
     isSuccess: false,
@@ -82,10 +75,8 @@ export const createContestStore = () =>
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
     setVotesOpen: datetime => set({ votesOpen: datetime }),
     setVotesClose: datetime => set({ votesClose: datetime }),
-    setVotingToken: token => set({ votingToken: token }),
-    setVotingTokenAddress: address => set({ votingTokenAddress: address }),
-    setSubmitProposalToken: token => set({ submitProposalToken: token }),
-    setSubmitProposalTokenAddress: address => set({ submitProposalTokenAddress: address }),
+    setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
+    setSubmissionMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
     setSnapshotTaken: value => set({ snapshotTaken: value }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),

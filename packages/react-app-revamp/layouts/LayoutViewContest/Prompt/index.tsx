@@ -21,7 +21,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt }) => {
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 items-center">
             <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
-            <div className="flex items-center px-2 h-5 bg-neutral-10 rounded-[5px] border-0 text-true-black text-[16px] font-bold">
+            <div className="flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-10 rounded-[5px] border-0 text-true-black text-[16px] font-bold">
               {type}
             </div>
             <button
@@ -34,7 +34,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt }) => {
           <div className="pl-5">
             <Collapsible isOpen={isPromptOpen}>
               <div className="border-l border-true-white ">
-                <p className="text-[16px] pl-5">
+                <p className="prose pl-5">
                   <Interweave content={promptText} matchers={[new UrlMatcher("url")]} />
                 </p>
               </div>
@@ -56,7 +56,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt }) => {
           <div className="pl-5">
             <Collapsible isOpen={isPromptOpen}>
               <div className="border-l border-true-white ">
-                <p className="text-[16px] pl-5">
+                <p className="prose pl-5">
                   <Interweave content={prompt} matchers={[new UrlMatcher("url")]} />
                 </p>
               </div>

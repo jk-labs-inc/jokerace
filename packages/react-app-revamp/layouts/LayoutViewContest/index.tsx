@@ -34,16 +34,16 @@ import { useContest } from "@hooks/useContest";
 import useContestEvents from "@hooks/useContestEvents";
 import useUser from "@hooks/useUser";
 import { switchNetwork } from "@wagmi/core";
+import moment from "moment";
 import { ErrorBoundary } from "react-error-boundary";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
+import LayoutContestPrompt from "./Prompt";
+import LayoutContestCountdown from "./StickyCards/components/Countdown";
 import ContestLayoutTabs from "./Tabs";
 import Timeline from "./Timeline";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
-import VotingToken from "./VotingToken";
 import LayoutContestTimeline from "./TimelineV3";
-import LayoutContestCountdown from "./StickyCards/components/Countdown";
-import LayoutContestPrompt from "./Prompt";
-import moment from "moment";
+import VotingToken from "./VotingToken";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -67,7 +67,7 @@ const LayoutViewContest = (props: any) => {
     submissionsOpen,
     votesClose,
     votesOpen,
-    contestAuthor,
+    contestAuthorEthereumAddress,
     contestStatus,
     contestPrompt,
     contestName,
@@ -273,7 +273,7 @@ const LayoutViewContest = (props: any) => {
 
                     <div className="flex flex-col gap-2 mt-10">
                       <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
-                      <p className="text-[24px] text-primary-10 font-bold">by {contestAuthor}</p>
+                      <p className="text-[24px] text-primary-10 font-bold">by {contestAuthorEthereumAddress}</p>
                     </div>
 
                     <div className="mt-4 gap-3 flex flex-col">
@@ -291,7 +291,7 @@ const LayoutViewContest = (props: any) => {
                     </div>
 
                     {contestInProgress && (
-                      <div className="mt-8 flex gap-4 sticky top-32 z-10">
+                      <div className="mt-8 flex gap-4 sticky top-0 z-10 bg-true-black">
                         <LayoutContestCountdown
                           submissionOpen={submissionsOpen}
                           votingOpen={votesOpen}

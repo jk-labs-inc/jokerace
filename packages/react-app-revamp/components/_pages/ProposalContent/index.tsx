@@ -34,6 +34,7 @@ function renderContent(str: string) {
       </>
     );
   }
+
   return (
     <div className={`with-link-highlighted prose prose-invert ${styles.content}`}>
       <Interweave content={renderedContent} matchers={[new UrlMatcher("url")]} />

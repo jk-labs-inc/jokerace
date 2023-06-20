@@ -180,10 +180,13 @@ module.exports = {
             "--tw-prose-invert-hr": theme("colors.neutral.4"),
             fontSize: theme("fontSize.base"),
             p: {
-              fontSize: clamp(0),
+              fontSize: "16px",
               marginTop: "0.5em",
               marginBottom: "0.5em",
               lineHeight: 1.75,
+            },
+            span: {
+              fontSize: "16px",
             },
             br: {
               display: "block",

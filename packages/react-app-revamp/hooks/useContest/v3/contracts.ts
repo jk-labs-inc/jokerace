@@ -9,6 +9,8 @@ export function getV3Contracts(contractConfig: any) {
     "voteStart",
     "state",
     "prompt",
+    "submissionMerkleRoot",
+    "votingMerkleRoot",
     "downvotingAllowed",
   ];
 
