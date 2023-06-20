@@ -18,6 +18,7 @@ export interface ContestState {
   isLoading: boolean;
   error: CustomError | null;
   isSuccess: boolean;
+  isV3: boolean;
   contestMaxProposalCount: number;
   snapshotTaken: boolean;
   downvotingAllowed: boolean;
@@ -43,6 +44,7 @@ export interface ContestState {
   setIsLoading: (value: boolean) => void;
   setError: (value: CustomError | null) => void;
   setIsSuccess: (value: boolean) => void;
+  setIsV3: (value: boolean) => void;
 }
 
 export const createContestStore = () =>
@@ -66,15 +68,14 @@ export const createContestStore = () =>
     snapshotTaken: false,
     downvotingAllowed: false,
     canUpdateVotesInRealTime: false,
+    isV3: false,
     supportsRewardsModule: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
-
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
-
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
-
+    setIsV3: value => set({ isV3: value }),
     setContestStatus: status => set({ contestStatus: status }),
     setContestName: name => set({ contestName: name }),
     setContestAuthor: (author, address) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),

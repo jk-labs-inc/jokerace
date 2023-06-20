@@ -18,7 +18,8 @@ export function useSubmitProposal() {
 
   async function sendProposal(proposalContent: string) {
     const [chainName, address] = asPath.split("/").slice(2, 4);
-    const abi = await getContestContractVersion(address, chainName);
+    const { abi, version } = await getContestContractVersion(address, chainName);
+
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);

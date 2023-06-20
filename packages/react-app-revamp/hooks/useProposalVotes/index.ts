@@ -56,7 +56,8 @@ export function useProposalVotes(id: number | string) {
     setIsListVotersLoading(true);
     const chainName = url[2];
 
-    const abi = await getContestContractVersion(address, chainName);
+    const { abi, version } = await getContestContractVersion(address, chainName);
+
     if (abi === null) {
       setIsListVotersLoading(false);
       setIsListVotersError("This contract doesn't exist on this chain.");
@@ -146,7 +147,8 @@ export function useProposalVotes(id: number | string) {
     const chainName = asPath.split("/")[2];
 
     try {
-      const abi = await getContestContractVersion(address, chainName);
+      const { abi, version } = await getContestContractVersion(address, chainName);
+
       if (abi === null) {
         toast.error("This contract doesn't exist on this chain.");
         setIsPageVotesError({ message: "This contract doesn't exist on this chain." });

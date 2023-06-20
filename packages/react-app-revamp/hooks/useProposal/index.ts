@@ -52,7 +52,7 @@ export function useProposal() {
     setIsPageProposalsError(null);
 
     try {
-      const abi = await getContestContractVersion(address, chainName);
+      const { abi, version } = await getContestContractVersion(address, chainName);
 
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;

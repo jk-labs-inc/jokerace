@@ -5,7 +5,6 @@ import {
   ROUTE_CONTEST_PROPOSAL,
   ROUTE_VIEW_CONTEST,
   ROUTE_VIEW_CONTEST_EXPORT_DATA,
-  ROUTE_VIEW_CONTEST_REWARDS,
   ROUTE_VIEW_CONTEST_RULES,
 } from "@config/routes";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
@@ -24,12 +23,9 @@ import { CastVotesWrapper, useCastVotesStore } from "@hooks/useCastVotes/store";
 
 import { DeleteProposalWrapper, useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
 
-import ShareDropdown from "@components/Share";
-import EtheuremAddress from "@components/UI/EtheuremAddress";
 import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import DialogModalVoteForProposal from "@components/_pages/DialogModalVoteForProposal";
-import FormSearchContest from "@components/_pages/FormSearchContest";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
@@ -38,15 +34,16 @@ import { useContest } from "@hooks/useContest";
 import useContestEvents from "@hooks/useContestEvents";
 import useUser from "@hooks/useUser";
 import { switchNetwork } from "@wagmi/core";
-import { Interweave } from "interweave";
-import { UrlMatcher } from "interweave-autolink";
 import { ErrorBoundary } from "react-error-boundary";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
-import Sidebar from "./Sidebar";
-import styles from "./styles.module.css";
+import ContestLayoutTabs from "./Tabs";
 import Timeline from "./Timeline";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
 import VotingToken from "./VotingToken";
+import LayoutContestTimeline from "./TimelineV3";
+import LayoutContestCountdown from "./StickyCards/components/Countdown";
+import LayoutContestPrompt from "./Prompt";
+import moment from "moment";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -76,6 +73,7 @@ const LayoutViewContest = (props: any) => {
     contestName,
     contestMaxProposalCount,
   } = useContestStore(state => state);
+  const contestInProgress = moment().isBefore(votesClose);
   const { didUserPassSnapshotAndCanVote, checkIfUserPassedSnapshotLoading } = useUserStore(state => state);
 
   const { updateSnapshotProgress } = useCheckSnapshotProgress();
@@ -150,32 +148,7 @@ const LayoutViewContest = (props: any) => {
 
   return (
     <>
-      <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
-        <div className="container mx-auto">
-          <FormSearchContest onSubmitTitle={onSubmitTitle} isInline={true} />
-        </div>
-      </div>
-
-      <div
-        className={`${
-          isLoading ? "pointer-events-none" : ""
-        } flex-grow container mx-auto md:grid md:gap-6 md:grid-cols-12 md:-mb-20`}
-      >
-        <div
-          className={`md:max-h-[calc(100vh-8rem)] ${styles.navbar} ${styles.withFakeSeparator} ${
-            pathname === ROUTE_CONTEST_PROPOSAL ? "!hidden" : ""
-          } z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-3`}
-        >
-          <Sidebar
-            isLoading={isLoading}
-            isListProposalsLoading={isListProposalsLoading}
-            isSuccess={isSuccess}
-            isError={error}
-            isListProposalsError={isListProposalsError}
-            chainId={chainId}
-            setIsTimelineModalOpen={setIsTimelineModalOpen}
-          />
-        </div>
+      <div className={`${isLoading ? "pointer-events-none" : ""} w-[700px] mx-auto`}>
         {!isLoading &&
           isSuccess &&
           submissionsOpen &&
@@ -298,31 +271,43 @@ const LayoutViewContest = (props: any) => {
                       </div>
                     )}
 
-                    <div
-                      className={`flex flex-wrap items-baseline text-neutral-11 font-bold ${
-                        contestPrompt ? "mb-3" : "mb-6"
-                      }`}
-                    >
-                      <span className="uppercase tracking-wide pie-1ex">{contestName}</span>{" "}
-                      <span className="text-xs overflow-hidden text-neutral-8 text-ellipsis">
-                        by &nbsp;
-                        <EtheuremAddress
-                          withHyphen={false}
-                          ethereumAddress={contestAuthor}
-                          shortenOnFallback={false}
-                          displayLensProfile={false}
-                        />
-                      </span>
-                      <div className="ml-auto">
-                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
-                      </div>
+                    <div className="flex flex-col gap-2 mt-10">
+                      <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
+                      <p className="text-[24px] text-primary-10 font-bold">by {contestAuthor}</p>
                     </div>
 
-                    {contestPrompt && !pathname.includes(ROUTE_VIEW_CONTEST_REWARDS) && (
-                      <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
-                        <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
-                      </p>
+                    <div className="mt-4 gap-3 flex flex-col">
+                      <hr className="border-neutral-10" />
+                      <ContestLayoutTabs contestAddress={address} chain={chain?.name ?? ""} contestName={contestName} />
+                      <hr className="border-neutral-10" />
+                    </div>
+
+                    <div className="mt-4">
+                      <LayoutContestTimeline
+                        submissionOpenDate={submissionsOpen}
+                        votingOpensDate={votesOpen}
+                        contestCloseDate={votesClose}
+                      />
+                    </div>
+
+                    {contestInProgress && (
+                      <div className="mt-8 flex gap-4 sticky top-32 z-10">
+                        <LayoutContestCountdown
+                          submissionOpen={submissionsOpen}
+                          votingOpen={votesOpen}
+                          votingClose={votesClose}
+                        />
+                        <LayoutContestCountdown
+                          submissionOpen={submissionsOpen}
+                          votingOpen={votesOpen}
+                          votingClose={votesClose}
+                        />
+                      </div>
                     )}
+
+                    <div className="mt-8">
+                      <LayoutContestPrompt prompt={contestPrompt} />
+                    </div>
 
                     {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
                       <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">

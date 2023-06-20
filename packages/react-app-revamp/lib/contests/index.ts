@@ -11,7 +11,8 @@ import { SearchOptions } from "types/search";
 export const ITEMS_PER_PAGE = 7;
 
 async function getContractConfig(address: string, chainName: string, chainId: number) {
-  const abi = await getContestContractVersion(address, chainName);
+  const { abi, version } = await getContestContractVersion(address, chainName);
+
   if (abi === null) {
     return;
   }

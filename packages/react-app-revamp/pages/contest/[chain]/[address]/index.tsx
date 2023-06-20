@@ -20,20 +20,6 @@ const Page: NextPage = (props: PageProps) => {
   const { address } = props;
   const { isLoading, isSuccess, contestName } = useContestStore(state => state);
   const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
-  const {
-    isSuccess: isRewardsModuleDeployed,
-    cancel: cancelCreateRewardsPool,
-    reset: clearRewardsData,
-  } = useDeployRewardsStore(state => state);
-  const router = useRouter();
-  const { popup } = router.query;
-  const [showPopup, setShowPopup] = useState(false);
-
-  useEffect(() => {
-    if (popup) {
-      setShowPopup(true);
-    }
-  }, [popup]);
 
   return (
     <>
@@ -46,21 +32,6 @@ const Page: NextPage = (props: PageProps) => {
         <div className="animate-appear mt-8">
           <ListProposals />
         </div>
-      )}
-
-      {showPopup && (
-        <DialogModalV3
-          isOpen={showPopup}
-          setIsOpen={value => setShowPopup(value)}
-          title="rewards"
-          className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
-        >
-          <div className="pl-[100px]">
-            <div className="pt-[50px]">
-              {isRewardsModuleDeployed ? <CreateRewardsFunding /> : <CreateRewardsPool />}
-            </div>
-          </div>
-        </DialogModalV3>
       )}
     </>
   );
