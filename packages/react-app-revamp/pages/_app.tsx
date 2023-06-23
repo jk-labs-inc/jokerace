@@ -45,11 +45,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta property="og:locale" content="en_GB" />
         <meta property="og:image" content="https://jokerace.xyz/jokerace.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@jokedao_" />
+        <meta name="twitter:site" content="@jokerace_xyz" />
         <meta
           name="twitter:description"
-          content="jokerace - contests for communities to make,
-          execute, and reward decisions."
+          content="jokerace - contests for communities to make, execute, and reward decisions."
         />
         <meta name="twitter:image" content="https://jokerace.xyz/jokerace.png" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
