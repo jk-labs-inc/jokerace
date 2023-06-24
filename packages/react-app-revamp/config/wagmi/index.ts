@@ -7,6 +7,7 @@ import { scrollGoerli } from "./custom-chains/scrollGoerli";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { evmosMainnet } from "./custom-chains/evmosMainnet";
 import { avaxCChain } from "./custom-chains/avaxCChain";
+import { zoraMainnet } from "./custom-chains/zora";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -19,7 +20,7 @@ type ChainImages = {
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
-const testnetChains = [
+const otherChains = [
   chain.polygonMumbai,
   chain.goerli,
   sepolia,
@@ -30,10 +31,11 @@ const testnetChains = [
   evmosTestnet,
   evmosMainnet,
   avaxCChain,
+  zoraMainnet
 ];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];
-const appChains = [...defaultChains, ...testnetChains];
+const appChains = [...defaultChains, ...otherChains];
 const providers =
   process.env.NODE_ENV === "development"
     ? [publicProvider(), alchemyProvider({ alchemyId })]
