@@ -14,7 +14,7 @@ export const generateTwitterShareUrl = (contestName: string, contestAddress: str
   const baseTwitterUrl = "https://twitter.com/intent/tweet?";
   const text = encodeURIComponent(`just launched a contest on jokerace, ${contestName} — come play to win`);
   const shareUrl = encodeURIComponent(`https://jokerace.xyz/contest/${chain}/${contestAddress}`);
-  const viaParam = encodeURIComponent("jokedao_");
+  const viaParam = encodeURIComponent("jokerace_xyz");
 
   const twitterShareUrl = `${baseTwitterUrl}text=${text}&url=${shareUrl}&via=${viaParam}`;
 
