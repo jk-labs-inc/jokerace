@@ -88,13 +88,6 @@ export const ListProposals = () => {
 
   // Contest not cancelled
   if (contestStatus !== CONTEST_STATUS.CANCELLED) {
-    if (contestStatus === CONTEST_STATUS.SUBMISSIONS_NOT_OPEN) {
-      return (
-        <div className="flex flex-col text-center items-center">
-          <p className="text-neutral-9 italic mb-6">Submissions aren&apos;t open yet.</p>
-        </div>
-      );
-    }
     // Empty state // @TODO - add empty state for when there are no proposals
     if (!listProposalsIds.length) {
       // return (

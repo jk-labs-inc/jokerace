@@ -3,12 +3,9 @@ import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagmi/core";
-import { isFuture } from "date-fns";
-import { generateProof } from "lib/merkletree/generateSubmissionsTree";
+import { fetchBlockNumber, getAccount, readContracts } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { CustomError } from "types/error";
 import { useAccount, useNetwork, useProvider } from "wagmi";
 import { useUserStore } from "./store";
 
@@ -25,7 +22,6 @@ export function useUser() {
     votingMerkleTree,
     setIsSuccess: setIsContestSuccess,
     setIsLoading: setIsContestLoading,
-    setSnapshotTaken,
     setError: setContestError,
   } = useContestStore(state => state);
   const { chain } = useNetwork();

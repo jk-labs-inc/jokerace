@@ -2,7 +2,9 @@ import Iframe from "@components/tiptap/Iframe";
 import Button from "@components/UI/Button";
 import DialogModal from "@components/UI/DialogModal";
 import DialogModalV3 from "@components/UI/DialogModalV3";
+import EtheuremAddress from "@components/UI/EtheuremAddress";
 import TipTapEditor from "@components/UI/TipTapEditor";
+import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { CONTEST_STATUS } from "@helpers/contestStatus";
@@ -12,21 +14,26 @@ import {
   saveSubmissionToLocalStorage,
   SubmissionCache,
 } from "@helpers/submissionCaching";
+import NextImage from "next/image";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
+import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import { useEditor } from "@tiptap/react";
+import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
+import ButtonV3 from "@components/UI/ButtonV3";
+import { useAccount } from "wagmi";
+import moment from "moment";
 
 interface DialogModalSendProposalProps {
   isOpen: boolean;
@@ -34,15 +41,17 @@ interface DialogModalSendProposalProps {
 }
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
+  const { address } = useAccount();
   const { asPath } = useRouter();
   const { sendProposal, isLoading, error, isSuccess } = useSubmitProposal();
   const { transactionData } = useSubmitProposalStore(state => state);
   const { contestPrompt, contestStatus, contestMaxProposalCount, votesOpen } = useContestStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
   const { currentUserProposalCount, contestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
+  const [lastEdited, setLastEdited] = useState<Date>(new Date());
+  const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
 
   const [showForm, setShowForm] = useState(true);
-  const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
   const contestId = asPath.split("/")[3];
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
   const [proposal, setProposal] = useState(savedProposal?.content || "");
@@ -54,14 +63,14 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       TiptapExtensionLink,
       Placeholder.configure({
         emptyEditorClass: "is-editor-empty",
-        placeholder: "Your proposal …",
+        placeholder: "this is my submission and here’s why...",
       }),
       Iframe,
     ],
     content: proposal,
     editorProps: {
       attributes: {
-        class: "prose prose-invert p-3 flex-grow focus:outline-none",
+        class: "prose prose-invert pt-6 flex-grow focus:outline-none",
       },
     },
     onUpdate: ({ editor }) => {
@@ -74,6 +83,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
         expiresAt: votesOpen,
       };
       saveSubmissionToLocalStorage("submissions", submissionCache);
+
+      setLastEdited(new Date());
     },
   });
 
@@ -84,7 +95,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       removeSubmissionFromLocalStorage("submissions", contestId);
     }
     if (isLoading || error) setShowForm(true);
-    if (isLoading || error || isSuccess) setShowDeploymentSteps(true);
   }, [isSuccess, isLoading, error]);
 
   useEffect(() => {
@@ -95,7 +105,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
         ...editorProposal.options,
         editable: true,
       });
-      setShowDeploymentSteps(false);
     }
   }, [isOpen, isLoading]);
 
@@ -111,7 +120,18 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       ...editorProposal.options,
       editable: true,
     });
-    setShowDeploymentSteps(false);
+  };
+
+  const tipMessage = () => {
+    return (
+      <p className="hidden md:flex items-center">
+        <span className="font-bold flex items-center gap-1 mr-1">
+          shift <NextImage src="/create-flow/shift.png" alt="shift" width={14} height={14} /> + enter{" "}
+          <NextImage src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
+        </span>
+        to make a line break.
+      </p>
+    );
   };
 
   return (
@@ -121,7 +141,29 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       setIsOpen={setIsOpen}
       className="xl:w-[1110px] 3xl:w-[1300px] h-[700px]"
     >
-      <div className="md:pl-[50px] lg:pl-[100px]"></div>
+      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[120px]">
+        <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
+        <div className="flex flex-col gap-2">
+          <EtheuremAddress ethereumAddress={address ?? ""} shortenOnFallback={true} displayLensProfile={true} />
+          <p className="font-bold text-neutral-10">{formattedDate}</p>
+        </div>
+        <div className="flex flex-col min-h-[12rem] rounded-md ">
+          <div className="relative px-1 py-2 border-y-2 border-neutral-10">
+            <TipTapEditorControls editor={editorProposal} />
+          </div>
+
+          <EditorContent
+            editor={editorProposal}
+            className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[600px] overflow-y-auto max-h-[300px] pb-2"
+          />
+          <p className="text-[16px] text-neutral-11 mt-2">{tipMessage()}</p>
+        </div>
+        <div className="mt-8">
+          <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large" onClick={() => sendProposal(proposal)}>
+            submit!
+          </ButtonV3>
+        </div>
+      </div>
     </DialogModalV3>
   );
 };

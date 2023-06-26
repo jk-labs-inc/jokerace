@@ -1,24 +1,29 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useContestStore } from "@hooks/useContest/store";
+import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { Proof } from "lib/merkletree/generateSubmissionsTree";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
-import { useNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
 
 export function useSubmitProposal() {
+  const { address: userAddress } = useAccount();
+  const { submissionMerkleTree } = useContestStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
+  const { checkIfProofIsValid } = useGenerateProof(submissionMerkleTree, userAddress ?? "", "submission");
 
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
 
-  async function sendProposal(proposalContent: string, proof?: Proof[]) {
+  async function sendProposal(proposalContent: string) {
     const [chainName, address] = asPath.split("/").slice(2, 4);
     const { abi } = await getContestContractVersion(address, chainName);
 
@@ -26,6 +31,14 @@ export function useSubmitProposal() {
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
+
+    let proof;
+
+    if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
+      proof = false;
+    } else {
+      proof = await checkIfProofIsValid();
+    }
 
     try {
       const contractConfig = {

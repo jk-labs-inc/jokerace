@@ -8,11 +8,12 @@ import { FC, useState } from "react";
 
 interface LayoutContestPromptProps {
   prompt: string;
+  hidePrompt?: boolean;
 }
 
-const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt }) => {
+const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt = false }) => {
   const { isV3, votesClose } = useContestStore(state => state);
-  const [isPromptOpen, setIsPromptOpen] = useState(moment().isBefore(votesClose));
+  const [isPromptOpen, setIsPromptOpen] = useState(moment().isBefore(votesClose) && !hidePrompt);
   const [type, title, promptText] = prompt.split("|");
 
   return (

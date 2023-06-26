@@ -43,7 +43,6 @@ import ContestLayoutTabs from "./Tabs";
 import Timeline from "./Timeline";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
 import LayoutContestTimeline from "./TimelineV3";
-import VotingToken from "./VotingToken";
 import ButtonV3 from "@components/UI/ButtonV3";
 import LayoutContestQualifier from "./StickyCards/components/Qualifier";
 
@@ -65,7 +64,6 @@ const LayoutViewContest = (props: any) => {
     useContest();
 
   const {
-    snapshotTaken,
     submissionsOpen,
     votesClose,
     votesOpen,
@@ -308,7 +306,11 @@ const LayoutViewContest = (props: any) => {
 
                     {contestInSubmissionPhase && (
                       <div className="mt-8">
-                        <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large">
+                        <ButtonV3
+                          color="bg-gradient-create rounded-[40px]"
+                          size="large"
+                          onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
+                        >
                           submit a response
                         </ButtonV3>
                       </div>
@@ -316,58 +318,12 @@ const LayoutViewContest = (props: any) => {
 
                     <div className="mt-8 bg-neutral-10 h-[1px] mb-16"></div>
 
-                    {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
-                      <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
-                        <p>Snapshot ongoing, voting will be open in 30sec-1min, please wait... </p>
-                      </div>
-                    )}
-
                     {children}
 
-                    <DialogModal
-                      isOpen={isTimelineModalOpen}
-                      setIsOpen={setIsTimelineModalOpen}
-                      title="Contest timeline"
-                    >
-                      {!isLoading && isSuccess && submissionsOpen && votesOpen && votesClose && (
-                        <>
-                          <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
-                          {account?.address && (
-                            <div className="mb-4">
-                              <VotingToken />
-                            </div>
-                          )}
-                          <Timeline />
-                        </>
-                      )}
-                    </DialogModal>
-                    {!isLoading &&
-                      isSuccess &&
-                      chain?.id === chainId &&
-                      submissionsOpen &&
-                      isAfter(new Date(), submissionsOpen) &&
-                      votesOpen &&
-                      isBefore(new Date(), votesOpen) && (
-                        <DialogModalSendProposal
-                          isOpen={isSubmitProposalModalOpen}
-                          setIsOpen={setIsSubmitProposalModalOpen}
-                        />
-                      )}
-                    {!isLoading && isSuccess && chain?.id === chainId && (
-                      <DialogModalDeleteProposal
-                        isOpen={isDeleteProposalModalOpen}
-                        setIsOpen={setIsDeleteProposalModalOpen}
-                      />
-                    )}
-                    {!isLoading &&
-                      isSuccess &&
-                      chain?.id === chainId &&
-                      votesOpen &&
-                      isAfter(new Date(), votesOpen) &&
-                      votesClose &&
-                      isBefore(new Date(), votesClose) && (
-                        <DialogModalVoteForProposal isOpen={isCastVotesModalOpen} setIsOpen={setIsCastVotesModalOpen} />
-                      )}
+                    <DialogModalSendProposal
+                      isOpen={isSubmitProposalModalOpen}
+                      setIsOpen={setIsSubmitProposalModalOpen}
+                    />
                   </div>
                 </>
               )}

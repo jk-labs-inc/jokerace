@@ -17,7 +17,6 @@ export interface ContestState {
   isSuccess: boolean;
   isV3: boolean;
   contestMaxProposalCount: number;
-  snapshotTaken: boolean;
   downvotingAllowed: boolean;
   canUpdateVotesInRealTime: boolean;
   supportsRewardsModule: boolean;
@@ -45,7 +44,6 @@ export interface ContestState {
   setVoters: (voters: { address: string; numVotes: number }[]) => void;
   setSubmissionMerkleTree: (merkleTree: MerkleTree) => void;
   setSubmitters: (submitters: { address: string }[]) => void;
-  setSnapshotTaken: (value: boolean) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: CustomError | null) => void;
   setIsSuccess: (value: boolean) => void;
@@ -70,7 +68,6 @@ export const createContestStore = () =>
     error: null,
     isSuccess: false,
     contestMaxProposalCount: 0,
-    snapshotTaken: false,
     downvotingAllowed: false,
     canUpdateVotesInRealTime: false,
     isV3: false,
@@ -91,7 +88,6 @@ export const createContestStore = () =>
     setSubmissionMerkleTree: merkleTree => set({ submissionMerkleTree: merkleTree }),
     setVoters: voters => set({ voters: voters }),
     setSubmitters: submitters => set({ submitters: submitters }),
-    setSnapshotTaken: value => set({ snapshotTaken: value }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
