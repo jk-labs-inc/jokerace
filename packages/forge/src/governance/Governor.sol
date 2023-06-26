@@ -210,6 +210,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function verifyProposer(address account, bytes32[] calldata proof) public override returns (bool verified) {
         if (!addressSubmitterVerified[account]) {
+            if (submissionMerkleRoot == 0) {
+                // if the submission root is 0, then anyone can submit
+                return true;
+            }
             checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
             addressSubmitterVerified[account] = true;
         }
@@ -261,7 +265,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-proposeWithoutProof}.
      */
     function proposeWithoutProof(ProposalCore memory proposal) public virtual override returns (uint256) {
-        require(addressSubmitterVerified[msg.sender], "Governor: address is not permissioned to submit");
+        if (submissionMerkleRoot != 0) {
+            // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
+            require(addressSubmitterVerified[msg.sender], "Governor: address is not permissioned to submit");
+        }
         validateProposalData(proposal);
         return _castProposal(proposal);
     }
