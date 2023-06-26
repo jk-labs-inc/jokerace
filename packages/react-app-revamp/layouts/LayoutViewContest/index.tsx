@@ -44,6 +44,8 @@ import Timeline from "./Timeline";
 import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
 import LayoutContestTimeline from "./TimelineV3";
 import VotingToken from "./VotingToken";
+import ButtonV3 from "@components/UI/ButtonV3";
+import LayoutContestQualifier from "./StickyCards/components/Qualifier";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -57,7 +59,7 @@ const LayoutViewContest = (props: any) => {
   });
   const { chain } = useNetwork();
 
-  const { checkIfCurrentUserQualifyToVote, checkCurrentUserAmountOfProposalTokens } = useUser();
+  const { checkIfCurrentUserQualifyToVote } = useUser();
 
   const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, chainName, setChainId } =
     useContest();
@@ -74,7 +76,7 @@ const LayoutViewContest = (props: any) => {
     contestMaxProposalCount,
   } = useContestStore(state => state);
   const contestInProgress = moment().isBefore(votesClose);
-  const { didUserPassSnapshotAndCanVote, checkIfUserPassedSnapshotLoading } = useUserStore(state => state);
+  const contestInSubmissionPhase = moment().isBefore(votesOpen) && moment().isAfter(submissionsOpen);
 
   const { updateSnapshotProgress } = useCheckSnapshotProgress();
   const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
@@ -137,7 +139,6 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     if (isListProposalsLoading && account?.address) {
-      checkCurrentUserAmountOfProposalTokens();
       checkIfCurrentUserQualifyToVote();
     }
   }, [chainId, account?.address, isListProposalsLoading]);
@@ -271,7 +272,7 @@ const LayoutViewContest = (props: any) => {
                       </div>
                     )}
 
-                    <div className="flex flex-col gap-2 mt-10">
+                    <div className="flex flex-col mt-10">
                       <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
                       <p className="text-[24px] text-primary-10 font-bold">by {contestAuthorEthereumAddress}</p>
                     </div>
@@ -297,11 +298,7 @@ const LayoutViewContest = (props: any) => {
                           votingOpen={votesOpen}
                           votingClose={votesClose}
                         />
-                        <LayoutContestCountdown
-                          submissionOpen={submissionsOpen}
-                          votingOpen={votesOpen}
-                          votingClose={votesClose}
-                        />
+                        <LayoutContestQualifier />
                       </div>
                     )}
 
@@ -309,23 +306,21 @@ const LayoutViewContest = (props: any) => {
                       <LayoutContestPrompt prompt={contestPrompt} />
                     </div>
 
+                    {contestInSubmissionPhase && (
+                      <div className="mt-8">
+                        <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large">
+                          submit a response
+                        </ButtonV3>
+                      </div>
+                    )}
+
+                    <div className="mt-8 bg-neutral-10 h-[1px] mb-16"></div>
+
                     {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
                       <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
                         <p>Snapshot ongoing, voting will be open in 30sec-1min, please wait... </p>
                       </div>
                     )}
-
-                    {snapshotTaken &&
-                      !checkIfUserPassedSnapshotLoading &&
-                      !didUserPassSnapshotAndCanVote &&
-                      contestStatus === CONTEST_STATUS.VOTING_OPEN &&
-                      ![ROUTE_VIEW_CONTEST_RULES, ROUTE_VIEW_CONTEST_EXPORT_DATA].includes(pathname) && (
-                        <section className="animate-appear">
-                          <p className="mt-4 p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
-                            Too bad, your wallet didn&apos;t qualify to vote.
-                          </p>
-                        </section>
-                      )}
 
                     {children}
 

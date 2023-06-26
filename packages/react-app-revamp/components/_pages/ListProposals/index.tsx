@@ -16,6 +16,8 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { Interweave } from "interweave";
+import moment from "moment";
+import { now } from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useAccount, useNetwork } from "wagmi";
@@ -44,16 +46,13 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { contestAuthorEthereumAddress, contestStatus, downvotingAllowed } = useContestStore(state => state);
-  const {
-    amountOfTokensRequiredToSubmitEntry,
-    currentUserAvailableVotesAmount,
-    didUserPassSnapshotAndCanVote,
-    checkIfUserPassedSnapshotLoading,
-    currentUserSubmitProposalTokensAmount,
-    isLoading: isUserStoreLoading,
-  } = useUserStore(state => state);
+  const { contestAuthorEthereumAddress, contestStatus, downvotingAllowed, votesOpen, votesClose } = useContestStore(
+    state => state,
+  );
+  const { currentUserAvailableVotesAmount, isLoading: isUserStoreLoading } = useUserStore(state => state);
 
+  const now = moment();
+  const formattedVotingOpen = moment(votesOpen);
   const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
@@ -96,28 +95,28 @@ export const ListProposals = () => {
         </div>
       );
     }
-    // Empty state
+    // Empty state // @TODO - add empty state for when there are no proposals
     if (!listProposalsIds.length) {
-      return (
-        <div className="flex flex-col text-center items-center">
-          <p className="text-neutral-9 italic mb-6">
-            {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-            currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry
-              ? "You can't submit a proposal for this contest."
-              : "It seems no one submitted a proposal for this contest."}
-          </p>
-          {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-            currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry && (
-              <Button onClick={() => setIsSubmitProposalModalOpen(true)}>Submit a proposal</Button>
-            )}
-        </div>
-      );
+      // return (
+      //   // <div className="flex flex-col text-center items-center">
+      //   //   <p className="text-neutral-9 italic mb-6">
+      //   //     {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
+      //   //     currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry
+      //   //       ? "You can't submit a proposal for this contest."
+      //   //       : "It seems no one submitted a proposal for this contest."}
+      //   //   </p>
+      //   //   {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
+      //   //     currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry && (
+      //   //       <Button onClick={() => setIsSubmitProposalModalOpen(true)}>Submit a proposal</Button>
+      //   //     )}
+      //   // </div>
+      // );
     } else {
       if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
         return <Loader scale="component">Loading proposals...</Loader>;
       }
       return (
-        <>
+        <div>
           <div className="flex flex-col gap-8">
             {Object.keys(listProposalsData)
               .sort((a, b) => {
@@ -131,15 +130,22 @@ export const ListProposals = () => {
               })
               .map((id, i) => {
                 return (
-                  <div
-                    className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11"
-                    key={id}
-                  >
-                    <ProposalContent content={listProposalsData[id].content} author={contestAuthorEthereumAddress} />
+                  <div key={id} className="relative">
+                    {!now.isBefore(formattedVotingOpen) && (
+                      <div
+                        className="absolute -top-0 left-0 -mt-6 -ml-6  w-12 z-10
+                     h-12 rounded-full bg-true-black flex items-center justify-center text-[24px] font-bold text-neutral-11 border border-neutral-11"
+                      >
+                        {i + 1}
+                      </div>
+                    )}
+
+                    <ProposalContent proposal={listProposalsData[id]} votingOpen={votesOpen} votingClose={votesClose} />
                   </div>
                 );
               })}
           </div>
+
           {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
             <Loader scale="component" classNameWrapper="my-3">
               Loading proposals...
@@ -163,7 +169,7 @@ export const ListProposals = () => {
               </Button>
             </div>
           )}
-        </>
+        </div>
       );
     }
   }

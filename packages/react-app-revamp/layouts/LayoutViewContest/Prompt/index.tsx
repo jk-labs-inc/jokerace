@@ -34,7 +34,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt }) => {
           <div className="pl-5">
             <Collapsible isOpen={isPromptOpen}>
               <div className="border-l border-true-white ">
-                <p className="prose pl-5">
+                <p className="prose prose-invert pl-5">
                   <Interweave content={promptText} matchers={[new UrlMatcher("url")]} />
                 </p>
               </div>
@@ -56,7 +56,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt }) => {
           <div className="pl-5">
             <Collapsible isOpen={isPromptOpen}>
               <div className="border-l border-true-white ">
-                <p className="prose pl-5">
+                <p className="prose pl-5 ">
                   <Interweave content={prompt} matchers={[new UrlMatcher("url")]} />
                 </p>
               </div>

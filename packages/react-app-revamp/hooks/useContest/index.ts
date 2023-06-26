@@ -18,6 +18,10 @@ import { useContestStore } from "./store";
 import { isSupabaseConfigured } from "@helpers/database";
 import { getV1Contracts } from "./v1/contracts";
 import { getV3Contracts } from "./v3/contracts";
+import MerkleTree from "merkletreejs";
+import { createMerkleTreeFromVotes, Voter } from "lib/merkletree/generateVotersTree";
+import { createMerkleTreeFromAddresses } from "lib/merkletree/generateSubmissionsTree";
+import { keccak256 } from "ethers/lib/utils";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -51,8 +55,10 @@ export function useContest() {
     setContestAuthor,
     setContestMaxProposalCount,
     setIsV3,
-    setVotingMerkleRoot,
-    setSubmissionMerkleRoot,
+    setVotingMerkleTree,
+    setVoters,
+    setSubmitters,
+    setSubmissionMerkleTree,
     setVotesClose,
     setVotesOpen,
     setSubmissionsOpen,
@@ -61,13 +67,8 @@ export function useContest() {
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds, resetListProposals } =
     useProposalStore(state => state);
-  const {
-    setCheckIfUserPassedSnapshotLoading,
-    setContestMaxNumberSubmissionsPerUser,
-    setAmountOfTokensRequiredToSubmitEntry,
-    setIsLoading: setIsUserStoreLoading,
-  } = useUserStore(state => state);
-  const { checkCurrentUserAmountOfProposalTokens, checkIfCurrentUserQualifyToVote, updateCurrentUserVotes } = useUser();
+  const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
+  const { checkIfCurrentUserQualifyToVote, updateCurrentUserVotes } = useUser();
   const { fetchProposalsIdsList, fetchProposalsPage } = useProposal();
 
   /**
@@ -88,7 +89,6 @@ export function useContest() {
         toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
         setError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
         setIsSuccess(false);
-        setCheckIfUserPassedSnapshotLoading(false);
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
         setIsLoading(false);
@@ -249,11 +249,6 @@ export function useContest() {
         //@ts-ignore
         setVotesOpen(new Date(parseInt(results[6]) * 1000));
 
-        setError(null);
-        setIsSuccess(true);
-        setIsLoading(false);
-        setIsListProposalsLoading(false);
-
         if (
           //@ts-ignore
           results[7] === CONTEST_STATUS.SUBMISSIONS_OPEN &&
@@ -271,11 +266,9 @@ export function useContest() {
         }
 
         setContestPrompt(results[8].toString());
+
         //@ts-ignore
-        setSubmissionMerkleRoot(results[9].toString());
-        setVotingMerkleRoot(results[10].toString());
-        //@ts-ignore
-        setDownvotingAllowed(results[11] === 1);
+        setDownvotingAllowed(results[9] === 1);
 
         // We want to track VoteCast event only 1H before the end of the contest
         if (isBefore(new Date(), closingVoteDate)) {
@@ -294,6 +287,40 @@ export function useContest() {
           }
         } else {
           setCanUpdateVotesInRealTime(false);
+        }
+
+        const { data, error } = await supabase
+          .from("contests_v3")
+          .select("submissionMerkleTree, votingMerkleTree")
+          .eq("address", address);
+
+        if (data && data.length > 0) {
+          const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
+
+          const votesDataRecord: Record<string, number> = votingMerkleTreeData.voters.reduce(
+            (acc: Record<string, number>, vote: Voter) => {
+              acc[vote.address] = Number(vote.numVotes);
+              return acc;
+            },
+            {},
+          );
+
+          const votingMerkleTree = createMerkleTreeFromVotes(0, votesDataRecord).merkleTree;
+
+          let submissionMerkleTree;
+
+          if (!submissionMerkleTreeData) {
+            submissionMerkleTree = createMerkleTreeFromAddresses([]).merkleTree;
+          } else {
+            submissionMerkleTree = createMerkleTreeFromAddresses(submissionMerkleTreeData.submitters).merkleTree;
+          }
+
+          setSubmissionMerkleTree(submissionMerkleTree);
+          setVotingMerkleTree(votingMerkleTree);
+          setError(null);
+          setIsSuccess(true);
+          setIsLoading(false);
+          setIsListProposalsLoading(false);
         }
       } catch (error) {}
     }

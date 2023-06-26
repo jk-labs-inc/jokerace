@@ -20,8 +20,6 @@ interface LayoutContestCountdownProps {
 const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpen, votingOpen, votingClose }) => {
   const [duration, setDuration] = useState(formatDuration(moment.duration(0)));
   const [phase, setPhase] = useState("submit");
-  const [hideVotingFollows, setHideVotingFollows] = useState(false);
-  const { y } = useWindowScroll();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -42,12 +40,6 @@ const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpe
       setDuration(formatDuration(moment.duration(diffTime)));
     }, 1000);
 
-    if (y > 100) {
-      setHideVotingFollows(true);
-    } else {
-      setHideVotingFollows(false);
-    }
-
     return () => {
       clearInterval(interval);
     };
@@ -66,14 +58,16 @@ const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpe
   };
 
   return (
-    <div className="w-full bg-true-black flex flex-col gap-2 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+    <div className="w-full bg-true-black flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
       <Image src="/contest/timer.svg" width={33} height={33} alt="timer" />
-      <div className="text-[16px] font-bold text-neutral-11">{displayText()}</div>
-      {!hideVotingFollows && phase === "submit" && (
-        <div className="text-[16px] text-neutral-11">
-          Voting follows until {moment(votingClose).format("MMMM Do, h:mm a")}
-        </div>
-      )}
+      <div className="flex flex-col">
+        <div className="text-[16px] font-bold text-neutral-11">{displayText()}</div>
+        {phase === "submit" && (
+          <div className="text-[16px] text-neutral-11 ">
+            Voting follows until {moment(votingClose).format("MMMM Do, h:mm a")}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

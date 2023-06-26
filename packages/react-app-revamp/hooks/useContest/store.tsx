@@ -1,3 +1,4 @@
+import MerkleTree from "merkletreejs";
 import { createContext, useContext, useRef } from "react";
 import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
@@ -20,8 +21,15 @@ export interface ContestState {
   downvotingAllowed: boolean;
   canUpdateVotesInRealTime: boolean;
   supportsRewardsModule: boolean;
-  submissionMerkleRoot: string;
-  votingMerkleRoot: string;
+  submissionMerkleTree: MerkleTree;
+  submitters: {
+    address: string;
+  }[];
+  votingMerkleTree: MerkleTree;
+  voters: {
+    address: string;
+    numVotes: number;
+  }[];
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -33,8 +41,10 @@ export interface ContestState {
   setSubmissionsOpen: (datetime: Date) => void;
   setVotesOpen: (datetime: Date) => void;
   setVotesClose: (datetime: Date) => void;
-  setVotingMerkleRoot: (merkleRoot: string) => void;
-  setSubmissionMerkleRoot: (merkleRoot: string) => void;
+  setVotingMerkleTree: (merkleTree: MerkleTree) => void;
+  setVoters: (voters: { address: string; numVotes: number }[]) => void;
+  setSubmissionMerkleTree: (merkleTree: MerkleTree) => void;
+  setSubmitters: (submitters: { address: string }[]) => void;
   setSnapshotTaken: (value: boolean) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: CustomError | null) => void;
@@ -52,8 +62,10 @@ export const createContestStore = () =>
     submissionsOpen: new Date(),
     votesOpen: new Date(),
     votesClose: new Date(),
-    submissionMerkleRoot: "",
-    votingMerkleRoot: "",
+    submissionMerkleTree: new MerkleTree([]),
+    submitters: [],
+    votingMerkleTree: new MerkleTree([]),
+    voters: [],
     isLoading: true,
     error: null,
     isSuccess: false,
@@ -75,8 +87,10 @@ export const createContestStore = () =>
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
     setVotesOpen: datetime => set({ votesOpen: datetime }),
     setVotesClose: datetime => set({ votesClose: datetime }),
-    setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
-    setSubmissionMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
+    setVotingMerkleTree: merkleTree => set({ votingMerkleTree: merkleTree }),
+    setSubmissionMerkleTree: merkleTree => set({ submissionMerkleTree: merkleTree }),
+    setVoters: voters => set({ voters: voters }),
+    setSubmitters: submitters => set({ submitters: submitters }),
     setSnapshotTaken: value => set({ snapshotTaken: value }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),

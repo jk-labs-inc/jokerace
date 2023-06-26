@@ -51,7 +51,7 @@ const CreateVotingAllowlist = () => {
   const handleNextStep = () => {
     if (Object.keys(allowList).length === 0) return;
 
-    const { merkleRoot, voters } = createMerkleTreeFromVotes(18, allowList);
+    const { merkleRoot, voters } = createMerkleTreeFromVotes(0, allowList);
 
     setVotingMerkle({ merkleRoot, voters });
     onNextStep();

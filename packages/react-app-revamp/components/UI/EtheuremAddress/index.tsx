@@ -1,25 +1,27 @@
-import { shortenEthereumAddress } from "@helpers/shortenEthereumAddress";
-import { getDefaultProfile } from "@services/lens/getDefaultProfile";
+/* eslint-disable @next/next/no-img-element */
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import Image from "next/image";
 import { chain, useEnsName } from "wagmi";
+import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 
-interface EtheuremAddressProps {
+const DEFAULT_AVATAR_URL = "/contest/avatar.svg"; // Default avatar url
+
+interface EthereumAddressProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
   displayLensProfile: boolean;
-  withHyphen: boolean;
 }
-export const EtheuremAddress = (props: EtheuremAddressProps) => {
-  const { ethereumAddress, displayLensProfile, shortenOnFallback, withHyphen } = props;
+
+const EthereumAddress = ({ ethereumAddress, displayLensProfile, shortenOnFallback }: EthereumAddressProps) => {
+  const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}.eth`;
+
+  const [avatarUrl, setAvatarUrl] = useState<string>();
+
   const queryUserProfileLens = useQuery(
     ["lens-profile", ethereumAddress],
     async () => {
       try {
-        const result = await getDefaultProfile({
-          ethereumAddress,
-        });
-        //@ts-ignore
+        const result = await getDefaultProfile({ ethereumAddress });
         if (result?.error) throw new Error(result?.error);
         return result?.data?.defaultProfile;
       } catch (e) {
@@ -28,66 +30,55 @@ export const EtheuremAddress = (props: EtheuremAddressProps) => {
     },
     {
       enabled: displayLensProfile,
+      onSuccess: data => {
+        setAvatarUrl(
+          data?.picture?.original?.url?.replace("ipfs://", "https://lens.infura-ipfs.io/ipfs/") || DEFAULT_AVATAR_URL,
+        );
+      },
     },
   );
 
   const queryEns = useEnsName({
     chainId: chain.mainnet.id,
     address: ethereumAddress,
-    enabled:
-      (queryUserProfileLens?.isSuccess && queryUserProfileLens?.data === null) || queryUserProfileLens?.isError
-        ? true
-        : false,
+    enabled: !displayLensProfile || queryUserProfileLens.isError || !queryUserProfileLens.data,
   });
 
-  if (!displayLensProfile || queryUserProfileLens?.status === "error" || queryUserProfileLens?.data === null) {
-    if (queryEns?.status === "success" && queryEns?.data !== null)
-      return <>{`${withHyphen === true ? "— " : ""}${queryEns?.data}`}</>;
-    return (
-      <>
-        {shortenOnFallback === true
-          ? `${withHyphen === true ? "— " : ""}${shortenEthereumAddress(ethereumAddress)}`
-          : `${withHyphen === true ? "— " : ""}${ethereumAddress}`}
-      </>
-    );
-  }
+  const isLoading = queryUserProfileLens?.status === "loading";
+  const isLensProfileAvailable = queryUserProfileLens?.status === "success" && queryUserProfileLens?.data !== null;
+  const ensName = queryEns?.status === "success" && queryEns?.data !== null && queryEns?.data;
 
-  if (queryUserProfileLens?.status === "loading")
-    return <>Loading {shortenEthereumAddress(ethereumAddress)} profile data...</>;
-  if (queryUserProfileLens?.status === "success" && queryUserProfileLens?.data !== null)
-    return (
-      <span className="flex items-baseline 2xs:items-center">
-        {withHyphen ? "—" : ""}
+  const displayName =
+    (isLensProfileAvailable && queryUserProfileLens.data.handle) ||
+    ensName ||
+    (shortenOnFallback && shortAddress) ||
+    ethereumAddress;
+
+  return (
+    <span className="flex gap-2 items-center text-[16px] text-neutral-11 font-bold">
+      <div className="flex items-center w-8 h-8 bg-neutral-5 rounded-full overflow-hidden">
+        <img
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          src={avatarUrl}
+          onError={() => setAvatarUrl(DEFAULT_AVATAR_URL)}
+          alt="avatar"
+        />
+      </div>
+      {isLoading ? (
+        <>Loading profile data...</>
+      ) : (
         <a
-          title={`View ${queryUserProfileLens?.data?.name}'s profile on LensFrens`}
-          className={`relative flex flex-col 2xs:flex-row 2xs:items-center flex-grow z-20 ${withHyphen ? "pis-3" : ""}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          href={`https://lensfrens.xyz/${queryUserProfileLens?.data?.handle}`}
+          title={isLensProfileAvailable ? `View ${displayName}'s profile on LensFrens` : ""}
+          className="text-[16px] text-neutral-11 font-bold no-underline cursor-pointer"
+          target={isLensProfileAvailable ? "_blank" : undefined}
+          rel={isLensProfileAvailable ? "noopener noreferrer" : undefined}
+          href={isLensProfileAvailable ? `https://lensfrens.xyz/${displayName}` : undefined}
         >
-          {queryUserProfileLens?.data?.picture?.original?.url && (
-            <div className="shrink-0 w-10 h-10 mb-3 2xs:mb-0 2xs:mie-3 bg-neutral-5 rounded-full overflow-hidden">
-              <Image
-                width={100}
-                height={100}
-                className="w-full h-full object-cover"
-                src={queryUserProfileLens?.data?.picture?.original?.url?.replace(
-                  "ipfs://",
-                  "https://lens.infura-ipfs.io/ipfs/",
-                )}
-                alt=""
-              />
-            </div>
-          )}
-
-          <span className="flex flex-wrap whitespace-pre-line">
-            <span className="font-bold w-full">{queryUserProfileLens?.data?.name}&nbsp;</span>
-            <span className="text-[0.9em] opacity-50">@{queryUserProfileLens?.data?.handle}</span>
-          </span>
+          {displayName}
         </a>
-      </span>
-    );
-  return <>{ethereumAddress}</>;
+      )}
+    </span>
+  );
 };
 
-export default EtheuremAddress;
+export default EthereumAddress;

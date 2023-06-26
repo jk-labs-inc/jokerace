@@ -1,7 +1,9 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
+import { Proof } from "lib/merkletree/generateSubmissionsTree";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
@@ -16,9 +18,9 @@ export function useSubmitProposal() {
   const { chain } = useNetwork();
   const { asPath } = useRouter();
 
-  async function sendProposal(proposalContent: string) {
+  async function sendProposal(proposalContent: string, proof?: Proof[]) {
     const [chainName, address] = asPath.split("/").slice(2, 4);
-    const { abi, version } = await getContestContractVersion(address, chainName);
+    const { abi } = await getContestContractVersion(address, chainName);
 
     setIsLoading(true);
     setIsSuccess(false);
@@ -31,11 +33,21 @@ export function useSubmitProposal() {
         contractInterface: abi || DeployedContestContract.abi,
       };
 
-      const txSendProposal = await writeContract({
-        ...contractConfig,
-        functionName: "propose",
-        args: [proposalContent],
-      });
+      let txSendProposal: TransactionResponse = {} as TransactionResponse;
+
+      if (proof) {
+        txSendProposal = await writeContract({
+          ...contractConfig,
+          functionName: "propose",
+          args: [proposalContent, proof],
+        });
+      } else {
+        txSendProposal = await writeContract({
+          ...contractConfig,
+          functionName: "proposeWithoutProof",
+          args: [proposalContent],
+        });
+      }
 
       const receipt = await waitForTransaction({
         chainId: chain?.id,
