@@ -6,6 +6,7 @@ import "../src/Contest.sol";
 
 contract ContestTest is Test {
     Contest public contest;
+    Contest public anyoneCanSubmitContest;
     uint64 public constant CONTEST_START = 1681650000;
     uint64 public constant VOTING_DELAY = 10000;
     uint64 public constant VOTING_PERIOD = 10000;
@@ -33,9 +34,12 @@ contract ContestTest is Test {
     */
     bytes32 public constant SUB_AND_VOTING_MERKLE_ROOT =
         bytes32(0xd0aa6a4e5b4e13462921d7518eebdb7b297a7877d6cfe078b0c318827392fb55);
+    bytes32 public constant SUB_ZERO_MERKLE_ROOT =
+        bytes32(0x0000000000000000000000000000000000000000000000000000000000000000);
     address public constant PERMISSIONED_ADDRESS_1 = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
     address public constant PERMISSIONED_ADDRESS_2 = 0x185a4dc360CE69bDCceE33b3784B0282f7961aea;
     address public constant UNPERMISSIONED_ADDRESS_1 = 0xd698e31229aB86334924ed9DFfd096a71C686900;
+    bytes32[] public proof0 = [bytes32(0x0000000000000000000000000000000000000000000000000000000000000000)];
     bytes32[] public proof1 = [bytes32(0x005a0033b5a1ac5c2872d7689e0f064ad6d2287ab98439e44c822e1c46530033)];
     bytes32[] public proof2 = [bytes32(0xceeae64152a2deaf8c661fccd5645458ba20261b16d2f6e090fe908b0ac9ca88)];
 
@@ -77,6 +81,12 @@ contract ContestTest is Test {
         contest = new Contest("test",
                               "hello world",
                               SUB_AND_VOTING_MERKLE_ROOT,
+                              SUB_AND_VOTING_MERKLE_ROOT,
+                              numParams);
+
+        anyoneCanSubmitContest = new Contest("test",
+                              "hello world",
+                              SUB_ZERO_MERKLE_ROOT,
                               SUB_AND_VOTING_MERKLE_ROOT,
                               numParams);
     }
@@ -126,6 +136,14 @@ contract ContestTest is Test {
         uint256 proposalId = contest.propose(firstProposalPA1, proof1);
 
         assertEq(proposalId, 23908983303022564668190521243102426214381108252970480710578796525208030103048);
+    }
+
+    function testProposeAnyone() public {
+        vm.warp(1681650001);
+        vm.prank(UNPERMISSIONED_ADDRESS_1);
+        uint256 proposalId = anyoneCanSubmitContest.propose(unpermissionedAuthorProposal1, proof0);
+
+        assertEq(proposalId, 82569039315138695914611829508911276316520611558309518279231235273641370615732);
     }
 
     function testProposeWithoutProof() public {
