@@ -105,7 +105,7 @@ contract RewardsModuleTest is Test {
 
     // REWARDS
 
-    // 1 proposal at 1 vote, release to author of rank 1
+    // 1 proposal at 1 vote; release to author of rank 1
     function testReleaseToAuthorFirstPlace1() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
@@ -123,7 +123,7 @@ contract RewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
-    // 1 proposal at 1 vote, release to target of rank 1
+    // 1 proposal at 1 vote; release to target of rank 1
     function testReleaseToTargetFirstPlace1() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
@@ -141,7 +141,7 @@ contract RewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
-    // 2 proposals with different authors, at 1 and 5 votes, release to author of rank 1
+    // 2 proposals with different authors, at 1 and 5 votes; release to author of rank 1
     function testReleaseToAuthorFirstPlace2() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -161,7 +161,7 @@ contract RewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
     }
 
-    // 2 proposals with different authors, at 1 and 5 votes, release to target of rank 1
+    // 2 proposals with different authors, at 1 and 5 votes; release to target of rank 1
     function testReleaseToTargetFirstPlace2() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -181,7 +181,7 @@ contract RewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
     }
 
-    // 2 proposals with different authors, both at 1 vote, send back to creator
+    // 2 proposals with different authors, both at 1 vote; send back to creator
     function testFirstPlaceTie() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -201,7 +201,30 @@ contract RewardsModuleTest is Test {
         assertEq(CREATOR_ADDRESS_1.balance, 50);
     }
 
-    // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote, send back to creator
+    // 2 proposals with different authors, both at 0 votes; send back to creator
+    function testFirstPlaceTieWithZeroVotes() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, proof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.propose(firstProposalPA2, proof2);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
+
+        assertEq(CREATOR_ADDRESS_1.balance, 50);
+    }
+
+    // 2 proposals with different authors, both at 0 votes; revert with error message
+    function testFirstPlaceTieWithZeroProposals() public {
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
+        rewardsModulePaysAuthor.release(1);
+    }
+
+    // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote; send back to creator
     function testSecondPlaceTie() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -224,7 +247,7 @@ contract RewardsModuleTest is Test {
         assertEq(CREATOR_ADDRESS_1.balance, 33);
     }
 
-    // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote send back to creator
+    // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
     function testSecondPlaceTiePayOutThirdPlace() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
