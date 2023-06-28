@@ -1,4 +1,5 @@
 import React from "react";
+import { useAccount } from "wagmi";
 
 type ButtonSize = "small" | "default" | "large";
 

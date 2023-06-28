@@ -4,7 +4,6 @@ import Loader from "@components/UI/Loader";
 import ProposalContent from "@components/_pages/ProposalContent";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import isProposalDeleted from "@helpers/isProposalDeleted";
 import truncate from "@helpers/truncate";
 import { TrashIcon } from "@heroicons/react/outline";
@@ -20,6 +19,7 @@ import moment from "moment";
 import { now } from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import styles from "./styles.module.css";
 
@@ -46,7 +46,7 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { contestAuthorEthereumAddress, contestStatus, downvotingAllowed, votesOpen, votesClose } = useContestStore(
+  const { contestAuthorEthereumAddress, downvotingAllowed, votesOpen, votesClose, submissionsOpen } = useContestStore(
     state => state,
   );
   const { currentUserAvailableVotesAmount, isLoading: isUserStoreLoading } = useUserStore(state => state);
@@ -86,91 +86,70 @@ export const ListProposals = () => {
     setIsModalDeleteProposalOpen(true);
   }
 
-  // Contest not cancelled
-  if (contestStatus !== CONTEST_STATUS.CANCELLED) {
-    // Empty state // @TODO - add empty state for when there are no proposals
-    if (!listProposalsIds.length) {
-      // return (
-      //   // <div className="flex flex-col text-center items-center">
-      //   //   <p className="text-neutral-9 italic mb-6">
-      //   //     {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-      //   //     currentUserSubmitProposalTokensAmount < amountOfTokensRequiredToSubmitEntry
-      //   //       ? "You can't submit a proposal for this contest."
-      //   //       : "It seems no one submitted a proposal for this contest."}
-      //   //   </p>
-      //   //   {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-      //   //     currentUserSubmitProposalTokensAmount >= amountOfTokensRequiredToSubmitEntry && (
-      //   //       <Button onClick={() => setIsSubmitProposalModalOpen(true)}>Submit a proposal</Button>
-      //   //     )}
-      //   // </div>
-      // );
-    } else {
-      if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
-        return <Loader scale="component">Loading proposals...</Loader>;
-      }
-      return (
-        <div>
-          <div className="flex flex-col gap-8">
-            {Object.keys(listProposalsData)
-              .sort((a, b) => {
-                if (listProposalsData[a].votes > listProposalsData[b].votes) {
-                  return -1;
-                }
-                if (listProposalsData[a].votes < listProposalsData[b].votes) {
-                  return 1;
-                }
-                return 0;
-              })
-              .map((id, i) => {
-                return (
-                  <div key={id} className="relative">
-                    {!now.isBefore(formattedVotingOpen) && (
-                      <div
-                        className="absolute -top-0 left-0 -mt-6 -ml-6  w-12 z-10
-                     h-12 rounded-full bg-true-black flex items-center justify-center text-[24px] font-bold text-neutral-11 border border-neutral-11"
-                      >
-                        {i + 1}
-                      </div>
-                    )}
-
-                    <ProposalContent proposal={listProposalsData[id]} votingOpen={votesOpen} votingClose={votesClose} />
-                  </div>
-                );
-              })}
-          </div>
-
-          {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
-            <Loader scale="component" classNameWrapper="my-3">
-              Loading proposals...
-            </Loader>
-          )}
-          {Object.keys(listProposalsData)?.length < listProposalsIds.length && !isPageProposalsLoading && (
-            <div className="pt-8 flex animate-appear">
-              <Button
-                intent="neutral-outline"
-                scale="sm"
-                className="mx-auto animate-appear"
-                onClick={() =>
-                  fetchProposalsPage(
-                    currentPagePaginationProposals + 1,
-                    indexPaginationProposals[currentPagePaginationProposals + 1],
-                    totalPagesPaginationProposals,
-                  )
-                }
-              >
-                {isPageProposalsError ? "Try again" : "Show more proposals"}
-              </Button>
-            </div>
-          )}
-        </div>
-      );
-    }
+  if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
+    return <Loader scale="component">Loading proposals...</Loader>;
   }
 
-  // Contest cancelled
   return (
-    <div className="flex flex-col text-center items-center">
-      <p className="text-neutral-9 italic mb-6">This contest was cancelled.</p>
+    <div>
+      <div className="flex flex-col gap-8">
+        {Object.keys(listProposalsData)
+          .sort((a, b) => {
+            if (listProposalsData[a].votes > listProposalsData[b].votes) {
+              return -1;
+            }
+            if (listProposalsData[a].votes < listProposalsData[b].votes) {
+              return 1;
+            }
+            return 0;
+          })
+          .map((id, i) => {
+            return (
+              <div key={id} className="relative">
+                {!now.isBefore(formattedVotingOpen) && (
+                  <div
+                    className="absolute -top-0 left-0 -mt-6 -ml-6  w-12 z-10
+                     h-12 rounded-full bg-true-black flex items-center justify-center text-[24px] font-bold text-neutral-11 border border-neutral-11"
+                  >
+                    {i + 1}
+                  </div>
+                )}
+
+                <ProposalContent
+                  proposal={listProposalsData[id]}
+                  submissionOpen={submissionsOpen}
+                  votingOpen={votesOpen}
+                  votingClose={votesClose}
+                />
+              </div>
+            );
+          })}
+      </div>
+
+      {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
+        <Loader scale="component" classNameWrapper="my-3">
+          Loading proposals...
+        </Loader>
+      )}
+
+      {Object.keys(listProposalsData)?.length < listProposalsIds.length && !isPageProposalsLoading && (
+        <div className="pt-8 flex animate-appear">
+          <Button
+            intent="neutral-outline"
+            scale="sm"
+            className="mx-auto animate-appear"
+            onClick={() =>
+              fetchProposalsPage(
+                currentPagePaginationProposals + 1,
+                indexPaginationProposals[currentPagePaginationProposals + 1],
+                totalPagesPaginationProposals,
+              )
+            }
+          >
+            {isPageProposalsError ? "Try again" : "Show more proposals"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

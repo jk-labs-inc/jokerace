@@ -1,50 +1,37 @@
 import Button from "@components/UI/Button";
-import DialogModal from "@components/UI/DialogModal";
+import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
-import {
-  ROUTE_CONTEST_PROPOSAL,
-  ROUTE_VIEW_CONTEST,
-  ROUTE_VIEW_CONTEST_EXPORT_DATA,
-  ROUTE_VIEW_CONTEST_RULES,
-} from "@config/routes";
+import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
+import { chains } from "@config/wagmi";
+import { RefreshIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
+import { CastVotesWrapper } from "@hooks/useCastVotes/store";
+import { useContest } from "@hooks/useContest";
 import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
+import useContestEvents from "@hooks/useContestEvents";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper, useProposalStore } from "@hooks/useProposal/store";
-import { UserWrapper, useUserStore } from "@hooks/useUser/store";
-
 import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { isAfter, isBefore, isDate } from "date-fns";
+import useUser from "@hooks/useUser";
+import { UserWrapper } from "@hooks/useUser/store";
+import { switchNetwork } from "@wagmi/core";
+import { isBefore } from "date-fns";
+import moment from "moment";
 import Link from "next/link";
 import router, { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
-
-import { CastVotesWrapper, useCastVotesStore } from "@hooks/useCastVotes/store";
-
-import { DeleteProposalWrapper, useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
-
-import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
-import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
-import DialogModalVoteForProposal from "@components/_pages/DialogModalVoteForProposal";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { chains } from "@config/wagmi";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { RefreshIcon } from "@heroicons/react/outline";
-import { useContest } from "@hooks/useContest";
-import useContestEvents from "@hooks/useContestEvents";
-import useUser from "@hooks/useUser";
-import { switchNetwork } from "@wagmi/core";
-import moment from "moment";
+import { useEffect } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import LayoutContestPrompt from "./Prompt";
+import ProposalStatistics from "./ProposalStatistics";
 import LayoutContestCountdown from "./StickyCards/components/Countdown";
-import ContestLayoutTabs from "./Tabs";
-import Timeline from "./Timeline";
-import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
-import LayoutContestTimeline from "./TimelineV3";
-import ButtonV3 from "@components/UI/ButtonV3";
 import LayoutContestQualifier from "./StickyCards/components/Qualifier";
+import ContestLayoutTabs from "./Tabs";
+import LayoutContestTimeline from "./TimelineV3";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -58,8 +45,6 @@ const LayoutViewContest = (props: any) => {
   });
   const { chain } = useNetwork();
 
-  const { checkIfCurrentUserQualifyToVote } = useUser();
-
   const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, chainName, setChainId } =
     useContest();
 
@@ -68,31 +53,53 @@ const LayoutViewContest = (props: any) => {
     votesClose,
     votesOpen,
     contestAuthorEthereumAddress,
-    contestStatus,
     contestPrompt,
     contestName,
     contestMaxProposalCount,
   } = useContestStore(state => state);
   const contestInProgress = moment().isBefore(votesClose);
-  const contestInSubmissionPhase = moment().isBefore(votesOpen) && moment().isAfter(submissionsOpen);
 
-  const { updateSnapshotProgress } = useCheckSnapshotProgress();
-  const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
   const { isListProposalsLoading, isListProposalsError, listProposalsIds } = useProposalStore(state => state);
-
   const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
-  const { isCastVotesModalOpen, setIsCastVotesModalOpen } = useCastVotesStore(state => ({
-    isCastVotesModalOpen: state.isModalOpen,
-    setIsCastVotesModalOpen: state.setIsModalOpen,
-  }));
-  const { isDeleteProposalModalOpen, setIsDeleteProposalModalOpen } = useDeleteProposalStore(state => ({
-    isDeleteProposalModalOpen: state.isModalOpen,
-    setIsDeleteProposalModalOpen: state.setIsModalOpen,
-  }));
+
+  const { setContestStatus, contestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
+
+  useEffect(() => {
+    const now = moment();
+    const formattedSubmissionOpen = moment(submissionsOpen);
+    const formattedVotingOpen = moment(votesOpen);
+    const formattedVotingClose = moment(votesClose);
+
+    let timeoutId: NodeJS.Timeout;
+
+    const setAndScheduleStatus = (status: ContestStatus, nextStatus: ContestStatus, nextTime: moment.Moment) => {
+      setContestStatus(status);
+      if (now.isBefore(nextTime)) {
+        const msUntilNext = nextTime.diff(now);
+        timeoutId = setTimeout(() => {
+          setContestStatus(nextStatus);
+        }, msUntilNext);
+      }
+    };
+
+    if (now.isBefore(formattedSubmissionOpen)) {
+      setAndScheduleStatus(ContestStatus.ContestOpen, ContestStatus.SubmissionOpen, formattedSubmissionOpen);
+    } else if (now.isBefore(formattedVotingOpen)) {
+      setAndScheduleStatus(ContestStatus.SubmissionOpen, ContestStatus.VotingOpen, formattedVotingOpen);
+    } else if (now.isBefore(formattedVotingClose)) {
+      setAndScheduleStatus(ContestStatus.VotingOpen, ContestStatus.VotingClosed, formattedVotingClose);
+    } else {
+      setContestStatus(ContestStatus.VotingClosed);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [submissionsOpen, votesOpen, votesClose]);
 
   useEffect(() => {
     fetchContestInfo();
@@ -124,23 +131,6 @@ const LayoutViewContest = (props: any) => {
     }
   }, [account?.connector]);
 
-  useEffect(() => {
-    const verifySnapshot = async () => {
-      if (account?.address) await checkIfCurrentUserQualifyToVote();
-    };
-
-    if (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING) updateSnapshotProgress();
-    if ([CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus)) {
-      verifySnapshot();
-    }
-  }, [contestStatus, account?.address]);
-
-  useEffect(() => {
-    if (isListProposalsLoading && account?.address) {
-      checkIfCurrentUserQualifyToVote();
-    }
-  }, [chainId, account?.address, isListProposalsLoading]);
-
   const onSubmitTitle = (title: string) => {
     router.push(`/contests?title=${title}`);
   };
@@ -148,12 +138,9 @@ const LayoutViewContest = (props: any) => {
   return (
     <>
       <div className={`${isLoading ? "pointer-events-none" : ""} w-[700px] mx-auto`}>
-        {!isLoading &&
+        {/* {!isLoading &&
           isSuccess &&
-          submissionsOpen &&
-          votesOpen &&
-          votesClose &&
-          [CONTEST_STATUS.SUBMISSIONS_OPEN, CONTEST_STATUS.VOTING_OPEN].includes(contestStatus) && (
+          contestStatus === ContestStatus.SubmissionOpen && contestStatus === ContestStatus.VotingOpen && (
             <div
               className={`animate-appear text-center text-xs sticky bg-neutral-0 border-b border-neutral-4 border-solid ${
                 pathname === ROUTE_CONTEST_PROPOSAL ? "top-0" : "top-10"
@@ -162,19 +149,19 @@ const LayoutViewContest = (props: any) => {
               <p className="text-center">
                 {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
                   <>
-                    {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
+                    {contestStatus === ContestStatus.SubmissionOpen && (
                       <>
                         {listProposalsIds.length >= contestMaxProposalCount
                           ? "✋ Submissions closed ✋"
                           : "✨ Submissions open ✨"}
                       </>
                     )}
-                    {contestStatus === CONTEST_STATUS.VOTING_OPEN && <>✨ Voting open ✨</>}
+                    {contestStatus === ContestStatus.VotingOpen && <>✨ Voting open ✨</>}
                   </>
                 )}
               </p>
             </div>
-          )}
+          )} */}
 
         <div
           className={`md:pt-5 md:pb-20 flex flex-col ${
@@ -304,7 +291,7 @@ const LayoutViewContest = (props: any) => {
                       <LayoutContestPrompt prompt={contestPrompt} />
                     </div>
 
-                    {contestInSubmissionPhase && (
+                    {contestStatus === ContestStatus.SubmissionOpen && (
                       <div className="mt-8">
                         <ButtonV3
                           color="bg-gradient-create rounded-[40px]"
@@ -316,7 +303,19 @@ const LayoutViewContest = (props: any) => {
                       </div>
                     )}
 
-                    <div className="mt-8 bg-neutral-10 h-[1px] mb-16"></div>
+                    {contestStatus === ContestStatus.ContestOpen && (
+                      <div className="mt-8">
+                        <p className="text-[16px] text-primary-10 font-bold">
+                          submissions open {moment(submissionsOpen).format("MMMM Do, h:mm a")}
+                        </p>
+                      </div>
+                    )}
+
+                    {contestStatus !== ContestStatus.ContestOpen && (
+                      <div className="mt-8 mb-12">
+                        <ProposalStatistics contestStatus={contestStatus} />
+                      </div>
+                    )}
 
                     {children}
 

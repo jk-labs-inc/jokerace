@@ -5,9 +5,9 @@ import { createStore, useStore } from "zustand";
 interface UserState {
   currentUserQualifiedToSubmit: boolean;
   currentUserQualifiedToVote: boolean;
+  currentUserTotalVotesAmount: number;
   currentUserAvailableVotesAmount: number;
   contestMaxNumberSubmissionsPerUser: number;
-  currentUserTotalVotesCast: number;
   currentUserProposalCount: number;
 
   isLoading: boolean;
@@ -17,10 +17,9 @@ interface UserState {
   setCurrentUserQualifiedToSubmit: (value: boolean) => void;
   setCurrentUserQualifiedToVote: (value: boolean) => void;
   setCurrentUserAvailableVotesAmount: (amount: number) => void;
-  setCurrentUserTotalVotesCast: (amount: number) => void;
+  setCurrentUserTotalVotesAmount: (amount: number) => void;
   setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
   setCurrentUserProposalCount: (amount: number) => void;
-
   increaseCurrentUserProposalCount: () => void;
   setIsLoading: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
@@ -32,10 +31,9 @@ export const createUserStore = () =>
     currentUserQualifiedToSubmit: false,
     currentUserQualifiedToVote: false,
     currentUserAvailableVotesAmount: 0,
+    currentUserTotalVotesAmount: 0,
     contestMaxNumberSubmissionsPerUser: 0,
-    currentUserTotalVotesCast: 0,
     currentUserProposalCount: 0,
-
     isLoading: false,
     isSuccess: false,
     error: null,
@@ -43,7 +41,7 @@ export const createUserStore = () =>
     setCurrentUserQualifiedToSubmit: value => set({ currentUserQualifiedToSubmit: value }),
     setCurrentUserQualifiedToVote: value => set({ currentUserQualifiedToVote: value }),
     setCurrentUserAvailableVotesAmount: amount => set({ currentUserAvailableVotesAmount: amount }),
-    setCurrentUserTotalVotesCast: amount => set({ currentUserTotalVotesCast: amount }),
+    setCurrentUserTotalVotesAmount: amount => set({ currentUserTotalVotesAmount: amount }),
     setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),
     setCurrentUserProposalCount: amount => set({ currentUserProposalCount: amount }),
 

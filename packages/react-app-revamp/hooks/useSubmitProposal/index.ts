@@ -3,6 +3,7 @@ import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
+import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { Proof } from "lib/merkletree/generateSubmissionsTree";
@@ -14,82 +15,108 @@ import { useSubmitProposalStore } from "./store";
 
 export function useSubmitProposal() {
   const { address: userAddress } = useAccount();
+  const { fetchProposalsIdsList } = useProposal();
+
   const { submissionMerkleTree } = useContestStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
-  const { checkIfProofIsValid } = useGenerateProof(submissionMerkleTree, userAddress ?? "", "submission");
+  const { checkIfProofIsVerified } = useGenerateProof();
 
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
 
-  async function sendProposal(proposalContent: string) {
-    const [chainName, address] = asPath.split("/").slice(2, 4);
-    const { abi } = await getContestContractVersion(address, chainName);
+  async function sendProposal(proposalContent: string): Promise<TransactionResponse> {
+    return new Promise<TransactionResponse>(async (resolve, reject) => {
+      const [chainName, address] = asPath.split("/").slice(2, 4);
+      const { abi } = await getContestContractVersion(address, chainName);
 
-    setIsLoading(true);
-    setIsSuccess(false);
-    setError(null);
-    setTransactionData(null);
+      setIsLoading(true);
+      setIsSuccess(false);
+      setError(null);
+      setTransactionData(null);
 
-    let proof;
+      let proof;
 
-    if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
-      proof = false;
-    } else {
-      proof = await checkIfProofIsValid();
-    }
-
-    try {
-      const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi || DeployedContestContract.abi,
-      };
-
-      let txSendProposal: TransactionResponse = {} as TransactionResponse;
-
-      if (proof) {
-        txSendProposal = await writeContract({
-          ...contractConfig,
-          functionName: "propose",
-          args: [proposalContent, proof],
-        });
+      if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
+        proof = false;
       } else {
-        txSendProposal = await writeContract({
-          ...contractConfig,
-          functionName: "proposeWithoutProof",
-          args: [proposalContent],
-        });
+        proof = await checkIfProofIsVerified(submissionMerkleTree, userAddress ?? "", "submission");
       }
 
-      const receipt = await waitForTransaction({
-        chainId: chain?.id,
-        hash: txSendProposal.hash,
-      });
+      try {
+        const contractConfig = {
+          addressOrName: address,
+          contractInterface: abi,
+          chainId: chain?.id,
+        };
 
-      setTransactionData({
-        chainId: chain?.id,
-        hash: receipt.transactionHash,
-        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
-      });
+        let txSendProposal: TransactionResponse = {} as TransactionResponse;
 
-      setIsLoading(false);
-      setIsSuccess(true);
-      toast.success(`Your proposal was deployed successfully!`);
-      increaseCurrentUserProposalCount();
-    } catch (e) {
-      const customError = e as CustomError;
+        let targetMetadata = {
+          targetAddress: "0x0000000000000000000000000000000000000000",
+        };
 
-      if (!customError) return;
+        let safeMetadata = {
+          signers: ["0x0000000000000000000000000000000000000000"],
+          threshold: 1,
+        };
 
-      const message = customError.message || "Something went wrong while submitting your proposal.";
-      toast.error(message);
-      setError({
-        code: customError.code,
-        message,
-      });
-      setIsLoading(false);
-    }
+        let proposalCore = {
+          author: userAddress,
+          exists: true,
+          description: proposalContent,
+          targetMetadata: targetMetadata,
+          safeMetadata: safeMetadata,
+        };
+
+        if (proof) {
+          txSendProposal = await writeContract({
+            ...contractConfig,
+            functionName: "propose",
+            args: [proposalCore, proof],
+          });
+        } else {
+          txSendProposal = await writeContract({
+            ...contractConfig,
+            functionName: "proposeWithoutProof",
+            args: [proposalCore],
+          });
+        }
+
+        const receipt = await waitForTransaction({
+          chainId: chain?.id,
+          hash: txSendProposal.hash,
+        });
+
+        setTransactionData({
+          chainId: chain?.id,
+          hash: receipt.transactionHash,
+          transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
+        });
+
+        setIsLoading(false);
+        setIsSuccess(true);
+        increaseCurrentUserProposalCount();
+
+        fetchProposalsIdsList(abi); // you might need to pass the ABI here
+
+        resolve(txSendProposal);
+      } catch (e) {
+        const customError = e as CustomError;
+
+        if (!customError) return;
+
+        const message = customError.message || "Something went wrong while submitting your proposal.";
+        toast.error(message);
+        setError({
+          code: customError.code,
+          message,
+        });
+        setIsLoading(false);
+        reject(e);
+      }
+    });
   }
 
   return {

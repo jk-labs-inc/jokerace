@@ -3,7 +3,7 @@ import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { fetchBlockNumber, getAccount, readContracts } from "@wagmi/core";
+import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useAccount, useNetwork, useProvider } from "wagmi";
@@ -14,8 +14,12 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 export function useUser() {
   const provider = useProvider();
   const { address: userAddress } = useAccount();
-  const { setCurrentUserQualifiedToSubmit, setCurrentUserTotalVotesCast, setCurrentUserAvailableVotesAmount } =
-    useUserStore(state => state);
+  const {
+    setCurrentUserQualifiedToSubmit,
+    setCurrentUserAvailableVotesAmount,
+    setCurrentUserTotalVotesAmount,
+    currentUserTotalVotesAmount,
+  } = useUserStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
   const {
     submissionMerkleTree,
@@ -65,7 +69,7 @@ export function useUser() {
   const checkIfCurrentUserQualifyToSubmit = async () => {
     if (!userAddress) return;
 
-    if (submissionMerkleTree.getHexRoot() === EMPTY_ROOT) {
+    if (submissionMerkleTree.getHexRoot() === "0x") {
       setCurrentUserQualifiedToSubmit(true);
     } else {
       // Perform a lookup in the 'contest_participants_v3' table.
@@ -109,8 +113,28 @@ export function useUser() {
 
     // If the current user can vote, set 'currentUserQualifiedToSubmit' to true.
     if (data && data.length > 0 && data[0].num_votes > 0) {
-      setCurrentUserAvailableVotesAmount(data[0].num_votes);
+      const contractConfig = await getContractConfig();
+      if (!contractConfig) return;
+
+      const currentUserTotalVotesCast = await readContract({
+        ...contractConfig,
+        functionName: "contestAddressTotalVotesCast",
+        args: userAddress,
+      });
+
+      const userVotes = data[0].num_votes;
+      //@ts-ignore
+      const castVotes = currentUserTotalVotesCast / 1e18;
+
+      if (castVotes > 0) {
+        setCurrentUserTotalVotesAmount(userVotes);
+        setCurrentUserAvailableVotesAmount(userVotes - castVotes);
+      } else {
+        setCurrentUserTotalVotesAmount(userVotes);
+        setCurrentUserAvailableVotesAmount(userVotes);
+      }
     } else {
+      setCurrentUserTotalVotesAmount(0);
       setCurrentUserAvailableVotesAmount(0);
     }
   }
@@ -125,31 +149,14 @@ export function useUser() {
     const accountData = getAccount();
 
     try {
-      // get current block number
-      const currentBlockNumber = await fetchBlockNumber();
-      const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 50; // (necessary to avoid block not mined error)
-      const contracts = [
-        // get current user availables votes now
-        {
-          ...contractConfig,
-          functionName: "getVotes",
-          args: [accountData?.address, timestamp],
-        },
-        // get votes cast by current user
-        {
-          ...contractConfig,
-          functionName: "contestAddressTotalVotesCast",
-          args: accountData?.address,
-        },
-      ];
+      const currentUserTotalVotesCast = await readContract({
+        ...contractConfig,
+        functionName: "contestAddressTotalVotesCast",
+        args: accountData?.address,
+      });
 
-      const results = await readContracts({ contracts });
-      const currentUserAvailableVotesAmount = results[0];
-      const currentUserTotalVotesCast = results[1];
       //@ts-ignore
-      setCurrentUserTotalVotesCast(currentUserTotalVotesCast / 1e18);
-      //@ts-ignore
-      setCurrentUserAvailableVotesAmount(currentUserAvailableVotesAmount / 1e18 - currentUserTotalVotesCast / 1e18);
+      setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount / 1e18 - currentUserTotalVotesCast / 1e18);
     } catch (e) {
       console.error(e);
     }

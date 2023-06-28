@@ -10,7 +10,7 @@ import { useAccount } from "wagmi";
 
 type ProofType = "submission" | "vote";
 
-export function useGenerateProof(merkleTree: MerkleTree, address: string, proofType: ProofType, numVotes?: string) {
+export function useGenerateProof() {
   const { asPath } = useRouter();
   const account = useAccount();
   const [url] = useState(asPath.split("/"));
@@ -21,7 +21,7 @@ export function useGenerateProof(merkleTree: MerkleTree, address: string, proofT
   const chainName = url[2];
   const contestAddress = url[3];
 
-  function generateProof(proofType: ProofType) {
+  function generateProof(merkleTree: MerkleTree, address: string, proofType: ProofType, numVotes?: string) {
     switch (proofType) {
       case "submission":
         const submissionProof = generateSubmissionProof(merkleTree, address);
@@ -34,8 +34,13 @@ export function useGenerateProof(merkleTree: MerkleTree, address: string, proofT
     }
   }
 
-  async function checkIfProofIsValid() {
-    const proof = generateProof(proofType);
+  async function checkIfProofIsVerified(
+    merkleTree: MerkleTree,
+    address: string,
+    proofType: ProofType,
+    numVotes?: string,
+  ) {
+    const proof = generateProof(merkleTree, address, proofType, numVotes);
 
     const { abi } = await getContestContractVersion(contestAddress, chainName);
 
@@ -82,6 +87,6 @@ export function useGenerateProof(merkleTree: MerkleTree, address: string, proofT
   }, [account?.connector]);
 
   return {
-    checkIfProofIsValid,
+    checkIfProofIsVerified,
   };
 }

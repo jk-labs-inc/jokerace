@@ -1,28 +1,40 @@
 import Button from "@components/UI/Button";
 import DialogModal from "@components/UI/DialogModal";
+import DialogModalV3 from "@components/UI/DialogModalV3";
+import EthereumAddress from "@components/UI/EtheuremAddress";
+import EtheuremAddress from "@components/UI/EtheuremAddress";
 import FormField from "@components/UI/FormField";
 import FormInput from "@components/UI/FormInput";
 import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
+import VotingWidget from "@components/Voting";
 import { RadioGroup } from "@headlessui/react";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
+import { ChevronUpIcon } from "@heroicons/react/outline";
 import useCastVotes from "@hooks/useCastVotes";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
+import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { useEffect, useState } from "react";
+import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
+import LayoutContestProposal from "@layouts/LayoutViewContest/Proposal";
+import { FC, useEffect, useState } from "react";
+import { Proposal } from "../ProposalContent";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  proposal: Proposal;
 }
 
-export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProps) => {
+export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
+  props: DialogModalVoteForProposalProps,
+) => {
   const { pickedProposal, transactionData, castPositiveAmountOfVotes, setCastPositiveAmountOfVotes } =
     useCastVotesStore(state => state);
-  const { downvotingAllowed, contestStatus } = useContestStore(state => state);
+  const { downvotingAllowed, contestPrompt } = useContestStore(state => state);
   const { listProposalsData } = useProposalStore(state => state);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
+  const { updateCurrentUserVotes } = useUser();
 
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
@@ -46,136 +58,33 @@ export const DialogModalVoteForProposal = (props: DialogModalVoteForProposalProp
     }
   }, [props.isOpen, isLoading, currentUserAvailableVotesAmount]);
 
-  function onSubmitCastVotes(e: any) {
-    e.preventDefault();
-    castVotes(votesToCast, castPositiveAmountOfVotes);
+  function onSubmitCastVotes(amount: string, isPositive: boolean) {
+    castVotes(parseFloat(amount), isPositive);
   }
 
   return (
-    <DialogModal title="Cast your votes" {...props}>
-      {showDeploymentSteps && (
-        <div className="animate-appear mt-2 mb-4">
-          <TrackerDeployTransaction error={error} isSuccess={isSuccess} isLoading={isLoading} />
-        </div>
-      )}
+    <DialogModalV3
+      title="Cast your votes"
+      isOpen={props.isOpen}
+      setIsOpen={props.setIsOpen}
+      className="xl:w-[1110px] 3xl:w-[1300px] h-[660px]"
+    >
+      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[120px]">
+        <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
+        <EtheuremAddress
+          ethereumAddress={props.proposal.authorEthereumAddress}
+          shortenOnFallback={true}
+          displayLensProfile={true}
+        />
 
-      {showDeploymentSteps && transactionData?.transactionHref && (
-        <div className="my-2 animate-appear">
-          <a rel="nofollow noreferrer" target="_blank" href={transactionData?.transactionHref}>
-            View transaction <span className="link">here</span>
-          </a>
-        </div>
-      )}
-
-      {currentUserAvailableVotesAmount === 0 ||
-        (showDeploymentSteps && transactionData?.transactionHref && (
-          <div className="mt-2 mb-4 animate-appear">
-            <Button onClick={() => props.setIsOpen(false)}>Go back</Button>
-          </div>
-        ))}
-
-      {showForm && contestStatus === CONTEST_STATUS.VOTING_OPEN && currentUserAvailableVotesAmount > 0 && (
-        <form className={isLoading === true ? "opacity-50 pointer-events-none" : ""} onSubmit={onSubmitCastVotes}>
-          {downvotingAllowed === true && (
-            <RadioGroup
-              className="overflow-hidden text-xs font-medium mb-6 divide-i divide-neutral-4 flex rounded-full border-solid border border-neutral-4"
-              value={castPositiveAmountOfVotes}
-              onChange={setCastPositiveAmountOfVotes}
-            >
-              <RadioGroup.Option className="relative w-1/2 p-1 flex items-center justify-center" value={true}>
-                {({ checked }) => (
-                  <>
-                    <span
-                      className={`${
-                        checked ? "bg-positive-9" : ""
-                      } cursor-pointer absolute top-0 left-0 w-full h-full block`}
-                    />
-                    <span className={`cursor-pointer relative z-10 ${checked ? "text-positive-1 font-bold" : ""}`}>
-                      Upvote
-                    </span>
-                  </>
-                )}
-              </RadioGroup.Option>
-              <RadioGroup.Option className="relative w-1/2 p-1 flex items-center justify-center" value={false}>
-                {({ checked }) => (
-                  <>
-                    <span
-                      className={`${
-                        checked ? "bg-positive-9" : ""
-                      } cursor-pointer absolute top-0 left-0 w-full h-full block`}
-                    />
-                    <span className={`cursor-pointer relative z-10 ${checked ? "text-positive-1 font-bold" : ""}`}>
-                      Downvote
-                    </span>
-                  </>
-                )}
-              </RadioGroup.Option>
-            </RadioGroup>
-          )}
-          <FormField className="w-full">
-            <FormField.Label
-              htmlFor="votesToCast"
-              hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
-            >
-              Cast votes
-            </FormField.Label>
-            <div className="flex items-center">
-              {downvotingAllowed && (
-                <span className="text-neutral-9 font-bold text-lg pie-1ex">
-                  {castPositiveAmountOfVotes ? "+" : "-"}
-                </span>
-              )}
-              <FormInput
-                required
-                type="number"
-                placeholder="0"
-                min={0}
-                step={0.000000001}
-                onChange={e => {
-                  setVotesToCast(parseFloat(e.currentTarget.value));
-                }}
-                className="w-full"
-                value={votesToCast}
-                max={currentUserAvailableVotesAmount}
-                aria-invalid={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount ? "true" : "false"}
-                name="votesToCast"
-                id="votesToCast"
-                disabled={isLoading}
-                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
-                aria-describedby="input-votesToCast-helpblock-1 input-votesToCast-helpblock-2"
-              />
-            </div>
-            <div className="mt-2 my-1">
-              <FormField.HelpBlock
-                className="min:not-sr-only text-2xs flex flex-col space-y-1 text-neutral-11"
-                id="input-contestaddress-helpblock-1"
-                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
-              >
-                <span>Available: {currentUserAvailableVotesAmount}</span>
-                {pickedProposal && (
-                  <span>
-                    Votes on submission: {new Intl.NumberFormat().format(listProposalsData[pickedProposal].votes)}{" "}
-                  </span>
-                )}
-              </FormField.HelpBlock>
-              <FormField.HelpBlock
-                hasError={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount}
-                id="input-contestaddress-helpblock-2"
-              >
-                Your amount of votes must be positive and not superior to the number of voting tokens you hold.
-              </FormField.HelpBlock>
-            </div>
-          </FormField>
-          <Button
-            disabled={votesToCast <= 0 || votesToCast > currentUserAvailableVotesAmount || isLoading}
-            className={isLoading ? "hidden" : "mt-3"}
-            type="submit"
-          >
-            Vote!
-          </Button>
-        </form>
-      )}
-    </DialogModal>
+        <LayoutContestProposal proposal={props.proposal} />
+        <VotingWidget
+          amountOfVotes={currentUserAvailableVotesAmount}
+          downvoteAllowed={downvotingAllowed}
+          onVote={onSubmitCastVotes}
+        />
+      </div>
+    </DialogModalV3>
   );
 };
 

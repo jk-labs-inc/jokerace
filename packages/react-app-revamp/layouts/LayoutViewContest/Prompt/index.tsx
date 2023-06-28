@@ -32,15 +32,17 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
               <ChevronUpIcon height={30} />
             </button>
           </div>
-          <div className="pl-5">
-            <Collapsible isOpen={isPromptOpen}>
-              <div className="border-l border-true-white ">
-                <p className="prose prose-invert pl-5">
-                  <Interweave content={promptText} matchers={[new UrlMatcher("url")]} />
-                </p>
-              </div>
-            </Collapsible>
-          </div>
+          {isPromptOpen && (
+            <div className="pl-5">
+              <Collapsible isOpen={isPromptOpen}>
+                <div className="border-l border-true-white ">
+                  <p className="prose prose-invert pl-5">
+                    <Interweave content={promptText} matchers={[new UrlMatcher("url")]} />
+                  </p>
+                </div>
+              </Collapsible>
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex flex-col gap-4">

@@ -5,7 +5,7 @@ import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsInd
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory } from "ethers";
+import { ContractFactory, ethers } from "ethers";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";

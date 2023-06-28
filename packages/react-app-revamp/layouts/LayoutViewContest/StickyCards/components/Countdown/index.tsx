@@ -19,14 +19,24 @@ interface LayoutContestCountdownProps {
 
 const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpen, votingOpen, votingClose }) => {
   const [duration, setDuration] = useState(formatDuration(moment.duration(0)));
-  const [phase, setPhase] = useState("submit");
+  const [phase, setPhase] = useState("contest");
+  const { y } = useWindowScroll();
+
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    setIsScrolled(y > 500);
+  }, [y]);
 
   useEffect(() => {
     const interval = setInterval(() => {
       const currentTime = moment();
       let diffTime;
 
-      if (currentTime.isBefore(votingOpen)) {
+      if (currentTime.isBefore(submissionOpen)) {
+        setPhase("start");
+        diffTime = moment(submissionOpen).diff(currentTime);
+      } else if (currentTime.isBefore(votingOpen)) {
         setPhase("submit");
         diffTime = moment(votingOpen).diff(currentTime);
       } else if (currentTime.isBefore(votingClose)) {
@@ -58,14 +68,28 @@ const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpe
   };
 
   return (
-    <div className="w-full bg-true-black flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+    <div
+      className={`w-full bg-true-black flex flex-col ${
+        isScrolled ? "justify-between" : ""
+      } gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container`}
+    >
       <Image src="/contest/timer.svg" width={33} height={33} alt="timer" />
-      <div className="flex flex-col">
-        <div className="text-[16px] font-bold text-neutral-11">{displayText()}</div>
-        {phase === "submit" && (
-          <div className="text-[16px] text-neutral-11 ">
-            Voting follows until {moment(votingClose).format("MMMM Do, h:mm a")}
-          </div>
+      <div className="flex flex-col items-center">
+        {isScrolled ? (
+          <div className="text-[20px] font-bold text-neutral-11">{displayText()}</div>
+        ) : (
+          <>
+            <div className="text-[16px] font-bold text-neutral-11">{displayText()}</div>
+            {phase === "start" ? (
+              <div className="text-[16px] text-neutral-11 ">
+                submissions follows until {moment(votingOpen).format("MMMM Do, h:mm a")}
+              </div>
+            ) : (
+              <div className="text-[16px] text-neutral-11 ">
+                Voting follows until {moment(votingClose).format("MMMM Do, h:mm a")}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

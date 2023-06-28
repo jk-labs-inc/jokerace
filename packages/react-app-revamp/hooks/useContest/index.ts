@@ -1,6 +1,5 @@
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContestsIndex from "@hooks/useContestsIndex";
 import useProposal from "@hooks/useProposal";
@@ -18,10 +17,8 @@ import { useContestStore } from "./store";
 import { isSupabaseConfigured } from "@helpers/database";
 import { getV1Contracts } from "./v1/contracts";
 import { getV3Contracts } from "./v3/contracts";
-import MerkleTree from "merkletreejs";
 import { createMerkleTreeFromVotes, Voter } from "lib/merkletree/generateVotersTree";
 import { createMerkleTreeFromAddresses } from "lib/merkletree/generateSubmissionsTree";
-import { keccak256 } from "ethers/lib/utils";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -63,12 +60,11 @@ export function useContest() {
     setVotesOpen,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
-    setContestStatus,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds, resetListProposals } =
     useProposalStore(state => state);
   const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
-  const { checkIfCurrentUserQualifyToVote, updateCurrentUserVotes } = useUser();
+  const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList, fetchProposalsPage } = useProposal();
 
   /**
@@ -116,8 +112,6 @@ export function useContest() {
     if (!result) return; // if the result is undefined, just return
 
     const { contractConfig, version } = result;
-
-    const accountData = getAccount();
 
     if (
       contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
@@ -170,22 +164,6 @@ export function useContest() {
         setIsSuccess(true);
         setIsLoading(false);
         setIsListProposalsLoading(false);
-
-        if (
-          //@ts-ignore
-          results[8] === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-          //@ts-ignore
-          isBefore(new Date(), new Date(parseInt(results[5]) * 1000))
-        ) {
-          // If the contest status is marked as open
-          // but the current date is before the opening of submissions
-          // Then we use a special status on the frontend
-          // This way we can display a countdown until submissions open
-          setContestStatus(CONTEST_STATUS.SUBMISSIONS_NOT_OPEN);
-        } else {
-          //@ts-ignore
-          setContestStatus(results[8]);
-        }
 
         //@ts-ignore
         const promptFilter = contractConfig.contractInterface?.filter(el => el.name === "prompt");
@@ -249,26 +227,9 @@ export function useContest() {
         //@ts-ignore
         setVotesOpen(new Date(parseInt(results[6]) * 1000));
 
-        if (
-          //@ts-ignore
-          results[7] === CONTEST_STATUS.SUBMISSIONS_OPEN &&
-          //@ts-ignore
-          isBefore(new Date(), new Date(parseInt(results[5]) * 1000))
-        ) {
-          // If the contest status is marked as open
-          // but the current date is before the opening of submissions
-          // Then we use a special status on the frontend
-          // This way we can display a countdown until submissions open
-          setContestStatus(CONTEST_STATUS.SUBMISSIONS_NOT_OPEN);
-        } else {
-          //@ts-ignore
-          setContestStatus(results[7]);
-        }
-
         setContestPrompt(results[8].toString());
 
-        //@ts-ignore
-        setDownvotingAllowed(results[9] === 1);
+        setDownvotingAllowed(results[9].toString() === "1");
 
         // We want to track VoteCast event only 1H before the end of the contest
         if (isBefore(new Date(), closingVoteDate)) {
@@ -317,6 +278,8 @@ export function useContest() {
 
           setSubmissionMerkleTree(submissionMerkleTree);
           setVotingMerkleTree(votingMerkleTree);
+          checkIfCurrentUserQualifyToSubmit();
+          checkIfCurrentUserQualifyToVote();
           setError(null);
           setIsSuccess(true);
           setIsLoading(false);

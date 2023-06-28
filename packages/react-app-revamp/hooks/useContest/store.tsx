@@ -8,7 +8,6 @@ export interface ContestState {
   contestPrompt: string;
   contestAuthorEthereumAddress: string;
   contestAuthor: string;
-  contestStatus: number;
   submissionsOpen: Date;
   votesOpen: Date;
   votesClose: Date;
@@ -34,7 +33,6 @@ export interface ContestState {
   setDownvotingAllowed: (isAllowed: boolean) => void;
   setContestPrompt: (prompt: string) => void;
   setContestMaxProposalCount: (amount: number) => void;
-  setContestStatus: (status: number) => void;
   setContestName: (name: string) => void;
   setContestAuthor: (author: string, address: string) => void;
   setSubmissionsOpen: (datetime: Date) => void;
@@ -56,7 +54,6 @@ export const createContestStore = () =>
     contestPrompt: "",
     contestAuthorEthereumAddress: "",
     contestAuthor: "",
-    contestStatus: 0,
     submissionsOpen: new Date(),
     votesOpen: new Date(),
     votesClose: new Date(),
@@ -78,7 +75,6 @@ export const createContestStore = () =>
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
     setIsV3: value => set({ isV3: value }),
-    setContestStatus: status => set({ contestStatus: status }),
     setContestName: name => set({ contestName: name }),
     setContestAuthor: (author, address) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),

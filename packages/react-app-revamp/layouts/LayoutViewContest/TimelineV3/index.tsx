@@ -1,7 +1,12 @@
 import React, { useState, useEffect, FC } from "react";
 import moment from "moment";
 
-const stages = ["Submission Open", "Voting Opens", "Contest Closes"];
+interface Stage {
+  name: string;
+  action: string;
+  date: Date;
+  color: string;
+}
 
 interface LayoutContestTimelineProps {
   submissionOpenDate: Date;
@@ -14,51 +19,44 @@ const LayoutContestTimeline: FC<LayoutContestTimelineProps> = ({
   votingOpensDate,
   contestCloseDate,
 }) => {
-  const [currentStage, setCurrentStage] = useState(0);
+  const stages: Stage[] = [
+    { name: "Submission Open", action: "Submissions are open", date: submissionOpenDate, color: "primary-10" },
+    { name: "Voting Opens", action: "Voting is open", date: votingOpensDate, color: "positive-11" },
+    { name: "Contest Closes", action: "Contest closed", date: contestCloseDate, color: "neutral-11" },
+  ];
+
+  const [currentStageIndex, setCurrentStageIndex] = useState(-1);
 
   useEffect(() => {
     const interval = setInterval(() => {
       const now = moment();
-      if (now.isSameOrAfter(moment(contestCloseDate))) setCurrentStage(2);
-      else if (now.isSameOrAfter(moment(votingOpensDate))) setCurrentStage(1);
-      else setCurrentStage(0);
+      let activeStageIndex = -1;
+      for (let i = stages.length - 1; i >= 0; i--) {
+        if (now.isSameOrAfter(moment(stages[i].date))) {
+          activeStageIndex = i;
+          break;
+        }
+      }
+      setCurrentStageIndex(activeStageIndex);
     }, 1000);
     return () => clearInterval(interval);
   }, [submissionOpenDate, votingOpensDate, contestCloseDate]);
 
-  const getLabel = (index: number) => {
-    if (currentStage === index) return "Now";
-    if (currentStage > index && currentStage !== stages.length - 1) return "Previous";
-    if (index === 0) return moment(submissionOpenDate).format("MMMM D, h:mm a");
-    if (index === 1) return moment(votingOpensDate).format("MMMM D, h:mm a");
-    if (index === 2) return moment(contestCloseDate).format("MMMM D, h:mm a");
-  };
-
-  const getStageLabel = (index: number) => {
-    if (currentStage === stages.length - 1) {
-      switch (index) {
-        case 0:
-          return "Submission period";
-        case 1:
-          return "Voting period";
-        case 2:
-          return "Contest closed";
-      }
-    } else {
-      return stages[index];
-    }
-  };
-
-  const getOpacity = (index: number) => (currentStage === index ? 1 : 0.5);
-  const getColor = (index: number) => (index === 0 ? "primary-10" : index === 1 ? "positive-11" : "neutral-11");
-
   return (
     <div className="hidden lg:grid grid-cols-3 lg:gap-0">
       {stages.map((stage, index) => (
-        <div key={index} style={{ opacity: getOpacity(index) }}>
-          <div className="text-[16px] font-bold  mb-1">{getLabel(index)}</div>
-          <div className={`h-[1px] bg-${getColor(index)}`}></div>
-          <div className={`text-[16px] font-bold mt-1 text-${getColor(index)}`}>{getStageLabel(index)}</div>
+        <div key={index} style={{ opacity: currentStageIndex === index ? 1 : 0.5 }}>
+          <div className="text-[16px] font-bold mb-1">
+            {index === currentStageIndex
+              ? "Now"
+              : currentStageIndex > index && currentStageIndex !== stages.length - 1
+              ? "Previous"
+              : moment(stage.date).format("MMMM D, h:mm a")}
+          </div>
+          <div className={`h-[1px] bg-${stage.color}`}></div>
+          <div className={`text-[16px] font-bold mt-1 text-${stage.color}`}>
+            {index === currentStageIndex ? stage.action : stage.name}
+          </div>
         </div>
       ))}
     </div>

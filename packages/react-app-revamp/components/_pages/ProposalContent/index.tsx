@@ -2,64 +2,62 @@
 /* eslint-disable react/no-children-prop */
 import ButtonV3 from "@components/UI/ButtonV3";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
+import { formatNumber } from "@helpers/formatNumber";
 import { isUrlTweet } from "@helpers/isUrlTweet";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { load } from "cheerio";
 import moment from "moment";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
-import { AnyNode, load } from "cheerio";
-import { formatNumber } from "@helpers/formatNumber";
+import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 
-enum ProposalStatus {
-  VoteNotOpened,
-  VoteOpen,
-  VoteEnded,
+export interface Proposal {
+  authorEthereumAddress: string;
+  content: string;
+  exists: boolean;
+  isContentImage: boolean;
+  votes: number;
 }
 
 interface ProposalContentProps {
-  proposal: {
-    authorEthereumAddress: string;
-    content: string;
-    exists: boolean;
-    isContentImage: boolean;
-    votes: number;
-  };
+  proposal: Proposal;
+  submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
 }
 
-const MAX_LENGTH = 150;
+const MAX_LENGTH = 250;
 const MAX_LENGTH_PARAGRAPH = 50;
 
-const ProposalContent: FC<ProposalContentProps> = ({ proposal, votingOpen, votingClose }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ proposal, submissionOpen, votingOpen, votingClose }) => {
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
-  const now = moment();
   const formattedVotingOpen = moment(votingOpen);
-  const formattedVotingClose = moment(votingClose);
-
-  const [proposalStatus, setProposalStatus] = useState<ProposalStatus>(ProposalStatus.VoteNotOpened);
+  const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
-    switch (proposalStatus) {
-      case ProposalStatus.VoteNotOpened:
+    switch (contestStatus) {
+      case ContestStatus.ContestOpen:
+      case ContestStatus.SubmissionOpen:
         return (
           <>
-            <p className="text-neutral-11">voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}</p>
+            <p className="text-neutral-10">voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}</p>
           </>
         );
-      case ProposalStatus.VoteOpen:
+      case ContestStatus.VotingOpen:
         return (
           <>
             <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
-            <ButtonV3 color="bg-gradient-vote rounded-[40px]" size="large">
+            <ButtonV3 color="bg-gradient-vote rounded-[40px]" size="large" onClick={() => setIsVotingModalOpen(true)}>
               vote
             </ButtonV3>
           </>
         );
-      case ProposalStatus.VoteEnded:
+      case ContestStatus.VotingClosed:
         return (
           <>
             <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
@@ -67,17 +65,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal, votingOpen, votin
           </>
         );
     }
-  }, [proposalStatus]);
-
-  useEffect(() => {
-    if (now.isBefore(formattedVotingOpen)) {
-      setProposalStatus(ProposalStatus.VoteNotOpened);
-    } else if (now.isBetween(formattedVotingOpen, formattedVotingClose)) {
-      setProposalStatus(ProposalStatus.VoteOpen);
-    } else {
-      setProposalStatus(ProposalStatus.VoteEnded);
-    }
-  }, [now, formattedVotingOpen, formattedVotingClose]);
+  }, [contestStatus]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];
@@ -120,14 +108,14 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal, votingOpen, votin
       $(element).text(newText);
     });
 
-    const finalContent = imgTags + textElements.toString();
+    const finalContent = imgTags + $.html(textElements);
 
     truncatedContent = `<div>${finalContent}</div>`;
   }
 
   return (
-    <div className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11 prose hover:bg-neutral-1 transition-colors duration-500 ease-in-out cursor-pointer">
-      <div className="flex items-center px-8 py-2 h-3/4">
+    <div className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+      <div className="flex items-center prose px-8 py-2 h-3/4">
         <ReactMarkdown
           className="prose-invert"
           components={{
@@ -155,6 +143,8 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal, votingOpen, votin
           {ProposalAction}
         </div>
       </div>
+
+      <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
     </div>
   );
 };

@@ -7,7 +7,6 @@ import TipTapEditor from "@components/UI/TipTapEditor";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import {
   loadSubmissionFromLocalStorage,
   removeSubmissionFromLocalStorage,
@@ -30,10 +29,12 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import ButtonV3 from "@components/UI/ButtonV3";
 import { useAccount } from "wagmi";
 import moment from "moment";
+import { toast } from "react-toastify";
+import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 
 interface DialogModalSendProposalProps {
   isOpen: boolean;
@@ -45,11 +46,12 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { asPath } = useRouter();
   const { sendProposal, isLoading, error, isSuccess } = useSubmitProposal();
   const { transactionData } = useSubmitProposalStore(state => state);
-  const { contestPrompt, contestStatus, contestMaxProposalCount, votesOpen } = useContestStore(state => state);
+  const { contestPrompt, contestMaxProposalCount, votesOpen } = useContestStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
   const { currentUserProposalCount, contestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
+  const toastIdRef = useRef<string | number | null>(null);
 
   const [showForm, setShowForm] = useState(true);
   const contestId = asPath.split("/")[3];
@@ -108,11 +110,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     }
   }, [isOpen, isLoading]);
 
-  const onSubmitProposal = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    sendProposal(proposal.trim());
-  };
-
   const onClickSubmitAnotherProposal = () => {
     setProposal("");
     setShowForm(true);
@@ -134,12 +131,39 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     );
   };
 
+  const onSubmitProposal = () => {
+    const promiseFn = () => sendProposal(proposal.trim());
+
+    const statusMessages: ToastMessage[] = [
+      {
+        message: "deploying proposal...",
+        successMessage: "Your proposal was deployed successfully!",
+        status: "pending",
+      },
+    ];
+
+    toastIdRef.current = toast(
+      <MultiStepToast
+        messages={statusMessages}
+        promises={[promiseFn]}
+        toastIdRef={toastIdRef}
+        completionMessage="Your proposal was deployed successfully!"
+      />,
+      {
+        position: "bottom-center",
+        bodyClassName: "text-[16px] font-bold",
+        autoClose: false,
+        icon: false,
+      },
+    );
+  };
+
   return (
     <DialogModalV3
       title="submission"
       isOpen={isOpen}
       setIsOpen={setIsOpen}
-      className="xl:w-[1110px] 3xl:w-[1300px] h-[700px]"
+      className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[120px]">
         <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
@@ -154,12 +178,12 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
 
           <EditorContent
             editor={editorProposal}
-            className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[600px] overflow-y-auto max-h-[300px] pb-2"
+            className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[600px] overflow-y-auto h-auto max-h-[300px] pb-2"
           />
           <p className="text-[16px] text-neutral-11 mt-2">{tipMessage()}</p>
         </div>
-        <div className="mt-8">
-          <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large" onClick={() => sendProposal(proposal)}>
+        <div className="mt-2">
+          <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large" onClick={onSubmitProposal}>
             submit!
           </ButtonV3>
         </div>

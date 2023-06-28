@@ -1,16 +1,21 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContest from "@hooks/useContest";
+import { useContestStore } from "@hooks/useContest/store";
+import { useGenerateProof } from "@hooks/useGenerateProof";
 import useUser from "@hooks/useUser";
+import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
-import { useNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
+  const votingMerkleTree = useContestStore(state => state.votingMerkleTree);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -22,13 +27,17 @@ export function useCastVotes() {
     setError,
     setTransactionData,
   } = useCastVotesStore(state => state);
+  const { address: userAddress } = useAccount();
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useUser();
+  const {} = useUserStore(state => state);
+  const { checkIfProofIsVerified } = useGenerateProof();
 
   async function castVotes(amount: number, isPositive: boolean) {
     const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
-    const abi = await getContestContractVersion(id, chainId);
+    const { abi } = await getContestContractVersion(id, chainId);
+
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
@@ -38,11 +47,24 @@ export function useCastVotes() {
       contractInterface: abi ?? DeployedContestContract.abi,
     };
     try {
-      const txCastVotes = await writeContract({
-        ...contractConfig,
-        functionName: "castVote",
-        args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
-      });
+      const proof = await checkIfProofIsVerified(votingMerkleTree, userAddress ?? "", "vote", amount.toString());
+
+      let txCastVotes: TransactionResponse = {} as TransactionResponse;
+
+      if (proof) {
+        txCastVotes = await writeContract({
+          ...contractConfig,
+          functionName: "castVote",
+          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`), parseUnits(`${amount}`), proof],
+        });
+      } else {
+        txCastVotes = await writeContract({
+          ...contractConfig,
+          functionName: "castVoteWithoutProof",
+          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
+        });
+      }
+
       const receipt = await waitForTransaction({
         chainId: chain?.id,
         hash: txCastVotes.hash,

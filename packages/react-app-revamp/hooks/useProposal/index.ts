@@ -3,6 +3,7 @@ import arrayToChunks from "@helpers/arrayToChunks";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { getAccount, readContract } from "@wagmi/core";
 import { Result } from "ethers/lib/utils";
@@ -29,7 +30,6 @@ export function useProposal() {
   } = useProposalStore(state => state);
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
-
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
@@ -88,7 +88,7 @@ export function useProposal() {
       const results = await readContracts({ contracts });
 
       for (let i = 0; i < slice.length; i++) {
-        await fetchProposal(i, results, slice);
+        await fetchProposal(i, results, slice, version);
       }
 
       setIsPageProposalsLoading(false);
@@ -114,7 +114,12 @@ export function useProposal() {
    * @param results - array of smart contracts calls results (returned by `readContracts`)
    * @param listIdsProposalsToBeFetched - array of proposals ids to be fetched
    */
-  async function fetchProposal(i: number, results: Array<any>, listIdsProposalsToBeFetched: Array<any>) {
+  async function fetchProposal(
+    i: number,
+    results: Array<any>,
+    listIdsProposalsToBeFetched: Array<any>,
+    version: string,
+  ) {
     const accountData = getAccount();
     // Create an array of proposals
     // A proposal is a pair of data
@@ -124,18 +129,21 @@ export function useProposal() {
       return result;
     }, []);
 
+    const isV3 = version.startsWith("3");
     const data = proposalDataPerId[i][0];
-    const content = data[1];
-    const isContentImage = isUrlToImage(data[1]) ? true : false;
+    const content = isV3 ? data[2] : data[1];
+    const isContentImage = isUrlToImage(isV3 ? data[2] : data[1]) ? true : false;
+
     const proposalData = {
       authorEthereumAddress: data[0],
       content,
       isContentImage,
-      exists: data[2],
+      exists: isV3 ? data[1] : data[2],
       votes: proposalDataPerId[i][1]?.forVotes
         ? proposalDataPerId[i][1]?.forVotes / 1e18 - proposalDataPerId[i][1]?.againstVotes / 1e18
         : proposalDataPerId[i][1] / 1e18,
     };
+
     // Check if that proposal belongs to the current user
     // (Needed to track if the current user can submit a proposal)
     if (data[0] === accountData?.address) {

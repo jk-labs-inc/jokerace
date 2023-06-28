@@ -2,22 +2,22 @@
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
 import { formatNumber } from "@helpers/formatNumber";
-import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ReactNode } from "react-markdown/lib/ast-to-react";
+import { useWindowScroll } from "react-use";
 import { useAccount } from "wagmi";
 
 const LayoutContestQualifier = () => {
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { currentUserQualifiedToSubmit, currentUserAvailableVotesAmount } = useUserStore(state => state);
-  const { checkIfCurrentUserQualifyToSubmit, checkIfCurrentUserQualifyToVote } = useUser();
+  const { y } = useWindowScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    checkIfCurrentUserQualifyToSubmit();
-    checkIfCurrentUserQualifyToVote();
-  }, [address]);
+    setIsScrolled(y > 500);
+  }, [y]);
 
   const qualifiedToSubmitMessage = useMemo<ReactNode>(() => {
     if (currentUserQualifiedToSubmit) {
@@ -43,9 +43,12 @@ const LayoutContestQualifier = () => {
     if (currentUserAvailableVotesAmount > 0) {
       return (
         <div className="flex flex-nowrap items-center gap-1">
-          <div className="mt-1">
-            <CheckmarkIcon />
-          </div>
+          {!isScrolled && (
+            <div className="mt-1">
+              <CheckmarkIcon />
+            </div>
+          )}
+
           <p>
             you have <span className="font-bold">{formatNumber(currentUserAvailableVotesAmount)} votes</span>
           </p>
@@ -59,7 +62,7 @@ const LayoutContestQualifier = () => {
         <p>you don't qualify to vote</p>
       </div>
     );
-  }, [currentUserAvailableVotesAmount]);
+  }, [currentUserAvailableVotesAmount, isScrolled]);
 
   return (
     <div className="w-full bg-true-black flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
@@ -67,8 +70,14 @@ const LayoutContestQualifier = () => {
 
       {isConnected ? (
         <div className="flex flex-col">
-          <div className="text-[16px] text-neutral-11">{qualifiedToSubmitMessage}</div>
-          <div className="text-[16px]  text-neutral-11">{qualifiedToVoteMessage}</div>
+          {isScrolled ? (
+            <div className="text-[20px]  text-neutral-11">{qualifiedToVoteMessage}</div>
+          ) : (
+            <>
+              <div className="text-[16px] text-neutral-11">{qualifiedToSubmitMessage}</div>
+              <div className="text-[16px]  text-neutral-11">{qualifiedToVoteMessage}</div>
+            </>
+          )}
         </div>
       ) : (
         <div className="text-[16px] font-bold text-neutral-11 mt-2">connect a wallet to see if you qualify</div>

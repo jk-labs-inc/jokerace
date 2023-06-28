@@ -68,7 +68,7 @@ const createMerkleTree = (voters: Voter[]): MerkleTree => {
  * @returns {Promise<void>}
  */
 export const createMerkleTreeFromVotes = (
-  decimals: number = 18,
+  decimals: number,
   votesData: Record<string, number>,
 ): MerkleTreeVotingData => {
   const voters = setupVoteRecipients(decimals, votesData);
