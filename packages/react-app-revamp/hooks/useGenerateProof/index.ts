@@ -1,6 +1,7 @@
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
+import { ethers } from "ethers";
 import { generateProof as generateSubmissionProof } from "lib/merkletree/generateSubmissionsTree";
 import { generateProof as generateVotingProof } from "lib/merkletree/generateVotersTree";
 import MerkleTree from "merkletreejs";
@@ -40,7 +41,7 @@ export function useGenerateProof() {
     proofType: ProofType,
     numVotes?: string,
   ) {
-    const proof = generateProof(merkleTree, address, proofType, numVotes);
+    const proofs = generateProof(merkleTree, address, proofType, numVotes);
 
     const { abi } = await getContestContractVersion(contestAddress, chainName);
 
@@ -73,7 +74,7 @@ export function useGenerateProof() {
     if (verified) {
       return true;
     } else {
-      return proof;
+      return proofs;
     }
   }
 

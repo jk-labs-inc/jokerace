@@ -5,6 +5,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { useEffect, useMemo, useState } from "react";
+import { useShowRewardsStore } from "../ContestDeploying";
 
 const CreateContestRewards = () => {
   const {
@@ -19,12 +20,13 @@ const CreateContestRewards = () => {
     cancel: cancelCreateRewardsPool,
     reset: clearRewardsData,
   } = useDeployRewardsStore(state => state);
+  const { setShowRewards } = useShowRewardsStore(state => state);
 
   const { isLoading: isFundingRewardsDeploying } = useFundRewardsStore(state => state);
 
   const { cancel: cancelFundingPool } = useFundRewardsStore(state => state);
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     if (!cancelCreateRewardsPool && !cancelFundingPool) return;
@@ -32,17 +34,8 @@ const CreateContestRewards = () => {
     setIsOpen(false);
   }, [cancelCreateRewardsPool, cancelFundingPool]);
 
-  useEffect(() => {
-    if (!isContestDeployed && !isRewardsModuleDeployed) return;
-
-    setIsOpen(true);
-
-    if (isContestDeployed) {
-      setContestDeployed(false);
-    }
-  }, [isContestDeployed, isRewardsModuleDeployed]);
-
   const handleModalClose = () => {
+    setShowRewards(false);
     clearContestData();
     clearRewardsData();
   };

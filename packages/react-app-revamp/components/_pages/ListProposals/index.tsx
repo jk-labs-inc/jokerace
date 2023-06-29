@@ -116,6 +116,7 @@ export const ListProposals = () => {
                 )}
 
                 <ProposalContent
+                  id={id}
                   proposal={listProposalsData[id]}
                   submissionOpen={submissionsOpen}
                   votingOpen={votesOpen}

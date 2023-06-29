@@ -4,6 +4,7 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import { formatNumber } from "@helpers/formatNumber";
 import { isUrlTweet } from "@helpers/isUrlTweet";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { load } from "cheerio";
 import moment from "moment";
@@ -23,6 +24,7 @@ export interface Proposal {
 }
 
 interface ProposalContentProps {
+  id: string;
   proposal: Proposal;
   submissionOpen: Date;
   votingOpen: Date;
@@ -32,12 +34,13 @@ interface ProposalContentProps {
 const MAX_LENGTH = 250;
 const MAX_LENGTH_PARAGRAPH = 50;
 
-const ProposalContent: FC<ProposalContentProps> = ({ proposal, submissionOpen, votingOpen, votingClose }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen }) => {
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
     switch (contestStatus) {
@@ -52,7 +55,14 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal, submissionOpen, v
         return (
           <>
             <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
-            <ButtonV3 color="bg-gradient-vote rounded-[40px]" size="large" onClick={() => setIsVotingModalOpen(true)}>
+            <ButtonV3
+              color="bg-gradient-vote rounded-[40px]"
+              size="large"
+              onClick={() => {
+                setPickProposal(id);
+                setIsVotingModalOpen(true);
+              }}
+            >
               vote
             </ButtonV3>
           </>

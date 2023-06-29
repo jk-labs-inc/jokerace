@@ -1,4 +1,6 @@
 import DialogModalV3 from "@components/UI/DialogModalV3";
+import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
+import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import ListProposals from "@components/_pages/ListProposals";
 import CreateRewardsPool from "@components/_pages/Rewards/components/Create";
 import CreateRewardsFunding from "@components/_pages/Rewards/components/Fund";

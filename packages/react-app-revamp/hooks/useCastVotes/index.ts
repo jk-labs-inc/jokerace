@@ -7,6 +7,7 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
+import { ethers } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
@@ -31,7 +32,7 @@ export function useCastVotes() {
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useUser();
-  const {} = useUserStore(state => state);
+  const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { checkIfProofIsVerified } = useGenerateProof();
 
   async function castVotes(amount: number, isPositive: boolean) {
@@ -46,16 +47,28 @@ export function useCastVotes() {
       addressOrName: id,
       contractInterface: abi ?? DeployedContestContract.abi,
     };
+
     try {
-      const proof = await checkIfProofIsVerified(votingMerkleTree, userAddress ?? "", "vote", amount.toString());
+      const proofs = await checkIfProofIsVerified(
+        votingMerkleTree,
+        userAddress ?? "",
+        "vote",
+        currentUserTotalVotesAmount.toString(),
+      );
 
       let txCastVotes: TransactionResponse = {} as TransactionResponse;
 
-      if (proof) {
+      if (proofs) {
         txCastVotes = await writeContract({
           ...contractConfig,
           functionName: "castVote",
-          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`), parseUnits(`${amount}`), proof],
+          args: [
+            pickedProposal,
+            isPositive ? 0 : 1,
+            parseUnits(currentUserTotalVotesAmount.toString()),
+            parseUnits(amount.toString()),
+            proofs,
+          ],
         });
       } else {
         txCastVotes = await writeContract({

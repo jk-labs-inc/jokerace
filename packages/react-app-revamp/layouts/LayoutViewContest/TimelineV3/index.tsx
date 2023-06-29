@@ -55,7 +55,13 @@ const LayoutContestTimeline: FC<LayoutContestTimelineProps> = ({
           </div>
           <div className={`h-[1px] bg-${stage.color}`}></div>
           <div className={`text-[16px] font-bold mt-1 text-${stage.color}`}>
-            {index === currentStageIndex ? stage.action : stage.name}
+            {index === currentStageIndex
+              ? stage.action
+              : currentStageIndex === stages.length - 1 && index < currentStageIndex
+              ? index === 0
+                ? "Submissions period"
+                : "Voting period"
+              : stage.name}
           </div>
         </div>
       ))}

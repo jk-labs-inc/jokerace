@@ -148,7 +148,6 @@ const CreateContestParams = () => {
           <CreateContestButton step={step} onClick={handleDeployContest} />
         </div>
       </div>
-      <CreateContestRewards />
     </div>
   );
 };

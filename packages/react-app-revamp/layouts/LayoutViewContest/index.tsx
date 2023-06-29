@@ -1,6 +1,8 @@
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
+import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
+import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
@@ -12,8 +14,12 @@ import { useContest } from "@hooks/useContest";
 import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
+import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
+import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper, useProposalStore } from "@hooks/useProposal/store";
+import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import useUser from "@hooks/useUser";
 import { UserWrapper } from "@hooks/useUser/store";
@@ -44,7 +50,7 @@ const LayoutViewContest = (props: any) => {
     },
   });
   const { chain } = useNetwork();
-
+  const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, chainName, setChainId } =
     useContest();
 
@@ -323,6 +329,8 @@ const LayoutViewContest = (props: any) => {
                       isOpen={isSubmitProposalModalOpen}
                       setIsOpen={setIsSubmitProposalModalOpen}
                     />
+
+                    {showRewards && <CreateContestRewards />}
                   </div>
                 </>
               )}
@@ -351,7 +359,15 @@ export const getLayout = (page: any) => {
             <SubmitProposalWrapper>
               <CastVotesWrapper>
                 <DeleteProposalWrapper>
-                  <LayoutViewContest>{page}</LayoutViewContest>
+                  <ContractFactoryWrapper>
+                    <DeployRewardsWrapper>
+                      <RewardsWrapper>
+                        <FundRewardsWrapper>
+                          <LayoutViewContest>{page}</LayoutViewContest>
+                        </FundRewardsWrapper>
+                      </RewardsWrapper>
+                    </DeployRewardsWrapper>
+                  </ContractFactoryWrapper>
                 </DeleteProposalWrapper>
               </CastVotesWrapper>
             </SubmitProposalWrapper>

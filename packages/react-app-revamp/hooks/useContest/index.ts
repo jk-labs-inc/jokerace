@@ -270,7 +270,10 @@ export function useContest() {
 
           let submissionMerkleTree;
 
-          if (!submissionMerkleTreeData || !submissionMerkleTreeData.getRoot()) {
+          if (
+            !submissionMerkleTreeData ||
+            submissionMerkleTreeData.merkleRoot === "0x0000000000000000000000000000000000000000000000000000000000000000"
+          ) {
             submissionMerkleTree = createMerkleTreeFromAddresses([]).merkleTree;
           } else {
             submissionMerkleTree = createMerkleTreeFromAddresses(submissionMerkleTreeData.submitters).merkleTree;

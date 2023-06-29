@@ -89,8 +89,8 @@ export const createMerkleTreeFromVotes = (
  * @param {string} numVotes dedicated to the recipient
  * @returns {Proof[]} Array of objects containing a position property and a data property of type Buffer
  */
-export const generateProof = (merkleTree: MerkleTree, address: string, numVotes: string): Proof[] => {
+export const generateProof = (merkleTree: MerkleTree, address: string, numVotes: string): string[] => {
   const leaf = generateLeaf(address, numVotes);
 
-  return merkleTree.getProof(leaf);
+  return merkleTree.getHexProof(leaf);
 };

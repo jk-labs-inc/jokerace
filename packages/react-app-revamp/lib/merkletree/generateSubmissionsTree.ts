@@ -1,14 +1,10 @@
+import { utils } from "ethers";
 import { keccak256, solidityKeccak256 } from "ethers/lib/utils";
 import MerkleTree from "merkletreejs";
 
 // Submitter address
 export interface Submitter {
   address: string;
-}
-
-export interface Proof {
-  position: "left" | "right";
-  data: Buffer;
 }
 
 export interface MerkleTreeSubmissionsData {
@@ -23,9 +19,9 @@ export interface MerkleTreeSubmissionsData {
  * @returns {Buffer} Merkle Tree node
  */
 const generateLeaf = (address: string): Buffer => {
-  return Buffer.from(solidityKeccak256(["address"], [address]).slice(2), "hex");
+  const checksumAddress = utils.getAddress(address);
+  return Buffer.from(solidityKeccak256(["address"], [checksumAddress]).slice(2), "hex");
 };
-
 /**
  * Generate Merkle Tree from submitters
  * @param {Submitter[]} submitters array of submitters
@@ -59,10 +55,18 @@ export const createMerkleTreeFromAddresses = (submitters: Submitter[]): MerkleTr
  * Generate Merkle proof for a given address
  * @param {MerkleTree} merkleTree The merkle tree instance
  * @param {string} address of submitter
- * @returns {Proof[]} Array of objects containing a position property and a data property of type Buffer
+ * @returns {string[]} Array of strings containing the Merkle proof or the Merkle root
  */
-export const generateProof = (merkleTree: MerkleTree, address: string): Proof[] => {
-  const leaf = generateLeaf(address);
+export const generateProof = (merkleTree: MerkleTree, address: string): string[] => {
+  const checksumAddress = utils.getAddress(address);
+  const leaf = generateLeaf(checksumAddress);
 
-  return merkleTree.getProof(leaf);
+  // If the tree only contains one address
+  if (merkleTree.getLeaves().length === 1) {
+    // Return the Merkle root as a single-item array
+    return [merkleTree.getHexRoot()];
+  }
+
+  // Otherwise return the proof as an array
+  return merkleTree.getHexProof(leaf);
 };

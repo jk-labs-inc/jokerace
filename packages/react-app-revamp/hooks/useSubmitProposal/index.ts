@@ -6,7 +6,6 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
-import { Proof } from "lib/merkletree/generateSubmissionsTree";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
@@ -30,6 +29,14 @@ export function useSubmitProposal() {
     return new Promise<TransactionResponse>(async (resolve, reject) => {
       const [chainName, address] = asPath.split("/").slice(2, 4);
       const { abi } = await getContestContractVersion(address, chainName);
+      const targetMetadata = {
+        targetAddress: "0x0000000000000000000000000000000000000000",
+      };
+
+      const safeMetadata = {
+        signers: ["0x0000000000000000000000000000000000000000"],
+        threshold: 1,
+      };
 
       setIsLoading(true);
       setIsSuccess(false);
@@ -52,15 +59,6 @@ export function useSubmitProposal() {
         };
 
         let txSendProposal: TransactionResponse = {} as TransactionResponse;
-
-        let targetMetadata = {
-          targetAddress: "0x0000000000000000000000000000000000000000",
-        };
-
-        let safeMetadata = {
-          signers: ["0x0000000000000000000000000000000000000000"],
-          threshold: 1,
-        };
 
         let proposalCore = {
           author: userAddress,
