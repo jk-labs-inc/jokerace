@@ -1,9 +1,7 @@
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
-import { ethers } from "ethers";
-import { generateProof as generateSubmissionProof } from "lib/merkletree/generateSubmissionsTree";
-import { generateProof as generateVotingProof } from "lib/merkletree/generateVotersTree";
+import { generateProof } from "lib/merkletree/generateMerkleTree";
 import MerkleTree from "merkletreejs";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -22,15 +20,16 @@ export function useGenerateProof() {
   const chainName = url[2];
   const contestAddress = url[3];
 
-  function generateProof(merkleTree: MerkleTree, address: string, proofType: ProofType, numVotes?: string) {
+  function getProof(merkleTree: MerkleTree, address: string, proofType: ProofType, numVotes?: string) {
     switch (proofType) {
       case "submission":
-        const submissionProof = generateSubmissionProof(merkleTree, address);
+        const submissionProof = generateProof(merkleTree, address, "10");
         return submissionProof;
       case "vote":
-        const votingProof = generateVotingProof(merkleTree, address, numVotes ?? "");
+        const votingProof = generateProof(merkleTree, address, numVotes ?? "");
         return votingProof;
       default:
+        return [];
         break;
     }
   }
@@ -41,7 +40,7 @@ export function useGenerateProof() {
     proofType: ProofType,
     numVotes?: string,
   ) {
-    const proofs = generateProof(merkleTree, address, proofType, numVotes);
+    const proofs = getProof(merkleTree, address, proofType, numVotes);
 
     const { abi } = await getContestContractVersion(contestAddress, chainName);
 
@@ -71,11 +70,7 @@ export function useGenerateProof() {
         break;
     }
 
-    if (verified) {
-      return true;
-    } else {
-      return proofs;
-    }
+    return verified ? [] : proofs;
   }
 
   useEffect(() => {

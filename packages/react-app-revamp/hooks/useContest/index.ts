@@ -6,19 +6,18 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { fetchToken, getAccount, readContract, readContracts } from "@wagmi/core";
+import { readContract, readContracts } from "@wagmi/core";
 import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore } from "date-fns";
+import { formatUnits, parseUnits } from "ethers/lib/utils";
+import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
-import { isSupabaseConfigured } from "@helpers/database";
 import { getV1Contracts } from "./v1/contracts";
 import { getV3Contracts } from "./v3/contracts";
-import { createMerkleTreeFromVotes, Voter } from "lib/merkletree/generateVotersTree";
-import { createMerkleTreeFromAddresses } from "lib/merkletree/generateSubmissionsTree";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -259,14 +258,14 @@ export function useContest() {
           const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
 
           const votesDataRecord: Record<string, number> = votingMerkleTreeData.voters.reduce(
-            (acc: Record<string, number>, vote: Voter) => {
+            (acc: Record<string, number>, vote: Recipient) => {
               acc[vote.address] = Number(vote.numVotes);
               return acc;
             },
             {},
           );
 
-          const votingMerkleTree = createMerkleTreeFromVotes(0, votesDataRecord).merkleTree;
+          const votingMerkleTree = generateMerkleTree(18, votesDataRecord).merkleTree;
 
           let submissionMerkleTree;
 
@@ -274,9 +273,17 @@ export function useContest() {
             !submissionMerkleTreeData ||
             submissionMerkleTreeData.merkleRoot === "0x0000000000000000000000000000000000000000000000000000000000000000"
           ) {
-            submissionMerkleTree = createMerkleTreeFromAddresses([]).merkleTree;
+            submissionMerkleTree = generateMerkleTree(18, {}).merkleTree;
           } else {
-            submissionMerkleTree = createMerkleTreeFromAddresses(submissionMerkleTreeData.submitters).merkleTree;
+            const submissionsDataRecord: Record<string, number> = submissionMerkleTreeData.submitters.reduce(
+              (acc: Record<string, number>, vote: Recipient) => {
+                acc[vote.address] = Number(vote.numVotes);
+                return acc;
+              },
+              {},
+            );
+
+            submissionMerkleTree = generateMerkleTree(18, submissionsDataRecord).merkleTree;
           }
 
           setSubmissionMerkleTree(submissionMerkleTree);

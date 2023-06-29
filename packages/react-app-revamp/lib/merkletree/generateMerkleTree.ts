@@ -1,8 +1,7 @@
-import { keccak256, parseUnits, solidityKeccak256 } from "ethers/lib/utils";
+import { getAddress, keccak256, parseUnits, solidityKeccak256 } from "ethers/lib/utils";
 import MerkleTree from "merkletreejs";
 
-// Vote recipient addresses and scaled vote values
-export interface Voter {
+export interface Recipient {
   address: string;
   numVotes: string;
 }
@@ -15,47 +14,49 @@ export interface Proof {
 export interface MerkleTreeVotingData {
   merkleTree: MerkleTree;
   merkleRoot: string;
-  voters: Voter[];
+  recipients: Recipient[];
 }
 
 /**
- * Setup vote recipients
+ * Setup recipients
  * @param {number} decimals of votes
- * @param {Record<string, number>} votesData address to vote claim mapping
- * @returns {VoteRecipient[]} array of vote recipients
+ * @param {Record<string, number>} votesData address to claim mapping
+ * @returns {Recipient[]} array of recipients
  */
-const setupVoteRecipients = (decimals: number, votesData: Record<string, number>): Voter[] => {
-  const voters: Voter[] = [];
+const setupVoteRecipients = (decimals: number, votesData: Record<string, number>): Recipient[] => {
+  const recipients: Recipient[] = [];
 
-  // For each vote entry
+  // For each entry
   for (const [address, votes] of Object.entries(votesData)) {
-    voters.push({
-      address: address,
+    recipients.push({
+      address: getAddress(address),
       numVotes: parseUnits(votes.toString(), decimals).toString(),
     });
   }
 
-  return voters;
+  return recipients;
 };
 
 /**
  * Generate Merkle Tree leaf from address and numVotes
- * @param {string} address of vote recipient
+ * @param {string} address of recipient
  * @param {string} numVotes dedicated to the recipient
  * @returns {Buffer} Merkle Tree node
  */
 const generateLeaf = (address: string, numVotes: string): Buffer => {
-  return Buffer.from(solidityKeccak256(["address", "uint256"], [address, numVotes]).slice(2), "hex");
+  const checksumAddress = getAddress(address);
+
+  return Buffer.from(solidityKeccak256(["address", "uint256"], [checksumAddress, numVotes]).slice(2), "hex");
 };
 
 /**
- * Generate Merkle Tree from vote recipients
- * @param {VoteRecipient[]} recipients array of vote recipients
+ * Generate Merkle Tree from  recipients
+ * @param {Recipient[]} recipients array of recipients
  * @returns {MerkleTree} merkle tree
  */
-const createMerkleTree = (voters: Voter[]): MerkleTree => {
+const createMerkleTree = (recipients: Recipient[]): MerkleTree => {
   return new MerkleTree(
-    voters.map(({ address, numVotes }) => generateLeaf(address, numVotes)),
+    recipients.map(({ address, numVotes }) => generateLeaf(address, numVotes)),
     keccak256,
     { sortPairs: true },
   );
@@ -64,33 +65,30 @@ const createMerkleTree = (voters: Voter[]): MerkleTree => {
 /**
  * Main processing function
  * @param {number} decimals of votes
- * @param {Record<string, number>} votesData address to vote claim mapping
+ * @param {Record<string, number>} data address to claim mapping
  * @returns {Promise<void>}
  */
-export const createMerkleTreeFromVotes = (
-  decimals: number,
-  votesData: Record<string, number>,
-): MerkleTreeVotingData => {
-  const voters = setupVoteRecipients(decimals, votesData);
-  const merkleTree = createMerkleTree(voters);
+export const generateMerkleTree = (decimals: number, data: Record<string, number>): MerkleTreeVotingData => {
+  const recipients = setupVoteRecipients(decimals, data);
+  const merkleTree = createMerkleTree(recipients);
   const merkleRoot: string = merkleTree.getHexRoot();
 
   return {
     merkleTree,
     merkleRoot,
-    voters,
+    recipients,
   };
 };
 
 /**
  * Generate Merkle proof for a given address and number of votes
  * @param {MerkleTree} merkleTree The merkle tree instance
- * @param {string} address of vote recipient
+ * @param {string} address of recipient
  * @param {string} numVotes dedicated to the recipient
  * @returns {Proof[]} Array of objects containing a position property and a data property of type Buffer
  */
 export const generateProof = (merkleTree: MerkleTree, address: string, numVotes: string): string[] => {
-  const leaf = generateLeaf(address, numVotes);
+  const leaf = generateLeaf(address, parseUnits(numVotes, 18).toString());
 
   return merkleTree.getHexProof(leaf);
 };

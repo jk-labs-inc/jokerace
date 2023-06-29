@@ -43,12 +43,12 @@ export function useSubmitProposal() {
       setError(null);
       setTransactionData(null);
 
-      let proof;
+      let proofs: string[] = [];
 
       if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
-        proof = false;
+        proofs = [];
       } else {
-        proof = await checkIfProofIsVerified(submissionMerkleTree, userAddress ?? "", "submission");
+        proofs = await checkIfProofIsVerified(submissionMerkleTree, userAddress ?? "", "submission");
       }
 
       try {
@@ -68,11 +68,11 @@ export function useSubmitProposal() {
           safeMetadata: safeMetadata,
         };
 
-        if (proof) {
+        if (proofs.length > 0) {
           txSendProposal = await writeContract({
             ...contractConfig,
             functionName: "propose",
-            args: [proposalCore, proof],
+            args: [proposalCore, proofs],
           });
         } else {
           txSendProposal = await writeContract({
