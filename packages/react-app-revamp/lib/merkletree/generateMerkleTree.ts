@@ -90,7 +90,6 @@ export const generateMerkleTree = (decimals: number, data: Record<string, number
 export const generateProof = (merkleTree: MerkleTree, address: string, numVotes: string): string[] => {
   const leaf = generateLeaf(address, parseUnits(numVotes, 18).toString());
 
-  console.log(merkleTree.getLeaves().length);
   // If the Merkle tree only has one leaf, return the root as the proof
   if (merkleTree.getLeaves().length === 1) {
     return [merkleTree.getHexRoot()];
