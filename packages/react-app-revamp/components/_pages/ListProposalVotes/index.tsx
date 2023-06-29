@@ -115,12 +115,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
                         Click to view this address on Debank
                       </a>
 
-                      <EtheuremAddress
-                        withHyphen={false}
-                        ethereumAddress={address}
-                        shortenOnFallback={true}
-                        displayLensProfile={true}
-                      />
+                      <EtheuremAddress ethereumAddress={address} shortenOnFallback={true} displayLensProfile={true} />
                     </td>
                     <td className="p-2 font-bold">
                       {new Intl.NumberFormat().format(parseFloat(votesPerAddress[address].votes.toFixed(2)))}
