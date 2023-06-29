@@ -10,7 +10,7 @@ contract ContestTest is Test {
     uint64 public constant CONTEST_START = 1681650000;
     uint64 public constant VOTING_DELAY = 10000;
     uint64 public constant VOTING_PERIOD = 10000;
-    uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 2;
+    uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 3;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
     uint256[] public numParams = [
@@ -36,6 +36,7 @@ contract ContestTest is Test {
         bytes32(0xd0aa6a4e5b4e13462921d7518eebdb7b297a7877d6cfe078b0c318827392fb55);
     bytes32 public constant SUB_ZERO_MERKLE_ROOT =
         bytes32(0x0000000000000000000000000000000000000000000000000000000000000000);
+    address public constant CREATOR_ADDRESS_1 = 0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94;
     address public constant PERMISSIONED_ADDRESS_1 = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
     address public constant PERMISSIONED_ADDRESS_2 = 0x185a4dc360CE69bDCceE33b3784B0282f7961aea;
     address public constant UNPERMISSIONED_ADDRESS_1 = 0xd698e31229aB86334924ed9DFfd096a71C686900;
@@ -76,7 +77,7 @@ contract ContestTest is Test {
     });
 
     function setUp() public {
-        vm.prank(PERMISSIONED_ADDRESS_1);
+        vm.startPrank(CREATOR_ADDRESS_1);
 
         contest = new Contest("test",
                               "hello world",
@@ -89,6 +90,8 @@ contract ContestTest is Test {
                               SUB_ZERO_MERKLE_ROOT,
                               SUB_AND_VOTING_MERKLE_ROOT,
                               numParams);
+
+        vm.stopPrank();
     }
 
     // GOVERNOR SETTINGS
@@ -118,7 +121,7 @@ contract ContestTest is Test {
     }
 
     function testCreator() public {
-        assertEq(contest.creator(), PERMISSIONED_ADDRESS_1);
+        assertEq(contest.creator(), CREATOR_ADDRESS_1);
     }
 
     // PROPOSING AND VOTING
@@ -155,6 +158,14 @@ contract ContestTest is Test {
 
         assertEq(firstProposalId, 23908983303022564668190521243102426214381108252970480710578796525208030103048);
         assertEq(secondProposalId, 69549311532485292444384863957802353874517660423894990781176389639772664791367);
+    }
+
+    function testProposeAnyoneWithoutProof() public {
+        vm.warp(1681650001);
+        vm.prank(UNPERMISSIONED_ADDRESS_1);
+        uint256 proposalId = anyoneCanSubmitContest.proposeWithoutProof(unpermissionedAuthorProposal1);
+
+        assertEq(proposalId, 82569039315138695914611829508911276316520611558309518279231235273641370615732);
     }
 
     function testProposeAuthorIsntSender() public {
