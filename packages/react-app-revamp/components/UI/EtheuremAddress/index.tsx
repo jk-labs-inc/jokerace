@@ -10,9 +10,15 @@ interface EthereumAddressProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
   displayLensProfile: boolean;
+  textualVersion?: boolean;
 }
 
-const EthereumAddress = ({ ethereumAddress, displayLensProfile, shortenOnFallback }: EthereumAddressProps) => {
+const EthereumAddress = ({
+  textualVersion,
+  ethereumAddress,
+  displayLensProfile,
+  shortenOnFallback,
+}: EthereumAddressProps) => {
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}.eth`;
 
   const [avatarUrl, setAvatarUrl] = useState<string>();
@@ -51,8 +57,12 @@ const EthereumAddress = ({ ethereumAddress, displayLensProfile, shortenOnFallbac
   const displayName =
     (isLensProfileAvailable && queryUserProfileLens.data.handle) ||
     ensName ||
-    (shortenOnFallback && shortAddress) ||
+    (shortenOnFallback && !textualVersion && shortAddress) ||
     ethereumAddress;
+
+  if (textualVersion) {
+    return <span>{displayName}</span>;
+  }
 
   return (
     <span className="flex gap-2 items-center text-[16px] text-neutral-11 font-bold">

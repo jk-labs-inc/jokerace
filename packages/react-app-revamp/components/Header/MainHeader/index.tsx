@@ -1,6 +1,6 @@
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
+import { ROUTE_CREATE_CONTEST } from "@config/routes";
 import { HomeIcon } from "@heroicons/react/outline";
-import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { ConnectButton, useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,6 @@ import { useAccount } from "wagmi";
 
 const MainHeader = () => {
   const { isConnected } = useAccount();
-  const { pageAction, setPageAction } = usePageActionStore(state => state);
   const onPreviousStep = usePreviousStep();
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
@@ -24,14 +23,6 @@ const MainHeader = () => {
     transition: "background-color 0.5s ease", // Smooth transition.
   };
 
-  useEffect(() => {
-    setPageAction("play");
-
-    return () => {
-      setPageAction("play");
-    };
-  }, []);
-
   const lowerDeviceHeader = (
     <header className="flex flex-row items-center justify-between px-4 mt-4">
       <Link href={"/"}>
@@ -39,18 +30,12 @@ const MainHeader = () => {
       </Link>
 
       <div className="flex items-center gap-5 text-[18px] md:text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header">
-        <p
-          className={`cursor-pointer ${pageAction === "play" ? "text-primary-10" : "text-neutral-11"}`}
-          onClick={() => setPageAction("play")}
-        >
+        <Link href="/" className="text-primary-10">
           play
-        </p>
-        <p
-          className={`cursor-pointer ${pageAction === "create" ? "text-primary-10" : "text-neutral-11"}`}
-          onClick={() => setPageAction("create")}
-        >
+        </Link>
+        <Link href={ROUTE_CREATE_CONTEST} className="text-neutral-11">
           create
-        </p>
+        </Link>
       </div>
       <div
         onClick={isConnected ? openAccountModal : openConnectModal}
@@ -73,24 +58,18 @@ const MainHeader = () => {
       {isMobileOrTablet ? (
         lowerDeviceHeader
       ) : (
-        <header className="flex flex-row items-center justify-between pl-[120px] pr-[55px] mt-4 mb-4">
+        <header className="flex flex-row items-center justify-between pl-[55px] pr-[55px] mt-4 mb-4">
           <Link href="/">
             <h1 className="font-sabo text-primary-10 text-[40px]">JOKERACE</h1>
           </Link>
 
           <div className="bg-true-black flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header">
-            <p
-              className={`cursor-pointer ${pageAction === "play" ? "text-primary-10" : "text-neutral-11"}`}
-              onClick={() => setPageAction("play")}
-            >
+            <Link href="/" className="text-primary-10">
               play
-            </p>
-            <p
-              className={`cursor-pointer ${pageAction === "create" ? "text-primary-10" : "text-neutral-11"}`}
-              onClick={() => setPageAction("create")}
-            >
+            </Link>
+            <Link href={ROUTE_CREATE_CONTEST} className="text-neutral-11">
               create
-            </p>
+            </Link>
           </div>
 
           <div className="flex">

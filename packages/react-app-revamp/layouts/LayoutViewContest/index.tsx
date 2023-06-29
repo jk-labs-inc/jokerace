@@ -1,5 +1,6 @@
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
@@ -265,7 +266,15 @@ const LayoutViewContest = (props: any) => {
 
                     <div className="flex flex-col mt-10">
                       <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
-                      <p className="text-[24px] text-primary-10 font-bold">by {contestAuthorEthereumAddress}</p>
+                      <p className="text-[24px] text-primary-10 font-bold">
+                        by{" "}
+                        <EthereumAddress
+                          ethereumAddress={contestAuthorEthereumAddress}
+                          shortenOnFallback
+                          displayLensProfile={false}
+                          textualVersion
+                        />
+                      </p>
                     </div>
 
                     <div className="mt-4 gap-3 flex flex-col">

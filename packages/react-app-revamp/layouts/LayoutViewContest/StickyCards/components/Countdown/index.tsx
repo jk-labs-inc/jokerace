@@ -81,11 +81,15 @@ const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpe
           <>
             <div className="text-[16px] font-bold text-neutral-11">{displayText()}</div>
             {phase === "start" ? (
-              <div className="text-[16px] text-neutral-11 ">
-                submissions follows until {moment(votingOpen).format("MMMM Do, h:mm a")}
+              <div className="text-[16px] text-neutral-11">
+                Submissions follow until {moment(votingOpen).format("MMMM Do, h:mm a")}
+              </div>
+            ) : phase === "vote" ? (
+              <div className="text-[16px] text-neutral-11">
+                Voting is open until {moment(votingClose).format("MMMM Do, h:mm a")}
               </div>
             ) : (
-              <div className="text-[16px] text-neutral-11 ">
+              <div className="text-[16px] text-neutral-11">
                 Voting follows until {moment(votingClose).format("MMMM Do, h:mm a")}
               </div>
             )}
