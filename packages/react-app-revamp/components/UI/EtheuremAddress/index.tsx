@@ -21,7 +21,7 @@ const EthereumAddress = ({
 }: EthereumAddressProps) => {
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}.eth`;
 
-  const [avatarUrl, setAvatarUrl] = useState<string>();
+  const [avatarUrl, setAvatarUrl] = useState<string>(DEFAULT_AVATAR_URL);
 
   const queryUserProfileLens = useQuery(
     ["lens-profile", ethereumAddress],

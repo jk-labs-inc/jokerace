@@ -69,7 +69,7 @@ const votingMerkleValidation = (allowList: Record<string, number>) => {
 };
 
 const submissionMerkleValidation = (allowList: Record<string, number>, submissionTab: string) => {
-  if (submissionTab === "submissionMerkle" && (!allowList || allowList.length === 0)) {
+  if (submissionTab === "submissionMerkle" && Object.keys(allowList).length === 0) {
     return "Merkle tree is empty";
   }
   return "";
