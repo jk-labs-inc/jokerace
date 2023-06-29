@@ -58,7 +58,7 @@ export function useCastVotes() {
 
       let txCastVotes: TransactionResponse = {} as TransactionResponse;
 
-      if (proofs.length > 0) {
+      if (proofs.length == 0) {
         txCastVotes = await writeContract({
           ...contractConfig,
           functionName: "castVote",
