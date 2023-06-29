@@ -30,7 +30,6 @@ export function useGenerateProof() {
         return votingProof;
       default:
         return [];
-        break;
     }
   }
 
@@ -58,6 +57,7 @@ export function useGenerateProof() {
           functionName: "addressSubmitterVerified",
           args: [address],
         });
+
         break;
       case "vote":
         verified = await readContract({

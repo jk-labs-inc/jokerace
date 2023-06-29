@@ -1,6 +1,7 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
@@ -15,7 +16,6 @@ import { useSubmitProposalStore } from "./store";
 export function useSubmitProposal() {
   const { address: userAddress } = useAccount();
   const { fetchProposalsIdsList } = useProposal();
-
   const { submissionMerkleTree } = useContestStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { checkIfProofIsVerified } = useGenerateProof();
@@ -96,7 +96,7 @@ export function useSubmitProposal() {
         setIsLoading(false);
         setIsSuccess(true);
         increaseCurrentUserProposalCount();
-
+        removeSubmissionFromLocalStorage("submissions", address);
         fetchProposalsIdsList(abi); // you might need to pass the ABI here
 
         resolve(txSendProposal);
