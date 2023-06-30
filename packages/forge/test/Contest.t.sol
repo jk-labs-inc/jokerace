@@ -197,7 +197,7 @@ contract ContestTest is Test {
         contest.proposeWithoutProof(unpermissionedAuthorProposal1);
     }
 
-    function testVote() public {
+    function testVote1() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -208,6 +208,17 @@ contract ContestTest is Test {
         vm.stopPrank();
 
         assertEq(totalVotes, 10 ether);
+    }
+
+    function testVote2() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 totalVotes = contest.castVote(proposalId, 0, 100 ether, 1 ether, votingProof2);
+
+        assertEq(totalVotes, 100 ether);
     }
 
     function testVoteWithoutProof() public {
