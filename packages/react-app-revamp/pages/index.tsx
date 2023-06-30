@@ -79,7 +79,7 @@ const Page: NextPage = props => {
         />
       </Head>
       <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-4 md:mt-14 lg:mt-6 max-w-[1350px] 3xl:pl-28 2xl:pr-0 ">
-        <div className="mb-8 animate-fadeInLanding">
+        <div className="mb-8">
           <p className="hidden lg:flex text-[18px] md:text-[20px] font-bold">
             contests for communities to make, <br />
             execute, and reward decisions
@@ -92,7 +92,7 @@ const Page: NextPage = props => {
           </div>
         </div>
 
-        <div className="hidden lg:full-width-grid-cols lg:gap-0 animate-fadeInLanding">
+        <div className="hidden lg:full-width-grid-cols lg:gap-0">
           <div>
             <div className="text-[16px] font-bold  mb-1">stage one</div>
             <div className="h-1 bg-secondary-11"></div>
