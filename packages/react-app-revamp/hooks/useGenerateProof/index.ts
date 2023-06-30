@@ -41,9 +41,6 @@ export function useGenerateProof() {
   ) {
     const proofs = getProof(merkleTree, address, proofType, numVotes);
 
-    console.log("proofType: ", proofType)
-    console.log("proof: ", proofs)
-
     const { abi } = await getContestContractVersion(contestAddress, chainName);
 
     const contractConfig = {
