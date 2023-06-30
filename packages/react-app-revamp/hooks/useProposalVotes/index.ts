@@ -207,36 +207,26 @@ export function useProposalVotes(id: number | string) {
   }, [account?.connector]);
 
   useEffect(() => {
-    if (canUpdateVotesInRealTime === false && contestStatus === ContestStatus.VotingClosed) {
+    if (contestStatus === ContestStatus.VotingClosed) {
       const contract = getContract({
         addressOrName: asPath.split("/")[3],
         contractInterface: DeployedContestContract.abi,
       });
       contract.removeAllListeners();
-    } else if (canUpdateVotesInRealTime === true) {
+    } else if (contestStatus === ContestStatus.VotingOpen) {
       // Only watch VoteCast events when voting is open and we are <=1h before end of voting
-      if (contestStatus === ContestStatus.VotingOpen) {
-        watchContractEvent(
-          {
-            addressOrName: asPath.split("/")[3],
-            contractInterface: DeployedContestContract.abi,
-          },
-          "VoteCast",
-          args => {
-            fetchVotesOfAddress(args[0]);
-          },
-        );
-      }
-      // When voting closes, remove all event listeners
-      if (contestStatus === ContestStatus.VotingClosed) {
-        const contract = getContract({
+      watchContractEvent(
+        {
           addressOrName: asPath.split("/")[3],
           contractInterface: DeployedContestContract.abi,
-        });
-        contract.removeAllListeners();
-      }
+        },
+        "VoteCast",
+        args => {
+          fetchVotesOfAddress(args[0]);
+        },
+      );
     }
-  }, [canUpdateVotesInRealTime, contestStatus]);
+  }, [contestStatus]);
 
   useEffect(() => {
     const fetchProposalVotesAndListenForEvents = async () => {

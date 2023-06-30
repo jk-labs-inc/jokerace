@@ -46,16 +46,11 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { contestAuthorEthereumAddress, downvotingAllowed, votesOpen, votesClose, submissionsOpen } = useContestStore(
-    state => state,
-  );
-  const { currentUserAvailableVotesAmount, isLoading: isUserStoreLoading } = useUserStore(state => state);
+  const { votesOpen, votesClose, submissionsOpen, contestPrompt } = useContestStore(state => state);
 
   const now = moment();
   const formattedVotingOpen = moment(votesOpen);
-  const { setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
-    setIsSubmitProposalModalOpen: state.setIsModalOpen,
-  }));
+
   const { setCastPositiveAmountOfVotes, setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useCastVotesStore(
     state => ({
       setPickedProposalToVoteFor: state.setPickedProposal,
@@ -118,9 +113,8 @@ export const ListProposals = () => {
                 <ProposalContent
                   id={id}
                   proposal={listProposalsData[id]}
-                  submissionOpen={submissionsOpen}
+                  prompt={contestPrompt}
                   votingOpen={votesOpen}
-                  votingClose={votesClose}
                 />
               </div>
             );

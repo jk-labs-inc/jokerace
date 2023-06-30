@@ -121,6 +121,7 @@ export function useProposal() {
     version: string,
   ) {
     const accountData = getAccount();
+
     // Create an array of proposals
     // A proposal is a pair of data
     // A pair of a proposal data is [content, votes]

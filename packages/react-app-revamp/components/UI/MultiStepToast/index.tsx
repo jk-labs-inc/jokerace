@@ -30,9 +30,7 @@ const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRe
           messages[i].status = "completed";
           messages[i].message = messages[i].successMessage;
         } catch (error) {
-          messages[i].status = "error";
-          messages[i].message += ` Error: ${(error as Error).message}`;
-          toast.error(`An error occurred in step ${i + 1}`);
+          setLoading(false);
           break;
         } finally {
           setLoading(false);

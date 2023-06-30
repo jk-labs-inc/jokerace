@@ -80,7 +80,7 @@ module.exports = {
       xs: clamp(-1),
       sm: clamp(-0.5),
       base: clamp(0),
-      prose: clamp(0.25),
+      prose: "16px",
       md: clamp(0.5),
       lg: clamp(1),
       xl: clamp(2),

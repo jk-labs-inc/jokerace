@@ -70,7 +70,10 @@ export function useGenerateProof() {
         break;
     }
 
-    return verified ? [] : proofs;
+    return {
+      verified,
+      proofs,
+    };
   }
 
   useEffect(() => {

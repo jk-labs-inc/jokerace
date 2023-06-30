@@ -16,7 +16,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { votingMerkleTree, submissionMerkleTree } = useContestStore(state => state);
+  const { votingMerkleTree } = useContestStore(state => state);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -49,7 +49,7 @@ export function useCastVotes() {
     };
 
     try {
-      const proofs = await checkIfProofIsVerified(
+      const proofsVerificationStatus = await checkIfProofIsVerified(
         votingMerkleTree,
         userAddress ?? "",
         "vote",
@@ -58,7 +58,7 @@ export function useCastVotes() {
 
       let txCastVotes: TransactionResponse = {} as TransactionResponse;
 
-      if (proofs.length > 0) {
+      if (!proofsVerificationStatus.verified) {
         txCastVotes = await writeContract({
           ...contractConfig,
           functionName: "castVote",
@@ -67,7 +67,7 @@ export function useCastVotes() {
             isPositive ? 0 : 1,
             parseUnits(currentUserTotalVotesAmount.toString()),
             parseUnits(amount.toString()),
-            proofs,
+            proofsVerificationStatus.proofs,
           ],
         });
       } else {

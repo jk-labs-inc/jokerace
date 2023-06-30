@@ -67,9 +67,9 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
       title="Cast your votes"
       isOpen={props.isOpen}
       setIsOpen={props.setIsOpen}
-      className="xl:w-[1110px] 3xl:w-[1300px] h-[660px]"
+      className="xl:w-[1110px] 3xl:w-[1300px]"
     >
-      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[120px]">
+      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
         <EtheuremAddress
           ethereumAddress={props.proposal.authorEthereumAddress}

@@ -8,9 +8,15 @@ import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import { load } from "cheerio";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useContestStore } from "@hooks/useContest/store";
+import moment from "moment";
 
 interface LayoutContestProposalProps {
   proposal: Proposal;
+  contestStatus?: ContestStatus;
+  collapsible?: boolean;
+  votingOpen?: Date;
 }
 
 const extractImageAndTextContent = (content: string) => {
@@ -30,10 +36,11 @@ const extractImageAndTextContent = (content: string) => {
   return { imgTags, totalContent };
 };
 
-const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal }) => {
+const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, contestStatus, collapsible = true }) => {
+  const votesOpen = useContestStore(state => state.votesOpen);
+  const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
   const [isProposalOpen, setIsProposalOpen] = useState(false);
   const { imgTags, totalContent } = extractImageAndTextContent(proposal.content);
-
   const truncatedContent = totalContent.length > 100 ? `${totalContent.substring(0, 90)}...` : totalContent;
   const isOnlyImage = imgTags.length > 0 && totalContent.length === 0;
   const isOnlyText = imgTags.length === 0 && totalContent.length > 0;
@@ -51,31 +58,29 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal }) => 
   const CollapsibleContent = (
     <div>
       <Collapsible isOpen={isProposalOpen}>
-        <div className="prose">
-          <ReactMarkdown
-            components={{
-              img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
-            }}
-            rehypePlugins={[rehypeRaw, rehypeSanitize]}
-          >
-            {proposal.content}
-          </ReactMarkdown>
-        </div>
+        <ReactMarkdown
+          components={{
+            img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
+            p: ({ node, children, ...props }) => (
+              <p {...props} className="m-0 text-[16px]">
+                {children}
+              </p>
+            ),
+          }}
+          rehypePlugins={[rehypeRaw, rehypeSanitize]}
+        >
+          {proposal.content}
+        </ReactMarkdown>
       </Collapsible>
     </div>
   );
 
   return (
     <div className="flex flex-col gap-4">
-      {isOnlyImage && (
+      {isOnlyImage && collapsible && (
         <ReactMarkdown
           components={{
             img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
-            p: ({ node, children, ...props }) => (
-              <p {...props} className="m-0">
-                {children}
-              </p>
-            ),
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize]}
         >
@@ -83,48 +88,87 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal }) => 
         </ReactMarkdown>
       )}
 
-      {isOnlyText && (
-        <>
-          <div className="flex gap-4 items-center prose">
+      {isOnlyText &&
+        (collapsible ? (
+          <>
+            <div className="flex gap-4 items-center">
+              <ReactMarkdown
+                components={{
+                  p: ({ node, children, ...props }) => (
+                    <p {...props} className="m-0 text-[16px]">
+                      {children}
+                    </p>
+                  ),
+                }}
+                rehypePlugins={[rehypeRaw, rehypeSanitize]}
+              >
+                {truncatedContent}
+              </ReactMarkdown>
+              {arrowButton}
+            </div>
+            {CollapsibleContent}
+          </>
+        ) : (
+          <>
             <ReactMarkdown
               components={{
                 p: ({ node, children, ...props }) => (
-                  <p {...props} className="m-0">
+                  <p {...props} className="m-0 text-[16px]">
                     {children}
                   </p>
                 ),
               }}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
             >
-              {truncatedContent}
+              {totalContent}
             </ReactMarkdown>
-            {arrowButton}
-          </div>
-          {CollapsibleContent}
-        </>
-      )}
+            {contestStatus === ContestStatus.SubmissionOpen && (
+              <p className="text-[16px] text-primary-10">voting opens {formattedVotesOpen}</p>
+            )}
+          </>
+        ))}
 
-      {isImageAndText && (
-        <>
-          <div className="flex gap-4 items-center prose">
+      {isImageAndText &&
+        (collapsible ? (
+          <>
+            <div className="flex gap-4 items-center">
+              <ReactMarkdown
+                components={{
+                  img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
+                  p: ({ node, children, ...props }) => (
+                    <p {...props} className="m-0 text-[16px]">
+                      {children}
+                    </p>
+                  ),
+                }}
+                rehypePlugins={[rehypeRaw, rehypeSanitize]}
+              >
+                {truncatedContent}
+              </ReactMarkdown>
+              {arrowButton}
+            </div>
+            {CollapsibleContent}
+          </>
+        ) : (
+          <>
             <ReactMarkdown
               components={{
                 img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
                 p: ({ node, children, ...props }) => (
-                  <p {...props} className="m-0">
+                  <p {...props} className="m-0 text-[16px]">
                     {children}
                   </p>
                 ),
               }}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
             >
-              {truncatedContent}
+              {proposal.content}
             </ReactMarkdown>
-            {arrowButton}
-          </div>
-          {CollapsibleContent}
-        </>
-      )}
+            {contestStatus === ContestStatus.SubmissionOpen && (
+              <p className="text-[16px] text-primary-10">voting opens {formattedVotesOpen}</p>
+            )}
+          </>
+        ))}
     </div>
   );
 };

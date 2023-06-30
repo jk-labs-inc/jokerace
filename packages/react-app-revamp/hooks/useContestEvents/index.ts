@@ -82,12 +82,12 @@ export function useContestEvents() {
   }
 
   useEffect(() => {
-    if (canUpdateVotesInRealTime === false || contestStatus === ContestStatus.VotingClosed) {
+    if (contestStatus === ContestStatus.VotingClosed) {
       provider.removeAllListeners();
       setDisplayReloadBanner(false);
     } else {
       // Only watch VoteCast events when voting is open and we are <=1h before end of voting
-      if (contestStatus === ContestStatus.VotingOpen && canUpdateVotesInRealTime === true) {
+      if (contestStatus === ContestStatus.VotingOpen) {
         watchContractEvent(
           {
             addressOrName: asPath.split("/")[3],
@@ -100,7 +100,7 @@ export function useContestEvents() {
         );
       }
     }
-  }, [canUpdateVotesInRealTime, contestStatus]);
+  }, [contestStatus]);
 
   function onVisibilityChangeHandler() {
     if (document.visibilityState === "hidden") {

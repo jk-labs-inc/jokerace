@@ -13,6 +13,8 @@ import ReactMarkdown from "react-markdown";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
+import DialogModalProposal from "../DialogModalProposal";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 
 export interface Proposal {
@@ -26,19 +28,19 @@ export interface Proposal {
 interface ProposalContentProps {
   id: string;
   proposal: Proposal;
-  submissionOpen: Date;
   votingOpen: Date;
-  votingClose: Date;
+  prompt: string;
 }
 
 const MAX_LENGTH = 250;
-const MAX_LENGTH_PARAGRAPH = 50;
+let MAX_LENGTH_PARAGRAPH = 200;
 
-const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, prompt }) => {
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
+  const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
 
@@ -91,43 +93,27 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen })
 
   if (proposal.isContentImage) {
     const $ = load(proposal.content);
+    const contentElements = $("*").not("script, style, img");
+    let totalTextLength = 0;
 
-    let imgTags = "";
-    let otherTags = "";
-
-    $("img").each((_, imgTag) => {
-      imgTags += $.html(imgTag);
-    });
-
-    const textElements = $("p, div, span, pre, h1, h2, h3, h4, h5");
-
-    textElements.each((_, element) => {
-      otherTags += $(element).text();
-    });
-
-    let totalContent = otherTags;
-    if (totalContent.length > MAX_LENGTH_PARAGRAPH) {
-      totalContent = totalContent.substring(0, MAX_LENGTH_PARAGRAPH) + "...";
-    }
-
-    textElements.each((i, element) => {
+    contentElements.each((_, element) => {
       const currentText = $(element).text();
-      const newText = totalContent.substring(0, currentText.length);
-      totalContent = totalContent.substring(currentText.length);
-
-      $(element).text(newText);
+      if (totalTextLength + currentText.length > MAX_LENGTH_PARAGRAPH) {
+        const remainingLength = MAX_LENGTH_PARAGRAPH - totalTextLength;
+        const truncatedText = currentText.substring(0, remainingLength) + "...";
+        $(element).text(truncatedText);
+        return false; // This stops the each loop
+      }
+      totalTextLength += currentText.length;
     });
 
-    const finalContent = imgTags + $.html(textElements);
-
-    truncatedContent = `<div>${finalContent}</div>`;
+    truncatedContent = `<div>${$.html()}</div>`;
   }
 
   return (
     <div className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
-      <div className="flex items-center prose px-8 py-2 h-3/4">
+      <div className="flex items-center px-8 py-2 h-3/4" onClick={() => setIsProposalModalOpen(true)}>
         <ReactMarkdown
-          className="prose-invert"
           components={{
             img: ({ node, ...props }) => <img {...props} className="w-[170px] h-[130px]" alt="image" />,
             div: ({ node, children, ...props }) => (
@@ -135,8 +121,13 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen })
                 {children}
               </div>
             ),
+            p: ({ node, children, ...props }) => (
+              <p {...props} style={{ fontSize: "16px" }}>
+                {children}
+              </p>
+            ),
           }}
-          rehypePlugins={[rehypeRaw, rehypeSanitize]}
+          rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
           children={truncatedContent}
         />
       </div>
@@ -155,6 +146,12 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen })
       </div>
 
       <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
+      <DialogModalProposal
+        prompt={prompt}
+        isOpen={isProposalModalOpen}
+        setIsOpen={setIsProposalModalOpen}
+        proposal={proposal}
+      />
     </div>
   );
 };

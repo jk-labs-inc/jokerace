@@ -29,6 +29,11 @@ export function useSubmitProposal() {
     return new Promise<TransactionResponse>(async (resolve, reject) => {
       const [chainName, address] = asPath.split("/").slice(2, 4);
       const { abi } = await getContestContractVersion(address, chainName);
+      const proofVerificationStatus = await checkIfProofIsVerified(
+        submissionMerkleTree,
+        userAddress ?? "",
+        "submission",
+      );
       const targetMetadata = {
         targetAddress: "0x0000000000000000000000000000000000000000",
       };
@@ -48,7 +53,7 @@ export function useSubmitProposal() {
       if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
         proofs = [];
       } else {
-        proofs = await checkIfProofIsVerified(submissionMerkleTree, userAddress ?? "", "submission");
+        proofs = proofVerificationStatus.proofs;
       }
 
       try {
@@ -68,7 +73,14 @@ export function useSubmitProposal() {
           safeMetadata: safeMetadata,
         };
 
-        if (proofs.length > 0) {
+        // case when anyone can submit a proposal
+        if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
+          txSendProposal = await writeContract({
+            ...contractConfig,
+            functionName: "proposeWithoutProof",
+            args: [proposalCore],
+          });
+        } else if (!proofVerificationStatus.verified) {
           txSendProposal = await writeContract({
             ...contractConfig,
             functionName: "propose",
