@@ -147,6 +147,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
 
       <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
       <DialogModalProposal
+        proposalId={id}
         prompt={prompt}
         isOpen={isProposalModalOpen}
         setIsOpen={setIsProposalModalOpen}

@@ -4,7 +4,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface LayoutContestPromptProps {
   prompt: string;
@@ -15,6 +15,10 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
   const { isV3, votesClose } = useContestStore(state => state);
   const [isPromptOpen, setIsPromptOpen] = useState(moment().isBefore(votesClose) && !hidePrompt);
   const [type, title, promptText] = prompt.split("|");
+
+  useEffect(() => {
+    setIsPromptOpen(!hidePrompt);
+  }, [hidePrompt]);
 
   return (
     <>

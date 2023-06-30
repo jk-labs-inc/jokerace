@@ -107,7 +107,7 @@ export function useContestEvents() {
       provider.removeAllListeners();
       if (contestStatus === ContestStatus.VotingOpen) setDisplayReloadBanner(true);
     } else {
-      if (contestStatus === ContestStatus.VotingOpen && canUpdateVotesInRealTime === true) {
+      if (contestStatus === ContestStatus.VotingOpen) {
         provider.addListener("VoteCast", (...args) => {
           onVoteCast(args);
         });

@@ -31,7 +31,6 @@ export function useProposalVotes(id: number | string) {
   );
   const [address] = useState(url[3]);
 
-  const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { contestStatus } = useContestStatusStore(state => state);
 
   const {

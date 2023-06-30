@@ -156,7 +156,7 @@ export function useUser() {
       });
 
       //@ts-ignore
-      setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount / 1e18 - currentUserTotalVotesCast / 1e18);
+      setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount - currentUserTotalVotesCast / 1e18);
     } catch (e) {
       console.error(e);
     }

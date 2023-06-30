@@ -159,13 +159,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   };
 
   return (
-    <DialogModalV3
-      title="submission"
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
-    >
-      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[120px]">
+    <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px]">
+      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
         <div className="flex flex-col gap-2">
           <EtheuremAddress ethereumAddress={address ?? ""} shortenOnFallback={true} displayLensProfile={true} />

@@ -2,20 +2,23 @@ import DialogModalV3 from "@components/UI/DialogModalV3";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { ProposalWrapper } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import LayoutContestProposal from "@layouts/LayoutViewContest/Proposal";
 import { FC } from "react";
+import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
 
 interface DialogModalProposalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   prompt: string;
+  proposalId: string;
   proposal: Proposal;
 }
 
-const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, prompt, proposal }) => {
+const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, prompt, proposal, proposalId }) => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   return (
@@ -34,6 +37,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
             <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} />
           </div>
         )}
+        {contestStatus === ContestStatus.VotingOpen ||
+          (contestStatus === ContestStatus.VotingClosed && (
+            <ListProposalVotes proposalId={proposalId} proposal={proposal} />
+          ))}
       </div>
     </DialogModalV3>
   );

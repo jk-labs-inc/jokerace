@@ -29,7 +29,6 @@ interface ContractConfigResult {
 }
 
 export function useContest() {
-  const { indexContest } = useContestsIndex();
   const { asPath } = useRouter();
   const { chain } = useNetwork();
   const [chainId, setChainId] = useState(
@@ -266,6 +265,7 @@ export function useContest() {
           );
 
           const votingMerkleTree = generateMerkleTree(18, votesDataRecord).merkleTree;
+          setVoters(votingMerkleTreeData.voters);
 
           let submissionMerkleTree;
 
@@ -274,6 +274,7 @@ export function useContest() {
             submissionMerkleTreeData.merkleRoot === "0x0000000000000000000000000000000000000000000000000000000000000000"
           ) {
             submissionMerkleTree = generateMerkleTree(18, {}).merkleTree;
+            setSubmitters([]);
           } else {
             const submissionsDataRecord: Record<string, number> = submissionMerkleTreeData.submitters.reduce(
               (acc: Record<string, number>, vote: Recipient) => {
@@ -284,6 +285,7 @@ export function useContest() {
             );
 
             submissionMerkleTree = generateMerkleTree(18, submissionsDataRecord).merkleTree;
+            setSubmitters(submissionMerkleTreeData.submitters);
           }
 
           setSubmissionMerkleTree(submissionMerkleTree);

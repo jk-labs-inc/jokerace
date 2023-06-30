@@ -1,48 +1,39 @@
 import ShareDropdown from "@components/Share";
 import { FC, ReactNode, useState } from "react";
 
-const tabs = [
-  {
-    title: "Contest",
-    content: "",
-  },
-  {
-    title: "parameters",
-    content: "Parameters Content",
-  },
-  {
-    title: "rewards",
-    content: "Rewards Content",
-  },
-];
+export enum Tab {
+  Contest = "Contest",
+  Parameters = "Parameters",
+  Rewards = "Rewards",
+}
 
 interface ContestLayoutTabsProps {
   contestAddress: string;
   chain: string;
   contestName: string;
+  onChange?: (tab: Tab) => void;
 }
 
-const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ contestAddress, chain, contestName }) => {
-  const [activeTab, setActiveTab] = useState(tabs[0].title);
+const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ contestAddress, chain, contestName, onChange }) => {
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.Contest);
 
-  const renderContent = (tab: { title: any; content: ReactNode }) => {
-    if (tab.title === activeTab) {
-      return <div>{tab.content}</div>;
-    }
+  const onTabChange = (tab: Tab) => {
+    setActiveTab(tab);
+    onChange?.(tab);
   };
 
   return (
     <div className="flex gap-4 flex-col">
       <div className="flex gap-4 items-center">
-        {tabs.map((tab, index) => (
+        {Object.keys(Tab).map(tabKey => (
           <div
-            key={index}
+            key={tabKey}
             className={`text-[16px] cursor-pointer  font-bold ${
-              tab.title === activeTab ? "text-primary-10" : "text-neutral-11"
+              tabKey === activeTab ? "text-primary-10" : "text-neutral-11"
             }`}
-            onClick={() => setActiveTab(tab.title)}
+            onClick={() => onTabChange(Tab[tabKey as keyof typeof Tab])}
           >
-            {tab.title}
+            {Tab[tabKey as keyof typeof Tab]}
           </div>
         ))}
         <div className="ml-auto z-20">

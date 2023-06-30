@@ -30,11 +30,6 @@ const Page: NextPage = (props: PageProps) => {
         <meta name="description" content="@TODO: change this" />
       </Head>
       <h1 className="sr-only">Contest {contestName ? contestName : address} </h1>
-      {!isLoading && !isListProposalsLoading && isSuccess && isListProposalsSuccess && (
-        <div className="animate-appear mt-8">
-          <ListProposals />
-        </div>
-      )}
     </>
   );
 };

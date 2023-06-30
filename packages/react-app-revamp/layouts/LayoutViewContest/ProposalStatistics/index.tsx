@@ -44,8 +44,8 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
   }, [contestStatus]);
 
   return (
-    <div className="flex flex-col gap-4 border-t border-neutral-10">
-      <p className="text-[24px] text-neutral-11 font-bold mt-4">{heading}</p>
+    <div className="flex flex-col">
+      <p className="text-[24px] text-neutral-11 font-bold">{heading}</p>
       {content}
     </div>
   );

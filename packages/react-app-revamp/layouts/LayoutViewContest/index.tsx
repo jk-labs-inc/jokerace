@@ -1,3 +1,4 @@
+import ContestParameters from "@components/Parameters";
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
@@ -5,6 +6,7 @@ import Loader from "@components/UI/Loader";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
+import ListProposals from "@components/_pages/ListProposals";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
 import { chains } from "@config/wagmi";
@@ -23,13 +25,13 @@ import { ProposalWrapper, useProposalStore } from "@hooks/useProposal/store";
 import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import useUser from "@hooks/useUser";
-import { UserWrapper } from "@hooks/useUser/store";
+import { UserWrapper, useUserStore } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
 import { isBefore } from "date-fns";
 import moment from "moment";
 import Link from "next/link";
 import router, { useRouter } from "next/router";
-import { useEffect } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
@@ -37,7 +39,7 @@ import LayoutContestPrompt from "./Prompt";
 import ProposalStatistics from "./ProposalStatistics";
 import LayoutContestCountdown from "./StickyCards/components/Countdown";
 import LayoutContestQualifier from "./StickyCards/components/Qualifier";
-import ContestLayoutTabs from "./Tabs";
+import ContestLayoutTabs, { Tab } from "./Tabs";
 import LayoutContestTimeline from "./TimelineV3";
 
 const LayoutViewContest = (props: any) => {
@@ -63,17 +65,20 @@ const LayoutViewContest = (props: any) => {
     contestPrompt,
     contestName,
     contestMaxProposalCount,
+    voters,
+    submitters,
   } = useContestStore(state => state);
+  const contestMaxNumberSubmissionsPerUser = useUserStore(state => state.contestMaxNumberSubmissionsPerUser);
   const contestInProgress = moment().isBefore(votesClose);
 
-  const { isListProposalsLoading, isListProposalsError, listProposalsIds } = useProposalStore(state => state);
+  const { isListProposalsLoading, isListProposalsSuccess, listProposalsIds } = useProposalStore(state => state);
   const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
-
   const { setContestStatus, contestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
+  const [tab, setTab] = useState<Tab>(Tab.Contest);
 
   useEffect(() => {
     const now = moment();
@@ -113,23 +118,6 @@ const LayoutViewContest = (props: any) => {
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
-    const chainName = chains
-      .filter(chain => chain.id === chainId)?.[0]
-      ?.name.toLowerCase()
-      .replace(" ", "");
-    if (asPath.split("/")[2] !== chainName) {
-      if (pathname === ROUTE_VIEW_CONTEST) {
-        let newRoute = pathname
-          .replace("[chain]", chainName)
-          .replace("[address]", address)
-          //@ts-ignorecontestMaxProposalCount
-          .replace("[proposal]", query?.proposal);
-        push(pathname, newRoute, { shallow: true });
-      }
-    }
-  }, [chainId, address]);
-
-  useEffect(() => {
     if (account?.connector) {
       account?.connector.on("change", data => {
         //@ts-ignore
@@ -138,9 +126,73 @@ const LayoutViewContest = (props: any) => {
     }
   }, [account?.connector]);
 
-  const onSubmitTitle = (title: string) => {
-    router.push(`/contests?title=${title}`);
-  };
+  const renderTabs = useMemo<ReactNode>(() => {
+    switch (tab) {
+      case Tab.Contest:
+        return (
+          <>
+            {contestStatus === ContestStatus.SubmissionOpen && (
+              <div className="mt-8">
+                <ButtonV3
+                  color="bg-gradient-create rounded-[40px]"
+                  size="large"
+                  onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
+                >
+                  submit a response
+                </ButtonV3>
+              </div>
+            )}
+
+            {contestStatus === ContestStatus.ContestOpen && (
+              <div className="mt-8">
+                <p className="text-[16px] text-primary-10 font-bold">
+                  submissions open {moment(submissionsOpen).format("MMMM Do, h:mm a")}
+                </p>
+              </div>
+            )}
+
+            <div className="mt-8">
+              <div className="flex flex-col gap-5">
+                <hr className="border-neutral-10" />
+                {contestStatus !== ContestStatus.ContestOpen && <ProposalStatistics contestStatus={contestStatus} />}
+
+                {!isLoading && !isListProposalsLoading && isSuccess && isListProposalsSuccess && (
+                  <div className={`animate-appear ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"}`}>
+                    <ListProposals />
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        );
+      case Tab.Rewards:
+        return <div>rewards</div>;
+      case Tab.Parameters:
+        return (
+          <div className="mt-16 w-1/2">
+            <ContestParameters
+              votingOpen={votesOpen}
+              submissionOpen={submissionsOpen}
+              votingClose={votesClose}
+              voters={voters}
+              submitters={submitters}
+              userMaxProposalCount={contestMaxNumberSubmissionsPerUser}
+              contestMaxProposalCount={contestMaxProposalCount}
+            />
+          </div>
+        );
+      default:
+        break;
+    }
+  }, [
+    tab,
+    contestStatus,
+    isListProposalsLoading,
+    isSuccess,
+    isListProposalsSuccess,
+    isLoading,
+    isSubmitProposalModalOpen,
+  ]);
 
   return (
     <>
@@ -279,7 +331,12 @@ const LayoutViewContest = (props: any) => {
 
                     <div className="mt-4 gap-3 flex flex-col">
                       <hr className="border-neutral-10" />
-                      <ContestLayoutTabs contestAddress={address} chain={chain?.name ?? ""} contestName={contestName} />
+                      <ContestLayoutTabs
+                        contestAddress={address}
+                        chain={chain?.name ?? ""}
+                        contestName={contestName}
+                        onChange={tab => setTab(tab)}
+                      />
                       <hr className="border-neutral-10" />
                     </div>
 
@@ -303,36 +360,16 @@ const LayoutViewContest = (props: any) => {
                     )}
 
                     <div className="mt-8">
-                      <LayoutContestPrompt prompt={contestPrompt} />
+                      <LayoutContestPrompt prompt={contestPrompt} hidePrompt={tab !== Tab.Contest} />
                     </div>
 
-                    {contestStatus === ContestStatus.SubmissionOpen && (
+                    {tab !== Tab.Contest && (
                       <div className="mt-8">
-                        <ButtonV3
-                          color="bg-gradient-create rounded-[40px]"
-                          size="large"
-                          onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
-                        >
-                          submit a response
-                        </ButtonV3>
+                        <hr className="border-neutral-10" />
                       </div>
                     )}
 
-                    {contestStatus === ContestStatus.ContestOpen && (
-                      <div className="mt-8">
-                        <p className="text-[16px] text-primary-10 font-bold">
-                          submissions open {moment(submissionsOpen).format("MMMM Do, h:mm a")}
-                        </p>
-                      </div>
-                    )}
-
-                    {contestStatus !== ContestStatus.ContestOpen && (
-                      <div className="mt-8 mb-12">
-                        <ProposalStatistics contestStatus={contestStatus} />
-                      </div>
-                    )}
-
-                    {children}
+                    {renderTabs}
 
                     <DialogModalSendProposal
                       isOpen={isSubmitProposalModalOpen}

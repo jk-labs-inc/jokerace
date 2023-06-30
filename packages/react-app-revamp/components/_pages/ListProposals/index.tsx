@@ -1,40 +1,12 @@
 import Button from "@components/UI/Button";
-import { IconCaretDown, IconCaretUp, IconSpinner } from "@components/UI/Icons";
 import Loader from "@components/UI/Loader";
 import ProposalContent from "@components/_pages/ProposalContent";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
-import isProposalDeleted from "@helpers/isProposalDeleted";
-import truncate from "@helpers/truncate";
-import { TrashIcon } from "@heroicons/react/outline";
-import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
-import { useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { useUserStore } from "@hooks/useUser/store";
-import { Interweave } from "interweave";
 import moment from "moment";
-import { now } from "moment";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { useAccount, useNetwork } from "wagmi";
-import styles from "./styles.module.css";
 
 export const ListProposals = () => {
-  const {
-    query: { chain, address },
-  } = useRouter();
-  const accountData = useAccount({
-    onConnect({ address }) {
-      if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
-      }
-    },
-  });
-  const network = useNetwork();
   const { fetchProposalsPage } = useProposal();
 
   const {
@@ -46,40 +18,10 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { votesOpen, votesClose, submissionsOpen, contestPrompt } = useContestStore(state => state);
+  const { votesOpen, contestPrompt } = useContestStore(state => state);
 
   const now = moment();
   const formattedVotingOpen = moment(votesOpen);
-
-  const { setCastPositiveAmountOfVotes, setPickedProposalToVoteFor, setIsModalCastVotesOpen } = useCastVotesStore(
-    state => ({
-      setPickedProposalToVoteFor: state.setPickedProposal,
-      setIsModalCastVotesOpen: state.setIsModalOpen,
-      setCastPositiveAmountOfVotes: state.setCastPositiveAmountOfVotes,
-    }),
-  );
-
-  const { setPickedProposalToDelete, setIsModalDeleteProposalOpen } = useDeleteProposalStore(state => ({
-    setPickedProposalToDelete: state.setPickedProposal,
-    setIsModalDeleteProposalOpen: state.setIsModalOpen,
-  }));
-
-  function onClickUpVote(proposalId: number | string) {
-    setCastPositiveAmountOfVotes(true);
-    setPickedProposalToVoteFor(proposalId.toString());
-    setIsModalCastVotesOpen(true);
-  }
-
-  function onClickDownVote(proposalId: number | string) {
-    setCastPositiveAmountOfVotes(false);
-    setPickedProposalToVoteFor(proposalId.toString());
-    setIsModalCastVotesOpen(true);
-  }
-
-  function onClickProposalDelete(proposalId: number | string) {
-    setPickedProposalToDelete(proposalId);
-    setIsModalDeleteProposalOpen(true);
-  }
 
   if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
     return <Loader scale="component">Loading proposals...</Loader>;
