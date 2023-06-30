@@ -5,7 +5,7 @@ import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsInd
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory } from "ethers";
+import { ContractFactory, ethers } from "ethers";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
@@ -106,8 +106,27 @@ export function useDeployContest() {
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,
-        votingMerkleTree: votingMerkle,
-        submissionMerkleTree: submissionMerkle,
+        votingMerkleTree: votingMerkle
+          ? {
+              ...votingMerkle,
+              voters: votingMerkle.voters.map(voter => ({
+                ...voter,
+                numVotes: ethers.utils.formatUnits(voter.numVotes, 18),
+              })),
+            }
+          : null,
+        submissionMerkleTree: submissionMerkle
+          ? {
+              ...submissionMerkle,
+              submitters:
+                submissionMerkle.merkleRoot !== "0x0000000000000000000000000000000000000000000000000000000000000000"
+                  ? submissionMerkle.submitters.map(submitter => ({
+                      ...submitter,
+                      numVotes: ethers.utils.formatUnits(submitter.numVotes, 18),
+                    }))
+                  : [],
+            }
+          : null,
         contractAddress: contractContest.address,
         authorAddress: (await signer.data?.getAddress()) ?? "",
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",

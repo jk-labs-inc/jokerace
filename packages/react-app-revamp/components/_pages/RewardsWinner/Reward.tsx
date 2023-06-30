@@ -1,6 +1,5 @@
 import Button from "@components/UI/Button";
 import Loader from "@components/UI/Loader";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import { useContestStore } from "@hooks/useContest/store";
 import { useNetwork } from "wagmi";
 
@@ -24,7 +23,6 @@ export const Reward = (props: RewardProps) => {
     queryRankRewardsReleased,
   } = props;
   const { chain } = useNetwork();
-  const { contestStatus } = useContestStore(state => state);
 
   if (queryTokenBalance.isLoading) return <Loader scale="component">Loading ERC20 token info...</Loader>;
   if (queryTokenBalance?.isError)
@@ -99,7 +97,7 @@ export const Reward = (props: RewardProps) => {
             </>
           ) : (
             <>
-              {queryRankRewardsReleasable.data > 0 && contestStatus === CONTEST_STATUS.COMPLETED && (
+              {/* {queryRankRewardsReleasable.data > 0 && contestStatus === CONTEST_STATUS.COMPLETED && (
                 <Button
                   className="mt-2 animate-appear"
                   intent="positive"
@@ -114,7 +112,7 @@ export const Reward = (props: RewardProps) => {
                     ? "Sending reward..."
                     : "Send rewards"}
                 </Button>
-              )}
+              )} */}
             </>
           )}
         </>

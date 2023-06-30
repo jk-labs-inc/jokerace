@@ -3,7 +3,7 @@ import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { formatUnits } from "ethers/lib/utils";
-import { createMerkleTreeFromVotes } from "lib/merkletree/generateVotersTree";
+import { generateMerkleTree } from "lib/merkletree/generateMerkleTree";
 import { useEffect, useState } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
@@ -51,9 +51,9 @@ const CreateVotingAllowlist = () => {
   const handleNextStep = () => {
     if (Object.keys(allowList).length === 0) return;
 
-    const { merkleRoot, voters } = createMerkleTreeFromVotes(18, allowList);
+    const { merkleRoot, recipients } = generateMerkleTree(18, allowList);
 
-    setVotingMerkle({ merkleRoot, voters });
+    setVotingMerkle({ merkleRoot, voters: recipients });
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
   };

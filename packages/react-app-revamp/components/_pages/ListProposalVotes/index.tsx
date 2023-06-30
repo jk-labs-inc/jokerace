@@ -5,14 +5,16 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useProposalVotes from "@hooks/useProposalVotes";
 import { useProposalVotesStore } from "@hooks/useProposalVotes/store";
+import { FC } from "react";
 import { useAccount } from "wagmi";
+import { Proposal } from "../ProposalContent";
 
 interface ListProposalVotesProps {
-  id: number | string;
+  proposalId: string;
+  proposal: Proposal;
 }
 
-export const ListProposalVotes = (props: ListProposalVotesProps) => {
-  const { id } = props;
+export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, proposalId }) => {
   const accountData = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
@@ -20,7 +22,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
       }
     },
   });
-  const { isLoading, isSuccess, isError, retry, fetchVotesPage } = useProposalVotes(id);
+  const { isLoading, isSuccess, isError, retry, fetchVotesPage } = useProposalVotes(proposalId);
   const { listProposalsData } = useProposalStore(state => state);
   const {
     votesPerAddress,
@@ -31,6 +33,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
     totalPagesPaginationVotes,
     hasPaginationVotesNextPage,
   } = useProposalVotesStore(state => state);
+
   return (
     <>
       {isLoading && (
@@ -65,7 +68,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
           <p className="animate-appear font-bold mb-3">
             <span>Current votes:</span> <br />
             <span className="text-positive-9">
-              {new Intl.NumberFormat().format(parseFloat(listProposalsData[id].votes.toFixed(2)))}
+              {new Intl.NumberFormat().format(parseFloat(proposal.votes.toFixed(2)))}
             </span>
           </p>
           <table className="text-xs">
@@ -115,12 +118,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
                         Click to view this address on Debank
                       </a>
 
-                      <EtheuremAddress
-                        withHyphen={false}
-                        ethereumAddress={address}
-                        shortenOnFallback={true}
-                        displayLensProfile={true}
-                      />
+                      <EtheuremAddress ethereumAddress={address} shortenOnFallback={true} displayLensProfile={true} />
                     </td>
                     <td className="p-2 font-bold">
                       {new Intl.NumberFormat().format(parseFloat(votesPerAddress[address].votes.toFixed(2)))}

@@ -341,7 +341,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         returns (bool verified)
     {
         if (!addressTotalVotesVerified[account]) {
-            checkProof(account, totalVotes, proof, false); // will revert with NotInMerkle if not valid
+            checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
             addressTotalVotesVerified[account] = true;
         }

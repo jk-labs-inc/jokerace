@@ -59,7 +59,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
               <button
                 onClick={handleClose}
                 title="Close this"
-                className="absolute z-10 top-0 inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11"
+                className="absolute z-10 top-0 right-[30px] inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11"
               >
                 <Image src="/modal/modal_close.svg" width={39} height={33} alt="close" />
                 <span className="sr-only">Close modal</span>

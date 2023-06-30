@@ -1,9 +1,8 @@
 import { ethers } from "ethers";
-import { Submitter } from "lib/merkletree/generateSubmissionsTree";
-import { Voter } from "lib/merkletree/generateVotersTree";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
 
 export function useContestParticipantsIndexV3() {
-  const indexContestParticipantsV3 = async (address: string, voters: Voter[], submitters: Submitter[]) => {
+  const indexContestParticipantsV3 = async (address: string, voters: Recipient[], submitters: Recipient[]) => {
     try {
       const config = await import("@config/supabase");
       const supabase = config.supabase;

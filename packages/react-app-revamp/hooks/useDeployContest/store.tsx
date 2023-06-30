@@ -1,8 +1,7 @@
 import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
-import { Submitter } from "lib/merkletree/generateSubmissionsTree";
-import { Voter } from "lib/merkletree/generateVotersTree";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { create } from "zustand";
 
 type CustomError = {
@@ -12,12 +11,12 @@ type CustomError = {
 
 export type VotingMerkle = {
   merkleRoot: string;
-  voters: Voter[];
+  voters: Recipient[];
 };
 
 export type SubmissionMerkle = {
   merkleRoot: string;
-  submitters: Submitter[];
+  submitters: Recipient[];
 };
 
 export interface DeployContestState {

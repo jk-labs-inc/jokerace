@@ -80,7 +80,7 @@ module.exports = {
       xs: clamp(-1),
       sm: clamp(-0.5),
       base: clamp(0),
-      prose: clamp(0.25),
+      prose: "16px",
       md: clamp(0.5),
       lg: clamp(1),
       xl: clamp(2),
@@ -180,10 +180,13 @@ module.exports = {
             "--tw-prose-invert-hr": theme("colors.neutral.4"),
             fontSize: theme("fontSize.base"),
             p: {
-              fontSize: clamp(0),
+              fontSize: "16px",
               marginTop: "0.5em",
               marginBottom: "0.5em",
               lineHeight: 1.75,
+            },
+            span: {
+              fontSize: "16px",
             },
             br: {
               display: "block",
@@ -310,9 +313,11 @@ module.exports = {
       backgroundImage: {
         "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
         "gradient-create": "linear-gradient(90deg, #BB65FF 0%, #FFE25B 96.62%)",
+        "gradient-vote": "linear-gradient(93.06deg, #78FFC6 0%, #BB65FF 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(255, 226, 91, 0.6)",
+        "timer-container": "3px 3px 4px rgba(106, 106, 106, 1)",
       },
       backgroundColor: {
         ffdd3e: "#FFDD3E",

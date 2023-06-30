@@ -56,27 +56,33 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
 
   return (
     <div>
-      <div className="hidden lg:flex gap-2 mt-12">
-        {steps.map((step, index) => (
-          <div
-            key={index}
-            onClick={() => handleStepClick(index)}
-            className="flex flex-col items-center text-[24px] font-bold cursor-pointer relative"
-          >
-            <hr
-              className={`w-32 3xl:w-36 border-2 transition-colors duration-500 ease-in-out ${
-                currentStep === index
-                  ? "border-primary-10"
-                  : currentStep > index
-                  ? "border-primary-7"
-                  : "border-neutral-9"
-              }`}
-            />
-            {currentStep === index && <p className="text-primary-10">{step.title}</p>}
+      {isLoading || isSuccess ? (
+        <CreateContestDeploying />
+      ) : (
+        <div>
+          <div className="hidden lg:flex gap-2 mt-12">
+            {steps.map((step, index) => (
+              <div
+                key={index}
+                onClick={() => handleStepClick(index)}
+                className="flex flex-col items-center text-[24px] font-bold cursor-pointer relative"
+              >
+                <hr
+                  className={`w-32 3xl:w-36 border-2 transition-colors duration-500 ease-in-out ${
+                    currentStep === index
+                      ? "border-primary-10"
+                      : currentStep > index
+                      ? "border-primary-7"
+                      : "border-neutral-9"
+                  }`}
+                />
+                {currentStep === index && <p className="text-primary-10">{step.title}</p>}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <div className="lg:pl-[100px]">{steps[currentStep].content}</div>
+          <div className="lg:pl-[100px]">{steps[currentStep].content}</div>
+        </div>
+      )}
     </div>
   );
 };

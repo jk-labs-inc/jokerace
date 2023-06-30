@@ -20,40 +20,37 @@ export async function getContestContractVersion(address: string, chainName: stri
   const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
   const version: string = await contract.version();
 
+  const defaultReturn = { abi: [], version: "unknown" };
+
   if (version === "2.8") {
-    return NumberedVersioningContract.abi;
+    return { abi: NumberedVersioningContract.abi, version };
   } else if (version === "2.9") {
-    return GateSubmissionsOpenContract.abi;
+    return { abi: GateSubmissionsOpenContract.abi, version };
   } else if (version === "2.10") {
-    return BetterRewardsNotesContract.abi;
+    return { abi: BetterRewardsNotesContract.abi, version };
   } else if (version === "3.1") {
-    return MerkleVotesContract.abi;
+    return { abi: MerkleVotesContract.abi, version };
   }
 
   if (version === "1") {
     const bytecode = await provider.getCode(address);
-    if (bytecode.length <= 2) return null;
+    if (bytecode.length <= 2) return defaultReturn;
     if (!bytecode.includes(utils.id("prompt()").slice(2, 10))) {
-      return LegacyDeployedContestContract.abi;
+      return { abi: LegacyDeployedContestContract.abi, version };
     } else if (!bytecode.includes(utils.id("allProposalTotalVotes()").slice(2, 10))) {
-      return PromptDeployedContestContract.abi;
+      return { abi: PromptDeployedContestContract.abi, version };
     } else if (!bytecode.includes(utils.id("downvotingAllowed()").slice(2, 10))) {
-      return AllProposalTotalVotesDeployedContestContract.abi;
+      return { abi: AllProposalTotalVotesDeployedContestContract.abi, version };
     } else if (!bytecode.includes(utils.id("submissionGatingByVotingToken()").slice(2, 10))) {
-      return ProposalVotesDownvotesContract.abi;
+      return { abi: ProposalVotesDownvotesContract.abi, version };
     } else if (!bytecode.includes(utils.id("officialRewardsModule()").slice(2, 10))) {
-      return SubmissionTokenGatingContract.abi;
+      return { abi: SubmissionTokenGatingContract.abi, version };
     } else {
-      // If the version function returns 1 and it doesn't fulfill the above checks, then it is either 2.6 or 2.7.
-      // And because we have no really feasible way of differintating and also because the function calls are the same, we'll go with 2.6 in this case.
-      return RewardsContract.abi;
+      return { abi: RewardsContract.abi, version };
     }
   }
 
-  // If the version isn't 1 and also isn't any that we have noted (this should not happen if we are versioning smart contract code releases correctly),
-  // then fall back to the latest version of bytecode and ABI.
-  return DeployedContestContract.abi;
-
+  return { abi: DeployedContestContract.abi, version };
 }
 
 export default getContestContractVersion;

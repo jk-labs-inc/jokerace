@@ -1,4 +1,4 @@
-import { Submitter } from "lib/merkletree/generateSubmissionsTree";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
 import moment from "moment";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
@@ -68,8 +68,8 @@ const votingMerkleValidation = (allowList: Record<string, number>) => {
   return "";
 };
 
-const submissionMerkleValidation = (allowList: Submitter[], submissionTab: string) => {
-  if (submissionTab === "submissionMerkle" && (!allowList || allowList.length === 0)) {
+const submissionMerkleValidation = (allowList: Record<string, number>, submissionTab: string) => {
+  if (submissionTab === "submissionMerkle" && Object.keys(allowList).length === 0) {
     return "Merkle tree is empty";
   }
   return "";

@@ -1,52 +1,46 @@
+import ContestParameters from "@components/Parameters";
 import Button from "@components/UI/Button";
-import DialogModal from "@components/UI/DialogModal";
+import ButtonV3 from "@components/UI/ButtonV3";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
-import {
-  ROUTE_CONTEST_PROPOSAL,
-  ROUTE_VIEW_CONTEST,
-  ROUTE_VIEW_CONTEST_EXPORT_DATA,
-  ROUTE_VIEW_CONTEST_REWARDS,
-  ROUTE_VIEW_CONTEST_RULES,
-} from "@config/routes";
+import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
+import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
+import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
+import ListProposals from "@components/_pages/ListProposals";
+import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
+import { chains } from "@config/wagmi";
+import { RefreshIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
+import { CastVotesWrapper } from "@hooks/useCastVotes/store";
+import { useContest } from "@hooks/useContest";
 import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
+import useContestEvents from "@hooks/useContestEvents";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { ContractFactoryWrapper } from "@hooks/useContractFactory";
+import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
+import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
+import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper, useProposalStore } from "@hooks/useProposal/store";
-import { UserWrapper, useUserStore } from "@hooks/useUser/store";
-
+import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { isAfter, isBefore, isDate } from "date-fns";
+import useUser from "@hooks/useUser";
+import { UserWrapper, useUserStore } from "@hooks/useUser/store";
+import { switchNetwork } from "@wagmi/core";
+import { isBefore } from "date-fns";
+import moment from "moment";
 import Link from "next/link";
 import router, { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
-
-import { CastVotesWrapper, useCastVotesStore } from "@hooks/useCastVotes/store";
-
-import { DeleteProposalWrapper, useDeleteProposalStore } from "@hooks/useDeleteProposal/store";
-
-import ShareDropdown from "@components/Share";
-import EtheuremAddress from "@components/UI/EtheuremAddress";
-import DialogModalDeleteProposal from "@components/_pages/DialogModalDeleteProposal";
-import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
-import DialogModalVoteForProposal from "@components/_pages/DialogModalVoteForProposal";
-import FormSearchContest from "@components/_pages/FormSearchContest";
-import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { chains } from "@config/wagmi";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
-import { RefreshIcon } from "@heroicons/react/outline";
-import { useContest } from "@hooks/useContest";
-import useContestEvents from "@hooks/useContestEvents";
-import useUser from "@hooks/useUser";
-import { switchNetwork } from "@wagmi/core";
-import { Interweave } from "interweave";
-import { UrlMatcher } from "interweave-autolink";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
-import Sidebar from "./Sidebar";
-import styles from "./styles.module.css";
-import Timeline from "./Timeline";
-import useCheckSnapshotProgress from "./Timeline/Countdown/useCheckSnapshotProgress";
-import VotingToken from "./VotingToken";
+import LayoutContestPrompt from "./Prompt";
+import ProposalStatistics from "./ProposalStatistics";
+import LayoutContestCountdown from "./StickyCards/components/Countdown";
+import LayoutContestQualifier from "./StickyCards/components/Qualifier";
+import ContestLayoutTabs, { Tab } from "./Tabs";
+import LayoutContestTimeline from "./TimelineV3";
 
 const LayoutViewContest = (props: any) => {
   const { children } = props;
@@ -59,63 +53,69 @@ const LayoutViewContest = (props: any) => {
     },
   });
   const { chain } = useNetwork();
-
-  const { checkIfCurrentUserQualifyToVote, checkCurrentUserAmountOfProposalTokens } = useUser();
-
+  const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, chainName, setChainId } =
     useContest();
 
   const {
-    snapshotTaken,
     submissionsOpen,
     votesClose,
     votesOpen,
-    contestAuthor,
-    contestStatus,
+    contestAuthorEthereumAddress,
     contestPrompt,
     contestName,
     contestMaxProposalCount,
+    voters,
+    submitters,
   } = useContestStore(state => state);
-  const { didUserPassSnapshotAndCanVote, checkIfUserPassedSnapshotLoading } = useUserStore(state => state);
+  const contestMaxNumberSubmissionsPerUser = useUserStore(state => state.contestMaxNumberSubmissionsPerUser);
+  const contestInProgress = moment().isBefore(votesClose);
 
-  const { updateSnapshotProgress } = useCheckSnapshotProgress();
-  const [isTimelineModalOpen, setIsTimelineModalOpen] = useState(false);
-  const { isListProposalsLoading, isListProposalsError, listProposalsIds } = useProposalStore(state => state);
-
+  const { isListProposalsLoading, isListProposalsSuccess, listProposalsIds } = useProposalStore(state => state);
   const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
-  const { isCastVotesModalOpen, setIsCastVotesModalOpen } = useCastVotesStore(state => ({
-    isCastVotesModalOpen: state.isModalOpen,
-    setIsCastVotesModalOpen: state.setIsModalOpen,
-  }));
-  const { isDeleteProposalModalOpen, setIsDeleteProposalModalOpen } = useDeleteProposalStore(state => ({
-    isDeleteProposalModalOpen: state.isModalOpen,
-    setIsDeleteProposalModalOpen: state.setIsModalOpen,
-  }));
+  const { setContestStatus, contestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
+  const [tab, setTab] = useState<Tab>(Tab.Contest);
+
+  useEffect(() => {
+    const now = moment();
+    const formattedSubmissionOpen = moment(submissionsOpen);
+    const formattedVotingOpen = moment(votesOpen);
+    const formattedVotingClose = moment(votesClose);
+
+    let timeoutId: NodeJS.Timeout;
+
+    const setAndScheduleStatus = (status: ContestStatus, nextStatus: ContestStatus, nextTime: moment.Moment) => {
+      setContestStatus(status);
+      if (now.isBefore(nextTime)) {
+        const msUntilNext = nextTime.diff(now);
+        timeoutId = setTimeout(() => {
+          setContestStatus(nextStatus);
+        }, msUntilNext);
+      }
+    };
+
+    if (now.isBefore(formattedSubmissionOpen)) {
+      setAndScheduleStatus(ContestStatus.ContestOpen, ContestStatus.SubmissionOpen, formattedSubmissionOpen);
+    } else if (now.isBefore(formattedVotingOpen)) {
+      setAndScheduleStatus(ContestStatus.SubmissionOpen, ContestStatus.VotingOpen, formattedVotingOpen);
+    } else if (now.isBefore(formattedVotingClose)) {
+      setAndScheduleStatus(ContestStatus.VotingOpen, ContestStatus.VotingClosed, formattedVotingClose);
+    } else {
+      setContestStatus(ContestStatus.VotingClosed);
+    }
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [submissionsOpen, votesOpen, votesClose]);
 
   useEffect(() => {
     fetchContestInfo();
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
-
-  useEffect(() => {
-    const chainName = chains
-      .filter(chain => chain.id === chainId)?.[0]
-      ?.name.toLowerCase()
-      .replace(" ", "");
-    if (asPath.split("/")[2] !== chainName) {
-      if (pathname === ROUTE_VIEW_CONTEST) {
-        let newRoute = pathname
-          .replace("[chain]", chainName)
-          .replace("[address]", address)
-          //@ts-ignorecontestMaxProposalCount
-          .replace("[proposal]", query?.proposal);
-        push(pathname, newRoute, { shallow: true });
-      }
-    }
-  }, [chainId, address]);
 
   useEffect(() => {
     if (account?.connector) {
@@ -126,62 +126,80 @@ const LayoutViewContest = (props: any) => {
     }
   }, [account?.connector]);
 
-  useEffect(() => {
-    const verifySnapshot = async () => {
-      if (account?.address) await checkIfCurrentUserQualifyToVote();
-    };
+  const renderTabs = useMemo<ReactNode>(() => {
+    switch (tab) {
+      case Tab.Contest:
+        return (
+          <>
+            {contestStatus === ContestStatus.SubmissionOpen && (
+              <div className="mt-8">
+                <ButtonV3
+                  color="bg-gradient-create rounded-[40px]"
+                  size="large"
+                  onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
+                >
+                  submit a response
+                </ButtonV3>
+              </div>
+            )}
 
-    if (contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING) updateSnapshotProgress();
-    if ([CONTEST_STATUS.VOTING_OPEN, CONTEST_STATUS.COMPLETED].includes(contestStatus)) {
-      verifySnapshot();
+            {contestStatus === ContestStatus.ContestOpen && (
+              <div className="mt-8">
+                <p className="text-[16px] text-primary-10 font-bold">
+                  submissions open {moment(submissionsOpen).format("MMMM Do, h:mm a")}
+                </p>
+              </div>
+            )}
+
+            <div className="mt-8">
+              <div className="flex flex-col gap-5">
+                <hr className="border-neutral-10" />
+                {contestStatus !== ContestStatus.ContestOpen && <ProposalStatistics contestStatus={contestStatus} />}
+
+                {!isLoading && !isListProposalsLoading && isSuccess && isListProposalsSuccess && (
+                  <div className={`animate-appear ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"}`}>
+                    <ListProposals />
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        );
+      case Tab.Rewards:
+        return <div>rewards</div>;
+      case Tab.Parameters:
+        return (
+          <div className="mt-16 w-1/2">
+            <ContestParameters
+              votingOpen={votesOpen}
+              submissionOpen={submissionsOpen}
+              votingClose={votesClose}
+              voters={voters}
+              submitters={submitters}
+              userMaxProposalCount={contestMaxNumberSubmissionsPerUser}
+              contestMaxProposalCount={contestMaxProposalCount}
+            />
+          </div>
+        );
+      default:
+        break;
     }
-  }, [contestStatus, account?.address]);
-
-  useEffect(() => {
-    if (isListProposalsLoading && account?.address) {
-      checkCurrentUserAmountOfProposalTokens();
-      checkIfCurrentUserQualifyToVote();
-    }
-  }, [chainId, account?.address, isListProposalsLoading]);
-
-  const onSubmitTitle = (title: string) => {
-    router.push(`/contests?title=${title}`);
-  };
+  }, [
+    tab,
+    contestStatus,
+    isListProposalsLoading,
+    isSuccess,
+    isListProposalsSuccess,
+    isLoading,
+    isSubmitProposalModalOpen,
+  ]);
 
   return (
     <>
-      <div className={`${isLoading ? "pointer-events-none" : ""} border-b border-solid border-neutral-2 py-2`}>
-        <div className="container mx-auto">
-          <FormSearchContest onSubmitTitle={onSubmitTitle} isInline={true} />
-        </div>
-      </div>
-
-      <div
-        className={`${
-          isLoading ? "pointer-events-none" : ""
-        } flex-grow container mx-auto md:grid md:gap-6 md:grid-cols-12 md:-mb-20`}
-      >
-        <div
-          className={`md:max-h-[calc(100vh-8rem)] ${styles.navbar} ${styles.withFakeSeparator} ${
-            pathname === ROUTE_CONTEST_PROPOSAL ? "!hidden" : ""
-          } z-10 justify-center md:justify-start md:pie-3 border-neutral-4 md:border-ie md:overflow-y-auto sticky inline-start-0 top-0 md:top-1 bg-true-black py-2 md:pt-0 md:mt-5 md:pb-10 md:h-full md:col-span-3`}
-        >
-          <Sidebar
-            isLoading={isLoading}
-            isListProposalsLoading={isListProposalsLoading}
-            isSuccess={isSuccess}
-            isError={error}
-            isListProposalsError={isListProposalsError}
-            chainId={chainId}
-            setIsTimelineModalOpen={setIsTimelineModalOpen}
-          />
-        </div>
-        {!isLoading &&
+      <div className={`${isLoading ? "pointer-events-none" : ""} w-[700px] mx-auto`}>
+        {/* {!isLoading &&
           isSuccess &&
-          submissionsOpen &&
-          votesOpen &&
-          votesClose &&
-          [CONTEST_STATUS.SUBMISSIONS_OPEN, CONTEST_STATUS.VOTING_OPEN].includes(contestStatus) && (
+          contestStatus === ContestStatus.SubmissionOpen && contestStatus === ContestStatus.VotingOpen && (
             <div
               className={`animate-appear text-center text-xs sticky bg-neutral-0 border-b border-neutral-4 border-solid ${
                 pathname === ROUTE_CONTEST_PROPOSAL ? "top-0" : "top-10"
@@ -190,19 +208,19 @@ const LayoutViewContest = (props: any) => {
               <p className="text-center">
                 {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
                   <>
-                    {contestStatus === CONTEST_STATUS.SUBMISSIONS_OPEN && (
+                    {contestStatus === ContestStatus.SubmissionOpen && (
                       <>
                         {listProposalsIds.length >= contestMaxProposalCount
                           ? "✋ Submissions closed ✋"
                           : "✨ Submissions open ✨"}
                       </>
                     )}
-                    {contestStatus === CONTEST_STATUS.VOTING_OPEN && <>✨ Voting open ✨</>}
+                    {contestStatus === ContestStatus.VotingOpen && <>✨ Voting open ✨</>}
                   </>
                 )}
               </p>
             </div>
-          )}
+          )} */}
 
         <div
           className={`md:pt-5 md:pb-20 flex flex-col ${
@@ -298,96 +316,67 @@ const LayoutViewContest = (props: any) => {
                       </div>
                     )}
 
-                    <div
-                      className={`flex flex-wrap items-baseline text-neutral-11 font-bold ${
-                        contestPrompt ? "mb-3" : "mb-6"
-                      }`}
-                    >
-                      <span className="uppercase tracking-wide pie-1ex">{contestName}</span>{" "}
-                      <span className="text-xs overflow-hidden text-neutral-8 text-ellipsis">
-                        by &nbsp;
-                        <EtheuremAddress
-                          withHyphen={false}
-                          ethereumAddress={contestAuthor}
-                          shortenOnFallback={false}
+                    <div className="flex flex-col mt-10">
+                      <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
+                      <p className="text-[24px] text-primary-10 font-bold">
+                        by{" "}
+                        <EthereumAddress
+                          ethereumAddress={contestAuthorEthereumAddress}
+                          shortenOnFallback
                           displayLensProfile={false}
+                          textualVersion
                         />
-                      </span>
-                      <div className="ml-auto">
-                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
-                      </div>
+                      </p>
                     </div>
 
-                    {contestPrompt && !pathname.includes(ROUTE_VIEW_CONTEST_REWARDS) && (
-                      <p className="text-sm with-link-highlighted font-bold pb-8 border-b border-neutral-4">
-                        <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
-                      </p>
-                    )}
+                    <div className="mt-4 gap-3 flex flex-col">
+                      <hr className="border-neutral-10" />
+                      <ContestLayoutTabs
+                        contestAddress={address}
+                        chain={chain?.name ?? ""}
+                        contestName={contestName}
+                        onChange={tab => setTab(tab)}
+                      />
+                      <hr className="border-neutral-10" />
+                    </div>
 
-                    {contestStatus === CONTEST_STATUS.SNAPSHOT_ONGOING && (
-                      <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 text-sm font-bold">
-                        <p>Snapshot ongoing, voting will be open in 30sec-1min, please wait... </p>
+                    <div className="mt-4">
+                      <LayoutContestTimeline
+                        submissionOpenDate={submissionsOpen}
+                        votingOpensDate={votesOpen}
+                        contestCloseDate={votesClose}
+                      />
+                    </div>
+
+                    {contestInProgress && (
+                      <div className="mt-8 flex gap-4 sticky top-0 z-10 bg-true-black">
+                        <LayoutContestCountdown
+                          submissionOpen={submissionsOpen}
+                          votingOpen={votesOpen}
+                          votingClose={votesClose}
+                        />
+                        <LayoutContestQualifier />
                       </div>
                     )}
 
-                    {snapshotTaken &&
-                      !checkIfUserPassedSnapshotLoading &&
-                      !didUserPassSnapshotAndCanVote &&
-                      contestStatus === CONTEST_STATUS.VOTING_OPEN &&
-                      ![ROUTE_VIEW_CONTEST_RULES, ROUTE_VIEW_CONTEST_EXPORT_DATA].includes(pathname) && (
-                        <section className="animate-appear">
-                          <p className="mt-4 p-3 rounded-md border-solid border mb-5 text-sm font-bold bg-primary-1 text-primary-10 border-primary-4">
-                            Too bad, your wallet didn&apos;t qualify to vote.
-                          </p>
-                        </section>
-                      )}
+                    <div className="mt-8">
+                      <LayoutContestPrompt prompt={contestPrompt} hidePrompt={tab !== Tab.Contest} />
+                    </div>
 
-                    {children}
-
-                    <DialogModal
-                      isOpen={isTimelineModalOpen}
-                      setIsOpen={setIsTimelineModalOpen}
-                      title="Contest timeline"
-                    >
-                      {!isLoading && isSuccess && submissionsOpen && votesOpen && votesClose && (
-                        <>
-                          <h3 className="text-lg text-neutral-12 mb-3 font-black">{contestName} - timeline</h3>
-                          {account?.address && (
-                            <div className="mb-4">
-                              <VotingToken />
-                            </div>
-                          )}
-                          <Timeline />
-                        </>
-                      )}
-                    </DialogModal>
-                    {!isLoading &&
-                      isSuccess &&
-                      chain?.id === chainId &&
-                      submissionsOpen &&
-                      isAfter(new Date(), submissionsOpen) &&
-                      votesOpen &&
-                      isBefore(new Date(), votesOpen) && (
-                        <DialogModalSendProposal
-                          isOpen={isSubmitProposalModalOpen}
-                          setIsOpen={setIsSubmitProposalModalOpen}
-                        />
-                      )}
-                    {!isLoading && isSuccess && chain?.id === chainId && (
-                      <DialogModalDeleteProposal
-                        isOpen={isDeleteProposalModalOpen}
-                        setIsOpen={setIsDeleteProposalModalOpen}
-                      />
+                    {tab !== Tab.Contest && (
+                      <div className="mt-8">
+                        <hr className="border-neutral-10" />
+                      </div>
                     )}
-                    {!isLoading &&
-                      isSuccess &&
-                      chain?.id === chainId &&
-                      votesOpen &&
-                      isAfter(new Date(), votesOpen) &&
-                      votesClose &&
-                      isBefore(new Date(), votesClose) && (
-                        <DialogModalVoteForProposal isOpen={isCastVotesModalOpen} setIsOpen={setIsCastVotesModalOpen} />
-                      )}
+
+                    {renderTabs}
+
+                    <DialogModalSendProposal
+                      isOpen={isSubmitProposalModalOpen}
+                      setIsOpen={setIsSubmitProposalModalOpen}
+                    />
+
+                    {showRewards && <CreateContestRewards />}
                   </div>
                 </>
               )}
@@ -416,7 +405,15 @@ export const getLayout = (page: any) => {
             <SubmitProposalWrapper>
               <CastVotesWrapper>
                 <DeleteProposalWrapper>
-                  <LayoutViewContest>{page}</LayoutViewContest>
+                  <ContractFactoryWrapper>
+                    <DeployRewardsWrapper>
+                      <RewardsWrapper>
+                        <FundRewardsWrapper>
+                          <LayoutViewContest>{page}</LayoutViewContest>
+                        </FundRewardsWrapper>
+                      </RewardsWrapper>
+                    </DeployRewardsWrapper>
+                  </ContractFactoryWrapper>
                 </DeleteProposalWrapper>
               </CastVotesWrapper>
             </SubmitProposalWrapper>

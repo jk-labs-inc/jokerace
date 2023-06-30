@@ -2,21 +2,26 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { createMerkleTreeFromAddresses, Submitter } from "lib/merkletree/generateSubmissionsTree";
+import { generateMerkleTree } from "lib/merkletree/generateMerkleTree";
 import { useEffect, useState } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
 
 const CreateSubmissionAllowlist = () => {
   const { step, setSubmissionMerkle, submissionMerkle, setError } = useDeployContestStore(state => state);
-  const [allowList, setAllowList] = useState<Submitter[]>([]);
   const submissionValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(allowList, "submissionMerkle")]);
+  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(allowList)]);
+  const [allowList, setAllowList] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    if (submissionMerkle) {
-      const newAllowList = submissionMerkle.submitters.map(submitter => ({ address: submitter.address }));
-      setAllowList(newAllowList);
-    }
+    if (!submissionMerkle) return;
+
+    const newAllowList = submissionMerkle.submitters.reduce((acc, field) => {
+      // We don't need to convert from BigNumber to normal number as numVotes is always hardcoded to 10
+      acc[field.address] = 10;
+      return acc;
+    }, {} as Record<string, number>);
+
+    setAllowList(newAllowList);
   }, [submissionMerkle]);
 
   useEffect(() => {
@@ -39,20 +44,23 @@ const CreateSubmissionAllowlist = () => {
     const hasError = nonEmptyFields.some(field => field.error === true);
 
     if (hasError) {
-      setAllowList([]);
+      setAllowList({});
       return;
     }
 
-    // If there are no errors, map the fields to an array of `Submitter` objects
-    setAllowList(nonEmptyFields.map(field => ({ address: field.address })));
+    const newAllowList: Record<string, number> = {};
+    nonEmptyFields.forEach(field => {
+      newAllowList[field.address] = 10; // numVotes is hardcoded to 10
+    });
+    setAllowList(newAllowList);
   };
 
   const handleNextStep = () => {
-    if (allowList.length === 0) return;
+    if (Object.keys(allowList).length === 0) return;
 
-    const { merkleRoot, submitters } = createMerkleTreeFromAddresses(allowList);
+    const { merkleRoot, recipients } = generateMerkleTree(18, allowList);
 
-    setSubmissionMerkle({ merkleRoot, submitters });
+    setSubmissionMerkle({ merkleRoot, submitters: recipients });
     onNextStep();
 
     setError(step + 1, { step: step + 1, message: "" });
