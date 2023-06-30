@@ -35,12 +35,16 @@
 }
 
 /* Edit toastify styles */
-.Toastify__toast--error {
-  box-shadow: 0 -2px 4px rgba(239, 68, 68, 0.5), 0 2px 4px rgba(239, 68, 68, 0.5), 0 1px 2px rgba(239, 68, 68, 0.3) !important;
+
+.Toastify__toast-theme--colored.Toastify__toast--default {
+  background-color: white !important;
+  color: #e5e5e5 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 -2px 4px #28282c, 0 2px 4px #28282c, 0 1px 2px #28282c !important;
 }
 
-.Toastify__toast--success {
-  box-shadow: 0 -2px 4px rgba(52, 211, 153, 0.5), 0 2px 4px rgba(52, 211, 153, 0.5), 0 1px 2px rgba(52, 211, 153, 0.3) !important;
+.Toastify__close-button {
+  color: black !important;
 }
 
 /* Custom bullet points */
@@ -65,23 +69,48 @@
   transform: rotate(15deg);
 }
 
+.createHeaderShadows {
+  filter: drop-shadow(0px 3px 4px rgba(255, 226, 91, 0.6));
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove labels from rc-slider */
+.rc-slider-mark-text {
+  font-size: 0 !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   *:not(.normal-case, .uppercase, input, textarea) {
-    text-transform: lowercase !important;
+    text-transform: lowercase;
   }
 
   html {
     --brand: theme("colors.primary.10");
     scrollbar-color: var(--brand) Canvas;
     color-scheme: dark;
+    overflow-y: scroll;
   }
 
   :root {
     accent-color: var(--brand);
+    --toastify-color-success: #78ffc6 !important;
+    --toastify-color-error: #ff78a9 !important;
+    --toastify-icon-color-success: #78ffc6 !important;
+    --toastify-icon-color-error: #ff78a9 !important;
+    --toastify-icon-color-info: #ffe25b !important;
+    --toastify-text-color-success: black !important;
+    --toastify-text-color-error: black !important;
+    --toastify-toast-width: 360px !important;
+    --toastify-toast-min-height: 80px !important;
   }
   :focus-visible {
     outline-color: var(--brand);
@@ -96,7 +125,12 @@
     @apply text-true-black;
   }
 
-  :is(::-webkit-calendar-picker-indicator, ::-webkit-clear-button, ::-webkit-inner-spin-button, ::-webkit-outer-spin-button) {
+  :is(
+      ::-webkit-calendar-picker-indicator,
+      ::-webkit-clear-button,
+      ::-webkit-inner-spin-button,
+      ::-webkit-outer-spin-button
+    ) {
     color: var(--brand);
   }
   html {
@@ -125,11 +159,11 @@
     @apply font-bold px-4 py-3;
   }
 
-  .prose a,
+  /* .prose a,
   .with-link-highlighted a,
   .link {
     @apply cursor-pointer font-bold text-positive-9 underline focus:text-positive-10 hover:no-underline;
-  }
+  } */
 
   .prose :where(hr):not(:where([class~="not-prose"] *)) {
     margin-top: 1.5em !important;
@@ -159,6 +193,15 @@
     height: 0;
     pointer-events: none;
   }
+  /* Placeholder (at the top) */
+  .ProseMirror p.is-editor-create-flow-empty:first-child::before {
+    color: #6a6a6a;
+    font-weight: bold;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
 }
 
 @layer components {
@@ -170,6 +213,11 @@
     @apply grid;
     grid-template-columns: repeat(3, minmax(auto, 1fr)) 0.4fr;
     gap: 1rem;
+  }
+
+  .rewards-funding-grid {
+    @apply grid;
+    grid-template-columns: 0.1fr 0.8fr 1.5fr 1fr 0.5fr;
   }
 
   .dropdownBorder {

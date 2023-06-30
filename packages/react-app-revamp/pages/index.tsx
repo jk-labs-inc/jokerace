@@ -2,13 +2,14 @@ import Explainer from "@components/Explainer";
 import Button from "@components/UI/Button";
 import ListContests from "@components/_pages/ListContests";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { isSupabaseConfigured } from "@helpers/database";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import router from "next/router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 
 function useContests(initialData: any, searchValue: string) {
@@ -109,11 +110,8 @@ const Page: NextPage = props => {
           </div>
         </div>
 
-        <div className="text-[16px] mt-8 -ml-[15px]">
-          {process.env.NEXT_PUBLIC_SUPABASE_URL !== "" &&
-          process.env.NEXT_PUBLIC_SUPABASE_URL &&
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== "" &&
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? (
+        <div className="text-[16px] mt-14 -ml-[15px]">
+          {isSupabaseConfigured ? (
             <ListContests
               isFetching={isFetching}
               itemsPerPage={ITEMS_PER_PAGE}

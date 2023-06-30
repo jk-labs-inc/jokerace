@@ -7,6 +7,14 @@ import { CustomError } from "types/error";
 import { erc20ABI, useNetwork } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
+export interface RewardData {
+  currentUserAddress: string;
+  tokenAddress: string | null;
+  isErc20: boolean;
+  amount: string;
+  rewardsContractAddress?: string;
+}
+
 export function useFundRewardsModule() {
   const queryClient = useQueryClient();
   const { chain } = useNetwork();
@@ -25,19 +33,21 @@ export function useFundRewardsModule() {
 
   async function sendFundsToRewardsModule(args: {
     currentUserAddress: string;
-    erc20TokenAddress: string;
+    tokenAddress: string | null;
     isErc20: boolean;
     amount: string;
+    rewardsContractAddress?: string;
   }) {
-    const { currentUserAddress, erc20TokenAddress, amount, isErc20 } = args;
+    const { currentUserAddress, tokenAddress, amount, isErc20, rewardsContractAddress } = args;
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
     const contractConfig = {
-      addressOrName: erc20TokenAddress,
+      addressOrName: tokenAddress ?? "",
       contractInterface: erc20ABI,
     };
+    const rewardsAddress = rewardsContractAddress ? rewardsContractAddress : rewards.contractAddress;
     try {
       let txSendFunds;
       let receipt;
@@ -45,7 +55,7 @@ export function useFundRewardsModule() {
         txSendFunds = await writeContract({
           ...contractConfig,
           functionName: "transfer",
-          args: [rewards.contractAddress, amount],
+          args: [rewardsAddress, amount],
         });
         receipt = await waitForTransaction({
           chainId: chain?.id,
@@ -56,7 +66,7 @@ export function useFundRewardsModule() {
           chainId: chain?.id,
           request: {
             from: currentUserAddress,
-            to: rewards.contractAddress,
+            to: rewardsAddress,
             value: amount,
           },
         });
@@ -97,6 +107,80 @@ export function useFundRewardsModule() {
     }
   }
 
+  const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
+    if (rewards.length > 4) {
+      toast.warning("number of rewards cannot be more than 4 in one take.");
+      return;
+    }
+    const promises = rewards.map((reward: any) => {
+      return () =>
+        sendFundsToSingleReward(reward)
+          .then(result => {
+            setTransactionData((prevData: any) => [...prevData, result]);
+            setIsSuccess(true);
+          })
+          .catch(e => {
+            const customError = e as CustomError;
+            const message = customError.message || `Something went wrong while sending funds for reward ${reward}.`;
+            setError({
+              code: customError.code,
+              message,
+            });
+            setIsLoading(false);
+            throw e; // This will stop the execution of the promises in case of error
+          });
+    });
+    return promises;
+  };
+
+  const sendFundsToSingleReward = async (args: {
+    currentUserAddress: string;
+    tokenAddress: string | null;
+    isErc20: boolean;
+    amount: string;
+    rewardsContractAddress?: string;
+  }) => {
+    const { currentUserAddress, tokenAddress, amount, isErc20, rewardsContractAddress } = args;
+    const contractConfig = {
+      addressOrName: tokenAddress ?? "",
+      contractInterface: erc20ABI,
+    };
+    const rewardsAddress = rewardsContractAddress ? rewardsContractAddress : rewards.contractAddress;
+    let txSendFunds;
+    let receipt;
+    if (isErc20) {
+      txSendFunds = await writeContract({
+        ...contractConfig,
+        functionName: "transfer",
+        args: [rewardsAddress, amount],
+      });
+      receipt = await waitForTransaction({
+        chainId: chain?.id,
+        hash: txSendFunds.hash,
+      });
+    } else {
+      txSendFunds = await sendTransaction({
+        chainId: chain?.id,
+        request: {
+          from: currentUserAddress,
+          to: rewardsAddress,
+          value: amount,
+        },
+      });
+
+      receipt = await waitForTransaction({
+        chainId: chain?.id,
+        hash: txSendFunds.hash,
+      });
+    }
+
+    return {
+      hash: receipt.transactionHash,
+      chainId: chain?.id,
+      transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendFunds?.hash}`,
+    };
+  };
+
   useEffect(() => {
     if (!isModalOpen) {
       setIsLoading(false);
@@ -108,6 +192,7 @@ export function useFundRewardsModule() {
 
   return {
     sendFundsToRewardsModule,
+    sendFundsToRewardsModuleV3,
     isLoading,
     error,
     isSuccess,

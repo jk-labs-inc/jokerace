@@ -3,28 +3,23 @@ import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface UserState {
+  currentUserQualifiedToSubmit: boolean;
+  currentUserQualifiedToVote: boolean;
+  currentUserTotalVotesAmount: number;
   currentUserAvailableVotesAmount: number;
   contestMaxNumberSubmissionsPerUser: number;
-  currentUserTotalVotesCast: number;
   currentUserProposalCount: number;
-  amountOfTokensRequiredToSubmitEntry: number;
-  usersQualifyToVoteIfTheyHoldTokenAtTime: Date;
-  didUserPassSnapshotAndCanVote: boolean;
-  checkIfUserPassedSnapshotLoading: boolean;
-  currentUserSubmitProposalTokensAmount: number;
+
   isLoading: boolean;
   isSuccess: boolean;
   error: CustomError | null;
 
+  setCurrentUserQualifiedToSubmit: (value: boolean) => void;
+  setCurrentUserQualifiedToVote: (value: boolean) => void;
   setCurrentUserAvailableVotesAmount: (amount: number) => void;
-  setCurrentUserTotalVotesCast: (amount: number) => void;
-  setAmountOfTokensRequiredToSubmitEntry: (amount: number) => void;
+  setCurrentUserTotalVotesAmount: (amount: number) => void;
   setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
   setCurrentUserProposalCount: (amount: number) => void;
-  setUsersQualifyToVoteIfTheyHoldTokenAtTime: (value: Date) => void;
-  setDidUserPassSnapshotAndCanVote: (value: boolean) => void;
-  setCheckIfUserPassedSnapshotLoading: (value: boolean) => void;
-  setCurrentUserSubmitProposalTokensAmount: (amount: number) => void;
   increaseCurrentUserProposalCount: () => void;
   setIsLoading: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
@@ -33,28 +28,23 @@ interface UserState {
 
 export const createUserStore = () =>
   createStore<UserState>(set => ({
+    currentUserQualifiedToSubmit: false,
+    currentUserQualifiedToVote: false,
     currentUserAvailableVotesAmount: 0,
+    currentUserTotalVotesAmount: 0,
     contestMaxNumberSubmissionsPerUser: 0,
-    currentUserTotalVotesCast: 0,
     currentUserProposalCount: 0,
-    amountOfTokensRequiredToSubmitEntry: 0,
-    usersQualifyToVoteIfTheyHoldTokenAtTime: new Date(),
-    didUserPassSnapshotAndCanVote: false,
-    checkIfUserPassedSnapshotLoading: true,
-    currentUserSubmitProposalTokensAmount: 0,
     isLoading: false,
     isSuccess: false,
     error: null,
 
+    setCurrentUserQualifiedToSubmit: value => set({ currentUserQualifiedToSubmit: value }),
+    setCurrentUserQualifiedToVote: value => set({ currentUserQualifiedToVote: value }),
     setCurrentUserAvailableVotesAmount: amount => set({ currentUserAvailableVotesAmount: amount }),
-    setCurrentUserTotalVotesCast: amount => set({ currentUserTotalVotesCast: amount }),
-    setAmountOfTokensRequiredToSubmitEntry: amount => set({ amountOfTokensRequiredToSubmitEntry: amount }),
+    setCurrentUserTotalVotesAmount: amount => set({ currentUserTotalVotesAmount: amount }),
     setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),
     setCurrentUserProposalCount: amount => set({ currentUserProposalCount: amount }),
-    setUsersQualifyToVoteIfTheyHoldTokenAtTime: value => set({ usersQualifyToVoteIfTheyHoldTokenAtTime: value }),
-    setDidUserPassSnapshotAndCanVote: value => set({ didUserPassSnapshotAndCanVote: value }),
-    setCheckIfUserPassedSnapshotLoading: value => set({ checkIfUserPassedSnapshotLoading: value }),
-    setCurrentUserSubmitProposalTokensAmount: amount => set({ currentUserSubmitProposalTokensAmount: amount }),
+
     increaseCurrentUserProposalCount: () =>
       set(state => ({ currentUserProposalCount: state.currentUserProposalCount + 1 })),
     setIsLoading: value => set({ isLoading: value }),

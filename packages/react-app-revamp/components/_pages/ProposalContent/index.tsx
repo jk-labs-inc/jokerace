@@ -1,70 +1,159 @@
-import isUrlToImage from "@helpers/isUrlToImage";
-import { isUrlTweet } from "@helpers/isUrlTweet";
-import { TwitterTweetEmbed } from "react-twitter-embed";
-import { Interweave } from "interweave";
-import { UrlMatcher } from "interweave-autolink";
-import styles from "./styles.module.css";
-import isProposalDeleted from "@helpers/isProposalDeleted";
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable react/no-children-prop */
+import ButtonV3 from "@components/UI/ButtonV3";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
-interface ProposalContentProps {
+import { formatNumber } from "@helpers/formatNumber";
+import { isUrlTweet } from "@helpers/isUrlTweet";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { load } from "cheerio";
+import moment from "moment";
+import { FC, useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { TwitterTweetEmbed } from "react-twitter-embed";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
+import DialogModalProposal from "../DialogModalProposal";
+import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
+
+export interface Proposal {
+  authorEthereumAddress: string;
   content: string;
-  author: string;
+  exists: boolean;
+  isContentImage: boolean;
+  votes: number;
 }
 
-function renderContent(str: string) {
-  let renderedContent = str;
-  if (isUrlToImage(renderedContent)) {
-    str.match(/^https[^\?]*.(jpg|jpeg|gif|avif|webp|png|tiff|bmp)(\?(.*))?$/gim)?.map(img => {
-      renderedContent = renderedContent.replace(img, `<img class="w-auto md:w-full h-auto" src="${img}" alt="" />`);
-    });
-  }
+interface ProposalContentProps {
+  id: string;
+  proposal: Proposal;
+  votingOpen: Date;
+  prompt: string;
+}
 
-  if (isUrlTweet(str)) {
-    const tweetId =
-      str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/) === null
-        ? new URL(renderedContent).pathname.split("/")[3]
-        : //@ts-ignore
-          str.match(/^https?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/)[3];
+const MAX_LENGTH = 250;
+let MAX_LENGTH_PARAGRAPH = 200;
+
+const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, prompt }) => {
+  let truncatedContent =
+    proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
+  const formattedVotingOpen = moment(votingOpen);
+  const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
+  const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
+
+  const ProposalAction = useMemo<React.ReactNode>(() => {
+    switch (contestStatus) {
+      case ContestStatus.ContestOpen:
+      case ContestStatus.SubmissionOpen:
+        return (
+          <>
+            <p className="text-neutral-10">voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}</p>
+          </>
+        );
+      case ContestStatus.VotingOpen:
+        return (
+          <>
+            <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
+            <ButtonV3
+              color="bg-gradient-vote rounded-[40px]"
+              size="large"
+              onClick={() => {
+                setPickProposal(id);
+                setIsVotingModalOpen(true);
+              }}
+            >
+              vote
+            </ButtonV3>
+          </>
+        );
+      case ContestStatus.VotingClosed:
+        return (
+          <>
+            <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
+            <p className="text-neutral-10">voting closed</p>
+          </>
+        );
+    }
+  }, [contestStatus]);
+
+  if (isUrlTweet(truncatedContent)) {
+    const tweetId = new URL(truncatedContent).pathname.split("/")[3];
     return (
       <>
-        <a target="_blank" rel="nofollow noreferrer" className="link mb-1 text-2xs" href={str}>
+        <a target="_blank" rel="nofollow noreferrer" className="link mb-1 text-2xs" href={truncatedContent}>
           View on Twitter
         </a>
         <TwitterTweetEmbed tweetId={tweetId} options={{ theme: "dark", dnt: "true" }} />
       </>
     );
   }
-  return (
-    <div className={`with-link-highlighted prose prose-invert ${styles.content}`}>
-      <Interweave content={renderedContent} matchers={[new UrlMatcher("url")]} />
-    </div>
-  );
-}
 
-export const ProposalContent = (props: ProposalContentProps) => {
-  const { content, author } = props;
+  if (proposal.isContentImage) {
+    const $ = load(proposal.content);
+    const contentElements = $("*").not("script, style, img");
+    let totalTextLength = 0;
+
+    contentElements.each((_, element) => {
+      const currentText = $(element).text();
+      if (totalTextLength + currentText.length > MAX_LENGTH_PARAGRAPH) {
+        const remainingLength = MAX_LENGTH_PARAGRAPH - totalTextLength;
+        const truncatedText = currentText.substring(0, remainingLength) + "...";
+        $(element).text(truncatedText);
+        return false; // This stops the each loop
+      }
+      totalTextLength += currentText.length;
+    });
+
+    truncatedContent = `<div>${$.html()}</div>`;
+  }
+
   return (
-    <>
-      <blockquote
-        className={`
-        leading-relaxed
-        ${isProposalDeleted(content) ? "italic text-neutral-11" : ""}
-      `}
-      >
-        {renderContent(content)}
-      </blockquote>
-      {!isProposalDeleted(content) && (
-        <figcaption className="pt-5 font-mono overflow-hidden text-neutral-12 text-ellipsis whitespace-nowrap">
-          {/*@ts-ignore*/}
+    <div className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+      <div className="flex items-center px-8 py-2 h-3/4" onClick={() => setIsProposalModalOpen(true)}>
+        <ReactMarkdown
+          components={{
+            img: ({ node, ...props }) => <img {...props} className="w-[170px] h-[130px]" alt="image" />,
+            div: ({ node, children, ...props }) => (
+              <div {...props} className="flex gap-5 items-center">
+                {children}
+              </div>
+            ),
+            p: ({ node, children, ...props }) => (
+              <p {...props} style={{ fontSize: "16px" }}>
+                {children}
+              </p>
+            ),
+          }}
+          rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
+          children={truncatedContent}
+        />
+      </div>
+
+      <div className="border-t border-neutral-10 h-1/4 flex items-center">
+        <div className="flex pl-8 w-1/2 h-full border-r border-neutral-10">
           <EtheuremAddress
-            ethereumAddress={author}
+            ethereumAddress={proposal.authorEthereumAddress}
+            shortenOnFallback={true}
             displayLensProfile={true}
-            shortenOnFallback={false}
-            withHyphen={true}
           />
-        </figcaption>
-      )}
-    </>
+        </div>
+        <div className="flex items-center justify-between pl-4 pr-4 w-1/2 h-full text-[16px] font-bold">
+          {ProposalAction}
+        </div>
+      </div>
+
+      <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
+      <DialogModalProposal
+        proposalId={id}
+        prompt={prompt}
+        isOpen={isProposalModalOpen}
+        setIsOpen={setIsProposalModalOpen}
+        proposal={proposal}
+      />
+    </div>
   );
 };
 

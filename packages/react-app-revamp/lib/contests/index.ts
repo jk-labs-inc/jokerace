@@ -12,7 +12,8 @@ import { SearchOptions } from "types/search";
 export const ITEMS_PER_PAGE = 7;
 
 async function getContractConfig(address: string, chainName: string, chainId: number) {
-  const abi = await getContestContractVersion(address, chainName);
+  const { abi, version } = await getContestContractVersion(address, chainName);
+
   if (abi === null) {
     return;
   }
@@ -150,6 +151,7 @@ const processContestData = async (contest: any, userAddress: string) => {
 
     if (
       contractConfig &&
+      //@ts-ignore
       contractConfig.contractInterface?.filter(el => el.name === "officialRewardsModule").length > 0
     ) {
       const contestRewardModuleAddress = await readContract({
@@ -240,7 +242,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
     searchString = "",
     pagination = { currentPage: 1, itemsPerPage: ITEMS_PER_PAGE },
     sorting = { orderBy: "created_at", ascending: false },
-    table = "contests",
+    table = "contests_v3",
     language = "english",
   } = options;
 
@@ -283,7 +285,7 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
 
   try {
     const { data, count, error } = await config.supabase
-      .from("contests")
+      .from("contests_v3")
       .select("*", { count: "exact" })
       .is("featured", true)
       .range(from, to);
@@ -324,7 +326,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
     const { from, to } = getPagination(currentPage, itemsPerPage);
     try {
       const result = await supabase
-        .from("contests")
+        .from("contests_v3")
         .select("*", { count: "exact" })
         .lte("start_at", new Date().toISOString())
         .gte("end_at", new Date().toISOString())
@@ -353,7 +355,7 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
     const { from, to } = getPagination(currentPage, itemsPerPage);
     try {
       const result = await supabase
-        .from("contests")
+        .from("contests_v3")
         .select("*", { count: "exact" })
         // all rows whose votes end date is < to the current date.
         .lt("end_at", new Date().toISOString())
@@ -380,7 +382,7 @@ export async function getUpcomingContests(currentPage: number, itemsPerPage: num
     const { from, to } = getPagination(currentPage, itemsPerPage);
     try {
       const result = await supabase
-        .from("contests")
+        .from("contests_v3")
         .select("*", { count: "exact" })
         // all rows whose submissions start date is > to the current date.
         .gt("start_at", new Date().toISOString())

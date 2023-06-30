@@ -1,30 +1,31 @@
+import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagmi/core";
-import { isFuture } from "date-fns";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { CustomError } from "types/error";
-import { useNetwork, useProvider } from "wagmi";
+import { useAccount, useNetwork, useProvider } from "wagmi";
 import { useUserStore } from "./store";
+
+const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useUser() {
   const provider = useProvider();
+  const { address: userAddress } = useAccount();
   const {
-    setCurrentUserSubmitProposalTokensAmount,
-    setDidUserPassSnapshotAndCanVote,
-    setCheckIfUserPassedSnapshotLoading,
-    setCurrentUserTotalVotesCast,
+    setCurrentUserQualifiedToSubmit,
     setCurrentUserAvailableVotesAmount,
-    setUsersQualifyToVoteIfTheyHoldTokenAtTime,
+    setCurrentUserTotalVotesAmount,
+    currentUserTotalVotesAmount,
   } = useUserStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
   const {
+    submissionMerkleTree,
+    votingMerkleTree,
     setIsSuccess: setIsContestSuccess,
     setIsLoading: setIsContestLoading,
-    setSnapshotTaken,
     setError: setContestError,
   } = useContestStore(state => state);
   const { chain } = useNetwork();
@@ -42,12 +43,12 @@ export function useUser() {
 
   // Generate config for the contract
   async function getContractConfig() {
-    const abi = await getContestContractVersion(address, chainName);
+    const { abi } = await getContestContractVersion(address, chainName);
+
     if (abi === null) {
       toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
       setContestError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
       setIsContestSuccess(false);
-      setCheckIfUserPassedSnapshotLoading(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
       setIsContestLoading(false);
@@ -65,84 +66,76 @@ export function useUser() {
     return contractConfig;
   }
 
-  /**
-   * Check how many proposal tokens of this contest the current user holds
-   */
-  async function checkCurrentUserAmountOfProposalTokens() {
-    const contractConfig = await getContractConfig();
-    if (!contractConfig) return;
-    const accountData = getAccount();
-    const contractBaseOptions = {};
+  const checkIfCurrentUserQualifyToSubmit = async () => {
+    if (!userAddress) return;
 
-    try {
-      const amount = await readContract({
-        ...contractConfig,
-        ...contractBaseOptions,
-        functionName: "getCurrentSubmissionTokenVotes",
-        args: [accountData?.address],
-      });
+    if (submissionMerkleTree.getHexRoot() === "0x") {
+      setCurrentUserQualifiedToSubmit(true);
+    } else {
+      // Perform a lookup in the 'contest_participants_v3' table.
+      const { data, error } = await supabase
+        .from("contest_participants_v3")
+        .select("can_submit")
+        .eq("user_address", userAddress)
+        .eq("contest_address", address);
 
-      //@ts-ignore
-      setCurrentUserSubmitProposalTokensAmount(amount / 1e18);
-    } catch (e) {
-      onContractError(e);
-      const customError = e as CustomError;
-      if (!customError) return;
-      setContestError(customError);
-      setIsContestSuccess(false);
-      setIsListProposalsSuccess(false);
-      setIsListProposalsLoading(false);
-      setIsContestLoading(false);
-      console.error(e);
+      if (error) {
+        console.error("Error performing lookup in 'contest_participants_v3':", error);
+        return;
+      }
+
+      // If the current user can submit, set 'currentUserQualifiedToSubmit' to true.
+      if (data && data.length > 0 && data[0].can_submit) {
+        setCurrentUserQualifiedToSubmit(true);
+      } else {
+        setCurrentUserQualifiedToSubmit(false);
+      }
     }
-  }
+  };
 
   /**
    * Check if the current user qualify to vote for this contest
    */
   async function checkIfCurrentUserQualifyToVote() {
-    const contractConfig = await getContractConfig();
+    if (!userAddress) return;
 
-    if (!contractConfig) return;
+    // Perform a lookup in the 'contest_participants_v3' table.
+    const { data, error } = await supabase
+      .from("contest_participants_v3")
+      .select("num_votes")
+      .eq("user_address", userAddress)
+      .eq("contest_address", address);
 
-    setCheckIfUserPassedSnapshotLoading(true);
-    const accountData = getAccount();
+    if (error) {
+      console.error("Error performing lookup in 'contest_participants_v3':", error);
+      return;
+    }
 
-    try {
-      // Timestamp from when a user can vote
-      // depending on the amount of voting token they're holding at a given timestamp (snapshot)
-      const timestampSnapshotRawData = await readContract({
+    // If the current user can vote, set 'currentUserQualifiedToSubmit' to true.
+    if (data && data.length > 0 && data[0].num_votes > 0) {
+      const contractConfig = await getContractConfig();
+      if (!contractConfig) return;
+
+      const currentUserTotalVotesCast = await readContract({
         ...contractConfig,
-        functionName: "contestSnapshot",
+        functionName: "contestAddressTotalVotesCast",
+        args: userAddress,
       });
+
+      const userVotes = data[0].num_votes;
       //@ts-ignore
-      setUsersQualifyToVoteIfTheyHoldTokenAtTime(new Date(parseInt(timestampSnapshotRawData) * 1000));
-      //@ts-ignore
-      if (!isFuture(new Date(parseInt(timestampSnapshotRawData) * 1000))) {
-        setSnapshotTaken(true);
-        const delayedCurrentTimestamp = Date.now() - 59; // Delay by 59 seconds to make sure we're looking at a block that has been mined
-        const timestampToCheck =
-          //@ts-ignore
-          delayedCurrentTimestamp >= timestampSnapshotRawData ? timestampSnapshotRawData : delayedCurrentTimestamp;
-        if (accountData?.address) {
-          const tokenUserWasHoldingAtSnapshotRawData = await readContract({
-            ...contractConfig,
-            functionName: "getVotes",
-            //@ts-ignore
-            args: [accountData?.address, timestampToCheck],
-          });
-          //@ts-ignore
-          setDidUserPassSnapshotAndCanVote(tokenUserWasHoldingAtSnapshotRawData / 1e18 > 0);
-        } else {
-          setDidUserPassSnapshotAndCanVote(false);
-        }
+      const castVotes = currentUserTotalVotesCast / 1e18;
+
+      if (castVotes > 0) {
+        setCurrentUserTotalVotesAmount(userVotes);
+        setCurrentUserAvailableVotesAmount(userVotes - castVotes);
       } else {
-        setSnapshotTaken(false);
+        setCurrentUserTotalVotesAmount(userVotes);
+        setCurrentUserAvailableVotesAmount(userVotes);
       }
-      setCheckIfUserPassedSnapshotLoading(false);
-    } catch (e) {
-      console.error(e);
-      setCheckIfUserPassedSnapshotLoading(false);
+    } else {
+      setCurrentUserTotalVotesAmount(0);
+      setCurrentUserAvailableVotesAmount(0);
     }
   }
 
@@ -156,39 +149,22 @@ export function useUser() {
     const accountData = getAccount();
 
     try {
-      // get current block number
-      const currentBlockNumber = await fetchBlockNumber();
-      const timestamp = (await provider.getBlock(currentBlockNumber)).timestamp - 50; // (necessary to avoid block not mined error)
-      const contracts = [
-        // get current user availables votes now
-        {
-          ...contractConfig,
-          functionName: "getVotes",
-          args: [accountData?.address, timestamp],
-        },
-        // get votes cast by current user
-        {
-          ...contractConfig,
-          functionName: "contestAddressTotalVotesCast",
-          args: accountData?.address,
-        },
-      ];
+      const currentUserTotalVotesCast = await readContract({
+        ...contractConfig,
+        functionName: "contestAddressTotalVotesCast",
+        args: accountData?.address,
+      });
 
-      const results = await readContracts({ contracts });
-      const currentUserAvailableVotesAmount = results[0];
-      const currentUserTotalVotesCast = results[1];
       //@ts-ignore
-      setCurrentUserTotalVotesCast(currentUserTotalVotesCast / 1e18);
-      //@ts-ignore
-      setCurrentUserAvailableVotesAmount(currentUserAvailableVotesAmount / 1e18 - currentUserTotalVotesCast / 1e18);
+      setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount - currentUserTotalVotesCast / 1e18);
     } catch (e) {
       console.error(e);
     }
   }
 
   return {
-    checkCurrentUserAmountOfProposalTokens,
     checkIfCurrentUserQualifyToVote,
+    checkIfCurrentUserQualifyToSubmit,
     updateCurrentUserVotes,
   };
 }

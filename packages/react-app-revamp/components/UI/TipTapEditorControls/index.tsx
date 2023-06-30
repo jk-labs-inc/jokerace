@@ -33,6 +33,7 @@ const Separator = () => {
 
 interface TipTapEditorControlsProps {
   editor: Editor | null;
+  className?: string;
 }
 
 export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
@@ -42,7 +43,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
   }
 
   return (
-    <div className="flex flex-wrap space-i-1">
+    <div className={`inline-flex flex-wrap space-i-1 ${props.className}`}>
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}

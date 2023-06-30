@@ -1,69 +1,132 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
+import { useContestStore } from "@hooks/useContest/store";
+import { useGenerateProof } from "@hooks/useGenerateProof";
+import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
-import { useNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
 
 export function useSubmitProposal() {
+  const { address: userAddress } = useAccount();
+  const { fetchProposalsIdsList } = useProposal();
+  const { submissionMerkleTree } = useContestStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
+  const { checkIfProofIsVerified } = useGenerateProof();
 
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
 
-  async function sendProposal(proposalContent: string) {
-    const [chainName, address] = asPath.split("/").slice(2, 4);
-    const abi = await getContestContractVersion(address, chainName);
-    setIsLoading(true);
-    setIsSuccess(false);
-    setError(null);
-    setTransactionData(null);
-
-    try {
-      const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi || DeployedContestContract.abi,
+  async function sendProposal(proposalContent: string): Promise<TransactionResponse> {
+    return new Promise<TransactionResponse>(async (resolve, reject) => {
+      const [chainName, address] = asPath.split("/").slice(2, 4);
+      const { abi } = await getContestContractVersion(address, chainName);
+      const proofVerificationStatus = await checkIfProofIsVerified(
+        submissionMerkleTree,
+        userAddress ?? "",
+        "submission",
+      );
+      const targetMetadata = {
+        targetAddress: "0x0000000000000000000000000000000000000000",
       };
 
-      const txSendProposal = await writeContract({
-        ...contractConfig,
-        functionName: "propose",
-        args: [proposalContent],
-      });
+      const safeMetadata = {
+        signers: ["0x0000000000000000000000000000000000000000"],
+        threshold: 1,
+      };
 
-      const receipt = await waitForTransaction({
-        chainId: chain?.id,
-        hash: txSendProposal.hash,
-      });
+      setIsLoading(true);
+      setIsSuccess(false);
+      setError(null);
+      setTransactionData(null);
 
-      setTransactionData({
-        chainId: chain?.id,
-        hash: receipt.transactionHash,
-        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
-      });
+      let proofs: string[] = [];
 
-      setIsLoading(false);
-      setIsSuccess(true);
-      toast.success(`Your proposal was deployed successfully!`);
-      increaseCurrentUserProposalCount();
-    } catch (e) {
-      const customError = e as CustomError;
+      if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
+        proofs = [];
+      } else {
+        proofs = proofVerificationStatus.proofs;
+      }
 
-      if (!customError) return;
+      try {
+        const contractConfig = {
+          addressOrName: address,
+          contractInterface: abi,
+          chainId: chain?.id,
+        };
 
-      const message = customError.message || "Something went wrong while submitting your proposal.";
-      toast.error(message);
-      setError({
-        code: customError.code,
-        message,
-      });
-      setIsLoading(false);
-    }
+        let txSendProposal: TransactionResponse = {} as TransactionResponse;
+
+        let proposalCore = {
+          author: userAddress,
+          exists: true,
+          description: proposalContent,
+          targetMetadata: targetMetadata,
+          safeMetadata: safeMetadata,
+        };
+
+        // case when anyone can submit a proposal
+        if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
+          txSendProposal = await writeContract({
+            ...contractConfig,
+            functionName: "proposeWithoutProof",
+            args: [proposalCore],
+          });
+        } else if (!proofVerificationStatus.verified) {
+          txSendProposal = await writeContract({
+            ...contractConfig,
+            functionName: "propose",
+            args: [proposalCore, proofs],
+          });
+        } else {
+          txSendProposal = await writeContract({
+            ...contractConfig,
+            functionName: "proposeWithoutProof",
+            args: [proposalCore],
+          });
+        }
+
+        const receipt = await waitForTransaction({
+          chainId: chain?.id,
+          hash: txSendProposal.hash,
+        });
+
+        setTransactionData({
+          chainId: chain?.id,
+          hash: receipt.transactionHash,
+          transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
+        });
+
+        setIsLoading(false);
+        setIsSuccess(true);
+        increaseCurrentUserProposalCount();
+        removeSubmissionFromLocalStorage("submissions", address);
+        fetchProposalsIdsList(abi); // you might need to pass the ABI here
+
+        resolve(txSendProposal);
+      } catch (e) {
+        const customError = e as CustomError;
+
+        if (!customError) return;
+
+        const message = customError.message || "Something went wrong while submitting your proposal.";
+        toast.error(message);
+        setError({
+          code: customError.code,
+          message,
+        });
+        setIsLoading(false);
+        reject(e);
+      }
+    });
   }
 
   return {

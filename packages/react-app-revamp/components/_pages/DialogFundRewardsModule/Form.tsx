@@ -17,7 +17,7 @@ interface FormProps {
   isSuccess: boolean;
   handleSubmit: (args: {
     currentUserAddress: string;
-    erc20TokenAddress: string;
+    tokenAddress: string | null;
     isErc20: boolean;
     amount: string;
   }) => Promise<void>;

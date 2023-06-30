@@ -6,7 +6,7 @@ const nextConfig = {
     defaultLocale: "en-US",
   },
   images: {
-    domains: ["lens.infura-ipfs.io"],
+    domains: ["lens.infura-ipfs.io", "ik.imagekit.io"],
   },
 };
 

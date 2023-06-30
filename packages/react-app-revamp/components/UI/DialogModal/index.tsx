@@ -3,7 +3,7 @@ import { Dialog } from "@headlessui/react";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { FC, useCallback } from "react";
 
-export interface DialogModalProps {
+interface DialogModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   title: string;
@@ -21,9 +21,7 @@ const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children,
       <div className="fixed inset-0 pointer-events-none bg-true-black bg-opacity-80" aria-hidden="true" />
 
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
-        {/* Container to center the panel */}
         <div className="flex min-h-full w-full items-center justify-center">
-          {/* The actual dialog panel  */}
           <Dialog.Panel
             className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-primary-10 border-opacity-40 bg-neutral-0 2xs:rounded-lg ${className}`}
           >
