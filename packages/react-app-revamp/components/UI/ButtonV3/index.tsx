@@ -1,7 +1,6 @@
 import React from "react";
-import { useAccount } from "wagmi";
 
-type ButtonSize = "small" | "default" | "large";
+type ButtonSize = "extraSmall" | "small" | "default" | "large";
 
 interface ButtonV3Props {
   color?: string;
@@ -11,6 +10,7 @@ interface ButtonV3Props {
 }
 
 const sizes = {
+  extraSmall: "w-20 h-6",
   small: "w-24",
   default: "w-[120px] h-[32px]",
   large: "w-40 h-[40px]",

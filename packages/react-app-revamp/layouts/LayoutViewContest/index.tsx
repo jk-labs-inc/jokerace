@@ -1,4 +1,5 @@
 import ContestParameters from "@components/Parameters";
+import ContestRewards from "@components/Rewards";
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
@@ -43,8 +44,7 @@ import ContestLayoutTabs, { Tab } from "./Tabs";
 import LayoutContestTimeline from "./TimelineV3";
 
 const LayoutViewContest = (props: any) => {
-  const { children } = props;
-  const { query, asPath, pathname, push, reload } = useRouter();
+  const { query, asPath, pathname, reload } = useRouter();
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
@@ -130,7 +130,7 @@ const LayoutViewContest = (props: any) => {
     switch (tab) {
       case Tab.Contest:
         return (
-          <>
+          <div className="animate-apppear">
             {contestStatus === ContestStatus.SubmissionOpen && (
               <div className="mt-8">
                 <ButtonV3
@@ -163,13 +163,17 @@ const LayoutViewContest = (props: any) => {
                 )}
               </div>
             </div>
-          </>
+          </div>
         );
       case Tab.Rewards:
-        return <div>rewards</div>;
+        return (
+          <div className="mt-16 w-2/3 animate-appear">
+            <ContestRewards />
+          </div>
+        );
       case Tab.Parameters:
         return (
-          <div className="mt-16 w-1/2">
+          <div className="mt-16 w-1/2 animate-appear">
             <ContestParameters
               votingOpen={votesOpen}
               submissionOpen={submissionsOpen}

@@ -1,7 +1,8 @@
 import { utils } from "ethers";
 import { toast } from "react-toastify";
 import { useBalance, useContractRead, useContractWrite, useNetwork, useToken, useWaitForTransaction } from "wagmi";
-import Reward from "./Reward";
+import Reward from "../Reward";
+
 interface PayeeERC20RewardProps {
   payee: string | number;
   tokenAddress: string;

@@ -3,13 +3,17 @@ import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { ethers } from "ethers";
-import { useRef } from "react";
+import { FC, useRef } from "react";
 import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
 import CreateRewardsFundingPoolSubmit from "./components/Buttons/Submit";
 import CreateRewardsFundPool from "./components/FundPool";
 
-const CreateRewardsFunding = () => {
+interface CreateRewardsFundingProps {
+  isFundingForTheFirstTime?: boolean;
+}
+
+const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFirstTime = true }) => {
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
   const { address } = useAccount();
   const { rewards, setCancel } = useFundRewardsStore(state => state);
@@ -67,7 +71,9 @@ const CreateRewardsFunding = () => {
   return (
     <div>
       <div className="flex flex-col gap-2">
-        <p className="text-[24px] font-bold text-primary-10">last step! let’s fund this rewards pool 💸</p>
+        <p className="text-[24px] font-bold text-primary-10">
+          {isFundingForTheFirstTime ? "last step!" : ""} let’s fund this rewards pool 💸
+        </p>
         <div className="text-[16px] flex flex-col gap-2">
           <p>if you’re ready, let’s fund the rewards pool below.</p>
           <p>

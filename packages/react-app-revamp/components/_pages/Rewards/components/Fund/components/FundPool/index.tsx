@@ -1,18 +1,18 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import CHAIN_CONFIGS, { ChainConfig, TokenConfig } from "@helpers/tokens";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Reward, useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { getAddress } from "ethers/lib/utils";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useMedia } from "react-use";
+import { useNetwork } from "wagmi";
 
 const CreateRewardsFundPool = () => {
-  const deployContestData = useDeployContestStore(state => state.deployContestData);
+  const { chain } = useNetwork();
   const { setRewards, setValidationError } = useFundRewardsStore(state => state);
   const [rows, setRows] = useState<Reward[]>([{ address: "", amount: "" }]);
   const isMobile = useMedia("(max-width: 768px)");
-  const chainConfig = Object.values(CHAIN_CONFIGS).find(config => config.id === deployContestData.chainId);
+  const chainConfig = Object.values(CHAIN_CONFIGS).find(config => config.id === chain?.id);
 
   useEffect(() => {
     setRewards(rows);
@@ -83,7 +83,7 @@ const CreateRewardsFundPool = () => {
               {idx + 1}
             </div>
             <div className="text-neutral-11 flex flex-col gap-2">
-              <span className="font-bold uppercase">chain</span> {deployContestData.chain}
+              <span className="font-bold uppercase">chain</span> {chain?.name}
             </div>
           </div>
 
@@ -150,7 +150,7 @@ const CreateRewardsFundPool = () => {
           {rows.map((row, idx) => (
             <div key={idx} className="rewards-funding-grid gap-4 text-[16px] items-center group">
               <div className="font-bold text-neutral-11 font-sabo self-center text-[18px] mt-[5px]">{idx + 1}</div>
-              <div className="self-center">{deployContestData.chain}</div>
+              <div className="self-center">{chain?.name}</div>
               <input
                 className={`bg-neutral-11 rounded-[5px] text-true-black px-2 py-1 placeholder-neutral-10 ${
                   isTokenShorthand(row.address, chainConfig) ? "uppercase" : "normal-case"

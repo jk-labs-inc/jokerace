@@ -84,6 +84,11 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: 0 !important;
 }
 
+/* implement markdown style */
+.markdown > * {
+  text-transform: initial !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

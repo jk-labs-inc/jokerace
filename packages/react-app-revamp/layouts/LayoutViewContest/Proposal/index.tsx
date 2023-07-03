@@ -3,14 +3,14 @@
 import Collapsible from "@components/UI/Collapsible";
 import { Proposal } from "@components/_pages/ProposalContent";
 import { ChevronUpIcon } from "@heroicons/react/outline";
+import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus } from "@hooks/useContestStatus/store";
+import { load } from "cheerio";
+import moment from "moment";
 import { FC, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
-import { load } from "cheerio";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { useContestStore } from "@hooks/useContest/store";
-import moment from "moment";
 
 interface LayoutContestProposalProps {
   proposal: Proposal;
@@ -59,6 +59,7 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
     return (
       <div className="flex flex-col gap-4">
         <ReactMarkdown
+          className="markdown"
           components={{
             img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
             p: ({ node, children, ...props }) => (
@@ -82,6 +83,7 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
     <div>
       <Collapsible isOpen={isProposalOpen}>
         <ReactMarkdown
+          className="markdown"
           components={{
             img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
             p: ({ node, children, ...props }) => (
@@ -102,6 +104,7 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
     <div className="flex flex-col gap-4">
       {isOnlyImage && (
         <ReactMarkdown
+          className="markdown"
           components={{
             img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
           }}
@@ -115,6 +118,7 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <>
           <div className="flex gap-4 items-center">
             <ReactMarkdown
+              className="markdown"
               components={{
                 p: ({ node, children, ...props }) => (
                   <p {...props} className="m-0 text-[16px]">
@@ -136,6 +140,7 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <>
           <div className="flex gap-4 items-center">
             <ReactMarkdown
+              className="markdown"
               components={{
                 img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
                 p: ({ node, children, ...props }) => (

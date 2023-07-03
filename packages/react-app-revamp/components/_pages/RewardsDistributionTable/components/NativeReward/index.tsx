@@ -1,7 +1,7 @@
 import { utils } from "ethers";
 import { toast } from "react-toastify";
 import { useBalance, useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
-import Reward from "./Reward";
+import Reward from "../Reward";
 
 interface PayeeNativeRewardProps {
   payee: string | number;
