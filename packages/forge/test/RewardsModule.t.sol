@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "@forge-std/Test.sol";
+import "@openzeppelin/token/ERC20/presets/ERC20PresetFixedSupply.sol";
 import "../src/Contest.sol";
 import "../src/modules/RewardsModule.sol";
 
@@ -93,10 +94,16 @@ contract RewardsModuleTest is Test {
     uint256[] public payees = [1, 2, 3];
     uint256[] public shares = [3, 2, 1];
 
+    // ERC20 VARS
+    ERC20PresetFixedSupply public testERC20;
+    uint256 public constant INITIAL_TEST_ERC20_SUPPLY = 100;
+
     // SETUP
 
     function setUp() public {
         vm.startPrank(CREATOR_ADDRESS_1);
+
+        testERC20 = new ERC20PresetFixedSupply("test", "TEST", INITIAL_TEST_ERC20_SUPPLY, CREATOR_ADDRESS_1);
 
         contest = new Contest("test",
                               "hello world",
@@ -120,7 +127,7 @@ contract RewardsModuleTest is Test {
     // REWARDS
 
     // 1 proposal at 1 vote; release to author of rank 1
-    function testReleaseToAuthorFirstPlace1() public {
+    function testReleaseToAuthorFirstPlace1WithNative() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -138,7 +145,7 @@ contract RewardsModuleTest is Test {
     }
 
     // 1 proposal at 1 vote; release to target of rank 1
-    function testReleaseToTargetFirstPlace1() public {
+    function testReleaseToTargetFirstPlace1WithNative() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
@@ -156,7 +163,7 @@ contract RewardsModuleTest is Test {
     }
 
     // 2 proposals with different authors, at 1 and 5 votes; release to author of rank 1
-    function testReleaseToAuthorFirstPlace2() public {
+    function testReleaseToAuthorFirstPlace2WithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -176,7 +183,7 @@ contract RewardsModuleTest is Test {
     }
 
     // 2 proposals with different authors, at 1 and 5 votes; release to target of rank 1
-    function testReleaseToTargetFirstPlace2() public {
+    function testReleaseToTargetFirstPlace2WithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -196,7 +203,7 @@ contract RewardsModuleTest is Test {
     }
 
     // 2 proposals with different authors, both at 1 vote; send back to creator
-    function testFirstPlaceTie() public {
+    function testFirstPlaceTieWithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -216,7 +223,7 @@ contract RewardsModuleTest is Test {
     }
 
     // 2 proposals with different authors, both at 0 votes; send back to creator
-    function testFirstPlaceTieWithZeroVotes() public {
+    function testFirstPlaceTieWithZeroVotesWithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.propose(firstProposalPA1, submissionProof1);
@@ -231,7 +238,7 @@ contract RewardsModuleTest is Test {
     }
 
     // 2 proposals with different authors, both at 0 votes; revert with error message
-    function testFirstPlaceTieWithZeroProposals() public {
+    function testFirstPlaceTieWithZeroProposalsWithNative() public {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
@@ -239,7 +246,7 @@ contract RewardsModuleTest is Test {
     }
 
     // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote; send back to creator
-    function testSecondPlaceTie() public {
+    function testSecondPlaceTieWithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -262,7 +269,7 @@ contract RewardsModuleTest is Test {
     }
 
     // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
-    function testSecondPlaceTiePayOutThirdPlace() public {
+    function testSecondPlaceTiePayOutThirdPlaceWithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
@@ -285,5 +292,182 @@ contract RewardsModuleTest is Test {
         rewardsModulePaysAuthor.release(3);
 
         assertEq(CREATOR_ADDRESS_1.balance, 16);
+    }
+
+    // 1 proposal at 1 vote; release to author of rank 1
+    function testReleaseToAuthorFirstPlace1WithERC20() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysAuthor.release(testERC20, 1);
+
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_1), 50);
+    }
+
+    // 1 proposal at 1 vote; release to target of rank 1
+    function testReleaseToTargetFirstPlace1WithERC20() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysTarget.release(testERC20, 1);
+
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_1), 50);
+    }
+
+    // 2 proposals with different authors, at 1 and 5 votes; release to author of rank 1
+    function testReleaseToAuthorFirstPlace2WithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysAuthor.release(testERC20, 1);
+
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 50);
+    }
+
+    // 2 proposals with different authors, at 1 and 5 votes; release to target of rank 1
+    function testReleaseToTargetFirstPlace2WithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysTarget.release(testERC20, 1);
+
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 50);
+    }
+
+    // 2 proposals with different authors, both at 1 vote; send back to creator
+    function testFirstPlaceTieWithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysAuthor.release(testERC20, 1);
+
+        assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
+    }
+
+    // 2 proposals with different authors, both at 0 votes; send back to creator
+    function testFirstPlaceTieWithZeroVotesWithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.propose(firstProposalPA2, submissionProof2);
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysAuthor.release(testERC20, 1);
+
+        assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
+    }
+
+    // 2 proposals with different authors, both at 0 votes; revert with error message
+    function testFirstPlaceTieWithZeroProposalsWithERC20() public {
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
+        rewardsModulePaysAuthor.release(testERC20, 1);
+    }
+
+    // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote; send back to creator
+    function testSecondPlaceTieWithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysAuthor.release(testERC20, 2);
+
+        assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 33);
+    }
+
+    // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
+    function testSecondPlaceTiePayOutThirdPlaceWithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId4 = contest.propose(thirdProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 0, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId3, 0, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId4, 0, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysAuthor.release(testERC20, 3);
+
+        assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 16);
     }
 }
