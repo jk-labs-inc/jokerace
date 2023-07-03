@@ -11,6 +11,9 @@ import { zoraMainnet } from "./custom-chains/zora";
 import { bnbMainnet } from "./custom-chains/bnbMainnet";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
 import { litTestnet } from "./custom-chains/litTestnet";
+import { zetaTestnet } from "./custom-chains/zetaTestnet";
+import { celoTestnet } from "./custom-chains/celoTestnet";
+import { celoMainnet } from "./custom-chains/celoMainnet";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -37,7 +40,10 @@ const otherChains = [
   zoraMainnet,
   bnbMainnet,
   lineaTestnet,
-  litTestnet
+  litTestnet,
+  zetaTestnet,
+  celoTestnet,
+  celoMainnet
 ];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];
