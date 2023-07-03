@@ -24,22 +24,36 @@ contract RewardsModuleTest is Test {
     ];
 
     /*
-        For this merkle tree:
+        Voting merkle tree:
         {
             "decimals": 18,
             "airdrop": {
-                "0x016C8780e5ccB32E5CAA342a926794cE64d9C364": 10,
-                "0x185a4dc360CE69bDCceE33b3784B0282f7961aea": 10
+                "0xd698e31229aB86334924ed9DFfd096a71C686900": 10,
+                "0x5b45e296C06ab3dAD836BCBc0fBd7a4b75b83C02": 100
+            }
+        }
+
+        Submission merkle tree (both are value 10 because that's just the dummy value 
+        that we make proposal merkle trees have and check against for a simpler flow):
+        {
+            "decimals": 18,
+            "airdrop": {
+                "0xd698e31229aB86334924ed9DFfd096a71C686900": 10,
+                "0x5b45e296C06ab3dAD836BCBc0fBd7a4b75b83C02": 10
             }
         }
     */
-    bytes32 public constant SUB_AND_VOTING_MERKLE_ROOT =
-        bytes32(0x6bdfe79384e162c9368032b3ea1deaa851760ec8664c8b25238c21fe595ba271);
+    bytes32 public constant VOTING_MERKLE_ROOT =
+        bytes32(0xdb0fd5147843d56c8f32dd8b2ab5bfe04c1fe199d121790ff805fb0f0f7019c5);
+    bytes32 public constant SUBMISSION_MERKLE_ROOT =
+        bytes32(0x7665f9790e783f13b614dacf6e7624e755b188e1bb086d301855d73f9b81fa85);
     address public constant CREATOR_ADDRESS_1 = 0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94;
-    address public constant PERMISSIONED_ADDRESS_1 = 0x016C8780e5ccB32E5CAA342a926794cE64d9C364;
-    address public constant PERMISSIONED_ADDRESS_2 = 0x185a4dc360CE69bDCceE33b3784B0282f7961aea;
-    bytes32[] public proof1 = [bytes32(0x8ab0a9b9a7cf0c105eeef64b71dd45268e015022a66069f01086437c80c78a4c)];
-    bytes32[] public proof2 = [bytes32(0xceeae64152a2deaf8c661fccd5645458ba20261b16d2f6e090fe908b0ac9ca88)];
+    address public constant PERMISSIONED_ADDRESS_1 = 0xd698e31229aB86334924ed9DFfd096a71C686900;
+    address public constant PERMISSIONED_ADDRESS_2 = 0x5b45e296C06ab3dAD836BCBc0fBd7a4b75b83C02;
+    bytes32[] public votingProof1 = [bytes32(0xf712e9f1bed1665ca7b426db8e09d438375a76fc5cf8052b6abae75233a117e7)];
+    bytes32[] public votingProof2 = [bytes32(0x3704b461c09457df5491016097977d5364e607b59049ca6d36dfb9c16d03a2bf)];
+    bytes32[] public submissionProof1 = [bytes32(0x3525e2aa1b921658191cfccf7e63bf6bcac64a0315ca9eb04f2bcc08975d431f)];
+    bytes32[] public submissionProof2 = [bytes32(0x3704b461c09457df5491016097977d5364e607b59049ca6d36dfb9c16d03a2bf)];
 
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
@@ -86,8 +100,8 @@ contract RewardsModuleTest is Test {
 
         contest = new Contest("test",
                               "hello world",
-                              SUB_AND_VOTING_MERKLE_ROOT,
-                              SUB_AND_VOTING_MERKLE_ROOT,
+                              SUBMISSION_MERKLE_ROOT,
+                              VOTING_MERKLE_ROOT,
                               numParams);
 
         rewardsModulePaysTarget = new RewardsModule(payees,
@@ -110,9 +124,9 @@ contract RewardsModuleTest is Test {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposalPA1, proof1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, proof1);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -128,9 +142,9 @@ contract RewardsModuleTest is Test {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
 
         vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposalPA1, proof1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, proof1);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
@@ -145,14 +159,14 @@ contract RewardsModuleTest is Test {
     function testReleaseToAuthorFirstPlace2() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, proof1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(firstProposalPA2, proof2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, proof1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, proof1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -165,14 +179,14 @@ contract RewardsModuleTest is Test {
     function testReleaseToTargetFirstPlace2() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, proof1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(firstProposalPA2, proof2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, proof1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 5 ether, proof1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
@@ -185,14 +199,14 @@ contract RewardsModuleTest is Test {
     function testFirstPlaceTie() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, proof1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId2 = contest.propose(firstProposalPA2, proof2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, proof1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, proof1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -205,9 +219,9 @@ contract RewardsModuleTest is Test {
     function testFirstPlaceTieWithZeroVotes() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        contest.propose(firstProposalPA1, proof1);
+        contest.propose(firstProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_2);
-        contest.propose(firstProposalPA2, proof2);
+        contest.propose(firstProposalPA2, submissionProof2);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -228,16 +242,16 @@ contract RewardsModuleTest is Test {
     function testSecondPlaceTie() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, proof1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId2 = contest.propose(secondProposalPA1, proof1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId3 = contest.propose(firstProposalPA2, proof2);
+        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
         vm.warp(1681660001);
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 3 ether, proof1);
-        contest.castVote(proposalId2, 0, 10 ether, 1 ether, proof1);
-        contest.castVote(proposalId3, 0, 10 ether, 1 ether, proof1);
+        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
         vm.warp(1681670001);
@@ -251,19 +265,19 @@ contract RewardsModuleTest is Test {
     function testSecondPlaceTiePayOutThirdPlace() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, proof1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId2 = contest.propose(secondProposalPA1, proof1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_2);
-        uint256 proposalId3 = contest.propose(firstProposalPA2, proof2);
+        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId4 = contest.propose(thirdProposalPA1, proof1);
+        uint256 proposalId4 = contest.propose(thirdProposalPA1, submissionProof1);
         vm.warp(1681660001);
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-        contest.castVote(proposalId1, 0, 10 ether, 3 ether, proof1);
-        contest.castVote(proposalId2, 0, 10 ether, 2 ether, proof1);
-        contest.castVote(proposalId3, 0, 10 ether, 2 ether, proof1);
-        contest.castVote(proposalId4, 0, 10 ether, 1 ether, proof1);
+        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 0, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId3, 0, 10 ether, 2 ether, votingProof1);
+        contest.castVote(proposalId4, 0, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
         vm.warp(1681670001);
