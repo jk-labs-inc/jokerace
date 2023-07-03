@@ -126,6 +126,26 @@ contract RewardsModuleTest is Test {
 
     // REWARDS
 
+    // Only the creator can withdraw, and they can do so at any time
+    function testCreatorWithdrawNative() public {
+        vm.warp(1681650001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to be withdrawn
+        vm.prank(CREATOR_ADDRESS_1);
+        rewardsModulePaysAuthor.withdrawRewards();
+
+        assertEq(CREATOR_ADDRESS_1.balance, 100);
+    }
+
+    // Only the creator can withdraw, and they can do so at any time
+    function testCreatorWithdrawERC20() public {
+        vm.warp(1681650001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to be withdrawn
+        vm.prank(CREATOR_ADDRESS_1);
+        rewardsModulePaysAuthor.withdrawRewards();
+
+        assertEq(CREATOR_ADDRESS_1.balance, 100);
+    }
+
     // 1 proposal at 1 vote; release to author of rank 1
     function testReleaseToAuthorFirstPlace1WithNative() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
