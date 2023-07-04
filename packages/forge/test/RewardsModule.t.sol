@@ -374,7 +374,7 @@ contract RewardsModuleTest is Test {
         assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
     }
 
-    // 2 proposals with different authors, both at 0 votes; revert with error message
+    // No proposals; revert with error message
     function testFirstPlaceTieWithZeroProposalsWithNative() public {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -382,7 +382,7 @@ contract RewardsModuleTest is Test {
         rewardsModulePaysAuthor.release(1);
     }
 
-    // 2 proposals with different authors, both at 0 votes; revert with error message
+    // No proposals; revert with error message
     function testFirstPlaceTieWithZeroProposalsWithERC20() public {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
