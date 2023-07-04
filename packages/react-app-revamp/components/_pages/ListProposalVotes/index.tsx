@@ -35,7 +35,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
     totalPagesPaginationVotes,
     hasPaginationVotesNextPage,
   } = useProposalVotesStore(state => state);
-  const [isTopVotersOpen, setIsTopVotersOpen] = useState(true);
+  const [isVotersOpen, setIsVotersOpen] = useState(true);
   const [isLoadMoreOpen, setIsLoadMoreOpen] = useState(false);
 
   const onLoadMore = () => {
@@ -50,16 +50,16 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
   return (
     <>
       <div className="flex gap-4 items-center mb-8">
-        <p className="text-[24px] text-neutral-11 font-bold">top voters</p>
+        <p className="text-[24px] text-neutral-11 font-bold">voters</p>
         <button
-          onClick={() => setIsTopVotersOpen(!isTopVotersOpen)}
-          className={`transition-transform duration-500 ease-in-out transform ${isTopVotersOpen ? "" : "rotate-180"}`}
+          onClick={() => setIsVotersOpen(!isVotersOpen)}
+          className={`transition-transform duration-500 ease-in-out transform ${isVotersOpen ? "" : "rotate-180"}`}
         >
           <ChevronUpIcon height={30} />
         </button>
       </div>
       {isSuccess && !isLoading && (
-        <Collapsible isOpen={isTopVotersOpen}>
+        <Collapsible isOpen={isVotersOpen}>
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-4 md:w-[350px]">
               {Object.keys(votesPerAddress)
