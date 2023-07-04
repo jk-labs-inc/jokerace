@@ -63,22 +63,13 @@ export const Reward = (props: RewardProps) => {
           </ButtonV3>
         </div>
       )}
-      {queryRankRewardsReleasable.data > 0 && parseFloat(queryTokenBalance?.data?.formatted) > 0 && (
-        <div className="mb-2">
-          <p className="animate-appear">
-            {queryRankRewardsReleasable.data} <span className="normal-case">${queryTokenBalance?.data?.symbol}</span>
-          </p>
-        </div>
-      )}
+      <div className="mb-2">
+        <p className="animate-appear">
+          {queryRankRewardsReleasable.data} <span className="normal-case">${queryTokenBalance?.data?.symbol}</span>
+        </p>
+      </div>
       {queryRankRewardsReleased.isSuccess && (
         <>
-          {queryRankRewardsReleased?.data > 0 && (
-            <p className="animate-appear mb-2">
-              Already sent: ${queryRankRewardsReleased.data}{" "}
-              <span className="normal-case">${queryTokenBalance?.data?.symbol}</span>
-            </p>
-          )}
-
           {queryRankRewardsReleasable.data > 0 && (
             <ButtonV3
               size="extraSmall"

@@ -6,7 +6,7 @@ import { useRouter } from "next/router";
 import { FC } from "react";
 import { useContractRead } from "wagmi";
 import PayeeERC20Reward from "./ERC20Reward";
-import PayeeNativeReward from "./NativeReward";
+import { PayeeNativeReward } from "./NativeReward";
 
 type ERC20Token = {
   contractAddress: string;

@@ -4,7 +4,7 @@ import { useBalance, useContractRead, useContractWrite, useNetwork, useToken, us
 import Reward from "../Reward";
 
 interface PayeeERC20RewardProps {
-  payee: string | number;
+  payee: number;
   tokenAddress: string;
   share: any;
   contractRewardsModuleAddress: string;
@@ -14,6 +14,7 @@ interface PayeeERC20RewardProps {
 
 export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
   const { payee, tokenAddress, share, contractRewardsModuleAddress, abiRewardsModule, chainId } = props;
+
   const queryTokenBalance = useBalance({
     addressOrName: contractRewardsModuleAddress,
     chainId,
@@ -68,7 +69,7 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
       await queryTokenBalance.refetch();
       await queryRankRewardsReleased.refetch();
       await queryRankRewardsReleasable.refetch();
-      toast.success("Transaction successful !");
+      toast.success("Transaction successful!");
     },
   });
 

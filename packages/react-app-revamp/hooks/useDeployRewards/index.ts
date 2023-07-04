@@ -32,7 +32,7 @@ export function useDeployRewardsPool() {
         //@ts-ignore
         signer.data,
       );
-      contractRewardsModule = await factoryCreateRewardsModule.deploy(ranks, shares, contestAddress, true);
+      contractRewardsModule = await factoryCreateRewardsModule.deploy(ranks, shares, contestAddress, false);
       await contractRewardsModule.deployTransaction.wait();
 
       setDeployRewardsData(contractRewardsModule.deployTransaction.hash, contractRewardsModule.address);

@@ -118,12 +118,12 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
           components={{
             img: ({ node, ...props }) => <img {...props} className="w-[170px] h-[130px]" alt="image" />,
             div: ({ node, children, ...props }) => (
-              <div {...props} className="flex gap-5 items-center">
+              <div {...props} className="flex gap-5 items-center markdown">
                 {children}
               </div>
             ),
             p: ({ node, children, ...props }) => (
-              <p {...props} className="text-[16px] normal-case">
+              <p {...props} className="text-[16px]">
                 {children}
               </p>
             ),

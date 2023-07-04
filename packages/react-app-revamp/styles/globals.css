@@ -84,17 +84,16 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: 0 !important;
 }
 
-/* implement markdown style */
-.markdown > * {
-  text-transform: initial !important;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  *:not(.normal-case, .uppercase, input, textarea) {
+  /* implement markdown style */
+  .markdown > * {
+    text-transform: none !important;
+  }
+  *:not(.normal-case, .uppercase, .markdown, input, textarea) {
     text-transform: lowercase;
   }
 

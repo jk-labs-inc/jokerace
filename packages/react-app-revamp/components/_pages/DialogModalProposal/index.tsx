@@ -3,6 +3,7 @@ import EtheuremAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
+import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
 import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import LayoutContestProposal from "@layouts/LayoutViewContest/Proposal";
@@ -20,6 +21,7 @@ interface DialogModalProposalProps {
 
 const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, prompt, proposal, proposalId }) => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
+
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   return (
     <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px] ">
@@ -37,10 +39,11 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
             <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} />
           </div>
         )}
-        {contestStatus === ContestStatus.VotingOpen ||
-          (contestStatus === ContestStatus.VotingClosed && (
+        {contestStatus !== ContestStatus.SubmissionOpen && (
+          <ProposalVotesWrapper>
             <ListProposalVotes proposalId={proposalId} proposal={proposal} />
-          ))}
+          </ProposalVotesWrapper>
+        )}
       </div>
     </DialogModalV3>
   );
