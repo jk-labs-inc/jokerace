@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { chain, useEnsName } from "wagmi";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
+import { useAvatarStore } from "@hooks/useAvatar";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg"; // Default avatar url
 
@@ -21,7 +22,8 @@ const EthereumAddress = ({
 }: EthereumAddressProps) => {
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
 
-  const [avatarUrl, setAvatarUrl] = useState<string>(DEFAULT_AVATAR_URL);
+  const { avatars, setAvatar } = useAvatarStore(state => state);
+  const avatarUrl = avatars[ethereumAddress] || DEFAULT_AVATAR_URL;
 
   const queryUserProfileLens = useQuery(
     ["lens-profile", ethereumAddress],
@@ -37,9 +39,9 @@ const EthereumAddress = ({
     {
       enabled: displayLensProfile,
       onSuccess: data => {
-        setAvatarUrl(
-          data?.picture?.original?.url?.replace("ipfs://", "https://lens.infura-ipfs.io/ipfs/") || DEFAULT_AVATAR_URL,
-        );
+        const newAvatarUrl =
+          data?.picture?.original?.url?.replace("ipfs://", "https://lens.infura-ipfs.io/ipfs/") || DEFAULT_AVATAR_URL;
+        setAvatar(ethereumAddress, newAvatarUrl);
       },
     },
   );
@@ -70,7 +72,7 @@ const EthereumAddress = ({
         <img
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
           src={avatarUrl}
-          onError={() => setAvatarUrl(DEFAULT_AVATAR_URL)}
+          onError={() => setAvatar(ethereumAddress, DEFAULT_AVATAR_URL)}
           alt="avatar"
         />
       </div>

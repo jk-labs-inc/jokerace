@@ -79,7 +79,10 @@ export function useRewardsModule() {
       const contestAddress = address ?? asPath.split("/")[3];
       const contestChainName = chainName ?? asPath.split("/")[2];
       const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]?.id;
-      const { abi: abiContest, version } = await getContestContractVersion(address ?? "", chainName ?? "");
+      const { abi: abiContest, version } = await getContestContractVersion(
+        address ?? contestAddress,
+        chainName ?? contestChainName,
+      );
 
       if (abiContest === null) {
         setIsLoading(false);

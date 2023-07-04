@@ -1,19 +1,21 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
+import { useContestStore } from "@hooks/useContest/store";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
+import { useRouter } from "next/router";
 import { CustomError } from "types/error";
-import { useNetwork, useSigner } from "wagmi";
+import { useSigner } from "wagmi";
 import { useDeployRewardsStore } from "./store";
 
 export function useDeployRewardsPool() {
+  const { asPath } = useRouter();
   const stateContestDeployment = useContractFactoryStore(state => state);
+  const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
   const { ranks, shares, setDeployRewardsData, setIsLoading, setIsError, setIsSuccess, setDisplayCreatePool } =
     useDeployRewardsStore(state => state);
-  const deployContestData = useDeployContestStore(state => state.deployContestData);
-  const { chain } = useNetwork();
+  const contestAddress = asPath.split("/")[3];
   const { refetch } = useSigner();
 
   function deployRewardsPool() {
@@ -30,7 +32,7 @@ export function useDeployRewardsPool() {
         //@ts-ignore
         signer.data,
       );
-      contractRewardsModule = await factoryCreateRewardsModule.deploy(ranks, shares, deployContestData.address, true);
+      contractRewardsModule = await factoryCreateRewardsModule.deploy(ranks, shares, contestAddress, false);
       await contractRewardsModule.deployTransaction.wait();
 
       setDeployRewardsData(contractRewardsModule.deployTransaction.hash, contractRewardsModule.address);
@@ -40,7 +42,7 @@ export function useDeployRewardsPool() {
 
     const rewardsModuleAttachment = async () => {
       const contractConfig = {
-        addressOrName: deployContestData.address,
+        addressOrName: contestAddress,
         contractInterface: DeployedContestContract.abi,
       };
       const txSetRewardsModule = await writeContract({
@@ -52,6 +54,7 @@ export function useDeployRewardsPool() {
 
       setIsLoading(false);
       setIsSuccess(true);
+      setSupportsRewardsModule(true);
     };
 
     return [

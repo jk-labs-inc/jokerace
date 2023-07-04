@@ -73,6 +73,7 @@ export function useProposalVotes(id: number | string) {
         contractInterface: abi,
         chainId: chainId,
       };
+
       const list = await readContract({
         ...contractConfig,
         chainId,
@@ -205,27 +206,28 @@ export function useProposalVotes(id: number | string) {
     }
   }, [account?.connector]);
 
-  useEffect(() => {
-    if (contestStatus === ContestStatus.VotingClosed) {
-      const contract = getContract({
-        addressOrName: asPath.split("/")[3],
-        contractInterface: DeployedContestContract.abi,
-      });
-      contract.removeAllListeners();
-    } else if (contestStatus === ContestStatus.VotingOpen) {
-      // Only watch VoteCast events when voting is open and we are <=1h before end of voting
-      watchContractEvent(
-        {
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
-        },
-        "VoteCast",
-        args => {
-          fetchVotesOfAddress(args[0]);
-        },
-      );
-    }
-  }, [contestStatus]);
+  // This one is throwing ENS error
+  // useEffect(() => {
+  //   if (contestStatus === ContestStatus.VotingClosed) {
+  //     const contract = getContract({
+  //       addressOrName: asPath.split("/")[3],
+  //       contractInterface: DeployedContestContract.abi,
+  //     });
+  //     contract.removeAllListeners();
+  //   } else if (contestStatus === ContestStatus.VotingOpen) {
+  //     // Only watch VoteCast events when voting is open and we are <=1h before end of voting
+  //     watchContractEvent(
+  //       {
+  //         addressOrName: asPath.split("/")[3],
+  //         contractInterface: DeployedContestContract.abi,
+  //       },
+  //       "VoteCast",
+  //       args => {
+  //         fetchVotesOfAddress(args[0]);
+  //       },
+  //     );
+  //   }
+  // }, [contestStatus]);
 
   useEffect(() => {
     const fetchProposalVotesAndListenForEvents = async () => {

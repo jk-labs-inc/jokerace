@@ -77,7 +77,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
           </>
         );
     }
-  }, [contestStatus]);
+  }, [contestStatus, proposal.votes]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];
@@ -111,18 +111,19 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   }
 
   return (
-    <div className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
-      <div className="flex items-center px-8 py-2 h-3/4" onClick={() => setIsProposalModalOpen(true)}>
+    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+      <div className="flex items-center px-8 py-2 h-3/5 md:h-3/4" onClick={() => setIsProposalModalOpen(true)}>
         <ReactMarkdown
+          className="markdown"
           components={{
             img: ({ node, ...props }) => <img {...props} className="w-[170px] h-[130px]" alt="image" />,
             div: ({ node, children, ...props }) => (
-              <div {...props} className="flex gap-5 items-center">
+              <div {...props} className="flex gap-5 items-center markdown">
                 {children}
               </div>
             ),
             p: ({ node, children, ...props }) => (
-              <p {...props} style={{ fontSize: "16px" }}>
+              <p {...props} className="text-[16px]">
                 {children}
               </p>
             ),
@@ -132,15 +133,15 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
         />
       </div>
 
-      <div className="border-t border-neutral-10 h-1/4 flex items-center">
-        <div className="flex pl-8 w-1/2 h-full border-r border-neutral-10">
+      <div className="border-t border-neutral-10 h-2/5 md:h-1/4 flex flex-col md:flex-row items-center">
+        <div className="flex pl-8 w-full md:w-1/2 h-full border-b md:border-r border-neutral-10">
           <EtheuremAddress
             ethereumAddress={proposal.authorEthereumAddress}
             shortenOnFallback={true}
             displayLensProfile={true}
           />
         </div>
-        <div className="flex items-center justify-between pl-4 pr-4 w-1/2 h-full text-[16px] font-bold">
+        <div className="flex items-center justify-between pl-8 md:pl-4 pr-4 w-full md:w-1/2 h-full text-[16px] font-bold">
           {ProposalAction}
         </div>
       </div>

@@ -82,24 +82,25 @@ export function useContestEvents() {
   }
 
   useEffect(() => {
-    if (contestStatus === ContestStatus.VotingClosed) {
-      provider.removeAllListeners();
+    if (contestStatus !== ContestStatus.VotingOpen) {
+      provider.removeAllListeners("VoteCast");
       setDisplayReloadBanner(false);
     } else {
-      // Only watch VoteCast events when voting is open and we are <=1h before end of voting
-      if (contestStatus === ContestStatus.VotingOpen) {
-        watchContractEvent(
-          {
-            addressOrName: asPath.split("/")[3],
-            contractInterface: DeployedContestContract.abi,
-          },
-          "VoteCast",
-          (...args) => {
-            onVoteCast(args);
-          },
-        );
-      }
+      watchContractEvent(
+        {
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+        },
+        "VoteCast",
+        (...args) => {
+          onVoteCast(args).catch(err => console.error(err));
+        },
+      );
     }
+
+    return () => {
+      provider.removeAllListeners("VoteCast");
+    };
   }, [contestStatus]);
 
   function onVisibilityChangeHandler() {
@@ -114,18 +115,8 @@ export function useContestEvents() {
       }
     }
   }
-  useEffect(() => {
-    watchContractEvent(
-      {
-        addressOrName: asPath.split("/")[3],
-        contractInterface: DeployedContestContract.abi,
-      },
-      "VoteCast",
-      (...args) => {
-        onVoteCast(args);
-      },
-    );
 
+  useEffect(() => {
     document.addEventListener("visibilitychange", onVisibilityChangeHandler);
     return () => {
       document.removeEventListener("visibilitychange", onVisibilityChangeHandler);

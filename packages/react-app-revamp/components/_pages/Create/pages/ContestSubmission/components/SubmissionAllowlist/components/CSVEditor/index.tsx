@@ -29,6 +29,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   const currentStep = step + 1;
   const currentStepError = errors.find(error => error.step === currentStep);
   const headersError = currentStepError?.message === "headers";
+  const uploadLimitExceeded = currentStepError?.message === "uploadLimitExceeded";
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -97,6 +98,9 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
       return;
     } else if (results.invalidEntries?.length) {
       setError(currentStep, { step: currentStep, message: "entries" });
+    } else if (results.limitExceeded) {
+      setError(currentStep, { step: currentStep, message: "uploadLimitExceeded" });
+      updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
     } else {
       setError(currentStep, { step: currentStep, message: "" });
       setUploadSuccess(true);
@@ -158,7 +162,14 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      {headersError ? (
+      {uploadLimitExceeded ? (
+        <div className="flex flex-col text-[16px] animate-fadeIn">
+          <p className=" text-negative-11">
+            Ruh-roh! CSV file has too many rows.{" "}
+            <span className="font-bold">The maximum number of rows allowed is 10,000</span>
+          </p>
+        </div>
+      ) : headersError ? (
         <div className="flex flex-col text-[16px] animate-fadeIn">
           <p className=" text-negative-11">
             ruh-roh! csv couldn’t be imported.{" "}

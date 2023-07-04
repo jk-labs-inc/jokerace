@@ -19,7 +19,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
       <main className="flex flex-col grow">{children}</main>
       {!createRoute && (
         <footer className="mt-auto py-20 xs:pb-0 xs:pt-32">
-          <div className="text-true-white text-opacity-80 font-medium container justify-center items-start text-[18px] flex flex-col pl-8 pr-8 md:pl-16 md:pr-16 space-y-1 xs:space-y-0 xs:space-i-4 xs:flex-row xs:flex-wrap mx-auto">
+          <div className="text-neutral-11 container justify-center items-start text-[16px] flex flex-col pl-8 pr-8 md:pl-16 md:pr-16 space-y-1 xs:space-y-0 xs:space-i-4 xs:flex-row xs:flex-wrap mx-auto">
             {filteredLinks.map((link, key) => (
               <a
                 className="py-2 xs:px-2"

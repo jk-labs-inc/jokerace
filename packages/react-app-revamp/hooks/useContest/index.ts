@@ -227,7 +227,7 @@ export function useContest() {
 
         setContestPrompt(results[8].toString());
 
-        setDownvotingAllowed(results[9].toString() === "1");
+        setDownvotingAllowed(results[9].eq(1));
 
         // We want to track VoteCast event only 1H before the end of the contest
         if (isBefore(new Date(), closingVoteDate)) {

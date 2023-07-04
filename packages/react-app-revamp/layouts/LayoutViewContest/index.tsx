@@ -1,4 +1,5 @@
 import ContestParameters from "@components/Parameters";
+import ContestRewards from "@components/Rewards";
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
@@ -43,8 +44,7 @@ import ContestLayoutTabs, { Tab } from "./Tabs";
 import LayoutContestTimeline from "./TimelineV3";
 
 const LayoutViewContest = (props: any) => {
-  const { children } = props;
-  const { query, asPath, pathname, push, reload } = useRouter();
+  const { query, asPath, pathname, reload } = useRouter();
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
@@ -130,7 +130,7 @@ const LayoutViewContest = (props: any) => {
     switch (tab) {
       case Tab.Contest:
         return (
-          <>
+          <div className="animate-apppear">
             {contestStatus === ContestStatus.SubmissionOpen && (
               <div className="mt-8">
                 <ButtonV3
@@ -163,13 +163,17 @@ const LayoutViewContest = (props: any) => {
                 )}
               </div>
             </div>
-          </>
+          </div>
         );
       case Tab.Rewards:
-        return <div>rewards</div>;
+        return (
+          <div className="mt-16 animate-appear">
+            <ContestRewards />
+          </div>
+        );
       case Tab.Parameters:
         return (
-          <div className="mt-16 w-1/2">
+          <div className="mt-16 animate-appear">
             <ContestParameters
               votingOpen={votesOpen}
               submissionOpen={submissionsOpen}
@@ -195,196 +199,169 @@ const LayoutViewContest = (props: any) => {
   ]);
 
   return (
-    <>
-      <div className={`${isLoading ? "pointer-events-none" : ""} w-[700px] mx-auto`}>
-        {/* {!isLoading &&
-          isSuccess &&
-          contestStatus === ContestStatus.SubmissionOpen && contestStatus === ContestStatus.VotingOpen && (
-            <div
-              className={`animate-appear text-center text-xs sticky bg-neutral-0 border-b border-neutral-4 border-solid ${
-                pathname === ROUTE_CONTEST_PROPOSAL ? "top-0" : "top-10"
-              } z-10 font-bold -mx-5 px-5 md:hidden w-screen py-1`}
+    <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-7 lg:w-[700px] mx-auto`}>
+      <div
+        className={`md:pt-5 md:pb-20 flex flex-col ${
+          pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
+        }`}
+      >
+        {(isLoading || isListProposalsLoading) && (
+          <div className="animate-appear">
+            <Loader scale="page">Loading contest info...</Loader>
+          </div>
+        )}
+
+        {account?.address && chain?.id !== chainId && votesClose && isBefore(new Date(), votesClose) && (
+          <div className="animate-appear flex text-center flex-col my-10 mx-auto">
+            <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
+            <p className="mt-2 mb-4 text-neutral-11 text-xs">
+              You need to use {asPath.split("/")[2]} to interact with this contest.
+            </p>
+            <Button
+              onClick={() => {
+                switchNetwork?.({ chainId });
+              }}
+              className="mx-auto"
             >
-              <p className="text-center">
-                {!isLoading && isSuccess && isDate(submissionsOpen) && isDate(votesOpen) && isDate(votesClose) && (
-                  <>
-                    {contestStatus === ContestStatus.SubmissionOpen && (
-                      <>
-                        {listProposalsIds.length >= contestMaxProposalCount
-                          ? "✋ Submissions closed ✋"
-                          : "✨ Submissions open ✨"}
-                      </>
-                    )}
-                    {contestStatus === ContestStatus.VotingOpen && <>✨ Voting open ✨</>}
-                  </>
-                )}
-              </p>
-            </div>
-          )} */}
+              Switch network
+            </Button>
+          </div>
+        )}
 
-        <div
-          className={`md:pt-5 md:pb-20 flex flex-col ${
-            pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
-          }`}
-        >
-          {(isLoading || isListProposalsLoading) && (
-            <div className="animate-appear">
-              <Loader scale="page">Loading contest info...</Loader>
-            </div>
-          )}
-
-          {account?.address && chain?.id !== chainId && votesClose && isBefore(new Date(), votesClose) && (
-            <div className="animate-appear flex text-center flex-col my-10 mx-auto">
-              <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
-              <p className="mt-2 mb-4 text-neutral-11 text-xs">
-                You need to use {asPath.split("/")[2]} to interact with this contest.
-              </p>
-              <Button
-                onClick={() => {
-                  switchNetwork?.({ chainId });
-                }}
-                className="mx-auto"
-              >
-                Switch network
-              </Button>
-            </div>
-          )}
-
-          {
-            <>
-              {(account?.address && chain?.id !== chainId) === false && error && !isLoading && (
-                <div className="my-6 md:my-0 animate-appear flex flex-col">
-                  <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
-                    <p className="text-sm font-bold text-negative-10 text-center">
-                      Something went wrong while fetching this contest.
+        {
+          <>
+            {(account?.address && chain?.id !== chainId) === false && error && !isLoading && (
+              <div className="my-6 md:my-0 animate-appear flex flex-col">
+                <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
+                  <p className="text-sm font-bold text-negative-10 text-center">
+                    Something went wrong while fetching this contest.
+                  </p>
+                </div>
+                {error?.message === "CALL_EXCEPTION" ? (
+                  <div className="animate-appear text-center my-3 space-y-3">
+                    <p>
+                      Looks like this contract doesn&apos;t exist on {chain?.name}. <br /> Try switching to another
+                      network.
                     </p>
                   </div>
-                  {error?.message === "CALL_EXCEPTION" ? (
-                    <div className="animate-appear text-center my-3 space-y-3">
-                      <p>
-                        Looks like this contract doesn&apos;t exist on {chain?.name}. <br /> Try switching to another
-                        network.
-                      </p>
+                ) : (
+                  <Button
+                    onClick={() => retry()}
+                    className="mt-5 mb-8 w-full mx-auto py-1 xs:w-auto xs:min-w-fit-content"
+                    intent="neutral-outline"
+                  >
+                    Try again
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {isSuccess && !error && !isLoading && (
+              <>
+                {displayReloadBanner === true && (
+                  <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-col gap-y-3 text-sm font-bold">
+                    <div className="flex gap-1.5 flex-col">
+                      <span>Let&apos;s refresh!</span>
+                      <p className="font-normal">Looks like live updates were frozen.</p>
                     </div>
-                  ) : (
                     <Button
-                      onClick={() => retry()}
-                      className="mt-5 mb-8 w-full mx-auto py-1 xs:w-auto xs:min-w-fit-content"
-                      intent="neutral-outline"
+                      className="w-full 2xs:w-fit-content"
+                      intent="primary-outline"
+                      scale="xs"
+                      onClick={() => reload()}
                     >
-                      Try again
+                      <RefreshIcon className="mie-1ex w-4" />
+                      Refresh
                     </Button>
-                  )}
-                </div>
-              )}
-
-              {isSuccess && !error && !isLoading && (
-                <>
-                  {displayReloadBanner === true && (
-                    <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-col gap-y-3 text-sm font-bold">
-                      <div className="flex gap-1.5 flex-col">
-                        <span>Let&apos;s refresh!</span>
-                        <p className="font-normal">Looks like live updates were frozen.</p>
-                      </div>
-                      <Button
-                        className="w-full 2xs:w-fit-content"
-                        intent="primary-outline"
-                        scale="xs"
-                        onClick={() => reload()}
-                      >
-                        <RefreshIcon className="mie-1ex w-4" />
-                        Refresh
-                      </Button>
-                    </div>
-                  )}
-                  <div className="animate-appear pt-3 md:pt-0">
-                    {pathname === ROUTE_CONTEST_PROPOSAL && (
-                      <div>
-                        <Link
-                          className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs"
-                          href={{
-                            pathname: ROUTE_VIEW_CONTEST,
-                            query: {
-                              chain: query.chain,
-                              address: query.address,
-                            },
-                          }}
-                        >
-                          <ArrowLeftIcon className="mie-1 w-4" />
-                          Back to contest
-                        </Link>
-                      </div>
-                    )}
-
-                    <div className="flex flex-col mt-10">
-                      <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
-                      <p className="text-[24px] text-primary-10 font-bold">
-                        by{" "}
-                        <EthereumAddress
-                          ethereumAddress={contestAuthorEthereumAddress}
-                          shortenOnFallback
-                          displayLensProfile={false}
-                          textualVersion
-                        />
-                      </p>
-                    </div>
-
-                    <div className="mt-4 gap-3 flex flex-col">
-                      <hr className="border-neutral-10" />
-                      <ContestLayoutTabs
-                        contestAddress={address}
-                        chain={chain?.name ?? ""}
-                        contestName={contestName}
-                        onChange={tab => setTab(tab)}
-                      />
-                      <hr className="border-neutral-10" />
-                    </div>
-
-                    <div className="mt-4">
-                      <LayoutContestTimeline
-                        submissionOpenDate={submissionsOpen}
-                        votingOpensDate={votesOpen}
-                        contestCloseDate={votesClose}
-                      />
-                    </div>
-
-                    {contestInProgress && (
-                      <div className="mt-8 flex gap-4 sticky top-0 z-10 bg-true-black">
-                        <LayoutContestCountdown
-                          submissionOpen={submissionsOpen}
-                          votingOpen={votesOpen}
-                          votingClose={votesClose}
-                        />
-                        <LayoutContestQualifier />
-                      </div>
-                    )}
-
-                    <div className="mt-8">
-                      <LayoutContestPrompt prompt={contestPrompt} hidePrompt={tab !== Tab.Contest} />
-                    </div>
-
-                    {tab !== Tab.Contest && (
-                      <div className="mt-8">
-                        <hr className="border-neutral-10" />
-                      </div>
-                    )}
-
-                    {renderTabs}
-
-                    <DialogModalSendProposal
-                      isOpen={isSubmitProposalModalOpen}
-                      setIsOpen={setIsSubmitProposalModalOpen}
-                    />
-
-                    {showRewards && <CreateContestRewards />}
                   </div>
-                </>
-              )}
-            </>
-          }
-        </div>
+                )}
+                <div className="animate-appear pt-3 md:pt-0">
+                  {pathname === ROUTE_CONTEST_PROPOSAL && (
+                    <div>
+                      <Link
+                        className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs"
+                        href={{
+                          pathname: ROUTE_VIEW_CONTEST,
+                          query: {
+                            chain: query.chain,
+                            address: query.address,
+                          },
+                        }}
+                      >
+                        <ArrowLeftIcon className="mie-1 w-4" />
+                        Back to contest
+                      </Link>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col mt-10">
+                    <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
+                    <p className="text-[24px] text-primary-10 font-bold break-all">
+                      by{" "}
+                      <EthereumAddress
+                        ethereumAddress={contestAuthorEthereumAddress}
+                        shortenOnFallback
+                        displayLensProfile={false}
+                        textualVersion
+                      />
+                    </p>
+                  </div>
+
+                  <div className="mt-4 gap-3 flex flex-col">
+                    <hr className="border-neutral-10" />
+                    <ContestLayoutTabs
+                      contestAddress={address}
+                      chain={chain?.name ?? ""}
+                      contestName={contestName}
+                      onChange={tab => setTab(tab)}
+                    />
+                    <hr className="border-neutral-10" />
+                  </div>
+
+                  <div className="mt-4">
+                    <LayoutContestTimeline
+                      submissionOpenDate={submissionsOpen}
+                      votingOpensDate={votesOpen}
+                      contestCloseDate={votesClose}
+                    />
+                  </div>
+
+                  {contestInProgress && (
+                    <div className="mt-8 flex flex-col md:flex-row gap-4 sticky top-0 z-10 bg-true-black">
+                      <LayoutContestCountdown
+                        submissionOpen={submissionsOpen}
+                        votingOpen={votesOpen}
+                        votingClose={votesClose}
+                      />
+                      <LayoutContestQualifier />
+                    </div>
+                  )}
+
+                  <div className="mt-8">
+                    <LayoutContestPrompt prompt={contestPrompt} hidePrompt={tab !== Tab.Contest} />
+                  </div>
+
+                  {tab !== Tab.Contest && (
+                    <div className="mt-8">
+                      <hr className="border-neutral-10" />
+                    </div>
+                  )}
+
+                  {renderTabs}
+
+                  <DialogModalSendProposal
+                    isOpen={isSubmitProposalModalOpen}
+                    setIsOpen={setIsSubmitProposalModalOpen}
+                  />
+
+                  {showRewards && <CreateContestRewards />}
+                </div>
+              </>
+            )}
+          </>
+        }
       </div>
-    </>
+    </div>
   );
 };
 

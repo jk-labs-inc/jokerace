@@ -31,6 +31,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   const currentStep = step + 1;
   const currentStepError = errors.find(error => error.step === currentStep);
   const headersError = currentStepError?.message === "headers";
+  const uploadLimitExceeded = currentStepError?.message === "uploadLimitExceeded";
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -112,6 +113,12 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       return;
     } else if (results.invalidEntries?.length) {
       setError(currentStep, { step: currentStep, message: "entries" });
+      updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+      return;
+    } else if (results.limitExceeded) {
+      setError(currentStep, { step: currentStep, message: "uploadLimitExceeded" });
+      updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+      return;
     } else {
       setError(currentStep, { step: currentStep, message: "" });
       setUploadSuccess(true);
@@ -176,29 +183,32 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      {headersError ? (
+      {uploadLimitExceeded ? (
         <div className="flex flex-col text-[16px] animate-fadeIn">
           <p className=" text-negative-11">
-            ruh-roh! csv couldn’t be imported.{" "}
-            <span className="font-bold">
-              make sure there are no headers or additional <br />
-              columns.
-            </span>{" "}
-            csv should have 1) only two columns, 2) a first column containing <span className="italic">only</span> valid
-            <br /> EVM addresses, and 3) a second column containing number of votes.
+            Ruh-roh! CSV file has too many rows.{" "}
+            <span className="font-bold">The maximum number of rows allowed is 10,000</span>
+          </p>
+        </div>
+      ) : headersError ? (
+        <div className="flex flex-col text-[16px] animate-fadeIn">
+          <p className=" text-negative-11">
+            Ruh-roh! CSV couldn’t be imported.{" "}
+            <span className="font-bold">Make sure there are no headers or additional columns.</span> CSV should have 1)
+            only two columns, 2) a first column containing <span className="italic">only</span> valid EVM addresses, and
+            3) a second column containing number of votes.
           </p>
         </div>
       ) : fields.some(field => field.address !== "" || field.votes !== "") ? (
         <p className="italic text-neutral-11 text-[16px]">
-          only first 100 entries of allowlist are visible to preview and edit
+          Only first 100 entries of allowlist are visible to preview and edit
         </p>
       ) : (
         <div className="flex flex-col text-[16px] mt-5">
-          <p className="text-primary-10 font-bold">prefer to upload a csv?</p>
+          <p className="text-primary-10 font-bold">Prefer to upload a CSV?</p>
           <p className="text-neutral-11">
-            csv should contain addresses in column <span className="uppercase">A</span> and number of votes in column{" "}
-            <span className="uppercase">B</span> (no <br />
-            headers or additional columns).
+            CSV should contain addresses in column <span className="uppercase">A</span> and number of votes in column{" "}
+            <span className="uppercase">B</span> (no headers or additional columns).
           </p>
         </div>
       )}

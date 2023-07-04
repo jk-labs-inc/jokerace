@@ -1,10 +1,10 @@
 import { utils } from "ethers";
 import { toast } from "react-toastify";
 import { useBalance, useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
-import Reward from "./Reward";
+import Reward from "../Reward";
 
 interface PayeeNativeRewardProps {
-  payee: string | number;
+  payee: number;
   share: any;
   contractRewardsModuleAddress: string;
   abiRewardsModule: any;
@@ -36,6 +36,7 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     //@ts-ignore
     select: data => parseFloat(utils.formatEther(data)).toFixed(4),
   });
+
   const contractWriteReleaseToken = useContractWrite({
     addressOrName: contractRewardsModuleAddress,
     contractInterface: abiRewardsModule,
@@ -71,5 +72,3 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     />
   );
 };
-
-export default PayeeNativeReward;
