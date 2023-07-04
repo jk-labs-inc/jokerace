@@ -233,7 +233,9 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"));
+        vm.expectRevert(
+            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+        );
         rewardsModulePaysAuthor.release(2);
     }
 
@@ -251,7 +253,9 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"));
+        vm.expectRevert(
+            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+        );
         rewardsModulePaysAuthor.release(testERC20, 2);
     }
 
@@ -263,12 +267,14 @@ contract RewardsModuleTest is Test {
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
         vm.warp(1681660001);
         contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
-        
+
         vm.stopPrank();
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
-        vm.expectRevert(bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"));
+        vm.expectRevert(
+            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+        );
         rewardsModulePaysTarget.release(2);
     }
 
@@ -286,7 +292,9 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"));
+        vm.expectRevert(
+            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+        );
         rewardsModulePaysTarget.release(testERC20, 2);
     }
 
