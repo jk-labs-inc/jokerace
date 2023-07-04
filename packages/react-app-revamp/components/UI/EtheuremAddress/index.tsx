@@ -20,7 +20,7 @@ const EthereumAddress = ({
   displayLensProfile,
   shortenOnFallback,
 }: EthereumAddressProps) => {
-  const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}.eth`;
+  const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
 
   const { avatars, setAvatar } = useAvatarStore(state => state);
   const avatarUrl = avatars[ethereumAddress] || DEFAULT_AVATAR_URL;
