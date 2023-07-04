@@ -45,7 +45,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
             <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onSubmitCastVotes} />
           </div>
         )}
-        {contestStatus !== ContestStatus.SubmissionOpen && (
+        {contestStatus !== ContestStatus.SubmissionOpen && proposal.votes > 0 && (
           <ProposalVotesWrapper>
             <ListProposalVotes proposalId={proposalId} proposal={proposal} />
           </ProposalVotesWrapper>

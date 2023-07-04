@@ -72,7 +72,6 @@ const CreateSubmissionAllowlist = () => {
         <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can submit?</p>
         <p className="text-[16px] text-neutral-11">
           copy-paste allowlist into preview box (up to 100 line items) or upload a csv below <br />
-          (no limit on line items).
         </p>
       </div>
       <CSVEditorSubmission onChange={onAllowListChange} />

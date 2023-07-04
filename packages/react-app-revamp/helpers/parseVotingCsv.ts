@@ -11,12 +11,15 @@ export type ParseCsvResult = {
   data: Record<string, number>;
   invalidEntries: InvalidEntry[];
   missingHeaders?: string[];
+  limitExceeded?: boolean;
   parseError?: Error;
 };
 
+const MAX_ROWS = 10000; // 10k for now
+
 const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   const requiredHeaders = ["address", "numberOfVotes"];
-  const csvHeaders = results.meta.fields || []; // Default to an empty array if fields are undefined
+  const csvHeaders = results.meta.fields || [];
   const missingHeaders = requiredHeaders.filter(header => !csvHeaders.includes(header));
   const unnecessaryHeaders = csvHeaders.length > requiredHeaders.length;
 
@@ -35,6 +38,14 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   const data = results.data as Array<{ address: string; numberOfVotes: number }>;
   const votesData: Record<string, number> = {};
   const invalidEntries: InvalidEntry[] = [];
+
+  if (data.length > MAX_ROWS) {
+    return {
+      data: {},
+      invalidEntries: [],
+      limitExceeded: true,
+    };
+  }
 
   for (const { address, numberOfVotes } of data) {
     let error: InvalidEntry["error"] | null = null;

@@ -10,8 +10,11 @@ export type ParseCsvResult = {
   data: string[];
   invalidEntries: InvalidEntry[];
   missingHeaders?: string[];
+  limitExceeded?: boolean;
   parseError?: Error;
 };
+
+const MAX_ROWS = 10000; // 10k for now
 
 const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   const requiredHeaders = ["address"];
@@ -35,6 +38,14 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   const data = results.data as Array<{ address: string }>;
   const addressData: string[] = [];
   const invalidEntries: InvalidEntry[] = [];
+
+  if (data.length > MAX_ROWS) {
+    return {
+      data: [],
+      invalidEntries: [],
+      limitExceeded: true,
+    };
+  }
 
   for (const { address } of data) {
     let error: boolean = false;

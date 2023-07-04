@@ -74,7 +74,6 @@ export function useProposalVotes(id: number | string) {
         chainId: chainId,
       };
 
-      console.log(contractConfig);
       const list = await readContract({
         ...contractConfig,
         chainId,
