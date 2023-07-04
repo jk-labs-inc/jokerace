@@ -28,7 +28,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const currentStep = step + 1;
   const currentStepError = errors.find(error => error.step === currentStep);
-  const headersError = currentStepError?.message === "headers";
+  const columnsError = currentStepError?.message === "columns";
   const uploadLimitExceeded = currentStepError?.message === "uploadLimitExceeded";
 
   // If user clean the fields, reset the state
@@ -92,8 +92,8 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvSubmissions(file);
 
-    if (results.missingHeaders?.length) {
-      setError(currentStep, { step: currentStep, message: "headers" });
+    if (results.missingColumns) {
+      setError(currentStep, { step: currentStep, message: "columns" });
       updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
       return;
     } else if (results.invalidEntries?.length) {
@@ -169,7 +169,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
             <span className="font-bold">The maximum number of rows allowed is 10,000</span>
           </p>
         </div>
-      ) : headersError ? (
+      ) : columnsError ? (
         <div className="flex flex-col text-[16px] animate-fadeIn">
           <p className=" text-negative-11">
             ruh-roh! csv couldn’t be imported.{" "}
@@ -177,8 +177,8 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
               make sure there are no headers or additional <br />
               columns.
             </span>{" "}
-            csv should have 1) only two columns, 2) a first column containing <span className="italic">only</span> valid
-            <br /> EVM addresses, and 3) a second column containing number of votes.
+            csv should have 1) only one column, 2) a column containing <span className="italic">only</span> valid
+            <br /> EVM addresses
           </p>
         </div>
       ) : fields.some(field => field.address !== "") ? (

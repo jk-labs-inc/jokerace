@@ -10,7 +10,7 @@ export type InvalidEntry = {
 export type ParseCsvResult = {
   data: Record<string, number>;
   invalidEntries: InvalidEntry[];
-  missingHeaders?: string[];
+  missingColumns?: boolean;
   limitExceeded?: boolean;
   parseError?: Error;
 };
@@ -18,24 +18,7 @@ export type ParseCsvResult = {
 const MAX_ROWS = 10000; // 10k for now
 
 const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
-  const requiredHeaders = ["address", "numberOfVotes"];
-  const csvHeaders = results.meta.fields || [];
-  const missingHeaders = requiredHeaders.filter(header => !csvHeaders.includes(header));
-  const unnecessaryHeaders = csvHeaders.length > requiredHeaders.length;
-
-  if (unnecessaryHeaders) {
-    missingHeaders.push("Unnecessary headers detected");
-  }
-
-  if (missingHeaders.length > 0) {
-    return {
-      data: {},
-      invalidEntries: [],
-      missingHeaders,
-    };
-  }
-
-  const data = results.data as Array<{ address: string; numberOfVotes: number }>;
+  const data = results.data as Array<any>;
   const votesData: Record<string, number> = {};
   const invalidEntries: InvalidEntry[] = [];
 
@@ -47,8 +30,21 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
     };
   }
 
-  for (const { address, numberOfVotes } of data) {
+  // Ensure that the CSV has the correct number of columns (2)
+  const expectedColumns = 2;
+  const firstRow = data[0];
+  if (firstRow.length !== expectedColumns) {
+    return {
+      data: {},
+      invalidEntries: [],
+      missingColumns: true,
+    };
+  }
+
+  for (const row of data) {
     let error: InvalidEntry["error"] | null = null;
+    const address = row[0];
+    const numberOfVotes = row[1];
 
     try {
       getAddress(address);
@@ -76,13 +72,9 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
 export const parseCsvVoting = (file: File): Promise<ParseCsvResult> => {
   return new Promise(resolve => {
     Papa.parse(file, {
-      header: true,
+      header: false,
       dynamicTyping: true,
       skipEmptyLines: true,
-      transformHeader: header => {
-        const transformedHeader = header.toLowerCase().replace(/\s/g, "");
-        return transformedHeader === "numberofvotes" ? "numberOfVotes" : transformedHeader;
-      },
       complete: results => {
         resolve(processResults(results));
       },

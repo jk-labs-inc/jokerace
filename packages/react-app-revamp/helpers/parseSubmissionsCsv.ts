@@ -9,33 +9,15 @@ export type InvalidEntry = {
 export type ParseCsvResult = {
   data: string[];
   invalidEntries: InvalidEntry[];
-  missingHeaders?: string[];
   limitExceeded?: boolean;
+  missingColumns?: boolean;
   parseError?: Error;
 };
 
 const MAX_ROWS = 10000; // 10k for now
 
 const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
-  const requiredHeaders = ["address"];
-  const csvHeaders = results.meta.fields || []; // Default to an empty array if fields are undefined
-  const missingHeaders = requiredHeaders.filter(header => !csvHeaders.includes(header));
-
-  const unnecessaryHeaders = csvHeaders.length > requiredHeaders.length;
-
-  if (unnecessaryHeaders) {
-    missingHeaders.push("Unnecessary headers detected");
-  }
-
-  if (missingHeaders.length > 0) {
-    return {
-      data: [],
-      invalidEntries: [],
-      missingHeaders,
-    };
-  }
-
-  const data = results.data as Array<{ address: string }>;
+  const data = results.data as Array<any>;
   const addressData: string[] = [];
   const invalidEntries: InvalidEntry[] = [];
 
@@ -47,8 +29,20 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
     };
   }
 
-  for (const { address } of data) {
+  // Ensure that the CSV has the correct number of columns (1)
+  const expectedColumns = 1;
+  const firstRow = data[0];
+  if (firstRow.length !== expectedColumns) {
+    return {
+      data: [],
+      invalidEntries: [],
+      missingColumns: true,
+    };
+  }
+
+  for (const row of data) {
     let error: boolean = false;
+    const address = row[0];
 
     try {
       getAddress(address);
@@ -72,10 +66,9 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
 export const parseCsvSubmissions = (file: File): Promise<ParseCsvResult> => {
   return new Promise(resolve => {
     Papa.parse(file, {
-      header: true,
+      header: false, // Update this to be false since we don't have headers
       dynamicTyping: true,
       skipEmptyLines: true,
-      transformHeader: header => header.toLowerCase().replace(/\s/g, ""),
       complete: results => {
         resolve(processResults(results));
       },
