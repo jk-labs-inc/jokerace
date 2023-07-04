@@ -8,10 +8,10 @@ You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io).
 - `yarn` installed
 - `node` version >= `17.0.0`
 - Have an Ethereum wallet (like MetaMask for instance)
+
 ## Before you start
-- Navigate to `packages/react-app-revamp` (the v2 site package)
 - Install dependencies with `yarn install`
-- Create a `.env` file and paste the following values:
+- Create a `.env` file in `packages/react-app-revamp` (the frontend package) and paste the following values:
 
 ```
 NEXT_PUBLIC_INFURA_ID=
