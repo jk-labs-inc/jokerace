@@ -40,6 +40,13 @@ abstract contract IGovernor is IERC165 {
         SafeMetadata safeMetadata;
     }
 
+    struct CommentCore {
+        address author;
+        uint256 timestamp;
+        uint256 proposalId;
+        string commentContent;
+    }
+
     /**
      * @dev Emitted when a proposal is created.
      */
@@ -61,6 +68,16 @@ abstract contract IGovernor is IERC165 {
      * Note: `support` values should be seen as buckets. There interpretation depends on the voting module used.
      */
     event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes, string reason);
+
+    /**
+     * @dev Emitted when a comment is created.
+     */
+    event CommentCreated(uint256 commentId);
+
+    /**
+     * @dev Emitted when a comment is deleted.
+     */
+    event CommentsDeleted(uint256[] commentIds);
 
     /**
      * @notice module:core
@@ -102,9 +119,15 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Hashing function used to (re)build the proposal id from the proposal details..
+     * @dev Hashing function used to build the proposal id from the proposal details.
      */
     function hashProposal(ProposalCore memory proposal) public pure virtual returns (uint256);
+
+    /**
+     * @notice module:core
+     * @dev Hashing function used to build the comment id from the comment details.
+     */
+    function hashComment(CommentCore memory comment) public pure virtual returns (uint256);
 
     /**
      * @notice module:core
@@ -208,4 +231,11 @@ abstract contract IGovernor is IERC165 {
         public
         virtual
         returns (uint256 balance);
+
+    /**
+     * @dev Comment on a proposal.
+     *
+     * Emits a {CommentCreated} event.
+     */
+    function comment(uint256 proposalId, string memory commentContent) public virtual returns (uint256 commentId);
 }

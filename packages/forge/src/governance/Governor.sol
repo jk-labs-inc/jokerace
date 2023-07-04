@@ -25,17 +25,24 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
 
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
+
+    string private _name;
+    string private _prompt;
+    bool private _canceled;
+
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
     mapping(address => bool) public addressSubmitterVerified;
 
     uint256[] private _proposalIds;
-    mapping(uint256 => uint256) private _deletedProposalIds;
-    string private _name;
-    string private _prompt;
-    bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
+    mapping(uint256 => uint256) private _deletedProposalIds;
     mapping(address => uint256) private _numSubmissions;
+
+    uint256[] public commentIds;
+    mapping(uint256 => CommentCore) public comments;
+    mapping(uint256 => uint256[]) public proposalComments;
+    mapping(uint256 => bool) public deletedCommentIds;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -89,19 +96,16 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
 
     /**
      * @dev See {IGovernor-hashProposal}.
-     *
-     * The proposal id is produced by hashing the RLC encoded `targets` array, the `values` array, the `calldatas` array
-     * and the descriptionHash (bytes32 which itself is the keccak256 hash of the description string). This proposal id
-     * can be produced from the proposal data which is part of the {ProposalCreated} event. It can even be computed in
-     * advance, before the proposal is submitted.
-     *
-     * Note that the chainId and the governor address are not part of the proposal id computation. Consequently, the
-     * same proposal (with same operation and same description) will have the same id if submitted on multiple governors
-     * accross multiple networks. This also means that in order to execute the same operation twice (on the same
-     * governor) the proposer will have to change the description in order to avoid proposal id conflicts.
      */
     function hashProposal(ProposalCore memory proposal) public pure virtual override returns (uint256) {
         return uint256(keccak256(abi.encode(proposal)));
+    }
+
+    /**
+     * @dev See {IGovernor-hashComment}.
+     */
+    function hashComment(CommentCore memory commentObj) public pure virtual override returns (uint256) {
+        return uint256(keccak256(abi.encode(commentObj)));
     }
 
     /**
@@ -194,6 +198,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function isProposalDeleted(uint256 proposalId) public view virtual returns (uint256) {
         return _deletedProposalIds[proposalId];
+    }
+
+    /**
+     * @dev Returns if a comment has been deleted or not.
+     */
+    function isCommentDeleted(uint256 commentId) public view virtual returns (bool) {
+        return deletedCommentIds[commentId];
     }
 
     /**
@@ -410,5 +421,46 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function _executor() internal view virtual returns (address) {
         return address(this);
+    }
+
+    /**
+     * @dev See {IGovernor-comment}.
+     */
+    function comment(uint256 proposalId, string memory commentContent) public virtual override returns (uint256) {
+        CommentCore memory commentObject = CommentCore({
+            author: msg.sender,
+            timestamp: block.timestamp,
+            proposalId: proposalId,
+            commentContent: commentContent
+        });
+        uint256 commentId = hashComment(commentObject);
+
+        commentIds.push(commentId);
+        comments[commentId] = commentObject;
+        proposalComments[proposalId].push(commentId);
+
+        emit CommentCreated(commentId);
+        return commentId;
+    }
+
+    /**
+     * @dev Delete comments.
+     *
+     * Emits a {IGovernor-CommentsDeleted} event.
+     */
+    function deleteComments(uint256[] memory commentIdsParam) public virtual {
+        require(msg.sender == creator(), "Governor: only the contest creator can delete comments");
+        require(
+            state() != ContestState.Completed,
+            "Governor: deletion of comments after the end of a contest is not allowed"
+        );
+
+        for (uint256 index = 0; index < commentIdsParam.length; index++) {
+            if (!deletedCommentIds[commentIdsParam[index]]) {
+                deletedCommentIds[commentIdsParam[index]] = true;
+            }
+        }
+
+        emit CommentsDeleted(commentIdsParam);
     }
 }
