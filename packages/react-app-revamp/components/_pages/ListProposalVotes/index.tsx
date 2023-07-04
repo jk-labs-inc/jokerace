@@ -47,6 +47,9 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
     );
   };
 
+  console.log("votes per address: ", votesPerAddress);
+  // console.log(new Intl.NumberFormat().format(parseFloat(votesPerAddress["0xd698e31229aB86334924ed9DFfd096a71C686900"].votes.toFixed(2))));
+
   return (
     <>
       <div className="flex gap-4 items-center mb-8">
@@ -63,10 +66,6 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-4 md:w-[350px]">
               {Object.keys(votesPerAddress)
-                .filter(address => {
-                  if (!accountData?.address) return address;
-                  if (address !== accountData?.address) return address;
-                })
                 .sort((a, b) => votesPerAddress[b].votes - votesPerAddress[a].votes) // Sorting here
                 .map((address: string, index, self) => (
                   <div
