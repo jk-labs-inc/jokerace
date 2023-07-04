@@ -220,6 +220,76 @@ contract RewardsModuleTest is Test {
         assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_1), 50);
     }
 
+    // 1 proposal at 1 vote; release to author of rank 2; revert with error message
+    function testReleaseToAuthorSecondPlace1WithNative() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"));
+        rewardsModulePaysAuthor.release(2);
+    }
+
+    // 1 proposal at 1 vote; release to author of rank 2; revert with error message
+    function testReleaseToAuthorSecondPlace1WithERC20() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"));
+        rewardsModulePaysAuthor.release(testERC20, 2);
+    }
+
+    // 1 proposal at 1 vote; release to target of rank 2; revert with error message
+    function testReleaseToTargetSecondPlace1WithNative() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
+        vm.expectRevert(bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"));
+        rewardsModulePaysTarget.release(2);
+    }
+
+    // 1 proposal at 1 vote; release to target of rank 2; revert with error message
+    function testReleaseToTargetSecondPlace1WithERC20() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"));
+        rewardsModulePaysTarget.release(testERC20, 2);
+    }
+
     // 2 proposals with different authors, at 1 and 5 votes; release to author of rank 1
     function testReleaseToAuthorFirstPlace2WithNative() public {
         vm.warp(1681650001);
