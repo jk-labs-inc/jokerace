@@ -127,77 +127,7 @@ export function useContest() {
       setSupportsRewardsModule(false);
     }
 
-    if (version === "1") {
-      try {
-        const contracts = getV1Contracts(contractConfig);
-        const results = await readContracts({ contracts });
-
-        setIsV3(false);
-
-        // If current page is proposal, fetch proposal with id
-        if (asPath.includes("/proposal/")) {
-          await fetchProposalsPage(0, [asPath.split("/")[5]], 1);
-        }
-
-        // List of proposals for this contest
-        await fetchProposalsIdsList(contractConfig.contractInterface);
-
-        setContestName(results[0].toString());
-        setContestAuthor(results[1].toString(), results[1].toString());
-        //@ts-ignore
-        setContestMaxNumberSubmissionsPerUser(results[2]);
-        //@ts-ignore
-        setContestMaxProposalCount(results[3]);
-
-        //@ts-ignore
-        const closingVoteDate = new Date(parseInt(results[6]) * 1000);
-
-        //@ts-ignore
-        setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
-        //@ts-ignore
-        setVotesOpen(new Date(parseInt(results[7]) * 1000));
-        setVotesClose(closingVoteDate);
-
-        setError(null);
-        setIsSuccess(true);
-        setIsLoading(false);
-        setIsListProposalsLoading(false);
-
-        //@ts-ignore
-        const promptFilter = contractConfig.contractInterface?.filter(el => el.name === "prompt");
-        //@ts-ignore
-        const submissionGatingFilter = contractConfig.contractInterface?.filter(
-          (el: { name: string }) => el.name === "submissionGatingByVotingToken",
-        );
-        //@ts-ignore
-        const downvotingFilter = contractConfig.contractInterface?.filter(el => el.name === "downvotingAllowed");
-
-        if (promptFilter.length > 0) {
-          const indexToCheck = submissionGatingFilter.length > 0 ? 4 : downvotingFilter.length > 0 ? 2 : 1;
-          setContestPrompt(results[contracts.length - indexToCheck].toString());
-        }
-
-        setDownvotingAllowed(
-          downvotingFilter.length > 0
-            ? parseInt(
-                results[submissionGatingFilter.length > 0 ? contracts.length - 3 : contracts.length - 1].toString(),
-              ) === 1
-            : false,
-        );
-      } catch (e) {
-        const customError = e as CustomError;
-
-        if (!customError) return;
-
-        onContractError(e);
-        setError(customError);
-        setIsSuccess(false);
-
-        setIsListProposalsSuccess(false);
-        setIsListProposalsLoading(false);
-        setIsLoading(false);
-      }
-    } else if (version === "3.1") {
+    if (version === "3.1") {
       try {
         const contracts = getV3Contracts(contractConfig);
         const results = await readContracts({ contracts });
@@ -298,6 +228,76 @@ export function useContest() {
           setIsListProposalsLoading(false);
         }
       } catch (error) {}
+    } else {
+      try {
+        const contracts = getV1Contracts(contractConfig);
+        const results = await readContracts({ contracts });
+
+        setIsV3(false);
+
+        // If current page is proposal, fetch proposal with id
+        if (asPath.includes("/proposal/")) {
+          await fetchProposalsPage(0, [asPath.split("/")[5]], 1);
+        }
+
+        // List of proposals for this contest
+        await fetchProposalsIdsList(contractConfig.contractInterface);
+
+        setContestName(results[0].toString());
+        setContestAuthor(results[1].toString(), results[1].toString());
+        //@ts-ignore
+        setContestMaxNumberSubmissionsPerUser(results[2]);
+        //@ts-ignore
+        setContestMaxProposalCount(results[3]);
+
+        //@ts-ignore
+        const closingVoteDate = new Date(parseInt(results[6]) * 1000);
+
+        //@ts-ignore
+        setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
+        //@ts-ignore
+        setVotesOpen(new Date(parseInt(results[7]) * 1000));
+        setVotesClose(closingVoteDate);
+
+        setError(null);
+        setIsSuccess(true);
+        setIsLoading(false);
+        setIsListProposalsLoading(false);
+
+        //@ts-ignore
+        const promptFilter = contractConfig.contractInterface?.filter(el => el.name === "prompt");
+        //@ts-ignore
+        const submissionGatingFilter = contractConfig.contractInterface?.filter(
+          (el: { name: string }) => el.name === "submissionGatingByVotingToken",
+        );
+        //@ts-ignore
+        const downvotingFilter = contractConfig.contractInterface?.filter(el => el.name === "downvotingAllowed");
+
+        if (promptFilter.length > 0) {
+          const indexToCheck = submissionGatingFilter.length > 0 ? 4 : downvotingFilter.length > 0 ? 2 : 1;
+          setContestPrompt(results[contracts.length - indexToCheck].toString());
+        }
+
+        setDownvotingAllowed(
+          downvotingFilter.length > 0
+            ? parseInt(
+                results[submissionGatingFilter.length > 0 ? contracts.length - 3 : contracts.length - 1].toString(),
+              ) === 1
+            : false,
+        );
+      } catch (e) {
+        const customError = e as CustomError;
+
+        if (!customError) return;
+
+        onContractError(e);
+        setError(customError);
+        setIsSuccess(false);
+
+        setIsListProposalsSuccess(false);
+        setIsListProposalsLoading(false);
+        setIsLoading(false);
+      }
     }
   }
 
