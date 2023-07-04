@@ -47,9 +47,6 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
     );
   };
 
-  console.log("votes per address: ", votesPerAddress);
-  // console.log(new Intl.NumberFormat().format(parseFloat(votesPerAddress["0xd698e31229aB86334924ed9DFfd096a71C686900"].votes.toFixed(2))));
-
   return (
     <>
       <div className="flex gap-4 items-center mb-8">
