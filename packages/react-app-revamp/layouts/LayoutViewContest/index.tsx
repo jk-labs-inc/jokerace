@@ -296,7 +296,7 @@ const LayoutViewContest = (props: any) => {
 
                   <div className="flex flex-col mt-10">
                     <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
-                    <p className="text-[24px] text-primary-10 font-bold">
+                    <p className="text-[24px] text-primary-10 font-bold break-all">
                       by{" "}
                       <EthereumAddress
                         ethereumAddress={contestAuthorEthereumAddress}
