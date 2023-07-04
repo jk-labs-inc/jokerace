@@ -1,6 +1,5 @@
 {
-   "solidity.packageDefaultDependenciesDirectory": "node_modules/@scaffold-eth/hardhat/node_modules/",
-   "solidity-va.test.defaultUnittestTemplate": "hardhat",
+   "solidity-va.test.defaultUnittestTemplate": "forge",
    "files.exclude": {
       "**/.git": true,
       "**/.svn": true,
@@ -31,5 +30,5 @@
    "search.exclude": {
       "**/yarn-error.log": true,
       "**/yarn.lock": true
-   }
+   },
 }

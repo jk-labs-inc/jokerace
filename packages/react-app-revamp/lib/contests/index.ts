@@ -6,13 +6,15 @@ import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVe
 import { alchemyRpcUrls, fetchBalance, readContract, readContracts } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 
 export const ITEMS_PER_PAGE = 7;
 
 async function getContractConfig(address: string, chainName: string, chainId: number) {
-  const abi = await getContestContractVersion(address, chainName);
+  const { abi, version } = await getContestContractVersion(address, chainName);
+
   if (abi === null) {
     return;
   }
@@ -71,86 +73,31 @@ const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: numb
   }
 };
 
-const fetchBalances = async (userAddress: string, chainId: number, contest: any, contractConfig: any) => {
-  const submissionContracts = [
-    {
-      ...contractConfig,
-      functionName: "submissionGatingByVotingToken",
-    },
-    {
-      ...contractConfig,
-      functionName: "proposalThreshold",
-    },
-  ];
-
-  const handleFetchUserBalanceError = (error: any, context: string) => {
-    console.error(`Error fetching user balance ${context}:`, error);
-    return { value: BigNumber.from(0) };
-  };
-
-  if (!userAddress) {
-    const submissionData = await readContracts({ contracts: submissionContracts });
-    return {
-      submissionGatingByVotingToken: submissionData[0] && submissionData[1].gt(0),
-      qualifiedToVote: false,
-      qualifiedToSubmit: false,
-    };
-  }
-
-  try {
-    const submissionData = await readContracts({ contracts: submissionContracts });
-
-    const [balanceToVote, balanceToSubmit] = await Promise.all([
-      fetchUserBalance(userAddress, chainId, contest.token_address).catch(error =>
-        handleFetchUserBalanceError(error, "to vote"),
-      ),
-      fetchUserBalance(
-        userAddress,
-        chainId,
-        submissionData[0] && submissionData[1].gt(0) ? contest.token_address : null,
-      ).catch(error => handleFetchUserBalanceError(error, "to submit")),
-    ]);
-
-    return {
-      submissionGatingByVotingToken: submissionData[0] && submissionData[1].gt(0),
-      qualifiedToVote: balanceToVote.value.gt(0),
-      qualifiedToSubmit: submissionData[0] && submissionData[1].gt(0) ? balanceToSubmit.value.gt(0) : true,
-    };
-  } catch (error) {
-    console.error("Error fetching balances:", error);
-    return {
-      submissionGatingByVotingToken: false,
-      qualifiedToVote: false,
-      qualifiedToSubmit: false,
-    };
-  }
-};
-
 const processContestData = async (contest: any, userAddress: string) => {
   try {
     const chain = chains.find(
       c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
     );
 
-    const contractConfigPromise = getContractConfig(contest.address, contest.network_name, chain?.id ?? 0).catch(
-      error => {
-        console.error("Error getting contract config:", error);
-        return null;
-      },
-    );
+    const contractConfig = await getContractConfig(contest.address, contest.network_name, chain?.id ?? 0);
 
-    const [contractConfig, balances] = await Promise.all([
-      contractConfigPromise,
-      fetchBalances(userAddress, chain?.id ?? 0, contest, await contractConfigPromise),
-    ]);
+    let votersSet = new Set(contest.votingMerkleTree.voters.map((voter: Recipient) => voter.address));
 
-    contest.submissionGatingByVotingToken = balances.submissionGatingByVotingToken;
-    contest.qualifiedToVote = balances.qualifiedToVote;
-    contest.qualifiedToSubmit = balances.qualifiedToSubmit;
+    contest.qualifiedToVote = votersSet.has(userAddress);
+
+    if (contest.submissionMerkleTree) {
+      const submittersSet = new Set(
+        contest.submissionMerkleTree.submitters.map((submitter: Recipient) => submitter.address),
+      );
+      contest.qualifiedToSubmit = submittersSet.has(userAddress);
+    } else {
+      contest.anyoneCanSubmit = true;
+    }
 
     if (
       contractConfig &&
-      contractConfig.contractInterface?.filter(el => el.name === "officialRewardsModule").length > 0
+      //@ts-ignore
+      contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
     ) {
       const contestRewardModuleAddress = await readContract({
         ...contractConfig,
@@ -240,7 +187,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
     searchString = "",
     pagination = { currentPage: 1, itemsPerPage: ITEMS_PER_PAGE },
     sorting = { orderBy: "created_at", ascending: false },
-    table = "contests",
+    table = "contests_v3",
     language = "english",
   } = options;
 
@@ -283,7 +230,7 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
 
   try {
     const { data, count, error } = await config.supabase
-      .from("contests")
+      .from("contests_v3")
       .select("*", { count: "exact" })
       .is("featured", true)
       .range(from, to);
@@ -324,7 +271,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
     const { from, to } = getPagination(currentPage, itemsPerPage);
     try {
       const result = await supabase
-        .from("contests")
+        .from("contests_v3")
         .select("*", { count: "exact" })
         .lte("start_at", new Date().toISOString())
         .gte("end_at", new Date().toISOString())
@@ -353,7 +300,7 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
     const { from, to } = getPagination(currentPage, itemsPerPage);
     try {
       const result = await supabase
-        .from("contests")
+        .from("contests_v3")
         .select("*", { count: "exact" })
         // all rows whose votes end date is < to the current date.
         .lt("end_at", new Date().toISOString())
@@ -380,7 +327,7 @@ export async function getUpcomingContests(currentPage: number, itemsPerPage: num
     const { from, to } = getPagination(currentPage, itemsPerPage);
     try {
       const result = await supabase
-        .from("contests")
+        .from("contests_v3")
         .select("*", { count: "exact" })
         // all rows whose submissions start date is > to the current date.
         .gt("start_at", new Date().toISOString())

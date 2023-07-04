@@ -158,7 +158,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
         return "text-positive-11";
       }
     } else if (submissionTimeLeft.value) {
-      if (contest.qualifiedToSubmit) {
+      if (contest.qualifiedToSubmit || contest.anyoneCanSubmit) {
         return "text-primary-10";
       } else {
         return "text-negative-10";
@@ -178,7 +178,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     if (!address) return "";
 
     if (submissionTimeLeft.value) {
-      if (contest.qualifiedToSubmit) {
+      if (contest.qualifiedToSubmit || contest.anyoneCanSubmit) {
         return (
           <span className="flex items-center gap-1">
             you qualify! <CheckmarkIcon />
@@ -203,9 +203,9 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
   };
 
   const getQualificationMessage = () => {
-    if (contest.qualifiedToSubmit && contest.qualifiedToVote) {
+    if ((contest.qualifiedToSubmit || contest.anyoneCanSubmit) && contest.qualifiedToVote) {
       return "you qualify to submit & vote";
-    } else if (contest.qualifiedToSubmit) {
+    } else if (contest.qualifiedToSubmit || contest.anyoneCanSubmit) {
       return "you qualify to submit but not vote";
     } else if (contest.qualifiedToVote) {
       return "you don't qualify to submit but you can vote";
@@ -346,8 +346,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             )}
             <p className="font-bold w-full uppercase">{loading ? <Skeleton /> : contest.title}</p>
           </div>
-          <div className="flex flex-row pl-12">
-            <ul className="list-disc list-inside text-[16px]  list-explainer w-full">
+          <div className="flex flex-row pl-14">
+            <ul className="list-disc list-inside text-[16px] list-explainer w-full">
               {loading ? (
                 <Skeleton count={3} />
               ) : (

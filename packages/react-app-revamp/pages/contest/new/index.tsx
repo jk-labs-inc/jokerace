@@ -1,7 +1,10 @@
-import Head from "next/head";
-import { Provider, createStore } from "@components/_pages/WizardFormCreateContest/store";
-import WizardFormCreateContest from "@components/_pages/WizardFormCreateContest";
+import CreateFlow from "@components/_pages/Create";
+import { ContractFactoryWrapper } from "@hooks/useContractFactory";
+import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
+import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
+import { RewardsWrapper } from "@hooks/useRewards/store";
 import type { NextPage } from "next";
+import Head from "next/head";
 
 const Page: NextPage = () => {
   return (
@@ -11,12 +14,15 @@ const Page: NextPage = () => {
         <meta name="description" content="@TODO: change this" />
       </Head>
 
-      <div className="container mx-auto pt-5">
-        <h1 className="sr-only">Create a new contest</h1>
-        <Provider createStore={createStore}>
-          <WizardFormCreateContest />
-        </Provider>
-      </div>
+      <ContractFactoryWrapper>
+        <DeployRewardsWrapper>
+          <RewardsWrapper>
+            <FundRewardsWrapper>
+              <CreateFlow />
+            </FundRewardsWrapper>
+          </RewardsWrapper>
+        </DeployRewardsWrapper>
+      </ContractFactoryWrapper>
     </>
   );
 };

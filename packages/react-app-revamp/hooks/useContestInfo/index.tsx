@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
 import { TimeLeft } from "@components/_pages/ListContests/Contest";
@@ -43,7 +44,7 @@ const useContestInfo = ({
         return "text-neutral-9";
       }
 
-      if (contest.qualifiedToSubmit || !address) {
+      if (contest.qualifiedToSubmit || contest.anyoneCanSubmit || !address) {
         if (submissionStatus === "Submissions are open") {
           return "text-primary-10";
         }
@@ -91,21 +92,19 @@ const useContestInfo = ({
         );
       }
 
-      if (!address) {
-        return contest.submissionGatingByVotingToken ? (
-          <p>
-            for <span className="uppercase">${contest.token_symbol}</span> holders
-          </p>
-        ) : (
-          "for everyone"
-        );
+      if (contest.anyoneCanSubmit) {
+        return "for everyone";
       }
 
-      return (
-        <p>
-          you need <span className="uppercase">${contest.token_symbol}</span>
-        </p>
-      );
+      if (!address) {
+        if (contest.anyoneCanSubmit) {
+          return "for everyone";
+        } else {
+          return "for allowlisted";
+        }
+      }
+
+      return <p>you aren't allowlisted</p>;
     })();
 
     const newVotingMessage = (() => {
@@ -122,29 +121,19 @@ const useContestInfo = ({
       }
 
       if (!address) {
-        return (
-          <p>
-            for <span className="uppercase">${contest.token_symbol}</span> holders
-          </p>
-        );
+        return <p>for allowlisted</p>;
       }
 
       if (votingStatus === "Voting is open") {
         return (
           <div className="flex flex-nowrap items-center gap-1">
             <CrossIcon />
-            <p>
-              you needed <span className="uppercase">${contest.token_symbol}</span>
-            </p>
+            <p>you aren't allowlisted</p>
           </div>
         );
       }
 
-      return (
-        <p>
-          you need <span className="uppercase">${contest.token_symbol}</span>
-        </p>
-      );
+      return <p>you aren't allowlisted</p>;
     })();
 
     setSubmissionMessage(newSubmissionMessage);
@@ -155,7 +144,6 @@ const useContestInfo = ({
     votingStatus,
     contest.qualifiedToSubmit,
     contest.qualifiedToVote,
-    contest.submissionGatingByVotingToken,
     address,
     chains,
     contest.token_symbol,

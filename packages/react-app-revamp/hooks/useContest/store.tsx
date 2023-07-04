@@ -1,3 +1,4 @@
+import MerkleTree from "merkletreejs";
 import { createContext, useContext, useRef } from "react";
 import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
@@ -7,42 +8,44 @@ export interface ContestState {
   contestPrompt: string;
   contestAuthorEthereumAddress: string;
   contestAuthor: string;
-  contestStatus: number;
   submissionsOpen: Date;
   votesOpen: Date;
   votesClose: Date;
-  votingToken: any | null;
-  votingTokenAddress: any | null;
-  submitProposalToken: any | null;
-  submitProposalTokenAddress: any | null;
   isLoading: boolean;
   error: CustomError | null;
   isSuccess: boolean;
+  isV3: boolean;
   contestMaxProposalCount: number;
-  snapshotTaken: boolean;
   downvotingAllowed: boolean;
   canUpdateVotesInRealTime: boolean;
   supportsRewardsModule: boolean;
-
+  submissionMerkleTree: MerkleTree;
+  submitters: {
+    address: string;
+  }[];
+  votingMerkleTree: MerkleTree;
+  voters: {
+    address: string;
+    numVotes: number;
+  }[];
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
   setContestPrompt: (prompt: string) => void;
   setContestMaxProposalCount: (amount: number) => void;
-  setContestStatus: (status: number) => void;
   setContestName: (name: string) => void;
   setContestAuthor: (author: string, address: string) => void;
   setSubmissionsOpen: (datetime: Date) => void;
   setVotesOpen: (datetime: Date) => void;
   setVotesClose: (datetime: Date) => void;
-  setVotingToken: (token: any) => void;
-  setVotingTokenAddress: (address: any) => void;
-  setSubmitProposalToken: (token: any) => void;
-  setSubmitProposalTokenAddress: (address: any) => void;
-  setSnapshotTaken: (value: boolean) => void;
+  setVotingMerkleTree: (merkleTree: MerkleTree) => void;
+  setVoters: (voters: { address: string; numVotes: number }[]) => void;
+  setSubmissionMerkleTree: (merkleTree: MerkleTree) => void;
+  setSubmitters: (submitters: { address: string }[]) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: CustomError | null) => void;
   setIsSuccess: (value: boolean) => void;
+  setIsV3: (value: boolean) => void;
 }
 
 export const createContestStore = () =>
@@ -51,41 +54,36 @@ export const createContestStore = () =>
     contestPrompt: "",
     contestAuthorEthereumAddress: "",
     contestAuthor: "",
-    contestStatus: 0,
     submissionsOpen: new Date(),
     votesOpen: new Date(),
     votesClose: new Date(),
-    votingToken: null,
-    votingTokenAddress: null,
-    submitProposalToken: null,
-    submitProposalTokenAddress: null,
+    submissionMerkleTree: new MerkleTree([]),
+    submitters: [],
+    votingMerkleTree: new MerkleTree([]),
+    voters: [],
     isLoading: true,
     error: null,
     isSuccess: false,
     contestMaxProposalCount: 0,
-    snapshotTaken: false,
     downvotingAllowed: false,
     canUpdateVotesInRealTime: false,
+    isV3: false,
     supportsRewardsModule: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
-
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
-
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
-
-    setContestStatus: status => set({ contestStatus: status }),
+    setIsV3: value => set({ isV3: value }),
     setContestName: name => set({ contestName: name }),
     setContestAuthor: (author, address) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
     setVotesOpen: datetime => set({ votesOpen: datetime }),
     setVotesClose: datetime => set({ votesClose: datetime }),
-    setVotingToken: token => set({ votingToken: token }),
-    setVotingTokenAddress: address => set({ votingTokenAddress: address }),
-    setSubmitProposalToken: token => set({ submitProposalToken: token }),
-    setSubmitProposalTokenAddress: address => set({ submitProposalTokenAddress: address }),
-    setSnapshotTaken: value => set({ snapshotTaken: value }),
+    setVotingMerkleTree: merkleTree => set({ votingMerkleTree: merkleTree }),
+    setSubmissionMerkleTree: merkleTree => set({ submissionMerkleTree: merkleTree }),
+    setVoters: voters => set({ voters: voters }),
+    setSubmitters: submitters => set({ submitters: submitters }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),

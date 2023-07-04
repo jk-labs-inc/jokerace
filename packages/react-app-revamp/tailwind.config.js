@@ -80,7 +80,7 @@ module.exports = {
       xs: clamp(-1),
       sm: clamp(-0.5),
       base: clamp(0),
-      prose: clamp(0.25),
+      prose: "16px",
       md: clamp(0.5),
       lg: clamp(1),
       xl: clamp(2),
@@ -106,7 +106,7 @@ module.exports = {
         4: "#352800",
         5: "#3e3000",
         6: "#493c00",
-        7: "#594a05",
+        7: "#645822",
         8: "#705e00",
         9: "#f5d90a",
         10: "#FFE25B",
@@ -141,6 +141,7 @@ module.exports = {
         11: "#78FFC6",
         12: "#e7fcf7",
       },
+
       negative: {
         1: "#1d1418",
         2: "#27141c",
@@ -158,7 +159,7 @@ module.exports = {
       neutral: {
         0: "#121212",
         1: "#161618",
-        2: "#1c1c1f",
+        2: "#1E1E1E",
         3: "#232326",
         4: "#28282c",
         5: "#2e2e32",
@@ -166,7 +167,7 @@ module.exports = {
         7: "#3e3e44",
         8: "#504f57",
         9: "#706f78",
-        10: "#7e7d86",
+        10: "#6A6A6A",
         11: "#E5E5E5",
         12: "#ededef",
       },
@@ -179,10 +180,13 @@ module.exports = {
             "--tw-prose-invert-hr": theme("colors.neutral.4"),
             fontSize: theme("fontSize.base"),
             p: {
-              fontSize: clamp(0),
+              fontSize: "16px",
               marginTop: "0.5em",
               marginBottom: "0.5em",
               lineHeight: 1.75,
+            },
+            span: {
+              fontSize: "16px",
             },
             br: {
               display: "block",
@@ -238,6 +242,7 @@ module.exports = {
             transform: "rotateY(0)",
           },
         },
+
         appear: {
           from: {
             opacity: "0",
@@ -256,10 +261,30 @@ module.exports = {
           "0%": { opacity: "1" },
           "100%": { opacity: "0" },
         },
+        swingInLeft: {
+          "0%": {
+            transform: "rotateY(70deg)",
+            transformOrigin: "left",
+            opacity: "0",
+          },
+          "100%": {
+            transform: "rotateY(0deg)",
+            transformOrigin: "left",
+            opacity: "1",
+          },
+        },
         blink: {
           "0%": { opacity: "1" },
           "60%": { opacity: "0.8" },
           "100%": { opacity: "1" },
+        },
+        shakeTop: {
+          "0%": { transform: "translateY(0)" },
+          "10%, 90%": { transform: "translateY(-2px)" },
+          "20%, 80%": { transform: "translateY(2px)" },
+          "30%, 50%, 70%": { transform: "translateY(-4px)" },
+          "40%, 60%": { transform: "translateY(4px)" },
+          "100%": { transform: "translateY(0)" },
         },
       },
       scale: {
@@ -267,18 +292,37 @@ module.exports = {
       },
       transitionProperty: {
         transform: "transform",
+        "border-color": "border-color",
+        gradient: "background-position",
       },
       animation: {
         "card-rotation": "card-rotation 2000ms linear infinite",
         appear: "appear 300ms ease-in forwards",
         fadeIn: "fadeIn 1s cubic-bezier(0.39, 0.575, 0.565, 1) both",
+        fadeInInfinite: "fadeIn cubic-bezier(0.39, 0.575, 0.565, 1) infinite both",
         fadeInLanding: "fadeIn 3s cubic-bezier(0.39, 0.575, 0.565, 1) both",
         fadeOut: "fadeOut 2s ease-out both",
-        "blink-shadow": "blink 1.5s ease-in-out infinite",
+        blinkShadow: "blink 1s ease-in-out infinite",
+        shakeTop: "shakeTop 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both",
+        swingInLeft: "swingInLeft 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both",
       },
 
       height: {
         "fit-content": "fit-content",
+      },
+      backgroundImage: {
+        "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
+        "gradient-create": "linear-gradient(90deg, #BB65FF 0%, #FFE25B 96.62%)",
+        "gradient-vote": "linear-gradient(93.06deg, #78FFC6 0%, #BB65FF 100%)",
+        "gradient-distribute": "linear-gradient(180deg, #B0FED4 0%, #78FFC6 50%, #4A9575 100%)",
+      },
+      boxShadow: {
+        "create-header": "0 3px 4px 0 rgba(255, 226, 91, 0.6)",
+        "timer-container": "3px 3px 4px rgba(106, 106, 106, 1)",
+      },
+      backgroundColor: {
+        ffdd3e: "#FFDD3E",
+        "78ffc6": "#78FFC6",
       },
       width: {
         "max-content": "max-content",

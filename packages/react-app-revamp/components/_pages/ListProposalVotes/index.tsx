@@ -1,18 +1,22 @@
 import Button from "@components/UI/Button";
+import Collapsible from "@components/UI/Collapsible";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useProposalVotes from "@hooks/useProposalVotes";
 import { useProposalVotesStore } from "@hooks/useProposalVotes/store";
+import { FC, useState } from "react";
 import { useAccount } from "wagmi";
+import { Proposal } from "../ProposalContent";
 
 interface ListProposalVotesProps {
-  id: number | string;
+  proposalId: string;
+  proposal: Proposal;
 }
 
-export const ListProposalVotes = (props: ListProposalVotesProps) => {
-  const { id } = props;
+export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, proposalId }) => {
   const accountData = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
@@ -20,7 +24,7 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
       }
     },
   });
-  const { isLoading, isSuccess, isError, retry, fetchVotesPage } = useProposalVotes(id);
+  const { isLoading, isSuccess, isError, retry, fetchVotesPage } = useProposalVotes(proposalId);
   const { listProposalsData } = useProposalStore(state => state);
   const {
     votesPerAddress,
@@ -31,128 +35,83 @@ export const ListProposalVotes = (props: ListProposalVotesProps) => {
     totalPagesPaginationVotes,
     hasPaginationVotesNextPage,
   } = useProposalVotesStore(state => state);
+  const [isTopVotersOpen, setIsTopVotersOpen] = useState(true);
+  const [isLoadMoreOpen, setIsLoadMoreOpen] = useState(false);
+
+  const onLoadMore = () => {
+    setIsLoadMoreOpen(true);
+    fetchVotesPage(
+      currentPagePaginationVotes + 1,
+      indexPaginationVotes[currentPagePaginationVotes + 1],
+      totalPagesPaginationVotes,
+    );
+  };
+
   return (
     <>
-      {isLoading && (
-        <div className="animate-appear">
-          <Loader classNameWrapper={!isLoading ? "hidden" : ""} scale="component">
-            Loading votes, one moment please...{" "}
-          </Loader>
-        </div>
-      )}
-
-      {!isLoading && isError && (
-        <div className="animate-appear">
-          <div className="flex flex-col">
-            <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
-              <p className="text-sm font-bold text-negative-10 text-center">
-                Something went wrong while fetching the votes of this proposal.
-              </p>
-            </div>
-            <Button
-              onClick={() => retry()}
-              className="mt-5 w-full mx-auto py-1 xs:w-auto xs:min-w-fit-content"
-              intent="neutral-outline"
-            >
-              Try again
-            </Button>
-          </div>
-        </div>
-      )}
-
+      <div className="flex gap-4 items-center mb-8">
+        <p className="text-[24px] text-neutral-11 font-bold">top voters</p>
+        <button
+          onClick={() => setIsTopVotersOpen(!isTopVotersOpen)}
+          className={`transition-transform duration-500 ease-in-out transform ${isTopVotersOpen ? "" : "rotate-180"}`}
+        >
+          <ChevronUpIcon height={30} />
+        </button>
+      </div>
       {isSuccess && !isLoading && (
-        <section className="animate-appear">
-          <p className="animate-appear font-bold mb-3">
-            <span>Current votes:</span> <br />
-            <span className="text-positive-9">
-              {new Intl.NumberFormat().format(parseFloat(listProposalsData[id].votes.toFixed(2)))}
-            </span>
-          </p>
-          <table className="text-xs">
-            <caption className="sr-only">Votes details</caption>
-            <thead className="sr-only">
-              <tr>
-                <th scope="col">Ethereum address</th>
-                <th scope="col">Votes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {accountData?.address && Object.keys(votesPerAddress)?.includes(accountData?.address) && (
-                <tr className="animate-appear">
-                  <td title={accountData?.address} className="relative text-ellipsis font-mono overflow-hidden p-2">
-                    <a
-                      className="top-0 left-0 absolute w-full h-full z-10 cursor-pointer opacity-0"
-                      target="_blank"
-                      rel="nofollow noreferrer"
-                      href={`https://debank.com/profile/${accountData?.address}`}
-                    >
-                      Click to view this address on Debank
-                    </a>
-                    {votesPerAddress[accountData?.address].displayAddress}:
-                  </td>
-                  <td className="p-2 font-bold">
-                    {new Intl.NumberFormat().format(parseFloat(votesPerAddress[accountData?.address].votes.toFixed(2)))}
-                  </td>
-                </tr>
-              )}
+        <Collapsible isOpen={isTopVotersOpen}>
+          <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4 md:w-[350px]">
               {Object.keys(votesPerAddress)
                 .filter(address => {
                   if (!accountData?.address) return address;
                   if (address !== accountData?.address) return address;
                 })
-                .map((address: string) => (
-                  <tr
-                    className="animate-appear"
-                    key={`${votesPerAddress[address].displayAddress}-${votesPerAddress[address].votes}`}
+                .sort((a, b) => votesPerAddress[b].votes - votesPerAddress[a].votes) // Sorting here
+                .map((address: string, index, self) => (
+                  <div
+                    key={address}
+                    className={`flex justify-between items-end text-[16px] font-bold pb-3 ${
+                      index !== self.length - 1 ? "border-b border-neutral-10" : ""
+                    }`}
                   >
-                    <td title={address} className="relative text-ellipsis font-mono overflow-hidden p-2">
-                      <a
-                        className="top-0 left-0 absolute w-full h-full z-10 cursor-pointer opacity-0"
-                        target="_blank"
-                        rel="nofollow noreferrer"
-                        href={`https://debank.com/profile/${address}`}
-                      >
-                        Click to view this address on Debank
-                      </a>
-
-                      <EtheuremAddress
-                        withHyphen={false}
-                        ethereumAddress={address}
-                        shortenOnFallback={true}
-                        displayLensProfile={true}
-                      />
-                    </td>
-                    <td className="p-2 font-bold">
-                      {new Intl.NumberFormat().format(parseFloat(votesPerAddress[address].votes.toFixed(2)))}
-                    </td>
-                  </tr>
+                    <EtheuremAddress ethereumAddress={address} shortenOnFallback={true} displayLensProfile={true} />
+                    <p>{new Intl.NumberFormat().format(parseFloat(votesPerAddress[address].votes.toFixed(2)))} votes</p>
+                  </div>
                 ))}
-            </tbody>
-          </table>
-          {isPageVotesLoading && Object.keys(listProposalsData)?.length > 1 && (
-            <Loader scale="component" classNameWrapper="my-3">
-              Loading votes...
-            </Loader>
-          )}
-          {hasPaginationVotesNextPage && !isPageVotesLoading && (
-            <div className="pt-8 flex animate-appear">
-              <Button
-                intent="neutral-outline"
-                scale="sm"
-                className="mx-auto animate-appear"
-                onClick={() =>
-                  fetchVotesPage(
-                    currentPagePaginationVotes + 1,
-                    indexPaginationVotes[currentPagePaginationVotes + 1],
-                    totalPagesPaginationVotes,
-                  )
-                }
-              >
-                {isPageVotesError ? "Try again" : "Show more votes"}
-              </Button>
             </div>
-          )}
-        </section>
+
+            {isPageVotesLoading && Object.keys(listProposalsData)?.length > 1 && (
+              <div className="mr-auto mt-0">
+                <Loader scale="component" classNameWrapper="my-3">
+                  Loading votes...
+                </Loader>
+              </div>
+            )}
+
+            {hasPaginationVotesNextPage && !isPageVotesLoading && (
+              <div className="flex gap-2 items-center mb-8">
+                <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+                <button
+                  onClick={onLoadMore}
+                  className={`transition-transform duration-500 ease-in-out transform ${
+                    isLoadMoreOpen ? "" : "rotate-180"
+                  }`}
+                >
+                  <ChevronUpIcon height={20} className="text-positive-11" />
+                </button>
+              </div>
+            )}
+          </div>
+        </Collapsible>
+      )}
+
+      {isLoading && (
+        <div className="animate-appear md:w-[350px]">
+          <Loader classNameWrapper={!isLoading ? "hidden" : ""} scale="component">
+            Loading votes, one moment please...{" "}
+          </Loader>
+        </div>
       )}
     </>
   );

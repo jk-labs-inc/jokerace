@@ -18,8 +18,8 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="flex items-center gap-2 text-true-white text-sm">
-          Share <Image src="/forward.png" alt="share" className="ml-1 w-5" width={20} height={20} />
+        <Menu.Button className="px-2 flex items-center gap-2 text-true-white text-[16px] font-bold rounded-[10px] border border-neutral-11">
+          Share <Image src="/forward.png" alt="share" className="ml-1 w-4" width={20} height={20} />
         </Menu.Button>
       </div>
 

@@ -1,7 +1,5 @@
-import ListProposals from "@components/_pages/ListProposals";
 import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
-import { useProposalStore } from "@hooks/useProposal/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -12,8 +10,7 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props;
-  const { isLoading, isSuccess, contestName } = useContestStore(state => state);
-  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
+  const { contestName } = useContestStore(state => state);
 
   return (
     <>
@@ -22,11 +19,6 @@ const Page: NextPage = (props: PageProps) => {
         <meta name="description" content="@TODO: change this" />
       </Head>
       <h1 className="sr-only">Contest {contestName ? contestName : address} </h1>
-      {!isLoading && !isListProposalsLoading && isSuccess && isListProposalsSuccess && (
-        <div className="animate-appear mt-8">
-          <ListProposals />
-        </div>
-      )}
     </>
   );
 };

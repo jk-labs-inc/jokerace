@@ -1,4 +1,5 @@
 import Button from "@components/UI/Button";
+import ButtonV3 from "@components/UI/ButtonV3";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { useContestStore } from "@hooks/useContest/store";
 import { useAccount } from "wagmi";
@@ -18,28 +19,10 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
       }
     },
   });
-  const { contestAuthorEthereumAddress } = useContestStore(state => state);
 
   return (
     <>
-      <Button
-        className="w-full xs:w-auto"
-        intent={
-          //@ts-ignore
-          parseFloat(queryTokenBalance?.data?.formatted).toFixed(4) <= 0.0001 ? "ghost-primary" : "primary-outline"
-        }
-        onClick={() => contractWriteWithdraw.write()}
-        isLoading={contractWriteWithdraw.isLoading || txWithdraw.isLoading}
-        disabled={
-          contestAuthorEthereumAddress !== accountData?.address ||
-          //@ts-ignore
-          parseFloat(queryTokenBalance?.data?.formatted).toFixed(4) <= 0.0001 ||
-          txWithdraw.isLoading ||
-          contractWriteWithdraw.isLoading ||
-          contractWriteWithdraw.isSuccess ||
-          txWithdraw.isSuccess
-        }
-      >
+      <ButtonV3 size="large" color="bg-gradient-distribute" onClick={() => contractWriteWithdraw.write()}>
         {contractWriteWithdraw.isError || txWithdraw.isError
           ? "Try again"
           : txWithdraw.isSuccess
@@ -47,8 +30,8 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
           : contractWriteWithdraw.isLoading || txWithdraw.isLoading
           ? "Withdrawing..."
           : `Withdraw all ${queryTokenBalance.data?.symbol}`}
-      </Button>
-      <p className="pt-2 text-2xs text-neutral-11 font-bold flex flex-wrap items-center">
+      </ButtonV3>
+      <p className="pt-2 text-2xs text-neutral-11 font-bold flex flex-wrap items-start">
         Rewards module {queryTokenBalance.data?.symbol} balance:{" "}
         {parseFloat(queryTokenBalance?.data?.formatted).toFixed(4)}
       </p>

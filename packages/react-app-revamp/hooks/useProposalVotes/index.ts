@@ -2,10 +2,10 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import arrayToChunks from "@helpers/arrayToChunks";
-import { CONTEST_STATUS } from "@helpers/contestStatus";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { fetchEnsName, getAccount, getContract, readContract, watchContractEvent } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -31,7 +31,7 @@ export function useProposalVotes(id: number | string) {
   );
   const [address] = useState(url[3]);
 
-  const { contestStatus, canUpdateVotesInRealTime } = useContestStore(state => state);
+  const { contestStatus } = useContestStatusStore(state => state);
 
   const {
     isListVotersSuccess,
@@ -56,7 +56,8 @@ export function useProposalVotes(id: number | string) {
     setIsListVotersLoading(true);
     const chainName = url[2];
 
-    const abi = await getContestContractVersion(address, chainName);
+    const { abi, version } = await getContestContractVersion(address, chainName);
+
     if (abi === null) {
       setIsListVotersLoading(false);
       setIsListVotersError("This contract doesn't exist on this chain.");
@@ -72,6 +73,7 @@ export function useProposalVotes(id: number | string) {
         contractInterface: abi,
         chainId: chainId,
       };
+
       const list = await readContract({
         ...contractConfig,
         chainId,
@@ -146,7 +148,8 @@ export function useProposalVotes(id: number | string) {
     const chainName = asPath.split("/")[2];
 
     try {
-      const abi = await getContestContractVersion(address, chainName);
+      const { abi, version } = await getContestContractVersion(address, chainName);
+
       if (abi === null) {
         toast.error("This contract doesn't exist on this chain.");
         setIsPageVotesError({ message: "This contract doesn't exist on this chain." });
@@ -203,37 +206,28 @@ export function useProposalVotes(id: number | string) {
     }
   }, [account?.connector]);
 
-  useEffect(() => {
-    if (canUpdateVotesInRealTime === false && contestStatus === CONTEST_STATUS.COMPLETED) {
-      const contract = getContract({
-        addressOrName: asPath.split("/")[3],
-        contractInterface: DeployedContestContract.abi,
-      });
-      contract.removeAllListeners();
-    } else if (canUpdateVotesInRealTime === true) {
-      // Only watch VoteCast events when voting is open and we are <=1h before end of voting
-      if (contestStatus === CONTEST_STATUS.VOTING_OPEN) {
-        watchContractEvent(
-          {
-            addressOrName: asPath.split("/")[3],
-            contractInterface: DeployedContestContract.abi,
-          },
-          "VoteCast",
-          args => {
-            fetchVotesOfAddress(args[0]);
-          },
-        );
-      }
-      // When voting closes, remove all event listeners
-      if (contestStatus === CONTEST_STATUS.COMPLETED) {
-        const contract = getContract({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
-        });
-        contract.removeAllListeners();
-      }
-    }
-  }, [canUpdateVotesInRealTime, contestStatus]);
+  // This one is throwing ENS error
+  // useEffect(() => {
+  //   if (contestStatus === ContestStatus.VotingClosed) {
+  //     const contract = getContract({
+  //       addressOrName: asPath.split("/")[3],
+  //       contractInterface: DeployedContestContract.abi,
+  //     });
+  //     contract.removeAllListeners();
+  //   } else if (contestStatus === ContestStatus.VotingOpen) {
+  //     // Only watch VoteCast events when voting is open and we are <=1h before end of voting
+  //     watchContractEvent(
+  //       {
+  //         addressOrName: asPath.split("/")[3],
+  //         contractInterface: DeployedContestContract.abi,
+  //       },
+  //       "VoteCast",
+  //       args => {
+  //         fetchVotesOfAddress(args[0]);
+  //       },
+  //     );
+  //   }
+  // }, [contestStatus]);
 
   useEffect(() => {
     const fetchProposalVotesAndListenForEvents = async () => {
