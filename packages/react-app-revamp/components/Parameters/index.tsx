@@ -34,7 +34,7 @@ const ContestParameters: FC<ContestParametersProps> = ({ ...props }) => {
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-12">
         <p className="text-[24px] font-bold text-neutral-11">timeline</p>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 md:w-96">
           <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
             <p>submissions open:</p>
             <p>{formattedSubmissionsOpen}</p>

@@ -77,7 +77,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
           </>
         );
     }
-  }, [contestStatus]);
+  }, [contestStatus, proposal.votes]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];

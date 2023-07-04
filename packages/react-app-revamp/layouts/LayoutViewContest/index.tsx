@@ -167,13 +167,13 @@ const LayoutViewContest = (props: any) => {
         );
       case Tab.Rewards:
         return (
-          <div className="mt-16 w-2/3 animate-appear">
+          <div className="mt-16 animate-appear">
             <ContestRewards />
           </div>
         );
       case Tab.Parameters:
         return (
-          <div className="mt-16 w-1/2 animate-appear">
+          <div className="mt-16 animate-appear">
             <ContestParameters
               votingOpen={votesOpen}
               submissionOpen={submissionsOpen}

@@ -9,10 +9,7 @@ import { toast } from "react-toastify";
 import { useAccount, useNetwork, useProvider } from "wagmi";
 import { useUserStore } from "./store";
 
-const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
-
 export function useUser() {
-  const provider = useProvider();
   const { address: userAddress } = useAccount();
   const {
     setCurrentUserQualifiedToSubmit,
@@ -23,7 +20,6 @@ export function useUser() {
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
   const {
     submissionMerkleTree,
-    votingMerkleTree,
     setIsSuccess: setIsContestSuccess,
     setIsLoading: setIsContestLoading,
     setError: setContestError,

@@ -29,18 +29,11 @@ interface DialogModalVoteForProposalProps {
 export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   props: DialogModalVoteForProposalProps,
 ) => {
-  const { pickedProposal, transactionData, castPositiveAmountOfVotes, setCastPositiveAmountOfVotes } =
-    useCastVotesStore(state => state);
   const { downvotingAllowed, contestPrompt } = useContestStore(state => state);
-  const { listProposalsData } = useProposalStore(state => state);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
-  const { updateCurrentUserVotes } = useUser();
 
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
-  const [votesToCast, setVotesToCast] = useState(
-    currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1,
-  );
   const [showForm, setShowForm] = useState(true);
   const [showDeploymentSteps, setShowDeploymentSteps] = useState(false);
 
@@ -52,7 +45,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
 
   useEffect(() => {
     if (!props.isOpen && !isLoading) {
-      setVotesToCast(currentUserAvailableVotesAmount < 1 ? currentUserAvailableVotesAmount : 1);
       setShowForm(true);
       setShowDeploymentSteps(false);
     }

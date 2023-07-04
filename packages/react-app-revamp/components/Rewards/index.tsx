@@ -102,7 +102,7 @@ const ContestRewards = () => {
                       address for anyone to send tokens to fund the pool:
                     </p>
                     <a
-                      className="text-positive-11 text-[16px] font-bold underline"
+                      className="text-positive-11 text-[16px] font-bold underline break-all"
                       href={`${rewardsStore?.rewards?.blockExplorers?.url}/address/${rewardsStore?.rewards?.contractAddress}`}
                     >
                       {rewardsStore?.rewards?.contractAddress}
@@ -145,7 +145,6 @@ const ContestRewards = () => {
                         )?.[0]?.id
                       }
                       payee={payee}
-                      erc20Tokens={rewardsStore.rewards.balance}
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                       abiRewardsModule={rewardsStore.rewards.abi}
                       totalShares={rewardsStore.rewards.totalShares}
