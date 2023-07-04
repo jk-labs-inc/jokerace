@@ -67,7 +67,6 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
                   if (!accountData?.address) return address;
                   if (address !== accountData?.address) return address;
                 })
-                .sort((a, b) => votesPerAddress[b].votes - votesPerAddress[a].votes) // Sorting here
                 .map((address: string, index, self) => (
                   <div
                     key={address}
