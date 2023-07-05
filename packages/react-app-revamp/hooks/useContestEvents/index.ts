@@ -24,7 +24,7 @@ export function useContestEvents() {
    */
   async function onVoteCast(args: Array<any>) {
     try {
-      const accountData = getAccount();
+      const accountData = await getAccount();
       // if the connected wallet is the address that casted votes
       if (accountData?.address && args[0] === accountData?.address) {
         // Update the current user available votes
@@ -46,38 +46,36 @@ export function useContestEvents() {
           //@ts-ignore
           votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
         });
+      } else {
+        const proposal = await readContract({
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+          functionName: "getProposal",
+          args: proposalId,
+        });
+
+        let author;
+        try {
+          author = await fetchEnsName({
+            address: proposal[0],
+            chainId: chain.mainnet.id,
+          });
+        } catch (error: any) {
+          author = proposal[0];
+        }
+
+        const proposalData: any = {
+          authorEthereumAddress: proposal[0],
+          author: author ?? proposal[0],
+          content: proposal[2],
+          isContentImage: isUrlToImage(proposal[2]) ? true : false,
+          exists: proposal[1],
+          //@ts-ignore
+          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+        };
+
+        setProposalData({ id: proposalId, data: proposalData });
       }
-      // Figure out why this else is needed
-      // else {
-      //   const proposal = await readContract({
-      //     addressOrName: asPath.split("/")[3],
-      //     contractInterface: DeployedContestContract.abi,
-      //     functionName: "getProposal",
-      //     args: proposalId,
-      //   });
-
-      //   let author;
-      //   try {
-      //     author = await fetchEnsName({
-      //       address: proposal[0],
-      //       chainId: chain.mainnet.id,
-      //     });
-      //   } catch (error: any) {
-      //     author = proposal[0];
-      //   }
-
-      //   const proposalData: any = {
-      //     authorEthereumAddress: proposal[0],
-      //     author: author ?? proposal[0],
-      //     content: proposal[1],
-      //     isContentImage: isUrlToImage(proposal[1]) ? true : false,
-      //     exists: proposal[2],
-      //     //@ts-ignore
-      //     votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
-      //   };
-
-      //   setProposalData({ id: proposalId, data: proposalData });
-      // }
     } catch (e) {
       console.error(e);
     }
