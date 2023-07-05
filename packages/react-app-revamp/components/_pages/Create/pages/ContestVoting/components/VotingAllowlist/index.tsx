@@ -65,6 +65,9 @@ const CreateVotingAllowlist = () => {
         <p className="text-[16px] text-neutral-11">
           copy-paste allowlist into preview box (up to 100 line items) or upload a csv below <br />
         </p>
+        <p className="text-[16px] text-neutral-11">
+          Please note: votes must be rounded to a whole number <br />
+        </p>
       </div>
       <CSVEditorVoting onChange={handleAllowListChange} />
       <div className="mt-8">
