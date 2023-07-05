@@ -15,6 +15,7 @@ export function useUser() {
     setCurrentUserQualifiedToSubmit,
     setCurrentUserAvailableVotesAmount,
     setCurrentUserTotalVotesAmount,
+    setCurrentUserProposalCount,
     currentUserTotalVotesAmount,
     contestMaxNumberSubmissionsPerUser,
   } = useUserStore(state => state);
@@ -75,11 +76,12 @@ export function useUser() {
         args: userAddress,
       });
 
-      if (numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
+      if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
         setCurrentUserQualifiedToSubmit(false);
         return;
       }
 
+      setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
       setCurrentUserQualifiedToSubmit(true);
     } else {
       // Perform a lookup in the 'contest_participants_v3' table.

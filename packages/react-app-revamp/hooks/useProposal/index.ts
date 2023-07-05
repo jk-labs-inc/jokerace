@@ -145,11 +145,6 @@ export function useProposal() {
         : proposalDataPerId[i][1] / 1e18,
     };
 
-    // Check if that proposal belongs to the current user
-    // (Needed to track if the current user can submit a proposal)
-    if (data[0] === accountData?.address) {
-      increaseCurrentUserProposalCount();
-    }
     setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
   }
 

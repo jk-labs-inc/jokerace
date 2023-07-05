@@ -46,7 +46,6 @@ const ButtonV3: React.FC<ButtonV3Props> = ({
 
   const isDisabled = useMemo<string>(() => {
     if (disabled) {
-      console.log;
       return "opacity-50 pointer-events-none";
     }
 

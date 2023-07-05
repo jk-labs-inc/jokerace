@@ -217,10 +217,10 @@ export function useContest() {
             setSubmitters(submissionMerkleTreeData.submitters);
           }
 
+          await checkIfCurrentUserQualifyToSubmit();
+          await checkIfCurrentUserQualifyToVote();
           setSubmissionMerkleTree(submissionMerkleTree);
           setVotingMerkleTree(votingMerkleTree);
-          checkIfCurrentUserQualifyToSubmit();
-          checkIfCurrentUserQualifyToVote();
           setError(null);
           setIsSuccess(true);
           setIsLoading(false);

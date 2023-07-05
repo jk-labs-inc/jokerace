@@ -26,7 +26,6 @@ const LayoutContestQualifier = () => {
   }, [y]);
 
   const qualifiedToSubmitMessage = useMemo<ReactNode>(() => {
-    console.log(currentUserProposalCount, contestMaxNumberSubmissionsPerUser);
     if (currentUserProposalCount >= contestMaxNumberSubmissionsPerUser || !currentUserQualifiedToSubmit) {
       return (
         <div className="flex flex-nowrap items-center gap-1">
