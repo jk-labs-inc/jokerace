@@ -17,7 +17,7 @@ export const validateVotingFields = (address: string, votes: string): "address" 
     error = "address";
   }
 
-  if (votes.trim() === "" || Number(votes) <= 0 || isNaN(Number(votes)) || !Number.isInteger(Number(votes))) {
+  if (votes.trim() === "" || Number(votes) <= 0 || isNaN(Number(votes))) {
     error = error ? "both" : "votes";
   }
 
