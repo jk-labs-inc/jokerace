@@ -2,7 +2,7 @@
 
 Check out the live site at [jokerace.xyz](https://jokerace.xyz/)!
 
-You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io).
+You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io)!
 
 ## Pre-requisites
 - `yarn` installed
