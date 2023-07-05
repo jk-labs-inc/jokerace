@@ -162,7 +162,14 @@ export function useDeployContest() {
 
       if (votingMerkle && votingMerkle.voters.length > 0) {
         const submitters = submissionMerkle ? submissionMerkle.submitters : [];
-        tasks.push(indexContestParticipantsV3(contestData.contractAddress, votingMerkle.voters, submitters));
+        tasks.push(
+          indexContestParticipantsV3(
+            contestData.contractAddress,
+            votingMerkle.voters,
+            submitters,
+            contestData.networkName,
+          ),
+        );
       }
 
       await Promise.all(tasks);
