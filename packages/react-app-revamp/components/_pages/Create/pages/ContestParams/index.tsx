@@ -9,7 +9,6 @@ import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
-import CreateContestRewards from "../ContestRewards";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
@@ -24,6 +23,15 @@ const CreateContestParams = () => {
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
+        if (!isConnected) {
+          try {
+            openConnectModal?.();
+            return;
+          } catch (err) {
+            console.error("Failed to connect wallet", err);
+            return; // If connection fails, don't proceed with deploying contest
+          }
+        }
         handleDeployContest();
       }
     };
@@ -49,15 +57,6 @@ const CreateContestParams = () => {
   };
 
   const handleDeployContest = async () => {
-    if (!isConnected) {
-      try {
-        openConnectModal?.();
-      } catch (err) {
-        console.error("Failed to connect wallet", err);
-        return; // If connection fails, don't proceed with deploying contest
-      }
-    }
-
     const promiseFn = () => deployContest();
 
     const statusMessages: ToastMessage[] = [

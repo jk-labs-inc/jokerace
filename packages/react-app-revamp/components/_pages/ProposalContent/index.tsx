@@ -58,6 +58,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
           <>
             <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
             <ButtonV3
+              type="txAction"
               color="bg-gradient-vote rounded-[40px]"
               size="large"
               onClick={() => {

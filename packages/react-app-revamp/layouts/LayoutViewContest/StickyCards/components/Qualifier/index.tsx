@@ -2,6 +2,7 @@
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
 import { formatNumber } from "@helpers/formatNumber";
+import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
@@ -11,7 +12,12 @@ import { useAccount } from "wagmi";
 
 const LayoutContestQualifier = () => {
   const { isConnected } = useAccount();
-  const { currentUserQualifiedToSubmit, currentUserAvailableVotesAmount } = useUserStore(state => state);
+  const {
+    currentUserQualifiedToSubmit,
+    currentUserAvailableVotesAmount,
+    currentUserProposalCount,
+    contestMaxNumberSubmissionsPerUser,
+  } = useUserStore(state => state);
   const { y } = useWindowScroll();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -20,7 +26,15 @@ const LayoutContestQualifier = () => {
   }, [y]);
 
   const qualifiedToSubmitMessage = useMemo<ReactNode>(() => {
-    if (currentUserQualifiedToSubmit) {
+    console.log(currentUserProposalCount, contestMaxNumberSubmissionsPerUser);
+    if (currentUserProposalCount >= contestMaxNumberSubmissionsPerUser || !currentUserQualifiedToSubmit) {
+      return (
+        <div className="flex flex-nowrap items-center gap-1">
+          <CrossIcon />
+          <p>you don't qualify to submit</p>
+        </div>
+      );
+    } else {
       return (
         <div className="flex flex-nowrap items-center gap-1">
           <div className="mt-1">
@@ -30,14 +44,7 @@ const LayoutContestQualifier = () => {
         </div>
       );
     }
-
-    return (
-      <div className="flex flex-nowrap items-center gap-1">
-        <CrossIcon />
-        <p>you don't qualify to submit</p>
-      </div>
-    );
-  }, [currentUserQualifiedToSubmit]);
+  }, [currentUserQualifiedToSubmit, currentUserProposalCount, contestMaxNumberSubmissionsPerUser]);
 
   const qualifiedToVoteMessage = useMemo<ReactNode>(() => {
     if (currentUserAvailableVotesAmount > 0) {

@@ -3,10 +3,10 @@ import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { fetchBlockNumber, getAccount, readContract, readContracts } from "@wagmi/core";
+import { getAccount, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { useAccount, useNetwork, useProvider } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { useUserStore } from "./store";
 
 export function useUser() {
@@ -16,6 +16,7 @@ export function useUser() {
     setCurrentUserAvailableVotesAmount,
     setCurrentUserTotalVotesAmount,
     currentUserTotalVotesAmount,
+    contestMaxNumberSubmissionsPerUser,
   } = useUserStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
   const {
@@ -63,9 +64,22 @@ export function useUser() {
   }
 
   const checkIfCurrentUserQualifyToSubmit = async () => {
-    if (!userAddress) return;
+    const contractConfig = await getContractConfig();
+
+    if (!userAddress || !contractConfig) return;
 
     if (submissionMerkleTree.getHexRoot() === "0x") {
+      const numOfSubmittedProposals = await readContract({
+        ...contractConfig,
+        functionName: "getNumSubmissions",
+        args: userAddress,
+      });
+
+      if (numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
+        setCurrentUserQualifiedToSubmit(false);
+        return;
+      }
+
       setCurrentUserQualifiedToSubmit(true);
     } else {
       // Perform a lookup in the 'contest_participants_v3' table.
@@ -81,7 +95,14 @@ export function useUser() {
       }
 
       // If the current user can submit, set 'currentUserQualifiedToSubmit' to true.
+      //TODO check if this is correct
       if (data && data.length > 0 && data[0].can_submit) {
+        const numOfSubmittedProposals = await readContract({
+          ...contractConfig,
+          functionName: "getNumSubmissions",
+          args: userAddress,
+        });
+
         setCurrentUserQualifiedToSubmit(true);
       } else {
         setCurrentUserQualifiedToSubmit(false);

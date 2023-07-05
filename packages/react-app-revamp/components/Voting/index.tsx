@@ -85,6 +85,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         </div>
         <div className="mt-4">
           <ButtonV3
+            type="txAction"
             color="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
             size="large"
             onClick={() => onVote?.(amount, isUpvote)}

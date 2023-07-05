@@ -68,10 +68,12 @@ const LayoutViewContest = (props: any) => {
     voters,
     submitters,
   } = useContestStore(state => state);
-  const contestMaxNumberSubmissionsPerUser = useUserStore(state => state.contestMaxNumberSubmissionsPerUser);
+  const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount } = useUserStore(
+    state => state,
+  );
   const contestInProgress = moment().isBefore(votesClose);
 
-  const { isListProposalsLoading, isListProposalsSuccess, listProposalsIds } = useProposalStore(state => state);
+  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
   const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
@@ -134,6 +136,10 @@ const LayoutViewContest = (props: any) => {
             {contestStatus === ContestStatus.SubmissionOpen && (
               <div className="mt-8">
                 <ButtonV3
+                  type="txAction"
+                  disabled={
+                    !currentUserQualifiedToSubmit || currentUserProposalCount >= contestMaxNumberSubmissionsPerUser
+                  }
                   color="bg-gradient-create rounded-[40px]"
                   size="large"
                   onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}

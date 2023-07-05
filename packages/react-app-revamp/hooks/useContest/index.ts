@@ -145,10 +145,9 @@ export function useContest() {
 
         setContestName(results[0].toString());
         setContestAuthor(results[1].toString(), results[1].toString());
-        //@ts-ignore
-        setContestMaxNumberSubmissionsPerUser(results[2]);
-        //@ts-ignore
-        setContestMaxProposalCount(results[3]);
+
+        setContestMaxNumberSubmissionsPerUser(parseFloat(results[2].toString()));
+        setContestMaxProposalCount(parseFloat(results[3].toString()));
         //@ts-ignore
         setSubmissionsOpen(new Date(parseInt(results[4]) * 1000));
         setVotesClose(closingVoteDate);

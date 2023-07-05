@@ -110,15 +110,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     }
   }, [isOpen, isLoading]);
 
-  const onClickSubmitAnotherProposal = () => {
-    setProposal("");
-    setShowForm(true);
-    editorProposal?.setOptions({
-      ...editorProposal.options,
-      editable: true,
-    });
-  };
-
   const tipMessage = () => {
     return (
       <p className="hidden md:flex items-center">
