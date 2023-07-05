@@ -1,5 +1,8 @@
 import FileUpload from "@components/_pages/Create/components/FileUpload";
 import { EMPTY_FIELDS_SUBMISSION } from "@components/_pages/Create/constants/csv";
+import CSVParseError, {
+  ParseError,
+} from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor/CSVParseError";
 import { validateSubmissionFields } from "@components/_pages/Create/utils/csv";
 import { parseCsvSubmissions } from "@helpers/parseSubmissionsCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
@@ -27,15 +30,13 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   } = useDeployContestStore(state => state);
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const currentStep = step + 1;
-  const currentStepError = errors.find(error => error.step === currentStep);
-  const columnsError = currentStepError?.message === "columns";
-  const uploadLimitExceeded = currentStepError?.message === "uploadLimitExceeded";
+  const [parseError, setParseError] = useState<ParseError>("");
 
   // If user clean the fields, reset the state
   useEffect(() => {
     if (fields.length) return;
 
-    updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
+    addEmptyFields();
   }, [fields]);
 
   // Update state and propagate changes to parent component
@@ -83,29 +84,42 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   };
 
   const clearFields = () => {
-    updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
+    addEmptyFields();
     setSubmissionMerkle(null);
     setError(currentStep, { step: currentStep, message: "" });
     setUploadSuccess(false);
   };
 
+  const addEmptyFields = () => {
+    updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
+  };
+
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvSubmissions(file);
 
-    if (results.missingColumns) {
-      setError(currentStep, { step: currentStep, message: "columns" });
-      updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
-      return;
-    } else if (results.invalidEntries?.length) {
+    switch (results.error?.kind) {
+      case "missingColumns":
+        setParseError("missingColumns");
+        addEmptyFields();
+        return;
+      case "limitExceeded":
+        setParseError("limitExceeded");
+        addEmptyFields();
+        return;
+      case "duplicates":
+        setParseError("duplicates");
+        addEmptyFields();
+        return;
+      default:
+        setParseError("");
+    }
+
+    if (results.invalidEntries?.length) {
       setError(currentStep, { step: currentStep, message: "entries" });
-    } else if (results.limitExceeded) {
-      setError(currentStep, { step: currentStep, message: "uploadLimitExceeded" });
-      updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
     } else {
       setError(currentStep, { step: currentStep, message: "" });
       setUploadSuccess(true);
     }
-
     // Get current entries
     let currentEntries = fields;
 
@@ -162,26 +176,8 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      {uploadLimitExceeded ? (
-        <div className="flex flex-col text-[16px] animate-fadeIn">
-          <p className=" text-negative-11">
-            Ruh-roh! CSV file has too many rows.{" "}
-            <span className="font-bold">The maximum number of rows allowed is 10,000</span>
-          </p>
-        </div>
-      ) : columnsError ? (
-        <div className="flex flex-col text-[16px] animate-fadeIn">
-          <p className=" text-negative-11">
-            ruh-roh! csv couldn’t be imported.{" "}
-            <span className="font-bold">
-              make sure there are no headers or additional <br />
-              columns.
-            </span>{" "}
-            csv should have 1) only one column, 2) a column containing <span className="italic">only</span> valid
-            <br /> EVM addresses
-          </p>
-        </div>
-      ) : fields.some(field => field.address !== "") ? (
+      <CSVParseError type={parseError} step="submission" />
+      {fields.some(field => field.address !== "") ? (
         <p className="italic text-neutral-11 text-[16px] ">
           only first 100 entries of allowlist are visible to preview and edit
         </p>

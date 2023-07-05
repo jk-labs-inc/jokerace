@@ -6,12 +6,16 @@ export type InvalidEntry = {
   error: boolean;
 };
 
+export type ValidationError =
+  | { kind: "missingColumns" }
+  | { kind: "limitExceeded" }
+  | { kind: "duplicates" }
+  | { kind: "parseError"; error: Error };
+
 export type ParseCsvResult = {
   data: string[];
   invalidEntries: InvalidEntry[];
-  limitExceeded?: boolean;
-  missingColumns?: boolean;
-  parseError?: Error;
+  error?: ValidationError;
 };
 
 const MAX_ROWS = 10000; // 10k for now
@@ -20,12 +24,13 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   const data = results.data as Array<any>;
   const addressData: string[] = [];
   const invalidEntries: InvalidEntry[] = [];
+  const addresses: Set<string> = new Set();
 
   if (data.length > MAX_ROWS) {
     return {
       data: [],
-      invalidEntries: [],
-      limitExceeded: true,
+      invalidEntries,
+      error: { kind: "limitExceeded" },
     };
   }
 
@@ -35,14 +40,24 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   if (firstRow.length !== expectedColumns) {
     return {
       data: [],
-      invalidEntries: [],
-      missingColumns: true,
+      invalidEntries,
+      error: { kind: "missingColumns" },
     };
   }
 
   for (const row of data) {
     let error: boolean = false;
     const address = row[0];
+
+    if (addresses.has(address)) {
+      return {
+        data: [],
+        invalidEntries,
+        error: { kind: "duplicates" },
+      };
+    } else {
+      addresses.add(address);
+    }
 
     try {
       getAddress(address);
@@ -51,7 +66,7 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
     }
 
     if (error) {
-      invalidEntries.push({ address: address, error });
+      invalidEntries.push({ address, error });
     } else {
       addressData.push(address);
     }
@@ -66,13 +81,13 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
 export const parseCsvSubmissions = (file: File): Promise<ParseCsvResult> => {
   return new Promise(resolve => {
     Papa.parse(file, {
-      header: false, // Update this to be false since we don't have headers
+      header: false,
       dynamicTyping: true,
       skipEmptyLines: true,
       complete: results => {
         resolve(processResults(results));
       },
-      error: error => resolve({ data: [], invalidEntries: [], parseError: error }),
+      error: error => resolve({ data: [], invalidEntries: [], error: { kind: "parseError", error } }),
     });
   });
 };
