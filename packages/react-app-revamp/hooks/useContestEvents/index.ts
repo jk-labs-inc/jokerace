@@ -67,9 +67,9 @@ export function useContestEvents() {
         const proposalData: any = {
           authorEthereumAddress: proposal[0],
           author: author ?? proposal[0],
-          content: proposal[1],
-          isContentImage: isUrlToImage(proposal[1]) ? true : false,
-          exists: proposal[2],
+          content: proposal[2],
+          isContentImage: isUrlToImage(proposal[2]) ? true : false,
+          exists: proposal[1],
           //@ts-ignore
           votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
         };

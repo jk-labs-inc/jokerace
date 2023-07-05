@@ -142,7 +142,7 @@ export function useDeployContest() {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setError(error as CustomError);
       setIsLoading(false);
-      console.error("Error: ", error); // Log all errors
+      console.error("Error: ", error);
     }
   }
 
@@ -151,20 +151,34 @@ export function useDeployContest() {
     votingMerkle: VotingMerkle | null,
     submissionMerkle: SubmissionMerkle | null,
   ) {
-    if (!isSupabaseConfigured) {
-      throw new Error("Supabase is not configured");
+    try {
+      if (!isSupabaseConfigured) {
+        throw new Error("Supabase is not configured");
+      }
+
+      const tasks = [];
+
+      tasks.push(indexContestV3(contestData));
+
+      if (votingMerkle && votingMerkle.voters.length > 0) {
+        const submitters = submissionMerkle ? submissionMerkle.submitters : [];
+        tasks.push(
+          indexContestParticipantsV3(
+            contestData.contractAddress,
+            votingMerkle.voters,
+            submitters,
+            contestData.networkName,
+          ),
+        );
+      }
+
+      await Promise.all(tasks);
+    } catch (error) {
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setError(error as CustomError);
+      setIsLoading(false);
+      console.error("Error: ", error);
     }
-
-    const tasks = [];
-
-    tasks.push(indexContestV3(contestData));
-
-    if (votingMerkle && votingMerkle.voters.length > 0) {
-      const submitters = submissionMerkle ? submissionMerkle.submitters : [];
-      tasks.push(indexContestParticipantsV3(contestData.contractAddress, votingMerkle.voters, submitters));
-    }
-
-    await Promise.all(tasks);
   }
 
   return {
