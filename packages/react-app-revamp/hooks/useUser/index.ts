@@ -69,18 +69,6 @@ export function useUser() {
     if (!userAddress || !contractConfig) return;
 
     if (submissionMerkleTree.getHexRoot() === "0x") {
-      const numOfSubmittedProposals = await readContract({
-        ...contractConfig,
-        functionName: "getNumSubmissions",
-        args: userAddress,
-      });
-
-      if (numOfSubmittedProposals && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
-        setCurrentUserQualifiedToSubmit(false);
-        return;
-      }
-
-      setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
       setCurrentUserQualifiedToSubmit(true);
     } else {
       try {
@@ -92,14 +80,7 @@ export function useUser() {
           .eq("contest_address", address)
           .eq("network_name", lowerCaseChainName);
 
-        //TODO finish this part
         if (data && data.length > 0 && data[0].can_submit) {
-          const numOfSubmittedProposals = await readContract({
-            ...contractConfig,
-            functionName: "getNumSubmissions",
-            args: userAddress,
-          });
-
           setCurrentUserQualifiedToSubmit(true);
         } else {
           setCurrentUserQualifiedToSubmit(false);
