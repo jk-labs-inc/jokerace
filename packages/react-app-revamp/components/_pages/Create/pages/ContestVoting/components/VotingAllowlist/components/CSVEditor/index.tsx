@@ -5,6 +5,7 @@ import { parseCsvVoting } from "@helpers/parseVotingCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
+import CSVParseError, { ParseError } from "./CSVParseError";
 import ScrollableTableBody from "./TableBody";
 
 export type VotingFieldObject = {
@@ -29,15 +30,13 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   } = useDeployContestStore(state => state);
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const currentStep = step + 1;
-  const currentStepError = errors.find(error => error.step === currentStep);
-  const columnsError = currentStepError?.message === "columns";
-  const uploadLimitExceeded = currentStepError?.message === "uploadLimitExceeded";
+  const [parseError, setParseError] = useState<ParseError>("");
 
   // If user clean the fields, reset the state
   useEffect(() => {
     if (fields.length) return;
 
-    updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+    addEmptyFields();
   }, [fields]);
 
   // Update state and propagate changes to parent component
@@ -97,6 +96,10 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     setFields(updatedFields);
   };
 
+  const addEmptyFields = () => {
+    updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+  };
+
   const clearFields = () => {
     updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
     setVotingMerkle(null);
@@ -107,18 +110,29 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvVoting(file);
 
-    if (results.missingColumns) {
-      setError(currentStep, { step: currentStep, message: "columns" });
-      updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
-      return;
-    } else if (results.invalidEntries?.length) {
+    switch (results.error?.kind) {
+      case "missingColumns":
+        setParseError("missingColumns");
+        addEmptyFields();
+        return;
+      case "limitExceeded":
+        setParseError("limitExceeded");
+        addEmptyFields();
+        return;
+      case "duplicates":
+        setParseError("duplicates");
+        addEmptyFields();
+        return;
+      case "over18Decimal":
+        setParseError("over18Decimal");
+        addEmptyFields();
+        return;
+      default:
+        setParseError("");
+    }
+
+    if (results.invalidEntries?.length) {
       setError(currentStep, { step: currentStep, message: "entries" });
-      updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
-      return;
-    } else if (results.limitExceeded) {
-      setError(currentStep, { step: currentStep, message: "uploadLimitExceeded" });
-      updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
-      return;
     } else {
       setError(currentStep, { step: currentStep, message: "" });
       setUploadSuccess(true);
@@ -183,28 +197,8 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      {uploadLimitExceeded ? (
-        <div className="flex flex-col text-[16px] animate-fadeIn">
-          <p className=" text-negative-11">
-            Ruh-roh! CSV file has too many rows.{" "}
-            <span className="font-bold">The maximum number of rows allowed is 10,000</span>
-          </p>
-        </div>
-      ) : columnsError ? (
-        <div className="flex flex-col text-[16px] animate-fadeIn">
-          <p className=" text-negative-11">
-            Ruh-roh! CSV couldn’t be imported.{" "}
-            <span className="font-bold">
-              Make sure there are no headers or additional <br />
-              columns.
-            </span>{" "}
-            CSV should have 1) only two columns, 2) a first column containing <span className="italic">
-              only
-            </span> valid <br />
-            EVM addresses, and 3) a second column containing number of votes.
-          </p>
-        </div>
-      ) : fields.some(field => field.address !== "" || field.votes !== "") ? (
+      <CSVParseError type={parseError} step="voting" />
+      {fields.some(field => field.address !== "" || field.votes !== "") ? (
         <p className="italic text-neutral-11 text-[16px]">
           Only first 100 entries of allowlist are visible to preview and edit
         </p>

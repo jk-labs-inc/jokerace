@@ -2,7 +2,7 @@
 
 Check out the live site at [jokerace.xyz](https://jokerace.xyz/)!
 
-You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io).
+You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io)!
 
 ## Pre-requisites
 - `yarn` installed
@@ -29,7 +29,7 @@ First, navigate to the top directory of this repo and run the development server
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
 ### Usage Note
 If you are not running Supabase, then the search functionality will not work. You can still access contests and the full functionality of the site, though, by visiting the URL with the format http://localhost:3000/contest/{chain}/{contest_address} where `chain` is the name of the chain that the contest is on as specified [here](https://github.com/jk-labs-inc/jokerace/blob/staging/packages/react-app-revamp/config/wagmi/index.ts), and `contest_address` is the address of the contest contract on that chain.
