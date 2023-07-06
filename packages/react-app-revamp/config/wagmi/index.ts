@@ -46,7 +46,7 @@ const otherChains = [
   celoMainnet
 ];
 
-const defaultChains = [chain.polygon, chain.arbitrum, chain.mainnet, chain.optimism];
+const defaultChains = [chain.polygon, chain.arbitrum, chain.optimism];
 const appChains = [...defaultChains, ...otherChains];
 const providers =
   process.env.NODE_ENV === "development"
