@@ -63,7 +63,6 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-4 md:w-[350px]">
               {Object.keys(votesPerAddress)
-                .sort((a, b) => votesPerAddress[b].votes - votesPerAddress[a].votes)
                 .map((address: string, index, self) => (
                   <div
                     key={address}
