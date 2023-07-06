@@ -96,8 +96,6 @@ export function useUser() {
         return;
       }
 
-      // If the current user can submit, set 'currentUserQualifiedToSubmit' to true.
-      //TODO check if this is correct
       if (data && data.length > 0 && data[0].can_submit) {
         const numOfSubmittedProposals = await readContract({
           ...contractConfig,
@@ -105,6 +103,12 @@ export function useUser() {
           args: userAddress,
         });
 
+        if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
+          setCurrentUserQualifiedToSubmit(false);
+          return;
+        }
+
+        setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
         setCurrentUserQualifiedToSubmit(true);
       } else {
         setCurrentUserQualifiedToSubmit(false);
