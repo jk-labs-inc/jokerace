@@ -14,6 +14,7 @@ import { litTestnet } from "./custom-chains/litTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { celoTestnet } from "./custom-chains/celoTestnet";
 import { celoMainnet } from "./custom-chains/celoMainnet";
+import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -43,7 +44,8 @@ const otherChains = [
   litTestnet,
   zetaTestnet,
   celoTestnet,
-  celoMainnet
+  celoMainnet,
+  publicGoodsNetworkTestnet
 ];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.optimism];
