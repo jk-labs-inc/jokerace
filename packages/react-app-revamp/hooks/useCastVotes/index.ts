@@ -87,6 +87,7 @@ export function useCastVotes() {
       setTransactionData({
         hash: receipt.transactionHash,
       });
+
       await updateCurrentUserVotes();
       setIsLoading(false);
       setIsSuccess(true);

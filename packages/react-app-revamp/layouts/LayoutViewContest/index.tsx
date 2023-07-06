@@ -133,17 +133,20 @@ const LayoutViewContest = (props: any) => {
           <div className="animate-apppear">
             {contestStatus === ContestStatus.SubmissionOpen && (
               <div className="mt-8">
-                <ButtonV3
-                  type="txAction"
-                  disabled={
-                    !currentUserQualifiedToSubmit || currentUserProposalCount >= contestMaxNumberSubmissionsPerUser
-                  }
-                  color="bg-gradient-create rounded-[40px]"
-                  size="large"
-                  onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
-                >
-                  submit a response
-                </ButtonV3>
+                {currentUserQualifiedToSubmit ||
+                  (currentUserProposalCount <= contestMaxNumberSubmissionsPerUser && (
+                    <ButtonV3
+                      type="txAction"
+                      disabled={
+                        !currentUserQualifiedToSubmit || currentUserProposalCount >= contestMaxNumberSubmissionsPerUser
+                      }
+                      color="bg-gradient-create rounded-[40px]"
+                      size="large"
+                      onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
+                    >
+                      submit a response
+                    </ButtonV3>
+                  ))}
               </div>
             )}
 
@@ -263,20 +266,14 @@ const LayoutViewContest = (props: any) => {
             {isSuccess && !error && !isLoading && (
               <>
                 {displayReloadBanner === true && (
-                  <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-col gap-y-3 text-sm font-bold">
-                    <div className="flex gap-1.5 flex-col">
+                  <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+                    <div className="flex flex-col">
                       <span>Let&apos;s refresh!</span>
                       <p className="font-normal">Looks like live updates were frozen.</p>
                     </div>
-                    <Button
-                      className="w-full 2xs:w-fit-content"
-                      intent="primary-outline"
-                      scale="xs"
-                      onClick={() => reload()}
-                    >
-                      <RefreshIcon className="mie-1ex w-4" />
+                    <ButtonV3 color="bg-gradient-next" onClick={() => reload()}>
                       Refresh
-                    </Button>
+                    </ButtonV3>
                   </div>
                 )}
                 <div className="animate-appear pt-3 md:pt-0">
@@ -331,7 +328,11 @@ const LayoutViewContest = (props: any) => {
                   </div>
 
                   {contestInProgress && (
-                    <div className="mt-8 flex flex-col md:flex-row gap-4 sticky top-0 z-10 bg-true-black">
+                    <div
+                      className={`mt-8 flex flex-col md:flex-row gap-4 sticky ${
+                        displayReloadBanner ? "top-[105px]" : "top-0"
+                      } z-10 bg-true-black`}
+                    >
                       <LayoutContestCountdown
                         submissionOpen={submissionsOpen}
                         votingOpen={votesOpen}

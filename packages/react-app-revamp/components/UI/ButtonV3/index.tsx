@@ -7,6 +7,7 @@ type ButtonSize = "extraSmall" | "small" | "default" | "large";
 interface ButtonV3Props {
   type?: "default" | "txAction";
   color?: string;
+  textColor?: string;
   size?: ButtonSize;
   children?: React.ReactNode;
   disabled?: boolean;
@@ -24,6 +25,7 @@ const ButtonV3: React.FC<ButtonV3Props> = ({
   type = "default",
   color = "yellow",
   size = "default",
+  textColor = "true-black",
   disabled,
   onClick,
   children,
@@ -54,7 +56,7 @@ const ButtonV3: React.FC<ButtonV3Props> = ({
 
   return (
     <button
-      className={`${color} ${sizeClasses} ${isDisabled} text-[16px] tracking-tighter rounded-[10px] text-true-black font-bold`}
+      className={`text-[16px] tracking-tighter rounded-[10px]  font-bold text-${textColor} ${color} ${sizeClasses} ${isDisabled} `}
       onClick={onClickHandler}
     >
       {children}

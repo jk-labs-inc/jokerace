@@ -4,6 +4,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
+import MerkleTree from "merkletreejs";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { useAccount, useNetwork } from "wagmi";
@@ -17,11 +18,9 @@ export function useUser() {
     setCurrentUserTotalVotesAmount,
     setCurrentUserProposalCount,
     currentUserTotalVotesAmount,
-    contestMaxNumberSubmissionsPerUser,
   } = useUserStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
   const {
-    submissionMerkleTree,
     setIsSuccess: setIsContestSuccess,
     setIsLoading: setIsContestLoading,
     setError: setContestError,
@@ -63,8 +62,13 @@ export function useUser() {
     return contractConfig;
   }
 
-  const checkIfCurrentUserQualifyToSubmit = async () => {
+  const checkIfCurrentUserQualifyToSubmit = async (
+    submissionMerkleTree: MerkleTree,
+    contestMaxNumberSubmissionsPerUser: number,
+  ) => {
     const contractConfig = await getContractConfig();
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
 
     if (!userAddress || !contractConfig) return;
 
@@ -76,7 +80,7 @@ export function useUser() {
       });
 
       if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
-        setCurrentUserQualifiedToSubmit(false);
+        setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
         return;
       }
 
@@ -84,7 +88,6 @@ export function useUser() {
       setCurrentUserQualifiedToSubmit(true);
     } else {
       try {
-        // Perform a lookup in the 'contest_participants_v3' table.
         const { data } = await supabase
           .from("contest_participants_v3")
           .select("can_submit")
@@ -100,7 +103,7 @@ export function useUser() {
           });
 
           if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
-            setCurrentUserQualifiedToSubmit(false);
+            setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
             return;
           }
 

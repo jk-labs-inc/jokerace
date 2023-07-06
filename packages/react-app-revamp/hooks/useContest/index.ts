@@ -1,14 +1,11 @@
-import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import useContestsIndex from "@hooks/useContestsIndex";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore } from "date-fns";
-import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -146,7 +143,8 @@ export function useContest() {
         setContestName(results[0].toString());
         setContestAuthor(results[1].toString(), results[1].toString());
 
-        setContestMaxNumberSubmissionsPerUser(parseFloat(results[2].toString()));
+        const contestMaxNumberSubmissionsPerUser = parseFloat(results[2].toString());
+        setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
         setContestMaxProposalCount(parseFloat(results[3].toString()));
         //@ts-ignore
         setSubmissionsOpen(new Date(parseInt(results[4]) * 1000));
@@ -177,6 +175,8 @@ export function useContest() {
           setCanUpdateVotesInRealTime(false);
         }
 
+        const config = await import("@config/supabase");
+        const supabase = config.supabase;
         const { data, error } = await supabase
           .from("contests_v3")
           .select("submissionMerkleTree, votingMerkleTree")
@@ -217,7 +217,7 @@ export function useContest() {
             setSubmitters(submissionMerkleTreeData.submitters);
           }
 
-          await checkIfCurrentUserQualifyToSubmit();
+          await checkIfCurrentUserQualifyToSubmit(submissionMerkleTree, contestMaxNumberSubmissionsPerUser);
           await checkIfCurrentUserQualifyToVote();
           setSubmissionMerkleTree(submissionMerkleTree);
           setVotingMerkleTree(votingMerkleTree);

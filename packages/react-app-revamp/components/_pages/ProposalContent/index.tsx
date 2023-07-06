@@ -6,9 +6,10 @@ import { formatNumber } from "@helpers/formatNumber";
 import { isUrlTweet } from "@helpers/isUrlTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import moment from "moment";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
@@ -43,6 +44,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
+  const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
     switch (contestStatus) {
@@ -57,28 +59,30 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
         return (
           <>
             <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
-            <ButtonV3
-              type="txAction"
-              color="bg-gradient-vote rounded-[40px]"
-              size="large"
-              onClick={() => {
-                setPickProposal(id);
-                setIsVotingModalOpen(true);
-              }}
-            >
-              vote
-            </ButtonV3>
+            {currentUserAvailableVotesAmount > 0 && (
+              <ButtonV3
+                type="txAction"
+                color="bg-gradient-vote rounded-[40px]"
+                size="large"
+                onClick={() => {
+                  setPickProposal(id);
+                  setIsVotingModalOpen(true);
+                }}
+              >
+                vote
+              </ButtonV3>
+            )}
           </>
         );
       case ContestStatus.VotingClosed:
         return (
           <>
-            <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
+            <p className="text-positive-11">{formatNumber(proposal.votes, 3)} votes</p>
             <p className="text-neutral-10">voting closed</p>
           </>
         );
     }
-  }, [contestStatus, proposal.votes]);
+  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];

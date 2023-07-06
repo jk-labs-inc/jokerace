@@ -39,7 +39,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
           displayLensProfile={true}
         />
         <LayoutContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
-        {contestStatus === ContestStatus.VotingOpen && (
+        {contestStatus === ContestStatus.VotingOpen && currentUserAvailableVotesAmount > 0 && (
           <div className="flex flex-col gap-8">
             <p className="text-neutral-11 text-[24px] font-bold">vote</p>
             <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onSubmitCastVotes} />

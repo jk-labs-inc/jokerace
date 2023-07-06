@@ -56,14 +56,26 @@ const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpe
   }, [submissionOpen, votingOpen, votingClose]);
 
   const displayText = () => {
-    if (duration.days > 0) {
-      return `${duration.days} days ${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec to ${phase}`;
-    } else if (duration.hours > 0) {
-      return `${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec to ${phase}`;
-    } else if (duration.minutes > 0) {
-      return `${duration.minutes} min ${duration.seconds} sec to ${phase}`;
+    if (isScrolled) {
+      if (duration.days > 0) {
+        return `${duration.days}d ${duration.hours}h ${duration.minutes}m ${duration.seconds}s to ${phase}`;
+      } else if (duration.hours > 0) {
+        return `${duration.hours}h ${duration.minutes}m ${duration.seconds}s to ${phase}`;
+      } else if (duration.minutes > 0) {
+        return `${duration.minutes}m ${duration.seconds}s to ${phase}`;
+      } else {
+        return `${duration.seconds}s to ${phase}`;
+      }
     } else {
-      return `${duration.seconds} sec to ${phase}`;
+      if (duration.days > 0) {
+        return `${duration.days} days ${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec to ${phase}`;
+      } else if (duration.hours > 0) {
+        return `${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec to ${phase}`;
+      } else if (duration.minutes > 0) {
+        return `${duration.minutes} min ${duration.seconds} sec to ${phase}`;
+      } else {
+        return `${duration.seconds} sec to ${phase}`;
+      }
     }
   };
 
