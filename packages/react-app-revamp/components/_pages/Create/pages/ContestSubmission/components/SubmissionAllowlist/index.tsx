@@ -73,9 +73,6 @@ const CreateSubmissionAllowlist = () => {
         <p className="text-[16px] text-neutral-11">
           copy-paste allowlist into preview box (up to 100 line items) or upload a csv below <br />
         </p>
-        <p className="text-[16px] text-neutral-11">
-          Please note: there must be no duplicate addresses in the allowlist <br />
-        </p>
       </div>
       <CSVEditorSubmission onChange={onAllowListChange} />
 

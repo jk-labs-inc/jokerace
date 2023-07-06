@@ -10,7 +10,6 @@ import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal"
 import ListProposals from "@components/_pages/ListProposals";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
-import { chains } from "@config/wagmi";
 import { RefreshIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
@@ -25,13 +24,12 @@ import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper, useProposalStore } from "@hooks/useProposal/store";
 import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper, useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import useUser from "@hooks/useUser";
 import { UserWrapper, useUserStore } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
 import { isBefore } from "date-fns";
 import moment from "moment";
 import Link from "next/link";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAccount, useNetwork } from "wagmi";
@@ -354,6 +352,8 @@ const LayoutViewContest = (props: any) => {
                   )}
 
                   {renderTabs}
+
+                  {props.children}
 
                   <DialogModalSendProposal
                     isOpen={isSubmitProposalModalOpen}

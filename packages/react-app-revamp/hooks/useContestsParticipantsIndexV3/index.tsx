@@ -2,7 +2,12 @@ import { ethers } from "ethers";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 
 export function useContestParticipantsIndexV3() {
-  const indexContestParticipantsV3 = async (address: string, voters: Recipient[], submitters: Recipient[]) => {
+  const indexContestParticipantsV3 = async (
+    address: string,
+    voters: Recipient[],
+    submitters: Recipient[],
+    networkName: string,
+  ) => {
     try {
       const config = await import("@config/supabase");
       const supabase = config.supabase;
@@ -36,6 +41,7 @@ export function useContestParticipantsIndexV3() {
           // If everyone can submit or if this participant is a designated submitter, mark them as able to submit
           can_submit: everyoneCanSubmit || isSubmitter,
           num_votes: num_votes,
+          network_name: networkName,
         };
       });
 

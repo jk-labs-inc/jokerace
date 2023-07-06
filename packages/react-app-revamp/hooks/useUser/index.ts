@@ -29,6 +29,7 @@ export function useUser() {
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
+  const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
 
   /**
    * Display an error toast in the UI for any contract related error
@@ -56,9 +57,7 @@ export function useUser() {
     const contractConfig = {
       addressOrName: address,
       contractInterface: abi,
-      chainId: chains.find(
-        c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
-      )?.id,
+      chainId: chains.find(c => c.name.replace(/\s+/g, "").toLowerCase() === lowerCaseChainName)?.id,
     };
 
     return contractConfig;
@@ -84,33 +83,34 @@ export function useUser() {
       setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
       setCurrentUserQualifiedToSubmit(true);
     } else {
-      // Perform a lookup in the 'contest_participants_v3' table.
-      const { data, error } = await supabase
-        .from("contest_participants_v3")
-        .select("can_submit")
-        .eq("user_address", userAddress)
-        .eq("contest_address", address);
+      try {
+        // Perform a lookup in the 'contest_participants_v3' table.
+        const { data } = await supabase
+          .from("contest_participants_v3")
+          .select("can_submit")
+          .eq("user_address", userAddress)
+          .eq("contest_address", address)
+          .eq("network_name", lowerCaseChainName);
 
-      if (error) {
-        console.error("Error performing lookup in 'contest_participants_v3':", error);
-        return;
-      }
+        if (data && data.length > 0 && data[0].can_submit) {
+          const numOfSubmittedProposals = await readContract({
+            ...contractConfig,
+            functionName: "getNumSubmissions",
+            args: userAddress,
+          });
 
-      if (data && data.length > 0 && data[0].can_submit) {
-        const numOfSubmittedProposals = await readContract({
-          ...contractConfig,
-          functionName: "getNumSubmissions",
-          args: userAddress,
-        });
+          if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
+            setCurrentUserQualifiedToSubmit(false);
+            return;
+          }
 
-        if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
-          setCurrentUserQualifiedToSubmit(false);
-          return;
+          setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
+          setCurrentUserQualifiedToSubmit(true);
+        } else {
+          setCurrentUserQualifiedToSubmit(true);
         }
-
-        setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
-        setCurrentUserQualifiedToSubmit(true);
-      } else {
+      } catch (error) {
+        console.error("Error performing lookup in 'contest_participants_v3':", error);
         setCurrentUserQualifiedToSubmit(false);
       }
     }
@@ -122,41 +122,42 @@ export function useUser() {
   async function checkIfCurrentUserQualifyToVote() {
     if (!userAddress) return;
 
-    // Perform a lookup in the 'contest_participants_v3' table.
-    const { data, error } = await supabase
-      .from("contest_participants_v3")
-      .select("num_votes")
-      .eq("user_address", userAddress)
-      .eq("contest_address", address);
+    try {
+      // Perform a lookup in the 'contest_participants_v3' table.
+      const { data } = await supabase
+        .from("contest_participants_v3")
+        .select("num_votes")
+        .eq("user_address", userAddress)
+        .eq("contest_address", address)
+        .eq("network_name", lowerCaseChainName);
 
-    if (error) {
-      console.error("Error performing lookup in 'contest_participants_v3':", error);
-      return;
-    }
+      if (data && data.length > 0 && data[0].num_votes > 0) {
+        const contractConfig = await getContractConfig();
+        if (!contractConfig) return;
 
-    // If the current user can vote, set 'currentUserQualifiedToSubmit' to true.
-    if (data && data.length > 0 && data[0].num_votes > 0) {
-      const contractConfig = await getContractConfig();
-      if (!contractConfig) return;
+        const currentUserTotalVotesCast = await readContract({
+          ...contractConfig,
+          functionName: "contestAddressTotalVotesCast",
+          args: userAddress,
+        });
 
-      const currentUserTotalVotesCast = await readContract({
-        ...contractConfig,
-        functionName: "contestAddressTotalVotesCast",
-        args: userAddress,
-      });
+        const userVotes = data[0].num_votes;
+        //@ts-ignore
+        const castVotes = currentUserTotalVotesCast / 1e18;
 
-      const userVotes = data[0].num_votes;
-      //@ts-ignore
-      const castVotes = currentUserTotalVotesCast / 1e18;
-
-      if (castVotes > 0) {
-        setCurrentUserTotalVotesAmount(userVotes);
-        setCurrentUserAvailableVotesAmount(userVotes - castVotes);
+        if (castVotes > 0) {
+          setCurrentUserTotalVotesAmount(userVotes);
+          setCurrentUserAvailableVotesAmount(userVotes - castVotes);
+        } else {
+          setCurrentUserTotalVotesAmount(userVotes);
+          setCurrentUserAvailableVotesAmount(userVotes);
+        }
       } else {
-        setCurrentUserTotalVotesAmount(userVotes);
-        setCurrentUserAvailableVotesAmount(userVotes);
+        setCurrentUserTotalVotesAmount(0);
+        setCurrentUserAvailableVotesAmount(0);
       }
-    } else {
+    } catch (error) {
+      console.error("Error performing lookup in 'contest_participants_v3':", error);
       setCurrentUserTotalVotesAmount(0);
       setCurrentUserAvailableVotesAmount(0);
     }
