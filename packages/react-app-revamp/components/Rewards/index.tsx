@@ -40,6 +40,10 @@ const ContestRewards = () => {
     if (supportsRewardsModule) getContestRewardsModule();
   }, [supportsRewardsModule]);
 
+  if (!supportsRewardsModule && !creator) {
+    return null;
+  }
+
   if (!supportsRewardsModule && creator) {
     return (
       <div className="flex flex-col gap-12">
