@@ -1,19 +1,15 @@
 import Iframe from "@components/tiptap/Iframe";
-import Button from "@components/UI/Button";
-import DialogModal from "@components/UI/DialogModal";
+import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
-import TipTapEditor from "@components/UI/TipTapEditor";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
-import TrackerDeployTransaction from "@components/UI/TrackerDeployTransaction";
-import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import {
   loadSubmissionFromLocalStorage,
   removeSubmissionFromLocalStorage,
   saveSubmissionToLocalStorage,
   SubmissionCache,
 } from "@helpers/submissionCaching";
-import NextImage from "next/image";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
@@ -25,16 +21,11 @@ import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Interweave } from "interweave";
-import { UrlMatcher } from "interweave-autolink";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { FC, useEffect, useRef, useState } from "react";
-import ButtonV3 from "@components/UI/ButtonV3";
-import { useAccount } from "wagmi";
 import moment from "moment";
-import { toast } from "react-toastify";
-import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
+import NextImage from "next/image";
+import { useRouter } from "next/router";
+import { FC, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 interface DialogModalSendProposalProps {
   isOpen: boolean;
@@ -44,16 +35,10 @@ interface DialogModalSendProposalProps {
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
   const { address } = useAccount();
   const { asPath } = useRouter();
-  const { sendProposal, isLoading, error, isSuccess } = useSubmitProposal();
-  const { transactionData } = useSubmitProposalStore(state => state);
-  const { contestPrompt, contestMaxProposalCount, votesOpen } = useContestStore(state => state);
-  const { listProposalsIds } = useProposalStore(state => state);
-  const { currentUserProposalCount, contestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
+  const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
+  const { contestPrompt, votesOpen } = useContestStore(state => state);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
-  const toastIdRef = useRef<string | number | null>(null);
-
-  const [showForm, setShowForm] = useState(true);
   const contestId = asPath.split("/")[3];
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
   const [proposal, setProposal] = useState(savedProposal?.content || "");
@@ -92,32 +77,11 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
 
   useEffect(() => {
     if (isSuccess) {
-      setShowForm(false);
+      setIsOpen(false);
       editorProposal?.commands.clearContent();
       removeSubmissionFromLocalStorage("submissions", contestId);
     }
-    if (isLoading || error) setShowForm(true);
-  }, [isSuccess, isLoading, error]);
-
-  useEffect(() => {
-    if (!isOpen && !isLoading) {
-      setShowForm(true);
-      editorProposal?.commands.focus();
-      editorProposal?.setOptions({
-        ...editorProposal.options,
-        editable: true,
-      });
-    }
-  }, [isOpen, isLoading]);
-
-  const onClickSubmitAnotherProposal = () => {
-    setProposal("");
-    setShowForm(true);
-    editorProposal?.setOptions({
-      ...editorProposal.options,
-      editable: true,
-    });
-  };
+  }, [isSuccess]);
 
   const tipMessage = () => {
     return (
@@ -132,30 +96,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   };
 
   const onSubmitProposal = () => {
-    const promiseFn = () => sendProposal(proposal.trim());
-
-    const statusMessages: ToastMessage[] = [
-      {
-        message: "deploying proposal...",
-        successMessage: "Your proposal was deployed successfully!",
-        status: "pending",
-      },
-    ];
-
-    toastIdRef.current = toast(
-      <MultiStepToast
-        messages={statusMessages}
-        promises={[promiseFn]}
-        toastIdRef={toastIdRef}
-        completionMessage="Your proposal was deployed successfully!"
-      />,
-      {
-        position: "bottom-center",
-        bodyClassName: "text-[16px] font-bold",
-        autoClose: false,
-        icon: false,
-      },
-    );
+    sendProposal(proposal.trim());
   };
 
   return (
@@ -178,7 +119,12 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           <p className="text-[16px] text-neutral-11 mt-2">{tipMessage()}</p>
         </div>
         <div className="mt-2">
-          <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large" onClick={onSubmitProposal}>
+          <ButtonV3
+            color="bg-gradient-create rounded-[40px]"
+            size="large"
+            onClick={onSubmitProposal}
+            disabled={isLoading}
+          >
             submit!
           </ButtonV3>
         </div>

@@ -11,6 +11,7 @@ interface RewardsTableShareProps {
   abiRewardsModule: any;
   chainId: number;
   totalShares: number;
+  isLast: boolean;
 }
 
 export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
@@ -33,7 +34,11 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
           {isError && "Something went wrong, please reload the page."}
           {data && (
             <div className="flex flex-col gap-4 md:w-[277px]">
-              <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
+              <div
+                className={`flex justify-between items-end text-[16px] font-bold ${
+                  !props.isLast ? "border-b border-neutral-10" : ""
+                } pb-3`}
+              >
                 <p>{ordinalSuffix(parseFloat(payee))} place</p>
                 <p>{(data.toNumber() * 100) / totalShares}% of rewards</p>
               </div>

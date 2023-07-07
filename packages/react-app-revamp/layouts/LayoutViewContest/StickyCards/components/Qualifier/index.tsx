@@ -11,7 +11,13 @@ import { useAccount } from "wagmi";
 
 const LayoutContestQualifier = () => {
   const { isConnected } = useAccount();
-  const { currentUserQualifiedToSubmit, currentUserAvailableVotesAmount } = useUserStore(state => state);
+  const {
+    currentUserQualifiedToSubmit,
+    currentUserAvailableVotesAmount,
+    currentUserProposalCount,
+    currentUserTotalVotesAmount,
+    contestMaxNumberSubmissionsPerUser,
+  } = useUserStore(state => state);
   const { y } = useWindowScroll();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -20,31 +26,41 @@ const LayoutContestQualifier = () => {
   }, [y]);
 
   const qualifiedToSubmitMessage = useMemo<ReactNode>(() => {
-    if (currentUserQualifiedToSubmit) {
+    const userReachedMaxSubmissions = currentUserProposalCount >= contestMaxNumberSubmissionsPerUser;
+    if (userReachedMaxSubmissions || !currentUserQualifiedToSubmit) {
+      if (userReachedMaxSubmissions) {
+        return (
+          <div className="flex flex-nowrap items-center gap-2">
+            <CheckmarkIcon />
+            <p>you've already submitted</p>
+          </div>
+        );
+      } else {
+        return (
+          <div className="flex flex-nowrap items-center gap-2">
+            <CrossIcon />
+            <p>you don't qualify to submit</p>
+          </div>
+        );
+      }
+    } else {
       return (
-        <div className="flex flex-nowrap items-center gap-1">
-          <div className="mt-1">
+        <div className="flex flex-nowrap items-center gap-2">
+          <div>
             <CheckmarkIcon />
           </div>
           <p>you qualify to submit</p>
         </div>
       );
     }
-
-    return (
-      <div className="flex flex-nowrap items-center gap-1">
-        <CrossIcon />
-        <p>you don't qualify to submit</p>
-      </div>
-    );
-  }, [currentUserQualifiedToSubmit]);
+  }, [currentUserQualifiedToSubmit, currentUserProposalCount, contestMaxNumberSubmissionsPerUser]);
 
   const qualifiedToVoteMessage = useMemo<ReactNode>(() => {
     if (currentUserAvailableVotesAmount > 0) {
       return (
-        <div className="flex flex-nowrap items-center gap-1">
+        <div className="flex flex-nowrap items-center gap-2">
           {!isScrolled && (
-            <div className="mt-1">
+            <div>
               <CheckmarkIcon />
             </div>
           )}
@@ -54,10 +70,17 @@ const LayoutContestQualifier = () => {
           </p>
         </div>
       );
+    } else if (currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0) {
+      return (
+        <div className="flex flex-nowrap items-center gap-2">
+          <CrossIcon />
+          <p>you’re out of votes :(</p>
+        </div>
+      );
     }
 
     return (
-      <div className="flex flex-nowrap items-center gap-1">
+      <div className="flex flex-nowrap items-center gap-2">
         <CrossIcon />
         <p>you don't qualify to vote</p>
       </div>

@@ -89,12 +89,14 @@ input[type="number"]::-webkit-outer-spin-button {
 @tailwind utilities;
 
 @layer base {
-  /* implement markdown style */
-  .markdown > * {
-    text-transform: none !important;
-  }
-  *:not(.normal-case, .uppercase, .markdown, input, textarea) {
+  *:not(.normal-case, .uppercase, input, textarea) {
     text-transform: lowercase;
+  }
+
+  /* implement markdown style */
+  .markdown,
+  .markdown * {
+    text-transform: none !important;
   }
 
   html {
@@ -108,10 +110,11 @@ input[type="number"]::-webkit-outer-spin-button {
     accent-color: var(--brand);
     --toastify-color-success: #78ffc6 !important;
     --toastify-color-error: #ff78a9 !important;
-    --toastify-icon-color-success: #78ffc6 !important;
+    --toastify-color-info: #ffff !important;
     --toastify-icon-color-error: #ff78a9 !important;
     --toastify-icon-color-info: #ffe25b !important;
     --toastify-text-color-success: black !important;
+    --toastify-text-color-info: black !important;
     --toastify-text-color-error: black !important;
     --toastify-toast-width: 360px !important;
     --toastify-toast-min-height: 80px !important;

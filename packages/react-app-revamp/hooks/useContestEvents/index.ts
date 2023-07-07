@@ -2,10 +2,9 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import isUrlToImage from "@helpers/isUrlToImage";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import useUser from "@hooks/useUser";
-import { chain, fetchEnsName, getAccount, readContract, watchContractEvent } from "@wagmi/core";
+import { chain, fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useProvider } from "wagmi";
 
 export function useContestEvents() {
@@ -15,8 +14,8 @@ export function useContestEvents() {
   const { setProposalData, setProposalVotes, listProposalsData, canUpdateVotesInRealTime } = useProposalStore(
     state => state,
   );
-  const { updateCurrentUserVotes } = useUser();
   const [displayReloadBanner, setDisplayReloadBanner] = useState(false);
+  const contestStatusRef = useRef(contestStatus);
 
   /**
    * Callback function triggered on "VoteCast" event
@@ -24,13 +23,6 @@ export function useContestEvents() {
    */
   async function onVoteCast(args: Array<any>) {
     try {
-      const accountData = await getAccount();
-      // if the connected wallet is the address that casted votes
-      if (accountData?.address && args[0] === accountData?.address) {
-        // Update the current user available votes
-        updateCurrentUserVotes();
-      }
-
       const proposalId = args[5].args.proposalId;
       const votes = await readContract({
         addressOrName: asPath.split("/")[3],
@@ -82,6 +74,10 @@ export function useContestEvents() {
   }
 
   useEffect(() => {
+    contestStatusRef.current = contestStatus;
+  }, [contestStatus]);
+
+  useEffect(() => {
     if (contestStatus !== ContestStatus.VotingOpen) {
       provider.removeAllListeners("VoteCast");
       setDisplayReloadBanner(false);
@@ -106,9 +102,12 @@ export function useContestEvents() {
   function onVisibilityChangeHandler() {
     if (document.visibilityState === "hidden") {
       provider.removeAllListeners();
-      if (contestStatus === ContestStatus.VotingOpen) setDisplayReloadBanner(true);
+      if (contestStatusRef.current === ContestStatus.VotingOpen) {
+        setDisplayReloadBanner(true);
+      }
+      return;
     } else {
-      if (contestStatus === ContestStatus.VotingOpen) {
+      if (contestStatusRef.current === ContestStatus.VotingOpen) {
         provider.addListener("VoteCast", (...args) => {
           onVoteCast(args);
         });

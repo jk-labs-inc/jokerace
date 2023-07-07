@@ -40,13 +40,6 @@ const ContestRewards = () => {
     if (supportsRewardsModule) getContestRewardsModule();
   }, [supportsRewardsModule]);
 
-  if (!supportsRewardsModule && !creator)
-    return (
-      <p className="p-3 mt-4 rounded-md bg-primary-1 text-primary-10 border-primary-4 mb-5 text-sm font-bold">
-        This contest doesn&apos;t support rewards.
-      </p>
-    );
-
   if (!supportsRewardsModule && creator) {
     return (
       <div className="flex flex-col gap-12">
@@ -136,7 +129,7 @@ const ContestRewards = () => {
                     </p>
                   </div>
                   <p className="text-[16px] text-neutral-11 font-bold">distribution of rewards in pool:</p>
-                  {rewardsStore?.rewards?.payees?.map((payee: any) => (
+                  {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
                     <RewardsTableShare
                       key={`rank-${`${payee}`}`}
                       chainId={
@@ -148,6 +141,7 @@ const ContestRewards = () => {
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                       abiRewardsModule={rewardsStore.rewards.abi}
                       totalShares={rewardsStore.rewards.totalShares}
+                      isLast={index === rewardsStore.rewards.payees.length - 1}
                     />
                   ))}
                 </div>

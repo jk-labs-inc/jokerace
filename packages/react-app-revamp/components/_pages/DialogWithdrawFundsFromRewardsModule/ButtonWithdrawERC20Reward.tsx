@@ -1,4 +1,6 @@
+import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
 import { toast } from "react-toastify";
+import { CustomError, ErrorCodes } from "types/error";
 import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 import ButtonWithdraw from "./ButtonWithdraw";
 interface ButtonWithdrawErc20RewardProps {
@@ -22,19 +24,31 @@ export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps)
     chainId: chain?.id,
     args: [tokenAddress],
     onError(e) {
-      toast.error(`${e.cause}: ${e.message}`);
+      const customError = e as CustomError;
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        return;
+      }
+      toastError(e.message);
     },
   });
 
   const txWithdrawERC20 = useWaitForTransaction({
     hash: contractWriteWithdrawERC20Reward?.data?.hash,
     onError(e) {
-      console.error(e);
-      //@ts-ignore
-      toast.error(`Something went wrong and the funds couldn't be withdrawn  :", ${e?.message}`);
+      const customError = e as CustomError;
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        return;
+      }
+      toastError(`Something went wrong and the funds couldn't be withdrawn  :", ${customError.message}`);
     },
     onSuccess(data) {
-      toast.success("Funds withdrawn successfully !");
+      toastSuccess("Funds withdrawn successfully !");
     },
   });
 

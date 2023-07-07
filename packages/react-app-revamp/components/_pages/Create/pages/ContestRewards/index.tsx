@@ -4,29 +4,28 @@ import CreateRewardsFunding from "@components/_pages/Rewards/components/Fund";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useShowRewardsStore } from "../ContestDeploying";
 
 const CreateContestRewards = () => {
-  const {
-    isSuccess: isContestDeployed,
-    setIsSuccess: setContestDeployed,
-    reset: clearContestData,
-  } = useDeployContestStore(state => state);
+  const { reset: clearContestData, isSuccess: contestDeployed } = useDeployContestStore(state => state);
   const {
     displayCreatePool,
     isLoading: isRewardsModuleDeploying,
-    isSuccess: isRewardsModuleDeployed,
     cancel: cancelCreateRewardsPool,
     reset: clearRewardsData,
   } = useDeployRewardsStore(state => state);
   const { setShowRewards } = useShowRewardsStore(state => state);
-
   const { isLoading: isFundingRewardsDeploying } = useFundRewardsStore(state => state);
-
   const { cancel: cancelFundingPool } = useFundRewardsStore(state => state);
 
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    if (contestDeployed) {
+      clearContestData();
+    }
+  }, []);
 
   useEffect(() => {
     if (!cancelCreateRewardsPool && !cancelFundingPool) return;
@@ -36,7 +35,6 @@ const CreateContestRewards = () => {
 
   const handleModalClose = () => {
     setShowRewards(false);
-    clearContestData();
     clearRewardsData();
   };
 

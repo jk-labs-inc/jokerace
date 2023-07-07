@@ -1,14 +1,12 @@
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import useContestsIndex from "@hooks/useContestsIndex";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore } from "date-fns";
-import { formatUnits, parseUnits } from "ethers/lib/utils";
 import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -145,10 +143,10 @@ export function useContest() {
 
         setContestName(results[0].toString());
         setContestAuthor(results[1].toString(), results[1].toString());
-        //@ts-ignore
-        setContestMaxNumberSubmissionsPerUser(results[2]);
-        //@ts-ignore
-        setContestMaxProposalCount(results[3]);
+
+        const contestMaxNumberSubmissionsPerUser = parseFloat(results[2].toString());
+        setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
+        setContestMaxProposalCount(parseFloat(results[3].toString()));
         //@ts-ignore
         setSubmissionsOpen(new Date(parseInt(results[4]) * 1000));
         setVotesClose(closingVoteDate);
@@ -196,6 +194,7 @@ export function useContest() {
           );
 
           const votingMerkleTree = generateMerkleTree(18, votesDataRecord).merkleTree;
+
           setVoters(votingMerkleTreeData.voters);
 
           let submissionMerkleTree;
@@ -219,10 +218,10 @@ export function useContest() {
             setSubmitters(submissionMerkleTreeData.submitters);
           }
 
+          await checkIfCurrentUserQualifyToSubmit(submissionMerkleTree, contestMaxNumberSubmissionsPerUser);
+          await checkIfCurrentUserQualifyToVote();
           setSubmissionMerkleTree(submissionMerkleTree);
           setVotingMerkleTree(votingMerkleTree);
-          checkIfCurrentUserQualifyToSubmit();
-          checkIfCurrentUserQualifyToVote();
           setError(null);
           setIsSuccess(true);
           setIsLoading(false);

@@ -66,10 +66,12 @@ const LayoutViewContest = (props: any) => {
     voters,
     submitters,
   } = useContestStore(state => state);
-  const contestMaxNumberSubmissionsPerUser = useUserStore(state => state.contestMaxNumberSubmissionsPerUser);
+  const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount } = useUserStore(
+    state => state,
+  );
   const contestInProgress = moment().isBefore(votesClose);
 
-  const { isListProposalsLoading, isListProposalsSuccess, listProposalsIds } = useProposalStore(state => state);
+  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
   const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
@@ -124,6 +126,23 @@ const LayoutViewContest = (props: any) => {
     }
   }, [account?.connector]);
 
+  const contestQualifiers = useMemo<ReactNode | null>(() => {
+    if (contestStatus === ContestStatus.VotingClosed) {
+      return null;
+    }
+
+    return (
+      <div
+        className={`mt-8 flex flex-col md:flex-row gap-4 sticky ${
+          displayReloadBanner ? "top-[105px]" : "top-0"
+        } z-10 bg-true-black`}
+      >
+        <LayoutContestCountdown submissionOpen={submissionsOpen} votingOpen={votesOpen} votingClose={votesClose} />
+        <LayoutContestQualifier />
+      </div>
+    );
+  }, [contestStatus, submissionsOpen, votesOpen, votesClose]);
+
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
       case Tab.Contest:
@@ -131,13 +150,16 @@ const LayoutViewContest = (props: any) => {
           <div className="animate-apppear">
             {contestStatus === ContestStatus.SubmissionOpen && (
               <div className="mt-8">
-                <ButtonV3
-                  color="bg-gradient-create rounded-[40px]"
-                  size="large"
-                  onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
-                >
-                  submit a response
-                </ButtonV3>
+                {(currentUserQualifiedToSubmit || currentUserProposalCount <= contestMaxNumberSubmissionsPerUser) && (
+                  <ButtonV3
+                    type="txAction"
+                    color="bg-gradient-create rounded-[40px]"
+                    size="large"
+                    onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
+                  >
+                    submit a response
+                  </ButtonV3>
+                )}
               </div>
             )}
 
@@ -193,6 +215,9 @@ const LayoutViewContest = (props: any) => {
     isSuccess,
     isListProposalsSuccess,
     isLoading,
+    currentUserProposalCount,
+    contestMaxNumberSubmissionsPerUser,
+    currentUserQualifiedToSubmit,
     isSubmitProposalModalOpen,
   ]);
 
@@ -203,26 +228,27 @@ const LayoutViewContest = (props: any) => {
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
         }`}
       >
-        {(isLoading || isListProposalsLoading) && (
+        {isLoading && (
           <div className="animate-appear">
             <Loader scale="page">Loading contest info...</Loader>
           </div>
         )}
 
         {account?.address && chain?.id !== chainId && votesClose && isBefore(new Date(), votesClose) && (
-          <div className="animate-appear flex text-center flex-col my-10 mx-auto">
-            <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
-            <p className="mt-2 mb-4 text-neutral-11 text-xs">
+          <div className="animate-appear flex text-center items-center flex-col my-10 mx-auto text-neutral-11">
+            <p className="font-bold text-[24px]">Looks like you&apos;re using the wrong network.</p>
+            <p className="mt-2 mb-4 text-neutral-11 text-[16px]">
               You need to use {asPath.split("/")[2]} to interact with this contest.
             </p>
-            <Button
+            <ButtonV3
+              size="large"
               onClick={() => {
                 switchNetwork?.({ chainId });
               }}
-              className="mx-auto"
+              color="bg-gradient-next"
             >
               Switch network
-            </Button>
+            </ButtonV3>
           </div>
         )}
 
@@ -257,20 +283,14 @@ const LayoutViewContest = (props: any) => {
             {isSuccess && !error && !isLoading && (
               <>
                 {displayReloadBanner === true && (
-                  <div className="mt-4 animate-appear p-3 rounded-md border-solid border border-neutral-4 mb-5 flex flex-col gap-y-3 text-sm font-bold">
-                    <div className="flex gap-1.5 flex-col">
+                  <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+                    <div className="flex flex-col">
                       <span>Let&apos;s refresh!</span>
                       <p className="font-normal">Looks like live updates were frozen.</p>
                     </div>
-                    <Button
-                      className="w-full 2xs:w-fit-content"
-                      intent="primary-outline"
-                      scale="xs"
-                      onClick={() => reload()}
-                    >
-                      <RefreshIcon className="mie-1ex w-4" />
+                    <ButtonV3 color="bg-gradient-create" onClick={() => reload()}>
                       Refresh
-                    </Button>
+                    </ButtonV3>
                   </div>
                 )}
                 <div className="animate-appear pt-3 md:pt-0">
@@ -324,19 +344,13 @@ const LayoutViewContest = (props: any) => {
                     />
                   </div>
 
-                  {contestInProgress && (
-                    <div className="mt-8 flex flex-col md:flex-row gap-4 sticky top-0 z-10 bg-true-black">
-                      <LayoutContestCountdown
-                        submissionOpen={submissionsOpen}
-                        votingOpen={votesOpen}
-                        votingClose={votesClose}
-                      />
-                      <LayoutContestQualifier />
-                    </div>
-                  )}
+                  {contestQualifiers}
 
                   <div className="mt-8">
-                    <LayoutContestPrompt prompt={contestPrompt} hidePrompt={tab !== Tab.Contest} />
+                    <LayoutContestPrompt
+                      prompt={contestPrompt}
+                      hidePrompt={tab !== Tab.Contest || contestStatus === ContestStatus.VotingClosed}
+                    />
                   </div>
 
                   {tab !== Tab.Contest && (

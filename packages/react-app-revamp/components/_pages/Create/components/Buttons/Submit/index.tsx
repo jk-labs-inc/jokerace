@@ -41,6 +41,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
         <ButtonV3
           color={`bg-gradient-create rounded-[10px] font-bold ${shake ? "animate-shakeTop" : ""}  text-true-black`}
           size="large"
+          type="txAction"
           onClick={handleClick}
         >
           create contest!

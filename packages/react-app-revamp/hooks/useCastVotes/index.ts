@@ -1,3 +1,4 @@
+import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -11,7 +12,7 @@ import { ethers } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { CustomError } from "types/error";
+import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -39,6 +40,7 @@ export function useCastVotes() {
     const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
     const { abi } = await getContestContractVersion(id, chainId);
 
+    toastLoading("votes are deploying...");
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
@@ -87,17 +89,24 @@ export function useCastVotes() {
       setTransactionData({
         hash: receipt.transactionHash,
       });
+
       await updateCurrentUserVotes();
       setIsLoading(false);
       setIsSuccess(true);
-      toast.success(`Your votes were cast successfully!`);
+      toastSuccess("your votes have been deployed successfully");
     } catch (e) {
       const customError = e as CustomError;
 
       if (!customError) return;
 
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        setIsLoading(false);
+        return;
+      }
+
       const message = customError.message || "Something went wrong while casting your votes";
-      toast.error(message);
+      toastError(message);
       setError({
         code: customError.code,
         message,

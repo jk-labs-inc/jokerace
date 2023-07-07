@@ -6,6 +6,7 @@ import { formatNumber } from "@helpers/formatNumber";
 import { isUrlTweet } from "@helpers/isUrlTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import moment from "moment";
 import { FC, useMemo, useState } from "react";
@@ -43,6 +44,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
+  const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
     switch (contestStatus) {
@@ -57,27 +59,30 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
         return (
           <>
             <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
-            <ButtonV3
-              color="bg-gradient-vote rounded-[40px]"
-              size="large"
-              onClick={() => {
-                setPickProposal(id);
-                setIsVotingModalOpen(true);
-              }}
-            >
-              vote
-            </ButtonV3>
+            {currentUserAvailableVotesAmount > 0 && (
+              <ButtonV3
+                type="txAction"
+                color="bg-gradient-vote rounded-[40px]"
+                size="large"
+                onClick={() => {
+                  setPickProposal(id);
+                  setIsVotingModalOpen(true);
+                }}
+              >
+                vote
+              </ButtonV3>
+            )}
           </>
         );
       case ContestStatus.VotingClosed:
         return (
           <>
-            <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
+            <p className="text-positive-11">{formatNumber(proposal.votes, 3)} votes</p>
             <p className="text-neutral-10">voting closed</p>
           </>
         );
     }
-  }, [contestStatus, proposal.votes]);
+  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];
@@ -111,7 +116,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   }
 
   return (
-    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <div className="flex items-center px-8 py-2 h-3/5 md:h-3/4" onClick={() => setIsProposalModalOpen(true)}>
         <ReactMarkdown
           className="markdown"

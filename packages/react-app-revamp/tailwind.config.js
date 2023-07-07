@@ -286,6 +286,10 @@ module.exports = {
           "40%, 60%": { transform: "translateY(4px)" },
           "100%": { transform: "translateY(0)" },
         },
+        flicker: {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.5" },
+        },
       },
       scale: {
         120: "1.1",
@@ -305,6 +309,7 @@ module.exports = {
         blinkShadow: "blink 1s ease-in-out infinite",
         shakeTop: "shakeTop 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both",
         swingInLeft: "swingInLeft 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both",
+        flicker: "flicker 1s linear",
       },
 
       height: {
