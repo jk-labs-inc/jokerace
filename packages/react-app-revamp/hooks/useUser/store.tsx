@@ -44,7 +44,6 @@ export const createUserStore = () =>
     setCurrentUserTotalVotesAmount: amount => set({ currentUserTotalVotesAmount: amount }),
     setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),
     setCurrentUserProposalCount: amount => set({ currentUserProposalCount: amount }),
-
     increaseCurrentUserProposalCount: () =>
       set(state => ({ currentUserProposalCount: state.currentUserProposalCount + 1 })),
     setIsLoading: value => set({ isLoading: value }),

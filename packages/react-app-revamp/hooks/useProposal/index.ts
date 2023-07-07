@@ -32,7 +32,6 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
-  const { increaseCurrentUserProposalCount } = useUserStore(state => state);
 
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
@@ -120,8 +119,6 @@ export function useProposal() {
     listIdsProposalsToBeFetched: Array<any>,
     version: string,
   ) {
-    const accountData = getAccount();
-
     // Create an array of proposals
     // A proposal is a pair of data
     // A pair of a proposal data is [content, votes]
@@ -145,11 +142,6 @@ export function useProposal() {
         : proposalDataPerId[i][1] / 1e18,
     };
 
-    // Check if that proposal belongs to the current user
-    // (Needed to track if the current user can submit a proposal)
-    if (data[0] === accountData?.address) {
-      increaseCurrentUserProposalCount();
-    }
     setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
   }
 

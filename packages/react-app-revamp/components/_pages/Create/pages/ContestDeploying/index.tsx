@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 
+import { toastDismiss, toastLoading } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
 import { create } from "zustand";
 
 interface ShowRewardsStore {
@@ -11,7 +11,6 @@ interface ShowRewardsStore {
   setShowRewards: (show: boolean) => void;
 }
 
-// Create the Zustand store
 export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
   showRewards: false,
   setShowRewards: show => set({ showRewards: show }),
@@ -24,13 +23,11 @@ const CreateContestDeploying = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      const toastId = toast.loading("redirecting you to the contest page..");
+      toastDismiss();
       setTimeout(() => {
-        toast.dismiss(toastId);
-
         router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
         setShowRewards(true);
-      }, 5000);
+      }, 3000);
     }
   }, [isSuccess]);
 

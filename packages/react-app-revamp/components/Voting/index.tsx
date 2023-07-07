@@ -1,9 +1,8 @@
 import ButtonV3 from "@components/UI/ButtonV3";
-import TooltipSlider from "@components/UI/Slider";
 import StepSlider from "@components/UI/Slider";
 import { ChevronRightIcon } from "@heroicons/react/outline";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { FC, useState } from "react";
-import { useMedia } from "react-use";
 
 interface VotingWidgetProps {
   amountOfVotes: number;
@@ -12,6 +11,7 @@ interface VotingWidgetProps {
 }
 
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
+  const isLoading = useCastVotesStore(state => state.isLoading);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState("");
   const [sliderValue, setSliderValue] = useState(0);
@@ -85,6 +85,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         </div>
         <div className="mt-4">
           <ButtonV3
+            type="txAction"
+            disabled={isLoading || isInvalid || parseFloat(amount) === 0 || !amount}
             color="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
             size="large"
             onClick={() => onVote?.(amount, isUpvote)}

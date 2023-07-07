@@ -206,7 +206,6 @@ export function useProposalVotes(id: number | string) {
     }
   }, [account?.connector]);
 
-  // This one is throwing ENS error
   // useEffect(() => {
   //   if (contestStatus === ContestStatus.VotingClosed) {
   //     const contract = getContract({

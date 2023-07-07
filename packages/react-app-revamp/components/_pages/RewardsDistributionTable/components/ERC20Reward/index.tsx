@@ -1,5 +1,7 @@
+import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
 import { utils } from "ethers";
 import { toast } from "react-toastify";
+import { CustomError, ErrorCodes } from "types/error";
 import { useBalance, useContractRead, useContractWrite, useNetwork, useToken, useWaitForTransaction } from "wagmi";
 import Reward from "../Reward";
 
@@ -31,7 +33,15 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
       return parseFloat(utils.formatEther(data)).toFixed(4);
     },
     onError(e) {
-      console.error(e?.message, e?.cause);
+      const customError = e as CustomError;
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        return;
+      }
+
+      toastError(`${e.cause} ${e.message}`);
     },
   });
 
@@ -46,7 +56,15 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
       return parseFloat(utils.formatEther(data)).toFixed(4);
     },
     onError(e) {
-      console.error(e?.message, e?.cause);
+      const customError = e as CustomError;
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        return;
+      }
+
+      toastError(`${e.cause} ${e.message}`);
     },
   });
 
@@ -62,14 +80,21 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
     hash: contractWriteReleaseToken?.data?.hash,
     chainId,
     onError(e) {
-      console.error(e);
-      toast.error(`Something went wrong and the transaction failed :", ${e?.message}`);
+      const customError = e as CustomError;
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        return;
+      }
+
+      toastError(`Something went wrong and the transaction failed :", ${e?.message}`);
     },
     async onSuccess() {
       await queryTokenBalance.refetch();
       await queryRankRewardsReleased.refetch();
       await queryRankRewardsReleasable.refetch();
-      toast.success("Transaction successful!");
+      toastSuccess("funds distributed successfully !");
     },
   });
 

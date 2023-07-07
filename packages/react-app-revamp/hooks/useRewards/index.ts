@@ -53,7 +53,7 @@ export function useRewardsModule() {
       }
     },
     {
-      enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
+      enabled: !!rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
       onError(e) {
         const customError = e as CustomError;
 
