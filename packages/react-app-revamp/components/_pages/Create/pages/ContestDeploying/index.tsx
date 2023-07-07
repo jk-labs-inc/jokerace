@@ -24,13 +24,10 @@ const CreateContestDeploying = () => {
   useEffect(() => {
     if (isSuccess) {
       toastDismiss();
-      toastLoading("redirecting to the contest page..", false);
       setTimeout(() => {
-        toastDismiss();
         router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
-
         setShowRewards(true);
-      }, 5000);
+      }, 3000);
     }
   }, [isSuccess]);
 

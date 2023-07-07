@@ -12,7 +12,7 @@ const createToast = (type: any, content: JSX.Element) => {
   if (toastId === null) {
     toastId = toast(content, {
       type,
-      autoClose: type !== toast.TYPE.INFO ? 3000 : false,
+      autoClose: type !== toast.TYPE.INFO ? 4000 : false,
       icon: false,
       onClose: () => {
         toastId = null;
@@ -21,7 +21,7 @@ const createToast = (type: any, content: JSX.Element) => {
   } else {
     toast.update(toastId, {
       type,
-      autoClose: type !== toast.TYPE.INFO ? 3000 : false,
+      autoClose: type !== toast.TYPE.INFO ? 4000 : false,
       render: content,
       icon: false,
     });

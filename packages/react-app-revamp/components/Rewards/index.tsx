@@ -129,7 +129,7 @@ const ContestRewards = () => {
                     </p>
                   </div>
                   <p className="text-[16px] text-neutral-11 font-bold">distribution of rewards in pool:</p>
-                  {rewardsStore?.rewards?.payees?.map((payee: any) => (
+                  {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
                     <RewardsTableShare
                       key={`rank-${`${payee}`}`}
                       chainId={
@@ -141,6 +141,7 @@ const ContestRewards = () => {
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                       abiRewardsModule={rewardsStore.rewards.abi}
                       totalShares={rewardsStore.rewards.totalShares}
+                      isLast={index === rewardsStore.rewards.payees.length - 1}
                     />
                   ))}
                 </div>

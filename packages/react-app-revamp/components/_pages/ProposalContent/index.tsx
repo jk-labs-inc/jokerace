@@ -9,7 +9,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import moment from "moment";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
@@ -116,7 +116,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   }
 
   return (
-    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <div className="flex items-center px-8 py-2 h-3/5 md:h-3/4" onClick={() => setIsProposalModalOpen(true)}>
         <ReactMarkdown
           className="markdown"

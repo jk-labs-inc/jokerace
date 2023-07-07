@@ -1,5 +1,7 @@
+import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
 import { utils } from "ethers";
 import { toast } from "react-toastify";
+import { CustomError, ErrorCodes } from "types/error";
 import { useBalance, useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import Reward from "../Reward";
 
@@ -44,7 +46,15 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     chainId,
     args: [payee],
     onError(e) {
-      toast.error(`${e.cause} ${e.message}`);
+      const customError = e as CustomError;
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        return;
+      }
+
+      toastError(`${e.cause} ${e.message}`);
     },
   });
 
@@ -52,11 +62,18 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     hash: contractWriteReleaseToken?.data?.hash,
     chainId,
     onError(e) {
-      console.error(e);
-      toast.error(`Something went wrong and the transaction failed :", ${e?.message}`);
+      const customError = e as CustomError;
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        return;
+      }
+
+      toastError(`Something went wrong and the transaction failed :", ${e?.message}`);
     },
     onSuccess() {
-      toast.success("Transaction successful !");
+      toastSuccess("funds distributed successfully !");
     },
   });
 

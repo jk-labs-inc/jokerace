@@ -126,6 +126,23 @@ const LayoutViewContest = (props: any) => {
     }
   }, [account?.connector]);
 
+  const contestQualifiers = useMemo<ReactNode | null>(() => {
+    if (contestStatus === ContestStatus.VotingClosed) {
+      return null;
+    }
+
+    return (
+      <div
+        className={`mt-8 flex flex-col md:flex-row gap-4 sticky ${
+          displayReloadBanner ? "top-[105px]" : "top-0"
+        } z-10 bg-true-black`}
+      >
+        <LayoutContestCountdown submissionOpen={submissionsOpen} votingOpen={votesOpen} votingClose={votesClose} />
+        <LayoutContestQualifier />
+      </div>
+    );
+  }, [contestStatus, submissionsOpen, votesOpen, votesClose]);
+
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
       case Tab.Contest:
@@ -327,23 +344,13 @@ const LayoutViewContest = (props: any) => {
                     />
                   </div>
 
-                  {contestInProgress && (
-                    <div
-                      className={`mt-8 flex flex-col md:flex-row gap-4 sticky ${
-                        displayReloadBanner ? "top-[105px]" : "top-0"
-                      } z-10 bg-true-black`}
-                    >
-                      <LayoutContestCountdown
-                        submissionOpen={submissionsOpen}
-                        votingOpen={votesOpen}
-                        votingClose={votesClose}
-                      />
-                      <LayoutContestQualifier />
-                    </div>
-                  )}
+                  {contestQualifiers}
 
                   <div className="mt-8">
-                    <LayoutContestPrompt prompt={contestPrompt} hidePrompt={tab !== Tab.Contest} />
+                    <LayoutContestPrompt
+                      prompt={contestPrompt}
+                      hidePrompt={tab !== Tab.Contest || contestStatus === ContestStatus.VotingClosed}
+                    />
                   </div>
 
                   {tab !== Tab.Contest && (

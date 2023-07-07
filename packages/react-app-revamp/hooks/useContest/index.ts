@@ -1,3 +1,4 @@
+import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import useProposal from "@hooks/useProposal";
@@ -175,8 +176,6 @@ export function useContest() {
           setCanUpdateVotesInRealTime(false);
         }
 
-        const config = await import("@config/supabase");
-        const supabase = config.supabase;
         const { data } = await supabase
           .from("contests_v3")
           .select("submissionMerkleTree, votingMerkleTree")
