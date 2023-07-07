@@ -133,20 +133,16 @@ const LayoutViewContest = (props: any) => {
           <div className="animate-apppear">
             {contestStatus === ContestStatus.SubmissionOpen && (
               <div className="mt-8">
-                {currentUserQualifiedToSubmit ||
-                  (currentUserProposalCount <= contestMaxNumberSubmissionsPerUser && (
-                    <ButtonV3
-                      type="txAction"
-                      disabled={
-                        !currentUserQualifiedToSubmit || currentUserProposalCount >= contestMaxNumberSubmissionsPerUser
-                      }
-                      color="bg-gradient-create rounded-[40px]"
-                      size="large"
-                      onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
-                    >
-                      submit a response
-                    </ButtonV3>
-                  ))}
+                {(currentUserQualifiedToSubmit || currentUserProposalCount <= contestMaxNumberSubmissionsPerUser) && (
+                  <ButtonV3
+                    type="txAction"
+                    color="bg-gradient-create rounded-[40px]"
+                    size="large"
+                    onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
+                  >
+                    submit a response
+                  </ButtonV3>
+                )}
               </div>
             )}
 
@@ -202,6 +198,9 @@ const LayoutViewContest = (props: any) => {
     isSuccess,
     isListProposalsSuccess,
     isLoading,
+    currentUserProposalCount,
+    contestMaxNumberSubmissionsPerUser,
+    currentUserQualifiedToSubmit,
     isSubmitProposalModalOpen,
   ]);
 
@@ -212,26 +211,27 @@ const LayoutViewContest = (props: any) => {
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
         }`}
       >
-        {(isLoading || isListProposalsLoading) && (
+        {isLoading && (
           <div className="animate-appear">
             <Loader scale="page">Loading contest info...</Loader>
           </div>
         )}
 
         {account?.address && chain?.id !== chainId && votesClose && isBefore(new Date(), votesClose) && (
-          <div className="animate-appear flex text-center flex-col my-10 mx-auto">
-            <p className="font-bold text-lg">Looks like you&apos;re using the wrong network.</p>
-            <p className="mt-2 mb-4 text-neutral-11 text-xs">
+          <div className="animate-appear flex text-center items-center flex-col my-10 mx-auto text-neutral-11">
+            <p className="font-bold text-[24px]">Looks like you&apos;re using the wrong network.</p>
+            <p className="mt-2 mb-4 text-neutral-11 text-[16px]">
               You need to use {asPath.split("/")[2]} to interact with this contest.
             </p>
-            <Button
+            <ButtonV3
+              size="large"
               onClick={() => {
                 switchNetwork?.({ chainId });
               }}
-              className="mx-auto"
+              color="bg-gradient-next"
             >
               Switch network
-            </Button>
+            </ButtonV3>
           </div>
         )}
 
@@ -271,7 +271,7 @@ const LayoutViewContest = (props: any) => {
                       <span>Let&apos;s refresh!</span>
                       <p className="font-normal">Looks like live updates were frozen.</p>
                     </div>
-                    <ButtonV3 color="bg-gradient-next" onClick={() => reload()}>
+                    <ButtonV3 color="bg-gradient-create" onClick={() => reload()}>
                       Refresh
                     </ButtonV3>
                   </div>

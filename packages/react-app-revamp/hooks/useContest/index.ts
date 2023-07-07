@@ -10,7 +10,7 @@ import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { CustomError } from "types/error";
+import { CustomError, ErrorCodes } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
@@ -194,6 +194,7 @@ export function useContest() {
           );
 
           const votingMerkleTree = generateMerkleTree(18, votesDataRecord).merkleTree;
+
           setVoters(votingMerkleTreeData.voters);
 
           let submissionMerkleTree;

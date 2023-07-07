@@ -1,4 +1,4 @@
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { toastDismiss, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
@@ -9,9 +9,18 @@ import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
-import { CustomError } from "types/error";
+import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
+
+const targetMetadata = {
+  targetAddress: "0x0000000000000000000000000000000000000000",
+};
+
+const safeMetadata = {
+  signers: ["0x0000000000000000000000000000000000000000"],
+  threshold: 1,
+};
 
 export function useSubmitProposal() {
   const { address: userAddress } = useAccount();
@@ -34,15 +43,8 @@ export function useSubmitProposal() {
         userAddress ?? "",
         "submission",
       );
-      const targetMetadata = {
-        targetAddress: "0x0000000000000000000000000000000000000000",
-      };
 
-      const safeMetadata = {
-        signers: ["0x0000000000000000000000000000000000000000"],
-        threshold: 1,
-      };
-
+      toastLoading("proposal is deploying...");
       setIsLoading(true);
       setIsSuccess(false);
       setError(null);
@@ -107,6 +109,7 @@ export function useSubmitProposal() {
 
         setIsLoading(false);
         setIsSuccess(true);
+        toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         removeSubmissionFromLocalStorage("submissions", address);
         fetchProposalsIdsList(abi); // you might need to pass the ABI here
@@ -116,6 +119,12 @@ export function useSubmitProposal() {
         const customError = e as CustomError;
 
         if (!customError) return;
+
+        if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+          toastDismiss();
+          setIsLoading(false);
+          return;
+        }
 
         const message = customError.message || "Something went wrong while submitting your proposal.";
         toast.error(message);

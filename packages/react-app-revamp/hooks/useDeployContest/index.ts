@@ -6,7 +6,6 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory, ethers } from "ethers";
-import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
@@ -14,7 +13,6 @@ import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
   const { indexContestParticipantsV3 } = useContestParticipantsIndexV3();
-
   const stateContestDeployment = useContractFactoryStore(state => state);
   const {
     type,

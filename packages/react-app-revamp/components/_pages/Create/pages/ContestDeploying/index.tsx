@@ -11,14 +11,13 @@ interface ShowRewardsStore {
   setShowRewards: (show: boolean) => void;
 }
 
-// Create the Zustand store
 export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
   showRewards: false,
   setShowRewards: show => set({ showRewards: show }),
 }));
 
 const CreateContestDeploying = () => {
-  const { isSuccess, deployContestData } = useDeployContestStore(state => state);
+  const { isSuccess, deployContestData, reset: clearContestData } = useDeployContestStore(state => state);
   const router = useRouter();
   const { setShowRewards } = useShowRewardsStore(state => state);
 
@@ -27,8 +26,9 @@ const CreateContestDeploying = () => {
       const toastId = toast.loading("redirecting you to the contest page..");
       setTimeout(() => {
         toast.dismiss(toastId);
-
         router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
+
+        clearContestData();
         setShowRewards(true);
       }, 5000);
     }

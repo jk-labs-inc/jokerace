@@ -1,16 +1,17 @@
-import Image from "next/image";
 import { FC } from "react";
+import { FadeLoader } from "react-spinners";
 
 interface LoadingToastProps {
   message: string;
+  showSignMessage?: boolean;
 }
 
-const LoadingToast: FC<LoadingToastProps> = ({ message }) => (
-  <div className="flex gap-4 items-center pl-4">
-    <Image src="/toast/error.svg" width={40} height={40} alt="error" />
+const LoadingToast: FC<LoadingToastProps> = ({ message, showSignMessage = true }) => (
+  <div className="flex gap-2 items-center pl-4">
+    <FadeLoader />
     <div className="flex flex-col">
-      <p className="uppercase font-bold text-[16px]">Error!</p>
-      <p className="text-[12px]">{message}</p>
+      <p className="font-bold text-[16px]">{message}</p>
+      {showSignMessage && <p className="text-[12px]">check wallet to sign all transactions</p>}
     </div>
   </div>
 );
