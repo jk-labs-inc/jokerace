@@ -1,5 +1,5 @@
 export const nearAuroraMainnet = {
-  id: 1313161555,
+  id: 1313161554,
   name: 'nearAuroraMainnet',
   network: 'nearAuroraMainnet',
   nativeCurrency: {
