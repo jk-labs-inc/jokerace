@@ -178,10 +178,11 @@ export function useContest() {
           setCanUpdateVotesInRealTime(false);
         }
 
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from("contests_v3")
           .select("submissionMerkleTree, votingMerkleTree")
-          .eq("address", address);
+          .eq("address", address)
+          .eq("network_name", chainName);
 
         if (data && data.length > 0) {
           const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
