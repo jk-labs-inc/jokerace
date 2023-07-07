@@ -10,7 +10,7 @@ import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { CustomError, ErrorCodes } from "types/error";
+import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
@@ -177,10 +177,11 @@ export function useContest() {
 
         const config = await import("@config/supabase");
         const supabase = config.supabase;
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from("contests_v3")
           .select("submissionMerkleTree, votingMerkleTree")
-          .eq("address", address);
+          .eq("address", address)
+          .eq("network_name", chainName);
 
         if (data && data.length > 0) {
           const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
