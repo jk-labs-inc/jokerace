@@ -40,8 +40,8 @@ export const toastWarning = (message: ToastProps) => {
   createToast(toast.TYPE.WARNING, <WarningToast message={message} />);
 };
 
-export const toastLoading = (message: ToastProps) => {
-  createToast(toast.TYPE.INFO, <LoadingToast message={message} />);
+export const toastLoading = (message: ToastProps, showSignMessage?: boolean) => {
+  createToast(toast.TYPE.INFO, <LoadingToast message={message} showSignMessage={showSignMessage} />);
 };
 
 export const toastDismiss = () => {

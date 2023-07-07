@@ -1,3 +1,4 @@
+import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
@@ -6,7 +7,7 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory, ethers } from "ethers";
-import { CustomError } from "types/error";
+import { CustomError, ErrorCodes } from "types/error";
 import { useNetwork, useSigner } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
@@ -39,6 +40,7 @@ export function useDeployContest() {
     stateContestDeployment.setIsSuccess(false);
     stateContestDeployment.setError(null);
 
+    toastLoading("contest is deploying...");
     try {
       const signer = await refetch();
 
@@ -132,15 +134,27 @@ export function useDeployContest() {
 
       await indexContest(contestData, votingMerkle, submissionMerkle);
 
+      toastSuccess("contest has been deployed!");
       setIsSuccess(true);
       setIsLoading(false);
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setIsSuccess(true);
-    } catch (error) {
+    } catch (e) {
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        setIsLoading(false);
+        stateContestDeployment.setIsLoading(false);
+        return;
+      }
+
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(error as CustomError);
+      stateContestDeployment.setError(customError);
       setIsLoading(false);
-      console.error("Error: ", error);
+      toastError(customError.message ?? "contest deployment failed");
     }
   }
 
@@ -175,7 +189,7 @@ export function useDeployContest() {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setError(error as CustomError);
       setIsLoading(false);
-      console.error("Error: ", error);
+      toastError("contest deployment failed");
     }
   }
 

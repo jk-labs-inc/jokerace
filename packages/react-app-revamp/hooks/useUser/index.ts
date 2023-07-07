@@ -110,7 +110,7 @@ export function useUser() {
           setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
           setCurrentUserQualifiedToSubmit(true);
         } else {
-          setCurrentUserQualifiedToSubmit(true);
+          setCurrentUserQualifiedToSubmit(false);
         }
       } catch (error) {
         console.error("Error performing lookup in 'contest_participants_v3':", error);

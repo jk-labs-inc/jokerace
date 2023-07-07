@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 
+import { toastDismiss, toastLoading } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
 import { create } from "zustand";
 
 interface ShowRewardsStore {
@@ -17,18 +17,18 @@ export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
 }));
 
 const CreateContestDeploying = () => {
-  const { isSuccess, deployContestData, reset: clearContestData } = useDeployContestStore(state => state);
+  const { isSuccess, deployContestData } = useDeployContestStore(state => state);
   const router = useRouter();
   const { setShowRewards } = useShowRewardsStore(state => state);
 
   useEffect(() => {
     if (isSuccess) {
-      const toastId = toast.loading("redirecting you to the contest page..");
+      toastDismiss();
+      toastLoading("redirecting to the contest page..", false);
       setTimeout(() => {
-        toast.dismiss(toastId);
+        toastDismiss();
         router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
 
-        clearContestData();
         setShowRewards(true);
       }, 5000);
     }

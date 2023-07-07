@@ -1,12 +1,14 @@
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import CreateRewardsPool from "@components/_pages/Rewards/components/Create";
 import CreateRewardsFunding from "@components/_pages/Rewards/components/Fund";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { useEffect, useState } from "react";
 import { useShowRewardsStore } from "../ContestDeploying";
 
 const CreateContestRewards = () => {
+  const { reset: clearContestData, isSuccess: contestDeployed } = useDeployContestStore(state => state);
   const {
     displayCreatePool,
     isLoading: isRewardsModuleDeploying,
@@ -14,12 +16,16 @@ const CreateContestRewards = () => {
     reset: clearRewardsData,
   } = useDeployRewardsStore(state => state);
   const { setShowRewards } = useShowRewardsStore(state => state);
-
   const { isLoading: isFundingRewardsDeploying } = useFundRewardsStore(state => state);
-
   const { cancel: cancelFundingPool } = useFundRewardsStore(state => state);
 
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    if (contestDeployed) {
+      clearContestData();
+    }
+  }, []);
 
   useEffect(() => {
     if (!cancelCreateRewardsPool && !cancelFundingPool) return;
