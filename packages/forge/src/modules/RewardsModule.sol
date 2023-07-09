@@ -27,12 +27,18 @@ import "../governance/extensions/GovernorSorting.sol";
  * to run tests before sending real value to this contract.
  */
 contract RewardsModule is Context {
+    // TODO: Change into wallet controlled by jk labs
+    address public constant JK_LABS_ADDRESS = 0xd698e31229aB86334924ed9DFfd096a71C686900;
+
     event PayeeAdded(uint256 ranking, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
     event ERC20PaymentReleased(IERC20 indexed token, address to, uint256 amount);
     event PaymentReceived(address from, uint256 amount);
     event RewardWithdrawn(address by, uint256 amount);
     event ERC20RewardWithdrawn(IERC20 indexed token, address by, uint256 amount);
+    event NoJkLabsFeeShares();
+    event NoJkLabsFeeDue();
+    event NoJkLabsERC20FeeDue(IERC20 indexed token);
 
     uint256 private _totalShares;
     uint256 private _totalReleased;
@@ -187,48 +193,78 @@ contract RewardsModule is Context {
      * total shares and their previous withdrawals.
      */
     function release(uint256 ranking) public virtual {
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
-        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
-        uint256 payment = releasable(ranking);
+        uint256 payment;
+        address payable addressToPayOut;
 
-        require(
-            payment != 0,
-            "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
-        );
+        // send rewards to winner only if the ranking is higher than the highest tied ranking, send to jk labs if 0
+        if (ranking == 0) {
+            if (_shares[ranking] == 0) {
+                emit NoJkLabsFeeShares();
+                return;
+            }
 
-        // _totalReleased is the sum of all values in _released.
-        // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
-        _totalReleased += payment;
-        unchecked {
-            _released[ranking] += payment;
+            payment = releasable(ranking);
+
+            if (payment == 0) {
+                emit NoJkLabsFeeDue();
+                return;
+            }
+
+            // _totalReleased is the sum of all values in _released.
+            // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
+            _totalReleased += payment;
+            unchecked {
+                _released[ranking] += payment;
+            }
+
+            addressToPayOut = payable(JK_LABS_ADDRESS);
+        } else {
+            require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
+
+            payment = releasable(ranking);
+
+            require(
+                payment != 0,
+                "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
+            );
+
+            // _totalReleased is the sum of all values in _released.
+            // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
+            _totalReleased += payment;
+            unchecked {
+                _released[ranking] += payment;
+            }
+
+            // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
+            // _lowestRanking, and _highestTiedRanking
+            if (!_underlyingContest.setSortedAndTiedProposalsHasBeenRun()) {
+                _underlyingContest.setSortedAndTiedProposals();
+            }
+
+            require(
+                ranking <= _underlyingContest.lowestRanking(),
+                "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
+            );
+
+            IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
+                _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
+            );
+
+            addressToPayOut = ranking < _underlyingContest.highestTiedRanking()
+                ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
+                : payable(creator());
         }
-
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
-        // _lowestRanking, and _highestTiedRanking
-        if (!_underlyingContest.setSortedAndTiedProposalsHasBeenRun()) {
-            _underlyingContest.setSortedAndTiedProposals();
-        }
-
-        require(
-            ranking <= _underlyingContest.lowestRanking(),
-            "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
-        );
-
-        IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-            _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
-        );
-
-        // send rewards to winner only if the ranking is higher than the highest tied ranking
-        address payable addressToPayOut = ranking < _underlyingContest.highestTiedRanking()
-            ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
-            : payable(creator());
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
+
+        if (ranking != 0) {
+            release(0);
+        }
 
         Address.sendValue(addressToPayOut, payment);
         emit PaymentReleased(addressToPayOut, payment);
@@ -240,50 +276,80 @@ contract RewardsModule is Context {
      * contract.
      */
     function release(IERC20 token, uint256 ranking) public virtual {
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
-        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
-        uint256 payment = releasable(token, ranking);
+        uint256 payment;
+        address payable addressToPayOut;
 
-        require(
-            payment != 0,
-            "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
-        );
+        // send rewards to winner only if the ranking is higher than the highest tied ranking, send to jk labs if 0
+        if (ranking == 0) {
+            if (_shares[ranking] == 0) {
+                emit NoJkLabsFeeShares();
+                return;
+            }
 
-        // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then
-        // "_erc20Released[token][account] += payment"
-        // cannot overflow.
-        _erc20TotalReleased[token] += payment;
-        unchecked {
-            _erc20Released[token][ranking] += payment;
+            payment = releasable(token, ranking);
+
+            if (payment == 0) {
+                emit NoJkLabsERC20FeeDue(token);
+                return;
+            }
+
+            // _totalReleased is the sum of all values in _released.
+            // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
+            _totalReleased += payment;
+            unchecked {
+                _released[ranking] += payment;
+            }
+
+            addressToPayOut = payable(JK_LABS_ADDRESS);
+        } else {
+            require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
+
+            payment = releasable(token, ranking);
+
+            require(
+                payment != 0,
+                "RewardsModule: account isn't due payment as there isn't any of the specified ERC20 token in the module to pay out"
+            );
+
+            // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
+            // If "_erc20TotalReleased[token] += payment" does not overflow, then
+            // "_erc20Released[token][account] += payment"
+            // cannot overflow.
+            _erc20TotalReleased[token] += payment;
+            unchecked {
+                _erc20Released[token][ranking] += payment;
+            }
+
+            // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
+            // _lowestRanking, and _highestTiedRanking
+            if (!_underlyingContest.setSortedAndTiedProposalsHasBeenRun()) {
+                _underlyingContest.setSortedAndTiedProposals();
+            }
+
+            require(
+                ranking <= _underlyingContest.lowestRanking(),
+                "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
+            );
+
+            IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
+                _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
+            );
+
+            addressToPayOut = ranking < _underlyingContest.highestTiedRanking()
+                ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
+                : payable(creator());
         }
-
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
-        // _lowestRanking, and _highestTiedRanking
-        if (!_underlyingContest.setSortedAndTiedProposalsHasBeenRun()) {
-            _underlyingContest.setSortedAndTiedProposals();
-        }
-
-        require(
-            ranking <= _underlyingContest.lowestRanking(),
-            "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
-        );
-
-        IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-            _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
-        );
-
-        // send rewards to winner only if the ranking is higher than the highest tied ranking
-        address payable addressToPayOut = ranking < _underlyingContest.highestTiedRanking()
-            ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
-            : payable(creator());
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
+
+        if (ranking != 0) {
+            release(token, 0);
+        }
 
         SafeERC20.safeTransfer(token, addressToPayOut, payment);
         emit ERC20PaymentReleased(token, addressToPayOut, payment);
@@ -321,7 +387,6 @@ contract RewardsModule is Context {
      * @param shares_ The number of shares owned by the payee.
      */
     function _addPayee(uint256 ranking, uint256 shares_) private {
-        require(ranking > 0, "RewardsModule: ranking is 0, must be greater");
         require(shares_ > 0, "RewardsModule: shares are 0");
         require(_shares[ranking] == 0, "RewardsModule: account already has shares");
 
