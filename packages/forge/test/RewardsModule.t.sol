@@ -567,5 +567,8 @@ contract RewardsModuleTest is Test {
         rewardsModulePaysAuthor.release(testERC20, 3);
 
         assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 16);
+
+        // TODO: give shares to fee and call direct 0
+        // TODO: give shares to fee and call another rank, make sure they get paid out
     }
 }

@@ -29,6 +29,7 @@ import "../governance/extensions/GovernorSorting.sol";
 contract RewardsModule is Context {
     // TODO: Change into wallet controlled by jk labs
     address public constant JK_LABS_ADDRESS = 0xd698e31229aB86334924ed9DFfd096a71C686900;
+    uint256 public constant JK_LABS_FEE_RANK = 0;
 
     event PayeeAdded(uint256 ranking, uint256 shares);
     event PaymentReleased(address to, uint256 amount);
@@ -202,7 +203,7 @@ contract RewardsModule is Context {
         address payable addressToPayOut;
 
         // send rewards to winner only if the ranking is higher than the highest tied ranking, send to jk labs if 0
-        if (ranking == 0) {
+        if (ranking == JK_LABS_FEE_RANK) {
             if (_shares[ranking] == 0) {
                 emit NoJkLabsFeeShares();
                 return;
@@ -285,7 +286,7 @@ contract RewardsModule is Context {
         address payable addressToPayOut;
 
         // send rewards to winner only if the ranking is higher than the highest tied ranking, send to jk labs if 0
-        if (ranking == 0) {
+        if (ranking == JK_LABS_FEE_RANK) {
             if (_shares[ranking] == 0) {
                 emit NoJkLabsFeeShares();
                 return;
