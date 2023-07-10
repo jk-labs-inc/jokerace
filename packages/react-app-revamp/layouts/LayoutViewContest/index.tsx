@@ -32,6 +32,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import LayoutContestPrompt from "./Prompt";
@@ -228,12 +229,6 @@ const LayoutViewContest = (props: any) => {
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
         }`}
       >
-        {isLoading && (
-          <div className="animate-appear">
-            <Loader scale="page">Loading contest info...</Loader>
-          </div>
-        )}
-
         {account?.address && chain?.id !== chainId && votesClose && isBefore(new Date(), votesClose) && (
           <div className="animate-appear flex text-center items-center flex-col my-10 mx-auto text-neutral-11">
             <p className="font-bold text-[24px]">Looks like you&apos;re using the wrong network.</p>
@@ -280,98 +275,94 @@ const LayoutViewContest = (props: any) => {
               </div>
             )}
 
-            {isSuccess && !error && !isLoading && (
-              <>
-                {displayReloadBanner === true && (
-                  <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
-                    <div className="flex flex-col">
-                      <span>Let&apos;s refresh!</span>
-                      <p className="font-normal">Looks like live updates were frozen.</p>
-                    </div>
-                    <ButtonV3 color="bg-gradient-create" onClick={() => reload()}>
-                      Refresh
-                    </ButtonV3>
+            <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
+              {displayReloadBanner === true && (
+                <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+                  <div className="flex flex-col">
+                    <span>Let&apos;s refresh!</span>
+                    <p className="font-normal">Looks like live updates were frozen.</p>
+                  </div>
+                  <ButtonV3 color="bg-gradient-create" onClick={() => reload()}>
+                    Refresh
+                  </ButtonV3>
+                </div>
+              )}
+              <div className="animate-appear pt-3 md:pt-0">
+                {pathname === ROUTE_CONTEST_PROPOSAL && (
+                  <div>
+                    <Link
+                      className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs"
+                      href={{
+                        pathname: ROUTE_VIEW_CONTEST,
+                        query: {
+                          chain: query.chain,
+                          address: query.address,
+                        },
+                      }}
+                    >
+                      <ArrowLeftIcon className="mie-1 w-4" />
+                      Back to contest
+                    </Link>
                   </div>
                 )}
-                <div className="animate-appear pt-3 md:pt-0">
-                  {pathname === ROUTE_CONTEST_PROPOSAL && (
-                    <div>
-                      <Link
-                        className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs"
-                        href={{
-                          pathname: ROUTE_VIEW_CONTEST,
-                          query: {
-                            chain: query.chain,
-                            address: query.address,
-                          },
-                        }}
-                      >
-                        <ArrowLeftIcon className="mie-1 w-4" />
-                        Back to contest
-                      </Link>
-                    </div>
-                  )}
 
-                  <div className="flex flex-col mt-10">
-                    <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
-                    <p className="text-[24px] text-primary-10 font-bold break-all">
-                      by{" "}
-                      <EthereumAddress
-                        ethereumAddress={contestAuthorEthereumAddress}
-                        shortenOnFallback
-                        displayLensProfile={false}
-                        textualVersion
-                      />
-                    </p>
-                  </div>
-
-                  <div className="mt-4 gap-3 flex flex-col">
-                    <hr className="border-neutral-10" />
-                    <ContestLayoutTabs
-                      contestAddress={address}
-                      chain={chain?.name ?? ""}
-                      contestName={contestName}
-                      onChange={tab => setTab(tab)}
+                <div className="flex flex-col mt-10">
+                  <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
+                  <p className="text-[24px] text-primary-10 font-bold break-all">
+                    by{" "}
+                    <EthereumAddress
+                      ethereumAddress={contestAuthorEthereumAddress}
+                      shortenOnFallback
+                      displayLensProfile={false}
+                      textualVersion
                     />
-                    <hr className="border-neutral-10" />
-                  </div>
-
-                  <div className="mt-4">
-                    <LayoutContestTimeline
-                      submissionOpenDate={submissionsOpen}
-                      votingOpensDate={votesOpen}
-                      contestCloseDate={votesClose}
-                    />
-                  </div>
-
-                  {contestQualifiers}
-
-                  <div className="mt-8">
-                    <LayoutContestPrompt
-                      prompt={contestPrompt}
-                      hidePrompt={tab !== Tab.Contest || contestStatus === ContestStatus.VotingClosed}
-                    />
-                  </div>
-
-                  {tab !== Tab.Contest && (
-                    <div className="mt-8">
-                      <hr className="border-neutral-10" />
-                    </div>
-                  )}
-
-                  {renderTabs}
-
-                  {props.children}
-
-                  <DialogModalSendProposal
-                    isOpen={isSubmitProposalModalOpen}
-                    setIsOpen={setIsSubmitProposalModalOpen}
-                  />
-
-                  {showRewards && <CreateContestRewards />}
+                  </p>
                 </div>
-              </>
-            )}
+
+                <div className="mt-4 gap-3 flex flex-col">
+                  <hr className="border-neutral-10" />
+                  <ContestLayoutTabs
+                    contestAddress={address}
+                    chain={chain?.name ?? ""}
+                    contestName={contestName}
+                    onChange={tab => setTab(tab)}
+                  />
+                  <hr className="border-neutral-10" />
+                </div>
+
+                <div className="mt-4">
+                  <LayoutContestTimeline
+                    submissionOpenDate={submissionsOpen}
+                    votingOpensDate={votesOpen}
+                    contestCloseDate={votesClose}
+                  />
+                </div>
+
+                {contestQualifiers}
+
+                <div className="mt-8">
+                  <LayoutContestPrompt
+                    prompt={contestPrompt}
+                    hidePrompt={tab !== Tab.Contest || contestStatus === ContestStatus.VotingClosed}
+                  />
+                </div>
+
+                {tab !== Tab.Contest && (
+                  <div className="mt-8">
+                    <hr className="border-neutral-10" />
+                  </div>
+                )}
+
+                {renderTabs}
+
+                {props.children}
+
+                <DialogModalSendProposal isOpen={isSubmitProposalModalOpen} setIsOpen={setIsSubmitProposalModalOpen} />
+
+                {showRewards && <CreateContestRewards />}
+              </div>
+            </SkeletonTheme>
+            <></>
           </>
         }
       </div>

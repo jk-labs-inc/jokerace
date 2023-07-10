@@ -1,12 +1,12 @@
 /**
  * Converts a number to a more human-readable string format
  * @param num - The number to format
- * @param decimals - Optional parameter to determine the number of decimal places
  * @return A string representing the formatted number
  */
-export function formatNumber(num: number, decimals: number = 1): string {
+export function formatNumber(num: number): string {
   let suffix = "";
   let scaledNumber = num;
+  let formattedNumber;
 
   if (num >= 1e9) {
     scaledNumber = num / 1e9;
@@ -19,8 +19,12 @@ export function formatNumber(num: number, decimals: number = 1): string {
     suffix = "K";
   }
 
-  let result = scaledNumber.toFixed(decimals);
-  result = parseFloat(result).toString();
+  // Only use toFixed(3) if the number is not an integer.
+  if (Math.floor(scaledNumber) !== scaledNumber) {
+    formattedNumber = scaledNumber.toFixed(3);
+  } else {
+    formattedNumber = scaledNumber.toString();
+  }
 
-  return result + suffix;
+  return formattedNumber + suffix;
 }

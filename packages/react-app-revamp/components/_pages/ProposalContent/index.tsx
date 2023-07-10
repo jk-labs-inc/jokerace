@@ -77,7 +77,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
       case ContestStatus.VotingClosed:
         return (
           <>
-            <p className="text-positive-11">{formatNumber(proposal.votes, 3)} votes</p>
+            <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
             <p className="text-neutral-10">voting closed</p>
           </>
         );

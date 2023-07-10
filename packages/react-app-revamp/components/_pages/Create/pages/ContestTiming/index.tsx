@@ -1,6 +1,5 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
-import { date } from "zod";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
@@ -10,7 +9,7 @@ import CreateSubmissionsOpenDate from "./components/SubmissionDate";
 import CreateVotesOpenDate from "./components/VotesDate";
 
 const CreateContestTiming = () => {
-  const { setStep, step, votingOpen, votingClose, submissionOpen } = useDeployContestStore(state => state);
+  const { step, votingOpen, votingClose, submissionOpen } = useDeployContestStore(state => state);
   const datesValidation = validationFunctions.get(step);
 
   const onNextStep = useNextStep([

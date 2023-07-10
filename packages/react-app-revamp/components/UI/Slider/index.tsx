@@ -55,9 +55,7 @@ const StepSlider: FC<StepSliderProps> = ({ val, min = 0, max = 100, defaultValue
     <Slider
       className="w-60"
       min={min}
-      // marks={{ 0: "0", 25: "25", 50: "50", 75: "75", 100: "100" }}
       max={max}
-      step={1}
       value={value}
       dotStyle={dotStyle}
       trackStyle={trackStyle}

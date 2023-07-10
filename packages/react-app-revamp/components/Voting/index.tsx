@@ -1,19 +1,22 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
+import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useUserStore } from "@hooks/useUser/store";
 import { FC, useState } from "react";
 
 interface VotingWidgetProps {
   amountOfVotes: number;
   downvoteAllowed?: boolean;
-  onVote?: (amount: string, isUpvote: boolean) => void;
+  onVote?: (amount: number, isUpvote: boolean) => void;
 }
 
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
+  const currentUserTotalVotesCast = useUserStore(state => state.currentUserTotalVotesCast);
   const isLoading = useCastVotesStore(state => state.isLoading);
   const [isUpvote, setIsUpvote] = useState(true);
-  const [amount, setAmount] = useState("");
+  const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
 
@@ -24,20 +27,27 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
     setIsUpvote(value);
   };
 
+  const truncateDecimals = (num: number, dec = 3) => {
+    const calcDec = Math.pow(10, dec);
+    return Math.trunc(calcDec * num) / calcDec;
+  };
+
   const handleSliderChange = (value: any) => {
     setSliderValue(value);
-    setAmount(((value / 100) * amountOfVotes).toFixed(0));
+    const newAmount = truncateDecimals((value / 100) * amountOfVotes);
+    setAmount(newAmount);
   };
+
   const handleChange = (e: any) => {
-    const inputValue = e.target.value;
+    const inputValue = e.target.value.replace(/,/g, "");
     if (!isNaN(inputValue)) {
-      setAmount(inputValue);
+      setAmount(parseFloat(inputValue));
       if (inputValue === "0") {
-        setAmount("");
+        setAmount(0);
       } else {
-        const numericInput = Number(inputValue);
+        const numericInput = parseFloat(inputValue);
         setSliderValue((numericInput / amountOfVotes) * 100);
-        setIsInvalid(numericInput > amountOfVotes);
+        setIsInvalid(truncateDecimals(numericInput) > amountOfVotes);
       }
     }
   };
@@ -53,13 +63,14 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
           <span>Amount</span>
           <div className="flex items-center">
             <input
-              value={amount ? `${amount}` : ""}
+              type="number"
+              value={amount > 0 ? amount : ""}
               onChange={handleChange}
               placeholder="0.00 votes"
               max={amountOfVotes}
               className="text-right w-24 bg-transparent outline-none mr-1 placeholder-neutral-10"
             />
-            {amount && <span>votes</span>}
+            {amount > 0 && <span>votes</span>}
           </div>
         </div>
         <div>
@@ -86,7 +97,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         <div className="mt-4">
           <ButtonV3
             type="txAction"
-            disabled={isLoading || isInvalid || parseFloat(amount) === 0 || !amount}
+            disabled={isLoading || isInvalid || amount === 0}
             color="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
             size="large"
             onClick={() => onVote?.(amount, isUpvote)}
@@ -95,9 +106,17 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
             <ChevronRightIcon className="w-5" />
           </ButtonV3>
         </div>
+        <div className="flex flex-col mt-4">
+          <div className="flex justify-between text-[16px]">
+            <p className="text-neutral-11">votes on submission</p>
+            <p className="text-positive-11 font-bold">{formatNumber(currentUserTotalVotesCast)}</p>
+          </div>
+          <div className="flex justify-between text-[16px]">
+            <p className="text-neutral-11">my remaining votes</p>
+            <p className="text-positive-11 font-bold">{formatNumber(amountOfVotes)}</p>
+          </div>
+        </div>
       </div>
-      <div></div>
-      <div></div>
     </div>
   );
 };
