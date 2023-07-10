@@ -306,7 +306,7 @@ const LayoutViewContest = (props: any) => {
                       <hr className="border-neutral-10" />
                       <ContestLayoutTabs
                         contestAddress={address}
-                        chain={chain?.name ?? ""}
+                        chain={chainName ?? ""}
                         contestName={contestName}
                         onChange={tab => setTab(tab)}
                       />
