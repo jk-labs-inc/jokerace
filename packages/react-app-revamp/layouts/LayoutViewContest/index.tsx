@@ -3,14 +3,12 @@ import ContestRewards from "@components/Rewards";
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
-import Loader from "@components/UI/Loader";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import ListProposals from "@components/_pages/ListProposals";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
-import { RefreshIcon } from "@heroicons/react/outline";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
@@ -37,8 +35,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import LayoutContestPrompt from "./Prompt";
 import ProposalStatistics from "./ProposalStatistics";
-import LayoutContestCountdown from "./StickyCards/components/Countdown";
-import LayoutContestQualifier from "./StickyCards/components/Qualifier";
+import ContestLayoutStickyCards from "./StickyCards";
 import ContestLayoutTabs, { Tab } from "./Tabs";
 import LayoutContestTimeline from "./TimelineV3";
 
@@ -70,7 +67,7 @@ const LayoutViewContest = (props: any) => {
   const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount } = useUserStore(
     state => state,
   );
-  const contestInProgress = moment().isBefore(votesClose);
+  const contestLoaded = isSuccess && !error && !isLoading;
 
   const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
   const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
@@ -126,23 +123,6 @@ const LayoutViewContest = (props: any) => {
       });
     }
   }, [account?.connector]);
-
-  const contestQualifiers = useMemo<ReactNode | null>(() => {
-    if (contestStatus === ContestStatus.VotingClosed) {
-      return null;
-    }
-
-    return (
-      <div
-        className={`mt-8 flex flex-col md:flex-row gap-4 sticky ${
-          displayReloadBanner ? "top-[105px]" : "top-0"
-        } z-10 bg-true-black`}
-      >
-        <LayoutContestCountdown submissionOpen={submissionsOpen} votingOpen={votesOpen} votingClose={votesClose} />
-        <LayoutContestQualifier />
-      </div>
-    );
-  }, [contestStatus, submissionsOpen, votesOpen, votesClose]);
 
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
@@ -276,93 +256,106 @@ const LayoutViewContest = (props: any) => {
             )}
 
             <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
-              {displayReloadBanner === true && (
-                <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
-                  <div className="flex flex-col">
-                    <span>Let&apos;s refresh!</span>
-                    <p className="font-normal">Looks like live updates were frozen.</p>
-                  </div>
-                  <ButtonV3 color="bg-gradient-create" onClick={() => reload()}>
-                    Refresh
-                  </ButtonV3>
-                </div>
-              )}
-              <div className="animate-appear pt-3 md:pt-0">
-                {pathname === ROUTE_CONTEST_PROPOSAL && (
-                  <div>
-                    <Link
-                      className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs"
-                      href={{
-                        pathname: ROUTE_VIEW_CONTEST,
-                        query: {
-                          chain: query.chain,
-                          address: query.address,
-                        },
-                      }}
-                    >
-                      <ArrowLeftIcon className="mie-1 w-4" />
-                      Back to contest
-                    </Link>
-                  </div>
-                )}
+              {isSuccess && !error && !isLoading && (
+                <>
+                  {displayReloadBanner === true && (
+                    <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+                      <div className="flex flex-col">
+                        <span>Let&apos;s refresh!</span>
+                        <p className="font-normal">Looks like live updates were frozen.</p>
+                      </div>
+                      <ButtonV3 color="bg-gradient-create" onClick={() => reload()}>
+                        Refresh
+                      </ButtonV3>
+                    </div>
+                  )}
 
-                <div className="flex flex-col mt-10">
-                  <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
-                  <p className="text-[24px] text-primary-10 font-bold break-all">
-                    by{" "}
-                    <EthereumAddress
-                      ethereumAddress={contestAuthorEthereumAddress}
-                      shortenOnFallback
-                      displayLensProfile={false}
-                      textualVersion
+                  <div className="animate-appear pt-3 md:pt-0">
+                    {pathname === ROUTE_CONTEST_PROPOSAL && (
+                      <div>
+                        <Link
+                          className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs"
+                          href={{
+                            pathname: ROUTE_VIEW_CONTEST,
+                            query: {
+                              chain: query.chain,
+                              address: query.address,
+                            },
+                          }}
+                        >
+                          <ArrowLeftIcon className="mie-1 w-4" />
+                          Back to contest
+                        </Link>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col mt-10">
+                      <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
+                      <p className="text-[24px] text-primary-10 font-bold break-all">
+                        by{" "}
+                        <EthereumAddress
+                          ethereumAddress={contestAuthorEthereumAddress}
+                          shortenOnFallback
+                          displayLensProfile={false}
+                          textualVersion
+                        />
+                      </p>
+                    </div>
+
+                    <div className="mt-4 gap-3 flex flex-col">
+                      <hr className="border-neutral-10" />
+                      <ContestLayoutTabs
+                        contestAddress={address}
+                        chain={chain?.name ?? ""}
+                        contestName={contestName}
+                        onChange={tab => setTab(tab)}
+                      />
+                      <hr className="border-neutral-10" />
+                    </div>
+
+                    <div className="mt-4">
+                      <LayoutContestTimeline
+                        submissionOpenDate={submissionsOpen}
+                        votingOpensDate={votesOpen}
+                        contestCloseDate={votesClose}
+                      />
+                    </div>
+
+                    <ContestLayoutStickyCards
+                      contestStatus={contestStatus}
+                      submissionsOpen={submissionsOpen}
+                      votesClose={votesClose}
+                      votesOpen={votesOpen}
+                      displayReloadBanner={displayReloadBanner}
                     />
-                  </p>
-                </div>
 
-                <div className="mt-4 gap-3 flex flex-col">
-                  <hr className="border-neutral-10" />
-                  <ContestLayoutTabs
-                    contestAddress={address}
-                    chain={chain?.name ?? ""}
-                    contestName={contestName}
-                    onChange={tab => setTab(tab)}
-                  />
-                  <hr className="border-neutral-10" />
-                </div>
+                    <div className="mt-8">
+                      <LayoutContestPrompt
+                        prompt={contestPrompt}
+                        hidePrompt={tab !== Tab.Contest || contestStatus === ContestStatus.VotingClosed}
+                      />
+                    </div>
 
-                <div className="mt-4">
-                  <LayoutContestTimeline
-                    submissionOpenDate={submissionsOpen}
-                    votingOpensDate={votesOpen}
-                    contestCloseDate={votesClose}
-                  />
-                </div>
+                    {tab !== Tab.Contest && (
+                      <div className="mt-8">
+                        <hr className="border-neutral-10" />
+                      </div>
+                    )}
 
-                {contestQualifiers}
+                    {renderTabs}
 
-                <div className="mt-8">
-                  <LayoutContestPrompt
-                    prompt={contestPrompt}
-                    hidePrompt={tab !== Tab.Contest || contestStatus === ContestStatus.VotingClosed}
-                  />
-                </div>
+                    {props.children}
 
-                {tab !== Tab.Contest && (
-                  <div className="mt-8">
-                    <hr className="border-neutral-10" />
+                    <DialogModalSendProposal
+                      isOpen={isSubmitProposalModalOpen}
+                      setIsOpen={setIsSubmitProposalModalOpen}
+                    />
+
+                    {showRewards && <CreateContestRewards />}
                   </div>
-                )}
-
-                {renderTabs}
-
-                {props.children}
-
-                <DialogModalSendProposal isOpen={isSubmitProposalModalOpen} setIsOpen={setIsSubmitProposalModalOpen} />
-
-                {showRewards && <CreateContestRewards />}
-              </div>
+                </>
+              )}
             </SkeletonTheme>
-            <></>
           </>
         }
       </div>
