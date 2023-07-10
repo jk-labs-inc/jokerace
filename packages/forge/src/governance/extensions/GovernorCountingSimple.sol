@@ -27,6 +27,7 @@ abstract contract GovernorCountingSimple is Governor {
         mapping(address => VoteCounts) addressVoteCounts;
     }
 
+    uint256 public totalVotesCast; // Total votes cast in contest so far
     mapping(address => uint256) public addressTotalCastVoteCounts;
     mapping(uint256 => ProposalVote) public proposalVotesStructs;
 
@@ -73,7 +74,12 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.
      */
-    function contestAddressTotalVotesCast(address userAddress) public view virtual returns (uint256 totalVotesCast) {
+    function contestAddressTotalVotesCast(address userAddress)
+        public
+        view
+        virtual
+        returns (uint256 userTotalVotesCast)
+    {
         return addressTotalCastVoteCounts[userAddress];
     }
 
@@ -109,5 +115,6 @@ abstract contract GovernorCountingSimple is Governor {
             proposalvote.addressesVoted.push(account);
         }
         addressTotalCastVoteCounts[account] += numVotes;
+        totalVotesCast += numVotes;
     }
 }
