@@ -234,7 +234,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
               {loading ? (
                 <Skeleton width={200} />
               ) : (
-                <div className="self-start inline-flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-10 rounded-[5px] border-0 text-true-black text-[16px] font-bold">
+                <div className="self-start inline-flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-12 rounded-[5px] border-0 text-true-black text-[12px] font-bold">
                   {contest.type}
                 </div>
               )}
@@ -362,7 +362,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
               {loading ? (
                 <Skeleton width={200} />
               ) : (
-                <div className="self-start inline-flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-10 rounded-[5px] border-0 text-true-black text-[16px] font-bold">
+                <div className="self-start inline-flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-12 rounded-[5px] border-0 text-true-black text-[12px] font-bold">
                   {contest.type}
                 </div>
               )}
