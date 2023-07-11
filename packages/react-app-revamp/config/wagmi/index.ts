@@ -19,6 +19,8 @@ import { lootChainMainnet } from "./custom-chains/lootChainMainnet";
 import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
 import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
 import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
+import { gnosisMainnet } from "./custom-chains/gnosisMainnet";
+import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { publicProvider } from "wagmi/providers/public";
 import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
@@ -54,6 +56,8 @@ const otherChains = [
   lootChainTestnet,
   nearAuroraMainnet,
   nearAuroraTestnet,
+  gnosisTestnet,
+  gnosisMainnet,
 ];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.optimism];
