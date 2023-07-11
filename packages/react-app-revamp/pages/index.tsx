@@ -1,4 +1,5 @@
 import Explainer from "@components/Explainer";
+import Subscribe from "@components/Subscribe";
 import Button from "@components/UI/Button";
 import ListContests from "@components/_pages/ListContests";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
@@ -143,6 +144,9 @@ const Page: NextPage = props => {
           <Button className="bg-primary-10 text-[18px] w-[146px] font-bold" onClick={onViewAll}>
             View all
           </Button>
+        </div>
+        <div className="mt-20 md:mt-0">
+          <Subscribe />
         </div>
       </div>
       <Explainer />

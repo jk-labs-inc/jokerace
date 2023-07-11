@@ -218,7 +218,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
       <a href={getContestUrl(contest)}>
         <div
-          className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-6 p-3 
+          className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-4 p-3 
         hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer"
           key={`live-contest-${contest.id}`}
         >
@@ -228,7 +228,17 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             ) : (
               <img className="w-8 h-8" src={chainsImages[contest.network_name]} alt="" />
             )}
-            <p className="font-bold w-full">{loading ? <Skeleton /> : contest.title}</p>
+            <div className="flex flex-col items-start w-full">
+              <p className="font-bold w-full">{loading ? <Skeleton width={200} /> : contest.title}</p>
+              <p>{loading ? <Skeleton width={200} /> : contest.summary}</p>
+              {loading ? (
+                <Skeleton width={200} />
+              ) : (
+                <div className="self-start inline-flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-10 rounded-[5px] border-0 text-true-black text-[16px] font-bold">
+                  {contest.type}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-4">
@@ -333,7 +343,9 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             <p className="text-neutral-9 font-bold">{loading ? <Skeleton /> : "no rewards"}</p>
           )}
         </div>
+
         {/*  Mobile */}
+
         <div
           className="flex flex-col gap-2 mb-4 pl-3 border-t border-neutral-9 pt-8 p-3 
           hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer lg:hidden"
@@ -344,7 +356,17 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
             ) : (
               <img className="w-[50px] h-auto" src={chainsImages[contest.network_name]} alt="" />
             )}
-            <p className="font-bold w-full uppercase">{loading ? <Skeleton /> : contest.title}</p>
+            <div className="flex flex-col gap-1">
+              <p className="font-bold">{loading ? <Skeleton width={200} /> : contest.title}</p>
+              <p>{loading ? <Skeleton width={200} /> : contest.summary}</p>
+              {loading ? (
+                <Skeleton width={200} />
+              ) : (
+                <div className="self-start inline-flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-10 rounded-[5px] border-0 text-true-black text-[16px] font-bold">
+                  {contest.type}
+                </div>
+              )}
+            </div>
           </div>
           <div className="flex flex-row pl-14">
             <ul className="list-disc list-inside text-[16px] list-explainer w-full">

@@ -9,7 +9,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import moment from "moment";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
@@ -45,6 +45,22 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
   const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
+  const previousVotesRef = useRef(proposal.votes);
+  const [isVoteChanged, setIsVoteChanged] = useState(false);
+
+  useEffect(() => {
+    let timer: any;
+    if (previousVotesRef.current !== proposal.votes) {
+      setIsVoteChanged(true);
+      timer = setTimeout(() => setIsVoteChanged(false), 1000);
+      previousVotesRef.current = proposal.votes;
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [proposal.votes]);
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
     switch (contestStatus) {
@@ -58,7 +74,9 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
       case ContestStatus.VotingOpen:
         return (
           <>
-            <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
+            <p className={`text-positive-11 ${isVoteChanged ? "animate-flicker" : ""}`}>
+              {formatNumber(proposal.votes)} votes
+            </p>
             {currentUserAvailableVotesAmount > 0 && (
               <ButtonV3
                 type="txAction"

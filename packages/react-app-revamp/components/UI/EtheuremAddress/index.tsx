@@ -1,9 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import { useAvatarStore } from "@hooks/useAvatar";
+import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
 import { chain, useEnsName } from "wagmi";
-import { getDefaultProfile } from "@services/lens/getDefaultProfile";
-import { useAvatarStore } from "@hooks/useAvatar";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg"; // Default avatar url
 
@@ -21,7 +20,6 @@ const EthereumAddress = ({
   shortenOnFallback,
 }: EthereumAddressProps) => {
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
-
   const { avatars, setAvatar } = useAvatarStore(state => state);
   const avatarUrl = avatars[ethereumAddress] || DEFAULT_AVATAR_URL;
 
@@ -49,12 +47,15 @@ const EthereumAddress = ({
   const queryEns = useEnsName({
     chainId: chain.mainnet.id,
     address: ethereumAddress,
-    enabled: !displayLensProfile || queryUserProfileLens.isError || !queryUserProfileLens.data,
+    enabled:
+      (queryUserProfileLens?.isSuccess && queryUserProfileLens?.data === null) || queryUserProfileLens?.isError
+        ? true
+        : false,
   });
 
   const isLoading = queryUserProfileLens?.status === "loading";
   const isLensProfileAvailable = queryUserProfileLens?.status === "success" && queryUserProfileLens?.data !== null;
-  const ensName = queryEns?.status === "success" && queryEns?.data !== null && queryEns?.data;
+  const ensName = queryEns?.data;
 
   const displayName =
     (isLensProfileAvailable && queryUserProfileLens.data.handle) ||
@@ -65,6 +66,10 @@ const EthereumAddress = ({
   if (textualVersion) {
     return <span>{displayName}</span>;
   }
+
+  const handleAddressClick = () => {
+    window.open(`https://etherscan.io/address/${ethereumAddress}`, "_blank");
+  };
 
   return (
     <span className="flex gap-2 items-center text-[16px] text-neutral-11 font-bold">
@@ -82,9 +87,14 @@ const EthereumAddress = ({
         <a
           title={isLensProfileAvailable ? `View ${displayName}'s profile on LensFrens` : ""}
           className="text-[16px] text-neutral-11 font-bold no-underline cursor-pointer"
-          target={isLensProfileAvailable ? "_blank" : undefined}
-          rel={isLensProfileAvailable ? "noopener noreferrer" : undefined}
-          href={isLensProfileAvailable ? `https://lensfrens.xyz/${displayName}` : undefined}
+          target="_blank"
+          rel="noopener noreferrer"
+          href={
+            isLensProfileAvailable
+              ? `https://lensfrens.xyz/${displayName}`
+              : `https://etherscan.io/address/${ethereumAddress}`
+          }
+          onClick={handleAddressClick}
         >
           {displayName}
         </a>

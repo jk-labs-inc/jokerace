@@ -9,7 +9,7 @@ const tabOptions = [
 ];
 
 const CreateContestVoting = () => {
-  const { errors, setStep, step } = useDeployContestStore(state => state);
+  const { step } = useDeployContestStore(state => state);
 
   return (
     <div className="mt-12 lg:mt-[50px] animate-swingInLeft">

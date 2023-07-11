@@ -180,6 +180,8 @@ export function useUser() {
 
       //@ts-ignore
       setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount - currentUserTotalVotesCast / 1e18);
+      //@ts-ignore
+      setCurrentuserTotalVotesCast(currentUserTotalVotesCast / 1e18);
     } catch (e) {
       console.error(e);
     }

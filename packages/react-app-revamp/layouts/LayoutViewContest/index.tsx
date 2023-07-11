@@ -3,6 +3,7 @@ import ContestRewards from "@components/Rewards";
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
+import Loader from "@components/UI/Loader";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
@@ -209,6 +210,11 @@ const LayoutViewContest = (props: any) => {
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
         }`}
       >
+        {isLoading && (
+          <div className="animate-appear">
+            <Loader scale="page">Loading contest info...</Loader>
+          </div>
+        )}
         {account?.address && chain?.id !== chainId && votesClose && isBefore(new Date(), votesClose) && (
           <div className="animate-appear flex text-center items-center flex-col my-10 mx-auto text-neutral-11">
             <p className="font-bold text-[24px]">Looks like you&apos;re using the wrong network.</p>

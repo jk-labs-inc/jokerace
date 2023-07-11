@@ -27,19 +27,15 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
     setIsUpvote(value);
   };
 
-  const truncateDecimals = (num: number, dec = 3) => {
-    const calcDec = Math.pow(10, dec);
-    return Math.trunc(calcDec * num) / calcDec;
-  };
-
   const handleSliderChange = (value: any) => {
     setSliderValue(value);
-    const newAmount = truncateDecimals((value / 100) * amountOfVotes);
+    const newAmount = (value / 100) * amountOfVotes;
+
     setAmount(newAmount);
   };
 
   const handleChange = (e: any) => {
-    const inputValue = e.target.value.replace(/,/g, "");
+    const inputValue = e.target.value;
     if (!isNaN(inputValue)) {
       setAmount(parseFloat(inputValue));
       if (inputValue === "0") {
@@ -47,7 +43,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
       } else {
         const numericInput = parseFloat(inputValue);
         setSliderValue((numericInput / amountOfVotes) * 100);
-        setIsInvalid(truncateDecimals(numericInput) > amountOfVotes);
+        setIsInvalid(numericInput > amountOfVotes);
       }
     }
   };
