@@ -26,7 +26,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 items-center">
             <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
-            <div className="flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-10 rounded-[5px] border-0 text-true-black text-[16px] font-bold">
+            <div className="flex items-center px-2 h-4 leading-tight pb-1 mt-1 bg-neutral-9 rounded-[5px] border-0 text-true-black text-[16px] font-bold">
               {type}
             </div>
             <button
