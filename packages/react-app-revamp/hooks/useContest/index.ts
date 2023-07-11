@@ -130,7 +130,7 @@ export function useContest() {
       setSupportsRewardsModule(false);
     }
 
-    if (version === "3.1") {
+    if (parseFloat(version) >= 3) {
       try {
         const contracts = getV3Contracts(contractConfig);
         const results = await readContracts({ contracts });
