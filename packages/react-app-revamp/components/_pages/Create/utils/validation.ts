@@ -22,8 +22,8 @@ const titleValidation = (title: string) => {
 };
 
 const summaryValidation = (summary: string) => {
-  if (!summary || summary.length < CONTEST_TITLE_MIN_LENGTH || summary.length >= CONTEST_TITLE_MAX_LENGTH) {
-    return "Contest summary should be 10-30 characters";
+  if (!summary || summary.length >= CONTEST_TITLE_MAX_LENGTH) {
+    return "Contest summary should be no more than 30 characters";
   }
   return "";
 };

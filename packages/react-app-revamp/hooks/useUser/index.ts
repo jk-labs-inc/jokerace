@@ -17,6 +17,7 @@ export function useUser() {
     setCurrentUserAvailableVotesAmount,
     setCurrentUserTotalVotesAmount,
     setCurrentUserProposalCount,
+    setCurrentuserTotalVotesCast,
     currentUserTotalVotesAmount,
   } = useUserStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
@@ -29,15 +30,6 @@ export function useUser() {
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
-
-  /**
-   * Display an error toast in the UI for any contract related error
-   */
-  function onContractError(err: any) {
-    let toastMessage = err?.message ?? err;
-    if (err.code === "CALL_EXCEPTION") toastMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-    toast.error(toastMessage);
-  }
 
   // Generate config for the contract
   async function getContractConfig() {
@@ -151,18 +143,22 @@ export function useUser() {
         if (castVotes > 0) {
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes - castVotes);
+          setCurrentuserTotalVotesCast(castVotes);
         } else {
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes);
+          setCurrentuserTotalVotesCast(castVotes);
         }
       } else {
         setCurrentUserTotalVotesAmount(0);
         setCurrentUserAvailableVotesAmount(0);
+        setCurrentuserTotalVotesCast(0);
       }
     } catch (error) {
       console.error("Error performing lookup in 'contest_participants_v3':", error);
       setCurrentUserTotalVotesAmount(0);
       setCurrentUserAvailableVotesAmount(0);
+      setCurrentuserTotalVotesCast(0);
     }
   }
 
@@ -184,6 +180,8 @@ export function useUser() {
 
       //@ts-ignore
       setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount - currentUserTotalVotesCast / 1e18);
+      //@ts-ignore
+      setCurrentuserTotalVotesCast(currentUserTotalVotesCast / 1e18);
     } catch (e) {
       console.error(e);
     }

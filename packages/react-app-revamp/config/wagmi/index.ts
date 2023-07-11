@@ -53,7 +53,7 @@ const otherChains = [
   lootChainMainnet,
   lootChainTestnet,
   nearAuroraMainnet,
-  nearAuroraTestnet
+  nearAuroraTestnet,
 ];
 
 const defaultChains = [chain.polygon, chain.arbitrum, chain.optimism];

@@ -1,3 +1,4 @@
+import { formatNumber } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -8,7 +9,7 @@ interface ProposalStatisticsProps {
 }
 
 const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
-  const { contestMaxProposalCount } = useContestStore(state => state);
+  const { contestMaxProposalCount, totalVotes, totalVotesCast } = useContestStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
 
   const content = useMemo<ReactNode>(() => {
@@ -23,13 +24,13 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
       case ContestStatus.VotingClosed:
         return (
           <p className="text-[16px] text-neutral-11">
-            {/* {listProposalsIds.length}/{contestMaxProposalCount.toString()} submitted */}
+            {formatNumber(totalVotesCast)} votes deployed/{formatNumber(totalVotes)} available votes in the contest
           </p>
         );
       default:
         break;
     }
-  }, [contestStatus, listProposalsIds]);
+  }, [contestStatus, listProposalsIds, totalVotesCast, totalVotes]);
 
   const heading = useMemo<string>(() => {
     switch (contestStatus) {

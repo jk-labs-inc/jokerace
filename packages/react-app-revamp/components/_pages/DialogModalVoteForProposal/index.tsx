@@ -21,8 +21,8 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
 
   const { castVotes, isLoading, error, isSuccess } = useCastVotes();
 
-  function onSubmitCastVotes(amount: string, isPositive: boolean) {
-    castVotes(parseFloat(amount), isPositive);
+  function onSubmitCastVotes(amount: number, isPositive: boolean) {
+    castVotes(amount, isPositive);
   }
 
   useEffect(() => {

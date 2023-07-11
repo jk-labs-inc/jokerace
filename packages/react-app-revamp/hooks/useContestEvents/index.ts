@@ -1,5 +1,6 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import isUrlToImage from "@helpers/isUrlToImage";
+import useContest from "@hooks/useContest";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { chain, fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
@@ -10,10 +11,9 @@ import { useProvider } from "wagmi";
 export function useContestEvents() {
   const { asPath } = useRouter();
   const provider = useProvider();
+  const { fetchTotalVotesCast } = useContest();
   const { contestStatus } = useContestStatusStore(state => state);
-  const { setProposalData, setProposalVotes, listProposalsData, canUpdateVotesInRealTime } = useProposalStore(
-    state => state,
-  );
+  const { setProposalData, setProposalVotes, listProposalsData } = useProposalStore(state => state);
   const [displayReloadBanner, setDisplayReloadBanner] = useState(false);
   const contestStatusRef = useRef(contestStatus);
 
@@ -68,6 +68,8 @@ export function useContestEvents() {
 
         setProposalData({ id: proposalId, data: proposalData });
       }
+
+      await fetchTotalVotesCast();
     } catch (e) {
       console.error(e);
     }

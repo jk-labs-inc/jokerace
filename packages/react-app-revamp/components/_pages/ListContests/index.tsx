@@ -150,8 +150,8 @@ export const ListContests: FC<ListContestsProps> = ({
                 ))
               : sortedData
                   .slice(0, 4)
-                  .map((contest: any) => (
-                    <Contest key={`live-contest-${contest.id}`} contest={contest} compact={compact} loading={loading} />
+                  .map((contest: any, index: number) => (
+                    <Contest key={`contest-${index}`} contest={contest} compact={compact} loading={loading} />
                   ))}
           </div>
         )}
@@ -201,13 +201,8 @@ export const ListContests: FC<ListContestsProps> = ({
                   ? placeholders.map((_, index) => (
                       <Contest key={`placeholder-contest-${index}`} contest={{}} compact={compact} loading={loading} />
                     ))
-                  : sortedData.map((contest: any) => (
-                      <Contest
-                        key={`live-contest-${contest.id}`}
-                        contest={contest}
-                        compact={compact}
-                        loading={loading}
-                      />
+                  : sortedData.map((contest: any, index: number) => (
+                      <Contest key={`contest-${index}`} contest={contest} compact={compact} loading={loading} />
                     ))}
               </div>
 

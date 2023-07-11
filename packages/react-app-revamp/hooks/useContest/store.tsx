@@ -11,6 +11,8 @@ export interface ContestState {
   submissionsOpen: Date;
   votesOpen: Date;
   votesClose: Date;
+  totalVotesCast: number;
+  totalVotes: number;
   isLoading: boolean;
   error: CustomError | null;
   isSuccess: boolean;
@@ -38,6 +40,8 @@ export interface ContestState {
   setSubmissionsOpen: (datetime: Date) => void;
   setVotesOpen: (datetime: Date) => void;
   setVotesClose: (datetime: Date) => void;
+  setTotalVotesCast: (amount: number) => void;
+  setTotalVotes: (amount: number) => void;
   setVotingMerkleTree: (merkleTree: MerkleTree) => void;
   setVoters: (voters: { address: string; numVotes: number }[]) => void;
   setSubmissionMerkleTree: (merkleTree: MerkleTree) => void;
@@ -61,6 +65,8 @@ export const createContestStore = () =>
     submitters: [],
     votingMerkleTree: new MerkleTree([]),
     voters: [],
+    totalVotesCast: 0,
+    totalVotes: 0,
     isLoading: true,
     error: null,
     isSuccess: false,
@@ -84,6 +90,8 @@ export const createContestStore = () =>
     setSubmissionMerkleTree: merkleTree => set({ submissionMerkleTree: merkleTree }),
     setVoters: voters => set({ voters: voters }),
     setSubmitters: submitters => set({ submitters: submitters }),
+    setTotalVotesCast: amount => set({ totalVotesCast: amount }),
+    setTotalVotes: amount => set({ totalVotes: amount }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),

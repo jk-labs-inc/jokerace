@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Tooltip } from "react-tooltip";
 
 type TabOption = {
@@ -11,16 +11,10 @@ type TabProps = {
   defaultTab?: number;
   className?: string;
   disabledTab?: number;
-  onSelectTab?: (tabIndex: number) => void; // adding callback prop
+  onSelectTab?: (tabIndex: number) => void;
 };
 
-const CreateTab: React.FC<TabProps> = ({
-  options,
-  defaultTab = 0,
-  className,
-  disabledTab = -1,
-  onSelectTab, // receiving callback prop
-}) => {
+const CreateTab: React.FC<TabProps> = ({ options, defaultTab = 0, className, disabledTab = -1, onSelectTab }) => {
   const [selectedTab, setSelectedTab] = useState<TabOption>(options[defaultTab]);
 
   const selectTab = (tab: TabOption, index: number) => {
@@ -34,10 +28,9 @@ const CreateTab: React.FC<TabProps> = ({
     <div>
       <div className={`flex justify-between items-end ${className}`}>
         {options.map((option, index) => (
-          <>
+          <Fragment key={index}>
             <div
-              key={index}
-              data-tooltip-id="voting-requirements"
+              data-tooltip-id={`tooltip-${index}`}
               className={`flex-grow text-[18px] md:text-[24px] font-bold text-start md:text-center py-2 ${
                 isTabDisabled(index) ? "cursor-not-allowed" : "cursor-pointer"
               } flex flex-col items-start ${selectedTab === options[index] ? "text-primary-10" : "text-neutral-9"} ${
@@ -50,7 +43,7 @@ const CreateTab: React.FC<TabProps> = ({
                 className={`h-1 w-full mt-1 ${selectedTab === options[index] ? "bg-primary-10" : "bg-neutral-9"}`}
               ></div>
               {isTabDisabled(index) && (
-                <Tooltip id="voting-requirements">
+                <Tooltip id={`tooltip-${index}`}>
                   <p className="text-[16px]">We are working on this feature, stay tuned!</p>
                 </Tooltip>
               )}
@@ -64,7 +57,7 @@ const CreateTab: React.FC<TabProps> = ({
                 </div>
               </div>
             )}
-          </>
+          </Fragment>
         ))}
       </div>
       <div className="mt-4">{selectedTab.content}</div>
