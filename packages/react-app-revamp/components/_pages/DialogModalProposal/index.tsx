@@ -27,8 +27,8 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
 
-  function onSubmitCastVotes(amount: string, isPositive: boolean) {
-    castVotes(parseFloat(amount), isPositive);
+  function onSubmitCastVotes(amount: number, isPositive: boolean) {
+    castVotes(amount, isPositive);
   }
 
   useEffect(() => {

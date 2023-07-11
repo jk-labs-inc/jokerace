@@ -30,37 +30,37 @@ export const ListProposals = () => {
   return (
     <div>
       <div className="flex flex-col gap-8">
-        {Object.keys(listProposalsData)
-          .sort((a, b) => {
-            if (listProposalsData[a].votes > listProposalsData[b].votes) {
-              return -1;
-            }
-            if (listProposalsData[a].votes < listProposalsData[b].votes) {
-              return 1;
-            }
-            return 0;
-          })
-          .map((id, i) => {
-            return (
-              <div key={id} className="relative">
-                {!now.isBefore(formattedVotingOpen) && (
-                  <div
-                    className="absolute -top-0 left-0 -mt-6 -ml-6  w-12 z-10
-                     h-12 rounded-full bg-true-black flex items-center justify-center text-[24px] font-bold text-neutral-11 border border-neutral-11"
-                  >
-                    {i + 1}
-                  </div>
-                )}
+        {(() => {
+          let rank = 0;
+          let lastVotes = -1;
 
-                <ProposalContent
-                  id={id}
-                  proposal={listProposalsData[id]}
-                  prompt={contestPrompt}
-                  votingOpen={votesOpen}
-                />
-              </div>
-            );
-          })}
+          return Object.keys(listProposalsData)
+            .sort((a, b) => listProposalsData[b].votes - listProposalsData[a].votes)
+            .map((id, i) => {
+              const currentVotes = listProposalsData[id].votes;
+
+              if (currentVotes > 0 && currentVotes !== lastVotes) {
+                rank = i + 1;
+                lastVotes = currentVotes;
+              }
+
+              return (
+                <div key={id} className="relative">
+                  {currentVotes > 0 && !now.isBefore(formattedVotingOpen) && (
+                    <div className="absolute -top-0 left-0 -mt-6 -ml-6 w-12 z-10 h-12 rounded-full bg-true-black flex items-center justify-center text-[24px] font-bold text-neutral-11 border border-neutral-11">
+                      {rank}
+                    </div>
+                  )}
+                  <ProposalContent
+                    id={id}
+                    proposal={listProposalsData[id]}
+                    prompt={contestPrompt}
+                    votingOpen={votesOpen}
+                  />
+                </div>
+              );
+            });
+        })()}
       </div>
 
       {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (

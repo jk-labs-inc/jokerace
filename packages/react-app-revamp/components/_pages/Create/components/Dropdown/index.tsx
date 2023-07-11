@@ -88,12 +88,12 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
         readOnly={!searchEnabled}
         className={className}
         onChange={value => handleInputChange(value)}
-        placeholder="eg. “hackathon,” “bounty,” “election”"
+        placeholder="select an option or type your own"
       />
-      <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleIconClick} />
+      <ChevronDownIcon className="w-5 cursor-pointer -ml-[35px]" onClick={handleIconClick} />
       {showOptions && (
         <ul
-          className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black  border border-primary-10 rounded-[10px] overflow-x-clip animate-appear ${className}`}
+          className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black border border-primary-10 rounded-[10px] overflow-x-clip animate-appear ${className}`}
         >
           {filteredOptions.map(option => (
             <li

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
 
 import { toastDismiss, toastLoading } from "@components/UI/Toast";
@@ -34,11 +35,20 @@ const CreateContestDeploying = () => {
   return (
     <div className="flex flex-col gap-4 mt-12 lg:mt-[100px] animate-swingInLeft">
       <p className="text-[24px] font-bold text-primary-10 uppercase font-sabo">
-        congratulations, you reached the end! 🥳
+        congratulations, you created a contest 👑
       </p>
-      <hr className="w-[60px] border-neutral-10" />
-      <p className="text-[18px] text-neutral-11">while we deploy your contest, kindly wait a moment.</p>
-      <p className="text-[18px] text-neutral-11">shortly you'll be redirected to the contest page!</p>
+      <p className="text-[18px] text-neutral-11">we'll redirect you to it as soon as it deploys...</p>
+      <p className="text-[18px] text-neutral-11">while it's deploying, here's a fun gif:</p>
+      <div className="relative w-[400px] border-4 border-true-black rounded-[10px] overflow-hidden">
+        <div className="absolute top-0 left-0 bg-black py-1 px-2">
+          <span className="text-[14px] text-true-black font-sabo font-bold">JOKETV</span>
+        </div>
+        <img
+          src="https://media.giphy.com/media/xT8qB8JY8car00rGLe/giphy.gif"
+          className="w-full h-full"
+          alt="Loading GIF"
+        />
+      </div>
     </div>
   );
 };

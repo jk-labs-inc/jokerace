@@ -1,6 +1,8 @@
+import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
@@ -51,6 +53,8 @@ export function useContest() {
     setVotingMerkleTree,
     setVoters,
     setSubmitters,
+    setTotalVotesCast,
+    setTotalVotes,
     setSubmissionMerkleTree,
     setVotesClose,
     setVotesOpen,
@@ -62,6 +66,7 @@ export function useContest() {
   const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList, fetchProposalsPage } = useProposal();
+  const { contestStatus } = useContestStatusStore(state => state);
 
   /**
    * Display an error toast in the UI for any contract related error
@@ -125,7 +130,7 @@ export function useContest() {
       setSupportsRewardsModule(false);
     }
 
-    if (version === "3.1") {
+    if (parseFloat(version) >= 3) {
       try {
         const contracts = getV3Contracts(contractConfig);
         const results = await readContracts({ contracts });
@@ -176,58 +181,20 @@ export function useContest() {
           setCanUpdateVotesInRealTime(false);
         }
 
-        const { data } = await supabase
-          .from("contests_v3")
-          .select("submissionMerkleTree, votingMerkleTree")
-          .eq("address", address)
-          .eq("network_name", chainName);
+        await processContestData(contestMaxNumberSubmissionsPerUser);
+        setError(null);
+        setIsSuccess(true);
+        setIsLoading(false);
+        setIsListProposalsLoading(false);
+      } catch (error) {
+        const customError = error as CustomError;
+        if (!customError) return;
 
-        if (data && data.length > 0) {
-          const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
-
-          const votesDataRecord: Record<string, number> = votingMerkleTreeData.voters.reduce(
-            (acc: Record<string, number>, vote: Recipient) => {
-              acc[vote.address] = Number(vote.numVotes);
-              return acc;
-            },
-            {},
-          );
-
-          const votingMerkleTree = generateMerkleTree(18, votesDataRecord).merkleTree;
-
-          setVoters(votingMerkleTreeData.voters);
-
-          let submissionMerkleTree;
-
-          if (
-            !submissionMerkleTreeData ||
-            submissionMerkleTreeData.merkleRoot === "0x0000000000000000000000000000000000000000000000000000000000000000"
-          ) {
-            submissionMerkleTree = generateMerkleTree(18, {}).merkleTree;
-            setSubmitters([]);
-          } else {
-            const submissionsDataRecord: Record<string, number> = submissionMerkleTreeData.submitters.reduce(
-              (acc: Record<string, number>, vote: Recipient) => {
-                acc[vote.address] = Number(vote.numVotes);
-                return acc;
-              },
-              {},
-            );
-
-            submissionMerkleTree = generateMerkleTree(18, submissionsDataRecord).merkleTree;
-            setSubmitters(submissionMerkleTreeData.submitters);
-          }
-
-          await checkIfCurrentUserQualifyToSubmit(submissionMerkleTree, contestMaxNumberSubmissionsPerUser);
-          await checkIfCurrentUserQualifyToVote();
-          setSubmissionMerkleTree(submissionMerkleTree);
-          setVotingMerkleTree(votingMerkleTree);
-          setError(null);
-          setIsSuccess(true);
-          setIsLoading(false);
-          setIsListProposalsLoading(false);
-        }
-      } catch (error) {}
+        setError(customError);
+        toastError(customError.message ?? "Error while fetching contest data");
+        setIsLoading(false);
+        setIsListProposalsLoading(false);
+      }
     } else {
       try {
         const contracts = getV1Contracts(contractConfig);
@@ -293,11 +260,90 @@ export function useContest() {
         onContractError(e);
         setError(customError);
         setIsSuccess(false);
-
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
         setIsLoading(false);
       }
+    }
+  }
+
+  /**
+   * Fetch merkle tree data from DB and re-create the tree
+   */
+  async function processContestData(contestMaxNumberSubmissionsPerUser: number) {
+    const { data } = await supabase
+      .from("contests_v3")
+      .select("submissionMerkleTree, votingMerkleTree")
+      .eq("address", address)
+      .eq("network_name", chainName);
+
+    if (data && data.length > 0) {
+      const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
+
+      let totalVotes = 0;
+      const votesDataRecord: Record<string, number> = votingMerkleTreeData.voters.reduce(
+        (acc: Record<string, number>, vote: Recipient) => {
+          const numVotes = Number(vote.numVotes);
+          acc[vote.address] = numVotes;
+          totalVotes += numVotes;
+          return acc;
+        },
+        {},
+      );
+
+      const votingMerkleTree = generateMerkleTree(18, votesDataRecord).merkleTree;
+      setTotalVotes(totalVotes);
+      setVoters(votingMerkleTreeData.voters);
+
+      let submissionMerkleTree;
+
+      if (
+        !submissionMerkleTreeData ||
+        submissionMerkleTreeData.merkleRoot === "0x0000000000000000000000000000000000000000000000000000000000000000"
+      ) {
+        submissionMerkleTree = generateMerkleTree(18, {}).merkleTree;
+        setSubmitters([]);
+      } else {
+        const submissionsDataRecord: Record<string, number> = submissionMerkleTreeData.submitters.reduce(
+          (acc: Record<string, number>, vote: Recipient) => {
+            acc[vote.address] = Number(vote.numVotes);
+            return acc;
+          },
+          {},
+        );
+
+        submissionMerkleTree = generateMerkleTree(18, submissionsDataRecord).merkleTree;
+        setSubmitters(submissionMerkleTreeData.submitters);
+      }
+
+      if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) {
+        await fetchTotalVotesCast();
+      }
+
+      await checkIfCurrentUserQualifyToSubmit(submissionMerkleTree, contestMaxNumberSubmissionsPerUser);
+      await checkIfCurrentUserQualifyToVote();
+
+      setSubmissionMerkleTree(submissionMerkleTree);
+      setVotingMerkleTree(votingMerkleTree);
+    }
+  }
+
+  async function fetchTotalVotesCast() {
+    try {
+      const result = await getContractConfig();
+
+      if (!result) return;
+
+      const { contractConfig } = result;
+
+      const totalVotesCast = await readContract({
+        ...contractConfig,
+        functionName: "totalVotesCast",
+      });
+
+      setTotalVotesCast(totalVotesCast ? Number(totalVotesCast) / 1e18 : 0);
+    } catch {
+      setTotalVotesCast(0);
     }
   }
 
@@ -306,6 +352,7 @@ export function useContest() {
     onContractError,
     address,
     fetchContestInfo,
+    fetchTotalVotesCast,
     setIsLoading,
     chainId,
     chainName,

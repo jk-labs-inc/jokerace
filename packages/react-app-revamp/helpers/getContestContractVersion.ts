@@ -8,6 +8,7 @@ import NumberedVersioningContract from "@contracts/bytecodeAndAbi/Contest.2.8.nu
 import GateSubmissionsOpenContract from "@contracts/bytecodeAndAbi/Contest.2.9.gateSubmissionsOpen.sol/Contest.json";
 import BetterRewardsNotesContract from "@contracts/bytecodeAndAbi/Contest.2.10.betterRewardsNotes.sol/Contest.json";
 import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVotes.sol/Contest.json";
+import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 
 import { chains } from "@config/wagmi";
@@ -30,6 +31,8 @@ export async function getContestContractVersion(address: string, chainName: stri
     return { abi: BetterRewardsNotesContract.abi, version };
   } else if (version === "3.1") {
     return { abi: MerkleVotesContract.abi, version };
+  } else if (version === "3.2") {
+    return { abi: TotalVotesCastContract.abi, version };
   }
 
   if (version === "1") {

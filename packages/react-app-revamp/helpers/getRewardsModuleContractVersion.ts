@@ -4,6 +4,7 @@ import NumberedVersioningRewards from "@contracts/bytecodeAndAbi/modules/Rewards
 import GateSubmissionsOpenRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.4.gateSubmissionsOpen.sol/RewardsModule.json";
 import BetterRewardsNotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.5.betterRewardsNotes.sol/RewardsModule.json";
 import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.1.merkleVotes.sol/RewardsModule.json";
+import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
 import { getProvider } from "@wagmi/core";
 import { ethers } from "ethers";
 
@@ -26,6 +27,8 @@ export async function getRewardsModuleContractVersion(address: string, chainName
       return BetterRewardsNotesRewards.abi;
     } else if (version === "3.1") {
       return MerkleVotesRewards.abi;
+    } else if (version === "3.2") {
+      return TotalVotesCastRewards.abi;
     } else {
       return LegacyDeployedRewardsModuleContract.abi;
     }

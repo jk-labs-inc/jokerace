@@ -57,7 +57,7 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ title, tip, onChange, mi
           showPopperArrow={false}
           showTimeSelect
           timeFormat="HH:mm"
-          timeIntervals={5}
+          timeIntervals={1}
           timeCaption="time"
           dateFormat="MMMM d, yyyy h:mm aa"
           minDate={minDate}

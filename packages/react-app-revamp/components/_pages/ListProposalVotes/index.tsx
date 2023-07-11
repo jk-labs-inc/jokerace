@@ -3,6 +3,7 @@ import Collapsible from "@components/UI/Collapsible";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
+import { formatNumber } from "@helpers/formatNumber";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useProposalVotes from "@hooks/useProposalVotes";
@@ -62,18 +63,17 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
         <Collapsible isOpen={isVotersOpen}>
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-4 md:w-[350px]">
-              {Object.keys(votesPerAddress)
-                .map((address: string, index, self) => (
-                  <div
-                    key={address}
-                    className={`flex justify-between items-end text-[16px] font-bold pb-3 ${
-                      index !== self.length - 1 ? "border-b border-neutral-10" : ""
-                    }`}
-                  >
-                    <EtheuremAddress ethereumAddress={address} shortenOnFallback={true} displayLensProfile={true} />
-                    <p>{new Intl.NumberFormat().format(parseFloat(votesPerAddress[address].votes.toFixed(2)))} votes</p>
-                  </div>
-                ))}
+              {Object.keys(votesPerAddress).map((address: string, index, self) => (
+                <div
+                  key={address}
+                  className={`flex justify-between items-end text-[16px] font-bold pb-3 ${
+                    index !== self.length - 1 ? "border-b border-neutral-10" : ""
+                  }`}
+                >
+                  <EtheuremAddress ethereumAddress={address} shortenOnFallback={true} displayLensProfile={true} />
+                  <p>{formatNumber(votesPerAddress[address].votes)} votes</p>
+                </div>
+              ))}
             </div>
 
             {isPageVotesLoading && Object.keys(listProposalsData)?.length > 1 && (

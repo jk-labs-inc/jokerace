@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect, useState } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
@@ -57,7 +58,9 @@ const CreateContestType = () => {
             <br />
             you decide who submits, who votes, and how many votes they have.
           </p>
-          <p className="text-primary-10 font-bold">how would you like your contest to be listed for users to find?</p>
+          <p className="text-primary-10 font-bold">
+            what kind of contest are you creating? (we'll use this as a tag to help users find it)
+          </p>
         </div>
       </div>
       <div className="mt-7 lg:ml-[70px]">

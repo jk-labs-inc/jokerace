@@ -65,12 +65,18 @@ const ContestParameters: FC<ContestParametersProps> = ({ ...props }) => {
             </span>
           </li>
           <li className="list-disc">contest accept up to {props.contestMaxProposalCount.toString()} submissions</li>
-          <li className="list-disc">
-            see full allowlist{" "}
-            <CSVLink data={processedSubmitters} filename={"submitters.csv"} className="text-positive-11">
-              here
-            </CSVLink>
-          </li>
+
+          {props.submitters.length ? (
+            <li className="list-disc">
+              {" "}
+              see full allowlist
+              <CSVLink data={processedSubmitters} filename={"submitters.csv"} className="text-positive-11">
+                here
+              </CSVLink>
+            </li>
+          ) : (
+            <li className="list-disc">anyone can submit</li>
+          )}
         </ul>
       </div>
       <div className="flex flex-col gap-12">

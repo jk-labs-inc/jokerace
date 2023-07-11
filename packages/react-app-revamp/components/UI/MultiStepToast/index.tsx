@@ -69,7 +69,7 @@ const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRe
       <div className="flex flex-col">
         {messages.map((message, index) => (
           <div
-            className={`text-[14px] items-center ${index === step ? "animate-blinkShadow" : ""}`}
+            className={`text-[14px] items-center ${index === step ? "animate-flicker" : ""}`}
             key={index}
             style={{
               color: message.status === "completed" ? "#6A6A6A" : index === step ? "black" : "#6A6A6A",
