@@ -3,7 +3,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { alchemyRpcUrls, fetchBalance, readContract, readContracts } from "@wagmi/core";
+import { alchemyRpcUrls, fetchBalance, FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
@@ -59,6 +59,19 @@ const fetchTokenBalances = async (contest: any, contestRewardModuleAddress: stri
   }
 };
 
+const fetchNativeBalance = async (contestRewardModuleAddress: string, chainId: number) => {
+  try {
+    const nativeBalance = await fetchBalance({
+      addressOrName: contestRewardModuleAddress.toString(),
+      chainId: chainId,
+    });
+    return nativeBalance;
+  } catch (error) {
+    console.error("Error fetching native balance:", error);
+    return null;
+  }
+};
+
 const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: number, tokenAddress: string) => {
   try {
     const firstToken = await fetchBalance({
@@ -99,70 +112,69 @@ const processContestData = async (contest: any, userAddress: string) => {
       //@ts-ignore
       contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
     ) {
-      const contestRewardModuleAddress = await readContract({
-        ...contractConfig,
-        functionName: "officialRewardsModule",
-      }).catch(error => {
-        console.error("Error reading contract:", error);
-        return "0x0000000000000000000000000000000000000000";
-      });
-
-      if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
-        contest.rewards = null;
-      } else {
-        const abiRewardsModule = await getRewardsModuleContractVersion(
-          contestRewardModuleAddress.toString(),
-          contest.network_name,
-        ).catch(error => {
-          console.error("Error getting rewards module contract version:", error);
-          return null;
+      try {
+        const contestRewardModuleAddress = await readContract({
+          ...contractConfig,
+          functionName: "officialRewardsModule",
         });
 
-        if (abiRewardsModule === null) {
+        if (contestRewardModuleAddress.toString() === "0x0000000000000000000000000000000000000000") {
           contest.rewards = null;
         } else {
-          const [winners, tokenBalances] = await Promise.all([
-            readContract({
+          const abiRewardsModule = await getRewardsModuleContractVersion(
+            contestRewardModuleAddress.toString(),
+            contest.network_name,
+          );
+
+          if (!abiRewardsModule) {
+            contest.rewards = null;
+          } else {
+            const winners = await readContract({
               addressOrName: contestRewardModuleAddress.toString(),
               contractInterface: abiRewardsModule,
               chainId: chain?.id,
               functionName: "getPayees",
-            }).catch(error => {
-              console.error("Error reading contract for winners:", error);
-              return [];
-            }),
-            fetchTokenBalances(contest, contestRewardModuleAddress.toString()).catch(error => {
-              console.error("Error fetching token balances:", error);
-              return [];
-            }),
-          ]);
-
-          if (tokenBalances && tokenBalances.length > 0) {
-            const firstToken = await fetchFirstToken(
-              contestRewardModuleAddress.toString(),
-              chain?.id ?? 0,
-              tokenBalances[0].contractAddress,
-            ).catch(error => {
-              console.error("Error fetching first token balance:", error);
-              return null;
             });
 
-            if (firstToken) {
+            let rewardToken: FetchBalanceResult | null = null;
+            let erc20Tokens: any = null;
+
+            rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chain?.id ?? 0);
+
+            if (!rewardToken || rewardToken.value.eq(0)) {
+              try {
+                erc20Tokens = await fetchTokenBalances(contest, contestRewardModuleAddress.toString());
+
+                if (erc20Tokens && erc20Tokens.length > 0) {
+                  rewardToken = await fetchFirstToken(
+                    contestRewardModuleAddress.toString(),
+                    chain?.id ?? 0,
+                    erc20Tokens[0].contractAddress,
+                  );
+                }
+              } catch (error) {
+                console.error("Error fetching token balances:", error);
+                return;
+              }
+            }
+
+            if (rewardToken) {
               contest.rewards = {
                 token: {
-                  symbol: firstToken?.symbol,
-                  value: firstToken?.formatted,
+                  symbol: rewardToken.symbol,
+                  value: rewardToken.formatted,
                 },
                 winners: winners.length,
-                numberOfTokens: tokenBalances.length,
+                numberOfTokens: erc20Tokens?.length ?? 1,
               };
             } else {
               contest.rewards = null;
             }
-          } else {
-            contest.rewards = null;
           }
         }
+      } catch (error) {
+        console.error("Error:", error);
+        contest.rewards = null;
       }
     } else {
       contest.rewards = null;
