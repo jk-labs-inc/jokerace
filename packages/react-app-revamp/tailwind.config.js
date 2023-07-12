@@ -188,10 +188,6 @@ module.exports = {
             span: {
               fontSize: "16px",
             },
-            br: {
-              display: "block",
-              marginBottom: "0.75em",
-            },
             h1: {
               fontSize: clamp(3),
               lineHeight: 1.5,
