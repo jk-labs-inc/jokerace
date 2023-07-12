@@ -114,7 +114,7 @@ const useContestInfo = ({
       if (contest.qualifiedToVote) {
         return (
           <div className="flex flex-nowrap items-center gap-1">
-            <CheckmarkIcon color={votingTimeLeft.value ? `#78FFC6` : `#FFFF`} />
+            <CheckmarkIcon color={votingStatus === "Voting is open" ? `#78FFC6` : `#FFFF`} />
             <p>you qualify</p>
           </div>
         );

@@ -16,10 +16,6 @@ export const Loader = (props: LoaderProps) => {
       <div className={`${loaderIcon({ scale: scale ?? "page", class: classNameIcon ?? "" })} animate-card-rotation`}>
         🃏
       </div>
-      {/* @ts-ignore */}
-      <div className={loaderText({ scale: scale ?? "page", class: classNameText ?? "" })}>
-        {children ?? "Loading, one moment please..."}
-      </div>
     </div>
   );
 };

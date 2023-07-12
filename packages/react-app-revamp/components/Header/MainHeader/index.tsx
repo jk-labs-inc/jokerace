@@ -58,7 +58,7 @@ const MainHeader = () => {
       {isMobileOrTablet ? (
         lowerDeviceHeader
       ) : (
-        <header className="flex flex-row items-center justify-between pl-[55px] pr-[55px] mt-4 mb-4">
+        <header className="flex flex-row items-center justify-between px-[55px] mt-4 mb-4">
           <Link href="/">
             <h1 className="font-sabo text-primary-10 text-[40px]">JOKERACE</h1>
           </Link>
