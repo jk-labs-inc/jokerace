@@ -37,7 +37,7 @@
 /* Edit toastify styles */
 
 .Toastify__toast-theme--colored.Toastify__toast--default {
-  background-color: black !important;
+  background-color: white !important;
   color: #e5e5e5 !important;
   border-radius: 10px !important;
   box-shadow: 0 -2px 4px #28282c, 0 2px 4px #28282c, 0 1px 2px #28282c !important;
