@@ -150,6 +150,16 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
                 {children}
               </p>
             ),
+            ul: ({ node, children, ...props }) => (
+              <ul {...props} className="list-disc list-inside  list-explainer">
+                {children}
+              </ul>
+            ),
+            li: ({ node, children, ...props }) => (
+              <li {...props} className="flex items-center">
+                {children}
+              </li>
+            ),
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
           children={truncatedContent}
