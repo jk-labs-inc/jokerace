@@ -4,8 +4,6 @@ import LoadingToast from "./components/Loading";
 import SuccessToast from "./components/Success";
 import WarningToast from "./components/Warning";
 
-type ToastProps = string;
-
 let toastId: any = null;
 
 const createToast = (type: any, content: JSX.Element) => {
@@ -28,19 +26,19 @@ const createToast = (type: any, content: JSX.Element) => {
   }
 };
 
-export const toastSuccess = (message: ToastProps) => {
+export const toastSuccess = (message: string) => {
   createToast(toast.TYPE.SUCCESS, <SuccessToast message={message} />);
 };
 
-export const toastError = (message: ToastProps) => {
-  createToast(toast.TYPE.ERROR, <ErrorToast message={message} />);
+export const toastError = (message: string, messageToCopy?: string) => {
+  createToast(toast.TYPE.ERROR, <ErrorToast messageToShow={message} messageToCopy={messageToCopy} />);
 };
 
-export const toastWarning = (message: ToastProps) => {
+export const toastWarning = (message: string) => {
   createToast(toast.TYPE.WARNING, <WarningToast message={message} />);
 };
 
-export const toastLoading = (message: ToastProps, showSignMessage?: boolean) => {
+export const toastLoading = (message: string, showSignMessage?: boolean) => {
   createToast(toast.TYPE.INFO, <LoadingToast message={message} showSignMessage={showSignMessage} />);
 };
 

@@ -31,10 +31,10 @@ const Subscribe = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex w-[300px] md:w-[500px]">
+      <div className="flex w-full md:w-[500px]">
         <div className="relative w-full">
           <input
-            className="bg-true-black w-full pl-2 py-2 text-[16px] placeholder-neutral-10 placeholder-bold rounded-[40px] border border-neutral-11 transition-opacity focus:outline-none"
+            className="bg-true-black w-full pl-4 py-2 text-[14px] md:text-[16px] placeholder-neutral-10 placeholder-bold rounded-[40px] border border-neutral-11 transition-opacity focus:outline-none"
             type="email"
             value={email}
             onChange={e => {

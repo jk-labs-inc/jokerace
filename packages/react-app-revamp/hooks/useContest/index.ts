@@ -74,7 +74,7 @@ export function useContest() {
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
     if (err.code === "CALL_EXCEPTION") toastMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-    toast.error(toastMessage);
+    toastError(toastMessage);
   }
 
   // Generate config for the contract
@@ -83,8 +83,9 @@ export function useContest() {
       const { abi, version } = await getContestContractVersion(address, chainName);
 
       if (abi === null) {
-        toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
-        setError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
+        const errorMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
+        toastError(errorMessage);
+        setError({ message: errorMessage });
         setIsSuccess(false);
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
@@ -191,7 +192,7 @@ export function useContest() {
         if (!customError) return;
 
         setError(customError);
-        toastError(customError.message ?? "Error while fetching contest data");
+        toastError(`error while fetching contest data`, customError.message);
         setIsLoading(false);
         setIsListProposalsLoading(false);
       }

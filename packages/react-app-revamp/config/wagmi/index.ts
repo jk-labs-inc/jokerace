@@ -14,6 +14,7 @@ import { litTestnet } from "./custom-chains/litTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { celoTestnet } from "./custom-chains/celoTestnet";
 import { celoMainnet } from "./custom-chains/celoMainnet";
+import { publicGoodsNetworkMainnet } from "./custom-chains/publicGoodsNetworkMainnet";
 import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
 import { lootChainMainnet } from "./custom-chains/lootChainMainnet";
 import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
@@ -51,6 +52,7 @@ const otherChains = [
   zetaTestnet,
   celoTestnet,
   celoMainnet,
+  publicGoodsNetworkMainnet,
   publicGoodsNetworkTestnet,
   lootChainMainnet,
   lootChainTestnet,

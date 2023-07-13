@@ -1,3 +1,4 @@
+import { toastError } from "@components/UI/Toast";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useQueryClient } from "@tanstack/react-query";
 import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
@@ -36,7 +37,7 @@ export function useFundRewardsModule() {
     tokenAddress: string | null;
     isErc20: boolean;
     amount: string;
-    rewardsContractAddress?: string;
+    rewardsContractAddress: string;
   }) {
     const { currentUserAddress, tokenAddress, amount, isErc20, rewardsContractAddress } = args;
     setIsLoading(true);
@@ -47,7 +48,7 @@ export function useFundRewardsModule() {
       addressOrName: tokenAddress ?? "",
       contractInterface: erc20ABI,
     };
-    const rewardsAddress = rewardsContractAddress ? rewardsContractAddress : rewards.contractAddress;
+
     try {
       let txSendFunds;
       let receipt;
@@ -55,7 +56,7 @@ export function useFundRewardsModule() {
         txSendFunds = await writeContract({
           ...contractConfig,
           functionName: "transfer",
-          args: [rewardsAddress, amount],
+          args: [rewardsContractAddress, amount],
         });
         receipt = await waitForTransaction({
           chainId: chain?.id,
@@ -66,7 +67,7 @@ export function useFundRewardsModule() {
           chainId: chain?.id,
           request: {
             from: currentUserAddress,
-            to: rewardsAddress,
+            to: rewardsContractAddress,
             value: amount,
           },
         });
@@ -97,18 +98,17 @@ export function useFundRewardsModule() {
 
       if (!customError) return;
 
-      const message = customError.message || "Something went wrong while sending funds to the rewards module.";
-      toast.error(message);
+      toastError("Something went wrong while sending funds to the rewards module.", customError.message);
       setError({
         code: customError.code,
-        message,
+        message: customError.message,
       });
       setIsLoading(false);
     }
   }
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
-    if (rewards.length > 4) {
+    if (rewards.length > 3) {
       toast.warning("number of rewards cannot be more than 4 in one take.");
       return;
     }
@@ -122,6 +122,7 @@ export function useFundRewardsModule() {
           .catch(e => {
             const customError = e as CustomError;
             const message = customError.message || `Something went wrong while sending funds for reward ${reward}.`;
+            toastError(`Something went wrong while sending funds for reward.`, customError.message);
             setError({
               code: customError.code,
               message,
@@ -138,21 +139,21 @@ export function useFundRewardsModule() {
     tokenAddress: string | null;
     isErc20: boolean;
     amount: string;
-    rewardsContractAddress?: string;
+    rewardsContractAddress: string;
   }) => {
     const { currentUserAddress, tokenAddress, amount, isErc20, rewardsContractAddress } = args;
     const contractConfig = {
       addressOrName: tokenAddress ?? "",
       contractInterface: erc20ABI,
     };
-    const rewardsAddress = rewardsContractAddress ? rewardsContractAddress : rewards.contractAddress;
+
     let txSendFunds;
     let receipt;
     if (isErc20) {
       txSendFunds = await writeContract({
         ...contractConfig,
         functionName: "transfer",
-        args: [rewardsAddress, amount],
+        args: [rewardsContractAddress, amount],
       });
       receipt = await waitForTransaction({
         chainId: chain?.id,
@@ -163,7 +164,7 @@ export function useFundRewardsModule() {
         chainId: chain?.id,
         request: {
           from: currentUserAddress,
-          to: rewardsAddress,
+          to: rewardsContractAddress,
           value: amount,
         },
       });

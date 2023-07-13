@@ -1,3 +1,4 @@
+import { toastError } from "@components/UI/Toast";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
@@ -10,6 +11,7 @@ import { fetchEnsName, getAccount, getContract, readContract, watchContractEvent
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { CustomError } from "types/error";
 import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
 import { useProposalVotesStore } from "./store";
 
@@ -59,11 +61,12 @@ export function useProposalVotes(id: number | string) {
     const { abi, version } = await getContestContractVersion(address, chainName);
 
     if (abi === null) {
+      const errorMessage = "This contract doesn't exist on this chain.";
       setIsListVotersLoading(false);
-      setIsListVotersError("This contract doesn't exist on this chain.");
+      setIsListVotersError(errorMessage);
       setIsListVotersSuccess(false);
       setIsListVotersLoading(false);
-      toast.error("This contract doesn't exist on this chain.");
+      toastError(errorMessage);
       return;
     }
     try {
@@ -102,13 +105,13 @@ export function useProposalVotes(id: number | string) {
       setIsListVotersError(null);
       setIsListVotersLoading(false);
     } catch (e) {
-      console.error(e);
-      //@ts-ignore
-      setIsListVotersError(e?.code ?? e);
+      const customError = e as CustomError;
+
+      setIsListVotersError(customError.code ?? "");
       setIsListVotersSuccess(false);
       setIsListVotersLoading(false);
-      //@ts-ignore
-      toast.error(e?.message ?? e);
+
+      toastError("There was an error while fetching the votes", customError.message);
     }
   }
 
@@ -132,11 +135,11 @@ export function useProposalVotes(id: number | string) {
       setIsPageVotesError(null);
       setHasPaginationVotesNextPage(pageIndex + 1 < totalPagesPaginationVotes);
     } catch (e) {
+      const customError = e as CustomError;
+
       setIsPageVotesLoading(false);
-      //@ts-ignore
-      setIsPageVotesError(e?.message ?? e);
-      //@ts-ignore
-      toast.error(e?.message ?? e);
+      setIsPageVotesError(customError);
+      toastError("There was an error while fetching the votes", customError.message);
     }
   }
 
@@ -151,8 +154,9 @@ export function useProposalVotes(id: number | string) {
       const { abi, version } = await getContestContractVersion(address, chainName);
 
       if (abi === null) {
-        toast.error("This contract doesn't exist on this chain.");
-        setIsPageVotesError({ message: "This contract doesn't exist on this chain." });
+        const errorMessage = "This contract doesn't exist on this chain.";
+        toastError(errorMessage);
+        setIsPageVotesError({ message: errorMessage });
         setIsPageVotesLoading(false);
         return;
       }
@@ -191,9 +195,9 @@ export function useProposalVotes(id: number | string) {
         value: { displayAddress, votes },
       });
     } catch (e) {
-      console.error(e);
-      //@ts-ignore
-      toast.error(e?.message ?? e);
+      const customError = e as CustomError;
+
+      toastError("There was an error while fetching the votes", customError.message);
     }
   }
 

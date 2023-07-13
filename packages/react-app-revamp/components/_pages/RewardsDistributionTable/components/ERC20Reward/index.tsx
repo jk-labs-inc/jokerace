@@ -41,7 +41,7 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
         return;
       }
 
-      toastError(`${e.cause} ${e.message}`);
+      toastError(`something went wrong and the the transaction failed`, customError.message);
     },
   });
 
@@ -64,7 +64,7 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
         return;
       }
 
-      toastError(`${e.cause} ${e.message}`);
+      toastError(`something went wrong and the the transaction failed`, customError.message);
     },
   });
 
@@ -88,7 +88,7 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
         return;
       }
 
-      toastError(`Something went wrong and the transaction failed :", ${e?.message}`);
+      toastError(`something went wrong and the the transaction failed`, customError.message);
     },
     async onSuccess() {
       await queryTokenBalance.refetch();

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, FC } from "react";
+import React, { useState, useEffect, FC, useMemo } from "react";
 import Image from "next/image";
 import moment from "moment";
 import { useWindowScroll } from "react-use";
+import { useContestStore } from "@hooks/useContest/store";
 
 const formatDuration = (duration: moment.Duration) => {
   const days = Math.floor(duration.asDays());
@@ -11,49 +12,49 @@ const formatDuration = (duration: moment.Duration) => {
   return { days, hours, minutes, seconds };
 };
 
-interface LayoutContestCountdownProps {
-  submissionOpen: Date;
-  votingOpen: Date;
-  votingClose: Date;
-}
-
-const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpen, votingOpen, votingClose }) => {
+const LayoutContestCountdown = () => {
+  const { submissionsOpen, votesOpen, votesClose } = useContestStore(state => state);
   const [duration, setDuration] = useState(formatDuration(moment.duration(0)));
   const [phase, setPhase] = useState("contest");
   const { y } = useWindowScroll();
-
   const [isScrolled, setIsScrolled] = useState(false);
+  const memoizedSubmissionsOpen = useMemo(() => submissionsOpen, [submissionsOpen.getTime()]);
+  const memoizedVotesOpen = useMemo(() => votesOpen, [votesOpen.getTime()]);
+  const memoizedVotesClose = useMemo(() => votesClose, [votesClose.getTime()]);
 
   useEffect(() => {
     setIsScrolled(y > 500);
   }, [y]);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const calculateDuration = () => {
       const currentTime = moment();
       let diffTime;
 
-      if (currentTime.isBefore(submissionOpen)) {
+      if (currentTime.isBefore(memoizedSubmissionsOpen)) {
         setPhase("start");
-        diffTime = moment(submissionOpen).diff(currentTime);
-      } else if (currentTime.isBefore(votingOpen)) {
+        diffTime = moment(memoizedSubmissionsOpen).diff(currentTime);
+      } else if (currentTime.isBefore(memoizedVotesOpen)) {
         setPhase("submit");
-        diffTime = moment(votingOpen).diff(currentTime);
-      } else if (currentTime.isBefore(votingClose)) {
+        diffTime = moment(memoizedVotesOpen).diff(currentTime);
+      } else if (currentTime.isBefore(memoizedVotesClose)) {
         setPhase("vote");
-        diffTime = moment(votingClose).diff(currentTime);
+        diffTime = moment(memoizedVotesClose).diff(currentTime);
       } else {
-        clearInterval(interval);
         setDuration(formatDuration(moment.duration(0)));
         return;
       }
       setDuration(formatDuration(moment.duration(diffTime)));
-    }, 1000);
+    };
+
+    calculateDuration();
+
+    const interval = setInterval(calculateDuration, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [submissionOpen, votingOpen, votingClose]);
+  }, [memoizedSubmissionsOpen, memoizedVotesOpen, memoizedVotesClose]);
 
   const displayText = () => {
     if (isScrolled) {
@@ -94,15 +95,15 @@ const LayoutContestCountdown: FC<LayoutContestCountdownProps> = ({ submissionOpe
             <div className="text-[16px] font-bold text-neutral-11">{displayText()}</div>
             {phase === "start" ? (
               <div className="text-[16px] text-neutral-11">
-                Submissions follow until {moment(votingOpen).format("MMMM Do, h:mm a")}
+                Submissions follow until {moment(votesOpen).format("MMMM Do, h:mm a")}
               </div>
             ) : phase === "vote" ? (
               <div className="text-[16px] text-neutral-11">
-                Voting is open until {moment(votingClose).format("MMMM Do, h:mm a")}
+                Voting is open until {moment(votesClose).format("MMMM Do, h:mm a")}
               </div>
             ) : (
               <div className="text-[16px] text-neutral-11">
-                Voting follows until {moment(votingClose).format("MMMM Do, h:mm a")}
+                Voting follows until {moment(votesClose).format("MMMM Do, h:mm a")}
               </div>
             )}
           </>

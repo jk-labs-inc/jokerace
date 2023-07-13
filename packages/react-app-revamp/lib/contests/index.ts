@@ -30,7 +30,8 @@ async function getContractConfig(address: string, chainName: string, chainId: nu
 
 const fetchTokenBalances = async (contest: any, contestRewardModuleAddress: string) => {
   try {
-    const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === contest.network_name)[0];
+    const networkName = contest.network_name.toLowerCase() === "arbitrumone" ? "arbitrum" : contest.network_name;
+    const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
     //@ts-ignore
     const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
     const response = await fetch(alchemyAppUrl, {

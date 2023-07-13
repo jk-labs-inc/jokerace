@@ -2,6 +2,7 @@ import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
+import { useRewardsStore } from "@hooks/useRewards/store";
 import { ethers } from "ethers";
 import { FC, useRef } from "react";
 import { toast } from "react-toastify";
@@ -17,6 +18,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
   const { address } = useAccount();
   const { rewards, setCancel } = useFundRewardsStore(state => state);
+  const { rewards: rewardsModule } = useRewardsStore(state => state);
   const deployRewardsData = useDeployRewardsStore(state => state.deployRewardsData);
   const toastIdRef = useRef<string | number | null>(null);
 
@@ -30,7 +32,9 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
               currentUserAddress: address,
               tokenAddress: reward.address,
               isErc20: reward.address.startsWith("0x"),
-              rewardsContractAddress: deployRewardsData.address,
+              rewardsContractAddress: deployRewardsData.address
+                ? deployRewardsData.address
+                : rewardsModule.contractAddress,
               amount: ethers.utils.parseUnits(reward.amount, 18).toString(),
             }))
         : [];
