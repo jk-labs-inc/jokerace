@@ -3,6 +3,7 @@ import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
 import { formatNumber } from "@helpers/formatNumber";
 import { useUserStore } from "@hooks/useUser/store";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { ReactNode } from "react-markdown/lib/ast-to-react";
@@ -11,6 +12,7 @@ import { useAccount } from "wagmi";
 
 const LayoutContestQualifier = () => {
   const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
   const {
     currentUserQualifiedToSubmit,
     currentUserAvailableVotesAmount,
@@ -103,7 +105,12 @@ const LayoutContestQualifier = () => {
           )}
         </div>
       ) : (
-        <div className="text-[16px] font-bold text-neutral-11 mt-2">connect a wallet to see if you qualify</div>
+        <div className="text-[16px] font-bold text-neutral-11 mt-2">
+          <span className="text-positive-11 cursor-pointer" onClick={openConnectModal}>
+            connect a wallet
+          </span>{" "}
+          to see if you qualify
+        </div>
       )}
     </div>
   );

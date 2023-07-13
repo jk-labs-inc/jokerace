@@ -113,17 +113,25 @@ const Page: NextPage = props => {
 
         <div className="text-[16px] mt-14 -ml-[15px]">
           {isSupabaseConfigured ? (
-            <ListContests
-              isFetching={isFetching}
-              itemsPerPage={ITEMS_PER_PAGE}
-              status={status}
-              error={error}
-              page={page}
-              setPage={setPage}
-              result={data}
-              compact={true}
-              onSearchChange={setSearchValue}
-            />
+            <div className="flex flex-col">
+              <ListContests
+                isFetching={isFetching}
+                itemsPerPage={ITEMS_PER_PAGE}
+                status={status}
+                error={error}
+                page={page}
+                setPage={setPage}
+                result={data}
+                compact={true}
+                onSearchChange={setSearchValue}
+              />
+              <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-between mt-5">
+                <Subscribe />
+                <Button className="bg-primary-10 text-[18px] w-[146px] font-bold" onClick={onViewAll}>
+                  View all
+                </Button>
+              </div>
+            </div>
           ) : (
             <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">
               This site&apos;s current deployment does not have access to jokerace&apos;s reference database of
@@ -139,14 +147,6 @@ const Page: NextPage = props => {
               for contest chain and address information!
             </div>
           )}
-        </div>
-        <div className="flex justify-end mt-5">
-          <Button className="bg-primary-10 text-[18px] w-[146px] font-bold" onClick={onViewAll}>
-            View all
-          </Button>
-        </div>
-        <div className="mt-20 md:mt-0">
-          <Subscribe />
         </div>
       </div>
       <Explainer />

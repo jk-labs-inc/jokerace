@@ -62,7 +62,8 @@
   background-repeat: no-repeat;
   margin-right: 10px;
   vertical-align: middle;
-  transition: transform 0.3s ease; /* Add a transition for smooth rotation */
+  transition: transform 0.3s ease;
+  margin-top: 5px;
 }
 
 .list-explainer li:hover::before {

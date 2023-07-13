@@ -54,7 +54,7 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
         return;
       }
 
-      toastError(`${e.cause} ${e.message}`);
+      toastError(`something went wrong and the the transaction failed`, customError.message);
     },
   });
 
@@ -70,7 +70,7 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
         return;
       }
 
-      toastError(`Something went wrong and the transaction failed :", ${e?.message}`);
+      toastError(`something went wrong and the the transaction failed`, customError.message);
     },
     onSuccess() {
       toastSuccess("funds distributed successfully !");

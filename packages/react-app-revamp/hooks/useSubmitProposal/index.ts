@@ -1,4 +1,4 @@
-import { toastDismiss, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
@@ -126,11 +126,10 @@ export function useSubmitProposal() {
           return;
         }
 
-        const message = customError.message || "Something went wrong while submitting your proposal.";
-        toast.error(message);
+        toastError("Something went wrong while submitting your proposal.", customError.message);
         setError({
           code: customError.code,
-          message,
+          message: customError.message,
         });
         setIsLoading(false);
         reject(e);

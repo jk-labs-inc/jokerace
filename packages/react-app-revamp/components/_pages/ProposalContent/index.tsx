@@ -33,7 +33,7 @@ interface ProposalContentProps {
   prompt: string;
 }
 
-const MAX_LENGTH = 250;
+const MAX_LENGTH = 200;
 let MAX_LENGTH_PARAGRAPH = 200;
 
 const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, prompt }) => {
@@ -149,6 +149,16 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
               <p {...props} className="text-[16px]">
                 {children}
               </p>
+            ),
+            ul: ({ node, children, ...props }) => (
+              <ul {...props} className="list-disc list-inside  list-explainer">
+                {children}
+              </ul>
+            ),
+            li: ({ node, children, ...props }) => (
+              <li {...props} className="flex items-center">
+                {children}
+              </li>
             ),
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}

@@ -67,6 +67,16 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
                 {children}
               </p>
             ),
+            ul: ({ node, children, ...props }) => (
+              <ul {...props} className="list-disc list-inside  list-explainer">
+                {children}
+              </ul>
+            ),
+            li: ({ node, children, ...props }) => (
+              <li {...props} className="flex items-center">
+                {children}
+              </li>
+            ),
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize]}
         >
@@ -90,6 +100,16 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
               <p {...props} className="m-0 text-[16px]">
                 {children}
               </p>
+            ),
+            ul: ({ node, children, ...props }) => (
+              <ul {...props} className="list-disc list-inside  list-explainer">
+                {children}
+              </ul>
+            ),
+            li: ({ node, children, ...props }) => (
+              <li {...props} className="flex items-center">
+                {children}
+              </li>
             ),
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize]}
@@ -125,6 +145,16 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
                     {children}
                   </p>
                 ),
+                ul: ({ node, children, ...props }) => (
+                  <ul {...props} className="list-disc list-inside  list-explainer">
+                    {children}
+                  </ul>
+                ),
+                li: ({ node, children, ...props }) => (
+                  <li {...props} className="flex items-center">
+                    {children}
+                  </li>
+                ),
               }}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
             >
@@ -147,6 +177,16 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
                   <p {...props} className="m-0 text-[16px]">
                     {children}
                   </p>
+                ),
+                ul: ({ node, children, ...props }) => (
+                  <ul {...props} className="list-disc list-inside  list-explainer">
+                    {children}
+                  </ul>
+                ),
+                li: ({ node, children, ...props }) => (
+                  <li {...props} className="flex items-center">
+                    {children}
+                  </li>
                 ),
               }}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}

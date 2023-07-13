@@ -3,17 +3,20 @@ import Image from "next/image";
 import { FC, useState } from "react";
 
 interface ErrorToastProps {
-  message: string;
+  messageToShow: string;
+  messageToCopy?: string;
 }
 
-const ErrorToast: FC<ErrorToastProps> = ({ message }) => {
+const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
   const [copySuccess, setCopySuccess] = useState(false);
 
   const copyToClipboard = async (event: React.MouseEvent) => {
     event.stopPropagation();
 
+    if (!messageToCopy) return;
+
     try {
-      await navigator.clipboard.writeText(message);
+      await navigator.clipboard.writeText(messageToCopy);
       setCopySuccess(true);
     } catch (err) {
       console.error("Failed to copy text: ", err);
@@ -23,14 +26,16 @@ const ErrorToast: FC<ErrorToastProps> = ({ message }) => {
   return (
     <div className="flex gap-4 items-center pl-4">
       <Image src="/toast/sadboi.png" width={40} height={40} alt="error" />
-      <div className="flex flex-col">
-        <div className="flex gap-4">
-          <p className="uppercase font-bold text-[16px]">Error!</p>
-          <ClipboardCopyIcon onClick={copyToClipboard} className="h-5 w-5 cursor-pointer" />
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-col">
+          <p className="uppercase font-bold text-[16px]">Error</p>
+          <p className="text-[12px]">{messageToShow}</p>
         </div>
-
-        <p className="text-[12px]">{message}</p>
-        {copySuccess && <p className="text-[12px]">Copied to clipboard!</p>}
+        {messageToCopy && (
+          <p className="text-[8px] text-true-black uppercase font-bold" onClick={copyToClipboard}>
+            {copySuccess ? "copied to clipboard!" : "copy error details"}
+          </p>
+        )}
       </div>
     </div>
   );

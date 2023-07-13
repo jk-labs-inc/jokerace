@@ -32,7 +32,7 @@ export const Reward = (props: RewardProps) => {
       </div>
       {queryRankRewardsReleased.isSuccess && (
         <>
-          {queryRankRewardsReleasable.data > 0 && (
+          {queryRankRewardsReleasable.data && (
             <ButtonV3
               disabled={contestStatus !== ContestStatus.VotingClosed || contractWriteRelease.isLoading}
               size="extraSmall"

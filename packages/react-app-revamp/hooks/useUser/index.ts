@@ -1,3 +1,4 @@
+import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -6,7 +7,6 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
 import MerkleTree from "merkletreejs";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import { useAccount, useNetwork } from "wagmi";
 import { useUserStore } from "./store";
 
@@ -36,7 +36,7 @@ export function useUser() {
     const { abi } = await getContestContractVersion(address, chainName);
 
     if (abi === null) {
-      toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+      toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
       setContestError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
       setIsContestSuccess(false);
       setIsListProposalsSuccess(false);

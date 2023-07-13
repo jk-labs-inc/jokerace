@@ -1,12 +1,12 @@
-import { useRouter } from "next/router";
+import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
-import { useRewardsStore } from "./store";
-import { useNetwork, useQuery } from "wagmi";
+import { useRouter } from "next/router";
 import { CustomError } from "types/error";
-import { toast } from "react-toastify";
+import { useNetwork, useQuery } from "wagmi";
+import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
@@ -22,7 +22,8 @@ export function useRewardsModule() {
         // See: https://docs.alchemy.com/docs/how-to-get-all-tokens-owned-by-an-address
         const contestChainName = asPath.split("/")[2];
         const contestRewardModuleAddress = rewards?.contractAddress;
-        const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === contestChainName)[0];
+        const networkName = contestChainName.toLowerCase() === "arbitrumone" ? "arbitrum" : contestChainName;
+        const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
         //@ts-ignore
         const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
         const response = await fetch(alchemyAppUrl, {
@@ -54,19 +55,6 @@ export function useRewardsModule() {
     },
     {
       enabled: !!rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
-      onError(e) {
-        const customError = e as CustomError;
-
-        if (!customError) return;
-        const message =
-          customError.message ||
-          "Something went wrong and the balance of the rewards module couldn't be retrieved. Try to reload the page.";
-        toast.error(message);
-        setError({
-          code: customError.code,
-          message,
-        });
-      },
     },
   );
 
@@ -90,7 +78,7 @@ export function useRewardsModule() {
           message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.`,
         });
         setIsSuccess(false);
-        toast.error(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+        toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
         return;
       }
       const contestRewardModuleAddress = await readContract({
@@ -103,9 +91,9 @@ export function useRewardsModule() {
       const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, contestChainName);
       if (abiRewardsModule === null) {
         if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
-          toast.error("There is no rewards module for this contest.");
+          toastError("There is no rewards module for this contest.");
         } else {
-          toast.error(`The rewards pool contract address doesn't exist on ${chain?.name ?? "this chain"}.`);
+          toastError(`The rewards pool contract address doesn't exist on ${chain?.name ?? "this chain"}.`);
         }
         return;
       }
@@ -150,11 +138,10 @@ export function useRewardsModule() {
 
       if (!customError) return;
 
-      const message = customError.message || "Something went wrong.";
-      toast.error(message);
+      toastError("Something went wrong and the rewards module couldn't be retrieved.", customError.message);
       setError({
         code: customError.code,
-        message,
+        message: customError.message,
       });
       setIsLoading(false);
     }

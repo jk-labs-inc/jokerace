@@ -1,3 +1,4 @@
+import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -36,7 +37,7 @@ export function useProposal() {
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
     if (err.code === "CALL_EXCEPTION") toastMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-    toast.error(toastMessage);
+    toastError(toastMessage);
   }
 
   /**
@@ -55,7 +56,7 @@ export function useProposal() {
 
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-        toast.error(errorMsg);
+        toastError(errorMsg);
         setIsPageProposalsError({ message: errorMsg });
         setIsPageProposalsLoading(false);
         return;
@@ -98,11 +99,10 @@ export function useProposal() {
 
       if (!customError) return;
 
-      const message = customError.message || "Something went wrong while getting proposals.";
-      toast.error(message);
+      toastError("Something went wrong while getting proposals.", customError.message);
       setIsPageProposalsError({
         code: customError.code,
-        message,
+        message: customError.message,
       });
     }
   }

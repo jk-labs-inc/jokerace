@@ -105,11 +105,10 @@ export function useCastVotes() {
         return;
       }
 
-      const message = customError.message || "Something went wrong while casting your votes";
-      toastError(message);
+      toastError(`Something went wrong while casting your votes`, customError.message);
       setError({
         code: customError.code,
-        message,
+        message: customError.message,
       });
       setIsLoading(false);
     }

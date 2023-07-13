@@ -1,3 +1,4 @@
+import { toastError } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { waitForTransaction, writeContract } from "@wagmi/core";
@@ -61,11 +62,10 @@ export function useDeleteProposal() {
 
       if (!customError) return;
 
-      const message = customError.message || "Something went wrong while deleting your proposal.";
-      toast.error(message);
+      toastError("Something went wrong while deleting your proposal.", customError.message);
       setError({
         code: customError.code,
-        message,
+        message: customError.message,
       });
       setIsLoading(false);
     }

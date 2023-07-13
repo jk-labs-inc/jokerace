@@ -337,7 +337,13 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                   </>
                 )}
               </p>
-              <p>{loading ? <Skeleton /> : `to ${contest.rewards.winners} winners`}</p>
+              <p>
+                {loading ? (
+                  <Skeleton />
+                ) : (
+                  `to ${contest.rewards.winners} ${contest.rewards.winners > 1 ? "winners" : "winner"}`
+                )}
+              </p>
             </div>
           ) : (
             <p className="text-neutral-9 font-bold">{loading ? <Skeleton /> : "no rewards"}</p>
