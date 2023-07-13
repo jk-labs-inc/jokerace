@@ -4,9 +4,10 @@
  * @return A string representing the formatted number
  */
 export function formatNumber(num: number, decimal = 0): string {
+  let formattedNum = Math.floor(num);
   let formatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: decimal });
 
-  let formatted = formatter.format(+num.toFixed(decimal));
+  let formatted = formatter.format(+formattedNum.toFixed(decimal));
 
   return formatted;
 }
