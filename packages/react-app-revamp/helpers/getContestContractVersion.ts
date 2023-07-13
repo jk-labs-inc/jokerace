@@ -19,11 +19,13 @@ export async function getContestContractVersion(address: string, chainName: stri
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const provider = getProvider({ chainId: chainId });
   const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
+  const defaultReturn = { abi: null, version: null };
+
   const version: string = await contract.version().catch((error:any) => {
     return null;
   });
 
-  if (version == null) { return { abi: null, version }; }
+  if (version == null) { return defaultReturn; }
 
   if (version === "2.8") {
     return { abi: NumberedVersioningContract.abi, version };
