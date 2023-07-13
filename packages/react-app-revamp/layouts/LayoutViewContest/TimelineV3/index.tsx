@@ -1,5 +1,6 @@
 import React, { useState, useEffect, FC } from "react";
 import moment from "moment";
+import { useContestStore } from "@hooks/useContest/store";
 
 interface Stage {
   name: string;
@@ -8,27 +9,19 @@ interface Stage {
   color: string;
 }
 
-interface LayoutContestTimelineProps {
-  submissionOpenDate: Date;
-  votingOpensDate: Date;
-  contestCloseDate: Date;
-}
+const LayoutContestTimeline = () => {
+  const { submissionsOpen, votesClose, votesOpen } = useContestStore(state => state);
 
-const LayoutContestTimeline: FC<LayoutContestTimelineProps> = ({
-  submissionOpenDate,
-  votingOpensDate,
-  contestCloseDate,
-}) => {
   const stages: Stage[] = [
-    { name: "Submission Open", action: "Submissions are open", date: submissionOpenDate, color: "primary-10" },
-    { name: "Voting Opens", action: "Voting is open", date: votingOpensDate, color: "positive-11" },
-    { name: "Contest Closes", action: "Contest closed", date: contestCloseDate, color: "neutral-11" },
+    { name: "Submission Open", action: "Submissions are open", date: submissionsOpen, color: "primary-10" },
+    { name: "Voting Opens", action: "Voting is open", date: votesOpen, color: "positive-11" },
+    { name: "Contest Closes", action: "Contest closed", date: votesClose, color: "neutral-11" },
   ];
 
   const [currentStageIndex, setCurrentStageIndex] = useState(-1);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const calculateCurrentStageIndex = () => {
       const now = moment();
       let activeStageIndex = -1;
       for (let i = stages.length - 1; i >= 0; i--) {
@@ -37,10 +30,17 @@ const LayoutContestTimeline: FC<LayoutContestTimelineProps> = ({
           break;
         }
       }
-      setCurrentStageIndex(activeStageIndex);
+      return activeStageIndex;
+    };
+
+    setCurrentStageIndex(calculateCurrentStageIndex());
+
+    const interval = setInterval(() => {
+      setCurrentStageIndex(calculateCurrentStageIndex());
     }, 1000);
+
     return () => clearInterval(interval);
-  }, [submissionOpenDate, votingOpensDate, contestCloseDate]);
+  }, [submissionsOpen, votesOpen, votesClose]);
 
   return (
     <div className="hidden lg:grid grid-cols-3 lg:gap-0">

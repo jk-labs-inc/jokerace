@@ -33,7 +33,7 @@ interface ProposalContentProps {
   prompt: string;
 }
 
-const MAX_LENGTH = 250;
+const MAX_LENGTH = 200;
 let MAX_LENGTH_PARAGRAPH = 200;
 
 const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, prompt }) => {

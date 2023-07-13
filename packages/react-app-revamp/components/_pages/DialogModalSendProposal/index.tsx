@@ -57,7 +57,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     content: proposal,
     editorProps: {
       attributes: {
-        class: "prose prose-invert flex-grow focus:outline-none",
+        class: "prose prose-invert pt-6 flex-grow focus:outline-none",
       },
     },
     onUpdate: ({ editor }) => {
@@ -123,7 +123,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
             color="bg-gradient-create rounded-[40px]"
             size="large"
             onClick={onSubmitProposal}
-            disabled={isLoading}
+            disabled={isLoading || !proposal.length}
           >
             submit!
           </ButtonV3>

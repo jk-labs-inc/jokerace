@@ -1,32 +1,23 @@
+import { useContestStore } from "@hooks/useContest/store";
+import { useUserStore } from "@hooks/useUser/store";
 import { BigNumber } from "ethers";
 import moment from "moment";
 import { FC } from "react";
 import { CSVLink } from "react-csv";
 
-interface ContestParametersProps {
-  submissionOpen: Date;
-  votingOpen: Date;
-  votingClose: Date;
-  voters: {
-    address: string;
-    numVotes: number;
-  }[];
-  submitters: {
-    address: string;
-  }[];
-  contestMaxProposalCount: number;
-  userMaxProposalCount: number;
-}
-
 const UNLIMITED_PROPOSALS_PER_USER = 1000000;
 
-const ContestParameters: FC<ContestParametersProps> = ({ ...props }) => {
-  const formattedSubmissionsOpen = moment(props.submissionOpen).format("MMMM Do, h:mm a");
-  const formattedVotesOpen = moment(props.votingOpen).format("MMMM Do, h:mm a");
-  const formattedVotesClosing = moment(props.votingClose).format("MMMM Do, h:mm a");
-  const userMaxProposalCountBN = BigNumber.from(props.userMaxProposalCount);
+const ContestParameters = () => {
+  const { submissionsOpen, votesClose, votesOpen, voters, submitters, contestMaxProposalCount } = useContestStore(
+    state => state,
+  );
+  const contestMaxNumberSubmissionsPerUser = useUserStore(state => state.contestMaxNumberSubmissionsPerUser);
+  const formattedSubmissionsOpen = moment(submissionsOpen).format("MMMM Do, h:mm a");
+  const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
+  const formattedVotesClosing = moment(votesClose).format("MMMM Do, h:mm a");
+  const userMaxProposalCountBN = BigNumber.from(contestMaxNumberSubmissionsPerUser);
   const maxProposalsPerUserCapped = userMaxProposalCountBN.eq(UNLIMITED_PROPOSALS_PER_USER);
-  const processedSubmitters = props.submitters.map(submitter => ({
+  const processedSubmitters = submitters.map(submitter => ({
     address: submitter.address,
   }));
 
@@ -61,12 +52,12 @@ const ContestParameters: FC<ContestParametersProps> = ({ ...props }) => {
             <span>
               {maxProposalsPerUserCapped
                 ? "as many submissions as desired"
-                : `a max of ${props.userMaxProposalCount.toString()} submission `}
+                : `a max of ${contestMaxNumberSubmissionsPerUser.toString()} submission `}
             </span>
           </li>
-          <li className="list-disc">contest accept up to {props.contestMaxProposalCount.toString()} submissions</li>
+          <li className="list-disc">contest accept up to {contestMaxProposalCount.toString()} submissions</li>
 
-          {props.submitters.length ? (
+          {submitters.length ? (
             <li className="list-disc">
               {" "}
               see full allowlist
@@ -85,7 +76,7 @@ const ContestParameters: FC<ContestParametersProps> = ({ ...props }) => {
           <li className="list-disc">to vote, you must be on the allowlist</li>
           <li className="list-disc">
             see full allowlist{" "}
-            <CSVLink data={props.voters} filename={"voters.csv"} className="text-positive-11">
+            <CSVLink data={voters} filename={"voters.csv"} className="text-positive-11">
               here
             </CSVLink>
           </li>
