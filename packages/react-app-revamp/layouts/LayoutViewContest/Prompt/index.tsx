@@ -5,6 +5,10 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC, useEffect, useState } from "react";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
+import remarkGfm from "remark-gfm";
 
 interface LayoutContestPromptProps {
   prompt: string;
@@ -64,7 +68,27 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
             <Collapsible isOpen={isPromptOpen}>
               <div className="border-l border-true-white ">
                 <p className="prose pl-5 ">
-                  <Interweave content={prompt} matchers={[new UrlMatcher("url")]} />
+                  <ReactMarkdown
+                    children={prompt}
+                    rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
+                    components={{
+                      p: ({ node, children, ...props }) => (
+                        <p {...props} className="text-[16px]">
+                          {children}
+                        </p>
+                      ),
+                      ul: ({ node, children, ...props }) => (
+                        <ul {...props} className="list-disc list-inside  list-explainer">
+                          {children}
+                        </ul>
+                      ),
+                      li: ({ node, children, ...props }) => (
+                        <li {...props} className="flex items-center">
+                          {children}
+                        </li>
+                      ),
+                    }}
+                  />
                 </p>
               </div>
             </Collapsible>

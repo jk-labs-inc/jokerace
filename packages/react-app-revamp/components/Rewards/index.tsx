@@ -1,6 +1,7 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import Loader from "@components/UI/Loader";
+import DialogCheckBalanceRewardsModule from "@components/_pages/DialogCheckBalanceRewardsModule";
 import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule";
 import CreateRewardsPool from "@components/_pages/Rewards/components/Create";
 import CreateRewardsFunding from "@components/_pages/Rewards/components/Fund";
@@ -23,6 +24,7 @@ const ContestRewards = () => {
   const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
   const [isWithdrawRewardsOpen, setIsWithdrawRewardsOpen] = useState(false);
+  const [isCheckBalanceRewardsOpen, setIsCheckBalanceRewardsOpen] = useState(false);
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const currentAccount = useAccount({
@@ -86,7 +88,7 @@ const ContestRewards = () => {
         <>
           {rewardsStore.isLoading && (
             <>
-              <Loader scale="component">Loading rewards module...</Loader>
+              <Loader scale="page">Loading rewards...</Loader>
             </>
           )}
           {rewardsStore.isSuccess && (
@@ -151,7 +153,20 @@ const ContestRewards = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-12">
-                <p className="text-[24px] text-neutral-11 font-bold">rewards to distribute</p>
+                <div className="flex flex-col gap-1">
+                  <p className="text-[24px] text-neutral-11 font-bold">rewards to distribute</p>
+                  <p className="text-[12px]">
+                    If you want to determine for yourself if a custom token is included in the rewards, you can do it{" "}
+                    <span
+                      className="text-positive-11 cursor-pointer font-bold"
+                      onClick={() => setIsCheckBalanceRewardsOpen(true)}
+                    >
+                      here
+                    </span>
+                    .
+                  </p>
+                </div>
+
                 {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
                   <RewardsDistributionTable
                     key={index}
@@ -192,6 +207,10 @@ const ContestRewards = () => {
           <DialogWithdrawFundsFromRewardsModule isOpen={isWithdrawRewardsOpen} setIsOpen={setIsWithdrawRewardsOpen}>
             <ContestWithdrawRewards rewardsStore={rewardsStore} />
           </DialogWithdrawFundsFromRewardsModule>
+          <DialogCheckBalanceRewardsModule
+            isOpen={isCheckBalanceRewardsOpen}
+            setIsOpen={setIsCheckBalanceRewardsOpen}
+          />
         </>
       )}
     </>

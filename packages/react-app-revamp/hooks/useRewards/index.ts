@@ -1,13 +1,12 @@
-import { useRouter } from "next/router";
+import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
-import { useRewardsStore } from "./store";
-import { useNetwork, useQuery } from "wagmi";
+import { useRouter } from "next/router";
 import { CustomError } from "types/error";
-import { toast } from "react-toastify";
-import { toastError } from "@components/UI/Toast";
+import { useNetwork, useQuery } from "wagmi";
+import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
@@ -24,7 +23,6 @@ export function useRewardsModule() {
         const contestChainName = asPath.split("/")[2];
         const contestRewardModuleAddress = rewards?.contractAddress;
         const networkName = contestChainName.toLowerCase() === "arbitrumone" ? "arbitrum" : contestChainName;
-
         const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
         //@ts-ignore
         const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
@@ -57,20 +55,6 @@ export function useRewardsModule() {
     },
     {
       enabled: !!rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
-      onError(e) {
-        const customError = e as CustomError;
-
-        if (!customError) return;
-
-        toastError(
-          "Something went wrong and the erc-20 tokens of the rewards module couldn't be retrieved. Try to reload the page.",
-          customError.message,
-        );
-        setError({
-          code: customError.code,
-          message: customError.message,
-        });
-      },
     },
   );
 

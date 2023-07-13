@@ -3,7 +3,6 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
-import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import {
   loadSubmissionFromLocalStorage,
   removeSubmissionFromLocalStorage,
@@ -11,10 +10,7 @@ import {
   SubmissionCache,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
-import { useProposalStore } from "@hooks/useProposal/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
-import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { useUserStore } from "@hooks/useUser/store";
 import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";

@@ -33,7 +33,7 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
         </div>
         {messageToCopy && (
           <p className="text-[8px] text-true-black uppercase font-bold" onClick={copyToClipboard}>
-            {copySuccess ? "copied to clipboard!" : "copy full message"}
+            {copySuccess ? "copied to clipboard!" : "copy error details"}
           </p>
         )}
       </div>

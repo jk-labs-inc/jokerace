@@ -55,13 +55,12 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
       }
     };
 
-    // Add the event listener
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleClick]); // Make sure to list all dependencies
+  }, [handleClick]);
 
   return (
     <div>
