@@ -29,7 +29,7 @@ export const ButtonWithdrawNativeReward = (props: ButtonWithdrawNativeRewardProp
         return;
       }
 
-      toastError(e.message);
+      toastError(`something went wrong and the funds couldn't be withdrawn`, customError.message);
     },
   });
 
@@ -43,7 +43,7 @@ export const ButtonWithdrawNativeReward = (props: ButtonWithdrawNativeRewardProp
         toastDismiss();
         return;
       }
-      toastError(`Something went wrong and the funds couldn't be withdrawn  :", ${customError.message}`);
+      toastError(`something went wrong and the funds couldn't be withdrawn`, customError.message);
     },
     onSuccess() {
       toastSuccess("Funds withdrawn successfully !");

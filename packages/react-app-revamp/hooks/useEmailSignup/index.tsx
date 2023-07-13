@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toastError, toastSuccess, toastLoading } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { isSupabaseConfigured } from "@helpers/database";
+import { CustomError } from "types/error";
 
 const useEmailSignup = () => {
   const [isLoading, setLoading] = useState(false);
@@ -14,13 +15,15 @@ const useEmailSignup = () => {
         const { error } = await supabase.from("email_signups").insert([{ email_address, user_address }]);
         setLoading(false);
         if (error) {
-          toastError("There was an error while subscribing. Please try again later.");
+          toastError("There was an error while subscribing. Please try again later.", error.message);
           return;
         }
         toastSuccess("You have been subscribed successfully.");
       } catch (error) {
+        const customError = error as CustomError;
+
         setLoading(false);
-        toastError("There was an error while subscribing. Please try again later.");
+        toastError("There was an error while subscribing. Please try again later.", customError.message);
       }
     }
   };
@@ -32,7 +35,7 @@ const useEmailSignup = () => {
         const { data, error } = await supabase.from("email_signups").select("*").eq("email_address", email_address);
         setLoading(false);
         if (error) {
-          toastError("There was an error while checking. Please try again later.");
+          toastError("There was an error while checking. Please try again later.", error.message);
           return false;
         }
         if (data?.length) {
@@ -42,8 +45,9 @@ const useEmailSignup = () => {
           return false;
         }
       } catch (error) {
+        const customError = error as CustomError;
         setLoading(false);
-        toastError("There was an error while checking. Please try again later.");
+        toastError("There was an error while checking. Please try again later.", customError.message);
 
         return false;
       }

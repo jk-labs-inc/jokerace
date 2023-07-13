@@ -11,7 +11,7 @@ const ContestLayoutStickyCards = () => {
 
   return (
     <div
-      className={`mt-8 flex flex-col md:flex-row gap-4 sticky ${
+      className={`mt-8 flex flex-col md:flex-row gap-4 md:sticky ${
         displayReloadBanner ? "top-[105px]" : "top-0"
       } z-10 bg-true-black`}
     >

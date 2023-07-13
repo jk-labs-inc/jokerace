@@ -200,7 +200,6 @@ const LayoutViewContest = (props: any) => {
                       </ButtonV3>
                     </div>
                   )}
-
                   <div className="animate-appear pt-3 md:pt-0">
                     {pathname === ROUTE_CONTEST_PROPOSAL && (
                       <div>

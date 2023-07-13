@@ -1,3 +1,4 @@
+import { toastError } from "@components/UI/Toast";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useQueryClient } from "@tanstack/react-query";
 import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
@@ -97,11 +98,10 @@ export function useFundRewardsModule() {
 
       if (!customError) return;
 
-      const message = customError.message || "Something went wrong while sending funds to the rewards module.";
-      toast.error(message);
+      toastError("Something went wrong while sending funds to the rewards module.", customError.message);
       setError({
         code: customError.code,
-        message,
+        message: customError.message,
       });
       setIsLoading(false);
     }

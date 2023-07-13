@@ -154,7 +154,7 @@ export function useDeployContest() {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setError(customError);
       setIsLoading(false);
-      toastError(customError.message ?? "contest deployment failed");
+      toastError(`contest deployment failed`, customError.message);
     }
   }
 
@@ -186,10 +186,14 @@ export function useDeployContest() {
 
       await Promise.all(tasks);
     } catch (error) {
+      const customError = error as CustomError;
+
+      if (!customError) return;
+
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(error as CustomError);
+      stateContestDeployment.setError(customError);
       setIsLoading(false);
-      toastError("contest deployment failed");
+      toastError(`contest deployment failed`, customError.message);
     }
   }
 

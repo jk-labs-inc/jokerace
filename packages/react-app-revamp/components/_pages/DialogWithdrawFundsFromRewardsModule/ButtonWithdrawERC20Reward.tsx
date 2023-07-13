@@ -31,7 +31,7 @@ export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps)
         toastDismiss();
         return;
       }
-      toastError(e.message);
+      toastError(`something went wrong and the funds couldn't be withdrawn`, customError.message);
     },
   });
 
@@ -45,9 +45,9 @@ export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps)
         toastDismiss();
         return;
       }
-      toastError(`Something went wrong and the funds couldn't be withdrawn  :", ${customError.message}`);
+      toastError(`something went wrong and the funds couldn't be withdrawn`, customError.message);
     },
-    onSuccess(data) {
+    onSuccess() {
       toastSuccess("Funds withdrawn successfully !");
     },
   });
