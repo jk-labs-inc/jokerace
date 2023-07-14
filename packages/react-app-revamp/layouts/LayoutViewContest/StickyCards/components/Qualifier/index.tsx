@@ -107,7 +107,7 @@ const LayoutContestQualifier = () => {
       ) : (
         <div className="text-[16px] font-bold text-neutral-11 mt-2">
           <span className="text-positive-11 cursor-pointer" onClick={openConnectModal}>
-            connect a wallet
+            connect wallet
           </span>{" "}
           to see if you qualify
         </div>
