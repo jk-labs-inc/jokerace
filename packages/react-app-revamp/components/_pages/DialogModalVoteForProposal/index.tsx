@@ -19,7 +19,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   const { downvotingAllowed, contestPrompt } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
 
-  const { castVotes, isLoading, error, isSuccess } = useCastVotes();
+  const { castVotes, isLoading } = useCastVotes();
 
   function onSubmitCastVotes(amount: number, isPositive: boolean) {
     castVotes(amount, isPositive);
@@ -43,13 +43,14 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
           shortenOnFallback={true}
           displayLensProfile={true}
         />
-
-        <LayoutContestProposal proposal={proposal} />
-        <VotingWidget
-          amountOfVotes={currentUserAvailableVotesAmount}
-          downvoteAllowed={downvotingAllowed}
-          onVote={onSubmitCastVotes}
-        />
+        <div className="flex flex-col gap-7">
+          <LayoutContestProposal proposal={proposal} />
+          <VotingWidget
+            amountOfVotes={currentUserAvailableVotesAmount}
+            downvoteAllowed={downvotingAllowed}
+            onVote={onSubmitCastVotes}
+          />
+        </div>
       </div>
     </DialogModalV3>
   );
