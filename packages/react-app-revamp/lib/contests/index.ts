@@ -15,7 +15,7 @@ export const ITEMS_PER_PAGE = 7;
 async function getContractConfig(address: string, chainName: string, chainId: number) {
   const { abi, version } = await getContestContractVersion(address, chainName);
 
-  if (abi === null) {
+  if (abi.length == 0) {
     return;
   }
 

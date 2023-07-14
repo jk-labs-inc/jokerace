@@ -60,7 +60,7 @@ export function useProposalVotes(id: number | string) {
 
     const { abi, version } = await getContestContractVersion(address, chainName);
 
-    if (abi === null) {
+    if (abi.length == 0) {
       const errorMessage = "This contract doesn't exist on this chain.";
       setIsListVotersLoading(false);
       setIsListVotersError(errorMessage);
@@ -153,7 +153,7 @@ export function useProposalVotes(id: number | string) {
     try {
       const { abi, version } = await getContestContractVersion(address, chainName);
 
-      if (abi === null) {
+      if (abi.length == 0) {
         const errorMessage = "This contract doesn't exist on this chain.";
         toastError(errorMessage);
         setIsPageVotesError({ message: errorMessage });

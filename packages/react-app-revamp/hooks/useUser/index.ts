@@ -35,7 +35,7 @@ export function useUser() {
   async function getContractConfig() {
     const { abi } = await getContestContractVersion(address, chainName);
 
-    if (abi === null) {
+    if (abi.length == 0) {
       toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
       setContestError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
       setIsContestSuccess(false);
