@@ -4,7 +4,7 @@ import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
 import { chain, useEnsName } from "wagmi";
 
-const DEFAULT_AVATAR_URL = "/contest/avatar.svg"; // Default avatar url
+const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
 
 interface EthereumAddressProps {
   ethereumAddress: string;
@@ -45,12 +45,8 @@ const EthereumAddress = ({
   );
 
   const queryEns = useEnsName({
-    chainId: chain.mainnet.id,
+    chainId: 1,
     address: ethereumAddress,
-    enabled:
-      (queryUserProfileLens?.isSuccess && queryUserProfileLens?.data === null) || queryUserProfileLens?.isError
-        ? true
-        : false,
   });
 
   const isLoading = queryUserProfileLens?.status === "loading";

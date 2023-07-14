@@ -117,7 +117,12 @@ const CreateContestParams = () => {
             </div>
           </div>
         </div>
-        <div className="mt-8">
+        <div>
+          <p className="text-[24px] text-neutral-11">
+            that’s it! now let’s create this contest—and then you can add rewards
+          </p>
+        </div>
+        <div>
           <CreateContestButton step={step} onClick={handleDeployContest} />
         </div>
       </div>

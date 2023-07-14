@@ -2,7 +2,6 @@ import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
@@ -12,7 +11,6 @@ import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBef
 import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
@@ -66,7 +64,6 @@ export function useContest() {
   const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList, fetchProposalsPage } = useProposal();
-  const { contestStatus } = useContestStatusStore(state => state);
 
   /**
    * Display an error toast in the UI for any contract related error
@@ -317,10 +314,7 @@ export function useContest() {
         setSubmitters(submissionMerkleTreeData.submitters);
       }
 
-      if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) {
-        await fetchTotalVotesCast();
-      }
-
+      await fetchTotalVotesCast();
       await checkIfCurrentUserQualifyToSubmit(submissionMerkleTree, contestMaxNumberSubmissionsPerUser);
       await checkIfCurrentUserQualifyToVote();
 
@@ -332,10 +326,14 @@ export function useContest() {
   async function fetchTotalVotesCast() {
     try {
       const result = await getContractConfig();
-
       if (!result) return;
 
       const { contractConfig } = result;
+
+      if (!contractConfig.contractInterface.includes("totalVotesCast")) {
+        setTotalVotesCast(-1);
+        return;
+      }
 
       const totalVotesCast = await readContract({
         ...contractConfig,
