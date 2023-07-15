@@ -113,6 +113,9 @@ const CreateContestPrompt = () => {
       <div className="flex flex-col lg:flex-row items-start gap-5 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-5">
+          <p className="text-neutral-11 font-normal">
+            now let’s write a full description of your contest and how it works—with as many words as you like.
+          </p>
           <p className="text-neutral-11 font-normal">what are the instructions for the contest? what are the rules?</p>
           <p className="text-primary-10 font-bold">what’s the full prompt for your contest?</p>
         </div>

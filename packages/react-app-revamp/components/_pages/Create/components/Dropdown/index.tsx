@@ -87,6 +87,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
         value={query}
         readOnly={!searchEnabled}
         className={className}
+        onClick={() => setShowOptions(true)}
         onChange={value => handleInputChange(value)}
         placeholder="select an option or type your own"
       />

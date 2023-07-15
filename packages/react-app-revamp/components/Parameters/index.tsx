@@ -2,7 +2,6 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { BigNumber } from "ethers";
 import moment from "moment";
-import { FC } from "react";
 import { CSVLink } from "react-csv";
 
 const UNLIMITED_PROPOSALS_PER_USER = 1000000;
@@ -59,8 +58,7 @@ const ContestParameters = () => {
 
           {submitters.length ? (
             <li className="list-disc">
-              {" "}
-              see full allowlist
+              see full allowlist{" "}
               <CSVLink data={processedSubmitters} filename={"submitters.csv"} className="text-positive-11">
                 here
               </CSVLink>

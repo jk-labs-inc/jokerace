@@ -137,7 +137,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
     <div className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <div className="flex items-center px-8 py-2 h-3/5 md:h-3/4" onClick={() => setIsProposalModalOpen(true)}>
         <ReactMarkdown
-          className="markdown"
+          className="markdown max-w-full overflow-x-hidden"
           components={{
             img: ({ node, ...props }) => <img {...props} className="w-[170px] h-[130px]" alt="image" />,
             div: ({ node, children, ...props }) => (
