@@ -24,12 +24,25 @@ interface DialogModalProposalProps {
 const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, prompt, proposal, proposalId }) => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { castVotes, isLoading } = useCastVotes();
-  const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
+  const {
+    currentUserAvailableVotesAmount,
+    currentUserTotalVotesAmount,
+    decreaseCurrentUserAvailableVotesAmount,
+    increaseCurrentUserAvailableVotesAmount,
+    increaseCurrentUserTotalVotesCast,
+    decreaseCurrentUserTotalVotesCast,
+  } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
 
-  function onSubmitCastVotes(amount: number, isPositive: boolean) {
-    castVotes(amount, isPositive);
-  }
+  const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
+    decreaseCurrentUserAvailableVotesAmount(amount);
+    increaseCurrentUserTotalVotesCast(amount);
+
+    castVotes(amount, isUpvote).catch(error => {
+      increaseCurrentUserAvailableVotesAmount(amount);
+      decreaseCurrentUserTotalVotesCast(amount);
+    });
+  };
 
   useEffect(() => {
     if (isLoading) setIsOpen(false);
