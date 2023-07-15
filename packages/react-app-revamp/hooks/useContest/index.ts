@@ -330,7 +330,7 @@ export function useContest() {
 
       const { contractConfig } = result;
 
-      if (!contractConfig.contractInterface.name.includes("totalVotesCast")) {
+      if (!(contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "totalVotesCast").length > 0)) {
         setTotalVotesCast(-1);
         return;
       }
