@@ -12,6 +12,7 @@ interface CreateTextInputProps {
   className?: string;
   onChange?: (value: string) => void;
   onNextStep?: () => void;
+  onClick?: () => void;
 }
 
 const CreateTextInput: FC<CreateTextInputProps> = ({
@@ -24,6 +25,7 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   className,
   onChange,
   onNextStep,
+  onClick,
 }) => {
   const { step, errors } = useDeployContestStore(state => state);
   const inputRef = useRef(null);
@@ -51,6 +53,7 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
       ref={inputRef}
       value={value}
       type={type}
+      onClick={onClick}
       className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2 ${className}`}
       placeholder={placeholder}
       minLength={minLength}

@@ -24,7 +24,11 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
       case ContestStatus.VotingClosed:
         return (
           <p className="text-[16px] text-neutral-11">
-            {formatNumber(totalVotesCast)} votes deployed/{formatNumber(totalVotes)} available votes in the contest
+            {totalVotesCast >= 0
+              ? `${formatNumber(totalVotesCast)} votes deployed/${formatNumber(
+                  totalVotes,
+                )} available votes in the contest`
+              : `${formatNumber(totalVotes)} available votes in the contest`}
           </p>
         );
       default:
@@ -35,8 +39,8 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
   const heading = useMemo<string>(() => {
     switch (contestStatus) {
       case ContestStatus.SubmissionOpen:
-        return "submissions";
       case ContestStatus.VotingOpen:
+        return "submissions";
       case ContestStatus.VotingClosed:
         return "votes";
       default:

@@ -15,8 +15,8 @@ export type StateKey =
   | "submissionRequirements";
 
 const titleValidation = (title: string) => {
-  if (!title || title.length < CONTEST_TITLE_MIN_LENGTH || title.length >= CONTEST_TITLE_MAX_LENGTH) {
-    return "Contest title should be 10-30 characters";
+  if (!title || title.length >= CONTEST_TITLE_MAX_LENGTH) {
+    return "Contest title should be no more than 30 characters";
   }
   return "";
 };

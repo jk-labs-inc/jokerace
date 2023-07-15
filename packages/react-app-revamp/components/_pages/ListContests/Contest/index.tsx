@@ -382,7 +382,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                 <>
                   {!address ? (
                     <li>
-                      <span className="text-positive-11">connect</span> a wallet to see if you qualify
+                      <span className="text-positive-11">connect wallet</span> to see if you qualify
                     </li>
                   ) : null}
 
