@@ -102,7 +102,7 @@ export function useCastVotes() {
       if (customError.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
         setIsLoading(false);
-        return;
+        throw customError;
       }
 
       toastError(`Something went wrong while casting your votes`, customError.message);
@@ -111,6 +111,7 @@ export function useCastVotes() {
         message: customError.message,
       });
       setIsLoading(false);
+      throw customError;
     }
   }
 
