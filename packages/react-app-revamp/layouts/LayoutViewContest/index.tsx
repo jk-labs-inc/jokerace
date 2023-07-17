@@ -34,6 +34,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import ContestTab from "./Contest";
 import ContestLayoutTabs, { Tab } from "./Tabs";
+import next from "next/types";
 
 const LayoutViewContest = (props: any) => {
   const { query, asPath, pathname, reload } = useRouter();
@@ -53,7 +54,7 @@ const LayoutViewContest = (props: any) => {
     state => state,
   );
 
-  const { setContestStatus } = useContestStatusStore(state => state);
+  const { contestStatus, setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
 
@@ -71,7 +72,8 @@ const LayoutViewContest = (props: any) => {
         const msUntilNext = nextTime.diff(now);
         timeoutId = setTimeout(() => {
           setContestStatus(nextStatus);
-        }, msUntilNext);
+          console.log("contest state just changed to ", nextStatus)
+        }, msUntilNext > 100000000 ? 100000000 : msUntilNext); // TODO: figure out what number we actually want here
       }
     };
 
