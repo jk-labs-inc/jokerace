@@ -1,16 +1,15 @@
-import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
-import { chains } from "@config/wagmi";
 import { ordinalSuffix } from "@helpers/ordinalSuffix";
-import { useRouter } from "next/router";
+import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { FC } from "react";
-import { useContractRead } from "wagmi";
+import { useBalance, useContractRead } from "wagmi";
 import PayeeERC20Reward from "./ERC20Reward";
 import { PayeeNativeReward } from "./NativeReward";
 
 type ERC20Token = {
   contractAddress: string;
   tokenBalance: string;
+  decimals: number;
 };
 
 interface RewardsDistributionTableProps {
@@ -21,71 +20,66 @@ interface RewardsDistributionTableProps {
   chainId: number;
 }
 
-const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000000";
-
 const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props }) => {
-  const { payee, erc20Tokens, contractRewardsModuleAddress, abiRewardsModule } = props;
-  const { asPath } = useRouter();
+  const { payee, erc20Tokens, contractRewardsModuleAddress, abiRewardsModule, chainId } = props;
+  const { isLoading: isFundingInProcess } = useFundRewardsStore(state => state);
   const { data, isError, isLoading } = useContractRead({
     addressOrName: contractRewardsModuleAddress,
     contractInterface: abiRewardsModule,
-    chainId: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id,
+    chainId: chainId,
     functionName: "shares",
     args: payee,
   });
 
+  const { data: nativeTokenBalance } = useBalance({
+    addressOrName: contractRewardsModuleAddress,
+    chainId: props.chainId,
+  });
+
   return (
     <>
-      {isLoading && !data ? (
+      {isLoading && isFundingInProcess && !data ? (
         <Loader scale="component">Loading rewards data for rank {`${payee}`}...</Loader>
       ) : (
         <>
           {isError && "Something went wrong, please reload the page."}
-          {data && (
+          {data && (nativeTokenBalance?.value.gt(0) || erc20Tokens?.length) ? (
             <div className="flex flex-col gap-12 w-[250px]">
               <div className="flex flex-col gap-3">
                 <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
-                <ul className="pl-4 text-[16px] font-bold">
-                  <li className="list-disc">
-                    <PayeeNativeReward
-                      share={data}
-                      payee={payee}
-                      chainId={
-                        chains.filter(
-                          chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
-                        )?.[0]?.id
-                      }
-                      contractRewardsModuleAddress={contractRewardsModuleAddress}
-                      abiRewardsModule={abiRewardsModule}
-                    />
-                  </li>
+                <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
+                  {nativeTokenBalance?.value.gt(0) ? (
+                    <li className="flex items-center">
+                      <PayeeNativeReward
+                        share={data}
+                        payee={payee}
+                        chainId={chainId}
+                        contractRewardsModuleAddress={contractRewardsModuleAddress}
+                        abiRewardsModule={abiRewardsModule}
+                      />
+                    </li>
+                  ) : null}
 
                   {erc20Tokens?.length > 0 && (
                     <>
-                      {erc20Tokens
-                        .filter(token => token.tokenBalance !== ZERO_BALANCE)
-                        .map((token: any, index: number) => (
-                          <li className="list-disc" key={index}>
-                            <PayeeERC20Reward
-                              share={data}
-                              payee={payee}
-                              chainId={
-                                chains.filter(
-                                  chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
-                                )?.[0]?.id
-                              }
-                              tokenAddress={token.contractAddress}
-                              contractRewardsModuleAddress={contractRewardsModuleAddress}
-                              abiRewardsModule={abiRewardsModule}
-                            />
-                          </li>
-                        ))}
+                      {erc20Tokens.map((token: any, index: number) => (
+                        <li className="flex items-center" key={index}>
+                          <PayeeERC20Reward
+                            share={data}
+                            payee={payee}
+                            chainId={chainId}
+                            tokenAddress={token.contractAddress}
+                            contractRewardsModuleAddress={contractRewardsModuleAddress}
+                            abiRewardsModule={abiRewardsModule}
+                          />
+                        </li>
+                      ))}
                     </>
                   )}
                 </ul>
               </div>
             </div>
-          )}
+          ) : null}
         </>
       )}
     </>

@@ -1,8 +1,10 @@
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
+import { toastError } from "@components/UI/Toast";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { useRewardsStore } from "@hooks/useRewards/store";
+import { fetchToken } from "@wagmi/core";
 import { ethers } from "ethers";
 import { FC, useRef } from "react";
 import { toast } from "react-toastify";
@@ -23,22 +25,32 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
   const toastIdRef = useRef<string | number | null>(null);
 
   const fundPool = async () => {
-    const populatedRewards =
-      rewards.length > 0
-        ? rewards
-            .filter(reward => reward.amount !== "")
-            .map(reward => ({
-              ...reward,
-              currentUserAddress: address,
-              tokenAddress: reward.address,
-              isErc20: reward.address.startsWith("0x"),
-              rewardsContractAddress: deployRewardsData.address
-                ? deployRewardsData.address
-                : rewardsModule.contractAddress,
-              amount: ethers.utils.parseUnits(reward.amount, 18).toString(),
-            }))
-        : [];
+    if (rewards.length === 0) return;
 
+    const populatedRewardsPromises = rewards.map(async reward => {
+      if (reward.amount === "") return null;
+
+      let decimals = 18;
+      if (reward.address.startsWith("0x")) {
+        const tokenData = await fetchToken({ address: reward.address });
+        if (tokenData === null) {
+          toastError("failed to fetch token data");
+          return;
+        }
+        decimals = tokenData.decimals;
+      }
+
+      return {
+        ...reward,
+        currentUserAddress: address,
+        tokenAddress: reward.address,
+        isErc20: reward.address.startsWith("0x"),
+        rewardsContractAddress: deployRewardsData.address ? deployRewardsData.address : rewardsModule.contractAddress,
+        amount: ethers.utils.parseUnits(reward.amount, decimals).toString(),
+      };
+    });
+
+    const populatedRewards = (await Promise.all(populatedRewardsPromises)).filter(Boolean);
     const promises = await sendFundsToRewardsModuleV3({ rewards: populatedRewards });
 
     // Don't proceed if promises is empty

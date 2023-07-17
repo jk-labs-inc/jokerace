@@ -59,7 +59,7 @@ const CHAIN_CONFIGS: ChainConfigs = {
       {
         name: "USD Coin",
         shorthand: "usdc",
-        address: "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+        address: "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
       },
     ],
   },
@@ -139,7 +139,7 @@ const CHAIN_CONFIGS: ChainConfigs = {
       {
         name: "USD Coin",
         shorthand: "usdc",
-        address: "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
+        address: "0xda9d4f9b69ac6C22e444eD9aF0CfC043b7a7f53f",
       },
     ],
   },

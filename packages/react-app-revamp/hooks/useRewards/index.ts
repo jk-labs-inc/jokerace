@@ -2,7 +2,8 @@ import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
+import { alchemyRpcUrls, fetchToken, readContract, readContracts } from "@wagmi/core";
+import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
 import { useNetwork, useQuery } from "wagmi";
@@ -40,15 +41,17 @@ export function useRewardsModule() {
           redirect: "follow",
         });
         const asJson = await response.json();
-        // Remove tokens with zero balance
-        const balance = asJson.result?.tokenBalances?.filter((token: any) => {
-          return token["tokenBalance"] !== "0";
+
+        const balances = asJson.result?.tokenBalances?.filter((token: any) => {
+          const tokenBalance = ethers.BigNumber.from(token["tokenBalance"]);
+          return tokenBalance.gt(0);
         });
+
         setRewards({
           ...rewards,
-          balance: balance,
+          balance: balances,
         });
-        return balance;
+        return balances;
       } catch (e) {
         console.error(e);
       }

@@ -4,7 +4,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { alchemyRpcUrls, fetchBalance, FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
-import { BigNumber } from "ethers";
+import { BigNumber, ethers, utils } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import moment from "moment";
@@ -48,9 +48,10 @@ const fetchTokenBalances = async (contest: any, contestRewardModuleAddress: stri
       redirect: "follow",
     });
     const asJson = await response.json();
-    // Remove tokens with zero balance
+
     const balance = asJson.result?.tokenBalances?.filter((token: any) => {
-      return token["tokenBalance"] !== "0";
+      const tokenBalance = ethers.BigNumber.from(token["tokenBalance"]);
+      return tokenBalance.gt(0);
     });
 
     return balance;
@@ -163,7 +164,7 @@ const processContestData = async (contest: any, userAddress: string) => {
               contest.rewards = {
                 token: {
                   symbol: rewardToken.symbol,
-                  value: rewardToken.formatted,
+                  value: parseFloat(utils.formatUnits(rewardToken.value, rewardToken.decimals)),
                 },
                 winners: winners.length,
                 numberOfTokens: erc20Tokens?.length ?? 1,

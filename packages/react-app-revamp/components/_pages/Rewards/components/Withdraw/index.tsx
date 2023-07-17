@@ -2,7 +2,7 @@ import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFro
 import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward";
 import { Tab } from "@headlessui/react";
 import { FC, Fragment } from "react";
-import { useNetwork } from "wagmi";
+import { useBalance, useNetwork } from "wagmi";
 
 interface ContestWithdrawRewardsProps {
   rewardsStore: any;
@@ -10,11 +10,15 @@ interface ContestWithdrawRewardsProps {
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore }) => {
   const { chain } = useNetwork();
+  const nativeTokenBalance = useBalance({
+    addressOrName: rewardsStore?.rewards?.contractAddress,
+    chainId: chain?.id,
+  });
 
   return (
-    <div className="w-1/2">
+    <div className="w-full">
       <Tab.Group>
-        <Tab.List className="animate-appear overflow-hidden text-xs font-medium mb-6 divide-i divide-neutral-4 flex rounded-full border-solid border border-neutral-4">
+        <Tab.List className="animate-appear w-[400px] overflow-hidden text-[16px] font-medium mb-6 divide-neutral-4 flex rounded-full border-solid border border-neutral-4">
           {["ERC20", chain?.nativeCurrency?.symbol].map(tab => (
             <Tab key={tab} as={Fragment}>
               {({ selected }) => (
@@ -31,9 +35,9 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
         <Tab.Panels>
           <Tab.Panel>
             {rewardsStore?.rewards?.balance?.length ? (
-              <ul className="flex flex-col items-start space-y-6">
-                {rewardsStore?.rewards?.balance?.map((token: { contractAddress: string }) => (
-                  <li className="flex flex-col items-start" key={`withdraw-erc20-${token.contractAddress}`}>
+              <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
+                {rewardsStore?.rewards?.balance?.map((token: { contractAddress: string }, index: number) => (
+                  <li className="flex items-center" key={index}>
                     <ButtonWithdrawERC20Reward
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                       abiRewardsModule={rewardsStore.rewards.abi}
@@ -44,15 +48,25 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
               </ul>
             ) : (
               <>
-                <p className="italic animate-appear text-neutral-11">No balance found for ERC20 tokens.</p>
+                <p className="italic text-[16px] animate-appear text-neutral-11">No balance found for ERC20 tokens.</p>
               </>
             )}
           </Tab.Panel>
-          <Tab.Panel className="flex flex-col items-start">
-            <ButtonWithdrawNativeReward
-              contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
-              abiRewardsModule={rewardsStore.rewards.abi}
-            />
+          <Tab.Panel>
+            {nativeTokenBalance.data?.value.gt(0) ? (
+              <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
+                <li className="flex items-center">
+                  <ButtonWithdrawNativeReward
+                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                    abiRewardsModule={rewardsStore.rewards.abi}
+                  />
+                </li>
+              </ul>
+            ) : (
+              <p className="italic text-[16px] animate-appear text-neutral-11">
+                No balance found for $<span className="uppercase">{nativeTokenBalance.data?.symbol}</span>.
+              </p>
+            )}
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>

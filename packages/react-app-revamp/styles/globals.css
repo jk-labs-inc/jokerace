@@ -85,6 +85,10 @@ input[type="number"]::-webkit-outer-spin-button {
   font-size: 0 !important;
 }
 
+li {
+  box-sizing: border-box;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

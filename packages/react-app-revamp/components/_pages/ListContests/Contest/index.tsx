@@ -332,8 +332,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                   <Skeleton />
                 ) : (
                   <>
-                    {parseInt(contest.rewards.token.value, 10)}{" "}
-                    <span className="uppercase">${contest.rewards.token.symbol}</span>
+                    {contest.rewards.token.value} <span className="uppercase">${contest.rewards.token.symbol}</span>
                   </>
                 )}
               </p>
@@ -414,7 +413,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                         <Skeleton />
                       ) : (
                         <>
-                          {parseInt(contest.rewards.token.value, 10)}{" "}
+                          {contest.rewards.token.value}{" "}
                           <span className="uppercase">${contest.rewards.token.symbol}</span>
                         </>
                       )}
