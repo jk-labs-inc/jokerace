@@ -1,7 +1,4 @@
-import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
-import { toast } from "react-toastify";
-import { CustomError, ErrorCodes } from "types/error";
-import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
+import { useWithdrawReward } from "@hooks/useWithdrawRewards";
 import ButtonWithdraw from "./ButtonWithdraw";
 interface ButtonWithdrawErc20RewardProps {
   contractRewardsModuleAddress: string;
@@ -11,52 +8,18 @@ interface ButtonWithdrawErc20RewardProps {
 
 export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps) => {
   const { contractRewardsModuleAddress, tokenAddress, abiRewardsModule } = props;
-  const { chain } = useNetwork();
-  const queryTokenBalance = useBalance({
-    token: tokenAddress,
-    chainId: chain?.id,
-    addressOrName: contractRewardsModuleAddress,
-  });
-  const contractWriteWithdrawERC20Reward = useContractWrite({
-    addressOrName: contractRewardsModuleAddress,
-    contractInterface: abiRewardsModule,
-    functionName: "withdrawRewards(address)",
-    chainId: chain?.id,
-    args: [tokenAddress],
-    onError(e) {
-      const customError = e as CustomError;
-      if (!customError) return;
-
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
-        toastDismiss();
-        return;
-      }
-      toastError(`something went wrong and the funds couldn't be withdrawn`, customError.message);
-    },
-  });
-
-  const txWithdrawERC20 = useWaitForTransaction({
-    hash: contractWriteWithdrawERC20Reward?.data?.hash,
-    onError(e) {
-      const customError = e as CustomError;
-      if (!customError) return;
-
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
-        toastDismiss();
-        return;
-      }
-      toastError(`something went wrong and the funds couldn't be withdrawn`, customError.message);
-    },
-    onSuccess() {
-      toastSuccess("Funds withdrawn successfully !");
-    },
-  });
+  const { queryTokenBalance, contractWriteWithdrawReward, txWithdraw } = useWithdrawReward(
+    contractRewardsModuleAddress,
+    abiRewardsModule,
+    "erc20",
+    tokenAddress,
+  );
 
   return (
     <ButtonWithdraw
-      contractWriteWithdraw={contractWriteWithdrawERC20Reward}
+      contractWriteWithdraw={contractWriteWithdrawReward}
       queryTokenBalance={queryTokenBalance}
-      txWithdraw={txWithdrawERC20}
+      txWithdraw={txWithdraw}
     />
   );
 };

@@ -1,5 +1,6 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import { toastLoading } from "@components/UI/Toast";
+import { utils } from "ethers";
 
 interface ButtonWithdrawErc20RewardProps {
   queryTokenBalance: any;
@@ -11,23 +12,25 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   const { queryTokenBalance, contractWriteWithdraw, txWithdraw } = props;
 
   return (
-    <>
+    <section className="flex justify-between w-[350px] animate-appear">
+      <p className="animate-appear">
+        {queryTokenBalance.data?.decimals <= 18
+          ? parseFloat(utils.formatEther(queryTokenBalance.data?.value))
+          : parseFloat(utils.formatUnits(queryTokenBalance.data?.value, queryTokenBalance.data.decimals))}{" "}
+        <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+      </p>
       <ButtonV3
-        disabled={contractWriteWithdraw.isLoading || txWithdraw.isLoading}
-        size="large"
-        color="bg-gradient-distribute"
+        disabled={contractWriteWithdraw.isLoadi1ng || txWithdraw.isLoading}
+        size="extraSmall"
+        color="bg-gradient-withdraw"
         onClick={() => {
           toastLoading("withdrawing funds...");
           contractWriteWithdraw.write();
         }}
       >
-        Withdraw all ${queryTokenBalance.data?.symbol}
+        Withdraw
       </ButtonV3>
-      <p className="pt-2 text-2xs text-neutral-11 font-bold flex flex-wrap items-start">
-        Rewards module {queryTokenBalance.data?.symbol} balance:{" "}
-        {parseFloat(queryTokenBalance?.data?.formatted).toFixed(4)}
-      </p>
-    </>
+    </section>
   );
 };
 
