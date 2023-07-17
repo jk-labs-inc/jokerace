@@ -57,6 +57,8 @@ const LayoutViewContest = (props: any) => {
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
 
+  const MAX_MS_TIMEOUT: number = 100000000;
+
   useEffect(() => {
     const now = moment();
     const formattedSubmissionOpen = moment(submissionsOpen);
@@ -71,7 +73,7 @@ const LayoutViewContest = (props: any) => {
         const msUntilNext = nextTime.diff(now);
         timeoutId = setTimeout(() => {
           setContestStatus(nextStatus);
-        }, msUntilNext);
+        }, msUntilNext > MAX_MS_TIMEOUT ? MAX_MS_TIMEOUT : msUntilNext);
       }
     };
 
