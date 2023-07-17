@@ -108,6 +108,8 @@ export function useFundRewardsModule() {
   }
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
+    setIsLoading(true);
+    setIsSuccess(false);
     if (rewards.length > 3) {
       toast.warning("number of rewards cannot be more than 4 in one take.");
       return;
@@ -117,6 +119,7 @@ export function useFundRewardsModule() {
         sendFundsToSingleReward(reward)
           .then(result => {
             setTransactionData((prevData: any) => [...prevData, result]);
+            setIsLoading(false);
             setIsSuccess(true);
           })
           .catch(e => {
@@ -127,6 +130,7 @@ export function useFundRewardsModule() {
               code: customError.code,
               message,
             });
+            setIsSuccess(false);
             setIsLoading(false);
             throw e; // This will stop the execution of the promises in case of error
           });
