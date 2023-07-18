@@ -9,7 +9,7 @@ export const polygon = {
   },
   rpcUrls: {
     public: 'https://rpc.ankr.com/polygon',
-    default: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_POLYGON_ALCHEMY_KEY}`,
+    default: 'https://rpc.ankr.com/polygon',
   },
   blockExplorers: {
     etherscan: { name: 'Polygon Mainnet Etherscan', url: 'https://polygonscan.com/' },

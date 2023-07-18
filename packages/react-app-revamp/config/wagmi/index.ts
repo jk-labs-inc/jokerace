@@ -28,12 +28,14 @@ import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
 import { gnosisMainnet } from "./custom-chains/gnosisMainnet";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { publicProvider } from "wagmi/providers/public";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { alchemyProvider } from "wagmi/providers/alchemy";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
 
 type ChainImages = {
   [key: string]: string;
 };
+
+const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
 const totalChains: Chain[] = [
   polygon,
@@ -68,8 +70,8 @@ const totalChains: Chain[] = [
 
 const providers =
   process.env.NODE_ENV === "development"
-    ? [publicProvider(), jsonRpcProvider({ rpc: (chain) => ({ http: `${chain.rpcUrls.default}`, }), })]  // if in dev, try public first in case there are no providers configured
-    : [jsonRpcProvider({ rpc: (chain) => ({ http: `${chain.rpcUrls.default}` }), }), publicProvider()];
+    ? [publicProvider(), alchemyProvider({ alchemyId })]  // if in dev, try public first in case there isn't an Alchemy key
+    : [alchemyProvider({ alchemyId }), publicProvider()];
 export const { chains, provider } = configureChains(totalChains, providers);
 
 const { wallets } = getDefaultWallets({
