@@ -25,7 +25,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     decreaseCurrentUserTotalVotesCast,
   } = useUserStore(state => state);
 
-  const { castVotes, isLoading } = useCastVotes();
+  const { castVotes, isSuccess } = useCastVotes();
 
   const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
     decreaseCurrentUserAvailableVotesAmount(amount);
@@ -38,8 +38,8 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   };
 
   useEffect(() => {
-    if (isLoading) setIsOpen(false);
-  }, [isLoading]);
+    if (isSuccess) setIsOpen(false);
+  }, [isSuccess]);
 
   return (
     <DialogModalV3
