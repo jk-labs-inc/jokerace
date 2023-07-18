@@ -68,13 +68,16 @@ const defaultChains = [chain.polygon, chain.arbitrum, chain.optimism];
 const appChains = [...defaultChains, ...otherChains];
 const providers =
   process.env.NODE_ENV === "development"
-    ? [publicProvider(), alchemyProvider({ alchemyId: polygonMainnetAlchemyId }),
-      alchemyProvider({ alchemyId: optimismMainnetAlchemyId }),
-      alchemyProvider({ alchemyId: arbitrumMainnetAlchemyId })]
+    ? [publicProvider(), 
+       alchemyProvider({ alchemyId: polygonMainnetAlchemyId }),
+       alchemyProvider({ alchemyId: optimismMainnetAlchemyId }),
+       alchemyProvider({ alchemyId: arbitrumMainnetAlchemyId }),
+       infuraProvider({ infuraId })]
     : [alchemyProvider({ alchemyId: polygonMainnetAlchemyId }),
        alchemyProvider({ alchemyId: optimismMainnetAlchemyId }),
        alchemyProvider({ alchemyId: arbitrumMainnetAlchemyId }),
-       infuraProvider({ infuraId }), publicProvider()];
+       infuraProvider({ infuraId }), 
+       publicProvider()];
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({
