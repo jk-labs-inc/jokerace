@@ -32,7 +32,9 @@ type ChainImages = {
 };
 
 const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
-const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
+const polygonMainnetAlchemyId = process.env.NEXT_PUBLIC_POLYGON_ALCHEMY_KEY;
+const optimismMainnetAlchemyId = process.env.NEXT_PUBLIC_OPTIMISM_ALCHEMY_KEY;
+const arbitrumMainnetAlchemyId = process.env.NEXT_PUBLIC_ARBITRUM_ALCHEMY_KEY;
 
 const otherChains = [
   chain.polygonMumbai,
@@ -66,8 +68,13 @@ const defaultChains = [chain.polygon, chain.arbitrum, chain.optimism];
 const appChains = [...defaultChains, ...otherChains];
 const providers =
   process.env.NODE_ENV === "development"
-    ? [publicProvider(), alchemyProvider({ alchemyId })]
-    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
+    ? [publicProvider(), alchemyProvider({ alchemyId: polygonMainnetAlchemyId }),
+      alchemyProvider({ alchemyId: optimismMainnetAlchemyId }),
+      alchemyProvider({ alchemyId: arbitrumMainnetAlchemyId }),]
+    : [alchemyProvider({ alchemyId: polygonMainnetAlchemyId }),
+       alchemyProvider({ alchemyId: optimismMainnetAlchemyId }),
+       alchemyProvider({ alchemyId: arbitrumMainnetAlchemyId }),
+       infuraProvider({ infuraId }), publicProvider()];
 export const { chains, provider } = configureChains(appChains, providers);
 
 const { wallets } = getDefaultWallets({
