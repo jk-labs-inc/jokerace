@@ -70,7 +70,7 @@ const providers =
   process.env.NODE_ENV === "development"
     ? [publicProvider(), alchemyProvider({ alchemyId: polygonMainnetAlchemyId }),
       alchemyProvider({ alchemyId: optimismMainnetAlchemyId }),
-      alchemyProvider({ alchemyId: arbitrumMainnetAlchemyId }),]
+      alchemyProvider({ alchemyId: arbitrumMainnetAlchemyId })]
     : [alchemyProvider({ alchemyId: polygonMainnetAlchemyId }),
        alchemyProvider({ alchemyId: optimismMainnetAlchemyId }),
        alchemyProvider({ alchemyId: arbitrumMainnetAlchemyId }),
