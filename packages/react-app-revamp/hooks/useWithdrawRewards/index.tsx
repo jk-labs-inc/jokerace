@@ -48,7 +48,8 @@ export const useWithdrawReward = (
       }
       toastError(`something went wrong and the funds couldn't be withdrawn`, customError.message);
     },
-    onSuccess() {
+    async onSuccess() {
+      await queryTokenBalance.refetch();
       toastSuccess("Funds withdrawn successfully !");
     },
   });

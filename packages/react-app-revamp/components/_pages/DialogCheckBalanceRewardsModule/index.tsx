@@ -6,6 +6,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useTokenBalance } from "@hooks/useTokenBalance";
 import { useWithdrawReward } from "@hooks/useWithdrawRewards";
+import { utils } from "ethers";
 import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import CreateTextInput from "../Create/components/TextInput";
@@ -33,12 +34,16 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
   useEffect(() => {
     if (!inputRewardsModuleBalanceCheck) return;
 
-    const existingBalance = rewardsStore.rewards.balance.find(
-      (bal: any) => bal.contractAddress.toLowerCase() == inputRewardsModuleBalanceCheck.toLowerCase(),
-    );
+    if (rewardsStore.rewards.balance) {
+      const existingBalance = rewardsStore.rewards.balance.find(
+        (bal: any) => bal.contractAddress.toLowerCase() == inputRewardsModuleBalanceCheck.toLowerCase(),
+      );
 
-    if (existingBalance) {
-      setTokenAlreadyAdded(true);
+      if (existingBalance) {
+        setTokenAlreadyAdded(true);
+      } else {
+        setTokenAlreadyAdded(false);
+      }
     } else {
       setTokenAlreadyAdded(false);
     }
@@ -109,7 +114,8 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
         {queryTokenBalance?.formatted && !tokenAlreadyAdded && (
           <ul className="flex gap-6 text-[16px] pt-6 font-bold list-explainer animate-appear">
             <li className="flex items-center uppercase">
-              {queryTokenBalance?.formatted} ${queryTokenBalance?.symbol}
+              {parseFloat(utils.formatUnits(queryTokenBalance.value, queryTokenBalance.decimals))} $
+              {queryTokenBalance?.symbol}
             </li>
             <div className="flex gap-2">
               <ButtonV3 size="extraSmall" color="bg-gradient-distribute" onClick={addReward}>

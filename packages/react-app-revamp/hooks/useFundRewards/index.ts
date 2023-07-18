@@ -1,4 +1,5 @@
 import { toastError } from "@components/UI/Toast";
+import { useDistributeRewards } from "@hooks/useDistributeRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useQueryClient } from "@tanstack/react-query";
 import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
@@ -117,10 +118,16 @@ export function useFundRewardsModule() {
     const promises = rewards.map((reward: any) => {
       return () =>
         sendFundsToSingleReward(reward)
-          .then(result => {
+          .then(async result => {
             setTransactionData((prevData: any) => [...prevData, result]);
             setIsLoading(false);
             setIsSuccess(true);
+
+            await queryClient.invalidateQueries({
+              queryKey: ["balance-rewards-module", rewards?.contractAddress],
+              exact: true,
+              refetchType: "active",
+            });
           })
           .catch(e => {
             const customError = e as CustomError;

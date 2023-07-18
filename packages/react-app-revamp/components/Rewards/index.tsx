@@ -12,6 +12,7 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
+import useFundRewardsModule from "@hooks/useFundRewards";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useRouter } from "next/router";
@@ -39,7 +40,9 @@ const ContestRewards = () => {
 
   useEffect(() => {
     if (rewardsStore?.isSuccess) return;
-    if (supportsRewardsModule) getContestRewardsModule();
+    if (supportsRewardsModule) {
+      getContestRewardsModule();
+    }
   }, [supportsRewardsModule]);
 
   if (!supportsRewardsModule && !creator) {

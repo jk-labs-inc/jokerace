@@ -12,7 +12,6 @@ import { useRewardsStore } from "./store";
 export function useRewardsModule() {
   const { asPath } = useRouter();
   const { chain } = useNetwork();
-
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
 
   const queryBalanceRewardsModule = useQuery(

@@ -17,9 +17,10 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
+import useFundRewardsModule from "@hooks/useFundRewards";
 import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
-import { RewardsWrapper } from "@hooks/useRewards/store";
+import { RewardsWrapper, useRewardsStore } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
 import { UserWrapper } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
@@ -48,11 +49,9 @@ const LayoutViewContest = (props: any) => {
   const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, chainName, setChainId } =
     useContest();
-
   const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, contestName } = useContestStore(
     state => state,
   );
-
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
@@ -71,9 +70,12 @@ const LayoutViewContest = (props: any) => {
       setContestStatus(status);
       if (now.isBefore(nextTime)) {
         const msUntilNext = nextTime.diff(now);
-        timeoutId = setTimeout(() => {
-          setContestStatus(nextStatus);
-        }, msUntilNext > MAX_MS_TIMEOUT ? MAX_MS_TIMEOUT : msUntilNext);
+        timeoutId = setTimeout(
+          () => {
+            setContestStatus(nextStatus);
+          },
+          msUntilNext > MAX_MS_TIMEOUT ? MAX_MS_TIMEOUT : msUntilNext,
+        );
       }
     };
 
