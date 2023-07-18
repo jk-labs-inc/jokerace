@@ -242,7 +242,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className={`flex items-start ${submissionClass} md:justify-between gap-3`}>
+            <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
               <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
                 <p className="font-bold">
                   {loading ? (
@@ -284,7 +284,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className={`flex items-start ${votingClass} md:justify-between gap-3`}>
+            <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
               <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
                 <p className="font-bold">
                   {loading ? (

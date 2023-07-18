@@ -20,7 +20,7 @@ export type ParseCsvResult = {
   error?: ValidationError;
 };
 
-const MAX_ROWS = 10000; // 10k for now
+const MAX_ROWS = 100000; // 100k for now
 
 const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   const data = results.data as Array<any>;

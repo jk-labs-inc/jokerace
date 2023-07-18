@@ -1,4 +1,9 @@
-import { chain, configureChains, createClient } from "wagmi";
+import { Chain, configureChains, createClient } from "wagmi";
+import { polygon } from "./custom-chains/polygon";
+import { arbitrumOne } from "./custom-chains/arbitrumOne";
+import { optimism } from "./custom-chains/optimism";
+import { polygonMumbai } from "./custom-chains/polygonMumbai";
+import { goerli } from "./custom-chains/goerli";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
 import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
 import { sepolia } from "./custom-chains/sepolia";
@@ -23,7 +28,6 @@ import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
 import { gnosisMainnet } from "./custom-chains/gnosisMainnet";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { publicProvider } from "wagmi/providers/public";
-import { infuraProvider } from "wagmi/providers/infura";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
 
@@ -31,13 +35,15 @@ type ChainImages = {
   [key: string]: string;
 };
 
-const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
-const otherChains = [
-  chain.polygonMumbai,
-  chain.goerli,
+const totalChains: Chain[] = [
+  polygon,
+  arbitrumOne,
+  optimism,
+  polygonMumbai,
   sepolia,
+  goerli,
   polygonZkTestnet,
   polygonZkMainnet,
   baseTestnet,
@@ -62,13 +68,11 @@ const otherChains = [
   gnosisMainnet,
 ];
 
-const defaultChains = [chain.polygon, chain.arbitrum, chain.optimism];
-const appChains = [...defaultChains, ...otherChains];
 const providers =
   process.env.NODE_ENV === "development"
-    ? [publicProvider(), alchemyProvider({ alchemyId })]
-    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
-export const { chains, provider } = configureChains(appChains, providers);
+    ? [publicProvider(), alchemyProvider({ alchemyId })]  // if in dev, try public first in case there isn't an Alchemy key
+    : [alchemyProvider({ alchemyId }), publicProvider()];
+export const { chains, provider } = configureChains(totalChains, providers);
 
 const { wallets } = getDefaultWallets({
   appName: "jokerace",
@@ -109,6 +113,7 @@ export const chainsImages: ChainImages = {
   hardhat: "/hardhat.svg",
   rinkeby: "/ethereum.svg",
   ropsten: "/ethereum.svg",
+  sepolia: "/ethereum.svg",
   localhost: "/ethereum.svg",
   goerli: "/ethereum.svg",
   kovan: "/ethereum.svg",
@@ -118,4 +123,5 @@ export const chainsImages: ChainImages = {
   polygonzkmainnet: "/polygon.svg",
   scrollgoerli: "/scroll.png",
   basetestnet: "/base.svg",
+  gnosistestnet: "/gnosis.png"
 };

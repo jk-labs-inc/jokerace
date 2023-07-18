@@ -6,6 +6,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { ReactNode } from "react-markdown/lib/ast-to-react";
 import { useWindowScroll } from "react-use";
 import { useAccount } from "wagmi";
@@ -19,6 +20,7 @@ const LayoutContestQualifier = () => {
     currentUserProposalCount,
     currentUserTotalVotesAmount,
     contestMaxNumberSubmissionsPerUser,
+    isLoading,
   } = useUserStore(state => state);
   const { y } = useWindowScroll();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -90,29 +92,40 @@ const LayoutContestQualifier = () => {
   }, [currentUserAvailableVotesAmount, isScrolled]);
 
   return (
-    <div className="w-full bg-true-black flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
-      <Image src="/contest/ballot.svg" width={33} height={33} alt="timer" />
+    <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
+      <div className="w-full bg-true-black flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+        <Image src="/contest/ballot.svg" width={33} height={33} alt="timer" />
 
-      {isConnected ? (
-        <div className="flex flex-col">
-          {isScrolled ? (
-            <div className="text-[20px]  text-neutral-11">{qualifiedToVoteMessage}</div>
-          ) : (
-            <>
-              <div className="text-[16px] text-neutral-11">{qualifiedToSubmitMessage}</div>
-              <div className="text-[16px]  text-neutral-11">{qualifiedToVoteMessage}</div>
-            </>
-          )}
-        </div>
-      ) : (
-        <div className="text-[16px] font-bold text-neutral-11 mt-2">
-          <span className="text-positive-11 cursor-pointer" onClick={openConnectModal}>
-            connect wallet
-          </span>{" "}
-          to see if you qualify
-        </div>
-      )}
-    </div>
+        {isLoading ? (
+          <div className="flex flex-col w-[150px]">
+            <p className="m-0">
+              <Skeleton height={16} />
+            </p>
+            <p className="m-0">
+              <Skeleton height={16} />
+            </p>
+          </div>
+        ) : isConnected ? (
+          <div className="flex flex-col">
+            {isScrolled ? (
+              <div className="text-[20px]  text-neutral-11">{qualifiedToVoteMessage}</div>
+            ) : (
+              <>
+                <div className="text-[16px] text-neutral-11">{qualifiedToSubmitMessage}</div>
+                <div className="text-[16px]  text-neutral-11">{qualifiedToVoteMessage}</div>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="text-[16px] font-bold text-neutral-11 mt-2">
+            <span className="text-positive-11 cursor-pointer" onClick={openConnectModal}>
+              connect wallet
+            </span>{" "}
+            to see if you qualify
+          </div>
+        )}
+      </div>
+    </SkeletonTheme>
   );
 };
 
