@@ -28,9 +28,9 @@ async function getContractConfig(address: string, chainName: string, chainId: nu
   return contractConfig;
 }
 
-const fetchTokenBalances = async (contest: any, contestRewardModuleAddress: string) => {
+export const fetchTokenBalances = async (chainName: string, contestRewardModuleAddress: string) => {
   try {
-    const networkName = contest.network_name.toLowerCase() === "arbitrumone" ? "arbitrum" : contest.network_name;
+    const networkName = chainName.toLowerCase() === "arbitrumone" ? "arbitrum" : chainName;
     const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
     //@ts-ignore
     const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
@@ -61,7 +61,7 @@ const fetchTokenBalances = async (contest: any, contestRewardModuleAddress: stri
   }
 };
 
-const fetchNativeBalance = async (contestRewardModuleAddress: string, chainId: number) => {
+export const fetchNativeBalance = async (contestRewardModuleAddress: string, chainId: number) => {
   try {
     const nativeBalance = await fetchBalance({
       addressOrName: contestRewardModuleAddress.toString(),
@@ -74,7 +74,7 @@ const fetchNativeBalance = async (contestRewardModuleAddress: string, chainId: n
   }
 };
 
-const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: number, tokenAddress: string) => {
+export const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: number, tokenAddress: string) => {
   try {
     const firstToken = await fetchBalance({
       addressOrName: contestRewardModuleAddress.toString(),
@@ -145,7 +145,7 @@ const processContestData = async (contest: any, userAddress: string) => {
 
             if (!rewardToken || rewardToken.value.eq(0)) {
               try {
-                erc20Tokens = await fetchTokenBalances(contest, contestRewardModuleAddress.toString());
+                erc20Tokens = await fetchTokenBalances(contest.network_name, contestRewardModuleAddress.toString());
 
                 if (erc20Tokens && erc20Tokens.length > 0) {
                   rewardToken = await fetchFirstToken(

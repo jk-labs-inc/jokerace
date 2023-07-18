@@ -25,7 +25,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { openConnectModal } = useConnectModal();
   const { isConnected } = useAccount();
-  const { castVotes, isLoading } = useCastVotes();
+  const { castVotes, isSuccess } = useCastVotes();
   const {
     currentUserAvailableVotesAmount,
     currentUserTotalVotesAmount,
@@ -47,8 +47,8 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
   };
 
   useEffect(() => {
-    if (isLoading) setIsOpen(false);
-  }, [isLoading]);
+    if (isSuccess) setIsOpen(false);
+  }, [isSuccess]);
 
   return (
     <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px] ">
