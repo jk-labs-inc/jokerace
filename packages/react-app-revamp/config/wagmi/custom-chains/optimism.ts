@@ -9,7 +9,7 @@ export const optimism = {
   },
   rpcUrls: {
     public: 'https://mainnet.optimism.io',
-    default: `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_OPTIMISM_ALCHEMY_KEY}`,
+    default: 'https://mainnet.optimism.io',
   },
   blockExplorers: {
     etherscan: { name: 'Optimism Mainnet Etherscan', url: 'https://optimistic.etherscan.io/' },
