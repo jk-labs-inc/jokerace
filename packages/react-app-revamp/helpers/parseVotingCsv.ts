@@ -49,7 +49,7 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   for (const row of data) {
     let error: InvalidEntry["error"] | null = null;
     const address = row[0];
-    const numberOfVotes = row[1];
+    let numberOfVotes = row[1];
 
     if (addresses.has(address)) {
       return {
@@ -61,7 +61,12 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
       addresses.add(address);
     }
 
-    const decimalIndex = numberOfVotes.toString().indexOf(".");
+    if (typeof numberOfVotes === "string") {
+      const parsedNumber = parseFloat(numberOfVotes.replaceAll(",", "").toUpperCase());
+      numberOfVotes = parsedNumber;
+    }
+
+    const decimalIndex = (numberOfVotes?.toString() ?? "").indexOf(".");
     if (decimalIndex !== -1 && numberOfVotes.toString().length - decimalIndex - 1 > 18) {
       return {
         data: {},

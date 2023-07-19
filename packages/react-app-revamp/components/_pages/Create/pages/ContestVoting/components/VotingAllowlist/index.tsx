@@ -42,10 +42,20 @@ const CreateVotingAllowlist = () => {
   }, [onNextStep]);
 
   const handleAllowListChange = (fields: VotingFieldObject[]) => {
-    const nonEmptyFields = fields.filter(({ address, votes }) => address || votes);
-    const newAllowList = nonEmptyFields.reduce((acc, { address, votes }) => ({ ...acc, [address]: Number(votes) }), {});
+    let newAllowList: Record<string, number> = {};
+    let errorExists = false;
 
-    nonEmptyFields.some(({ error }) => error !== null) ? setAllowList({}) : setAllowList(newAllowList);
+    for (const field of fields) {
+      if (field.address || field.votes) {
+        newAllowList[field.address] = Number(field.votes);
+        if (field.error !== null) {
+          errorExists = true;
+          break;
+        }
+      }
+    }
+
+    setAllowList(errorExists ? {} : newAllowList);
   };
 
   const handleNextStep = () => {
