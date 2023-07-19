@@ -30,6 +30,7 @@ import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { useAccount, useNetwork } from "wagmi";
+import { chains } from "@config/wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import ContestTab from "./Contest";
 import ContestLayoutTabs, { Tab } from "./Tabs";
@@ -152,7 +153,21 @@ const LayoutViewContest = (props: any) => {
             <ButtonV3
               size="large"
               onClick={() => {
-                switchNetwork?.({ chainId });
+                try {
+                  switchNetwork?.({ chainId });
+                } catch {
+                  window.ethereum?.request({
+                    jsonrpc: "2.0",
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                      chainId: chainId.toString(),
+                      rpcUrls: [chains.filter(chain => chain.id == chainId)?.[0].rpcUrls.default],
+                      chainName: chains.filter(chain => chain.id == chainId)?.[0].name,
+                      nativeCurrency: chains.filter(chain => chain.id == chainId)?.[0].nativeCurrency,
+                      blockExplorerUrls: [chains.filter(chain => chain.id == chainId)?.[0].blockExplorers?.default?.url]
+                    }]
+                  });
+                }
               }}
               color="bg-gradient-next"
             >
