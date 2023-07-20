@@ -27,6 +27,8 @@ import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
 import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
 import { gnosisMainnet } from "./custom-chains/gnosisMainnet";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
+import { mantleMainnet } from "./custom-chains/mantleMainnet";
+import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { publicProvider } from "wagmi/providers/public";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
@@ -66,6 +68,8 @@ const totalChains: Chain[] = [
   nearAuroraTestnet,
   gnosisTestnet,
   gnosisMainnet,
+  mantleMainnet,
+  mantleTestnet
 ];
 
 const providers =
