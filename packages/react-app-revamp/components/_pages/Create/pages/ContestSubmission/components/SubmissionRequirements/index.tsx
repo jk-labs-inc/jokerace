@@ -14,8 +14,9 @@ const CreateSubmissionRequirements = () => {
     submissionRequirements,
     setSubmissionRequirements,
     setSubmissionAllowlistFields,
+    submissionMerkle,
     setSubmissionMerkle,
-    votingAllowlistFields,
+    votingAllowlist,
   } = useDeployContestStore(state => state);
   const submissionRequirementsValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([
@@ -41,20 +42,20 @@ const CreateSubmissionRequirements = () => {
   }, [onNextStep]);
 
   const handleNextStep = () => {
-    let submissionMerkleData: Record<string, number> = {};
-
     if (submissionRequirements === "voters (same requirements)") {
-      votingAllowlistFields.forEach(field => {
-        if (field.address) {
-          submissionMerkleData[field.address] = 10;
-        }
-      });
+      if (submissionMerkle) {
+        onNextStep();
+        return;
+      }
 
-      const { merkleRoot, recipients } = generateMerkleTree(18, submissionMerkleData);
+      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist).reduce((acc, address) => {
+        acc[address] = 10;
+        return acc;
+      }, {} as Record<string, number>);
 
+      const { merkleRoot, recipients } = generateMerkleTree(18, submissionAllowlist);
       setSubmissionMerkle({ merkleRoot, submitters: recipients });
       setSubmissionAllowlistFields([]);
-
       onNextStep();
     } else {
       setSubmissionAllowlistFields([]);

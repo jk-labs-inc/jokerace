@@ -1,6 +1,6 @@
 import { createClient } from "urql";
 
-const API_URL = (process.env.NEXT_PUBLIC_LENS_API_URL as string) ?? "https://api.lens.dev";
+const API_URL = "https://api.lens.dev";
 
 //@ts-ignore
 export const client = new createClient({

@@ -174,12 +174,27 @@ export function useDeployContest() {
 
       if (votingMerkle && votingMerkle.voters.length > 0) {
         const submitters = submissionMerkle ? submissionMerkle.submitters : [];
+        const voterSet = new Set(votingMerkle.voters.map(voter => voter.address));
+        const submitterSet = new Set(submitters.map(submitter => submitter.address));
+
+        // Combine voters and submitters, removing duplicates
+        const allParticipants = Array.from(
+          new Set([
+            ...votingMerkle.voters.map(voter => voter.address),
+            ...submitters.map(submitter => submitter.address),
+          ]),
+        );
+
+        const everyoneCanSubmit = submitters.length === 0;
         tasks.push(
           indexContestParticipantsV3(
             contestData.contractAddress,
+            allParticipants,
+            voterSet,
+            submitterSet,
             votingMerkle.voters,
-            submitters,
             contestData.networkName,
+            everyoneCanSubmit,
           ),
         );
       }
@@ -196,6 +211,8 @@ export function useDeployContest() {
       toastError(`contest deployment failed`, customError.message);
     }
   }
+
+  function prepareParticipantsForIndexing() {}
 
   return {
     deployContest,

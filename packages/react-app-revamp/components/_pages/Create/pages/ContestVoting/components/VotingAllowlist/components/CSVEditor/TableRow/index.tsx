@@ -24,7 +24,11 @@ const TableRow: FC<TableRowProps> = ({ address, votes, error, index, handlePaste
         onChange={event => handleChange(index, "address", event.target.value)}
       />
     </td>
-    <td className={`${error === "votes" || error === "both" ? "text-negative-11" : ""} relative`}>
+    <td
+      className={`${
+        error === "votes" || error === "both" || error === "exceededLimit" ? "text-negative-11" : ""
+      } relative`}
+    >
       <div className="flex justify-between items-center">
         <input
           type="text"
