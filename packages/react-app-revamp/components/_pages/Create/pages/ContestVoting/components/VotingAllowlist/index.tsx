@@ -1,31 +1,19 @@
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { formatUnits } from "ethers/lib/utils";
 import { generateMerkleTree } from "lib/merkletree/generateMerkleTree";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
 const CreateVotingAllowlist = () => {
-  const { step, setVotingMerkle, votingMerkle, setError } = useDeployContestStore(state => state);
+  const { step, setVotingMerkle, votingMerkle, setError, setVotingAllowlist, votingAllowlist } = useDeployContestStore(
+    state => state,
+  );
   const votingValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => votingValidation?.[0].validation(allowList)]);
-  const [allowList, setAllowList] = useState<Record<string, number>>({});
-
-  useEffect(() => {
-    if (!votingMerkle) return;
-
-    const newAllowList = votingMerkle.voters.reduce((acc, field) => {
-      // Convert back to 'normal' number from string that represents a BigNumber
-      let numVotes = formatUnits(field.numVotes, 18);
-
-      acc[field.address] = parseFloat(numVotes);
-      return acc;
-    }, {} as Record<string, number>);
-
-    setAllowList(newAllowList);
-  }, [votingMerkle]);
+  const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist)]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -42,16 +30,31 @@ const CreateVotingAllowlist = () => {
   }, [onNextStep]);
 
   const handleAllowListChange = (fields: VotingFieldObject[]) => {
-    const nonEmptyFields = fields.filter(({ address, votes }) => address || votes);
-    const newAllowList = nonEmptyFields.reduce((acc, { address, votes }) => ({ ...acc, [address]: Number(votes) }), {});
+    let newAllowList: Record<string, number> = {};
+    let errorExists = false;
 
-    nonEmptyFields.some(({ error }) => error !== null) ? setAllowList({}) : setAllowList(newAllowList);
+    for (const field of fields) {
+      if (field.address || field.votes) {
+        newAllowList[field.address] = Number(field.votes);
+        if (field.error !== null) {
+          errorExists = true;
+          break;
+        }
+      }
+    }
+
+    setVotingAllowlist(errorExists ? {} : newAllowList);
   };
 
   const handleNextStep = () => {
-    if (Object.keys(allowList).length === 0) return;
+    if (Object.keys(votingAllowlist).length === 0) return;
 
-    const { merkleRoot, recipients } = generateMerkleTree(18, allowList);
+    if (votingMerkle) {
+      onNextStep();
+      return;
+    }
+
+    const { merkleRoot, recipients } = generateMerkleTree(18, votingAllowlist);
 
     setVotingMerkle({ merkleRoot, voters: recipients });
     onNextStep();
