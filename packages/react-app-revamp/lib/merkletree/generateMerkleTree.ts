@@ -30,7 +30,7 @@ const setupVoteRecipients = (decimals: number, votesData: Record<string, number>
   for (const [address, votes] of Object.entries(votesData)) {
     recipients.push({
       address: getAddress(address),
-      numVotes: parseUnits(votes.toFixed(decimals), decimals).toString(),
+      numVotes: parseUnits(votes.toString(), decimals).toString(),
     });
   }
 
