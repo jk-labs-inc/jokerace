@@ -12,7 +12,7 @@ import ScrollableTableBody from "./TableBody";
 export type VotingFieldObject = {
   address: string;
   votes: string;
-  error: "address" | "votes" | "both" | null;
+  error: "address" | "votes" | "both" | "exceededLimit" | null;
 };
 
 type CSVEditorProps = {
@@ -26,11 +26,15 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     setVotingMerkle,
     setError,
     step,
+    errors,
   } = useDeployContestStore(state => state);
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const currentStep = step + 1;
   const [parseError, setParseError] = useState<ParseError>("");
   const [allEntries, setAllEntries] = useState<Array<VotingFieldObject>>([]);
+  const [roundedZeroCount, setRoundedZeroCount] = useState<number | undefined>(0);
+  const currentStepError = errors.find(error => error.step === currentStep);
+  const entriesError = currentStepError?.message === "entries";
 
   useEffect(() => {
     if (fields.length) return;
@@ -88,6 +92,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   const handleChange = (index: number, field: string, value: string) => {
     const fieldToChange = fields[index];
     const updatedField = { ...fieldToChange, [field]: value };
+
     const error = validateVotingFields(updatedField.address, updatedField.votes);
 
     updatedField.error = error;
@@ -121,7 +126,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       case "missingColumns":
       case "limitExceeded":
       case "duplicates":
-      case "over18Decimal":
+      case "allZero":
         setParseError(results.error.kind);
         addEmptyFields();
         return;
@@ -150,9 +155,9 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
 
     const allNewEntries = [...invalidEntries, ...validEntries];
     setAllEntries(allNewEntries);
-
     onChange?.(allNewEntries);
     setFields(allNewEntries.slice(0, 100));
+    setRoundedZeroCount(results.roundedZeroCount);
   };
 
   const handleDelete = (index: number) => {
@@ -206,9 +211,30 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       </table>
       <CSVParseError type={parseError} step="voting" />
       {fields.some(field => field.address !== "" || field.votes !== "") ? (
-        <p className="italic text-neutral-11 text-[16px]">
-          Only first 100 entries of allowlist are visible to preview and edit
-        </p>
+        entriesError || fields.some(field => field.error === "exceededLimit") ? (
+          <p className="font-bold text-negative-11 text-[16px]">
+            Your votes input should be less than 1 billion and no more than 4 decimal places.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <p className="italic text-neutral-11 text-[16px]">
+              Only first 100 entries of allowlist are visible to preview and edit <br />
+            </p>
+            <div>
+              {uploadSuccess && (
+                <p className="text-neutral-11 text-[16px]">
+                  please note: we rounded all entries with more than 4 decimals
+                </p>
+              )}
+              {roundedZeroCount && roundedZeroCount > 0 ? (
+                <p className="text-positive-11 text-[16px]">
+                  we removed <span className="font-bold">{roundedZeroCount} </span>
+                  {roundedZeroCount > 1 ? "entries" : "entry"} that had less than 0.0001 votes
+                </p>
+              ) : null}
+            </div>
+          </div>
+        )
       ) : (
         <div className="flex flex-col text-[16px] mt-5">
           <p className="text-primary-10 font-bold">Prefer to upload a CSV?</p>

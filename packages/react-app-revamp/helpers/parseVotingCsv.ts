@@ -11,22 +11,25 @@ export type ValidationError =
   | { kind: "missingColumns" }
   | { kind: "limitExceeded" }
   | { kind: "duplicates" }
-  | { kind: "over18Decimal" }
+  | { kind: "allZero" }
   | { kind: "parseError"; error: Error };
 
 export type ParseCsvResult = {
   data: Record<string, number>;
   invalidEntries: InvalidEntry[];
+  roundedZeroCount?: number;
   error?: ValidationError;
 };
 
-const MAX_ROWS = 100000; // 100k for now
+export const MAX_ROWS = 100000; // 100k for now
+const MAX_VOTES = 1e9; // 1 billion
 
 const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
   const data = results.data as Array<any>;
   const votesData: Record<string, number> = {};
   const invalidEntries: InvalidEntry[] = [];
   const addresses: Set<string> = new Set();
+  let roundedToZeroCount = 0;
 
   if (data.length > MAX_ROWS) {
     return {
@@ -51,6 +54,12 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
     const address = row[0];
     let numberOfVotes = row[1];
 
+    if (typeof numberOfVotes === "number") {
+      numberOfVotes = parseFloat(row[1].toFixed(4));
+    } else {
+      numberOfVotes = parseFloat(parseFloat(row[1].toString().replaceAll(",", "")).toFixed(4));
+    }
+
     if (addresses.has(address)) {
       return {
         data: {},
@@ -61,40 +70,39 @@ const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
       addresses.add(address);
     }
 
-    if (typeof numberOfVotes === "string") {
-      const parsedNumber = parseFloat(numberOfVotes.replaceAll(",", "").toUpperCase());
-      numberOfVotes = parsedNumber;
-    }
-
-    const decimalIndex = (numberOfVotes?.toString() ?? "").indexOf(".");
-    if (decimalIndex !== -1 && numberOfVotes.toString().length - decimalIndex - 1 > 18) {
-      return {
-        data: {},
-        invalidEntries,
-        error: { kind: "over18Decimal" },
-      };
-    }
-
     try {
       getAddress(address);
     } catch (e) {
       error = "address";
     }
 
-    if (typeof numberOfVotes !== "number" || numberOfVotes <= 0) {
+    if (typeof numberOfVotes !== "number" || numberOfVotes >= MAX_VOTES) {
       error = error ? "both" : "votes";
     }
 
     if (error) {
       invalidEntries.push({ address: address, votes: numberOfVotes, error });
     } else {
-      votesData[address] = numberOfVotes;
+      if (numberOfVotes !== 0) {
+        votesData[address] = numberOfVotes;
+      } else {
+        roundedToZeroCount++;
+      }
     }
+  }
+
+  if (roundedToZeroCount === data.length) {
+    return {
+      data: {},
+      invalidEntries,
+      error: { kind: "allZero" },
+    };
   }
 
   return {
     data: votesData,
     invalidEntries,
+    roundedZeroCount: roundedToZeroCount,
   };
 };
 

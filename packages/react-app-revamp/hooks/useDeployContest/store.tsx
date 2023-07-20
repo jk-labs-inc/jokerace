@@ -35,8 +35,10 @@ export interface DeployContestState {
   votingClose: Date;
   votingRequirements: string;
   submissionRequirements: string;
+  votingAllowlist: Record<string, number>;
   votingAllowlistFields: VotingFieldObject[];
   votingMerkle: VotingMerkle | null;
+  submissionAllowList: Record<string, number>;
   submissionAllowlistFields: SubmissionFieldObject[];
   submissionMerkle: SubmissionMerkle | null;
   allowedSubmissionsPerUser: number;
@@ -59,8 +61,10 @@ export interface DeployContestState {
   setVotingClose: (votingClose: Date) => void;
   setVotingRequirements: (votingRequirements: string) => void;
   setSubmissionRequirements: (submissionRequirements: string) => void;
+  setVotingAllowlist: (votingAllowlist: Record<string, number>) => void;
   setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
   setVotingMerkle: (votingInfo: VotingMerkle | null) => void;
+  setSubmissionAllowlist: (submissionAllowlist: Record<string, number>) => void;
   setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) => void;
   setSubmissionMerkle: (submissionInfo: SubmissionMerkle | null) => void;
   setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
@@ -99,8 +103,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     votingClose: initialVotingClose,
     votingRequirements: "",
     submissionRequirements: "anyone",
+    votingAllowlist: {},
     votingAllowlistFields: Array(15).fill(EMPTY_FIELDS_VOTING),
     votingMerkle: null,
+    submissionAllowList: {},
     submissionAllowlistFields: Array(15).fill(EMPTY_FIELDS_SUBMISSION),
     submissionMerkle: null,
     allowedSubmissionsPerUser: 0,
@@ -128,8 +134,11 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setVotingClose: (votingClose: Date) => set({ votingClose }),
     setVotingRequirements: (votingRequirements: string) => set({ votingRequirements }),
     setSubmissionRequirements: (submissionRequirements: string) => set({ submissionRequirements }),
+    setVotingAllowlist: (votingAllowlist: Record<string, number>) => set({ votingAllowlist }),
     setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => set({ votingAllowlistFields }),
     setVotingMerkle: (votingMerkle: VotingMerkle | null) => set({ votingMerkle }),
+    setSubmissionAllowlist: (submissionAllowlist: Record<string, number>) =>
+      set({ submissionAllowList: submissionAllowlist }),
     setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) =>
       set({ submissionAllowlistFields }),
     setSubmissionMerkle: (submissionMerkle: SubmissionMerkle | null) => set({ submissionMerkle }),
