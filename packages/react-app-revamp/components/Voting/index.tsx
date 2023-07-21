@@ -4,7 +4,7 @@ import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
 interface VotingWidgetProps {
   amountOfVotes: number;
@@ -19,6 +19,20 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
+
+  useEffect(() => {
+    const handleEnterPress = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        onVote?.(amount, isUpvote);
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [onVote]);
 
   const handleClick = (value: boolean) => {
     if (!downvoteAllowed) {
