@@ -2,7 +2,6 @@ import { toastDismiss, toastError, toastLoading, toastSuccess } from "@component
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
-import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
@@ -13,7 +12,6 @@ import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
-  const { indexContestParticipantsV3 } = useContestParticipantsIndexV3();
   const stateContestDeployment = useContractFactoryStore(state => state);
   const {
     type,
@@ -171,34 +169,6 @@ export function useDeployContest() {
       const tasks = [];
 
       tasks.push(indexContestV3(contestData));
-
-      if (votingMerkle && votingMerkle.voters.length > 0) {
-        const submitters = submissionMerkle ? submissionMerkle.submitters : [];
-        const voterSet = new Set(votingMerkle.voters.map(voter => voter.address));
-        const submitterSet = new Set(submitters.map(submitter => submitter.address));
-
-        // Combine voters and submitters, removing duplicates
-        const allParticipants = Array.from(
-          new Set([
-            ...votingMerkle.voters.map(voter => voter.address),
-            ...submitters.map(submitter => submitter.address),
-          ]),
-        );
-
-        const everyoneCanSubmit = submitters.length === 0;
-        tasks.push(
-          indexContestParticipantsV3(
-            contestData.contractAddress,
-            allParticipants,
-            voterSet,
-            submitterSet,
-            votingMerkle.voters,
-            contestData.networkName,
-            everyoneCanSubmit,
-          ),
-        );
-      }
-
       await Promise.all(tasks);
     } catch (error) {
       const customError = error as CustomError;
