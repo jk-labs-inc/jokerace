@@ -1,5 +1,4 @@
 import { toastError } from "@components/UI/Toast";
-import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
@@ -25,6 +24,8 @@ export function useUser() {
     setIsSuccess: setIsContestSuccess,
     setIsLoading: setIsContestLoading,
     setError: setContestError,
+    voters,
+    submitters,
   } = useContestStore(state => state);
   const { chain } = useNetwork();
   const { asPath } = useRouter();
@@ -80,14 +81,8 @@ export function useUser() {
       setCurrentUserQualifiedToSubmit(true);
     } else {
       try {
-        const { data } = await supabase
-          .from("contest_participants_v3")
-          .select("can_submit")
-          .eq("user_address", userAddress)
-          .eq("contest_address", address)
-          .eq("network_name", lowerCaseChainName);
-
-        if (data && data.length > 0 && data[0].can_submit) {
+        const user_can_submit = submitters.some(submitter => submitter.address === userAddress)
+        if (user_can_submit) {
           const numOfSubmittedProposals = await readContract({
             ...contractConfig,
             functionName: "getNumSubmissions",
@@ -118,15 +113,8 @@ export function useUser() {
     if (!userAddress) return;
 
     try {
-      // Perform a lookup in the 'contest_participants_v3' table.
-      const { data } = await supabase
-        .from("contest_participants_v3")
-        .select("num_votes")
-        .eq("user_address", userAddress)
-        .eq("contest_address", address)
-        .eq("network_name", lowerCaseChainName);
-
-      if (data && data.length > 0 && data[0].num_votes > 0) {
+      const user_votes = voters.filter(voter => voter.address === userAddress)
+      if (user_votes.length > 0) {
         const contractConfig = await getContractConfig();
         if (!contractConfig) return;
 
@@ -136,7 +124,7 @@ export function useUser() {
           args: userAddress,
         });
 
-        const userVotes = data[0].num_votes;
+        const userVotes = user_votes[0].numVotes;
         //@ts-ignore
         const castVotes = currentUserTotalVotesCast / 1e18;
 
