@@ -12,15 +12,51 @@ interface RewardProps {
   txRelease: any;
   queryRankRewardsReleasable: any;
   queryRankRewardsReleased: any;
+  showPreviouslyDistributed?: boolean;
 }
 
 export const Reward = (props: RewardProps) => {
   const { contestStatus } = useContestStatusStore(state => state);
-  const { queryTokenBalance, contractWriteRelease, queryRankRewardsReleasable, queryRankRewardsReleased } = props;
+  const {
+    queryTokenBalance,
+    contractWriteRelease,
+    queryRankRewardsReleasable,
+    queryRankRewardsReleased,
+    showPreviouslyDistributed,
+  } = props;
 
   if (queryTokenBalance.isLoading) return <Loader scale="component">Loading ERC20 token info...</Loader>;
 
-  if (queryRankRewardsReleasable.data === 0) return null;
+  if (showPreviouslyDistributed && queryRankRewardsReleased.data === 0) {
+    return (
+      <li>
+        <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds distributed
+      </li>
+    );
+  }
+
+  if (showPreviouslyDistributed) {
+    return (
+      <li className="flex items-center text-positive-11">
+        <section className="flex justify-between w-full animate-appear">
+          {(queryRankRewardsReleased.isLoading || queryRankRewardsReleasable.isLoading) && (
+            <Loader scale="component">Loading info...</Loader>
+          )}
+          <p className="animate-appear">
+            {queryRankRewardsReleased.data} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+          </p>
+        </section>
+      </li>
+    );
+  }
+
+  if (queryRankRewardsReleasable.data === 0) {
+    return (
+      <li>
+        <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds to distribute
+      </li>
+    );
+  }
 
   return (
     <li className="flex items-center">

@@ -110,7 +110,7 @@ export function useFundRewardsModule() {
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
     if (rewards.length > 3) {
-      toast.warning("number of rewards cannot be more than 4 in one take.");
+      toast.warning("number of rewards cannot be more than 3 in one take.");
       return;
     }
     const promises = rewards.map((reward: any) => {

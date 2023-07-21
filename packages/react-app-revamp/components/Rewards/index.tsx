@@ -218,6 +218,7 @@ const ContestRewards = () => {
                     erc20Tokens={rewardsStore.rewards.balance}
                     contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                     abiRewardsModule={rewardsStore.rewards.abi}
+                    showPreviouslyDistributedTable
                   />
                 ))}
               </div>
