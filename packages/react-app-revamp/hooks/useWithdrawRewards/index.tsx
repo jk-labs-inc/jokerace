@@ -24,6 +24,7 @@ export const useWithdrawReward = (
     functionName: tokenType === "erc20" ? "withdrawRewards(address)" : "withdrawRewards()",
     chainId: chain?.id,
     args: tokenType === "erc20" ? [tokenAddress] : [],
+
     onError(e) {
       const customError = e as CustomError;
       if (!customError) return;

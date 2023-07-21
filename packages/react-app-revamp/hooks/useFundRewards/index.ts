@@ -109,8 +109,6 @@ export function useFundRewardsModule() {
   }
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
-    setIsLoading(true);
-    setIsSuccess(false);
     if (rewards.length > 3) {
       toast.warning("number of rewards cannot be more than 4 in one take.");
       return;
@@ -120,8 +118,6 @@ export function useFundRewardsModule() {
         sendFundsToSingleReward(reward)
           .then(async result => {
             setTransactionData((prevData: any) => [...prevData, result]);
-            setIsLoading(false);
-            setIsSuccess(true);
 
             await queryClient.invalidateQueries({
               queryKey: ["balance-rewards-module", rewards?.contractAddress],
@@ -158,6 +154,9 @@ export function useFundRewardsModule() {
       contractInterface: erc20ABI,
     };
 
+    setIsLoading(true);
+    setIsSuccess(false);
+
     let txSendFunds;
     let receipt;
     if (isErc20) {
@@ -185,6 +184,9 @@ export function useFundRewardsModule() {
         hash: txSendFunds.hash,
       });
     }
+
+    setIsLoading(false);
+    setIsSuccess(true);
 
     return {
       hash: receipt.transactionHash,

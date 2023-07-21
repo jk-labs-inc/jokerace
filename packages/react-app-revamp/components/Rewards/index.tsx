@@ -12,7 +12,6 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
-import useFundRewardsModule from "@hooks/useFundRewards";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useRouter } from "next/router";
@@ -40,9 +39,7 @@ const ContestRewards = () => {
 
   useEffect(() => {
     if (rewardsStore?.isSuccess) return;
-    if (supportsRewardsModule) {
-      getContestRewardsModule();
-    }
+    if (supportsRewardsModule) getContestRewardsModule();
   }, [supportsRewardsModule]);
 
   if (!supportsRewardsModule && !creator) {
@@ -153,6 +150,27 @@ const ContestRewards = () => {
                       isLast={index === rewardsStore.rewards.payees.length - 1}
                     />
                   ))}
+                  {creator && (
+                    <>
+                      <ButtonV3
+                        color={`bg-gradient-create rounded-[40px] mt-3`}
+                        size="large"
+                        onClick={() => setIsFundRewardsOpen(true)}
+                      >
+                        fund pool
+                      </ButtonV3>
+                      <DialogModalV3
+                        isOpen={isFundRewardsOpen}
+                        setIsOpen={value => setIsFundRewardsOpen(value)}
+                        title="rewards"
+                        className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
+                      >
+                        <div className="md:pl-[50px] lg:pl-[100px]">
+                          <div className="pt-[50px]">{<CreateRewardsFunding isFundingForTheFirstTime={false} />}</div>
+                        </div>
+                      </DialogModalV3>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="flex flex-col gap-12">
@@ -183,27 +201,25 @@ const ContestRewards = () => {
                     abiRewardsModule={rewardsStore.rewards.abi}
                   />
                 ))}
-                {creator && (
-                  <>
-                    <ButtonV3
-                      color={`bg-gradient-create rounded-[40px] mt-3`}
-                      size="large"
-                      onClick={() => setIsFundRewardsOpen(true)}
-                    >
-                      fund pool
-                    </ButtonV3>
-                    <DialogModalV3
-                      isOpen={isFundRewardsOpen}
-                      setIsOpen={value => setIsFundRewardsOpen(value)}
-                      title="rewards"
-                      className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
-                    >
-                      <div className="md:pl-[50px] lg:pl-[100px]">
-                        <div className="pt-[50px]">{<CreateRewardsFunding isFundingForTheFirstTime={false} />}</div>
-                      </div>
-                    </DialogModalV3>
-                  </>
-                )}
+              </div>
+              <div className="flex flex-col gap-12">
+                <div className="flex flex-col gap-1">
+                  <p className="text-[24px] text-neutral-11 font-bold">previously distributed rewards</p>
+                </div>
+
+                {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
+                  <RewardsDistributionTable
+                    key={index}
+                    chainId={
+                      chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
+                        ?.id
+                    }
+                    payee={payee}
+                    erc20Tokens={rewardsStore.rewards.balance}
+                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                    abiRewardsModule={rewardsStore.rewards.abi}
+                  />
+                ))}
               </div>
             </div>
           )}

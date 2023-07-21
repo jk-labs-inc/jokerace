@@ -11,26 +11,30 @@ interface ButtonWithdrawErc20RewardProps {
 export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   const { queryTokenBalance, contractWriteWithdraw, txWithdraw } = props;
 
+  if (queryTokenBalance.data.value.eq(0)) return null;
+
   return (
-    <section className="flex justify-between w-[350px] animate-appear">
-      <p className="animate-appear">
-        {queryTokenBalance.data?.decimals <= 18
-          ? parseFloat(utils.formatEther(queryTokenBalance.data?.value))
-          : parseFloat(utils.formatUnits(queryTokenBalance.data?.value, queryTokenBalance.data.decimals))}{" "}
-        <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
-      </p>
-      <ButtonV3
-        disabled={contractWriteWithdraw.isLoadi1ng || txWithdraw.isLoading}
-        size="extraSmall"
-        color="bg-gradient-withdraw"
-        onClick={() => {
-          toastLoading("withdrawing funds...");
-          contractWriteWithdraw.write();
-        }}
-      >
-        Withdraw
-      </ButtonV3>
-    </section>
+    <li className="flex items-center">
+      <section className="flex justify-between w-[350px] animate-appear">
+        <p className="animate-appear">
+          {queryTokenBalance.data?.decimals <= 18
+            ? parseFloat(utils.formatEther(queryTokenBalance.data?.value))
+            : parseFloat(utils.formatUnits(queryTokenBalance.data?.value, queryTokenBalance.data.decimals))}{" "}
+          <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+        </p>
+        <ButtonV3
+          disabled={contractWriteWithdraw.isLoadi1ng || txWithdraw.isLoading}
+          size="extraSmall"
+          color="bg-gradient-withdraw"
+          onClick={() => {
+            toastLoading("withdrawing funds...");
+            contractWriteWithdraw.write();
+          }}
+        >
+          Withdraw
+        </ButtonV3>
+      </section>
+    </li>
   );
 };
 

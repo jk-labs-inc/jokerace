@@ -35,6 +35,8 @@ export const useDistributeRewards = (
         : parseFloat(utils.formatEther(data)),
   });
 
+  console.log(tokenType, queryRankRewardsReleasable.data);
+
   const queryRankRewardsReleased = useContractRead({
     addressOrName: contractRewardsModuleAddress,
     contractInterface: abiRewardsModule,
