@@ -3,6 +3,7 @@ import { EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
 import { parseCsvVoting } from "@helpers/parseVotingCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { cloneDeep } from "lodash";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
 import CSVParseError, { ParseError } from "./CSVParseError";
@@ -11,12 +12,11 @@ import ScrollableTableBody from "./TableBody";
 export type VotingFieldObject = {
   address: string;
   votes: string;
-  error: "address" | "votes" | "both" | null;
+  error: "address" | "votes" | "both" | "exceededLimit" | null;
 };
 
 type CSVEditorProps = {
   onChange?: (fields: Array<VotingFieldObject>) => void;
-  onErrorChange?: (error: string) => void;
 };
 
 const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
@@ -31,24 +31,32 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const currentStep = step + 1;
   const [parseError, setParseError] = useState<ParseError>("");
+  const [allEntries, setAllEntries] = useState<Array<VotingFieldObject>>([]);
+  const [roundedZeroCount, setRoundedZeroCount] = useState<number | undefined>(0);
+  const currentStepError = errors.find(error => error.step === currentStep);
+  const entriesError = currentStepError?.message === "entries";
 
-  // If user clean the fields, reset the state
   useEffect(() => {
     if (fields.length) return;
-
     addEmptyFields();
   }, [fields]);
 
-  // Update state and propagate changes to parent component
   const updateFields = (newFields: Array<VotingFieldObject>, isDeleting = false) => {
-    if (newFields.length === 100) {
-      newFields.push(EMPTY_FIELDS_VOTING);
+    let tempFields = cloneDeep(newFields);
+    if (isDeleting) {
+      while (tempFields.length < 100) {
+        tempFields.push(EMPTY_FIELDS_VOTING);
+      }
+    } else {
+      if (tempFields.length === 100) {
+        tempFields.push(EMPTY_FIELDS_VOTING);
+      }
+      if (tempFields.length < 100) {
+        tempFields.push(EMPTY_FIELDS_VOTING);
+      }
     }
-    if (newFields.length < 100 && !isDeleting) {
-      newFields.push(EMPTY_FIELDS_VOTING);
-    }
-    setFields(newFields);
-    onChange?.(newFields);
+    setFields(tempFields);
+    onChange?.(tempFields);
   };
 
   const handlePaste = (index: number, event: React.ClipboardEvent) => {
@@ -60,48 +68,52 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       return;
     }
 
-    let newFields = [...fields]; // Create a copy of the fields array
+    let newFields = [...fields.slice(0)];
+    let newAllEntries = [...allEntries.slice(0)];
 
     lines.forEach((line, lineIndex) => {
       const [address = "", votes = ""] = line.split("\t").map(str => str.trim());
       const error = validateVotingFields(address, votes);
 
-      // Update the field at the specified index if it exists, or create a new field
       if (index + lineIndex < newFields.length) {
         newFields[index + lineIndex] = { address, votes, error };
+        newAllEntries[index + lineIndex] = { address, votes, error };
       } else {
         newFields.push({ address, votes, error });
+        newAllEntries.push({ address, votes, error });
       }
     });
 
-    updateFields(newFields);
+    setAllEntries(newAllEntries);
+    setFields(newFields.slice(0, 100));
+    onChange?.(newAllEntries);
   };
 
   const handleChange = (index: number, field: string, value: string) => {
     const fieldToChange = fields[index];
-
-    // Create a new field object with the changed value
     const updatedField = { ...fieldToChange, [field]: value };
 
     const error = validateVotingFields(updatedField.address, updatedField.votes);
 
-    // Add error to the new field object
     updatedField.error = error;
+    let updatedFields = [...fields.slice(0, index), updatedField, ...fields.slice(index + 1)];
 
-    // Replace the old field object with the new one in the array
-    const updatedFields = [...fields.slice(0, index), updatedField, ...fields.slice(index + 1)];
-
-    onChange?.(updatedFields);
+    let updatedAllEntries = [...allEntries.slice(0)];
+    updatedAllEntries[index] = updatedField;
 
     setFields(updatedFields);
+    setAllEntries(updatedAllEntries);
+    onChange?.(updatedAllEntries);
   };
 
   const addEmptyFields = () => {
-    updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+    const emptyFields = Array(15).fill(EMPTY_FIELDS_VOTING);
+    updateFields(emptyFields);
+    setAllEntries(emptyFields);
   };
 
   const clearFields = () => {
-    updateFields(Array(15).fill(EMPTY_FIELDS_VOTING));
+    addEmptyFields();
     setVotingMerkle(null);
     setError(currentStep, { step: currentStep, message: "" });
     setUploadSuccess(false);
@@ -112,19 +124,10 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
 
     switch (results.error?.kind) {
       case "missingColumns":
-        setParseError("missingColumns");
-        addEmptyFields();
-        return;
       case "limitExceeded":
-        setParseError("limitExceeded");
-        addEmptyFields();
-        return;
       case "duplicates":
-        setParseError("duplicates");
-        addEmptyFields();
-        return;
-      case "over18Decimal":
-        setParseError("over18Decimal");
+      case "allZero":
+        setParseError(results.error.kind);
         addEmptyFields();
         return;
       default:
@@ -138,10 +141,6 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       setUploadSuccess(true);
     }
 
-    let currentEntries = fields;
-
-    currentEntries = currentEntries.filter(field => field.address !== "" || field.votes !== "");
-
     const validEntries = Object.entries(results.data).map(([address, votes]) => ({
       address,
       votes: String(votes),
@@ -154,21 +153,34 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       error,
     }));
 
-    // Prepend invalid entries to the existing ones and then append valid entries
-    updateFields([...invalidEntries, ...currentEntries, ...validEntries]);
+    const allNewEntries = [...invalidEntries, ...validEntries];
+    setAllEntries(allNewEntries);
+    onChange?.(allNewEntries);
+    setFields(allNewEntries.slice(0, 100));
+    setRoundedZeroCount(results.roundedZeroCount);
   };
 
   const handleDelete = (index: number) => {
-    const newFields = [...fields];
+    let newFields = [...fields.slice(0)];
+    let newAllEntries = [...allEntries.slice(0)];
+
+    if (index < newAllEntries.length) {
+      newAllEntries.splice(index, 1);
+    }
 
     newFields.splice(index, 1);
 
-    updateFields(newFields, true);
+    if (newFields.length < 100) {
+      newFields.push(EMPTY_FIELDS_VOTING);
+    }
+    setAllEntries(newAllEntries);
+    setFields(newFields);
+    onChange?.(newAllEntries);
   };
 
   return (
     <div className="flex flex-col gap-2">
-      <table className="table-fixed border-collapse border-b border-dotted border-neutral-9 w-[300px] md:w-[600px] text-left">
+      <table className="table-fixed  w-[300px] md:w-[600px] text-left">
         <thead>
           <tr className="text-[16px] font-bold">
             <th className="w-2/3 py-2 uppercase">Address</th>
@@ -191,7 +203,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
         </thead>
 
         <ScrollableTableBody
-          fields={fields.slice(0, 100)}
+          fields={fields}
           handlePaste={handlePaste}
           handleChange={handleChange}
           handleDelete={handleDelete}
@@ -199,9 +211,30 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       </table>
       <CSVParseError type={parseError} step="voting" />
       {fields.some(field => field.address !== "" || field.votes !== "") ? (
-        <p className="italic text-neutral-11 text-[16px]">
-          Only first 100 entries of allowlist are visible to preview and edit
-        </p>
+        entriesError || fields.some(field => field.error === "exceededLimit") ? (
+          <p className="font-bold text-negative-11 text-[16px]">
+            Your votes input should be less than 1 billion and no more than 4 decimal places.
+          </p>
+        ) : (
+          <div className="flex flex-col gap-4">
+            <p className="italic text-neutral-11 text-[16px]">
+              Only first 100 entries of allowlist are visible to preview and edit <br />
+            </p>
+            <div>
+              {uploadSuccess && (
+                <p className="text-neutral-11 text-[16px]">
+                  please note: we rounded all entries with more than 4 decimals
+                </p>
+              )}
+              {roundedZeroCount && roundedZeroCount > 0 ? (
+                <p className="text-positive-11 text-[16px]">
+                  we removed <span className="font-bold">{roundedZeroCount} </span>
+                  {roundedZeroCount > 1 ? "entries" : "entry"} that had less than 0.0001 votes
+                </p>
+              ) : null}
+            </div>
+          </div>
+        )
       ) : (
         <div className="flex flex-col text-[16px] mt-5">
           <p className="text-primary-10 font-bold">Prefer to upload a CSV?</p>

@@ -8,8 +8,8 @@ export const publicGoodsNetworkMainnet = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    public: 'rpc.publicgoods.network',
-    default: 'rpc.publicgoods.network',
+    public: 'https://rpc.publicgoods.network',
+    default: 'https://rpc.publicgoods.network',
   },
   blockExplorers: {
     etherscan: { name: 'Public Goods Network Mainnet Block Explorer', url: 'explorer.publicgoods.network' },

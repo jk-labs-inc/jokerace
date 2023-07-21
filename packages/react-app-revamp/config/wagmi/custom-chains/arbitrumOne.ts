@@ -9,7 +9,7 @@ export const arbitrumOne = {
   },
   rpcUrls: {
     public: 'https://rpc.ankr.com/arbitrum',
-    default: `https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ARBITRUM_ALCHEMY_KEY}`,
+    default: 'https://rpc.ankr.com/arbitrum',
   },
   blockExplorers: {
     etherscan: { name: 'Arbitrum Mainnet Etherscan', url: 'https://arbiscan.io/' },

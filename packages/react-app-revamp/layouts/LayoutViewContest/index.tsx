@@ -17,10 +17,9 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
-import useFundRewardsModule from "@hooks/useFundRewards";
 import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
-import { RewardsWrapper, useRewardsStore } from "@hooks/useRewards/store";
+import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
 import { UserWrapper } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
@@ -30,7 +29,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import ContestTab from "./Contest";
@@ -47,11 +45,12 @@ const LayoutViewContest = (props: any) => {
   });
   const { chain } = useNetwork();
   const showRewards = useShowRewardsStore(state => state.showRewards);
-  const { isLoading, address, fetchContestInfo, isSuccess, error, retry, onSearch, chainId, chainName, setChainId } =
+  const { isLoading, address, fetchContestInfo, isSuccess, error, retry, chainId, chainName, setChainId } =
     useContest();
-  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, contestName } = useContestStore(
-    state => state,
-  );
+
+  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, contestName, rewards } =
+    useContestStore(state => state);
+
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
@@ -223,16 +222,26 @@ const LayoutViewContest = (props: any) => {
                   )}
 
                   <div className="flex flex-col mt-10">
-                    <p className="text-[40px] text-primary-10 font-sabo">{contestName}</p>
-                    <p className="text-[24px] text-primary-10 font-bold break-all">
-                      by{" "}
-                      <EthereumAddress
-                        ethereumAddress={contestAuthorEthereumAddress}
-                        shortenOnFallback
-                        displayLensProfile={false}
-                        textualVersion
-                      />
+                    <p className="text-[30px] md:text-[40px] text-primary-10 font-sabo break-all md:break-normal">
+                      {contestName}
                     </p>
+                    <div className="flex flex-col md:flex-row gap-3 md:gap-8 md:items-center">
+                      <p className="text-[20px] md:text-[24px] text-primary-10 font-bold break-all">
+                        by{" "}
+                        <EthereumAddress
+                          ethereumAddress={contestAuthorEthereumAddress}
+                          shortenOnFallback
+                          displayLensProfile={false}
+                          textualVersion
+                        />
+                      </p>
+                      {rewards && (
+                        <div className="shrink-0 p-1 border border-primary-10 rounded-[10px] text-[16px] font-bold text-primary-10">
+                          {rewards?.token.value} $<span className="uppercase">{rewards?.token.symbol}</span> to{" "}
+                          {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="mt-4 gap-3 flex flex-col">

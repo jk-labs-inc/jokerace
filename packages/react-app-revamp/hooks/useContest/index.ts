@@ -2,12 +2,15 @@ import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { readContract, readContracts } from "@wagmi/core";
+import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
 import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore } from "date-fns";
+import { utils } from "ethers";
+import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -56,6 +59,7 @@ export function useContest() {
     setSubmissionMerkleTree,
     setVotesClose,
     setVotesOpen,
+    setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
   } = useContestStore(state => state);
@@ -111,21 +115,25 @@ export function useContest() {
     if (!result) return; // if the result is undefined, just return
 
     const { contractConfig, version } = result;
+    let contestRewardModuleAddress: string | undefined;
 
     if (
       contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
     ) {
-      const contestRewardModuleAddress = await readContract({
+      contestRewardModuleAddress = await readContract({
         ...contractConfig,
         functionName: "officialRewardsModule",
       });
-      if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
+      if (contestRewardModuleAddress?.toString() == "0x0000000000000000000000000000000000000000") {
         setSupportsRewardsModule(false);
+        contestRewardModuleAddress = undefined;
       } else {
         setSupportsRewardsModule(true);
+        contestRewardModuleAddress = contestRewardModuleAddress?.toString();
       }
     } else {
       setSupportsRewardsModule(false);
+      contestRewardModuleAddress = undefined;
     }
 
     if (parseFloat(version) >= 3) {
@@ -179,11 +187,12 @@ export function useContest() {
           setCanUpdateVotesInRealTime(false);
         }
 
-        await processContestData(contestMaxNumberSubmissionsPerUser);
+        await processRewardData(contestRewardModuleAddress);
         setError(null);
         setIsSuccess(true);
         setIsLoading(false);
         setIsListProposalsLoading(false);
+        await processContestData(contestMaxNumberSubmissionsPerUser);
       } catch (error) {
         const customError = error as CustomError;
         if (!customError) return;
@@ -191,6 +200,7 @@ export function useContest() {
         setError(customError);
         toastError(`error while fetching contest data`, customError.message);
         setIsLoading(false);
+        setIsUserStoreLoading(false);
         setIsListProposalsLoading(false);
       }
     } else {
@@ -260,7 +270,56 @@ export function useContest() {
         setIsSuccess(false);
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
+        setIsUserStoreLoading(false);
         setIsLoading(false);
+      }
+    }
+  }
+
+  async function processRewardData(contestRewardModuleAddress: string | undefined) {
+    if (!contestRewardModuleAddress) return;
+
+    const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainName);
+
+    if (!abiRewardsModule) {
+      setRewards(null);
+    } else {
+      const winners = await readContract({
+        addressOrName: contestRewardModuleAddress,
+        contractInterface: abiRewardsModule,
+        chainId: chainId,
+        functionName: "getPayees",
+      });
+
+      let rewardToken: FetchBalanceResult | null = null;
+      let erc20Tokens: any = null;
+
+      rewardToken = await fetchNativeBalance(contestRewardModuleAddress, chainId);
+
+      if (!rewardToken || rewardToken.value.eq(0)) {
+        try {
+          erc20Tokens = await fetchTokenBalances(chainName, contestRewardModuleAddress);
+
+          if (erc20Tokens && erc20Tokens.length > 0) {
+            rewardToken = await fetchFirstToken(contestRewardModuleAddress, chainId, erc20Tokens[0].contractAddress);
+          }
+        } catch (error) {
+          console.error("Error fetching token balances:", error);
+          return;
+        }
+      }
+
+      if (rewardToken) {
+        setRewards({
+          token: {
+            symbol: rewardToken.symbol,
+            value: parseFloat(utils.formatUnits(rewardToken.value, rewardToken.decimals)),
+          },
+          winners: winners.length,
+          numberOfTokens: erc20Tokens?.length ?? 1,
+        });
+      } else {
+        setRewards(null);
       }
     }
   }
@@ -318,6 +377,7 @@ export function useContest() {
       await checkIfCurrentUserQualifyToSubmit(submissionMerkleTree, contestMaxNumberSubmissionsPerUser);
       await checkIfCurrentUserQualifyToVote();
 
+      setIsUserStoreLoading(false);
       setSubmissionMerkleTree(submissionMerkleTree);
       setVotingMerkleTree(votingMerkleTree);
     }
@@ -330,7 +390,9 @@ export function useContest() {
 
       const { contractConfig } = result;
 
-      if (!(contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "totalVotesCast").length > 0)) {
+      if (
+        !(contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "totalVotesCast").length > 0)
+      ) {
         setTotalVotesCast(-1);
         return;
       }

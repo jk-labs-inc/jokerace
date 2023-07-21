@@ -7,22 +7,10 @@ import { useEffect, useState } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
 
 const CreateSubmissionAllowlist = () => {
-  const { step, setSubmissionMerkle, submissionMerkle, setError } = useDeployContestStore(state => state);
+  const { step, setSubmissionMerkle, submissionMerkle, setError, submissionAllowList, setSubmissionAllowlist } =
+    useDeployContestStore(state => state);
   const submissionValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(allowList)]);
-  const [allowList, setAllowList] = useState<Record<string, number>>({});
-
-  useEffect(() => {
-    if (!submissionMerkle) return;
-
-    const newAllowList = submissionMerkle.submitters.reduce((acc, field) => {
-      // We don't need to convert from BigNumber to normal number as numVotes is always hardcoded to 10
-      acc[field.address] = 10;
-      return acc;
-    }, {} as Record<string, number>);
-
-    setAllowList(newAllowList);
-  }, [submissionMerkle]);
+  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowList)]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -39,30 +27,35 @@ const CreateSubmissionAllowlist = () => {
   }, [onNextStep]);
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
-    const nonEmptyFields = fields.filter(field => field.address !== "");
+    const newAllowList: Record<string, number> = {};
 
-    const hasError = nonEmptyFields.some(field => field.error === true);
+    let hasError = false;
+    for (const field of fields) {
+      if (field.address === "") continue;
 
-    if (hasError) {
-      setAllowList({});
-      return;
+      if (field.error === true) {
+        hasError = true;
+        break;
+      }
+
+      newAllowList[field.address] = 10; // numVotes is hardcoded to 10
     }
 
-    const newAllowList: Record<string, number> = {};
-    nonEmptyFields.forEach(field => {
-      newAllowList[field.address] = 10; // numVotes is hardcoded to 10
-    });
-    setAllowList(newAllowList);
+    setSubmissionAllowlist(hasError ? {} : newAllowList);
   };
 
   const handleNextStep = () => {
-    if (Object.keys(allowList).length === 0) return;
+    if (Object.keys(submissionAllowList).length === 0) return;
 
-    const { merkleRoot, recipients } = generateMerkleTree(18, allowList);
+    if (submissionMerkle) {
+      onNextStep();
+      return;
+    }
+
+    const { merkleRoot, recipients } = generateMerkleTree(18, submissionAllowList);
 
     setSubmissionMerkle({ merkleRoot, submitters: recipients });
     onNextStep();
-
     setError(step + 1, { step: step + 1, message: "" });
   };
 

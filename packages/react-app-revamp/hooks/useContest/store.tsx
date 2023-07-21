@@ -3,6 +3,15 @@ import { createContext, useContext, useRef } from "react";
 import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
+type Reward = {
+  token: {
+    symbol: string;
+    value: number;
+  };
+  winners: number;
+  numberOfTokens: number;
+};
+
 export interface ContestState {
   contestName: string;
   contestPrompt: string;
@@ -30,6 +39,7 @@ export interface ContestState {
     address: string;
     numVotes: number;
   }[];
+  rewards: Reward | null;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -42,6 +52,7 @@ export interface ContestState {
   setVotesClose: (datetime: Date) => void;
   setTotalVotesCast: (amount: number) => void;
   setTotalVotes: (amount: number) => void;
+  setRewards: (rewards: Reward | null) => void;
   setVotingMerkleTree: (merkleTree: MerkleTree) => void;
   setVoters: (voters: { address: string; numVotes: number }[]) => void;
   setSubmissionMerkleTree: (merkleTree: MerkleTree) => void;
@@ -66,6 +77,7 @@ export const createContestStore = () =>
     votingMerkleTree: new MerkleTree([]),
     voters: [],
     totalVotesCast: 0,
+    rewards: null,
     totalVotes: 0,
     isLoading: true,
     error: null,
@@ -92,6 +104,7 @@ export const createContestStore = () =>
     setSubmitters: submitters => set({ submitters: submitters }),
     setTotalVotesCast: amount => set({ totalVotesCast: amount }),
     setTotalVotes: amount => set({ totalVotes: amount }),
+    setRewards: rewards => set({ rewards: rewards }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
