@@ -1,0 +1,4 @@
+name of bucket is merkle_trees
+name of files are: {network_name}_{contest_address}
+
+you can see what correctly formatted merkle trees should look like in the files pre-pended with "has_submitters" and "no_submitters" in this folder.
