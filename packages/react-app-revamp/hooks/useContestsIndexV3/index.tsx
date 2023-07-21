@@ -23,7 +23,7 @@ export function useContestsIndexV3() {
       const { address } = getAccount();
       const config = await import("@config/supabase");
       const supabase = config.supabase;
-      const { error, data } = await supabase.from("contests_v3").insert([
+      const { error: db_error, data: db_data } = await supabase.from("contests_v3").insert([
         {
           created_at: new Date().toISOString(),
           start_at: values.datetimeOpeningSubmissions.toISOString(),
@@ -36,13 +36,25 @@ export function useContestsIndexV3() {
           address: values.contractAddress,
           author_address: values?.authorAddress ?? address,
           network_name: values.networkName,
-          votingMerkleTree: values.votingMerkleTree,
-          submissionMerkleTree: values.submissionMerkleTree,
           featured: values.featured ?? false,
         },
       ]);
-      if (error) {
-        throw new Error(error.message);
+
+      const bucketId = "merkle_trees";
+      const fileId = `${values.networkName}_${values.contractAddress}`;
+      const merkle_trees_json = 
+        { 
+          votingMerkleTree: values.votingMerkleTree,
+          submissionMerkleTree: values.submissionMerkleTree
+        };
+      const { error: upload_error, data: upload_data } = await supabase.storage.from(bucketId)
+        .upload(fileId, JSON.stringify(merkle_trees_json));
+
+      if (db_error) {
+        throw new Error(db_error.message);
+      }
+      if (upload_error) {
+        throw new Error(upload_error.message);
       }
     } catch (e) {
       console.error(e);

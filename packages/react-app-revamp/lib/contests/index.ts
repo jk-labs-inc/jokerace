@@ -95,14 +95,32 @@ const processContestData = async (contest: any, userAddress: string) => {
     );
 
     const contractConfig = await getContractConfig(contest.address, contest.network_name, chain?.id ?? 0);
-
-    let votersSet = new Set(contest.votingMerkleTree.voters.map((voter: Recipient) => voter.address));
+    var submissionMerkleTree, votingMerkleTree : any = null;
+    if (isSupabaseConfigured) {
+      const config = await import("@config/supabase");
+      const supabase = config.supabase;
+      const bucketId = "merkle_trees";
+      const fileId = `${contest.network_name}_${contest.address}`;
+      const { data: file_data, error: file_error } = await supabase.storage.from(bucketId).download(fileId);
+      if (file_error) {
+        throw new Error(file_error.message);
+      }
+      const blob_info = await file_data?.text();
+      const data = JSON.parse(blob_info!);
+  
+      if (data) {
+        const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data;
+        submissionMerkleTree = submissionMerkleTreeData;
+        votingMerkleTree = votingMerkleTreeData;
+      }
+    }
+    let votersSet = new Set(votingMerkleTree.voters.map((voter: Recipient) => voter.address));
 
     contest.qualifiedToVote = votersSet.has(userAddress);
 
-    if (contest.submissionMerkleTree) {
+    if (submissionMerkleTree) {
       const submittersSet = new Set(
-        contest.submissionMerkleTree.submitters.map((submitter: Recipient) => submitter.address),
+        submissionMerkleTree.submitters.map((submitter: Recipient) => submitter.address),
       );
       contest.qualifiedToSubmit = submittersSet.has(userAddress);
     } else {

@@ -8,8 +8,6 @@ create table
     network_name character varying null,
     vote_start_at timestamp with time zone null,
     featured boolean null,
-    votingMerkleTree json null,
-    submissionMerkleTree json null,
     title character varying null,
     type character varying null,
     summary character varying null,

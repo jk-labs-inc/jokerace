@@ -328,14 +328,17 @@ export function useContest() {
    * Fetch merkle tree data from DB and re-create the tree
    */
   async function processContestData(contestMaxNumberSubmissionsPerUser: number) {
-    const { data } = await supabase
-      .from("contests_v3")
-      .select("submissionMerkleTree, votingMerkleTree")
-      .eq("address", address)
-      .eq("network_name", chainName);
+    const bucketId = "merkle_trees";
+    const fileId = `${chainName}_${address}`;
+    const { data: bucket_data, error: bucket_error } = await supabase.storage.from(bucketId).download(fileId);
+    if (bucket_error) {
+      throw new Error(bucket_error.message);
+    }
+    const blob_info = await bucket_data?.text();
+    const data = JSON.parse(blob_info!);
 
-    if (data && data.length > 0) {
-      const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
+    if (data) {
+      const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data;
 
       let totalVotes = 0;
       const votesDataRecord: Record<string, number> = votingMerkleTreeData.voters.reduce(
