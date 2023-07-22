@@ -55,6 +55,10 @@ export function useUser() {
     return contractConfig;
   }
 
+  async function checkSubmitters(one_ks: number) {
+    return submitters.slice(one_ks * 1000, (one_ks + 1) * 1000).some(submitter => submitter.address === userAddress);
+  }
+
   const checkIfCurrentUserQualifyToSubmit = async (
     submissionMerkleTree: MerkleTree,
     contestMaxNumberSubmissionsPerUser: number,
@@ -81,7 +85,13 @@ export function useUser() {
       setCurrentUserQualifiedToSubmit(true);
     } else {
       try {
-        const user_can_submit = submitters.some(submitter => submitter.address === userAddress)
+        const tasks = [];
+        var one_ks = 0;
+        while ((one_ks * 1000) < submitters.length) {
+          tasks.push(checkSubmitters(one_ks))
+          one_ks += 1;
+        }
+        const user_can_submit = (await Promise.all(tasks)).flat();
         if (user_can_submit) {
           const numOfSubmittedProposals = await readContract({
             ...contractConfig,
@@ -106,6 +116,10 @@ export function useUser() {
     }
   };
 
+  async function checkVoters(one_ks: number) {
+    return voters.slice(one_ks * 1000, (one_ks + 1) * 1000).filter(voter => voter.address === userAddress);
+  }
+
   /**
    * Check if the current user qualify to vote for this contest
    */
@@ -113,7 +127,13 @@ export function useUser() {
     if (!userAddress) return;
 
     try {
-      const user_votes = voters.filter(voter => voter.address === userAddress)
+      const tasks = [];
+      var one_ks = 0;
+      while ((one_ks * 1000) < voters.length) {
+        tasks.push(checkVoters(one_ks))
+        one_ks += 1;
+      }
+      const user_votes = (await Promise.all(tasks)).flat();
       if (user_votes.length > 0) {
         const contractConfig = await getContractConfig();
         if (!contractConfig) return;
