@@ -1,5 +1,6 @@
 import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward";
 import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward";
+import { ZERO_BALANCE } from "@components/_pages/RewardsDistributionTable/components";
 import { Tab } from "@headlessui/react";
 import { FC, Fragment } from "react";
 import { useBalance, useNetwork } from "wagmi";
@@ -34,17 +35,21 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
         </Tab.List>
         <Tab.Panels>
           <Tab.Panel>
-            {rewardsStore?.rewards?.balance?.length ? (
+            {rewardsStore.rewards.balance &&
+            rewardsStore.rewards.balance?.some(
+              (token: { tokenBalance: string }) => token.tokenBalance !== ZERO_BALANCE,
+            ) ? (
               <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-                {rewardsStore?.rewards?.balance?.map((token: { contractAddress: string }, index: number) => (
-                  <li className="flex items-center" key={index}>
+                {rewardsStore?.rewards.balance
+                  ?.filter((token: { tokenBalance: string }) => token.tokenBalance !== ZERO_BALANCE)
+                  .map((token: { contractAddress: string }, index: number) => (
                     <ButtonWithdrawERC20Reward
+                      key={index}
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                       abiRewardsModule={rewardsStore.rewards.abi}
                       tokenAddress={token.contractAddress}
                     />
-                  </li>
-                ))}
+                  ))}
               </ul>
             ) : (
               <>
@@ -55,12 +60,10 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
           <Tab.Panel>
             {nativeTokenBalance.data?.value.gt(0) ? (
               <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-                <li className="flex items-center">
-                  <ButtonWithdrawNativeReward
-                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                    abiRewardsModule={rewardsStore.rewards.abi}
-                  />
-                </li>
+                <ButtonWithdrawNativeReward
+                  contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                  abiRewardsModule={rewardsStore.rewards.abi}
+                />
               </ul>
             ) : (
               <p className="italic text-[16px] animate-appear text-neutral-11">

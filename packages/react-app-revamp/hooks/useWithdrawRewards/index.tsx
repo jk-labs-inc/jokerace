@@ -24,6 +24,7 @@ export const useWithdrawReward = (
     functionName: tokenType === "erc20" ? "withdrawRewards(address)" : "withdrawRewards()",
     chainId: chain?.id,
     args: tokenType === "erc20" ? [tokenAddress] : [],
+
     onError(e) {
       const customError = e as CustomError;
       if (!customError) return;
@@ -48,7 +49,8 @@ export const useWithdrawReward = (
       }
       toastError(`something went wrong and the funds couldn't be withdrawn`, customError.message);
     },
-    onSuccess() {
+    async onSuccess() {
+      await queryTokenBalance.refetch();
       toastSuccess("Funds withdrawn successfully !");
     },
   });
