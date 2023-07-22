@@ -61,7 +61,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
 
   const handleProportionChange = (event: React.ChangeEvent<HTMLInputElement>, id: number) => {
     let { value } = event.target;
-    let updatedProportion = value === "" ? 0 : parseFloat(value);
+    let updatedProportion = parseFloat(value);
 
     if (updatedProportion > 100) {
       updatedProportion = 100;
@@ -82,7 +82,10 @@ const CreateRewardsPoolRecipients: React.FC = () => {
     );
   };
 
-  const totalProportion = recipients.reduce((sum, recipient) => sum + recipient.proportion, 0);
+  const totalProportion = recipients.reduce(
+    (sum, recipient) => sum + (isNaN(recipient.proportion) ? 0 : recipient.proportion),
+    0,
+  );
   const proportionError = totalProportion > 100 ? "over" : totalProportion < 100 ? "under" : null;
 
   return (
