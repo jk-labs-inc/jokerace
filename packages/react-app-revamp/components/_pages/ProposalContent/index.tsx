@@ -139,7 +139,21 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
         <ReactMarkdown
           className="markdown max-w-full overflow-x-hidden"
           components={{
-            img: ({ node, ...props }) => <img {...props} className="w-[170px] h-[130px]" alt="image" />,
+            img: ({ node, ...props }) => {
+              const [error, setError] = useState(false);
+
+              if (error) {
+                return (
+                  <p>
+                    <a href={props.src} target="_blank" rel="noopener noreferrer">
+                      {props.src}
+                    </a>
+                  </p>
+                );
+              }
+
+              return <img {...props} className="w-[170px] h-[130px]" alt="image" onError={() => setError(true)} />;
+            },
             div: ({ node, children, ...props }) => (
               <div {...props} className="flex gap-5 items-center markdown">
                 {children}
