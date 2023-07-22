@@ -150,7 +150,7 @@ export function useContest() {
         await fetchProposalsIdsList(contractConfig.contractInterface);
 
         //@ts-ignore
-        const closingVoteDate = new Date(parseInt(results[5]) * 1000);
+        const closingVoteDate = new Date(parseInt(results[5] * 1000) + 1000);
 
         setContestName(results[0].toString());
         setContestAuthor(results[1].toString(), results[1].toString());
@@ -158,11 +158,12 @@ export function useContest() {
         const contestMaxNumberSubmissionsPerUser = parseFloat(results[2].toString());
         setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
         setContestMaxProposalCount(parseFloat(results[3].toString()));
+
         //@ts-ignore
-        setSubmissionsOpen(new Date(parseInt(results[4]) * 1000));
+        setSubmissionsOpen(new Date(parseInt(results[4]) * 1000 + 1000));
         setVotesClose(closingVoteDate);
         //@ts-ignore
-        setVotesOpen(new Date(parseInt(results[6]) * 1000));
+        setVotesOpen(new Date(parseInt(results[6]) * 1000 + 1000));
 
         setContestPrompt(results[8].toString());
 

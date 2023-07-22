@@ -3,6 +3,7 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
+import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import {
   loadSubmissionFromLocalStorage,
   removeSubmissionFromLocalStorage,
@@ -42,6 +43,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const editorProposal = useEditor({
     extensions: [
       StarterKit,
+      ShiftEnterCreateExtension,
+      DisableEnter,
       Image,
       TiptapExtensionLink,
       Placeholder.configure({
@@ -71,6 +74,27 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     },
   });
 
+  const onSubmitProposal = () => {
+    sendProposal(proposal.trim());
+  };
+
+  useEffect(() => {
+    const handleEnterPress = (event: KeyboardEvent) => {
+      if (event.shiftKey) {
+        return;
+      }
+      if (event.key === "Enter") {
+        onSubmitProposal();
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [onSubmitProposal]);
+
   useEffect(() => {
     if (isSuccess) {
       setIsOpen(false);
@@ -89,10 +113,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
         to make a line break.
       </p>
     );
-  };
-
-  const onSubmitProposal = () => {
-    sendProposal(proposal.trim());
   };
 
   return (
