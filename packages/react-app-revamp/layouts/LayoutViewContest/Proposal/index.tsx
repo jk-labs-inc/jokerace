@@ -61,7 +61,21 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <ReactMarkdown
           className="markdown"
           components={{
-            img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
+            img: ({ node, ...props }) => {
+              const [error, setError] = useState(false);
+
+              if (error) {
+                return (
+                  <p>
+                    <a href={props.src} target="_blank" rel="noopener noreferrer">
+                      {props.src}
+                    </a>
+                  </p>
+                );
+              }
+
+              return <img {...props} className="w-[350px]" alt="image" onError={() => setError(true)} />;
+            },
             p: ({ node, children, ...props }) => (
               <p {...props} className="m-0 text-[16px]">
                 {children}
@@ -95,7 +109,21 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <ReactMarkdown
           className="markdown"
           components={{
-            img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
+            img: ({ node, ...props }) => {
+              const [error, setError] = useState(false);
+
+              if (error) {
+                return (
+                  <p>
+                    <a href={props.src} target="_blank" rel="noopener noreferrer">
+                      {props.src}
+                    </a>
+                  </p>
+                );
+              }
+
+              return <img {...props} className="w-[350px]" alt="image" onError={() => setError(true)} />;
+            },
             p: ({ node, children, ...props }) => (
               <p {...props} className="m-0 text-[16px]">
                 {children}
@@ -126,7 +154,21 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <ReactMarkdown
           className="markdown"
           components={{
-            img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
+            img: ({ node, ...props }) => {
+              const [error, setError] = useState(false);
+
+              if (error) {
+                return (
+                  <p>
+                    <a href={props.src} target="_blank" rel="noopener noreferrer">
+                      {props.src}
+                    </a>
+                  </p>
+                );
+              }
+
+              return <img {...props} className="w-[350px]" alt="image" onError={() => setError(true)} />;
+            },
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize]}
         >
@@ -196,7 +238,21 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
             <ReactMarkdown
               className="markdown"
               components={{
-                img: ({ node, ...props }) => <img {...props} className="w-[350px]" alt="image" />,
+                img: ({ node, ...props }) => {
+                  const [error, setError] = useState(false);
+
+                  if (error) {
+                    return (
+                      <p>
+                        <a href={props.src} target="_blank" rel="noopener noreferrer">
+                          {props.src}
+                        </a>
+                      </p>
+                    );
+                  }
+
+                  return <img {...props} className="w-[350px]" alt="image" onError={() => setError(true)} />;
+                },
                 p: ({ node, children, ...props }) => (
                   <p {...props} className="m-0 text-[16px]">
                     {children}
