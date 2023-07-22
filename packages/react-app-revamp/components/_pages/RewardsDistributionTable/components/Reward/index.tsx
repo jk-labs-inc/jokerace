@@ -29,7 +29,7 @@ export const Reward = (props: RewardProps) => {
 
   if (showPreviouslyDistributed && queryRankRewardsReleased.data === 0) {
     return (
-      <li>
+      <li className="no-funds-distributed">
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds distributed
       </li>
     );
@@ -37,7 +37,7 @@ export const Reward = (props: RewardProps) => {
 
   if (showPreviouslyDistributed) {
     return (
-      <li className="flex items-center text-positive-11">
+      <li className="flex items-center text-positive-11 funds-distributed">
         <section className="flex justify-between w-full animate-appear">
           {(queryRankRewardsReleased.isLoading || queryRankRewardsReleasable.isLoading) && (
             <Loader scale="component">Loading info...</Loader>

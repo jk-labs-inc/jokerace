@@ -66,6 +66,18 @@
   margin-top: 5px;
 }
 
+li.funds-distributed::before {
+  background: url('/rewards/distributed-ellipse.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+li.no-funds-distributed::before {
+  background: url('/rewards/no-funds-distributed-ellipse.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
 .list-explainer li:hover::before {
   transform: rotate(15deg);
 }
