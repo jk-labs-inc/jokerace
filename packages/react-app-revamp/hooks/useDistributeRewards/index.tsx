@@ -55,6 +55,17 @@ export const useDistributeRewards = (
     functionName: tokenType === "erc20" ? "release(address,uint256)" : "release(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     chainId,
+    async onError(e) {
+      const customError = e as CustomError;
+      if (!customError) return;
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        return;
+      }
+
+      toastError(`something went wrong and the the transaction failed`, customError.message);
+    },
   });
 
   const txRelease = useWaitForTransaction({

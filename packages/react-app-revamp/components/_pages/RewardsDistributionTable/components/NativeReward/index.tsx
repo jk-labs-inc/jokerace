@@ -7,10 +7,11 @@ interface PayeeNativeRewardProps {
   contractRewardsModuleAddress: string;
   abiRewardsModule: any;
   chainId: number;
+  showPreviouslyDistributed?: boolean;
 }
 
 export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
-  const { payee, share, contractRewardsModuleAddress, abiRewardsModule, chainId } = props;
+  const { payee, share, contractRewardsModuleAddress, abiRewardsModule, chainId, showPreviouslyDistributed } = props;
   const {
     queryTokenBalance,
     queryRankRewardsReleasable,
@@ -28,6 +29,7 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
       queryRankRewardsReleased={queryRankRewardsReleased}
       contractWriteRelease={contractWriteReleaseToken}
       txRelease={txRelease}
+      showPreviouslyDistributed={showPreviouslyDistributed}
     />
   );
 };

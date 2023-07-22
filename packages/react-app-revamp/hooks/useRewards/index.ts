@@ -12,7 +12,6 @@ import { useRewardsStore } from "./store";
 export function useRewardsModule() {
   const { asPath } = useRouter();
   const { chain } = useNetwork();
-
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
 
   const queryBalanceRewardsModule = useQuery(
@@ -42,10 +41,7 @@ export function useRewardsModule() {
         });
         const asJson = await response.json();
 
-        const balances = asJson.result?.tokenBalances?.filter((token: any) => {
-          const tokenBalance = ethers.BigNumber.from(token["tokenBalance"]);
-          return tokenBalance.gt(0);
-        });
+        const balances = asJson.result?.tokenBalances;
 
         setRewards({
           ...rewards,

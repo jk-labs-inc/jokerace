@@ -1,4 +1,5 @@
 import { toastError } from "@components/UI/Toast";
+import { useDistributeRewards } from "@hooks/useDistributeRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useQueryClient } from "@tanstack/react-query";
 import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
@@ -108,19 +109,21 @@ export function useFundRewardsModule() {
   }
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
-    setIsLoading(true);
-    setIsSuccess(false);
     if (rewards.length > 3) {
-      toast.warning("number of rewards cannot be more than 4 in one take.");
+      toast.warning("number of rewards cannot be more than 3 in one take.");
       return;
     }
     const promises = rewards.map((reward: any) => {
       return () =>
         sendFundsToSingleReward(reward)
-          .then(result => {
+          .then(async result => {
             setTransactionData((prevData: any) => [...prevData, result]);
-            setIsLoading(false);
-            setIsSuccess(true);
+
+            await queryClient.invalidateQueries({
+              queryKey: ["balance-rewards-module", rewards?.contractAddress],
+              exact: true,
+              refetchType: "active",
+            });
           })
           .catch(e => {
             const customError = e as CustomError;
@@ -151,6 +154,9 @@ export function useFundRewardsModule() {
       contractInterface: erc20ABI,
     };
 
+    setIsLoading(true);
+    setIsSuccess(false);
+
     let txSendFunds;
     let receipt;
     if (isErc20) {
@@ -178,6 +184,9 @@ export function useFundRewardsModule() {
         hash: txSendFunds.hash,
       });
     }
+
+    setIsLoading(false);
+    setIsSuccess(true);
 
     return {
       hash: receipt.transactionHash,

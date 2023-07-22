@@ -1,10 +1,12 @@
-import Loader from "@components/UI/Loader";
 import { ordinalSuffix } from "@helpers/ordinalSuffix";
-import { useFundRewardsStore } from "@hooks/useFundRewards/store";
+import useFundRewardsModule from "@hooks/useFundRewards";
 import { FC } from "react";
-import { useBalance, useContractRead } from "wagmi";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { useContractRead } from "wagmi";
 import PayeeERC20Reward from "./ERC20Reward";
 import { PayeeNativeReward } from "./NativeReward";
+
+export const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 type ERC20Token = {
   contractAddress: string;
@@ -18,11 +20,19 @@ interface RewardsDistributionTableProps {
   contractRewardsModuleAddress: string;
   abiRewardsModule: any;
   chainId: number;
+  showPreviouslyDistributedTable?: boolean;
 }
 
 const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props }) => {
-  const { payee, erc20Tokens, contractRewardsModuleAddress, abiRewardsModule, chainId } = props;
-  const { isLoading: isFundingInProcess } = useFundRewardsStore(state => state);
+  const {
+    payee,
+    erc20Tokens,
+    contractRewardsModuleAddress,
+    abiRewardsModule,
+    chainId,
+    showPreviouslyDistributedTable,
+  } = props;
+  const { isLoading: isFundingRewardsLoading } = useFundRewardsModule();
   const { data, isError, isLoading } = useContractRead({
     addressOrName: contractRewardsModuleAddress,
     contractInterface: abiRewardsModule,
@@ -31,40 +41,41 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
     args: payee,
   });
 
-  const { data: nativeTokenBalance } = useBalance({
-    addressOrName: contractRewardsModuleAddress,
-    chainId: props.chainId,
-  });
-
   return (
-    <>
-      {isLoading && isFundingInProcess && !data ? (
-        <Loader scale="component">Loading rewards data for rank {`${payee}`}...</Loader>
-      ) : (
-        <>
-          {isError && "Something went wrong, please reload the page."}
-          {data && (nativeTokenBalance?.value.gt(0) || erc20Tokens?.length) ? (
-            <div className="flex flex-col gap-12 w-[250px]">
-              <div className="flex flex-col gap-3">
-                <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
-                <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-                  {nativeTokenBalance?.value.gt(0) ? (
-                    <li className="flex items-center">
-                      <PayeeNativeReward
-                        share={data}
-                        payee={payee}
-                        chainId={chainId}
-                        contractRewardsModuleAddress={contractRewardsModuleAddress}
-                        abiRewardsModule={abiRewardsModule}
-                      />
-                    </li>
-                  ) : null}
+    <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
+      {isError && "Something went wrong, please reload the page."}
+      {data && !showPreviouslyDistributedTable && (
+        <div className="flex flex-col gap-12 w-[300px]">
+          <div className="flex flex-col gap-3">
+            <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
+            <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
+              {isLoading || isFundingRewardsLoading ? (
+                <li>
+                  <Skeleton width={200} height={16} />
+                </li>
+              ) : (
+                <PayeeNativeReward
+                  share={data}
+                  payee={payee}
+                  chainId={chainId}
+                  contractRewardsModuleAddress={contractRewardsModuleAddress}
+                  abiRewardsModule={abiRewardsModule}
+                />
+              )}
 
-                  {erc20Tokens?.length > 0 && (
-                    <>
-                      {erc20Tokens.map((token: any, index: number) => (
-                        <li className="flex items-center" key={index}>
+              {erc20Tokens?.length > 0 && (
+                <>
+                  {erc20Tokens
+                    .filter(token => token.tokenBalance !== ZERO_BALANCE)
+                    .map((token: any, index: number) => (
+                      <>
+                        {isLoading || isFundingRewardsLoading ? (
+                          <li>
+                            <Skeleton width={200} height={16} key={index} />
+                          </li>
+                        ) : (
                           <PayeeERC20Reward
+                            key={index}
                             share={data}
                             payee={payee}
                             chainId={chainId}
@@ -72,17 +83,67 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
                             contractRewardsModuleAddress={contractRewardsModuleAddress}
                             abiRewardsModule={abiRewardsModule}
                           />
-                        </li>
-                      ))}
-                    </>
-                  )}
-                </ul>
-              </div>
-            </div>
-          ) : null}
-        </>
+                        )}
+                      </>
+                    ))}
+                </>
+              )}
+            </ul>
+          </div>
+        </div>
       )}
-    </>
+
+      {data && showPreviouslyDistributedTable && (
+        <div className="flex flex-col gap-12 w-[300px]">
+          <div className="flex flex-col gap-3">
+            <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
+            <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
+              {isLoading ? (
+                <li>
+                  <Skeleton width={200} height={16} />
+                </li>
+              ) : (
+                <PayeeNativeReward
+                  share={data}
+                  payee={payee}
+                  chainId={chainId}
+                  contractRewardsModuleAddress={contractRewardsModuleAddress}
+                  abiRewardsModule={abiRewardsModule}
+                  showPreviouslyDistributed
+                />
+              )}
+
+              {erc20Tokens?.length > 0 && (
+                <>
+                  {erc20Tokens
+                    .filter(token => token.tokenBalance !== ZERO_BALANCE)
+                    .map((token: any, index: number) => (
+                      <>
+                        {isLoading || isFundingRewardsLoading ? (
+                          <li>
+                            <Skeleton width={200} height={16} key={index} />
+                          </li>
+                        ) : (
+                          <PayeeERC20Reward
+                            key={index}
+                            share={data}
+                            payee={payee}
+                            chainId={chainId}
+                            tokenAddress={token.contractAddress}
+                            contractRewardsModuleAddress={contractRewardsModuleAddress}
+                            abiRewardsModule={abiRewardsModule}
+                            showPreviouslyDistributed={showPreviouslyDistributedTable}
+                          />
+                        )}
+                      </>
+                    ))}
+                </>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
+    </SkeletonTheme>
   );
 };
 
