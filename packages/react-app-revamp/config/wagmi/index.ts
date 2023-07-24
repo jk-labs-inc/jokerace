@@ -73,14 +73,20 @@ const totalChains: Chain[] = [
   mantleTestnet
 ];
 
-const providers = [
-  jsonRpcProvider({rpc: (chain) => ({
-    http: `${chain.rpcUrls.default}`
-  })}),
+const providers = (process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY) ? 
+  [
+    jsonRpcProvider({rpc: (chain) => ({
+      http: `${chain.rpcUrls.default}`
+    })}),
+    jsonRpcProvider({rpc: (chain) => ({
+      http: `${chain.rpcUrls.public}`
+    })}),
+  ] :
+  [
   jsonRpcProvider({rpc: (chain) => ({
     http: `${chain.rpcUrls.public}`
   })}),
-];
+  ];
 export const { chains, provider } = configureChains(totalChains, providers);
 
 const { wallets } = getDefaultWallets({
