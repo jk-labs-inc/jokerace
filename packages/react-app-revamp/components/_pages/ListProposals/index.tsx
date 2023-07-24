@@ -32,21 +32,21 @@ export const ListProposals = () => {
       <div className="flex flex-col gap-8">
         {(() => {
           let rank = 0;
-          let lastVotes = -1;
+          let lastVotes: number | null = null;
 
           return Object.keys(listProposalsData)
             .sort((a, b) => listProposalsData[b].votes - listProposalsData[a].votes)
-            .map((id, i) => {
-              const currentVotes = listProposalsData[id].votes;
+            .map(id => {
+              const votes = listProposalsData[id].votes;
 
-              if (currentVotes > 0 && currentVotes !== lastVotes) {
-                rank = i + 1;
-                lastVotes = currentVotes;
+              if (votes !== lastVotes) {
+                rank++;
+                lastVotes = votes;
               }
 
               return (
                 <div key={id} className="relative">
-                  {currentVotes > 0 && !now.isBefore(formattedVotingOpen) && (
+                  {votes > 0 && (
                     <div className="absolute -top-0 left-0 -mt-6 -ml-6 w-12 z-10 h-12 rounded-full bg-true-black flex items-center justify-center text-[24px] font-bold text-neutral-11 border border-neutral-11">
                       {rank}
                     </div>

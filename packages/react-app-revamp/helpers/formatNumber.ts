@@ -3,11 +3,10 @@
  * @param num - The number to format
  * @return A string representing the formatted number
  */
-export function formatNumber(num: number, decimal = 0): string {
-  let formattedNum = Math.floor(num);
-  let formatter = new Intl.NumberFormat("en-US", { maximumFractionDigits: decimal });
+export function formatNumber(num: number): string {
+  let formatter = new Intl.NumberFormat("en-US");
 
-  let formatted = formatter.format(+formattedNum.toFixed(decimal));
+  let formatted = formatter.format(+num);
 
   return formatted;
 }
