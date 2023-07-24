@@ -2,8 +2,7 @@ import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { alchemyRpcUrls, fetchToken, readContract, readContracts } from "@wagmi/core";
-import { ethers } from "ethers";
+import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
 import { useNetwork, useQuery } from "wagmi";
@@ -34,8 +33,7 @@ export function useRewardsModule() {
             headers: {
               "Content-Type": "application/json",
             },
-            params: [`${contestRewardModuleAddress}`, "erc20"],
-            id: 42,
+            params: [`${contestRewardModuleAddress}`],
           }),
           redirect: "follow",
         });
@@ -53,7 +51,7 @@ export function useRewardsModule() {
       }
     },
     {
-      enabled: !!rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
+      enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
     },
   );
 

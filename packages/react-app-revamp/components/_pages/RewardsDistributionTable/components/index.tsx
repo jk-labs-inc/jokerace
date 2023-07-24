@@ -1,5 +1,6 @@
 import { ordinalSuffix } from "@helpers/ordinalSuffix";
 import useFundRewardsModule from "@hooks/useFundRewards";
+import { useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
 import { FC } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useContractRead } from "wagmi";
@@ -33,13 +34,19 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
     showPreviouslyDistributedTable,
   } = props;
   const { isLoading: isFundingRewardsLoading } = useFundRewardsModule();
-  const { data, isError, isLoading } = useContractRead({
+  const { isLoading: isWithdrawRewardsLoading } = useWithdrawRewardStore(state => state);
+  const {
+    data,
+    isError,
+    isLoading: isSharesLoading,
+  } = useContractRead({
     addressOrName: contractRewardsModuleAddress,
     contractInterface: abiRewardsModule,
     chainId: chainId,
     functionName: "shares",
     args: payee,
   });
+  const isLoading = isSharesLoading || isFundingRewardsLoading || isWithdrawRewardsLoading;
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
@@ -49,7 +56,7 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
           <div className="flex flex-col gap-3">
             <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
             <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-              {isLoading || isFundingRewardsLoading ? (
+              {isLoading ? (
                 <li>
                   <Skeleton width={200} height={16} />
                 </li>
@@ -65,27 +72,25 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
 
               {erc20Tokens?.length > 0 && (
                 <>
-                  {erc20Tokens
-                    .filter(token => token.tokenBalance !== ZERO_BALANCE)
-                    .map((token: any, index: number) => (
-                      <>
-                        {isLoading || isFundingRewardsLoading ? (
-                          <li>
-                            <Skeleton width={200} height={16} key={index} />
-                          </li>
-                        ) : (
-                          <PayeeERC20Reward
-                            key={index}
-                            share={data}
-                            payee={payee}
-                            chainId={chainId}
-                            tokenAddress={token.contractAddress}
-                            contractRewardsModuleAddress={contractRewardsModuleAddress}
-                            abiRewardsModule={abiRewardsModule}
-                          />
-                        )}
-                      </>
-                    ))}
+                  {erc20Tokens.map((token: any, index: number) => (
+                    <>
+                      {isLoading ? (
+                        <li>
+                          <Skeleton width={200} height={16} key={index} />
+                        </li>
+                      ) : (
+                        <PayeeERC20Reward
+                          key={index}
+                          share={data}
+                          payee={payee}
+                          chainId={chainId}
+                          tokenAddress={token.contractAddress}
+                          contractRewardsModuleAddress={contractRewardsModuleAddress}
+                          abiRewardsModule={abiRewardsModule}
+                        />
+                      )}
+                    </>
+                  ))}
                 </>
               )}
             </ul>
@@ -115,28 +120,26 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
 
               {erc20Tokens?.length > 0 && (
                 <>
-                  {erc20Tokens
-                    .filter(token => token.tokenBalance !== ZERO_BALANCE)
-                    .map((token: any, index: number) => (
-                      <>
-                        {isLoading || isFundingRewardsLoading ? (
-                          <li>
-                            <Skeleton width={200} height={16} key={index} />
-                          </li>
-                        ) : (
-                          <PayeeERC20Reward
-                            key={index}
-                            share={data}
-                            payee={payee}
-                            chainId={chainId}
-                            tokenAddress={token.contractAddress}
-                            contractRewardsModuleAddress={contractRewardsModuleAddress}
-                            abiRewardsModule={abiRewardsModule}
-                            showPreviouslyDistributed={showPreviouslyDistributedTable}
-                          />
-                        )}
-                      </>
-                    ))}
+                  {erc20Tokens.map((token: any, index: number) => (
+                    <>
+                      {isLoading ? (
+                        <li>
+                          <Skeleton width={200} height={16} key={index} />
+                        </li>
+                      ) : (
+                        <PayeeERC20Reward
+                          key={index}
+                          share={data}
+                          payee={payee}
+                          chainId={chainId}
+                          tokenAddress={token.contractAddress}
+                          contractRewardsModuleAddress={contractRewardsModuleAddress}
+                          abiRewardsModule={abiRewardsModule}
+                          showPreviouslyDistributed={showPreviouslyDistributedTable}
+                        />
+                      )}
+                    </>
+                  ))}
                 </>
               )}
             </ul>

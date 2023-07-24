@@ -69,12 +69,12 @@ const totalChains: Chain[] = [
   gnosisTestnet,
   gnosisMainnet,
   mantleMainnet,
-  mantleTestnet
+  mantleTestnet,
 ];
 
 const providers =
   process.env.NODE_ENV === "development"
-    ? [publicProvider(), alchemyProvider({ alchemyId })]  // if in dev, try public first in case there isn't an Alchemy key
+    ? [publicProvider(), alchemyProvider({ alchemyId })] // if in dev, try public first in case there isn't an Alchemy key
     : [alchemyProvider({ alchemyId }), publicProvider()];
 export const { chains, provider } = configureChains(totalChains, providers);
 
@@ -127,5 +127,5 @@ export const chainsImages: ChainImages = {
   polygonzkmainnet: "/polygon.svg",
   scrollgoerli: "/scroll.png",
   basetestnet: "/base.svg",
-  gnosistestnet: "/gnosis.png"
+  gnosistestnet: "/gnosis.png",
 };

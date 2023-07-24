@@ -22,14 +22,12 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
 
   return (
     <Reward
-      share={share}
-      chainId={chainId}
       queryTokenBalance={queryTokenBalance}
       queryRankRewardsReleasable={queryRankRewardsReleasable}
       queryRankRewardsReleased={queryRankRewardsReleased}
       contractWriteRelease={contractWriteReleaseToken}
-      txRelease={txRelease}
       showPreviouslyDistributed={showPreviouslyDistributed}
+      txRelease={txRelease}
     />
   );
 };

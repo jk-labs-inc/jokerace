@@ -53,7 +53,7 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
               </ul>
             ) : (
               <>
-                <p className="italic text-[16px] animate-appear text-neutral-11">No balance found for ERC20 tokens.</p>
+                <p className="italic text-[16px]  text-neutral-11">No balance found for ERC20 tokens.</p>
               </>
             )}
           </Tab.Panel>
@@ -66,7 +66,7 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
                 />
               </ul>
             ) : (
-              <p className="italic text-[16px] animate-appear text-neutral-11">
+              <p className="italic text-[16px] text-neutral-11">
                 No balance found for $<span className="uppercase">{nativeTokenBalance.data?.symbol}</span>.
               </p>
             )}
