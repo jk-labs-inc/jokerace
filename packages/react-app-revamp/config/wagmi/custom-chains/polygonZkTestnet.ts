@@ -9,7 +9,7 @@ export const polygonZkTestnet = {
   },
   rpcUrls: {
     public: 'https://rpc.public.zkevm-test.net',
-    default: 'https://rpc.public.zkevm-test.net',
+    default: `https://polygonzkevm-testnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
   },
   blockExplorers: {
     etherscan: { name: 'Polygon zkEvm Testnet Scan', url: 'https://explorer.public.zkevm-test.net' },

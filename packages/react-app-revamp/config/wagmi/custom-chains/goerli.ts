@@ -9,7 +9,7 @@ export const goerli = {
   },
   rpcUrls: {
     public: 'https://rpc.ankr.com/eth_goerli',
-    default: 'https://rpc.ankr.com/eth_goerli',
+    default: `https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
   },
   blockExplorers: {
     etherscan: { name: 'Goerli Etherscan', url: 'https://goerli.etherscan.io/' },
