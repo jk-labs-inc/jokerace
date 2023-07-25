@@ -10,8 +10,8 @@ export const DialogWithdrawFundsFromRewardsModule = (props: DialogWithdrawFundsF
   const { children, ...dialogProps } = props;
 
   return (
-    <DialogModalV3 title="Withdraw rewards from module" {...dialogProps} className="w-full md:w-[700px]">
-      <p className="font-bold mb-4 animate-appear">Withdraw funds from the rewards module</p>
+    <DialogModalV3 title="Withdraw rewards from module" {...dialogProps} className="w-full md:w-[1000px]">
+      <p className="font-bold mb-4">Withdraw funds from the rewards module</p>
       {children}
     </DialogModalV3>
   );

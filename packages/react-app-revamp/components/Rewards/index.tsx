@@ -102,7 +102,7 @@ const ContestRewards = () => {
                     </p>
                     <a
                       className="text-positive-11 text-[16px] font-bold underline break-all"
-                      href={`${rewardsStore?.rewards?.blockExplorers?.url}/address/${rewardsStore?.rewards?.contractAddress}`}
+                      href={`${rewardsStore?.rewards?.blockExplorers?.url}address/${rewardsStore?.rewards?.contractAddress}`}
                     >
                       {rewardsStore?.rewards?.contractAddress}
                     </a>

@@ -2,8 +2,19 @@ import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
 import { utils } from "ethers";
 import { CustomError, ErrorCodes } from "types/error";
 import { useBalance, useContractRead, useContractWrite, useToken, useWaitForTransaction } from "wagmi";
+import { create } from "zustand";
 
 type TokenType = "erc20" | "native";
+
+type Store = {
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+};
+
+export const useDistributeRewardStore = create<Store>(set => ({
+  isLoading: false,
+  setIsLoading: isLoading => set({ isLoading }),
+}));
 
 export const useDistributeRewards = (
   payee: number,
@@ -14,6 +25,7 @@ export const useDistributeRewards = (
   tokenType: TokenType,
   tokenAddress?: string,
 ) => {
+  const { setIsLoading } = useDistributeRewardStore(state => state);
   const { data: tokenData } = tokenType === "erc20" ? useToken({ address: tokenAddress, chainId }) : { data: null };
 
   const queryTokenBalance = useBalance({
@@ -61,10 +73,12 @@ export const useDistributeRewards = (
 
       if (customError.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
+        setIsLoading(false);
         return;
       }
 
       toastError(`something went wrong and the the transaction failed`, customError.message);
+      setIsLoading(false);
     },
   });
 
@@ -77,15 +91,18 @@ export const useDistributeRewards = (
 
       if (customError.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
+        setIsLoading(false);
         return;
       }
 
       toastError(`something went wrong and the the transaction failed`, customError.message);
+      setIsLoading(false);
     },
     async onSuccess() {
       await queryTokenBalance.refetch();
       await queryRankRewardsReleased.refetch();
       await queryRankRewardsReleasable.refetch();
+      setIsLoading(false);
       toastSuccess("funds distributed successfully !");
     },
   });

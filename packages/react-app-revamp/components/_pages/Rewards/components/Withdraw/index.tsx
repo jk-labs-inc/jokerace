@@ -19,7 +19,7 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
   return (
     <div className="w-full">
       <Tab.Group>
-        <Tab.List className="animate-appear w-[400px] overflow-hidden text-[16px] font-medium mb-6 divide-neutral-4 flex rounded-full border-solid border border-neutral-4">
+        <Tab.List className="animate-appear max-w-[700px] overflow-hidden text-[16px] font-medium mb-6 divide-neutral-4 flex rounded-full border-solid border border-neutral-4">
           {["ERC20", chain?.nativeCurrency?.symbol].map(tab => (
             <Tab key={tab} as={Fragment}>
               {({ selected }) => (
@@ -53,7 +53,7 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
               </ul>
             ) : (
               <>
-                <p className="italic text-[16px] animate-appear text-neutral-11">No balance found for ERC20 tokens.</p>
+                <p className="italic text-[16px]  text-neutral-11">No balance found for ERC20 tokens.</p>
               </>
             )}
           </Tab.Panel>
@@ -66,7 +66,7 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
                 />
               </ul>
             ) : (
-              <p className="italic text-[16px] animate-appear text-neutral-11">
+              <p className="italic text-[16px] text-neutral-11">
                 No balance found for $<span className="uppercase">{nativeTokenBalance.data?.symbol}</span>.
               </p>
             )}
