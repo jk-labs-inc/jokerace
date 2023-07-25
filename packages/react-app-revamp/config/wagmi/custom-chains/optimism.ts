@@ -8,7 +8,7 @@ export const optimism = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    public: 'https://mainnet.optimism.io',
+    public: 'https://rpc.ankr.com/optimism',
     default: `https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
   },
   blockExplorers: {

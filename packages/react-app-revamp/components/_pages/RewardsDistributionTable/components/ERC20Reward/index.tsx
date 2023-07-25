@@ -39,14 +39,12 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
 
   return (
     <Reward
-      share={share}
-      chainId={chainId}
       queryTokenBalance={queryTokenBalance}
       queryRankRewardsReleasable={queryRankRewardsReleasable}
       queryRankRewardsReleased={queryRankRewardsReleased}
       contractWriteRelease={contractWriteReleaseToken}
-      txRelease={txRelease}
       showPreviouslyDistributed={showPreviouslyDistributed}
+      txRelease={txRelease}
     />
   );
 };

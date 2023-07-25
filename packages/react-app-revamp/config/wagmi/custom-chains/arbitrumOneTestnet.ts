@@ -8,7 +8,7 @@ export const arbitrumOneTestnet = {
     symbol: 'ETH',
   },
   rpcUrls: {
-    public: '421613',
+    public: 'https://endpoints.omniatech.io/v1/arbitrum/goerli/public',
     default: `https://arb-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
   },
   blockExplorers: {

@@ -70,23 +70,30 @@ const totalChains: Chain[] = [
   gnosisTestnet,
   gnosisMainnet,
   mantleMainnet,
-  mantleTestnet
+  mantleTestnet,
 ];
 
-const providers = (process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY) ? 
-  [
-    jsonRpcProvider({rpc: (chain) => ({
-      http: `${chain.rpcUrls.default}`
-    })}),
-    jsonRpcProvider({rpc: (chain) => ({
-      http: `${chain.rpcUrls.public}`
-    })}),
-  ] :
-  [
-  jsonRpcProvider({rpc: (chain) => ({
-    http: `${chain.rpcUrls.public}`
-  })}),
-  ];
+const providers =
+  process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY
+    ? [
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.default}`,
+          }),
+        }),
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.public}`,
+          }),
+        }),
+      ]
+    : [
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.public}`,
+          }),
+        }),
+      ];
 export const { chains, provider } = configureChains(totalChains, providers);
 
 const { wallets } = getDefaultWallets({
@@ -138,5 +145,5 @@ export const chainsImages: ChainImages = {
   polygonzkmainnet: "/polygon.svg",
   scrollgoerli: "/scroll.png",
   basetestnet: "/base.svg",
-  gnosistestnet: "/gnosis.png"
+  gnosistestnet: "/gnosis.png",
 };

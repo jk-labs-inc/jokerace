@@ -90,7 +90,7 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
         </p>
         <div>
           <CreateTextInput
-            className="w-[500px]"
+            className="w-full md:w-[500px]"
             placeholder="0x..."
             type="text"
             onChange={setInputRewardsModuleBalanceCheck}
