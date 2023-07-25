@@ -17,7 +17,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
 
   return (
     <li className="flex items-center">
-      <section className="flex justify-between w-[350px]">
+      <section className="flex justify-between w-full md:w-[650px]">
         <p>
           {queryTokenBalance.data?.decimals <= 18
             ? parseFloat(utils.formatEther(queryTokenBalance.data?.value))

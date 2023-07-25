@@ -1,4 +1,5 @@
 import { ordinalSuffix } from "@helpers/ordinalSuffix";
+import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
 import { FC } from "react";
@@ -34,6 +35,7 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
     showPreviouslyDistributedTable,
   } = props;
   const { isLoading: isFundingRewardsLoading } = useFundRewardsModule();
+  const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
   const { isLoading: isWithdrawRewardsLoading } = useWithdrawRewardStore(state => state);
   const {
     data,
@@ -52,7 +54,7 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       {isError && "Something went wrong, please reload the page."}
       {data && !showPreviouslyDistributedTable && (
-        <div className="flex flex-col gap-12 w-[300px]">
+        <div className="flex flex-col gap-12 max-w-[500px]">
           <div className="flex flex-col gap-3">
             <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
             <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
@@ -99,11 +101,11 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
       )}
 
       {data && showPreviouslyDistributedTable && (
-        <div className="flex flex-col gap-12 w-[300px]">
+        <div className="flex flex-col gap-12 max-w-[500px]">
           <div className="flex flex-col gap-3">
             <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
             <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-              {isLoading ? (
+              {isLoading || isDistributeRewardsLoading ? (
                 <li>
                   <Skeleton width={200} height={16} />
                 </li>
@@ -122,7 +124,7 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
                 <>
                   {erc20Tokens.map((token: any, index: number) => (
                     <>
-                      {isLoading ? (
+                      {isLoading || isDistributeRewardsLoading ? (
                         <li>
                           <Skeleton width={200} height={16} key={index} />
                         </li>

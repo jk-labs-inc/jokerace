@@ -1,5 +1,5 @@
 import { toastError } from "@components/UI/Toast";
-import { useQueryClient } from "@tanstack/react-query";
+import useRewardsModule from "@hooks/useRewards";
 import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
@@ -16,7 +16,6 @@ export interface RewardData {
 }
 
 export function useFundRewardsModule() {
-  const queryClient = useQueryClient();
   const { chain } = useNetwork();
   const {
     isModalOpen,
@@ -29,6 +28,7 @@ export function useFundRewardsModule() {
     setError,
     setTransactionData,
   } = useFundRewardsStore(state => state);
+  const { refetchBalanceRewardsModule } = useRewardsModule();
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
     if (rewards.length > 3) {
@@ -81,16 +81,13 @@ export function useFundRewardsModule() {
         functionName: "transfer",
         args: [rewardsContractAddress, amount],
       });
+
       receipt = await waitForTransaction({
         chainId: chain?.id,
         hash: txSendFunds.hash,
       });
 
-      await queryClient.invalidateQueries({
-        queryKey: ["balance-rewards-module", rewardsContractAddress],
-        exact: true,
-        refetchType: "active",
-      });
+      await refetchBalanceRewardsModule();
     } else {
       txSendFunds = await sendTransaction({
         chainId: chain?.id,

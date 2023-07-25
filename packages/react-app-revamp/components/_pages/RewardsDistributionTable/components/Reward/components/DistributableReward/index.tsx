@@ -2,6 +2,8 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
 import { toastLoading } from "@components/UI/Toast";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
+import Skeleton from "react-loading-skeleton";
 import { Tooltip } from "react-tooltip";
 
 interface DistributableRewardProps {
@@ -13,9 +15,15 @@ interface DistributableRewardProps {
 
 export const DistributableReward = (props: DistributableRewardProps) => {
   const { contestStatus } = useContestStatusStore(state => state);
+  const { setIsLoading } = useDistributeRewardStore(state => state);
   const { queryTokenBalance, contractWriteRelease, queryRankRewardsReleasable, txRelease } = props;
 
-  if (queryTokenBalance.isLoading) return <Loader scale="component">Loading ERC20 token info...</Loader>;
+  if (queryTokenBalance.isLoading)
+    return (
+      <li className="flex items-center">
+        <Skeleton width={200} height={16} />
+      </li>
+    );
 
   if (queryTokenBalance.data.value.eq(0) || queryRankRewardsReleasable.data === 0) {
     return (
@@ -42,6 +50,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
                 color="bg-gradient-distribute"
                 onClick={async () => {
                   toastLoading("distributing rewards...");
+                  setIsLoading(true);
                   await contractWriteRelease.writeAsync();
                 }}
               >

@@ -13,18 +13,17 @@ export function useRewardsModule() {
   const { chain } = useNetwork();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
 
-  const queryBalanceRewardsModule = useQuery(
+  const { refetch: refetchBalanceRewardsModule } = useQuery(
     ["balance-rewards-module", rewards?.contractAddress],
     async () => {
       try {
-        // Get rewards module contract balance
-        // See: https://docs.alchemy.com/docs/how-to-get-all-tokens-owned-by-an-address
         const contestChainName = asPath.split("/")[2];
         const contestRewardModuleAddress = rewards?.contractAddress;
         const networkName = contestChainName.toLowerCase() === "arbitrumone" ? "arbitrum" : contestChainName;
         const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
         //@ts-ignore
         const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
+
         const response = await fetch(alchemyAppUrl, {
           method: "POST",
           body: JSON.stringify({
@@ -37,14 +36,15 @@ export function useRewardsModule() {
           }),
           redirect: "follow",
         });
-        const asJson = await response.json();
 
+        const asJson = await response.json();
         const balances = asJson.result?.tokenBalances;
 
         setRewards({
           ...rewards,
           balance: balances,
         });
+
         return balances;
       } catch (e) {
         console.error(e);
@@ -146,7 +146,7 @@ export function useRewardsModule() {
 
   return {
     getContestRewardsModule,
-    queryBalanceRewardsModule,
+    refetchBalanceRewardsModule,
   };
 }
 

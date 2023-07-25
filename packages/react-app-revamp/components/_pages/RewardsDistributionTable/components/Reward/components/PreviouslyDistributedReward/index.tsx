@@ -1,4 +1,5 @@
 import Loader from "@components/UI/Loader";
+import Skeleton from "react-loading-skeleton";
 
 interface PreviouslyDistributedRewardProps {
   queryTokenBalance: any;
@@ -8,7 +9,12 @@ interface PreviouslyDistributedRewardProps {
 export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardProps) => {
   const { queryTokenBalance, queryRankRewardsReleased } = props;
 
-  if (queryTokenBalance.isLoading) return <Loader scale="component">Loading ERC20 token info...</Loader>;
+  if (queryTokenBalance.isLoading)
+    return (
+      <li className="flex items-center">
+        <Skeleton width={200} height={16} />
+      </li>
+    );
 
   if (queryRankRewardsReleased.data === 0) {
     return (
