@@ -31,6 +31,7 @@ import { mantleMainnet } from "./custom-chains/mantleMainnet";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { publicProvider } from "wagmi/providers/public";
 import { alchemyProvider } from "wagmi/providers/alchemy";
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
 
 type ChainImages = {
@@ -73,9 +74,26 @@ const totalChains: Chain[] = [
 ];
 
 const providers =
-  process.env.NODE_ENV === "development"
-    ? [publicProvider(), alchemyProvider({ alchemyId })] // if in dev, try public first in case there isn't an Alchemy key
-    : [alchemyProvider({ alchemyId }), publicProvider()];
+  process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY
+    ? [
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.default}`,
+          }),
+        }),
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.public}`,
+          }),
+        }),
+      ]
+    : [
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.public}`,
+          }),
+        }),
+      ];
 export const { chains, provider } = configureChains(totalChains, providers);
 
 const { wallets } = getDefaultWallets({
