@@ -1,6 +1,7 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import ListProposals from "@components/_pages/ListProposals";
+import { isSupabaseConfigured } from "@helpers/database";
 import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
