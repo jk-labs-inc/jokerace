@@ -1,38 +1,36 @@
+import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
 import { Chain, configureChains, createClient } from "wagmi";
-import { polygon } from "./custom-chains/polygon";
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
-import { optimism } from "./custom-chains/optimism";
-import { polygonMumbai } from "./custom-chains/polygonMumbai";
-import { goerli } from "./custom-chains/goerli";
-import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
-import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
-import { sepolia } from "./custom-chains/sepolia";
-import { baseTestnet } from "./custom-chains/baseTestnet";
-import { scrollGoerli } from "./custom-chains/scrollGoerli";
-import { evmosTestnet } from "./custom-chains/evmosTestnet";
-import { evmosMainnet } from "./custom-chains/evmosMainnet";
 import { avaxCChain } from "./custom-chains/avaxCChain";
-import { zoraMainnet } from "./custom-chains/zora";
+import { baseTestnet } from "./custom-chains/baseTestnet";
 import { bnbMainnet } from "./custom-chains/bnbMainnet";
-import { lineaTestnet } from "./custom-chains/lineaTestnet";
-import { litTestnet } from "./custom-chains/litTestnet";
-import { zetaTestnet } from "./custom-chains/zetaTestnet";
-import { celoTestnet } from "./custom-chains/celoTestnet";
 import { celoMainnet } from "./custom-chains/celoMainnet";
-import { publicGoodsNetworkMainnet } from "./custom-chains/publicGoodsNetworkMainnet";
-import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
-import { lootChainMainnet } from "./custom-chains/lootChainMainnet";
-import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
-import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
-import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
+import { celoTestnet } from "./custom-chains/celoTestnet";
+import { evmosMainnet } from "./custom-chains/evmosMainnet";
+import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { gnosisMainnet } from "./custom-chains/gnosisMainnet";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
+import { goerli } from "./custom-chains/goerli";
+import { lineaTestnet } from "./custom-chains/lineaTestnet";
+import { litTestnet } from "./custom-chains/litTestnet";
+import { lootChainMainnet } from "./custom-chains/lootChainMainnet";
+import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
 import { mantleMainnet } from "./custom-chains/mantleMainnet";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
-import { publicProvider } from "wagmi/providers/public";
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
+import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
+import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
+import { optimism } from "./custom-chains/optimism";
+import { polygon } from "./custom-chains/polygon";
+import { polygonMumbai } from "./custom-chains/polygonMumbai";
+import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
+import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
+import { publicGoodsNetworkMainnet } from "./custom-chains/publicGoodsNetworkMainnet";
+import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
+import { scrollGoerli } from "./custom-chains/scrollGoerli";
+import { sepolia } from "./custom-chains/sepolia";
+import { zetaTestnet } from "./custom-chains/zetaTestnet";
+import { zoraMainnet } from "./custom-chains/zora";
 
 type ChainImages = {
   [key: string]: string;
@@ -145,5 +143,8 @@ export const chainsImages: ChainImages = {
   polygonzkmainnet: "/polygon.svg",
   scrollgoerli: "/scroll.png",
   basetestnet: "/base.svg",
+  gnosismainnet: "/gnosis.png",
   gnosistestnet: "/gnosis.png",
+  publicgoodsnetworkmainnet: "/publicgoodsnetwork.svg",
+  publicgoodsnetworktestnet: "/publicgoodsnetwork.svg",
 };
