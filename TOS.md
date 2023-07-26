@@ -113,10 +113,10 @@ We care about data privacy and security. Please review our Privacy Policy: https
 
 PRIVACY NOTICE
 
-Thank you for choosing to be part of our community at Layer3 XYZ, Inc. ("Company," "we," "us," or "our"). We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about this privacy notice or our practices with regard to your personal information, please contact us at brandon@layer3.xyz.
+Thank you for choosing to be part of our community at jk labs, inc. ("Company," "we," "us," or "our"). We are committed to protecting your personal information and your right to privacy. If you have any questions or concerns about this privacy notice or our practices with regard to your personal information, please contact us at hello@jklabs.co.
 
 This privacy notice describes how we might use your information if you:
-Visit our website at https://layer3.xyz/
+Visit our website at https://jokerace.xyz/
 Engage with us in other related ways ― including any sales, marketing, or events
 In this privacy notice, if we refer to:
 "Website," we are referring to any website of ours that references or links to this policy
@@ -162,7 +162,7 @@ We use personal information collected via our Website for a variety of business 
 
 We use the information we collect or receive:
 To facilitate account creation and logon process. If you choose to link your account with us to a third-party account (such as your Google or Facebook account), we use the information you allowed us to collect from those third parties to facilitate account creation and logon process for the performance of the contract.
-To post testimonials. We post testimonials on our Website that may contain personal information. Prior to posting a testimonial, we will obtain your consent to use your name and the content of the testimonial. If you wish to update, or delete your testimonial, please contact us at hi@layer3.xyz and be sure to include your name, testimonial location, and contact information.
+To post testimonials. We post testimonials on our Website that may contain personal information. Prior to posting a testimonial, we will obtain your consent to use your name and the content of the testimonial. If you wish to update, or delete your testimonial, please contact us at hello@jklabs.co and be sure to include your name, testimonial location, and contact information.
 Request feedback. We may use your information to request feedback and to contact you about your use of our Website.
 To enable user-to-user communications. We may use your information in order to enable user-to-user communications with each user's consent.
 To manage user accounts. We may use your information for the purposes of managing our account and keeping it in working order.
@@ -267,12 +267,12 @@ Collected
 A. Identifiers
 Contact details, such as real name, alias, postal address, telephone or mobile contact number, unique personal identifier, online identifier, Internet Protocol address, email address and account name
 
-NO
+YES
 
 B. Personal information categories listed in the California Customer Records statute
 Name, contact information, education, employment, employment history and financial information
 
-YES
+NO
 
 C. Protected classification characteristics under California or federal law
 Gender and date of birth
@@ -292,7 +292,7 @@ NO
 F. Internet or other similar network activity
 Browsing history, search history, online behavior, interest data, and interactions with our and other websites, applications, systems and advertisements
 
-NO
+YES
 
 G. Geolocation data
 Device location
@@ -324,11 +324,12 @@ We may also collect other personal information outside of these categories insta
 Receiving help through our customer support channels;
 Participation in customer surveys or contests; and
 Facilitation in the delivery of our Services and to respond to your inquiries.
+
 How do we use and share your personal information?
 
 More information about our data collection and sharing practices can be found in this privacy notice.
 
-You may contact us by email at hi@layer3.xyz, or by referring to the contact details at the bottom of this document.
+You may contact us by email at hello@jklabs.co, or by referring to the contact details at the bottom of this document.
 
 If you are using an authorized agent to exercise your right to opt-out we may deny a request if the authorized agent does not submit proof that they have been validly authorized to act on your behalf.
 
@@ -338,7 +339,7 @@ We may disclose your personal information with our service providers pursuant to
 
 We may use your personal information for our own business purposes, such as for undertaking internal research for technological development and demonstration. This is not considered to be "selling" of your personal data.
 
-Layer3 XYZ, Inc. has not disclosed or sold any personal information to third parties for a business or commercial purpose in the preceding 12 months. Layer3 XYZ, Inc. will not sell personal information in the future belonging to website visitors, users and other consumers.
+jk labs inc. has not disclosed or sold any personal information to third parties for a business or commercial purpose in the preceding 12 months. jk labs inc. will not sell personal information in the future belonging to website visitors, users and other consumers.
 
 Your rights with respect to your personal data
 
@@ -373,7 +374,7 @@ you may object to the processing of your personal data
 you may request correction of your personal data if it is incorrect or no longer relevant, or ask to restrict the processing of the data
 you can designate an authorized agent to make a request under the CCPA on your behalf. We may deny a request from an authorized agent that does not submit proof that they have been validly authorized to act on your behalf in accordance with the CCPA.
 you may request to opt-out from future selling of your personal information to third parties. Upon receiving a request to opt-out, we will act upon the request as soon as feasibly possible, but no later than 15 days from the date of the request submission.
-To exercise these rights, you can contact us by email at hi@layer3.xyz, or by referring to the contact details at the bottom of this document. If you have a complaint about how we handle your data, we would like to hear from you.  
+To exercise these rights, you can contact us by email at hello@jklabs.co, or by referring to the contact details at the bottom of this document. If you have a complaint about how we handle your data, we would like to hear from you.  
 
 10. DO WE MAKE UPDATES TO THIS NOTICE?     
 
@@ -383,9 +384,9 @@ We may update this privacy notice from time to time. The updated version will be
 
 11. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?     
 
-If you have questions or comments about this notice, you may email us at hi@layer3.xyz or by post to:
+If you have questions or comments about this notice, you may email us at hello@jklabs.co or by post to:
 
-Layer3 XYZ, Inc.
+jk labs, inc.
 __________
 __________
 
