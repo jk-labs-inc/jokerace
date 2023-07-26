@@ -214,6 +214,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     }
   };
 
+  console.log(contest.network_name);
+
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
       <a href={getContestUrl(contest)}>
