@@ -33,7 +33,7 @@ function useContests(initialData: any, searchValue: string) {
             },
             address,
           )
-        : getFeaturedContests(page, 4, address),
+        : getFeaturedContests(page, 6, address),
   );
 
   return {
