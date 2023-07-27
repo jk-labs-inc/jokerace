@@ -1,6 +1,7 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import isUrlToImage from "@helpers/isUrlToImage";
 import useContest from "@hooks/useContest";
+import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { chain, fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
@@ -11,6 +12,7 @@ import { useProvider } from "wagmi";
 export function useContestEvents() {
   const { asPath } = useRouter();
   const provider = useProvider();
+  const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { fetchTotalVotesCast } = useContest();
   const { contestStatus } = useContestStatusStore(state => state);
   const { setProposalData, setProposalVotes, listProposalsData } = useProposalStore(state => state);
@@ -80,36 +82,38 @@ export function useContestEvents() {
   }, [contestStatus]);
 
   useEffect(() => {
-    if (contestStatus !== ContestStatus.VotingOpen) {
+    if (!canUpdateVotesInRealTime || ContestStatus.VotingOpen !== contestStatus) {
       provider.removeAllListeners("VoteCast");
       setDisplayReloadBanner(false);
     } else {
-      watchContractEvent(
-        {
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
-        },
-        "VoteCast",
-        (...args) => {
-          onVoteCast(args).catch(err => console.error(err));
-        },
-      );
+      if (ContestStatus.VotingOpen === contestStatus && canUpdateVotesInRealTime) {
+        watchContractEvent(
+          {
+            addressOrName: asPath.split("/")[3],
+            contractInterface: DeployedContestContract.abi,
+          },
+          "VoteCast",
+          (...args) => {
+            onVoteCast(args).catch(err => console.error(err));
+          },
+        );
+      }
     }
 
     return () => {
       provider.removeAllListeners("VoteCast");
     };
-  }, [contestStatus]);
+  }, [contestStatus, canUpdateVotesInRealTime]);
 
   function onVisibilityChangeHandler() {
     if (document.visibilityState === "hidden") {
       provider.removeAllListeners();
-      if (contestStatusRef.current === ContestStatus.VotingOpen) {
+      if (contestStatusRef.current === ContestStatus.VotingOpen && canUpdateVotesInRealTime) {
         setDisplayReloadBanner(true);
       }
       return;
     } else {
-      if (contestStatusRef.current === ContestStatus.VotingOpen) {
+      if (contestStatusRef.current === ContestStatus.VotingOpen && canUpdateVotesInRealTime) {
         provider.addListener("VoteCast", (...args) => {
           onVoteCast(args);
         });
@@ -122,7 +126,7 @@ export function useContestEvents() {
     return () => {
       document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
     };
-  }, []);
+  }, [canUpdateVotesInRealTime]);
 
   return {
     displayReloadBanner,

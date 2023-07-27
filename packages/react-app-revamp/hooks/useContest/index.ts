@@ -1,6 +1,7 @@
 import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
+import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
@@ -8,8 +9,15 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser, { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
-import { differenceInHours, differenceInMilliseconds, hoursToMilliseconds, isBefore } from "date-fns";
+import { alchemyRpcUrls, FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
+import {
+  differenceInHours,
+  differenceInMilliseconds,
+  differenceInMinutes,
+  hoursToMilliseconds,
+  isBefore,
+  minutesToMilliseconds,
+} from "date-fns";
 import { utils } from "ethers";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
@@ -69,12 +77,15 @@ export function useContest() {
     setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
+    setIsReadOnly,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds, resetListProposals } =
     useProposalStore(state => state);
   const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
-  const { fetchProposalsIdsList, fetchProposalsPage } = useProposal();
+  const { fetchProposalsIdsList } = useProposal();
+  const networkName = chainName.toLowerCase() === "arbitrumone" ? "arbitrum" : chainName;
+  const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
 
   /**
    * Display an error toast in the UI for any contract related error
@@ -121,11 +132,7 @@ export function useContest() {
     }
   }
 
-  async function fetchV3ContestInfo(
-    contractConfig: ContractConfig,
-    asPath: string,
-    contestRewardModuleAddress: string | undefined,
-  ) {
+  async function fetchV3ContestInfo(contractConfig: ContractConfig, contestRewardModuleAddress: string | undefined) {
     try {
       const contracts = getV3Contracts(contractConfig);
       const results = await readContracts({ contracts });
@@ -154,17 +161,17 @@ export function useContest() {
 
       const submissionMerkleRoot = results[10].toString();
 
-      // We want to track VoteCast event only 1H before the end of the contest
-      if (isBefore(new Date(), closingVoteDate)) {
-        if (differenceInHours(closingVoteDate, new Date()) <= 1) {
-          // If the difference between the closing date (end of votes) and now is <= to 1h
+      // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
+      if (isBefore(new Date(), closingVoteDate) && alchemyRpc && isAlchemyConfigured) {
+        if (differenceInMinutes(closingVoteDate, new Date()) <= 120) {
+          // If the difference between the closing date (end of votes) and now is <= to 2h
           // reflect this in the state
           setCanUpdateVotesInRealTime(true);
         } else {
           setCanUpdateVotesInRealTime(false);
-          // Otherwise, update the state 1h before the closing date (end of votes)
+          // Otherwise, update the state 2h before the closing date (end of votes)
           const delayBeforeVotesCanBeUpdated =
-            differenceInMilliseconds(closingVoteDate, new Date()) - hoursToMilliseconds(1);
+            differenceInMilliseconds(closingVoteDate, new Date()) - minutesToMilliseconds(120);
           setTimeout(() => {
             setCanUpdateVotesInRealTime(true);
           }, delayBeforeVotesCanBeUpdated);
@@ -191,17 +198,12 @@ export function useContest() {
     }
   }
 
-  async function fetchV1ContestInfo(contractConfig: ContractConfig, asPath: string) {
+  async function fetchV1ContestInfo(contractConfig: ContractConfig) {
     try {
       const contracts = getV1Contracts(contractConfig);
       const results = await readContracts({ contracts });
 
       setIsV3(false);
-
-      // If current page is proposal, fetch proposal with id
-      if (asPath.includes("/proposal/")) {
-        await fetchProposalsPage(0, [asPath.split("/")[5]], 1);
-      }
 
       // List of proposals for this contest
       await fetchProposalsIdsList(contractConfig.contractInterface);
@@ -301,9 +303,9 @@ export function useContest() {
     }
 
     if (parseFloat(version) >= 3) {
-      await fetchV3ContestInfo(contractConfig, asPath, contestRewardModuleAddress);
+      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress);
     } else {
-      await fetchV1ContestInfo(contractConfig, asPath);
+      await fetchV1ContestInfo(contractConfig);
     }
   }
 
@@ -312,6 +314,7 @@ export function useContest() {
    */
   async function processContestData(submissionMerkleRoot: string, contestMaxNumberSubmissionsPerUser: number) {
     if (!isSupabaseConfigured) {
+      setIsReadOnly(true);
       if (submissionMerkleRoot === EMPTY_ROOT) {
         await checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser);
         setIsUserStoreLoading(false);
@@ -331,6 +334,10 @@ export function useContest() {
 
       if (data && data.length === 0) {
         toastError("we couldn't find given contest in db!");
+        setIsReadOnly(true);
+        if (submissionMerkleRoot === EMPTY_ROOT) {
+          await checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser);
+        }
         setIsUserStoreLoading(false);
         return;
       }
@@ -355,10 +362,7 @@ export function useContest() {
 
         let submissionMerkleTree;
 
-        if (
-          !submissionMerkleTreeData ||
-          submissionMerkleTreeData.merkleRoot === "0x0000000000000000000000000000000000000000000000000000000000000000"
-        ) {
+        if (submissionMerkleRoot === EMPTY_ROOT) {
           submissionMerkleTree = generateMerkleTree(18, {}).merkleTree;
           setSubmitters([]);
         } else {

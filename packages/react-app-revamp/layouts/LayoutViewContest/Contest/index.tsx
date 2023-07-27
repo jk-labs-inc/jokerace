@@ -1,7 +1,6 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import ListProposals from "@components/_pages/ListProposals";
-import { isSupabaseConfigured } from "@helpers/database";
 import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -26,6 +25,7 @@ const ContestTab = () => {
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
+
   return (
     <div>
       <div className="mt-4">
@@ -39,7 +39,7 @@ const ContestTab = () => {
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && (
         <div className="mt-8">
-          {(currentUserQualifiedToSubmit || currentUserProposalCount <= contestMaxNumberSubmissionsPerUser) && (
+          {currentUserQualifiedToSubmit && currentUserProposalCount <= contestMaxNumberSubmissionsPerUser && (
             <ButtonV3
               type="txAction"
               color="bg-gradient-create rounded-[40px]"

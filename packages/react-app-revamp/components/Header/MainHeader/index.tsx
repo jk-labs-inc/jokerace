@@ -1,5 +1,4 @@
 import { ROUTE_CREATE_CONTEST } from "@config/routes";
-import { isSupabaseConfigured } from "@helpers/database";
 import { HomeIcon } from "@heroicons/react/outline";
 import { ConnectButton, useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
@@ -12,7 +11,6 @@ const MainHeader = () => {
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
   const isMobileOrTablet = useMedia("(max-width: 1024px)");
-  const isReadOnly = !isSupabaseConfigured;
 
   const lowerDeviceHeader = (
     <header className="flex flex-row items-center justify-between px-4 mt-4">
@@ -51,14 +49,7 @@ const MainHeader = () => {
       ) : (
         <header className="px-10  mx-auto flex items-center justify-between mt-2 mb-4">
           <Link href="/">
-            <div className="flex flex-col items-start">
-              <h1 className="font-sabo text-primary-10 text-[40px]">JOKERACE</h1>
-              {isReadOnly && (
-                <div className="ml-2 border rounded-[5px] border-neutral-11 px-2">
-                  <p className="text-[12px]">read mode</p>
-                </div>
-              )}
-            </div>
+            <h1 className="font-sabo text-primary-10 text-[40px]">JOKERACE</h1>
           </Link>
           <div className="flex-1 flex justify-center items-center">
             <div className="bg-true-black flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header">
