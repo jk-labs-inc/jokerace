@@ -5,12 +5,12 @@ import GateSubmissionsOpenRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import BetterRewardsNotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.5.betterRewardsNotes.sol/RewardsModule.json";
 import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.1.merkleVotes.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
-import { getProvider } from "@wagmi/core";
 import { ethers } from "ethers";
+import { useEthersProvider } from "./ethers";
 
 export async function getRewardsModuleContractVersion(address: string, chainName: string) {
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const provider = await getProvider({ chainId: chainId });
+  const provider = useEthersProvider({ chainId });
 
   const contract = new ethers.Contract(address, NumberedVersioningRewards.abi, provider);
 

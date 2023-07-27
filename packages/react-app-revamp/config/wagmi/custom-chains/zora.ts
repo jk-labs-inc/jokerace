@@ -1,18 +1,24 @@
-export const zoraMainnet = {
+import { Chain } from "wagmi";
+
+export const zoraMainnet: Chain = {
   id: 7777777,
-  name: 'zora',
-  network: 'zora',
+  name: "zora",
+  network: "zora",
   nativeCurrency: {
     decimals: 18,
-    name: 'Ether',
-    symbol: 'ETH',
+    name: "Ether",
+    symbol: "ETH",
   },
   rpcUrls: {
-    public: 'https://rpc.zora.energy/',
-    default: 'https://rpc.zora.energy/',
+    public: {
+      http: ["https://rpc.zora.energy/"],
+    },
+    default: {
+      http: ["https://rpc.zora.energy/"],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Zora Block Explorer', url: 'https://explorer.zora.energy/' },
-    default: { name: 'Zora Block Explorer', url: 'https://explorer.zora.energy/' },
+    etherscan: { name: "Zora Block Explorer", url: "https://explorer.zora.energy/" },
+    default: { name: "Zora Block Explorer", url: "https://explorer.zora.energy/" },
   },
-}
+};

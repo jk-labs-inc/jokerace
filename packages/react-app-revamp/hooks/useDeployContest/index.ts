@@ -8,7 +8,7 @@ import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory, ethers } from "ethers";
 import { CustomError, ErrorCodes } from "types/error";
-import { useNetwork, useSigner } from "wagmi";
+import { useNetwork, useWalletClient } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
 export function useDeployContest() {
@@ -33,7 +33,7 @@ export function useDeployContest() {
     setIsSuccess,
   } = useDeployContestStore(state => state);
   const { chain } = useNetwork();
-  const { refetch } = useSigner();
+  const { refetch } = useWalletClient();
 
   async function deployContest() {
     stateContestDeployment.setIsLoading(true);
@@ -88,7 +88,7 @@ export function useDeployContest() {
 
       const receiptDeployContest = await waitForTransaction({
         chainId: chain?.id,
-        hash: contractContest.deployTransaction.hash,
+        hash: contractContest.deployTransaction.hash as `0x${string}`,
       });
 
       setDeployContestData(
@@ -128,11 +128,11 @@ export function useDeployContest() {
             }
           : null,
         contractAddress: contractContest.address,
-        authorAddress: (await signer.data?.getAddress()) ?? "",
+        authorAddress: (await signer.data?.getAddresses()) ?? "",
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
       };
 
-      await indexContest(contestData, votingMerkle, submissionMerkle);
+      await indexContest(contestData as any, votingMerkle, submissionMerkle);
 
       toastSuccess("contest has been deployed!");
       setIsSuccess(true);

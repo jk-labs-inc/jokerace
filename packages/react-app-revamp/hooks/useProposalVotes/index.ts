@@ -1,18 +1,15 @@
 import { toastError } from "@components/UI/Toast";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import arrayToChunks from "@helpers/arrayToChunks";
+import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { fetchEnsName, getAccount, getContract, readContract, watchContractEvent } from "@wagmi/core";
+import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { CustomError } from "types/error";
-import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
+import { useAccount } from "wagmi";
 import { useProposalVotesStore } from "./store";
 
 const VOTES_PER_PAGE = 5;
@@ -26,14 +23,12 @@ export function useProposalVotes(id: number | string) {
       }
     },
   });
-  const provider = useProvider();
+  const provider = useEthersProvider();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
   const [address] = useState(url[3]);
-
-  const { contestStatus } = useContestStatusStore(state => state);
 
   const {
     isListVotersSuccess,
@@ -69,19 +64,20 @@ export function useProposalVotes(id: number | string) {
       toastError(errorMessage);
       return;
     }
+
     try {
       const accountData = getAccount();
+
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
-        chainId: chainId,
+        address: address as `0x${string}`,
+        abi: abi,
       };
 
       const list = await readContract({
         ...contractConfig,
-        chainId,
+        chainId: chainId,
         functionName: "proposalAddressesHaveVoted",
-        args: id,
+        args: [id],
       });
 
       const usersListWithCurrentUserFirst = Array.from(list);
@@ -162,8 +158,8 @@ export function useProposalVotes(id: number | string) {
       }
 
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
+        address: address as `0x${string}`,
+        abi: abi,
         chainId,
       };
 

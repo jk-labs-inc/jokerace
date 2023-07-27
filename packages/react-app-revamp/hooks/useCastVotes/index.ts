@@ -2,17 +2,14 @@ import { toastDismiss, toastError, toastLoading, toastSuccess } from "@component
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { waitForTransaction, writeContract } from "@wagmi/core";
-import { ethers } from "ethers";
-import { parseUnits } from "ethers/lib/utils";
+import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import { CustomError, ErrorCodes } from "types/error";
+import { parseUnits } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -45,9 +42,10 @@ export function useCastVotes() {
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
+
     const contractConfig = {
-      addressOrName: id,
-      contractInterface: abi ?? DeployedContestContract.abi,
+      address: id as `0x${string}`,
+      abi: abi ? abi : DeployedContestContract.abi,
     };
 
     try {
@@ -59,30 +57,37 @@ export function useCastVotes() {
       );
 
       let txCastVotes: TransactionResponse = {} as TransactionResponse;
+      let hash: string = "";
 
       if (!proofsVerificationStatus.verified) {
-        txCastVotes = await writeContract({
+        const config = await prepareWriteContract({
           ...contractConfig,
           functionName: "castVote",
           args: [
             pickedProposal,
             isPositive ? 0 : 1,
-            parseUnits(currentUserTotalVotesAmount.toString()),
-            parseUnits(amount.toString()),
+            parseUnits(currentUserTotalVotesAmount.toString(), 18),
+            parseUnits(amount.toString(), 18),
             proofsVerificationStatus.proofs,
           ],
         });
+
+        const { hash: writeHash } = await writeContract(config);
+        hash = writeHash;
       } else {
-        txCastVotes = await writeContract({
+        const config = await prepareWriteContract({
           ...contractConfig,
           functionName: "castVoteWithoutProof",
-          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
+          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`, 18)],
         });
+
+        const { hash: writeHash } = await writeContract(config);
+        hash = writeHash;
       }
 
       const receipt = await waitForTransaction({
         chainId: chain?.id,
-        hash: txCastVotes.hash,
+        hash: hash as `0x${string}`,
         //@ts-ignore
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
       });

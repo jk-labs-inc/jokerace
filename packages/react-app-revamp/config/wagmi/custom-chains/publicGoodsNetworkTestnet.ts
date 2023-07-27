@@ -1,18 +1,30 @@
-export const publicGoodsNetworkTestnet = {
+import { Chain } from "wagmi";
+
+export const publicGoodsNetworkTestnet: Chain = {
   id: 58008,
-  name: 'publicGoodsNetworkTestnet',
-  network: 'publicGoodsNetworkTestnet',
+  name: "publicGoodsNetworkTestnet",
+  network: "publicGoodsNetworkTestnet",
   nativeCurrency: {
     decimals: 18,
-    name: 'Ether',
-    symbol: 'ETH',
+    name: "Ether",
+    symbol: "ETH",
   },
   rpcUrls: {
-    public: 'https://sepolia.publicgoods.network',
-    default: 'https://sepolia.publicgoods.network',
+    public: {
+      http: ["https://sepolia.publicgoods.network"],
+    },
+    default: {
+      http: ["https://sepolia.publicgoods.network"],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Public Goods Network Testnet Block Explorer', url: 'https://explorer.sepolia.publicgoods.network/' },
-    default: { name: 'Public Goods Network Testnet Block Explorer', url: 'https://explorer.sepolia.publicgoods.network/' },
+    etherscan: {
+      name: "Public Goods Network Testnet Block Explorer",
+      url: "https://explorer.sepolia.publicgoods.network/",
+    },
+    default: {
+      name: "Public Goods Network Testnet Block Explorer",
+      url: "https://explorer.sepolia.publicgoods.network/",
+    },
   },
-}
+};

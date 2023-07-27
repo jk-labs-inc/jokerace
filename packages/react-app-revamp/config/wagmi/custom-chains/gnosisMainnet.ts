@@ -1,18 +1,24 @@
-export const gnosisMainnet = {
+import { Chain } from "wagmi";
+
+export const gnosisMainnet: Chain = {
   id: 100,
-  name: 'gnosisMainnet',
-  network: 'gnosisMainnet',
+  name: "gnosisMainnet",
+  network: "gnosisMainnet",
   nativeCurrency: {
     decimals: 18,
-    name: 'xDAI',
-    symbol: 'xDAI',
+    name: "xDAI",
+    symbol: "xDAI",
   },
   rpcUrls: {
-    public: 'https://rpc.gnosischain.com/',
-    default: 'https://rpc.gnosischain.com/',
+    public: {
+      http: ["https://rpc.gnosischain.com/"],
+    },
+    default: {
+      http: ["https://rpc.gnosischain.com/"],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Gnosis Etherscan', url: 'https://gnosisscan.io/' },
-    default: { name: 'Gnosis Etherscan', url: 'https://gnosisscan.io/' },
+    etherscan: { name: "Gnosis Etherscan", url: "https://gnosisscan.io/" },
+    default: { name: "Gnosis Etherscan", url: "https://gnosisscan.io/" },
   },
-}
+};

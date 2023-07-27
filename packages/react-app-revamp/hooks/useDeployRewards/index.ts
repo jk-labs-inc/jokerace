@@ -2,11 +2,11 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Cont
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
-import { writeContract } from "@wagmi/core";
+import { prepareWriteContract, writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
-import { useSigner } from "wagmi";
+import { useWalletClient } from "wagmi";
 import { useDeployRewardsStore } from "./store";
 
 export function useDeployRewardsPool() {
@@ -16,7 +16,7 @@ export function useDeployRewardsPool() {
   const { ranks, shares, setDeployRewardsData, setIsLoading, setIsError, setIsSuccess, setDisplayCreatePool } =
     useDeployRewardsStore(state => state);
   const contestAddress = asPath.split("/")[3];
-  const { refetch } = useSigner();
+  const { refetch } = useWalletClient();
 
   function deployRewardsPool() {
     setIsLoading(true);
@@ -42,15 +42,17 @@ export function useDeployRewardsPool() {
 
     const rewardsModuleAttachment = async () => {
       const contractConfig = {
-        addressOrName: contestAddress,
-        contractInterface: DeployedContestContract.abi,
+        address: contestAddress as `0x${string}`,
+        abi: DeployedContestContract.abi,
       };
-      const txSetRewardsModule = await writeContract({
+
+      const config = prepareWriteContract({
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
         args: [contractRewardsModule!.address],
       });
-      await txSetRewardsModule.wait();
+
+      await writeContract(config);
 
       setIsLoading(false);
       setIsSuccess(true);

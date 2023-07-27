@@ -36,8 +36,8 @@ export function useDeleteProposal() {
     setError(null);
     setTransactionData(null);
     const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi ? abi : DeployedContestContract.abi,
+      address: address as `0x${string}`,
+      abi: abi ? abi : DeployedContestContract.abi,
     };
     try {
       const txCastVotes = await writeContract({

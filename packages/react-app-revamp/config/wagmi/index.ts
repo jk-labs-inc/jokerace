@@ -1,5 +1,5 @@
-import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
-import { Chain, configureChains, createClient } from "wagmi";
+import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
+import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avaxCChain } from "./custom-chains/avaxCChain";
@@ -71,7 +71,7 @@ const totalChains: Chain[] = [
   mantleTestnet,
 ];
 
-const providers =
+const publicClients =
   process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY
     ? [
         jsonRpcProvider({
@@ -92,31 +92,35 @@ const providers =
           }),
         }),
       ];
-export const { chains, provider } = configureChains(totalChains, providers);
+
+export const { chains, publicClient, webSocketPublicClient } = configureChains(totalChains, publicClients);
 
 const { wallets } = getDefaultWallets({
   appName: "jokerace",
+  projectId: "jokerace",
   chains,
 });
 
+// @TODO wallet connectors
 const connectors = connectorsForWallets([
   ...wallets,
-  {
-    groupName: "Other",
-    wallets: [
-      wallet.argent({ chains }),
-      wallet.trust({ chains }),
-      wallet.steak({ chains }),
-      wallet.imToken({ chains }),
-      wallet.ledger({ chains }),
-    ],
-  },
+  // {
+  //   groupName: "Other",
+  //   wallets: [
+  //     wallet.argent({ chains }),
+  //     wallet.trust({ chains }),
+  //     wallet.steak({ chains }),
+  //     wallet.imToken({ chains }),
+  //     wallet.ledger({ chains }),
+  //   ],
+  // },
 ]);
 
-export const client = createClient({
+export const client = createConfig({
   autoConnect: true,
   connectors,
-  provider,
+  publicClient,
+  webSocketPublicClient,
 });
 
 export const chainsImages: ChainImages = {

@@ -1,5 +1,5 @@
 import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
-import { utils } from "ethers";
+import { BigNumberish, utils } from "ethers";
 import { CustomError, ErrorCodes } from "types/error";
 import { useBalance, useContractRead, useContractWrite, useToken, useWaitForTransaction } from "wagmi";
 import { create } from "zustand";
@@ -26,44 +26,43 @@ export const useDistributeRewards = (
   tokenAddress?: string,
 ) => {
   const { setIsLoading } = useDistributeRewardStore(state => state);
-  const { data: tokenData } = tokenType === "erc20" ? useToken({ address: tokenAddress, chainId }) : { data: null };
+  const { data: tokenData } =
+    tokenType === "erc20" ? useToken({ address: tokenAddress as `0x${string}`, chainId }) : { data: null };
 
   const queryTokenBalance = useBalance({
-    addressOrName: contractRewardsModuleAddress,
+    address: contractRewardsModuleAddress as `0x${string}`,
     chainId,
-    token: tokenType === "erc20" ? tokenAddress : undefined,
+    token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
   });
 
   const queryRankRewardsReleasable = useContractRead({
-    addressOrName: contractRewardsModuleAddress,
-    contractInterface: abiRewardsModule,
+    address: contractRewardsModuleAddress as `0x${string}`,
+    abi: abiRewardsModule,
     chainId,
     functionName: tokenType === "erc20" ? "releasable(address,uint256)" : "releasable(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     //@ts-ignore
     select: data =>
       tokenType === "erc20"
-        ? parseFloat(utils.formatUnits(data, tokenData?.decimals))
-        : parseFloat(utils.formatEther(data)),
+        ? parseFloat(utils.formatUnits(data as BigNumberish, tokenData?.decimals))
+        : parseFloat(utils.formatEther(data as BigNumberish)),
   });
 
   const queryRankRewardsReleased = useContractRead({
-    addressOrName: contractRewardsModuleAddress,
-    contractInterface: abiRewardsModule,
+    address: contractRewardsModuleAddress as `0x${string}`,
+    abi: abiRewardsModule,
     chainId,
     functionName: tokenType === "erc20" ? "released(address,uint256)" : "released(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
-    //@ts-ignore
-
     select: data =>
       tokenType === "erc20"
-        ? parseFloat(utils.formatUnits(data, tokenData?.decimals))
-        : parseFloat(utils.formatEther(data)),
+        ? parseFloat(utils.formatUnits(data as BigNumberish, tokenData?.decimals))
+        : parseFloat(utils.formatEther(data as BigNumberish)),
   });
 
   const contractWriteReleaseToken = useContractWrite({
-    addressOrName: contractRewardsModuleAddress,
-    contractInterface: abiRewardsModule,
+    address: contractRewardsModuleAddress as `0x${string}`,
+    abi: abiRewardsModule,
     functionName: tokenType === "erc20" ? "release(address,uint256)" : "release(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     chainId,

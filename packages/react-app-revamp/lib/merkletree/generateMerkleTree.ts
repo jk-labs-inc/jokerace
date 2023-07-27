@@ -1,5 +1,6 @@
-import { getAddress, keccak256, parseUnits, solidityKeccak256 } from "ethers/lib/utils";
+import { solidityKeccak256 } from "ethers/lib/utils";
 import MerkleTree from "merkletreejs";
+import { getAddress, keccak256, parseUnits } from "viem";
 
 export interface Recipient {
   address: string;
