@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const scrollGoerli: Chain = {
+export const scrollGoerli = {
   id: 534353,
   name: "scrollGoerli",
   network: "scrollGoerli",
@@ -21,4 +21,4 @@ export const scrollGoerli: Chain = {
     etherscan: { name: "Scroll Goerli Scan", url: "https://blockscout.scroll.io/" },
     default: { name: "Scroll Goerli Scan", url: "https://blockscout.scroll.io/" },
   },
-};
+} as const satisfies Chain;

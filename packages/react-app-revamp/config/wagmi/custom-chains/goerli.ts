@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const goerli: Chain = {
+export const goerli = {
   id: 5,
   name: "goerli",
   network: "goerli",
@@ -21,4 +21,4 @@ export const goerli: Chain = {
     etherscan: { name: "Goerli Etherscan", url: "https://goerli.etherscan.io/" },
     default: { name: "Goerli Etherscan", url: "https://goerli.etherscan.io/" },
   },
-};
+} as const satisfies Chain;

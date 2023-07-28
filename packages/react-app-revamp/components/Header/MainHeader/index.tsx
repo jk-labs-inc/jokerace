@@ -4,7 +4,6 @@ import { HomeIcon } from "@heroicons/react/outline";
 import { ConnectButton, useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
 import { useMedia, useWindowScroll } from "react-use";
 import { useAccount } from "wagmi";
 

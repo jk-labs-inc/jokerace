@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const celoTestnet: Chain = {
+export const celoTestnet = {
   id: 44787,
   name: "celoTestnet",
   network: "celoTestnet",
@@ -21,4 +21,4 @@ export const celoTestnet: Chain = {
     etherscan: { name: "Celo Testnet Block Explorer", url: "https://explorer.celo.org/alfajores" },
     default: { name: "Celo Testnet Block Explorer", url: "https://explorer.celo.org/alfajores" },
   },
-};
+} as const satisfies Chain;

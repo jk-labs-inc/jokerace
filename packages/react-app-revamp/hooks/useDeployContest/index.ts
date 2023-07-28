@@ -8,7 +8,7 @@ import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory, ethers } from "ethers";
 import { CustomError, ErrorCodes } from "types/error";
-import { useNetwork, useWalletClient } from "wagmi";
+import { useAccount, useNetwork, useWalletClient } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
 export function useDeployContest() {
@@ -33,7 +33,7 @@ export function useDeployContest() {
     setIsSuccess,
   } = useDeployContestStore(state => state);
   const { chain } = useNetwork();
-  const { refetch } = useWalletClient();
+  const { address } = useAccount();
 
   async function deployContest() {
     stateContestDeployment.setIsLoading(true);
@@ -42,14 +42,7 @@ export function useDeployContest() {
 
     toastLoading("contest is deploying...");
     try {
-      const signer = await refetch();
-
-      const factoryCreateContest = new ContractFactory(
-        DeployedContestContract.abi,
-        DeployedContestContract.bytecode,
-        //@ts-ignore
-        signer.data,
-      );
+      const factoryCreateContest = new ContractFactory(DeployedContestContract.abi, DeployedContestContract.bytecode);
 
       const contestInfo = type + "|" + summary + "|" + prompt;
 
@@ -128,7 +121,7 @@ export function useDeployContest() {
             }
           : null,
         contractAddress: contractContest.address,
-        authorAddress: (await signer.data?.getAddresses()) ?? "",
+        authorAddress: address,
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
       };
 
@@ -211,8 +204,6 @@ export function useDeployContest() {
       toastError(`contest deployment failed`, customError.message);
     }
   }
-
-  function prepareParticipantsForIndexing() {}
 
   return {
     deployContest,

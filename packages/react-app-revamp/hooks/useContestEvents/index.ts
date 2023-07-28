@@ -4,7 +4,7 @@ import isUrlToImage from "@helpers/isUrlToImage";
 import useContest from "@hooks/useContest";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
+import { chain, fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
@@ -25,8 +25,8 @@ export function useContestEvents() {
     try {
       const proposalId = args[5].args.proposalId;
       const votes = await readContract({
-        address: asPath.split("/")[3] as `0x${string}`,
-        abi: DeployedContestContract.abi,
+        addressOrName: asPath.split("/")[3],
+        contractInterface: DeployedContestContract.abi,
         functionName: "proposalVotes",
         args: proposalId,
       });
@@ -39,9 +39,9 @@ export function useContestEvents() {
           votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
         });
       } else {
-        const proposal: any = await readContract({
-          address: asPath.split("/")[3] as `0x${string}`,
-          abi: DeployedContestContract.abi,
+        const proposal = await readContract({
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
           functionName: "getProposal",
           args: proposalId,
         });
@@ -49,8 +49,8 @@ export function useContestEvents() {
         let author;
         try {
           author = await fetchEnsName({
-            address: proposal[0] as `0x${string}`,
-            chainId: 1,
+            address: proposal[0],
+            chainId: chain.mainnet.id,
           });
         } catch (error: any) {
           author = proposal[0];
@@ -86,10 +86,10 @@ export function useContestEvents() {
     } else {
       watchContractEvent(
         {
-          address: asPath.split("/")[3] as `0x${string}`,
-          abi: DeployedContestContract.abi,
-          eventName: "VoteCast",
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
         },
+        "VoteCast",
         (...args) => {
           onVoteCast(args).catch(err => console.error(err));
         },

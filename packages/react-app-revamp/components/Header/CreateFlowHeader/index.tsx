@@ -6,9 +6,9 @@ import { ConnectButton, useAccountModal, useConnectModal } from "@rainbow-me/rai
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect } from "react";
+import Confetti from "react-confetti";
 import { useMedia, useWindowSize } from "react-use";
 import { useAccount } from "wagmi";
-import Confetti from "react-confetti";
 
 const CreateFlowHeader = () => {
   const { isConnected } = useAccount();

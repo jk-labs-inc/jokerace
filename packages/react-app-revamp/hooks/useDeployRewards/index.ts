@@ -2,7 +2,7 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Cont
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
-import { prepareWriteContract, writeContract } from "@wagmi/core";
+import { writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
@@ -16,7 +16,6 @@ export function useDeployRewardsPool() {
   const { ranks, shares, setDeployRewardsData, setIsLoading, setIsError, setIsSuccess, setDisplayCreatePool } =
     useDeployRewardsStore(state => state);
   const contestAddress = asPath.split("/")[3];
-  const { refetch } = useWalletClient();
 
   function deployRewardsPool() {
     setIsLoading(true);
@@ -25,13 +24,7 @@ export function useDeployRewardsPool() {
     let contractRewardsModule: Contract | null = null;
 
     const rewardsModuleDeployment = async () => {
-      const signer = await refetch();
-      const factoryCreateRewardsModule = new ContractFactory(
-        RewardsModuleContract.abi,
-        RewardsModuleContract.bytecode,
-        //@ts-ignore
-        signer.data,
-      );
+      const factoryCreateRewardsModule = new ContractFactory(RewardsModuleContract.abi, RewardsModuleContract.bytecode);
       contractRewardsModule = await factoryCreateRewardsModule.deploy(ranks, shares, contestAddress, false);
       await contractRewardsModule.deployTransaction.wait();
 
@@ -42,17 +35,15 @@ export function useDeployRewardsPool() {
 
     const rewardsModuleAttachment = async () => {
       const contractConfig = {
-        address: contestAddress as `0x${string}`,
-        abi: DeployedContestContract.abi,
+        addressOrName: contestAddress,
+        contractInterface: DeployedContestContract.abi,
       };
-
-      const config = prepareWriteContract({
+      const txSetRewardsModule = await writeContract({
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
         args: [contractRewardsModule!.address],
       });
-
-      await writeContract(config);
+      await txSetRewardsModule.wait();
 
       setIsLoading(false);
       setIsSuccess(true);

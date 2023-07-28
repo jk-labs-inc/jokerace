@@ -22,8 +22,8 @@ import { getV3Contracts } from "./v3/contracts";
 
 interface ContractConfigResult {
   contractConfig: {
-    address: string;
-    abi: any;
+    addressOrName: string;
+    contractInterface: any;
     chainId: number;
   };
   version: string;
@@ -95,8 +95,8 @@ export function useContest() {
       }
 
       const contractConfig = {
-        address: address,
-        abi: abi,
+        addressOrName: address,
+        contractInterface: abi,
         chainId: chainId,
       };
 
@@ -117,7 +117,9 @@ export function useContest() {
     const { contractConfig, version } = result;
     let contestRewardModuleAddress: string | undefined;
 
-    if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
+    if (
+      contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
+    ) {
       contestRewardModuleAddress = await readContract({
         ...contractConfig,
         functionName: "officialRewardsModule",
@@ -145,7 +147,7 @@ export function useContest() {
           await fetchProposalsPage(0, [asPath.split("/")[5]], 1);
         }
 
-        await fetchProposalsIdsList(contractConfig.abi);
+        await fetchProposalsIdsList(contractConfig.contractInterface);
 
         //@ts-ignore
         const closingVoteDate = new Date(parseInt(results[5] * 1000) + 1000);

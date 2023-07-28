@@ -1,6 +1,6 @@
 import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
-import { BigNumberish, utils } from "ethers";
 import { CustomError, ErrorCodes } from "types/error";
+import { formatEther, formatUnits } from "viem";
 import { useBalance, useContractRead, useContractWrite, useToken, useWaitForTransaction } from "wagmi";
 import { create } from "zustand";
 
@@ -42,10 +42,7 @@ export const useDistributeRewards = (
     functionName: tokenType === "erc20" ? "releasable(address,uint256)" : "releasable(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     //@ts-ignore
-    select: data =>
-      tokenType === "erc20"
-        ? parseFloat(utils.formatUnits(data as BigNumberish, tokenData?.decimals))
-        : parseFloat(utils.formatEther(data as BigNumberish)),
+    select: (data: bigint) => (tokenType === "erc20" ? formatUnits(data, tokenData?.decimals ?? 0) : formatEther(data)),
   });
 
   const queryRankRewardsReleased = useContractRead({
@@ -54,10 +51,7 @@ export const useDistributeRewards = (
     chainId,
     functionName: tokenType === "erc20" ? "released(address,uint256)" : "released(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
-    select: data =>
-      tokenType === "erc20"
-        ? parseFloat(utils.formatUnits(data as BigNumberish, tokenData?.decimals))
-        : parseFloat(utils.formatEther(data as BigNumberish)),
+    select: (data: bigint) => (tokenType === "erc20" ? formatUnits(data, tokenData?.decimals ?? 0) : formatEther(data)),
   });
 
   const contractWriteReleaseToken = useContractWrite({

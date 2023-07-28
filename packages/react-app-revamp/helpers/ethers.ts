@@ -1,7 +1,7 @@
-import { providers } from "ethers";
 import * as React from "react";
+import { type PublicClient, usePublicClient } from "wagmi";
+import { providers } from "ethers";
 import { type HttpTransport } from "viem";
-import { usePublicClient, type PublicClient } from "wagmi";
 
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
@@ -10,6 +10,7 @@ export function publicClientToProvider(publicClient: PublicClient) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
+
   if (transport.type === "fallback")
     return new providers.FallbackProvider(
       (transport.transports as ReturnType<HttpTransport>[]).map(

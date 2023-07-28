@@ -5,6 +5,10 @@ const nextConfig = {
     locales: ["en-US"],
     defaultLocale: "en-US",
   },
+  webpack: config => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    return config;
+  },
   images: {
     domains: ["lens.infura-ipfs.io", "ik.imagekit.io"],
   },

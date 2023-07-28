@@ -6,7 +6,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
 import { parseUnits } from "viem";
@@ -42,10 +42,9 @@ export function useCastVotes() {
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
-
     const contractConfig = {
-      address: id as `0x${string}`,
-      abi: abi ? abi : DeployedContestContract.abi,
+      addressOrName: id,
+      contractInterface: abi ?? DeployedContestContract.abi,
     };
 
     try {
@@ -57,10 +56,9 @@ export function useCastVotes() {
       );
 
       let txCastVotes: TransactionResponse = {} as TransactionResponse;
-      let hash: string = "";
 
       if (!proofsVerificationStatus.verified) {
-        const config = await prepareWriteContract({
+        txCastVotes = await writeContract({
           ...contractConfig,
           functionName: "castVote",
           args: [
@@ -71,23 +69,17 @@ export function useCastVotes() {
             proofsVerificationStatus.proofs,
           ],
         });
-
-        const { hash: writeHash } = await writeContract(config);
-        hash = writeHash;
       } else {
-        const config = await prepareWriteContract({
+        txCastVotes = await writeContract({
           ...contractConfig,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`, 18)],
         });
-
-        const { hash: writeHash } = await writeContract(config);
-        hash = writeHash;
       }
 
       const receipt = await waitForTransaction({
         chainId: chain?.id,
-        hash: hash as `0x${string}`,
+        hash: txCastVotes.hash,
         //@ts-ignore
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
       });

@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const zoraMainnet: Chain = {
+export const zoraMainnet = {
   id: 7777777,
   name: "zora",
   network: "zora",
@@ -21,4 +21,4 @@ export const zoraMainnet: Chain = {
     etherscan: { name: "Zora Block Explorer", url: "https://explorer.zora.energy/" },
     default: { name: "Zora Block Explorer", url: "https://explorer.zora.energy/" },
   },
-};
+} as const satisfies Chain;

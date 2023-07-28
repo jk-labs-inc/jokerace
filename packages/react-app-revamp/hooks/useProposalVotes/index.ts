@@ -5,6 +5,7 @@ import arrayToChunks from "@helpers/arrayToChunks";
 import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -29,6 +30,8 @@ export function useProposalVotes(id: number | string) {
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
   const [address] = useState(url[3]);
+
+  const { contestStatus } = useContestStatusStore(state => state);
 
   const {
     isListVotersSuccess,
@@ -64,20 +67,19 @@ export function useProposalVotes(id: number | string) {
       toastError(errorMessage);
       return;
     }
-
     try {
       const accountData = getAccount();
-
       const contractConfig = {
-        address: address as `0x${string}`,
-        abi: abi,
+        addressOrName: address,
+        contractInterface: abi,
+        chainId: chainId,
       };
 
       const list = await readContract({
         ...contractConfig,
-        chainId: chainId,
+        chainId,
         functionName: "proposalAddressesHaveVoted",
-        args: [id],
+        args: id,
       });
 
       const usersListWithCurrentUserFirst = Array.from(list);
@@ -158,8 +160,8 @@ export function useProposalVotes(id: number | string) {
       }
 
       const contractConfig = {
-        address: address as `0x${string}`,
-        abi: abi,
+        addressOrName: address,
+        contractInterface: abi,
         chainId,
       };
 
@@ -176,7 +178,7 @@ export function useProposalVotes(id: number | string) {
       try {
         author = await fetchEnsName({
           address: userAddress,
-          chainId: wagmiChain.mainnet.id,
+          chainId: 1,
         });
       } catch (error: any) {
         author = userAddress;

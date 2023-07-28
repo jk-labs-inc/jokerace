@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const avaxCChain: Chain = {
+export const avaxCChain = {
   id: 43114,
   name: "Avalanche",
   network: "avaxCChain",
@@ -21,4 +21,4 @@ export const avaxCChain: Chain = {
     escan: { name: "Snowtrace", url: "https://snowtrace.io/" },
     default: { name: "Snowtrace", url: "https://snowtrace.io/" },
   },
-};
+} as const satisfies Chain;

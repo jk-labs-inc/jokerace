@@ -4,11 +4,11 @@ import arrayToChunks from "@helpers/arrayToChunks";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
-import { readContract } from "@wagmi/core";
+import { readContract, readContracts } from "@wagmi/core";
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
-import { readContracts, useNetwork } from "wagmi";
+import { useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
 
 const PROPOSALS_PER_PAGE = 12;
@@ -60,8 +60,8 @@ export function useProposal() {
       }
 
       const contractConfig = {
-        address: address as `0x${string}`,
-        abi: abi,
+        addressOrName: address,
+        contractInterface: abi,
         chainId: chains.find(
           c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
         )?.id,
@@ -158,8 +158,8 @@ export function useProposal() {
       if (!chains) return;
 
       const contractConfig = {
-        address: address as `0x${string}`,
-        abi: abi,
+        addressOrName: address,
+        contractInterface: abi,
         chainId: chains.find(
           c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
         )?.id,

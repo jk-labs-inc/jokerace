@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const optimismTestnet: Chain = {
+export const optimismTestnet = {
   id: 420,
   name: "optimismTestnet",
   network: "optimismTestnet",
@@ -21,4 +21,4 @@ export const optimismTestnet: Chain = {
     etherscan: { name: "Optimism Testnet Etherscan", url: "https://goerli-optimism.etherscan.io/" },
     default: { name: "Optimism Testnet Etherscan", url: "https://goerli-optimism.etherscan.io/" },
   },
-};
+} as const satisfies Chain;

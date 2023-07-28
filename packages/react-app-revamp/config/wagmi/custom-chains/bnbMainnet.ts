@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const bnbMainnet: Chain = {
+export const bnbMainnet = {
   id: 56,
   name: "BnbMainnet",
   network: "bnbMainnet",
@@ -21,4 +21,4 @@ export const bnbMainnet: Chain = {
     escan: { name: "BNB Explorer", url: "https://bscscan.com" },
     default: { name: "BNB Explorer", url: "https://bscscan.com" },
   },
-};
+} as const satisfies Chain;

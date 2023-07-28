@@ -12,7 +12,7 @@ interface ContestWithdrawRewardsProps {
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore }) => {
   const { chain } = useNetwork();
   const nativeTokenBalance = useBalance({
-    addressOrName: rewardsStore?.rewards?.contractAddress,
+    address: rewardsStore?.rewards?.contractAddress as `0x${string}`,
     chainId: chain?.id,
   });
 

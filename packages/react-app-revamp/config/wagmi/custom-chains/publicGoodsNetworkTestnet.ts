@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const publicGoodsNetworkTestnet: Chain = {
+export const publicGoodsNetworkTestnet = {
   id: 58008,
   name: "publicGoodsNetworkTestnet",
   network: "publicGoodsNetworkTestnet",
@@ -27,4 +27,4 @@ export const publicGoodsNetworkTestnet: Chain = {
       url: "https://explorer.sepolia.publicgoods.network/",
     },
   },
-};
+} as const satisfies Chain;

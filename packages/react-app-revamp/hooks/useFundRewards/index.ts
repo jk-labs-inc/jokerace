@@ -1,10 +1,9 @@
 import { toastError } from "@components/UI/Toast";
 import useRewardsModule from "@hooks/useRewards";
-import { prepareSendTransaction, sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
+import { sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
-import { parseEther } from "viem";
 import { erc20ABI, useNetwork } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
@@ -65,10 +64,10 @@ export function useFundRewardsModule() {
     amount: string;
     rewardsContractAddress: string;
   }) => {
-    const { tokenAddress, amount, isErc20, rewardsContractAddress } = args;
+    const { currentUserAddress, tokenAddress, amount, isErc20, rewardsContractAddress } = args;
     const contractConfig = {
-      address: tokenAddress ?? ("" as `0x${string}`),
-      abi: erc20ABI,
+      addressOrName: tokenAddress ?? "",
+      contractInterface: erc20ABI,
     };
 
     setIsLoading(true);
@@ -80,7 +79,7 @@ export function useFundRewardsModule() {
       txSendFunds = await writeContract({
         ...contractConfig,
         functionName: "transfer",
-        args: [rewardsContractAddress as `0x${string}`, parseEther(amount)],
+        args: [rewardsContractAddress, amount],
       });
 
       receipt = await waitForTransaction({
@@ -90,16 +89,18 @@ export function useFundRewardsModule() {
 
       await refetchBalanceRewardsModule();
     } else {
-      const config = prepareSendTransaction({
-        to: rewardsContractAddress as `0x${string}`,
-        value: parseEther(amount),
+      txSendFunds = await sendTransaction({
+        chainId: chain?.id,
+        request: {
+          from: currentUserAddress,
+          to: rewardsContractAddress,
+          value: amount,
+        },
       });
-
-      const { hash } = await sendTransaction(await config);
 
       receipt = await waitForTransaction({
         chainId: chain?.id,
-        hash: hash,
+        hash: txSendFunds.hash,
       });
     }
 

@@ -5,12 +5,12 @@ import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import { ROUTE_VIEW_CONTEST_BASE_PATH, ROUTE_VIEW_UPCOMING_CONTESTS } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
 import useContestInfo from "@hooks/useContestInfo";
-import { getAccount } from "@wagmi/core";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { useAccount } from "wagmi";
 
 interface ContestProps {
   contest: any;
@@ -24,7 +24,7 @@ export type TimeLeft = {
 };
 
 const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
-  const { address } = getAccount();
+  const { address } = useAccount();
   const router = useRouter();
   const isUpcomingContest = router.pathname === ROUTE_VIEW_UPCOMING_CONTESTS;
   const [submissionStatus, setSubmissionStatus] = useState("");

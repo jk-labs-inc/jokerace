@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const publicGoodsNetworkMainnet: Chain = {
+export const publicGoodsNetworkMainnet = {
   id: 424,
   name: "publicGoodsNetworkMainnet",
   network: "publicGoodsNetworkMainnet",
@@ -21,4 +21,4 @@ export const publicGoodsNetworkMainnet: Chain = {
     etherscan: { name: "Public Goods Network Mainnet Block Explorer", url: "explorer.publicgoods.network" },
     default: { name: "Public Goods Network Mainnet Block Explorer", url: "explorer.publicgoods.network" },
   },
-};
+} as const satisfies Chain;

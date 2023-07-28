@@ -1,4 +1,5 @@
 import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
+import { argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
@@ -35,8 +36,6 @@ import { zoraMainnet } from "./custom-chains/zora";
 type ChainImages = {
   [key: string]: string;
 };
-
-const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
 const totalChains: Chain[] = [
   polygon,
@@ -75,52 +74,58 @@ const publicClients =
   process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY
     ? [
         jsonRpcProvider({
-          rpc: chain => ({
-            http: `${chain.rpcUrls.default}`,
-          }),
+          rpc: chain => {
+            return {
+              http: `${chain.rpcUrls.default.http[0]}`,
+            };
+          },
         }),
         jsonRpcProvider({
-          rpc: chain => ({
-            http: `${chain.rpcUrls.public}`,
-          }),
+          rpc: chain => {
+            return {
+              http: `${chain.rpcUrls.public.http[0]}`,
+            };
+          },
         }),
       ]
     : [
         jsonRpcProvider({
-          rpc: chain => ({
-            http: `${chain.rpcUrls.public}`,
-          }),
+          rpc: chain => {
+            return {
+              http: `${chain.rpcUrls.public.http[0]}`,
+            };
+          },
         }),
       ];
 
-export const { chains, publicClient, webSocketPublicClient } = configureChains(totalChains, publicClients);
+export const { chains, publicClient } = configureChains(totalChains, publicClients);
+
+const WALLETCONNECT_PROJECT_ID = "275c857ec75d696799f94aa5c72dbe70";
 
 const { wallets } = getDefaultWallets({
   appName: "jokerace",
-  projectId: "jokerace",
   chains,
+  projectId: WALLETCONNECT_PROJECT_ID,
 });
 
-// @TODO wallet connectors
 const connectors = connectorsForWallets([
   ...wallets,
-  // {
-  //   groupName: "Other",
-  //   wallets: [
-  //     wallet.argent({ chains }),
-  //     wallet.trust({ chains }),
-  //     wallet.steak({ chains }),
-  //     wallet.imToken({ chains }),
-  //     wallet.ledger({ chains }),
-  //   ],
-  // },
+  {
+    groupName: "Other",
+    wallets: [
+      argentWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
+      trustWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
+      ledgerWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
+      imTokenWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
+      omniWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
+    ],
+  },
 ]);
 
-export const client = createConfig({
+export const config = createConfig({
   autoConnect: true,
   connectors,
   publicClient,
-  webSocketPublicClient,
 });
 
 export const chainsImages: ChainImages = {
