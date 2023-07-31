@@ -1,6 +1,7 @@
 import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
+import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
@@ -30,6 +31,7 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
+  const provider = useEthersProvider({ chainId: chain?.id });
 
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
@@ -49,7 +51,8 @@ export function useProposal() {
     setIsPageProposalsError(null);
 
     try {
-      const { abi, version } = await getContestContractVersion(address, chainName);
+      const { abi } = await getContestContractVersion(address, provider);
+      console.log("abi", abi);
 
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
@@ -60,32 +63,36 @@ export function useProposal() {
       }
 
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
+        address: address as `0x${string}`,
+        abi: abi,
         chainId: chains.find(
           c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
         )?.id,
       };
 
-      const contracts = slice.flatMap((id: number) => [
-        // proposal content
-        {
-          ...contractConfig,
-          functionName: "getProposal",
-          args: id,
-        },
-        // Votes received
-        {
-          ...contractConfig,
-          functionName: "proposalVotes",
-          args: id,
-        },
-      ]);
+      const contracts: any[] = [];
+
+      for (const id of slice) {
+        contracts.push(
+          // Proposal content
+          {
+            ...contractConfig,
+            functionName: "getProposal",
+            args: [id],
+          },
+          // Votes received
+          {
+            ...contractConfig,
+            functionName: "proposalVotes",
+            args: [id],
+          },
+        );
+      }
 
       const results = await readContracts({ contracts });
 
       for (let i = 0; i < slice.length; i++) {
-        await fetchProposal(i, results, slice, version);
+        await fetchProposal(i, results, slice);
       }
 
       setIsPageProposalsLoading(false);
@@ -110,12 +117,7 @@ export function useProposal() {
    * @param results - array of smart contracts calls results (returned by `readContracts`)
    * @param listIdsProposalsToBeFetched - array of proposals ids to be fetched
    */
-  async function fetchProposal(
-    i: number,
-    results: Array<any>,
-    listIdsProposalsToBeFetched: Array<any>,
-    version: string,
-  ) {
+  async function fetchProposal(i: number, results: Array<any>, listIdsProposalsToBeFetched: Array<any>) {
     // Create an array of proposals
     // A proposal is a pair of data
     // A pair of a proposal data is [content, votes]
@@ -124,19 +126,20 @@ export function useProposal() {
       return result;
     }, []);
 
-    const isV3 = version.startsWith("3");
-    const data = proposalDataPerId[i][0];
-    const content = isV3 ? data[2] : data[1];
-    const isContentImage = isUrlToImage(isV3 ? data[2] : data[1]) ? true : false;
+    const data = proposalDataPerId[i][0].result;
 
+    const isContentImage = isUrlToImage(data.description) ? true : false;
+
+    //@TODO check decimals here
     const proposalData = {
-      authorEthereumAddress: data[0],
-      content,
+      authorEthereumAddress: data.author,
+      content: data.description,
       isContentImage,
-      exists: isV3 ? data[1] : data[2],
-      votes: proposalDataPerId[i][1]?.forVotes
-        ? proposalDataPerId[i][1]?.forVotes / 1e18 - proposalDataPerId[i][1]?.againstVotes / 1e18
-        : proposalDataPerId[i][1] / 1e18,
+      exists: data.exists,
+      votes: proposalDataPerId[i][1].result
+        ? Number(BigInt(proposalDataPerId[i][1].result[0]) / BigInt("1000000000000000000")) -
+          Number(BigInt(proposalDataPerId[i][1].result[1]) / BigInt("1000000000000000000"))
+        : 0,
     };
 
     setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
@@ -152,22 +155,24 @@ export function useProposal() {
     try {
       // Get list of proposals (ids)
       const useLegacyGetAllProposalsIdFn =
-        //@ts-ignore
-        abi?.filter(el => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
+        abi?.filter((el: { name: string }) => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
 
       if (!chains) return;
 
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
+        address: address as `0x${string}`,
+        abi: abi,
         chainId: chains.find(
           c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
         )?.id,
       };
-      const proposalsIdsRawData = await readContract({
+
+      const proposalsIdsRawData = (await readContract({
         ...contractConfig,
         functionName: !useLegacyGetAllProposalsIdFn ? "allProposalTotalVotes" : "getAllProposalIds",
-      });
+        args: [],
+      })) as any;
+
       let proposalsIds: Result;
       if (!useLegacyGetAllProposalsIdFn) {
         proposalsIds = [];
@@ -192,6 +197,7 @@ export function useProposal() {
             return 0;
           })
           .map((proposal: { id: any }) => proposal.id);
+
         setListProposalsIds(proposalsIds as string[]);
       } else {
         proposalsIds = proposalsIdsRawData;

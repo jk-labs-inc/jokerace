@@ -35,15 +35,14 @@ export function useDeployRewardsPool() {
 
     const rewardsModuleAttachment = async () => {
       const contractConfig = {
-        addressOrName: contestAddress,
-        contractInterface: DeployedContestContract.abi,
+        address: contestAddress as `0x${string}`,
+        abi: DeployedContestContract.abi,
       };
-      const txSetRewardsModule = await writeContract({
+      await writeContract({
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
         args: [contractRewardsModule!.address],
       });
-      await txSetRewardsModule.wait();
 
       setIsLoading(false);
       setIsSuccess(true);

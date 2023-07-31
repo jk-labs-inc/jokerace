@@ -4,7 +4,6 @@ import ProposalContent from "@components/_pages/ProposalContent";
 import { useContestStore } from "@hooks/useContest/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import moment from "moment";
 
 export const ListProposals = () => {
   const { fetchProposalsPage } = useProposal();
@@ -19,9 +18,6 @@ export const ListProposals = () => {
     listProposalsData,
   } = useProposalStore(state => state);
   const { votesOpen, contestPrompt } = useContestStore(state => state);
-
-  const now = moment();
-  const formattedVotingOpen = moment(votesOpen);
 
   if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
     return <Loader scale="component">Loading proposals...</Loader>;

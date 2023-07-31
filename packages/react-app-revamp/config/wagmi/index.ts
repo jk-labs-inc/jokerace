@@ -1,6 +1,6 @@
 import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
 import { argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
-import { Chain, configureChains, createConfig } from "wagmi";
+import { Chain, configureChains, createConfig, mainnet } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avaxCChain } from "./custom-chains/avaxCChain";
@@ -38,6 +38,7 @@ type ChainImages = {
 };
 
 const totalChains: Chain[] = [
+  mainnet,
   polygon,
   arbitrumOne,
   optimism,
@@ -98,7 +99,7 @@ const publicClients =
         }),
       ];
 
-export const { chains, publicClient } = configureChains(totalChains, publicClients);
+export const { chains, publicClient, webSocketPublicClient } = configureChains(totalChains, publicClients);
 
 const WALLETCONNECT_PROJECT_ID = "275c857ec75d696799f94aa5c72dbe70";
 
@@ -126,6 +127,7 @@ export const config = createConfig({
   autoConnect: true,
   connectors,
   publicClient,
+  webSocketPublicClient,
 });
 
 export const chainsImages: ChainImages = {

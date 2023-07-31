@@ -48,7 +48,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
 
   useEffect(() => {
     if (isSuccess) setIsOpen(false);
-  }, [isSuccess]);
+  }, [isSuccess, setIsOpen]);
 
   return (
     <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px] ">

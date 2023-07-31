@@ -6,12 +6,8 @@ import BetterRewardsNotesRewards from "@contracts/bytecodeAndAbi/modules/Rewards
 import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.1.merkleVotes.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
 import { ethers } from "ethers";
-import { useEthersProvider } from "./ethers";
 
-export async function getRewardsModuleContractVersion(address: string, chainName: string) {
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const provider = useEthersProvider({ chainId });
-
+export async function getRewardsModuleContractVersion(address: string, provider: any) {
   const contract = new ethers.Contract(address, NumberedVersioningRewards.abi, provider);
 
   try {

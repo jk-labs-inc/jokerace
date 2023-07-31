@@ -4,7 +4,7 @@ import isUrlToImage from "@helpers/isUrlToImage";
 import useContest from "@hooks/useContest";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { chain, fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
+import { fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
@@ -25,8 +25,8 @@ export function useContestEvents() {
     try {
       const proposalId = args[5].args.proposalId;
       const votes = await readContract({
-        addressOrName: asPath.split("/")[3],
-        contractInterface: DeployedContestContract.abi,
+        address: asPath.split("/")[3] as `0x${string}`,
+        abi: DeployedContestContract.abi,
         functionName: "proposalVotes",
         args: proposalId,
       });
@@ -39,18 +39,18 @@ export function useContestEvents() {
           votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
         });
       } else {
-        const proposal = await readContract({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
+        const proposal = (await readContract({
+          address: asPath.split("/")[3] as `0x${string}`,
+          abi: DeployedContestContract.abi,
           functionName: "getProposal",
           args: proposalId,
-        });
+        })) as any;
 
         let author;
         try {
           author = await fetchEnsName({
-            address: proposal[0],
-            chainId: chain.mainnet.id,
+            address: proposal[0] as `0x${string}`,
+            chainId: 1,
           });
         } catch (error: any) {
           author = proposal[0];
@@ -79,6 +79,7 @@ export function useContestEvents() {
     contestStatusRef.current = contestStatus;
   }, [contestStatus]);
 
+  //@TODO event listeners
   useEffect(() => {
     if (contestStatus !== ContestStatus.VotingOpen) {
       provider.removeAllListeners("VoteCast");
@@ -86,8 +87,9 @@ export function useContestEvents() {
     } else {
       watchContractEvent(
         {
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
+          address: asPath.split("/")[3] as `0x${string}`,
+          abi: DeployedContestContract.abi,
+          eventName: "VoteCast",
         },
         "VoteCast",
         (...args) => {

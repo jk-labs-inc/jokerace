@@ -1,6 +1,7 @@
 import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
+import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import useProposal from "@hooks/useProposal";
@@ -22,8 +23,8 @@ import { getV3Contracts } from "./v3/contracts";
 
 interface ContractConfigResult {
   contractConfig: {
-    addressOrName: string;
-    contractInterface: any;
+    address: `0x${string}`;
+    abi: any;
     chainId: number;
   };
   version: string;
@@ -67,7 +68,8 @@ export function useContest() {
     useProposalStore(state => state);
   const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
-  const { fetchProposalsIdsList, fetchProposalsPage } = useProposal();
+  const { fetchProposalsIdsList } = useProposal();
+  const provider = useEthersProvider({ chainId });
 
   /**
    * Display an error toast in the UI for any contract related error
@@ -81,7 +83,7 @@ export function useContest() {
   // Generate config for the contract
   async function getContractConfig(): Promise<ContractConfigResult | undefined> {
     try {
-      const { abi, version } = await getContestContractVersion(address, chainName);
+      const { abi, version } = await getContestContractVersion(address, provider);
 
       if (abi === null) {
         const errorMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
@@ -95,8 +97,8 @@ export function useContest() {
       }
 
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
+        address: address as `0x${string}`,
+        abi: abi,
         chainId: chainId,
       };
 
@@ -117,13 +119,12 @@ export function useContest() {
     const { contractConfig, version } = result;
     let contestRewardModuleAddress: string | undefined;
 
-    if (
-      contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
-    ) {
-      contestRewardModuleAddress = await readContract({
+    if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
+      contestRewardModuleAddress = (await readContract({
         ...contractConfig,
         functionName: "officialRewardsModule",
-      });
+        args: [],
+      })) as any;
       if (contestRewardModuleAddress?.toString() == "0x0000000000000000000000000000000000000000") {
         setSupportsRewardsModule(false);
         contestRewardModuleAddress = undefined;
@@ -143,31 +144,26 @@ export function useContest() {
 
         setIsV3(true);
 
-        if (asPath.includes("/proposal/")) {
-          await fetchProposalsPage(0, [asPath.split("/")[5]], 1);
-        }
+        await fetchProposalsIdsList(contractConfig.abi);
 
-        await fetchProposalsIdsList(contractConfig.contractInterface);
+        const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
+        const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
+        const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
+        const isDownvotingAllowed = Number(results[9].result) === 1;
+        const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
+        const contestMaxProposalCount = Number(results[3].result);
 
-        //@ts-ignore
-        const closingVoteDate = new Date(parseInt(results[5] * 1000) + 1000);
+        setContestName(results[0].result as string);
+        setContestAuthor(results[1].result as string, results[1].result as string);
 
-        setContestName(results[0].toString());
-        setContestAuthor(results[1].toString(), results[1].toString());
-
-        const contestMaxNumberSubmissionsPerUser = parseFloat(results[2].toString());
         setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
-        setContestMaxProposalCount(parseFloat(results[3].toString()));
-
-        //@ts-ignore
-        setSubmissionsOpen(new Date(parseInt(results[4]) * 1000 + 1000));
+        setContestMaxProposalCount(contestMaxProposalCount);
+        setSubmissionsOpen(submissionsOpenDate);
         setVotesClose(closingVoteDate);
-        //@ts-ignore
-        setVotesOpen(new Date(parseInt(results[6]) * 1000 + 1000));
+        setVotesOpen(votesOpenDate);
+        setContestPrompt(results[8].result as string);
 
-        setContestPrompt(results[8].toString());
-
-        setDownvotingAllowed(results[9].eq(1));
+        setDownvotingAllowed(isDownvotingAllowed);
 
         // We want to track VoteCast event only 1H before the end of the contest
         if (isBefore(new Date(), closingVoteDate)) {
@@ -211,28 +207,22 @@ export function useContest() {
 
         setIsV3(false);
 
-        // If current page is proposal, fetch proposal with id
-        if (asPath.includes("/proposal/")) {
-          await fetchProposalsPage(0, [asPath.split("/")[5]], 1);
-        }
-
         // List of proposals for this contest
-        await fetchProposalsIdsList(contractConfig.contractInterface);
+        await fetchProposalsIdsList(contractConfig.abi);
 
-        setContestName(results[0].toString());
-        setContestAuthor(results[1].toString(), results[1].toString());
-        //@ts-ignore
-        setContestMaxNumberSubmissionsPerUser(results[2]);
-        //@ts-ignore
-        setContestMaxProposalCount(results[3]);
+        setContestName(results[0].result as string);
+        setContestAuthor(results[1].result as string, results[1].result as string);
 
-        //@ts-ignore
-        const closingVoteDate = new Date(parseInt(results[6]) * 1000);
+        const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
+        const contestMaxProposalCount = Number(results[3].result);
+        const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
+        const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
+        const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
 
-        //@ts-ignore
-        setSubmissionsOpen(new Date(parseInt(results[5]) * 1000));
-        //@ts-ignore
-        setVotesOpen(new Date(parseInt(results[7]) * 1000));
+        setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
+        setContestMaxProposalCount(contestMaxProposalCount);
+        setSubmissionsOpen(submissionsOpenDate);
+        setVotesOpen(votesOpenDate);
         setVotesClose(closingVoteDate);
 
         setError(null);
@@ -240,14 +230,11 @@ export function useContest() {
         setIsLoading(false);
         setIsListProposalsLoading(false);
 
-        //@ts-ignore
-        const promptFilter = contractConfig.contractInterface?.filter(el => el.name === "prompt");
-        //@ts-ignore
-        const submissionGatingFilter = contractConfig.contractInterface?.filter(
+        const promptFilter = contractConfig.abi?.filter((el: { name: string }) => el.name === "prompt");
+        const submissionGatingFilter = contractConfig.abi?.filter(
           (el: { name: string }) => el.name === "submissionGatingByVotingToken",
         );
-        //@ts-ignore
-        const downvotingFilter = contractConfig.contractInterface?.filter(el => el.name === "downvotingAllowed");
+        const downvotingFilter = contractConfig.abi?.filter((el: { name: string }) => el.name === "downvotingAllowed");
 
         if (promptFilter.length > 0) {
           const indexToCheck = submissionGatingFilter.length > 0 ? 4 : downvotingFilter.length > 0 ? 2 : 1;
@@ -280,24 +267,24 @@ export function useContest() {
   async function processRewardData(contestRewardModuleAddress: string | undefined) {
     if (!contestRewardModuleAddress) return;
 
-    const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainName);
+    const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, provider);
 
     if (!abiRewardsModule) {
       setRewards(null);
     } else {
-      const winners = await readContract({
-        addressOrName: contestRewardModuleAddress,
-        contractInterface: abiRewardsModule,
+      const winners = (await readContract({
+        address: contestRewardModuleAddress as `0x${string}`,
+        abi: abiRewardsModule,
         chainId: chainId,
         functionName: "getPayees",
-      });
+      })) as any[];
 
       let rewardToken: FetchBalanceResult | null = null;
       let erc20Tokens: any = null;
 
       rewardToken = await fetchNativeBalance(contestRewardModuleAddress, chainId);
 
-      if (!rewardToken || rewardToken.value.eq(0)) {
+      if (!rewardToken || rewardToken.value.toString() == "0") {
         try {
           erc20Tokens = await fetchTokenBalances(chainName, contestRewardModuleAddress);
 
@@ -377,7 +364,6 @@ export function useContest() {
       await fetchTotalVotesCast();
       await checkIfCurrentUserQualifyToSubmit(submissionMerkleTree, contestMaxNumberSubmissionsPerUser);
       await checkIfCurrentUserQualifyToVote();
-
       setIsUserStoreLoading(false);
       setSubmissionMerkleTree(submissionMerkleTree);
       setVotingMerkleTree(votingMerkleTree);
@@ -391,9 +377,7 @@ export function useContest() {
 
       const { contractConfig } = result;
 
-      if (
-        !(contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "totalVotesCast").length > 0)
-      ) {
+      if (!(contractConfig.abi?.filter((el: { name: string }) => el.name === "totalVotesCast").length > 0)) {
         setTotalVotesCast(-1);
         return;
       }
@@ -401,6 +385,7 @@ export function useContest() {
       const totalVotesCast = await readContract({
         ...contractConfig,
         functionName: "totalVotesCast",
+        args: [],
       });
 
       setTotalVotesCast(totalVotesCast ? Number(totalVotesCast) / 1e18 : 0);

@@ -1,6 +1,7 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
+import { useEthersSigner } from "@helpers/ethers";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
@@ -8,7 +9,7 @@ import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory, ethers } from "ethers";
 import { CustomError, ErrorCodes } from "types/error";
-import { useAccount, useNetwork, useWalletClient } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
 export function useDeployContest() {
@@ -34,6 +35,7 @@ export function useDeployContest() {
   } = useDeployContestStore(state => state);
   const { chain } = useNetwork();
   const { address } = useAccount();
+  const signer = useEthersSigner();
 
   async function deployContest() {
     stateContestDeployment.setIsLoading(true);
@@ -42,7 +44,11 @@ export function useDeployContest() {
 
     toastLoading("contest is deploying...");
     try {
-      const factoryCreateContest = new ContractFactory(DeployedContestContract.abi, DeployedContestContract.bytecode);
+      const factoryCreateContest = new ContractFactory(
+        DeployedContestContract.abi,
+        DeployedContestContract.bytecode,
+        signer,
+      );
 
       const contestInfo = type + "|" + summary + "|" + prompt;
 

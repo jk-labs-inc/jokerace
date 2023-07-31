@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-import { chains, provider } from "@config/wagmi";
+import { chains } from "@config/wagmi";
 import { useAvatarStore } from "@hooks/useAvatar";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import { chain, useEnsName } from "wagmi";
+import { useEnsName } from "wagmi";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
 
@@ -56,8 +56,8 @@ const EthereumAddress = ({
   );
 
   const queryEns = useEnsName({
-    chainId: chain.mainnet.id,
-    address: ethereumAddress,
+    chainId: 1,
+    address: ethereumAddress as `0x${string}`,
     enabled: !displayLensProfile || queryUserProfileLens.isError || !queryUserProfileLens.data,
   });
 

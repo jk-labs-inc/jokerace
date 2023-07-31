@@ -1,12 +1,15 @@
 import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
+import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
+import { BigNumber } from "ethers";
 import MerkleTree from "merkletreejs";
 import { useRouter } from "next/router";
+import { Abi } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useUserStore } from "./store";
 
@@ -30,10 +33,12 @@ export function useUser() {
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
+  const chainId = chains.find(c => c.name.replace(/\s+/g, "").toLowerCase() === lowerCaseChainName)?.id;
+  const provider = useEthersProvider({ chainId });
 
   // Generate config for the contract
   async function getContractConfig() {
-    const { abi } = await getContestContractVersion(address, chainName);
+    const { abi } = await getContestContractVersion(address, provider);
 
     if (abi === null) {
       toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
@@ -45,31 +50,34 @@ export function useUser() {
       return;
     }
 
-    const contractConfig = {
-      addressOrName: address,
-      contractInterface: abi,
-      chainId: chains.find(c => c.name.replace(/\s+/g, "").toLowerCase() === lowerCaseChainName)?.id,
-    };
-
-    return contractConfig;
+    return { abi };
   }
 
   const checkIfCurrentUserQualifyToSubmit = async (
     submissionMerkleTree: MerkleTree,
     contestMaxNumberSubmissionsPerUser: number,
   ) => {
-    const contractConfig = await getContractConfig();
+    const abi = await getContractConfig();
     const config = await import("@config/supabase");
     const supabase = config.supabase;
 
-    if (!userAddress || !contractConfig) return;
+    if (!userAddress || !abi) return;
 
+    const contractConfig = {
+      address: address as `0x${string}`,
+      abi: abi.abi as unknown as Abi,
+      chainId: chainId,
+    };
+
+    //@TODO check here if type is good
     if (submissionMerkleTree.getHexRoot() === "0x") {
-      const numOfSubmittedProposals = await readContract({
+      const numOfSubmittedProposalsRaw = await readContract({
         ...contractConfig,
         functionName: "getNumSubmissions",
-        args: userAddress,
+        args: [userAddress],
       });
+
+      const numOfSubmittedProposals = BigNumber.from(numOfSubmittedProposalsRaw);
 
       if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
         setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
@@ -88,11 +96,13 @@ export function useUser() {
           .eq("network_name", lowerCaseChainName);
 
         if (data && data.length > 0 && data[0].can_submit) {
-          const numOfSubmittedProposals = await readContract({
+          const numOfSubmittedProposalsRaw = await readContract({
             ...contractConfig,
             functionName: "getNumSubmissions",
-            args: userAddress,
+            args: [userAddress],
           });
+
+          const numOfSubmittedProposals = BigNumber.from(numOfSubmittedProposalsRaw);
 
           if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
             setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
@@ -127,24 +137,32 @@ export function useUser() {
         .eq("network_name", lowerCaseChainName);
 
       if (data && data.length > 0 && data[0].num_votes > 0) {
-        const contractConfig = await getContractConfig();
-        if (!contractConfig) return;
+        const abi = await getContractConfig();
+        if (!abi) return;
+
+        const contractConfig = {
+          address: address as `0x${string}`,
+          abi: abi.abi as unknown as Abi,
+          chainId: chainId,
+        };
 
         const currentUserTotalVotesCast = await readContract({
           ...contractConfig,
           functionName: "contestAddressTotalVotesCast",
-          args: userAddress,
+          args: [userAddress],
         });
 
         const userVotes = data[0].num_votes;
+
         //@ts-ignore
-        const castVotes = currentUserTotalVotesCast / 1e18;
+        const castVotes = BigNumber.from(currentUserTotalVotesCast) / 1e18;
 
         if (castVotes > 0) {
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes - castVotes);
           setCurrentuserTotalVotesCast(castVotes);
         } else {
+          console.log("el;sara");
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes);
           setCurrentuserTotalVotesCast(castVotes);
@@ -166,16 +184,17 @@ export function useUser() {
    * Update the amount of votes casted in this contest by the current user
    */
   async function updateCurrentUserVotes() {
-    const contractConfig = await getContractConfig();
+    const abi = await getContractConfig();
 
-    if (!contractConfig) return;
+    if (!abi) return;
     const accountData = getAccount();
 
     try {
       const currentUserTotalVotesCast = await readContract({
-        ...contractConfig,
+        address: address as `0x${string}`,
+        abi: abi as unknown as Abi,
         functionName: "contestAddressTotalVotesCast",
-        args: accountData?.address,
+        args: [accountData?.address],
       });
 
       //@ts-ignore

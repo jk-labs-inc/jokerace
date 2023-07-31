@@ -42,11 +42,11 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
     isError,
     isLoading: isSharesLoading,
   } = useContractRead({
-    addressOrName: contractRewardsModuleAddress,
-    contractInterface: abiRewardsModule,
+    address: contractRewardsModuleAddress as `0x${string}`,
+    abi: abiRewardsModule,
     chainId: chainId,
     functionName: "shares",
-    args: payee,
+    args: [Number(payee)],
   });
   const isLoading = isSharesLoading || isFundingRewardsLoading || isWithdrawRewardsLoading;
 

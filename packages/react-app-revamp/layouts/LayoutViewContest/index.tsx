@@ -15,7 +15,6 @@ import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
-import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
 import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
@@ -286,17 +285,15 @@ export const getLayout = (page: any) => {
           <UserWrapper>
             <SubmitProposalWrapper>
               <CastVotesWrapper>
-                <DeleteProposalWrapper>
-                  <ContractFactoryWrapper>
-                    <DeployRewardsWrapper>
-                      <RewardsWrapper>
-                        <FundRewardsWrapper>
-                          <LayoutViewContest>{page}</LayoutViewContest>
-                        </FundRewardsWrapper>
-                      </RewardsWrapper>
-                    </DeployRewardsWrapper>
-                  </ContractFactoryWrapper>
-                </DeleteProposalWrapper>
+                <ContractFactoryWrapper>
+                  <DeployRewardsWrapper>
+                    <RewardsWrapper>
+                      <FundRewardsWrapper>
+                        <LayoutViewContest>{page}</LayoutViewContest>
+                      </FundRewardsWrapper>
+                    </RewardsWrapper>
+                  </DeployRewardsWrapper>
+                </ContractFactoryWrapper>
               </CastVotesWrapper>
             </SubmitProposalWrapper>
           </UserWrapper>

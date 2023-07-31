@@ -5,11 +5,11 @@ import arrayToChunks from "@helpers/arrayToChunks";
 import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { CustomError } from "types/error";
+import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useProposalVotesStore } from "./store";
 
@@ -24,15 +24,13 @@ export function useProposalVotes(id: number | string) {
       }
     },
   });
-  const provider = useEthersProvider();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
   const [address] = useState(url[3]);
 
-  const { contestStatus } = useContestStatusStore(state => state);
-
+  const provider = useEthersProvider({ chainId });
   const {
     isListVotersSuccess,
     isListVotersError,
@@ -54,9 +52,8 @@ export function useProposalVotes(id: number | string) {
    */
   async function fetchProposalVotes() {
     setIsListVotersLoading(true);
-    const chainName = url[2];
 
-    const { abi, version } = await getContestContractVersion(address, chainName);
+    const { abi, version } = await getContestContractVersion(address, provider);
 
     if (abi === null) {
       const errorMessage = "This contract doesn't exist on this chain.";
@@ -69,18 +66,14 @@ export function useProposalVotes(id: number | string) {
     }
     try {
       const accountData = getAccount();
-      const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
-        chainId: chainId,
-      };
 
-      const list = await readContract({
-        ...contractConfig,
+      const list = (await readContract({
+        address: address as `0x${string}`,
+        abi: abi as unknown as Abi,
         chainId,
         functionName: "proposalAddressesHaveVoted",
-        args: id,
-      });
+        args: [id],
+      })) as any;
 
       const usersListWithCurrentUserFirst = Array.from(list);
       // Make sure that current user address appears first in the list
@@ -149,7 +142,7 @@ export function useProposalVotes(id: number | string) {
     const chainName = asPath.split("/")[2];
 
     try {
-      const { abi, version } = await getContestContractVersion(address, chainName);
+      const { abi, version } = await getContestContractVersion(address, provider);
 
       if (abi === null) {
         const errorMessage = "This contract doesn't exist on this chain.";
@@ -160,24 +153,24 @@ export function useProposalVotes(id: number | string) {
       }
 
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
+        address: address as `0x${string}`,
+        abi: abi as unknown as Abi,
         chainId,
       };
 
-      const data = await readContract({
+      const data = (await readContract({
         ...contractConfig,
         functionName: "proposalAddressVotes",
         args: [id, userAddress],
         chainId,
-      });
+      })) as any;
 
       const { forVotes, againstVotes } = data ?? {};
 
       let author;
       try {
         author = await fetchEnsName({
-          address: userAddress,
+          address: userAddress as `0x${string}`,
           chainId: 1,
         });
       } catch (error: any) {

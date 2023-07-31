@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
 import ButtonV3 from "@components/UI/ButtonV3";

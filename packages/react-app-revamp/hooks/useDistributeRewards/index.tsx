@@ -26,8 +26,13 @@ export const useDistributeRewards = (
   tokenAddress?: string,
 ) => {
   const { setIsLoading } = useDistributeRewardStore(state => state);
-  const { data: tokenData } =
-    tokenType === "erc20" ? useToken({ address: tokenAddress as `0x${string}`, chainId }) : { data: null };
+  const tokenDataRes = useToken({ address: tokenAddress as `0x${string}`, chainId });
+  const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;
+
+  const transform = (data: unknown[]) => {
+    const amount = data[0] as bigint;
+    return tokenType === "erc20" ? formatUnits(amount, tokenData?.decimals ?? 0) : formatEther(amount);
+  };
 
   const queryTokenBalance = useBalance({
     address: contractRewardsModuleAddress as `0x${string}`,
@@ -41,8 +46,10 @@ export const useDistributeRewards = (
     chainId,
     functionName: tokenType === "erc20" ? "releasable(address,uint256)" : "releasable(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
-    //@ts-ignore
-    select: (data: bigint) => (tokenType === "erc20" ? formatUnits(data, tokenData?.decimals ?? 0) : formatEther(data)),
+    select: data => transform(data),
+    async onError(e) {
+      console.log(e);
+    },
   });
 
   const queryRankRewardsReleased = useContractRead({
@@ -51,7 +58,7 @@ export const useDistributeRewards = (
     chainId,
     functionName: tokenType === "erc20" ? "released(address,uint256)" : "released(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
-    select: (data: bigint) => (tokenType === "erc20" ? formatUnits(data, tokenData?.decimals ?? 0) : formatEther(data)),
+    select: data => transform(data),
   });
 
   const contractWriteReleaseToken = useContractWrite({

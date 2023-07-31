@@ -25,7 +25,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
       </li>
     );
 
-  if (queryTokenBalance.data.value.eq(0) || queryRankRewardsReleasable.data === 0) {
+  if (queryTokenBalance.data.value === 0 || queryRankRewardsReleasable.data === 0) {
     return (
       <li>
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds to distribute
@@ -38,7 +38,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
       <section className="flex justify-between w-full">
         {queryRankRewardsReleasable.isLoading && <Loader scale="component">Loading info...</Loader>}
         <p>
-          {queryRankRewardsReleasable.data} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+          {queryRankRewardsReleasable.data.value} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
         </p>
 
         {queryRankRewardsReleasable.isSuccess && (

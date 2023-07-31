@@ -28,8 +28,8 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
     contractWriteReleaseToken,
     txRelease,
   } = useDistributeRewards(
-    payee,
-    share,
+    Number(payee),
+    Number(share),
     contractRewardsModuleAddress,
     abiRewardsModule,
     chainId,

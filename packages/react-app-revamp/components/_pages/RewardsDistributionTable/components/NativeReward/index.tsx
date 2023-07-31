@@ -18,7 +18,14 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     queryRankRewardsReleased,
     contractWriteReleaseToken,
     txRelease,
-  } = useDistributeRewards(payee, share, contractRewardsModuleAddress, abiRewardsModule, chainId, "native");
+  } = useDistributeRewards(
+    Number(payee),
+    Number(share),
+    contractRewardsModuleAddress,
+    abiRewardsModule,
+    chainId,
+    "native",
+  );
 
   return (
     <Reward

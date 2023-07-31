@@ -17,19 +17,19 @@ export function getV1Contracts(contractConfig: any) {
     functionName,
   }));
 
-  if (contractConfig.contractInterface?.some(({ name }: any) => name === "prompt")) {
+  if (contractConfig.abi?.some(({ name }: any) => name === "prompt")) {
     contracts.push({
       ...contractConfig,
       functionName: "prompt",
     });
   }
-  if (contractConfig.contractInterface?.some(({ name }: any) => name === "downvotingAllowed")) {
+  if (contractConfig.abi?.some(({ name }: any) => name === "downvotingAllowed")) {
     contracts.push({
       ...contractConfig,
       functionName: "downvotingAllowed",
     });
   }
-  if (contractConfig.contractInterface?.some(({ name }: any) => name === "submissionGatingByVotingToken")) {
+  if (contractConfig.abi?.some(({ name }: any) => name === "submissionGatingByVotingToken")) {
     contracts.push(
       {
         ...contractConfig,
