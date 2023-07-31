@@ -17,7 +17,7 @@ export function useContestParticipantsIndexV3() {
 
       const data = participants.map(participant => {
         const isVoter = voterSet.has(participant);
-        const isSubmitter = submitterSet.has(participant);
+        const isSubmitter = everyoneCanSubmit ? everyoneCanSubmit : submitterSet.has(participant);
 
         let num_votes = 0;
 
@@ -31,8 +31,7 @@ export function useContestParticipantsIndexV3() {
         return {
           contest_address: address,
           user_address: participant,
-          // If everyone can submit or if this participant is a designated submitter, mark them as able to submit
-          can_submit: everyoneCanSubmit || isSubmitter,
+          can_submit: isSubmitter,
           num_votes: num_votes,
           network_name: networkName,
         };

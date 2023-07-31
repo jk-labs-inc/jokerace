@@ -4,6 +4,7 @@ import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { baseTestnet } from "./custom-chains/baseTestnet";
+import { baseMainnet } from "./custom-chains/baseMainnet";
 import { bnbMainnet } from "./custom-chains/bnbMainnet";
 import { celoMainnet } from "./custom-chains/celoMainnet";
 import { celoTestnet } from "./custom-chains/celoTestnet";
@@ -48,6 +49,7 @@ const totalChains: Chain[] = [
   polygonZkTestnet,
   polygonZkMainnet,
   baseTestnet,
+  baseMainnet,
   scrollGoerli,
   evmosTestnet,
   evmosMainnet,
