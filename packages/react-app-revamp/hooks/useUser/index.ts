@@ -162,7 +162,6 @@ export function useUser() {
           setCurrentUserAvailableVotesAmount(userVotes - castVotes);
           setCurrentuserTotalVotesCast(castVotes);
         } else {
-          console.log("el;sara");
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes);
           setCurrentuserTotalVotesCast(castVotes);

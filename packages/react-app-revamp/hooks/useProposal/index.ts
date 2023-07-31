@@ -52,7 +52,6 @@ export function useProposal() {
 
     try {
       const { abi } = await getContestContractVersion(address, provider);
-      console.log("abi", abi);
 
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;

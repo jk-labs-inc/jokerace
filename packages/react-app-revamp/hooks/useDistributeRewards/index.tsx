@@ -47,9 +47,7 @@ export const useDistributeRewards = (
     functionName: tokenType === "erc20" ? "releasable(address,uint256)" : "releasable(uint256)",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     select: data => transform(data),
-    async onError(e) {
-      console.log(e);
-    },
+    async onError(e) {},
   });
 
   const queryRankRewardsReleased = useContractRead({
