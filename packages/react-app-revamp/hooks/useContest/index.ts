@@ -5,19 +5,13 @@ import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser, { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { alchemyRpcUrls, FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
-import {
-  differenceInHours,
-  differenceInMilliseconds,
-  differenceInMinutes,
-  hoursToMilliseconds,
-  isBefore,
-  minutesToMilliseconds,
-} from "date-fns";
+import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { utils } from "ethers";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
@@ -78,12 +72,14 @@ export function useContest() {
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
     setIsReadOnly,
+    setIsMerkleTreeInProgress,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds, resetListProposals } =
     useProposalStore(state => state);
   const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
+  const { contestStatus } = useContestStatusStore(state => state);
   const networkName = chainName.toLowerCase() === "arbitrumone" ? "arbitrum" : chainName;
   const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
 
@@ -181,6 +177,8 @@ export function useContest() {
       }
 
       await processRewardData(contestRewardModuleAddress);
+      await fetchTotalVotesCast();
+
       setError(null);
       setIsSuccess(true);
       setIsLoading(false);
@@ -271,11 +269,13 @@ export function useContest() {
   async function fetchContestInfo() {
     setIsLoading(true);
     setIsUserStoreLoading(true);
+    setIsMerkleTreeInProgress(true);
     const result = await getContractConfig();
 
     if (!result) {
       setIsLoading(false);
       setIsUserStoreLoading(false);
+      setIsMerkleTreeInProgress(false);
       return;
     }
 
@@ -313,6 +313,12 @@ export function useContest() {
    * Fetch merkle tree data from DB and re-create the tree
    */
   async function processContestData(submissionMerkleRoot: string, contestMaxNumberSubmissionsPerUser: number) {
+    // Do not fetch merkle tree data if the contest is not using it
+    if (contestStatus === ContestStatus.VotingClosed) {
+      setIsUserStoreLoading(false);
+      return;
+    }
+
     if (!isSupabaseConfigured) {
       setIsReadOnly(true);
       if (submissionMerkleRoot === EMPTY_ROOT) {
@@ -325,22 +331,19 @@ export function useContest() {
       }
     }
 
+    await Promise.all([
+      checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
+      checkIfCurrentUserQualifyToVote(),
+    ]);
+
+    setIsUserStoreLoading(false);
+
     try {
       const { data } = await supabase
         .from("contests_v3")
         .select("submissionMerkleTree, votingMerkleTree")
         .eq("address", address)
         .eq("network_name", chainName);
-
-      if (data && data.length === 0) {
-        toastError("we couldn't find given contest in db!");
-        setIsReadOnly(true);
-        if (submissionMerkleRoot === EMPTY_ROOT) {
-          await checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser);
-        }
-        setIsUserStoreLoading(false);
-        return;
-      }
 
       if (data && data.length > 0) {
         const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
@@ -378,20 +381,15 @@ export function useContest() {
           setSubmitters(submissionMerkleTreeData.submitters);
         }
 
-        await fetchTotalVotesCast();
-        await checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser);
-        await checkIfCurrentUserQualifyToVote();
-
-        setIsUserStoreLoading(false);
+        setIsMerkleTreeInProgress(false);
         setSubmissionMerkleTree(submissionMerkleTree);
         setVotingMerkleTree(votingMerkleTree);
-      } else {
-        setIsUserStoreLoading(false);
       }
     } catch (error) {
       const customError = error as CustomError;
       toastError("error while fetching data from db", customError.message);
       setIsUserStoreLoading(false);
+      setIsMerkleTreeInProgress(false);
     }
   }
 

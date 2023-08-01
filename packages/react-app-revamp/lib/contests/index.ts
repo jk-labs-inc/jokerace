@@ -87,26 +87,50 @@ export const fetchFirstToken = async (contestRewardModuleAddress: string, chainI
   }
 };
 
+const fetchParticipantData = async (contestAddress: string, userAddress: string, networkName: string) => {
+  const config = await import("@config/supabase");
+  const supabase = config.supabase;
+
+  const { data } = await supabase
+    .from("contest_participants_v3")
+    .select("can_submit, num_votes")
+    .eq("user_address", userAddress)
+    .eq("contest_address", contestAddress)
+    .eq("network_name", networkName);
+
+  return data && data.length > 0 ? data[0] : null;
+};
+
+const updateContestWithUserQualifications = async (contest: any, userAddress: string) => {
+  const { submissionMerkleTree, network_name, address } = contest;
+  const anyoneCanSubmit = submissionMerkleTree === null;
+
+  let participantData = { can_submit: anyoneCanSubmit, num_votes: 0 };
+  if (userAddress) {
+    const fetchedData = await fetchParticipantData(address, userAddress, network_name);
+    participantData = fetchedData ? fetchedData : participantData;
+  }
+
+  const updatedContest = {
+    ...contest,
+    anyoneCanSubmit: anyoneCanSubmit,
+    qualifiedToSubmit: !anyoneCanSubmit ? participantData.can_submit : undefined,
+    qualifiedToVote: participantData.num_votes > 0,
+  };
+
+  return updatedContest;
+};
+
 const processContestData = async (contest: any, userAddress: string) => {
+  const { address, network_name } = contest;
+
   try {
     const chain = chains.find(
-      c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
+      c => c.name.replace(/\s+/g, "").toLowerCase() === network_name.replace(/\s+/g, "").toLowerCase(),
     );
+    const contractConfig = await getContractConfig(address, network_name, chain?.id ?? 0);
 
-    const contractConfig = await getContractConfig(contest.address, contest.network_name, chain?.id ?? 0);
-
-    let votersSet = new Set(contest.votingMerkleTree.voters.map((voter: Recipient) => voter.address));
-
-    contest.qualifiedToVote = votersSet.has(userAddress);
-
-    if (contest.submissionMerkleTree) {
-      const submittersSet = new Set(
-        contest.submissionMerkleTree.submitters.map((submitter: Recipient) => submitter.address),
-      );
-      contest.qualifiedToSubmit = submittersSet.has(userAddress);
-    } else {
-      contest.anyoneCanSubmit = true;
-    }
+    contest = await updateContestWithUserQualifications(contest, userAddress);
 
     if (
       contractConfig &&
@@ -144,7 +168,7 @@ const processContestData = async (contest: any, userAddress: string) => {
 
             if (!rewardToken || rewardToken.value.eq(0)) {
               try {
-                erc20Tokens = await fetchTokenBalances(contest.network_name, contestRewardModuleAddress.toString());
+                erc20Tokens = await fetchTokenBalances(network_name, contestRewardModuleAddress.toString());
 
                 if (erc20Tokens && erc20Tokens.length > 0) {
                   rewardToken = await fetchFirstToken(

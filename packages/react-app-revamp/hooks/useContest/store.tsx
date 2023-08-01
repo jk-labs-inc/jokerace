@@ -41,6 +41,7 @@ export interface ContestState {
   }[];
   rewards: Reward | null;
   isReadOnly: boolean;
+  isMerkleTreeInProgress: boolean;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -63,6 +64,7 @@ export interface ContestState {
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
   setIsReadOnly: (value: boolean) => void;
+  setIsMerkleTreeInProgress: (value: boolean) => void;
 }
 
 export const createContestStore = () =>
@@ -90,6 +92,7 @@ export const createContestStore = () =>
     isV3: false,
     isReadOnly: false,
     supportsRewardsModule: false,
+    isMerkleTreeInProgress: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
@@ -112,6 +115,7 @@ export const createContestStore = () =>
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
+    setIsMerkleTreeInProgress: value => set({ isMerkleTreeInProgress: value }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);
