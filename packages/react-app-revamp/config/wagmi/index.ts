@@ -22,6 +22,7 @@ import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
 import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
 import { optimism } from "./custom-chains/optimism";
+import { optimismTestnet } from "./custom-chains/optimismTestnet";
 import { polygon } from "./custom-chains/polygon";
 import { polygonMumbai } from "./custom-chains/polygonMumbai";
 import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
@@ -58,6 +59,7 @@ const totalChains: Chain[] = [
   litTestnet,
   zetaTestnet,
   celoTestnet,
+  optimismTestnet,
   celoMainnet,
   publicGoodsNetworkMainnet,
   publicGoodsNetworkTestnet,

@@ -1,3 +1,4 @@
+import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { useEthersProvider } from "@helpers/ethers";
 import isUrlToImage from "@helpers/isUrlToImage";
@@ -10,7 +11,8 @@ import { useEffect, useRef, useState } from "react";
 
 export function useContestEvents() {
   const { asPath } = useRouter();
-  const provider = useEthersProvider();
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const provider = useEthersProvider({ chainId });
   const { fetchTotalVotesCast } = useContest();
   const { contestStatus } = useContestStatusStore(state => state);
   const { setProposalData, setProposalVotes, listProposalsData } = useProposalStore(state => state);

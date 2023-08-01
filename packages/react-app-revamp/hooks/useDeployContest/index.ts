@@ -7,7 +7,8 @@ import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsInd
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory, ethers } from "ethers";
+import { ContractFactory } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
@@ -110,7 +111,7 @@ export function useDeployContest() {
               ...votingMerkle,
               voters: votingMerkle.voters.map(voter => ({
                 ...voter,
-                numVotes: ethers.utils.formatUnits(voter.numVotes, 18),
+                numVotes: formatUnits(voter.numVotes, 18),
               })),
             }
           : null,
@@ -121,7 +122,7 @@ export function useDeployContest() {
                 submissionMerkle.merkleRoot !== "0x0000000000000000000000000000000000000000000000000000000000000000"
                   ? submissionMerkle.submitters.map(submitter => ({
                       ...submitter,
-                      numVotes: ethers.utils.formatUnits(submitter.numVotes, 18),
+                      numVotes: formatUnits(submitter.numVotes, 18),
                     }))
                   : [],
             }
@@ -131,7 +132,7 @@ export function useDeployContest() {
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
       };
 
-      await indexContest(contestData as any, votingMerkle, submissionMerkle);
+      await indexContest(contestData, votingMerkle, submissionMerkle);
 
       toastSuccess("contest has been deployed!");
       setIsSuccess(true);

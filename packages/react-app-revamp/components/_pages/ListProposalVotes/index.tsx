@@ -55,6 +55,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
             {isLoading || (isPageVotesLoading && Object.keys(listProposalsData)?.length > 1) ? (
               placeholders.map((_, index, self) => (
                 <div
+                  key={index}
                   className={`flex justify-between items-center pb-3 ${
                     index !== self.length - 1 ? "border-b border-neutral-10" : ""
                   }`}

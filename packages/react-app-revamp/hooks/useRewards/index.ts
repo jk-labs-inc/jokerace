@@ -12,15 +12,17 @@ import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
+  const contestChainName = asPath.split("/")[2];
   const { chain } = useNetwork();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
-  //@TODO add chainId
-  const provider = useEthersProvider();
+  const chainId = chains.filter(
+    chain => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
+  )?.[0]?.id;
+  const provider = useEthersProvider({ chainId });
   const { refetch: refetchBalanceRewardsModule } = useQuery(
     ["balance-rewards-module", rewards?.contractAddress],
     async () => {
       try {
-        const contestChainName = asPath.split("/")[2];
         const contestRewardModuleAddress = rewards?.contractAddress;
         const networkName = contestChainName.toLowerCase() === "arbitrumone" ? "arbitrum" : contestChainName;
         const alchemyAppUrl = chains.filter(chain => chain.name === networkName)[0].rpcUrls.default.http[0];
@@ -64,7 +66,6 @@ export function useRewardsModule() {
     try {
       const contestAddress = address ?? asPath.split("/")[3];
       const contestChainName = chainName ?? asPath.split("/")[2];
-      const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]?.id;
       const { abi: abiContest, version } = await getContestContractVersion(address ?? contestAddress, provider);
 
       if (abiContest === null) {

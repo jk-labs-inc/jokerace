@@ -46,6 +46,23 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
     });
   };
 
+  async function requestAccount() {
+    try {
+      const accounts = await window.ethereum?.request({
+        method: "eth_requestAccounts",
+      });
+      return accounts?.[0];
+    } catch (error) {
+      console.error("User denied account access");
+      return null;
+    }
+  }
+
+  const onConnectWallet = async () => {
+    await requestAccount();
+    openConnectModal?.();
+  };
+
   useEffect(() => {
     if (isSuccess) setIsOpen(false);
   }, [isSuccess, setIsOpen]);
@@ -79,7 +96,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
               )
             ) : (
               <p className="text-[16px] font-bold text-neutral-11 mt-2">
-                <span className="text-positive-11 cursor-pointer" onClick={openConnectModal}>
+                <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
                   connect wallet
                 </span>{" "}
                 to see if you qualify

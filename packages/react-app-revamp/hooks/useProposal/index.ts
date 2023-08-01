@@ -31,7 +31,8 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
-  const provider = useEthersProvider({ chainId: chain?.id });
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const provider = useEthersProvider({ chainId });
 
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
@@ -107,6 +108,8 @@ export function useProposal() {
         code: customError.code,
         message: customError.message,
       });
+      setIsPageProposalsLoading(false);
+      setIsPageProposalsError(null);
     }
   }
 
@@ -129,7 +132,7 @@ export function useProposal() {
 
     const isContentImage = isUrlToImage(data.description) ? true : false;
 
-    //@TODO check decimals here
+    //TODO check decimals here
     const proposalData = {
       authorEthereumAddress: data.author,
       content: data.description,
@@ -186,16 +189,10 @@ export function useProposal() {
           });
         });
         proposalsIds = proposalsIds
-          .sort((a: { votes: number }, b: { votes: number }) => {
-            if (a.votes > b.votes) {
-              return -1;
-            }
-            if (a.votes < b.votes) {
-              return 1;
-            }
-            return 0;
-          })
+          .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
           .map((proposal: { id: any }) => proposal.id);
+
+        console.log({ proposalsIds });
 
         setListProposalsIds(proposalsIds as string[]);
       } else {

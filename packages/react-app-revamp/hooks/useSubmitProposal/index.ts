@@ -1,4 +1,5 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -7,11 +8,9 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
-import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import { CustomError, ErrorCodes } from "types/error";
-import { Abi } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
 
@@ -25,22 +24,22 @@ const safeMetadata = {
 };
 
 export function useSubmitProposal() {
+  const { asPath } = useRouter();
   const { address: userAddress } = useAccount();
   const { fetchProposalsIdsList } = useProposal();
   const { submissionMerkleTree } = useContestStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { checkIfProofIsVerified } = useGenerateProof();
-
+  const [chainName, address] = asPath.split("/").slice(2, 4);
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
+    ?.id;
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
-  const provider = useEthersProvider({ chainId: chain?.id });
-
-  const { asPath } = useRouter();
+  const provider = useEthersProvider({ chainId });
 
   async function sendProposal(proposalContent: string): Promise<TransactionResponse> {
     return new Promise<TransactionResponse>(async (resolve, reject) => {
-      const [chainName, address] = asPath.split("/").slice(2, 4);
       const { abi } = await getContestContractVersion(address, provider);
       const proofVerificationStatus = await checkIfProofIsVerified(
         submissionMerkleTree,
@@ -124,7 +123,7 @@ export function useSubmitProposal() {
         toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         removeSubmissionFromLocalStorage("submissions", address);
-        fetchProposalsIdsList(abi); // you might need to pass the ABI here
+        fetchProposalsIdsList(abi);
 
         resolve(txSendProposal);
       } catch (e) {
