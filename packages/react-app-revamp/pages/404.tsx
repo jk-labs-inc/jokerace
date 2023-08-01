@@ -19,12 +19,11 @@ const Page: NextPage = () => {
         />
       </Head>
       <div className="container m-auto sm:text-center">
-        <h1 className="text-4xl font-black mb-3 text-primary-10">Page not found</h1>
-        {/*  eslint-disable-next-line react/no-unescaped-entities */}
-        <p className="text-neutral-12 mb-6">Sorry ! The page you are looking for was deleted or it doesn't exist.</p>
-        <Link href="/" className={ctaGoBackStyles}>
-          Go back to home page
-        </Link>
+        <h1 className="text-[40px] font-black mb-3 text-primary-10 font-sabo">Page not found</h1>
+        <p className="text-neutral-11 mb-6 text-[16px]">
+          Sorry ! The page you are looking for was deleted or it doesn't exist.
+        </p>
+        <Link href="/">Go back to home page</Link>
       </div>
     </>
   );

@@ -32,7 +32,8 @@ export function useRewardsModule() {
             headers: {
               "Content-Type": "application/json",
             },
-            params: [`${contestRewardModuleAddress}`],
+            params: [`${contestRewardModuleAddress}`, "erc20"],
+            id: 42,
           }),
           redirect: "follow",
         });

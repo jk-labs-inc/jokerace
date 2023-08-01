@@ -8,6 +8,7 @@ import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDepl
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
+import { isSupabaseConfigured } from "@helpers/database";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
@@ -34,6 +35,8 @@ import { getLayout as getBaseLayout } from "./../LayoutBase";
 import ContestTab from "./Contest";
 import ContestLayoutTabs, { Tab } from "./Tabs";
 
+const MAX_MS_TIMEOUT: number = 100000000;
+
 const LayoutViewContest = (props: any) => {
   const { query, asPath, pathname, reload } = useRouter();
   const account = useAccount({
@@ -48,14 +51,12 @@ const LayoutViewContest = (props: any) => {
   const { isLoading, address, fetchContestInfo, isSuccess, error, retry, chainId, chainName, setChainId } =
     useContest();
 
-  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, contestName, rewards } =
+  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, contestName, rewards, isReadOnly } =
     useContestStore(state => state);
 
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
-
-  const MAX_MS_TIMEOUT: number = 100000000;
 
   useEffect(() => {
     const now = moment();
@@ -161,6 +162,22 @@ const LayoutViewContest = (props: any) => {
           </div>
         )}
 
+        {isReadOnly && !isLoading && (
+          <div className="w-full bg-true-black text-[16px] text-center flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 px-4 items-center shadow-timer-container">
+            <div className="flex flex-col text-start">
+              <p>
+                missing environmental variables limit some functionalities to <b>read mode</b>.
+              </p>
+              <p>
+                for more details, visit{" "}
+                <a className="text-positive-11" href="https://github.com/jk-labs-inc/jokerace#readme" target="_blank">
+                  <b>here!</b>
+                </a>
+              </p>
+            </div>
+          </div>
+        )}
+
         {
           <>
             {(account?.address && chain?.id !== chainId) === false && error && !isLoading && (
@@ -191,7 +208,7 @@ const LayoutViewContest = (props: any) => {
 
             {isSuccess && !error && !isLoading && (
               <>
-                {displayReloadBanner === true && (
+                {displayReloadBanner && (
                   <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
                     <div className="flex flex-col">
                       <span>Let&apos;s refresh!</span>
