@@ -25,6 +25,7 @@ const ContestTab = () => {
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
+
   return (
     <div>
       <div className="mt-4">
@@ -38,7 +39,7 @@ const ContestTab = () => {
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && (
         <div className="mt-8">
-          {(currentUserQualifiedToSubmit || currentUserProposalCount <= contestMaxNumberSubmissionsPerUser) && (
+          {currentUserQualifiedToSubmit && currentUserProposalCount <= contestMaxNumberSubmissionsPerUser && (
             <ButtonV3
               type="txAction"
               color="bg-gradient-create rounded-[40px]"

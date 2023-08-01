@@ -39,6 +39,7 @@ export function useDeployContest() {
     stateContestDeployment.setIsLoading(true);
     stateContestDeployment.setIsSuccess(false);
     stateContestDeployment.setError(null);
+    setIsLoading(true);
 
     toastLoading("contest is deploying...");
     try {
@@ -78,8 +79,6 @@ export function useDeployContest() {
         votingMerkle?.merkleRoot,
         contestParameters,
       );
-
-      setIsLoading(true);
 
       const transactionPromise = contractContest.deployTransaction.wait();
 

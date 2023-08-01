@@ -32,6 +32,8 @@ import { scrollGoerli } from "./custom-chains/scrollGoerli";
 import { sepolia } from "./custom-chains/sepolia";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zoraMainnet } from "./custom-chains/zora";
+import { luksoTestnet } from "./custom-chains/luksoTestnet";
+import { luksoMainnet } from "./custom-chains/luksoMainnet";
 
 type ChainImages = {
   [key: string]: string;
@@ -71,6 +73,8 @@ const totalChains: Chain[] = [
   gnosisMainnet,
   mantleMainnet,
   mantleTestnet,
+  luksoMainnet,
+  luksoTestnet
 ];
 
 const providers =
@@ -94,6 +98,7 @@ const providers =
           }),
         }),
       ];
+
 export const { chains, provider } = configureChains(totalChains, providers);
 
 const { wallets } = getDefaultWallets({

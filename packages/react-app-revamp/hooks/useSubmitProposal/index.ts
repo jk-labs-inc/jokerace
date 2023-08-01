@@ -112,7 +112,7 @@ export function useSubmitProposal() {
         toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         removeSubmissionFromLocalStorage("submissions", address);
-        fetchProposalsIdsList(abi); // you might need to pass the ABI here
+        fetchProposalsIdsList(abi);
 
         resolve(txSendProposal);
       } catch (e) {
