@@ -21,7 +21,7 @@ const CustomInput = forwardRef<HTMLInputElement, { value: string; onClick: () =>
       type="text"
       value={value}
       readOnly
-      className="bg-transparent react-datepicker__input-text text-[18px] md:text-[24px]  placeholder-neutral-9 lowercase"
+      className="bg-transparent react-datepicker__input-text text-[18px] md:text-[24px]  placeholder-neutral-9 lowercase w-full"
     />
     <span
       className="mb-[10px]"

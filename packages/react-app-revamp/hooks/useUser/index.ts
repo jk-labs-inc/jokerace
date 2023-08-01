@@ -5,10 +5,11 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
-import MerkleTree from "merkletreejs";
 import { useRouter } from "next/router";
 import { useAccount, useNetwork } from "wagmi";
 import { useUserStore } from "./store";
+
+export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useUser() {
   const { address: userAddress } = useAccount();
@@ -55,16 +56,14 @@ export function useUser() {
   }
 
   const checkIfCurrentUserQualifyToSubmit = async (
-    submissionMerkleTree: MerkleTree,
+    submissionMerkleRoot: string,
     contestMaxNumberSubmissionsPerUser: number,
   ) => {
     const contractConfig = await getContractConfig();
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
 
     if (!userAddress || !contractConfig) return;
 
-    if (submissionMerkleTree.getHexRoot() === "0x") {
+    if (submissionMerkleRoot === EMPTY_ROOT) {
       const numOfSubmittedProposals = await readContract({
         ...contractConfig,
         functionName: "getNumSubmissions",
@@ -79,6 +78,8 @@ export function useUser() {
       setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
       setCurrentUserQualifiedToSubmit(true);
     } else {
+      const config = await import("@config/supabase");
+      const supabase = config.supabase;
       try {
         const { data } = await supabase
           .from("contest_participants_v3")

@@ -92,6 +92,7 @@ const providers =
           }),
         }),
       ];
+
 export const { chains, provider } = configureChains(totalChains, providers);
 
 const { wallets } = getDefaultWallets({

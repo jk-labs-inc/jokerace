@@ -1,7 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
+import { isSupabaseConfigured } from "@helpers/database";
 import { formatNumber } from "@helpers/formatNumber";
+import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
@@ -22,6 +24,7 @@ const LayoutContestQualifier = () => {
     contestMaxNumberSubmissionsPerUser,
     isLoading,
   } = useUserStore(state => state);
+  const isReadOnly = useContestStore(state => state.isReadOnly);
   const { y } = useWindowScroll();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -31,6 +34,16 @@ const LayoutContestQualifier = () => {
 
   const qualifiedToSubmitMessage = useMemo<ReactNode>(() => {
     const userReachedMaxSubmissions = currentUserProposalCount >= contestMaxNumberSubmissionsPerUser;
+    if (isReadOnly && !currentUserQualifiedToSubmit) {
+      return (
+        <div className="flex flex-nowrap items-center gap-2">
+          <CrossIcon />
+          <p>
+            submissions are in <b>read mode</b>
+          </p>
+        </div>
+      );
+    }
     if (userReachedMaxSubmissions || !currentUserQualifiedToSubmit) {
       if (userReachedMaxSubmissions) {
         return (
@@ -57,9 +70,19 @@ const LayoutContestQualifier = () => {
         </div>
       );
     }
-  }, [currentUserQualifiedToSubmit, currentUserProposalCount, contestMaxNumberSubmissionsPerUser]);
+  }, [currentUserQualifiedToSubmit, currentUserProposalCount, contestMaxNumberSubmissionsPerUser, isReadOnly]);
 
   const qualifiedToVoteMessage = useMemo<ReactNode>(() => {
+    if (isReadOnly) {
+      return (
+        <div className="flex flex-nowrap items-center gap-2">
+          <CrossIcon />
+          <p>
+            vote is in <b>read mode</b>
+          </p>
+        </div>
+      );
+    }
     if (currentUserAvailableVotesAmount > 0) {
       return (
         <div className="flex flex-nowrap items-center gap-2">
@@ -89,7 +112,7 @@ const LayoutContestQualifier = () => {
         <p>you don't qualify to vote</p>
       </div>
     );
-  }, [currentUserAvailableVotesAmount, isScrolled]);
+  }, [currentUserAvailableVotesAmount, isScrolled, isReadOnly]);
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
