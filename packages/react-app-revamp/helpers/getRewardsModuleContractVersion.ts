@@ -1,4 +1,3 @@
-import { chains } from "@config/wagmi";
 import LegacyDeployedRewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.1.first.sol/RewardsModule.json";
 import NumberedVersioningRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.3.numberedVersioning.sol/RewardsModule.json";
 import GateSubmissionsOpenRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.4.gateSubmissionsOpen.sol/RewardsModule.json";
@@ -6,8 +5,10 @@ import BetterRewardsNotesRewards from "@contracts/bytecodeAndAbi/modules/Rewards
 import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.1.merkleVotes.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
 import { ethers } from "ethers";
+import { getEthersProvider } from "./ethers";
 
-export async function getRewardsModuleContractVersion(address: string, provider: any) {
+export async function getRewardsModuleContractVersion(address: string, chainId: number) {
+  const provider = getEthersProvider({ chainId });
   const contract = new ethers.Contract(address, NumberedVersioningRewards.abi, provider);
 
   try {

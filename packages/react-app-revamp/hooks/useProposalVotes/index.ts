@@ -2,7 +2,6 @@ import { toastError } from "@components/UI/Toast";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
-import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
@@ -30,7 +29,6 @@ export function useProposalVotes(id: number | string) {
   );
   const [address] = useState(url[3]);
 
-  const provider = useEthersProvider({ chainId });
   const {
     isListVotersSuccess,
     isListVotersError,
@@ -53,7 +51,7 @@ export function useProposalVotes(id: number | string) {
   async function fetchProposalVotes() {
     setIsListVotersLoading(true);
 
-    const { abi, version } = await getContestContractVersion(address, provider);
+    const { abi } = await getContestContractVersion(address, chainId);
 
     if (abi === null) {
       const errorMessage = "This contract doesn't exist on this chain.";
@@ -139,10 +137,8 @@ export function useProposalVotes(id: number | string) {
    * @param userAddress - wallet address
    */
   async function fetchVotesOfAddress(userAddress: string) {
-    const chainName = asPath.split("/")[2];
-
     try {
-      const { abi, version } = await getContestContractVersion(address, provider);
+      const { abi } = await getContestContractVersion(address, chainId);
 
       if (abi === null) {
         const errorMessage = "This contract doesn't exist on this chain.";
@@ -223,25 +219,25 @@ export function useProposalVotes(id: number | string) {
   //   }
   // }, [contestStatus]);
 
-  useEffect(() => {
-    const fetchProposalVotesAndListenForEvents = async () => {
-      await fetchProposalVotes();
+  // useEffect(() => {
+  //   const fetchProposalVotesAndListenForEvents = async () => {
+  //     await fetchProposalVotes();
 
-      const onVisibilityChangeHandler = () => {
-        if (document.visibilityState === "hidden") {
-          provider.removeAllListeners();
-        }
-      };
+  //     const onVisibilityChangeHandler = () => {
+  //       if (document.visibilityState === "hidden") {
+  //         provider.removeAllListeners();
+  //       }
+  //     };
 
-      document.addEventListener("visibilitychange", onVisibilityChangeHandler);
+  //     document.addEventListener("visibilitychange", onVisibilityChangeHandler);
 
-      return () => {
-        document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
-      };
-    };
+  //     return () => {
+  //       document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
+  //     };
+  //   };
 
-    fetchProposalVotesAndListenForEvents();
-  }, []);
+  //   fetchProposalVotesAndListenForEvents();
+  // }, []);
 
   return {
     isLoading: isListVotersLoading,

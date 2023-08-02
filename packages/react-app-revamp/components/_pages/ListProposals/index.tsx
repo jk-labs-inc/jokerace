@@ -4,6 +4,7 @@ import ProposalContent from "@components/_pages/ProposalContent";
 import { useContestStore } from "@hooks/useContest/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 export const ListProposals = () => {
   const { fetchProposalsPage } = useProposal();
@@ -20,7 +21,15 @@ export const ListProposals = () => {
   const { votesOpen, contestPrompt } = useContestStore(state => state);
 
   if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
-    return <Loader scale="component">Loading proposals...</Loader>;
+    return (
+      <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
+        <Skeleton
+          count={5}
+          borderRadius={10}
+          className="flex flex-col h-96 md:h-56 animate-appear border border-neutral-11  mb-3"
+        />
+      </SkeletonTheme>
+    );
   }
 
   return (
@@ -60,9 +69,13 @@ export const ListProposals = () => {
       </div>
 
       {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
-        <Loader scale="component" classNameWrapper="my-3">
-          Loading proposals...
-        </Loader>
+        <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
+          <Skeleton
+            borderRadius={10}
+            count={3}
+            className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 mt-3"
+          />
+        </SkeletonTheme>
       )}
 
       {Object.keys(listProposalsData)?.length < listProposalsIds.length && !isPageProposalsLoading && (

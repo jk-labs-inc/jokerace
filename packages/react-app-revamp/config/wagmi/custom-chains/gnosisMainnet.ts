@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const gnosisMainnet = {
+export const gnosisMainnet: Chain = {
   id: 100,
   name: "gnosisMainnet",
   network: "gnosisMainnet",
@@ -21,4 +21,4 @@ export const gnosisMainnet = {
     etherscan: { name: "Gnosis Etherscan", url: "https://gnosisscan.io/" },
     default: { name: "Gnosis Etherscan", url: "https://gnosisscan.io/" },
   },
-} as const satisfies Chain;
+};

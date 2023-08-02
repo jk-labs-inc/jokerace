@@ -40,6 +40,9 @@ export interface ContestState {
     numVotes: number;
   }[];
   rewards: Reward | null;
+  isReadOnly: boolean;
+  isMerkleTreeInProgress: boolean;
+  isRewardsLoading: boolean;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -61,6 +64,9 @@ export interface ContestState {
   setError: (value: CustomError | null) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
+  setIsReadOnly: (value: boolean) => void;
+  setIsMerkleTreeInProgress: (value: boolean) => void;
+  setIsRewardsLoading: (value: boolean) => void;
 }
 
 export const createContestStore = () =>
@@ -86,13 +92,17 @@ export const createContestStore = () =>
     downvotingAllowed: false,
     canUpdateVotesInRealTime: false,
     isV3: false,
+    isReadOnly: false,
     supportsRewardsModule: false,
+    isMerkleTreeInProgress: false,
+    isRewardsLoading: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
     setIsV3: value => set({ isV3: value }),
+    setIsReadOnly: value => set({ isReadOnly: value }),
     setContestName: name => set({ contestName: name }),
     setContestAuthor: (author, address) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
@@ -108,6 +118,8 @@ export const createContestStore = () =>
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
+    setIsMerkleTreeInProgress: value => set({ isMerkleTreeInProgress: value }),
+    setIsRewardsLoading: value => set({ isRewardsLoading: value }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

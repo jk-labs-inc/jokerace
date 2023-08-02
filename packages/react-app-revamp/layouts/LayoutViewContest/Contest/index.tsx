@@ -25,6 +25,7 @@ const ContestTab = () => {
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
+
   return (
     <div>
       <div className="mt-4">
@@ -38,7 +39,7 @@ const ContestTab = () => {
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && (
         <div className="mt-8">
-          {(currentUserQualifiedToSubmit || currentUserProposalCount <= contestMaxNumberSubmissionsPerUser) && (
+          {currentUserQualifiedToSubmit && currentUserProposalCount <= contestMaxNumberSubmissionsPerUser && (
             <ButtonV3
               type="txAction"
               color="bg-gradient-create rounded-[40px]"
@@ -62,7 +63,9 @@ const ContestTab = () => {
       <div className="mt-8">
         <div className="flex flex-col gap-5">
           <hr className="border-neutral-10" />
-          {contestStatus !== ContestStatus.ContestOpen && <ProposalStatistics contestStatus={contestStatus} />}
+          {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
+            <ProposalStatistics contestStatus={contestStatus} />
+          )}
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
             <div className={`animate-appear ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"}`}>

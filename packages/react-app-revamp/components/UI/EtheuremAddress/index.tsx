@@ -3,8 +3,9 @@ import { chains } from "@config/wagmi";
 import { useAvatarStore } from "@hooks/useAvatar";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
+import { fetchEnsAvatar } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { useEnsName } from "wagmi";
+import { useEnsAvatar, useEnsName } from "wagmi";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
 

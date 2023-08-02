@@ -8,6 +8,7 @@ import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDepl
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
+import { isSupabaseConfigured } from "@helpers/database";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
@@ -28,10 +29,13 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import ContestTab from "./Contest";
 import ContestLayoutTabs, { Tab } from "./Tabs";
+
+const MAX_MS_TIMEOUT: number = 100000000;
 
 const LayoutViewContest = (props: any) => {
   const { query, asPath, pathname, reload } = useRouter();
@@ -47,14 +51,20 @@ const LayoutViewContest = (props: any) => {
   const { isLoading, address, fetchContestInfo, isSuccess, error, retry, chainId, chainName, setChainId } =
     useContest();
 
-  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, contestName, rewards } =
-    useContestStore(state => state);
+  const {
+    submissionsOpen,
+    votesClose,
+    votesOpen,
+    contestAuthorEthereumAddress,
+    contestName,
+    rewards,
+    isReadOnly,
+    isRewardsLoading,
+  } = useContestStore(state => state);
 
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
-
-  const MAX_MS_TIMEOUT: number = 100000000;
 
   useEffect(() => {
     const now = moment();
@@ -160,6 +170,22 @@ const LayoutViewContest = (props: any) => {
           </div>
         )}
 
+        {isReadOnly && !isLoading && (
+          <div className="w-full bg-true-black text-[16px] text-center flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 px-4 items-center shadow-timer-container">
+            <div className="flex flex-col text-start">
+              <p>
+                missing environmental variables limit some functionalities to <b>read mode</b>.
+              </p>
+              <p>
+                for more details, visit{" "}
+                <a className="text-positive-11" href="https://github.com/jk-labs-inc/jokerace#readme" target="_blank">
+                  <b>here!</b>
+                </a>
+              </p>
+            </div>
+          </div>
+        )}
+
         {
           <>
             {(account?.address && chain?.id !== chainId) === false && error && !isLoading && (
@@ -190,7 +216,7 @@ const LayoutViewContest = (props: any) => {
 
             {isSuccess && !error && !isLoading && (
               <>
-                {displayReloadBanner === true && (
+                {displayReloadBanner && (
                   <div className="w-full bg-true-black text-[16px] text-center flex flex-col sticky top-0 gap-1 z-10 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
                     <div className="flex flex-col">
                       <span>Let&apos;s refresh!</span>
@@ -234,7 +260,14 @@ const LayoutViewContest = (props: any) => {
                           textualVersion
                         />
                       </p>
-                      {rewards && (
+
+                      {isRewardsLoading && (
+                        <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={2}>
+                          <Skeleton borderRadius={10} className="shrink-0 p-1 border border-primary-10" width={200} />
+                        </SkeletonTheme>
+                      )}
+
+                      {rewards && !isRewardsLoading && (
                         <div className="shrink-0 p-1 border border-primary-10 rounded-[10px] text-[16px] font-bold text-primary-10">
                           {rewards?.token.value} $<span className="uppercase">{rewards?.token.symbol}</span> to{" "}
                           {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}

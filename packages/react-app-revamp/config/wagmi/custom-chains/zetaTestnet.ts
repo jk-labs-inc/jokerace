@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const zetaTestnet = {
+export const zetaTestnet: Chain = {
   id: 7001,
   name: "zetaTestnet",
   network: "zetaTestnet",
@@ -21,4 +21,4 @@ export const zetaTestnet = {
     etherscan: { name: "Zeta Block Explorer", url: "https://explorer.zetachain.com" },
     default: { name: "Zeta Block Explorer", url: "https://explorer.zetachain.com" },
   },
-} as const satisfies Chain;
+};

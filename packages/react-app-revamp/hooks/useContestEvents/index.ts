@@ -1,8 +1,9 @@
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { useEthersProvider } from "@helpers/ethers";
+import { getEthersProvider } from "@helpers/ethers";
 import isUrlToImage from "@helpers/isUrlToImage";
 import useContest from "@hooks/useContest";
+import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
@@ -12,7 +13,8 @@ import { useEffect, useRef, useState } from "react";
 export function useContestEvents() {
   const { asPath } = useRouter();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
-  const provider = useEthersProvider({ chainId });
+  const provider = getEthersProvider({ chainId });
+  const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { fetchTotalVotesCast } = useContest();
   const { contestStatus } = useContestStatusStore(state => state);
   const { setProposalData, setProposalVotes, listProposalsData } = useProposalStore(state => state);
@@ -83,37 +85,39 @@ export function useContestEvents() {
 
   //@TODO event listeners
   useEffect(() => {
-    if (contestStatus !== ContestStatus.VotingOpen) {
+    if (!canUpdateVotesInRealTime || ContestStatus.VotingOpen !== contestStatus) {
       provider.removeAllListeners("VoteCast");
       setDisplayReloadBanner(false);
     } else {
-      watchContractEvent(
-        {
-          address: asPath.split("/")[3] as `0x${string}`,
-          abi: DeployedContestContract.abi,
-          eventName: "VoteCast",
-        },
-        "VoteCast",
-        (...args) => {
-          onVoteCast(args).catch(err => console.error(err));
-        },
-      );
+      if (ContestStatus.VotingOpen === contestStatus && canUpdateVotesInRealTime) {
+        watchContractEvent(
+          {
+            address: asPath.split("/")[3] as `0x${string}`,
+            abi: DeployedContestContract.abi,
+            eventName: "VoteCast",
+          },
+          "VoteCast",
+          (...args) => {
+            onVoteCast(args).catch(err => console.error(err));
+          },
+        );
+      }
     }
 
     return () => {
       provider.removeAllListeners("VoteCast");
     };
-  }, [contestStatus]);
+  }, [contestStatus, canUpdateVotesInRealTime]);
 
   function onVisibilityChangeHandler() {
     if (document.visibilityState === "hidden") {
       provider.removeAllListeners();
-      if (contestStatusRef.current === ContestStatus.VotingOpen) {
+      if (contestStatusRef.current === ContestStatus.VotingOpen && canUpdateVotesInRealTime) {
         setDisplayReloadBanner(true);
       }
       return;
     } else {
-      if (contestStatusRef.current === ContestStatus.VotingOpen) {
+      if (contestStatusRef.current === ContestStatus.VotingOpen && canUpdateVotesInRealTime) {
         provider.addListener("VoteCast", (...args) => {
           onVoteCast(args);
         });
@@ -126,7 +130,7 @@ export function useContestEvents() {
     return () => {
       document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
     };
-  }, []);
+  }, [canUpdateVotesInRealTime]);
 
   return {
     displayReloadBanner,

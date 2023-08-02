@@ -33,7 +33,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { address } = useAccount();
   const { asPath } = useRouter();
   const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
-  const { contestPrompt, votesOpen } = useContestStore(state => state);
+  const { contestPrompt, votesOpen, isMerkleTreeInProgress } = useContestStore(state => state);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
   const contestId = asPath.split("/")[3];
@@ -139,7 +139,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
             color="bg-gradient-create rounded-[40px]"
             size="large"
             onClick={onSubmitProposal}
-            disabled={isLoading || !proposal.length}
+            disabled={isLoading || !proposal.length || isMerkleTreeInProgress}
           >
             submit!
           </ButtonV3>

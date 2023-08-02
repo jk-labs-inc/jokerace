@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const mantleTestnet = {
+export const mantleTestnet: Chain = {
   id: 5001,
   name: "mantleTestnet",
   network: "mantleTestnet",
@@ -21,4 +21,4 @@ export const mantleTestnet = {
     etherscan: { name: "Mantle Testnet Scan", url: "https://explorer.testnet.mantle.xyz" },
     default: { name: "Mantle Testnet Scan", url: "https://explorer.testnet.mantle.xyz" },
   },
-} as const satisfies Chain;
+};

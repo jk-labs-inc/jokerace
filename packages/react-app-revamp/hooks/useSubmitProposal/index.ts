@@ -1,7 +1,6 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
@@ -36,11 +35,10 @@ export function useSubmitProposal() {
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
-  const provider = useEthersProvider({ chainId });
 
   async function sendProposal(proposalContent: string): Promise<TransactionResponse> {
     return new Promise<TransactionResponse>(async (resolve, reject) => {
-      const { abi } = await getContestContractVersion(address, provider);
+      const { abi } = await getContestContractVersion(address, chainId);
       const proofVerificationStatus = await checkIfProofIsVerified(
         submissionMerkleTree,
         userAddress ?? "",

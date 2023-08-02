@@ -1,13 +1,14 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
+import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
 import { parseUnits } from "viem";
@@ -15,7 +16,9 @@ import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { votingMerkleTree } = useContestStore(state => state);
+  const { fetchTotalVotesCast } = useContest();
+  const { votingMerkleTree, canUpdateVotesInRealTime } = useContestStore(state => state);
+  const { setProposalVotes } = useProposalStore(state => state);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -34,10 +37,9 @@ export function useCastVotes() {
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { checkIfProofIsVerified } = useGenerateProof();
   const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
-  const provider = useEthersProvider({ chainId: parseFloat(chainId) });
 
   async function castVotes(amount: number, isPositive: boolean) {
-    const { abi } = await getContestContractVersion(id, provider);
+    const { abi } = await getContestContractVersion(id, parseFloat(chainId));
 
     toastLoading("votes are deploying...");
     setIsLoading(true);
@@ -95,6 +97,26 @@ export function useCastVotes() {
       setTransactionData({
         hash: receipt.transactionHash,
       });
+
+      // We need this to update the votes either if there is more than 2 hours
+      if (!canUpdateVotesInRealTime) {
+        const votes = await readContract({
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+          functionName: "proposalVotes",
+          //@ts-ignore
+          args: pickedProposal,
+        });
+
+        await fetchTotalVotesCast();
+
+        //@ts-ignore
+        setProposalVotes({
+          id: pickedProposal,
+          //@ts-ignore
+          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+        });
+      }
 
       await updateCurrentUserVotes();
       setIsLoading(false);

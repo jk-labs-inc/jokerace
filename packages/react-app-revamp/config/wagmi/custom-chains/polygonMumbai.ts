@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const polygonMumbai = {
+export const polygonMumbai: Chain = {
   id: 80001,
   name: "polygonMumbai",
   network: "polygonMumbai",
@@ -21,4 +21,4 @@ export const polygonMumbai = {
     etherscan: { name: "Polygon Mumbai Etherscan", url: "https://mumbai.polygonscan.com/" },
     default: { name: "Polygon Mumbai Etherscan", url: "https://mumbai.polygonscan.com/" },
   },
-} as const satisfies Chain;
+};

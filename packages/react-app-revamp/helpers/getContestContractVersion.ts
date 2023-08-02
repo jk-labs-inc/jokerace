@@ -11,8 +11,10 @@ import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVot
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
+import { getEthersProvider } from "./ethers";
 
-export async function getContestContractVersion(address: string, provider: any) {
+export async function getContestContractVersion(address: string, chainId: number) {
+  const provider = getEthersProvider({ chainId });
   const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
 
   const version: string = await contract.version();

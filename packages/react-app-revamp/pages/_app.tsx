@@ -1,16 +1,16 @@
 import { chains, config } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import "@rainbow-me/rainbowkit/styles.css";
+import "@styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import "react-datepicker/dist/react-datepicker.css";
+import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
-import "@rainbow-me/rainbowkit/styles.css";
-import "react-datepicker/dist/react-datepicker.css";
-import "react-loading-skeleton/dist/skeleton.css";
-import "@styles/globals.css";
 
 import { jokeraceTheme } from "@config/rainbowkit";
 import { WagmiConfig } from "wagmi";

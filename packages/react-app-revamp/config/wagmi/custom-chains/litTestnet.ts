@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const litTestnet = {
+export const litTestnet: Chain = {
   id: 175177,
   name: "chroniclelittestnet",
   network: "chroniclelittestnet",
@@ -21,4 +21,4 @@ export const litTestnet = {
     etherscan: { name: "Chronicle Block Explorer", url: "https://chain.litprotocol.com/" },
     default: { name: "Chronicle Block Explorer", url: "https://chain.litprotocol.com/" },
   },
-} as const satisfies Chain;
+};

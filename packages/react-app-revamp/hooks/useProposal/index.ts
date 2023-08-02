@@ -1,11 +1,12 @@
 import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
-import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
 import { readContract, readContracts } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
+
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
@@ -13,6 +14,8 @@ import { useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
 
 const PROPOSALS_PER_PAGE = 12;
+
+const divisor = BigInt("1000000000000000000"); // Equivalent to 1e18
 
 export function useProposal() {
   const {
@@ -32,7 +35,6 @@ export function useProposal() {
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
-  const provider = useEthersProvider({ chainId });
 
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
@@ -52,7 +54,7 @@ export function useProposal() {
     setIsPageProposalsError(null);
 
     try {
-      const { abi } = await getContestContractVersion(address, provider);
+      const { abi } = await getContestContractVersion(address, chainId);
 
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
@@ -132,16 +134,18 @@ export function useProposal() {
 
     const isContentImage = isUrlToImage(data.description) ? true : false;
 
-    //TODO check decimals here
+    const forVotesBigInt = proposalDataPerId[i][1].result[0] as bigint;
+    const againstVotesBigInt = proposalDataPerId[i][1].result[1] as bigint;
+
+    const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
+    const votes = Number(utils.formatEther(votesBigNumber));
+
     const proposalData = {
       authorEthereumAddress: data.author,
       content: data.description,
       isContentImage,
       exists: data.exists,
-      votes: proposalDataPerId[i][1].result
-        ? Number(BigInt(proposalDataPerId[i][1].result[0]) / BigInt("1000000000000000000")) -
-          Number(BigInt(proposalDataPerId[i][1].result[1]) / BigInt("1000000000000000000"))
-        : 0,
+      votes,
     };
 
     setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
@@ -179,20 +183,25 @@ export function useProposal() {
       if (!useLegacyGetAllProposalsIdFn) {
         proposalsIds = [];
         proposalsIdsRawData[0].map((data: any, index: number) => {
+          const forVotesBigNumber = BigNumber.from(proposalsIdsRawData[1][index].forVotes.toString());
+          const againstVotesBigNumber = BigNumber.from(
+            proposalsIdsRawData[1][index].againstVotes ? proposalsIdsRawData[1][index].againstVotes.toString() : "0",
+          );
+          const votesBigNumber =
+            proposalsIdsRawData[1][index].length === 1
+              ? forVotesBigNumber
+              : forVotesBigNumber.sub(againstVotesBigNumber);
+          const votesDivided = votesBigNumber.div(BigNumber.from(divisor.toString()));
+          const votes = parseFloat(utils.formatEther(votesDivided));
+
           proposalsIds.push({
-            // for votes minus against votes if there are against votes
-            votes:
-              proposalsIdsRawData[1][index].length == 1
-                ? proposalsIdsRawData[1][index][0] / 1e18
-                : proposalsIdsRawData[1][index][0] / 1e18 - proposalsIdsRawData[1][index][1] / 1e18,
+            votes,
             id: data,
           });
         });
         proposalsIds = proposalsIds
           .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
           .map((proposal: { id: any }) => proposal.id);
-
-        console.log({ proposalsIds });
 
         setListProposalsIds(proposalsIds as string[]);
       } else {

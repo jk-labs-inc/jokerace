@@ -4,6 +4,7 @@ import { Chain, configureChains, createConfig, mainnet } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avaxCChain } from "./custom-chains/avaxCChain";
+import { baseMainnet } from "./custom-chains/baseMainnet";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { bnbMainnet } from "./custom-chains/bnbMainnet";
 import { celoMainnet } from "./custom-chains/celoMainnet";
@@ -17,6 +18,8 @@ import { lineaTestnet } from "./custom-chains/lineaTestnet";
 import { litTestnet } from "./custom-chains/litTestnet";
 import { lootChainMainnet } from "./custom-chains/lootChainMainnet";
 import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
+import { luksoMainnet } from "./custom-chains/luksoMainnet";
+import { luksoTestnet } from "./custom-chains/luksoTestnet";
 import { mantleMainnet } from "./custom-chains/mantleMainnet";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
@@ -49,6 +52,7 @@ const totalChains: Chain[] = [
   polygonZkTestnet,
   polygonZkMainnet,
   baseTestnet,
+  baseMainnet,
   scrollGoerli,
   evmosTestnet,
   evmosMainnet,
@@ -71,6 +75,8 @@ const totalChains: Chain[] = [
   gnosisMainnet,
   mantleMainnet,
   mantleTestnet,
+  luksoMainnet,
+  luksoTestnet,
 ];
 
 const publicClients =

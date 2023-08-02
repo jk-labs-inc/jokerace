@@ -1,17 +1,17 @@
 import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
-import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
-import MerkleTree from "merkletreejs";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useUserStore } from "./store";
+
+export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useUser() {
   const { address: userAddress } = useAccount();
@@ -33,12 +33,11 @@ export function useUser() {
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
-  const chainId = chains.find(c => c.name.replace(/\s+/g, "").toLowerCase() === lowerCaseChainName)?.id;
-  const provider = useEthersProvider({ chainId });
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName)?.[0]?.id;
 
   // Generate config for the contract
   async function getContractConfig() {
-    const { abi } = await getContestContractVersion(address, provider);
+    const { abi } = await getContestContractVersion(address, chainId);
 
     if (abi === null) {
       toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
@@ -54,12 +53,10 @@ export function useUser() {
   }
 
   const checkIfCurrentUserQualifyToSubmit = async (
-    submissionMerkleTree: MerkleTree,
+    submissionMerkleRoot: string,
     contestMaxNumberSubmissionsPerUser: number,
   ) => {
     const abi = await getContractConfig();
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
 
     if (!userAddress || !abi) return;
 
@@ -69,8 +66,7 @@ export function useUser() {
       chainId: chainId,
     };
 
-    //@TODO check here if type is good
-    if (submissionMerkleTree.getHexRoot() === "0x") {
+    if (submissionMerkleRoot === EMPTY_ROOT) {
       const numOfSubmittedProposalsRaw = await readContract({
         ...contractConfig,
         functionName: "getNumSubmissions",
@@ -87,6 +83,8 @@ export function useUser() {
       setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
       setCurrentUserQualifiedToSubmit(true);
     } else {
+      const config = await import("@config/supabase");
+      const supabase = config.supabase;
       try {
         const { data } = await supabase
           .from("contest_participants_v3")

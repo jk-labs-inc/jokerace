@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const evmosTestnet = {
+export const evmosTestnet: Chain = {
   id: 9000,
   name: "EvmosTestnet",
   network: "evmosTestnet",
@@ -21,4 +21,4 @@ export const evmosTestnet = {
     mintscan: { name: "Mintscan", url: "https://testnet.mintscan.io/evmos-testnet" },
     default: { name: "Mintscan", url: "https://testnet.mintscan.io/evmos-testnet" },
   },
-} as const satisfies Chain;
+};

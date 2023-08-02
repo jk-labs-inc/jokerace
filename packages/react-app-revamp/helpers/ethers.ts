@@ -1,7 +1,8 @@
-import * as React from "react";
-import { type PublicClient, type WalletClient, useWalletClient, usePublicClient } from "wagmi";
+import { getPublicClient } from "@wagmi/core";
 import { providers } from "ethers";
+import * as React from "react";
 import { type HttpTransport } from "viem";
+import { useWalletClient, type PublicClient, type WalletClient } from "wagmi";
 
 export function publicClientToProvider(publicClient: PublicClient) {
   const { chain, transport } = publicClient;
@@ -10,7 +11,6 @@ export function publicClientToProvider(publicClient: PublicClient) {
     name: chain.name,
     ensAddress: chain.contracts?.ensRegistry?.address,
   };
-
   if (transport.type === "fallback")
     return new providers.FallbackProvider(
       (transport.transports as ReturnType<HttpTransport>[]).map(
@@ -20,10 +20,10 @@ export function publicClientToProvider(publicClient: PublicClient) {
   return new providers.JsonRpcProvider(transport.url, network);
 }
 
-/** Hook to convert a viem Public Client to an ethers.js Provider. */
-export function useEthersProvider({ chainId }: { chainId?: number } = {}) {
-  const publicClient = usePublicClient({ chainId });
-  return React.useMemo(() => publicClientToProvider(publicClient), [publicClient]);
+/** Action to convert a viem Public Client to an ethers.js Provider. */
+export function getEthersProvider({ chainId }: { chainId?: number } = {}) {
+  const publicClient = getPublicClient({ chainId });
+  return publicClientToProvider(publicClient);
 }
 
 export function walletClientToSigner(walletClient: WalletClient) {

@@ -1,6 +1,5 @@
 import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
-import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { readContract, readContracts } from "@wagmi/core";
@@ -18,7 +17,6 @@ export function useRewardsModule() {
   const chainId = chains.filter(
     chain => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
-  const provider = useEthersProvider({ chainId });
   const { refetch: refetchBalanceRewardsModule } = useQuery(
     ["balance-rewards-module", rewards?.contractAddress],
     async () => {
@@ -35,7 +33,8 @@ export function useRewardsModule() {
             headers: {
               "Content-Type": "application/json",
             },
-            params: [`${contestRewardModuleAddress}`],
+            params: [`${contestRewardModuleAddress}`, "erc20"],
+            id: 42,
           }),
           redirect: "follow",
         });
@@ -66,7 +65,7 @@ export function useRewardsModule() {
     try {
       const contestAddress = address ?? asPath.split("/")[3];
       const contestChainName = chainName ?? asPath.split("/")[2];
-      const { abi: abiContest, version } = await getContestContractVersion(address ?? contestAddress, provider);
+      const { abi: abiContest } = await getContestContractVersion(address ?? contestAddress, chainId);
 
       if (abiContest === null) {
         setIsLoading(false);
@@ -84,7 +83,7 @@ export function useRewardsModule() {
         functionName: "officialRewardsModule",
       })) as string;
       //@ts-ignore
-      const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, provider);
+      const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
       if (abiRewardsModule === null) {
         if (contestRewardModuleAddress == "0x0000000000000000000000000000000000000000") {
           toastError("There is no rewards module for this contest.");

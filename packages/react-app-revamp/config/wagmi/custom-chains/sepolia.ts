@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const sepolia = {
+export const sepolia: Chain = {
   id: 11155111,
   name: "sepolia",
   network: "sepolia",
@@ -21,4 +21,4 @@ export const sepolia = {
     etherscan: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan.io" },
     default: { name: "Sepolia Otterscan", url: "https://sepolia.otterscan.io" },
   },
-} as const satisfies Chain;
+};

@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const polygonZkMainnet = {
+export const polygonZkMainnet: Chain = {
   id: 1101,
   name: "PolygonZkMainnet",
   network: "polygonZkMainnet",
@@ -21,4 +21,4 @@ export const polygonZkMainnet = {
     etherscan: { name: "Polygon zkEvm Mainnet Scan", url: "https://zkevm.polygonscan.com/" },
     default: { name: "Polygon zkEvm Mainnet Scan", url: "https://zkevm.polygonscan.com/" },
   },
-} as const satisfies Chain;
+};

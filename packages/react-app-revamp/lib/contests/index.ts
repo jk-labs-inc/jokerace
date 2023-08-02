@@ -5,14 +5,13 @@ import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { fetchBalance, FetchBalanceResult, readContract } from "@wagmi/core";
 import { BigNumber, ethers, utils } from "ethers";
-import { Recipient } from "lib/merkletree/generateMerkleTree";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 
 export const ITEMS_PER_PAGE = 7;
 
-async function getContractConfig(address: string, chainName: string, chainId: number) {
-  const { abi, version } = await getContestContractVersion(address, chainName);
+async function getContractConfig(address: string, chainId: number) {
+  const { abi } = await getContestContractVersion(address, chainId);
 
   if (abi === null) {
     return;
@@ -86,26 +85,51 @@ export const fetchFirstToken = async (contestRewardModuleAddress: string, chainI
   }
 };
 
+const fetchParticipantData = async (contestAddress: string, userAddress: string, networkName: string) => {
+  const config = await import("@config/supabase");
+  const supabase = config.supabase;
+
+  const { data } = await supabase
+    .from("contest_participants_v3")
+    .select("can_submit, num_votes")
+    .eq("user_address", userAddress)
+    .eq("contest_address", contestAddress)
+    .eq("network_name", networkName);
+
+  return data && data.length > 0 ? data[0] : null;
+};
+
+const updateContestWithUserQualifications = async (contest: any, userAddress: string) => {
+  const { submissionMerkleTree, network_name, address } = contest;
+  const anyoneCanSubmit = submissionMerkleTree === null;
+
+  let participantData = { can_submit: anyoneCanSubmit, num_votes: 0 };
+  if (userAddress) {
+    const fetchedData = await fetchParticipantData(address, userAddress, network_name);
+    participantData = fetchedData ? fetchedData : participantData;
+  }
+
+  const updatedContest = {
+    ...contest,
+    anyoneCanSubmit: anyoneCanSubmit,
+    qualifiedToSubmit: !anyoneCanSubmit ? participantData.can_submit : undefined,
+    qualifiedToVote: participantData.num_votes > 0,
+  };
+
+  return updatedContest;
+};
+
 const processContestData = async (contest: any, userAddress: string) => {
+  const { address, network_name } = contest;
+
   try {
-    const chain = chains.find(
-      c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
-    );
+    const chainId = chains.filter(
+      c => c.name.replace(/\s+/g, "").toLowerCase() === network_name.replace(/\s+/g, "").toLowerCase(),
+    )[0].id;
 
-    const contractConfig = await getContractConfig(contest.address, contest.network_name, chain?.id ?? 0);
+    const contractConfig = await getContractConfig(address, chainId);
 
-    let votersSet = new Set(contest.votingMerkleTree.voters.map((voter: Recipient) => voter.address));
-
-    contest.qualifiedToVote = votersSet.has(userAddress);
-
-    if (contest.submissionMerkleTree) {
-      const submittersSet = new Set(
-        contest.submissionMerkleTree.submitters.map((submitter: Recipient) => submitter.address),
-      );
-      contest.qualifiedToSubmit = submittersSet.has(userAddress);
-    } else {
-      contest.anyoneCanSubmit = true;
-    }
+    contest = await updateContestWithUserQualifications(contest, userAddress);
 
     if (
       contractConfig &&
@@ -123,7 +147,7 @@ const processContestData = async (contest: any, userAddress: string) => {
         } else {
           const abiRewardsModule = await getRewardsModuleContractVersion(
             contestRewardModuleAddress.toString(),
-            contest.network_name,
+            chainId,
           );
 
           if (!abiRewardsModule) {
@@ -132,23 +156,23 @@ const processContestData = async (contest: any, userAddress: string) => {
             const winners = (await readContract({
               address: contestRewardModuleAddress.toString() as `0x${string}`,
               abi: abiRewardsModule,
-              chainId: chain?.id,
+              chainId: chainId,
               functionName: "getPayees",
             })) as BigNumber[];
 
             let rewardToken: FetchBalanceResult | null = null;
             let erc20Tokens: any = null;
 
-            rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chain?.id ?? 0);
+            rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
 
             if (!rewardToken || Number(rewardToken.value) === 0) {
               try {
-                erc20Tokens = await fetchTokenBalances(contest.network_name, contestRewardModuleAddress.toString());
+                erc20Tokens = await fetchTokenBalances(network_name, contestRewardModuleAddress.toString());
 
                 if (erc20Tokens && erc20Tokens.length > 0) {
                   rewardToken = await fetchFirstToken(
                     contestRewardModuleAddress.toString(),
-                    chain?.id ?? 0,
+                    chainId,
                     erc20Tokens[0].contractAddress,
                   );
                 }

@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const nearAuroraMainnet = {
+export const nearAuroraMainnet: Chain = {
   id: 1313161554,
   name: "nearAuroraMainnet",
   network: "nearAuroraMainnet",
@@ -21,4 +21,4 @@ export const nearAuroraMainnet = {
     etherscan: { name: "Near Aurora Mainnet Block Explorer", url: "https://mainnet.aurorascan.dev/" },
     default: { name: "Near Aurora Mainnet Block Explorer", url: "https://mainnet.aurorascan.dev/" },
   },
-} as const satisfies Chain;
+};

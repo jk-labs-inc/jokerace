@@ -69,7 +69,6 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
               <div className="border-l border-true-white ">
                 <p className="prose pl-5 ">
                   <ReactMarkdown
-                    children={prompt}
                     rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
                     components={{
                       p: ({ node, children, ...props }) => (
@@ -88,7 +87,9 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
                         </li>
                       ),
                     }}
-                  />
+                  >
+                    {prompt}
+                  </ReactMarkdown>
                 </p>
               </div>
             </Collapsible>

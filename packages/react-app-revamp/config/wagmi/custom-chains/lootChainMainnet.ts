@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const lootChainMainnet = {
+export const lootChainMainnet: Chain = {
   id: 5151706,
   name: "lootChainMainnet",
   network: "lootChainMainnet",
@@ -21,4 +21,4 @@ export const lootChainMainnet = {
     etherscan: { name: "Loot Chain Mainnet Block Explorer", url: "https://explorer.lootchain.com/" },
     default: { name: "Loot Chain Mainnet Block Explorer", url: "https://explorer.lootchain.com/" },
   },
-} as const satisfies Chain;
+};

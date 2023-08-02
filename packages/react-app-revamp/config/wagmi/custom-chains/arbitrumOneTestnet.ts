@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const arbitrumOneTestnet = {
+export const arbitrumOneTestnet: Chain = {
   id: 42161,
   name: "arbitrumoneTestnet",
   network: "arbitrumoneTestnet",
@@ -21,4 +21,4 @@ export const arbitrumOneTestnet = {
     etherscan: { name: "Arbitrum Testnet Etherscan", url: "https://goerli-rollup-explorer.arbitrum.io" },
     default: { name: "Arbitrum Testnet Etherscan", url: "https://goerli-rollup-explorer.arbitrum.io" },
   },
-} as const satisfies Chain;
+};

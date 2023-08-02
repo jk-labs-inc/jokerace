@@ -1,5 +1,4 @@
 import { chains } from "@config/wagmi";
-import { useEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
 import { generateProof } from "lib/merkletree/generateMerkleTree";
@@ -18,7 +17,6 @@ export function useGenerateProof() {
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
-  const provider = useEthersProvider({ chainId: chainId });
   const contestAddress = url[3];
 
   function getProof(merkleTree: MerkleTree, address: string, proofType: ProofType, numVotes?: string) {
@@ -42,7 +40,7 @@ export function useGenerateProof() {
   ) {
     const proofs = getProof(merkleTree, address, proofType, numVotes);
 
-    const { abi } = await getContestContractVersion(contestAddress, provider);
+    const { abi } = await getContestContractVersion(contestAddress, chainId);
 
     const contractConfig = {
       address: contestAddress as `0x${string}`,
