@@ -8,8 +8,8 @@ export const gnosisMainnet = {
     symbol: 'xDAI',
   },
   rpcUrls: {
-    public: 'https://rpc.gnosischain.com/',
-    default: 'https://rpc.gnosischain.com/',
+    public: 'https://rpc.ankr.com/gnosis',
+    default: 'https://rpc.ankr.com/gnosis',
   },
   blockExplorers: {
     etherscan: { name: 'Gnosis Etherscan', url: 'https://gnosisscan.io/' },
