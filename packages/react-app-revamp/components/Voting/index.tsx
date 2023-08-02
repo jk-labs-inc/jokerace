@@ -3,6 +3,7 @@ import StepSlider from "@components/UI/Slider";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { FC, useEffect, useState } from "react";
 
@@ -13,12 +14,14 @@ interface VotingWidgetProps {
 }
 
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
+  const isMerkleTreeInProgress = useContestStore(state => state.isMerkleTreeInProgress);
   const currentUserTotalVotesCast = useUserStore(state => state.currentUserTotalVotesCast);
   const isLoading = useCastVotesStore(state => state.isLoading);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
+  const voteDisabled = isMerkleTreeInProgress || isLoading || amount === 0 || isInvalid;
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -107,7 +110,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         <div className="mt-4">
           <ButtonV3
             type="txAction"
-            disabled={isLoading || isInvalid || amount === 0}
+            disabled={voteDisabled}
             color="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
             size="large"
             onClick={() => onVote?.(amount, isUpvote)}
