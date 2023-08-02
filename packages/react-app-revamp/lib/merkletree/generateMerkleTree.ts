@@ -11,7 +11,7 @@ export interface Proof {
   data: Buffer;
 }
 
-export interface MerkleTreeVotingData {
+export interface MerkleTreeData {
   merkleTree: MerkleTree;
   merkleRoot: string;
   recipients: Recipient[];
@@ -68,7 +68,7 @@ const createMerkleTree = (recipients: Recipient[]): MerkleTree => {
  * @param {Record<string, number>} data address to claim mapping
  * @returns {Promise<void>}
  */
-export const generateMerkleTree = (decimals: number, data: Record<string, number>): MerkleTreeVotingData => {
+export const generateMerkleTree = (decimals: number, data: Record<string, number>): MerkleTreeData => {
   const recipients = setupVoteRecipients(decimals, data);
   const merkleTree = createMerkleTree(recipients);
   const merkleRoot: string = merkleTree.getHexRoot();

@@ -1,6 +1,8 @@
+import { formatNumber } from "@helpers/formatNumber";
+import { MAX_ROWS } from "@helpers/parseVotingCsv";
 import { FC, ReactNode, useMemo } from "react";
 
-export type ParseError = "missingColumns" | "limitExceeded" | "duplicates" | "over18Decimal" | "";
+export type ParseError = "missingColumns" | "limitExceeded" | "duplicates" | "allZero" | "";
 
 interface CSVParseErrorProps {
   step: "voting" | "submission";
@@ -46,7 +48,7 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
           <div className="flex flex-col text-[16px] animate-fadeIn">
             <p className=" text-negative-11">
               Ruh-roh! CSV file has too many rows.{" "}
-              <span className="font-bold">The maximum number of rows allowed is 10,000</span>
+              <span className="font-bold">The maximum number of rows allowed is {formatNumber(MAX_ROWS)}</span>
             </p>
           </div>
         );
@@ -59,12 +61,12 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
             </p>
           </div>
         );
-      case "over18Decimal":
+      case "allZero":
         return (
           <div className="flex flex-col text-[16px] animate-fadeIn">
             <p className=" text-negative-11">
-              Ruh-roh! CSV file has some votes with over 18 decimals{" "}
-              <span className="font-bold">CSV should have vote values with less decimals</span>
+              Ruh-roh! All votes in the CSV file are 0.{" "}
+              <span className="font-bold">CSV should have at least one vote above zero.</span>
             </p>
           </div>
         );

@@ -17,8 +17,10 @@ export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
   setShowRewards: show => set({ showRewards: show }),
 }));
 
+const WARNING_MESSAGE_THRESHOLD = 10000;
+
 const CreateContestDeploying = () => {
-  const { isSuccess, deployContestData } = useDeployContestStore(state => state);
+  const { isSuccess, deployContestData, votingMerkle } = useDeployContestStore(state => state);
   const router = useRouter();
   const { setShowRewards } = useShowRewardsStore(state => state);
 
@@ -49,6 +51,13 @@ const CreateContestDeploying = () => {
           alt="Loading GIF"
         />
       </div>
+      {votingMerkle && votingMerkle.voters.length > WARNING_MESSAGE_THRESHOLD && (
+        <p className="text-[16px] text-neutral-11 italic">
+          You seem to be trying to deploy a larger set of data; since this could take longer, don't reload the page.{" "}
+          <br />
+          please be patient and keep hallucinating at the gif above.
+        </p>
+      )}
     </div>
   );
 };

@@ -3,6 +3,15 @@ import { createContext, useContext, useRef } from "react";
 import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
+type Reward = {
+  token: {
+    symbol: string;
+    value: number;
+  };
+  winners: number;
+  numberOfTokens: number;
+};
+
 export interface ContestState {
   contestName: string;
   contestPrompt: string;
@@ -30,6 +39,9 @@ export interface ContestState {
     address: string;
     numVotes: number;
   }[];
+  rewards: Reward | null;
+  isReadOnly: boolean;
+  isMerkleTreeInProgress: boolean;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -42,6 +54,7 @@ export interface ContestState {
   setVotesClose: (datetime: Date) => void;
   setTotalVotesCast: (amount: number) => void;
   setTotalVotes: (amount: number) => void;
+  setRewards: (rewards: Reward | null) => void;
   setVotingMerkleTree: (merkleTree: MerkleTree) => void;
   setVoters: (voters: { address: string; numVotes: number }[]) => void;
   setSubmissionMerkleTree: (merkleTree: MerkleTree) => void;
@@ -50,6 +63,8 @@ export interface ContestState {
   setError: (value: CustomError | null) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
+  setIsReadOnly: (value: boolean) => void;
+  setIsMerkleTreeInProgress: (value: boolean) => void;
 }
 
 export const createContestStore = () =>
@@ -66,6 +81,7 @@ export const createContestStore = () =>
     votingMerkleTree: new MerkleTree([]),
     voters: [],
     totalVotesCast: 0,
+    rewards: null,
     totalVotes: 0,
     isLoading: true,
     error: null,
@@ -74,13 +90,16 @@ export const createContestStore = () =>
     downvotingAllowed: false,
     canUpdateVotesInRealTime: false,
     isV3: false,
+    isReadOnly: false,
     supportsRewardsModule: false,
+    isMerkleTreeInProgress: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
     setContestPrompt: prompt => set({ contestPrompt: prompt }),
     setContestMaxProposalCount: amount => set({ contestMaxProposalCount: amount }),
     setIsV3: value => set({ isV3: value }),
+    setIsReadOnly: value => set({ isReadOnly: value }),
     setContestName: name => set({ contestName: name }),
     setContestAuthor: (author, address) => set({ contestAuthor: author, contestAuthorEthereumAddress: address }),
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
@@ -92,9 +111,11 @@ export const createContestStore = () =>
     setSubmitters: submitters => set({ submitters: submitters }),
     setTotalVotesCast: amount => set({ totalVotesCast: amount }),
     setTotalVotes: amount => set({ totalVotes: amount }),
+    setRewards: rewards => set({ rewards: rewards }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
+    setIsMerkleTreeInProgress: value => set({ isMerkleTreeInProgress: value }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

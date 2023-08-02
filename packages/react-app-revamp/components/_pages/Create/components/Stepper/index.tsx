@@ -1,3 +1,4 @@
+import { isSupabaseConfigured } from "@helpers/database";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, ReactElement } from "react";
 import CreateContestDeploying from "../../pages/ContestDeploying";
@@ -53,6 +54,22 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
       setFurthestStep(index);
     }
   };
+
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="flex flex-col gap-3 justify-center items-center mt-40">
+        <p className="text-[24px] font-sabo text-primary-10">
+          Oops, it seems you've forgotten to include environmental variables!
+        </p>
+        <p className="text-[16px]">
+          for more details, visit{" "}
+          <a className="text-positive-11" href="https://github.com/jk-labs-inc/jokerace#readme" target="_blank">
+            <b>here!</b>
+          </a>
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div>

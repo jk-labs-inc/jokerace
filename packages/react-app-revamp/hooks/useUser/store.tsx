@@ -20,6 +20,10 @@ interface UserState {
   setCurrentUserAvailableVotesAmount: (amount: number) => void;
   setCurrentUserTotalVotesAmount: (amount: number) => void;
   setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
+  decreaseCurrentUserAvailableVotesAmount: (amount: number) => void;
+  increaseCurrentUserAvailableVotesAmount: (amount: number) => void;
+  increaseCurrentUserTotalVotesCast: (amount: number) => void;
+  decreaseCurrentUserTotalVotesCast: (amount: number) => void;
   setCurrentUserProposalCount: (amount: number) => void;
   increaseCurrentUserProposalCount: () => void;
   setIsLoading: (value: boolean) => void;
@@ -47,6 +51,14 @@ export const createUserStore = () =>
     setCurrentUserTotalVotesAmount: amount => set({ currentUserTotalVotesAmount: amount }),
     setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),
     setCurrentUserProposalCount: amount => set({ currentUserProposalCount: amount }),
+    decreaseCurrentUserAvailableVotesAmount: (amount: number) =>
+      set(state => ({ currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount - amount })),
+    increaseCurrentUserAvailableVotesAmount: (amount: number) =>
+      set(state => ({ currentUserAvailableVotesAmount: state.currentUserAvailableVotesAmount + amount })),
+    increaseCurrentUserTotalVotesCast: (amount: number) =>
+      set(state => ({ currentUserTotalVotesCast: state.currentUserTotalVotesCast + amount })),
+    decreaseCurrentUserTotalVotesCast: (amount: number) =>
+      set(state => ({ currentUserTotalVotesCast: state.currentUserTotalVotesCast - amount })),
     increaseCurrentUserProposalCount: () =>
       set(state => ({ currentUserProposalCount: state.currentUserProposalCount + 1 })),
     setIsLoading: value => set({ isLoading: value }),

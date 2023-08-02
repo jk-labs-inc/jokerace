@@ -1,5 +1,7 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import { toastLoading } from "@components/UI/Toast";
+import { useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
+import { utils } from "ethers";
 
 interface ButtonWithdrawErc20RewardProps {
   queryTokenBalance: any;
@@ -9,25 +11,33 @@ interface ButtonWithdrawErc20RewardProps {
 
 export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   const { queryTokenBalance, contractWriteWithdraw, txWithdraw } = props;
+  const { setIsLoading } = useWithdrawRewardStore(state => state);
+
+  if (queryTokenBalance.data.value.eq(0)) return null;
 
   return (
-    <>
-      <ButtonV3
-        disabled={contractWriteWithdraw.isLoading || txWithdraw.isLoading}
-        size="large"
-        color="bg-gradient-distribute"
-        onClick={() => {
-          toastLoading("withdrawing funds...");
-          contractWriteWithdraw.write();
-        }}
-      >
-        Withdraw all ${queryTokenBalance.data?.symbol}
-      </ButtonV3>
-      <p className="pt-2 text-2xs text-neutral-11 font-bold flex flex-wrap items-start">
-        Rewards module {queryTokenBalance.data?.symbol} balance:{" "}
-        {parseFloat(queryTokenBalance?.data?.formatted).toFixed(4)}
-      </p>
-    </>
+    <li className="flex items-center">
+      <section className="flex justify-between w-full md:w-[650px]">
+        <p>
+          {queryTokenBalance.data?.decimals <= 18
+            ? parseFloat(utils.formatEther(queryTokenBalance.data?.value))
+            : parseFloat(utils.formatUnits(queryTokenBalance.data?.value, queryTokenBalance.data.decimals))}{" "}
+          <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+        </p>
+        <ButtonV3
+          disabled={txWithdraw.isLoading}
+          size="extraSmall"
+          color="bg-gradient-withdraw"
+          onClick={() => {
+            setIsLoading(true);
+            toastLoading("withdrawing funds...");
+            contractWriteWithdraw.write();
+          }}
+        >
+          Withdraw
+        </ButtonV3>
+      </section>
+    </li>
   );
 };
 

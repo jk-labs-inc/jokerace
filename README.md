@@ -14,12 +14,9 @@ You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io)!
 - Create a `.env` file in `packages/react-app-revamp` (the frontend package) and paste the following values:
 
 ```
-NEXT_PUBLIC_INFURA_ID=
 NEXT_PUBLIC_ALCHEMY_KEY=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
-NEXT_PUBLIC_LENS_API_URL=
-NEXT_PUBLIC_WEB3STORAGE_TOKEN=
 ```
 ## Getting Started
 

@@ -4,27 +4,20 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 export function useContestParticipantsIndexV3() {
   const indexContestParticipantsV3 = async (
     address: string,
+    participants: string[],
+    voterSet: Set<string>,
+    submitterSet: Set<string>,
     voters: Recipient[],
-    submitters: Recipient[],
     networkName: string,
+    everyoneCanSubmit?: boolean,
   ) => {
     try {
       const config = await import("@config/supabase");
       const supabase = config.supabase;
 
-      const voterSet = new Set(voters.map(voter => voter.address));
-      const submitterSet = new Set(submitters.map(submitter => submitter.address));
-
-      // Combine voters and submitters, removing duplicates
-      const allParticipants = Array.from(
-        new Set([...voters.map(voter => voter.address), ...submitters.map(submitter => submitter.address)]),
-      );
-
-      const everyoneCanSubmit = submitters.length === 0;
-
-      const data = allParticipants.map(participant => {
+      const data = participants.map(participant => {
         const isVoter = voterSet.has(participant);
-        const isSubmitter = submitterSet.has(participant);
+        const isSubmitter = everyoneCanSubmit ? everyoneCanSubmit : submitterSet.has(participant);
 
         let num_votes = 0;
 
@@ -38,8 +31,7 @@ export function useContestParticipantsIndexV3() {
         return {
           contest_address: address,
           user_address: participant,
-          // If everyone can submit or if this participant is a designated submitter, mark them as able to submit
-          can_submit: everyoneCanSubmit || isSubmitter,
+          can_submit: isSubmitter,
           num_votes: num_votes,
           network_name: networkName,
         };

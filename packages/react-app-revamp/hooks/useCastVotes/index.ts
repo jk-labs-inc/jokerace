@@ -5,19 +5,20 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
+import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { waitForTransaction, writeContract } from "@wagmi/core";
-import { ethers } from "ethers";
+import { waitForTransaction, writeContract, readContract } from "@wagmi/core";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { votingMerkleTree } = useContestStore(state => state);
+  const { fetchTotalVotesCast } = useContest();
+  const { votingMerkleTree, canUpdateVotesInRealTime } = useContestStore(state => state);
+  const { setProposalVotes } = useProposalStore(state => state);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -90,6 +91,25 @@ export function useCastVotes() {
         hash: receipt.transactionHash,
       });
 
+      // We need this to update the votes either if there is more than 2 hours
+      if (!canUpdateVotesInRealTime) {
+        const votes = await readContract({
+          addressOrName: asPath.split("/")[3],
+          contractInterface: DeployedContestContract.abi,
+          functionName: "proposalVotes",
+          args: pickedProposal,
+        });
+
+        await fetchTotalVotesCast();
+
+        //@ts-ignore
+        setProposalVotes({
+          id: pickedProposal,
+          //@ts-ignore
+          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+        });
+      }
+
       await updateCurrentUserVotes();
       setIsLoading(false);
       setIsSuccess(true);
@@ -102,7 +122,7 @@ export function useCastVotes() {
       if (customError.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
         setIsLoading(false);
-        return;
+        throw customError;
       }
 
       toastError(`Something went wrong while casting your votes`, customError.message);
@@ -111,6 +131,7 @@ export function useCastVotes() {
         message: customError.message,
       });
       setIsLoading(false);
+      throw customError;
     }
   }
 

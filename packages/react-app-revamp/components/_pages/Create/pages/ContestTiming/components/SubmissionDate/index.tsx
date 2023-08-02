@@ -1,6 +1,5 @@
 import CreateDatePicker from "@components/_pages/Create/components/DatePicker";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useEffect } from "react";
 
 const CreateSubmissionsOpenDate = () => {
   const { submissionOpen, setSubmissionOpen } = useDeployContestStore(state => state);
@@ -15,7 +14,7 @@ const CreateSubmissionsOpenDate = () => {
       tip="we recommend opening them now—because why not?"
       onChange={onSubmissionDateChange}
       defaultDate={submissionOpen}
-      minDate={submissionOpen}
+      minDate={new Date()}
     />
   );
 };

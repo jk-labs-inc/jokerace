@@ -39,7 +39,7 @@ export const ListContests: FC<ListContestsProps> = ({
   const [sorting, setSorting] = useState<Sorting | null>(null);
   const [fadeBg, setFadeBg] = useState(false);
   const loading = status === "loading" || isFetching;
-  const placeholderCount = compact ? 4 : 7;
+  const placeholderCount = compact ? 6 : 7;
   const placeholders = new Array(placeholderCount).fill(null);
 
   useEffect(() => {
@@ -149,7 +149,7 @@ export const ListContests: FC<ListContestsProps> = ({
                   <Contest key={`placeholder-contest-${index}`} contest={{}} compact={compact} loading={loading} />
                 ))
               : sortedData
-                  .slice(0, 4)
+                  .slice(0, 6)
                   .map((contest: any, index: number) => (
                     <Contest key={`contest-${index}`} contest={contest} compact={compact} loading={loading} />
                   ))}

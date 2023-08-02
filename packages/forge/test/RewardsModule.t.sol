@@ -452,6 +452,39 @@ contract RewardsModuleTest is Test {
         assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
     }
 
+    // 2 proposals with different authors, both at 0 votes; send back to creator
+    function testSecondPlaceTieWithZeroVotesWithNative() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.propose(firstProposalPA2, submissionProof2);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+        );
+        rewardsModulePaysAuthor.release(2);
+    }
+
+    // 2 proposals with different authors, both at 0 votes; send back to creator
+    function testSecondPlaceTieWithZeroVotesWithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.propose(firstProposalPA2, submissionProof2);
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(
+            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+        );
+        rewardsModulePaysAuthor.release(testERC20, 2);
+    }
+
     // No proposals; revert with error message
     function testFirstPlaceTieWithZeroProposalsWithNative() public {
         vm.warp(1681670001);

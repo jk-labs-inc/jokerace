@@ -28,7 +28,7 @@ const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ contestAddress, chain, 
         {Object.keys(Tab).map(tabKey => (
           <div
             key={tabKey}
-            className={`text-[16px] cursor-pointer  font-bold ${
+            className={`text-[16px] cursor-pointer font-bold transition-colors duration-300 ${
               tabKey === activeTab ? "text-primary-10" : "text-neutral-11"
             }`}
             onClick={() => onTabChange(Tab[tabKey as keyof typeof Tab])}

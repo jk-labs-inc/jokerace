@@ -10,6 +10,7 @@ import CreateTextInput from "../../components/TextInput";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
+  const { isLoading } = useDeployContestStore(state => state);
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const isMobile = useMedia("(max-width: 768px)");
@@ -19,6 +20,8 @@ const CreateContestParams = () => {
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
+      if (isLoading) return;
+
       if (event.key === "Enter") {
         if (!isConnected) {
           try {
@@ -38,7 +41,7 @@ const CreateContestParams = () => {
     return () => {
       window.removeEventListener("keydown", handleEnterPress);
     };
-  }, [deployContest]);
+  }, [deployContest, isLoading]);
 
   const handleClick = (value: boolean) => {
     setIsEnabled(value);
@@ -117,7 +120,12 @@ const CreateContestParams = () => {
             </div>
           </div>
         </div>
-        <div className="mt-8">
+        <div>
+          <p className="text-[24px] text-neutral-11">
+            that’s it! now let’s create this contest—and then you can add rewards
+          </p>
+        </div>
+        <div>
           <CreateContestButton step={step} onClick={handleDeployContest} />
         </div>
       </div>

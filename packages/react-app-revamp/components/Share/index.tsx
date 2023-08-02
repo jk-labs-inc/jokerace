@@ -32,7 +32,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-neutral-0 shadow-lg ring-1 ring-inset ring-primary-9 ring-opacity-10 focus:outline-none">
+        <Menu.Items className="absolute right-0 z-10  mt-2 w-48 origin-top-right rounded-md bg-neutral-0 shadow-lg ring-1 ring-inset ring-primary-9 ring-opacity-10 focus:outline-none">
           <Menu.Item>
             {({ active }) => (
               <a
@@ -40,7 +40,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 href={generateLensShareUrl(contestName, contestAddress, chain)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
+                  "flex items-center text-[16px] gap-1 px-4 py-2  hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
                 )}
                 rel="noreferrer"
               >
@@ -56,7 +56,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 target="_blank"
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
+                  "flex items-center text-[16px] gap-1 px-4 py-2  hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
                 )}
                 rel="noreferrer"
               >
@@ -77,7 +77,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 onClick={() => generateUrlToCopy(contestAddress, chain)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center gap-1 px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
+                  "flex items-center gap-1 px-4 py-2 text-[16px] hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
                 )}
               >
                 <DuplicateIcon className="h-6 w-6 text-gray-400 mr-2" />

@@ -1,46 +1,57 @@
-import { chain, configureChains, createClient } from "wagmi";
-import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
-import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
-import { sepolia } from "./custom-chains/sepolia";
-import { baseTestnet } from "./custom-chains/baseTestnet";
-import { scrollGoerli } from "./custom-chains/scrollGoerli";
-import { evmosTestnet } from "./custom-chains/evmosTestnet";
-import { evmosMainnet } from "./custom-chains/evmosMainnet";
+import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
+import { Chain, configureChains, createClient } from "wagmi";
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avaxCChain } from "./custom-chains/avaxCChain";
-import { zoraMainnet } from "./custom-chains/zora";
+import { baseTestnet } from "./custom-chains/baseTestnet";
+import { baseMainnet } from "./custom-chains/baseMainnet";
 import { bnbMainnet } from "./custom-chains/bnbMainnet";
-import { lineaTestnet } from "./custom-chains/lineaTestnet";
-import { litTestnet } from "./custom-chains/litTestnet";
-import { zetaTestnet } from "./custom-chains/zetaTestnet";
-import { celoTestnet } from "./custom-chains/celoTestnet";
 import { celoMainnet } from "./custom-chains/celoMainnet";
-import { publicGoodsNetworkMainnet } from "./custom-chains/publicGoodsNetworkMainnet";
-import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
-import { lootChainMainnet } from "./custom-chains/lootChainMainnet";
-import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
-import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
-import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
+import { celoTestnet } from "./custom-chains/celoTestnet";
+import { evmosMainnet } from "./custom-chains/evmosMainnet";
+import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { gnosisMainnet } from "./custom-chains/gnosisMainnet";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
-import { publicProvider } from "wagmi/providers/public";
-import { infuraProvider } from "wagmi/providers/infura";
-import { alchemyProvider } from "wagmi/providers/alchemy";
-import { connectorsForWallets, getDefaultWallets, wallet } from "@rainbow-me/rainbowkit";
+import { goerli } from "./custom-chains/goerli";
+import { lineaTestnet } from "./custom-chains/lineaTestnet";
+import { litTestnet } from "./custom-chains/litTestnet";
+import { lootChainMainnet } from "./custom-chains/lootChainMainnet";
+import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
+import { mantleMainnet } from "./custom-chains/mantleMainnet";
+import { mantleTestnet } from "./custom-chains/mantleTestnet";
+import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
+import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
+import { optimism } from "./custom-chains/optimism";
+import { polygon } from "./custom-chains/polygon";
+import { polygonMumbai } from "./custom-chains/polygonMumbai";
+import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
+import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
+import { publicGoodsNetworkMainnet } from "./custom-chains/publicGoodsNetworkMainnet";
+import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
+import { scrollGoerli } from "./custom-chains/scrollGoerli";
+import { sepolia } from "./custom-chains/sepolia";
+import { zetaTestnet } from "./custom-chains/zetaTestnet";
+import { zoraMainnet } from "./custom-chains/zora";
+import { luksoTestnet } from "./custom-chains/luksoTestnet";
+import { luksoMainnet } from "./custom-chains/luksoMainnet";
 
 type ChainImages = {
   [key: string]: string;
 };
 
-const infuraId = process.env.NEXT_PUBLIC_INFURA_ID;
 const alchemyId = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
-const otherChains = [
-  chain.polygonMumbai,
-  chain.goerli,
+const totalChains: Chain[] = [
+  polygon,
+  arbitrumOne,
+  optimism,
+  polygonMumbai,
   sepolia,
+  goerli,
   polygonZkTestnet,
   polygonZkMainnet,
   baseTestnet,
+  baseMainnet,
   scrollGoerli,
   evmosTestnet,
   evmosMainnet,
@@ -60,15 +71,35 @@ const otherChains = [
   nearAuroraTestnet,
   gnosisTestnet,
   gnosisMainnet,
+  mantleMainnet,
+  mantleTestnet,
+  luksoMainnet,
+  luksoTestnet
 ];
 
-const defaultChains = [chain.polygon, chain.arbitrum, chain.optimism];
-const appChains = [...defaultChains, ...otherChains];
 const providers =
-  process.env.NODE_ENV === "development"
-    ? [publicProvider(), alchemyProvider({ alchemyId })]
-    : [alchemyProvider({ alchemyId }), infuraProvider({ infuraId }), publicProvider()];
-export const { chains, provider } = configureChains(appChains, providers);
+  process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY
+    ? [
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.default}`,
+          }),
+        }),
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.public}`,
+          }),
+        }),
+      ]
+    : [
+        jsonRpcProvider({
+          rpc: chain => ({
+            http: `${chain.rpcUrls.public}`,
+          }),
+        }),
+      ];
+
+export const { chains, provider } = configureChains(totalChains, providers);
 
 const { wallets } = getDefaultWallets({
   appName: "jokerace",
@@ -109,6 +140,7 @@ export const chainsImages: ChainImages = {
   hardhat: "/hardhat.svg",
   rinkeby: "/ethereum.svg",
   ropsten: "/ethereum.svg",
+  sepolia: "/ethereum.svg",
   localhost: "/ethereum.svg",
   goerli: "/ethereum.svg",
   kovan: "/ethereum.svg",
@@ -118,4 +150,8 @@ export const chainsImages: ChainImages = {
   polygonzkmainnet: "/polygon.svg",
   scrollgoerli: "/scroll.png",
   basetestnet: "/base.svg",
+  gnosismainnet: "/gnosis.png",
+  gnosistestnet: "/gnosis.png",
+  publicgoodsnetworkmainnet: "/publicgoodsnetwork.svg",
+  publicgoodsnetworktestnet: "/publicgoodsnetwork.svg",
 };

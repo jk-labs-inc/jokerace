@@ -1,11 +1,14 @@
 /* eslint-disable react/no-unescaped-entities */
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
+import { isSupabaseConfigured } from "@helpers/database";
 import { formatNumber } from "@helpers/formatNumber";
+import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { ReactNode } from "react-markdown/lib/ast-to-react";
 import { useWindowScroll } from "react-use";
 import { useAccount } from "wagmi";
@@ -19,7 +22,9 @@ const LayoutContestQualifier = () => {
     currentUserProposalCount,
     currentUserTotalVotesAmount,
     contestMaxNumberSubmissionsPerUser,
+    isLoading,
   } = useUserStore(state => state);
+  const isReadOnly = useContestStore(state => state.isReadOnly);
   const { y } = useWindowScroll();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -29,6 +34,16 @@ const LayoutContestQualifier = () => {
 
   const qualifiedToSubmitMessage = useMemo<ReactNode>(() => {
     const userReachedMaxSubmissions = currentUserProposalCount >= contestMaxNumberSubmissionsPerUser;
+    if (isReadOnly && !currentUserQualifiedToSubmit) {
+      return (
+        <div className="flex flex-nowrap items-center gap-2">
+          <CrossIcon />
+          <p>
+            submissions are in <b>read mode</b>
+          </p>
+        </div>
+      );
+    }
     if (userReachedMaxSubmissions || !currentUserQualifiedToSubmit) {
       if (userReachedMaxSubmissions) {
         return (
@@ -55,9 +70,19 @@ const LayoutContestQualifier = () => {
         </div>
       );
     }
-  }, [currentUserQualifiedToSubmit, currentUserProposalCount, contestMaxNumberSubmissionsPerUser]);
+  }, [currentUserQualifiedToSubmit, currentUserProposalCount, contestMaxNumberSubmissionsPerUser, isReadOnly]);
 
   const qualifiedToVoteMessage = useMemo<ReactNode>(() => {
+    if (isReadOnly) {
+      return (
+        <div className="flex flex-nowrap items-center gap-2">
+          <CrossIcon />
+          <p>
+            vote is in <b>read mode</b>
+          </p>
+        </div>
+      );
+    }
     if (currentUserAvailableVotesAmount > 0) {
       return (
         <div className="flex flex-nowrap items-center gap-2">
@@ -87,32 +112,43 @@ const LayoutContestQualifier = () => {
         <p>you don't qualify to vote</p>
       </div>
     );
-  }, [currentUserAvailableVotesAmount, isScrolled]);
+  }, [currentUserAvailableVotesAmount, isScrolled, isReadOnly]);
 
   return (
-    <div className="w-full bg-true-black flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
-      <Image src="/contest/ballot.svg" width={33} height={33} alt="timer" />
+    <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
+      <div className="w-full bg-true-black flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container">
+        <Image src="/contest/ballot.svg" width={33} height={33} alt="timer" />
 
-      {isConnected ? (
-        <div className="flex flex-col">
-          {isScrolled ? (
-            <div className="text-[20px]  text-neutral-11">{qualifiedToVoteMessage}</div>
-          ) : (
-            <>
-              <div className="text-[16px] text-neutral-11">{qualifiedToSubmitMessage}</div>
-              <div className="text-[16px]  text-neutral-11">{qualifiedToVoteMessage}</div>
-            </>
-          )}
-        </div>
-      ) : (
-        <div className="text-[16px] font-bold text-neutral-11 mt-2">
-          <span className="text-positive-11 cursor-pointer" onClick={openConnectModal}>
-            connect a wallet
-          </span>{" "}
-          to see if you qualify
-        </div>
-      )}
-    </div>
+        {isLoading ? (
+          <div className="flex flex-col w-[150px]">
+            <p className="m-0">
+              <Skeleton height={16} />
+            </p>
+            <p className="m-0">
+              <Skeleton height={16} />
+            </p>
+          </div>
+        ) : isConnected ? (
+          <div className="flex flex-col">
+            {isScrolled ? (
+              <div className="text-[20px]  text-neutral-11">{qualifiedToVoteMessage}</div>
+            ) : (
+              <>
+                <div className="text-[16px] text-neutral-11">{qualifiedToSubmitMessage}</div>
+                <div className="text-[16px]  text-neutral-11">{qualifiedToVoteMessage}</div>
+              </>
+            )}
+          </div>
+        ) : (
+          <div className="text-[16px] font-bold text-neutral-11 mt-2">
+            <span className="text-positive-11 cursor-pointer" onClick={openConnectModal}>
+              connect wallet
+            </span>{" "}
+            to see if you qualify
+          </div>
+        )}
+      </div>
+    </SkeletonTheme>
   );
 };
 

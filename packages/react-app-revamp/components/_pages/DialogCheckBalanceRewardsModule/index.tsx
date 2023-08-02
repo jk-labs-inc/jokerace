@@ -1,62 +1,81 @@
+import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
-import { chains } from "@config/wagmi";
-import { ExclamationIcon } from "@heroicons/react/outline";
+import { useContestStore } from "@hooks/useContest/store";
 import { useRewardsStore } from "@hooks/useRewards/store";
-import { useRouter } from "next/router";
+import { useTokenBalance } from "@hooks/useTokenBalance";
+import { useWithdrawReward } from "@hooks/useWithdrawRewards";
+import { utils } from "ethers";
 import { FC, useEffect, useState } from "react";
-import { useBalance } from "wagmi";
+import { useAccount } from "wagmi";
 import CreateTextInput from "../Create/components/TextInput";
 
 interface DialogCheckBalanceRewardsModuleProps {
   isOpen: boolean;
   setIsOpen: (value: boolean) => void;
 }
+
 export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModuleProps> = ({ isOpen, setIsOpen }) => {
   const rewardsStore = useRewardsStore(state => state);
-  const { asPath } = useRouter();
+  const { contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { address, isConnected } = useAccount();
+  const creator = isConnected && address ? contestAuthorEthereumAddress === address : false;
   const [inputRewardsModuleBalanceCheck, setInputRewardsModuleBalanceCheck] = useState("");
-  const queryTokenBalance = useBalance({
-    addressOrName: rewardsStore?.rewards?.contractAddress,
-    chainId: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id,
-    token: inputRewardsModuleBalanceCheck,
-    //@ts-ignore
-    enabled: inputRewardsModuleBalanceCheck !== "" && inputRewardsModuleBalanceCheck?.match(/^0x[a-fA-F0-9]{40}$/),
-    onSuccess(data) {
-      if (parseFloat(data?.formatted) > 0) {
-        const newBalance = {
-          contractAddress: inputRewardsModuleBalanceCheck,
-          tokenBalance: data?.formatted,
-        };
-
-        if (!rewardsStore.rewards.balance) {
-          rewardsStore.setRewards({
-            ...rewardsStore.rewards,
-            balance: [newBalance],
-          });
-        } else {
-          const existingBalance = rewardsStore.rewards.balance.find(
-            (bal: any) => bal.contractAddress === inputRewardsModuleBalanceCheck,
-          );
-
-          if (!existingBalance) {
-            rewardsStore.setRewards({
-              ...rewardsStore.rewards,
-              balance: [...rewardsStore.rewards.balance, newBalance],
-            });
-          }
-        }
-      }
-    },
-  });
+  const { contractWriteWithdrawReward, txWithdraw } = useWithdrawReward(
+    rewardsStore?.rewards?.contractAddress,
+    rewardsStore?.rewards?.abi,
+    "erc20",
+    inputRewardsModuleBalanceCheck,
+  );
+  const { queryTokenBalance, error } = useTokenBalance(inputRewardsModuleBalanceCheck);
+  const [tokenAlreadyAdded, setTokenAlreadyAdded] = useState(false);
 
   useEffect(() => {
-    // reset state when modal closes
+    if (!inputRewardsModuleBalanceCheck) return;
+
+    if (rewardsStore.rewards.balance) {
+      const existingBalance = rewardsStore.rewards.balance.find(
+        (bal: any) => bal.contractAddress.toLowerCase() == inputRewardsModuleBalanceCheck.toLowerCase(),
+      );
+
+      if (existingBalance) {
+        setTokenAlreadyAdded(true);
+      } else {
+        setTokenAlreadyAdded(false);
+      }
+    } else {
+      setTokenAlreadyAdded(false);
+    }
+  }, [inputRewardsModuleBalanceCheck]);
+
+  useEffect(() => {
     if (!isOpen) {
       setInputRewardsModuleBalanceCheck("");
+      setTokenAlreadyAdded(false);
     }
   }, [isOpen]);
+
+  const addReward = () => {
+    if (!queryTokenBalance) return;
+
+    const newBalance = {
+      contractAddress: inputRewardsModuleBalanceCheck,
+      tokenBalance: queryTokenBalance.formatted,
+    };
+
+    if (!rewardsStore.rewards.balance) {
+      rewardsStore.setRewards({
+        ...rewardsStore.rewards,
+        balance: [newBalance],
+      });
+    } else {
+      rewardsStore.setRewards({
+        ...rewardsStore.rewards,
+        balance: [...rewardsStore.rewards.balance, newBalance],
+      });
+    }
+  };
 
   return (
     <DialogModalV3
@@ -71,32 +90,49 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
         </p>
         <div>
           <CreateTextInput
-            className="w-[500px]"
+            className="w-full md:w-[500px]"
             placeholder="0x..."
             type="text"
             onChange={setInputRewardsModuleBalanceCheck}
           />
 
-          {queryTokenBalance?.isError && (
-            <div className="pt-2 flex items-center">
-              <CrossIcon />
-              <p className="text-negative-11 text-2xs">{queryTokenBalance?.error?.message}</p>{" "}
+          {error && (
+            <div className="pt-2 gap-2 flex items-center">
+              <CrossIcon color="#FF78A9" />
+              <p className="text-negative-11 text-2xs">{error}</p>{" "}
             </div>
           )}
-          {queryTokenBalance?.isSuccess && (
+          {queryTokenBalance && tokenAlreadyAdded && (
             <div className="pt-2 flex items-center gap-1">
               <CheckmarkIcon color="#78FFC6" />
-              <p className="text-positive-11 text-[16px] uppercase">${queryTokenBalance?.data?.symbol}</p>{" "}
+              <p className="text-positive-11 text-[16px]">
+                <span className="uppercase">${queryTokenBalance?.symbol}</span> has already been added to your rewards
+              </p>
             </div>
           )}
         </div>
-        {queryTokenBalance?.data?.formatted && (
-          <div className="flex gap-2 animate-appear text-[16px] pt-6 font-bold">
-            <p>balance:</p>
-            <p className="uppercase text-positive-11">
-              {queryTokenBalance?.data?.formatted} ${queryTokenBalance?.data?.symbol}
-            </p>
-          </div>
+        {queryTokenBalance?.formatted && !tokenAlreadyAdded && (
+          <ul className="flex gap-6 text-[16px] pt-6 font-bold list-explainer animate-appear">
+            <li className="flex items-center uppercase">
+              {parseFloat(utils.formatUnits(queryTokenBalance.value, queryTokenBalance.decimals))} $
+              {queryTokenBalance?.symbol}
+            </li>
+            <div className="flex gap-2">
+              <ButtonV3 size="extraSmall" color="bg-gradient-distribute" onClick={addReward}>
+                add
+              </ButtonV3>
+              {creator && (
+                <ButtonV3
+                  disabled={txWithdraw.isLoading}
+                  size="extraSmall"
+                  color="bg-gradient-withdraw"
+                  onClick={() => contractWriteWithdrawReward.write()}
+                >
+                  Withdraw
+                </ButtonV3>
+              )}
+            </div>
+          </ul>
         )}
       </div>
     </DialogModalV3>

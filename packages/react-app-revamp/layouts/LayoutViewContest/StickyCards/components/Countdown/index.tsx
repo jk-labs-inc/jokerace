@@ -15,7 +15,7 @@ const formatDuration = (duration: moment.Duration) => {
 const LayoutContestCountdown = () => {
   const { submissionsOpen, votesOpen, votesClose } = useContestStore(state => state);
   const [duration, setDuration] = useState(formatDuration(moment.duration(0)));
-  const [phase, setPhase] = useState("contest");
+  const [phase, setPhase] = useState("start");
   const { y } = useWindowScroll();
   const [isScrolled, setIsScrolled] = useState(false);
   const memoizedSubmissionsOpen = useMemo(() => submissionsOpen, [submissionsOpen.getTime()]);
@@ -59,23 +59,23 @@ const LayoutContestCountdown = () => {
   const displayText = () => {
     if (isScrolled) {
       if (duration.days > 0) {
-        return `${duration.days}d ${duration.hours}h ${duration.minutes}m ${duration.seconds}s to ${phase}`;
+        return `${duration.days}d ${duration.hours}h ${duration.minutes}m ${duration.seconds}s`;
       } else if (duration.hours > 0) {
-        return `${duration.hours}h ${duration.minutes}m ${duration.seconds}s to ${phase}`;
+        return `${duration.hours}h ${duration.minutes}m ${duration.seconds}s`;
       } else if (duration.minutes > 0) {
-        return `${duration.minutes}m ${duration.seconds}s to ${phase}`;
+        return `${duration.minutes}m ${duration.seconds}s`;
       } else {
         return `${duration.seconds}s to ${phase}`;
       }
     } else {
       if (duration.days > 0) {
-        return `${duration.days} days ${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec to ${phase}`;
+        return `${duration.days} days ${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec`;
       } else if (duration.hours > 0) {
-        return `${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec to ${phase}`;
+        return `${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec`;
       } else if (duration.minutes > 0) {
-        return `${duration.minutes} min ${duration.seconds} sec to ${phase}`;
+        return `${duration.minutes} min ${duration.seconds} sec`;
       } else {
-        return `${duration.seconds} sec to ${phase}`;
+        return `${duration.seconds} sec`;
       }
     }
   };
@@ -94,17 +94,11 @@ const LayoutContestCountdown = () => {
           <>
             <div className="text-[16px] font-bold text-neutral-11">{displayText()}</div>
             {phase === "start" ? (
-              <div className="text-[16px] text-neutral-11">
-                Submissions follow until {moment(votesOpen).format("MMMM Do, h:mm a")}
-              </div>
-            ) : phase === "vote" ? (
-              <div className="text-[16px] text-neutral-11">
-                Voting is open until {moment(votesClose).format("MMMM Do, h:mm a")}
-              </div>
+              <div className="text-[16px] text-neutral-11">until contest opens</div>
+            ) : phase === "submit" ? (
+              <div className="text-[16px] text-neutral-11">to submit</div>
             ) : (
-              <div className="text-[16px] text-neutral-11">
-                Voting follows until {moment(votesClose).format("MMMM Do, h:mm a")}
-              </div>
+              <div className="text-[16px] text-neutral-11">to vote</div>
             )}
           </>
         )}

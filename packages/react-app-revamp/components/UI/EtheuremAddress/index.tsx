@@ -1,10 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
+import { chains, provider } from "@config/wagmi";
 import { useAvatarStore } from "@hooks/useAvatar";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/router";
 import { chain, useEnsName } from "wagmi";
 
-const DEFAULT_AVATAR_URL = "/contest/avatar.svg"; // Default avatar url
+const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
 
 interface EthereumAddressProps {
   ethereumAddress: string;
@@ -20,8 +22,17 @@ const EthereumAddress = ({
   shortenOnFallback,
 }: EthereumAddressProps) => {
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
+  const { asPath } = useRouter();
+  const chainName = asPath.split("/")[2];
   const { avatars, setAvatar } = useAvatarStore(state => state);
   const avatarUrl = avatars[ethereumAddress] || DEFAULT_AVATAR_URL;
+
+  const getExplorer = () => {
+    const chainExplorer = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)[0]
+      .blockExplorers?.default.url;
+
+    return `${chainExplorer}address/${ethereumAddress}`;
+  };
 
   const queryUserProfileLens = useQuery(
     ["lens-profile", ethereumAddress],
@@ -47,10 +58,7 @@ const EthereumAddress = ({
   const queryEns = useEnsName({
     chainId: chain.mainnet.id,
     address: ethereumAddress,
-    enabled:
-      (queryUserProfileLens?.isSuccess && queryUserProfileLens?.data === null) || queryUserProfileLens?.isError
-        ? true
-        : false,
+    enabled: !displayLensProfile || queryUserProfileLens.isError || !queryUserProfileLens.data,
   });
 
   const isLoading = queryUserProfileLens?.status === "loading";
@@ -60,16 +68,20 @@ const EthereumAddress = ({
   const displayName =
     (isLensProfileAvailable && queryUserProfileLens.data.handle) ||
     ensName ||
-    (shortenOnFallback && !textualVersion && shortAddress) ||
+    (shortenOnFallback && shortAddress) ||
     ethereumAddress;
 
   if (textualVersion) {
-    return <span>{displayName}</span>;
+    return (
+      <a
+        target="_blank"
+        rel="noopener noreferrer"
+        href={isLensProfileAvailable ? `https://lensfrens.xyz/${displayName}` : getExplorer()}
+      >
+        {displayName}
+      </a>
+    );
   }
-
-  const handleAddressClick = () => {
-    window.open(`https://etherscan.io/address/${ethereumAddress}`, "_blank");
-  };
 
   return (
     <span className="flex gap-2 items-center text-[16px] text-neutral-11 font-bold">
@@ -89,12 +101,7 @@ const EthereumAddress = ({
           className="text-[16px] text-neutral-11 font-bold no-underline cursor-pointer"
           target="_blank"
           rel="noopener noreferrer"
-          href={
-            isLensProfileAvailable
-              ? `https://lensfrens.xyz/${displayName}`
-              : `https://etherscan.io/address/${ethereumAddress}`
-          }
-          onClick={handleAddressClick}
+          href={isLensProfileAvailable ? `https://lensfrens.xyz/${displayName}` : getExplorer()}
         >
           {displayName}
         </a>

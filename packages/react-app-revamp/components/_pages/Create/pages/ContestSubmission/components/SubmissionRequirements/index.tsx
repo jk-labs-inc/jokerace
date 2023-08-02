@@ -3,18 +3,21 @@ import CreateDropdown, { Option } from "@components/_pages/Create/components/Dro
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { generateMerkleTree } from "lib/merkletree/generateMerkleTree";
 import { useEffect } from "react";
 
-const options: Option[] = [
-  { value: "anyone" },
-  { value: "voters (same requirements)", disabled: true },
-  { value: "holders of a specific token", disabled: true },
-  { value: "custom twitter users", disabled: true },
-];
+const options: Option[] = [{ value: "anyone" }, { value: "voters (same requirements)" }];
 
 const CreateSubmissionRequirements = () => {
-  const { step, submissionRequirements, setSubmissionRequirements, setSubmissionAllowlistFields, setSubmissionMerkle } =
-    useDeployContestStore(state => state);
+  const {
+    step,
+    submissionRequirements,
+    setSubmissionRequirements,
+    setSubmissionAllowlistFields,
+    submissionMerkle,
+    setSubmissionMerkle,
+    votingAllowlist,
+  } = useDeployContestStore(state => state);
   const submissionRequirementsValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([
     () => submissionRequirementsValidation?.[1].validation(submissionRequirements, "submissionRequirements"),
@@ -39,10 +42,26 @@ const CreateSubmissionRequirements = () => {
   }, [onNextStep]);
 
   const handleNextStep = () => {
-    setSubmissionAllowlistFields([]);
-    setSubmissionMerkle(null);
+    if (submissionRequirements === "voters (same requirements)") {
+      if (submissionMerkle) {
+        onNextStep();
+        return;
+      }
 
-    onNextStep();
+      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist).reduce((acc, address) => {
+        acc[address] = 10;
+        return acc;
+      }, {} as Record<string, number>);
+
+      const { merkleRoot, recipients } = generateMerkleTree(18, submissionAllowlist);
+      setSubmissionMerkle({ merkleRoot, submitters: recipients });
+      setSubmissionAllowlistFields([]);
+      onNextStep();
+    } else {
+      setSubmissionAllowlistFields([]);
+      setSubmissionMerkle(null);
+      onNextStep();
+    }
   };
 
   return (

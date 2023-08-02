@@ -242,7 +242,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className={`flex items-start ${submissionClass} md:justify-between gap-3`}>
+            <div className={`flex items-center ${submissionClass} md:justify-between gap-3`}>
               <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
                 <p className="font-bold">
                   {loading ? (
@@ -284,7 +284,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className={`flex items-start ${votingClass} md:justify-between gap-3`}>
+            <div className={`flex items-center ${votingClass} md:justify-between gap-3`}>
               <div className="min-w-[185px] min-h-[3rem] flex flex-col justify-center">
                 <p className="font-bold">
                   {loading ? (
@@ -332,8 +332,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                   <Skeleton />
                 ) : (
                   <>
-                    {parseInt(contest.rewards.token.value, 10)}{" "}
-                    <span className="uppercase">${contest.rewards.token.symbol}</span>
+                    {contest.rewards.token.value} <span className="uppercase">${contest.rewards.token.symbol}</span>
                   </>
                 )}
               </p>
@@ -382,7 +381,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                 <>
                   {!address ? (
                     <li>
-                      <span className="text-positive-11">connect</span> a wallet to see if you qualify
+                      <span className="text-positive-11">connect wallet</span> to see if you qualify
                     </li>
                   ) : null}
 
@@ -414,7 +413,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                         <Skeleton />
                       ) : (
                         <>
-                          {parseInt(contest.rewards.token.value, 10)}{" "}
+                          {contest.rewards.token.value}{" "}
                           <span className="uppercase">${contest.rewards.token.symbol}</span>
                         </>
                       )}

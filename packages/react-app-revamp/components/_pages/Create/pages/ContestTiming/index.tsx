@@ -32,7 +32,7 @@ const CreateContestTiming = () => {
   }, [onNextStep]);
 
   return (
-    <div className="mt-12 lg:mt-[50px] flex flex-col lg:flex-row gap-5 animate-swingInLeft">
+    <div className="mt-12 lg:mt-[50px] flex flex-col lg:flex-row gap-5 animate-swingInLeft opacity-5">
       <StepCircle step={step + 1} />
       <div className="flex flex-col gap-10">
         <CreateSubmissionsOpenDate />
