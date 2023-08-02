@@ -1,6 +1,6 @@
 TERMS OF SERVICE
 
-Last updated July 14, 2023
+Last updated August 2, 2023
 
 
 
