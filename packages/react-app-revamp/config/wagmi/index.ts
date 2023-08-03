@@ -42,7 +42,6 @@ type ChainImages = {
 };
 
 const totalChains: Chain[] = [
-  mainnet,
   polygon,
   arbitrumOne,
   optimism,
@@ -77,6 +76,7 @@ const totalChains: Chain[] = [
   mantleTestnet,
   luksoMainnet,
   luksoTestnet,
+  mainnet,
 ];
 
 const publicClients =

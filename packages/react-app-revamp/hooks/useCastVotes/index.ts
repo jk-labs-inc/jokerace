@@ -8,10 +8,11 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { readContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
+import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
-import { parseUnits } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -40,16 +41,11 @@ export function useCastVotes() {
 
   async function castVotes(amount: number, isPositive: boolean) {
     const { abi } = await getContestContractVersion(id, parseFloat(chainId));
-
     toastLoading("votes are deploying...");
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
-    const contractConfig = {
-      address: id as `0x${string}`,
-      abi: abi ? abi : DeployedContestContract.abi,
-    };
 
     try {
       const proofsVerificationStatus = await checkIfProofIsVerified(
@@ -59,32 +55,30 @@ export function useCastVotes() {
         currentUserTotalVotesAmount.toString(),
       );
 
-      let txConfig = null;
+      let txCastVotes: any = {} as TransactionResponse;
 
       if (!proofsVerificationStatus.verified) {
-        txConfig = await prepareWriteContract({
-          ...contractConfig,
+        txCastVotes = await writeContract({
+          address: id as `0x${string}`,
+          //@ts-ignore
+          abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVote",
           args: [
             pickedProposal,
             isPositive ? 0 : 1,
-            parseUnits(currentUserTotalVotesAmount.toString(), 18),
-            parseUnits(amount.toString(), 18),
+            parseUnits(currentUserTotalVotesAmount.toString()),
+            parseUnits(amount.toString()),
             proofsVerificationStatus.proofs,
           ],
         });
       } else {
-        txConfig = await prepareWriteContract({
-          ...contractConfig,
+        txCastVotes = await writeContract({
+          address: id as `0x${string}`,
+          //@ts-ignore
+          abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
-          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`, 18)],
+          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
         });
-      }
-
-      let txCastVotes: any = {} as TransactionResponse;
-
-      if (txConfig) {
-        txCastVotes = await writeContract(txConfig);
       }
 
       const receipt = await waitForTransaction({
@@ -100,21 +94,26 @@ export function useCastVotes() {
 
       // We need this to update the votes either if there is more than 2 hours
       if (!canUpdateVotesInRealTime) {
-        const votes = await readContract({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
+        const voteResponse = (await readContract({
+          address: asPath.split("/")[3] as `0x${string}`,
+          abi: DeployedContestContract.abi,
           functionName: "proposalVotes",
-          //@ts-ignore
-          args: pickedProposal,
-        });
+          args: [pickedProposal],
+        })) as bigint[];
+
+        const forVotes = voteResponse[0] as bigint;
+        const againstVotes = voteResponse[1] as bigint;
+
+        const votesBigNumber = BigNumber.from(forVotes).sub(againstVotes);
+
+        const votes = Number(utils.formatEther(votesBigNumber));
 
         await fetchTotalVotesCast();
 
         //@ts-ignore
         setProposalVotes({
           id: pickedProposal,
-          //@ts-ignore
-          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+          votes,
         });
       }
 

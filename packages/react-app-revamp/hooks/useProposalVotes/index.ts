@@ -2,9 +2,11 @@ import { toastError } from "@components/UI/Toast";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
+import { getEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { CustomError } from "types/error";
@@ -27,6 +29,7 @@ export function useProposalVotes(id: number | string) {
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
+  const provider = getEthersProvider({ chainId });
   const [address] = useState(url[3]);
 
   const {
@@ -67,7 +70,7 @@ export function useProposalVotes(id: number | string) {
 
       const list = (await readContract({
         address: address as `0x${string}`,
-        abi: abi as unknown as Abi,
+        abi: abi as any,
         chainId,
         functionName: "proposalAddressesHaveVoted",
         args: [id],
@@ -137,6 +140,7 @@ export function useProposalVotes(id: number | string) {
    * @param userAddress - wallet address
    */
   async function fetchVotesOfAddress(userAddress: string) {
+    console.count();
     try {
       const { abi } = await getContestContractVersion(address, chainId);
 
@@ -154,14 +158,18 @@ export function useProposalVotes(id: number | string) {
         chainId,
       };
 
-      const data = (await readContract({
+      const votesRaw = (await readContract({
         ...contractConfig,
         functionName: "proposalAddressVotes",
         args: [id, userAddress],
         chainId,
       })) as any;
 
-      const { forVotes, againstVotes } = data ?? {};
+      const forVotesBigInt = votesRaw[0];
+      const againstVotesBigInt = votesRaw[1];
+
+      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
+      const votes = Number(utils.formatEther(votesBigNumber));
 
       let author;
       try {
@@ -174,8 +182,6 @@ export function useProposalVotes(id: number | string) {
       }
 
       const displayAddress = author ?? shortenEthereumAddress(userAddress);
-      // @ts-ignore
-      const votes = (forVotes ? forVotes / 1e18 - againstVotes / 1e18 : data / 1e18) ?? 0;
 
       setVotesPerAddress({
         address: userAddress,
@@ -197,6 +203,7 @@ export function useProposalVotes(id: number | string) {
     }
   }, [account?.connector]);
 
+  // TODO: will monitor this for now, we should prolly use this event listener as well to update list live when a vote is cast, but not until i check if RPC calls are all good.
   // useEffect(() => {
   //   if (contestStatus === ContestStatus.VotingClosed) {
   //     const contract = getContract({
@@ -219,25 +226,26 @@ export function useProposalVotes(id: number | string) {
   //   }
   // }, [contestStatus]);
 
-  // useEffect(() => {
-  //   const fetchProposalVotesAndListenForEvents = async () => {
-  //     await fetchProposalVotes();
+  useEffect(() => {
+    const fetchProposalVotesAndListenForEvents = async () => {
+      await fetchProposalVotes();
 
-  //     const onVisibilityChangeHandler = () => {
-  //       if (document.visibilityState === "hidden") {
-  //         provider.removeAllListeners();
-  //       }
-  //     };
+      const onVisibilityChangeHandler = () => {
+        if (document.visibilityState === "hidden") {
+          provider.removeAllListeners();
+        }
+      };
 
-  //     document.addEventListener("visibilitychange", onVisibilityChangeHandler);
+      document.addEventListener("visibilitychange", onVisibilityChangeHandler);
 
-  //     return () => {
-  //       document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
-  //     };
-  //   };
+      return () => {
+        document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
+      };
+    };
 
-  //   fetchProposalVotesAndListenForEvents();
-  // }, []);
+    fetchProposalVotesAndListenForEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     isLoading: isListVotersLoading,

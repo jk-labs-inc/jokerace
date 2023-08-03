@@ -13,7 +13,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   const { queryTokenBalance, contractWriteWithdraw, txWithdraw } = props;
   const { setIsLoading } = useWithdrawRewardStore(state => state);
 
-  if (queryTokenBalance.data.value.eq(0)) return null;
+  if (queryTokenBalance.data.value === 0) return null;
 
   return (
     <li className="flex items-center">

@@ -16,7 +16,7 @@ export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardPr
       </li>
     );
 
-  if (queryRankRewardsReleased.data === 0) {
+  if (!queryRankRewardsReleased.data || queryRankRewardsReleased.data === 0) {
     return (
       <li className="no-funds-distributed">
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds distributed

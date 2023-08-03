@@ -4,7 +4,6 @@ import { prepareSendTransaction, sendTransaction, waitForTransaction, writeContr
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
-import { parseEther } from "viem";
 import { erc20ABI, useNetwork } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
@@ -92,10 +91,11 @@ export function useFundRewardsModule() {
 
       await refetchBalanceRewardsModule();
     } else {
+      const amountBigInt = BigInt(amount);
+
       const config = prepareSendTransaction({
         to: rewardsContractAddress as `0x${string}`,
-        //@TODO check if this is correct
-        value: parseEther(amount),
+        value: amountBigInt,
       });
 
       const { hash } = await sendTransaction(await config);
@@ -123,6 +123,7 @@ export function useFundRewardsModule() {
       setTransactionData({});
       setError(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModalOpen]);
 
   return {

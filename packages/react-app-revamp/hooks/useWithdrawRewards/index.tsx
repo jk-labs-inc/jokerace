@@ -33,7 +33,7 @@ export const useWithdrawReward = (
   const contractWriteWithdrawReward = useContractWrite({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
-    functionName: tokenType === "erc20" ? "withdrawRewards(address)" : "withdrawRewards()",
+    functionName: "withdrawRewards",
     chainId: chain?.id,
     args: tokenType === "erc20" ? [tokenAddress] : [],
     onError(e) {

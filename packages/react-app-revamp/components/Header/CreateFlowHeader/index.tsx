@@ -63,7 +63,7 @@ const CreateFlowHeader = () => {
         )}
       </div>
       <div className="hidden md:flex">
-        <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+        <ConnectButton showBalance={false} accountStatus="full" label="Connect wallet" />
       </div>
     </header>
   );
@@ -99,7 +99,7 @@ const CreateFlowHeader = () => {
 
           {!isLoading && !isSuccess && (
             <div className="flex">
-              <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+              <ConnectButton showBalance={false} accountStatus="full" label="Connect wallet" />
             </div>
           )}
         </header>

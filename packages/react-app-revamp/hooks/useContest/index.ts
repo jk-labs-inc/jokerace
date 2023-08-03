@@ -12,7 +12,7 @@ import useUser, { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
-import { utils } from "ethers";
+import { BigNumber, utils } from "ethers";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
@@ -84,7 +84,7 @@ export function useContest() {
   const networkName = chainName.toLowerCase() === "arbitrumone" ? "arbitrum" : chainName;
   const alchemyRpc = chains
     .filter(chain => chain.name.toLowerCase().replace(" ", "") === networkName)?.[0]
-    ?.rpcUrls.default.http.includes("alchemy");
+    ?.rpcUrls.default.http[0].includes("alchemy");
 
   /**
    * Display an error toast in the UI for any contract related error
@@ -176,8 +176,6 @@ export function useContest() {
         setCanUpdateVotesInRealTime(false);
       }
 
-      await fetchTotalVotesCast();
-
       setError(null);
       setIsSuccess(true);
       setIsLoading(false);
@@ -185,6 +183,7 @@ export function useContest() {
       setIsListProposalsLoading(false);
 
       await Promise.all([
+        await fetchTotalVotesCast(),
         await processRewardData(contestRewardModuleAddress),
         await processContestData(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
       ]);
@@ -461,7 +460,8 @@ export function useContest() {
         args: [],
       });
 
-      setTotalVotesCast(totalVotesCast ? Number(totalVotesCast) / 1e18 : 0);
+      //@ts-ignore
+      setTotalVotesCast(totalVotesCast ? BigNumber.from(totalVotesCast) / 1e18 : 0);
     } catch {
       setTotalVotesCast(0);
     }

@@ -11,6 +11,7 @@ import {
   SubmissionCache,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import Image from "@tiptap/extension-image";
@@ -34,11 +35,12 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { asPath } = useRouter();
   const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
   const { contestPrompt, votesOpen, isMerkleTreeInProgress } = useContestStore(state => state);
-  const [lastEdited, setLastEdited] = useState<Date>(new Date());
-  const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
   const contestId = asPath.split("/")[3];
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
+  const { contestStatus } = useContestStatusStore(state => state);
+  const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const [proposal, setProposal] = useState(savedProposal?.content || "");
+  const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
 
   const editorProposal = useEditor({
     extensions: [
@@ -74,11 +76,14 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     },
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSubmitProposal = () => {
     sendProposal(proposal.trim());
   };
 
   useEffect(() => {
+    if (contestStatus !== ContestStatus.SubmissionOpen) return;
+
     const handleEnterPress = (event: KeyboardEvent) => {
       if (event.shiftKey) {
         return;
@@ -93,7 +98,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     return () => {
       window.removeEventListener("keydown", handleEnterPress);
     };
-  }, [onSubmitProposal]);
+  }, [contestStatus, onSubmitProposal]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -101,6 +106,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       editorProposal?.commands.clearContent();
       removeSubmissionFromLocalStorage("submissions", contestId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);
 
   const tipMessage = () => {

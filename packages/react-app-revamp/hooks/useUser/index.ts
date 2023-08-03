@@ -7,7 +7,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
-import { Abi } from "viem";
+import { Abi, createPublicClient, http } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useUserStore } from "./store";
 
@@ -62,7 +62,7 @@ export function useUser() {
 
     const contractConfig = {
       address: address as `0x${string}`,
-      abi: abi.abi as unknown as Abi,
+      abi: abi.abi as any,
       chainId: chainId,
     };
 
@@ -187,12 +187,14 @@ export function useUser() {
     const accountData = getAccount();
 
     try {
-      const currentUserTotalVotesCast = await readContract({
+      const currentUserTotalVotesCastRaw = await readContract({
         address: address as `0x${string}`,
-        abi: abi as unknown as Abi,
+        abi: abi.abi as unknown as Abi,
         functionName: "contestAddressTotalVotesCast",
         args: [accountData?.address],
       });
+
+      const currentUserTotalVotesCast = BigNumber.from(currentUserTotalVotesCastRaw);
 
       //@ts-ignore
       setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount - currentUserTotalVotesCast / 1e18);

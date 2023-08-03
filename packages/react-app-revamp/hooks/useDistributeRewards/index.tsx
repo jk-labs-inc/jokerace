@@ -30,8 +30,11 @@ export const useDistributeRewards = (
   const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;
 
   const transform = (data: unknown[]) => {
-    const amount = data[0] as bigint;
-    return tokenType === "erc20" ? formatUnits(amount, tokenData?.decimals ?? 0) : formatEther(amount);
+    const amount = data as unknown as bigint;
+
+    return tokenType === "erc20"
+      ? parseFloat(formatUnits(amount, tokenData?.decimals ?? 18))
+      : parseFloat(formatEther(amount));
   };
 
   const queryTokenBalance = useBalance({
@@ -44,7 +47,7 @@ export const useDistributeRewards = (
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
     chainId,
-    functionName: tokenType === "erc20" ? "releasable(address,uint256)" : "releasable(uint256)",
+    functionName: "releasable",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     select: data => transform(data),
     async onError(e) {},
@@ -54,7 +57,7 @@ export const useDistributeRewards = (
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
     chainId,
-    functionName: tokenType === "erc20" ? "released(address,uint256)" : "released(uint256)",
+    functionName: "released",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     select: data => transform(data),
   });
@@ -62,7 +65,7 @@ export const useDistributeRewards = (
   const contractWriteReleaseToken = useContractWrite({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
-    functionName: tokenType === "erc20" ? "release(address,uint256)" : "release(uint256)",
+    functionName: "release",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     chainId,
     async onError(e) {

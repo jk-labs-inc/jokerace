@@ -44,9 +44,9 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
             <div className="pl-5">
               <Collapsible isOpen={isPromptOpen}>
                 <div className="border-l border-true-white ">
-                  <p className="prose prose-invert pl-5">
+                  <div className="prose prose-invert pl-5">
                     <Interweave content={promptText} matchers={[new UrlMatcher("url")]} />
-                  </p>
+                  </div>
                 </div>
               </Collapsible>
             </div>
@@ -67,7 +67,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
           <div className="pl-5">
             <Collapsible isOpen={isPromptOpen}>
               <div className="border-l border-true-white ">
-                <p className="prose pl-5 ">
+                <div className="prose pl-5 ">
                   <ReactMarkdown
                     rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
                     components={{
@@ -90,7 +90,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
                   >
                     {prompt}
                   </ReactMarkdown>
-                </p>
+                </div>
               </div>
             </Collapsible>
           </div>

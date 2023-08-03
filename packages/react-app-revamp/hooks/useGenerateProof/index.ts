@@ -48,10 +48,10 @@ export function useGenerateProof() {
       chainId: chainId,
     };
 
-    //@TODO check proofs against contract
     let verified = false;
     switch (proofType) {
       case "submission":
+        //@ts-ignore
         verified = (await readContract({
           ...contractConfig,
           functionName: "addressSubmitterVerified",
@@ -59,6 +59,7 @@ export function useGenerateProof() {
         })) as boolean;
         break;
       case "vote":
+        //@ts-ignore
         verified = (await readContract({
           ...contractConfig,
           functionName: "addressTotalVotesVerified",
@@ -78,7 +79,8 @@ export function useGenerateProof() {
   useEffect(() => {
     if (account?.connector) {
       account?.connector.on("change", data => {
-        //@ts-ignore
+        if (!data.chain) return;
+
         setChainId(data.chain.id);
       });
     }

@@ -7,6 +7,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 
@@ -27,27 +28,32 @@ export function useContestEvents() {
    */
   async function onVoteCast(args: Array<any>) {
     try {
-      const proposalId = args[5].args.proposalId;
-      const votes = await readContract({
+      const proposalId = args[0].args.proposalId;
+      const votesRaw = (await readContract({
         address: asPath.split("/")[3] as `0x${string}`,
         abi: DeployedContestContract.abi,
         functionName: "proposalVotes",
-        args: proposalId,
-      });
+        args: [proposalId],
+      })) as bigint[];
+
+      const forVotesBigInt = votesRaw[0];
+      const againstVotesBigInt = votesRaw[1];
+
+      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
+      const votes = Number(utils.formatEther(votesBigNumber));
 
       if (listProposalsData[proposalId]) {
         //@ts-ignore
         setProposalVotes({
           id: proposalId,
-          //@ts-ignore
-          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+          votes,
         });
       } else {
         const proposal = (await readContract({
           address: asPath.split("/")[3] as `0x${string}`,
           abi: DeployedContestContract.abi,
           functionName: "getProposal",
-          args: proposalId,
+          args: [proposalId],
         })) as any;
 
         let author;
@@ -61,13 +67,12 @@ export function useContestEvents() {
         }
 
         const proposalData: any = {
-          authorEthereumAddress: proposal[0],
-          author: author ?? proposal[0],
-          content: proposal[2],
-          isContentImage: isUrlToImage(proposal[2]) ? true : false,
-          exists: proposal[1],
-          //@ts-ignore
-          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+          authorEthereumAddress: proposal.author,
+          author: author ?? proposal.author,
+          content: proposal.description,
+          isContentImage: isUrlToImage(proposal.description) ? true : false,
+          exists: proposal.exists,
+          votes,
         };
 
         setProposalData({ id: proposalId, data: proposalData });
@@ -83,7 +88,6 @@ export function useContestEvents() {
     contestStatusRef.current = contestStatus;
   }, [contestStatus]);
 
-  //@TODO event listeners
   useEffect(() => {
     if (!canUpdateVotesInRealTime || ContestStatus.VotingOpen !== contestStatus) {
       provider.removeAllListeners("VoteCast");
@@ -96,9 +100,8 @@ export function useContestEvents() {
             abi: DeployedContestContract.abi,
             eventName: "VoteCast",
           },
-          "VoteCast",
-          (...args) => {
-            onVoteCast(args).catch(err => console.error(err));
+          args => {
+            onVoteCast(args).catch(err => console.log(err));
           },
         );
       }
@@ -107,6 +110,7 @@ export function useContestEvents() {
     return () => {
       provider.removeAllListeners("VoteCast");
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contestStatus, canUpdateVotesInRealTime]);
 
   function onVisibilityChangeHandler() {
@@ -130,6 +134,7 @@ export function useContestEvents() {
     return () => {
       document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [canUpdateVotesInRealTime]);
 
   return {
