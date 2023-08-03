@@ -24,7 +24,7 @@ export const ListProposals = () => {
     return (
       <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
         <Skeleton
-          count={5}
+          count={listProposalsIds.length}
           borderRadius={10}
           className="flex flex-col h-96 md:h-56 animate-appear border border-neutral-11  mb-3"
         />
