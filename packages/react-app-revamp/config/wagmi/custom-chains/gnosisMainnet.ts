@@ -11,10 +11,10 @@ export const gnosisMainnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.gnosischain.com/"],
+      http: ["https://rpc.ankr.com/gnosis"],
     },
     default: {
-      http: ["https://rpc.gnosischain.com/"],
+      http: ["https://rpc.ankr.com/gnosis"],
     },
   },
   blockExplorers: {
