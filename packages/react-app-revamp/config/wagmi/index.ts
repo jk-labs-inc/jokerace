@@ -109,12 +109,12 @@ const publicClients =
 
 export const { chains, publicClient, webSocketPublicClient } = configureChains(totalChains, publicClients);
 
-const WALLETCONNECT_PROJECT_ID = "275c857ec75d696799f94aa5c72dbe70";
+const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
 
 const { wallets } = getDefaultWallets({
   appName: "jokerace",
   chains,
-  projectId: WALLETCONNECT_PROJECT_ID,
+  projectId: WALLETCONECT_PROJECT_ID,
 });
 
 const connectors = connectorsForWallets([
@@ -122,11 +122,11 @@ const connectors = connectorsForWallets([
   {
     groupName: "Other",
     wallets: [
-      argentWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
-      trustWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
-      ledgerWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
-      imTokenWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
-      omniWallet({ chains, projectId: WALLETCONNECT_PROJECT_ID }),
+      argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      ledgerWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
     ],
   },
 ]);
