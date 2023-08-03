@@ -36,18 +36,23 @@ const EthereumAddress = ({ textualVersion, ethereumAddress, shortenOnFallback }:
     }
 
     // If no lens profile found, attempt to fetch the ens name and avatar
-    const ensName = await fetchEnsName({
-      chainId: 1,
-      address: ethereumAddress as `0x${string}`,
-    });
+    try {
+      const ensName = await fetchEnsName({
+        chainId: 1,
+        address: ethereumAddress as `0x${string}`,
+      });
 
-    if (ensName) {
-      try {
-        const ensAvatar = await fetchEnsAvatar({ name: ensName as string, chainId: 1 });
-        return { handle: ensName, avatarUrl: ensAvatar };
-      } catch (e) {
-        console.error(e);
+      if (ensName) {
+        try {
+          const ensAvatar = await fetchEnsAvatar({ name: ensName as string, chainId: 1 });
+          return { handle: ensName, avatarUrl: ensAvatar || DEFAULT_AVATAR_URL };
+        } catch (e) {
+          console.error(e);
+        }
+        return { handle: ensName, avatarUrl: DEFAULT_AVATAR_URL };
       }
+    } catch (e) {
+      console.error(e);
     }
 
     return { handle: null, avatarUrl: DEFAULT_AVATAR_URL };
