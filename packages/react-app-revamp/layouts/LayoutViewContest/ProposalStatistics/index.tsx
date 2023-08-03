@@ -34,7 +34,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
       default:
         break;
     }
-  }, [contestStatus, listProposalsIds, totalVotesCast, totalVotes]);
+  }, [contestStatus, listProposalsIds.length, contestMaxProposalCount, totalVotesCast, totalVotes]);
 
   const heading = useMemo<string>(() => {
     switch (contestStatus) {

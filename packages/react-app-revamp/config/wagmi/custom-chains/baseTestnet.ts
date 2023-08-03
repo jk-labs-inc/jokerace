@@ -1,18 +1,24 @@
-export const baseTestnet = {
+import { Chain } from "wagmi";
+
+export const baseTestnet: Chain = {
   id: 84531,
-  name: 'BaseTestnet',
-  network: 'baseTestnet',
+  name: "BaseTestnet",
+  network: "baseTestnet",
   nativeCurrency: {
     decimals: 18,
-    name: 'Ether',
-    symbol: 'ETH',
+    name: "Ether",
+    symbol: "ETH",
   },
   rpcUrls: {
-    public: 'https://goerli.base.org',
-    default: 'https://goerli.base.org',
+    public: {
+      http: ["https://goerli.base.org"],
+    },
+    default: {
+      http: ["https://goerli.base.org"],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Base Testnet Scan', url: 'https://goerli.basescan.org' },
-    default: { name: 'Base Testnet Scan', url: 'https://goerli.basescan.org' },
+    etherscan: { name: "Base Testnet Scan", url: "https://goerli.basescan.org" },
+    default: { name: "Base Testnet Scan", url: "https://goerli.basescan.org" },
   },
-}
+};

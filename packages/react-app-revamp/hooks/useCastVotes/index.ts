@@ -2,13 +2,14 @@ import { toastDismiss, toastError, toastLoading, toastSuccess } from "@component
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import useContest from "@hooks/useContest";
+import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { waitForTransaction, writeContract, readContract } from "@wagmi/core";
+import { readContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
@@ -36,20 +37,15 @@ export function useCastVotes() {
   const { updateCurrentUserVotes } = useUser();
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { checkIfProofIsVerified } = useGenerateProof();
+  const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
 
   async function castVotes(amount: number, isPositive: boolean) {
-    const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
-    const { abi } = await getContestContractVersion(id, chainId);
-
+    const { abi } = await getContestContractVersion(id, parseFloat(chainId));
     toastLoading("votes are deploying...");
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
-    const contractConfig = {
-      addressOrName: id,
-      contractInterface: abi ?? DeployedContestContract.abi,
-    };
 
     try {
       const proofsVerificationStatus = await checkIfProofIsVerified(
@@ -59,11 +55,13 @@ export function useCastVotes() {
         currentUserTotalVotesAmount.toString(),
       );
 
-      let txCastVotes: TransactionResponse = {} as TransactionResponse;
+      let txCastVotes: any = {} as TransactionResponse;
 
       if (!proofsVerificationStatus.verified) {
         txCastVotes = await writeContract({
-          ...contractConfig,
+          address: id as `0x${string}`,
+          //@ts-ignore
+          abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVote",
           args: [
             pickedProposal,
@@ -75,7 +73,9 @@ export function useCastVotes() {
         });
       } else {
         txCastVotes = await writeContract({
-          ...contractConfig,
+          address: id as `0x${string}`,
+          //@ts-ignore
+          abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
         });
@@ -87,26 +87,33 @@ export function useCastVotes() {
         //@ts-ignore
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
       });
+
       setTransactionData({
         hash: receipt.transactionHash,
       });
 
       // We need this to update the votes either if there is more than 2 hours
       if (!canUpdateVotesInRealTime) {
-        const votes = await readContract({
-          addressOrName: asPath.split("/")[3],
-          contractInterface: DeployedContestContract.abi,
+        const voteResponse = (await readContract({
+          address: asPath.split("/")[3] as `0x${string}`,
+          abi: DeployedContestContract.abi,
           functionName: "proposalVotes",
-          args: pickedProposal,
-        });
+          args: [pickedProposal],
+        })) as bigint[];
+
+        const forVotes = voteResponse[0] as bigint;
+        const againstVotes = voteResponse[1] as bigint;
+
+        const votesBigNumber = BigNumber.from(forVotes).sub(againstVotes);
+
+        const votes = Number(utils.formatEther(votesBigNumber));
 
         await fetchTotalVotesCast();
 
         //@ts-ignore
         setProposalVotes({
           id: pickedProposal,
-          //@ts-ignore
-          votes: votes?.forVotes ? votes?.forVotes / 1e18 - votes?.againstVotes / 1e18 : votes / 1e18,
+          votes,
         });
       }
 

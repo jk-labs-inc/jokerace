@@ -1,12 +1,12 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
+import { useEthersSigner } from "@helpers/ethers";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
-import { writeContract } from "@wagmi/core";
+import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
-import { useSigner } from "wagmi";
 import { useDeployRewardsStore } from "./store";
 
 export function useDeployRewardsPool() {
@@ -16,7 +16,7 @@ export function useDeployRewardsPool() {
   const { ranks, shares, setDeployRewardsData, setIsLoading, setIsError, setIsSuccess, setDisplayCreatePool } =
     useDeployRewardsStore(state => state);
   const contestAddress = asPath.split("/")[3];
-  const { refetch } = useSigner();
+  const signer = useEthersSigner();
 
   function deployRewardsPool() {
     setIsLoading(true);
@@ -25,12 +25,10 @@ export function useDeployRewardsPool() {
     let contractRewardsModule: Contract | null = null;
 
     const rewardsModuleDeployment = async () => {
-      const signer = await refetch();
       const factoryCreateRewardsModule = new ContractFactory(
         RewardsModuleContract.abi,
         RewardsModuleContract.bytecode,
-        //@ts-ignore
-        signer.data,
+        signer,
       );
       contractRewardsModule = await factoryCreateRewardsModule.deploy(ranks, shares, contestAddress, false);
       await contractRewardsModule.deployTransaction.wait();
@@ -42,15 +40,21 @@ export function useDeployRewardsPool() {
 
     const rewardsModuleAttachment = async () => {
       const contractConfig = {
-        addressOrName: contestAddress,
-        contractInterface: DeployedContestContract.abi,
+        address: contestAddress as `0x${string}`,
+        abi: DeployedContestContract.abi,
       };
-      const txSetRewardsModule = await writeContract({
+
+      const config = await prepareWriteContract({
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
         args: [contractRewardsModule!.address],
       });
-      await txSetRewardsModule.wait();
+
+      const { hash } = await writeContract(config);
+
+      await waitForTransaction({
+        hash,
+      });
 
       setIsLoading(false);
       setIsSuccess(true);

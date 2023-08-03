@@ -4,17 +4,18 @@ import arrayToChunks from "@helpers/arrayToChunks";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
-import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { useUserStore } from "@hooks/useUser/store";
-import { getAccount, readContract } from "@wagmi/core";
+import { readContract, readContracts } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
+
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import { CustomError } from "types/error";
-import { readContracts, useNetwork } from "wagmi";
+import { useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
 
 const PROPOSALS_PER_PAGE = 12;
+
+const divisor = BigInt("1000000000000000000"); // Equivalent to 1e18
 
 export function useProposal() {
   const {
@@ -33,6 +34,7 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
 
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
@@ -52,7 +54,7 @@ export function useProposal() {
     setIsPageProposalsError(null);
 
     try {
-      const { abi, version } = await getContestContractVersion(address, chainName);
+      const { abi } = await getContestContractVersion(address, chainId);
 
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
@@ -63,32 +65,36 @@ export function useProposal() {
       }
 
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
+        address: address as `0x${string}`,
+        abi: abi,
         chainId: chains.find(
           c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
         )?.id,
       };
 
-      const contracts = slice.flatMap((id: number) => [
-        // proposal content
-        {
-          ...contractConfig,
-          functionName: "getProposal",
-          args: id,
-        },
-        // Votes received
-        {
-          ...contractConfig,
-          functionName: "proposalVotes",
-          args: id,
-        },
-      ]);
+      const contracts: any[] = [];
+
+      for (const id of slice) {
+        contracts.push(
+          // Proposal content
+          {
+            ...contractConfig,
+            functionName: "getProposal",
+            args: [id],
+          },
+          // Votes received
+          {
+            ...contractConfig,
+            functionName: "proposalVotes",
+            args: [id],
+          },
+        );
+      }
 
       const results = await readContracts({ contracts });
 
       for (let i = 0; i < slice.length; i++) {
-        await fetchProposal(i, results, slice, version);
+        await fetchProposal(i, results, slice);
       }
 
       setIsPageProposalsLoading(false);
@@ -104,6 +110,8 @@ export function useProposal() {
         code: customError.code,
         message: customError.message,
       });
+      setIsPageProposalsLoading(false);
+      setIsPageProposalsError(null);
     }
   }
 
@@ -113,12 +121,7 @@ export function useProposal() {
    * @param results - array of smart contracts calls results (returned by `readContracts`)
    * @param listIdsProposalsToBeFetched - array of proposals ids to be fetched
    */
-  async function fetchProposal(
-    i: number,
-    results: Array<any>,
-    listIdsProposalsToBeFetched: Array<any>,
-    version: string,
-  ) {
+  async function fetchProposal(i: number, results: Array<any>, listIdsProposalsToBeFetched: Array<any>) {
     // Create an array of proposals
     // A proposal is a pair of data
     // A pair of a proposal data is [content, votes]
@@ -127,19 +130,22 @@ export function useProposal() {
       return result;
     }, []);
 
-    const isV3 = version.startsWith("3");
-    const data = proposalDataPerId[i][0];
-    const content = isV3 ? data[2] : data[1];
-    const isContentImage = isUrlToImage(isV3 ? data[2] : data[1]) ? true : false;
+    const data = proposalDataPerId[i][0].result;
+
+    const isContentImage = isUrlToImage(data.description) ? true : false;
+
+    const forVotesBigInt = proposalDataPerId[i][1].result[0] as bigint;
+    const againstVotesBigInt = proposalDataPerId[i][1].result[1] as bigint;
+
+    const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
+    const votes = Number(utils.formatEther(votesBigNumber));
 
     const proposalData = {
-      authorEthereumAddress: data[0],
-      content,
+      authorEthereumAddress: data.author,
+      content: data.description,
       isContentImage,
-      exists: isV3 ? data[1] : data[2],
-      votes: proposalDataPerId[i][1]?.forVotes
-        ? proposalDataPerId[i][1]?.forVotes / 1e18 - proposalDataPerId[i][1]?.againstVotes / 1e18
-        : proposalDataPerId[i][1] / 1e18,
+      exists: data.exists,
+      votes,
     };
 
     setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
@@ -155,46 +161,48 @@ export function useProposal() {
     try {
       // Get list of proposals (ids)
       const useLegacyGetAllProposalsIdFn =
-        //@ts-ignore
-        abi?.filter(el => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
+        abi?.filter((el: { name: string }) => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
 
       if (!chains) return;
 
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
+        address: address as `0x${string}`,
+        abi: abi,
         chainId: chains.find(
           c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
         )?.id,
       };
-      const proposalsIdsRawData = await readContract({
+
+      const proposalsIdsRawData = (await readContract({
         ...contractConfig,
         functionName: !useLegacyGetAllProposalsIdFn ? "allProposalTotalVotes" : "getAllProposalIds",
-      });
+        args: [],
+      })) as any;
+
       let proposalsIds: Result;
       if (!useLegacyGetAllProposalsIdFn) {
         proposalsIds = [];
         proposalsIdsRawData[0].map((data: any, index: number) => {
+          const forVotesBigNumber = BigNumber.from(proposalsIdsRawData[1][index].forVotes.toString());
+          const againstVotesBigNumber = BigNumber.from(
+            proposalsIdsRawData[1][index].againstVotes ? proposalsIdsRawData[1][index].againstVotes.toString() : "0",
+          );
+          const votesBigNumber =
+            proposalsIdsRawData[1][index].length === 1
+              ? forVotesBigNumber
+              : forVotesBigNumber.sub(againstVotesBigNumber);
+          const votesDivided = votesBigNumber.div(BigNumber.from(divisor.toString()));
+          const votes = parseFloat(utils.formatEther(votesDivided));
+
           proposalsIds.push({
-            // for votes minus against votes if there are against votes
-            votes:
-              proposalsIdsRawData[1][index].length == 1
-                ? proposalsIdsRawData[1][index][0] / 1e18
-                : proposalsIdsRawData[1][index][0] / 1e18 - proposalsIdsRawData[1][index][1] / 1e18,
+            votes,
             id: data,
           });
         });
         proposalsIds = proposalsIds
-          .sort((a: { votes: number }, b: { votes: number }) => {
-            if (a.votes > b.votes) {
-              return -1;
-            }
-            if (a.votes < b.votes) {
-              return 1;
-            }
-            return 0;
-          })
+          .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
           .map((proposal: { id: any }) => proposal.id);
+
         setListProposalsIds(proposalsIds as string[]);
       } else {
         proposalsIds = proposalsIdsRawData;

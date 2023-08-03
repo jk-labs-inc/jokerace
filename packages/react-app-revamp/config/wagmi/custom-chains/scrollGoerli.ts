@@ -1,18 +1,24 @@
-export const scrollGoerli = {
+import { Chain } from "wagmi";
+
+export const scrollGoerli: Chain = {
   id: 534353,
-  name: 'scrollGoerli',
-  network: 'scrollGoerli',
+  name: "scrollGoerli",
+  network: "scrollGoerli",
   nativeCurrency: {
     decimals: 18,
-    name: 'Ether',
-    symbol: 'ETH',
+    name: "Ether",
+    symbol: "ETH",
   },
   rpcUrls: {
-    public: 'https://alpha-rpc.scroll.io/l2',
-    default: 'https://alpha-rpc.scroll.io/l2',
+    public: {
+      http: ["https://alpha-rpc.scroll.io/l2"],
+    },
+    default: {
+      http: ["https://alpha-rpc.scroll.io/l2"],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Scroll Goerli Scan', url: 'https://blockscout.scroll.io/' },
-    default: { name: 'Scroll Goerli Scan', url: 'https://blockscout.scroll.io/' },
+    etherscan: { name: "Scroll Goerli Scan", url: "https://blockscout.scroll.io/" },
+    default: { name: "Scroll Goerli Scan", url: "https://blockscout.scroll.io/" },
   },
-}
+};

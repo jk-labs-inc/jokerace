@@ -1,14 +1,16 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
+import { useEthersSigner } from "@helpers/ethers";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory, ethers } from "ethers";
+import { ContractFactory } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
 import { CustomError, ErrorCodes } from "types/error";
-import { useNetwork, useSigner } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
 export function useDeployContest() {
@@ -33,7 +35,8 @@ export function useDeployContest() {
     setIsSuccess,
   } = useDeployContestStore(state => state);
   const { chain } = useNetwork();
-  const { refetch } = useSigner();
+  const { address } = useAccount();
+  const signer = useEthersSigner();
 
   async function deployContest() {
     stateContestDeployment.setIsLoading(true);
@@ -43,13 +46,10 @@ export function useDeployContest() {
 
     toastLoading("contest is deploying...");
     try {
-      const signer = await refetch();
-
       const factoryCreateContest = new ContractFactory(
         DeployedContestContract.abi,
         DeployedContestContract.bytecode,
-        //@ts-ignore
-        signer.data,
+        signer,
       );
 
       const contestInfo = type + "|" + summary + "|" + prompt;
@@ -87,7 +87,7 @@ export function useDeployContest() {
 
       const receiptDeployContest = await waitForTransaction({
         chainId: chain?.id,
-        hash: contractContest.deployTransaction.hash,
+        hash: contractContest.deployTransaction.hash as `0x${string}`,
       });
 
       setDeployContestData(
@@ -110,7 +110,7 @@ export function useDeployContest() {
               ...votingMerkle,
               voters: votingMerkle.voters.map(voter => ({
                 ...voter,
-                numVotes: ethers.utils.formatUnits(voter.numVotes, 18),
+                numVotes: formatUnits(voter.numVotes, 18),
               })),
             }
           : null,
@@ -121,13 +121,13 @@ export function useDeployContest() {
                 submissionMerkle.merkleRoot !== "0x0000000000000000000000000000000000000000000000000000000000000000"
                   ? submissionMerkle.submitters.map(submitter => ({
                       ...submitter,
-                      numVotes: ethers.utils.formatUnits(submitter.numVotes, 18),
+                      numVotes: formatUnits(submitter.numVotes, 18),
                     }))
                   : [],
             }
           : null,
         contractAddress: contractContest.address,
-        authorAddress: (await signer.data?.getAddress()) ?? "",
+        authorAddress: address,
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
       };
 
@@ -210,8 +210,6 @@ export function useDeployContest() {
       toastError(`contest deployment failed`, customError.message);
     }
   }
-
-  function prepareParticipantsForIndexing() {}
 
   return {
     deployContest,

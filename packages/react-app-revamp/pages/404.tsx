@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import button from "@components/UI/Button/styles";
 import type { NextPage } from "next";
 import Head from "next/head";

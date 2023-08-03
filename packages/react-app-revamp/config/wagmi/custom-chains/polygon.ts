@@ -1,18 +1,24 @@
-export const polygon = {
+import { Chain } from "wagmi";
+
+export const polygon: Chain = {
   id: 137,
-  name: 'polygon',
-  network: 'polygon',
+  name: "polygon",
+  network: "polygon",
   nativeCurrency: {
     decimals: 18,
-    name: 'MATIC',
-    symbol: 'MATIC',
+    name: "MATIC",
+    symbol: "MATIC",
   },
   rpcUrls: {
-    public: 'https://rpc.ankr.com/polygon',
-    default: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`,
+    public: {
+      http: ["https://rpc.ankr.com/polygon"],
+    },
+    default: {
+      http: [`https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Polygon Mainnet Etherscan', url: 'https://polygonscan.com/' },
-    default: { name: 'Polygon Mainnet Etherscan', url: 'https://polygonscan.com/' },
+    etherscan: { name: "Polygon Mainnet Etherscan", url: "https://polygonscan.com/" },
+    default: { name: "Polygon Mainnet Etherscan", url: "https://polygonscan.com/" },
   },
-}
+};

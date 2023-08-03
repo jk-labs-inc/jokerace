@@ -1,4 +1,4 @@
-import { chains, client } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
@@ -62,7 +62,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="preload" href="/fantom.png" as="image" />
         <link rel="preload" href="/gnosis.png" as="image" />
       </Head>
-      <WagmiConfig client={client}>
+      <WagmiConfig config={config}>
         <RainbowKitProvider chains={chains} theme={jokeraceTheme}>
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer

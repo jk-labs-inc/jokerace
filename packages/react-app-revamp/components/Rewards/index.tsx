@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import Loader from "@components/UI/Loader";
@@ -40,7 +41,7 @@ const ContestRewards = () => {
   useEffect(() => {
     if (rewardsStore?.isSuccess) return;
     if (supportsRewardsModule) getContestRewardsModule();
-  }, [supportsRewardsModule]);
+  }, [rewardsStore?.isSuccess, supportsRewardsModule]);
 
   if (!supportsRewardsModule && !creator) {
     return null;

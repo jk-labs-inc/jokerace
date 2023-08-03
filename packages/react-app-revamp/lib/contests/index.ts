@@ -3,24 +3,23 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { alchemyRpcUrls, fetchBalance, FetchBalanceResult, readContract } from "@wagmi/core";
-import { ethers, utils } from "ethers";
-import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { fetchBalance, FetchBalanceResult, readContract } from "@wagmi/core";
+import { BigNumber, ethers, utils } from "ethers";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 
 export const ITEMS_PER_PAGE = 7;
 
-async function getContractConfig(address: string, chainName: string, chainId: number) {
-  const { abi, version } = await getContestContractVersion(address, chainName);
+async function getContractConfig(address: string, chainId: number) {
+  const { abi } = await getContestContractVersion(address, chainId);
 
   if (abi === null) {
     return;
   }
 
   const contractConfig = {
-    addressOrName: address,
-    contractInterface: abi,
+    address: address as `0x${string}`,
+    abi: abi as any,
     chainId: chainId,
   };
 
@@ -30,9 +29,8 @@ async function getContractConfig(address: string, chainName: string, chainId: nu
 export const fetchTokenBalances = async (chainName: string, contestRewardModuleAddress: string) => {
   try {
     const networkName = chainName.toLowerCase() === "arbitrumone" ? "arbitrum" : chainName;
-    const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
-    //@ts-ignore
-    const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
+    const alchemyAppUrl = chains.filter(chain => chain.name === networkName)[0].rpcUrls.default.http[0];
+
     const response = await fetch(alchemyAppUrl, {
       method: "POST",
       body: JSON.stringify({
@@ -63,7 +61,7 @@ export const fetchTokenBalances = async (chainName: string, contestRewardModuleA
 export const fetchNativeBalance = async (contestRewardModuleAddress: string, chainId: number) => {
   try {
     const nativeBalance = await fetchBalance({
-      addressOrName: contestRewardModuleAddress.toString(),
+      address: contestRewardModuleAddress.toString() as `0x${string}`,
       chainId: chainId,
     });
     return nativeBalance;
@@ -76,9 +74,9 @@ export const fetchNativeBalance = async (contestRewardModuleAddress: string, cha
 export const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: number, tokenAddress: string) => {
   try {
     const firstToken = await fetchBalance({
-      addressOrName: contestRewardModuleAddress.toString(),
+      address: contestRewardModuleAddress.toString() as `0x${string}`,
       chainId: chainId,
-      token: tokenAddress,
+      token: tokenAddress as `0x${string}`,
     });
     return firstToken;
   } catch (error) {
@@ -125,55 +123,56 @@ const processContestData = async (contest: any, userAddress: string) => {
   const { address, network_name } = contest;
 
   try {
-    const chain = chains.find(
+    const chainId = chains.filter(
       c => c.name.replace(/\s+/g, "").toLowerCase() === network_name.replace(/\s+/g, "").toLowerCase(),
-    );
-    const contractConfig = await getContractConfig(address, network_name, chain?.id ?? 0);
+    )[0].id;
+
+    const contractConfig = await getContractConfig(address, chainId);
 
     contest = await updateContestWithUserQualifications(contest, userAddress);
 
     if (
       contractConfig &&
-      //@ts-ignore
-      contractConfig.contractInterface?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
+      contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
     ) {
       try {
-        const contestRewardModuleAddress = await readContract({
+        const contestRewardModuleAddress = (await readContract({
           ...contractConfig,
           functionName: "officialRewardsModule",
-        });
+          args: [],
+        })) as any;
 
         if (contestRewardModuleAddress.toString() === "0x0000000000000000000000000000000000000000") {
           contest.rewards = null;
         } else {
           const abiRewardsModule = await getRewardsModuleContractVersion(
             contestRewardModuleAddress.toString(),
-            contest.network_name,
+            chainId,
           );
 
           if (!abiRewardsModule) {
             contest.rewards = null;
           } else {
-            const winners = await readContract({
-              addressOrName: contestRewardModuleAddress.toString(),
-              contractInterface: abiRewardsModule,
-              chainId: chain?.id,
+            const winners = (await readContract({
+              address: contestRewardModuleAddress.toString() as `0x${string}`,
+              abi: abiRewardsModule,
+              chainId: chainId,
               functionName: "getPayees",
-            });
+            })) as BigNumber[];
 
             let rewardToken: FetchBalanceResult | null = null;
             let erc20Tokens: any = null;
 
-            rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chain?.id ?? 0);
+            rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
 
-            if (!rewardToken || rewardToken.value.eq(0)) {
+            if (!rewardToken || Number(rewardToken.value) === 0) {
               try {
                 erc20Tokens = await fetchTokenBalances(network_name, contestRewardModuleAddress.toString());
 
                 if (erc20Tokens && erc20Tokens.length > 0) {
                   rewardToken = await fetchFirstToken(
                     contestRewardModuleAddress.toString(),
-                    chain?.id ?? 0,
+                    chainId,
                     erc20Tokens[0].contractAddress,
                   );
                 }

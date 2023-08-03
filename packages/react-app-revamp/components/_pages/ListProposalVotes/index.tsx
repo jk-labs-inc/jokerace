@@ -1,5 +1,5 @@
 import Collapsible from "@components/UI/Collapsible";
-import EtheuremAddress from "@components/UI/EtheuremAddress";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -55,6 +55,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
             {isLoading || (isPageVotesLoading && Object.keys(listProposalsData)?.length > 1) ? (
               placeholders.map((_, index, self) => (
                 <div
+                  key={index}
                   className={`flex justify-between items-center pb-3 ${
                     index !== self.length - 1 ? "border-b border-neutral-10" : ""
                   }`}
@@ -76,7 +77,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposal, propos
                       index !== self.length - 1 ? "border-b border-neutral-10" : ""
                     }`}
                   >
-                    <EtheuremAddress ethereumAddress={address} shortenOnFallback={true} displayLensProfile={true} />
+                    <EthereumAddress ethereumAddress={address} shortenOnFallback={true} />
                     <p>{formatNumber(votesPerAddress[address].votes)} votes</p>
                   </div>
                 ))}

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { isSupabaseConfigured } from "@helpers/database";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, ReactElement } from "react";

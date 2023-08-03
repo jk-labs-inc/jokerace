@@ -1,4 +1,5 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
@@ -8,7 +9,6 @@ import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
@@ -23,21 +23,22 @@ const safeMetadata = {
 };
 
 export function useSubmitProposal() {
+  const { asPath } = useRouter();
   const { address: userAddress } = useAccount();
   const { fetchProposalsIdsList } = useProposal();
   const { submissionMerkleTree } = useContestStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { checkIfProofIsVerified } = useGenerateProof();
-
+  const [chainName, address] = asPath.split("/").slice(2, 4);
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
+    ?.id;
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
-  const { asPath } = useRouter();
 
   async function sendProposal(proposalContent: string): Promise<TransactionResponse> {
     return new Promise<TransactionResponse>(async (resolve, reject) => {
-      const [chainName, address] = asPath.split("/").slice(2, 4);
-      const { abi } = await getContestContractVersion(address, chainName);
+      const { abi } = await getContestContractVersion(address, chainId);
       const proofVerificationStatus = await checkIfProofIsVerified(
         submissionMerkleTree,
         userAddress ?? "",
@@ -60,8 +61,8 @@ export function useSubmitProposal() {
 
       try {
         const contractConfig = {
-          addressOrName: address,
-          contractInterface: abi,
+          address: address as `0x${string}`,
+          abi: abi as any,
           chainId: chain?.id,
         };
 
@@ -75,30 +76,38 @@ export function useSubmitProposal() {
           safeMetadata: safeMetadata,
         };
 
+        let hash = "" as `0x${string}`;
+        let txConfig = null;
+
         // case when anyone can submit a proposal
         if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
-          txSendProposal = await writeContract({
+          txConfig = {
             ...contractConfig,
             functionName: "proposeWithoutProof",
             args: [proposalCore],
-          });
+          };
         } else if (!proofVerificationStatus.verified) {
-          txSendProposal = await writeContract({
+          txConfig = {
             ...contractConfig,
             functionName: "propose",
             args: [proposalCore, proofs],
-          });
+          };
         } else {
-          txSendProposal = await writeContract({
+          txConfig = {
             ...contractConfig,
             functionName: "proposeWithoutProof",
             args: [proposalCore],
-          });
+          };
+        }
+
+        if (txConfig) {
+          const txSendProposal = await writeContract(txConfig);
+          hash = txSendProposal.hash;
         }
 
         const receipt = await waitForTransaction({
           chainId: chain?.id,
-          hash: txSendProposal.hash,
+          hash,
         });
 
         setTransactionData({

@@ -2,27 +2,28 @@ import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { alchemyRpcUrls, readContract, readContracts } from "@wagmi/core";
+import { readContract, readContracts } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
+import { Abi } from "viem";
 import { useNetwork, useQuery } from "wagmi";
 import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
+  const contestChainName = asPath.split("/")[2];
   const { chain } = useNetwork();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
-
+  const chainId = chains.filter(
+    chain => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
+  )?.[0]?.id;
   const { refetch: refetchBalanceRewardsModule } = useQuery(
     ["balance-rewards-module", rewards?.contractAddress],
     async () => {
       try {
-        const contestChainName = asPath.split("/")[2];
         const contestRewardModuleAddress = rewards?.contractAddress;
         const networkName = contestChainName.toLowerCase() === "arbitrumone" ? "arbitrum" : contestChainName;
-        const alchemyRpc = Object.keys(alchemyRpcUrls).filter(url => url.toLowerCase() === networkName)[0];
-        //@ts-ignore
-        const alchemyAppUrl = `${alchemyRpcUrls[alchemyRpc]}/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`;
+        const alchemyAppUrl = chains.filter(chain => chain.name === networkName)[0].rpcUrls.default.http[0];
 
         const response = await fetch(alchemyAppUrl, {
           method: "POST",
@@ -64,11 +65,7 @@ export function useRewardsModule() {
     try {
       const contestAddress = address ?? asPath.split("/")[3];
       const contestChainName = chainName ?? asPath.split("/")[2];
-      const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]?.id;
-      const { abi: abiContest, version } = await getContestContractVersion(
-        address ?? contestAddress,
-        chainName ?? contestChainName,
-      );
+      const { abi: abiContest } = await getContestContractVersion(address ?? contestAddress, chainId);
 
       if (abiContest === null) {
         setIsLoading(false);
@@ -79,16 +76,16 @@ export function useRewardsModule() {
         toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
         return;
       }
-      const contestRewardModuleAddress = await readContract({
-        addressOrName: contestAddress,
-        contractInterface: abiContest,
+      const contestRewardModuleAddress = (await readContract({
+        address: contestAddress as `0x${string}`,
+        abi: abiContest as unknown as Abi,
         chainId,
         functionName: "officialRewardsModule",
-      });
+      })) as string;
       //@ts-ignore
-      const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, contestChainName);
+      const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
       if (abiRewardsModule === null) {
-        if (contestRewardModuleAddress.toString() == "0x0000000000000000000000000000000000000000") {
+        if (contestRewardModuleAddress == "0x0000000000000000000000000000000000000000") {
           toastError("There is no rewards module for this contest.");
         } else {
           toastError(`The rewards pool contract address doesn't exist on ${chain?.name ?? "this chain"}.`);
@@ -97,8 +94,8 @@ export function useRewardsModule() {
       }
 
       const configRewardsModuleContract = {
-        addressOrName: contestRewardModuleAddress,
-        contractInterface: abiRewardsModule,
+        address: contestRewardModuleAddress as `0x${string}`,
+        abi: abiRewardsModule,
         chainId,
       };
       const contractsRewardsModule = [
@@ -120,13 +117,14 @@ export function useRewardsModule() {
         //@ts-ignore
         contracts: contractsRewardsModule,
       });
+
       setIsLoading(false);
       setRewards({
         abi: abiRewardsModule,
         contractAddress: contestRewardModuleAddress,
         creator: rewardsModule[0],
-        payees: rewardsModule[1],
-        totalShares: rewardsModule[2],
+        payees: rewardsModule[1].result,
+        totalShares: rewardsModule[2].result,
         blockExplorers: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]
           ?.blockExplorers?.default,
       });

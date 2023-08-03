@@ -1,18 +1,24 @@
-export const zetaTestnet = {
+import { Chain } from "wagmi";
+
+export const zetaTestnet: Chain = {
   id: 7001,
-  name: 'zetaTestnet',
-  network: 'zetaTestnet',
+  name: "zetaTestnet",
+  network: "zetaTestnet",
   nativeCurrency: {
     decimals: 18,
-    name: 'Zeta',
-    symbol: 'ZETA',
+    name: "Zeta",
+    symbol: "ZETA",
   },
   rpcUrls: {
-    public: 'https://rpc.ankr.com/zetachain_evm_testnet',
-    default: 'https://rpc.ankr.com/zetachain_evm_testnet',
+    public: {
+      http: ["https://rpc.ankr.com/zetachain_evm_testnet"],
+    },
+    default: {
+      http: ["https://rpc.ankr.com/zetachain_evm_testnet"],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Zeta Block Explorer', url: 'https://explorer.zetachain.com' },
-    default: { name: 'Zeta Block Explorer', url: 'https://explorer.zetachain.com' },
+    etherscan: { name: "Zeta Block Explorer", url: "https://explorer.zetachain.com" },
+    default: { name: "Zeta Block Explorer", url: "https://explorer.zetachain.com" },
   },
-}
+};

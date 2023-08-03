@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { formatUnits } from "ethers/lib/utils";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 
 export function useContestParticipantsIndexV3() {
@@ -24,7 +24,7 @@ export function useContestParticipantsIndexV3() {
         if (isVoter) {
           const voter = voters.find(v => v.address === participant);
           if (voter) {
-            num_votes = parseFloat(ethers.utils.formatUnits(voter.numVotes, 18));
+            num_votes = parseFloat(formatUnits(voter.numVotes, 18));
           }
         }
 
