@@ -256,7 +256,6 @@ const LayoutViewContest = (props: any) => {
                         <EthereumAddress
                           ethereumAddress={contestAuthorEthereumAddress}
                           shortenOnFallback
-                          displayLensProfile={false}
                           textualVersion
                         />
                       </p>

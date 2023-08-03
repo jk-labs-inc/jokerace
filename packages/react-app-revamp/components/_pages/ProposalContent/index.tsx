@@ -2,7 +2,7 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
 import ButtonV3 from "@components/UI/ButtonV3";
-import EtheuremAddress from "@components/UI/EtheuremAddress";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import { formatNumber } from "@helpers/formatNumber";
 import { isUrlTweet } from "@helpers/isUrlTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -183,11 +183,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
 
       <div className="border-t border-neutral-10 h-2/5 md:h-1/4 flex flex-col md:flex-row items-center">
         <div className="flex pl-8 w-full md:w-1/2 h-full border-b md:border-r border-neutral-10">
-          <EtheuremAddress
-            ethereumAddress={proposal.authorEthereumAddress}
-            shortenOnFallback={true}
-            displayLensProfile={true}
-          />
+          <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
         </div>
         <div className="flex items-center justify-between pl-8 md:pl-4 pr-4 w-full md:w-1/2 h-full text-[16px] font-bold">
           {ProposalAction}
