@@ -1,6 +1,7 @@
 import Iframe from "@components/tiptap/Iframe";
 import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
@@ -126,7 +127,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
         <div className="flex flex-col gap-2">
-          <EtheuremAddress ethereumAddress={address ?? ""} shortenOnFallback={true} displayLensProfile={true} />
+          <EthereumAddress ethereumAddress={address ?? ""} shortenOnFallback={true} />
           <p className="font-bold text-neutral-10">{formattedDate}</p>
         </div>
         <div className="flex flex-col min-h-[12rem] rounded-md ">

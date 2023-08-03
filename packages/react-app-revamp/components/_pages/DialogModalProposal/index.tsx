@@ -1,5 +1,5 @@
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import EtheuremAddress from "@components/UI/EtheuremAddress";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import useCastVotes from "@hooks/useCastVotes";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -71,11 +71,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
     <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px] ">
       <div className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[60px] pb-[60px]">
         <LayoutContestPrompt prompt={prompt} hidePrompt />
-        <EtheuremAddress
-          ethereumAddress={proposal.authorEthereumAddress}
-          shortenOnFallback={true}
-          displayLensProfile={true}
-        />
+        <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
         <LayoutContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
         {contestStatus === ContestStatus.VotingOpen && (
           <div className="flex flex-col gap-8">
