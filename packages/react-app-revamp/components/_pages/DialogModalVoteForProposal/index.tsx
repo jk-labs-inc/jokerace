@@ -1,5 +1,5 @@
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import EtheuremAddress from "@components/UI/EtheuremAddress";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
@@ -50,11 +50,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
-        <EtheuremAddress
-          ethereumAddress={proposal.authorEthereumAddress}
-          shortenOnFallback={true}
-          displayLensProfile={true}
-        />
+        <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
         <div className="flex flex-col gap-7">
           <LayoutContestProposal proposal={proposal} />
           <VotingWidget

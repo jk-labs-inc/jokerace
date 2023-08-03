@@ -25,7 +25,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
       </li>
     );
 
-  if (queryTokenBalance.data.value.eq(0) || queryRankRewardsReleasable.data === 0) {
+  if (!queryRankRewardsReleasable.data || queryTokenBalance.data.value === 0 || queryRankRewardsReleasable.data === 0) {
     return (
       <li>
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds to distribute

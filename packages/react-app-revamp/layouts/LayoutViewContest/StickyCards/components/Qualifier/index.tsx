@@ -112,7 +112,7 @@ const LayoutContestQualifier = () => {
         <p>you don't qualify to vote</p>
       </div>
     );
-  }, [currentUserAvailableVotesAmount, isScrolled, isReadOnly]);
+  }, [isReadOnly, currentUserAvailableVotesAmount, currentUserTotalVotesAmount, isScrolled]);
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>

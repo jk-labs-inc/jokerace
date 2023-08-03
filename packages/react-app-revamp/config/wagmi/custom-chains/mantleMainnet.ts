@@ -1,18 +1,24 @@
-export const mantleMainnet = {
+import { Chain } from "wagmi";
+
+export const mantleMainnet: Chain = {
   id: 5000,
-  name: 'mantleMainnet',
-  network: 'mantleMainnet',
+  name: "mantleMainnet",
+  network: "mantleMainnet",
   nativeCurrency: {
     decimals: 18,
-    name: 'Mantle',
-    symbol: 'MNT',
+    name: "Mantle",
+    symbol: "MNT",
   },
   rpcUrls: {
-    public: 'https://rpc.mantle.xyz',
-    default: 'https://rpc.mantle.xyz',
+    public: {
+      http: ["https://rpc.mantle.xyz"],
+    },
+    default: {
+      http: ["https://rpc.mantle.xyz"],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Mantle Mainnet Scan', url: 'https://explorer.mantle.xyz' },
-    default: { name: 'Mantle Mainnet Scan', url: 'https://explorer.mantle.xyz' },
+    etherscan: { name: "Mantle Mainnet Scan", url: "https://explorer.mantle.xyz" },
+    default: { name: "Mantle Mainnet Scan", url: "https://explorer.mantle.xyz" },
   },
-}
+};

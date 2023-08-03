@@ -1,6 +1,7 @@
 import Loader from "@components/UI/Loader";
 import { chains } from "@config/wagmi";
 import { ordinalSuffix } from "@helpers/ordinalSuffix";
+import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
 import { FC } from "react";
 import { useContractRead } from "wagmi";
@@ -18,12 +19,12 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares } = props;
   const { asPath } = useRouter();
   const { data, isError, isLoading } = useContractRead({
-    addressOrName: contractRewardsModuleAddress,
-    contractInterface: abiRewardsModule,
+    address: contractRewardsModuleAddress as `0x${string}`,
+    abi: abiRewardsModule,
     chainId: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id,
     functionName: "shares",
-    args: payee,
-  });
+    args: [Number(payee)],
+  }) as any;
 
   return (
     <>
@@ -40,7 +41,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
                 } pb-3`}
               >
                 <p>{ordinalSuffix(parseFloat(payee))} place</p>
-                <p>{(data.toNumber() * 100) / totalShares}% of rewards</p>
+                <p>{BigNumber.from(data).mul(100).div(totalShares).toString()}% of rewards</p>
               </div>
             </div>
           )}

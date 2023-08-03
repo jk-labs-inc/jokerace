@@ -1,4 +1,5 @@
 import LegacyDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.1.pre-prompt.sol/Contest.json";
+import BetterRewardsNotesContract from "@contracts/bytecodeAndAbi/Contest.2.10.betterRewardsNotes.sol/Contest.json";
 import PromptDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.2.prompt.sol/Contest.json";
 import AllProposalTotalVotesDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.3.allProposalTotalVotes.sol/Contest.json";
 import ProposalVotesDownvotesContract from "@contracts/bytecodeAndAbi/Contest.2.4.proposalVotesDownvotes.sol/Contest.json";
@@ -6,19 +7,16 @@ import SubmissionTokenGatingContract from "@contracts/bytecodeAndAbi/Contest.2.5
 import RewardsContract from "@contracts/bytecodeAndAbi/Contest.2.6.rewards.sol/Contest.json";
 import NumberedVersioningContract from "@contracts/bytecodeAndAbi/Contest.2.8.numberedVersioning.sol/Contest.json";
 import GateSubmissionsOpenContract from "@contracts/bytecodeAndAbi/Contest.2.9.gateSubmissionsOpen.sol/Contest.json";
-import BetterRewardsNotesContract from "@contracts/bytecodeAndAbi/Contest.2.10.betterRewardsNotes.sol/Contest.json";
 import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVotes.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-
-import { chains } from "@config/wagmi";
-import { getProvider } from "@wagmi/core";
 import { ethers, utils } from "ethers";
+import { getEthersProvider } from "./ethers";
 
-export async function getContestContractVersion(address: string, chainName: string) {
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const provider = getProvider({ chainId: chainId });
+export async function getContestContractVersion(address: string, chainId: number) {
+  const provider = getEthersProvider({ chainId });
   const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
+
   const version: string = await contract.version();
 
   const defaultReturn = { abi: [], version: "unknown" };

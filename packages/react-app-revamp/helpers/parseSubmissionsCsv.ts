@@ -1,5 +1,5 @@
-import { getAddress } from "ethers/lib/utils";
 import Papa from "papaparse";
+import { getAddress } from "viem";
 
 export type InvalidEntry = {
   address: string;

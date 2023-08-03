@@ -37,7 +37,7 @@ const MainHeader = () => {
         )}
       </div>
       <div className="hidden md:flex">
-        <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+        <ConnectButton showBalance={false} accountStatus="full" label="Connect wallet" />
       </div>
     </header>
   );
@@ -63,7 +63,7 @@ const MainHeader = () => {
           </div>
 
           <div className="flex" style={{ minWidth: "260px" }}>
-            <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+            <ConnectButton showBalance={false} accountStatus="full" label="Connect wallet" />
           </div>
         </header>
       )}

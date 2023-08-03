@@ -1,5 +1,5 @@
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import EtheuremAddress from "@components/UI/EtheuremAddress";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import useCastVotes from "@hooks/useCastVotes";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -46,19 +46,32 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
     });
   };
 
+  async function requestAccount() {
+    try {
+      const accounts = await window.ethereum?.request({
+        method: "eth_requestAccounts",
+      });
+      return accounts?.[0];
+    } catch (error) {
+      console.error("User denied account access");
+      return null;
+    }
+  }
+
+  const onConnectWallet = async () => {
+    await requestAccount();
+    openConnectModal?.();
+  };
+
   useEffect(() => {
     if (isSuccess) setIsOpen(false);
-  }, [isSuccess]);
+  }, [isSuccess, setIsOpen]);
 
   return (
     <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px] ">
       <div className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[60px] pb-[60px]">
         <LayoutContestPrompt prompt={prompt} hidePrompt />
-        <EtheuremAddress
-          ethereumAddress={proposal.authorEthereumAddress}
-          shortenOnFallback={true}
-          displayLensProfile={true}
-        />
+        <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
         <LayoutContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
         {contestStatus === ContestStatus.VotingOpen && (
           <div className="flex flex-col gap-8">
@@ -79,7 +92,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
               )
             ) : (
               <p className="text-[16px] font-bold text-neutral-11 mt-2">
-                <span className="text-positive-11 cursor-pointer" onClick={openConnectModal}>
+                <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
                   connect wallet
                 </span>{" "}
                 to see if you qualify

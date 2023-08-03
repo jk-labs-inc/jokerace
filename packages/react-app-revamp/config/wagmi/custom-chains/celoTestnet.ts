@@ -1,18 +1,24 @@
-export const celoTestnet = {
+import { Chain } from "wagmi";
+
+export const celoTestnet: Chain = {
   id: 44787,
-  name: 'celoTestnet',
-  network: 'celoTestnet',
+  name: "celoTestnet",
+  network: "celoTestnet",
   nativeCurrency: {
     decimals: 18,
-    name: 'A-Celo',
-    symbol: 'A-CELO',
+    name: "A-Celo",
+    symbol: "A-CELO",
   },
   rpcUrls: {
-    public: 'https://alfajores-forno.celo-testnet.org',
-    default: 'https://alfajores-forno.celo-testnet.org',
+    public: {
+      http: ["https://alfajores-forno.celo-testnet.org"],
+    },
+    default: {
+      http: ["https://alfajores-forno.celo-testnet.org"],
+    },
   },
   blockExplorers: {
-    etherscan: { name: 'Celo Testnet Block Explorer', url: 'https://explorer.celo.org/alfajores' },
-    default: { name: 'Celo Testnet Block Explorer', url: 'https://explorer.celo.org/alfajores' },
+    etherscan: { name: "Celo Testnet Block Explorer", url: "https://explorer.celo.org/alfajores" },
+    default: { name: "Celo Testnet Block Explorer", url: "https://explorer.celo.org/alfajores" },
   },
-}
+};

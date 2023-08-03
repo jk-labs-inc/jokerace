@@ -16,7 +16,7 @@ export const useUserBalance = (address: string, chainId: number, token?: string)
     async function fetchData() {
       try {
         const fetchedBalance = await fetchUserBalance(address, chainId, token);
-        setQualified(fetchedBalance.value.gt(0));
+        setQualified(fetchedBalance.value > 0);
       } catch (error) {
         console.error("Error fetching balance:", error);
       } finally {

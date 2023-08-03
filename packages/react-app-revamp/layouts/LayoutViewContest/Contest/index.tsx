@@ -63,7 +63,9 @@ const ContestTab = () => {
       <div className="mt-8">
         <div className="flex flex-col gap-5">
           <hr className="border-neutral-10" />
-          {contestStatus !== ContestStatus.ContestOpen && <ProposalStatistics contestStatus={contestStatus} />}
+          {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
+            <ProposalStatistics contestStatus={contestStatus} />
+          )}
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
             <div className={`animate-appear ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"}`}>

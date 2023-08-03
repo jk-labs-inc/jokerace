@@ -42,11 +42,11 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
     isError,
     isLoading: isSharesLoading,
   } = useContractRead({
-    addressOrName: contractRewardsModuleAddress,
-    contractInterface: abiRewardsModule,
+    address: contractRewardsModuleAddress as `0x${string}`,
+    abi: abiRewardsModule,
     chainId: chainId,
     functionName: "shares",
-    args: payee,
+    args: [Number(payee)],
   });
   const isLoading = isSharesLoading || isFundingRewardsLoading || isWithdrawRewardsLoading;
 
@@ -72,29 +72,25 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
                 />
               )}
 
-              {erc20Tokens?.length > 0 && (
-                <>
-                  {erc20Tokens.map((token: any, index: number) => (
-                    <>
-                      {isLoading ? (
-                        <li>
-                          <Skeleton width={200} height={16} key={index} />
-                        </li>
-                      ) : (
-                        <PayeeERC20Reward
-                          key={index}
-                          share={data}
-                          payee={payee}
-                          chainId={chainId}
-                          tokenAddress={token.contractAddress}
-                          contractRewardsModuleAddress={contractRewardsModuleAddress}
-                          abiRewardsModule={abiRewardsModule}
-                        />
-                      )}
-                    </>
-                  ))}
-                </>
-              )}
+              {erc20Tokens?.length > 0 &&
+                erc20Tokens.map((token: any, index: number) => (
+                  <div key={index}>
+                    {isLoading ? (
+                      <li>
+                        <Skeleton width={200} height={16} />
+                      </li>
+                    ) : (
+                      <PayeeERC20Reward
+                        share={data}
+                        payee={payee}
+                        chainId={chainId}
+                        tokenAddress={token.contractAddress}
+                        contractRewardsModuleAddress={contractRewardsModuleAddress}
+                        abiRewardsModule={abiRewardsModule}
+                      />
+                    )}
+                  </div>
+                ))}
             </ul>
           </div>
         </div>
@@ -120,30 +116,26 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
                 />
               )}
 
-              {erc20Tokens?.length > 0 && (
-                <>
-                  {erc20Tokens.map((token: any, index: number) => (
-                    <>
-                      {isLoading || isDistributeRewardsLoading ? (
-                        <li>
-                          <Skeleton width={200} height={16} key={index} />
-                        </li>
-                      ) : (
-                        <PayeeERC20Reward
-                          key={index}
-                          share={data}
-                          payee={payee}
-                          chainId={chainId}
-                          tokenAddress={token.contractAddress}
-                          contractRewardsModuleAddress={contractRewardsModuleAddress}
-                          abiRewardsModule={abiRewardsModule}
-                          showPreviouslyDistributed={showPreviouslyDistributedTable}
-                        />
-                      )}
-                    </>
-                  ))}
-                </>
-              )}
+              {erc20Tokens?.length > 0 &&
+                erc20Tokens.map((token: any, index: number) => (
+                  <div key={index}>
+                    {isLoading || isDistributeRewardsLoading ? (
+                      <li>
+                        <Skeleton width={200} height={16} />
+                      </li>
+                    ) : (
+                      <PayeeERC20Reward
+                        share={data}
+                        payee={payee}
+                        chainId={chainId}
+                        tokenAddress={token.contractAddress}
+                        contractRewardsModuleAddress={contractRewardsModuleAddress}
+                        abiRewardsModule={abiRewardsModule}
+                        showPreviouslyDistributed={showPreviouslyDistributedTable}
+                      />
+                    )}
+                  </div>
+                ))}
             </ul>
           </div>
         </div>

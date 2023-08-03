@@ -25,15 +25,15 @@ export const useWithdrawReward = (
   const { setIsLoading } = useWithdrawRewardStore(state => state);
 
   const queryTokenBalance = useBalance({
-    token: tokenType === "erc20" ? tokenAddress : undefined,
+    token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
     chainId: chain?.id,
-    addressOrName: contractRewardsModuleAddress,
+    address: contractRewardsModuleAddress as `0x${string}`,
   });
 
   const contractWriteWithdrawReward = useContractWrite({
-    addressOrName: contractRewardsModuleAddress,
-    contractInterface: abiRewardsModule,
-    functionName: tokenType === "erc20" ? "withdrawRewards(address)" : "withdrawRewards()",
+    address: contractRewardsModuleAddress as `0x${string}`,
+    abi: abiRewardsModule,
+    functionName: "withdrawRewards",
     chainId: chain?.id,
     args: tokenType === "erc20" ? [tokenAddress] : [],
     onError(e) {

@@ -35,7 +35,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
     return () => {
       window.removeEventListener("keydown", handleEnterPress);
     };
-  }, [onVote]);
+  }, [amount, isUpvote, onVote]);
 
   const handleClick = (value: boolean) => {
     if (!downvoteAllowed) {

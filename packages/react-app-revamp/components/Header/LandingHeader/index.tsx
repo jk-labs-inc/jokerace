@@ -33,7 +33,7 @@ const LandingHeader = () => {
           </Button>
         </Link>
         <div className="hidden lg:flex">
-          <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+          <ConnectButton showBalance={false} accountStatus="full" label="Connect wallet" />
         </div>
       </div>
 

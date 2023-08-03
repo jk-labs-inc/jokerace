@@ -26,8 +26,8 @@ export const useTokenBalance = (inputToken: string) => {
         try {
           const balance = await fetchBalance({
             chainId,
-            addressOrName: rewardsStore?.rewards?.contractAddress,
-            token: inputToken,
+            address: rewardsStore?.rewards?.contractAddress as `0x${string}`,
+            token: inputToken as `0x${string}`,
           });
           setQueryTokenBalance(balance);
           setError("");

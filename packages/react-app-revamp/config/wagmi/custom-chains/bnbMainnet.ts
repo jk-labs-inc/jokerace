@@ -1,18 +1,24 @@
-export const bnbMainnet = {
+import { Chain } from "wagmi";
+
+export const bnbMainnet: Chain = {
   id: 56,
-  name: 'BnbMainnet',
-  network: 'bnbMainnet',
+  name: "BnbMainnet",
+  network: "bnbMainnet",
   nativeCurrency: {
     decimals: 18,
-    name: 'BNB',
-    symbol: 'BNB',
+    name: "BNB",
+    symbol: "BNB",
   },
   rpcUrls: {
-    public: 'https://bsc-dataseed.binance.org/',
-    default: 'https://bsc-dataseed.binance.org/',
+    public: {
+      http: ["https://bsc-dataseed.binance.org/"],
+    },
+    default: {
+      http: ["https://bsc-dataseed.binance.org/"],
+    },
   },
   blockExplorers: {
-    escan: { name: 'BNB Explorer', url: 'https://bscscan.com' },
-    default: { name: 'BNB Explorer', url: 'https://bscscan.com' },
+    escan: { name: "BNB Explorer", url: "https://bscscan.com" },
+    default: { name: "BNB Explorer", url: "https://bscscan.com" },
   },
-}
+};

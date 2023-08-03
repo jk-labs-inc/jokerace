@@ -12,7 +12,7 @@ interface ContestWithdrawRewardsProps {
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore }) => {
   const { chain } = useNetwork();
   const nativeTokenBalance = useBalance({
-    addressOrName: rewardsStore?.rewards?.contractAddress,
+    address: rewardsStore?.rewards?.contractAddress as `0x${string}`,
     chainId: chain?.id,
   });
 
@@ -58,7 +58,7 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
             )}
           </Tab.Panel>
           <Tab.Panel>
-            {nativeTokenBalance.data?.value.gt(0) ? (
+            {nativeTokenBalance.data && nativeTokenBalance.data?.value > 0 ? (
               <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
                 <ButtonWithdrawNativeReward
                   contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}

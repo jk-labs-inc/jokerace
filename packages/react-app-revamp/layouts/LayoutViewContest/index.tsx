@@ -16,7 +16,6 @@ import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
-import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
 import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
@@ -30,6 +29,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import ContestTab from "./Contest";
@@ -51,8 +51,16 @@ const LayoutViewContest = (props: any) => {
   const { isLoading, address, fetchContestInfo, isSuccess, error, retry, chainId, chainName, setChainId } =
     useContest();
 
-  const { submissionsOpen, votesClose, votesOpen, contestAuthorEthereumAddress, contestName, rewards, isReadOnly } =
-    useContestStore(state => state);
+  const {
+    submissionsOpen,
+    votesClose,
+    votesOpen,
+    contestAuthorEthereumAddress,
+    contestName,
+    rewards,
+    isReadOnly,
+    isRewardsLoading,
+  } = useContestStore(state => state);
 
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
@@ -248,11 +256,17 @@ const LayoutViewContest = (props: any) => {
                         <EthereumAddress
                           ethereumAddress={contestAuthorEthereumAddress}
                           shortenOnFallback
-                          displayLensProfile={false}
                           textualVersion
                         />
                       </p>
-                      {rewards && (
+
+                      {isRewardsLoading && (
+                        <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={2}>
+                          <Skeleton borderRadius={10} className="shrink-0 p-1 border border-primary-10" width={200} />
+                        </SkeletonTheme>
+                      )}
+
+                      {rewards && !isRewardsLoading && (
                         <div className="shrink-0 p-1 border border-primary-10 rounded-[10px] text-[16px] font-bold text-primary-10">
                           {rewards?.token.value} $<span className="uppercase">{rewards?.token.symbol}</span> to{" "}
                           {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}
@@ -303,17 +317,15 @@ export const getLayout = (page: any) => {
           <UserWrapper>
             <SubmitProposalWrapper>
               <CastVotesWrapper>
-                <DeleteProposalWrapper>
-                  <ContractFactoryWrapper>
-                    <DeployRewardsWrapper>
-                      <RewardsWrapper>
-                        <FundRewardsWrapper>
-                          <LayoutViewContest>{page}</LayoutViewContest>
-                        </FundRewardsWrapper>
-                      </RewardsWrapper>
-                    </DeployRewardsWrapper>
-                  </ContractFactoryWrapper>
-                </DeleteProposalWrapper>
+                <ContractFactoryWrapper>
+                  <DeployRewardsWrapper>
+                    <RewardsWrapper>
+                      <FundRewardsWrapper>
+                        <LayoutViewContest>{page}</LayoutViewContest>
+                      </FundRewardsWrapper>
+                    </RewardsWrapper>
+                  </DeployRewardsWrapper>
+                </ContractFactoryWrapper>
               </CastVotesWrapper>
             </SubmitProposalWrapper>
           </UserWrapper>

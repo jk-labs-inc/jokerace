@@ -1,18 +1,17 @@
 import { toastError } from "@components/UI/Toast";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
-import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import arrayToChunks from "@helpers/arrayToChunks";
+import { getEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { fetchEnsName, getAccount, getContract, readContract, watchContractEvent } from "@wagmi/core";
+import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { CustomError } from "types/error";
-import { chain as wagmiChain, useAccount, useProvider } from "wagmi";
+import { Abi } from "viem";
+import { useAccount } from "wagmi";
 import { useProposalVotesStore } from "./store";
 
 const VOTES_PER_PAGE = 5;
@@ -26,14 +25,12 @@ export function useProposalVotes(id: number | string) {
       }
     },
   });
-  const provider = useProvider();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
+  const provider = getEthersProvider({ chainId });
   const [address] = useState(url[3]);
-
-  const { contestStatus } = useContestStatusStore(state => state);
 
   const {
     isListVotersSuccess,
@@ -56,9 +53,8 @@ export function useProposalVotes(id: number | string) {
    */
   async function fetchProposalVotes() {
     setIsListVotersLoading(true);
-    const chainName = url[2];
 
-    const { abi, version } = await getContestContractVersion(address, chainName);
+    const { abi } = await getContestContractVersion(address, chainId);
 
     if (abi === null) {
       const errorMessage = "This contract doesn't exist on this chain.";
@@ -71,18 +67,14 @@ export function useProposalVotes(id: number | string) {
     }
     try {
       const accountData = getAccount();
-      const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
-        chainId: chainId,
-      };
 
-      const list = await readContract({
-        ...contractConfig,
+      const list = (await readContract({
+        address: address as `0x${string}`,
+        abi: abi as any,
         chainId,
         functionName: "proposalAddressesHaveVoted",
-        args: id,
-      });
+        args: [id],
+      })) as any;
 
       const usersListWithCurrentUserFirst = Array.from(list);
       // Make sure that current user address appears first in the list
@@ -148,10 +140,9 @@ export function useProposalVotes(id: number | string) {
    * @param userAddress - wallet address
    */
   async function fetchVotesOfAddress(userAddress: string) {
-    const chainName = asPath.split("/")[2];
-
+    console.count();
     try {
-      const { abi, version } = await getContestContractVersion(address, chainName);
+      const { abi } = await getContestContractVersion(address, chainId);
 
       if (abi === null) {
         const errorMessage = "This contract doesn't exist on this chain.";
@@ -162,33 +153,35 @@ export function useProposalVotes(id: number | string) {
       }
 
       const contractConfig = {
-        addressOrName: address,
-        contractInterface: abi,
+        address: address as `0x${string}`,
+        abi: abi as unknown as Abi,
         chainId,
       };
 
-      const data = await readContract({
+      const votesRaw = (await readContract({
         ...contractConfig,
         functionName: "proposalAddressVotes",
         args: [id, userAddress],
         chainId,
-      });
+      })) as any;
 
-      const { forVotes, againstVotes } = data ?? {};
+      const forVotesBigInt = votesRaw[0];
+      const againstVotesBigInt = votesRaw[1];
+
+      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
+      const votes = Number(utils.formatEther(votesBigNumber));
 
       let author;
       try {
         author = await fetchEnsName({
-          address: userAddress,
-          chainId: wagmiChain.mainnet.id,
+          address: userAddress as `0x${string}`,
+          chainId: 1,
         });
       } catch (error: any) {
         author = userAddress;
       }
 
       const displayAddress = author ?? shortenEthereumAddress(userAddress);
-      // @ts-ignore
-      const votes = (forVotes ? forVotes / 1e18 - againstVotes / 1e18 : data / 1e18) ?? 0;
 
       setVotesPerAddress({
         address: userAddress,
@@ -210,6 +203,7 @@ export function useProposalVotes(id: number | string) {
     }
   }, [account?.connector]);
 
+  // TODO: will monitor this for now, we should prolly use this event listener as well to update list live when a vote is cast, but not until i check if RPC calls are all good.
   // useEffect(() => {
   //   if (contestStatus === ContestStatus.VotingClosed) {
   //     const contract = getContract({
@@ -250,6 +244,7 @@ export function useProposalVotes(id: number | string) {
     };
 
     fetchProposalVotesAndListenForEvents();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

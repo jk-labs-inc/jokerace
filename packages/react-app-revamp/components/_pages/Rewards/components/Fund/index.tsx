@@ -32,7 +32,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
 
       let decimals = 18;
       if (reward.address.startsWith("0x")) {
-        const tokenData = await fetchToken({ address: reward.address });
+        const tokenData = await fetchToken({ address: reward.address as `0x${string}` });
         if (tokenData === null) {
           toastError("failed to fetch token data");
           return;

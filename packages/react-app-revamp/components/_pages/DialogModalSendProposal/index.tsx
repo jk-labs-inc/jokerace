@@ -1,6 +1,7 @@
 import Iframe from "@components/tiptap/Iframe";
 import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import EtheuremAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
@@ -11,6 +12,7 @@ import {
   SubmissionCache,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import Image from "@tiptap/extension-image";
@@ -34,11 +36,12 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { asPath } = useRouter();
   const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
   const { contestPrompt, votesOpen, isMerkleTreeInProgress } = useContestStore(state => state);
-  const [lastEdited, setLastEdited] = useState<Date>(new Date());
-  const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
   const contestId = asPath.split("/")[3];
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
+  const { contestStatus } = useContestStatusStore(state => state);
+  const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const [proposal, setProposal] = useState(savedProposal?.content || "");
+  const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
 
   const editorProposal = useEditor({
     extensions: [
@@ -74,11 +77,14 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     },
   });
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const onSubmitProposal = () => {
     sendProposal(proposal.trim());
   };
 
   useEffect(() => {
+    if (contestStatus !== ContestStatus.SubmissionOpen) return;
+
     const handleEnterPress = (event: KeyboardEvent) => {
       if (event.shiftKey) {
         return;
@@ -93,7 +99,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     return () => {
       window.removeEventListener("keydown", handleEnterPress);
     };
-  }, [onSubmitProposal]);
+  }, [contestStatus, onSubmitProposal]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -101,6 +107,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       editorProposal?.commands.clearContent();
       removeSubmissionFromLocalStorage("submissions", contestId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);
 
   const tipMessage = () => {
@@ -120,7 +127,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
         <div className="flex flex-col gap-2">
-          <EtheuremAddress ethereumAddress={address ?? ""} shortenOnFallback={true} displayLensProfile={true} />
+          <EthereumAddress ethereumAddress={address ?? ""} shortenOnFallback={true} />
           <p className="font-bold text-neutral-10">{formattedDate}</p>
         </div>
         <div className="flex flex-col min-h-[12rem] rounded-md ">
