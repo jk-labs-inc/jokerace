@@ -18,7 +18,7 @@ export const sepolia: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan.io" },
-    default: { name: "Sepolia Otterscan", url: "https://sepolia.otterscan.io" },
+    etherscan: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan" },
+    default: { name: "Sepolia Otterscan", url: "https://sepolia.otterscan" },
   },
 };
