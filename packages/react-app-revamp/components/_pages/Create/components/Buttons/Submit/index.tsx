@@ -1,9 +1,8 @@
-import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
-import { useState, useEffect, MouseEventHandler, FC } from "react";
+import { FC, MouseEventHandler, useEffect, useState } from "react";
 
 interface CreateContestButtonProps {
   step: number;

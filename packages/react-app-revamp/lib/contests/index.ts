@@ -120,14 +120,12 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
 };
 
 const processContestData = async (contest: any, userAddress: string) => {
-  const { address, network_name } = contest;
-
   try {
     const chainId = chains.filter(
-      c => c.name.replace(/\s+/g, "").toLowerCase() === network_name.replace(/\s+/g, "").toLowerCase(),
+      c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
     )[0].id;
 
-    const contractConfig = await getContractConfig(address, chainId);
+    const contractConfig = await getContractConfig(contest.address, chainId);
 
     contest = await updateContestWithUserQualifications(contest, userAddress);
 
@@ -167,7 +165,7 @@ const processContestData = async (contest: any, userAddress: string) => {
 
             if (!rewardToken || Number(rewardToken.value) === 0) {
               try {
-                erc20Tokens = await fetchTokenBalances(network_name, contestRewardModuleAddress.toString());
+                erc20Tokens = await fetchTokenBalances(contest.network_name, contestRewardModuleAddress.toString());
 
                 if (erc20Tokens && erc20Tokens.length > 0) {
                   rewardToken = await fetchFirstToken(

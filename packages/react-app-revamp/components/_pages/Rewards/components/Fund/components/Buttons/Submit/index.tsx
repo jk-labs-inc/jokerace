@@ -2,7 +2,7 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import Image from "next/image";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 interface CreateRewardsFundingPoolSubmitProps {
@@ -16,24 +16,27 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
   const isLoading = useDeployRewardsStore(state => state.isLoading);
   const { validationError, rewards } = useFundRewardsStore(state => state);
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setAttemptedSubmit(true);
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      setAttemptedSubmit(true);
 
-    if (isLoading) {
-      toast.warning("Please wait while your reward deployment is finished.");
-    }
-
-    const hasErrors = validationError.some(error => error.amount || error.tokenAddress);
-
-    if (hasErrors) {
-      setShake(true);
-    } else {
-      setAttemptedSubmit(false);
-      if (onClick) {
-        onClick(e);
+      if (isLoading) {
+        toast.warning("Please wait while your reward deployment is finished.");
       }
-    }
-  };
+
+      const hasErrors = validationError.some(error => error.amount || error.tokenAddress);
+
+      if (hasErrors) {
+        setShake(true);
+      } else {
+        setAttemptedSubmit(false);
+        if (onClick) {
+          onClick(e);
+        }
+      }
+    },
+    [isLoading, validationError, onClick],
+  );
 
   useEffect(() => {
     setAttemptedSubmit(false);

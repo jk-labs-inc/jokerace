@@ -73,7 +73,14 @@ const useContestInfo = ({
 
     setSubmissionClass(newSubmissionClass);
     setVotingClass(newVotingClass);
-  }, [submissionStatus, votingStatus, contest.qualifiedToSubmit, contest.qualifiedToVote, address]);
+  }, [
+    submissionStatus,
+    votingStatus,
+    contest.qualifiedToSubmit,
+    contest.qualifiedToVote,
+    address,
+    contest.anyoneCanSubmit,
+  ]);
 
   useEffect(() => {
     const newSubmissionMessage = (() => {
@@ -148,6 +155,8 @@ const useContestInfo = ({
     chains,
     contest.token_symbol,
     contest.network_name,
+    contest.anyoneCanSubmit,
+    submissionTimeLeft.value,
   ]);
 
   return { submissionClass, votingClass, submissionMessage, votingMessage };

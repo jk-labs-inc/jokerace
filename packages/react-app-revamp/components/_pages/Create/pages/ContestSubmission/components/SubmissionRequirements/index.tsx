@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDropdown, { Option } from "@components/_pages/Create/components/Dropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";

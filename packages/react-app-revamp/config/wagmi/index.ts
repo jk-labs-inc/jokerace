@@ -89,13 +89,6 @@ const publicClients =
             };
           },
         }),
-        jsonRpcProvider({
-          rpc: chain => {
-            return {
-              http: `${chain.rpcUrls.public.http[0]}`,
-            };
-          },
-        }),
       ]
     : [
         jsonRpcProvider({
@@ -106,7 +99,7 @@ const publicClients =
           },
         }),
       ];
-
+g;
 export const { chains, publicClient, webSocketPublicClient } = configureChains(totalChains, publicClients);
 
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
