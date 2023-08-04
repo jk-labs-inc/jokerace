@@ -159,4 +159,6 @@ export const chainsImages: ChainImages = {
   gnosistestnet: "/gnosis.png",
   publicgoodsnetworkmainnet: "/publicgoodsnetwork.svg",
   publicgoodsnetworktestnet: "/publicgoodsnetwork.svg",
+  lootchainmainnet: "/lootchain.svg",
+  lootchaintestnet: "/lootchain.svg",
 };

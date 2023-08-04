@@ -6,8 +6,8 @@ export const lootChainMainnet: Chain = {
   network: "lootChainMainnet",
   nativeCurrency: {
     decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
+    name: "AGLD",
+    symbol: "AGLD",
   },
   rpcUrls: {
     public: {
