@@ -89,13 +89,6 @@ const publicClients =
             };
           },
         }),
-        jsonRpcProvider({
-          rpc: chain => {
-            return {
-              http: `${chain.rpcUrls.public.http[0]}`,
-            };
-          },
-        }),
       ]
     : [
         jsonRpcProvider({
