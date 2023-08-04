@@ -40,7 +40,7 @@ const CreateRewardsFundPool = () => {
 
     const hasErrors = errors.some(error => Object.keys(error).length !== 0);
     setValidationError(hasErrors ? errors : []);
-  }, [rows, setRewards, chainConfig]);
+  }, [rows, setRewards, chainConfig, setValidationError]);
 
   const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
     const values = [...rows];

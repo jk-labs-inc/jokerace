@@ -73,7 +73,7 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
       default:
         return null;
     }
-  }, [type]);
+  }, [step, type]);
 
   return <>{errorContent}</>;
 };

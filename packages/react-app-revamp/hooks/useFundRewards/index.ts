@@ -123,8 +123,7 @@ export function useFundRewardsModule() {
       setTransactionData({});
       setError(null);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModalOpen]);
+  }, [isModalOpen, setError, setIsLoading, setIsSuccess, setTransactionData]);
 
   return {
     sendFundsToRewardsModuleV3,

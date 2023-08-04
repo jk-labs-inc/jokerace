@@ -1,6 +1,5 @@
 import CreateDatePicker from "@components/_pages/Create/components/DatePicker";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useEffect } from "react";
 
 const CreateVotesOpenDate = () => {
   const { votingOpen, setVotingOpen, submissionOpen, errors, step } = useDeployContestStore(state => state);

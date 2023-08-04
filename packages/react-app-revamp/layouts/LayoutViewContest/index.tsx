@@ -100,10 +100,11 @@ const LayoutViewContest = (props: any) => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [submissionsOpen, votesOpen, votesClose]);
+  }, [submissionsOpen, votesOpen, votesClose, setContestStatus]);
 
   useEffect(() => {
     fetchContestInfo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
@@ -113,7 +114,7 @@ const LayoutViewContest = (props: any) => {
         setChainId(data?.chain?.id);
       });
     }
-  }, [account?.connector]);
+  }, [account?.connector, setChainId]);
 
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {

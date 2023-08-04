@@ -46,7 +46,7 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [step, value, errors[step]]);
+  }, [onNextStep, step, value]);
 
   return (
     <input

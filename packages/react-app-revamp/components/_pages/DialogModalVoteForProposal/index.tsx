@@ -39,7 +39,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
 
   useEffect(() => {
     if (isSuccess) setIsOpen(false);
-  }, [isSuccess]);
+  }, [isSuccess, setIsOpen]);
 
   return (
     <DialogModalV3

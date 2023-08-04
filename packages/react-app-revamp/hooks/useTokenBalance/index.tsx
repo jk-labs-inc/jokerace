@@ -43,7 +43,7 @@ export const useTokenBalance = (inputToken: string) => {
     };
 
     fetchTokenBalance();
-  }, [inputToken]);
+  }, [asPath, inputToken, rewardsStore?.rewards?.contractAddress]);
 
   return { queryTokenBalance, error };
 };

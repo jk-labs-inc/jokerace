@@ -25,7 +25,7 @@ const CreateContestRewards = () => {
     if (contestDeployed) {
       clearContestData();
     }
-  }, []);
+  }, [clearContestData, contestDeployed]);
 
   useEffect(() => {
     if (!cancelCreateRewardsPool && !cancelFundingPool) return;

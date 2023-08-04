@@ -1,5 +1,3 @@
-// hooks/useUserBalance.js
-
 import { fetchUserBalance } from "lib/fetchUserBalance";
 import { useState, useEffect } from "react";
 

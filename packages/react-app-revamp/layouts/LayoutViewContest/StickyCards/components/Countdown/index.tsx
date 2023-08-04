@@ -18,9 +18,9 @@ const LayoutContestCountdown = () => {
   const [phase, setPhase] = useState("start");
   const { y } = useWindowScroll();
   const [isScrolled, setIsScrolled] = useState(false);
-  const memoizedSubmissionsOpen = useMemo(() => submissionsOpen, [submissionsOpen.getTime()]);
-  const memoizedVotesOpen = useMemo(() => votesOpen, [votesOpen.getTime()]);
-  const memoizedVotesClose = useMemo(() => votesClose, [votesClose.getTime()]);
+  const memoizedSubmissionsOpen = useMemo(() => submissionsOpen, [submissionsOpen]);
+  const memoizedVotesOpen = useMemo(() => votesOpen, [votesOpen]);
+  const memoizedVotesClose = useMemo(() => votesClose, [votesClose]);
 
   useEffect(() => {
     setIsScrolled(y > 500);
