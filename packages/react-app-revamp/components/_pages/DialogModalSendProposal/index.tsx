@@ -1,8 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
 import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
-import EtheuremAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import {
@@ -107,7 +107,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       editorProposal?.commands.clearContent();
       removeSubmissionFromLocalStorage("submissions", contestId);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);
 
   const tipMessage = () => {

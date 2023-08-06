@@ -1,7 +1,7 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import Image from "next/image";
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 interface CreateRewardsPoolSubmitProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -13,42 +13,44 @@ const CreateRewardsPoolSubmit: FC<CreateRewardsPoolSubmitProps> = ({ onClick, on
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
   const { validationError, ranks, setCancel } = useDeployRewardsStore(state => state);
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    setAttemptedSubmit(true);
+  // wrap the onClick handler in a useCallback to prevent unnecessary re-renders
+  const handleClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      setAttemptedSubmit(true);
 
-    const validationErrorExists = Object.keys(validationError).length > 0;
+      const validationErrorExists = Object.keys(validationError).length > 0;
 
-    if (validationErrorExists) {
-      setShake(true);
-    } else {
-      setAttemptedSubmit(false);
-      if (onClick) {
-        onClick(e);
+      if (validationErrorExists) {
+        setShake(true);
+      } else {
+        setAttemptedSubmit(false);
+        if (onClick) {
+          onClick(e);
+        }
       }
-    }
-  };
+    },
+    [validationError, onClick],
+  );
 
   useEffect(() => {
-    setAttemptedSubmit(false);
-  }, [ranks]);
-
-  useEffect(() => {
-    // Define your keydown handler
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
         event.preventDefault();
-        event.stopPropagation(); // Stop event bubbling
-        handleClick(event as any); // Call your handleClick function
+        event.stopPropagation();
+        handleClick(event as any);
       }
     };
 
-    // Add the event listener
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleClick]); // Make sure to list all dependencies
+  }, [handleClick]);
+
+  useEffect(() => {
+    setAttemptedSubmit(false);
+  }, [ranks]);
 
   useEffect(() => {
     if (shake) {

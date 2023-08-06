@@ -1,4 +1,3 @@
-import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";

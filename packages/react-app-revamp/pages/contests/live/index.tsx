@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getLiveContests, ITEMS_PER_PAGE } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 
 function useContests(initialData: any) {

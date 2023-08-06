@@ -24,7 +24,7 @@ const CreateFlowHeader = () => {
     return () => {
       setPageAction("create");
     };
-  }, []);
+  }, [setPageAction]);
 
   const lowerDeviceHeader = (
     <header className="flex flex-row items-center justify-between px-4 mt-4">

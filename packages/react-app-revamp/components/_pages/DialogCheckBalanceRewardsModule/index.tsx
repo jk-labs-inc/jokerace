@@ -47,7 +47,7 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
     } else {
       setTokenAlreadyAdded(false);
     }
-  }, [inputRewardsModuleBalanceCheck]);
+  }, [inputRewardsModuleBalanceCheck, rewardsStore.rewards.balance]);
 
   useEffect(() => {
     if (!isOpen) {

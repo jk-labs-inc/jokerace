@@ -101,7 +101,8 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
           </>
         );
     }
-  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount, setPickProposal]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];

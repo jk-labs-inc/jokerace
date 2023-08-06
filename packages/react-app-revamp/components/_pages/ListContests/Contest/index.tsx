@@ -123,6 +123,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     }
 
     setOnCountdownComplete(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contest, onCountdownComplete]);
 
   const renderer = ({ days, hours, minutes, seconds }: CountdownRenderProps, targetDate: moment.Moment) => {

@@ -29,7 +29,7 @@ export const FormSearchContest: FC<FormSearchContestProps> = ({ initialTitle, is
     } else {
       setFields({ contestTitle: initialTitle || "" });
     }
-  }, [initialTitle]);
+  }, [initialTitle, setFields]);
 
   return (
     <form

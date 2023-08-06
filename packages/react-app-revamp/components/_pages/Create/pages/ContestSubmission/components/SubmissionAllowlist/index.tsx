@@ -1,9 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { generateMerkleTree } from "lib/merkletree/generateMerkleTree";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
 
 const CreateSubmissionAllowlist = () => {

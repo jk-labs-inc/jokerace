@@ -45,7 +45,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
     }
 
     setValidationError(error);
-  }, [recipients]);
+  }, [recipients, setRanks, setShares, setValidationError]);
 
   const handleAddRecipient = () => {
     const nextPlace = recipients.length + 1 <= 100 ? recipients.length + 1 : 1;

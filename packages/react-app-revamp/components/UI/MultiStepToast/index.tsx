@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Image from "next/image";
-import { useEffect, useState, FC, RefObject } from "react";
+import { FC, RefObject, useEffect, useState } from "react";
 import { FadeLoader } from "react-spinners";
 import { toast } from "react-toastify";
 
