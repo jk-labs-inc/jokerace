@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const lineaMainnet: Chain = {
+export const linea: Chain = {
   id: 59144,
-  name: "lineaMainnet",
-  network: "lineaMainnet",
+  name: "linea",
+  network: "linea",
   iconUrl: "/linea.svg",
   nativeCurrency: {
     decimals: 18,

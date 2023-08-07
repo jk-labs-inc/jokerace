@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const publicGoodsNetworkMainnet: Chain = {
+export const publicGoodsNetwork: Chain = {
   id: 424,
-  name: "publicGoodsNetworkMainnet",
-  network: "publicGoodsNetworkMainnet",
+  name: "publicGoodsNetwork",
+  network: "publicGoodsNetwork",
   iconUrl: "/publicgoodsnetwork.svg",
   nativeCurrency: {
     decimals: 18,

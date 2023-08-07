@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const scrollGoerli: Chain = {
+export const scrollTestnet: Chain = {
   id: 534353,
-  name: "scrollGoerli",
-  network: "scrollGoerli",
+  name: "scrollTestnet",
+  network: "scrollTestnet",
   iconUrl: "/scroll.png",
   nativeCurrency: {
     decimals: 18,

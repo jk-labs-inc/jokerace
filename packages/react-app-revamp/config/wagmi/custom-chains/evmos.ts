@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const evmosMainnet: Chain = {
+export const evmos: Chain = {
   id: 9001,
-  name: "evmosMainnet",
-  network: "evmosMainnet",
+  name: "evmos",
+  network: "evmos",
   iconUrl: "/evmos.svg",
   nativeCurrency: {
     decimals: 18,

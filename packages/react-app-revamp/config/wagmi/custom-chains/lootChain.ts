@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const lootChainMainnet: Chain = {
+export const lootChain: Chain = {
   id: 5151706,
-  name: "lootChainMainnet",
-  network: "lootChainMainnet",
+  name: "lootChain",
+  network: "lootChain",
   iconUrl: "/lootchain.svg",
   nativeCurrency: {
     decimals: 18,

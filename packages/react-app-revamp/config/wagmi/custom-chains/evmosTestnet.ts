@@ -2,7 +2,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 
 export const evmosTestnet: Chain = {
   id: 9000,
-  name: "EvmosTestnet",
+  name: "evmosTestnet",
   network: "evmosTestnet",
   iconUrl: "/evmos.svg",
   nativeCurrency: {

@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const gnosisMainnet: Chain = {
+export const gnosis: Chain = {
   id: 100,
-  name: "gnosisMainnet",
-  network: "gnosisMainnet",
+  name: "gnosis",
+  network: "gnosis",
   iconUrl: "/gnosis.png",
   nativeCurrency: {
     decimals: 18,
