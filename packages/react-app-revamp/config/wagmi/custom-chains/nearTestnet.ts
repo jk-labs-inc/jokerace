@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const nearAuroraTestnet: Chain = {
+export const nearTestnet: Chain = {
   id: 1313161555,
-  name: "nearAuroraTestnet",
-  network: "nearAuroraTestnet",
+  name: "nearTestnet",
+  network: "nearTestnet",
   iconUrl: "/aurora.svg",
   nativeCurrency: {
     decimals: 18,

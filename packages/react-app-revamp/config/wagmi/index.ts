@@ -24,7 +24,7 @@ import { luksoTestnet } from "./custom-chains/luksoTestnet";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { near } from "./custom-chains/near";
-import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
+import { nearTestnet } from "./custom-chains/nearTestnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
 import { polygon } from "./custom-chains/polygon";
@@ -74,7 +74,7 @@ const totalChains: Chain[] = [
   optimismTestnet,
   publicGoodsNetworkTestnet,
   lootChainTestnet,
-  nearAuroraTestnet,
+  nearTestnet,
   gnosisTestnet,
   mantleTestnet,
   luksoTestnet,
@@ -168,13 +168,13 @@ export const chainsImages: ChainImages = {
   evmostestnet: "/evmos.svg",
   linea: "/linea.svg",
   lineatestnet: "/linea.svg",
-  chroniclelittestnet: "/lit.svg",
+  littestnet: "/lit.svg",
   lukso: "/lukso.svg",
   luksotestnet: "/lukso.svg",
   mantl: "/mantle.svg",
   mantletestnet: "/mantle.svg",
   near: "/aurora.svg",
-  nearauroratestnet: "/aurora.svg",
+  neartestnet: "/aurora.svg",
   zetatestnet: "/zeta.svg",
   zora: "/zora.png",
 };
