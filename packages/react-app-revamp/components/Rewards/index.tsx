@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import Loader from "@components/UI/Loader";
@@ -21,7 +20,7 @@ import { useAccount } from "wagmi";
 
 const ContestRewards = () => {
   const { isSuccess, isLoading, supportsRewardsModule, contestAuthorEthereumAddress } = useContestStore(state => state);
-  const displayCreatePool = useDeployRewardsStore(state => state.displayCreatePool);
+  const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
   const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
   const [isWithdrawRewardsOpen, setIsWithdrawRewardsOpen] = useState(false);
@@ -41,6 +40,8 @@ const ContestRewards = () => {
   useEffect(() => {
     if (rewardsStore?.isSuccess) return;
     if (supportsRewardsModule) getContestRewardsModule();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rewardsStore?.isSuccess, supportsRewardsModule]);
 
   if (!supportsRewardsModule && !creator) {
@@ -48,6 +49,8 @@ const ContestRewards = () => {
   }
 
   if (!supportsRewardsModule && creator) {
+    if (isRewardsPoolDeploying) return <Loader scale="page">Deploying rewards pool...</Loader>;
+
     return (
       <div className="flex flex-col gap-12">
         <p className="text-[24px] font-bold text-neutral-11">create a rewards pool</p>

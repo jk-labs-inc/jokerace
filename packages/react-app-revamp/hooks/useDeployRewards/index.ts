@@ -70,6 +70,8 @@ export function useDeployRewardsPool() {
           stateContestDeployment.setIsSuccess(false);
           stateContestDeployment.setError(error as CustomError);
           setIsError(true);
+          setIsLoading(false);
+          setIsSuccess(false);
           setDisplayCreatePool(true);
           throw error;
         }
@@ -82,6 +84,8 @@ export function useDeployRewardsPool() {
           stateContestDeployment.setIsSuccess(false);
           stateContestDeployment.setError(error as CustomError);
           setIsError(true);
+          setIsLoading(false);
+          setIsSuccess(false);
           setDisplayCreatePool(true);
           throw error;
         }
