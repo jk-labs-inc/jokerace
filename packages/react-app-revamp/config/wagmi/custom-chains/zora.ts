@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const zoraMainnet: Chain = {
+export const zora: Chain = {
   id: 7777777,
   name: "zora",
   network: "zora",

@@ -1,4 +1,4 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const avaxCChain: Chain = {
   id: 43114,

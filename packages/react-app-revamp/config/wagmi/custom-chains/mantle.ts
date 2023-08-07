@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
-export const mantleMainnet: Chain = {
+export const mantle: Chain = {
   id: 5000,
-  name: "mantleMainnet",
-  network: "mantleMainnet",
+  name: "mantle",
+  network: "mantle",
+  iconUrl: "/mantle.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Mantle",

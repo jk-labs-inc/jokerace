@@ -1,9 +1,9 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
-export const bnbMainnet: Chain = {
+export const bnb: Chain = {
   id: 56,
-  name: "BnbMainnet",
-  network: "bnbMainnet",
+  name: "bnb",
+  network: "bnb",
   nativeCurrency: {
     decimals: 18,
     name: "BNB",
