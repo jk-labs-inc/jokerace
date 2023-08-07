@@ -8,7 +8,6 @@ import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDepl
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
-import { isSupabaseConfigured } from "@helpers/database";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
@@ -16,8 +15,6 @@ import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
-import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
-import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
@@ -319,13 +316,9 @@ export const getLayout = (page: any) => {
             <SubmitProposalWrapper>
               <CastVotesWrapper>
                 <ContractFactoryWrapper>
-                  <DeployRewardsWrapper>
-                    <RewardsWrapper>
-                      <FundRewardsWrapper>
-                        <LayoutViewContest>{page}</LayoutViewContest>
-                      </FundRewardsWrapper>
-                    </RewardsWrapper>
-                  </DeployRewardsWrapper>
+                  <RewardsWrapper>
+                    <LayoutViewContest>{page}</LayoutViewContest>
+                  </RewardsWrapper>
                 </ContractFactoryWrapper>
               </CastVotesWrapper>
             </SubmitProposalWrapper>

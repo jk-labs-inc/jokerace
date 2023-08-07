@@ -11,12 +11,10 @@ const CreateContestRewards = () => {
   const { reset: clearContestData, isSuccess: contestDeployed } = useDeployContestStore(state => state);
   const {
     displayCreatePool,
-    isLoading: isRewardsModuleDeploying,
     cancel: cancelCreateRewardsPool,
     reset: clearRewardsData,
   } = useDeployRewardsStore(state => state);
   const { setShowRewards } = useShowRewardsStore(state => state);
-  const { isLoading: isFundingRewardsDeploying } = useFundRewardsStore(state => state);
   const { cancel: cancelFundingPool } = useFundRewardsStore(state => state);
 
   const [isOpen, setIsOpen] = useState(true);
@@ -43,7 +41,6 @@ const CreateContestRewards = () => {
       isOpen={isOpen}
       setIsOpen={value => setIsOpen(value)}
       onClose={handleModalClose}
-      disableClose={isRewardsModuleDeploying || isFundingRewardsDeploying}
       title="rewards"
       className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
     >

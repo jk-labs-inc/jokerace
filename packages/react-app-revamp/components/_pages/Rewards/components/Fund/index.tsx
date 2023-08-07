@@ -1,9 +1,8 @@
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { toastError } from "@components/UI/Toast";
-import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
-import { useRewardsStore } from "@hooks/useRewards/store";
+import useRewardsModule from "@hooks/useRewards";
 import { fetchToken } from "@wagmi/core";
 import { ethers } from "ethers";
 import { FC, useRef } from "react";
@@ -18,10 +17,9 @@ interface CreateRewardsFundingProps {
 
 const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFirstTime = true }) => {
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
+  const { getContestRewardsAddress } = useRewardsModule();
   const { address } = useAccount();
   const { rewards, setCancel } = useFundRewardsStore(state => state);
-  const { rewards: rewardsModule } = useRewardsStore(state => state);
-  const deployRewardsData = useDeployRewardsStore(state => state.deployRewardsData);
   const toastIdRef = useRef<string | number | null>(null);
 
   const fundPool = async () => {
@@ -29,6 +27,13 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
 
     const populatedRewardsPromises = rewards.map(async reward => {
       if (reward.amount === "") return null;
+
+      const rewardsContractAddress = await getContestRewardsAddress();
+
+      if (!rewardsContractAddress || rewardsContractAddress === "0x0000000000000000000000000000000000000000") {
+        toastError("there is no rewards module for this contest!");
+        return;
+      }
 
       let decimals = 18;
       if (reward.address.startsWith("0x")) {
@@ -45,7 +50,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
         currentUserAddress: address,
         tokenAddress: reward.address,
         isErc20: reward.address.startsWith("0x"),
-        rewardsContractAddress: deployRewardsData.address ? deployRewardsData.address : rewardsModule.contractAddress,
+        rewardsContractAddress: rewardsContractAddress,
         amount: ethers.utils.parseUnits(reward.amount, decimals).toString(),
       };
     });
