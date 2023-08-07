@@ -1,4 +1,4 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const bnbMainnet: Chain = {
   id: 56,

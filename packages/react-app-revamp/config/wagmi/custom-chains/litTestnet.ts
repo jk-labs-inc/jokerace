@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const litTestnet: Chain = {
   id: 175177,
   name: "chroniclelittestnet",
   network: "chroniclelittestnet",
+  iconUrl: "/lit.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Lit",

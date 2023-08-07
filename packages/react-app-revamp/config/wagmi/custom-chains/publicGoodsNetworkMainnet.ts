@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const publicGoodsNetworkMainnet: Chain = {
   id: 424,
   name: "publicGoodsNetworkMainnet",
   network: "publicGoodsNetworkMainnet",
+  iconUrl: "/publicgoodsnetwork.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

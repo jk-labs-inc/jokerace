@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const evmosMainnet: Chain = {
   id: 9001,
-  name: "EvmosMainnet",
+  name: "evmosMainnet",
   network: "evmosMainnet",
+  iconUrl: "/evmos.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Evmos",

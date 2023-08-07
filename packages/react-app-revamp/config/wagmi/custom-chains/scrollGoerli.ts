@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const scrollGoerli: Chain = {
   id: 534353,
   name: "scrollGoerli",
   network: "scrollGoerli",
+  iconUrl: "/scroll.png",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

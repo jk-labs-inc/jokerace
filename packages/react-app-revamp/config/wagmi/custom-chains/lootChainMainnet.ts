@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const lootChainMainnet: Chain = {
   id: 5151706,
   name: "lootChainMainnet",
   network: "lootChainMainnet",
+  iconUrl: "/lootchain.svg",
   nativeCurrency: {
     decimals: 18,
     name: "AGLD",

@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const polygonZkTestnet: Chain = {
   id: 1422,
   name: "PolygonZkTestnet",
   network: "polygonZkTestnet",
+  iconUrl: "/polygon.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
