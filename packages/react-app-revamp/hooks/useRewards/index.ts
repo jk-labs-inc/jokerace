@@ -82,7 +82,7 @@ export function useRewardsModule() {
         chainId,
         functionName: "officialRewardsModule",
       })) as string;
-      //@ts-ignore
+
       const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
       if (abiRewardsModule === null) {
         if (contestRewardModuleAddress == "0x0000000000000000000000000000000000000000") {

@@ -1,13 +1,15 @@
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { toastError } from "@components/UI/Toast";
-import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
+import { chains } from "@config/wagmi";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
-import { useRewardsStore } from "@hooks/useRewards/store";
-import { fetchToken } from "@wagmi/core";
+import { fetchToken, readContract } from "@wagmi/core";
 import { ethers } from "ethers";
+import { useRouter } from "next/router";
 import { FC, useRef } from "react";
 import { toast } from "react-toastify";
+import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import CreateRewardsFundingPoolSubmit from "./components/Buttons/Submit";
 import CreateRewardsFundPool from "./components/FundPool";
@@ -17,11 +19,15 @@ interface CreateRewardsFundingProps {
 }
 
 const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFirstTime = true }) => {
+  const { asPath } = useRouter();
+  const contestAddress = asPath.split("/")[3];
+  const contestChainName = asPath.split("/")[2];
+  const chainId = chains.filter(
+    chain => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
+  )?.[0]?.id;
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
   const { address } = useAccount();
   const { rewards, setCancel } = useFundRewardsStore(state => state);
-  const { rewards: rewardsModule } = useRewardsStore(state => state);
-  const deployRewardsData = useDeployRewardsStore(state => state.deployRewardsData);
   const toastIdRef = useRef<string | number | null>(null);
 
   const fundPool = async () => {
@@ -29,6 +35,13 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
 
     const populatedRewardsPromises = rewards.map(async reward => {
       if (reward.amount === "") return null;
+
+      const rewardsContractAddress = await getRewardsModuleAddress();
+
+      if (rewardsContractAddress === "0x0000000000000000000000000000000000000000") {
+        toastError("there is no rewards module for this contest!");
+        return;
+      }
 
       let decimals = 18;
       if (reward.address.startsWith("0x")) {
@@ -45,7 +58,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
         currentUserAddress: address,
         tokenAddress: reward.address,
         isErc20: reward.address.startsWith("0x"),
-        rewardsContractAddress: deployRewardsData.address ? deployRewardsData.address : rewardsModule.contractAddress,
+        rewardsContractAddress: rewardsContractAddress,
         amount: ethers.utils.parseUnits(reward.amount, decimals).toString(),
       };
     });
@@ -78,6 +91,29 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
         icon: false,
       },
     );
+  };
+
+  const getRewardsModuleAddress = async () => {
+    const { abi: abiContest } = await getContestContractVersion(contestAddress, chainId);
+
+    if (abiContest === null) {
+      toastError(`This contract doesn't exist on ${contestChainName}.`);
+      return;
+    }
+
+    try {
+      const contestRewardModuleAddress = (await readContract({
+        address: contestAddress as `0x${string}`,
+        abi: abiContest as unknown as Abi,
+        chainId,
+        functionName: "officialRewardsModule",
+      })) as string;
+
+      return contestRewardModuleAddress;
+    } catch (error) {
+      toastError("failed to fetch rewards module address");
+      return;
+    }
   };
 
   const onCancelFundingPool = () => {
