@@ -23,6 +23,7 @@ import { lukso } from "./custom-chains/lukso";
 import { luksoTestnet } from "./custom-chains/luksoTestnet";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
+import { modeTestnet } from "./custom-chains/modeTestnet";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
 import { optimism } from "./custom-chains/optimism";
@@ -78,6 +79,7 @@ const totalChains: Chain[] = [
   gnosisTestnet,
   mantleTestnet,
   luksoTestnet,
+  modeTestnet,
   mainnet,
 ];
 
