@@ -104,14 +104,14 @@ const ContestParameters = () => {
           </li>
           <li className="list-disc">contest accept up to {contestMaxProposalCount.toString()} submissions</li>
           <li className="list-disc">{address ? qualifyToSubmitMessage : walletNotConnected}</li>
-          {submitters.length && (
+          {submitters.length ? (
             <li className="list-disc">
               see full allowlist{" "}
               <CSVLink data={processedSubmitters} filename={"submitters.csv"} className="text-positive-11">
                 here
               </CSVLink>
             </li>
-          )}
+          ) : null}
         </ul>
       </div>
       <div className="flex flex-col gap-12">

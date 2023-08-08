@@ -246,7 +246,7 @@ const LayoutViewContest = (props: any) => {
                   )}
 
                   <div className="flex flex-col mt-10 gap-4">
-                    <p className="text-[32px] text-primary-10 font-sabo break-all">{contestName}</p>
+                    <p className="text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
                     <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
                       <p className="text-[16px] md:text-[16px] text-neutral-11 font-bold break-all">
                         by{" "}
