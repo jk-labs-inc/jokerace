@@ -32,8 +32,6 @@ const ContestTab = () => {
         <LayoutContestTimeline />
       </div>
 
-      <ContestLayoutStickyCards />
-
       <div className="mt-8">
         <LayoutContestPrompt prompt={contestPrompt} hidePrompt={contestStatus === ContestStatus.VotingClosed} />
       </div>
@@ -51,6 +49,7 @@ const ContestTab = () => {
           )}
         </div>
       )}
+      <ContestLayoutStickyCards />
 
       {contestStatus === ContestStatus.ContestOpen && (
         <div className="mt-8">

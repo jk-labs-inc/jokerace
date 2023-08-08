@@ -57,51 +57,31 @@ const LayoutContestCountdown = () => {
   }, [memoizedSubmissionsOpen, memoizedVotesOpen, memoizedVotesClose]);
 
   const displayText = () => {
-    if (isScrolled) {
-      if (duration.days > 0) {
-        return `${duration.days}d ${duration.hours}h ${duration.minutes}m ${duration.seconds}s`;
-      } else if (duration.hours > 0) {
-        return `${duration.hours}h ${duration.minutes}m ${duration.seconds}s`;
-      } else if (duration.minutes > 0) {
-        return `${duration.minutes}m ${duration.seconds}s`;
-      } else {
-        return `${duration.seconds}s to ${phase}`;
-      }
+    if (duration.days > 0) {
+      return `${duration.days} days ${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec `;
+    } else if (duration.hours > 0) {
+      return `${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec `;
+    } else if (duration.minutes > 0) {
+      return `${duration.minutes} min ${duration.seconds} sec `;
     } else {
-      if (duration.days > 0) {
-        return `${duration.days} days ${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec`;
-      } else if (duration.hours > 0) {
-        return `${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec`;
-      } else if (duration.minutes > 0) {
-        return `${duration.minutes} min ${duration.seconds} sec`;
-      } else {
-        return `${duration.seconds} sec`;
-      }
+      return `${duration.seconds} sec `;
     }
   };
 
   return (
-    <div
-      className={`w-full bg-true-black flex flex-col ${
-        isScrolled ? "justify-between" : ""
-      } gap-1 border border-neutral-11 rounded-[10px] py-2 items-center shadow-timer-container`}
-    >
-      <Image src="/contest/timer.svg" width={33} height={33} alt="timer" />
-      <div className="flex flex-col items-center">
-        {isScrolled ? (
-          <div className="text-[20px] font-bold text-neutral-11">{displayText()}</div>
-        ) : (
-          <>
-            <div className="text-[16px] font-bold text-neutral-11">{displayText()}</div>
-            {phase === "start" ? (
-              <div className="text-[16px] text-neutral-11">until contest opens</div>
-            ) : phase === "submit" ? (
-              <div className="text-[16px] text-neutral-11">to submit</div>
-            ) : (
-              <div className="text-[16px] text-neutral-11">to vote</div>
-            )}
-          </>
-        )}
+    <div className={`w-full h-12 bg-neutral-0 flex gap-3 border border-transparent rounded-[10px] p-4 items-center`}>
+      <Image src="/contest/timer.svg" width={24} height={24} alt="timer" />
+      <div className="flex items-center">
+        <div className="text-[16px]">
+          <span className="font-bold text-neutral-11">{displayText()}</span>
+          {phase === "start" ? (
+            <span className="text-neutral-11"> until contest opens</span>
+          ) : phase === "submit" ? (
+            <span className="text-neutral-11"> to submit</span>
+          ) : (
+            <span className="text-neutral-11"> to vote</span>
+          )}
+        </div>
       </div>
     </div>
   );

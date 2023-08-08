@@ -6,16 +6,15 @@ interface Stage {
   name: string;
   action: string;
   date: Date;
-  color: string;
 }
 
 const LayoutContestTimeline = () => {
   const { submissionsOpen, votesClose, votesOpen } = useContestStore(state => state);
 
   const stages: Stage[] = [
-    { name: "Submission Open", action: "Submissions are open", date: submissionsOpen, color: "primary-10" },
-    { name: "Voting Opens", action: "Voting is open", date: votesOpen, color: "positive-11" },
-    { name: "Contest Closes", action: "Contest closed", date: votesClose, color: "neutral-11" },
+    { name: "Submission Open", action: "Submissions are open", date: submissionsOpen },
+    { name: "Voting Opens", action: "Voting is open", date: votesOpen },
+    { name: "Contest Closes", action: "Contest closed", date: votesClose },
   ];
 
   const [currentStageIndex, setCurrentStageIndex] = useState(-1);
@@ -46,7 +45,7 @@ const LayoutContestTimeline = () => {
   return (
     <div className="hidden lg:grid grid-cols-3 lg:gap-0">
       {stages.map((stage, index) => (
-        <div key={index} style={{ opacity: currentStageIndex === index ? 1 : 0.5 }}>
+        <div key={index} className={`opacity-${currentStageIndex === index ? "100" : "50"} text-neutral-11`}>
           <div className="text-[16px] font-bold mb-1">
             {index === currentStageIndex
               ? "Now"
@@ -54,8 +53,8 @@ const LayoutContestTimeline = () => {
               ? "Previous"
               : moment(stage.date).format("MMMM D, h:mm a")}
           </div>
-          <div className={`h-[1px] bg-${stage.color}`}></div>
-          <div className={`text-[16px] font-bold mt-1 text-${stage.color}`}>
+          <div className="h-[1px] bg-neutral-11"></div>
+          <div className="text-[16px] font-bold mt-1">
             {index === currentStageIndex
               ? stage.action
               : currentStageIndex === stages.length - 1 && index < currentStageIndex

@@ -45,7 +45,11 @@ const ContestRewards = () => {
   }, [rewardsStore?.isSuccess, supportsRewardsModule]);
 
   if (!supportsRewardsModule && !creator) {
-    return null;
+    return (
+      <div className="text-[16px]">
+        For this contest, there is no rewards module; the contest creator is the only one who may configure one.
+      </div>
+    );
   }
 
   if (!supportsRewardsModule && creator) {
