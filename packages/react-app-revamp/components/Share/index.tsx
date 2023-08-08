@@ -18,7 +18,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="px-2 flex items-center gap-2 text-true-white text-[16px] font-bold rounded-[10px] border border-neutral-11">
+        <Menu.Button className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
           Share <Image src="/forward.png" alt="share" className="ml-1 w-4" width={20} height={20} />
         </Menu.Button>
       </div>
@@ -32,7 +32,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10  mt-2 w-48 origin-top-right rounded-md bg-neutral-0 shadow-lg ring-1 ring-inset ring-primary-9 ring-opacity-10 focus:outline-none">
+        <Menu.Items className="absolute right-0 z-10  mt-2 w-48 origin-top-right rounded-md bg-true-black shadow-lg ring-1 ring-inset ring-primary-9 ring-opacity-10 focus:outline-none">
           <Menu.Item>
             {({ active }) => (
               <a
@@ -40,7 +40,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 href={generateLensShareUrl(contestName, contestAddress, chain)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
-                  "flex items-center text-[16px] gap-1 px-4 py-2  hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
+                  "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
                 )}
                 rel="noreferrer"
               >

@@ -29,7 +29,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
       {isV3 ? (
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 items-center">
-            <p className="text-[24px] text-neutral-11 font-bold">{title}</p>
+            <p className="text-[24px] text-primary-10 font-bold">{title}</p>
             <div className="flex items-center px-4 leading-tight py-[1px] bg-neutral-10 rounded-[5px] text-true-black text-[16px] font-bold">
               {type}
             </div>

@@ -1,4 +1,3 @@
-import { isSupabaseConfigured } from "@helpers/database";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import LayoutContestCountdown from "./components/Countdown";

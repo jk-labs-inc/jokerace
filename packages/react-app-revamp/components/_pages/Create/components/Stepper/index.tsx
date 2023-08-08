@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { isSupabaseConfigured } from "@helpers/database";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { FC, ReactElement } from "react";
+import { FC, ReactElement, useState } from "react";
 import CreateContestDeploying from "../../pages/ContestDeploying";
 import { validateStep } from "../../utils/validation";
 
@@ -25,6 +25,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
     isSuccess,
     ...state
   } = useDeployContestStore(state => state);
+  const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
   const handleStepClick = (index: number) => {
     // Navigate backwards always allowed
@@ -83,6 +84,8 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
               <div
                 key={index}
                 onClick={() => handleStepClick(index)}
+                onMouseEnter={() => setHoveredStep(index)}
+                onMouseLeave={() => setHoveredStep(null)}
                 className="flex flex-col items-center text-[24px] font-bold cursor-pointer relative"
               >
                 <hr
@@ -91,13 +94,18 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
                       ? "border-primary-10"
                       : currentStep > index
                       ? "border-primary-7"
-                      : "border-neutral-9"
+                      : "border-neutral-10"
                   }`}
                 />
-                {currentStep === index && <p className="text-primary-10">{step.title}</p>}
+                {currentStep === index ? (
+                  <p className="text-primary-10">{step.title}</p>
+                ) : hoveredStep === index ? (
+                  <p className={`${currentStep > index ? "text-primary-7" : "text-neutral-10"}`}>{step.title}</p>
+                ) : null}
               </div>
             ))}
           </div>
+
           <div className="lg:pl-[100px]">{steps[currentStep].content}</div>
         </div>
       )}
