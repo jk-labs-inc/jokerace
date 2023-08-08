@@ -4,38 +4,39 @@ import { Chain, configureChains, createConfig, mainnet } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avaxCChain } from "./custom-chains/avaxCChain";
-import { baseMainnet } from "./custom-chains/baseMainnet";
+import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
-import { bnbMainnet } from "./custom-chains/bnbMainnet";
-import { celoMainnet } from "./custom-chains/celoMainnet";
+import { bnb } from "./custom-chains/bnb";
+import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
-import { evmosMainnet } from "./custom-chains/evmosMainnet";
+import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
-import { gnosisMainnet } from "./custom-chains/gnosisMainnet";
+import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { goerli } from "./custom-chains/goerli";
+import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
 import { litTestnet } from "./custom-chains/litTestnet";
-import { lootChainMainnet } from "./custom-chains/lootChainMainnet";
+import { lootChain } from "./custom-chains/lootChain";
 import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
-import { luksoMainnet } from "./custom-chains/luksoMainnet";
+import { lukso } from "./custom-chains/lukso";
 import { luksoTestnet } from "./custom-chains/luksoTestnet";
-import { mantleMainnet } from "./custom-chains/mantleMainnet";
+import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
-import { nearAuroraMainnet } from "./custom-chains/nearAuroraMainnet";
-import { nearAuroraTestnet } from "./custom-chains/nearAuroraTestnet";
+import { near } from "./custom-chains/near";
+import { nearTestnet } from "./custom-chains/nearTestnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
 import { polygon } from "./custom-chains/polygon";
-import { polygonMumbai } from "./custom-chains/polygonMumbai";
-import { polygonZkMainnet } from "./custom-chains/polygonZkMainnet";
+import { polygonTestnet } from "./custom-chains/polygonTestnet";
+import { polygonZk } from "./custom-chains/polygonZk";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
-import { publicGoodsNetworkMainnet } from "./custom-chains/publicGoodsNetworkMainnet";
+import { publicGoodsNetwork } from "./custom-chains/publicGoodsNetwork";
 import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
-import { scrollGoerli } from "./custom-chains/scrollGoerli";
+import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
-import { zoraMainnet } from "./custom-chains/zora";
+import { zora } from "./custom-chains/zora";
 
 type ChainImages = {
   [key: string]: string;
@@ -45,36 +46,37 @@ const totalChains: Chain[] = [
   polygon,
   arbitrumOne,
   optimism,
-  polygonMumbai,
+  polygonZk,
+  base,
+  evmos,
+  avaxCChain,
+  zora,
+  bnb,
+  linea,
+  celo,
+  publicGoodsNetwork,
+  lootChain,
+  near,
+  gnosis,
+  mantle,
+  lukso,
+  polygonTestnet,
   sepolia,
   goerli,
   polygonZkTestnet,
-  polygonZkMainnet,
   baseTestnet,
-  baseMainnet,
-  scrollGoerli,
+  scrollTestnet,
   evmosTestnet,
-  evmosMainnet,
-  avaxCChain,
-  zoraMainnet,
-  bnbMainnet,
   lineaTestnet,
   litTestnet,
   zetaTestnet,
   celoTestnet,
   optimismTestnet,
-  celoMainnet,
-  publicGoodsNetworkMainnet,
   publicGoodsNetworkTestnet,
-  lootChainMainnet,
   lootChainTestnet,
-  nearAuroraMainnet,
-  nearAuroraTestnet,
+  nearTestnet,
   gnosisTestnet,
-  gnosisMainnet,
-  mantleMainnet,
   mantleTestnet,
-  luksoMainnet,
   luksoTestnet,
   mainnet,
 ];
@@ -134,7 +136,6 @@ export const config = createConfig({
 export const chainsImages: ChainImages = {
   avalanche: "/avalanche.png",
   fantom: "/fantom.png",
-  gnosis: "/gnosis.png",
   harmony: "/harmony.png",
   arbitrum: "/arbitrum.svg",
   arbitrumone: "/arbitrum.svg",
@@ -150,15 +151,30 @@ export const chainsImages: ChainImages = {
   goerli: "/ethereum.svg",
   kovan: "/ethereum.svg",
   polygon: "/polygon.svg",
-  polygonmumbai: "/polygon.svg",
+  polygontestnet: "/polygon.svg",
   polygonzktestnet: "/polygon.svg",
-  polygonzkmainnet: "/polygon.svg",
-  scrollgoerli: "/scroll.png",
-  basetestnet: "/base.svg",
-  gnosismainnet: "/gnosis.png",
+  polygonzk: "/polygon.svg",
+  scrolltestnet: "/scroll.png",
+  base: "/base.svg",
+  gnosis: "/gnosis.png",
   gnosistestnet: "/gnosis.png",
-  publicgoodsnetworkmainnet: "/publicgoodsnetwork.svg",
+  publicgoodsnetwork: "/publicgoodsnetwork.svg",
   publicgoodsnetworktestnet: "/publicgoodsnetwork.svg",
-  lootchainmainnet: "/lootchain.svg",
+  lootchain: "/lootchain.svg",
   lootchaintestnet: "/lootchain.svg",
+  celo: "/celo.svg",
+  celotestnet: "/celo.svg",
+  evmos: "/evmos.svg",
+  evmostestnet: "/evmos.svg",
+  linea: "/linea.svg",
+  lineatestnet: "/linea.svg",
+  littestnet: "/lit.svg",
+  lukso: "/lukso.svg",
+  luksotestnet: "/lukso.svg",
+  mantl: "/mantle.svg",
+  mantletestnet: "/mantle.svg",
+  near: "/aurora.svg",
+  neartestnet: "/aurora.svg",
+  zetatestnet: "/zeta.svg",
+  zora: "/zora.png",
 };

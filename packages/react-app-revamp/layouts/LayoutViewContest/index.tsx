@@ -1,5 +1,6 @@
 import ContestParameters from "@components/Parameters";
 import ContestRewards from "@components/Rewards";
+import ShareDropdown from "@components/Share";
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
@@ -8,7 +9,6 @@ import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDepl
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
-import { isSupabaseConfigured } from "@helpers/database";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
@@ -16,8 +16,6 @@ import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
-import { DeployRewardsWrapper } from "@hooks/useDeployRewards/store";
-import { FundRewardsWrapper } from "@hooks/useFundRewards/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
@@ -142,7 +140,7 @@ const LayoutViewContest = (props: any) => {
   }, [tab]);
 
   return (
-    <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-7 lg:w-[700px] mx-auto`}>
+    <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-7 lg:w-[750px] mx-auto`}>
       <div
         className={`md:pt-5 md:pb-20 flex flex-col ${
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
@@ -247,12 +245,10 @@ const LayoutViewContest = (props: any) => {
                     </div>
                   )}
 
-                  <div className="flex flex-col mt-10">
-                    <p className="text-[30px] md:text-[40px] text-primary-10 font-sabo break-all md:break-normal">
-                      {contestName}
-                    </p>
-                    <div className="flex flex-col md:flex-row gap-3 md:gap-8 md:items-center">
-                      <p className="text-[20px] md:text-[24px] text-primary-10 font-bold break-all">
+                  <div className="flex flex-col mt-10 gap-4">
+                    <p className="text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
+                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
+                      <p className="text-[16px] md:text-[16px] text-neutral-11 font-bold break-all">
                         by{" "}
                         <EthereumAddress
                           ethereumAddress={contestAuthorEthereumAddress}
@@ -262,29 +258,28 @@ const LayoutViewContest = (props: any) => {
                       </p>
 
                       {isRewardsLoading && (
-                        <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={2}>
-                          <Skeleton borderRadius={10} className="shrink-0 p-1 border border-primary-10" width={200} />
+                        <SkeletonTheme baseColor="#000000" highlightColor="#212121" duration={1}>
+                          <Skeleton
+                            borderRadius={10}
+                            className="h-8 shrink-0 p-2 border border-neutral-11"
+                            width={200}
+                          />
                         </SkeletonTheme>
                       )}
 
                       {rewards && !isRewardsLoading && (
-                        <div className="shrink-0 p-1 border border-primary-10 rounded-[10px] text-[16px] font-bold text-primary-10">
-                          {rewards?.token.value} $<span className="uppercase">{rewards?.token.symbol}</span> to{" "}
+                        <div className="flex shrink-0 h-8 p-4 items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11">
+                          {rewards?.token.value} $<span className="uppercase mr-1">{rewards?.token.symbol} </span> to{" "}
                           {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}
                         </div>
                       )}
+
+                      <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                     </div>
                   </div>
 
-                  <div className="mt-4 gap-3 flex flex-col">
-                    <hr className="border-neutral-10" />
-                    <ContestLayoutTabs
-                      contestAddress={address}
-                      chain={chainName ?? ""}
-                      contestName={contestName}
-                      onChange={tab => setTab(tab)}
-                    />
-                    <hr className="border-neutral-10" />
+                  <div className="mt-8 mb-8 gap-3 flex flex-col">
+                    <ContestLayoutTabs onChange={tab => setTab(tab)} />
                   </div>
 
                   {renderTabs}
@@ -319,13 +314,9 @@ export const getLayout = (page: any) => {
             <SubmitProposalWrapper>
               <CastVotesWrapper>
                 <ContractFactoryWrapper>
-                  <DeployRewardsWrapper>
-                    <RewardsWrapper>
-                      <FundRewardsWrapper>
-                        <LayoutViewContest>{page}</LayoutViewContest>
-                      </FundRewardsWrapper>
-                    </RewardsWrapper>
-                  </DeployRewardsWrapper>
+                  <RewardsWrapper>
+                    <LayoutViewContest>{page}</LayoutViewContest>
+                  </RewardsWrapper>
                 </ContractFactoryWrapper>
               </CastVotesWrapper>
             </SubmitProposalWrapper>

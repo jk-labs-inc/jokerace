@@ -11,6 +11,7 @@ import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
+  const contestAddress = asPath.split("/")[3];
   const contestChainName = asPath.split("/")[2];
   const { chain } = useNetwork();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
@@ -49,7 +50,7 @@ export function useRewardsModule() {
 
         return balances;
       } catch (e) {
-        console.error(e);
+        setIsLoading(false);
       }
     },
     {
@@ -57,32 +58,19 @@ export function useRewardsModule() {
     },
   );
 
-  async function getContestRewardsModule(address?: string, chainName?: string) {
+  async function getContestRewardsModule() {
     setIsLoading(true);
     setError(null);
     setIsSuccess(false);
 
     try {
-      const contestAddress = address ?? asPath.split("/")[3];
-      const contestChainName = chainName ?? asPath.split("/")[2];
-      const { abi: abiContest } = await getContestContractVersion(address ?? contestAddress, chainId);
+      const contestRewardModuleAddress = await getContestRewardsAddress();
 
-      if (abiContest === null) {
-        setIsLoading(false);
-        setError({
-          message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.`,
-        });
-        setIsSuccess(false);
-        toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+      if (!contestRewardModuleAddress || contestRewardModuleAddress === "0x0000000000000000000000000000000000000000") {
+        toastError("there is no rewards module for this contest!");
         return;
       }
-      const contestRewardModuleAddress = (await readContract({
-        address: contestAddress as `0x${string}`,
-        abi: abiContest as unknown as Abi,
-        chainId,
-        functionName: "officialRewardsModule",
-      })) as string;
-      //@ts-ignore
+
       const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
       if (abiRewardsModule === null) {
         if (contestRewardModuleAddress == "0x0000000000000000000000000000000000000000") {
@@ -118,7 +106,6 @@ export function useRewardsModule() {
         contracts: contractsRewardsModule,
       });
 
-      setIsLoading(false);
       setRewards({
         abi: abiRewardsModule,
         contractAddress: contestRewardModuleAddress,
@@ -128,6 +115,7 @@ export function useRewardsModule() {
         blockExplorers: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]
           ?.blockExplorers?.default,
       });
+      setIsLoading(false);
       setIsSuccess(true);
     } catch (e) {
       const customError = e as CustomError;
@@ -140,11 +128,38 @@ export function useRewardsModule() {
         message: customError.message,
       });
       setIsLoading(false);
+      setIsSuccess(false);
+    }
+  }
+
+  async function getContestRewardsAddress() {
+    const { abi: abiContest } = await getContestContractVersion(contestAddress, chainId);
+
+    if (abiContest === null) {
+      setIsLoading(false);
+      setIsSuccess(false);
+      toastError(`This contract doesn't exist on ${contestChainName}.`);
+      return;
+    }
+
+    try {
+      const contestRewardModuleAddress = (await readContract({
+        address: contestAddress as `0x${string}`,
+        abi: abiContest as unknown as Abi,
+        chainId,
+        functionName: "officialRewardsModule",
+      })) as string;
+
+      return contestRewardModuleAddress;
+    } catch (error) {
+      toastError("failed to fetch rewards module address");
+      return;
     }
   }
 
   return {
     getContestRewardsModule,
+    getContestRewardsAddress,
     refetchBalanceRewardsModule,
   };
 }

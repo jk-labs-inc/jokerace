@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const luksoTestnet: Chain = {
   id: 4201,
   name: "luksoTestnet",
   network: "luksoTestnet",
+  iconUrl: "/lukso.svg",
   nativeCurrency: {
     decimals: 18,
     name: "LYXt",

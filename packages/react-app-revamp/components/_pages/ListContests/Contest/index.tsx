@@ -67,7 +67,13 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     const now = moment();
 
     if (now.isBefore(moment(contest.start_at))) {
-      setSubmissionStatus("Submissions open in:");
+      const submissionsDaysLeft = moment(contest.start_at).diff(now, "days");
+
+      if (submissionsDaysLeft > 5) {
+        setSubmissionStatus("Submissions open on:");
+      } else {
+        setSubmissionStatus("Submissions open in:");
+      }
     } else if (now.isBefore(moment(contest.vote_start_at))) {
       setSubmissionStatus("Submissions are open");
 
@@ -95,7 +101,13 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     }
 
     if (now.isBefore(moment(contest.vote_start_at))) {
-      setVotingStatus("Voting opens in:");
+      const votingDaysLeft = moment(contest.vote_start_at).diff(now, "days");
+
+      if (votingDaysLeft > 5) {
+        setVotingStatus("Voting opens on:");
+      } else {
+        setVotingStatus("Voting opens in:");
+      }
     } else if (now.isBefore(moment(contest.end_at))) {
       setVotingStatus("Voting is open");
 
@@ -126,20 +138,23 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contest, onCountdownComplete]);
 
+  const pluralize = (count: number, singular: string, plural: string) => {
+    return count === 1 ? `${count} ${singular}` : `${count} ${plural}`;
+  };
+
   const renderer = ({ days, hours, minutes, seconds }: CountdownRenderProps, targetDate: moment.Moment) => {
     if (days > 5) {
       return <span>{targetDate.format("MMMM Do")}</span>;
     } else if (days > 0) {
-      return <span>{days} days</span>;
+      return <span>{pluralize(days, "day", "days")}</span>;
     } else if (hours > 0) {
-      return <span>{hours} hours</span>;
+      return <span>{pluralize(hours, "hour", "hours")}</span>;
     } else if (minutes > 0) {
-      return <span>{minutes} minutes</span>;
+      return <span>{pluralize(minutes, "minute", "minutes")}</span>;
     } else {
-      return <span>{seconds} seconds</span>;
+      return <span>{pluralize(seconds, "second", "seconds")}</span>;
     }
   };
-
   const getStatusText = (startDate: Date, endDate: Date) => {
     const currentDate = moment();
     const start = moment(startDate);
@@ -251,13 +266,13 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                   ) : (
                     <>
                       {submissionStatus}{" "}
-                      {submissionStatus.includes("in:") && (
+                      {submissionStatus.includes("in:") || submissionStatus.includes("on:") ? (
                         <Countdown
                           date={moment(contest.start_at).toDate()}
                           renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.start_at))}
                           onComplete={() => setOnCountdownComplete(true)}
                         />
-                      )}
+                      ) : null}
                     </>
                   )}
                 </p>
@@ -292,15 +307,14 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                     <Skeleton width={185} />
                   ) : (
                     <>
-                      {/* TODO - if contests ends, it does not apply */}
                       {votingStatus}{" "}
-                      {votingStatus.includes("in:") && (
+                      {votingStatus.includes("Voting opens in:") || votingStatus.includes("Voting opens on:") ? (
                         <Countdown
                           date={moment(contest.vote_start_at).toDate()}
                           renderer={(props: CountdownRenderProps) => renderer(props, moment(contest.vote_start_at))}
                           onComplete={() => setOnCountdownComplete(true)}
                         />
-                      )}
+                      ) : null}
                     </>
                   )}
                 </p>

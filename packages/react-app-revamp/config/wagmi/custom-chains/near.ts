@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
-export const nearAuroraMainnet: Chain = {
+export const near: Chain = {
   id: 1313161554,
-  name: "nearAuroraMainnet",
-  network: "nearAuroraMainnet",
+  name: "near",
+  network: "near",
+  iconUrl: "/aurora.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

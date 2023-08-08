@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const gnosisTestnet: Chain = {
   id: 10200,
   name: "gnosisTestnet",
   network: "gnosisTestnet",
+  iconUrl: "/gnosis.png",
   nativeCurrency: {
     decimals: 18,
     name: "xDAI",

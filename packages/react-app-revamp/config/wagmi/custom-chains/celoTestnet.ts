@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const celoTestnet: Chain = {
   id: 44787,
   name: "celoTestnet",
   network: "celoTestnet",
+  iconUrl: "/celo.svg",
   nativeCurrency: {
     decimals: 18,
     name: "A-Celo",

@@ -14,7 +14,7 @@ interface RewardsState {
 
 export const createRewardsStore = () =>
   createStore<RewardsState>(set => ({
-    isLoading: true,
+    isLoading: false,
     isSuccess: false,
     error: null,
     rewards: {},

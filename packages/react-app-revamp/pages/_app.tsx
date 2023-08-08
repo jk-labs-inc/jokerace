@@ -63,7 +63,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="preload" href="/gnosis.png" as="image" />
       </Head>
       <WagmiConfig config={config}>
-        <RainbowKitProvider chains={chains} theme={jokeraceTheme}>
+        <RainbowKitProvider chains={chains} theme={jokeraceTheme} modalSize="wide">
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <ToastContainer
             position="bottom-center"

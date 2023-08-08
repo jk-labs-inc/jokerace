@@ -1,5 +1,4 @@
-import ShareDropdown from "@components/Share";
-import { FC, ReactNode, useState } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 
 export enum Tab {
   Contest = "Contest",
@@ -8,14 +7,25 @@ export enum Tab {
 }
 
 interface ContestLayoutTabsProps {
-  contestAddress: string;
-  chain: string;
-  contestName: string;
   onChange?: (tab: Tab) => void;
 }
 
-const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ contestAddress, chain, contestName, onChange }) => {
+const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ onChange }) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Contest);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
+  const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const activeTabIndex = Object.keys(Tab).findIndex(key => key === activeTab);
+    const activeTabRef = tabRefs.current[activeTabIndex];
+
+    if (activeTabRef) {
+      setIndicatorStyle({
+        left: `${activeTabRef.offsetLeft}px`,
+        width: `${activeTabRef.offsetWidth}px`,
+      });
+    }
+  }, [activeTab]);
 
   const onTabChange = (tab: Tab) => {
     setActiveTab(tab);
@@ -23,12 +33,13 @@ const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ contestAddress, chain, 
   };
 
   return (
-    <div className="flex gap-4 flex-col">
-      <div className="flex gap-4 items-center">
-        {Object.keys(Tab).map(tabKey => (
+    <div className="relative flex flex-col gap-2">
+      <div className="flex gap-8 mb-4">
+        {Object.keys(Tab).map((tabKey, index) => (
           <div
+            ref={el => (tabRefs.current[index] = el)}
             key={tabKey}
-            className={`text-[16px] cursor-pointer font-bold transition-colors duration-300 ${
+            className={`text-[24px] cursor-pointer font-bold transition-colors duration-200 ${
               tabKey === activeTab ? "text-primary-10" : "text-neutral-11"
             }`}
             onClick={() => onTabChange(Tab[tabKey as keyof typeof Tab])}
@@ -36,10 +47,9 @@ const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ contestAddress, chain, 
             {Tab[tabKey as keyof typeof Tab]}
           </div>
         ))}
-        <div className="ml-auto z-20">
-          <ShareDropdown contestAddress={contestAddress} chain={chain} contestName={contestName} />
-        </div>
       </div>
+      <div className="absolute left-0 w-full h-1 bottom-0 bg-neutral-0"></div>
+      <div style={indicatorStyle} className="absolute bottom-0 h-1 bg-primary-10 transition-all duration-200"></div>
     </div>
   );
 };
