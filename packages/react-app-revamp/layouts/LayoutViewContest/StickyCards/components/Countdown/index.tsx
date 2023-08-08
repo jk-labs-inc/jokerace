@@ -1,8 +1,7 @@
-import React, { useState, useEffect, FC, useMemo } from "react";
-import Image from "next/image";
-import moment from "moment";
-import { useWindowScroll } from "react-use";
 import { useContestStore } from "@hooks/useContest/store";
+import moment from "moment";
+import Image from "next/image";
+import { useEffect, useMemo, useState } from "react";
 
 const formatDuration = (duration: moment.Duration) => {
   const days = Math.floor(duration.asDays());
@@ -16,15 +15,9 @@ const LayoutContestCountdown = () => {
   const { submissionsOpen, votesOpen, votesClose } = useContestStore(state => state);
   const [duration, setDuration] = useState(formatDuration(moment.duration(0)));
   const [phase, setPhase] = useState("start");
-  const { y } = useWindowScroll();
-  const [isScrolled, setIsScrolled] = useState(false);
   const memoizedSubmissionsOpen = useMemo(() => submissionsOpen, [submissionsOpen]);
   const memoizedVotesOpen = useMemo(() => votesOpen, [votesOpen]);
   const memoizedVotesClose = useMemo(() => votesClose, [votesClose]);
-
-  useEffect(() => {
-    setIsScrolled(y > 500);
-  }, [y]);
 
   useEffect(() => {
     const calculateDuration = () => {

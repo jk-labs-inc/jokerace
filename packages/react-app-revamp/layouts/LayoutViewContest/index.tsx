@@ -245,10 +245,8 @@ const LayoutViewContest = (props: any) => {
                     </div>
                   )}
 
-                  <div className="flex flex-col mt-10">
-                    <p className="text-[30px] md:text-[40px] text-primary-10 font-sabo break-all md:break-normal">
-                      {contestName}
-                    </p>
+                  <div className="flex flex-col mt-10 gap-4">
+                    <p className="text-[32px] text-primary-10 font-sabo break-all">{contestName}</p>
                     <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
                       <p className="text-[16px] md:text-[16px] text-neutral-11 font-bold break-all">
                         by{" "}
@@ -276,9 +274,7 @@ const LayoutViewContest = (props: any) => {
                         </div>
                       )}
 
-                      <div className={`${!rewards && !isRewardsLoading ? "ml-auto" : ""}`}>
-                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
-                      </div>
+                      <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                     </div>
                   </div>
 

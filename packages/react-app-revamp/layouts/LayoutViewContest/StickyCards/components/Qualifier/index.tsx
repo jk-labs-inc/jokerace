@@ -1,21 +1,20 @@
 /* eslint-disable react/no-unescaped-entities */
-import CheckmarkIcon from "@components/UI/Icons/Checkmark";
-import CrossIcon from "@components/UI/Icons/Cross";
-import { isSupabaseConfigured } from "@helpers/database";
 import { formatNumber } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { useWindowScroll } from "react-use";
 import { useAccount } from "wagmi";
 
 const LayoutContestQualifier = () => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const { currentUserQualifiedToSubmit, currentUserAvailableVotesAmount, isLoading } = useUserStore(state => state);
+  const { currentUserQualifiedToSubmit, currentUserAvailableVotesAmount, currentUserTotalVotesAmount, isLoading } =
+    useUserStore(state => state);
+  const { contestStatus } = useContestStatusStore(state => state);
   const isReadOnly = useContestStore(state => state.isReadOnly);
 
   const qualifiedMessage = useMemo(() => {
@@ -30,6 +29,19 @@ const LayoutContestQualifier = () => {
       }
     }
 
+    if (contestStatus === ContestStatus.VotingOpen) {
+      if (canVote) {
+        return (
+          <p>
+            you have <span className="font-bold">{formatNumber(currentUserAvailableVotesAmount)} votes</span>
+          </p>
+        );
+      } else if (currentUserTotalVotesAmount > 0) {
+        return "you're out of votes :(";
+      }
+      return "you don't qualify to vote";
+    }
+
     if (canSubmit && canVote) {
       return "you qualify to submit & vote";
     } else if (canSubmit && !canVote) {
@@ -39,7 +51,13 @@ const LayoutContestQualifier = () => {
     } else {
       return "you don't qualify to submit & vote";
     }
-  }, [currentUserQualifiedToSubmit, currentUserAvailableVotesAmount, isReadOnly]);
+  }, [
+    currentUserQualifiedToSubmit,
+    currentUserAvailableVotesAmount,
+    isReadOnly,
+    contestStatus,
+    currentUserTotalVotesAmount,
+  ]);
 
   if (!isConnected) {
     return (
