@@ -9,6 +9,8 @@ import { baseTestnet } from "./custom-chains/baseTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
+import { eos } from "./custom-chains/eos";
+import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { gnosis } from "./custom-chains/gnosis";
@@ -64,6 +66,7 @@ const totalChains: Chain[] = [
   mantle,
   lukso,
   qChain,
+  eos,
   polygonTestnet,
   sepolia,
   goerli,
@@ -84,6 +87,7 @@ const totalChains: Chain[] = [
   luksoTestnet,
   modeTestnet,
   qChainTestnet,
+  eosTestnet,
   mainnet,
 ];
 
