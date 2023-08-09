@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const q: Chain = {
+export const qChain: Chain = {
   id: 35441,
-  name: "q",
-  network: "q",
+  name: "qChain",
+  network: "qChain",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

@@ -34,6 +34,8 @@ import { polygonZk } from "./custom-chains/polygonZk";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
 import { publicGoodsNetwork } from "./custom-chains/publicGoodsNetwork";
 import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
+import { qChain } from "./custom-chains/qChain";
+import { qChainTestnet } from "./custom-chains/qChainTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
@@ -61,6 +63,7 @@ const totalChains: Chain[] = [
   gnosis,
   mantle,
   lukso,
+  qChain,
   polygonTestnet,
   sepolia,
   goerli,
@@ -80,6 +83,7 @@ const totalChains: Chain[] = [
   mantleTestnet,
   luksoTestnet,
   modeTestnet,
+  qChainTestnet,
   mainnet,
 ];
 
