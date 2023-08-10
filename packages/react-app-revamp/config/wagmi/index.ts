@@ -187,4 +187,6 @@ export const chainsImages: ChainImages = {
   neartestnet: "/aurora.svg",
   zetatestnet: "/zeta.svg",
   zora: "/zora.png",
+  qchain: "/qchain.svg",
+  qchaintestnet: "/qchain.svg",
 };

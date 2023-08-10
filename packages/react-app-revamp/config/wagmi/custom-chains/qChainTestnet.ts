@@ -4,6 +4,7 @@ export const qChainTestnet: Chain = {
   id: 35443,
   name: "qChainTestnet",
   network: "qChainTestnet",
+  iconUrl: "/qchain.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
