@@ -14,14 +14,13 @@ interface VotingWidgetProps {
 }
 
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
-  const isMerkleTreeInProgress = useContestStore(state => state.isMerkleTreeInProgress);
   const currentUserTotalVotesCast = useUserStore(state => state.currentUserTotalVotesCast);
   const isLoading = useCastVotesStore(state => state.isLoading);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
-  const voteDisabled = isMerkleTreeInProgress || isLoading || amount === 0 || isInvalid;
+  const voteDisabled = isLoading || amount === 0 || isInvalid;
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {

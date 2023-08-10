@@ -4,10 +4,11 @@ export const qChain: Chain = {
   id: 35441,
   name: "qChain",
   network: "qChain",
+  iconUrl: "/qchain.svg",
   nativeCurrency: {
     decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
+    name: "Q",
+    symbol: "Q",
   },
   rpcUrls: {
     public: {
@@ -18,7 +19,7 @@ export const qChain: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Q Mainnet Scan", url: "https://explorer.q.org" },
-    default: { name: "Q Mainnet Scan", url: "https://explorer.q.org" },
+    etherscan: { name: "Q Mainnet Scan", url: "https://explorer.q.org/" },
+    default: { name: "Q Mainnet Scan", url: "https://explorer.q.org/" },
   },
 };

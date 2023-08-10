@@ -5,7 +5,7 @@ import CSVParseError, {
   ParseError,
 } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor/CSVParseError";
 import { validateSubmissionFields } from "@components/_pages/Create/utils/csv";
-import { parseCsvSubmissions } from "@helpers/parseSubmissionsCsv";
+import { parseSubmissionCsv } from "@helpers/parseSubmissionsCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
@@ -96,7 +96,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   };
 
   const onFileSelectHandler = async (file: File) => {
-    const results = await parseCsvSubmissions(file);
+    const results = await parseSubmissionCsv(file);
 
     switch (results.error?.kind) {
       case "missingColumns":
