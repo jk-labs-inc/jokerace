@@ -8,7 +8,7 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { readContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { useRouter } from "next/router";
@@ -18,7 +18,7 @@ import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
   const { fetchTotalVotesCast } = useContest();
-  const { votingMerkleTree, canUpdateVotesInRealTime } = useContestStore(state => state);
+  const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { setProposalVotes } = useProposalStore(state => state);
   const {
     castPositiveAmountOfVotes,
@@ -36,7 +36,7 @@ export function useCastVotes() {
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useUser();
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
-  const { checkIfProofIsVerified } = useGenerateProof();
+  const { getProofs } = useGenerateProof();
   const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
 
   async function castVotes(amount: number, isPositive: boolean) {
@@ -48,17 +48,12 @@ export function useCastVotes() {
     setTransactionData(null);
 
     try {
-      const proofsVerificationStatus = await checkIfProofIsVerified(
-        votingMerkleTree,
-        userAddress ?? "",
-        "vote",
-        currentUserTotalVotesAmount.toString(),
-      );
+      const proofs = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
 
-      let txCastVotes: any = {} as TransactionResponse;
+      let txRequest;
 
-      if (!proofsVerificationStatus.verified) {
-        txCastVotes = await writeContract({
+      if (proofs) {
+        txRequest = await prepareWriteContract({
           address: id as `0x${string}`,
           //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
@@ -68,11 +63,11 @@ export function useCastVotes() {
             isPositive ? 0 : 1,
             parseUnits(currentUserTotalVotesAmount.toString()),
             parseUnits(amount.toString()),
-            proofsVerificationStatus.proofs,
+            proofs,
           ],
         });
       } else {
-        txCastVotes = await writeContract({
+        txRequest = await prepareWriteContract({
           address: id as `0x${string}`,
           //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
@@ -81,11 +76,13 @@ export function useCastVotes() {
         });
       }
 
+      const txResult = await writeContract(txRequest);
+
       const receipt = await waitForTransaction({
         chainId: chain?.id,
-        hash: txCastVotes.hash,
+        hash: txResult.hash,
         //@ts-ignore
-        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txCastVotes?.hash}`,
+        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txResult?.hash}`,
       });
 
       setTransactionData({

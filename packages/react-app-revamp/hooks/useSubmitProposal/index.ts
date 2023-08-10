@@ -26,9 +26,8 @@ export function useSubmitProposal() {
   const { asPath } = useRouter();
   const { address: userAddress } = useAccount();
   const { fetchProposalsIdsList } = useProposal();
-  const { submissionMerkleTree } = useContestStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
-  const { checkIfProofIsVerified } = useGenerateProof();
+  const { getProofs } = useGenerateProof();
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.id;
@@ -39,27 +38,15 @@ export function useSubmitProposal() {
   async function sendProposal(proposalContent: string): Promise<TransactionResponse> {
     return new Promise<TransactionResponse>(async (resolve, reject) => {
       const { abi } = await getContestContractVersion(address, chainId);
-      const proofVerificationStatus = await checkIfProofIsVerified(
-        submissionMerkleTree,
-        userAddress ?? "",
-        "submission",
-      );
-
       toastLoading("proposal is deploying...");
+
       setIsLoading(true);
       setIsSuccess(false);
       setError(null);
       setTransactionData(null);
 
-      let proofs: string[] = [];
-
-      if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
-        proofs = [];
-      } else {
-        proofs = proofVerificationStatus.proofs;
-      }
-
       try {
+        const proofs = await getProofs(userAddress ?? "", "submission", "10");
         const contractConfig = {
           address: address as `0x${string}`,
           abi: abi as any,
@@ -79,14 +66,7 @@ export function useSubmitProposal() {
         let hash = "" as `0x${string}`;
         let txConfig = null;
 
-        // case when anyone can submit a proposal
-        if (!submissionMerkleTree || submissionMerkleTree.getLeaves().length === 0) {
-          txConfig = {
-            ...contractConfig,
-            functionName: "proposeWithoutProof",
-            args: [proposalCore],
-          };
-        } else if (!proofVerificationStatus.verified) {
+        if (proofs) {
           txConfig = {
             ...contractConfig,
             functionName: "propose",

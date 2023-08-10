@@ -1,5 +1,4 @@
 import Papa from "papaparse";
-import { getAddress } from "viem";
 
 export type InvalidEntry = {
   address: string;
@@ -18,76 +17,37 @@ export type ParseCsvResult = {
   error?: ValidationError;
 };
 
-const MAX_ROWS = 100000; // 100k for now
+export const MAX_ROWS = 100000; // 100k for now
 
-const processResults = (results: Papa.ParseResult<any>): ParseCsvResult => {
-  const data = results.data as Array<any>;
-  const addressData: string[] = [];
-  const invalidEntries: InvalidEntry[] = [];
-  const addresses: Set<string> = new Set();
+export const parseSubmissionCsv = (file: File): Promise<ParseCsvResult> => {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(new URL("/workers/parseSubmissionCsv", import.meta.url));
 
-  if (data.length > MAX_ROWS) {
-    return {
-      data: [],
-      invalidEntries,
-      error: { kind: "limitExceeded" },
+    worker.onmessage = (event: MessageEvent) => {
+      const payload: ParseCsvResult = event.data;
+      resolve(payload);
+
+      worker.terminate();
     };
-  }
 
-  // Ensure that the CSV has the correct number of columns (1)
-  const expectedColumns = 1;
-  const firstRow = data[0];
-  if (firstRow.length !== expectedColumns) {
-    return {
-      data: [],
-      invalidEntries,
-      error: { kind: "missingColumns" },
+    worker.onerror = err => {
+      reject({ data: [], invalidEntries: [], error: { kind: "parseError", error: err } });
+
+      worker.terminate();
     };
-  }
 
-  for (const row of data) {
-    let error: boolean = false;
-    const address = row[0];
-
-    if (addresses.has(address)) {
-      return {
-        data: [],
-        invalidEntries,
-        error: { kind: "duplicates" },
-      };
-    } else {
-      addresses.add(address);
-    }
-
-    try {
-      getAddress(address);
-    } catch (e) {
-      error = true;
-    }
-
-    if (error) {
-      invalidEntries.push({ address, error });
-    } else {
-      addressData.push(address);
-    }
-  }
-
-  return {
-    data: addressData,
-    invalidEntries,
-  };
-};
-
-export const parseCsvSubmissions = (file: File): Promise<ParseCsvResult> => {
-  return new Promise(resolve => {
     Papa.parse(file, {
       header: false,
       dynamicTyping: true,
       skipEmptyLines: true,
       complete: results => {
-        resolve(processResults(results));
+        worker.postMessage(results.data);
       },
-      error: error => resolve({ data: [], invalidEntries: [], error: { kind: "parseError", error } }),
+      error: error => {
+        reject({ data: [], invalidEntries: [], error: { kind: "parseError", error } });
+
+        worker.terminate();
+      },
     });
   });
 };

@@ -1,4 +1,3 @@
-import MerkleTree from "merkletreejs";
 import { createContext, useContext, useRef } from "react";
 import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
@@ -30,18 +29,15 @@ export interface ContestState {
   downvotingAllowed: boolean;
   canUpdateVotesInRealTime: boolean;
   supportsRewardsModule: boolean;
-  submissionMerkleTree: MerkleTree;
   submitters: {
     address: string;
   }[];
-  votingMerkleTree: MerkleTree;
   voters: {
     address: string;
     numVotes: number;
   }[];
   rewards: Reward | null;
   isReadOnly: boolean;
-  isMerkleTreeInProgress: boolean;
   isRewardsLoading: boolean;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
@@ -56,16 +52,13 @@ export interface ContestState {
   setTotalVotesCast: (amount: number) => void;
   setTotalVotes: (amount: number) => void;
   setRewards: (rewards: Reward | null) => void;
-  setVotingMerkleTree: (merkleTree: MerkleTree) => void;
   setVoters: (voters: { address: string; numVotes: number }[]) => void;
-  setSubmissionMerkleTree: (merkleTree: MerkleTree) => void;
   setSubmitters: (submitters: { address: string }[]) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: CustomError | null) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
   setIsReadOnly: (value: boolean) => void;
-  setIsMerkleTreeInProgress: (value: boolean) => void;
   setIsRewardsLoading: (value: boolean) => void;
 }
 
@@ -78,9 +71,7 @@ export const createContestStore = () =>
     submissionsOpen: new Date(),
     votesOpen: new Date(),
     votesClose: new Date(),
-    submissionMerkleTree: new MerkleTree([]),
     submitters: [],
-    votingMerkleTree: new MerkleTree([]),
     voters: [],
     totalVotesCast: 0,
     rewards: null,
@@ -94,7 +85,6 @@ export const createContestStore = () =>
     isV3: false,
     isReadOnly: false,
     supportsRewardsModule: false,
-    isMerkleTreeInProgress: false,
     isRewardsLoading: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
@@ -108,8 +98,6 @@ export const createContestStore = () =>
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
     setVotesOpen: datetime => set({ votesOpen: datetime }),
     setVotesClose: datetime => set({ votesClose: datetime }),
-    setVotingMerkleTree: merkleTree => set({ votingMerkleTree: merkleTree }),
-    setSubmissionMerkleTree: merkleTree => set({ submissionMerkleTree: merkleTree }),
     setVoters: voters => set({ voters: voters }),
     setSubmitters: submitters => set({ submitters: submitters }),
     setTotalVotesCast: amount => set({ totalVotesCast: amount }),
@@ -118,7 +106,6 @@ export const createContestStore = () =>
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
-    setIsMerkleTreeInProgress: value => set({ isMerkleTreeInProgress: value }),
     setIsRewardsLoading: value => set({ isRewardsLoading: value }),
   }));
 
