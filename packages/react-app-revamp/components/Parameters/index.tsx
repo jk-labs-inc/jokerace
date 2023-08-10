@@ -30,9 +30,11 @@ const ContestParameters = () => {
   const formattedVotesClosing = moment(votesClose).format("MMMM Do, h:mm a");
   const userMaxProposalCountBN = BigNumber.from(contestMaxNumberSubmissionsPerUser);
   const maxProposalsPerUserCapped = userMaxProposalCountBN.eq(UNLIMITED_PROPOSALS_PER_USER);
-  const processedSubmitters = submitters.map(submitter => ({
-    address: submitter.address,
-  }));
+  const processedSubmitters = useMemo(() => {
+    return submitters.map(submitter => ({
+      address: submitter.address,
+    }));
+  }, [submitters]);
 
   const qualifyToSubmitMessage = useMemo<string | JSX.Element>(() => {
     if (!submitters.length) return `anyone can submit`;

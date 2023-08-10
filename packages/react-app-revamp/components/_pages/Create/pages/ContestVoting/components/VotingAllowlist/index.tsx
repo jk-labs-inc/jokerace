@@ -1,17 +1,24 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { generateMerkleTree } from "lib/merkletree/generateMerkleTree";
-import { useEffect } from "react";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { useEffect, useState } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
+
+type WorkerMessageData = {
+  merkleRoot: string;
+  recipients: Recipient[];
+};
 
 const CreateVotingAllowlist = () => {
   const { step, setVotingMerkle, votingMerkle, setError, setVotingAllowlist, votingAllowlist } = useDeployContestStore(
     state => state,
   );
   const votingValidation = validationFunctions.get(step);
+
   const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist)]);
 
   useEffect(() => {
@@ -45,19 +52,50 @@ const CreateVotingAllowlist = () => {
     setVotingAllowlist(errorExists ? {} : newAllowList);
   };
 
-  const handleNextStep = () => {
-    if (Object.keys(votingAllowlist).length === 0) return;
+  const initializeWorker = () => {
+    const worker = new Worker(new URL("/workers/generateRootAndRecipients", import.meta.url));
 
-    if (votingMerkle) {
-      onNextStep();
-      return;
-    }
+    worker.onmessage = handleWorkerMessage;
+    worker.onerror = handleWorkerError;
 
-    const { merkleRoot, recipients } = generateMerkleTree(18, votingAllowlist);
+    return worker;
+  };
+
+  const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
+    const { merkleRoot, recipients } = event.data;
 
     setVotingMerkle({ merkleRoot, voters: recipients });
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
+    toastSuccess("allowlist processed successfully.");
+
+    terminateWorker(event.target as Worker);
+  };
+
+  const handleWorkerError = (error: ErrorEvent): void => {
+    console.error("Worker error:", error);
+    toastError("something went wrong, please try again.");
+
+    terminateWorker(error.target as Worker);
+  };
+  const terminateWorker = (worker: Worker): void => {
+    if (worker && worker.terminate) {
+      worker.terminate();
+    }
+  };
+
+  const handleNextStep = () => {
+    if (Object.keys(votingAllowlist).length === 0 || votingMerkle) {
+      onNextStep();
+      return;
+    }
+
+    toastLoading("processing your allowlist...", false);
+    const worker = initializeWorker();
+    worker.postMessage({
+      decimals: 18,
+      allowList: votingAllowlist,
+    });
   };
 
   return (

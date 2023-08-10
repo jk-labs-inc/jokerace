@@ -140,7 +140,6 @@ export function useProposalVotes(id: number | string) {
    * @param userAddress - wallet address
    */
   async function fetchVotesOfAddress(userAddress: string) {
-    console.count();
     try {
       const { abi } = await getContestContractVersion(address, chainId);
 

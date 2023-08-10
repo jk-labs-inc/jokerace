@@ -35,7 +35,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { address } = useAccount();
   const { asPath } = useRouter();
   const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
-  const { contestPrompt, votesOpen, isMerkleTreeInProgress } = useContestStore(state => state);
+  const { contestPrompt, votesOpen } = useContestStore(state => state);
   const contestId = asPath.split("/")[3];
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
   const { contestStatus } = useContestStatusStore(state => state);
@@ -145,7 +145,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
             color="bg-gradient-create rounded-[40px]"
             size="large"
             onClick={onSubmitProposal}
-            disabled={isLoading || !proposal.length || isMerkleTreeInProgress}
+            disabled={isLoading || !proposal.length}
           >
             submit!
           </ButtonV3>

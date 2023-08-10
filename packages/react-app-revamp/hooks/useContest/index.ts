@@ -60,19 +60,16 @@ export function useContest() {
     setContestAuthor,
     setContestMaxProposalCount,
     setIsV3,
-    setVotingMerkleTree,
     setVoters,
     setSubmitters,
     setTotalVotesCast,
     setTotalVotes,
-    setSubmissionMerkleTree,
     setVotesClose,
     setVotesOpen,
     setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
     setIsReadOnly,
-    setIsMerkleTreeInProgress,
     setIsRewardsLoading,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds, resetListProposals } =
@@ -260,13 +257,11 @@ export function useContest() {
   async function fetchContestInfo() {
     setIsLoading(true);
     setIsUserStoreLoading(true);
-    setIsMerkleTreeInProgress(true);
     const result = await getContractConfig();
 
     if (!result) {
       setIsLoading(false);
       setIsUserStoreLoading(false);
-      setIsMerkleTreeInProgress(false);
       return;
     }
 
@@ -342,48 +337,24 @@ export function useContest() {
       if (data && data.length > 0) {
         const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
 
-        let totalVotes = 0;
-        const votesDataRecord: Record<string, number> = votingMerkleTreeData.voters.reduce(
-          (acc: Record<string, number>, vote: Recipient) => {
-            const numVotes = Number(vote.numVotes);
-            acc[vote.address] = numVotes;
-            totalVotes += numVotes;
-            return acc;
-          },
-          {},
+        let totalVotes = votingMerkleTreeData.voters.reduce(
+          (sum: number, vote: { numVotes: string }) => sum + Number(vote.numVotes),
+          0,
         );
 
-        const votingMerkleTree = generateMerkleTree(18, votesDataRecord).merkleTree;
         setTotalVotes(totalVotes);
         setVoters(votingMerkleTreeData.voters);
 
-        let submissionMerkleTree;
-
         if (submissionMerkleRoot === EMPTY_ROOT) {
-          submissionMerkleTree = generateMerkleTree(18, {}).merkleTree;
           setSubmitters([]);
         } else {
-          const submissionsDataRecord: Record<string, number> = submissionMerkleTreeData.submitters.reduce(
-            (acc: Record<string, number>, vote: Recipient) => {
-              acc[vote.address] = Number(vote.numVotes);
-              return acc;
-            },
-            {},
-          );
-
-          submissionMerkleTree = generateMerkleTree(18, submissionsDataRecord).merkleTree;
           setSubmitters(submissionMerkleTreeData.submitters);
         }
-
-        setIsMerkleTreeInProgress(false);
-        setSubmissionMerkleTree(submissionMerkleTree);
-        setVotingMerkleTree(votingMerkleTree);
       }
     } catch (error) {
       const customError = error as CustomError;
       toastError("error while fetching data from db", customError.message);
       setIsUserStoreLoading(false);
-      setIsMerkleTreeInProgress(false);
     }
   }
 

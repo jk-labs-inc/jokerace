@@ -1,11 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { generateMerkleTree } from "lib/merkletree/generateMerkleTree";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useEffect } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
+
+type WorkerMessageData = {
+  merkleRoot: string;
+  recipients: Recipient[];
+};
 
 const CreateSubmissionAllowlist = () => {
   const { step, setSubmissionMerkle, submissionMerkle, setError, submissionAllowList, setSubmissionAllowlist } =
@@ -45,6 +51,39 @@ const CreateSubmissionAllowlist = () => {
     setSubmissionAllowlist(hasError ? {} : newAllowList);
   };
 
+  const initializeWorker = () => {
+    const worker = new Worker(new URL("/workers/generateRootAndRecipients", import.meta.url));
+
+    worker.onmessage = handleWorkerMessage;
+    worker.onerror = handleWorkerError;
+
+    return worker;
+  };
+
+  const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
+    const { merkleRoot, recipients } = event.data;
+
+    setSubmissionMerkle({ merkleRoot, submitters: recipients });
+    onNextStep();
+    setError(step + 1, { step: step + 1, message: "" });
+    toastSuccess("allowlist processed successfully.");
+
+    terminateWorker(event.target as Worker);
+  };
+
+  const handleWorkerError = (error: ErrorEvent): void => {
+    console.error("Worker error:", error);
+    toastError("something went wrong, please try again.");
+
+    terminateWorker(error.target as Worker);
+  };
+
+  const terminateWorker = (worker: Worker): void => {
+    if (worker && worker.terminate) {
+      worker.terminate();
+    }
+  };
+
   const handleNextStep = () => {
     if (Object.keys(submissionAllowList).length === 0) return;
 
@@ -53,11 +92,12 @@ const CreateSubmissionAllowlist = () => {
       return;
     }
 
-    const { merkleRoot, recipients } = generateMerkleTree(18, submissionAllowList);
-
-    setSubmissionMerkle({ merkleRoot, submitters: recipients });
-    onNextStep();
-    setError(step + 1, { step: step + 1, message: "" });
+    toastLoading("processing your allowlist...", false);
+    const worker = initializeWorker();
+    worker.postMessage({
+      decimals: 18,
+      allowList: submissionAllowList,
+    });
   };
 
   return (

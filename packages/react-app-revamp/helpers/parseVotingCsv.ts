@@ -111,6 +111,7 @@ export const parseCsvVoting = (file: File): Promise<ParseCsvResult> => {
     Papa.parse(file, {
       header: false,
       dynamicTyping: true,
+      worker: true,
       skipEmptyLines: true,
       complete: results => {
         resolve(processResults(results));
