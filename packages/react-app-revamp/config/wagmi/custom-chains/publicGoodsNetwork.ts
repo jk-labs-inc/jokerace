@@ -19,7 +19,7 @@ export const publicGoodsNetwork: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Public Goods Network Mainnet Block Explorer", url: "explorer.publicgoods.network" },
-    default: { name: "Public Goods Network Mainnet Block Explorer", url: "explorer.publicgoods.network" },
+    etherscan: { name: "Public Goods Network Mainnet Block Explorer", url: "https://explorer.publicgoods.network/" },
+    default: { name: "Public Goods Network Mainnet Block Explorer", url: "https://explorer.publicgoods.network/" },
   },
 };
