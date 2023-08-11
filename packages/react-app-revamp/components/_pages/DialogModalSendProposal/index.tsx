@@ -4,6 +4,7 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
+import { chains } from "@config/wagmi";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import {
   loadSubmissionFromLocalStorage,
@@ -20,11 +21,12 @@ import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { switchNetwork } from "@wagmi/core";
 import moment from "moment";
 import NextImage from "next/image";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 
 interface DialogModalSendProposalProps {
   isOpen: boolean;
@@ -33,15 +35,18 @@ interface DialogModalSendProposalProps {
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
   const { address } = useAccount();
+  const { chain } = useNetwork();
   const { asPath } = useRouter();
   const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
   const { contestPrompt, votesOpen } = useContestStore(state => state);
   const contestId = asPath.split("/")[3];
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
   const { contestStatus } = useContestStatusStore(state => state);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const [proposal, setProposal] = useState(savedProposal?.content || "");
   const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
+  const isCorrectNetwork = chainId === chain?.id;
 
   const editorProposal = useEditor({
     extensions: [
@@ -77,7 +82,10 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     },
   });
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onSwitchNetwork = async () => {
+    await switchNetwork({ chainId });
+  };
+
   const onSubmitProposal = () => {
     sendProposal(proposal.trim());
   };
@@ -90,6 +98,10 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
         return;
       }
       if (event.key === "Enter") {
+        if (!isCorrectNetwork) {
+          onSwitchNetwork();
+          return;
+        }
         onSubmitProposal();
       }
     };
@@ -141,14 +153,20 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           <p className="text-[16px] text-neutral-11 mt-2">{tipMessage()}</p>
         </div>
         <div className="mt-2">
-          <ButtonV3
-            color="bg-gradient-create rounded-[40px]"
-            size="large"
-            onClick={onSubmitProposal}
-            disabled={isLoading || !proposal.length}
-          >
-            submit!
-          </ButtonV3>
+          {isCorrectNetwork ? (
+            <ButtonV3
+              color="bg-gradient-create rounded-[40px]"
+              size="large"
+              onClick={onSubmitProposal}
+              disabled={isLoading || !proposal.length}
+            >
+              submit!
+            </ButtonV3>
+          ) : (
+            <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large" onClick={onSwitchNetwork}>
+              switch network
+            </ButtonV3>
+          )}
         </div>
       </div>
     </DialogModalV3>

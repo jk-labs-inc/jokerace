@@ -1,11 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3 from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
+import { chains } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
+import { switchNetwork } from "@wagmi/core";
+import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
+import { useNetwork } from "wagmi";
 
 interface VotingWidgetProps {
   amountOfVotes: number;
@@ -15,16 +19,24 @@ interface VotingWidgetProps {
 
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
   const currentUserTotalVotesCast = useUserStore(state => state.currentUserTotalVotesCast);
+  const { asPath } = useRouter();
+  const { chain } = useNetwork();
   const isLoading = useCastVotesStore(state => state.isLoading);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
   const voteDisabled = isLoading || amount === 0 || isInvalid;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const isCorrectNetwork = chainId === chain?.id;
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
       if (event.key === "Enter") {
+        if (!isCorrectNetwork) {
+          onSwitchNetwork();
+          return;
+        }
         onVote?.(amount, isUpvote);
       }
     };
@@ -62,6 +74,10 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         setIsInvalid(numericInput > amountOfVotes);
       }
     }
+  };
+
+  const onSwitchNetwork = async () => {
+    await switchNetwork({ chainId });
   };
 
   return (
@@ -107,16 +123,27 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
           </div>
         </div>
         <div className="mt-4">
-          <ButtonV3
-            type="txAction"
-            disabled={voteDisabled}
-            color="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
-            size="large"
-            onClick={() => onVote?.(amount, isUpvote)}
-          >
-            <span className="w-full text-center">add votes</span>
-            <ChevronRightIcon className="w-5" />
-          </ButtonV3>
+          {isCorrectNetwork ? (
+            <ButtonV3
+              type="txAction"
+              disabled={voteDisabled}
+              color="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
+              size="large"
+              onClick={() => onVote?.(amount, isUpvote)}
+            >
+              <span className="w-full text-center">add votes</span>
+              <ChevronRightIcon className="w-5" />
+            </ButtonV3>
+          ) : (
+            <ButtonV3
+              type="txAction"
+              color="flex items-center justify-center bg-gradient-vote rounded-[40px] w-full"
+              size="large"
+              onClick={onSwitchNetwork}
+            >
+              switch network
+            </ButtonV3>
+          )}
         </div>
         <div className="flex flex-col mt-4">
           <div className="flex justify-between text-[16px]">
