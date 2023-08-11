@@ -1,6 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
 import Collapsible from "@components/UI/Collapsible";
+import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
+import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
+import MarkdownText from "@components/UI/Markdown/components/MarkdownText";
+import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
 import { Proposal } from "@components/_pages/ProposalContent";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
@@ -61,36 +65,10 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <ReactMarkdown
           className="markdown"
           components={{
-            img: ({ node, ...props }) => {
-              const [error, setError] = useState(false);
-
-              if (error) {
-                return (
-                  <p>
-                    <a href={props.src} target="_blank" rel="noopener noreferrer">
-                      {props.src}
-                    </a>
-                  </p>
-                );
-              }
-
-              return <img {...props} className="w-[350px]" alt="image" onError={() => setError(true)} />;
-            },
-            p: ({ node, children, ...props }) => (
-              <p {...props} className="m-0 text-[16px]">
-                {children}
-              </p>
-            ),
-            ul: ({ node, children, ...props }) => (
-              <ul {...props} className="list-disc list-inside  list-explainer">
-                {children}
-              </ul>
-            ),
-            li: ({ node, children, ...props }) => (
-              <li {...props} className="flex items-center">
-                {children}
-              </li>
-            ),
+            img: ({ node, ...props }) => <MarkdownImage imageSize="full" src={props.src ?? ""} />,
+            p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
+            ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
+            li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize]}
         >
@@ -109,36 +87,10 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <ReactMarkdown
           className="markdown"
           components={{
-            img: ({ node, ...props }) => {
-              const [error, setError] = useState(false);
-
-              if (error) {
-                return (
-                  <p>
-                    <a href={props.src} target="_blank" rel="noopener noreferrer">
-                      {props.src}
-                    </a>
-                  </p>
-                );
-              }
-
-              return <img {...props} className="w-[350px]" alt="image" onError={() => setError(true)} />;
-            },
-            p: ({ node, children, ...props }) => (
-              <p {...props} className="m-0 text-[16px]">
-                {children}
-              </p>
-            ),
-            ul: ({ node, children, ...props }) => (
-              <ul {...props} className="list-disc list-inside  list-explainer">
-                {children}
-              </ul>
-            ),
-            li: ({ node, children, ...props }) => (
-              <li {...props} className="flex items-center">
-                {children}
-              </li>
-            ),
+            img: ({ node, ...props }) => <MarkdownImage imageSize="full" src={props.src ?? ""} />,
+            p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
+            ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
+            li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize]}
         >
@@ -154,21 +106,7 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <ReactMarkdown
           className="markdown"
           components={{
-            img: ({ node, ...props }) => {
-              const [error, setError] = useState(false);
-
-              if (error) {
-                return (
-                  <p>
-                    <a href={props.src} target="_blank" rel="noopener noreferrer">
-                      {props.src}
-                    </a>
-                  </p>
-                );
-              }
-
-              return <img {...props} className="w-[350px]" alt="image" onError={() => setError(true)} />;
-            },
+            img: ({ node, ...props }) => <MarkdownImage imageSize="full" src={props.src ?? ""} />,
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize]}
         >
@@ -182,21 +120,9 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
             <ReactMarkdown
               className="markdown"
               components={{
-                p: ({ node, children, ...props }) => (
-                  <p {...props} className="m-0 text-[16px]">
-                    {children}
-                  </p>
-                ),
-                ul: ({ node, children, ...props }) => (
-                  <ul {...props} className="list-disc list-inside  list-explainer">
-                    {children}
-                  </ul>
-                ),
-                li: ({ node, children, ...props }) => (
-                  <li {...props} className="flex items-center">
-                    {children}
-                  </li>
-                ),
+                p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
+                ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
+                li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
               }}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
             >
@@ -210,21 +136,9 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
         <ReactMarkdown
           className="markdown"
           components={{
-            p: ({ node, children, ...props }) => (
-              <p {...props} className="m-0 text-[16px]">
-                {children}
-              </p>
-            ),
-            ul: ({ node, children, ...props }) => (
-              <ul {...props} className="list-disc list-inside  list-explainer">
-                {children}
-              </ul>
-            ),
-            li: ({ node, children, ...props }) => (
-              <li {...props} className="flex items-center">
-                {children}
-              </li>
-            ),
+            p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
+            ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
+            li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize]}
         >
@@ -238,36 +152,10 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
             <ReactMarkdown
               className="markdown"
               components={{
-                img: ({ node, ...props }) => {
-                  const [error, setError] = useState(false);
-
-                  if (error) {
-                    return (
-                      <p>
-                        <a href={props.src} target="_blank" rel="noopener noreferrer">
-                          {props.src}
-                        </a>
-                      </p>
-                    );
-                  }
-
-                  return <img {...props} className="w-[350px]" alt="image" onError={() => setError(true)} />;
-                },
-                p: ({ node, children, ...props }) => (
-                  <p {...props} className="m-0 text-[16px]">
-                    {children}
-                  </p>
-                ),
-                ul: ({ node, children, ...props }) => (
-                  <ul {...props} className="list-disc list-inside  list-explainer">
-                    {children}
-                  </ul>
-                ),
-                li: ({ node, children, ...props }) => (
-                  <li {...props} className="flex items-center">
-                    {children}
-                  </li>
-                ),
+                img: ({ node, ...props }) => <MarkdownImage imageSize="full" src={props.src ?? ""} />,
+                p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
+                ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
+                li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
               }}
               rehypePlugins={[rehypeRaw, rehypeSanitize]}
             >
