@@ -94,8 +94,8 @@ export async function getStaticProps() {
     const { from, to } = getPagination(0, 7);
 
     const result = await supabase
-      .from("contests")
-      .select("*", { count: "exact" })
+      .from("contests_v3")
+      .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt")
       // all rows whose votes end date is < to the current date.
       .lt("end_at", new Date().toISOString())
       .order("end_at", { ascending: false })
