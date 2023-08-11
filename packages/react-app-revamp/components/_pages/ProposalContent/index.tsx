@@ -3,6 +3,11 @@
 /* eslint-disable react/no-children-prop */
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
+import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
+import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
+import MarkdownOrderedList from "@components/UI/Markdown/components/MarkdownOrderedList";
+import MarkdownText from "@components/UI/Markdown/components/MarkdownText";
+import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
 import { formatNumber } from "@helpers/formatNumber";
 import { isUrlTweet } from "@helpers/isUrlTweet";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -10,6 +15,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import moment from "moment";
+import React, { Children } from "react";
 import { FC, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { TwitterTweetEmbed } from "react-twitter-embed";
@@ -137,45 +143,35 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
 
   return (
     <div className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
-      <div className="flex items-center px-8 py-2 h-3/5 md:h-3/4" onClick={() => setIsProposalModalOpen(true)}>
+      <div
+        className="flex items-center overflow-hidden  px-8 py-2 h-3/5 md:h-3/4"
+        onClick={() => setIsProposalModalOpen(true)}
+      >
         <ReactMarkdown
-          className="markdown max-w-full overflow-x-hidden"
+          className="markdown max-w-full"
           components={{
-            img: ({ node, ...props }) => {
-              const [error, setError] = useState(false);
-
-              if (error) {
-                return (
-                  <p>
-                    <a href={props.src} target="_blank" rel="noopener noreferrer">
-                      {props.src}
-                    </a>
-                  </p>
-                );
-              }
-
-              return <img {...props} className="w-[170px] h-[130px]" alt="image" onError={() => setError(true)} />;
-            },
             div: ({ node, children, ...props }) => (
               <div {...props} className="flex gap-5 items-center markdown">
                 {children}
               </div>
             ),
-            p: ({ node, children, ...props }) => (
-              <p {...props} className="text-[16px]">
-                {children}
-              </p>
-            ),
-            ul: ({ node, children, ...props }) => (
-              <ul {...props} className="list-disc list-inside  list-explainer">
-                {children}
-              </ul>
-            ),
-            li: ({ node, children, ...props }) => (
-              <li {...props} className="flex items-center">
-                {children}
-              </li>
-            ),
+            img: ({ node, ...props }) => <MarkdownImage imageSize="compact" src={props.src ?? ""} />,
+            p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
+            ul: ({ node, children, ...props }) => {
+              const truncatedChildren = Children.toArray(children).slice(0, 3);
+              const combinedChildren =
+                children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
+
+              return <MarkdownUnorderedList children={combinedChildren} props={props} />;
+            },
+            li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
+            ol: ({ node, children, ...props }) => {
+              const truncatedChildren = Children.toArray(children).slice(0, 3);
+              const finalChildren =
+                children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
+
+              return <MarkdownOrderedList children={finalChildren} props={props} />;
+            },
           }}
           rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
           children={truncatedContent}
