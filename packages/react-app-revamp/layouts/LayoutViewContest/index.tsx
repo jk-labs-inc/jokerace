@@ -103,7 +103,7 @@ const LayoutViewContest = (props: any) => {
   useEffect(() => {
     fetchContestInfo();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chain?.id, chainId, asPath.split("/")[2], asPath.split("/")[3]]);
+  }, [asPath.split("/")[2], asPath.split("/")[3]]);
 
   useEffect(() => {
     if (account?.connector) {
@@ -149,23 +149,6 @@ const LayoutViewContest = (props: any) => {
         {isLoading && (
           <div className="animate-appear">
             <Loader scale="page">Loading contest info...</Loader>
-          </div>
-        )}
-        {account?.address && chain?.id !== chainId && votesClose && isBefore(new Date(), votesClose) && (
-          <div className="animate-appear flex text-center items-center flex-col my-10 mx-auto text-neutral-11">
-            <p className="font-bold text-[24px]">Looks like you&apos;re using the wrong network.</p>
-            <p className="mt-2 mb-4 text-neutral-11 text-[16px]">
-              You need to use {asPath.split("/")[2]} to interact with this contest.
-            </p>
-            <ButtonV3
-              size="large"
-              onClick={() => {
-                switchNetwork?.({ chainId });
-              }}
-              color="bg-gradient-next"
-            >
-              Switch network
-            </ButtonV3>
           </div>
         )}
 
