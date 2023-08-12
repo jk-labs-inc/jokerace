@@ -248,7 +248,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(async contest => processContestData(contest, userAddress ?? "")));
+      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
       return { data: processedData, count };
     } catch (e) {
       console.error(e);
@@ -271,7 +271,7 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
 
     if (error) throw new Error(error.message);
 
-    const processedData = await Promise.all(data.map(async contest => processContestData(contest, userAddress ?? "")));
+    const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
 
     processedData.sort((a, b) => {
       const now = moment();
@@ -317,7 +317,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(async contest => processContestData(contest, userAddress ?? "")));
+      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
 
       return { data: processedData, count };
     } catch (e) {
@@ -345,7 +345,7 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(async contest => processContestData(contest, userAddress ?? "")));
+      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
       return { data: processedData, count };
     } catch (e) {
       console.error(e);
@@ -372,7 +372,7 @@ export async function getUpcomingContests(currentPage: number, itemsPerPage: num
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(async contest => processContestData(contest, userAddress ?? "")));
+      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
       return { data: processedData, count };
     } catch (e) {
       console.error(e);
