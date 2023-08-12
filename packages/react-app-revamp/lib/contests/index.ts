@@ -5,7 +5,6 @@ import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { fetchBalance, FetchBalanceResult, readContract } from "@wagmi/core";
 import { BigNumber, ethers, utils } from "ethers";
-import { now } from "lodash";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 
@@ -121,7 +120,6 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
 };
 
 const processContestData = async (contest: any, userAddress: string) => {
-  console.log("process data hit " + contest.address + " " + now())
   try {
     const chainId = chains.filter(
       c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
@@ -131,80 +129,78 @@ const processContestData = async (contest: any, userAddress: string) => {
 
     contest = await updateContestWithUserQualifications(contest, userAddress);
 
-    // if (
-    //   contractConfig &&
-    //   contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
-    // ) {
-    //   try {
-    //     const contestRewardModuleAddress = (await readContract({
-    //       ...contractConfig,
-    //       functionName: "officialRewardsModule",
-    //       args: [],
-    //     })) as any;
+    if (
+      contractConfig &&
+      contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
+    ) {
+      try {
+        const contestRewardModuleAddress = (await readContract({
+          ...contractConfig,
+          functionName: "officialRewardsModule",
+          args: [],
+        })) as any;
 
-    //     if (contestRewardModuleAddress.toString() === "0x0000000000000000000000000000000000000000") {
-    //       contest.rewards = null;
-    //     } else {
-    //       const abiRewardsModule = await getRewardsModuleContractVersion(
-    //         contestRewardModuleAddress.toString(),
-    //         chainId,
-    //       );
+        if (contestRewardModuleAddress.toString() === "0x0000000000000000000000000000000000000000") {
+          contest.rewards = null;
+        } else {
+          const abiRewardsModule = await getRewardsModuleContractVersion(
+            contestRewardModuleAddress.toString(),
+            chainId,
+          );
 
-    //       if (!abiRewardsModule) {
-    //         contest.rewards = null;
-    //       } else {
-    //         const winners = (await readContract({
-    //           address: contestRewardModuleAddress.toString() as `0x${string}`,
-    //           abi: abiRewardsModule,
-    //           chainId: chainId,
-    //           functionName: "getPayees",
-    //         })) as BigNumber[];
+          if (!abiRewardsModule) {
+            contest.rewards = null;
+          } else {
+            const winners = (await readContract({
+              address: contestRewardModuleAddress.toString() as `0x${string}`,
+              abi: abiRewardsModule,
+              chainId: chainId,
+              functionName: "getPayees",
+            })) as BigNumber[];
 
-    //         let rewardToken: FetchBalanceResult | null = null;
-    //         let erc20Tokens: any = null;
+            let rewardToken: FetchBalanceResult | null = null;
+            let erc20Tokens: any = null;
 
-    //         rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
+            rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
 
-    //         if (!rewardToken || Number(rewardToken.value) === 0) {
-    //           try {
-    //             erc20Tokens = await fetchTokenBalances(contest.network_name, contestRewardModuleAddress.toString());
+            if (!rewardToken || Number(rewardToken.value) === 0) {
+              try {
+                erc20Tokens = await fetchTokenBalances(contest.network_name, contestRewardModuleAddress.toString());
 
-    //             if (erc20Tokens && erc20Tokens.length > 0) {
-    //               rewardToken = await fetchFirstToken(
-    //                 contestRewardModuleAddress.toString(),
-    //                 chainId,
-    //                 erc20Tokens[0].contractAddress,
-    //               );
-    //             }
-    //           } catch (error) {
-    //             console.error("Error fetching token balances:", error);
-    //             return;
-    //           }
-    //         }
+                if (erc20Tokens && erc20Tokens.length > 0) {
+                  rewardToken = await fetchFirstToken(
+                    contestRewardModuleAddress.toString(),
+                    chainId,
+                    erc20Tokens[0].contractAddress,
+                  );
+                }
+              } catch (error) {
+                console.error("Error fetching token balances:", error);
+                return;
+              }
+            }
 
-    //         if (rewardToken) {
-    //           contest.rewards = {
-    //             token: {
-    //               symbol: rewardToken.symbol,
-    //               value: parseFloat(utils.formatUnits(rewardToken.value, rewardToken.decimals)),
-    //             },
-    //             winners: winners.length,
-    //             numberOfTokens: erc20Tokens?.length ?? 1,
-    //           };
-    //         } else {
-    //           contest.rewards = null;
-    //         }
-    //       }
-    //     }
-    //   } catch (error) {
-    //     console.error("Error:", error);
-    //     contest.rewards = null;
-    //   }
-    // } else {
+            if (rewardToken) {
+              contest.rewards = {
+                token: {
+                  symbol: rewardToken.symbol,
+                  value: parseFloat(utils.formatUnits(rewardToken.value, rewardToken.decimals)),
+                },
+                winners: winners.length,
+                numberOfTokens: erc20Tokens?.length ?? 1,
+              };
+            } else {
+              contest.rewards = null;
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        contest.rewards = null;
+      }
+    } else {
       contest.rewards = null;
-    // }
-
-    console.log("process finished " + contest.address + " " + now())
+    }
 
     return contest;
   } catch (error) {
@@ -272,8 +268,6 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
       .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
       .is("featured", true)
       .range(from, to);
-
-    console.log("made it 1")
 
     if (error) throw new Error(error.message);
 
