@@ -96,7 +96,7 @@ export async function getStaticProps() {
 
     const result = await supabase
       .from("contests_v3")
-      .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt")
+      .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
       .lte("start_at", new Date().toISOString())
       .gte("end_at", new Date().toISOString())
       .order("end_at", { ascending: true })

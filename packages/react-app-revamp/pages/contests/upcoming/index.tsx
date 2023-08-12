@@ -95,7 +95,7 @@ export async function getStaticProps() {
 
     const result = await supabase
       .from("contests_v3")
-      .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt")
+      .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
       // all rows whose submissions start date is > to the current date.
       .gt("start_at", new Date().toISOString())
       .order("start_at", { ascending: false })
