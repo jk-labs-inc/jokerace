@@ -2,5 +2,6 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+solc-version = "0.8.19"  # most rollups don't support past this - https://twitter.com/pashovkrum/status/1690298101448208384?s=46
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
