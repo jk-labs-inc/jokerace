@@ -120,7 +120,7 @@ export function useProposalVotes(id: number | string) {
     try {
       await Promise.all(
         slice.map(async (userAddress: string) => {
-          await fetchVotesOfAddress(userAddress);
+          fetchVotesOfAddress(userAddress);
         }),
       );
       setIsPageVotesLoading(false);
