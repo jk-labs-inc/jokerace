@@ -38,7 +38,7 @@ If you are not running Supabase, then the search functionality will not work. Yo
 
 Whenever you make a change to smart contracts or really whenever the bytecode files change (could be that [the compiler version got changed and so no bytecode changed, but remappings were reformatted](https://github.com/jk-labs-inc/jokerace/pull/509)), increment the version by `x.1`. Then generate the bytecode and version it as described below.
 
-The purpose of this is so that we have a way to tell exactly what bytecode a contract that we read from a chain has given its version number.
+The purpose of this is so that we have a way to tell exactly what bytecode a contract that we read from a chain has and exactly how it was deployed given its version number.
 
 In order to generate and/or update the bytecode of your project, run 
 
