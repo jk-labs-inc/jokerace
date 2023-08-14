@@ -28,8 +28,7 @@ async function getContractConfig(address: string, chainId: number) {
 
 export const fetchTokenBalances = async (chainName: string, contestRewardModuleAddress: string) => {
   try {
-    const networkName = chainName.toLowerCase() === "arbitrumone" ? "arbitrum" : chainName;
-    const alchemyAppUrl = chains.filter(chain => chain.name === networkName)[0].rpcUrls.default.http[0];
+    const alchemyAppUrl = chains.filter(chain => chain.name === chainName.toLowerCase())[0].rpcUrls.default.http[0];
 
     const response = await fetch(alchemyAppUrl, {
       method: "POST",
@@ -101,7 +100,7 @@ const fetchParticipantData = async (contestAddress: string, userAddress: string,
 
 const updateContestWithUserQualifications = async (contest: any, userAddress: string) => {
   const { submissionMerkleTree, network_name, address } = contest;
-  const anyoneCanSubmit = submissionMerkleTree === null;
+  const anyoneCanSubmit = !submissionMerkleTree;
 
   let participantData = { can_submit: anyoneCanSubmit, num_votes: 0 };
   if (userAddress) {
@@ -235,7 +234,10 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
     try {
       const result = await supabase
         .from(table)
-        .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+          { count: "exact" },
+        )
         .textSearch(searchColumn, `${searchString}`, {
           type: "websearch",
           config: language,
@@ -265,7 +267,10 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
   try {
     const { data, count, error } = await config.supabase
       .from("contests_v3")
-      .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
+      .select(
+        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+        { count: "exact" },
+      )
       .is("featured", true)
       .range(from, to);
 
@@ -306,7 +311,10 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
     try {
       const result = await supabase
         .from("contests_v3")
-        .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+          { count: "exact" },
+        )
         .lte("start_at", new Date().toISOString())
         .gte("end_at", new Date().toISOString())
         .order("end_at", { ascending: true })
@@ -335,7 +343,10 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
     try {
       const result = await supabase
         .from("contests_v3")
-        .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+          { count: "exact" },
+        )
         // all rows whose votes end date is < to the current date.
         .lt("end_at", new Date().toISOString())
         .order("end_at", { ascending: false })
@@ -362,7 +373,10 @@ export async function getUpcomingContests(currentPage: number, itemsPerPage: num
     try {
       const result = await supabase
         .from("contests_v3")
-        .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+          { count: "exact" },
+        )
         // all rows whose submissions start date is > to the current date.
         .gt("start_at", new Date().toISOString())
         .order("start_at", { ascending: false })
