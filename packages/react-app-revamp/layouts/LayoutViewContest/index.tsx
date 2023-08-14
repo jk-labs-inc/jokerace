@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import ContestParameters from "@components/Parameters";
 import ContestRewards from "@components/Rewards";
 import ShareDropdown from "@components/Share";
@@ -5,11 +6,13 @@ import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
+import { toastError } from "@components/UI/Toast";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
+import { useAccountChange } from "@hooks/useAccountChange";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
 import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
@@ -19,9 +22,8 @@ import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
-import { UserWrapper } from "@hooks/useUser/store";
-import { switchNetwork } from "@wagmi/core";
-import { isBefore } from "date-fns";
+import useUser from "@hooks/useUser";
+import { UserWrapper, useUserStore } from "@hooks/useUser/store";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -58,8 +60,12 @@ const LayoutViewContest = (props: any) => {
     rewards,
     isReadOnly,
     isRewardsLoading,
+    submissionMerkleRoot,
   } = useContestStore(state => state);
+  const accountChanged = useAccountChange();
+  const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
 
+  const { contestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
@@ -101,18 +107,29 @@ const LayoutViewContest = (props: any) => {
   }, [submissionsOpen, votesOpen, votesClose, setContestStatus]);
 
   useEffect(() => {
-    fetchContestInfo();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [asPath.split("/")[2], asPath.split("/")[3]]);
+    const fetchUserData = async () => {
+      try {
+        if (accountChanged) {
+          setIsUserStoreLoading(true);
+          await Promise.all([
+            checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
+            checkIfCurrentUserQualifyToVote(),
+          ]);
+
+          setIsUserStoreLoading(false);
+        }
+      } catch (error) {
+        setIsUserStoreLoading(false);
+        toastError("we couldn't fetch user data, please try again!");
+      }
+    };
+
+    fetchUserData();
+  }, [accountChanged]);
 
   useEffect(() => {
-    if (account?.connector) {
-      account?.connector.on("change", data => {
-        //@ts-ignore
-        setChainId(data?.chain?.id);
-      });
-    }
-  }, [account?.connector, setChainId]);
+    fetchContestInfo();
+  }, [asPath.split("/")[2], asPath.split("/")[3]]);
 
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
