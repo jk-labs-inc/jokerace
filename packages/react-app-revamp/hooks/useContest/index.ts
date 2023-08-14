@@ -180,9 +180,9 @@ export function useContest() {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        await fetchTotalVotesCast(),
-        await processRewardData(contestRewardModuleAddress),
-        await processContestData(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
+        fetchTotalVotesCast(),
+        processRewardData(contestRewardModuleAddress),
+        processContestData(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
       ]);
     } catch (error) {
       const customError = error as CustomError;
