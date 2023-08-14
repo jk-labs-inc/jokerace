@@ -231,7 +231,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
   };
 
   return (
-    <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
+    <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       <a href={getContestUrl(contest)}>
         <div
           className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-4 p-3 

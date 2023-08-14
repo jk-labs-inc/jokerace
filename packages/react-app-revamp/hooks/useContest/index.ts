@@ -14,7 +14,6 @@ import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { BigNumber, utils } from "ethers";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
-import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { CustomError } from "types/error";
@@ -67,6 +66,7 @@ export function useContest() {
     setVotesClose,
     setVotesOpen,
     setRewards,
+    setSubmissionMerkleRoot,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
     setIsReadOnly,
@@ -144,7 +144,7 @@ export function useContest() {
       const submissionMerkleRoot = results[10].result as string;
       setContestName(results[0].result as string);
       setContestAuthor(results[1].result as string, results[1].result as string);
-
+      setSubmissionMerkleRoot(submissionMerkleRoot);
       setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
       setContestMaxProposalCount(contestMaxProposalCount);
       setSubmissionsOpen(submissionsOpenDate);
@@ -180,9 +180,9 @@ export function useContest() {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        await fetchTotalVotesCast(),
-        await processRewardData(contestRewardModuleAddress),
-        await processContestData(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
+        fetchTotalVotesCast(),
+        processRewardData(contestRewardModuleAddress),
+        processContestData(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
       ]);
     } catch (error) {
       const customError = error as CustomError;

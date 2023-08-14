@@ -23,8 +23,8 @@ export function useRewardsModule() {
     async () => {
       try {
         const contestRewardModuleAddress = rewards?.contractAddress;
-        const networkName = contestChainName.toLowerCase() === "arbitrumone" ? "arbitrum" : contestChainName;
-        const alchemyAppUrl = chains.filter(chain => chain.name === networkName)[0].rpcUrls.default.http[0];
+        const alchemyAppUrl = chains.filter(chain => chain.name === contestChainName.toLowerCase())[0].rpcUrls.default
+          .http[0];
 
         const response = await fetch(alchemyAppUrl, {
           method: "POST",

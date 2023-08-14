@@ -32,7 +32,7 @@ const useEmailSignup = () => {
     if (isSupabaseConfigured) {
       setLoading(true);
       try {
-        const { data, error } = await supabase.from("email_signups").select("*").eq("email_address", email_address);
+        const { data, error } = await supabase.from("email_signups").select("email_address").eq("email_address", email_address);
         setLoading(false);
         if (error) {
           toastError("There was an error while checking. Please try again later.", error.message);
