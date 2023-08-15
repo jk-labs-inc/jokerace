@@ -4,7 +4,7 @@ export const nautilusChain: Chain = {
   id: 22222,
   name: "nautilusChain",
   network: "nautilusChain",
-  iconUrl: "/nautilus.svg",
+  iconUrl: "/nautiluschain.svg",
   nativeCurrency: {
     decimals: 18,
     name: "ZBC",
