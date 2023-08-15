@@ -1,10 +1,10 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const publicGoodsNetwork: Chain = {
+export const nautilusChain: Chain = {
   id: 22222,
   name: "nautilusChain",
   network: "nautilusChain",
-  iconUrl: "/naut_sq.svg",
+  iconUrl: "/nautilus.svg",
   nativeCurrency: {
     decimals: 18,
     name: "ZBC",
