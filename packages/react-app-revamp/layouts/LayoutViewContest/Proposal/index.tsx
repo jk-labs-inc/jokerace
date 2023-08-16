@@ -14,6 +14,8 @@ import moment from "moment";
 import { FC, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import { Interweave } from "interweave";
+import { UrlMatcher } from "interweave-autolink";
 import rehypeSanitize from "rehype-sanitize";
 
 interface LayoutContestProposalProps {
@@ -62,18 +64,7 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
   if (!collapsible) {
     return (
       <div className="flex flex-col gap-4">
-        <ReactMarkdown
-          className="markdown"
-          components={{
-            img: ({ node, ...props }) => <MarkdownImage imageSize="full" src={props.src ?? ""} />,
-            p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
-            ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
-            li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
-          }}
-          rehypePlugins={[rehypeRaw, rehypeSanitize]}
-        >
-          {proposal.content}
-        </ReactMarkdown>
+        <Interweave className="prose" content={proposal.content} matchers={[new UrlMatcher("url")]} />
         {contestStatus === ContestStatus.SubmissionOpen && (
           <p className="text-[16px] text-primary-10">voting opens {formattedVotesOpen}</p>
         )}
@@ -84,83 +75,31 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
   const CollapsibleContent = (
     <div>
       <Collapsible isOpen={isProposalOpen}>
-        <ReactMarkdown
-          className="markdown"
-          components={{
-            img: ({ node, ...props }) => <MarkdownImage imageSize="full" src={props.src ?? ""} />,
-            p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
-            ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
-            li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
-          }}
-          rehypePlugins={[rehypeRaw, rehypeSanitize]}
-        >
-          {proposal.content}
-        </ReactMarkdown>
+        <Interweave className="prose" content={proposal.content} matchers={[new UrlMatcher("url")]} />
       </Collapsible>
     </div>
   );
 
   return (
     <div className="flex flex-col gap-4">
-      {isOnlyImage && (
-        <ReactMarkdown
-          className="markdown"
-          components={{
-            img: ({ node, ...props }) => <MarkdownImage imageSize="full" src={props.src ?? ""} />,
-          }}
-          rehypePlugins={[rehypeRaw, rehypeSanitize]}
-        >
-          {imgTags}
-        </ReactMarkdown>
-      )}
+      {isOnlyImage && <Interweave className="prose" content={totalContent} matchers={[new UrlMatcher("url")]} />}
 
       {isOnlyText && totalContent.length >= 90 ? (
         <>
           <div className="flex gap-4 items-center">
-            <ReactMarkdown
-              className="markdown"
-              components={{
-                p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
-                ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
-                li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
-              }}
-              rehypePlugins={[rehypeRaw, rehypeSanitize]}
-            >
-              {truncatedContent}
-            </ReactMarkdown>
+            <Interweave className="prose" content={totalContent} matchers={[new UrlMatcher("url")]} />
             {arrowButton}
           </div>
           {CollapsibleContent}
         </>
       ) : (
-        <ReactMarkdown
-          className="markdown"
-          components={{
-            p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
-            ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
-            li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
-          }}
-          rehypePlugins={[rehypeRaw, rehypeSanitize]}
-        >
-          {totalContent}
-        </ReactMarkdown>
+        <Interweave className="prose" content={totalContent} matchers={[new UrlMatcher("url")]} />
       )}
 
       {isImageAndText && (
         <>
-          <div className="flex gap-4 items-center">
-            <ReactMarkdown
-              className="markdown"
-              components={{
-                img: ({ node, ...props }) => <MarkdownImage imageSize="full" src={props.src ?? ""} />,
-                p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
-                ul: ({ node, children, ...props }) => <MarkdownUnorderedList children={children} props={props} />,
-                li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
-              }}
-              rehypePlugins={[rehypeRaw, rehypeSanitize]}
-            >
-              {truncatedContent}
-            </ReactMarkdown>
+          <div className="flex gap-4 prose items-center">
+            <Interweave className="prose" content={truncatedContent} matchers={[new UrlMatcher("url")]} />
             {arrowButton}
           </div>
           {CollapsibleContent}
