@@ -3,7 +3,7 @@ import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
-import { ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -26,7 +26,7 @@ const Page: NextPage = () => {
     status,
     data: queryData,
     error,
-    isFetching,
+    isFetching: isContestDataFetching,
   } = useQuery(
     ["searchedContests", title, page],
     () =>
@@ -42,6 +42,14 @@ const Page: NextPage = () => {
     {
       ...queryOptions,
       enabled: title !== "",
+    },
+  );
+
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
+    ["rewards", queryData],
+    data => getRewards(queryData?.data ?? []),
+    {
+      enabled: !!queryData,
     },
   );
 
@@ -84,13 +92,15 @@ const Page: NextPage = () => {
           <h1 className="sr-only">Searched contests</h1>
           {isSupabaseConfigured ? (
             <ListContests
-              isFetching={isFetching}
+              isContestDataFetching={isContestDataFetching}
               itemsPerPage={ITEMS_PER_PAGE}
               status={status}
               error={error}
               page={page}
               setPage={setPage}
-              result={queryData}
+              contestData={queryData}
+              rewardsData={rewardsData}
+              isRewardsFetching={isRewardsFetching}
             />
           ) : (
             <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">

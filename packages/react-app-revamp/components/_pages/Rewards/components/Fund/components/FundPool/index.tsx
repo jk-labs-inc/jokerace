@@ -1,18 +1,41 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3 from "@components/UI/ButtonV3";
+import { chains, chainsImages } from "@config/wagmi";
 import CHAIN_CONFIGS, { ChainConfig, TokenConfig } from "@helpers/tokens";
 import { Reward, useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { getAddress } from "ethers/lib/utils";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useMedia } from "react-use";
-import { useNetwork } from "wagmi";
+
+type NativeCurrency = {
+  name: string;
+  symbol: string;
+  decimals: number;
+};
+
+const formatNativeToken = (nativeToken?: NativeCurrency): TokenConfig | undefined => {
+  if (!nativeToken) return undefined;
+
+  return {
+    symbol: nativeToken.symbol,
+    name: nativeToken.name,
+    address: "",
+  };
+};
 
 const CreateRewardsFundPool = () => {
-  const { chain } = useNetwork();
+  const { asPath } = useRouter();
+  const chainName = asPath.split("/")[2];
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const { setRewards, setValidationError } = useFundRewardsStore(state => state);
   const [rows, setRows] = useState<Reward[]>([{ address: "", amount: "" }]);
   const isMobile = useMedia("(max-width: 768px)");
-  const chainConfig = Object.values(CHAIN_CONFIGS).find(config => config.id === chain?.id);
+  const chainConfig = Object.values(CHAIN_CONFIGS).find(config => config.id === chainId);
+  const nativeToken: NativeCurrency | undefined = chains.find(chain => chain.id === chainId)?.nativeCurrency;
+  const nativeTokenConfig = formatNativeToken(nativeToken);
+  const allTokens = (nativeTokenConfig ? [nativeTokenConfig] : []).concat(chainConfig?.tokens || []);
 
   useEffect(() => {
     setRewards(rows);
@@ -25,7 +48,7 @@ const CreateRewardsFundPool = () => {
       }
 
       try {
-        if (!isTokenShorthand(row.address, chainConfig)) {
+        if (!isTokenShorthand(row.address)) {
           getAddress(row.address);
         }
       } catch {
@@ -55,7 +78,12 @@ const CreateRewardsFundPool = () => {
 
   const handleTokenClick = (index: number, token: TokenConfig) => {
     const values = [...rows];
-    values[index].address = token.address ?? `$${token.shorthand}`;
+    if (!token.address) {
+      values[index].address = `$${token.symbol}`;
+    } else {
+      values[index].address = token.address;
+    }
+
     setRows(values);
   };
 
@@ -67,11 +95,21 @@ const CreateRewardsFundPool = () => {
     }
   };
 
-  const isTokenShorthand = (value: string, chainConfig?: ChainConfig) => {
-    const tokenShorthands = chainConfig?.tokens.map((token: { shorthand: string }) => token.shorthand);
+  const isTokenShorthand = (value: string) => {
+    const tokenShorthands = allTokens.map((token: { symbol: string }) => token.symbol);
     const normalizedValue = value.replace("$", ""); // Remove $ sign from the value
 
     return tokenShorthands?.includes(normalizedValue);
+  };
+
+  const getTokenImage = (token: TokenConfig) => {
+    if (token.address) {
+      return `/tokens/${token.name.toLowerCase()}.svg`;
+    } else if (token.symbol === "ETH") {
+      return "/tokens/ether.svg";
+    } else {
+      return chainsImages[chainName.toLowerCase().replace(" ", "")];
+    }
   };
 
   const lowerDeviceFunding = (
@@ -83,7 +121,7 @@ const CreateRewardsFundPool = () => {
               {idx + 1}
             </div>
             <div className="text-neutral-11 flex flex-col gap-2">
-              <span className="font-bold uppercase">chain</span> {chain?.name}
+              <span className="font-bold uppercase">chain</span> {chainName}
             </div>
           </div>
 
@@ -91,7 +129,7 @@ const CreateRewardsFundPool = () => {
             <span className="font-bold uppercase">token address</span>
             <input
               className={`bg-neutral-11 rounded-[5px] text-true-black px-2 py-1 placeholder-neutral-10 ${
-                isTokenShorthand(row.address, chainConfig) ? "uppercase" : "normal-case"
+                isTokenShorthand(row.address) ? "uppercase" : "normal-case"
               }`}
               type="text"
               placeholder="0xA973C55826589f..."
@@ -101,14 +139,14 @@ const CreateRewardsFundPool = () => {
             />
           </div>
           <div className="flex gap-2">
-            {chainConfig?.tokens.map(token => (
+            {allTokens.map(token => (
               <div
                 key={token.address}
                 className="flex items-center gap-2 border-2 border-neutral-10 text-[16px] font-bold uppercase rounded-[10px] px-2 cursor-pointer hover:bg-neutral-4 transition-colors duration-200"
                 onClick={() => handleTokenClick(idx, token)}
               >
-                <Image src={`/tokens/${token.shorthand}.svg`} width={15} height={15} alt="token" className="mt-[2px]" />
-                {token.shorthand}
+                <Image src={getTokenImage(token)} width={15} height={15} alt="token" className="mt-[2px]" />
+                {token.symbol}
               </div>
             ))}
           </div>
@@ -150,10 +188,10 @@ const CreateRewardsFundPool = () => {
           {rows.map((row, idx) => (
             <div key={idx} className="rewards-funding-grid gap-4 text-[16px] items-center group">
               <div className="font-bold text-neutral-11 font-sabo self-center text-[18px] mt-[5px]">{idx + 1}</div>
-              <div className="self-center">{chain?.name}</div>
+              <div className="self-center">{chainName}</div>
               <input
                 className={`bg-neutral-11 rounded-[5px] text-true-black px-2 py-1 placeholder-neutral-10 ${
-                  isTokenShorthand(row.address, chainConfig) ? "uppercase" : "normal-case"
+                  isTokenShorthand(row.address) ? "uppercase" : "normal-case"
                 }`}
                 type="text"
                 placeholder="0xA973C5582658933f..."
@@ -179,20 +217,14 @@ const CreateRewardsFundPool = () => {
               )}
 
               <div className={`col-start-3 col-span-3 -mt-[5px] flex gap-2 ${idx < rows.length - 1 ? "mb-8" : ""}`}>
-                {chainConfig?.tokens.map(token => (
+                {allTokens.map(token => (
                   <div
                     key={token.address}
                     className="flex items-center gap-2 border-2 border-neutral-10 text-[16px] font-bold uppercase rounded-[10px] px-2 cursor-pointer hover:bg-neutral-4 transition-colors duration-200"
                     onClick={() => handleTokenClick(idx, token)}
                   >
-                    <Image
-                      src={`/tokens/${token.shorthand}.svg`}
-                      width={15}
-                      height={15}
-                      alt="token"
-                      className="mt-[2px]"
-                    />
-                    {token.shorthand}
+                    <Image src={getTokenImage(token)} width={20} height={20} alt="token" className="mt-[2px]" />
+                    {token.symbol}
                   </div>
                 ))}
               </div>

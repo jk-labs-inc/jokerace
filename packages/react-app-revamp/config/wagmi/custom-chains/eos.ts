@@ -4,6 +4,7 @@ export const eos: Chain = {
   id: 17777,
   name: "eos",
   network: "eos",
+  iconUrl: "/eos.svg",
   nativeCurrency: {
     decimals: 18,
     name: "EOS",
