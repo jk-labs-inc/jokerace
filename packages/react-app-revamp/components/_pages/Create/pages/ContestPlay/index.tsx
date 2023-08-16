@@ -1,7 +1,7 @@
 import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useQuery } from "@tanstack/react-query";
-import { getLiveContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { getLiveContests, getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import { useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 
@@ -10,7 +10,12 @@ const ContestPlay = () => {
   const { address } = useAccount();
   const [searchValue, setSearchValue] = useState("");
 
-  const { status, data, error, isFetching } = useQuery(["liveContests", page, address, searchValue], () =>
+  const {
+    status,
+    data: contestData,
+    error,
+    isFetching: isContestDataFetching,
+  } = useQuery(["liveContests", page, address, searchValue], () =>
     searchValue
       ? searchContests(
           {
@@ -24,6 +29,14 @@ const ContestPlay = () => {
       : getLiveContests(page, 7, address),
   );
 
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
+    ["rewards", contestData],
+    data => getRewards(contestData?.data ?? []),
+    {
+      enabled: !!contestData,
+    },
+  );
+
   const customTitle = useMemo(() => {
     if (!searchValue) return "Live Contests";
 
@@ -35,14 +48,16 @@ const ContestPlay = () => {
       {isSupabaseConfigured ? (
         <ListContests
           className="animate-swingInLeft"
-          isFetching={isFetching}
+          isContestDataFetching={isContestDataFetching}
+          isRewardsFetching={isRewardsFetching}
           itemsPerPage={ITEMS_PER_PAGE}
           status={status}
           error={error}
           page={page}
           setPage={setPage}
           includeSearch
-          result={data}
+          contestData={contestData}
+          rewardsData={rewardsData}
           customTitle={customTitle}
           onSearchChange={(value: string) => setSearchValue(value)}
         />

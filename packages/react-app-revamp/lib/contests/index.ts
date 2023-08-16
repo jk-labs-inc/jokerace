@@ -270,11 +270,8 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
       const processedData = await Promise.all(
         data.map(contest => processContestQualifications(contest, userAddress ?? "")),
       );
-      const rewardsData = await Promise.all(
-        data.map(contest => processContestRewardsData(contest.address, contest.network_name)),
-      );
 
-      return { data: processedData, rewards: rewardsData, count };
+      return { data: processedData, count };
     } catch (e) {
       console.error(e);
     }
