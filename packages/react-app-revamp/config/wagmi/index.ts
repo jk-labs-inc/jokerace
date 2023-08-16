@@ -187,6 +187,7 @@ export const chainsImages: ChainImages = {
   luksotestnet: "/lukso.svg",
   mantl: "/mantle.svg",
   mantletestnet: "/mantle.svg",
+  nautilusChain: "/nautilusChain.png",
   near: "/aurora.svg",
   neartestnet: "/aurora.svg",
   zetatestnet: "/zeta.svg",
