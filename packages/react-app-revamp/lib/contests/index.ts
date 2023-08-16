@@ -10,6 +10,17 @@ import { SearchOptions } from "types/search";
 
 export const ITEMS_PER_PAGE = 7;
 
+interface ContestReward {
+  contestAddress: string;
+  chain: string;
+  token: {
+    symbol: string;
+    value: number;
+  };
+  winners: number;
+  numberOfTokens: number;
+}
+
 async function getContractConfig(address: string, chainId: number) {
   const { abi } = await getContestContractVersion(address, chainId);
 
@@ -28,8 +39,7 @@ async function getContractConfig(address: string, chainId: number) {
 
 export const fetchTokenBalances = async (chainName: string, contestRewardModuleAddress: string) => {
   try {
-    const networkName = chainName.toLowerCase() === "arbitrumone" ? "arbitrum" : chainName;
-    const alchemyAppUrl = chains.filter(chain => chain.name === networkName)[0].rpcUrls.default.http[0];
+    const alchemyAppUrl = chains.filter(chain => chain.name === chainName.toLowerCase())[0].rpcUrls.default.http[0];
 
     const response = await fetch(alchemyAppUrl, {
       method: "POST",
@@ -119,92 +129,98 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
   return updatedContest;
 };
 
-const processContestData = async (contest: any, userAddress: string) => {
-  try {
-    const chainId = chains.filter(
-      c => c.name.replace(/\s+/g, "").toLowerCase() === contest.network_name.replace(/\s+/g, "").toLowerCase(),
-    )[0].id;
+const processContestRewardsData = async (contestAddress: string, contestChainName: string) => {
+  const chainId = chains.filter(
+    c => c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
+  )[0].id;
 
-    const contractConfig = await getContractConfig(contest.address, chainId);
+  const contractConfig = await getContractConfig(contestAddress, chainId);
 
-    contest = await updateContestWithUserQualifications(contest, userAddress);
+  let reward: ContestReward | null = null;
 
-    if (
-      contractConfig &&
-      contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
-    ) {
-      try {
-        const contestRewardModuleAddress = (await readContract({
-          ...contractConfig,
-          functionName: "officialRewardsModule",
-          args: [],
-        })) as any;
+  if (
+    contractConfig &&
+    contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
+  ) {
+    try {
+      const contestRewardModuleAddress = (await readContract({
+        ...contractConfig,
+        functionName: "officialRewardsModule",
+        args: [],
+      })) as any;
 
-        if (contestRewardModuleAddress.toString() === "0x0000000000000000000000000000000000000000") {
-          contest.rewards = null;
+      if (contestRewardModuleAddress.toString() === "0x0000000000000000000000000000000000000000") {
+        reward = null;
+      } else {
+        const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress.toString(), chainId);
+
+        if (!abiRewardsModule) {
+          reward = null;
         } else {
-          const abiRewardsModule = await getRewardsModuleContractVersion(
-            contestRewardModuleAddress.toString(),
-            chainId,
-          );
+          const winners = (await readContract({
+            address: contestRewardModuleAddress.toString() as `0x${string}`,
+            abi: abiRewardsModule,
+            chainId: chainId,
+            functionName: "getPayees",
+          })) as BigNumber[];
 
-          if (!abiRewardsModule) {
-            contest.rewards = null;
-          } else {
-            const winners = (await readContract({
-              address: contestRewardModuleAddress.toString() as `0x${string}`,
-              abi: abiRewardsModule,
-              chainId: chainId,
-              functionName: "getPayees",
-            })) as BigNumber[];
+          let rewardToken: FetchBalanceResult | null = null;
+          let erc20Tokens: any = null;
 
-            let rewardToken: FetchBalanceResult | null = null;
-            let erc20Tokens: any = null;
+          rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
 
-            rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
+          if (!rewardToken || Number(rewardToken.value) === 0) {
+            try {
+              erc20Tokens = await fetchTokenBalances(contestChainName, contestRewardModuleAddress.toString());
 
-            if (!rewardToken || Number(rewardToken.value) === 0) {
-              try {
-                erc20Tokens = await fetchTokenBalances(contest.network_name, contestRewardModuleAddress.toString());
-
-                if (erc20Tokens && erc20Tokens.length > 0) {
-                  rewardToken = await fetchFirstToken(
-                    contestRewardModuleAddress.toString(),
-                    chainId,
-                    erc20Tokens[0].contractAddress,
-                  );
-                }
-              } catch (error) {
-                console.error("Error fetching token balances:", error);
-                return;
+              if (erc20Tokens && erc20Tokens.length > 0) {
+                rewardToken = await fetchFirstToken(
+                  contestRewardModuleAddress.toString(),
+                  chainId,
+                  erc20Tokens[0].contractAddress,
+                );
               }
-            }
-
-            if (rewardToken) {
-              contest.rewards = {
-                token: {
-                  symbol: rewardToken.symbol,
-                  value: parseFloat(utils.formatUnits(rewardToken.value, rewardToken.decimals)),
-                },
-                winners: winners.length,
-                numberOfTokens: erc20Tokens?.length ?? 1,
-              };
-            } else {
-              contest.rewards = null;
+            } catch (error) {
+              console.error("Error fetching token balances:", error);
+              return;
             }
           }
-        }
-      } catch (error) {
-        console.error("Error:", error);
-        contest.rewards = null;
-      }
-    } else {
-      contest.rewards = null;
-    }
 
-    return contest;
+          if (rewardToken) {
+            reward = {
+              contestAddress,
+              chain: contestChainName,
+              token: {
+                symbol: rewardToken.symbol,
+                value: parseFloat(utils.formatUnits(rewardToken.value, rewardToken.decimals)),
+              },
+              winners: winners.length,
+              numberOfTokens: erc20Tokens?.length ?? 1,
+            };
+          } else {
+            reward = null;
+          }
+          return reward;
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      reward = null;
+
+      return reward;
+    }
+  } else {
+    reward = null;
+
+    return reward;
+  }
+};
+
+const processContestQualifications = async (contest: any, userAddress: string) => {
+  try {
+    return await updateContestWithUserQualifications(contest, userAddress);
   } catch (error) {
-    console.error("Error processing contest data:", error);
+    console.error("Error processing contest qualifications:", error);
     return {
       ...contest,
       rewards: null,
@@ -248,12 +264,22 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
-      return { data: processedData, count };
+      const processedData = await Promise.all(
+        data.map(contest => processContestQualifications(contest, userAddress ?? "")),
+      );
+      const rewardsData = await Promise.all(
+        data.map(contest => processContestRewardsData(contest.address, contest.network_name)),
+      );
+
+      return { data: processedData, rewards: rewardsData, count };
     } catch (e) {
       console.error(e);
     }
   }
+}
+
+export async function getRewards(contests: any[]) {
+  return Promise.all(contests.map(contest => processContestRewardsData(contest.address, contest.network_name)));
 }
 
 export async function getFeaturedContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
@@ -261,6 +287,7 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
 
   const config = await import("@config/supabase");
   const { from, to } = getPagination(currentPage, itemsPerPage);
+  let processedData = [];
 
   try {
     const { data, count, error } = await config.supabase
@@ -271,7 +298,7 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
 
     if (error) throw new Error(error.message);
 
-    const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+    processedData = await Promise.all(data.map(contest => processContestQualifications(contest, userAddress ?? "")));
 
     processedData.sort((a, b) => {
       const now = moment();
@@ -317,7 +344,9 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+      const processedData = await Promise.all(
+        data.map(contest => processContestQualifications(contest, userAddress ?? "")),
+      );
 
       return { data: processedData, count };
     } catch (e) {
@@ -345,7 +374,10 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+      const processedData = await Promise.all(
+        data.map(contest => processContestQualifications(contest, userAddress ?? "")),
+      );
+
       return { data: processedData, count };
     } catch (e) {
       console.error(e);
@@ -372,7 +404,10 @@ export async function getUpcomingContests(currentPage: number, itemsPerPage: num
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(contest => processContestData(contest, userAddress ?? "")));
+      const processedData = await Promise.all(
+        data.map(contest => processContestQualifications(contest, userAddress ?? "")),
+      );
+
       return { data: processedData, count };
     } catch (e) {
       console.error(e);

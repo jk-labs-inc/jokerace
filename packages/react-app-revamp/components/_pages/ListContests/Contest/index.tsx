@@ -14,8 +14,10 @@ import { useAccount } from "wagmi";
 
 interface ContestProps {
   contest: any;
+  rewards: any;
   compact: boolean;
   loading: boolean;
+  rewardsLoading: boolean;
 }
 
 export type TimeLeft = {
@@ -23,9 +25,10 @@ export type TimeLeft = {
   type: "days" | "hours" | "minutes";
 };
 
-const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
+const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, rewardsLoading }) => {
   const { address } = useAccount();
   const router = useRouter();
+  const [contestReward, setContestReward] = useState<any>(null);
   const isUpcomingContest = router.pathname === ROUTE_VIEW_UPCOMING_CONTESTS;
   const [submissionStatus, setSubmissionStatus] = useState("");
   const [votingStatus, setVotingStatus] = useState("");
@@ -62,6 +65,14 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
   const getContestUrl = (contest: { network_name: string; address: string }) => {
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", contest.network_name).replace("[address]", contest.address);
   };
+
+  useEffect(() => {
+    if (rewardsLoading || loading) return;
+
+    const contestReward = rewards.find((reward: any) => reward && reward.contestAddress === contest.address);
+
+    setContestReward(contestReward || null);
+  }, [rewardsLoading, loading, rewards, contest.address]);
 
   useEffect(() => {
     const now = moment();
@@ -231,7 +242,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
   };
 
   return (
-    <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={2}>
+    <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       <a href={getContestUrl(contest)}>
         <div
           className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-4 p-3 
@@ -340,28 +351,28 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
               <div className="w-50 h-50"></div>
             )}
           </div>
-          {contest.rewards ? (
-            <div className="flex flex-col">
-              <p className="font-bold w-full">
-                {loading ? (
-                  <Skeleton />
-                ) : (
-                  <>
-                    {contest.rewards.token.value} <span className="uppercase">${contest.rewards.token.symbol}</span>
-                  </>
-                )}
-              </p>
+          <div className="flex flex-col">
+            <p className={`font-bold w-full ${contestReward ? "text-neutral-11" : "text-neutral-9"} `}>
+              {rewardsLoading || loading ? (
+                <Skeleton />
+              ) : contestReward ? (
+                <>
+                  {contestReward.token.value} <span className="uppercase">${contestReward.token.symbol}</span>
+                </>
+              ) : (
+                "No rewards"
+              )}
+            </p>
+            {contestReward && (
               <p>
-                {loading ? (
+                {rewardsLoading || loading ? (
                   <Skeleton />
                 ) : (
-                  `to ${contest.rewards.winners} ${contest.rewards.winners > 1 ? "winners" : "winner"}`
+                  `to ${contestReward.winners} ${contestReward.winners > 1 ? "winners" : "winner"}`
                 )}
               </p>
-            </div>
-          ) : (
-            <p className="text-neutral-9 font-bold">{loading ? <Skeleton /> : "no rewards"}</p>
-          )}
+            )}
+          </div>
         </div>
 
         {/*  Mobile */}
@@ -422,7 +433,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
                       "voting closed"
                     )}
                   </li>
-                  {contest.rewards ? (
+                  {/* TODO: mobile rewards */}
+                  {/* {contest.rewards ? (
                     <li>
                       {loading ? (
                         <Skeleton />
@@ -435,7 +447,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading }) => {
 
                       {loading ? <Skeleton /> : ` to ${contest.rewards.winners} winners`}
                     </li>
-                  ) : null}
+                  ) : null} */}
                 </>
               )}
             </ul>

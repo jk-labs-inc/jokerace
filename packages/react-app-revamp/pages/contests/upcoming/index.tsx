@@ -3,7 +3,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getPagination from "@helpers/getPagination";
 import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
-import { getUpcomingContests, ITEMS_PER_PAGE } from "lib/contests";
+import { getRewards, getUpcomingContests, ITEMS_PER_PAGE } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
@@ -21,19 +21,34 @@ function useContests(initialData: any) {
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
-  const { status, data, error, isFetching } = useQuery(
+  const {
+    status,
+    data: contestData,
+    error,
+    isFetching: isContestDataFetching,
+  } = useQuery(
     ["upcomingContests", page, address],
     () => getUpcomingContests(page, ITEMS_PER_PAGE, address),
     queryOptions,
+  );
+
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
+    ["rewards", contestData],
+    data => getRewards(contestData?.data ?? []),
+    {
+      enabled: !!contestData,
+    },
   );
 
   return {
     page,
     setPage,
     status,
-    data,
+    contestData,
+    rewardsData,
     error,
-    isFetching,
+    isContestDataFetching,
+    isRewardsFetching,
   };
 }
 const Page: NextPage = props => {
@@ -42,9 +57,11 @@ const Page: NextPage = props => {
     page,
     setPage,
     status,
-    data,
+    contestData,
+    rewardsData,
     error,
-    isFetching,
+    isContestDataFetching,
+    isRewardsFetching,
     //@ts-ignore
   } = useContests(initialData?.data);
 
@@ -59,13 +76,15 @@ const Page: NextPage = props => {
         <h1 className="sr-only">Upcoming contests</h1>
         {isSupabaseConfigured ? (
           <ListContests
-            isFetching={isFetching}
+            isContestDataFetching={isContestDataFetching}
+            isRewardsFetching={isRewardsFetching}
             itemsPerPage={ITEMS_PER_PAGE}
             status={status}
             error={error}
             page={page}
             setPage={setPage}
-            result={data}
+            contestData={contestData}
+            rewardsData={rewardsData}
           />
         ) : (
           <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">

@@ -6,7 +6,7 @@ import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery } from "@tanstack/react-query";
-import { getFeaturedContests, ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { getFeaturedContests, getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import router from "next/router";
@@ -20,29 +20,43 @@ function useContests(initialData: any, searchValue: string) {
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
 
-  const { status, data, error, isFetching } = useQuery(
-    [searchValue ? "featuredContests" : "liveContests", page, address, searchValue],
-    () =>
-      searchValue
-        ? searchContests(
-            {
-              searchString: searchValue,
-              pagination: {
-                currentPage: page,
-              },
+  const {
+    status,
+    data: contestData,
+    error,
+    isFetching: isContestDataFetching,
+  } = useQuery([searchValue ? "featuredContests" : "liveContests", page, address, searchValue], () =>
+    searchValue
+      ? searchContests(
+          {
+            searchString: searchValue,
+            pagination: {
+              currentPage: page,
             },
-            address,
-          )
-        : getFeaturedContests(page, 6, address),
+          },
+          address,
+        )
+      : getFeaturedContests(page, 6, address),
   );
+
+  const {
+    status: rewardsStatus,
+    data: rewardsData,
+    error: rewardsError,
+    isFetching: isRewardsFetching,
+  } = useQuery(["rewards", contestData], data => getRewards(contestData?.data ?? []), {
+    enabled: !!contestData,
+  });
 
   return {
     page,
     setPage,
     status,
-    data,
+    contestData,
+    rewardsData,
+    isRewardsFetching,
     error,
-    isFetching,
+    isContestDataFetching,
   };
 }
 
@@ -55,9 +69,11 @@ const Page: NextPage = props => {
     page,
     setPage,
     status,
-    data,
+    contestData,
+    rewardsData,
+    isRewardsFetching,
     error,
-    isFetching,
+    isContestDataFetching,
     //@ts-ignore
   } = useContests(initialData?.data, searchValue);
 
@@ -115,13 +131,15 @@ const Page: NextPage = props => {
           {isSupabaseConfigured ? (
             <div className="flex flex-col">
               <ListContests
-                isFetching={isFetching}
+                isFetching={isContestDataFetching}
+                isRewardsFetching={isRewardsFetching}
                 itemsPerPage={ITEMS_PER_PAGE}
                 status={status}
                 error={error}
                 page={page}
                 setPage={setPage}
-                result={data}
+                contestData={contestData}
+                rewardsData={rewardsData}
                 compact={true}
                 onSearchChange={setSearchValue}
               />
