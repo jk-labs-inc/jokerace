@@ -433,21 +433,17 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, rewards
                       "voting closed"
                     )}
                   </li>
-                  {/* TODO: mobile rewards */}
-                  {/* {contest.rewards ? (
+                  {rewardsLoading || loading ? (
                     <li>
-                      {loading ? (
-                        <Skeleton />
-                      ) : (
-                        <>
-                          {contest.rewards.token.value}{" "}
-                          <span className="uppercase">${contest.rewards.token.symbol}</span>
-                        </>
-                      )}
-
-                      {loading ? <Skeleton /> : ` to ${contest.rewards.winners} winners`}
+                      <Skeleton width={100} />
                     </li>
-                  ) : null} */}
+                  ) : contestReward ? (
+                    <li>
+                      {contestReward.token.value}
+                      <span className="uppercase"> ${contestReward.token.symbol} </span>
+                      to {contestReward.winners} {contestReward.winners > 1 ? "winners" : "winner"}
+                    </li>
+                  ) : null}
                 </>
               )}
             </ul>
