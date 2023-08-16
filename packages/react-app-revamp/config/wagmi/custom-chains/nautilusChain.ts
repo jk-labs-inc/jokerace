@@ -1,7 +1,7 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
 export const nautilusChain: Chain = {
-  id: 22222,
+  id: 91002,
   name: "nautilusChain",
   network: "nautilusChain",
   iconUrl: "/nautiluschain.png",
