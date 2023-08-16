@@ -5,10 +5,6 @@ interface MarkdownListProps {
   props: any;
 }
 
-const MarkdownList: FC<MarkdownListProps> = ({ children, props }) => (
-  <li {...props} className="flex items-center">
-    {children}
-  </li>
-);
+const MarkdownList: FC<MarkdownListProps> = ({ children, props }) => <li {...props}>{children}</li>;
 
 export default MarkdownList;
