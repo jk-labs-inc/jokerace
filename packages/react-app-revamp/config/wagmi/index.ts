@@ -26,6 +26,7 @@ import { luksoTestnet } from "./custom-chains/luksoTestnet";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { modeTestnet } from "./custom-chains/modeTestnet";
+import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
 import { optimism } from "./custom-chains/optimism";
@@ -69,6 +70,7 @@ const totalChains: Chain[] = [
   qChain,
   eos,
   proteus,
+  nautilusChain,
   polygonTestnet,
   sepolia,
   goerli,
