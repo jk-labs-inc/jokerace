@@ -12,10 +12,10 @@ export const nautilusChain: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["http://api.nautilus.nautchain.xyz/"],
+      http: ["https://api.nautilus.nautchain.xyz/"],
     },
     default: {
-      http: ["http://api.nautilus.nautchain.xyz/"],
+      http: ["https://api.nautilus.nautchain.xyz/"],
     },
   },
   blockExplorers: {
