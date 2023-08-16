@@ -10,9 +10,11 @@ interface ListContestsProps {
   status: "error" | "loading" | "success";
   page: number;
   setPage: any;
-  isFetching: boolean;
+  isContestDataFetching: boolean;
+  isRewardsFetching: boolean;
   itemsPerPage: number;
-  result?: any;
+  contestData?: any;
+  rewardsData?: any;
   error?: any;
   className?: string;
   includeSearch?: boolean;
@@ -24,29 +26,31 @@ interface ListContestsProps {
 export const ListContests: FC<ListContestsProps> = ({
   error,
   status,
-  result,
+  contestData,
   page,
   className,
   setPage,
   customTitle,
   includeSearch,
+  rewardsData,
+  isRewardsFetching,
   itemsPerPage,
-  isFetching,
+  isContestDataFetching,
   compact = false,
   onSearchChange,
 }) => {
   const [sortedData, setSortedData] = useState<any[]>([]);
   const [sorting, setSorting] = useState<Sorting | null>(null);
   const [fadeBg, setFadeBg] = useState(false);
-  const loading = status === "loading" || isFetching;
+  const loading = status === "loading" || isContestDataFetching;
   const placeholderCount = compact ? 6 : 7;
   const placeholders = new Array(placeholderCount).fill(null);
 
   useEffect(() => {
-    if (!result) return;
+    if (!contestData) return;
 
-    setSortedData(result.data);
-  }, [result]);
+    setSortedData(contestData.data);
+  }, [contestData]);
 
   useEffect(() => {
     handleSort();
@@ -115,16 +119,16 @@ export const ListContests: FC<ListContestsProps> = ({
   };
 
   const handleSort = () => {
-    if (!result) return;
+    if (!contestData) return;
 
     if (!sorting) {
-      setSortedData(result.data); // Reset sorted data
+      setSortedData(contestData.data); // Reset sorted data
       return;
     }
 
     const { property, ascending } = sorting;
     const order = ascending ? "ascending" : "descending";
-    const sorted = sortData([...result.data], property, order);
+    const sorted = sortData([...contestData.data], property, order);
     setSortedData(sorted);
   };
 
@@ -136,7 +140,7 @@ export const ListContests: FC<ListContestsProps> = ({
           <Search onSearchChange={onSearchChange} />
           <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
         </div>
-        {!isFetching && result?.count === 0 ? (
+        {!isContestDataFetching && contestData?.count === 0 ? (
           <div className="text-neutral-9 text-center italic mb-6 animate-appear mt-12">No contests found</div>
         ) : (
           <div
@@ -146,12 +150,26 @@ export const ListContests: FC<ListContestsProps> = ({
           >
             {loading
               ? placeholders.map((_, index) => (
-                  <Contest key={`placeholder-contest-${index}`} contest={{}} compact={compact} loading={loading} />
+                  <Contest
+                    key={`placeholder-contest-${index}`}
+                    contest={{}}
+                    compact={compact}
+                    loading={loading}
+                    rewards={rewardsData}
+                    rewardsLoading={isRewardsFetching}
+                  />
                 ))
               : sortedData
                   .slice(0, 6)
                   .map((contest: any, index: number) => (
-                    <Contest key={`contest-${index}`} contest={contest} compact={compact} loading={loading} />
+                    <Contest
+                      key={`contest-${index}`}
+                      contest={contest}
+                      compact={compact}
+                      loading={loading}
+                      rewards={rewardsData}
+                      rewardsLoading={isRewardsFetching}
+                    />
                   ))}
           </div>
         )}
@@ -174,7 +192,7 @@ export const ListContests: FC<ListContestsProps> = ({
               ) : (
                 <span aria-hidden="true">
                   🃏
-                  <span className={`pis-1ex text-[20px]`}>{result?.count} contests</span>
+                  <span className={`pis-1ex text-[20px]`}>{contestData?.count} contests</span>
                 </span>
               )}
             </div>
@@ -188,10 +206,10 @@ export const ListContests: FC<ListContestsProps> = ({
               <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
             </div>
           </div>
-          {!isFetching && result?.count === 0 ? (
+          {!isContestDataFetching && contestData?.count === 0 ? (
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
-            <div className={`animate-appear ${className}`}>
+            <div className={`${className}`}>
               <div
                 className={`grid ${
                   fadeBg ? "opacity-50" : "opacity-100"
@@ -199,18 +217,32 @@ export const ListContests: FC<ListContestsProps> = ({
               >
                 {loading
                   ? placeholders.map((_, index) => (
-                      <Contest key={`placeholder-contest-${index}`} contest={{}} compact={compact} loading={loading} />
+                      <Contest
+                        key={`placeholder-contest-${index}`}
+                        contest={{}}
+                        compact={compact}
+                        loading={loading}
+                        rewards={rewardsData}
+                        rewardsLoading={isRewardsFetching}
+                      />
                     ))
                   : sortedData.map((contest: any, index: number) => (
-                      <Contest key={`contest-${index}`} contest={contest} compact={compact} loading={loading} />
+                      <Contest
+                        key={`contest-${index}`}
+                        contest={contest}
+                        compact={compact}
+                        loading={loading}
+                        rewards={rewardsData}
+                        rewardsLoading={isRewardsFetching}
+                      />
                     ))}
               </div>
 
-              {Math.ceil(result?.count / itemsPerPage) > 1 && (
+              {Math.ceil(contestData?.count / itemsPerPage) > 1 && (
                 <Pagination
                   currentPage={page}
                   setCurrentPage={(newPage: number) => setPage(newPage)}
-                  totalPages={Math.ceil(result.count / itemsPerPage)}
+                  totalPages={Math.ceil(contestData.count / itemsPerPage)}
                   edgePageCount={1}
                   middlePagesSiblingCount={1}
                   className="mt-6 flex"

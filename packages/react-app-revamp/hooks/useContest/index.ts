@@ -78,9 +78,8 @@ export function useContest() {
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
   const { contestStatus } = useContestStatusStore(state => state);
-  const networkName = chainName.toLowerCase() === "arbitrumone" ? "arbitrum" : chainName;
   const alchemyRpc = chains
-    .filter(chain => chain.name.toLowerCase().replace(" ", "") === networkName)?.[0]
+    .filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.rpcUrls.default.http[0].includes("alchemy");
 
   /**
