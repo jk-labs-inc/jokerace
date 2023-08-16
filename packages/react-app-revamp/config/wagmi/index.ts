@@ -193,4 +193,6 @@ export const chainsImages: ChainImages = {
   zora: "/zora.png",
   qchain: "/qchain.svg",
   qchaintestnet: "/qchain.svg",
+  eos: "/eos.svg",
+  eostestnet: "/eos.svg",
 };
