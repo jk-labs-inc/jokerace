@@ -131,7 +131,7 @@ const Page: NextPage = props => {
           {isSupabaseConfigured ? (
             <div className="flex flex-col">
               <ListContests
-                isFetching={isContestDataFetching}
+                isContestDataFetching={isContestDataFetching}
                 isRewardsFetching={isRewardsFetching}
                 itemsPerPage={ITEMS_PER_PAGE}
                 status={status}
