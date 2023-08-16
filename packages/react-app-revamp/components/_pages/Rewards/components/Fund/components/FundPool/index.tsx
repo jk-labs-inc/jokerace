@@ -104,7 +104,7 @@ const CreateRewardsFundPool = () => {
 
   const getTokenImage = (token: TokenConfig) => {
     if (token.address) {
-      return `/tokens/${token.name}.svg`;
+      return `/tokens/${token.name.toLowerCase()}.svg`;
     } else if (token.symbol === "ETH") {
       return "/tokens/ether.svg";
     } else {
