@@ -5,10 +5,6 @@ interface MarkdownUnorderedListProps {
   props: any;
 }
 
-const MarkdownUnorderedList: FC<MarkdownUnorderedListProps> = ({ children, props }) => (
-  <ul {...props} className="list-disc list-inside list-explainer">
-    {children}
-  </ul>
-);
+const MarkdownUnorderedList: FC<MarkdownUnorderedListProps> = ({ children, props }) => <ul {...props}>{children}</ul>;
 
 export default MarkdownUnorderedList;
