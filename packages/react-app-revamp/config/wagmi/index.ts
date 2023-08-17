@@ -40,6 +40,8 @@ import { publicGoodsNetwork } from "./custom-chains/publicGoodsNetwork";
 import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
 import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
+import { ronin } from "./custom-chains/ronin";
+import { roninTestnet } from "./custom-chains/roninTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
@@ -71,6 +73,7 @@ const totalChains: Chain[] = [
   eos,
   proteus,
   nautilusChain,
+  ronin,
   polygonTestnet,
   sepolia,
   goerli,
@@ -92,6 +95,7 @@ const totalChains: Chain[] = [
   modeTestnet,
   qChainTestnet,
   eosTestnet,
+  roninTestnet,
   mainnet,
 ];
 
