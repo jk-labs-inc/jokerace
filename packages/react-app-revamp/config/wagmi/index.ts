@@ -42,6 +42,7 @@ import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
+import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
@@ -96,6 +97,7 @@ const totalChains: Chain[] = [
   qChainTestnet,
   eosTestnet,
   roninTestnet,
+  scrollSepoliaTestnet,
   mainnet,
 ];
 
