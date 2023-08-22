@@ -72,8 +72,9 @@ const EthereumAddress = ({ textualVersion, ethereumAddress, shortenOnFallback, i
   const displayName = queryProfileAndAvatar?.data?.handle || (shortenOnFallback && shortAddress) || ethereumAddress;
 
   const getExplorer = () => {
-    const chainExplorer = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)[0]
-      .blockExplorers?.default.url;
+    const chainExplorer = chains.filter(
+      chain => chain.name.toLowerCase().replace(" ", "") === chainName || "ethereum",
+    )[0].blockExplorers?.default.url;
 
     return `${chainExplorer}address/${ethereumAddress}`;
   };

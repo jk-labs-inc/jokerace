@@ -32,12 +32,6 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
       setError(null);
     } else {
       setCurrentPlaceholder("Search by user address or ENS name");
-      const hexPattern = /^0x[a-fA-F0-9]{40}$/;
-      if (hexPattern.test(searchCriteria.query) || searchCriteria.query.endsWith(".eth") || !searchCriteria.query) {
-        setError(null);
-      } else {
-        setError("Ruh-roh! Value must be a user hexadecimal address or end with .eth");
-      }
     }
   };
 

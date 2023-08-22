@@ -36,7 +36,7 @@ const Dropdown: FC<DropdownProps> = ({ menuItems, onSelectionChange }) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-5 w-40 origin-top-right rounded-md bg-white border border-neutral-11 shadow-lg ring-1 ring-black bg-true-black focus:outline-none">
+        <Menu.Items className="absolute right-0 z-10 mt-5 w-40 overflow-x-clip rounded-[5px] bg-white border border-neutral-11 bg-true-black focus:outline-none">
           <div className="py-1">
             {menuItems.map(item => (
               <Menu.Item key={item.value}>
@@ -46,7 +46,7 @@ const Dropdown: FC<DropdownProps> = ({ menuItems, onSelectionChange }) => {
                     onClick={() => handleSelection(item.value)}
                     className={classNames(
                       active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                      "block px-4 py-2 text-[16px]",
+                      "block px-4 py-2 text-[16px] hover:bg-neutral-3 transition-colors duration-300 ease-in-out ",
                     )}
                   >
                     {item.label}

@@ -55,12 +55,8 @@ const LayoutContests = (props: LayoutContestsProps) => {
 
   return (
     <>
-      <div className="relative flex mt-6 flex-col gap-2 overflow-x-auto">
-        {" "}
-        {/* Added overflow-x-auto for horizontal scrolling */}
+      <div className="relative mt-6 flex-col gap-2">
         <div className="flex gap-4 justify-center mb-4 px-2 sm:gap-8 sm:px-0">
-          {" "}
-          {/* Adjusted the gap for mobile and added padding on the sides, which is removed on larger screens */}
           {navLinks.map((link, index) => (
             <Link href={link.href} key={link.href}>
               <div
@@ -74,9 +70,9 @@ const LayoutContests = (props: LayoutContestsProps) => {
               </div>
             </Link>
           ))}
+          <div className="absolute left-0 w-full h-1 bottom-0 bg-neutral-0"></div>
+          <div style={indicatorStyle} className="absolute bottom-0 h-1 bg-primary-10 transition-all duration-200"></div>
         </div>
-        <div className="absolute left-0 w-full h-1 bottom-0 bg-neutral-0"></div>
-        <div style={indicatorStyle} className="absolute bottom-0 h-1 bg-primary-10 transition-all duration-200"></div>
       </div>
 
       <ErrorBoundary

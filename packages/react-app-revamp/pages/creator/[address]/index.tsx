@@ -4,11 +4,10 @@ import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import { getLayout } from "@layouts/LayoutCreator";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEnsName } from "@wagmi/core";
+import { fetchEnsAddress, fetchEnsName } from "@wagmi/core";
 import { getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
@@ -19,10 +18,8 @@ interface PageProps {
   avatar: any;
 }
 
-function useContests(initialData: any) {
+function useContests(creatorAddress: string, initialData: any) {
   const [page, setPage] = useState(0);
-  const { asPath } = useRouter();
-  const creatorAddress = asPath.split("/")[2];
   const queryOptions = {
     keepPreviousData: true,
     staleTime: 5000,
@@ -52,7 +49,7 @@ function useContests(initialData: any) {
     },
     {
       ...queryOptions,
-      enabled: creatorAddress !== "",
+      enabled: !!creatorAddress,
     },
   );
 
@@ -80,17 +77,8 @@ function useContests(initialData: any) {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address, ensName, initialData } = props;
-  const {
-    page,
-    setPage,
-    status,
-    contestData,
-    rewardsData,
-    isRewardsFetching,
-    error,
-    isContestDataFetching,
-    //@ts-ignore
-  } = useContests(initialData?.data);
+  const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
+    useContests(address, initialData?.data);
 
   return (
     <>
@@ -109,6 +97,7 @@ const Page: NextPage = (props: PageProps) => {
             <EthereumAddress ethereumAddress={address} shortenOnFallback isLarge />
           )}
           <div className="flex items-center gap-8 mb-8"></div>
+
           {isSupabaseConfigured ? (
             <ListContests
               isContestDataFetching={isContestDataFetching}
@@ -149,31 +138,51 @@ export async function getStaticPaths() {
 }
 
 export async function getStaticProps({ params }: any) {
-  const { address } = params;
+  const { address: pathAddress } = params;
 
-  if (!REGEX_ETHEREUM_ADDRESS.test(address)) {
+  let actualAddress = pathAddress;
+  let ensName: string | null = null;
+
+  if (pathAddress.endsWith(".eth")) {
+    try {
+      const resolvedAddress = await fetchEnsAddress({
+        name: pathAddress,
+        chainId: 1,
+      });
+
+      if (resolvedAddress) {
+        actualAddress = resolvedAddress;
+      } else {
+        return { notFound: true };
+      }
+    } catch (error) {
+      console.error("Error resolving ENS address:", error);
+      return { notFound: true };
+    }
+  } else if (!REGEX_ETHEREUM_ADDRESS.test(pathAddress)) {
     return { notFound: true };
   }
 
-  let ensName = address;
+  // If it's not an ENS name and is a valid Ethereum address, get the ENS name for it
+  if (actualAddress !== pathAddress) {
+    try {
+      const fetchedEnsName = await fetchEnsName({
+        address: actualAddress as `0x${string}`,
+        chainId: 1,
+      });
 
-  try {
-    const ensNameData = await fetchEnsName({
-      address: address as `0x${string}`,
-      chainId: 1,
-    });
-
-    if (ensNameData) {
-      ensName = ensNameData;
+      if (fetchedEnsName) {
+        ensName = fetchedEnsName;
+      }
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
   }
 
   return {
     props: {
-      address,
-      ensName,
+      address: actualAddress,
+      ensName: ensName || actualAddress,
     },
   };
 }
