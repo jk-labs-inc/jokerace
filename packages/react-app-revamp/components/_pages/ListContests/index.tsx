@@ -137,6 +137,11 @@ export const ListContests: FC<ListContestsProps> = ({
   if (compact) {
     return (
       <>
+        <div className="font-bold text-md grid-cols-1 grid gap-5 md:full-width-grid-cols items-center pie-1ex p-3">
+          <h2 className="text-[20px] font-bold font-sabo">Featured Contests</h2>
+          <Search onSearchChange={onSearchChange} />
+          <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
+        </div>
         {!isContestDataFetching && contestData?.count === 0 ? (
           <div className="text-neutral-9 text-center italic mb-6 animate-appear mt-12">No contests found</div>
         ) : (
@@ -145,36 +150,29 @@ export const ListContests: FC<ListContestsProps> = ({
               fadeBg ? "opacity-50" : "opacity-100"
             } text-[16px] transition-opacity duration-300 ease-in-out`}
           >
-            {loading ? (
-              placeholders.map((_, index) => (
-                <Contest
-                  key={`placeholder-contest-${index}`}
-                  contest={{}}
-                  compact={compact}
-                  loading={loading}
-                  rewards={rewardsData}
-                  rewardsLoading={isRewardsFetching}
-                />
-              ))
-            ) : (
-              <div>
-                <div className="font-bold text-md grid-cols-1 grid gap-5 md:full-width-grid-cols items-center pie-1ex p-3">
-                  <h2 className="text-[20px] font-bold font-sabo">Featured Contests</h2>
-                  <Search onSearchChange={onSearchChange} />
-                  <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
-                </div>
-                {sortedData.slice(0, 6).map((contest: any, index: number) => (
+            {loading
+              ? placeholders.map((_, index) => (
                   <Contest
-                    key={`contest-${index}`}
-                    contest={contest}
+                    key={`placeholder-contest-${index}`}
+                    contest={{}}
                     compact={compact}
                     loading={loading}
                     rewards={rewardsData}
                     rewardsLoading={isRewardsFetching}
                   />
-                ))}
-              </div>
-            )}
+                ))
+              : sortedData
+                  .slice(0, 6)
+                  .map((contest: any, index: number) => (
+                    <Contest
+                      key={`contest-${index}`}
+                      contest={contest}
+                      compact={compact}
+                      loading={loading}
+                      rewards={rewardsData}
+                      rewardsLoading={isRewardsFetching}
+                    />
+                  ))}
           </div>
         )}
       </>
@@ -182,7 +180,7 @@ export const ListContests: FC<ListContestsProps> = ({
   }
 
   return (
-    <div className="animate-appear">
+    <>
       {status === "error" ? (
         <div className={`animate-appear bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4`}>
           <p className="text-sm font-bold text-negative-10 text-center">Something went wrong: {error?.message}</p>
@@ -210,7 +208,7 @@ export const ListContests: FC<ListContestsProps> = ({
                     />
                   ))
                 ) : (
-                  <div>
+                  <>
                     <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
                       <div className="order-3 md:order-none">
                         {customTitle ? (
@@ -242,7 +240,7 @@ export const ListContests: FC<ListContestsProps> = ({
                         rewardsLoading={isRewardsFetching}
                       />
                     ))}
-                  </div>
+                  </>
                 )}
               </div>
 
@@ -280,7 +278,7 @@ export const ListContests: FC<ListContestsProps> = ({
           )}
         </>
       )}
-    </div>
+    </>
   );
 };
 
