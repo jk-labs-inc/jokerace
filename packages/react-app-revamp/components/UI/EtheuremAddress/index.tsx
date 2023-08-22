@@ -12,13 +12,16 @@ interface EthereumAddressProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
   textualVersion?: boolean;
+  isLarge?: boolean;
 }
 
-const EthereumAddress = ({ textualVersion, ethereumAddress, shortenOnFallback }: EthereumAddressProps) => {
+const EthereumAddress = ({ textualVersion, ethereumAddress, shortenOnFallback, isLarge }: EthereumAddressProps) => {
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
   const { asPath } = useRouter();
   const chainName = asPath.split("/")[2];
   const { setAvatar } = useAvatarStore(state => state);
+  const avatarSizeClass = isLarge ? "w-[100px] h-[100px]" : "w-8 h-8";
+  const textSizeClass = isLarge ? "text-[24px] font-sabo" : "text-[16px]";
 
   const fetchAvatarAndProfile = async () => {
     try {
@@ -90,15 +93,15 @@ const EthereumAddress = ({ textualVersion, ethereumAddress, shortenOnFallback }:
   }
 
   return (
-    <span className="flex gap-2 items-center text-[16px] text-neutral-11 font-bold">
-      <div className="flex items-center w-8 h-8 bg-neutral-5 rounded-full overflow-hidden">
+    <span className={`flex ${isLarge ? "gap-6" : "gap-2"} items-center ${textSizeClass} text-neutral-11 font-bold`}>
+      <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
         <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={avatarUrl} alt="avatar" />
       </div>
       {isLoading ? (
         <>Loading profile data...</>
       ) : (
         <a
-          className="text-[16px] text-neutral-11 font-bold no-underline cursor-pointer"
+          className={`no-underline cursor-pointer ${textSizeClass} text-neutral-11 font-bold`}
           target="_blank"
           rel="noopener noreferrer"
           href={

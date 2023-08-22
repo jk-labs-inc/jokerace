@@ -1,12 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
-import button from "@components/UI/Button/styles";
 import type { NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-
-const ctaGoBackStyles = button({
-  class: "w-full 2xs:w-auto",
-});
 
 const Page: NextPage = () => {
   return (

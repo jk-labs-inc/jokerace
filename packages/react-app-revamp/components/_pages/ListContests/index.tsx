@@ -17,9 +17,11 @@ interface ListContestsProps {
   rewardsData?: any;
   error?: any;
   className?: string;
+  includeFullSearch?: boolean;
   includeSearch?: boolean;
   customTitle?: string;
   compact?: boolean;
+  onFullSearchChange?: (value: string) => void;
   onSearchChange?: (value: string) => void;
 }
 
