@@ -1,7 +1,7 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import Dropdown from "@components/UI/Dropdown";
 import FormField from "@components/UI/FormField";
-import { FC, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 
 interface SearchCriteria {
   query: string;
@@ -39,7 +39,7 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
     setSearchCriteria({ ...searchCriteria, query: value });
   };
 
-  const executeSearch = () => {
+  const executeSearch = useCallback(() => {
     if (searchCriteria.filterType === "user") {
       const hexPattern = /^0x[a-fA-F0-9]{40}$/;
       if (!hexPattern.test(searchCriteria.query) && !searchCriteria.query.endsWith(".eth")) {
@@ -50,7 +50,21 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
 
     setError(null);
     onSearch?.(searchCriteria);
-  };
+  }, [searchCriteria, onSearch]);
+
+  useEffect(() => {
+    const handleEnterPress = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        executeSearch();
+      }
+    };
+
+    window.addEventListener("keydown", handleEnterPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [executeSearch]);
 
   return (
     <div
