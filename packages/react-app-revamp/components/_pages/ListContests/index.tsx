@@ -17,9 +17,11 @@ interface ListContestsProps {
   rewardsData?: any;
   error?: any;
   className?: string;
+  includeFullSearch?: boolean;
   includeSearch?: boolean;
   customTitle?: string;
   compact?: boolean;
+  onFullSearchChange?: (value: string) => void;
   onSearchChange?: (value: string) => void;
 }
 
@@ -185,27 +187,6 @@ export const ListContests: FC<ListContestsProps> = ({
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
-            <div className="order-3 md:order-none">
-              {customTitle ? (
-                <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
-              ) : (
-                <span aria-hidden="true">
-                  🃏
-                  <span className={`pis-1ex text-[20px]`}>{contestData?.count} contests</span>
-                </span>
-              )}
-            </div>
-            {includeSearch && (
-              <div className="order-1 md:order-none">
-                <Search onSearchChange={onSearchChange} />
-              </div>
-            )}
-
-            <div className="order-2 md:order-none">
-              <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
-            </div>
-          </div>
           {!isContestDataFetching && contestData?.count === 0 ? (
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
@@ -215,18 +196,41 @@ export const ListContests: FC<ListContestsProps> = ({
                   fadeBg ? "opacity-50" : "opacity-100"
                 } text-[16px] transition-opacity duration-300 ease-in-out`}
               >
-                {loading
-                  ? placeholders.map((_, index) => (
-                      <Contest
-                        key={`placeholder-contest-${index}`}
-                        contest={{}}
-                        compact={compact}
-                        loading={loading}
-                        rewards={rewardsData}
-                        rewardsLoading={isRewardsFetching}
-                      />
-                    ))
-                  : sortedData.map((contest: any, index: number) => (
+                {loading ? (
+                  placeholders.map((_, index) => (
+                    <Contest
+                      key={`placeholder-contest-${index}`}
+                      contest={{}}
+                      compact={compact}
+                      loading={loading}
+                      rewards={rewardsData}
+                      rewardsLoading={isRewardsFetching}
+                    />
+                  ))
+                ) : (
+                  <>
+                    <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
+                      <div className="order-3 md:order-none">
+                        {customTitle ? (
+                          <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
+                        ) : (
+                          <span aria-hidden="true">
+                            🃏
+                            <span className={`pis-1ex text-[20px]`}>{contestData?.count} contests</span>
+                          </span>
+                        )}
+                      </div>
+                      {includeSearch && (
+                        <div className="order-1 md:order-none">
+                          <Search onSearchChange={onSearchChange} />
+                        </div>
+                      )}
+
+                      <div className="order-2 md:order-none">
+                        <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
+                      </div>
+                    </div>
+                    {sortedData.map((contest: any, index: number) => (
                       <Contest
                         key={`contest-${index}`}
                         contest={contest}
@@ -236,6 +240,8 @@ export const ListContests: FC<ListContestsProps> = ({
                         rewardsLoading={isRewardsFetching}
                       />
                     ))}
+                  </>
+                )}
               </div>
 
               {Math.ceil(contestData?.count / itemsPerPage) > 1 && (
