@@ -1,17 +1,19 @@
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
+import { ROUTE_VIEW_CREATOR } from "@config/routes";
 import { HomeIcon } from "@heroicons/react/outline";
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { ConnectButton, useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Confetti from "react-confetti";
 import { useMedia, useWindowSize } from "react-use";
 import { useAccount } from "wagmi";
 
 const CreateFlowHeader = () => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { step, isLoading, isSuccess } = useDeployContestStore(state => state);
   const { pageAction, setPageAction } = usePageActionStore(state => state);
   const onPreviousStep = usePreviousStep();
@@ -19,6 +21,11 @@ const CreateFlowHeader = () => {
   const { openAccountModal } = useAccountModal();
   const isMobileOrTablet = useMedia("(max-width: 1024px)");
   const { width, height } = useWindowSize();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -57,13 +64,20 @@ const CreateFlowHeader = () => {
         className="md:hidden transition-all duration-500"
       >
         {isConnected ? (
-          <Image width={30} height={30} src="/create-flow/wallet-connected.svg" alt="wallet-connected" />
+          <div className="flex gap-2">
+            {isClient && address && (
+              <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+                <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+              </Link>
+            )}
+            <Image width={30} height={30} src="/create-flow/wallet-connected.svg" alt="wallet-connected" />
+          </div>
         ) : (
           <Image width={30} height={30} src="/create-flow/wallet.svg" alt="wallet" />
         )}
       </div>
       <div className="hidden md:flex">
-        <ConnectButton showBalance={false} accountStatus="full" label="Connect wallet" />
+        <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
       </div>
     </header>
   );
@@ -98,8 +112,13 @@ const CreateFlowHeader = () => {
           {isSuccess && <Confetti width={width} height={height} opacity={0.7} numberOfPieces={100} />}
 
           {!isLoading && !isSuccess && (
-            <div className="flex">
-              <ConnectButton showBalance={false} accountStatus="full" label="Connect wallet" />
+            <div className="flex items-center gap-3">
+              {isClient && address && (
+                <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+                  <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+                </Link>
+              )}
+              <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
             </div>
           )}
         </header>

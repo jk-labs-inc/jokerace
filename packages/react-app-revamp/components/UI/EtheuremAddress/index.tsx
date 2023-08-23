@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-import { chains } from "@config/wagmi";
+import { ROUTE_VIEW_CREATOR } from "@config/routes";
 import { useAvatarStore } from "@hooks/useAvatar";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEnsAvatar, fetchEnsName } from "@wagmi/core";
+import { fetchEnsAvatar, fetchEnsName, mainnet } from "@wagmi/core";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
@@ -12,16 +13,25 @@ interface EthereumAddressProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
   textualVersion?: boolean;
+  avatarVersion?: boolean;
+  includeSocials?: boolean;
   isLarge?: boolean;
 }
 
-const EthereumAddress = ({ textualVersion, ethereumAddress, shortenOnFallback, isLarge }: EthereumAddressProps) => {
+const EthereumAddress = ({
+  textualVersion,
+  avatarVersion,
+  ethereumAddress,
+  includeSocials,
+  shortenOnFallback,
+  isLarge,
+}: EthereumAddressProps) => {
+  const router = useRouter();
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
-  const { asPath } = useRouter();
-  const chainName = asPath.split("/")[2];
   const { setAvatar } = useAvatarStore(state => state);
   const avatarSizeClass = isLarge ? "w-[100px] h-[100px]" : "w-8 h-8";
   const textSizeClass = isLarge ? "text-[24px] font-sabo" : "text-[16px]";
+  const etherscan = mainnet.blockExplorers.etherscan.url;
 
   const fetchAvatarAndProfile = async () => {
     try {
@@ -67,29 +77,30 @@ const EthereumAddress = ({ textualVersion, ethereumAddress, shortenOnFallback, i
     },
   });
 
+  const onUserProfileRoute = () => {
+    router.push(`${ROUTE_VIEW_CREATOR}/${ethereumAddress}`);
+  };
+
   const avatarUrl = queryProfileAndAvatar.data?.avatarUrl || DEFAULT_AVATAR_URL;
   const isLoading = queryProfileAndAvatar?.status === "loading";
   const displayName = queryProfileAndAvatar?.data?.handle || (shortenOnFallback && shortAddress) || ethereumAddress;
 
-  const getExplorer = () => {
-    const chainExplorer = chains.filter(
-      chain => chain.name.toLowerCase().replace(" ", "") === chainName || "ethereum",
-    )[0].blockExplorers?.default.url;
-
-    return `${chainExplorer}address/${ethereumAddress}`;
-  };
-
   if (textualVersion) {
     return (
-      <a
-        target="_blank"
-        rel="noopener noreferrer"
-        href={
-          queryProfileAndAvatar.data?.handle?.includes("lens") ? `https://lensfrens.xyz/${displayName}` : getExplorer()
-        }
-      >
+      <a target="_blank" rel="noopener noreferrer" href={`${ROUTE_VIEW_CREATOR}/${ethereumAddress}`}>
         {displayName}
       </a>
+    );
+  }
+
+  if (avatarVersion) {
+    return (
+      <div
+        className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}
+        onClick={onUserProfileRoute}
+      >
+        <img src={avatarUrl} alt="avatar" />
+      </div>
     );
   }
 
@@ -101,18 +112,33 @@ const EthereumAddress = ({ textualVersion, ethereumAddress, shortenOnFallback, i
       {isLoading ? (
         <>Loading profile data...</>
       ) : (
-        <a
-          className={`no-underline cursor-pointer ${textSizeClass} text-neutral-11 font-bold`}
-          target="_blank"
-          rel="noopener noreferrer"
-          href={
-            queryProfileAndAvatar.data?.handle?.includes("lens")
-              ? `https://lensfrens.xyz/${displayName}`
-              : getExplorer()
-          }
-        >
-          {displayName}
-        </a>
+        <div className="flex flex-col gap-1">
+          <a
+            className={`no-underline ${textSizeClass} text-neutral-11 font-bold`}
+            target="_blank"
+            rel="noopener noreferrer"
+            href={includeSocials ? undefined : `${ROUTE_VIEW_CREATOR}/${ethereumAddress}`}
+          >
+            {displayName}
+          </a>
+
+          {includeSocials ? (
+            <div className="flex gap-1 items-center">
+              <a href={`${etherscan}/address/${ethereumAddress}`} target="_blank">
+                <div className="w-6 h-6 flex justify-center items-center overflow-hidden rounded-full">
+                  <img className="object-cover" src="/etherscan.svg" alt="Etherscan" />
+                </div>
+              </a>
+              {queryProfileAndAvatar.data?.handle?.includes("lens") && (
+                <a href={`https://lensfrens.xyz/${displayName}`} target="_blank">
+                  <div className="w-12 h-12 flex justify-center items-center overflow-hidden rounded-full">
+                    <img className="object-cover" src="/socials/lens.svg" alt="Lens" />
+                  </div>
+                </a>
+              )}
+            </div>
+          ) : null}
+        </div>
       )}
     </span>
   );

@@ -2,7 +2,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import React, { useMemo } from "react";
 import { useAccount } from "wagmi";
 
-type ButtonSize = "extraSmall" | "small" | "default" | "large" | "extraLarge";
+type ButtonSize = "extraSmall" | "small" | "default" | "large" | "extraLarge" | "extraLargeLong";
 
 interface ButtonV3Props {
   type?: "default" | "txAction";
@@ -20,6 +20,7 @@ const sizes = {
   default: "w-[120px] h-[32px]",
   large: "w-40 h-[40px]",
   extraLarge: "w-[200px] h-12",
+  extraLargeLong: "w-[240px] h-[40px]",
 };
 
 const ButtonV3: React.FC<ButtonV3Props> = ({
