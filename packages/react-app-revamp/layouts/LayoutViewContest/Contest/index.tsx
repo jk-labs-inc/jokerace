@@ -8,6 +8,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import moment from "moment";
+import { useAccount } from "wagmi";
 import LayoutContestPrompt from "../Prompt";
 import ProposalStatistics from "../ProposalStatistics";
 import ContestLayoutStickyCards from "../StickyCards";
@@ -15,6 +16,7 @@ import LayoutContestTimeline from "../TimelineV3";
 
 const ContestTab = () => {
   const { submissionsOpen, contestPrompt } = useContestStore(state => state);
+  const { isConnected } = useAccount();
   const { contestStatus } = useContestStatusStore(state => state);
   const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount } = useUserStore(
     state => state,
@@ -25,6 +27,10 @@ const ContestTab = () => {
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
+  const submitButtonText = isConnected ? "submit a response" : "connect wallet to submit";
+  const qualifiedToSubmit =
+    currentUserQualifiedToSubmit && currentUserProposalCount <= contestMaxNumberSubmissionsPerUser;
+  const showSubmitButton = !isConnected || qualifiedToSubmit;
 
   return (
     <div>
@@ -37,14 +43,14 @@ const ContestTab = () => {
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && (
         <div className="mt-8">
-          {currentUserQualifiedToSubmit && currentUserProposalCount <= contestMaxNumberSubmissionsPerUser && (
+          {showSubmitButton && (
             <ButtonV3
               type="txAction"
               color="bg-gradient-create rounded-[40px]"
-              size="large"
+              size="extraLargeLong"
               onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
             >
-              submit a response
+              {submitButtonText}
             </ButtonV3>
           )}
         </div>

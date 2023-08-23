@@ -69,6 +69,14 @@ const LayoutViewContest = (props: any) => {
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
+  const [previousStatus, setPreviousStatus] = useState(account.status);
+  const didConnect = previousStatus === "disconnected" && account.status === "connected";
+
+  useEffect(() => {
+    if (account.status === "connecting") return;
+
+    setPreviousStatus(account.status);
+  }, [account.status]);
 
   useEffect(() => {
     const now = moment();
@@ -109,8 +117,9 @@ const LayoutViewContest = (props: any) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        if (accountChanged) {
+        if (accountChanged || didConnect) {
           setIsUserStoreLoading(true);
+
           await Promise.all([
             checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
             checkIfCurrentUserQualifyToVote(),
@@ -125,7 +134,7 @@ const LayoutViewContest = (props: any) => {
     };
 
     fetchUserData();
-  }, [accountChanged]);
+  }, [accountChanged, didConnect]);
 
   useEffect(() => {
     fetchContestInfo();

@@ -22,6 +22,7 @@ import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
+import { useAccount } from "wagmi";
 import DialogModalProposal from "../DialogModalProposal";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 
@@ -47,6 +48,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
+  const { isConnected } = useAccount();
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
@@ -54,6 +56,8 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
   const previousVotesRef = useRef(proposal.votes);
   const [isVoteChanged, setIsVoteChanged] = useState(false);
+  const showVoteButton = !isConnected || currentUserAvailableVotesAmount > 0;
+  const voteButtonMessage = isConnected ? "vote" : "connect wallet to vote";
 
   useEffect(() => {
     let timer: any;
@@ -84,7 +88,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
             <p className={`text-positive-11 ${isVoteChanged ? "animate-flicker" : ""}`}>
               {formatNumber(proposal.votes)} votes
             </p>
-            {currentUserAvailableVotesAmount > 0 && (
+            {showVoteButton && (
               <ButtonV3
                 type="txAction"
                 color="bg-gradient-vote rounded-[40px]"
@@ -94,7 +98,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
                   setIsVotingModalOpen(true);
                 }}
               >
-                vote
+                {voteButtonMessage}
               </ButtonV3>
             )}
           </>
@@ -108,7 +112,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
         );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount, setPickProposal]);
+  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount, setPickProposal, isConnected]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];
