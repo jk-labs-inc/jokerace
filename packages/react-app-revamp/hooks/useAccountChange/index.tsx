@@ -16,7 +16,9 @@ export const useAccountChange = () => {
       activeConnector.on("change", handleConnectorUpdate);
     }
 
-    return () => activeConnector?.off("change", handleConnectorUpdate) as any;
+    return () => {
+      activeConnector?.off("change", handleConnectorUpdate);
+    };
   }, [activeConnector]);
 
   return account;

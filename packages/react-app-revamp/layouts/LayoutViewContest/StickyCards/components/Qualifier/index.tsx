@@ -20,7 +20,6 @@ const LayoutContestQualifier = () => {
   const qualifiedMessage = useMemo(() => {
     const canSubmit = currentUserQualifiedToSubmit;
     const canVote = currentUserAvailableVotesAmount > 0;
-
     if (isReadOnly) {
       if (canSubmit) {
         return "you qualify to submit ( vote is in read mode )";
