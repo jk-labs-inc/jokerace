@@ -39,12 +39,12 @@ const LandingHeader = () => {
           </Button>
         </Link>
         <div className="hidden lg:flex items-center gap-3">
-          <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
           {isClient && address && (
             <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
               <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
             </Link>
           )}
+          <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
         </div>
       </div>
 
