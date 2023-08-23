@@ -44,7 +44,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 )}
                 rel="noreferrer"
               >
-                <Image src="/socials/lens.svg" alt="Lens" width={24} height={24} className="object-fit-cover mr-2" />
+                <Image src="/socials/lens.svg" alt="Lens" width={32} height={32} className="object-fit-cover mr-2" />
                 <span className="text-left">share on Lens</span>
               </a>
             )}

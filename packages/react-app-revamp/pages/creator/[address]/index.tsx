@@ -94,7 +94,7 @@ const Page: NextPage = (props: PageProps) => {
               <Skeleton height={24} width={200} />
             </div>
           ) : (
-            <EthereumAddress ethereumAddress={address} shortenOnFallback isLarge />
+            <EthereumAddress ethereumAddress={address} shortenOnFallback isLarge includeSocials />
           )}
           <div className="flex items-center gap-8 mb-8"></div>
 

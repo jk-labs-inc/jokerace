@@ -1,15 +1,21 @@
 import Button from "@components/UI/Button";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import MenuLink from "@components/UI/Menu/Link";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS } from "@config/routes";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS, ROUTE_VIEW_CREATOR } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 const LandingHeader = () => {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <header className="flex items-center flex-col lg:flex-row gap-5 lg:gap-20 lg:pl-8 lg:pr-8 max-w-[1350px] 3xl:pl-16">
@@ -32,8 +38,13 @@ const LandingHeader = () => {
             Create contest
           </Button>
         </Link>
-        <div className="hidden lg:flex">
-          <ConnectButton showBalance={false} accountStatus="full" label="Connect wallet" />
+        <div className="hidden lg:flex items-center gap-3">
+          <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+          {isClient && address && (
+            <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+              <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+            </Link>
+          )}
         </div>
       </div>
 
@@ -72,6 +83,15 @@ const LandingHeader = () => {
                         </MenuLink>
                       )}
                     </Menu.Item>
+                    {isClient && address && (
+                      <Menu.Item>
+                        {({ active }) => (
+                          <MenuLink active={active} href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+                            Profile
+                          </MenuLink>
+                        )}
+                      </Menu.Item>
+                    )}
 
                     <Menu.Item>
                       {({ active }) => (
