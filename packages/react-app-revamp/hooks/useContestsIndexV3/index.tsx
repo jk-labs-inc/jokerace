@@ -1,4 +1,3 @@
-import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/store";
 import { getAccount } from "@wagmi/core";
 
 export interface ContestValues {
@@ -10,9 +9,10 @@ export interface ContestValues {
   summary: string;
   prompt: string;
   contractAddress: string;
-  authorAddress?: string;
   networkName: string;
-
+  votingMerkleRoot: string;
+  submissionMerkleRoot: string;
+  authorAddress?: string;
   featured?: boolean;
 }
 
@@ -33,6 +33,8 @@ export function useContestsIndexV3() {
           summary: values.summary,
           prompt: values.prompt,
           address: values.contractAddress,
+          votingMerkleRoot: values.votingMerkleRoot,
+          submissionMerkleRoot: values.submissionMerkleRoot,
           author_address: values?.authorAddress ?? address,
           network_name: values.networkName,
           featured: values.featured ?? false,

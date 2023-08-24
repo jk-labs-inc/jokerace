@@ -108,6 +108,8 @@ export function useDeployContest() {
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,
         contractAddress: contractContest.address,
+        votingMerkleRoot: votingMerkle?.merkleRoot ?? EMPTY_ROOT,
+        submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
       };
