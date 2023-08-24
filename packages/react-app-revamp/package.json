@@ -6,6 +6,8 @@
     "build": "next build"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.398.0",
+    "@aws-sdk/s3-request-presigner": "^3.398.0",
     "@babel/core": "^7.4.0",
     "@felte/react": "^1.2.2",
     "@felte/validator-zod": "^1.0.13",

@@ -12,8 +12,7 @@ export interface ContestValues {
   contractAddress: string;
   authorAddress?: string;
   networkName: string;
-  votingMerkleTree: VotingMerkle | null;
-  submissionMerkleTree: SubmissionMerkle | null;
+
   featured?: boolean;
 }
 
@@ -36,8 +35,6 @@ export function useContestsIndexV3() {
           address: values.contractAddress,
           author_address: values?.authorAddress ?? address,
           network_name: values.networkName,
-          votingMerkleTree: values.votingMerkleTree,
-          submissionMerkleTree: values.submissionMerkleTree,
           featured: values.featured ?? false,
         },
       ]);

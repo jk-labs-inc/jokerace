@@ -1,10 +1,7 @@
 import { generateMerkleTree, generateProof, Recipient } from "lib/merkletree/generateMerkleTree";
 
 interface MerkleTreeProofPayload {
-  data: {
-    address: string;
-    numVotes: string;
-  }[];
+  data: Recipient[];
   address: string;
   numVotes: string;
 }
