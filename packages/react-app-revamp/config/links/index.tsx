@@ -35,17 +35,10 @@ export const FOOTER_LINKS = [
     href: LINK_MIRROR,
   },
   {
-    label: "OpenSea",
-    href: LINK_OPENSEA,
-  },
-  {
     label: "$JOKE",
     href: LINK_TOKEN,
   },
-  {
-    label: "Uniswap",
-    href: LINK_UNISWAP,
-  },
+
   {
     label: "Request a feature",
     href: LINK_REQUEST_FEATURE,
