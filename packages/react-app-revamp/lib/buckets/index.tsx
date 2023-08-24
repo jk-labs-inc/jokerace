@@ -2,7 +2,7 @@ import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3 } from "@config/s3";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 
-const MERKLE_TREES_BUCKET = "merkle_trees";
+const MERKLE_TREES_BUCKET = process.env.NEXT_PUBLIC_MERKLE_TREES_BUCKET as string;
 
 interface LoadFileOptions {
   fileId: string;
