@@ -15,5 +15,7 @@ create table
     summary character varying null,
     prompt character varying null,
     uuid uuid not null default gen_random_uuid (),
+    votingMerkleRoot character varying null,
+    submissionMerkleRoot character varying null,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;

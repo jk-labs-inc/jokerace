@@ -1,4 +1,3 @@
-import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/store";
 import { getAccount } from "@wagmi/core";
 
 export interface ContestValues {
@@ -10,10 +9,10 @@ export interface ContestValues {
   summary: string;
   prompt: string;
   contractAddress: string;
-  authorAddress?: string;
   networkName: string;
-  votingMerkleTree: VotingMerkle | null;
-  submissionMerkleTree: SubmissionMerkle | null;
+  votingMerkleRoot: string;
+  submissionMerkleRoot: string;
+  authorAddress?: string;
   featured?: boolean;
 }
 
@@ -34,10 +33,10 @@ export function useContestsIndexV3() {
           summary: values.summary,
           prompt: values.prompt,
           address: values.contractAddress,
+          votingMerkleRoot: values.votingMerkleRoot,
+          submissionMerkleRoot: values.submissionMerkleRoot,
           author_address: values?.authorAddress ?? address,
           network_name: values.networkName,
-          votingMerkleTree: values.votingMerkleTree,
-          submissionMerkleTree: values.submissionMerkleTree,
           featured: values.featured ?? false,
         },
       ]);
@@ -45,7 +44,7 @@ export function useContestsIndexV3() {
         throw new Error(error.message);
       }
     } catch (e) {
-      console.error(e);
+      throw e;
     }
   }
 
