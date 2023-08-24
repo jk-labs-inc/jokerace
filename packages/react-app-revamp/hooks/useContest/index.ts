@@ -326,35 +326,36 @@ export function useContest() {
 
     setIsUserStoreLoading(false);
 
-    try {
-      const { data } = await supabase
-        .from("contests_v3")
-        .select("submissionMerkleTree, votingMerkleTree")
-        .eq("address", address)
-        .eq("network_name", chainName);
+    //TODO: use buckets here to load voters & submitters for downloading it in params afterwards for excel view
+    // try {
+    //   const { data } = await supabase
+    //     .from("contests_v3")
+    //     .select("submissionMerkleTree, votingMerkleTree")
+    //     .eq("address", address)
+    //     .eq("network_name", chainName);
 
-      if (data && data.length > 0) {
-        const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
+    //   if (data && data.length > 0) {
+    //     const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
 
-        let totalVotes = votingMerkleTreeData.voters.reduce(
-          (sum: number, vote: { numVotes: string }) => sum + Number(vote.numVotes),
-          0,
-        );
+    //     let totalVotes = votingMerkleTreeData.voters.reduce(
+    //       (sum: number, vote: { numVotes: string }) => sum + Number(vote.numVotes),
+    //       0,
+    //     );
 
-        setTotalVotes(totalVotes);
-        setVoters(votingMerkleTreeData.voters);
+    //     setTotalVotes(totalVotes);
+    //     setVoters(votingMerkleTreeData.voters);
 
-        if (submissionMerkleRoot === EMPTY_ROOT) {
-          setSubmitters([]);
-        } else {
-          setSubmitters(submissionMerkleTreeData.submitters);
-        }
-      }
-    } catch (error) {
-      const customError = error as CustomError;
-      toastError("error while fetching data from db", customError.message);
-      setIsUserStoreLoading(false);
-    }
+    //     if (submissionMerkleRoot === EMPTY_ROOT) {
+    //       setSubmitters([]);
+    //     } else {
+    //       setSubmitters(submissionMerkleTreeData.submitters);
+    //     }
+    //   }
+    // } catch (error) {
+    //   const customError = error as CustomError;
+    //   toastError("error while fetching data from db", customError.message);
+    //   setIsUserStoreLoading(false);
+    // }
   }
 
   /**
