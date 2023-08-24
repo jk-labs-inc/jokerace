@@ -144,31 +144,27 @@ export function useDeployContest() {
       throw new Error("R2 is not configured");
     }
 
+    const tasks: Promise<void>[] = [];
+
+    if (votingMerkle && !(await checkExistingFileInBucket(votingMerkle.merkleRoot))) {
+      tasks.push(
+        saveFileToBucket({
+          fileId: votingMerkle.merkleRoot,
+          content: formatRecipients(votingMerkle.voters),
+        }),
+      );
+    }
+
+    if (submissionMerkle && !(await checkExistingFileInBucket(submissionMerkle.merkleRoot))) {
+      tasks.push(
+        saveFileToBucket({
+          fileId: submissionMerkle.merkleRoot,
+          content: formatRecipients(submissionMerkle.submitters),
+        }),
+      );
+    }
+
     try {
-      const tasks: Promise<void>[] = [];
-
-      if (votingMerkle) {
-        if (votingMerkle && (await checkExistingFileInBucket(votingMerkle.merkleRoot))) return;
-
-        tasks.push(
-          saveFileToBucket({
-            fileId: votingMerkle.merkleRoot,
-            content: formatRecipients(votingMerkle.voters),
-          }),
-        );
-      }
-
-      if (submissionMerkle) {
-        if (submissionMerkle && (await checkExistingFileInBucket(submissionMerkle.merkleRoot))) return;
-
-        tasks.push(
-          saveFileToBucket({
-            fileId: submissionMerkle.merkleRoot,
-            content: formatRecipients(submissionMerkle.submitters),
-          }),
-        );
-      }
-
       await Promise.all(tasks);
     } catch (e) {
       const customError = e as CustomError;
