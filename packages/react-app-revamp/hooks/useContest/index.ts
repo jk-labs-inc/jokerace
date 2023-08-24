@@ -1,5 +1,4 @@
 import { toastError } from "@components/UI/Toast";
-import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
@@ -13,7 +12,9 @@ import { useUserStore } from "@hooks/useUser/store";
 import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { BigNumber, utils } from "ethers";
+import { loadFileFromBucket } from "lib/buckets";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { CustomError } from "types/error";
@@ -140,10 +141,9 @@ export function useContest() {
       const isDownvotingAllowed = Number(results[9].result) === 1;
       const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
       const contestMaxProposalCount = Number(results[3].result);
-      const submissionMerkleRoot = results[10].result as string;
+
       setContestName(results[0].result as string);
       setContestAuthor(results[1].result as string, results[1].result as string);
-      setSubmissionMerkleRoot(submissionMerkleRoot);
       setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
       setContestMaxProposalCount(contestMaxProposalCount);
       setSubmissionsOpen(submissionsOpenDate);
@@ -181,7 +181,7 @@ export function useContest() {
       await Promise.all([
         fetchTotalVotesCast(),
         processRewardData(contestRewardModuleAddress),
-        processContestData(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
+        processContestData(contractConfig, contestMaxNumberSubmissionsPerUser),
       ]);
     } catch (error) {
       const customError = error as CustomError;
@@ -300,12 +300,35 @@ export function useContest() {
   /**
    * Fetch merkle tree data from DB and re-create the tree
    */
-  async function processContestData(submissionMerkleRoot: string, contestMaxNumberSubmissionsPerUser: number) {
+  async function processContestData(contractConfig: ContractConfig, contestMaxNumberSubmissionsPerUser: number) {
     // Do not fetch merkle tree data if the contest is not using it
     if (contestStatus === ContestStatus.VotingClosed) {
       setIsUserStoreLoading(false);
       return;
     }
+
+    const results = await readContracts({
+      contracts: [
+        {
+          ...contractConfig,
+          functionName: "submissionMerkleRoot",
+          args: [],
+        },
+        {
+          ...contractConfig,
+          functionName: "votingMerkleRoot",
+          args: [],
+        },
+      ],
+    });
+
+    if (!results) {
+      setIsUserStoreLoading(false);
+      return;
+    }
+
+    const submissionMerkleRoot = results[0].result as unknown as string;
+    const votingMerkleRoot = results[1].result as unknown as string;
 
     if (!isSupabaseConfigured) {
       setIsReadOnly(true);
@@ -326,37 +349,36 @@ export function useContest() {
 
     setIsUserStoreLoading(false);
 
-    //TODO: use buckets here to load voters & submitters for downloading it in params afterwards for excel view
-    // try {
-    //   const { data } = await supabase
-    //     .from("contests_v3")
-    //     .select("submissionMerkleTree, votingMerkleTree")
-    //     .eq("address", address)
-    //     .eq("network_name", chainName);
+    try {
+      const [votingMerkleTreeData, submissionMerkleTreeData] = await Promise.all([
+        fetchDataFromBucket(votingMerkleRoot),
+        submissionMerkleRoot !== EMPTY_ROOT ? fetchDataFromBucket(submissionMerkleRoot) : Promise.resolve(null),
+      ]);
 
-    //   if (data && data.length > 0) {
-    //     const { submissionMerkleTree: submissionMerkleTreeData, votingMerkleTree: votingMerkleTreeData } = data[0];
+      const totalVotes = votingMerkleTreeData ? calculateTotalVotes(votingMerkleTreeData) : 0;
 
-    //     let totalVotes = votingMerkleTreeData.voters.reduce(
-    //       (sum: number, vote: { numVotes: string }) => sum + Number(vote.numVotes),
-    //       0,
-    //     );
-
-    //     setTotalVotes(totalVotes);
-    //     setVoters(votingMerkleTreeData.voters);
-
-    //     if (submissionMerkleRoot === EMPTY_ROOT) {
-    //       setSubmitters([]);
-    //     } else {
-    //       setSubmitters(submissionMerkleTreeData.submitters);
-    //     }
-    //   }
-    // } catch (error) {
-    //   const customError = error as CustomError;
-    //   toastError("error while fetching data from db", customError.message);
-    //   setIsUserStoreLoading(false);
-    // }
+      setTotalVotes(totalVotes);
+      setVoters(votingMerkleTreeData || []);
+      setSubmitters(submissionMerkleTreeData || []);
+    } catch (error) {
+      const customError = error as CustomError;
+      toastError("error while fetching data from db", customError.message);
+      setIsUserStoreLoading(false);
+    }
   }
+
+  const fetchDataFromBucket = async (fileId: string): Promise<Recipient[] | null> => {
+    try {
+      const data = await loadFileFromBucket({ fileId });
+      return data || null;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const calculateTotalVotes = (data: Recipient[]): number => {
+    return data.reduce((sum, vote) => sum + Number(vote.numVotes), 0);
+  };
 
   /**
    * Fetch reward data from the rewards module contract

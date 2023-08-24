@@ -169,19 +169,23 @@ export function useDeployContest() {
     } catch (e) {
       const customError = e as CustomError;
 
-      if (!customError) return;
+      if (!customError) {
+        throw e;
+      }
 
       if (customError.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
         setIsLoading(false);
         stateContestDeployment.setIsLoading(false);
-        return;
+        throw e;
       }
 
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setError(customError);
       setIsLoading(false);
       toastError(`contest deployment failed`, "error while saving files to bucket");
+
+      throw e;
     }
   }
 

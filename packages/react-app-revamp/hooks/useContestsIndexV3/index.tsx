@@ -42,7 +42,7 @@ export function useContestsIndexV3() {
         throw new Error(error.message);
       }
     } catch (e) {
-      console.error(e);
+      throw e;
     }
   }
 
