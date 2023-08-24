@@ -67,7 +67,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
           <div className="pl-5">
             <Collapsible isOpen={isPromptOpen}>
               <div className="border-l border-true-white ">
-                <div className="prose pl-5 ">
+                <div className="prose prose-invert pl-5 ">
                   <ReactMarkdown
                     rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
                     components={{
