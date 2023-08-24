@@ -2,6 +2,7 @@ import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
+import { loadFileFromBucket } from "lib/buckets";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
@@ -19,7 +20,6 @@ export function useGenerateProof() {
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
-  const contestChainName = url[2];
   const contestAddress = url[3];
 
   async function getContractConfig() {
@@ -32,26 +32,11 @@ export function useGenerateProof() {
     };
   }
 
-  async function generateProofs(
-    address: string,
-    numVotes: string,
-    type: "submission" | "voting",
-  ): Promise<ProofResult> {
-    const selectType = type === "submission" ? "submissionMerkleTree" : "votingMerkleTree";
+  async function generateProofs(address: string, numVotes: string, merkleRoot: string): Promise<ProofResult> {
     try {
-      const { data } = await supabase
-        .from("contests_v3")
-        .select(selectType)
-        .eq("address", contestAddress)
-        .eq("network_name", contestChainName);
+      const recipients = await fetchFileFromBucket(merkleRoot);
 
-      if (data && data.length > 0) {
-        const merkleTreeData = data[0];
-
-        const tree = merkleTreeData[selectType];
-
-        const participants = type === "submission" ? tree.submitters : tree.voters;
-
+      if (recipients) {
         const generateTreeWorker = new Worker(new URL("/workers/generateProof", import.meta.url));
 
         return new Promise<string[]>((resolve, reject) => {
@@ -69,14 +54,14 @@ export function useGenerateProof() {
           generateTreeWorker.postMessage({
             address: address,
             numVotes: numVotes,
-            data: participants,
+            data: recipients,
           });
         });
       } else {
         return Promise.resolve([]);
       }
     } catch (error) {
-      console.error(`Error in generate${type.charAt(0).toUpperCase() + type.slice(1)}Proofs:`, error);
+      console.error(`Error in generate proof`);
       return Promise.reject(error);
     }
   }
@@ -86,10 +71,10 @@ export function useGenerateProof() {
 
     if (isVerified) return [];
 
+    const contractConfig = await getContractConfig();
+
     switch (proofType) {
       case "submission":
-        const contractConfig = await getContractConfig();
-
         //@ts-ignore
         const submissionMerkleRoot = (await readContract({
           ...contractConfig,
@@ -99,11 +84,16 @@ export function useGenerateProof() {
         if (submissionMerkleRoot === EMPTY_ROOT) {
           return [];
         } else {
-          const submissionProofs = await generateProofs(address, numVotes, "submission");
+          const submissionProofs = await generateProofs(address, numVotes, submissionMerkleRoot);
           return submissionProofs;
         }
       case "vote":
-        const votingProofs = await generateProofs(address, numVotes, "voting");
+        //@ts-ignore
+        const votingMerkleRoot = (await readContract({
+          ...contractConfig,
+          functionName: "votingMerkleRoot",
+        })) as string;
+        const votingProofs = await generateProofs(address, numVotes, votingMerkleRoot);
 
         return votingProofs;
     }
@@ -136,6 +126,14 @@ export function useGenerateProof() {
     }
 
     return verified;
+  }
+
+  async function fetchFileFromBucket(merkleRoot: string) {
+    const recipients = await loadFileFromBucket({ fileId: merkleRoot });
+
+    if (!recipients) return [];
+
+    return recipients;
   }
 
   useEffect(() => {

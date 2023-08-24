@@ -1,7 +1,9 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { s3 } from "@config/s3";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useEthersSigner } from "@helpers/ethers";
+import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
@@ -9,9 +11,13 @@ import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
+
+const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
@@ -61,9 +67,7 @@ export function useDeployContest() {
 
       const contestParameters = [
         getUnixTime(submissionOpen),
-        // how many seconds will submissions be open
         differenceInSeconds(votingOpen, submissionOpen),
-        // how many seconds will voting be open
         differenceInSeconds(votingClose, votingOpen),
         finalAllowedSubmissionsPerUser,
         finalMaxSubmissions,
@@ -73,9 +77,7 @@ export function useDeployContest() {
       const contractContest = await factoryCreateContest.deploy(
         title,
         contestInfo,
-        submissionMerkle
-          ? submissionMerkle.merkleRoot
-          : "0x0000000000000000000000000000000000000000000000000000000000000000",
+        submissionMerkle ? submissionMerkle.merkleRoot : EMPTY_ROOT,
         votingMerkle?.merkleRoot,
         contestParameters,
       );
@@ -105,32 +107,14 @@ export function useDeployContest() {
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,
-        votingMerkleTree: votingMerkle
-          ? {
-              ...votingMerkle,
-              voters: votingMerkle.voters.map(voter => ({
-                ...voter,
-                numVotes: formatUnits(voter.numVotes, 18),
-              })),
-            }
-          : null,
-        submissionMerkleTree: submissionMerkle
-          ? {
-              ...submissionMerkle,
-              submitters:
-                submissionMerkle.merkleRoot !== "0x0000000000000000000000000000000000000000000000000000000000000000"
-                  ? submissionMerkle.submitters.map(submitter => ({
-                      ...submitter,
-                      numVotes: formatUnits(submitter.numVotes, 18),
-                    }))
-                  : [],
-            }
-          : null,
         contractAddress: contractContest.address,
+        votingMerkleRoot: votingMerkle?.merkleRoot ?? EMPTY_ROOT,
+        submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
       };
 
+      await saveFilesToBucket(votingMerkle, submissionMerkle);
       await indexContest(contestData, votingMerkle, submissionMerkle);
 
       toastSuccess("contest has been deployed!");
@@ -157,6 +141,65 @@ export function useDeployContest() {
     }
   }
 
+  async function saveFilesToBucket(votingMerkle: VotingMerkle | null, submissionMerkle: SubmissionMerkle | null) {
+    if (!isR2Configured) {
+      throw new Error("R2 is not configured");
+    }
+
+    const tasks: Promise<void>[] = [];
+
+    if (votingMerkle && !(await checkExistingFileInBucket(votingMerkle.merkleRoot))) {
+      tasks.push(
+        saveFileToBucket({
+          fileId: votingMerkle.merkleRoot,
+          content: formatRecipients(votingMerkle.voters),
+        }),
+      );
+    }
+
+    if (submissionMerkle && !(await checkExistingFileInBucket(submissionMerkle.merkleRoot))) {
+      tasks.push(
+        saveFileToBucket({
+          fileId: submissionMerkle.merkleRoot,
+          content: formatRecipients(submissionMerkle.submitters),
+        }),
+      );
+    }
+
+    try {
+      await Promise.all(tasks);
+    } catch (e) {
+      const customError = e as CustomError;
+
+      if (!customError) {
+        throw e;
+      }
+
+      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        setIsLoading(false);
+        stateContestDeployment.setIsLoading(false);
+        throw e;
+      }
+
+      stateContestDeployment.setIsLoading(false);
+      stateContestDeployment.setError(customError);
+      setIsLoading(false);
+      toastError(`contest deployment failed`, "error while saving files to bucket");
+
+      throw e;
+    }
+  }
+
+  async function checkExistingFileInBucket(fileId: string): Promise<boolean> {
+    try {
+      const existingData = await loadFileFromBucket({ fileId });
+      return !!(existingData && existingData.length > 0);
+    } catch (e) {
+      return false;
+    }
+  }
+
   async function indexContest(
     contestData: ContestValues,
     votingMerkle: VotingMerkle | null,
@@ -171,7 +214,7 @@ export function useDeployContest() {
 
       tasks.push(indexContestV3(contestData));
 
-      if (votingMerkle && votingMerkle.voters.length > 0) {
+      if (votingMerkle) {
         const submitters = submissionMerkle ? submissionMerkle.submitters : [];
         const voterSet = new Set(votingMerkle.voters.map(voter => voter.address));
         const submitterSet = new Set(submitters.map(submitter => submitter.address));
@@ -209,6 +252,14 @@ export function useDeployContest() {
       setIsLoading(false);
       toastError(`contest deployment failed`, customError.message);
     }
+  }
+
+  // Helper function to format recipients (either voters or submitters)
+  function formatRecipients(recipients: Recipient[]): Recipient[] {
+    return recipients.map(recipient => ({
+      ...recipient,
+      numVotes: formatUnits(recipient.numVotes, 18),
+    }));
   }
 
   return {

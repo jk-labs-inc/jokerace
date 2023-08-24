@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import EthereumAddress from "@components/UI/EtheuremAddress";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CREATOR } from "@config/routes";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_USER } from "@config/routes";
 import { HomeIcon } from "@heroicons/react/outline";
 import { ConnectButton, useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
@@ -41,7 +41,7 @@ const MainHeader = () => {
         {isConnected ? (
           <div className="flex gap-2">
             {isClient && address && (
-              <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+              <Link href={`${ROUTE_VIEW_USER}/${address}`}>
                 <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
               </Link>
             )}
@@ -70,7 +70,7 @@ const MainHeader = () => {
             <div
               className={`bg-true-black flex items-center gap-5 ${
                 isConnected ? "ml-[100px]" : ""
-              }text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header`}
+              } text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header`}
             >
               <Link href="/contests" className="text-primary-10">
                 play
@@ -83,7 +83,7 @@ const MainHeader = () => {
 
           <div className="flex gap-3 items-center" style={{ minWidth: "260pxs" }}>
             {isClient && address ? (
-              <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+              <Link href={`${ROUTE_VIEW_USER}/${address}`}>
                 <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
               </Link>
             ) : null}

@@ -1,0 +1,2 @@
+File name = merkle root
+File content = the merkle tree information in the format demonstrated in bucket_file_format.json

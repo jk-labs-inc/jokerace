@@ -1,6 +1,6 @@
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
-import { ROUTE_VIEW_CREATOR } from "@config/routes";
+import { ROUTE_VIEW_USER } from "@config/routes";
 import { HomeIcon } from "@heroicons/react/outline";
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
@@ -66,7 +66,7 @@ const CreateFlowHeader = () => {
         {isConnected ? (
           <div className="flex gap-2">
             {isClient && address && (
-              <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+              <Link href={`${ROUTE_VIEW_USER}/${address}`}>
                 <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
               </Link>
             )}
@@ -114,7 +114,7 @@ const CreateFlowHeader = () => {
           {!isLoading && !isSuccess && (
             <div className="flex items-center gap-3">
               {isClient && address && (
-                <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+                <Link href={`${ROUTE_VIEW_USER}/${address}`}>
                   <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
                 </Link>
               )}

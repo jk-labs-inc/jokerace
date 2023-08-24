@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { ROUTE_VIEW_CREATOR } from "@config/routes";
+import { ROUTE_VIEW_USER } from "@config/routes";
 import { useAvatarStore } from "@hooks/useAvatar";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEnsAvatar, fetchEnsName, mainnet } from "@wagmi/core";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
@@ -78,7 +77,7 @@ const EthereumAddress = ({
   });
 
   const onUserProfileRoute = () => {
-    router.push(`${ROUTE_VIEW_CREATOR}/${ethereumAddress}`);
+    router.push(`${ROUTE_VIEW_USER}/${ethereumAddress}`);
   };
 
   const avatarUrl = queryProfileAndAvatar.data?.avatarUrl || DEFAULT_AVATAR_URL;
@@ -87,7 +86,7 @@ const EthereumAddress = ({
 
   if (textualVersion) {
     return (
-      <a target="_blank" rel="noopener noreferrer" href={`${ROUTE_VIEW_CREATOR}/${ethereumAddress}`}>
+      <a target="_blank" rel="noopener noreferrer" href={`${ROUTE_VIEW_USER}/${ethereumAddress}`}>
         {displayName}
       </a>
     );
@@ -117,7 +116,7 @@ const EthereumAddress = ({
             className={`no-underline ${textSizeClass} text-neutral-11 font-bold`}
             target="_blank"
             rel="noopener noreferrer"
-            href={includeSocials ? undefined : `${ROUTE_VIEW_CREATOR}/${ethereumAddress}`}
+            href={includeSocials ? undefined : `${ROUTE_VIEW_USER}/${ethereumAddress}`}
           >
             {displayName}
           </a>

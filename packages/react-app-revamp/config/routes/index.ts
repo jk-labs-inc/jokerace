@@ -1,6 +1,6 @@
 export const ROUTE_CREATE_CONTEST = "/contest/new";
 export const ROUTE_VIEW_CONTESTS = "/contests";
-export const ROUTE_VIEW_CREATOR = `/creator`;
+export const ROUTE_VIEW_USER = `/user`;
 export const ROUTE_VIEW_LIVE_CONTESTS = `${ROUTE_VIEW_CONTESTS}/live`;
 export const ROUTE_VIEW_PAST_CONTESTS = `${ROUTE_VIEW_CONTESTS}/past`;
 export const ROUTE_VIEW_UPCOMING_CONTESTS = `${ROUTE_VIEW_CONTESTS}/upcoming`;
