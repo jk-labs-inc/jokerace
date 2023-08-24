@@ -70,7 +70,7 @@ const MainHeader = () => {
             <div
               className={`bg-true-black flex items-center gap-5 ${
                 isConnected ? "ml-[100px]" : ""
-              }text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header`}
+              } text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header`}
             >
               <Link href="/contests" className="text-primary-10">
                 play
