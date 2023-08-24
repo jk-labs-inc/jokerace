@@ -12,7 +12,7 @@ import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { saveFileToBucket } from "lib/buckets";
+import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
@@ -148,6 +148,8 @@ export function useDeployContest() {
       const tasks: Promise<void>[] = [];
 
       if (votingMerkle) {
+        if (votingMerkle && (await checkExistingFileInBucket(votingMerkle.merkleRoot))) return;
+
         tasks.push(
           saveFileToBucket({
             fileId: votingMerkle.merkleRoot,
@@ -157,6 +159,8 @@ export function useDeployContest() {
       }
 
       if (submissionMerkle) {
+        if (submissionMerkle && (await checkExistingFileInBucket(submissionMerkle.merkleRoot))) return;
+
         tasks.push(
           saveFileToBucket({
             fileId: submissionMerkle.merkleRoot,
@@ -186,6 +190,15 @@ export function useDeployContest() {
       toastError(`contest deployment failed`, "error while saving files to bucket");
 
       throw e;
+    }
+  }
+
+  async function checkExistingFileInBucket(fileId: string): Promise<boolean> {
+    try {
+      const existingData = await loadFileFromBucket({ fileId });
+      return !!(existingData && existingData.length > 0);
+    } catch (e) {
+      return false;
     }
   }
 
