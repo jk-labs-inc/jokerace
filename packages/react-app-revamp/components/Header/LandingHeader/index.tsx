@@ -1,7 +1,7 @@
 import Button from "@components/UI/Button";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import MenuLink from "@components/UI/Menu/Link";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS, ROUTE_VIEW_CREATOR } from "@config/routes";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -40,7 +40,7 @@ const LandingHeader = () => {
         </Link>
         <div className="hidden lg:flex items-center gap-3">
           {isClient && address && (
-            <Link href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+            <Link href={`${ROUTE_VIEW_USER}/${address}`}>
               <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
             </Link>
           )}
@@ -86,7 +86,7 @@ const LandingHeader = () => {
                     {isClient && address && (
                       <Menu.Item>
                         {({ active }) => (
-                          <MenuLink active={active} href={`${ROUTE_VIEW_CREATOR}/${address}`}>
+                          <MenuLink active={active} href={`${ROUTE_VIEW_USER}/${address}`}>
                             Profile
                           </MenuLink>
                         )}
