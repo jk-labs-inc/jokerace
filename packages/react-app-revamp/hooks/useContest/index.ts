@@ -67,7 +67,6 @@ export function useContest() {
     setVotesClose,
     setVotesOpen,
     setRewards,
-    setSubmissionMerkleRoot,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
     setIsReadOnly,

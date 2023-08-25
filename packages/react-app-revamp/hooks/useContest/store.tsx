@@ -30,7 +30,6 @@ export interface ContestState {
   downvotingAllowed: boolean;
   canUpdateVotesInRealTime: boolean;
   supportsRewardsModule: boolean;
-  submissionMerkleRoot: string;
   submitters: {
     address: string;
   }[];
@@ -53,7 +52,6 @@ export interface ContestState {
   setRewards: (rewards: Reward | null) => void;
   setVoters: (voters: Recipient[]) => void;
   setSubmitters: (submitters: { address: string }[]) => void;
-  setSubmissionMerkleRoot: (root: string) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: CustomError | null) => void;
   setIsSuccess: (value: boolean) => void;
@@ -71,7 +69,6 @@ export const createContestStore = () =>
     submissionsOpen: new Date(),
     votesOpen: new Date(),
     votesClose: new Date(),
-    submissionMerkleRoot: "",
     submitters: [],
     voters: [],
     totalVotesCast: 0,
@@ -101,7 +98,6 @@ export const createContestStore = () =>
     setVotesClose: datetime => set({ votesClose: datetime }),
     setVoters: voters => set({ voters: voters }),
     setSubmitters: submitters => set({ submitters: submitters }),
-    setSubmissionMerkleRoot: root => set({ submissionMerkleRoot: root }),
     setTotalVotesCast: amount => set({ totalVotesCast: amount }),
     setTotalVotes: amount => set({ totalVotes: amount }),
     setRewards: rewards => set({ rewards: rewards }),
