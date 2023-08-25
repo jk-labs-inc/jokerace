@@ -18,7 +18,7 @@ const TableRow: FC<TableRowProps> = ({ address, votes, error, index, handlePaste
     >
       <input
         type="text"
-        placeholder={index === 0 ? "0xd56e3E325133EFEd6B1687C88571b8a91e517ab0" : ""}
+        placeholder={index === 0 ? "0xb19d2F010a53ACbd8D0746aE9412b4e34F350Dc2" : ""}
         className="w-full bg-transparent outline-none border-none p-0 placeholder-neutral-10"
         value={address}
         onPaste={event => handlePaste(index, event)}
