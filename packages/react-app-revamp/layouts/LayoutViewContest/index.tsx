@@ -11,6 +11,7 @@ import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDepl
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
@@ -24,6 +25,7 @@ import { RewardsWrapper } from "@hooks/useRewards/store";
 import { SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
 import useUser from "@hooks/useUser";
 import { UserWrapper, useUserStore } from "@hooks/useUser/store";
+import { readContract } from "@wagmi/core";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -60,7 +62,6 @@ const LayoutViewContest = (props: any) => {
     rewards,
     isReadOnly,
     isRewardsLoading,
-    submissionMerkleRoot,
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
@@ -119,6 +120,22 @@ const LayoutViewContest = (props: any) => {
       try {
         if (accountChanged || didConnect) {
           setIsUserStoreLoading(true);
+
+          const { abi } = await getContestContractVersion(address, chainId);
+
+          if (!abi) return;
+
+          const contractConfig = {
+            address: address as `0x${string}`,
+            abi: abi,
+            chainId: chainId,
+          };
+
+          //@ts-ignore
+          const submissionMerkleRoot = (await readContract({
+            ...contractConfig,
+            functionName: "submissionMerkleRoot",
+          })) as string;
 
           await Promise.all([
             checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),

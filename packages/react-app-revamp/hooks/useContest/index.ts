@@ -67,7 +67,6 @@ export function useContest() {
     setVotesClose,
     setVotesOpen,
     setRewards,
-    setSubmissionMerkleRoot,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
     setIsReadOnly,
@@ -141,8 +140,7 @@ export function useContest() {
       const isDownvotingAllowed = Number(results[9].result) === 1;
       const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
       const contestMaxProposalCount = Number(results[3].result);
-      const submissionMerkleRoot = results[10].result as string;
-      const votingMerkleRoot = results[11].result as string;
+
       setContestName(results[0].result as string);
       setContestAuthor(results[1].result as string, results[1].result as string);
       setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
@@ -151,7 +149,7 @@ export function useContest() {
       setVotesClose(closingVoteDate);
       setVotesOpen(votesOpenDate);
       setContestPrompt(results[8].result as string);
-      setSubmissionMerkleRoot(submissionMerkleRoot);
+
       setDownvotingAllowed(isDownvotingAllowed);
 
       // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
@@ -182,7 +180,7 @@ export function useContest() {
       await Promise.all([
         fetchTotalVotesCast(),
         processRewardData(contestRewardModuleAddress),
-        processContestData(submissionMerkleRoot, votingMerkleRoot, contestMaxNumberSubmissionsPerUser),
+        processContestData(contractConfig, contestMaxNumberSubmissionsPerUser),
       ]);
     } catch (error) {
       const customError = error as CustomError;
@@ -301,16 +299,35 @@ export function useContest() {
   /**
    * Fetch merkle tree data from DB and re-create the tree
    */
-  async function processContestData(
-    submissionMerkleRoot: string,
-    votingMerkleRoot: string,
-    contestMaxNumberSubmissionsPerUser: number,
-  ) {
+  async function processContestData(contractConfig: ContractConfig, contestMaxNumberSubmissionsPerUser: number) {
     // Do not fetch merkle tree data if the contest is not using it
     if (contestStatus === ContestStatus.VotingClosed) {
       setIsUserStoreLoading(false);
       return;
     }
+
+    const results = await readContracts({
+      contracts: [
+        {
+          ...contractConfig,
+          functionName: "submissionMerkleRoot",
+          args: [],
+        },
+        {
+          ...contractConfig,
+          functionName: "votingMerkleRoot",
+          args: [],
+        },
+      ],
+    });
+
+    if (!results) {
+      setIsUserStoreLoading(false);
+      return;
+    }
+
+    const submissionMerkleRoot = results[0].result as unknown as string;
+    const votingMerkleRoot = results[1].result as unknown as string;
 
     if (!isSupabaseConfigured) {
       setIsReadOnly(true);
