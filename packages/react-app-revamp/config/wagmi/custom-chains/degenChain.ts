@@ -1,8 +1,8 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const nautilusChain: Chain = {
+export const degenChain: Chain = {
   id: 69420,
-  name: "Degen",
+  name: "degenChain",
   network: "degenChain",
   iconUrl: "/degen.png",
   nativeCurrency: {
