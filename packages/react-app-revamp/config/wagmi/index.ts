@@ -9,6 +9,7 @@ import { baseTestnet } from "./custom-chains/baseTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
+import { degenChain } from "./custom-chains/degenChain";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
@@ -75,6 +76,7 @@ const totalChains: Chain[] = [
   proteus,
   nautilusChain,
   ronin,
+  degenChain,
   polygonTestnet,
   sepolia,
   goerli,
