@@ -273,7 +273,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         override
         returns (uint256)
     {
-        require(msg.value >= _costToPropose, "Governer: this transaction was not sent with sufficient funds to propose");
+        require(
+            msg.value == _costToPropose,
+            "Governor: this transaction was not sent with the correct amount of funds needed to propose"
+        );
         require(verifyProposer(msg.sender, proof), "Governor: address is not permissioned to submit");
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
