@@ -179,6 +179,7 @@ abstract contract IGovernor is IERC165 {
      */
     function propose(ProposalCore memory proposal, bytes32[] calldata proof)
         public
+        payable
         virtual
         returns (uint256 proposalId);
 

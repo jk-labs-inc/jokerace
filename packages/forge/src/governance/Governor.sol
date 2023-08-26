@@ -23,8 +23,12 @@ import "./GovernorMerkleVotes.sol";
 abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
+    event PaymentReleased(address to, uint256 amount);
+
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
+    address public constant JK_LABS_REVENUE_ADDRESS = 0xd698e31229aB86334924ed9DFfd096a71C686900;
+
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
     mapping(address => bool) public addressSubmitterVerified;
@@ -264,13 +268,27 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function propose(ProposalCore memory proposal, bytes32[] calldata proof)
         public
+        payable
         virtual
         override
         returns (uint256)
     {
+        require(msg.value >= _costToPropose, "Governer: this transaction was not sent with sufficient funds to propose");
         require(verifyProposer(msg.sender, proof), "Governor: address is not permissioned to submit");
         validateProposalData(proposal);
-        return _castProposal(proposal);
+        uint256 proposalId = _castProposal(proposal);
+
+        if (_costToPropose > 0) {
+            // Send proposal fee to jk labs address and creator
+            uint256 sendingToJkLabs = msg.value / 2;
+            Address.sendValue(payable(JK_LABS_REVENUE_ADDRESS), sendingToJkLabs);
+            emit PaymentReleased(JK_LABS_REVENUE_ADDRESS, sendingToJkLabs);
+            uint256 sendingToCreator = msg.value - sendingToJkLabs;
+            Address.sendValue(payable(creator()), sendingToCreator); // creator gets the extra wei in the case of rounding
+            emit PaymentReleased(creator(), sendingToCreator);
+        }
+
+        return proposalId;
     }
 
     /**
