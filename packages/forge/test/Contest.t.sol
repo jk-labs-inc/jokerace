@@ -7,6 +7,9 @@ import "../src/Contest.sol";
 contract ContestTest is Test {
     Contest public contest;
     Contest public anyoneCanSubmitContest;
+    Contest public anyoneCanSubmitCostsAnEthContest;
+
+    // BASIC INT PARAMS
     uint64 public constant CONTEST_START = 1681650000;
     uint64 public constant VOTING_DELAY = 10000;
     uint64 public constant VOTING_PERIOD = 10000;
@@ -22,6 +25,11 @@ contract ContestTest is Test {
         DOWNVOTING_ALLOWED
     ];
 
+    // COST TO PROPOSE PARAMS
+    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
+    uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
+
+    // MERKLE TREE PARAMS
     /*
         Voting merkle tree:
         {
@@ -58,9 +66,11 @@ contract ContestTest is Test {
     bytes32[] public submissionProof1 = [bytes32(0x3525e2aa1b921658191cfccf7e63bf6bcac64a0315ca9eb04f2bcc08975d431f)];
     bytes32[] public submissionProof2 = [bytes32(0x3704b461c09457df5491016097977d5364e607b59049ca6d36dfb9c16d03a2bf)];
 
+    // METADATA PARAMS
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
 
+    // PROPOSALS PARAMS
     IGovernor.ProposalCore public firstProposalPA1 = IGovernor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "firstProposalPA1",
@@ -97,12 +107,21 @@ contract ContestTest is Test {
                               "hello world",
                               SUBMISSION_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
+                              ZERO_COST_TO_PROPOSE,
                               numParams);
 
         anyoneCanSubmitContest = new Contest("test",
                               "hello world",
                               SUB_ZERO_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
+                              ZERO_COST_TO_PROPOSE,
+                              numParams);
+
+        anyoneCanSubmitCostsAnEthContest = new Contest("test",
+                              "hello world",
+                              SUB_ZERO_MERKLE_ROOT,
+                              VOTING_MERKLE_ROOT,
+                              ONE_ETH_COST_TO_PROPOSE,
                               numParams);
 
         vm.stopPrank();

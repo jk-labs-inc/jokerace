@@ -36,6 +36,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
+    uint256 private _costToPropose;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -43,12 +44,16 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev Sets the value for {name} and {version}
      */
-    constructor(string memory name_, string memory prompt_, bytes32 submissionMerkleRoot_, bytes32 votingMerkleRoot_)
-        GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_)
-        EIP712(name_, version())
-    {
+    constructor(
+        string memory name_,
+        string memory prompt_,
+        bytes32 submissionMerkleRoot_,
+        bytes32 votingMerkleRoot_,
+        uint256 costToPropose_
+    ) GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_) EIP712(name_, version()) {
         _name = name_;
         _prompt = prompt_;
+        _costToPropose = costToPropose_;
     }
 
     /**
@@ -81,10 +86,17 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
+     * @dev See {IGovernor-costToPropose}.
+     */
+    function costToPropose() public view virtual override returns (uint256) {
+        return _costToPropose;
+    }
+
+    /**
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.3";
+        return "3.4";
     }
 
     /**

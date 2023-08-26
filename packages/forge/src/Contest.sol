@@ -12,9 +12,10 @@ contract Contest is Governor, GovernorSettings, GovernorSorting, GovernorModuleR
         string memory _prompt,
         bytes32 _submissionMerkleRoot,
         bytes32 _votingMerkleRoot,
+        uint256 _costToPropose,
         uint256[] memory _constructorIntParams
     )
-        Governor(_name, _prompt, _submissionMerkleRoot, _votingMerkleRoot)
+        Governor(_name, _prompt, _submissionMerkleRoot, _votingMerkleRoot, _costToPropose)
         GovernorSettings(
             _constructorIntParams[0], // _initialContestStart
             _constructorIntParams[1], // _initialVotingDelay,
