@@ -157,7 +157,7 @@ contract ContestTest is Test {
         assertEq(contest.creator(), CREATOR_ADDRESS_1);
     }
 
-    // PROPOSING AND VOTING
+    // PROPOSING
 
     function testValidate() public {
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -216,6 +216,37 @@ contract ContestTest is Test {
         vm.expectRevert(bytes("Governor: the proposal author must be msg.sender"));
         contest.proposeWithoutProof(unpermissionedAuthorProposal1);
     }
+
+    function testProposeAnyoneCanCostIsOneEther() public {
+        vm.warp(1681650001);
+        vm.deal(address(UNPERMISSIONED_ADDRESS_1), 1 ether); // give the proposer wei to pay the cost to propose
+        vm.prank(UNPERMISSIONED_ADDRESS_1);
+        uint256 proposalId =
+            anyoneCanSubmitCostsAnEthContest.propose{value: 1 ether}(unpermissionedAuthorProposal1, proof0);
+
+        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+    }
+
+    function testProposeAnyoneCanCostIsOneEtherNoMsgValue() public {
+        vm.warp(1681650001);
+        vm.prank(UNPERMISSIONED_ADDRESS_1);
+        vm.expectRevert(
+            bytes("Governor: this transaction was not sent with the correct amount of funds needed to propose")
+        );
+        anyoneCanSubmitCostsAnEthContest.propose(unpermissionedAuthorProposal1, proof0);
+    }
+
+    function testProposeAnyoneCanCostIsOneEtherTooMuchMsgValue() public {
+        vm.warp(1681650001);
+        vm.deal(address(UNPERMISSIONED_ADDRESS_1), 2 ether); // give the proposer wei to pay the cost to propose
+        vm.prank(UNPERMISSIONED_ADDRESS_1);
+        vm.expectRevert(
+            bytes("Governor: this transaction was not sent with the correct amount of funds needed to propose")
+        );
+        anyoneCanSubmitCostsAnEthContest.propose{value: 2 ether}(unpermissionedAuthorProposal1, proof0);
+    }
+
+    // VOTING
 
     function testVote1() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);
