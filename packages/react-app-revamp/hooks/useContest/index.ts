@@ -16,7 +16,7 @@ import { loadFileFromBucket } from "lib/buckets";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
@@ -39,7 +39,7 @@ interface ContractConfig {
 }
 
 export function useContest() {
-  const { asPath } = useRouter();
+  const { asPath, ...router } = useRouter();
   const { chain } = useNetwork();
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,

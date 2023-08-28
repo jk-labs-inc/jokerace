@@ -15,15 +15,14 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import moment from "moment";
-import React, { Children } from "react";
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/router";
+import React, { Children, FC, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 import { useAccount } from "wagmi";
-import DialogModalProposal from "../DialogModalProposal";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 
 export interface Proposal {
@@ -49,8 +48,10 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
   const { isConnected } = useAccount();
+  const { asPath, ...router } = useRouter();
+  const chainName = asPath.split("/")[2];
+  const contestAddress = asPath.split("/")[3];
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
-  const [isProposalModalOpen, setIsProposalModalOpen] = useState(false);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
   const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
@@ -145,12 +146,22 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
     truncatedContent = `<div>${$.html()}</div>`;
   }
 
+  const onSubmissionPageNavigate = () => {
+    router.push(
+      {
+        pathname: `/contest/${chainName}/${contestAddress}/submission/${id}`,
+        query: {
+          submission: id,
+        },
+      },
+      `/contest/${chainName}/${contestAddress}/submission/${id}`,
+      { shallow: true, scroll: false },
+    );
+  };
+
   return (
     <div className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
-      <div
-        className="flex items-center overflow-hidden  px-8 py-2 h-3/5 md:h-3/4"
-        onClick={() => setIsProposalModalOpen(true)}
-      >
+      <div className="flex items-center overflow-hidden  px-8 py-2 h-3/5 md:h-3/4" onClick={onSubmissionPageNavigate}>
         <ReactMarkdown
           className="markdown max-w-full"
           components={{
@@ -192,13 +203,6 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
       </div>
 
       <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
-      <DialogModalProposal
-        proposalId={id}
-        prompt={prompt}
-        isOpen={isProposalModalOpen}
-        setIsOpen={setIsProposalModalOpen}
-        proposal={proposal}
-      />
     </div>
   );
 };

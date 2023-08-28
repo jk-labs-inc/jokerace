@@ -1,5 +1,4 @@
 import Button from "@components/UI/Button";
-import Loader from "@components/UI/Loader";
 import ProposalContent from "@components/_pages/ProposalContent";
 import { useContestStore } from "@hooks/useContest/store";
 import useProposal from "@hooks/useProposal";
