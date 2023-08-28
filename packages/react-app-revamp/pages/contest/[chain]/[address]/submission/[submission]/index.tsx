@@ -3,11 +3,13 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import { readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC } from "react";
 
@@ -19,7 +21,7 @@ interface PageProps {
 
 const Page: FC<PageProps> = ({ proposalData, address, chain }) => {
   const router = useRouter();
-  const contestPrompt = useContestStore(state => state.contestPrompt);
+  const { contestPrompt, contestName } = useContestStore(state => state);
   const { listProposalsData } = useProposalStore(state => state);
   const id = router.query.submission as string;
   const proposal = listProposalsData[id] || proposalData;
@@ -29,13 +31,20 @@ const Page: FC<PageProps> = ({ proposalData, address, chain }) => {
   };
 
   return (
-    <DialogModalProposal
-      proposalId={id}
-      prompt={contestPrompt}
-      isOpen={true}
-      proposal={proposal}
-      onClose={onModalClose}
-    />
+    <>
+      <Head>
+        <title>
+          proposal by {shortenEthereumAddress(proposal.authorEthereumAddress)} for {contestName}
+        </title>
+      </Head>
+      <DialogModalProposal
+        proposalId={id}
+        prompt={contestPrompt}
+        isOpen={true}
+        proposal={proposal}
+        onClose={onModalClose}
+      />
+    </>
   );
 };
 
@@ -102,7 +111,6 @@ export async function getStaticProps({ params }: any) {
     const chainId = getChainId(chain);
 
     if (!chainId) return;
-
     const proposalData = await fetchProposalData(address, chainId, submission);
 
     return {
