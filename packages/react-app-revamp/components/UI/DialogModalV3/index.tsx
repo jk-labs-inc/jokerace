@@ -1,16 +1,15 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Dialog } from "@headlessui/react";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import { FC, useCallback, useState } from "react";
 import ButtonV3 from "../ButtonV3";
 
 interface DialogModalProps {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
   title: string;
   children: React.ReactNode;
   disableClose?: boolean;
+  setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
   className?: string;
   doubleCheckClose?: boolean;
@@ -38,7 +37,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
         return;
       }
 
-      setIsOpen(false);
+      setIsOpen?.(false);
       if (onClose) {
         onClose();
       }
@@ -73,7 +72,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
                       <ButtonV3
                         onClick={() => {
                           setShowConfirmation(false);
-                          setIsOpen(true);
+                          setIsOpen?.(true);
                         }}
                         color="bg-primary-10"
                       >
