@@ -14,6 +14,7 @@ import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
+import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { goerli } from "./custom-chains/goerli";
@@ -77,6 +78,7 @@ const totalChains: Chain[] = [
   nautilusChain,
   ronin,
   degenChain,
+  fuse,
   polygonTestnet,
   sepolia,
   goerli,

@@ -15,13 +15,21 @@ import { Proposal } from "../ProposalContent";
 
 interface DialogModalProposalProps {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
   prompt: string;
   proposalId: string;
   proposal: Proposal;
+  setIsOpen?: (isOpen: boolean) => void;
+  onClose?: () => void;
 }
 
-const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, prompt, proposal, proposalId }) => {
+const DialogModalProposal: FC<DialogModalProposalProps> = ({
+  isOpen,
+  setIsOpen,
+  prompt,
+  proposal,
+  proposalId,
+  onClose,
+}) => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { openConnectModal } = useConnectModal();
   const { isConnected } = useAccount();
@@ -64,11 +72,17 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({ isOpen, setIsOpen, 
   };
 
   useEffect(() => {
-    if (isSuccess) setIsOpen(false);
+    if (isSuccess) setIsOpen?.(false);
   }, [isSuccess, setIsOpen]);
 
   return (
-    <DialogModalV3 title="Proposal" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px] ">
+    <DialogModalV3
+      title="Proposal"
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      className="xl:w-[1110px] 3xl:w-[1300px]"
+      onClose={onClose}
+    >
       <div className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[60px] pb-[60px]">
         <LayoutContestPrompt prompt={prompt} hidePrompt />
         <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
