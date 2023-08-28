@@ -10,8 +10,6 @@ export function getV3Contracts(contractConfig: any) {
     "state",
     "prompt",
     "downvotingAllowed",
-    "submissionMerkleRoot",
-    "votingMerkleRoot",
   ];
 
   const contracts = contractFunctionNames.map(functionName => ({
