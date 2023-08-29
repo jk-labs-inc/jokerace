@@ -2,7 +2,6 @@ import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
-import { NextSeo } from "next-seo";
 import Head from "next/head";
 
 interface PageProps {
@@ -11,38 +10,15 @@ interface PageProps {
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
   const { address } = props;
-  const { contestName } = useContestStore(state => state);
+  const { contestName, contestPrompt } = useContestStore(state => state);
 
   return (
     <>
-      <NextSeo
-        title="Using More of Config"
-        description="This example uses more of the available config options."
-        openGraph={{
-          url: "https://www.url.ie/a",
-          title: "Open Graph Title",
-          description: "Open Graph Description",
-          images: [
-            {
-              url: "https://www.example.ie/og-image-01.jpg",
-              width: 800,
-              height: 600,
-              alt: "Og Image Alt",
-              type: "image/jpeg",
-            },
-            {
-              url: "https://www.example.ie/og-image-02.jpg",
-              width: 900,
-              height: 800,
-              alt: "Og Image Alt Second",
-              type: "image/jpeg",
-            },
-            { url: "https://www.example.ie/og-image-03.jpg" },
-            { url: "https://www.example.ie/og-image-04.jpg" },
-          ],
-          siteName: "SiteName",
-        }}
-      />
+      <Head>
+        <title>{contestName ? contestName : address} - jokerace</title>
+        <meta property="og:title" content={`${contestName} - jokerace`} />
+        <meta property="og:description" content={`${contestPrompt}`} />
+      </Head>
     </>
   );
 };
