@@ -15,6 +15,7 @@ const Page: NextPage = (props: PageProps) => {
   return (
     <>
       <Head>
+        <title>{contestName} - jokerace</title>
         <meta property="og:title" content={`${contestName} - jokerace`} />
         <meta property="og:description" content={`${title}`} />
       </Head>
