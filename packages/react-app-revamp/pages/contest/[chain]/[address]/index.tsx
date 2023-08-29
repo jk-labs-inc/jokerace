@@ -16,8 +16,8 @@ const Page: NextPage = (props: PageProps) => {
     <>
       <Head>
         <title>{contestName.toLowerCase()} - jokerace</title>
-        <meta property="og:title" content={`${contestName.toLowerCase()} - jokerace`} />
-        <meta property="og:description" content={`${title.toLowerCase()}`} />
+        <meta property="og:title" content={`${contestName.toLowerCase()} - jokerace`} key="title" />
+        <meta property="og:description" content={`${title.toLowerCase()}`} key="description" />
       </Head>
     </>
   );

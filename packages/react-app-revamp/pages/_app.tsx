@@ -37,8 +37,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="color-scheme" content="dark" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://jokerace.xyz/" />
-        <meta property="og:title" content="jokerace" />
+        <meta property="og:title" content="jokerace" key="title" />
         <meta
+          key="description"
           property="og:description"
           content="jokerace - contests for communities to make,
           execute, and reward decisions"
