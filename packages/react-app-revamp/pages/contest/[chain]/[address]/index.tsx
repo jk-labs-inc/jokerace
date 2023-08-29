@@ -9,15 +9,14 @@ interface PageProps {
 }
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
-  const { address } = props;
   const { contestName, contestPrompt } = useContestStore(state => state);
+  const [, title] = contestPrompt.split("|");
 
   return (
     <>
       <Head>
-        <title>{contestName ? contestName : address} - jokerace</title>
         <meta property="og:title" content={`${contestName} - jokerace`} />
-        <meta property="og:description" content={`${contestPrompt}`} />
+        <meta property="og:description" content={`${title}`} />
       </Head>
     </>
   );
