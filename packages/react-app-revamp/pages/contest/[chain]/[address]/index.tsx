@@ -9,14 +9,15 @@ interface PageProps {
 }
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
-  const { address } = props;
-  const { contestName } = useContestStore(state => state);
+  const { contestName, contestPrompt } = useContestStore(state => state);
+  const [, title] = contestPrompt.split("|");
 
   return (
     <>
       <Head>
-        <title>{contestName ? contestName : address} - jokerace</title>
-        <meta name="description" content="@TODO: change this" />
+        <title>{contestName.toLowerCase()} - jokerace</title>
+        <meta property="og:title" content={`${contestName.toLowerCase()} - jokerace`} />
+        <meta property="og:description" content={`${title.toLowerCase()}`} />
       </Head>
     </>
   );
