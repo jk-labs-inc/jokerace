@@ -2,6 +2,7 @@ import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import type { NextPage } from "next";
+import { NextSeo } from "next-seo";
 import Head from "next/head";
 
 interface PageProps {
@@ -14,12 +15,7 @@ const Page: NextPage = (props: PageProps) => {
 
   return (
     <>
-      <Head>
-        <title>{contestName ? contestName : address} - jokerace</title>
-        <meta property="og:title" content="jokerace contest" />
-        <meta property="og:description" content="jokerace - contest test" />
-        <meta property="og:image" content="https://jokerace.xyz/jokerace.png" />
-      </Head>
+      <NextSeo title="Simple Usage Example" description="A short description goes here." />
     </>
   );
 };
