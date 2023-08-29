@@ -16,7 +16,9 @@ const Page: NextPage = (props: PageProps) => {
     <>
       <Head>
         <title>{contestName ? contestName : address} - jokerace</title>
-        <meta name="description" content="@TODO: change this" />
+        <meta property="og:title" content="jokerace contest" />
+        <meta property="og:description" content="jokerace - contest test" />
+        <meta property="og:image" content="https://jokerace.xyz/jokerace.png" />
       </Head>
     </>
   );
