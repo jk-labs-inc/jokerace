@@ -37,7 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="color-scheme" content="dark" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://jokerace.xyz/" />
-        <meta property="og:title" content="jokerace" />
+        {/* <meta property="og:title" content="jokerace" />
         <meta
           property="og:description"
           content="jokerace - contests for communities to make,
@@ -50,7 +50,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta
           name="twitter:description"
           content="jokerace - contests for communities to make, execute, and reward decisions."
-        />
+        /> */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="twitter:image" content="https://jokerace.xyz/jokerace.png" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
