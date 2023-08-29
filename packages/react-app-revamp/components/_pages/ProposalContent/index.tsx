@@ -15,6 +15,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import moment from "moment";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Children, FC, useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -146,52 +147,46 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
     truncatedContent = `<div>${$.html()}</div>`;
   }
 
-  const onSubmissionPageNavigate = () => {
-    router.push(
-      {
-        pathname: `/contest/${chainName}/${contestAddress}/submission/${id}`,
-        query: {
-          submission: id,
-        },
-      },
-      `/contest/${chainName}/${contestAddress}/submission/${id}`,
-      { shallow: true, scroll: false },
-    );
-  };
-
   return (
     <div className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
-      <div className="flex items-center overflow-hidden  px-8 py-2 h-3/5 md:h-3/4" onClick={onSubmissionPageNavigate}>
-        <ReactMarkdown
-          className="markdown max-w-full"
-          components={{
-            div: ({ node, children, ...props }) => (
-              <div {...props} className="flex gap-5 items-center markdown">
-                {children}
-              </div>
-            ),
-            img: ({ node, ...props }) => <MarkdownImage imageSize="compact" src={props.src ?? ""} />,
-            p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
-            ul: ({ node, children, ...props }) => {
-              const truncatedChildren = Children.toArray(children).slice(0, 3);
-              const combinedChildren =
-                children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
+      <Link
+        href={`/contest/${chainName}/${contestAddress}/submission/${id}`}
+        shallow
+        scroll={false}
+        className="flex items-center overflow-hidden px-8 py-2 h-3/5 md:h-3/4"
+      >
+        <>
+          <ReactMarkdown
+            className="markdown max-w-full"
+            components={{
+              div: ({ node, children, ...props }) => (
+                <div {...props} className="flex gap-5 items-center markdown">
+                  {children}
+                </div>
+              ),
+              img: ({ node, ...props }) => <MarkdownImage imageSize="compact" src={props.src ?? ""} />,
+              p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
+              ul: ({ node, children, ...props }) => {
+                const truncatedChildren = Children.toArray(children).slice(0, 3);
+                const combinedChildren =
+                  children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
 
-              return <MarkdownUnorderedList children={combinedChildren} props={props} />;
-            },
-            li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
-            ol: ({ node, children, ...props }) => {
-              const truncatedChildren = Children.toArray(children).slice(0, 3);
-              const finalChildren =
-                children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
+                return <MarkdownUnorderedList children={combinedChildren} props={props} />;
+              },
+              li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
+              ol: ({ node, children, ...props }) => {
+                const truncatedChildren = Children.toArray(children).slice(0, 3);
+                const finalChildren =
+                  children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
 
-              return <MarkdownOrderedList children={finalChildren} props={props} />;
-            },
-          }}
-          rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
-          children={truncatedContent}
-        />
-      </div>
+                return <MarkdownOrderedList children={finalChildren} props={props} />;
+              },
+            }}
+            rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
+            children={truncatedContent}
+          />
+        </>
+      </Link>
 
       <div className="border-t border-neutral-10 h-2/5 md:h-1/4 flex flex-col md:flex-row items-center">
         <div className="flex pl-8 w-full md:w-1/2 h-full border-b md:border-r border-neutral-10">

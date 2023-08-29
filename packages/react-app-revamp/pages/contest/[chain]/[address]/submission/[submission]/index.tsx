@@ -50,10 +50,6 @@ const Page: FC<PageProps> = ({ proposalData, address, chain }) => {
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
-export async function getStaticPaths() {
-  return { paths: [], fallback: true };
-}
-
 const getChainId = (chain: string) => {
   return chains.find(c => c.name.toLowerCase().replace(" ", "") === chain)?.id;
 };
@@ -95,6 +91,10 @@ const fetchProposalData = async (address: string, chainId: number, submission: s
     votes,
   };
 };
+
+export async function getStaticPaths() {
+  return { paths: [], fallback: true };
+}
 
 export async function getStaticProps({ params }: any) {
   const { chain, address, submission } = params;
