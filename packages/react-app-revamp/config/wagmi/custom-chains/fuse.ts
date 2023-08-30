@@ -4,6 +4,7 @@ export const fuse: Chain = {
   id: 122,
   name: "fuse",
   network: "fuse",
+  iconUrl: "/fuse.svg",
   nativeCurrency: {
     decimals: 18,
     name: "FLUX",
