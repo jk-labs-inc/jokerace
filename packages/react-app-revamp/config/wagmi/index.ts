@@ -206,4 +206,5 @@ export const chainsImages: ChainImages = {
   qchaintestnet: "/qchain.svg",
   eos: "/eos.svg",
   eostestnet: "/eos.svg",
+  fuse: "/fuse.svg",
 };
