@@ -15,6 +15,7 @@ import {
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
+import { useUploadImageStore } from "@hooks/useUploadImage";
 import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
@@ -22,6 +23,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchNetwork } from "@wagmi/core";
+import { uploadToImgur } from "lib/image/imgur";
 import moment from "moment";
 import NextImage from "next/image";
 import { useRouter } from "next/router";
@@ -47,6 +49,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const [proposal, setProposal] = useState(savedProposal?.content || "");
   const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
   const isCorrectNetwork = chainId === chain?.id;
+  const [isDragging, setIsDragging] = useState(false);
+  const { uploadImage } = useUploadImageStore(state => state);
 
   const editorProposal = useEditor({
     extensions: [
@@ -121,6 +125,35 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     }
   }, [isSuccess]);
 
+  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+
+    const file = event.dataTransfer.files[0];
+
+    if (file && file.type.startsWith("image/")) {
+      try {
+        const imageUrl = await uploadImage(file);
+        if (imageUrl) {
+          editorProposal?.chain().focus().setImage({ src: imageUrl }).run();
+        } else {
+          console.error("Received no URL from the upload.");
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    }
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
   const tipMessage = () => {
     return (
       <p className="hidden md:flex items-center">
@@ -148,7 +181,12 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
 
           <EditorContent
             editor={editorProposal}
-            className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[600px] overflow-y-auto h-auto max-h-[300px] pb-2"
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[600px] overflow-y-auto h-auto max-h-[300px] pb-2 ${
+              isDragging ? "backdrop-blur-md opacity-70" : ""
+            }`}
           />
           <p className="text-[16px] text-neutral-11 mt-2">{tipMessage()}</p>
         </div>

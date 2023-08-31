@@ -20,7 +20,10 @@ import {
   IconEditorStrike,
   IconEditorUndo,
 } from "@components/UI/Icons";
+import { useUploadImageStore } from "@hooks/useUploadImage";
 import { Editor } from "@tiptap/react";
+import { uploadToImgur } from "lib/image/imgur";
+import { useRef } from "react";
 import styles from "./styles.module.css";
 
 const Separator = () => {
@@ -37,10 +40,28 @@ interface TipTapEditorControlsProps {
 }
 
 export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadImage } = useUploadImageStore(state => state);
   const { editor } = props;
+
   if (!editor) {
     return null;
   }
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files && event.target.files[0];
+    if (file) {
+      try {
+        const imgUrl = await uploadImage(file);
+
+        if (imgUrl) {
+          editor.chain().focus().setImage({ src: imgUrl }).run();
+        }
+      } catch (error) {
+        console.error("Failed to upload image:", error);
+      }
+    }
+  };
 
   return (
     <div className={`inline-flex flex-wrap space-i-1 ${props.className}`}>
@@ -195,18 +216,12 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
         <IconEditorQuote />
         <span className="sr-only">Toggle blockquote text formatting</span>
       </button>
+      <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
+
       <button
         type="button"
         className={`${styles.control} ${editor.isActive("image") ? styles["control--active"] : ""}`}
-        onClick={() => {
-          const url = window.prompt(
-            "Your image URL (must end with a valid image extension like .png, .jpeg, .gif ...).",
-          );
-
-          if (url) {
-            editor.chain().focus().setImage({ src: url }).run();
-          }
-        }}
+        onClick={() => fileInputRef.current?.click()}
       >
         <IconEditorImage />
         <span className="sr-only">Add an image</span>
