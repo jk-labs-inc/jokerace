@@ -23,7 +23,7 @@ export type ParseCsvResult = {
 export const MAX_ROWS = 100000; // 100k for now
 export const MAX_VOTES = 1e9; // 1 billion
 
-export const parseCsvVoting = (file: File): Promise<ParseCsvResult> => {
+export const parseCsvVoting = (file: File, userAddress: string | undefined): Promise<ParseCsvResult> => {
   return new Promise((resolve, reject) => {
     const worker = new Worker(new URL("/workers/parseVotingCsv", import.meta.url));
 
@@ -61,6 +61,7 @@ export const parseCsvVoting = (file: File): Promise<ParseCsvResult> => {
       complete: results => {
         worker.postMessage({
           data: results.data,
+          userAddress: userAddress,
         });
       },
       error: error => {

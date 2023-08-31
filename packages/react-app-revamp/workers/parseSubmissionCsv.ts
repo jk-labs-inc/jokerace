@@ -1,4 +1,5 @@
 import { InvalidEntry, MAX_ROWS } from "@helpers/parseSubmissionsCsv";
+import { canUploadLargeAllowlist } from "lib/vip";
 import { getAddress } from "viem";
 
 const processRowData = (row: any[]): { address: string; error: boolean } => {
@@ -14,19 +15,23 @@ const processRowData = (row: any[]): { address: string; error: boolean } => {
   return { address, error };
 };
 
-self.onmessage = (event: MessageEvent) => {
-  const data = event.data as Array<any>;
+self.onmessage = async (event: MessageEvent) => {
+  const { data, userAddress } = event.data;
   const addressData: string[] = [];
   const invalidEntries: InvalidEntry[] = [];
   const addresses: Set<string> = new Set();
 
   if (data.length > MAX_ROWS) {
-    self.postMessage({
-      data: [],
-      invalidEntries,
-      error: { kind: "limitExceeded" },
-    });
-    return;
+    if (userAddress) {
+      const hasLargeUploadPermission = await canUploadLargeAllowlist(userAddress, data.length);
+      if (!hasLargeUploadPermission) {
+        self.postMessage({ data: {}, invalidEntries, error: { kind: "limitExceeded" } });
+        return;
+      }
+    } else {
+      self.postMessage({ data: {}, invalidEntries, error: { kind: "limitExceeded" } });
+      return;
+    }
   }
 
   const expectedColumns = 1;

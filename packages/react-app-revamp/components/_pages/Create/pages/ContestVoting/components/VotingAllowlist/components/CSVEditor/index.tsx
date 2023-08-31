@@ -7,6 +7,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { cloneDeep } from "lodash";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import CSVParseError, { ParseError } from "./CSVParseError";
 import ScrollableTableBody from "./TableBody";
 
@@ -21,6 +22,7 @@ type CSVEditorProps = {
 };
 
 const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
+  const { address } = useAccount();
   const {
     votingAllowlistFields: fields,
     setVotingAllowlistFields: setFields,
@@ -121,7 +123,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   };
 
   const onFileSelectHandler = async (file: File) => {
-    const results = await parseCsvVoting(file);
+    const results = await parseCsvVoting(file, address);
 
     switch (results.error?.kind) {
       case "missingColumns":
