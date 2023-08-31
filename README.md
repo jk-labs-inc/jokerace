@@ -13,8 +13,8 @@ You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io)!
 - Install dependencies with `yarn install`
 - Create a `.env` file in `packages/react-app-revamp` (the frontend package) and paste the following values:
 
+Required
 ```
-NEXT_PUBLIC_ALCHEMY_KEY=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=
@@ -22,6 +22,12 @@ NEXT_PUBLIC_R2_ACCOUNT_ID=
 NEXT_PUBLIC_R2_ACCESS_KEY_ID=
 NEXT_PUBLIC_R2_SECRET_ACCESS_KEY=
 NEXT_PUBLIC_MERKLE_TREES_BUCKET=
+```
+
+Optional
+```
+NEXT_PUBLIC_ALCHEMY_KEY=
+NEXT_PUBLIC_IMGUR_CLIENT_ID=
 ```
 ## Getting Started
 
