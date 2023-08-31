@@ -6,7 +6,7 @@ export const canUploadLargeAllowlist = async (userAddress: string, requiredSize:
     const supabase = config.supabase;
     const { data, error } = await supabase
       .from("user_permissions")
-      .select("allowlist_max_size, user_address")
+      .select("allowlist_max_size")
       .eq("user_address", userAddress);
 
     if (error || !data[0]) return false;
