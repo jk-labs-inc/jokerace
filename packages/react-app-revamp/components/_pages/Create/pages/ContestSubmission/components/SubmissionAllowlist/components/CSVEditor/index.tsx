@@ -9,6 +9,7 @@ import { parseSubmissionCsv } from "@helpers/parseSubmissionsCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import ScrollableTableBody from "./TableBody";
 
 export type SubmissionFieldObject = {
@@ -21,6 +22,7 @@ type CSVEditorProps = {
 };
 
 const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
+  const { address } = useAccount();
   const {
     submissionAllowlistFields: fields,
     setSubmissionAllowlistFields: setFields,
@@ -96,7 +98,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
   };
 
   const onFileSelectHandler = async (file: File) => {
-    const results = await parseSubmissionCsv(file);
+    const results = await parseSubmissionCsv(file, address);
 
     switch (results.error?.kind) {
       case "missingColumns":
