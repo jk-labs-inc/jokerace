@@ -1,8 +1,10 @@
 import { InvalidEntry, MAX_ROWS, MAX_VOTES } from "@helpers/parseVotingCsv";
+import { canUploadLargeAllowlist } from "lib/vip";
 import { getAddress } from "viem";
 
 interface ParseVotingCsvPayload {
   data: any[];
+  userAddress: string | undefined;
 }
 
 const processRowData = (row: any[]) => {
@@ -25,16 +27,24 @@ const processRowData = (row: any[]) => {
   return { address, numberOfVotes, error };
 };
 
-self.onmessage = (event: MessageEvent<ParseVotingCsvPayload>) => {
-  const { data } = event.data;
+self.onmessage = async (event: MessageEvent<ParseVotingCsvPayload>) => {
+  const { data, userAddress } = event.data;
   const votesData: Record<string, number> = {};
   const invalidEntries: InvalidEntry[] = [];
   const addresses: Set<string> = new Set();
   let roundedZeroCount = 0;
 
   if (data.length > MAX_ROWS) {
-    self.postMessage({ data: {}, invalidEntries, error: { kind: "limitExceeded" } });
-    return;
+    if (userAddress) {
+      const hasLargeUploadPermission = await canUploadLargeAllowlist(userAddress, data.length);
+      if (!hasLargeUploadPermission) {
+        self.postMessage({ data: {}, invalidEntries, error: { kind: "limitExceeded" } });
+        return;
+      }
+    } else {
+      self.postMessage({ data: {}, invalidEntries, error: { kind: "limitExceeded" } });
+      return;
+    }
   }
 
   if (data[0].length !== 2) {

@@ -1,8 +1,8 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { s3 } from "@config/s3";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useEthersSigner } from "@helpers/ethers";
+import { MAX_ROWS } from "@helpers/parseSubmissionsCsv";
 import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
@@ -11,8 +11,9 @@ import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
-import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { canUploadLargeAllowlist } from "lib/vip";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
@@ -45,6 +46,15 @@ export function useDeployContest() {
   const signer = useEthersSigner();
 
   async function deployContest() {
+    const isSpoofingDetected = await checkForSpoofing(signer?._address ?? "");
+
+    if (isSpoofingDetected) {
+      stateContestDeployment.setIsLoading(false);
+      toastError("Spoofing detected! None shall pass.");
+      setIsLoading(false);
+      return;
+    }
+
     stateContestDeployment.setIsLoading(true);
     stateContestDeployment.setIsSuccess(false);
     stateContestDeployment.setError(null);
@@ -57,7 +67,6 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
-
       const contestInfo = type + "|" + summary + "|" + prompt;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
@@ -252,6 +261,30 @@ export function useDeployContest() {
       setIsLoading(false);
       toastError(`contest deployment failed`, customError.message);
     }
+  }
+
+  async function checkForSpoofing(address: string) {
+    const exceedsVotingMaxRows = votingMerkle && votingMerkle.voters.length > MAX_ROWS;
+    const exceedsSubmissionMaxRows = submissionMerkle && submissionMerkle.submitters.length > MAX_ROWS;
+
+    let isVotingAllowListed = false;
+    let isSubmissionAllowListed = false;
+
+    if (exceedsVotingMaxRows) {
+      isVotingAllowListed = await canUploadLargeAllowlist(address, votingMerkle.voters.length);
+      if (!isVotingAllowListed) {
+        return true;
+      }
+    }
+
+    if (exceedsSubmissionMaxRows) {
+      isSubmissionAllowListed = await canUploadLargeAllowlist(address, submissionMerkle.submitters.length);
+      if (!isSubmissionAllowListed) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   // Helper function to format recipients (either voters or submitters)
