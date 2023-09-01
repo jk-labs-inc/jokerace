@@ -15,13 +15,12 @@ import ContestLayoutStickyCards from "../StickyCards";
 import LayoutContestTimeline from "../TimelineV3";
 
 const ContestTab = () => {
-  const { submissionsOpen, contestPrompt } = useContestStore(state => state);
+  const { submissionsOpen, contestPrompt, contestMaxProposalCount } = useContestStore(state => state);
   const { isConnected } = useAccount();
   const { contestStatus } = useContestStatusStore(state => state);
-  const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount } = useUserStore(
-    state => state,
-  );
-  const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
+  const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount, isLoading } =
+    useUserStore(state => state);
+  const { isListProposalsLoading, isListProposalsSuccess, listProposalsIds } = useProposalStore(state => state);
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
   const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
     isSubmitProposalModalOpen: state.isModalOpen,
@@ -31,6 +30,7 @@ const ContestTab = () => {
   const qualifiedToSubmit =
     currentUserQualifiedToSubmit && currentUserProposalCount <= contestMaxNumberSubmissionsPerUser;
   const showSubmitButton = !isConnected || qualifiedToSubmit;
+  const proposalsMaxCountReached = listProposalsIds.length >= contestMaxProposalCount;
 
   return (
     <div>
@@ -43,7 +43,7 @@ const ContestTab = () => {
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && (
         <div className="mt-8">
-          {showSubmitButton && (
+          {isLoading || isListProposalsLoading ? null : showSubmitButton && !proposalsMaxCountReached ? (
             <ButtonV3
               type="txAction"
               color="bg-gradient-create rounded-[40px]"
@@ -52,6 +52,8 @@ const ContestTab = () => {
             >
               {submitButtonText}
             </ButtonV3>
+          ) : (
+            <p className="text-primary-10 text-[16px]">No more submissions are allowed for this contest.</p>
           )}
         </div>
       )}
