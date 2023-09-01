@@ -3,11 +3,11 @@ import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
-import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
+import { incrementUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
@@ -95,6 +95,8 @@ export function useSubmitProposal() {
           hash: receipt.transactionHash,
           transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
         });
+
+        incrementUserActionForAnalytics(userAddress, "proposed", address, chainName);
 
         setIsLoading(false);
         setIsSuccess(true);

@@ -1,4 +1,6 @@
 import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
+import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
 import { formatEther, formatUnits } from "viem";
 import { useBalance, useContractRead, useContractWrite, useToken, useWaitForTransaction } from "wagmi";
@@ -25,9 +27,11 @@ export const useDistributeRewards = (
   tokenType: TokenType,
   tokenAddress?: string,
 ) => {
+  const { asPath } = useRouter();
   const { setIsLoading } = useDistributeRewardStore(state => state);
   const tokenDataRes = useToken({ address: tokenAddress as `0x${string}`, chainId });
   const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;
+  const [chainName, contestAddress] = asPath.split("/").slice(2, 4);
 
   const transform = (data: unknown[]) => {
     const amount = data as unknown as bigint;
@@ -101,10 +105,20 @@ export const useDistributeRewards = (
     },
     async onSuccess() {
       await queryTokenBalance.refetch();
-      await queryRankRewardsReleased.refetch();
       await queryRankRewardsReleasable.refetch();
+      const amountReleased = await queryRankRewardsReleased.refetch();
+
       setIsLoading(false);
       toastSuccess("funds distributed successfully !");
+
+      updateRewardAnalytics({
+        contest_address: contestAddress,
+        rewards_module_address: contractRewardsModuleAddress,
+        network_name: chainName,
+        amount: amountReleased.data ?? 0,
+        operation: "distribute",
+        token_address: tokenAddress ? tokenAddress : null,
+      });
     },
   });
 
