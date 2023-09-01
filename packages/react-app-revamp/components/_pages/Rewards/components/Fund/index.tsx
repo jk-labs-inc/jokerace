@@ -52,6 +52,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
         isErc20: reward.address.startsWith("0x"),
         rewardsContractAddress: rewardsContractAddress,
         amount: ethers.utils.parseUnits(reward.amount, decimals).toString(),
+        decimals: decimals,
       };
     });
 

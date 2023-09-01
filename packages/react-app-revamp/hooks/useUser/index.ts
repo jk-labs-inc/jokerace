@@ -7,7 +7,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
-import { Abi, createPublicClient, http } from "viem";
+import { Abi } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useUserStore } from "./store";
 

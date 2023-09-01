@@ -1,6 +1,9 @@
 import { toastError } from "@components/UI/Toast";
 import useRewardsModule from "@hooks/useRewards";
 import { prepareSendTransaction, sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
+import { utils } from "ethers";
+import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { CustomError } from "types/error";
@@ -16,6 +19,8 @@ export interface RewardData {
 }
 
 export function useFundRewardsModule() {
+  const { asPath } = useRouter();
+  const [chainName, contestAddress] = asPath.split("/").slice(2, 4);
   const { chain } = useNetwork();
   const {
     isModalOpen,
@@ -63,8 +68,9 @@ export function useFundRewardsModule() {
     isErc20: boolean;
     amount: string;
     rewardsContractAddress: string;
+    decimals: number;
   }) => {
-    const { currentUserAddress, tokenAddress, amount, isErc20, rewardsContractAddress } = args;
+    const { currentUserAddress, tokenAddress, amount, isErc20, rewardsContractAddress, decimals } = args;
     const contractConfig = {
       address: tokenAddress as `0x${string}`,
       abi: erc20ABI,
@@ -108,6 +114,15 @@ export function useFundRewardsModule() {
 
     setIsLoading(false);
     setIsSuccess(true);
+
+    updateRewardAnalytics({
+      contest_address: contestAddress,
+      rewards_module_address: rewardsContractAddress,
+      network_name: chainName,
+      amount: parseFloat(utils.formatUnits(amount, decimals)),
+      operation: "deposit",
+      token_address: tokenAddress?.startsWith("$") ? null : tokenAddress,
+    });
 
     return {
       hash: receipt.transactionHash,
