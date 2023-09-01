@@ -18,7 +18,7 @@ export const updateRewardAnalytics = async (options: RewardAnalyticsUpdateOption
 
     let fetchQuery = supabase
       .from("analytics_rewards_v3")
-      .select("*")
+      .select("amount_paid_in, amount_paid_out, uuid")
       .eq("rewards_module_address", rewards_module_address)
       .eq("contest_address", contest_address)
       .eq("network_name", network_name);
