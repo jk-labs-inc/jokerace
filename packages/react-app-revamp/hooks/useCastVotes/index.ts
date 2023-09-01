@@ -1,6 +1,5 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
-import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
@@ -11,6 +10,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
+import { incrementUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
@@ -115,6 +115,7 @@ export function useCastVotes() {
       }
 
       await updateCurrentUserVotes();
+      incrementUserActionForAnalytics(userAddress, "voted", id, chainId);
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");
