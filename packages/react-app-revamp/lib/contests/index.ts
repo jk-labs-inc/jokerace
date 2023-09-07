@@ -9,6 +9,7 @@ import moment from "moment";
 import { SearchOptions } from "types/search";
 
 export const ITEMS_PER_PAGE = 7;
+export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 interface ContestReward {
   contestAddress: string;
@@ -111,7 +112,7 @@ const fetchParticipantData = async (contestAddress: string, userAddress: string,
 
 const updateContestWithUserQualifications = async (contest: any, userAddress: string) => {
   const { submissionMerkleRoot, network_name, address } = contest;
-  const anyoneCanSubmit = !submissionMerkleRoot;
+  const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
   let participantData = { can_submit: anyoneCanSubmit, num_votes: 0 };
   if (userAddress) {
