@@ -110,8 +110,8 @@ const fetchParticipantData = async (contestAddress: string, userAddress: string,
 };
 
 const updateContestWithUserQualifications = async (contest: any, userAddress: string) => {
-  const { submissionMerkleTree, network_name, address } = contest;
-  const anyoneCanSubmit = !submissionMerkleTree;
+  const { submissionMerkleRoot, network_name, address } = contest;
+  const anyoneCanSubmit = !submissionMerkleRoot;
 
   let participantData = { can_submit: anyoneCanSubmit, num_votes: 0 };
   if (userAddress) {
@@ -252,7 +252,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
       const result = await supabase
         .from(table)
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
           { count: "exact" },
         )
         .textSearch(searchColumn, `${searchString}`, {
@@ -293,7 +293,7 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
     const { data, count, error } = await config.supabase
       .from("contests_v3")
       .select(
-        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
         { count: "exact" },
       )
       .is("featured", true)
@@ -337,7 +337,7 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
       const result = await supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
           { count: "exact" },
         )
         .lte("start_at", new Date().toISOString())
@@ -371,7 +371,7 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
       const result = await supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
           { count: "exact" },
         )
         // all rows whose votes end date is < to the current date.
@@ -404,7 +404,7 @@ export async function getUpcomingContests(currentPage: number, itemsPerPage: num
       const result = await supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
           { count: "exact" },
         )
         // all rows whose submissions start date is > to the current date.
