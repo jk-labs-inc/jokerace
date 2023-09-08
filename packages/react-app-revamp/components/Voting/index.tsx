@@ -147,7 +147,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         </div>
         <div className="flex flex-col mt-4">
           <div className="flex justify-between text-[16px]">
-            <p className="text-neutral-11">votes on submission</p>
+            <p className="text-neutral-11">used votes</p>
             <p className="text-positive-11 font-bold">{formatNumber(currentUserTotalVotesCast)}</p>
           </div>
           <div className="flex justify-between text-[16px]">
