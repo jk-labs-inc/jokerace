@@ -67,7 +67,6 @@ contract ContestTest is Test {
         author: PERMISSIONED_ADDRESS_1,
         description: "firstProposalPA1",
         exists: true,
-        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -75,7 +74,6 @@ contract ContestTest is Test {
         author: PERMISSIONED_ADDRESS_1,
         description: "secondProposalPA1",
         exists: true,
-        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -83,7 +81,6 @@ contract ContestTest is Test {
         author: PERMISSIONED_ADDRESS_2,
         description: "firstProposalPA2",
         exists: true,
-        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -91,7 +88,6 @@ contract ContestTest is Test {
         author: UNPERMISSIONED_ADDRESS_1,
         description: "unpermissionedAuthorProposal1",
         exists: true,
-        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -158,7 +154,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
 
-        assertEq(proposalId, 80936610070631566406924353653982623787006163746279182965692032602050082082947);
+        assertEq(proposalId, 49056523107705728825615382688395286440062072247511095534135796452139198417529);
     }
 
     function testProposeAnyone() public {
@@ -166,7 +162,7 @@ contract ContestTest is Test {
         vm.prank(UNPERMISSIONED_ADDRESS_1);
         uint256 proposalId = anyoneCanSubmitContest.propose(unpermissionedAuthorProposal1, proof0);
 
-        assertEq(proposalId, 39105403124210166314120292162303515432642323943406197310566730185064393978842);
+        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
     }
 
     function testProposeWithoutProof() public {
@@ -176,8 +172,8 @@ contract ContestTest is Test {
         uint256 secondProposalId = contest.proposeWithoutProof(secondProposalPA1);
         vm.stopPrank();
 
-        assertEq(firstProposalId, 80936610070631566406924353653982623787006163746279182965692032602050082082947);
-        assertEq(secondProposalId, 80054283571408810957432002189778088032285802541112902911785656400486610660986);
+        assertEq(firstProposalId, 49056523107705728825615382688395286440062072247511095534135796452139198417529);
+        assertEq(secondProposalId, 54769785658820412218609810676735378376293272785081650547477539805570535635325);
     }
 
     function testProposeAnyoneWithoutProof() public {
@@ -185,7 +181,7 @@ contract ContestTest is Test {
         vm.prank(UNPERMISSIONED_ADDRESS_1);
         uint256 proposalId = anyoneCanSubmitContest.proposeWithoutProof(unpermissionedAuthorProposal1);
 
-        assertEq(proposalId, 39105403124210166314120292162303515432642323943406197310566730185064393978842);
+        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
     }
 
     function testProposeAuthorIsntSender() public {
