@@ -30,14 +30,14 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(address => bool) public addressSubmitterVerified;
 
     uint256[] private _proposalIds;
-    mapping(uint256 => bool) private _deletedProposalIds;
+    mapping(uint256 => bool) private _proposalIsDeleted;
     string private _name;
     string private _prompt;
     bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
 
-    uint256 public _numDeletedProposals;
+    uint256[] public _deletedProposalIds;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -86,7 +86,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.6";
+        return "3.7";
     }
 
     /**
@@ -195,7 +195,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev Returns if a proposal has been deleted or not.
      */
     function isProposalDeleted(uint256 proposalId) public view virtual returns (bool) {
-        return _deletedProposalIds[proposalId];
+        return _proposalIsDeleted[proposalId];
     }
 
     /**
@@ -282,7 +282,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
             "Governor: the same address cannot submit more than the numAllowedProposalSubmissions for this contest"
         );
         require(
-            (_proposalIds.length - _numDeletedProposals) < maxProposalCount(),
+            (_proposalIds.length - _deletedProposalIds.length) < maxProposalCount(),
             "Governor: the max number of proposals have been submitted"
         );
 
@@ -311,12 +311,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         );
 
         for (uint256 index = 0; index < proposalIds.length; index++) {
-            if (!_deletedProposalIds[proposalIds[index]]) {
+            uint256 currentProposalId = proposalIds[index];
+            if (!_proposalIsDeleted[currentProposalId]) {
                 // if this proposal hasn't already been deleted
-                _deletedProposalIds[proposalIds[index]] = true;
+                _proposalIsDeleted[currentProposalId] = true;
                 // this proposal now won't count towards the total number allowed in the contest
                 // it will still count towards the total number of proposals that the user is allowed to submit though
-                _numDeletedProposals += 1;
+                _deletedProposalIds.push(currentProposalId);
             }
         }
 
