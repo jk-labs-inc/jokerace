@@ -48,7 +48,7 @@ const LayoutContestQualifier = () => {
     } else if (!canSubmit && canVote) {
       return "you qualify to vote ( but not submit )";
     } else {
-      return "you don't qualify to submit & vote";
+      return "you don't qualify to submit or vote";
     }
   }, [
     currentUserQualifiedToSubmit,
