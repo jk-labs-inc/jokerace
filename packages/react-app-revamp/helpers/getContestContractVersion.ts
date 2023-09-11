@@ -12,6 +12,7 @@ import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalV
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
 import DeletedDontHitLimitContract from "@contracts/bytecodeAndAbi/Contest.3.5.deletedDontHitLimit.sol/Contest.json";
+import BringBackDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.6.bringBackDeletedIds.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -40,6 +41,8 @@ export async function getContestContractVersion(address: string, chainId: number
     return { abi: AddIsDeletedContract.abi, version };
   } else if (version === "3.5") {
     return { abi: DeletedDontHitLimitContract.abi, version };
+  } else if (version === "3.6") {
+    return { abi: BringBackDeletedIdsContract.abi, version };
   }
 
   if (version === "1") {

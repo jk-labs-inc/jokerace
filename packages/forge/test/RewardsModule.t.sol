@@ -63,7 +63,6 @@ contract RewardsModuleTest is Test {
         author: PERMISSIONED_ADDRESS_1,
         description: "firstProposalPA1",
         exists: true,
-        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -71,7 +70,6 @@ contract RewardsModuleTest is Test {
         author: PERMISSIONED_ADDRESS_1,
         description: "secondProposalPA1",
         exists: true,
-        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -79,7 +77,6 @@ contract RewardsModuleTest is Test {
         author: PERMISSIONED_ADDRESS_1,
         description: "thirdProposalPA1",
         exists: true,
-        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -87,7 +84,6 @@ contract RewardsModuleTest is Test {
         author: PERMISSIONED_ADDRESS_2,
         description: "firstProposalPA2",
         exists: true,
-        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });

@@ -30,6 +30,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(address => bool) public addressSubmitterVerified;
 
     uint256[] private _proposalIds;
+    mapping(uint256 => bool) private _deletedProposalIds;
     string private _name;
     string private _prompt;
     bool private _canceled;
@@ -194,7 +195,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev Returns if a proposal has been deleted or not.
      */
     function isProposalDeleted(uint256 proposalId) public view virtual returns (bool) {
-        return _proposals[proposalId].isDeleted;
+        return _deletedProposalIds[proposalId];
     }
 
     /**
@@ -310,9 +311,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         );
 
         for (uint256 index = 0; index < proposalIds.length; index++) {
-            if (!_proposals[proposalIds[index]].isDeleted) {
+            if (!_deletedProposalIds[proposalIds[index]]) {
                 // if this proposal hasn't already been deleted
-                _proposals[proposalIds[index]].isDeleted = true;
+                _deletedProposalIds[proposalIds[index]] = true;
                 // this proposal now won't count towards the total number allowed in the contest
                 // it will still count towards the total number of proposals that the user is allowed to submit though
                 _numDeletedProposals += 1;

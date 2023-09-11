@@ -57,12 +57,11 @@ const CreateRewardsPool = () => {
 
         <div className="flex flex-col gap-2">
           <p className="text-[16px]">
-            a rewards pool incentivizes players, compensates winners, and is <br /> open for{" "}
-            <span className="italic">anyone</span> to fund.
+            a rewards pool incentivizes players, compensates winners, and helps showcase you to players.
           </p>
           <p className="text-[16px]">
-            it’s up to you whether you want to add one—but it’s easier to attract <br /> and retain a community if you
-            do.{" "}
+            it’s up to you whether you want to add one—but it’s easier to attract
+            <br /> and retain a community if you do.
           </p>
         </div>
       </div>
@@ -77,9 +76,13 @@ const CreateRewardsPool = () => {
         <CreateRewardsPoolSubmitButton onClick={onSubmitRewardsPool} onCancel={onCancelCreateRewardsPool} />
       </div>
       <div className="mt-24 text-neutral-11 text-[12px]">
-        note: you’ll have the option to withdraw all funds from the pool, and in case of ties, funds <br />
-        will be reverted to you to distribute manually. please be aware of any obligations you might <br /> face for
-        receiving funds.
+        note: you’ll have the option to withdraw all funds from the pool.{" "}
+        <b>
+          in case of ties, funds <br />
+          will be reverted to you to distribute manually.
+        </b>{" "}
+        please be aware of any obligations you might
+        <br /> face for receiving funds.
       </div>
     </div>
   );

@@ -127,60 +127,64 @@ export function useContest() {
     }
   }
 
-  async function fetchV3ContestInfo(contractConfig: ContractConfig, contestRewardModuleAddress: string | undefined) {
-    try {
-      const contracts = getV3Contracts(contractConfig);
-      const results = await readContracts({ contracts });
+  async function fetchContestContractData(contractConfig: ContractConfig) {
+    const contracts = getV3Contracts(contractConfig);
+    const results = await readContracts({ contracts });
 
-      setIsV3(true);
+    setIsV3(true);
 
-      const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
-      const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
-      const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
-      const isDownvotingAllowed = Number(results[9].result) === 1;
-      const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
-      const contestMaxProposalCount = Number(results[3].result);
+    const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
+    const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
+    const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
+    const isDownvotingAllowed = Number(results[9].result) === 1;
+    const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
+    const contestMaxProposalCount = Number(results[3].result);
 
-      setContestName(results[0].result as string);
-      setContestAuthor(results[1].result as string, results[1].result as string);
-      setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
-      setContestMaxProposalCount(contestMaxProposalCount);
-      setSubmissionsOpen(submissionsOpenDate);
-      setVotesClose(closingVoteDate);
-      setVotesOpen(votesOpenDate);
-      setContestPrompt(results[8].result as string);
+    setContestName(results[0].result as string);
+    setContestAuthor(results[1].result as string, results[1].result as string);
+    setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
+    setContestMaxProposalCount(contestMaxProposalCount);
+    setSubmissionsOpen(submissionsOpenDate);
+    setVotesClose(closingVoteDate);
+    setVotesOpen(votesOpenDate);
+    setContestPrompt(results[8].result as string);
 
-      setDownvotingAllowed(isDownvotingAllowed);
+    setDownvotingAllowed(isDownvotingAllowed);
 
-      // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
-      if (isBefore(new Date(), closingVoteDate) && alchemyRpc && isAlchemyConfigured) {
-        if (differenceInMinutes(closingVoteDate, new Date()) <= 120) {
-          // If the difference between the closing date (end of votes) and now is <= to 2h
-          // reflect this in the state
-          setCanUpdateVotesInRealTime(true);
-        } else {
-          setCanUpdateVotesInRealTime(false);
-          // Otherwise, update the state 2h before the closing date (end of votes)
-          const delayBeforeVotesCanBeUpdated =
-            differenceInMilliseconds(closingVoteDate, new Date()) - minutesToMilliseconds(120);
-          setTimeout(() => {
-            setCanUpdateVotesInRealTime(true);
-          }, delayBeforeVotesCanBeUpdated);
-        }
+    // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
+    if (isBefore(new Date(), closingVoteDate) && alchemyRpc && isAlchemyConfigured) {
+      if (differenceInMinutes(closingVoteDate, new Date()) <= 120) {
+        // If the difference between the closing date (end of votes) and now is <= to 2h
+        // reflect this in the state
+        setCanUpdateVotesInRealTime(true);
       } else {
         setCanUpdateVotesInRealTime(false);
+        // Otherwise, update the state 2h before the closing date (end of votes)
+        const delayBeforeVotesCanBeUpdated =
+          differenceInMilliseconds(closingVoteDate, new Date()) - minutesToMilliseconds(120);
+        setTimeout(() => {
+          setCanUpdateVotesInRealTime(true);
+        }, delayBeforeVotesCanBeUpdated);
       }
+    } else {
+      setCanUpdateVotesInRealTime(false);
+    }
 
-      setError(null);
-      setIsSuccess(true);
-      setIsLoading(false);
-      await fetchProposalsIdsList(contractConfig.abi);
+    setError(null);
+    setIsSuccess(true);
+    setIsLoading(false);
+  }
+
+  async function fetchV3ContestInfo(contractConfig: ContractConfig, contestRewardModuleAddress: string | undefined) {
+    try {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        fetchTotalVotesCast(),
+        fetchContestContractData(contractConfig),
+        fetchProposalsIdsList(contractConfig.abi),
+        processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
-        processContestData(contractConfig, contestMaxNumberSubmissionsPerUser),
+        fetchTotalVotesCast(),
       ]);
     } catch (error) {
       const customError = error as CustomError;
@@ -299,7 +303,7 @@ export function useContest() {
   /**
    * Fetch merkle tree data from DB and re-create the tree
    */
-  async function processContestData(contractConfig: ContractConfig, contestMaxNumberSubmissionsPerUser: number) {
+  async function processContestData(contractConfig: ContractConfig) {
     // Do not fetch merkle tree data if the contest is not using it
     if (contestStatus === ContestStatus.VotingClosed) {
       setIsUserStoreLoading(false);
@@ -318,6 +322,11 @@ export function useContest() {
           functionName: "votingMerkleRoot",
           args: [],
         },
+        {
+          ...contractConfig,
+          functionName: "numAllowedProposalSubmissions",
+          args: [],
+        },
       ],
     });
 
@@ -328,6 +337,7 @@ export function useContest() {
 
     const submissionMerkleRoot = results[0].result as unknown as string;
     const votingMerkleRoot = results[1].result as unknown as string;
+    const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
 
     if (!isSupabaseConfigured) {
       setIsReadOnly(true);
