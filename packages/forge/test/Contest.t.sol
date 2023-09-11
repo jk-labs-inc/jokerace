@@ -61,10 +61,13 @@ contract ContestTest is Test {
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
 
+    uint256[] public proposalsToDelete;
+
     IGovernor.ProposalCore public firstProposalPA1 = IGovernor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "firstProposalPA1",
         exists: true,
+        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -72,6 +75,7 @@ contract ContestTest is Test {
         author: PERMISSIONED_ADDRESS_1,
         description: "secondProposalPA1",
         exists: true,
+        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -79,6 +83,7 @@ contract ContestTest is Test {
         author: PERMISSIONED_ADDRESS_2,
         description: "firstProposalPA2",
         exists: true,
+        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -86,6 +91,7 @@ contract ContestTest is Test {
         author: UNPERMISSIONED_ADDRESS_1,
         description: "unpermissionedAuthorProposal1",
         exists: true,
+        isDeleted: false,
         targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
@@ -152,7 +158,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
 
-        assertEq(proposalId, 49056523107705728825615382688395286440062072247511095534135796452139198417529);
+        assertEq(proposalId, 80936610070631566406924353653982623787006163746279182965692032602050082082947);
     }
 
     function testProposeAnyone() public {
@@ -160,7 +166,7 @@ contract ContestTest is Test {
         vm.prank(UNPERMISSIONED_ADDRESS_1);
         uint256 proposalId = anyoneCanSubmitContest.propose(unpermissionedAuthorProposal1, proof0);
 
-        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(proposalId, 39105403124210166314120292162303515432642323943406197310566730185064393978842);
     }
 
     function testProposeWithoutProof() public {
@@ -170,8 +176,8 @@ contract ContestTest is Test {
         uint256 secondProposalId = contest.proposeWithoutProof(secondProposalPA1);
         vm.stopPrank();
 
-        assertEq(firstProposalId, 49056523107705728825615382688395286440062072247511095534135796452139198417529);
-        assertEq(secondProposalId, 54769785658820412218609810676735378376293272785081650547477539805570535635325);
+        assertEq(firstProposalId, 80936610070631566406924353653982623787006163746279182965692032602050082082947);
+        assertEq(secondProposalId, 80054283571408810957432002189778088032285802541112902911785656400486610660986);
     }
 
     function testProposeAnyoneWithoutProof() public {
@@ -179,7 +185,7 @@ contract ContestTest is Test {
         vm.prank(UNPERMISSIONED_ADDRESS_1);
         uint256 proposalId = anyoneCanSubmitContest.proposeWithoutProof(unpermissionedAuthorProposal1);
 
-        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(proposalId, 39105403124210166314120292162303515432642323943406197310566730185064393978842);
     }
 
     function testProposeAuthorIsntSender() public {
@@ -196,6 +202,26 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         vm.expectRevert(bytes("Governor: the proposal author must be msg.sender"));
         contest.proposeWithoutProof(unpermissionedAuthorProposal1);
+    }
+
+    function testProposeDuplicateProposal() public {
+        vm.warp(1681650001);
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.expectRevert(bytes("Governor: duplicate proposals not allowed"));
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.stopPrank();
+    }
+
+    function testDeleteProposal() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
+        proposalsToDelete.push(proposalId);
+        vm.prank(CREATOR_ADDRESS_1);
+        contest.deleteProposals(proposalsToDelete);
+        assertEq(contest.isProposalDeleted(proposalId), true);
     }
 
     function testVote1() public {

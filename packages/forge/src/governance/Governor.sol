@@ -30,7 +30,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(address => bool) public addressSubmitterVerified;
 
     uint256[] private _proposalIds;
-    mapping(uint256 => uint256) private _deletedProposalIds;
     string private _name;
     string private _prompt;
     bool private _canceled;
@@ -84,7 +83,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.3";
+        return "3.4";
     }
 
     /**
@@ -190,10 +189,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev Returns if a proposal has been deleted or not (0 if not, 1 if it has been deleted).
+     * @dev Returns if a proposal has been deleted or not.
      */
-    function isProposalDeleted(uint256 proposalId) public view virtual returns (uint256) {
-        return _deletedProposalIds[proposalId];
+    function isProposalDeleted(uint256 proposalId) public view virtual returns (bool) {
+        return _proposals[proposalId].isDeleted;
     }
 
     /**
@@ -306,10 +305,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         );
 
         for (uint256 index = 0; index < proposalIds.length; index++) {
-            if (_deletedProposalIds[proposalIds[index]] != 1) {
-                _deletedProposalIds[proposalIds[index]] = 1;
-                _proposals[proposalIds[index]].description =
-                    "This proposal has been deleted by the creator of the contest.";
+            if (!_proposals[proposalIds[index]].isDeleted) {
+                // if this proposal hasn't already been deleted
+                _proposals[proposalIds[index]].isDeleted = true;
             }
         }
 

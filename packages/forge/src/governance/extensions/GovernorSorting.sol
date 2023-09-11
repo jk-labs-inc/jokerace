@@ -100,7 +100,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
 
         uint256 newArraysIndexCounter = 0;
         for (uint256 i = 0; i < proposalIds.length; i++) {
-            if (!(isProposalDeleted(proposalIds[i]) == 1)) {
+            if (!isProposalDeleted(proposalIds[i])) {
                 proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIds[i];
                 proposalVoteCountsArray[newArraysIndexCounter] = proposalVotesStructs[proposalIds[i]].proposalVoteCounts;
                 newArraysIndexCounter += 1;
