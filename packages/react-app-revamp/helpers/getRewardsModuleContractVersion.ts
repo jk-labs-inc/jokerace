@@ -6,6 +6,7 @@ import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
 import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.3.setCompilerTo8Dot19.sol/RewardsModule.json";
 import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
+import DeletedDontHitLimitRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.5.deletedDontHitLimit.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -33,6 +34,8 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
       return SetCompilerRewards.abi;
     } else if (version === "3.4") {
       return AddIsDeletedRewards.abi;
+    } else if (version === "3.5") {
+      return DeletedDontHitLimitRewards.abi;
     } else {
       return DeployedRewardsContract.abi;
     }
