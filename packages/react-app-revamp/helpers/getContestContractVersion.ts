@@ -11,6 +11,7 @@ import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVot
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
+import DeletedDontHitLimitContract from "@contracts/bytecodeAndAbi/Contest.3.5.deletedDontHitLimit.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -37,6 +38,8 @@ export async function getContestContractVersion(address: string, chainId: number
     return { abi: SetCompilerContract.abi, version };
   } else if (version === "3.4") {
     return { abi: AddIsDeletedContract.abi, version };
+  } else if (version === "3.5") {
+    return { abi: DeletedDontHitLimitContract.abi, version };
   }
 
   if (version === "1") {
