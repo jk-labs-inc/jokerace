@@ -38,13 +38,13 @@ interface ProposalContentProps {
   id: string;
   proposal: Proposal;
   votingOpen: Date;
-  prompt: string;
+  isDeleted?: boolean;
 }
 
 const MAX_LENGTH = 200;
 let MAX_LENGTH_PARAGRAPH = 200;
 
-const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, prompt }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, isDeleted }) => {
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
@@ -58,7 +58,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, p
   const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
   const previousVotesRef = useRef(proposal.votes);
   const [isVoteChanged, setIsVoteChanged] = useState(false);
-  const showVoteButton = !isConnected || currentUserAvailableVotesAmount > 0;
+  const showVoteButton = !isConnected || currentUserAvailableVotesAmount > 0 || !isDeleted;
   const voteButtonMessage = isConnected ? "vote" : "connect wallet to vote";
 
   useEffect(() => {

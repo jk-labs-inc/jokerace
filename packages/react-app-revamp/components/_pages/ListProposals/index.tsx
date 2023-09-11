@@ -1,13 +1,19 @@
 import Button from "@components/UI/Button";
 import ProposalContent from "@components/_pages/ProposalContent";
+import { TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { useAccount } from "wagmi";
 
 export const ListProposals = () => {
+  const { address } = useAccount();
   const { fetchProposalsPage } = useProposal();
-
+  const { deleteProposal, isProposalDeleted } = useDeleteProposal();
   const {
     listProposalsIds,
     isPageProposalsLoading,
@@ -17,7 +23,40 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { votesOpen, contestPrompt } = useContestStore(state => state);
+  const { votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const [deletedProposals, setDeletedProposals] = useState<Record<string, boolean>>({});
+  const [isFetchingDeletedStatus, setIsFetchingDeletedStatus] = useState(false);
+  const [hasFetchedDeletedStatus, setHasFetchedDeletedStatus] = useState(false);
+  const allowDelete = contestStatus === ContestStatus.SubmissionOpen && address === contestAuthorEthereumAddress;
+  const shouldFetchDeletedStatus =
+    (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
+    !isFetchingDeletedStatus;
+
+  // useEffect(() => {
+  //   const fetchDeletedStatus = async () => {
+  //     setIsFetchingDeletedStatus(true);
+  //     const deletedStatus: Record<string, boolean> = {};
+
+  //     for (const id of Object.keys(listProposalsData)) {
+  //       const isDeleted = await isProposalDeleted(id);
+  //       deletedStatus[id] = Boolean(isDeleted);
+  //     }
+
+  //     setDeletedProposals(deletedStatus);
+  //     setIsFetchingDeletedStatus(false);
+  //     setHasFetchedDeletedStatus(true);
+  //   };
+
+  //   if (shouldFetchDeletedStatus) {
+  //     fetchDeletedStatus();
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [listProposalsData, shouldFetchDeletedStatus]);
+
+  const onDeleteProposal = async (proposalId: string) => {
+    await deleteProposal(proposalId);
+  };
 
   if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
     return (
@@ -55,12 +94,15 @@ export const ListProposals = () => {
                       {rank}
                     </div>
                   )}
-                  <ProposalContent
-                    id={id}
-                    proposal={listProposalsData[id]}
-                    prompt={contestPrompt}
-                    votingOpen={votesOpen}
-                  />
+                  <ProposalContent id={id} proposal={listProposalsData[id]} votingOpen={votesOpen} />
+                  {allowDelete && hasFetchedDeletedStatus && !deletedProposals[id] && (
+                    <div
+                      className="absolute cursor-pointer -top-0 right-0 -mt-4 -mr-2 w-6 z-10 h-6 bg-true-black flex items-center justify-center text-[24px] font-bold text-neutral-11"
+                      onClick={() => onDeleteProposal(id)}
+                    >
+                      <TrashIcon className="h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300" />
+                    </div>
+                  )}
                 </div>
               );
             });
