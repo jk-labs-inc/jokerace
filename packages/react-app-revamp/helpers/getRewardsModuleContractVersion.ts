@@ -8,6 +8,7 @@ import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.
 import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
 import DeletedDontHitLimitRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.5.deletedDontHitLimit.sol/RewardsModule.json";
 import BringBackDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.6.bringBackDeletedIds.sol/RewardsModule.json";
+import ArrayOfDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.7.makeArrayOfDeletedIds.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -39,6 +40,8 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
       return DeletedDontHitLimitRewards.abi;
     } else if (version === "3.6") {
       return BringBackDeletedIdsRewards.abi;
+    } else if (version === "3.7") {
+      return ArrayOfDeletedIdsRewards.abi;
     } else {
       return DeployedRewardsContract.abi;
     }
