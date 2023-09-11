@@ -237,7 +237,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, rewards
     } else if (contest.qualifiedToVote) {
       return "you don't qualify to submit but you can vote";
     } else {
-      return "you don't qualify to submit & vote";
+      return "you don't qualify to submit or vote";
     }
   };
 
