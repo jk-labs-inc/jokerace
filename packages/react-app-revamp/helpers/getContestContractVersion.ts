@@ -9,6 +9,8 @@ import NumberedVersioningContract from "@contracts/bytecodeAndAbi/Contest.2.8.nu
 import GateSubmissionsOpenContract from "@contracts/bytecodeAndAbi/Contest.2.9.gateSubmissionsOpen.sol/Contest.json";
 import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVotes.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
+import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
+import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -31,6 +33,10 @@ export async function getContestContractVersion(address: string, chainId: number
     return { abi: MerkleVotesContract.abi, version };
   } else if (version === "3.2") {
     return { abi: TotalVotesCastContract.abi, version };
+  } else if (version === "3.3") {
+    return { abi: SetCompilerContract.abi, version };
+  } else if (version === "3.4") {
+    return { abi: AddIsDeletedContract.abi, version };
   }
 
   if (version === "1") {

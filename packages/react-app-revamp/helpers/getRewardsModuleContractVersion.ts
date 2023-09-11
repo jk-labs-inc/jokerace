@@ -4,6 +4,9 @@ import GateSubmissionsOpenRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import BetterRewardsNotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.5.betterRewardsNotes.sol/RewardsModule.json";
 import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.1.merkleVotes.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
+import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.3.setCompilerTo8Dot19.sol/RewardsModule.json";
+import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
+import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
 
@@ -26,8 +29,12 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
       return MerkleVotesRewards.abi;
     } else if (version === "3.2") {
       return TotalVotesCastRewards.abi;
+    } else if (version === "3.3") {
+      return SetCompilerRewards.abi;
+    } else if (version === "3.4") {
+      return AddIsDeletedRewards.abi;
     } else {
-      return LegacyDeployedRewardsModuleContract.abi;
+      return DeployedRewardsContract.abi;
     }
   } catch (error) {
     // If the version method does not exist, use the legacy ABI
