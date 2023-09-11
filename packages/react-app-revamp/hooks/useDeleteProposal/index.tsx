@@ -1,3 +1,4 @@
+import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -33,6 +34,7 @@ export function useDeleteProposal() {
 
     const abi = await getContestContractVersion(address, chainId);
 
+    toastLoading(`Deleting proposal...`);
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
@@ -62,49 +64,14 @@ export function useDeleteProposal() {
       setIsLoading(false);
       setIsSuccess(true);
       softDeleteProposal(proposalId);
-      toast.success(`Proposal deleted successfully!`);
+      toastSuccess(`Proposal deleted successfully!`);
     } catch (e) {
       const customError = e as CustomError;
 
       if (!customError) return;
 
       const message = customError.message || "Something went wrong while deleting your proposal.";
-      toast.error(message);
-      setError({
-        code: customError.code,
-        message,
-      });
-      setIsLoading(false);
-    }
-  }
-
-  async function isProposalDeleted(proposalId: string) {
-    const address = asPath.split("/")[3];
-    const chainName = asPath.split("/")[2];
-    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-
-    const abi = await getContestContractVersion(address, chainId);
-
-    const contractConfig = {
-      address: address as `0x${string}`,
-      abi: abi ? abi.abi : DeployedContestContract.abi,
-    };
-
-    try {
-      const isProposalDeleted = (await readContract({
-        ...contractConfig,
-        functionName: "isProposalDeleted",
-        args: [proposalId],
-      })) as number;
-
-      return isProposalDeleted;
-    } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      const message = customError.message || "Something went wrong while deleting your proposal.";
-      toast.error(message);
+      toastError(message);
       setError({
         code: customError.code,
         message,
@@ -124,7 +91,6 @@ export function useDeleteProposal() {
 
   return {
     deleteProposal,
-    isProposalDeleted,
     isLoading,
     error,
     isSuccess,

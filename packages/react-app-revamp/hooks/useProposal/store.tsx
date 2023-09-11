@@ -89,17 +89,14 @@ export const createProposalStore = () =>
         },
       })),
     softDeleteProposal: id =>
-      set(state => ({
-        ...state,
-        listProposalsData: {
-          ...state.listProposalsData,
-          [id]: {
-            ...state.listProposalsData[id],
-            content: "This proposal has been deleted by the creator of the contest.",
-            isContentImage: false,
-          },
-        },
-      })),
+      set(state => {
+        const newState = { ...state };
+
+        delete newState.listProposalsData[id];
+
+        return newState;
+      }),
+
     resetListProposals: () => set({ listProposalsData: {}, listProposalsIds: [] }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setIsListProposalsLoading: value => set({ isListProposalsLoading: value }),

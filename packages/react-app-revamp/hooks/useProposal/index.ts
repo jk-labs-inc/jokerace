@@ -136,7 +136,6 @@ export function useProposal() {
 
     const forVotesBigInt = proposalDataPerId[i][1].result[0] as bigint;
     const againstVotesBigInt = proposalDataPerId[i][1].result[1] as bigint;
-
     const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
     const votes = Number(utils.formatEther(votesBigNumber));
 
