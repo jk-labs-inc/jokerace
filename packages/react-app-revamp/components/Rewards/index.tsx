@@ -59,10 +59,7 @@ const ContestRewards = () => {
       <div className="flex flex-col gap-12">
         <p className="text-[24px] font-bold text-neutral-11">create a rewards pool</p>
         <div className="flex flex-col gap-4 text-[16px] text-neutral-11">
-          <p>
-            a rewards pool incentivizes players, compensates winners, and is
-            <br /> open for <i>anyone</i> to fund
-          </p>
+          <p>a rewards pool incentivizes players, compensates winners, and helps showcase you to players.</p>
           <p>
             when you create a rewards pool, you’ll set what percent of rewards <br />
             each winner receives—and then you’ll have the option to fund it

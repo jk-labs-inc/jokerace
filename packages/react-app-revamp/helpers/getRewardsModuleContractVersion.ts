@@ -4,6 +4,13 @@ import GateSubmissionsOpenRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import BetterRewardsNotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.5.betterRewardsNotes.sol/RewardsModule.json";
 import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.1.merkleVotes.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
+import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.3.setCompilerTo8Dot19.sol/RewardsModule.json";
+import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
+import DeletedDontHitLimitRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.5.deletedDontHitLimit.sol/RewardsModule.json";
+import BringBackDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.6.bringBackDeletedIds.sol/RewardsModule.json";
+import ArrayOfDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.7.makeArrayOfDeletedIds.sol/RewardsModule.json";
+import DeletedIdAccessorRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.8.makeDeletedIdAccessor.sol/RewardsModule.json";
+import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
 
@@ -26,8 +33,20 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
       return MerkleVotesRewards.abi;
     } else if (version === "3.2") {
       return TotalVotesCastRewards.abi;
+    } else if (version === "3.3") {
+      return SetCompilerRewards.abi;
+    } else if (version === "3.4") {
+      return AddIsDeletedRewards.abi;
+    } else if (version === "3.5") {
+      return DeletedDontHitLimitRewards.abi;
+    } else if (version === "3.6") {
+      return BringBackDeletedIdsRewards.abi;
+    } else if (version === "3.7") {
+      return ArrayOfDeletedIdsRewards.abi;
+    } else if (version === "3.8") {
+      return DeletedIdAccessorRewards.abi;
     } else {
-      return LegacyDeployedRewardsModuleContract.abi;
+      return DeployedRewardsContract.abi;
     }
   } catch (error) {
     // If the version method does not exist, use the legacy ABI

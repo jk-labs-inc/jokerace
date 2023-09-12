@@ -5,7 +5,7 @@ import CreateSubmissionAllowlist from "./components/SubmissionAllowlist";
 import CreateSubmissionRequirements from "./components/SubmissionRequirements";
 
 const tabOptions = [
-  { label: "set submission requirements", content: <CreateSubmissionRequirements /> },
+  { label: "use prefilled requirements", content: <CreateSubmissionRequirements /> },
   { label: "set allowlist manually", content: <CreateSubmissionAllowlist /> },
 ];
 

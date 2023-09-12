@@ -9,6 +9,12 @@ import NumberedVersioningContract from "@contracts/bytecodeAndAbi/Contest.2.8.nu
 import GateSubmissionsOpenContract from "@contracts/bytecodeAndAbi/Contest.2.9.gateSubmissionsOpen.sol/Contest.json";
 import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVotes.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
+import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
+import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
+import DeletedDontHitLimitContract from "@contracts/bytecodeAndAbi/Contest.3.5.deletedDontHitLimit.sol/Contest.json";
+import BringBackDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.6.bringBackDeletedIds.sol/Contest.json";
+import ArrayOfDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.7.makeArrayOfDeletedIds.sol/Contest.json";
+import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.makeDeletedIdAccessor.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -31,6 +37,18 @@ export async function getContestContractVersion(address: string, chainId: number
     return { abi: MerkleVotesContract.abi, version };
   } else if (version === "3.2") {
     return { abi: TotalVotesCastContract.abi, version };
+  } else if (version === "3.3") {
+    return { abi: SetCompilerContract.abi, version };
+  } else if (version === "3.4") {
+    return { abi: AddIsDeletedContract.abi, version };
+  } else if (version === "3.5") {
+    return { abi: DeletedDontHitLimitContract.abi, version };
+  } else if (version === "3.6") {
+    return { abi: BringBackDeletedIdsContract.abi, version };
+  } else if (version === "3.7") {
+    return { abi: ArrayOfDeletedIdsContract.abi, version };
+  } else if (version === "3.8") {
+    return { abi: DeletedIdAccessorContract.abi, version };
   }
 
   if (version === "1") {

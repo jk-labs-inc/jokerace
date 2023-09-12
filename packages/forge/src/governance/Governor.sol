@@ -30,12 +30,14 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(address => bool) public addressSubmitterVerified;
 
     uint256[] private _proposalIds;
-    mapping(uint256 => uint256) private _deletedProposalIds;
+    mapping(uint256 => bool) private _proposalIsDeleted;
     string private _name;
     string private _prompt;
     bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
+
+    uint256[] public _deletedProposalIds;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -84,7 +86,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.3";
+        return "3.8";
     }
 
     /**
@@ -141,6 +143,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
+     * @dev Return all deleted proposals.
+     */
+    function getAllDeletedProposalIds() public view virtual returns (uint256[] memory) {
+        return _deletedProposalIds;
+    }
+
+    /**
      * @dev See {IGovernor-voteStart}.
      */
     function voteStart() public view virtual override returns (uint256) {
@@ -190,10 +199,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev Returns if a proposal has been deleted or not (0 if not, 1 if it has been deleted).
+     * @dev Returns if a proposal has been deleted or not.
      */
-    function isProposalDeleted(uint256 proposalId) public view virtual returns (uint256) {
-        return _deletedProposalIds[proposalId];
+    function isProposalDeleted(uint256 proposalId) public view virtual returns (bool) {
+        return _proposalIsDeleted[proposalId];
     }
 
     /**
@@ -279,7 +288,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
             _numSubmissions[msg.sender] < numAllowedProposalSubmissions(),
             "Governor: the same address cannot submit more than the numAllowedProposalSubmissions for this contest"
         );
-        require(_proposalIds.length < maxProposalCount(), "Governor: the max number of proposals have been submitted");
+        require(
+            (_proposalIds.length - _deletedProposalIds.length) < maxProposalCount(),
+            "Governor: the max number of proposals have been submitted"
+        );
 
         uint256 proposalId = hashProposal(proposal);
         require(!_proposals[proposalId].exists, "Governor: duplicate proposals not allowed");
@@ -306,10 +318,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         );
 
         for (uint256 index = 0; index < proposalIds.length; index++) {
-            if (_deletedProposalIds[proposalIds[index]] != 1) {
-                _deletedProposalIds[proposalIds[index]] = 1;
-                _proposals[proposalIds[index]].description =
-                    "This proposal has been deleted by the creator of the contest.";
+            uint256 currentProposalId = proposalIds[index];
+            if (!_proposalIsDeleted[currentProposalId]) {
+                // if this proposal hasn't already been deleted
+                _proposalIsDeleted[currentProposalId] = true;
+                // this proposal now won't count towards the total number allowed in the contest
+                // it will still count towards the total number of proposals that the user is allowed to submit though
+                _deletedProposalIds.push(currentProposalId);
             }
         }
 

@@ -61,6 +61,8 @@ contract ContestTest is Test {
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
 
+    uint256[] public proposalsToDelete;
+
     IGovernor.ProposalCore public firstProposalPA1 = IGovernor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "firstProposalPA1",
@@ -196,6 +198,26 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         vm.expectRevert(bytes("Governor: the proposal author must be msg.sender"));
         contest.proposeWithoutProof(unpermissionedAuthorProposal1);
+    }
+
+    function testProposeDuplicateProposal() public {
+        vm.warp(1681650001);
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.expectRevert(bytes("Governor: duplicate proposals not allowed"));
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.stopPrank();
+    }
+
+    function testDeleteProposal() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
+        proposalsToDelete.push(proposalId);
+        vm.prank(CREATOR_ADDRESS_1);
+        contest.deleteProposals(proposalsToDelete);
+        assertEq(contest.isProposalDeleted(proposalId), true);
     }
 
     function testVote1() public {

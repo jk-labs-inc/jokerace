@@ -38,18 +38,17 @@ interface ProposalContentProps {
   id: string;
   proposal: Proposal;
   votingOpen: Date;
-  prompt: string;
 }
 
 const MAX_LENGTH = 200;
 let MAX_LENGTH_PARAGRAPH = 200;
 
-const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, prompt }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen }) => {
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
   const { isConnected } = useAccount();
-  const { asPath, ...router } = useRouter();
+  const { asPath } = useRouter();
   const chainName = asPath.split("/")[2];
   const contestAddress = asPath.split("/")[3];
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);

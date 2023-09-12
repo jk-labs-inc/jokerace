@@ -11,10 +11,10 @@ export const arbitrumOneTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://endpoints.omniatech.io/v1/arbitrum/goerli/public"],
+      http: ["https://arbitrum-goerli.publicnode.com"],
     },
     default: {
-      http: [`https://arb-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
+      http: ["https://arbitrum-goerli.publicnode.com"],
     },
   },
   blockExplorers: {
