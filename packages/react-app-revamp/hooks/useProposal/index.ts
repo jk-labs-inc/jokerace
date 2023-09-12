@@ -245,8 +245,8 @@ export function useProposal() {
         },
         {
           ...contractConfig,
-          functionName: "_deletedProposalIds",
-          args: [[]],
+          functionName: "getAllDeletedProposalIds",
+          args: [],
         },
       ];
 
