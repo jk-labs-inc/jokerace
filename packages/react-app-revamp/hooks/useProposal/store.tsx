@@ -90,11 +90,19 @@ export const createProposalStore = () =>
       })),
     softDeleteProposal: id =>
       set(state => {
-        const newState = { ...state };
+        const updatedListProposalsData = { ...state.listProposalsData };
 
-        delete newState.listProposalsData[id];
+        const updatedListProposalsIds = state.listProposalsIds
+          .map(existingId => existingId.toString())
+          .filter(existingIdStr => existingIdStr !== id);
 
-        return newState;
+        delete updatedListProposalsData[id];
+
+        return {
+          ...state,
+          listProposalsData: updatedListProposalsData,
+          listProposalsIds: updatedListProposalsIds,
+        };
       }),
 
     resetListProposals: () => set({ listProposalsData: {}, listProposalsIds: [] }),

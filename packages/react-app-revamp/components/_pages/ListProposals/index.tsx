@@ -31,6 +31,7 @@ export const ListProposals = () => {
   const onDeleteProposal = async (proposalId: string) => {
     setDeletingProposalId(proposalId);
     await deleteProposal(proposalId);
+
     if (isDeleteSuccess) {
       setDeletingProposalId(null);
     }
@@ -60,7 +61,7 @@ export const ListProposals = () => {
             .map(id => {
               if (id === deletingProposalId && isDeleteInProcess) {
                 return (
-                  <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1} key={id}>
+                  <SkeletonTheme baseColor="#000000" highlightColor="#FF78A9" duration={1} key={id}>
                     <Skeleton
                       borderRadius={10}
                       className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 mt-3"

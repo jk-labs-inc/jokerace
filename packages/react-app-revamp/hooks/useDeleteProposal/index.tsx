@@ -13,7 +13,7 @@ import { useDeleteProposalStore } from "./store";
 export function useDeleteProposal() {
   const { asPath } = useRouter();
   const { chain } = useNetwork();
-  const softDeleteProposal = useProposalStore(state => state.softDeleteProposal);
+  const { softDeleteProposal } = useProposalStore(state => state);
   const {
     isLoading,
     error,
@@ -27,23 +27,25 @@ export function useDeleteProposal() {
   } = useDeleteProposalStore(state => state);
 
   async function deleteProposal(proposalId: string) {
+    toastLoading(`Deleting proposal...`);
+    setIsLoading(true);
+    setIsSuccess(false);
+    setError(null);
+    setTransactionData(null);
+
     const address = asPath.split("/")[3];
     const chainName = asPath.split("/")[2];
     const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
 
     const abi = await getContestContractVersion(address, chainId);
 
-    toastLoading(`Deleting proposal...`);
-    setIsLoading(true);
-    setIsSuccess(false);
-    setError(null);
-    setTransactionData(null);
     const contractConfig = {
       address: address as `0x${string}`,
       abi: abi ? abi.abi : DeployedContestContract.abi,
     };
 
     try {
+      //@ts-ignore
       const txDeleteProposals = await writeContract({
         ...contractConfig,
         functionName: "deleteProposals",
@@ -60,9 +62,10 @@ export function useDeleteProposal() {
         chainId: chain?.id,
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txDeleteProposals?.hash}`,
       });
+
+      softDeleteProposal(proposalId);
       setIsLoading(false);
       setIsSuccess(true);
-      softDeleteProposal(proposalId);
       toastSuccess(`Proposal deleted successfully!`);
     } catch (e) {
       const customError = e as CustomError;
@@ -76,6 +79,7 @@ export function useDeleteProposal() {
         message,
       });
       setIsLoading(false);
+      setIsSuccess(false);
     }
   }
 

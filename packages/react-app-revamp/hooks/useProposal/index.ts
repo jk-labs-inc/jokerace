@@ -6,7 +6,6 @@ import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
@@ -172,11 +171,7 @@ export function useProposal() {
         )?.id,
       };
 
-      const proposalsIdsRawData = (await readContract({
-        ...contractConfig,
-        functionName: !useLegacyGetAllProposalsIdFn ? "allProposalTotalVotes" : "getAllProposalIds",
-        args: [],
-      })) as any;
+      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
 
       let proposalsIds: Result;
       if (!useLegacyGetAllProposalsIdFn) {
@@ -198,6 +193,7 @@ export function useProposal() {
             id: data,
           });
         });
+
         proposalsIds = proposalsIds
           .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
           .map((proposal: { id: any }) => proposal.id);
@@ -232,6 +228,70 @@ export function useProposal() {
       setIsLoading(false);
     }
   }
+
+  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
+    if (isLegacy) {
+      return (await readContract({
+        ...contractConfig,
+        functionName: "getAllProposalIds",
+        args: [],
+      })) as any;
+    } else {
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "allProposalTotalVotes",
+          args: [],
+        },
+        {
+          ...contractConfig,
+          functionName: "_deletedProposalIds",
+          args: [[]],
+        },
+      ];
+
+      const results: any[] = await readContracts({ contracts });
+
+      const [allProposalVotes, deletedIdsArray] = results;
+
+      // If there are no deleted IDs, jusdt return all proposals and their votes.
+      if (!deletedIdsArray) {
+        return [allProposalVotes.result[0], allProposalVotes.result[1]];
+      }
+
+      const deletedProposalSet = new Set(mapResultToStringArray(deletedIdsArray.result));
+
+      const { validProposalIds, correspondingVotes } = filterValidProposals(
+        allProposalVotes.result[0],
+        deletedProposalSet,
+        allProposalVotes.result[1],
+      );
+
+      return [validProposalIds, correspondingVotes];
+    }
+  }
+
+  const filterValidProposals = (allProposals: any[], deletedIdsSet: Set<string>, allVotes: any[]) => {
+    const validProposalIds: any[] = [];
+    const correspondingVotes: any[] = [];
+
+    allProposals.forEach((proposalId, index) => {
+      if (!deletedIdsSet.has(proposalId.toString())) {
+        validProposalIds.push(proposalId);
+        correspondingVotes.push(allVotes[index]);
+      }
+    });
+
+    return { validProposalIds, correspondingVotes };
+  };
+
+  const mapResultToStringArray = (result: any): string[] => {
+    if (Array.isArray(result)) {
+      return result.map((id: bigint) => id.toString());
+    } else {
+      return [result.toString()];
+    }
+  };
 
   return {
     fetchProposal,
