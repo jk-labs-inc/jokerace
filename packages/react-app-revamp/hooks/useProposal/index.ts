@@ -6,7 +6,6 @@ import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
@@ -136,7 +135,6 @@ export function useProposal() {
 
     const forVotesBigInt = proposalDataPerId[i][1].result[0] as bigint;
     const againstVotesBigInt = proposalDataPerId[i][1].result[1] as bigint;
-
     const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
     const votes = Number(utils.formatEther(votesBigNumber));
 
@@ -173,11 +171,7 @@ export function useProposal() {
         )?.id,
       };
 
-      const proposalsIdsRawData = (await readContract({
-        ...contractConfig,
-        functionName: !useLegacyGetAllProposalsIdFn ? "allProposalTotalVotes" : "getAllProposalIds",
-        args: [],
-      })) as any;
+      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
 
       let proposalsIds: Result;
       if (!useLegacyGetAllProposalsIdFn) {
@@ -199,6 +193,7 @@ export function useProposal() {
             id: data,
           });
         });
+
         proposalsIds = proposalsIds
           .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
           .map((proposal: { id: any }) => proposal.id);
@@ -233,6 +228,65 @@ export function useProposal() {
       setIsLoading(false);
     }
   }
+
+  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
+    if (isLegacy) {
+      return (await readContract({
+        ...contractConfig,
+        functionName: "getAllProposalIds",
+        args: [],
+      })) as any;
+    } else {
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "allProposalTotalVotes",
+          args: [],
+        },
+        {
+          ...contractConfig,
+          functionName: "getAllDeletedProposalIds",
+          args: [],
+        },
+      ];
+
+      const results: any[] = await readContracts({ contracts });
+
+      const allProposals = results[0].result[0];
+      const deletedIdsArray = results[1]?.result;
+
+      if (!deletedIdsArray) {
+        return [allProposals, results[0].result[1]];
+      }
+
+      const deletedProposalSet = new Set(mapResultToStringArray(deletedIdsArray));
+
+      const validData = allProposals.reduce(
+        (
+          accumulator: { validProposalIds: any[]; correspondingVotes: any[] },
+          proposalId: { toString: () => string },
+          index: string | number,
+        ) => {
+          if (!deletedProposalSet.has(proposalId.toString())) {
+            accumulator.validProposalIds.push(proposalId);
+            accumulator.correspondingVotes.push(results[0].result[1][index]);
+          }
+          return accumulator;
+        },
+        { validProposalIds: [], correspondingVotes: [] },
+      );
+
+      return [validData.validProposalIds, validData.correspondingVotes];
+    }
+  }
+
+  const mapResultToStringArray = (result: any): string[] => {
+    if (Array.isArray(result)) {
+      return result.map((id: bigint) => id.toString());
+    } else {
+      return [result.toString()];
+    }
+  };
 
   return {
     fetchProposal,

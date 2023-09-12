@@ -1,13 +1,19 @@
 import Button from "@components/UI/Button";
 import ProposalContent from "@components/_pages/ProposalContent";
+import { TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { useAccount } from "wagmi";
 
 export const ListProposals = () => {
+  const { address } = useAccount();
   const { fetchProposalsPage } = useProposal();
-
+  const { deleteProposal, isLoading: isDeleteInProcess, isSuccess: isDeleteSuccess } = useDeleteProposal();
   const {
     listProposalsIds,
     isPageProposalsLoading,
@@ -17,7 +23,19 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { votesOpen, contestPrompt } = useContestStore(state => state);
+  const { votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const contestStatus = useContestStatusStore(state => state.contestStatus);
+  const allowDelete = contestStatus === ContestStatus.SubmissionOpen && address === contestAuthorEthereumAddress;
+  const [deletingProposalId, setDeletingProposalId] = useState<string | null>(null);
+
+  const onDeleteProposal = async (proposalId: string) => {
+    setDeletingProposalId(proposalId);
+    await deleteProposal(proposalId);
+
+    if (isDeleteSuccess) {
+      setDeletingProposalId(null);
+    }
+  };
 
   if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
     return (
@@ -41,6 +59,16 @@ export const ListProposals = () => {
           return Object.keys(listProposalsData)
             .sort((a, b) => listProposalsData[b].votes - listProposalsData[a].votes)
             .map(id => {
+              if (id === deletingProposalId && isDeleteInProcess) {
+                return (
+                  <SkeletonTheme baseColor="#000000" highlightColor="#FF78A9" duration={1} key={id}>
+                    <Skeleton
+                      borderRadius={10}
+                      className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 mt-3"
+                    />
+                  </SkeletonTheme>
+                );
+              }
               const votes = listProposalsData[id].votes;
 
               if (votes !== lastVotes) {
@@ -55,12 +83,15 @@ export const ListProposals = () => {
                       {rank}
                     </div>
                   )}
-                  <ProposalContent
-                    id={id}
-                    proposal={listProposalsData[id]}
-                    prompt={contestPrompt}
-                    votingOpen={votesOpen}
-                  />
+                  <ProposalContent id={id} proposal={listProposalsData[id]} votingOpen={votesOpen} />
+                  {allowDelete && (
+                    <div
+                      className="absolute cursor-pointer -top-0 right-0 -mt-4 -mr-2 z-10 bg-true-black"
+                      onClick={() => onDeleteProposal(id)}
+                    >
+                      <TrashIcon className="h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300" />
+                    </div>
+                  )}
                 </div>
               );
             });
