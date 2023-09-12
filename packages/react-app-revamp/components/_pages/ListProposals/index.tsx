@@ -25,7 +25,9 @@ export const ListProposals = () => {
   } = useProposalStore(state => state);
   const { votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const allowDelete = contestStatus === ContestStatus.SubmissionOpen && address === contestAuthorEthereumAddress;
+  const allowDelete =
+    (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
+    address === contestAuthorEthereumAddress;
   const [deletingProposalId, setDeletingProposalId] = useState<string | null>(null);
 
   const onDeleteProposal = async (proposalId: string) => {
