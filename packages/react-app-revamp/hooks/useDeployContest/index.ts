@@ -18,6 +18,7 @@ import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
+export const MAX_SUBMISSIONS_LIMIT = 10000;
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useDeployContest() {
@@ -71,8 +72,10 @@ export function useDeployContest() {
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
       const finalAllowedSubmissionsPerUser =
-        !isNaN(allowedSubmissionsPerUser) && allowedSubmissionsPerUser > 0 ? allowedSubmissionsPerUser : 1000000;
-      const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : 1000000;
+        !isNaN(allowedSubmissionsPerUser) && allowedSubmissionsPerUser > 0
+          ? allowedSubmissionsPerUser
+          : MAX_SUBMISSIONS_LIMIT;
+      const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : MAX_SUBMISSIONS_LIMIT;
 
       const contestParameters = [
         getUnixTime(submissionOpen),

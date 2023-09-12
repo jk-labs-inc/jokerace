@@ -6,6 +6,8 @@ interface CreateTextInputProps {
   type?: "text" | "number";
   placeholder?: string;
   errorMessage?: string;
+  max?: number;
+  min?: number;
   minLength?: number;
   maxLength?: number;
   readOnly?: boolean;
@@ -19,6 +21,8 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   value,
   type = "text",
   placeholder,
+  max,
+  min,
   minLength = 100,
   maxLength = 100,
   readOnly = false,
@@ -48,6 +52,22 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
     };
   }, [onNextStep, step, value]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (type === "number") {
+      let val = parseFloat(e.target.value);
+
+      if (min !== undefined && val < min) {
+        val = min;
+      } else if (max !== undefined && val > max) {
+        val = max;
+      }
+
+      e.target.value = val.toString();
+    }
+
+    onChange?.(e.target.value);
+  };
+
   return (
     <input
       ref={inputRef}
@@ -56,10 +76,12 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
       onClick={onClick}
       className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2 ${className}`}
       placeholder={placeholder}
-      minLength={minLength}
       readOnly={readOnly}
+      max={min}
+      min={max}
       maxLength={maxLength}
-      onChange={e => onChange?.(e.target.value)}
+      minLength={minLength}
+      onChange={handleChange}
     />
   );
 };
