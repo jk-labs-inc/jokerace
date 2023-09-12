@@ -86,7 +86,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.7";
+        return "3.8";
     }
 
     /**
@@ -140,6 +140,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function getAllProposalIds() public view virtual returns (uint256[] memory) {
         return _proposalIds;
+    }
+
+    /**
+     * @dev Return all deleted proposals.
+     */
+    function getAllDeletedProposalIds() public view virtual returns (uint256[] memory) {
+        return _deletedProposalIds;
     }
 
     /**
