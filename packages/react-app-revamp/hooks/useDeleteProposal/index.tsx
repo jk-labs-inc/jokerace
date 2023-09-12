@@ -73,7 +73,7 @@ export function useDeleteProposal() {
       if (!customError) return;
 
       const message = customError.message || "Something went wrong while deleting your proposal.";
-      toastError(message);
+      toastError("something went wrong while deleting your proposal", message);
       setError({
         code: customError.code,
         message,
