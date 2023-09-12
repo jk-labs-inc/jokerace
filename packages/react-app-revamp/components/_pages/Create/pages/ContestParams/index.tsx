@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useDeployContest } from "@hooks/useDeployContest";
+import { MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
@@ -75,6 +75,8 @@ const CreateContestParams = () => {
               className="w-full md:w-[280px]"
               onChange={onSubmissionsPerUserChange}
               type="number"
+              max={MAX_SUBMISSIONS_LIMIT}
+              min={1}
             />
             <p className="text-neutral-11 text-[16px]">leave blank to enable infinite submissions</p>
           </div>
@@ -92,6 +94,8 @@ const CreateContestParams = () => {
               className="w-full md:w-[280px]"
               type="number"
               onChange={onMaxSubmissionsChange}
+              max={MAX_SUBMISSIONS_LIMIT}
+              min={1}
             />
             <p className="text-neutral-11 text-[16px]">leave blank to enable infinite submissions</p>
           </div>
