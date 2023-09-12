@@ -11,7 +11,7 @@ export const arbitrumOne: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.ankr.com/arbitrum"],
+      http: ["https://arbitrum-one.publicnode.com"],
     },
     default: {
       http: ["https://arbitrum-one.publicnode.com"],
