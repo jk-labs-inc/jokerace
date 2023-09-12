@@ -252,38 +252,33 @@ export function useProposal() {
 
       const results: any[] = await readContracts({ contracts });
 
-      const [allProposalVotes, deletedIdsArray] = results;
+      const allProposals = results[0].result[0];
+      const deletedIdsArray = results[1]?.result;
 
-      // If there are no deleted IDs, jusdt return all proposals and their votes.
       if (!deletedIdsArray) {
-        return [allProposalVotes.result[0], allProposalVotes.result[1]];
+        return [allProposals, results[0].result[1]];
       }
 
-      const deletedProposalSet = new Set(mapResultToStringArray(deletedIdsArray.result));
+      const deletedProposalSet = new Set(mapResultToStringArray(deletedIdsArray));
 
-      const { validProposalIds, correspondingVotes } = filterValidProposals(
-        allProposalVotes.result[0],
-        deletedProposalSet,
-        allProposalVotes.result[1],
+      const validData = allProposals.reduce(
+        (
+          accumulator: { validProposalIds: any[]; correspondingVotes: any[] },
+          proposalId: { toString: () => string },
+          index: string | number,
+        ) => {
+          if (!deletedProposalSet.has(proposalId.toString())) {
+            accumulator.validProposalIds.push(proposalId);
+            accumulator.correspondingVotes.push(results[0].result[1][index]);
+          }
+          return accumulator;
+        },
+        { validProposalIds: [], correspondingVotes: [] },
       );
 
-      return [validProposalIds, correspondingVotes];
+      return [validData.validProposalIds, validData.correspondingVotes];
     }
   }
-
-  const filterValidProposals = (allProposals: any[], deletedIdsSet: Set<string>, allVotes: any[]) => {
-    const validProposalIds: any[] = [];
-    const correspondingVotes: any[] = [];
-
-    allProposals.forEach((proposalId, index) => {
-      if (!deletedIdsSet.has(proposalId.toString())) {
-        validProposalIds.push(proposalId);
-        correspondingVotes.push(allVotes[index]);
-      }
-    });
-
-    return { validProposalIds, correspondingVotes };
-  };
 
   const mapResultToStringArray = (result: any): string[] => {
     if (Array.isArray(result)) {
