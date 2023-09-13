@@ -1,4 +1,6 @@
 import { toastError } from "@components/UI/Toast";
+import { chains } from "@config/wagmi";
+import { getTimestampFromReceipt } from "@helpers/timestamp";
 import useRewardsModule from "@hooks/useRewards";
 import { prepareSendTransaction, sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
 import { utils } from "ethers";
@@ -21,6 +23,7 @@ export interface RewardData {
 export function useFundRewardsModule() {
   const { asPath } = useRouter();
   const [chainName, contestAddress] = asPath.split("/").slice(2, 4);
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const { chain } = useNetwork();
   const {
     isModalOpen,
@@ -70,7 +73,7 @@ export function useFundRewardsModule() {
     rewardsContractAddress: string;
     decimals: number;
   }) => {
-    const { currentUserAddress, tokenAddress, amount, isErc20, rewardsContractAddress, decimals } = args;
+    const { tokenAddress, amount, isErc20, rewardsContractAddress, decimals } = args;
     const contractConfig = {
       address: tokenAddress as `0x${string}`,
       abi: erc20ABI,
@@ -91,7 +94,7 @@ export function useFundRewardsModule() {
       });
 
       receipt = await waitForTransaction({
-        chainId: chain?.id,
+        chainId: chainId,
         hash: txSendFunds.hash,
       });
 
@@ -107,7 +110,7 @@ export function useFundRewardsModule() {
       const { hash } = await sendTransaction(await config);
 
       receipt = await waitForTransaction({
-        chainId: chain?.id,
+        chainId: chainId,
         hash: hash,
       });
     }
@@ -122,11 +125,12 @@ export function useFundRewardsModule() {
       amount: parseFloat(utils.formatUnits(amount, decimals)),
       operation: "deposit",
       token_address: tokenAddress?.startsWith("$") ? null : tokenAddress,
+      created_at: await getTimestampFromReceipt(receipt, chainId),
     });
 
     return {
       hash: receipt.transactionHash,
-      chainId: chain?.id,
+      chainId: chainId,
       transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendFunds?.hash}`,
     };
   };

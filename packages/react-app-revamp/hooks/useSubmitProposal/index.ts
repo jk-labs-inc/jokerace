@@ -4,14 +4,16 @@ import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
+import { getTimestampFromReceipt } from "@helpers/timestamp";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-import { incrementUserActionForAnalytics } from "lib/analytics/participants";
+import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
+import { TransactionReceipt } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
 
@@ -105,9 +107,15 @@ export function useSubmitProposal() {
         increaseCurrentUserProposalCount();
         removeSubmissionFromLocalStorage("submissions", address);
         fetchProposalsIdsList(abi);
-
-        incrementUserActionForAnalytics(userAddress, "proposed", address, chainName);
         resolve({ tx: txSendProposal, proposalId });
+
+        addUserActionForAnalytics({
+          contest_address: address,
+          user_address: userAddress,
+          network_name: chainName,
+          created_at: await getTimestampFromReceipt(receipt, chainId),
+          proposal_id: proposalId,
+        });
       } catch (e) {
         const customError = e as CustomError;
 
@@ -119,7 +127,7 @@ export function useSubmitProposal() {
           return;
         }
 
-        toastError("Something went wrong while submitting your proposal.", customError.message);
+        toastError("Something went wrong while submittings your proposal.", customError.message);
         setError({
           code: customError.code,
           message: customError.message,
@@ -130,7 +138,7 @@ export function useSubmitProposal() {
     });
   }
 
-  function getProposalIdFromReceipt(receipt: any, abi: any): string {
+  function getProposalIdFromReceipt(receipt: TransactionReceipt, abi: any): string {
     const iface = new utils.Interface(abi);
     const log = receipt.logs[0];
     const event = iface.parseLog(log);

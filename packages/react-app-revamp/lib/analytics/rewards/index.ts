@@ -7,10 +7,12 @@ interface RewardAnalyticsUpdateOptions {
   amount: number;
   operation: "deposit" | "distribute";
   token_address: string | null;
+  created_at?: number;
 }
 
 export const updateRewardAnalytics = async (options: RewardAnalyticsUpdateOptions) => {
-  const { contest_address, rewards_module_address, network_name, token_address, amount, operation } = options;
+  const { contest_address, rewards_module_address, network_name, token_address, amount, operation, created_at } =
+    options;
 
   if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
@@ -59,6 +61,7 @@ export const updateRewardAnalytics = async (options: RewardAnalyticsUpdateOption
         token_address: token_address ? token_address.toLowerCase() : null,
         amount_paid_in: operation === "deposit" ? amount : 0,
         amount_paid_out: operation === "distribute" ? amount : 0,
+        created_at,
       };
 
       const { error: insertError } = await supabase.from("analytics_rewards_v3").insert(insertPayload);
