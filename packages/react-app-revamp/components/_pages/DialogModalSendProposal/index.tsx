@@ -8,7 +8,6 @@ import { chains } from "@config/wagmi";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import {
   loadSubmissionFromLocalStorage,
-  removeSubmissionFromLocalStorage,
   saveSubmissionToLocalStorage,
   SubmissionCache,
 } from "@helpers/submissionCaching";
@@ -23,7 +22,6 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchNetwork } from "@wagmi/core";
-import { uploadToImgur } from "lib/image/imgur";
 import moment from "moment";
 import NextImage from "next/image";
 import { useRouter } from "next/router";
@@ -121,7 +119,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     if (isSuccess) {
       setIsOpen(false);
       editorProposal?.commands.clearContent();
-      removeSubmissionFromLocalStorage("submissions", contestId);
     }
   }, [isSuccess]);
 
