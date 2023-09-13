@@ -9,4 +9,4 @@ export const ROUTE_VIEW_CONTEST = ROUTE_VIEW_CONTEST_BASE_PATH;
 export const ROUTE_VIEW_CONTEST_RULES = `${ROUTE_VIEW_CONTEST}/rules`;
 export const ROUTE_VIEW_CONTEST_REWARDS = `${ROUTE_VIEW_CONTEST}/rewards`;
 export const ROUTE_VIEW_CONTEST_EXPORT_DATA = `${ROUTE_VIEW_CONTEST}/export-data`;
-export const ROUTE_CONTEST_PROPOSAL = `${ROUTE_VIEW_CONTEST}/proposal/[proposal]`;
+export const ROUTE_CONTEST_PROPOSAL = `${ROUTE_VIEW_CONTEST}/submission/[submission]`;
