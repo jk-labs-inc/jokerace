@@ -11,7 +11,7 @@ export const base: Chain = {
   },
   rpcUrls: {
     public: { http: ["https://mainnet.base.org"] },
-    default: { http: ["https://mainnet.base.org"] },
+    default: { http: [`https://base-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`] },
   },
   blockExplorers: {
     etherscan: { name: "Base Mainnet Scan", url: "https://basescan.org" },
