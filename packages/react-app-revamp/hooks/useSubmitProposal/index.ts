@@ -1,4 +1,5 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -7,6 +8,7 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
 import { incrementUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
@@ -23,7 +25,7 @@ const safeMetadata = {
 };
 
 export function useSubmitProposal() {
-  const { asPath } = useRouter();
+  const { asPath, ...router } = useRouter();
   const { address: userAddress } = useAccount();
   const { fetchProposalsIdsList } = useProposal();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
@@ -35,15 +37,15 @@ export function useSubmitProposal() {
     useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
 
-  async function sendProposal(proposalContent: string): Promise<TransactionResponse> {
-    return new Promise<TransactionResponse>(async (resolve, reject) => {
-      const { abi } = await getContestContractVersion(address, chainId);
-      toastLoading("proposal is deploying...");
+  async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
+    toastLoading("proposal is deploying...");
+    setIsLoading(true);
+    setIsSuccess(false);
+    setError(null);
+    setTransactionData(null);
 
-      setIsLoading(true);
-      setIsSuccess(false);
-      setError(null);
-      setTransactionData(null);
+    return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
+      const { abi } = await getContestContractVersion(address, chainId);
 
       try {
         const proofs = await getProofs(userAddress ?? "", "submission", "10");
@@ -89,14 +91,13 @@ export function useSubmitProposal() {
           chainId: chain?.id,
           hash,
         });
+        const proposalId = getProposalIdFromReceipt(receipt, abi);
 
         setTransactionData({
           chainId: chain?.id,
           hash: receipt.transactionHash,
           transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendProposal?.hash}`,
         });
-
-        incrementUserActionForAnalytics(userAddress, "proposed", address, chainName);
 
         setIsLoading(false);
         setIsSuccess(true);
@@ -105,7 +106,8 @@ export function useSubmitProposal() {
         removeSubmissionFromLocalStorage("submissions", address);
         fetchProposalsIdsList(abi);
 
-        resolve(txSendProposal);
+        incrementUserActionForAnalytics(userAddress, "proposed", address, chainName);
+        resolve({ tx: txSendProposal, proposalId });
       } catch (e) {
         const customError = e as CustomError;
 
@@ -128,8 +130,27 @@ export function useSubmitProposal() {
     });
   }
 
+  function getProposalIdFromReceipt(receipt: any, abi: any): string {
+    const iface = new utils.Interface(abi);
+    const log = receipt.logs[0];
+    const event = iface.parseLog(log);
+
+    const proposalIdDecimal = BigNumber.from(event.args.proposalId).toString();
+
+    return proposalIdDecimal;
+  }
+
+  function goToProposalPage(chain: string, address: string, submission: string) {
+    const path = ROUTE_CONTEST_PROPOSAL.replace("[chain]", chain)
+      .replace("[address]", address)
+      .replace("[submission]", submission);
+
+    router.push(path);
+  }
+
   return {
     sendProposal,
+    goToProposalPage,
     isLoading,
     isSuccess,
     error,
