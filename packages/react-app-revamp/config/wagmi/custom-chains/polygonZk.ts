@@ -15,7 +15,7 @@ export const polygonZk: Chain = {
       http: ["https://zkevm-rpc.com"],
     },
     default: {
-      http: ["https://zkevm-rpc.com"],
+      http: [`https://polygonzkevm-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {

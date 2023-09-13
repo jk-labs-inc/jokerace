@@ -11,10 +11,10 @@ export const arbitrumOne: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://arbitrum-one.publicnode.com"],
+      http: ["https://rpc.ankr.com/arbitrum"],
     },
     default: {
-      http: ["https://arbitrum-one.publicnode.com"],
+      http: [`https://arb-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {

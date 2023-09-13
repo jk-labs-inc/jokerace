@@ -14,7 +14,7 @@ export const optimismTestnet: Chain = {
       http: ["https://optimism-goerli.publicnode.com"],
     },
     default: {
-      http: ["https://optimism-goerli.publicnode.com"],
+      http: [`https://opt-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {
