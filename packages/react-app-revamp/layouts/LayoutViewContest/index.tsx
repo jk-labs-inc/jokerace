@@ -254,24 +254,6 @@ const LayoutViewContest = (props: any) => {
                   </div>
                 )}
                 <div className="animate-appear pt-3 md:pt-0">
-                  {pathname === ROUTE_CONTEST_PROPOSAL && (
-                    <div>
-                      <Link
-                        className="text-neutral-12 hover:text-opacity-75 focus:underline flex items-center mb-2 text-2xs"
-                        href={{
-                          pathname: ROUTE_VIEW_CONTEST,
-                          query: {
-                            chain: query.chain,
-                            address: query.address,
-                          },
-                        }}
-                      >
-                        <ArrowLeftIcon className="mie-1 w-4" />
-                        Back to contest
-                      </Link>
-                    </div>
-                  )}
-
                   <div className="flex flex-col mt-10 gap-4">
                     <p className="text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
                     <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
