@@ -10,8 +10,8 @@ export const base: Chain = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://mainnet.base.org"] },
-    default: { http: ["https://mainnet.base.org"] },
+    public: { http: ["https://base.publicnode.com"] },
+    default: { http: ["https://base.publicnode.com"] },
   },
   blockExplorers: {
     etherscan: { name: "Base Mainnet Scan", url: "https://basescan.org" },
