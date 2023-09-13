@@ -37,14 +37,14 @@ export function useSubmitProposal() {
     useSubmitProposalStore(state => state);
   const { chain } = useNetwork();
 
-  async function sendProposal(proposalContent: string): Promise<TransactionResponse> {
+  async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
     toastLoading("proposal is deploying...");
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
 
-    return new Promise<TransactionResponse>(async (resolve, reject) => {
+    return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       const { abi } = await getContestContractVersion(address, chainId);
 
       try {
@@ -93,8 +93,6 @@ export function useSubmitProposal() {
         });
         const proposalId = getProposalIdFromReceipt(receipt, abi);
 
-        await goToProposalPage(chainName, address, proposalId);
-
         setTransactionData({
           chainId: chain?.id,
           hash: receipt.transactionHash,
@@ -109,7 +107,7 @@ export function useSubmitProposal() {
         fetchProposalsIdsList(abi);
 
         incrementUserActionForAnalytics(userAddress, "proposed", address, chainName);
-        resolve(txSendProposal);
+        resolve({ tx: txSendProposal, proposalId });
       } catch (e) {
         const customError = e as CustomError;
 
@@ -142,7 +140,7 @@ export function useSubmitProposal() {
     return proposalIdDecimal;
   }
 
-  async function goToProposalPage(chain: string, address: string, submission: string) {
+  function goToProposalPage(chain: string, address: string, submission: string) {
     const path = ROUTE_CONTEST_PROPOSAL.replace("[chain]", chain)
       .replace("[address]", address)
       .replace("[submission]", submission);
@@ -152,6 +150,7 @@ export function useSubmitProposal() {
 
   return {
     sendProposal,
+    goToProposalPage,
     isLoading,
     isSuccess,
     error,

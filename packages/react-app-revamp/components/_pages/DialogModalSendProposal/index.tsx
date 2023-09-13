@@ -24,7 +24,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { switchNetwork } from "@wagmi/core";
 import moment from "moment";
 import NextImage from "next/image";
-import { useRouter } from "next/router";
+import router, { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 
@@ -37,10 +37,11 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { asPath } = useRouter();
-  const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
+  const { sendProposal, isLoading, isSuccess, goToProposalPage } = useSubmitProposal();
   const { contestPrompt, votesOpen } = useContestStore(state => state);
+  const chainName = asPath.split("/")[2];
   const contestId = asPath.split("/")[3];
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
   const { contestStatus } = useContestStatusStore(state => state);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());
@@ -88,8 +89,18 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     await switchNetwork({ chainId });
   };
 
-  const onSubmitProposal = () => {
-    sendProposal(proposal.trim());
+  const onSubmitProposal = async () => {
+    const result = await sendProposal(proposal.trim());
+    if (result) {
+      const handleRouteChangeComplete = () => {
+        setIsOpen(false);
+        editorProposal?.commands.clearContent();
+        router.events.off("routeChangeComplete", handleRouteChangeComplete);
+      };
+
+      router.events.on("routeChangeComplete", handleRouteChangeComplete);
+      goToProposalPage(chainName, contestId, result.proposalId);
+    }
   };
 
   useEffect(() => {
@@ -114,13 +125,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       window.removeEventListener("keydown", handleEnterPress);
     };
   }, [contestStatus, onSubmitProposal]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      setIsOpen(false);
-      editorProposal?.commands.clearContent();
-    }
-  }, [isSuccess]);
 
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
