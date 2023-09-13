@@ -11,10 +11,10 @@ export const baseTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://base-goerli.publicnode.com"],
+      http: ["https://goerli.base.org"],
     },
     default: {
-      http: ["https://base-goerli.publicnode.com"],
+      http: ["https://goerli.base.org"],
     },
   },
   blockExplorers: {
