@@ -11,10 +11,10 @@ export const polygonTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://polygon-mumbai-bor.publicnode.com"],
+      http: ["https://rpc.ankr.com/polygon_mumbai"],
     },
     default: {
-      http: ["https://polygon-mumbai-bor.publicnode.com"],
+      http: [`https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {
