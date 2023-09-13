@@ -1,6 +1,8 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { getTimestampFromReceipt } from "@helpers/timestamp";
 import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useGenerateProof } from "@hooks/useGenerateProof";
@@ -10,7 +12,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
-import { incrementUserActionForAnalytics } from "lib/analytics/participants";
+import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
@@ -37,10 +39,12 @@ export function useCastVotes() {
   const { updateCurrentUserVotes } = useUser();
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
-  const [id, chainId] = [asPath.split("/")[3], asPath.split("/")[2]];
+  const [contestId, chainName] = [asPath.split("/")[3], asPath.split("/")[2]];
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
+    ?.id;
 
   async function castVotes(amount: number, isPositive: boolean) {
-    const { abi } = await getContestContractVersion(id, parseFloat(chainId));
+    const { abi } = await getContestContractVersion(contestId, chainId);
     toastLoading("votes are deploying...");
     setIsLoading(true);
     setIsSuccess(false);
@@ -54,7 +58,7 @@ export function useCastVotes() {
 
       if (proofs) {
         txRequest = await prepareWriteContract({
-          address: id as `0x${string}`,
+          address: contestId as `0x${string}`,
           //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVote",
@@ -68,7 +72,7 @@ export function useCastVotes() {
         });
       } else {
         txRequest = await prepareWriteContract({
-          address: id as `0x${string}`,
+          address: contestId as `0x${string}`,
           //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
@@ -115,10 +119,18 @@ export function useCastVotes() {
       }
 
       await updateCurrentUserVotes();
-      incrementUserActionForAnalytics(userAddress, "voted", id, chainId);
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");
+
+      addUserActionForAnalytics({
+        contest_address: contestId,
+        user_address: userAddress,
+        network_name: chainName,
+        created_at: await getTimestampFromReceipt(receipt, chainId),
+        proposal_id: pickedProposal !== null ? pickedProposal : undefined,
+        vote_amount: amount,
+      });
     } catch (e) {
       const customError = e as CustomError;
 

@@ -5,6 +5,7 @@ create table public.analytics_rewards_v3 (
     network_name character varying not null,
     token_address character varying default null,
     amount_paid_in numeric default 0,   
-    amount_paid_out numeric default 0,  
+    amount_paid_out numeric default 0,
+    created_at int4 null  
     constraint analytics_rewards_v3_pkey primary key (uuid)
 ) tablespace pg_default;
