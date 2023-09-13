@@ -11,10 +11,10 @@ export const optimism: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://optimism.publicnode.com"],
+      http: ["https://rpc.ankr.com/optimism"],
     },
     default: {
-      http: ["https://optimism.publicnode.com"],
+      http: [`https://opt-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {

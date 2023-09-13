@@ -11,10 +11,10 @@ export const goerli: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://ethereum-goerli.publicnode.com"],
+      http: ["https://rpc.ankr.com/eth_goerli"],
     },
     default: {
-      http: ["https://ethereum-goerli.publicnode.com"],
+      http: [`https://eth-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {

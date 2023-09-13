@@ -11,10 +11,10 @@ export const polygon: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://polygon-bor.publicnode.com"],
+      http: ["https://rpc.ankr.com/polygon"],
     },
     default: {
-      http: ["https://polygon-bor.publicnode.com"],
+      http: [`https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {
