@@ -131,33 +131,26 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
 };
 
 const processContestRewardsData = async (contestAddress: string, contestChainName: string) => {
-  const chainId = chains.filter(
-    c => c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
-  )[0].id;
-
-  const contractConfig = await getContractConfig(contestAddress, chainId);
-
   let reward: ContestReward | null = null;
 
-  if (
-    contractConfig &&
-    contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0
-  ) {
-    try {
+  try {
+    const chainId = chains.filter(
+      c => c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
+    )[0].id;
+
+    const contractConfig = await getContractConfig(contestAddress, chainId);
+
+    if (contractConfig && contractConfig.abi?.some((el: { name: string }) => el.name === "officialRewardsModule")) {
       const contestRewardModuleAddress = (await readContract({
         ...contractConfig,
         functionName: "officialRewardsModule",
         args: [],
       })) as any;
 
-      if (contestRewardModuleAddress.toString() === "0x0000000000000000000000000000000000000000") {
-        reward = null;
-      } else {
+      if (contestRewardModuleAddress.toString() !== "0x0000000000000000000000000000000000000000") {
         const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress.toString(), chainId);
 
-        if (!abiRewardsModule) {
-          reward = null;
-        } else {
+        if (abiRewardsModule) {
           const winners = (await readContract({
             address: contestRewardModuleAddress.toString() as `0x${string}`,
             abi: abiRewardsModule,
@@ -165,25 +158,17 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
             functionName: "getPayees",
           })) as BigNumber[];
 
-          let rewardToken: FetchBalanceResult | null = null;
+          let rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
           let erc20Tokens: any = null;
 
-          rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
-
           if (!rewardToken || Number(rewardToken.value) === 0) {
-            try {
-              erc20Tokens = await fetchTokenBalances(contestChainName, contestRewardModuleAddress.toString());
-
-              if (erc20Tokens && erc20Tokens.length > 0) {
-                rewardToken = await fetchFirstToken(
-                  contestRewardModuleAddress.toString(),
-                  chainId,
-                  erc20Tokens[0].contractAddress,
-                );
-              }
-            } catch (error) {
-              console.error("Error fetching token balances:", error);
-              return;
+            erc20Tokens = await fetchTokenBalances(contestChainName, contestRewardModuleAddress.toString());
+            if (erc20Tokens && erc20Tokens.length > 0) {
+              rewardToken = await fetchFirstToken(
+                contestRewardModuleAddress.toString(),
+                chainId,
+                erc20Tokens[0].contractAddress,
+              );
             }
           }
 
@@ -198,23 +183,15 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
               winners: winners.length,
               numberOfTokens: erc20Tokens?.length ?? 1,
             };
-          } else {
-            reward = null;
           }
-          return reward;
         }
       }
-    } catch (error) {
-      console.error("Error:", error);
-      reward = null;
-
-      return reward;
     }
-  } else {
-    reward = null;
-
-    return reward;
+  } catch (error) {
+    console.error("Error:", error);
   }
+
+  return reward;
 };
 
 const processContestQualifications = async (contest: any, userAddress: string) => {
