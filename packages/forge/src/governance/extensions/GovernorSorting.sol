@@ -3,6 +3,7 @@
 pragma solidity ^0.8.0;
 
 import "./GovernorCountingSimple.sol";
+import "forge-std/console.sol";
 
 /**
  * @dev Extension of {GovernorCountingSimple} for sorting and ranking.
@@ -165,8 +166,8 @@ abstract contract GovernorSorting is GovernorCountingSimple {
             return proposalIdList;
         }
 
-        uint256[] memory slicedProposalIds;
         uint256 highestIndex = Math.min(endIndex, proposalIdList.length);
+        uint256[] memory slicedProposalIds = new uint256[](highestIndex - startIndex);
         for (uint256 i = startIndex; i < highestIndex; i++) {
             slicedProposalIds[i - startIndex] = proposalIdList[i];
         }
