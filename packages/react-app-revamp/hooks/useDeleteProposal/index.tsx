@@ -35,7 +35,7 @@ export function useDeleteProposal() {
 
     const address = asPath.split("/")[3];
     const chainName = asPath.split("/")[2];
-    const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
 
     const abi = await getContestContractVersion(address, chainId);
 

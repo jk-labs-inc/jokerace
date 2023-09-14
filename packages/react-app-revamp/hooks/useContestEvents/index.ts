@@ -13,7 +13,7 @@ import { useEffect, useRef, useState } from "react";
 
 export function useContestEvents() {
   const { asPath } = useRouter();
-  const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
   const provider = getEthersProvider({ chainId });
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { fetchTotalVotesCast } = useContest();

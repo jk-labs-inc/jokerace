@@ -33,7 +33,7 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
-  const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
 
   function onContractError(err: any) {
     let toastMessage = err?.message ?? err;
@@ -67,7 +67,7 @@ export function useProposal() {
         address: address as `0x${string}`,
         abi: abi,
         chainId: chains.find(
-          c => c.name.replace(/\s+/g, "")?.toLowerCase() === chainName.replace(/\s+/g, "")?.toLowerCase(),
+          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
         )?.id,
       };
 
@@ -167,7 +167,7 @@ export function useProposal() {
         address: address as `0x${string}`,
         abi: abi,
         chainId: chains.find(
-          c => c.name.replace(/\s+/g, "")?.toLowerCase() === chainName.replace(/\s+/g, "")?.toLowerCase(),
+          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
         )?.id,
       };
 

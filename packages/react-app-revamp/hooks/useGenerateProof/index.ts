@@ -18,7 +18,7 @@ export function useGenerateProof() {
   const account = useAccount();
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
   const contestAddress = url[3];
 

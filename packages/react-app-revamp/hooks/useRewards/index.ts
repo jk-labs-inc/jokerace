@@ -16,14 +16,14 @@ export function useRewardsModule() {
   const { chain } = useNetwork();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const chainId = chains.filter(
-    chain => chain.name?.toLowerCase().replace(" ", "") === contestChainName?.toLowerCase(),
+    chain => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
   const { refetch: refetchBalanceRewardsModule } = useQuery(
     ["balance-rewards-module", rewards?.contractAddress],
     async () => {
       try {
         const contestRewardModuleAddress = rewards?.contractAddress;
-        const alchemyAppUrl = chains.filter(chain => chain.name === contestChainName?.toLowerCase())[0].rpcUrls.default
+        const alchemyAppUrl = chains.filter(chain => chain.name === contestChainName.toLowerCase())[0].rpcUrls.default
           .http[0];
 
         const response = await fetch(alchemyAppUrl, {
@@ -112,7 +112,7 @@ export function useRewardsModule() {
         creator: rewardsModule[0],
         payees: rewardsModule[1].result,
         totalShares: rewardsModule[2].result,
-        blockExplorers: chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === contestChainName)?.[0]
+        blockExplorers: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestChainName)?.[0]
           ?.blockExplorers?.default,
       });
       setIsLoading(false);

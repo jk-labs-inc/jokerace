@@ -145,7 +145,7 @@ const ContestRewards = () => {
                       key={`rank-${`${payee}`}`}
                       chainId={
                         chains.filter(
-                          chain => chain.name?.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
+                          chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
                         )?.[0]?.id
                       }
                       payee={payee}
@@ -197,7 +197,7 @@ const ContestRewards = () => {
                   <RewardsDistributionTable
                     key={index}
                     chainId={
-                      chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
+                      chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
                         ?.id
                     }
                     payee={payee}
@@ -216,7 +216,7 @@ const ContestRewards = () => {
                   <RewardsDistributionTable
                     key={index}
                     chainId={
-                      chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
+                      chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
                         ?.id
                     }
                     payee={payee}

@@ -40,7 +40,7 @@ export function useCastVotes() {
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const [contestId, chainName] = [asPath.split("/")[3], asPath.split("/")[2]];
-  const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === chainName?.toLowerCase())?.[0]
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.id;
 
   async function castVotes(amount: number, isPositive: boolean) {

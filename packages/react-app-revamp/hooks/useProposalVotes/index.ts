@@ -27,7 +27,7 @@ export function useProposalVotes(id: number | string) {
   });
   const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
   );
   const provider = getEthersProvider({ chainId });
   const [address] = useState(url[3]);

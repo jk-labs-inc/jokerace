@@ -33,7 +33,7 @@ export function useSubmitProposal() {
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const [chainName, address] = asPath.split("/").slice(2, 4);
-  const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === chainName?.toLowerCase())?.[0]
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.id;
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);

@@ -22,7 +22,7 @@ export const updateRewardAnalytics = async (options: RewardAnalyticsUpdateOption
       contest_address,
       rewards_module_address,
       network_name,
-      token_address: token_address ? token_address?.toLowerCase() : null,
+      token_address: token_address ? token_address.toLowerCase() : null,
       amount_paid_in: operation === "deposit" ? amount : 0,
       amount_paid_out: operation === "distribute" ? amount : 0,
       created_at,

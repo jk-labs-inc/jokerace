@@ -51,7 +51,7 @@ const Page: FC<PageProps> = ({ proposalData, address, chain }) => {
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 const getChainId = (chain: string) => {
-  return chains.find(c => c.name?.toLowerCase().replace(" ", "") === chain)?.id;
+  return chains.find(c => c.name.toLowerCase().replace(" ", "") === chain)?.id;
 };
 
 const fetchProposalData = async (address: string, chainId: number, submission: string) => {
@@ -101,7 +101,7 @@ export async function getStaticProps({ params }: any) {
 
   if (
     !REGEX_ETHEREUM_ADDRESS.test(address) ||
-    !chains.some(c => c.name?.toLowerCase().replace(" ", "") === chain) ||
+    !chains.some(c => c.name.toLowerCase().replace(" ", "") === chain) ||
     !submission
   ) {
     return { notFound: true };
