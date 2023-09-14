@@ -1,5 +1,5 @@
 import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
+import { argentWallet, imTokenWallet, ledgerWallet, metaMaskWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig, mainnet } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
@@ -130,22 +130,23 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(t
 
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
 
-const { wallets } = getDefaultWallets({
-  appName: "jokerace",
-  chains,
-  projectId: WALLETCONECT_PROJECT_ID,
-});
+// const { wallets } = getDefaultWallets({
+//   appName: "jokerace",
+//   chains,
+//   projectId: WALLETCONECT_PROJECT_ID,
+// });
 
 const connectors = connectorsForWallets([
-  ...wallets,
+  // ...wallets,
   {
     groupName: "Other",
     wallets: [
-      argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      ledgerWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      metaMaskWallet({ chains, projectId: WALLETCONECT_PROJECT_ID })
+      // argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      // trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      // ledgerWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      // imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      // omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
     ],
   },
 ]);
