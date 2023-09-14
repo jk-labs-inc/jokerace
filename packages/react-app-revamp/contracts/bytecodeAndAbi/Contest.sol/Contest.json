@@ -3732,10 +3732,10 @@
         "license": "MIT"
       },
       "src/modules/RewardsModule.sol": {
-        "keccak256": "0x3bf57477413f3fec2ad5c16fb266cefb312ab2197edabc6524c0e18297153bef",
+        "keccak256": "0xaf703340133228355fd5681df2cde4ef1638f848b3cd478d25086d9555249c74",
         "urls": [
-          "bzz-raw://a8284030b38bf377931689b2ed4e859416f03de113aad4838be1c3a8f595ee25",
-          "dweb:/ipfs/Qma2AgyHdGZUiPy7LDm2DXXVTCm2TLfcz2Aka91XU2mM9S"
+          "bzz-raw://8e896d7d68034016d16bf327d6c93fa0b5aa7ff88c10fc9338c89019286e4647",
+          "dweb:/ipfs/QmQ8SKiT7LSprtvr8dtDgjyE8N7AJiWrKfXX26uei6r1so"
         ],
         "license": "MIT"
       }
