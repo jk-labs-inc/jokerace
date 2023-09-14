@@ -267,5 +267,4 @@ contract ContestTest is Test {
     }
 
     /////////////////////////////
-    
 }
