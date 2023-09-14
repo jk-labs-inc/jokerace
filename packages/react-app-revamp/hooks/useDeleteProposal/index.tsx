@@ -13,7 +13,7 @@ import { useDeleteProposalStore } from "./store";
 export function useDeleteProposal() {
   const { asPath } = useRouter();
   const { chain } = useNetwork();
-  const { softDeleteProposal } = useProposalStore(state => state);
+  const { softDeleteProposals } = useProposalStore(state => state);
   const {
     isLoading,
     error,
@@ -26,7 +26,7 @@ export function useDeleteProposal() {
     setTransactionData,
   } = useDeleteProposalStore(state => state);
 
-  async function deleteProposal(proposalId: string) {
+  async function deleteProposal(proposalIds: string[]) {
     toastLoading(`Deleting proposal...`);
     setIsLoading(true);
     setIsSuccess(false);
@@ -49,7 +49,7 @@ export function useDeleteProposal() {
       const txDeleteProposals = await writeContract({
         ...contractConfig,
         functionName: "deleteProposals",
-        args: [[proposalId]],
+        args: [proposalIds],
       });
 
       const receipt = await waitForTransaction({
@@ -63,7 +63,7 @@ export function useDeleteProposal() {
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txDeleteProposals?.hash}`,
       });
 
-      softDeleteProposal(proposalId);
+      softDeleteProposals(proposalIds);
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess(`Proposal deleted successfully!`);

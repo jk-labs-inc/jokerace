@@ -24,7 +24,7 @@ interface ProposalState {
   setIsListProposalsError: (value: CustomError | null) => void;
   setProposalData: (proposal: any) => void;
   setProposalVotes: (id: any, votes: any) => void;
-  softDeleteProposal: (id: string) => void;
+  softDeleteProposals: (ids: string[]) => void;
   resetListProposals: () => void;
   setIsPageProposalsLoading: (value: boolean) => void;
   setIsPageProposalsError: (value: CustomError | null) => void;
@@ -88,15 +88,18 @@ export const createProposalStore = () =>
           },
         },
       })),
-    softDeleteProposal: id =>
+    softDeleteProposals: (idsToDelete: string[]) =>
       set(state => {
         const updatedListProposalsData = { ...state.listProposalsData };
+        const idsToDeleteSet = new Set(idsToDelete.map(id => id.toString()));
 
         const updatedListProposalsIds = state.listProposalsIds
           .map(existingId => existingId.toString())
-          .filter(existingIdStr => existingIdStr !== id);
+          .filter(existingIdStr => !idsToDeleteSet.has(existingIdStr));
 
-        delete updatedListProposalsData[id];
+        idsToDelete.forEach(id => {
+          delete updatedListProposalsData[id];
+        });
 
         return {
           ...state,
