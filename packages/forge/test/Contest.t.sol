@@ -267,4 +267,44 @@ contract ContestTest is Test {
     }
 
     /////////////////////////////
+
+    // SORTING
+
+    function testSort1FromZeroToZero() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
+
+        assertEq(sortedProposalIds[0], proposalId);
+    }
+
+    function testSort1FromZeroToOneHundred() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 100);
+
+        assertEq(sortedProposalIds[0], proposalId);
+    }
+
+    function testSort0FromZeroToZero() public {
+        vm.warp(1681650001);
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
+
+        assertEq(sortedProposalIds.length, 0);
+    }
+
+    function testSort0FromZeroToOneHundred() public {
+        vm.warp(1681650001);
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
+
+        assertEq(sortedProposalIds.length, 0);
+    }
+
+    /////////////////////////////
 }
