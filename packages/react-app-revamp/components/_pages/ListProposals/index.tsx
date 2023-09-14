@@ -1,6 +1,7 @@
 import Button from "@components/UI/Button";
+import ButtonV3 from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
-import { TrashIcon } from "@heroicons/react/outline";
+import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
@@ -28,15 +29,31 @@ export const ListProposals = () => {
   const allowDelete =
     (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
     address === contestAuthorEthereumAddress;
-  const [deletingProposalId, setDeletingProposalId] = useState<string | null>(null);
+  const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
+  const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
+  const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
 
-  const onDeleteProposal = async (proposalId: string) => {
-    setDeletingProposalId(proposalId);
-    await deleteProposal(proposalId);
-
+  const onDeleteSelectedProposals = async () => {
+    setDeletingProposalIds(selectedProposalIds);
+    await deleteProposal(selectedProposalIds);
     if (isDeleteSuccess) {
-      setDeletingProposalId(null);
+      setDeletingProposalIds([]);
     }
+    setSelectedProposalIds([]);
+  };
+
+  const toggleProposalSelection = (proposalId: string) => {
+    setSelectedProposalIds(prevIds => {
+      if (prevIds.includes(proposalId)) {
+        return prevIds.filter(id => id !== proposalId);
+      } else {
+        if (prevIds.length >= 50) {
+          alert("You can only select up to 50 proposals in one take.");
+          return prevIds;
+        }
+        return [...prevIds, proposalId];
+      }
+    });
   };
 
   if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
@@ -61,7 +78,7 @@ export const ListProposals = () => {
           return Object.keys(listProposalsData)
             .sort((a, b) => listProposalsData[b].votes - listProposalsData[a].votes)
             .map(id => {
-              if (id === deletingProposalId && isDeleteInProcess) {
+              if (deletingProposalIds.includes(id) && isDeleteInProcess) {
                 return (
                   <SkeletonTheme baseColor="#000000" highlightColor="#FF78A9" duration={1} key={id}>
                     <Skeleton
@@ -88,10 +105,24 @@ export const ListProposals = () => {
                   <ProposalContent id={id} proposal={listProposalsData[id]} votingOpen={votesOpen} />
                   {allowDelete && (
                     <div
-                      className="absolute cursor-pointer -top-0 right-0 -mt-4 -mr-2 z-10 bg-true-black"
-                      onClick={() => onDeleteProposal(id)}
+                      className="absolute cursor-pointer -top-0 right-0 -mt-4 -mr-2 z-10"
+                      onClick={() => toggleProposalSelection(id)}
                     >
-                      <TrashIcon className="h-6 text-negative-11 hover:text-negative-10 transition-colors duration-300" />
+                      <div className="relative h-6 w-6">
+                        <CheckIcon
+                          className={`absolute transform transition-all ease-in-out duration-300 
+                           ${selectedProposalIds.includes(id) ? "opacity-100" : "opacity-0"}
+                          h-7 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+                          shadow-md hover:shadow-lg rounded-md`}
+                        />
+
+                        <TrashIcon
+                          className={`absolute transition-opacity duration-300  ${
+                            selectedProposalIds.includes(id) ? "opacity-0" : "opacity-100"
+                          }
+                           h-7 text-negative-11 bg-true-black hover:text-negative-10`}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -99,6 +130,18 @@ export const ListProposals = () => {
             });
         })()}
       </div>
+
+      {showDeleteButton && (
+        <div className="flex sticky bottom-0 left-0 right-0 p-4 bg-white shadow-lg">
+          <ButtonV3
+            size="extraLarge"
+            color="bg-gradient-withdraw mx-auto animate-appear"
+            onClick={onDeleteSelectedProposals}
+          >
+            Delete {selectedProposalIds.length} {selectedProposalIds.length === 1 ? "submission" : "submissions"}
+          </ButtonV3>
+        </div>
+      )}
 
       {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
         <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
