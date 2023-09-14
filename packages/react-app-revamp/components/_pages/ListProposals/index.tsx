@@ -112,7 +112,7 @@ export const ListProposals = () => {
                         <CheckIcon
                           className={`absolute transform transition-all ease-in-out duration-300 
                            ${selectedProposalIds.includes(id) ? "opacity-100" : "opacity-0"}
-                          h-7 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+                          h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
                           shadow-md hover:shadow-lg rounded-md`}
                         />
 
@@ -120,7 +120,7 @@ export const ListProposals = () => {
                           className={`absolute transition-opacity duration-300  ${
                             selectedProposalIds.includes(id) ? "opacity-0" : "opacity-100"
                           }
-                           h-7 text-negative-11 bg-true-black hover:text-negative-10`}
+                           h-8 text-negative-11 bg-true-black hover:text-negative-10`}
                         />
                       </div>
                     </div>
