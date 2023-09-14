@@ -105,7 +105,7 @@ export const ListProposals = () => {
                   <ProposalContent id={id} proposal={listProposalsData[id]} votingOpen={votesOpen} />
                   {allowDelete && (
                     <div
-                      className="absolute cursor-pointer -top-0 right-0 -mt-4 -mr-2 z-10"
+                      className="absolute cursor-pointer -top-0 right-0 -mt-4 z-10"
                       onClick={() => toggleProposalSelection(id)}
                     >
                       <div className="relative h-6 w-6">
