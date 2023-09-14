@@ -40,7 +40,7 @@ async function getContractConfig(address: string, chainId: number) {
 
 export const fetchTokenBalances = async (chainName: string, contestRewardModuleAddress: string) => {
   try {
-    const alchemyAppUrl = chains.filter(chain => chain.name === chainName.toLowerCase())[0].rpcUrls.default.http[0];
+    const alchemyAppUrl = chains.filter(chain => chain.name === chainName?.toLowerCase())[0].rpcUrls.default.http[0];
 
     const response = await fetch(alchemyAppUrl, {
       method: "POST",
@@ -135,7 +135,7 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
 
   try {
     const chainId = chains.filter(
-      c => c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
+      c => c.name.replace(/\s+/g, "")?.toLowerCase() === contestChainName.replace(/\s+/g, "")?.toLowerCase(),
     )[0].id;
 
     const contractConfig = await getContractConfig(contestAddress, chainId);

@@ -41,7 +41,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { contestPrompt, votesOpen } = useContestStore(state => state);
   const chainName = asPath.split("/")[2];
   const contestId = asPath.split("/")[3];
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
   const { contestStatus } = useContestStatusStore(state => state);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());

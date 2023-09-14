@@ -29,7 +29,7 @@ const CreateContestDeploying = () => {
     if (isSuccess) {
       toastDismiss();
       setTimeout(() => {
-        router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
+        router.push(`/contest/${deployContestData.chain?.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
         setShowRewards(true);
       }, 3000);
     }

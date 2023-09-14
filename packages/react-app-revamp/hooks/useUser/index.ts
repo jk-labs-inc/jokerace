@@ -32,8 +32,8 @@ export function useUser() {
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
-  const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName)?.[0]?.id;
+  const lowerCaseChainName = chainName.replace(/\s+/g, "")?.toLowerCase();
+  const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === lowerCaseChainName)?.[0]?.id;
 
   // Generate config for the contract
   async function getContractConfig() {

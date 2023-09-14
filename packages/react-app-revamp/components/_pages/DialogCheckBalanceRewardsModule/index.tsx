@@ -36,7 +36,7 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
 
     if (rewardsStore.rewards.balance) {
       const existingBalance = rewardsStore.rewards.balance.find(
-        (bal: any) => bal.contractAddress.toLowerCase() == inputRewardsModuleBalanceCheck.toLowerCase(),
+        (bal: any) => bal.contractAddress?.toLowerCase() == inputRewardsModuleBalanceCheck?.toLowerCase(),
       );
 
       if (existingBalance) {

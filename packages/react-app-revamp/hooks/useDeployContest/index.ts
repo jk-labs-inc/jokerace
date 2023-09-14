@@ -123,7 +123,7 @@ export function useDeployContest() {
         votingMerkleRoot: votingMerkle?.merkleRoot ?? EMPTY_ROOT,
         submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,
-        networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
+        networkName: chain?.name?.toLowerCase().replace(" ", "") ?? "",
       };
 
       await saveFilesToBucket(votingMerkle, submissionMerkle);

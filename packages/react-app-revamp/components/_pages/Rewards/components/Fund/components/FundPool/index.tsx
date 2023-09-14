@@ -28,7 +28,7 @@ const formatNativeToken = (nativeToken?: NativeCurrency): TokenConfig | undefine
 const CreateRewardsFundPool = () => {
   const { asPath } = useRouter();
   const chainName = asPath.split("/")[2];
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const { setRewards, setValidationError } = useFundRewardsStore(state => state);
   const [rows, setRows] = useState<Reward[]>([{ address: "", amount: "" }]);
   const isMobile = useMedia("(max-width: 768px)");
@@ -104,11 +104,11 @@ const CreateRewardsFundPool = () => {
 
   const getTokenImage = (token: TokenConfig) => {
     if (token.address) {
-      return `/tokens/${token.name.toLowerCase()}.svg`;
+      return `/tokens/${token.name?.toLowerCase()}.svg`;
     } else if (token.symbol === "ETH") {
       return "/tokens/ether.svg";
     } else {
-      return chainsImages[chainName.toLowerCase().replace(" ", "")];
+      return chainsImages[chainName?.toLowerCase().replace(" ", "")];
     }
   };
 

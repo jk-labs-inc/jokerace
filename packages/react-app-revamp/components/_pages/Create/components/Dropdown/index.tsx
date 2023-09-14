@@ -30,7 +30,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     !searchEnabled || query === ""
       ? options
       : options.filter(option => {
-          return option.value.toLowerCase().includes(query.toLowerCase());
+          return option.value?.toLowerCase().includes(query?.toLowerCase());
         });
 
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -56,7 +56,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     if (searchEnabled) {
       setQuery(value);
       onChange?.(value);
-      const matchingOptions = options.filter(option => option.value.toLowerCase().startsWith(value.toLowerCase()));
+      const matchingOptions = options.filter(option => option.value?.toLowerCase().startsWith(value?.toLowerCase()));
       if (value !== "" && matchingOptions.length > 0) {
         setShowOptions(true);
       } else {

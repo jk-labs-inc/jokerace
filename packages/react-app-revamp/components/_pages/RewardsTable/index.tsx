@@ -21,7 +21,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   const { data, isError, isLoading } = useContractRead({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
-    chainId: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id,
+    chainId: chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id,
     functionName: "shares",
     args: [Number(payee)],
   }) as any;

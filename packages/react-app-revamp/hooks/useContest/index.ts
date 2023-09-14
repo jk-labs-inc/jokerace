@@ -42,7 +42,7 @@ export function useContest() {
   const { asPath, ...router } = useRouter();
   const { chain } = useNetwork();
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
+    chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
   );
   const [address, setAddress] = useState(asPath.split("/")[3]);
   const [chainName, setChainName] = useState(asPath.split("/")[2]);
@@ -79,7 +79,7 @@ export function useContest() {
   const { fetchProposalsIdsList } = useProposal();
   const { contestStatus } = useContestStatusStore(state => state);
   const alchemyRpc = chains
-    .filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
+    .filter(chain => chain.name?.toLowerCase().replace(" ", "") === chainName?.toLowerCase())?.[0]
     ?.rpcUrls.default.http[0].includes("alchemy");
 
   /**
@@ -486,7 +486,7 @@ export function useContest() {
     retry: fetchContestInfo,
     onSearch: (addr: string, chainName: string) => {
       setChainName(chainName);
-      setChainId(chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id);
+      setChainId(chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === chainName)?.[0]?.id);
       setIsLoading(true);
       setIsListProposalsLoading(true);
       setListProposalsIds([]);

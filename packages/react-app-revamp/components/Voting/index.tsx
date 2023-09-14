@@ -27,7 +27,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
   const voteDisabled = isLoading || amount === 0 || isInvalid;
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name?.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
   const isCorrectNetwork = chainId === chain?.id;
 
   useEffect(() => {
