@@ -92,6 +92,10 @@ contract ContestTest is Test {
         safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
 
+    /////////////////////////////
+
+    // SETUP
+
     function setUp() public {
         vm.startPrank(CREATOR_ADDRESS_1);
 
@@ -109,6 +113,8 @@ contract ContestTest is Test {
 
         vm.stopPrank();
     }
+
+    /////////////////////////////
 
     // GOVERNOR SETTINGS
 
@@ -139,6 +145,8 @@ contract ContestTest is Test {
     function testCreator() public {
         assertEq(contest.creator(), CREATOR_ADDRESS_1);
     }
+
+    /////////////////////////////
 
     // PROPOSING AND VOTING
 
@@ -257,4 +265,7 @@ contract ContestTest is Test {
 
         assertEq(totalVotesWithoutProof, 10 ether);
     }
+
+    /////////////////////////////
+    
 }

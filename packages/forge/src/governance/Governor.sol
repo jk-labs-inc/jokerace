@@ -30,14 +30,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(address => bool) public addressSubmitterVerified;
 
     uint256[] private _proposalIds;
+    uint256[] private _deletedProposalIds;
     mapping(uint256 => bool) private _proposalIsDeleted;
     string private _name;
     string private _prompt;
     bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
-
-    uint256[] public _deletedProposalIds;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -86,7 +85,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.8";
+        return "3.9";
     }
 
     /**
