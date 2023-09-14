@@ -11,6 +11,7 @@ import BringBackDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import ArrayOfDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.7.makeArrayOfDeletedIds.sol/RewardsModule.json";
 import DeletedIdAccessorRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.8.makeDeletedIdAccessor.sol/RewardsModule.json";
 import PrivateDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.9.privateDeletedIds.sol/RewardsModule.json";
+import CantVoteOnDeletedPropsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.10.cantVoteOnDeletedProps.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -48,6 +49,8 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
       return DeletedIdAccessorRewards.abi;
     } else if (version === "3.9") {
       return PrivateDeletedIdsRewards.abi;
+    } else if (version === "3.10") {
+      return CantVoteOnDeletedPropsRewards.abi;
     } else {
       return DeployedRewardsContract.abi;
     }
