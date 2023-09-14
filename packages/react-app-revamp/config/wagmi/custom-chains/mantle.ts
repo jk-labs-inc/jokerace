@@ -12,7 +12,7 @@ export const mantle: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.mantle.xyz"],
+      http: ["https://rpc.mantle.xyz/"],
     },
     default: {
       http: ["https://rpc.mantle.xyz"],
