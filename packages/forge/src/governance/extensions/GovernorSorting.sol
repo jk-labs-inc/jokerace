@@ -146,6 +146,10 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         if (proposalIdList.length == 0) {
             return new uint256[](0);
         }
+        require(
+            startIndex < proposalIdList.length,
+            "GovernorSorting: startIndex must be less than the total number of proposals"
+        );
 
         int256[] memory netProposalVotes = new int256[](proposalIdList.length);
         for (uint256 i = 0; i < proposalVoteCountsArray.length; i++) {
@@ -162,7 +166,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         }
 
         uint256[] memory slicedProposalIds;
-        uint256 highestIndex = Math.max(endIndex, proposalIdList.length);
+        uint256 highestIndex = Math.min(endIndex, proposalIdList.length);
         for (uint256 i = startIndex; i < highestIndex; i++) {
             slicedProposalIds[i - startIndex] = proposalIdList[i];
         }
