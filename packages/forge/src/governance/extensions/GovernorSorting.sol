@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "./GovernorCountingSimple.sol";
-import "forge-std/console.sol";
 
 /**
  * @dev Extension of {GovernorCountingSimple} for sorting and ranking.
