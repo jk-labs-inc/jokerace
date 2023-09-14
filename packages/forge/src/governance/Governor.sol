@@ -372,6 +372,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         returns (uint256)
     {
         address voter = msg.sender;
+        require(!isProposalDeleted(proposalId), "Governor: you cannot vote on a deleted proposal");
         verifyVoter(voter, totalVotes, proof);
         return _castVote(proposalId, voter, support, numVotes, "");
     }
@@ -386,6 +387,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         returns (uint256)
     {
         address voter = msg.sender;
+        require(!isProposalDeleted(proposalId), "Governor: you cannot vote on a deleted proposal");
         require(
             addressTotalVotesVerified[voter],
             "Governor: you need to cast a vote with the proof at least once and you haven't yet"

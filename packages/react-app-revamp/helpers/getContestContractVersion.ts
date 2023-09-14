@@ -16,6 +16,8 @@ import BringBackDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.6.b
 import ArrayOfDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.7.makeArrayOfDeletedIds.sol/Contest.json";
 import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.makeDeletedIdAccessor.sol/Contest.json";
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
+import CantVoteOnDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.10.cantVoteOnDeletedProps.sol/Contest.json";
+import AddIndexedSortedPropsContract from "@contracts/bytecodeAndAbi/Contest.3.11.addIndexedSortedProps.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -52,6 +54,10 @@ export async function getContestContractVersion(address: string, chainId: number
     return { abi: DeletedIdAccessorContract.abi, version };
   } else if (version === "3.9") {
     return { abi: PrivateDeletedIdsContract.abi, version };
+  } else if (version === "3.10") {
+    return { abi: CantVoteOnDeletedContract.abi, version };
+  } else if (version === "3.11") {
+    return { abi: AddIndexedSortedPropsContract.abi, version };
   }
 
   if (version === "1") {
