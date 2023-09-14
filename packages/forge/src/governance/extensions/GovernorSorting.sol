@@ -142,7 +142,11 @@ abstract contract GovernorSorting is GovernorCountingSimple {
     {
         (uint256[] memory proposalIdList, VoteCounts[] memory proposalVoteCountsArray) =
             excludeDeletedProposals ? allProposalTotalVotesWithoutDeleted() : allProposalTotalVotes();
-        require(proposalIdList.length > 0, "GovernorSorting: cannot sort a list of zero length");
+
+        if (proposalIdList.length == 0) {
+            return new uint256[](0);
+        }
+
         int256[] memory netProposalVotes = new int256[](proposalIdList.length);
         for (uint256 i = 0; i < proposalVoteCountsArray.length; i++) {
             netProposalVotes[i] =
@@ -181,6 +185,8 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         );
 
         _sortedProposalIds = sortedProposals(true, 0, 0);
+
+        require(_sortedProposalIds.length != 0, "GovernorSorting: cannot sort a list of zero length");
 
         int256 lastTotalVotes;
         uint256 rankingBeingChecked = 1;
