@@ -15,6 +15,7 @@ import DeletedDontHitLimitContract from "@contracts/bytecodeAndAbi/Contest.3.5.d
 import BringBackDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.6.bringBackDeletedIds.sol/Contest.json";
 import ArrayOfDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.7.makeArrayOfDeletedIds.sol/Contest.json";
 import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.makeDeletedIdAccessor.sol/Contest.json";
+import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -49,6 +50,8 @@ export async function getContestContractVersion(address: string, chainId: number
     return { abi: ArrayOfDeletedIdsContract.abi, version };
   } else if (version === "3.8") {
     return { abi: DeletedIdAccessorContract.abi, version };
+  } else if (version === "3.9") {
+    return { abi: PrivateDeletedIdsContract.abi, version };
   }
 
   if (version === "1") {
