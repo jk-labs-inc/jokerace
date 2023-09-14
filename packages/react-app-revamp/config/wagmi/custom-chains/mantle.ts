@@ -15,7 +15,7 @@ export const mantle: Chain = {
       http: ["https://rpc.mantle.xyz/"],
     },
     default: {
-      http: ["https://rpc.mantle.xyz/"],
+      http: ["https://mantle-mainnet.public.blastapi.io/"],
     },
   },
   blockExplorers: {
