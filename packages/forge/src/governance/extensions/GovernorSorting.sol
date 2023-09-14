@@ -162,7 +162,8 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         }
 
         uint256[] memory slicedProposalIds;
-        for (uint256 i = startIndex; i < endIndex; i++) {
+        uint256 highestIndex = Math.max(endIndex, proposalIdList.length);
+        for (uint256 i = startIndex; i < highestIndex; i++) {
             slicedProposalIds[i - startIndex] = proposalIdList[i];
         }
         return slicedProposalIds;
