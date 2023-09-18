@@ -131,10 +131,9 @@ abstract contract GovernorSorting is GovernorCountingSimple {
     }
 
     /**
-     * @dev Accessor to sorted list of proposalIds its net (For - Against) votes in ascending order.
-     * Set startIndex and endIndex to return the full array. startIndex is inclusive and endIndex is exclusive.
+     * @dev Accessor to sorted list of proposalIds in ascending order.
      */
-    function sortedProposals(bool excludeDeletedProposals, uint256 startIndex, uint256 endIndex)
+    function sortedProposals(bool excludeDeletedProposals)
         public
         view
         virtual
@@ -142,15 +141,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
     {
         (uint256[] memory proposalIdList, VoteCounts[] memory proposalVoteCountsArray) =
             excludeDeletedProposals ? allProposalTotalVotesWithoutDeleted() : allProposalTotalVotes();
-
-        if (proposalIdList.length == 0) {
-            return new uint256[](0);
-        }
-        require(
-            startIndex < proposalIdList.length,
-            "GovernorSorting: startIndex must be less than the total number of proposals"
-        );
-
+        require(proposalIdList.length > 0, "GovernorSorting: cannot sort a list of zero length");
         int256[] memory netProposalVotes = new int256[](proposalIdList.length);
         for (uint256 i = 0; i < proposalVoteCountsArray.length; i++) {
             netProposalVotes[i] =
@@ -160,17 +151,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
             // Only goes to length minus 1 because sorting the last item would be redundant
             _sortItem(i, netProposalVotes, proposalIdList);
         }
-
-        if (startIndex == 0 && endIndex == 0) {
-            return proposalIdList;
-        }
-
-        uint256 highestIndex = Math.min(endIndex, proposalIdList.length);
-        uint256[] memory slicedProposalIds = new uint256[](highestIndex - startIndex);
-        for (uint256 i = startIndex; i < highestIndex; i++) {
-            slicedProposalIds[i - startIndex] = proposalIdList[i];
-        }
-        return slicedProposalIds;
+        return proposalIdList;
     }
 
     /**
@@ -189,9 +170,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
             "GovernorSorting: setSortedAndTiedProposals() has already been run and its respective values set"
         );
 
-        _sortedProposalIds = sortedProposals(true, 0, 0);
-
-        require(_sortedProposalIds.length != 0, "GovernorSorting: cannot sort a list of zero length");
+        _sortedProposalIds = sortedProposals(true);
 
         int256 lastTotalVotes;
         uint256 rankingBeingChecked = 1;
