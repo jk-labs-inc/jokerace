@@ -688,5 +688,4 @@ contract RewardsModuleTest is Test {
     }
 
     /////////////////////////////
-    
 }

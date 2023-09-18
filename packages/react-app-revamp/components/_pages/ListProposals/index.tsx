@@ -5,7 +5,7 @@ import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
-import useProposal from "@hooks/useProposal";
+import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -56,11 +56,11 @@ export const ListProposals = () => {
     });
   };
 
-  if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
+  if (isPageProposalsLoading) {
     return (
       <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
         <Skeleton
-          count={listProposalsIds.length}
+          count={listProposalsIds.length > PROPOSALS_PER_PAGE ? PROPOSALS_PER_PAGE : listProposalsIds.length}
           borderRadius={10}
           className="flex flex-col h-96 md:h-56 animate-appear border border-neutral-11  mb-3"
         />
@@ -110,9 +110,9 @@ export const ListProposals = () => {
                     >
                       <div className="relative h-6 w-6">
                         <CheckIcon
-                          className={`absolute transform transition-all ease-in-out duration-300 
+                          className={`absolute transform transition-all ease-in-out duration-300
                            ${selectedProposalIds.includes(id) ? "opacity-100" : "opacity-0"}
-                          h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+                          h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9
                           shadow-md hover:shadow-lg rounded-md`}
                         />
 
