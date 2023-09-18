@@ -16,7 +16,7 @@ import { loadFileFromBucket } from "lib/buckets";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
@@ -175,17 +175,13 @@ export function useContest() {
     setIsLoading(false);
   }
 
-  async function fetchV3ContestInfo(
-    contractConfig: ContractConfig,
-    contestRewardModuleAddress: string | undefined,
-    version: string,
-  ) {
+  async function fetchV3ContestInfo(contractConfig: ContractConfig, contestRewardModuleAddress: string | undefined) {
     try {
       setIsListProposalsLoading(false);
 
       await Promise.all([
         fetchContestContractData(contractConfig),
-        fetchProposalsIdsList(contractConfig.abi, version),
+        fetchProposalsIdsList(contractConfig.abi),
         processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
         fetchTotalVotesCast(),
@@ -203,7 +199,7 @@ export function useContest() {
     }
   }
 
-  async function fetchV1ContestInfo(contractConfig: ContractConfig, version: string) {
+  async function fetchV1ContestInfo(contractConfig: ContractConfig) {
     try {
       const contracts = getV1Contracts(contractConfig);
       const results = await readContracts({ contracts });
@@ -211,7 +207,7 @@ export function useContest() {
       setIsV3(false);
 
       // List of proposals for this contest
-      await fetchProposalsIdsList(contractConfig.abi, version);
+      await fetchProposalsIdsList(contractConfig.abi);
 
       const closingVoteDate = new Date(Number(results[6].result) * 1000 + 1000);
       const submissionsOpenDate = new Date(Number(results[5].result) * 1000 + 1000);
@@ -298,9 +294,9 @@ export function useContest() {
     }
 
     if (parseFloat(version) >= 3) {
-      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
+      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress);
     } else {
-      await fetchV1ContestInfo(contractConfig, version);
+      await fetchV1ContestInfo(contractConfig);
     }
   }
 
