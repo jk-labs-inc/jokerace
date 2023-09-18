@@ -6,13 +6,12 @@ import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
 import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
 
-const PROPOSALS_PER_PAGE = 12;
+export const PROPOSALS_PER_PAGE = 12;
 
 export function useProposal() {
   const {
@@ -182,6 +181,7 @@ export function useProposal() {
       const paginationChunks = arrayToChunks(proposalsIds, PROPOSALS_PER_PAGE);
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
+
       if (proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
       const customError = e as CustomError;
