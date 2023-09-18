@@ -18,7 +18,7 @@ import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
-export const MAX_SUBMISSIONS_LIMIT = 10000;
+export const MAX_SUBMISSIONS_LIMIT = 1000;
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useDeployContest() {
