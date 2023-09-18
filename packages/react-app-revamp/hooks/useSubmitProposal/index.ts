@@ -29,7 +29,7 @@ const safeMetadata = {
 export function useSubmitProposal() {
   const { asPath, ...router } = useRouter();
   const { address: userAddress } = useAccount();
-  const { fetchSingleProposal } = useProposal();
+  const { fetchProposalsIdsList } = useProposal();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const [chainName, address] = asPath.split("/").slice(2, 4);
@@ -47,7 +47,7 @@ export function useSubmitProposal() {
     setTransactionData(null);
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
-      const { abi, version } = await getContestContractVersion(address, chainId);
+      const { abi } = await getContestContractVersion(address, chainId);
 
       try {
         const proofs = await getProofs(userAddress ?? "", "submission", "10");
@@ -106,7 +106,7 @@ export function useSubmitProposal() {
         toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         removeSubmissionFromLocalStorage("submissions", address);
-        fetchSingleProposal(proposalId);
+        fetchProposalsIdsList(abi);
         resolve({ tx: txSendProposal, proposalId });
 
         addUserActionForAnalytics({
