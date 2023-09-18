@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-type PageAction = "create" | "play";
+export type PageAction = "create" | "play";
 
 type PageActionState = {
   pageAction: PageAction;
