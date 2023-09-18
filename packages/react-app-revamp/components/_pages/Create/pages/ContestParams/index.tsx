@@ -78,7 +78,7 @@ const CreateContestParams = () => {
               max={MAX_SUBMISSIONS_LIMIT}
               min={1}
             />
-            <p className="text-neutral-11 text-[16px]">leave to set at max of 1000</p>
+            <p className="text-neutral-11 text-[16px]">leave blank to set at max of 1000</p>
           </div>
         </div>
       </div>
@@ -97,7 +97,7 @@ const CreateContestParams = () => {
               max={MAX_SUBMISSIONS_LIMIT}
               min={1}
             />
-            <p className="text-neutral-11 text-[16px]">leave to set at max of 1000</p>
+            <p className="text-neutral-11 text-[16px]">leave blank to set at max of 1000</p>
           </div>
         </div>
         <div className="flex flex-col gap-5">
