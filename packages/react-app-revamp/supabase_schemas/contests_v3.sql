@@ -17,3 +17,11 @@ create table
     submissionMerkleRoot character varying null,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
+
+create index if not exists idx_contests_v3_title on public.contests_v3 using btree (title) tablespace pg_default;
+
+create index if not exists idx_contests_v3_featured on public.contests_v3 using btree (featured) tablespace pg_default;
+
+create index if not exists idx_contests_v3_address on public.contests_v3 using btree (address) tablespace pg_default;
+
+create index if not exists idx_contests_v3_author_address on public.contests_v3 using btree (author_address) tablespace pg_default;
