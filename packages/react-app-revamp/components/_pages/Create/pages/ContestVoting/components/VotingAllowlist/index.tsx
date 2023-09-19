@@ -106,7 +106,7 @@ const CreateVotingAllowlist = () => {
           upload a csv below (up to 100k entries) <i>or</i> copy-paste an allowlist (up to 100 entries)
         </p>
         <p className="text-[16px] text-neutral-11">
-          allowlists and are required so nobody can vote from multiple wallets—and cannot be edited afterwards.
+          allowlists are necessary to avoid luck-based voting—and cannot be edited afterwards.
         </p>
       </div>
       <CSVEditorVoting onChange={handleAllowListChange} />
