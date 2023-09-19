@@ -21,61 +21,80 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
 
+const MAX_TIME_TO_WAIT_FOR_RPC = 5000;
+
 export async function getContestContractVersion(address: string, chainId: number) {
-  const provider = getEthersProvider({ chainId });
-  const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
+  try {
+    const provider = getEthersProvider({ chainId });
+    const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
 
-  const version: string = await contract.version();
+    // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI
+    const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-  const defaultReturn = { abi: [], version: "unknown" };
+    const defaultReturn = { abi: null, version: "unknown" };
 
-  if (version === "2.8") {
-    return { abi: NumberedVersioningContract.abi, version };
-  } else if (version === "2.9") {
-    return { abi: GateSubmissionsOpenContract.abi, version };
-  } else if (version === "2.10") {
-    return { abi: BetterRewardsNotesContract.abi, version };
-  } else if (version === "3.1") {
-    return { abi: MerkleVotesContract.abi, version };
-  } else if (version === "3.2") {
-    return { abi: TotalVotesCastContract.abi, version };
-  } else if (version === "3.3") {
-    return { abi: SetCompilerContract.abi, version };
-  } else if (version === "3.4") {
-    return { abi: AddIsDeletedContract.abi, version };
-  } else if (version === "3.5") {
-    return { abi: DeletedDontHitLimitContract.abi, version };
-  } else if (version === "3.6") {
-    return { abi: BringBackDeletedIdsContract.abi, version };
-  } else if (version === "3.7") {
-    return { abi: ArrayOfDeletedIdsContract.abi, version };
-  } else if (version === "3.8") {
-    return { abi: DeletedIdAccessorContract.abi, version };
-  } else if (version === "3.9") {
-    return { abi: PrivateDeletedIdsContract.abi, version };
-  } else if (version === "3.10") {
-    return { abi: CantVoteOnDeletedContract.abi, version };
-  }
-
-  if (version === "1") {
-    const bytecode = await provider.getCode(address);
-    if (bytecode.length <= 2) return defaultReturn;
-    if (!bytecode.includes(utils.id("prompt()").slice(2, 10))) {
-      return { abi: LegacyDeployedContestContract.abi, version };
-    } else if (!bytecode.includes(utils.id("allProposalTotalVotes()").slice(2, 10))) {
-      return { abi: PromptDeployedContestContract.abi, version };
-    } else if (!bytecode.includes(utils.id("downvotingAllowed()").slice(2, 10))) {
-      return { abi: AllProposalTotalVotesDeployedContestContract.abi, version };
-    } else if (!bytecode.includes(utils.id("submissionGatingByVotingToken()").slice(2, 10))) {
-      return { abi: ProposalVotesDownvotesContract.abi, version };
-    } else if (!bytecode.includes(utils.id("officialRewardsModule()").slice(2, 10))) {
-      return { abi: SubmissionTokenGatingContract.abi, version };
-    } else {
-      return { abi: RewardsContract.abi, version };
+    if (version === "2.8") {
+      return { abi: NumberedVersioningContract.abi, version };
+    } else if (version === "2.9") {
+      return { abi: GateSubmissionsOpenContract.abi, version };
+    } else if (version === "2.10") {
+      return { abi: BetterRewardsNotesContract.abi, version };
+    } else if (version === "3.1") {
+      return { abi: MerkleVotesContract.abi, version };
+    } else if (version === "3.2") {
+      return { abi: TotalVotesCastContract.abi, version };
+    } else if (version === "3.3") {
+      return { abi: SetCompilerContract.abi, version };
+    } else if (version === "3.4") {
+      return { abi: AddIsDeletedContract.abi, version };
+    } else if (version === "3.5") {
+      return { abi: DeletedDontHitLimitContract.abi, version };
+    } else if (version === "3.6") {
+      return { abi: BringBackDeletedIdsContract.abi, version };
+    } else if (version === "3.7") {
+      return { abi: ArrayOfDeletedIdsContract.abi, version };
+    } else if (version === "3.8") {
+      return { abi: DeletedIdAccessorContract.abi, version };
+    } else if (version === "3.9") {
+      return { abi: PrivateDeletedIdsContract.abi, version };
+    } else if (version === "3.10") {
+      return { abi: CantVoteOnDeletedContract.abi, version };
     }
-  }
 
-  return { abi: DeployedContestContract.abi, version };
+    if (version === "1") {
+      const bytecode = await provider.getCode(address);
+      if (bytecode.length <= 2) return defaultReturn;
+      if (!bytecode.includes(utils.id("prompt()").slice(2, 10))) {
+        return { abi: LegacyDeployedContestContract.abi, version };
+      } else if (!bytecode.includes(utils.id("allProposalTotalVotes()").slice(2, 10))) {
+        return { abi: PromptDeployedContestContract.abi, version };
+      } else if (!bytecode.includes(utils.id("downvotingAllowed()").slice(2, 10))) {
+        return { abi: AllProposalTotalVotesDeployedContestContract.abi, version };
+      } else if (!bytecode.includes(utils.id("submissionGatingByVotingToken()").slice(2, 10))) {
+        return { abi: ProposalVotesDownvotesContract.abi, version };
+      } else if (!bytecode.includes(utils.id("officialRewardsModule()").slice(2, 10))) {
+        return { abi: SubmissionTokenGatingContract.abi, version };
+      } else {
+        return { abi: RewardsContract.abi, version };
+      }
+    }
+
+    return { abi: DeployedContestContract.abi, version };
+  } catch (error) {
+    console.error(`Error while fetching the contract version for address ${address} on chainId ${chainId}:`, error);
+    return { abi: null, version: "error" };
+  }
+}
+
+async function executeWithTimeout<T>(timeoutDuration: number, targetPromise: Promise<T>): Promise<T> {
+  let timeoutPromise = new Promise<T>((_, reject) => {
+    let timerId = setTimeout(() => {
+      clearTimeout(timerId);
+      reject(new Error(`RPC timed out after ${timeoutDuration}ms.`));
+    }, timeoutDuration);
+  });
+
+  return Promise.race([targetPromise, timeoutPromise]);
 }
 
 export default getContestContractVersion;
