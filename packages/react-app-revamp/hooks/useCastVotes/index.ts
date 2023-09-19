@@ -44,12 +44,12 @@ export function useCastVotes() {
     ?.id;
 
   async function castVotes(amount: number, isPositive: boolean) {
-    const { abi } = await getContestContractVersion(contestId, chainId);
     toastLoading("votes are deploying...");
     setIsLoading(true);
     setIsSuccess(false);
     setError(null);
     setTransactionData(null);
+    const { abi } = await getContestContractVersion(contestId, chainId);
 
     try {
       const proofs = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());

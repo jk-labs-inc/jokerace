@@ -11,10 +11,10 @@ export const sepolia: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://gateway.tenderly.co/public/sepolia"],
+      http: ["https://eth-sepolia-public.unifra.io"],
     },
     default: {
-      http: ["https://gateway.tenderly.co/public/sepolia"],
+      http: ["https://eth-sepolia-public.unifra.io"],
     },
   },
   blockExplorers: {

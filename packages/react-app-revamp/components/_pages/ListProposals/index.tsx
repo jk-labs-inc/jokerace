@@ -32,6 +32,8 @@ export const ListProposals = () => {
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
+  const remainingProposalsToLoad = listProposalsIds.length - Object.keys(listProposalsData).length;
+  const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
 
   const onDeleteSelectedProposals = async () => {
     setDeletingProposalIds(selectedProposalIds);
@@ -56,7 +58,7 @@ export const ListProposals = () => {
     });
   };
 
-  if (isPageProposalsLoading) {
+  if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
     return (
       <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
         <Skeleton
@@ -110,9 +112,9 @@ export const ListProposals = () => {
                     >
                       <div className="relative h-6 w-6">
                         <CheckIcon
-                          className={`absolute transform transition-all ease-in-out duration-300
+                          className={`absolute transform transition-all ease-in-out duration-300 
                            ${selectedProposalIds.includes(id) ? "opacity-100" : "opacity-0"}
-                          h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9
+                          h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
                           shadow-md hover:shadow-lg rounded-md`}
                         />
 
@@ -147,7 +149,7 @@ export const ListProposals = () => {
         <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
           <Skeleton
             borderRadius={10}
-            count={3}
+            count={skeletonRemainingLoaderCount}
             className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 mt-3"
           />
         </SkeletonTheme>

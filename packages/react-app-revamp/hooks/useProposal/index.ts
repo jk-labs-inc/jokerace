@@ -133,10 +133,18 @@ export function useProposal() {
 
     const isContentImage = isUrlToImage(data.description) ? true : false;
 
-    const forVotesBigInt = proposalDataPerId[i][1].result[0] as bigint;
-    const againstVotesBigInt = proposalDataPerId[i][1].result[1] as bigint;
-    const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
-    const votes = Number(utils.formatEther(votesBigNumber));
+    let forVotesBigInt: bigint;
+    let againstVotesBigInt: bigint;
+    let votes: number;
+
+    if (Array.isArray(proposalDataPerId[i][1].result)) {
+      forVotesBigInt = proposalDataPerId[i][1].result[0] as bigint;
+      againstVotesBigInt = proposalDataPerId[i][1].result[1] as bigint;
+      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
+      votes = Number(utils.formatEther(votesBigNumber));
+    } else {
+      votes = Number(utils.formatEther(proposalDataPerId[i][1].result as bigint));
+    }
 
     const proposalData = {
       authorEthereumAddress: data.author,
@@ -175,26 +183,31 @@ export function useProposal() {
 
       let proposalsIds: Result;
       if (!useLegacyGetAllProposalsIdFn) {
-        proposalsIds = [];
-        proposalsIdsRawData[0].map((data: any, index: number) => {
-          const forVotesBigNumber = BigNumber.from(proposalsIdsRawData[1][index].forVotes.toString());
-          const againstVotesBigNumber = BigNumber.from(
-            proposalsIdsRawData[1][index].againstVotes ? proposalsIdsRawData[1][index].againstVotes.toString() : "0",
-          );
-          const votesBigNumber =
-            proposalsIdsRawData[1][index].length === 1
-              ? forVotesBigNumber
-              : forVotesBigNumber.sub(againstVotesBigNumber);
-          const votesDivided = votesBigNumber.div(BigNumber.from(divisor.toString()));
-          const votes = parseFloat(utils.formatEther(votesDivided));
+        const extractVotes = (index: number) => {
+          const forVotesValue = proposalsIdsRawData[1][index].forVotes?.toString() || "0";
+          const againstVotesValue = proposalsIdsRawData[1][index].againstVotes?.toString() || "0";
 
-          proposalsIds.push({
-            votes,
+          const forVotes = BigNumber.from(forVotesValue);
+          const againstVotes = BigNumber.from(againstVotesValue);
+
+          return proposalsIdsRawData[1][index].length === 1 ? forVotes : forVotes.sub(againstVotes);
+        };
+
+        const computeVotes = (index: number) => {
+          const votesBigNumber = extractVotes(index);
+          const votesDivided = votesBigNumber.div(BigNumber.from(divisor?.toString() || "0"));
+
+          return parseFloat(utils.formatEther(votesDivided));
+        };
+
+        const mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
+          return {
+            votes: computeVotes(index),
             id: data,
-          });
+          };
         });
 
-        proposalsIds = proposalsIds
+        proposalsIds = mappedProposals
           .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
           .map((proposal: { id: any }) => proposal.id);
 

@@ -105,6 +105,9 @@ const CreateVotingAllowlist = () => {
         <p className="text-[16px] text-neutral-11">
           upload a csv below (up to 100k entries) <i>or</i> copy-paste an allowlist (up to 100 entries)
         </p>
+        <p className="text-[16px] text-neutral-11">
+          allowlists are necessary to avoid luck-based voting—and cannot be edited afterwards.
+        </p>
       </div>
       <CSVEditorVoting onChange={handleAllowListChange} />
       <div className="mt-8">
