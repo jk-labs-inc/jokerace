@@ -101,10 +101,15 @@ const ContestParameters = () => {
             <span>
               {maxProposalsPerUserCapped
                 ? "as many submissions as desired"
-                : `a max of ${contestMaxNumberSubmissionsPerUser.toString()} submission${contestMaxNumberSubmissionsPerUser > 1 ? "s" : ""} `}
+                : `a max of ${contestMaxNumberSubmissionsPerUser.toString()} submission${
+                    contestMaxNumberSubmissionsPerUser > 1 ? "s" : ""
+                  } `}
             </span>
           </li>
-          <li className="list-disc">contest accept up to {contestMaxProposalCount.toString()} submissions</li>
+          <li className="list-disc">
+            contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {contestMaxProposalCount.toString()}{" "}
+            submissions
+          </li>
           <li className="list-disc">{address ? qualifyToSubmitMessage : walletNotConnected}</li>
           {submitters.length ? (
             <li className="list-disc">
