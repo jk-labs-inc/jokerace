@@ -8,6 +8,7 @@ import RewardsContract from "@contracts/bytecodeAndAbi/Contest.2.6.rewards.sol/C
 import NumberedVersioningContract from "@contracts/bytecodeAndAbi/Contest.2.8.numberedVersioning.sol/Contest.json";
 import GateSubmissionsOpenContract from "@contracts/bytecodeAndAbi/Contest.2.9.gateSubmissionsOpen.sol/Contest.json";
 import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVotes.sol/Contest.json";
+import CantVoteOnDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.10.cantVoteOnDeletedProps.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
@@ -16,12 +17,10 @@ import BringBackDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.6.b
 import ArrayOfDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.7.makeArrayOfDeletedIds.sol/Contest.json";
 import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.makeDeletedIdAccessor.sol/Contest.json";
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
-import CantVoteOnDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.10.cantVoteOnDeletedProps.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
-
-const MAX_TIME_TO_WAIT_FOR_RPC = 5000;
+import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 
 export async function getContestContractVersion(address: string, chainId: number) {
   try {
@@ -84,17 +83,6 @@ export async function getContestContractVersion(address: string, chainId: number
     console.error(`Error while fetching the contract version for address ${address} on chainId ${chainId}:`, error);
     return { abi: null, version: "error" };
   }
-}
-
-async function executeWithTimeout<T>(timeoutDuration: number, targetPromise: Promise<T>): Promise<T> {
-  let timeoutPromise = new Promise<T>((_, reject) => {
-    let timerId = setTimeout(() => {
-      clearTimeout(timerId);
-      reject(new Error(`RPC timed out after ${timeoutDuration}ms.`));
-    }, timeoutDuration);
-  });
-
-  return Promise.race([targetPromise, timeoutPromise]);
 }
 
 export default getContestContractVersion;
