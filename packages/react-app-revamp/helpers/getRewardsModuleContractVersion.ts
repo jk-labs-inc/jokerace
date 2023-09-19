@@ -3,6 +3,7 @@ import NumberedVersioningRewards from "@contracts/bytecodeAndAbi/modules/Rewards
 import GateSubmissionsOpenRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.4.gateSubmissionsOpen.sol/RewardsModule.json";
 import BetterRewardsNotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.2.5.betterRewardsNotes.sol/RewardsModule.json";
 import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.1.merkleVotes.sol/RewardsModule.json";
+import CantVoteOnDeletedPropsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.10.cantVoteOnDeletedProps.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
 import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.3.setCompilerTo8Dot19.sol/RewardsModule.json";
 import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
@@ -11,17 +12,17 @@ import BringBackDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import ArrayOfDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.7.makeArrayOfDeletedIds.sol/RewardsModule.json";
 import DeletedIdAccessorRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.8.makeDeletedIdAccessor.sol/RewardsModule.json";
 import PrivateDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.9.privateDeletedIds.sol/RewardsModule.json";
-import CantVoteOnDeletedPropsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.10.cantVoteOnDeletedProps.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
+import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 
 export async function getRewardsModuleContractVersion(address: string, chainId: number) {
   const provider = getEthersProvider({ chainId });
   const contract = new ethers.Contract(address, NumberedVersioningRewards.abi, provider);
 
   try {
-    const version: string = await contract.version();
+    const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
     if (version === "1") {
       return LegacyDeployedRewardsModuleContract.abi;
