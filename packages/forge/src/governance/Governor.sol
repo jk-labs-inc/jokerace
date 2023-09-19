@@ -246,7 +246,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
                     proposal.safeMetadata.threshold != 0,
                     "GovernorMetadataValidation: threshold cannot be zero in safeMetadata"
                 );
-                require(proposal.safeMetadata.signers.length != 0);
             } else {
                 revert TooManyMetadatas();
             }
