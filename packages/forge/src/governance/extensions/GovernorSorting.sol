@@ -2,6 +2,7 @@
 
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/utils/math/SafeCast.sol";
 import "./GovernorCountingSimple.sol";
 
 /**
@@ -144,8 +145,8 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         require(proposalIdList.length > 0, "GovernorSorting: cannot sort a list of zero length");
         int256[] memory netProposalVotes = new int256[](proposalIdList.length);
         for (uint256 i = 0; i < proposalVoteCountsArray.length; i++) {
-            netProposalVotes[i] =
-                int256(proposalVoteCountsArray[i].forVotes) - int256(proposalVoteCountsArray[i].againstVotes);
+            netProposalVotes[i] = SafeCast.toInt256(proposalVoteCountsArray[i].forVotes)
+                - SafeCast.toInt256(proposalVoteCountsArray[i].againstVotes);
         }
         for (uint256 i = 0; i < proposalIdList.length - 1; i++) {
             // Only goes to length minus 1 because sorting the last item would be redundant
@@ -181,7 +182,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
             // decrement through the ascending sorted list
             (uint256 currentForVotes, uint256 currentAgainstVotes) =
                 proposalVotes(_sortedProposalIds[lastSortedItemIndex - i]);
-            int256 currentTotalVotes = int256(currentForVotes) - int256(currentAgainstVotes);
+            int256 currentTotalVotes = SafeCast.toInt256(currentForVotes) - SafeCast.toInt256(currentAgainstVotes);
 
             // if on first item, set lastTotalVotes and continue
             if (i == 0) {
