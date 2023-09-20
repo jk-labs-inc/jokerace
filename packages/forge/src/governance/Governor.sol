@@ -255,7 +255,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         returns (uint256)
     {
         require(verifyProposer(msg.sender, proof), "Governor: address is not permissioned to submit");
-        validateProposalData(proposal);
+        require(validateProposalData(proposal), "Governor: proposal content failed validation");
         return _castProposal(proposal);
     }
 
@@ -267,7 +267,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
             // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
             require(addressSubmitterVerified[msg.sender], "Governor: address is not permissioned to submit");
         }
-        validateProposalData(proposal);
+        require(validateProposalData(proposal), "Governor: proposal content failed validation");
         return _castProposal(proposal);
     }
 
@@ -363,7 +363,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     {
         address voter = msg.sender;
         require(!isProposalDeleted(proposalId), "Governor: you cannot vote on a deleted proposal");
-        verifyVoter(voter, totalVotes, proof);
+        require(verifyVoter(voter, totalVotes, proof), "Governor: this address is not permissioned to vote");
         return _castVote(proposalId, voter, support, numVotes);
     }
 
