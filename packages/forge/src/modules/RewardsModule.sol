@@ -44,9 +44,9 @@ contract RewardsModule is Context {
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
 
-    GovernorSorting private _underlyingContest;
-    address private _creator;
-    bool private _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
+    GovernorSorting private immutable _underlyingContest;
+    address private immutable _creator;
+    bool private immutable _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
