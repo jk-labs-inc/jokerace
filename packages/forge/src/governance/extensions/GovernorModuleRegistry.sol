@@ -28,6 +28,6 @@ abstract contract GovernorModuleRegistry is Governor {
         require(msg.sender == creator(), "GovernorModuleRegistry: only the creator can set the official rewards module");
         RewardsModule oldOfficialRewardsModule = officialRewardsModule();
         _officialRewardsModule = officialRewardsModule_;
-        emit OfficialRewardsModuleSet(oldOfficialRewardsModule, _officialRewardsModule);
+        emit OfficialRewardsModuleSet(oldOfficialRewardsModule, officialRewardsModule_);
     }
 }
