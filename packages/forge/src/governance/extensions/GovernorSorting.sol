@@ -176,7 +176,8 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         int256 lastTotalVotes;
         uint256 rankingBeingChecked = 1;
         _highestTiedRanking = _sortedProposalIds.length + 1; // set as default so that it isn't 0 if no ties are found
-        for (uint256 i = 0; i < _sortedProposalIds.length; i++) {
+        uint256 sortedProposalIdsLength = _sortedProposalIds.length;
+        for (uint256 i = 0; i < sortedProposalIdsLength; i++) {
             uint256 lastSortedItemIndex = _sortedProposalIds.length - 1;
 
             // decrement through the ascending sorted list
