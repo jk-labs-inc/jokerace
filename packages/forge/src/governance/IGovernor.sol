@@ -102,7 +102,7 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
-     * @dev Hashing function used to (re)build the proposal id from the proposal details..
+     * @dev Hashing function used to build the proposal id from the proposal details.
      */
     function hashProposal(ProposalCore memory proposal) public pure virtual returns (uint256);
 
