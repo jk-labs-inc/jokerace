@@ -60,7 +60,7 @@ abstract contract IGovernor is IERC165 {
      *
      * Note: `support` values should be seen as buckets. There interpretation depends on the voting module used.
      */
-    event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes, string reason);
+    event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes);
 
     /**
      * @notice module:core
