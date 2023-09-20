@@ -242,7 +242,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
                 revert TooManyMetadatas();
             }
         }
-        require(bytes(proposal.description).length != 0, "Governor: empty proposal");
+        require(bytes(proposal.description).length != 0, "Governor: empty proposal descriptions are not allowed");
         return true;
     }
 
@@ -327,7 +327,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * Emits a {IGovernor-ContestCanceled} event.
      */
     function cancel() public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "Governor: only the creator can cancel a contest");
 
         ContestState status = state();
 

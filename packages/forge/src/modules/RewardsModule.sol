@@ -292,14 +292,14 @@ contract RewardsModule is Context {
     }
 
     function withdrawRewards() public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "RewardsModule: only the creator can withdraw rewards");
 
         emit RewardWithdrawn(creator(), address(this).balance);
         Address.sendValue(payable(creator()), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "RewardsModule: only the creator can withdraw rewards");
 
         emit ERC20RewardWithdrawn(token, creator(), token.balanceOf(address(this)));
         SafeERC20.safeTransfer(token, payable(creator()), token.balanceOf(address(this)));

@@ -25,7 +25,7 @@ abstract contract GovernorModuleRegistry is Governor {
      * @dev Get the official rewards module contract for this contest (effectively reverse record).
      */
     function setOfficialRewardsModule(RewardsModule officialRewardsModule_) public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "GovernorModuleRegistry: only the creator can set the official rewards module");
         RewardsModule oldOfficialRewardsModule = officialRewardsModule();
         _officialRewardsModule = officialRewardsModule_;
         emit OfficialRewardsModuleSet(oldOfficialRewardsModule, _officialRewardsModule);
