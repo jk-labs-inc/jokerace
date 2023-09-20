@@ -1,5 +1,5 @@
+import { MAX_ROWS } from "@helpers/csvConstants";
 import { formatNumber } from "@helpers/formatNumber";
-import { MAX_ROWS } from "@helpers/parseVotingCsv";
 import { FC, ReactNode, useMemo } from "react";
 
 export type ParseError = "missingColumns" | "limitExceeded" | "duplicates" | "allZero" | "";

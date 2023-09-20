@@ -1,4 +1,5 @@
-import { InvalidEntry, MAX_ROWS, MAX_VOTES } from "@helpers/parseVotingCsv";
+import { MAX_ROWS, MAX_VOTES } from "@helpers/csvConstants";
+import { VotingInvalidEntry } from "@helpers/csvTypes";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { getAddress } from "viem";
 
@@ -8,7 +9,7 @@ interface ParseVotingCsvPayload {
 }
 
 const processRowData = (row: any[]) => {
-  let error: InvalidEntry["error"] | null = null;
+  let error: VotingInvalidEntry["error"] | null = null;
   const address = row[0];
   let numberOfVotes =
     typeof row[1] === "number"
@@ -30,7 +31,7 @@ const processRowData = (row: any[]) => {
 self.onmessage = async (event: MessageEvent<ParseVotingCsvPayload>) => {
   const { data, userAddress } = event.data;
   const votesData: Record<string, number> = {};
-  const invalidEntries: InvalidEntry[] = [];
+  const invalidEntries: VotingInvalidEntry[] = [];
   const addresses: Set<string> = new Set();
   let roundedZeroCount = 0;
 
