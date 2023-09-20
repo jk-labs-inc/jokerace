@@ -248,7 +248,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev See {IGovernor-propose}.
      */
-    function propose(ProposalCore memory proposal, bytes32[] calldata proof)
+    function propose(ProposalCore calldata proposal, bytes32[] calldata proof)
         public
         virtual
         override
@@ -262,7 +262,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev See {IGovernor-proposeWithoutProof}.
      */
-    function proposeWithoutProof(ProposalCore memory proposal) public virtual override returns (uint256) {
+    function proposeWithoutProof(ProposalCore calldata proposal) public virtual override returns (uint256) {
         if (submissionMerkleRoot != 0) {
             // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
             require(addressSubmitterVerified[msg.sender], "Governor: address is not permissioned to submit");
@@ -299,7 +299,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      *
      * Emits a {IGovernor-ProposalsDeleted} event.
      */
-    function deleteProposals(uint256[] memory proposalIds) public virtual {
+    function deleteProposals(uint256[] calldata proposalIds) public virtual {
         require(msg.sender == creator(), "Governor: only the contest creator can delete proposals");
         require(
             state() != ContestState.Completed,
