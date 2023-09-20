@@ -23,7 +23,6 @@ import "./GovernorMerkleVotes.sol";
 abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
-    bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
