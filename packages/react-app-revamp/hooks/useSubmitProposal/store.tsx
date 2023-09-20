@@ -1,18 +1,18 @@
-import React, { createContext, useRef, useContext } from "react";
-import { CustomError } from "types/error";
+import React, { createContext, useContext, useRef } from "react";
+import { TransactionError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface SubmitProposalState {
   isModalOpen: boolean;
   isLoading: boolean;
   isSuccess: boolean;
-  error: CustomError | null;
+  error: TransactionError | null;
   transactionData: any;
   setTransactionData: (value: any) => void;
   setIsModalOpen: (value: boolean) => void;
   setIsLoading: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
-  setError: (value: CustomError | null) => void;
+  setError: (value: TransactionError | null) => void;
 }
 
 export const createSubmitProposalStore = () =>
@@ -26,7 +26,7 @@ export const createSubmitProposalStore = () =>
     setIsModalOpen: (value: boolean) => set({ isModalOpen: value }),
     setIsLoading: (value: boolean) => set({ isLoading: value }),
     setIsSuccess: (value: boolean) => set({ isSuccess: value }),
-    setError: (value: CustomError | null) => set({ error: value }),
+    setError: (value: TransactionError | null) => set({ error: value }),
   }));
 
 export const SubmitProposalContext = createContext<ReturnType<typeof createSubmitProposalStore> | null>(null);

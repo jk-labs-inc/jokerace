@@ -8,7 +8,7 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { CustomError } from "types/error";
+import { ErrorCodes, TransactionError } from "types/error";
 import { erc20ABI, useNetwork } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
@@ -50,11 +50,20 @@ export function useFundRewardsModule() {
             setTransactionData((prevData: any) => [...prevData, result]);
           })
           .catch(e => {
-            const customError = e as CustomError;
-            const message = customError.message || `Something went wrong while sending funds for reward ${reward}.`;
-            toastError(`Something went wrong while sending funds for reward.`, customError.message);
+            const transactionError = e as TransactionError;
+
+            if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
+              setIsSuccess(false);
+              setIsLoading(false);
+              return;
+            }
+            const message =
+              transactionError.message || `Something went wrong while sending funds for reward ${reward}.`;
+            toastError(`Something went wrong while sending funds for reward.`, transactionError.message);
             setError({
-              code: customError.code,
+              cause: {
+                code: transactionError.cause?.code,
+              },
               message,
             });
             setIsSuccess(false);

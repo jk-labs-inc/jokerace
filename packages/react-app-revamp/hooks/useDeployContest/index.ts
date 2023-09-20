@@ -14,7 +14,7 @@ import { formatUnits } from "ethers/lib/utils";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
-import { CustomError, ErrorCodes } from "types/error";
+import { ErrorCodes, TransactionError } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
@@ -135,11 +135,11 @@ export function useDeployContest() {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setIsSuccess(true);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      if (!customError) return;
+      if (!transactionError) return;
 
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
         setIsLoading(false);
         stateContestDeployment.setIsLoading(false);
@@ -147,9 +147,9 @@ export function useDeployContest() {
       }
 
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(customError);
+      stateContestDeployment.setError(transactionError);
       setIsLoading(false);
-      toastError(`contest deployment failed`, customError.message);
+      toastError(`contest deployment failed`, transactionError.message);
     }
   }
 
@@ -181,13 +181,13 @@ export function useDeployContest() {
     try {
       await Promise.all(tasks);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      if (!customError) {
+      if (!transactionError) {
         throw e;
       }
 
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
         setIsLoading(false);
         stateContestDeployment.setIsLoading(false);
@@ -195,7 +195,7 @@ export function useDeployContest() {
       }
 
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(customError);
+      stateContestDeployment.setError(transactionError);
       setIsLoading(false);
       toastError(`contest deployment failed`, "error while saving files to bucket");
 
@@ -255,14 +255,14 @@ export function useDeployContest() {
 
       await Promise.all(tasks);
     } catch (error) {
-      const customError = error as CustomError;
+      const transactionError = error as TransactionError;
 
-      if (!customError) return;
+      if (!transactionError) return;
 
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(customError);
+      stateContestDeployment.setError(transactionError);
       setIsLoading(false);
-      toastError(`contest deployment failed`, customError.message);
+      toastError(`contest deployment failed to index in db`, transactionError.message);
     }
   }
 

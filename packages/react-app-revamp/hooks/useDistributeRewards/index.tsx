@@ -2,7 +2,7 @@ import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
 import { getTimestampFromReceipt } from "@helpers/timestamp";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
-import { CustomError, ErrorCodes } from "types/error";
+import { ErrorCodes, TransactionError } from "types/error";
 import { formatEther, formatUnits } from "viem";
 import { useBalance, useContractRead, useContractWrite, useToken, useWaitForTransaction } from "wagmi";
 import { create } from "zustand";
@@ -74,16 +74,16 @@ export const useDistributeRewards = (
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     chainId,
     async onError(e) {
-      const customError = e as CustomError;
-      if (!customError) return;
+      const transactionError = e as TransactionError;
+      if (!transactionError) return;
 
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
         setIsLoading(false);
         return;
       }
 
-      toastError(`something went wrong and the the transaction failed`, customError.message);
+      toastError(`something went wrong and the the transaction failed`, transactionError.message);
       setIsLoading(false);
     },
   });
@@ -92,16 +92,16 @@ export const useDistributeRewards = (
     hash: contractWriteReleaseToken?.data?.hash,
     chainId,
     async onError(e) {
-      const customError = e as CustomError;
-      if (!customError) return;
+      const transactionError = e as TransactionError;
+      if (!transactionError) return;
 
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
         setIsLoading(false);
         return;
       }
 
-      toastError(`something went wrong and the the transaction failed`, customError.message);
+      toastError(`something went wrong and the the transaction failed`, transactionError.message);
       setIsLoading(false);
     },
     async onSuccess() {

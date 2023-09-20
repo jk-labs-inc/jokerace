@@ -1,8 +1,7 @@
-import { useState } from "react";
-import { toastError, toastSuccess, toastLoading } from "@components/UI/Toast";
+import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { isSupabaseConfigured } from "@helpers/database";
-import { CustomError } from "types/error";
+import { useState } from "react";
 
 const useEmailSignup = () => {
   const [isLoading, setLoading] = useState(false);
@@ -19,11 +18,9 @@ const useEmailSignup = () => {
           return;
         }
         toastSuccess("You have been subscribed successfully.");
-      } catch (error) {
-        const customError = error as CustomError;
-
+      } catch (error: any) {
         setLoading(false);
-        toastError("There was an error while subscribing. Please try again later.", customError.message);
+        toastError("There was an error while subscribing. Please try again later.", error.message);
       }
     }
   };
@@ -32,7 +29,10 @@ const useEmailSignup = () => {
     if (isSupabaseConfigured) {
       setLoading(true);
       try {
-        const { data, error } = await supabase.from("email_signups").select("email_address").eq("email_address", email_address);
+        const { data, error } = await supabase
+          .from("email_signups")
+          .select("email_address")
+          .eq("email_address", email_address);
         setLoading(false);
         if (error) {
           toastError("There was an error while checking. Please try again later.", error.message);
@@ -44,10 +44,9 @@ const useEmailSignup = () => {
         } else {
           return false;
         }
-      } catch (error) {
-        const customError = error as CustomError;
+      } catch (error: any) {
         setLoading(false);
-        toastError("There was an error while checking. Please try again later.", customError.message);
+        toastError("There was an error while checking. Please try again later.", error.message);
 
         return false;
       }

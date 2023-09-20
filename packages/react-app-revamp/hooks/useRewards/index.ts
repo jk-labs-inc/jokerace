@@ -4,7 +4,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { readContract, readContracts } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { CustomError } from "types/error";
+import { TransactionError } from "types/error";
 import { Abi } from "viem";
 import { useNetwork, useQuery } from "wagmi";
 import { useRewardsStore } from "./store";
@@ -118,14 +118,16 @@ export function useRewardsModule() {
       setIsLoading(false);
       setIsSuccess(true);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      if (!customError) return;
+      if (!transactionError) return;
 
-      toastError("Something went wrong and the rewards module couldn't be retrieved.", customError.message);
+      toastError("Something went wrong and the rewards module couldn't be retrieved.", transactionError.message);
       setError({
-        code: customError.code,
-        message: customError.message,
+        cause: {
+          code: transactionError.cause?.code,
+        },
+        message: transactionError.message,
       });
       setIsLoading(false);
       setIsSuccess(false);

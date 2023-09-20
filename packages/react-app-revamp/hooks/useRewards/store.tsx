@@ -1,14 +1,14 @@
 import { createContext, useContext, useRef } from "react";
-import { CustomError } from "types/error";
+import { TransactionError } from "types/error";
 import { createStore, useStore } from "zustand";
 interface RewardsState {
   isLoading: boolean;
   isSuccess: boolean;
-  error: CustomError | null;
+  error: TransactionError | null;
   rewards: any;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (value: boolean) => void;
-  setError: (value: CustomError | null) => void;
+  setError: (value: TransactionError | null) => void;
   setRewards: (rewards: any) => void;
 }
 

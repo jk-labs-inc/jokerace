@@ -14,7 +14,7 @@ import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { CustomError, ErrorCodes } from "types/error";
+import { ErrorCodes, TransactionError } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -132,23 +132,25 @@ export function useCastVotes() {
         vote_amount: amount,
       });
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      if (!customError) return;
+      if (!transactionError) return;
 
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
         toastDismiss();
         setIsLoading(false);
-        throw customError;
+        throw transactionError;
       }
 
-      toastError(`Something went wrong while casting your votes`, customError.message);
+      toastError(`Something went wrong while casting your votes`, transactionError.message);
       setError({
-        code: customError.code,
-        message: customError.message,
+        cause: {
+          code: transactionError.cause?.code,
+        },
+        message: transactionError.message,
       });
       setIsLoading(false);
-      throw customError;
+      throw transactionError;
     }
   }
 

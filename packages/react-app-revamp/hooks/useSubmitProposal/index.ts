@@ -12,7 +12,7 @@ import { waitForTransaction, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { CustomError, ErrorCodes } from "types/error";
+import { ErrorCodes, TransactionError } from "types/error";
 import { TransactionReceipt } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
@@ -117,20 +117,22 @@ export function useSubmitProposal() {
           proposal_id: proposalId,
         });
       } catch (e) {
-        const customError = e as CustomError;
+        const transactionError = e as TransactionError;
 
-        if (!customError) return;
+        if (!transactionError) return;
 
-        if (customError.code === ErrorCodes.USER_REJECTED_TX) {
+        if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
           toastDismiss();
           setIsLoading(false);
           return;
         }
 
-        toastError("Something went wrong while submittings your proposal.", customError.message);
+        toastError("Something went wrong while submittings your proposal.", transactionError.message);
         setError({
-          code: customError.code,
-          message: customError.message,
+          cause: {
+            code: transactionError.cause?.code,
+          },
+          message: transactionError.message,
         });
         setIsLoading(false);
         reject(e);

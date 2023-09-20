@@ -6,7 +6,7 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
 import { useRouter } from "next/router";
-import { CustomError } from "types/error";
+import { ErrorCodes, TransactionError } from "types/error";
 import { useDeployRewardsStore } from "./store";
 
 export function useDeployRewardsPool() {
@@ -66,9 +66,22 @@ export function useDeployRewardsPool() {
         try {
           return await rewardsModuleDeployment();
         } catch (error) {
+          const transactionError = error as TransactionError;
+
+          if (!transactionError) return;
+
+          if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
+            stateContestDeployment.setIsLoading(false);
+            stateContestDeployment.setIsSuccess(false);
+            setIsLoading(false);
+            setIsSuccess(false);
+            setDisplayCreatePool(true);
+            return;
+          }
+
           stateContestDeployment.setIsLoading(false);
           stateContestDeployment.setIsSuccess(false);
-          stateContestDeployment.setError(error as CustomError);
+          stateContestDeployment.setError(error as TransactionError);
           setIsError(true);
           setIsLoading(false);
           setIsSuccess(false);
@@ -80,9 +93,22 @@ export function useDeployRewardsPool() {
         try {
           return await rewardsModuleAttachment();
         } catch (error) {
+          const transactionError = error as TransactionError;
+
+          if (!transactionError) return;
+
+          if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
+            stateContestDeployment.setIsLoading(false);
+            stateContestDeployment.setIsSuccess(false);
+            setIsLoading(false);
+            setIsSuccess(false);
+            setDisplayCreatePool(true);
+            return;
+          }
+
           stateContestDeployment.setIsLoading(false);
           stateContestDeployment.setIsSuccess(false);
-          stateContestDeployment.setError(error as CustomError);
+          stateContestDeployment.setError(error as TransactionError);
           setIsError(true);
           setIsLoading(false);
           setIsSuccess(false);

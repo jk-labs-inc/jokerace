@@ -1,4 +1,3 @@
-import { ClipboardCopyIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import { FC, useState } from "react";
 

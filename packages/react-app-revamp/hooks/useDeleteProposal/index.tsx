@@ -1,4 +1,4 @@
-import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -6,7 +6,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { CustomError } from "types/error";
+import { ErrorCodes, TransactionError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useDeleteProposalStore } from "./store";
 
@@ -68,14 +68,23 @@ export function useDeleteProposal() {
       setIsSuccess(true);
       toastSuccess(`Proposal deleted successfully!`);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      if (!customError) return;
+      if (!transactionError) return;
 
-      const message = customError.message || "Something went wrong while deleting your proposal.";
+      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
+        toastDismiss();
+        setIsLoading(false);
+        setIsSuccess(false);
+        return;
+      }
+
+      const message = transactionError.message || "Something went wrong while deleting your proposal.";
       toastError("something went wrong while deleting your proposal", message);
       setError({
-        code: customError.code,
+        cause: {
+          code: transactionError.cause?.code,
+        },
         message,
       });
       setIsLoading(false);

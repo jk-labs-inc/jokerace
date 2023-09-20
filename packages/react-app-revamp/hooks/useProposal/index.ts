@@ -8,7 +8,7 @@ import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
-import { CustomError } from "types/error";
+import { TransactionError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
 
@@ -100,14 +100,16 @@ export function useProposal() {
       setIsPageProposalsError(null);
       setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      if (!customError) return;
+      if (!transactionError) return;
 
-      toastError("Something went wrong while getting proposals.", customError.message);
+      toastError("Something went wrong while getting proposals.", transactionError.message);
       setIsPageProposalsError({
-        code: customError.code,
-        message: customError.message,
+        cause: {
+          code: transactionError.cause?.code,
+        },
+        message: transactionError.message,
       });
       setIsPageProposalsLoading(false);
       setIsPageProposalsError(null);
@@ -230,12 +232,12 @@ export function useProposal() {
 
       if (proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      if (!customError) return;
+      if (!transactionError) return;
 
       onContractError(e);
-      setError(customError);
+      setError(transactionError);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);

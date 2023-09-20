@@ -16,8 +16,8 @@ import { loadFileFromBucket } from "lib/buckets";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { CustomError } from "types/error";
+import { useState } from "react";
+import { TransactionError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
@@ -115,11 +115,11 @@ export function useContest() {
 
       return { contractConfig, version };
     } catch (error) {
-      const customError = error as CustomError;
-      if (!customError) return;
+      const transactionError = error as TransactionError;
+      if (!transactionError) return;
 
       onContractError(error);
-      setError(customError);
+      setError(transactionError);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -187,11 +187,11 @@ export function useContest() {
         fetchTotalVotesCast(),
       ]);
     } catch (error) {
-      const customError = error as CustomError;
-      if (!customError) return;
+      const transactionError = error as TransactionError;
+      if (!transactionError) return;
 
-      setError(customError);
-      toastError(`error while fetching contest data`, customError.message);
+      setError(transactionError);
+      toastError(`error while fetching contest data`, transactionError.message);
       setIsLoading(false);
       setIsUserStoreLoading(false);
       setIsListProposalsLoading(false);
@@ -239,12 +239,12 @@ export function useContest() {
       setIsLoading(false);
       setIsListProposalsLoading(false);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      if (!customError) return;
+      if (!transactionError) return;
 
       onContractError(e);
-      setError(customError);
+      setError(transactionError);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -370,8 +370,8 @@ export function useContest() {
       setVoters(votingMerkleTreeData || []);
       setSubmitters(submissionMerkleTreeData || []);
     } catch (error) {
-      const customError = error as CustomError;
-      toastError("error while fetching data from db", customError.message);
+      const transactionError = error as TransactionError;
+      toastError("error while fetching data from db", transactionError.message);
       setIsUserStoreLoading(false);
     }
   }

@@ -1,8 +1,10 @@
-export interface CustomError {
+export interface TransactionError {
   message: string;
-  code?: string;
+  cause?: {
+    code?: number;
+  };
 }
 
 export enum ErrorCodes {
-  USER_REJECTED_TX = "ACTION_REJECTED",
+  USER_REJECTED_TX = 4001,
 }

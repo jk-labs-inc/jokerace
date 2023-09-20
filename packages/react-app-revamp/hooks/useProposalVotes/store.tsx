@@ -1,5 +1,5 @@
 import { createContext, useContext, useRef } from "react";
-import { CustomError } from "types/error";
+import { TransactionError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface ProposalVotesState {
@@ -9,14 +9,14 @@ interface ProposalVotesState {
   votesPerAddress: Record<string, any>;
   isPageVotesLoading: boolean;
   isPageVotesSuccess: boolean;
-  isPageVotesError: CustomError | null;
+  isPageVotesError: TransactionError | null;
   indexPaginationVotes: Array<any>;
   totalPagesPaginationVotes: number;
   currentPagePaginationVotes: number;
   hasPaginationVotesNextPage: boolean;
   setIsPageVotesLoading: (value: boolean) => void;
   setIsPageVotesSuccess: (value: boolean) => void;
-  setIsPageVotesError: (value: CustomError | null) => void;
+  setIsPageVotesError: (value: TransactionError | null) => void;
   setCurrentPagePaginationVotes: (currentPage: number) => void;
   setIndexPaginationVotesPerId: (votesPages: Array<any>) => void;
   setTotalPagesPaginationVotes: (newTotal: number) => void;

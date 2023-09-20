@@ -1,8 +1,8 @@
 import { FC } from "react";
-import { CustomError, ErrorCodes } from "types/error";
+import { ErrorCodes, TransactionError } from "types/error";
 import styles from "./styles.module.css";
 interface TrackerDeployTransactionProps {
-  error: CustomError | null;
+  error: TransactionError | null;
   isLoading: boolean;
   isSuccess: boolean;
   transactionHref?: string;
@@ -18,7 +18,7 @@ export const TrackerDeployTransaction: FC<TrackerDeployTransactionProps> = ({
   textSuccess,
   textPending,
 }) => {
-  const isUserRejectedTx = error?.code === ErrorCodes.USER_REJECTED_TX;
+  const isUserRejectedTx = error?.cause?.code === ErrorCodes.USER_REJECTED_TX;
 
   if (isUserRejectedTx) return null;
 

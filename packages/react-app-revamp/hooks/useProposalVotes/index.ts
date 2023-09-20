@@ -9,7 +9,7 @@ import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { CustomError } from "types/error";
+import { TransactionError } from "types/error";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useProposalVotesStore } from "./store";
@@ -97,13 +97,13 @@ export function useProposalVotes(id: number | string) {
       setIsListVotersError(null);
       setIsListVotersLoading(false);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      setIsListVotersError(customError.code ?? "");
+      setIsListVotersError(transactionError.message);
       setIsListVotersSuccess(false);
       setIsListVotersLoading(false);
 
-      toastError("There was an error while fetching the votes", customError.message);
+      toastError("There was an error while fetching the votes", transactionError.message);
     }
   }
 
@@ -127,11 +127,11 @@ export function useProposalVotes(id: number | string) {
       setIsPageVotesError(null);
       setHasPaginationVotesNextPage(pageIndex + 1 < totalPagesPaginationVotes);
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
       setIsPageVotesLoading(false);
-      setIsPageVotesError(customError);
-      toastError("There was an error while fetching the votes", customError.message);
+      setIsPageVotesError(transactionError);
+      toastError("There was an error while fetching the votes", transactionError.message);
     }
   }
 
@@ -187,9 +187,9 @@ export function useProposalVotes(id: number | string) {
         value: { displayAddress, votes },
       });
     } catch (e) {
-      const customError = e as CustomError;
+      const transactionError = e as TransactionError;
 
-      toastError("There was an error while fetching the votes", customError.message);
+      toastError("There was an error while fetching the votes", transactionError.message);
     }
   }
 

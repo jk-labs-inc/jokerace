@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import ContestParameters from "@components/Parameters";
 import ContestRewards from "@components/Rewards";
@@ -218,7 +219,8 @@ const LayoutViewContest = (props: any) => {
               <div className="my-6 md:my-0 animate-appear flex flex-col">
                 <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                   <p className="text-sm font-bold text-negative-10 text-center">
-                    Something went wrong while fetching this contest.
+                    we were unable to fetch this contest — please check url to make sure it's accurate or search for
+                    contests here
                   </p>
                 </div>
                 {error?.message === "CALL_EXCEPTION" ? (
