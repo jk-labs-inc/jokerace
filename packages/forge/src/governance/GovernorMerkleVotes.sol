@@ -34,6 +34,7 @@ abstract contract GovernorMerkleVotes {
     /// @param addressToCheck address of claimee
     /// @param amount to check that the claimee has
     /// @param proof merkle proof to prove address and amount are in tree
+    /// @param voting true if this is for a voting proof, false if this is for a submission proof
     function checkProof(address addressToCheck, uint256 amount, bytes32[] calldata proof, bool voting)
         public
         view
