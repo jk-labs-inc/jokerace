@@ -208,10 +208,10 @@ abstract contract GovernorSorting is GovernorCountingSimple {
                     // if this is the first tie found, set it as the highest tied ranking
                     _highestTiedRanking = rankingBeingChecked;
                 }
-            }
-            // otherwise, mark that the last iteration of this ranking's value is at the index
-            // above the current index in the sorted list, then increment the ranking being checked
-            if (currentTotalVotes != lastTotalVotes) {
+            } else {
+                // otherwise, mark that the last iteration of this ranking's value is at the index
+                // above the current index in the sorted list, then increment the ranking being checked
+
                 // index we last decremented from is the last iteration of the current rank's value
                 tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;
                 rankingBeingChecked++;
