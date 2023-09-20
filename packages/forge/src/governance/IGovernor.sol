@@ -16,7 +16,7 @@ abstract contract IGovernor is IERC165 {
         Completed
     }
 
-    uint256 public constant METADATAS_COUNT = 2;
+    uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
 
     enum Metadatas {
         Target,
