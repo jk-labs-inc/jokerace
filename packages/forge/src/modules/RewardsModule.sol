@@ -68,6 +68,8 @@ contract RewardsModule is Context {
             _addPayee(payees[i], shares_[i]);
         }
 
+        require(_totalShares != 0, "RewardsModule: the total number of shares cannot equal 0");
+
         _paysOutTarget = paysOutTarget_;
         _underlyingContest = underlyingContest_;
         _creator = msg.sender;
@@ -90,7 +92,7 @@ contract RewardsModule is Context {
      * @dev Version of the rewards module. Default: "1"
      */
     function version() public view virtual returns (string memory) {
-        return "3.10";
+        return "3.11";
     }
 
     /**
@@ -230,8 +232,8 @@ contract RewardsModule is Context {
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
-        Address.sendValue(addressToPayOut, payment);
         emit PaymentReleased(addressToPayOut, payment);
+        Address.sendValue(addressToPayOut, payment);
     }
 
     /**
@@ -285,22 +287,22 @@ contract RewardsModule is Context {
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
-        SafeERC20.safeTransfer(token, addressToPayOut, payment);
         emit ERC20PaymentReleased(token, addressToPayOut, payment);
+        SafeERC20.safeTransfer(token, addressToPayOut, payment);
     }
 
     function withdrawRewards() public virtual {
         require(msg.sender == creator());
 
-        Address.sendValue(payable(creator()), address(this).balance);
         emit RewardWithdrawn(creator(), address(this).balance);
+        Address.sendValue(payable(creator()), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public virtual {
         require(msg.sender == creator());
 
-        SafeERC20.safeTransfer(token, payable(creator()), token.balanceOf(address(this)));
         emit ERC20RewardWithdrawn(token, creator(), token.balanceOf(address(this)));
+        SafeERC20.safeTransfer(token, payable(creator()), token.balanceOf(address(this)));
     }
 
     /**

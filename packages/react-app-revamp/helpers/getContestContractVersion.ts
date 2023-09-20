@@ -9,6 +9,7 @@ import NumberedVersioningContract from "@contracts/bytecodeAndAbi/Contest.2.8.nu
 import GateSubmissionsOpenContract from "@contracts/bytecodeAndAbi/Contest.2.9.gateSubmissionsOpen.sol/Contest.json";
 import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVotes.sol/Contest.json";
 import CantVoteOnDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.10.cantVoteOnDeletedProps.sol/Contest.json";
+import AuditMinorFixesContract from "@contracts/bytecodeAndAbi/Contest.3.11.auditMinorFixes.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
@@ -58,6 +59,8 @@ export async function getContestContractVersion(address: string, chainId: number
       return { abi: PrivateDeletedIdsContract.abi, version };
     } else if (version === "3.10") {
       return { abi: CantVoteOnDeletedContract.abi, version };
+    } else if (version === "3.11") {
+      return { abi: AuditMinorFixesContract.abi, version };
     }
 
     if (version === "1") {

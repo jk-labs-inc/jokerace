@@ -98,7 +98,10 @@ abstract contract GovernorCountingSimple is Governor {
             "GovernorVotingSimple: not enough votes left to cast"
         );
 
-        bool firstTimeVoting = proposalvote.addressVoteCounts[account].forVotes == 0;
+        bool firstTimeVoting = (
+            proposalvote.addressVoteCounts[account].forVotes == 0
+                && proposalvote.addressVoteCounts[account].againstVotes == 0
+        );
 
         if (support == uint8(VoteType.For)) {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
