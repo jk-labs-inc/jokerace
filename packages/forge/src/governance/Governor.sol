@@ -365,7 +365,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     {
         address voter = msg.sender;
         verifyVoter(voter, totalVotes, proof);
-        return _castVote(proposalId, voter, support, numVotes, "");
+        return _castVote(proposalId, voter, support, numVotes);
     }
 
     /**
@@ -382,7 +382,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
             addressTotalVotesVerified[voter],
             "Governor: you need to cast a vote with the proof at least once and you haven't yet"
         );
-        return _castVote(proposalId, voter, support, numVotes, "");
+        return _castVote(proposalId, voter, support, numVotes);
     }
 
     /**
@@ -391,7 +391,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      *
      * Emits a {IGovernor-VoteCast} event.
      */
-    function _castVote(uint256 proposalId, address account, uint8 support, uint256 numVotes, string memory reason)
+    function _castVote(uint256 proposalId, address account, uint8 support, uint256 numVotes)
         internal
         virtual
         returns (uint256)
@@ -405,7 +405,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         );
         _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);
 
-        emit VoteCast(account, proposalId, support, numVotes, reason);
+        emit VoteCast(account, proposalId, support, numVotes);
 
         return addressTotalVotes[account];
     }
