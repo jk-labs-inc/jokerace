@@ -67,6 +67,8 @@ contract RewardsModule is Context {
         for (uint256 i = 0; i < payees.length; i++) {
             _addPayee(payees[i], shares_[i]);
         }
+        
+        require(_totalShares != 0, "RewardsModule: the total number of shares cannot equal 0");
 
         _paysOutTarget = paysOutTarget_;
         _underlyingContest = underlyingContest_;
