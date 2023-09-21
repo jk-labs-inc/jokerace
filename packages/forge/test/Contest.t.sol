@@ -275,17 +275,15 @@ contract ContestTest is Test {
     function testSort0FromZeroToZero() public {
         vm.warp(1681650001);
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
-
-        assertEq(sortedProposalIds.length, 0);
+        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
+        contest.sortedProposals(true);
     }
 
     function testSort0FromZeroToOneHundred() public {
         vm.warp(1681650001);
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
-
-        assertEq(sortedProposalIds.length, 0);
+        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
+        contest.sortedProposals(true);
     }
 
     function testSort1NoVotesFromZeroToZero() public {
@@ -293,7 +291,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
 
         assertEq(sortedProposalIds[0], proposalId);
     }
@@ -303,7 +301,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 100);
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
 
         assertEq(sortedProposalIds[0], proposalId);
     }
@@ -315,7 +313,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
 
         assertEq(sortedProposalIds[0], proposalId1);
         assertEq(sortedProposalIds[1], proposalId2);
@@ -328,7 +326,7 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 100);
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
 
         assertEq(sortedProposalIds[0], proposalId1);
         assertEq(sortedProposalIds[1], proposalId2);
@@ -344,7 +342,7 @@ contract ContestTest is Test {
         contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
 
         assertEq(sortedProposalIds[0], proposalId);
     }
@@ -357,7 +355,7 @@ contract ContestTest is Test {
         contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 100);
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
 
         assertEq(sortedProposalIds[0], proposalId);
     }
@@ -371,7 +369,7 @@ contract ContestTest is Test {
         contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 0);
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
 
         assertEq(sortedProposalIds[0], proposalId2);
         assertEq(sortedProposalIds[1], proposalId1);
@@ -386,7 +384,7 @@ contract ContestTest is Test {
         contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
         vm.stopPrank();
 
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true, 0, 100);
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
 
         assertEq(sortedProposalIds[0], proposalId2);
         assertEq(sortedProposalIds[1], proposalId1);
