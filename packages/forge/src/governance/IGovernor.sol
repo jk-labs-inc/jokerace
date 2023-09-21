@@ -16,7 +16,7 @@ abstract contract IGovernor is IERC165 {
         Completed
     }
 
-    uint256 public constant METADATAS_COUNT = 2;
+    uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
 
     enum Metadatas {
         Target,
@@ -60,7 +60,7 @@ abstract contract IGovernor is IERC165 {
      *
      * Note: `support` values should be seen as buckets. There interpretation depends on the voting module used.
      */
-    event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes, string reason);
+    event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes);
 
     /**
      * @notice module:core
@@ -171,7 +171,7 @@ abstract contract IGovernor is IERC165 {
      *
      * Emits a {ProposalCreated} event.
      */
-    function propose(ProposalCore memory proposal, bytes32[] calldata proof)
+    function propose(ProposalCore calldata proposal, bytes32[] calldata proof)
         public
         virtual
         returns (uint256 proposalId);
@@ -182,7 +182,7 @@ abstract contract IGovernor is IERC165 {
      *
      * Emits a {ProposalCreated} event.
      */
-    function proposeWithoutProof(ProposalCore memory proposal) public virtual returns (uint256 proposalId);
+    function proposeWithoutProof(ProposalCore calldata proposal) public virtual returns (uint256 proposalId);
 
     /**
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.

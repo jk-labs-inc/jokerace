@@ -44,9 +44,9 @@ contract RewardsModule is Context {
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
 
-    GovernorSorting private _underlyingContest;
-    address private _creator;
-    bool private _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
+    GovernorSorting private immutable _underlyingContest;
+    address private immutable _creator;
+    bool private immutable _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -92,7 +92,7 @@ contract RewardsModule is Context {
      * @dev Version of the rewards module. Default: "1"
      */
     function version() public view virtual returns (string memory) {
-        return "3.11";
+        return "3.12";
     }
 
     /**
@@ -292,14 +292,14 @@ contract RewardsModule is Context {
     }
 
     function withdrawRewards() public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "RewardsModule: only the creator can withdraw rewards");
 
         emit RewardWithdrawn(creator(), address(this).balance);
         Address.sendValue(payable(creator()), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "RewardsModule: only the creator can withdraw rewards");
 
         emit ERC20RewardWithdrawn(token, creator(), token.balanceOf(address(this)));
         SafeERC20.safeTransfer(token, payable(creator()), token.balanceOf(address(this)));
