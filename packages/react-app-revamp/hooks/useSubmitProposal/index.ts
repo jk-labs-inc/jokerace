@@ -1,10 +1,11 @@
-import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
 import { getTimestampFromReceipt } from "@helpers/timestamp";
+import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
@@ -12,7 +13,6 @@ import { waitForTransaction, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { ErrorCodes, TransactionError } from "types/error";
 import { TransactionReceipt } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
@@ -30,6 +30,8 @@ export function useSubmitProposal() {
   const { asPath, ...router } = useRouter();
   const { address: userAddress } = useAccount();
   const { fetchProposalsIdsList } = useProposal();
+  const { error: errorMessage, handleError } = useError();
+
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const [chainName, address] = asPath.split("/").slice(2, 4);
@@ -43,7 +45,7 @@ export function useSubmitProposal() {
     toastLoading("proposal is deploying...");
     setIsLoading(true);
     setIsSuccess(false);
-    setError(null);
+    setError("");
     setTransactionData(null);
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
@@ -117,25 +119,9 @@ export function useSubmitProposal() {
           proposal_id: proposalId,
         });
       } catch (e) {
-        const transactionError = e as TransactionError;
-
-        if (!transactionError) return;
-
-        if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
-          toastDismiss();
-          setIsLoading(false);
-          return;
-        }
-
-        toastError("Something went wrong while submittings your proposal.", transactionError.message);
-        setError({
-          cause: {
-            code: transactionError.cause?.code,
-          },
-          message: transactionError.message,
-        });
+        handleError(e, `Something went wrong while submitting your proposal.`);
+        setError(errorMessage);
         setIsLoading(false);
-        reject(e);
       }
     });
   }

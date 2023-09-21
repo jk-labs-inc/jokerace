@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useRef } from "react";
-import { TransactionError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface CastVotesState {
@@ -7,7 +6,7 @@ interface CastVotesState {
   isModalOpen: boolean;
   isLoading: boolean;
   isSuccess: boolean;
-  error: TransactionError | null;
+  error: string;
   transactionData: any;
   castPositiveAmountOfVotes: boolean;
   setTransactionData: (value: any) => void;
@@ -16,7 +15,7 @@ interface CastVotesState {
   setIsLoading: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
   setCastPositiveAmountOfVotes: (value: boolean) => void;
-  setError: (value: TransactionError | null) => void;
+  setError: (value: string) => void;
 }
 
 export const createCastVotesStore = () =>
@@ -25,7 +24,7 @@ export const createCastVotesStore = () =>
     isModalOpen: false,
     isLoading: false,
     isSuccess: false,
-    error: null,
+    error: "",
     transactionData: null,
     castPositiveAmountOfVotes: true,
     setTransactionData: value => set({ transactionData: value }),

@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ErrorCodes, TransactionError } from "types/error";
+import { ErrorCodes, TransactionError } from "utils/error";
 import styles from "./styles.module.css";
 interface TrackerDeployTransactionProps {
   error: TransactionError | null;

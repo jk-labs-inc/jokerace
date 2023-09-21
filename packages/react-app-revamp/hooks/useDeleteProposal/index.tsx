@@ -1,12 +1,12 @@
-import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useError } from "@hooks/useError";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { ErrorCodes, TransactionError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useDeleteProposalStore } from "./store";
 
@@ -25,12 +25,13 @@ export function useDeleteProposal() {
     setError,
     setTransactionData,
   } = useDeleteProposalStore(state => state);
+  const { error: errorMessage, handleError } = useError();
 
   async function deleteProposal(proposalIds: string[]) {
     toastLoading(`Deleting proposal...`);
     setIsLoading(true);
     setIsSuccess(false);
-    setError(null);
+    setError("");
     setTransactionData(null);
 
     const address = asPath.split("/")[3];
@@ -68,25 +69,8 @@ export function useDeleteProposal() {
       setIsSuccess(true);
       toastSuccess(`Proposal deleted successfully!`);
     } catch (e) {
-      const transactionError = e as TransactionError;
-
-      if (!transactionError) return;
-
-      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
-        toastDismiss();
-        setIsLoading(false);
-        setIsSuccess(false);
-        return;
-      }
-
-      const message = transactionError.message || "Something went wrong while deleting your proposal.";
-      toastError("something went wrong while deleting your proposal", message);
-      setError({
-        cause: {
-          code: transactionError.cause?.code,
-        },
-        message,
-      });
+      handleError(e, `something went wrong and the proposal couldn't be deleted`);
+      setError(errorMessage);
       setIsLoading(false);
       setIsSuccess(false);
     }
@@ -97,7 +81,7 @@ export function useDeleteProposal() {
       setIsLoading(false);
       setIsSuccess(false);
       setTransactionData({});
-      setError(null);
+      setError("");
     }
   }, [isModalOpen, setError, setIsLoading, setIsSuccess, setTransactionData]);
 

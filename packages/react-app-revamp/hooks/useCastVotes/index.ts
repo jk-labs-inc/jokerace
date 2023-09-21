@@ -1,10 +1,11 @@
-import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { getTimestampFromReceipt } from "@helpers/timestamp";
 import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
+import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
@@ -14,7 +15,6 @@ import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { ErrorCodes, TransactionError } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -39,6 +39,7 @@ export function useCastVotes() {
   const { updateCurrentUserVotes } = useUser();
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
+  const { error: errorMessage, handleError } = useError();
   const [contestId, chainName] = [asPath.split("/")[3], asPath.split("/")[2]];
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.id;
@@ -47,7 +48,7 @@ export function useCastVotes() {
     toastLoading("votes are deploying...");
     setIsLoading(true);
     setIsSuccess(false);
-    setError(null);
+    setError("");
     setTransactionData(null);
     const { abi } = await getContestContractVersion(contestId, chainId);
 
@@ -132,25 +133,10 @@ export function useCastVotes() {
         vote_amount: amount,
       });
     } catch (e) {
-      const transactionError = e as TransactionError;
-
-      if (!transactionError) return;
-
-      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
-        toastDismiss();
-        setIsLoading(false);
-        throw transactionError;
-      }
-
-      toastError(`Something went wrong while casting your votes`, transactionError.message);
-      setError({
-        cause: {
-          code: transactionError.cause?.code,
-        },
-        message: transactionError.message,
-      });
+      handleError(e, "something went wrong while casting your votes");
+      setError(errorMessage);
       setIsLoading(false);
-      throw transactionError;
+      throw e;
     }
   }
 

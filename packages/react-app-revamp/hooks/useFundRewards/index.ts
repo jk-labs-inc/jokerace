@@ -1,6 +1,6 @@
-import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { getTimestampFromReceipt } from "@helpers/timestamp";
+import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
 import { prepareSendTransaction, sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
 import { utils } from "ethers";
@@ -8,7 +8,6 @@ import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { ErrorCodes, TransactionError } from "types/error";
 import { erc20ABI, useNetwork } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
@@ -36,6 +35,7 @@ export function useFundRewardsModule() {
     setError,
     setTransactionData,
   } = useFundRewardsStore(state => state);
+  const { error: errorMessage, handleError } = useError();
   const { refetchBalanceRewardsModule } = useRewardsModule();
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
@@ -50,22 +50,8 @@ export function useFundRewardsModule() {
             setTransactionData((prevData: any) => [...prevData, result]);
           })
           .catch(e => {
-            const transactionError = e as TransactionError;
-
-            if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
-              setIsSuccess(false);
-              setIsLoading(false);
-              return;
-            }
-            const message =
-              transactionError.message || `Something went wrong while sending funds for reward ${reward}.`;
-            toastError(`Something went wrong while sending funds for reward.`, transactionError.message);
-            setError({
-              cause: {
-                code: transactionError.cause?.code,
-              },
-              message,
-            });
+            handleError(e, `Something went wrong while sending funds for reward ${reward}.`);
+            setError(errorMessage);
             setIsSuccess(false);
             setIsLoading(false);
             throw e;
@@ -149,7 +135,7 @@ export function useFundRewardsModule() {
       setIsLoading(false);
       setIsSuccess(false);
       setTransactionData({});
-      setError(null);
+      setError("");
     }
   }, [isModalOpen, setError, setIsLoading, setIsSuccess, setTransactionData]);
 

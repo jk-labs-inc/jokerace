@@ -1,6 +1,6 @@
 import { toastError } from "@components/UI/Toast";
 import { toast } from "react-toastify";
-import { TransactionError } from "types/error";
+import { TransactionError } from "utils/error";
 
 export const copyToClipboard = async (textToCopy: string, toastMessage: string) => {
   try {

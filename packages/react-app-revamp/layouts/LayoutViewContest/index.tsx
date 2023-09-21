@@ -215,7 +215,7 @@ const LayoutViewContest = (props: any) => {
 
         {
           <>
-            {(account?.address && chain?.id !== chainId) === false && error && !isLoading && (
+            {error && !isLoading && (
               <div className="my-6 md:my-0 animate-appear flex flex-col">
                 <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
                   <p className="text-sm font-bold text-negative-10 text-center">
@@ -223,7 +223,7 @@ const LayoutViewContest = (props: any) => {
                     contests here
                   </p>
                 </div>
-                {error?.message === "CALL_EXCEPTION" ? (
+                {error.startsWith(`This contract doesn't exist`) ? (
                   <div className="animate-appear text-center my-3 space-y-3">
                     <p>
                       Looks like this contract doesn&apos;t exist on {chain?.name}. <br /> Try switching to another

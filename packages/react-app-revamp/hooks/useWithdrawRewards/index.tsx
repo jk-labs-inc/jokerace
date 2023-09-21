@@ -1,5 +1,5 @@
-import { toastDismiss, toastError, toastSuccess } from "@components/UI/Toast";
-import { ErrorCodes, TransactionError } from "types/error";
+import { toastSuccess } from "@components/UI/Toast";
+import { useError } from "@hooks/useError";
 import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 import { create } from "zustand";
 
@@ -23,6 +23,7 @@ export const useWithdrawReward = (
 ) => {
   const { chain } = useNetwork();
   const { setIsLoading } = useWithdrawRewardStore(state => state);
+  const { handleError } = useError();
 
   const queryTokenBalance = useBalance({
     token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
@@ -37,34 +38,16 @@ export const useWithdrawReward = (
     chainId: chain?.id,
     args: tokenType === "erc20" ? [tokenAddress] : [],
     onError(e) {
-      const transactionError = e as TransactionError;
-      if (!transactionError) return;
-
-      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
-        toastDismiss();
-        setIsLoading(false);
-        return;
-      }
-
+      handleError(e, `something went wrong and the funds couldn't be withdrawn`);
       setIsLoading(false);
-      toastError(`something went wrong and the funds couldn't be withdrawn`, transactionError.message);
     },
   });
 
   const txWithdraw = useWaitForTransaction({
     hash: contractWriteWithdrawReward?.data?.hash,
     onError(e) {
-      const transactionError = e as TransactionError;
-      if (!transactionError) return;
-
-      if (transactionError.cause?.code === ErrorCodes.USER_REJECTED_TX) {
-        toastDismiss();
-        setIsLoading(false);
-
-        return;
-      }
+      handleError(e, `something went wrong and the funds couldn't be withdrawn`);
       setIsLoading(false);
-      toastError(`something went wrong and the funds couldn't be withdrawn`, transactionError.message);
     },
     async onSuccess() {
       await queryTokenBalance.refetch();

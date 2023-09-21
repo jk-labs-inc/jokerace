@@ -19,6 +19,7 @@ import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.mak
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
+import { BaseError, TransactionExecutionError } from "viem";
 import { getEthersProvider } from "./ethers";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 
@@ -79,7 +80,8 @@ export async function getContestContractVersion(address: string, chainId: number
     }
 
     return { abi: DeployedContestContract.abi, version };
-  } catch (error) {
+  } catch (error: unknown) {
+    console.log({ error });
     console.error(`Error while fetching the contract version for address ${address} on chainId ${chainId}:`, error);
     return { abi: null, version: "error" };
   }

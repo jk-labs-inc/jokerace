@@ -3,6 +3,7 @@ import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
+import { useError } from "@hooks/useError";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
@@ -29,6 +30,7 @@ export function useUser() {
     setIsLoading: setIsContestLoading,
     setError: setContestError,
   } = useContestStore(state => state);
+  const { handleError } = useError();
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
@@ -37,19 +39,23 @@ export function useUser() {
 
   // Generate config for the contract
   async function getContractConfig() {
-    const { abi } = await getContestContractVersion(address, chainId);
+    try {
+      const { abi } = await getContestContractVersion(address, chainId);
 
-    if (abi === null) {
-      toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
-      setContestError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
-      setIsContestSuccess(false);
-      setIsListProposalsSuccess(false);
-      setIsListProposalsLoading(false);
-      setIsContestLoading(false);
-      return;
+      if (abi === null) {
+        toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
+        setContestError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
+        setIsContestSuccess(false);
+        setIsListProposalsSuccess(false);
+        setIsListProposalsLoading(false);
+        setIsContestLoading(false);
+        return;
+      }
+
+      return { abi };
+    } catch (error) {
+      handleError(error, `This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
     }
-
-    return { abi };
   }
 
   const checkIfCurrentUserQualifyToSubmit = async (
