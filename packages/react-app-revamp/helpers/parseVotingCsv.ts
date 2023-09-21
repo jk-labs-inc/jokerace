@@ -1,27 +1,12 @@
 import Papa from "papaparse";
-
-export type InvalidEntry = {
-  address: string;
-  votes: number;
-  error: "address" | "votes" | "both";
-};
-
-export type ValidationError =
-  | { kind: "missingColumns" }
-  | { kind: "limitExceeded" }
-  | { kind: "duplicates" }
-  | { kind: "allZero" }
-  | { kind: "parseError"; error: Error };
+import { VotingInvalidEntry, VotingValidationError } from "./csvTypes";
 
 export type ParseCsvResult = {
   data: Record<string, number>;
-  invalidEntries: InvalidEntry[];
+  invalidEntries: VotingInvalidEntry[];
   roundedZeroCount?: number;
-  error?: ValidationError;
+  error?: VotingValidationError;
 };
-
-export const MAX_ROWS = 100000; // 100k for now
-export const MAX_VOTES = 1e9; // 1 billion
 
 export const parseCsvVoting = (file: File, userAddress: string | undefined): Promise<ParseCsvResult> => {
   return new Promise((resolve, reject) => {

@@ -53,14 +53,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev Function to receive ETH that will be handled by the governor
-     * (disabled if executor is a third party contract)
-     */
-    receive() external payable virtual {
-        require(_executor() == address(this));
-    }
-
-    /**
      * @dev See {IERC165-supportsInterface}.
      */
     function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC165) returns (bool) {
@@ -85,7 +77,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.10";
+        return "3.11";
     }
 
     /**
@@ -246,7 +238,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
                     proposal.safeMetadata.threshold != 0,
                     "GovernorMetadataValidation: threshold cannot be zero in safeMetadata"
                 );
-                require(proposal.safeMetadata.signers.length != 0);
             } else {
                 revert TooManyMetadatas();
             }

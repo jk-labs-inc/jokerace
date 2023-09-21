@@ -63,8 +63,8 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 <Image
                   src="/socials/twitter.svg"
                   alt="Twitter"
-                  width={24}
-                  height={24}
+                  width={32}
+                  height={32}
                   className="object-fit-cover mr-2"
                 />
                 <span className="text-left">share on Twitter</span>
@@ -80,7 +80,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                   "flex items-center gap-1 px-4 py-2 text-[16px] hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
                 )}
               >
-                <DuplicateIcon className="h-6 w-6 text-gray-400 mr-2" />
+                <DuplicateIcon className="h-8 w-8 text-gray-400 mr-2" />
                 <span className="text-left">copy link</span>
               </a>
             )}

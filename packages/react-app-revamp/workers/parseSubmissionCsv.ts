@@ -1,4 +1,5 @@
-import { InvalidEntry, MAX_ROWS } from "@helpers/parseSubmissionsCsv";
+import { MAX_ROWS } from "@helpers/csvConstants";
+import { SubmissionInvalidEntry } from "@helpers/csvTypes";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { getAddress } from "viem";
 
@@ -18,7 +19,7 @@ const processRowData = (row: any[]): { address: string; error: boolean } => {
 self.onmessage = async (event: MessageEvent) => {
   const { data, userAddress } = event.data;
   const addressData: string[] = [];
-  const invalidEntries: InvalidEntry[] = [];
+  const invalidEntries: SubmissionInvalidEntry[] = [];
   const addresses: Set<string> = new Set();
 
   if (data.length > MAX_ROWS) {

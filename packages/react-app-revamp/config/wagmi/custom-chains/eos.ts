@@ -19,7 +19,7 @@ export const eos: Chain = {
     },
   },
   blockExplorers: {
-    escan: { name: "EOS Mainnet Block Explorer", url: "https://explorer.evm.eosnetwork.com" },
-    default: { name: "EOS Mainnet Block Explorer", url: "https://explorer.evm.eosnetwork.com" },
+    escan: { name: "EOS Mainnet Block Explorer", url: "https://explorer.evm.eosnetwork.com/" },
+    default: { name: "EOS Mainnet Block Explorer", url: "https://explorer.evm.eosnetwork.com/" },
   },
 };

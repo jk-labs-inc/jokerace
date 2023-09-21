@@ -4,6 +4,7 @@ import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { getLayout } from "@layouts/LayoutViewContest";
@@ -11,7 +12,7 @@ import { readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 
 interface PageProps {
   address: string;
@@ -22,9 +23,14 @@ interface PageProps {
 const Page: FC<PageProps> = ({ proposalData, address, chain }) => {
   const router = useRouter();
   const { contestPrompt, contestName } = useContestStore(state => state);
+  const { setPickedProposal } = useCastVotesStore(state => state);
   const { listProposalsData } = useProposalStore(state => state);
   const id = router.query.submission as string;
   const proposal = listProposalsData[id] || proposalData;
+
+  useEffect(() => {
+    setPickedProposal(id);
+  }, [id, setPickedProposal]);
 
   const onModalClose = () => {
     router.push(`/contest/${chain}/${address}`, undefined, { shallow: true, scroll: false });

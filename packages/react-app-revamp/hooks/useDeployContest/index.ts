@@ -1,8 +1,8 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
+import { MAX_ROWS } from "@helpers/csvConstants";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useEthersSigner } from "@helpers/ethers";
-import { MAX_ROWS } from "@helpers/parseSubmissionsCsv";
 import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";

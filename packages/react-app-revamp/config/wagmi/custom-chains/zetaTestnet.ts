@@ -19,7 +19,7 @@ export const zetaTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Zeta Block Explorer", url: "https://explorer.zetachain.com" },
-    default: { name: "Zeta Block Explorer", url: "https://explorer.zetachain.com" },
+    etherscan: { name: "Zeta Block Explorer", url: "https://explorer.zetachain.com/" },
+    default: { name: "Zeta Block Explorer", url: "https://explorer.zetachain.com/" },
   },
 };
