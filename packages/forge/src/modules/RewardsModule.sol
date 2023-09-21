@@ -92,7 +92,7 @@ contract RewardsModule is Context {
      * @dev Version of the rewards module. Default: "1"
      */
     function version() public view virtual returns (string memory) {
-        return "3.11";
+        return "3.12";
     }
 
     /**
