@@ -167,7 +167,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
             "GovernorSorting: contest must be to calculate sorted and tied proposals"
         );
         require(
-            setSortedAndTiedProposalsHasBeenRun == false,
+            !setSortedAndTiedProposalsHasBeenRun,
             "GovernorSorting: setSortedAndTiedProposals() has already been run and its respective values set"
         );
 
