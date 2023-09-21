@@ -103,7 +103,7 @@ const ContestRewards = () => {
                 <div className="flex flex-col gap-5">
                   <div className="flex flex-col gap-3">
                     <p className="text-[16px] text-neutral-11 font-bold">
-                      address for anyone to send tokens to fund the pool:
+                      rewards pool address:
                     </p>
                     <a
                       className="text-positive-11 text-[16px] font-bold underline break-all"
