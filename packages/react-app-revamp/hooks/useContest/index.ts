@@ -90,7 +90,6 @@ export function useContest() {
 
       if (abi === null) {
         const errorMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-        toastError(errorMessage);
         setError(errorMessage);
         setIsSuccess(false);
         setIsListProposalsSuccess(false);
@@ -107,7 +106,6 @@ export function useContest() {
 
       return { contractConfig, version };
     } catch (e) {
-      handleError(e, "Something went wrong while fetching the contract config.");
       setError(errorMessage);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);

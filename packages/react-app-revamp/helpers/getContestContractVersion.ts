@@ -81,7 +81,6 @@ export async function getContestContractVersion(address: string, chainId: number
 
     return { abi: DeployedContestContract.abi, version };
   } catch (error: unknown) {
-    console.log({ error });
     console.error(`Error while fetching the contract version for address ${address} on chainId ${chainId}:`, error);
     return { abi: null, version: "error" };
   }

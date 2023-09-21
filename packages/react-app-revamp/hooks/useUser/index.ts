@@ -24,45 +24,16 @@ export function useUser() {
     setCurrentuserTotalVotesCast,
     currentUserTotalVotesAmount,
   } = useUserStore(state => state);
-  const { setIsListProposalsSuccess, setIsListProposalsLoading } = useProposalStore(state => state);
-  const {
-    setIsSuccess: setIsContestSuccess,
-    setIsLoading: setIsContestLoading,
-    setError: setContestError,
-  } = useContestStore(state => state);
-  const { handleError } = useError();
-  const { chain } = useNetwork();
   const { asPath } = useRouter();
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName)?.[0]?.id;
 
-  // Generate config for the contract
-  async function getContractConfig() {
-    try {
-      const { abi } = await getContestContractVersion(address, chainId);
-
-      if (abi === null) {
-        toastError(`This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
-        setContestError({ message: `This contract doesn't exist on ${chain?.name ?? "this chain"}.` });
-        setIsContestSuccess(false);
-        setIsListProposalsSuccess(false);
-        setIsListProposalsLoading(false);
-        setIsContestLoading(false);
-        return;
-      }
-
-      return { abi };
-    } catch (error) {
-      handleError(error, `This contract doesn't exist on ${chain?.name ?? "this chain"}.`);
-    }
-  }
-
   const checkIfCurrentUserQualifyToSubmit = async (
     submissionMerkleRoot: string,
     contestMaxNumberSubmissionsPerUser: number,
   ) => {
-    const abi = await getContractConfig();
+    const abi = await getContestContractVersion(address, chainId);
 
     if (!userAddress || !abi) return;
 
@@ -141,7 +112,7 @@ export function useUser() {
         .eq("network_name", lowerCaseChainName);
 
       if (data && data.length > 0 && data[0].num_votes > 0) {
-        const abi = await getContractConfig();
+        const abi = await getContestContractVersion(address, chainId);
         if (!abi) return;
 
         const contractConfig = {
@@ -187,7 +158,7 @@ export function useUser() {
    * Update the amount of votes casted in this contest by the current user
    */
   async function updateCurrentUserVotes() {
-    const abi = await getContractConfig();
+    const abi = await getContestContractVersion(address, chainId);
 
     if (!abi) return;
     const accountData = getAccount();
