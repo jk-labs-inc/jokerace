@@ -19,7 +19,7 @@ export const qChainTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Q Testnet Scan", url: "https://explorer.qtestnet.org" },
-    default: { name: "Q Testnet Scan", url: "https://explorer.qtestnet.org" },
+    etherscan: { name: "Q Testnet Scan", url: "https://explorer.qtestnet.org/" },
+    default: { name: "Q Testnet Scan", url: "https://explorer.qtestnet.org/" },
   },
 };

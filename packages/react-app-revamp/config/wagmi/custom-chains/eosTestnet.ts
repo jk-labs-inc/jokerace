@@ -19,7 +19,7 @@ export const eosTestnet: Chain = {
     },
   },
   blockExplorers: {
-    escan: { name: "EOS Testnet Block Explorer", url: "https://explorer.testnet.evm.eosnetwork.com" },
-    default: { name: "EOS Testnet Block Explorer", url: "https://explorer.testnet.evm.eosnetwork.com" },
+    escan: { name: "EOS Testnet Block Explorer", url: "https://explorer.testnet.evm.eosnetwork.com/" },
+    default: { name: "EOS Testnet Block Explorer", url: "https://explorer.testnet.evm.eosnetwork.com/" },
   },
 };

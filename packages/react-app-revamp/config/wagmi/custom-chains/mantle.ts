@@ -19,7 +19,7 @@ export const mantle: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Mantle Mainnet Scan", url: "https://explorer.mantle.xyz" },
-    default: { name: "Mantle Mainnet Scan", url: "https://explorer.mantle.xyz" },
+    etherscan: { name: "Mantle Mainnet Scan", url: "https://explorer.mantle.xyz/" },
+    default: { name: "Mantle Mainnet Scan", url: "https://explorer.mantle.xyz/" },
   },
 };

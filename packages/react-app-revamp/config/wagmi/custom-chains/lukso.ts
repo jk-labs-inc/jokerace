@@ -19,7 +19,7 @@ export const lukso: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Lukso Mainnet Block Explorer", url: "https://explorer.execution.mainnet.lukso.network" },
-    default: { name: "Lukso Mainnet Block Explorer", url: "https://explorer.execution.mainnet.lukso.network" },
+    etherscan: { name: "Lukso Mainnet Block Explorer", url: "https://explorer.execution.mainnet.lukso.network/" },
+    default: { name: "Lukso Mainnet Block Explorer", url: "https://explorer.execution.mainnet.lukso.network/" },
   },
 };
