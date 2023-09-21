@@ -57,26 +57,24 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @dev Emitted when a vote is cast.
-     *
-     * Note: `support` values should be seen as buckets. There interpretation depends on the voting module used.
      */
     event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes);
 
     /**
      * @notice module:core
-     * @dev Name of the governor instance (used in building the ERC712 domain separator).
+     * @dev Name of the contest.
      */
     function name() public view virtual returns (string memory);
 
     /**
      * @notice module:core
-     * @dev Prompt of the governor instance (used in building the ERC712 domain separator).
+     * @dev Prompt of the contest.
      */
     function prompt() public view virtual returns (string memory);
 
     /**
      * @notice module:core
-     * @dev Version of the governor instance (used in building the ERC712 domain separator). Default: "1"
+     * @dev Version of the contest contract.
      */
     function version() public view virtual returns (string memory);
 
