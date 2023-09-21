@@ -47,7 +47,7 @@ export function useSubmitProposal() {
     setTransactionData(null);
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
-      const { abi } = await getContestContractVersion(address, chainId);
+      const { abi, version } = await getContestContractVersion(address, chainId);
 
       try {
         const proofs = await getProofs(userAddress ?? "", "submission", "10");
@@ -106,7 +106,7 @@ export function useSubmitProposal() {
         toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         removeSubmissionFromLocalStorage("submissions", address);
-        fetchProposalsIdsList(abi);
+        fetchProposalsIdsList(abi, version);
         resolve({ tx: txSendProposal, proposalId });
 
         addUserActionForAnalytics({

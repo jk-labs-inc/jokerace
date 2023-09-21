@@ -161,7 +161,7 @@ export function useProposal() {
    * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
    * @param abi - ABI to use
    */
-  async function fetchProposalsIdsList(abi: any) {
+  async function fetchProposalsIdsList(abi: any, version: string) {
     setIsListProposalsLoading(true);
 
     try {
@@ -179,7 +179,7 @@ export function useProposal() {
         )?.id,
       };
 
-      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
+      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);
 
       let proposalsIds: Result;
       if (!useLegacyGetAllProposalsIdFn) {
@@ -243,7 +243,7 @@ export function useProposal() {
     }
   }
 
-  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
+  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean, version: string) {
     if (isLegacy) {
       return (await readContract({
         ...contractConfig,
