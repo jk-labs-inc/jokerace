@@ -19,7 +19,7 @@ export const polygonZkTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Polygon zkEvm Testnet Scan", url: "https://explorer.public.zkevm-test.net" },
-    default: { name: "Polygon zkEvm Testnet Scan", url: "https://explorer.public.zkevm-test.net" },
+    etherscan: { name: "Polygon zkEvm Testnet Scan", url: "https://explorer.public.zkevm-test.net/" },
+    default: { name: "Polygon zkEvm Testnet Scan", url: "https://explorer.public.zkevm-test.net/" },
   },
 };

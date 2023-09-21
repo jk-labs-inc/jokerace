@@ -18,7 +18,7 @@ export const roninTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Ronin Testnet Scan", url: "https://saigon-explorer.roninchain.com" },
-    default: { name: "Ronin Testnet Scan", url: "https://saigon-explorer.roninchain.com" },
+    etherscan: { name: "Ronin Testnet Scan", url: "https://saigon-explorer.roninchain.com/" },
+    default: { name: "Ronin Testnet Scan", url: "https://saigon-explorer.roninchain.com/" },
   },
 };

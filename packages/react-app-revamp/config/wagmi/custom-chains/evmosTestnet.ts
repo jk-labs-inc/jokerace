@@ -19,7 +19,7 @@ export const evmosTestnet: Chain = {
     },
   },
   blockExplorers: {
-    mintscan: { name: "Mintscan", url: "https://testnet.mintscan.io/evmos-testnet" },
-    default: { name: "Mintscan", url: "https://testnet.mintscan.io/evmos-testnet" },
+    mintscan: { name: "Mintscan", url: "https://testnet.mintscan.io/evmos-testnet/" },
+    default: { name: "Mintscan", url: "https://testnet.mintscan.io/evmos-testnet/" },
   },
 };
