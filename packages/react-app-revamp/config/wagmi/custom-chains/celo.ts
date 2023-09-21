@@ -19,7 +19,7 @@ export const celo: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Celo Block Explorer", url: "https://celoscan.io" },
-    default: { name: "Celo Block Explorer", url: "https://celoscan.io" },
+    etherscan: { name: "Celo Block Explorer", url: "https://celoscan.io/" },
+    default: { name: "Celo Block Explorer", url: "https://celoscan.io/" },
   },
 };

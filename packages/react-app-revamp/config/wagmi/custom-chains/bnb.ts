@@ -18,7 +18,7 @@ export const bnb: Chain = {
     },
   },
   blockExplorers: {
-    escan: { name: "BNB Explorer", url: "https://bscscan.com" },
-    default: { name: "BNB Explorer", url: "https://bscscan.com" },
+    escan: { name: "BNB Explorer", url: "https://bscscan.com/" },
+    default: { name: "BNB Explorer", url: "https://bscscan.com/" },
   },
 };

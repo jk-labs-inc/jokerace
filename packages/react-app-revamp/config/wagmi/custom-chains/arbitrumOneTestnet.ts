@@ -18,7 +18,7 @@ export const arbitrumOneTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Arbitrum Testnet Etherscan", url: "https://goerli-rollup-explorer.arbitrum.io" },
-    default: { name: "Arbitrum Testnet Etherscan", url: "https://goerli-rollup-explorer.arbitrum.io" },
+    etherscan: { name: "Arbitrum Testnet Etherscan", url: "https://goerli-rollup-explorer.arbitrum.io/" },
+    default: { name: "Arbitrum Testnet Etherscan", url: "https://goerli-rollup-explorer.arbitrum.io/" },
   },
 };

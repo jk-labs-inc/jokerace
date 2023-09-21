@@ -19,7 +19,7 @@ export const scrollSepoliaTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Scroll Sepolia Scan", url: "https://sepolia-blockscout.scroll.io" },
-    default: { name: "Scroll Sepolia Scan", url: "https://sepolia-blockscout.scroll.io" },
+    etherscan: { name: "Scroll Sepolia Scan", url: "https://sepolia-blockscout.scroll.io/" },
+    default: { name: "Scroll Sepolia Scan", url: "https://sepolia-blockscout.scroll.io/" },
   },
 };

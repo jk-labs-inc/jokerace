@@ -18,7 +18,7 @@ export const baseTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Base Testnet Scan", url: "https://goerli.basescan.org" },
-    default: { name: "Base Testnet Scan", url: "https://goerli.basescan.org" },
+    etherscan: { name: "Base Testnet Scan", url: "https://goerli.basescan.org/" },
+    default: { name: "Base Testnet Scan", url: "https://goerli.basescan.org/" },
   },
 };
