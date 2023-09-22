@@ -24,9 +24,9 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
   };
 
   return (
-    <div className="flex gap-4 items-center pl-4 py-2 ">
+    <div className="flex gap-4 items-center pl-6">
       <Image src="/toast/sadboi.png" width={40} height={40} alt="error" />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 pl-1">
         <div className="flex flex-col">
           <p className="text-[14px] font-medium">{messageToShow}</p>
           {messageToCopy && (
