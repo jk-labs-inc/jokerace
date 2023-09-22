@@ -43,3 +43,10 @@ export const toastLoading = (message: string, showSignMessage?: boolean) => {
     autoClose: false,
   });
 };
+
+export const toastDismiss = () => {
+  if (toastId !== null) {
+    toast.dismiss(toastId);
+    toastId = null;
+  }
+};
