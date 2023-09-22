@@ -296,7 +296,7 @@ export function useProposal() {
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
         toastError(errorMsg);
-        setIsPageProposalsError({ message: errorMsg });
+        setIsPageProposalsError(errorMsg);
         return;
       }
 
@@ -342,15 +342,8 @@ export function useProposal() {
 
       setProposalData({ id: proposalId, data: proposalData });
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      toastError("Something went wrong while getting the proposal.", customError.message);
-      setIsPageProposalsError({
-        code: customError.code,
-        message: customError.message,
-      });
+      handleError(e, "Something went wrong while getting the proposal.");
+      setIsPageProposalsError(error);
     }
   }
 
