@@ -29,9 +29,8 @@ const safeMetadata = {
 export function useSubmitProposal() {
   const { asPath, ...router } = useRouter();
   const { address: userAddress } = useAccount();
-  const { fetchProposalsIdsList } = useProposal();
   const { error: errorMessage, handleError } = useError();
-
+  const { fetchSingleProposal } = useProposal();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const [chainName, address] = asPath.split("/").slice(2, 4);
@@ -108,7 +107,7 @@ export function useSubmitProposal() {
         toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
         removeSubmissionFromLocalStorage("submissions", address);
-        fetchProposalsIdsList(abi);
+        fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
 
         addUserActionForAnalytics({

@@ -148,7 +148,7 @@ export function useProposal() {
    * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
    * @param abi - ABI to use
    */
-  async function fetchProposalsIdsList(abi: any) {
+  async function fetchProposalsIdsList(abi: any, version: string) {
     setIsListProposalsLoading(true);
 
     try {
@@ -166,7 +166,7 @@ export function useProposal() {
         )?.id,
       };
 
-      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
+      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);
 
       let proposalsIds: Result;
       if (!useLegacyGetAllProposalsIdFn) {
@@ -226,7 +226,7 @@ export function useProposal() {
     }
   }
 
-  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
+  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean, version: string) {
     if (isLegacy) {
       return (await readContract({
         ...contractConfig,
@@ -285,9 +285,79 @@ export function useProposal() {
     }
   };
 
+  /**
+   * Fetch a single proposal based on its ID.
+   * @param proposalId - the ID of the proposal to fetch
+   */
+  async function fetchSingleProposal(proposalId: any) {
+    try {
+      const { abi } = await getContestContractVersion(address, chainId);
+
+      if (abi === null) {
+        const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
+        toastError(errorMsg);
+        setIsPageProposalsError({ message: errorMsg });
+        return;
+      }
+
+      const contractConfig: any = {
+        address: address as `0x${string}`,
+        abi: abi,
+        chainId: chains.find(
+          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
+        )?.id,
+      };
+
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "getProposal",
+          args: [proposalId],
+        },
+        {
+          ...contractConfig,
+          functionName: "proposalVotes",
+          args: [proposalId],
+        },
+      ];
+
+      const results: any = await readContracts({ contracts });
+
+      const data = results[0].result;
+
+      const isContentImage = isUrlToImage(data.description) ? true : false;
+
+      const forVotesBigInt = results[1].result[0] as bigint;
+      const againstVotesBigInt = results[1].result[1] as bigint;
+      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
+      const votes = Number(utils.formatEther(votesBigNumber));
+
+      const proposalData = {
+        authorEthereumAddress: data.author,
+        content: data.description,
+        isContentImage,
+        exists: data.exists,
+        votes,
+      };
+
+      setProposalData({ id: proposalId, data: proposalData });
+    } catch (e) {
+      const customError = e as CustomError;
+
+      if (!customError) return;
+
+      toastError("Something went wrong while getting the proposal.", customError.message);
+      setIsPageProposalsError({
+        code: customError.code,
+        message: customError.message,
+      });
+    }
+  }
+
   return {
     fetchProposal,
     fetchProposalsPage,
+    fetchSingleProposal,
     fetchProposalsIdsList,
   };
 }

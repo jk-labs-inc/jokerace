@@ -162,13 +162,17 @@ export function useContest() {
     setIsLoading(false);
   }
 
-  async function fetchV3ContestInfo(contractConfig: ContractConfig, contestRewardModuleAddress: string | undefined) {
+  async function fetchV3ContestInfo(
+    contractConfig: ContractConfig,
+    contestRewardModuleAddress: string | undefined,
+    version: string,
+  ) {
     try {
       setIsListProposalsLoading(false);
 
       await Promise.all([
         fetchContestContractData(contractConfig),
-        fetchProposalsIdsList(contractConfig.abi),
+        fetchProposalsIdsList(contractConfig.abi, version),
         processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
         fetchTotalVotesCast(),
@@ -183,7 +187,7 @@ export function useContest() {
     }
   }
 
-  async function fetchV1ContestInfo(contractConfig: ContractConfig) {
+  async function fetchV1ContestInfo(contractConfig: ContractConfig, version: string) {
     try {
       const contracts = getV1Contracts(contractConfig);
       const results = await readContracts({ contracts });
@@ -191,7 +195,7 @@ export function useContest() {
       setIsV3(false);
 
       // List of proposals for this contest
-      await fetchProposalsIdsList(contractConfig.abi);
+      await fetchProposalsIdsList(contractConfig.abi, version);
 
       const closingVoteDate = new Date(Number(results[6].result) * 1000 + 1000);
       const submissionsOpenDate = new Date(Number(results[5].result) * 1000 + 1000);
@@ -274,9 +278,9 @@ export function useContest() {
     }
 
     if (parseFloat(version) >= 3) {
-      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress);
+      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
     } else {
-      await fetchV1ContestInfo(contractConfig);
+      await fetchV1ContestInfo(contractConfig, version);
     }
   }
 

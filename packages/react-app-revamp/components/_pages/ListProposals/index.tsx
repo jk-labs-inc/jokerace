@@ -11,6 +11,16 @@ import { useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
 
+const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlightColor: string }) => (
+  <SkeletonTheme baseColor="#000000" highlightColor={highlightColor} duration={1}>
+    <Skeleton
+      borderRadius={10}
+      count={count}
+      className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 mt-3"
+    />
+  </SkeletonTheme>
+);
+
 export const ListProposals = () => {
   const { address } = useAccount();
   const { fetchProposalsPage } = useProposal();
@@ -60,13 +70,10 @@ export const ListProposals = () => {
 
   if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
     return (
-      <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
-        <Skeleton
-          count={listProposalsIds.length > PROPOSALS_PER_PAGE ? PROPOSALS_PER_PAGE : listProposalsIds.length}
-          borderRadius={10}
-          className="flex flex-col h-96 md:h-56 animate-appear border border-neutral-11  mb-3"
-        />
-      </SkeletonTheme>
+      <ProposalSkeleton
+        count={listProposalsIds.length > PROPOSALS_PER_PAGE ? PROPOSALS_PER_PAGE : listProposalsIds.length}
+        highlightColor="#FFE25B"
+      />
     );
   }
 
@@ -81,14 +88,7 @@ export const ListProposals = () => {
             .sort((a, b) => listProposalsData[b].votes - listProposalsData[a].votes)
             .map(id => {
               if (deletingProposalIds.includes(id) && isDeleteInProcess) {
-                return (
-                  <SkeletonTheme baseColor="#000000" highlightColor="#FF78A9" duration={1} key={id}>
-                    <Skeleton
-                      borderRadius={10}
-                      className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 mt-3"
-                    />
-                  </SkeletonTheme>
-                );
+                return <ProposalSkeleton key={id} highlightColor="#FF78A9" />;
               }
               const votes = listProposalsData[id].votes;
 
@@ -146,13 +146,7 @@ export const ListProposals = () => {
       )}
 
       {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
-        <SkeletonTheme baseColor="#000000" highlightColor="#FFE25B" duration={1}>
-          <Skeleton
-            borderRadius={10}
-            count={skeletonRemainingLoaderCount}
-            className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 mt-3"
-          />
-        </SkeletonTheme>
+        <ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />
       )}
 
       {Object.keys(listProposalsData)?.length < listProposalsIds.length && !isPageProposalsLoading && (
