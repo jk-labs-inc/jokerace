@@ -209,4 +209,5 @@ export const chainsImages: ChainImages = {
   eos: "/eos.svg",
   eostestnet: "/eos.svg",
   fuse: "/fuse.svg",
+  kroma: "/kroma.svg",
 };
