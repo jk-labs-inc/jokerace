@@ -1,4 +1,4 @@
-import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { MAX_ROWS } from "@helpers/csvConstants";
 import { isSupabaseConfigured } from "@helpers/database";
@@ -7,6 +7,7 @@ import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
+import { useError } from "@hooks/useError";
 import { waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
@@ -14,7 +15,6 @@ import { formatUnits } from "ethers/lib/utils";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
-import { CustomError, ErrorCodes } from "types/error";
 import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
@@ -42,6 +42,7 @@ export function useDeployContest() {
     setIsLoading,
     setIsSuccess,
   } = useDeployContestStore(state => state);
+  const { error, handleError } = useError();
   const { chain } = useNetwork();
   const { address } = useAccount();
   const signer = useEthersSigner();
@@ -58,7 +59,7 @@ export function useDeployContest() {
 
     stateContestDeployment.setIsLoading(true);
     stateContestDeployment.setIsSuccess(false);
-    stateContestDeployment.setError(null);
+    stateContestDeployment.setError("");
     setIsLoading(true);
 
     toastLoading("contest is deploying...");
@@ -135,21 +136,10 @@ export function useDeployContest() {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setIsSuccess(true);
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
-        toastDismiss();
-        setIsLoading(false);
-        stateContestDeployment.setIsLoading(false);
-        return;
-      }
-
+      handleError(e, "Something went wrong and the contest couldn't be deployed.");
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(customError);
+      stateContestDeployment.setError(error);
       setIsLoading(false);
-      toastError(`contest deployment failed`, customError.message);
     }
   }
 
@@ -181,23 +171,10 @@ export function useDeployContest() {
     try {
       await Promise.all(tasks);
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) {
-        throw e;
-      }
-
-      if (customError.code === ErrorCodes.USER_REJECTED_TX) {
-        toastDismiss();
-        setIsLoading(false);
-        stateContestDeployment.setIsLoading(false);
-        throw e;
-      }
-
+      handleError(e, "Something went wrong while saving files to bucket.");
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(customError);
+      stateContestDeployment.setError(error);
       setIsLoading(false);
-      toastError(`contest deployment failed`, "error while saving files to bucket");
 
       throw e;
     }
@@ -254,15 +231,11 @@ export function useDeployContest() {
       }
 
       await Promise.all(tasks);
-    } catch (error) {
-      const customError = error as CustomError;
-
-      if (!customError) return;
-
+    } catch (e) {
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(customError);
+      stateContestDeployment.setError(error);
       setIsLoading(false);
-      toastError(`contest deployment failed`, customError.message);
+      toastError(`contest deployment failed to index in db`, error);
     }
   }
 

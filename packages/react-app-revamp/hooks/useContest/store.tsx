@@ -1,6 +1,5 @@
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { createContext, useContext, useRef } from "react";
-import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 type Reward = {
@@ -23,7 +22,7 @@ export interface ContestState {
   totalVotesCast: number;
   totalVotes: number;
   isLoading: boolean;
-  error: CustomError | null;
+  error: string;
   isSuccess: boolean;
   isV3: boolean;
   contestMaxProposalCount: number;
@@ -53,7 +52,7 @@ export interface ContestState {
   setVoters: (voters: Recipient[]) => void;
   setSubmitters: (submitters: { address: string }[]) => void;
   setIsLoading: (value: boolean) => void;
-  setError: (value: CustomError | null) => void;
+  setError: (value: string) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
   setIsReadOnly: (value: boolean) => void;
@@ -75,7 +74,7 @@ export const createContestStore = () =>
     rewards: null,
     totalVotes: 0,
     isLoading: true,
-    error: null,
+    error: "",
     isSuccess: false,
     contestMaxProposalCount: 0,
     downvotingAllowed: false,

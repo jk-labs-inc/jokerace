@@ -1,5 +1,4 @@
 import { createContext, useContext, useRef } from "react";
-import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 interface UserState {
@@ -12,7 +11,7 @@ interface UserState {
   currentUserTotalVotesCast: number;
   isLoading: boolean;
   isSuccess: boolean;
-  error: CustomError | null;
+  error: string;
 
   setCurrentUserQualifiedToSubmit: (value: boolean) => void;
   setCurrentUserQualifiedToVote: (value: boolean) => void;
@@ -28,7 +27,7 @@ interface UserState {
   increaseCurrentUserProposalCount: () => void;
   setIsLoading: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
-  setError: (value: CustomError | null) => void;
+  setError: (value: string) => void;
 }
 
 export const createUserStore = () =>
@@ -42,7 +41,7 @@ export const createUserStore = () =>
     currentUserProposalCount: 0,
     isLoading: false,
     isSuccess: false,
-    error: null,
+    error: "",
 
     setCurrentUserQualifiedToSubmit: value => set({ currentUserQualifiedToSubmit: value }),
     setCurrentUserQualifiedToVote: value => set({ currentUserQualifiedToVote: value }),

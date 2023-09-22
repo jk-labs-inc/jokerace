@@ -4,7 +4,7 @@ import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { create } from "zustand";
 
-type CustomError = {
+type ContestDeployError = {
   step: number;
   message: string;
 };
@@ -46,7 +46,7 @@ export interface DeployContestState {
   downvote: boolean;
   isLoading: boolean;
   isSuccess: boolean;
-  errors: CustomError[];
+  errors: ContestDeployError[];
   step: number;
   furthestStep: number;
   submissionTab: number;
@@ -72,7 +72,7 @@ export interface DeployContestState {
   setDownvote: (downvote: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
-  setError: (step: number, error: CustomError) => void;
+  setError: (step: number, error: ContestDeployError) => void;
   setStep: (step: number) => void;
   setFurthestStep: (furthestStep: number) => void;
   setSubmissionTab: (tab: number) => void;
@@ -147,7 +147,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setDownvote: (downvote: boolean) => set({ downvote }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
-    setError: (step: number, error: CustomError) => {
+    setError: (step: number, error: ContestDeployError) => {
       let errorsCopy = [...get().errors];
 
       errorsCopy = errorsCopy.filter(error => error.step !== step);

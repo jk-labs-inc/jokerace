@@ -3,7 +3,7 @@ import { useRewardsStore } from "@hooks/useRewards/store";
 import { fetchBalance, FetchBalanceResult } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { CustomError } from "types/error";
+import { handleError } from "utils/error";
 
 export const useTokenBalance = (inputToken: string) => {
   const rewardsStore = useRewardsStore(state => state);
@@ -31,9 +31,9 @@ export const useTokenBalance = (inputToken: string) => {
           });
           setQueryTokenBalance(balance);
           setError("");
-        } catch (error) {
-          const customError = error as CustomError;
-          setError(customError.message);
+        } catch (e) {
+          const { message: errorMessage } = handleError(e);
+          setError(errorMessage);
           setQueryTokenBalance(undefined);
         }
       } else {

@@ -1,23 +1,22 @@
 import { createContext, useContext, useRef } from "react";
-import { CustomError } from "types/error";
 import { createStore, useStore } from "zustand";
 
 export interface ContractFactoryState {
   isLoading: boolean;
   isSuccess: boolean;
-  error: CustomError | null;
+  error: string;
   data: any;
   setIsSuccess: (value: boolean) => void;
   setIsLoading: (value: boolean) => void;
   setData: (value: any) => void;
-  setError: (value: CustomError | null) => void;
+  setError: (value: string) => void;
 }
 
 export const createContractFactoryStore = () =>
   createStore<ContractFactoryState>(set => ({
     isLoading: false,
     isSuccess: false,
-    error: null,
+    error: "",
     data: null,
     setIsSuccess: value => set({ isSuccess: value }),
     setIsLoading: value => set({ isLoading: value }),

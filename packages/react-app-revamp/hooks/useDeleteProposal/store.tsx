@@ -1,10 +1,9 @@
-import React, { createContext, useRef, useContext } from "react";
-import { CustomError } from "types/error";
+import React, { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
 interface DeleteProposalState {
   isLoading: boolean;
-  error: CustomError | null;
+  error: string;
   isSuccess: boolean;
   transactionData: any;
   pickedProposal: any;
@@ -12,14 +11,14 @@ interface DeleteProposalState {
   setIsModalOpen: (isOpen: boolean) => void;
   setIsLoading: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
-  setError: (value: CustomError | null) => void;
+  setError: (value: string) => void;
   setTransactionData: (data: any) => void;
 }
 
 export const createDeleteProposalStore = () =>
   createStore<DeleteProposalState>(set => ({
     isLoading: false,
-    error: null,
+    error: "",
     isSuccess: false,
     transactionData: null,
     pickedProposal: null,

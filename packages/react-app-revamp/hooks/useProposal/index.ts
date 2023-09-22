@@ -4,11 +4,11 @@ import arrayToChunks from "@helpers/arrayToChunks";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
+import { useError } from "@hooks/useError";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
-import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
 
@@ -33,13 +33,8 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
+  const { error, handleError } = useError();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
-
-  function onContractError(err: any) {
-    let toastMessage = err?.message ?? err;
-    if (err.code === "CALL_EXCEPTION") toastMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-    toastError(toastMessage);
-  }
 
   /**
    * Fetch the data of each proposals in page X
@@ -50,7 +45,7 @@ export function useProposal() {
   async function fetchProposalsPage(pageIndex: number, slice: Array<any>, totalPagesPaginationProposals: number) {
     setCurrentPagePaginationProposals(pageIndex);
     setIsPageProposalsLoading(true);
-    setIsPageProposalsError(null);
+    setIsPageProposalsError("");
 
     try {
       const { abi } = await getContestContractVersion(address, chainId);
@@ -58,7 +53,7 @@ export function useProposal() {
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
         toastError(errorMsg);
-        setIsPageProposalsError({ message: errorMsg });
+        setIsPageProposalsError(errorMsg);
         setIsPageProposalsLoading(false);
         return;
       }
@@ -97,20 +92,12 @@ export function useProposal() {
       }
 
       setIsPageProposalsLoading(false);
-      setIsPageProposalsError(null);
+      setIsPageProposalsError("");
       setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals);
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      toastError("Something went wrong while getting proposals.", customError.message);
-      setIsPageProposalsError({
-        code: customError.code,
-        message: customError.message,
-      });
+      handleError(e, "Something went wrong while getting proposals.");
+      setIsPageProposalsError(error);
       setIsPageProposalsLoading(false);
-      setIsPageProposalsError(null);
     }
   }
 
@@ -230,12 +217,8 @@ export function useProposal() {
 
       if (proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      onContractError(e);
-      setError(customError);
+      handleError(e, "Something went wrong while getting proposal ids.");
+      setError(error);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -313,7 +296,7 @@ export function useProposal() {
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
         toastError(errorMsg);
-        setIsPageProposalsError({ message: errorMsg });
+        setIsPageProposalsError(errorMsg);
         return;
       }
 
@@ -359,15 +342,8 @@ export function useProposal() {
 
       setProposalData({ id: proposalId, data: proposalData });
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      toastError("Something went wrong while getting the proposal.", customError.message);
-      setIsPageProposalsError({
-        code: customError.code,
-        message: customError.message,
-      });
+      handleError(e, "Something went wrong while getting the proposal.");
+      setIsPageProposalsError(error);
     }
   }
 
