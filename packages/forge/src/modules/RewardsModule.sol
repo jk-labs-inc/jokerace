@@ -79,10 +79,6 @@ contract RewardsModule is Context {
      * @dev The Ether received will be logged with {PaymentReceived} events. Note that these events are not fully
      * reliable: it's possible for a contract to receive Ether without triggering this function. This only affects the
      * reliability of the events, and not the actual splitting of Ether.
-     *
-     * To learn more about this see the Solidity documentation for
-     * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback
-     * functions].
      */
     receive() external payable virtual {
         emit PaymentReceived(msg.sender, msg.value);
@@ -92,7 +88,7 @@ contract RewardsModule is Context {
      * @dev Version of the rewards module. Default: "1"
      */
     function version() public view virtual returns (string memory) {
-        return "3.12";
+        return "3.13";
     }
 
     /**
@@ -257,9 +253,7 @@ contract RewardsModule is Context {
         );
 
         // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then
-        // "_erc20Released[token][account] += payment"
-        // cannot overflow.
+        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
         _erc20TotalReleased[token] += payment;
         unchecked {
             _erc20Released[token][ranking] += payment;

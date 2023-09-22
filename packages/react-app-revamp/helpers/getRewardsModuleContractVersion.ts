@@ -6,6 +6,7 @@ import MerkleVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.
 import CantVoteOnDeletedPropsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.10.cantVoteOnDeletedProps.sol/RewardsModule.json";
 import AuditMinorFixesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.11.auditMinorFixes.sol/RewardsModule.json";
 import AuditInfoAndOptimizationsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.12.auditInfoAndOptimizations.sol/RewardsModule.json";
+import CleanUpContractDocsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.13.cleanUpContractDocs.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
 import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.3.setCompilerTo8Dot19.sol/RewardsModule.json";
 import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
@@ -58,6 +59,8 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
       return AuditMinorFixesRewards.abi;
     } else if (version === "3.12") {
       return AuditInfoAndOptimizationsRewards.abi;
+    } else if (version === "3.13") {
+      return CleanUpContractDocsRewards.abi;
     } else {
       return DeployedRewardsContract.abi;
     }

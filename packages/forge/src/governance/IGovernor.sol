@@ -57,52 +57,30 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @dev Emitted when a vote is cast.
-     *
-     * Note: `support` values should be seen as buckets. There interpretation depends on the voting module used.
      */
     event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes);
 
     /**
      * @notice module:core
-     * @dev Name of the governor instance (used in building the ERC712 domain separator).
+     * @dev Name of the contest.
      */
     function name() public view virtual returns (string memory);
 
     /**
      * @notice module:core
-     * @dev Prompt of the governor instance (used in building the ERC712 domain separator).
+     * @dev Prompt of the contest.
      */
     function prompt() public view virtual returns (string memory);
 
     /**
      * @notice module:core
-     * @dev Version of the governor instance (used in building the ERC712 domain separator). Default: "1"
+     * @dev Version of the contest contract.
      */
     function version() public view virtual returns (string memory);
 
     /**
-     * @notice module:voting
-     * @dev A description of the possible `support` values for {castVote} and the way these votes are counted,
-     * meant to be consumed by UIs to show correct vote options and interpret the results. The string is
-     * a URL-encoded sequence of key-value pairs that each describe one aspect, for example
-     * `support=bravo&quorum=for,abstain`.
-     *
-     * There are 2 standard keys: `support` and `quorum`.
-     *
-     * - `support=bravo` refers to the vote options 0 = Against, 1 = For, 2 = Abstain, as in `GovernorBravo`.
-     * - `quorum=bravo` means that only For votes are counted towards quorum.
-     * - `quorum=for,abstain` means that both For and Abstain votes are counted towards quorum.
-     *
-     * NOTE: The string can be decoded by the standard
-     * https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams[`URLSearchParams`]
-     * JavaScript class.
-     */
-    // solhint-disable-next-line func-name-mixedcase
-    function COUNTING_MODE() public pure virtual returns (string memory);
-
-    /**
      * @notice module:core
-     * @dev Hashing function used to (re)build the proposal id from the proposal details..
+     * @dev Hashing function used to build the proposal id from the proposal details.
      */
     function hashProposal(ProposalCore memory proposal) public pure virtual returns (uint256);
 

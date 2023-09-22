@@ -13,12 +13,6 @@ import "./GovernorMerkleVotes.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
- *
- * This contract is abstract and requires several function to be implemented in various modules:
- *
- * - A counting module must implement {quorum}, {_quorumReached}, {_voteSucceeded} and {_countVote}
- * - A voting module must implement {getVotes}
- * - Additionaly, the {votingPeriod} must also be implemented
  */
 abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
@@ -76,21 +70,11 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.12";
+        return "3.13";
     }
 
     /**
      * @dev See {IGovernor-hashProposal}.
-     *
-     * The proposal id is produced by hashing the RLC encoded `targets` array, the `values` array, the `calldatas` array
-     * and the descriptionHash (bytes32 which itself is the keccak256 hash of the description string). This proposal id
-     * can be produced from the proposal data which is part of the {ProposalCreated} event. It can even be computed in
-     * advance, before the proposal is submitted.
-     *
-     * Note that the chainId and the governor address are not part of the proposal id computation. Consequently, the
-     * same proposal (with same operation and same description) will have the same id if submitted on multiple governors
-     * accross multiple networks. This also means that in order to execute the same operation twice (on the same
-     * governor) the proposer will have to change the description in order to avoid proposal id conflicts.
      */
     function hashProposal(ProposalCore memory proposal) public pure virtual override returns (uint256) {
         return uint256(keccak256(abi.encode(proposal)));
