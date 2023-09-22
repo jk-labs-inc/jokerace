@@ -18,6 +18,7 @@ import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { goerli } from "./custom-chains/goerli";
+import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
 import { litTestnet } from "./custom-chains/litTestnet";
@@ -79,6 +80,7 @@ const totalChains: Chain[] = [
   ronin,
   degenChain,
   fuse,
+  kroma,
   polygonTestnet,
   sepolia,
   goerli,
