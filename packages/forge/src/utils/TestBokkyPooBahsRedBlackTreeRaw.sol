@@ -22,8 +22,6 @@ contract TestBokkyPooBahsRedBlackTreeRaw {
 
     event Log(string where, uint key, uint value);
 
-    constructor() public {
-    }
     function root() public view returns (uint _key) {
         _key = _tree.root;
     }
@@ -48,10 +46,8 @@ contract TestBokkyPooBahsRedBlackTreeRaw {
 
     function insert(uint _key) public {
         _tree.insert(_key);
-        // emit Log("insert", _key, 0);
     }
     function remove(uint _key) public {
         _tree.remove(_key);
-        // emit Log("remove", _key, 0);
     }
 }
