@@ -15,7 +15,7 @@ import "./BokkyPooBahsRedBlackTreeLibrary.sol";
 //
 // Enjoy. (c) BokkyPooBah / Bok Consulting Pty Ltd 2020. The MIT Licence.
 // ----------------------------------------------------------------------------
-contract TestBokkyPooBahsRedBlackTreeRaw {
+contract BokkyPooBahsRedBlackTreeRaw {
     using BokkyPooBahsRedBlackTreeLibrary for BokkyPooBahsRedBlackTreeLibrary.Tree;
 
     BokkyPooBahsRedBlackTreeLibrary.Tree _tree;

@@ -3,11 +3,12 @@
 pragma solidity ^0.8.0;
 
 import "../Governor.sol";
+import "../../utils/BokkyPooBahsRedBlackTreeRaw.sol";
 
 /**
  * @dev Extension of {Governor} for simple, 3 options, vote counting.
  */
-abstract contract GovernorCountingSimple is Governor {
+abstract contract GovernorCountingSimple is Governor, BokkyPooBahsRedBlackTreeRaw {
     /**
      * @dev Supported vote types. Matches Governor Bravo ordering.
      */
@@ -30,6 +31,8 @@ abstract contract GovernorCountingSimple is Governor {
     uint256 public totalVotesCast; // Total votes cast in contest so far
     mapping(address => uint256) public addressTotalCastVoteCounts;
     mapping(uint256 => ProposalVote) public proposalVotesStructs;
+
+    mapping(uint256 => uint256) public voteAmountCount; // forVotes amount => count, used with the RB tree to determine ties
 
     /**
      * @dev Accessor to the internal vote counts for a given proposal.
@@ -111,5 +114,39 @@ abstract contract GovernorCountingSimple is Governor {
         }
         addressTotalCastVoteCounts[account] += numVotes;
         totalVotesCast += numVotes;
+
+        // the RB tree cannot be used if downvoting is enabled
+        // also, keys in the RB tree cannot be 0 - this is checked for in _castVote in Governor.sol
+        // keys in the RB tree are forVotes counts
+        if (downvotingAllowed() == 0) {
+            uint256 newVotes = proposalvote.proposalVoteCounts.forVotes;
+            uint256 oldVotes = newVotes - numVotes;
+
+            // In order to update, we first have to remove the old value, then insert the new one
+
+            // REMOVAL
+
+            //// if there are multiple proposals with the old vote amount on this proposal, decrement the number's copy count
+            if (voteAmountCount[oldVotes] > 0) {
+                voteAmountCount[oldVotes] = voteAmountCount[oldVotes] - 1;
+            }
+
+            //// if there are no more proposals left with this proposals old number of votes after decrementing, remove the vote amount number from the tree
+            if (voteAmountCount[oldVotes] == 0) {
+                remove(oldVotes);
+            }
+
+            // INSERTION
+
+            //// dupe keys cannot be inserted
+            if (exists(newVotes)){
+                //// increment the copy count of the new vote amount for the proposal
+                //// that's all we need to do because that vote amount is already in the tree and sorted
+                voteAmountCount[newVotes]++;
+            } else {
+                //// insert the vote amount into the tree
+                insert(proposalvote.proposalVoteCounts.forVotes);
+            }
+        }
     }
 }
