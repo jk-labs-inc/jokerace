@@ -1,6 +1,7 @@
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "BokkyPooBahsRedBlackTreeLibrary.sol";
+import "./BokkyPooBahsRedBlackTreeLibrary.sol";
 
 // ----------------------------------------------------------------------------
 // BokkyPooBah's Red-Black Tree Library v1.0-pre-release-a - Contract for testing
@@ -17,40 +18,40 @@ import "BokkyPooBahsRedBlackTreeLibrary.sol";
 contract TestBokkyPooBahsRedBlackTreeRaw {
     using BokkyPooBahsRedBlackTreeLibrary for BokkyPooBahsRedBlackTreeLibrary.Tree;
 
-    BokkyPooBahsRedBlackTreeLibrary.Tree tree;
+    BokkyPooBahsRedBlackTreeLibrary.Tree _tree;
 
     event Log(string where, uint key, uint value);
 
     constructor() public {
     }
     function root() public view returns (uint _key) {
-        _key = tree.root;
+        _key = _tree.root;
     }
     function first() public view returns (uint _key) {
-        _key = tree.first();
+        _key = _tree.first();
     }
     function last() public view returns (uint _key) {
-        _key = tree.last();
+        _key = _tree.last();
     }
     function next(uint key) public view returns (uint _key) {
-        _key = tree.next(key);
+        _key = _tree.next(key);
     }
     function prev(uint key) public view returns (uint _key) {
-        _key = tree.prev(key);
+        _key = _tree.prev(key);
     }
     function exists(uint key) public view returns (bool _exists) {
-        _exists = tree.exists(key);
+        _exists = _tree.exists(key);
     }
     function getNode(uint _key) public view returns (uint key, uint parent, uint left, uint right, bool red) {
-        (key, parent, left, right, red) = tree.getNode(_key);
+        (key, parent, left, right, red) = _tree.getNode(_key);
     }
 
     function insert(uint _key) public {
-        tree.insert(_key);
+        _tree.insert(_key);
         // emit Log("insert", _key, 0);
     }
     function remove(uint _key) public {
-        tree.remove(_key);
+        _tree.remove(_key);
         // emit Log("remove", _key, 0);
     }
 }
