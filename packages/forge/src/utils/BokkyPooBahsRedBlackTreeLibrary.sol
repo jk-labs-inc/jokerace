@@ -20,6 +20,7 @@ library BokkyPooBahsRedBlackTreeLibrary {
         uint left;
         uint right;
         bool red;
+        uint count;
     }
 
     struct Tree {
@@ -28,6 +29,13 @@ library BokkyPooBahsRedBlackTreeLibrary {
     }
 
     uint private constant _EMPTY = 0;
+
+    function getCount(Tree storage self, uint key) internal view returns (uint) {
+        if (key == _EMPTY) {
+            return 0;
+        }
+        return self.nodes[key].count;
+    }
 
     function first(Tree storage self) internal view returns (uint _key) {
         _key = self.root;
@@ -96,7 +104,7 @@ library BokkyPooBahsRedBlackTreeLibrary {
                 probe = self.nodes[probe].right;
             }
         }
-        self.nodes[key] = Node({parent: cursor, left: _EMPTY, right: _EMPTY, red: true});
+        self.nodes[key] = Node({parent: cursor, left: _EMPTY, right: _EMPTY, red: true, count: 1});
         if (cursor == _EMPTY) {
             self.root = key;
         } else if (key < cursor) {
@@ -105,10 +113,27 @@ library BokkyPooBahsRedBlackTreeLibrary {
             self.nodes[cursor].right = key;
         }
         _insertFixup(self, key);
+
+        // After inserting, adjust counts of ancestors
+        while (key != _EMPTY) {
+            self.nodes[key].count++;
+            key = self.nodes[key].parent;
+        }
     }
     function remove(Tree storage self, uint key) internal {
         require(key != _EMPTY);
         require(exists(self, key));
+
+        // Store ancestor nodes before deletion to update counts
+        uint[] memory ancestors = new uint[](32);  // Assuming tree height will not exceed 32 (would need to have more than 1bn proposals)
+        uint index = 0;
+        uint temp = key;
+        while (temp != _EMPTY) {
+            ancestors[index] = temp;
+            index++;
+            temp = self.nodes[temp].parent;
+        }
+
         uint probe;
         uint cursor;
         if (self.nodes[key].left == _EMPTY || self.nodes[key].right == _EMPTY) {
@@ -149,6 +174,11 @@ library BokkyPooBahsRedBlackTreeLibrary {
             _removeFixup(self, probe);
         }
         delete self.nodes[cursor];
+
+        // After deleting, adjust counts of ancestors
+        for (uint i = 0; i < index; i++) {
+            self.nodes[ancestors[i]].count--;
+        }
     }
 
     function _treeMinimum(Tree storage self, uint key) private view returns (uint) {
@@ -314,6 +344,20 @@ library BokkyPooBahsRedBlackTreeLibrary {
             }
         }
         self.nodes[key].red = false;
+    }
+
+    // Additional function to calculate rank of a key
+    function getRank(Tree storage self, uint key) internal view returns (uint rank) {
+        require(exists(self, key), "Key does not exist");
+        rank = getCount(self, self.nodes[key].left) + 1;
+        uint parent = self.nodes[key].parent;
+        while (parent != _EMPTY) {
+            if (key == self.nodes[parent].right) {
+                rank += getCount(self, self.nodes[parent].left) + 1;
+            }
+            key = parent;
+            parent = self.nodes[key].parent;
+        }
     }
 }
 // ----------------------------------------------------------------------------
