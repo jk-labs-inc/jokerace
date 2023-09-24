@@ -6,7 +6,7 @@ import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/utils/Address.sol";
 import "@openzeppelin/utils/Context.sol";
 import "../governance/IGovernor.sol";
-import "../governance/extensions/GovernorSorting.sol";
+import "../governance/extensions/GovernorCountingSimple.sol";
 
 /**
  * @title RewardsModule
@@ -44,7 +44,7 @@ contract RewardsModule is Context {
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
 
-    GovernorSorting private immutable _underlyingContest;
+    GovernorCountingSimple private immutable _underlyingContest;
     address private immutable _creator;
     bool private immutable _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
 
@@ -58,7 +58,7 @@ contract RewardsModule is Context {
     constructor(
         uint256[] memory payees,
         uint256[] memory shares_,
-        GovernorSorting underlyingContest_,
+        GovernorCountingSimple underlyingContest_,
         bool paysOutTarget_
     ) payable {
         require(payees.length == shares_.length, "RewardsModule: payees and shares length mismatch");
@@ -181,15 +181,24 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
+     * @dev Triggers a transfer to `proposalId` of the amount of Ether they are owed, according to its percentage of the
      * total shares and their previous withdrawals.
      */
-    function release(uint256 ranking) public virtual {
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
+    function release(uint256 proposalId) public virtual {
+        require(_underlyingContest.downvotingAllowed() == 0, "RewardsModule: the Red Black tree does not work with negative values, downvoting cannot be enabled on the underlying contest");
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
+
+        // calculate the descending ranking of this proposal
+        (uint256 forVotes, ) = _underlyingContest.proposalVotes(proposalId);
+        require(forVotes > 0, "RewardsModule: this proposal does not have any For votes cast on it");
+        require(_underlyingContest.exists(forVotes), "RewardsModule: no clue how you got here but this proposals For vote amount is not in the RB tree");
+        uint256 currentProposalAscendingRank = _underlyingContest.getRank(forVotes); // ascending rank = highest number rank is highest value (rank 1 = lowest number of votes)
+        uint256 highestAscendingRank = _underlyingContest.getRank(_underlyingContest.last());
+        uint256 ranking = (highestAscendingRank - currentProposalAscendingRank) + 1; // flip ranking to descending (1st place is the highest number of votes)
+
         require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
         uint256 payment = releasable(ranking);
@@ -206,25 +215,14 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
-        // _lowestRanking, and _highestTiedRanking
-        if (!_underlyingContest.setSortedAndTiedProposalsHasBeenRun()) {
-            _underlyingContest.setSortedAndTiedProposals();
-        }
-
-        require(
-            ranking <= _underlyingContest.lowestRanking(),
-            "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
-        );
-
-        IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-            _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
-        );
+        IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(proposalId);
+        
+        bool isTied = _underlyingContest.voteAmountCount(forVotes) > 1;
 
         // send rewards to winner only if the ranking is higher than the highest tied ranking
-        address payable addressToPayOut = ranking < _underlyingContest.highestTiedRanking()
-            ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
-            : payable(creator());
+        address payable addressToPayOut = isTied
+            ? payable(creator())
+            : _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author);
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
@@ -233,16 +231,25 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Triggers a transfer to `ranking` of the amount of `token` tokens they are owed, according to their
+     * @dev Triggers a transfer to `proposalId` of the amount of `token` tokens they are owed, according to their
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
      * contract.
      */
-    function release(IERC20 token, uint256 ranking) public virtual {
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
+    function release(IERC20 token, uint256 proposalId) public virtual {
+                require(_underlyingContest.downvotingAllowed() == 0, "RewardsModule: the Red Black tree does not work with negative values, downvoting cannot be enabled on the underlying contest");
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
+
+        // calculate the descending ranking of this proposal
+        (uint256 forVotes, ) = _underlyingContest.proposalVotes(proposalId);
+        require(forVotes > 0, "RewardsModule: this proposal does not have any For votes cast on it");
+        require(_underlyingContest.exists(forVotes), "RewardsModule: no clue how you got here but this proposals For vote amount is not in the RB tree");
+        uint256 currentProposalAscendingRank = _underlyingContest.getRank(forVotes); // ascending rank = highest number rank is highest value (rank 1 = lowest number of votes)
+        uint256 highestAscendingRank = _underlyingContest.getRank(_underlyingContest.last());
+        uint256 ranking = (highestAscendingRank - currentProposalAscendingRank) + 1; // flip ranking to descending (1st place is the highest number of votes)
+
         require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
         uint256 payment = releasable(token, ranking);
@@ -252,32 +259,21 @@ contract RewardsModule is Context {
             "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
         );
 
-        // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
-        _erc20TotalReleased[token] += payment;
+        // _totalReleased is the sum of all values in _released.
+        // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
+        _totalReleased += payment;
         unchecked {
-            _erc20Released[token][ranking] += payment;
+            _released[ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
-        // _lowestRanking, and _highestTiedRanking
-        if (!_underlyingContest.setSortedAndTiedProposalsHasBeenRun()) {
-            _underlyingContest.setSortedAndTiedProposals();
-        }
-
-        require(
-            ranking <= _underlyingContest.lowestRanking(),
-            "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
-        );
-
-        IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-            _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
-        );
+        IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(proposalId);
+        
+        bool isTied = _underlyingContest.voteAmountCount(forVotes) > 1;
 
         // send rewards to winner only if the ranking is higher than the highest tied ranking
-        address payable addressToPayOut = ranking < _underlyingContest.highestTiedRanking()
-            ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
-            : payable(creator());
+        address payable addressToPayOut = isTied
+            ? payable(creator())
+            : _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author);
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
