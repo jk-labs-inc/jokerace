@@ -252,19 +252,19 @@ contract ContestTest is Test {
         assertEq(totalVotes, 100 ether);
     }
 
-    // function testVoteWithoutProof() public {
-    //     vm.startPrank(PERMISSIONED_ADDRESS_1);
+    function testVoteWithoutProof() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
 
-    //     vm.warp(1681650001);
-    //     uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.warp(1681660001);
-    //     contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
-    //     uint256 totalVotesWithoutProof = contest.castVoteWithoutProof(proposalId, 0, 1 ether);
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        uint256 totalVotesWithoutProof = contest.castVoteWithoutProof(proposalId, 0, 1 ether);
 
-    //     vm.stopPrank();
+        vm.stopPrank();
 
-    //     assertEq(totalVotesWithoutProof, 10 ether);
-    // }
+        assertEq(totalVotesWithoutProof, 10 ether);
+    }
 
     // /////////////////////////////
 

@@ -115,8 +115,8 @@ library BokkyPooBahsRedBlackTreeLibrary {
         _insertFixup(self, key);
 
         // After inserting, adjust counts of ancestors
-        while (key != _EMPTY) {
-            self.nodes[key].count++;
+        while (self.nodes[key].parent != _EMPTY) {
+            self.nodes[self.nodes[key].parent].count++;
             key = self.nodes[key].parent;
         }
     }
@@ -128,8 +128,8 @@ library BokkyPooBahsRedBlackTreeLibrary {
         uint[] memory ancestors = new uint[](32);  // Assuming tree height will not exceed 32 (would need to have more than 1bn proposals)
         uint index = 0;
         uint temp = key;
-        while (temp != _EMPTY) {
-            ancestors[index] = temp;
+        while (self.nodes[temp].parent != _EMPTY) {
+            ancestors[index] = self.nodes[temp].parent;
             index++;
             temp = self.nodes[temp].parent;
         }
