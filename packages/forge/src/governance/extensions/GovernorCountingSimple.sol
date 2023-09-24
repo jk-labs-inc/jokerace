@@ -79,6 +79,47 @@ abstract contract GovernorCountingSimple is Governor, BokkyPooBahsRedBlackTreeRa
     }
 
     /**
+     * @dev Accessor to the internal vote counts for a given proposal.
+     */
+    function allProposalTotalVotes()
+        public
+        view
+        virtual
+        returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
+    {
+        uint256[] memory proposalIds = getAllProposalIds();
+        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
+        for (uint256 i = 0; i < proposalIds.length; i++) {
+            proposalVoteCountsArray[i] = proposalVotesStructs[proposalIds[i]].proposalVoteCounts;
+        }
+        return (proposalIds, proposalVoteCountsArray);
+    }
+
+    /**
+     * @dev Accessor to the internal vote counts for a given proposal that excludes deleted proposals.
+     */
+    function allProposalTotalVotesWithoutDeleted()
+        public
+        view
+        virtual
+        returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
+    {
+        uint256[] memory proposalIds = getAllProposalIds();
+        uint256[] memory proposalIdsWithoutDeleted = new uint256[](proposalIds.length);
+        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
+
+        uint256 newArraysIndexCounter = 0;
+        for (uint256 i = 0; i < proposalIds.length; i++) {
+            if (!isProposalDeleted(proposalIds[i])) {
+                proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIds[i];
+                proposalVoteCountsArray[newArraysIndexCounter] = proposalVotesStructs[proposalIds[i]].proposalVoteCounts;
+                newArraysIndexCounter += 1;
+            }
+        }
+        return (proposalIdsWithoutDeleted, proposalVoteCountsArray);
+    }
+
+    /**
      * @dev See {Governor-_countVote}. In this module, the support follows the `VoteType` enum (from Governor Bravo).
      */
     function _countVote(uint256 proposalId, address account, uint8 support, uint256 numVotes, uint256 totalVotes)
