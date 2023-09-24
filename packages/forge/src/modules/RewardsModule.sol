@@ -205,27 +205,28 @@ contract RewardsModule is Context {
         uint256 highestAscendingRank = _underlyingContest.getRank(_underlyingContest.last());
         uint256 ranking = (highestAscendingRank - currentProposalAscendingRank) + 1; // flip ranking to descending (1st place is the highest number of votes)
 
+        // calculate amount to pay out to said ranks
         require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
         uint256 payment = releasable(ranking);
-
         require(
             payment != 0,
             "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
         );
 
-        // _totalReleased is the sum of all values in _released.
-        // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
+        //// _totalReleased is the sum of all values in _released.
+        //// If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
         _totalReleased += payment;
         unchecked {
             _released[ranking] += payment;
         }
 
+        // do the paying out
         IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(proposalId);
 
         bool isTied = _underlyingContest.voteAmountCount(forVotes) > 1;
 
-        // send rewards to winner only if the ranking is higher than the highest tied ranking
+        //// send rewards to winner only if the ranking is higher than the highest tied ranking
         address payable addressToPayOut = isTied
             ? payable(creator())
             : _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author);
@@ -262,27 +263,28 @@ contract RewardsModule is Context {
         uint256 highestAscendingRank = _underlyingContest.getRank(_underlyingContest.last());
         uint256 ranking = (highestAscendingRank - currentProposalAscendingRank) + 1; // flip ranking to descending (1st place is the highest number of votes)
 
+        // calculate amount to pay out to said rank
         require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
 
         uint256 payment = releasable(token, ranking);
-
         require(
             payment != 0,
             "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
         );
 
-        // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
+        //// _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
+        //// If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
         _erc20TotalReleased[token] += payment;
         unchecked {
             _erc20Released[token][ranking] += payment;
         }
 
+        // do the paying out
         IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(proposalId);
 
         bool isTied = _underlyingContest.voteAmountCount(forVotes) > 1;
 
-        // send rewards to winner only if the ranking is higher than the highest tied ranking
+        //// send rewards to winner only if the ranking is higher than the highest tied ranking
         address payable addressToPayOut = isTied
             ? payable(creator())
             : _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author);
