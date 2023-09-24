@@ -367,11 +367,11 @@ library BokkyPooBahsRedBlackTreeLibrary {
     // 99 will be rank 2 while 7 will be rank 1)
     function getRank(Tree storage self, uint256 key) internal view returns (uint256 rank) {
         require(exists(self, key), "key does not exist");
-        rank = getCount(self, self.nodes[key].left) + 1;
+        rank = getCount(self, key);
         uint256 parent = self.nodes[key].parent;
         while (parent != _EMPTY) {
             if (key == self.nodes[parent].right) {
-                rank += getCount(self, self.nodes[parent].left) + 1;
+                rank += getCount(self, parent);
             }
             key = parent;
             parent = self.nodes[key].parent;
