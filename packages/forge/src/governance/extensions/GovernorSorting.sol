@@ -13,6 +13,34 @@ abstract contract GovernorSorting {
     uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
     mapping(uint256 => uint256) public copyCounts; // key is forVotes amount, value is the number of copies of that number that are present in sortedRanks
 
+    // get the idx of sortedRanks considered to be the inputted rank taking deleted proposals
+    // into account
+    function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
+        require(rank != 0, "GovernorSorting: rank cannot equal 0");
+        uint256 counter = 1;
+        for (uint256 index = 0; index < sortedRanks.length; index++) {
+            // if this is a deleted proposal, go forwards without incrementing the counter
+            if (copyCounts[sortedRanks[index]] > 1) {
+                continue;
+            }
+            // if the counter is at the rank we are looking for, then return with it
+            if (counter == rank) {
+                return index;
+            }
+            counter++;
+        }
+    }
+
+    // returns whether a given index in sortedRanks is tied or is below a tied rank
+    function isOrIsBelowTiedRank(uint256 idx) public view returns (bool atOrBelowTiedRank) {
+        for (uint256 index = 0; index < idx + 1; index++) {
+            if (copyCounts[index] > 1) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // insert a new value into sortedRanks at insertingIndex
     function _insertRank(uint256 newValue, uint256 insertingIndex) internal {
         // if either of these cases, then we can just swap out, there is nothing to push down

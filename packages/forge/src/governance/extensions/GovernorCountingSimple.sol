@@ -156,6 +156,8 @@ abstract contract GovernorCountingSimple is Governor, GovernorSorting {
 
         // sorting and consequently rewards module compatability is only available if downvoting is disabled
         if (downvotingAllowed() == 0) {
+            // TODO: update a map of forVotes => proposalId[] to be able to go from rank => proposalId
+            // TODO: also add logic to delete to decrement the copy count of that voteAmount
             updateRanks(proposalvote.proposalVoteCounts.forVotes - numVotes, proposalvote.proposalVoteCounts.forVotes);
         }
     }
