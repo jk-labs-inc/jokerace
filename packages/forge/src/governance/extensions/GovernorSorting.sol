@@ -29,6 +29,12 @@ abstract contract GovernorSorting {
             }
             counter++;
         }
+        // if there's no valid index for that rank in sortedRanks, revert
+        // (how you would get here is it you deleted the top 25 voted proposals with a RANK_LIMIT of 25
+        // and then tried to pay out rank 1, or any rank for that matter)
+        revert(
+            "GovernorSorting: there is not a valid proposal within the allowed range for that rank taking deleted proposals into account"
+        );
     }
 
     // returns whether a given index in sortedRanks is tied or is below a tied rank

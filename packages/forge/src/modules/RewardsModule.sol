@@ -222,7 +222,7 @@ contract RewardsModule is Context {
         if (rankValue == 0 || _underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
             addressToPayOut = payable(creator());
         }
-        //// otherwise, determine proposal at ranking
+        //// otherwise, determine proposal at ranking and pay out according to that
         else {
             //// TODO: determine the proposal to be paid out (pay out target)
             IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
