@@ -185,16 +185,22 @@ contract RewardsModule is Context {
      * total shares and their previous withdrawals.
      */
     function release(uint256 proposalId) public virtual {
-        require(_underlyingContest.downvotingAllowed() == 0, "RewardsModule: the Red Black tree does not work with negative values, downvoting cannot be enabled on the underlying contest");
+        require(
+            _underlyingContest.downvotingAllowed() == 0,
+            "RewardsModule: the Red Black tree does not work with negative values, downvoting cannot be enabled on the underlying contest"
+        );
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
 
         // calculate the descending ranking of this proposal
-        (uint256 forVotes, ) = _underlyingContest.proposalVotes(proposalId);
+        (uint256 forVotes,) = _underlyingContest.proposalVotes(proposalId);
         require(forVotes > 0, "RewardsModule: this proposal does not have any For votes cast on it");
-        require(_underlyingContest.exists(forVotes), "RewardsModule: no clue how you got here but this proposals For vote amount is not in the RB tree");
+        require(
+            _underlyingContest.exists(forVotes),
+            "RewardsModule: no clue how you got here but this proposals For vote amount is not in the RB tree"
+        );
         uint256 currentProposalAscendingRank = _underlyingContest.getRank(forVotes); // ascending rank = highest number rank is highest value (rank 1 = lowest number of votes)
         uint256 highestAscendingRank = _underlyingContest.getRank(_underlyingContest.last());
         uint256 ranking = (highestAscendingRank - currentProposalAscendingRank) + 1; // flip ranking to descending (1st place is the highest number of votes)
@@ -216,7 +222,7 @@ contract RewardsModule is Context {
         }
 
         IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(proposalId);
-        
+
         bool isTied = _underlyingContest.voteAmountCount(forVotes) > 1;
 
         // send rewards to winner only if the ranking is higher than the highest tied ranking
@@ -236,16 +242,22 @@ contract RewardsModule is Context {
      * contract.
      */
     function release(IERC20 token, uint256 proposalId) public virtual {
-                require(_underlyingContest.downvotingAllowed() == 0, "RewardsModule: the Red Black tree does not work with negative values, downvoting cannot be enabled on the underlying contest");
+        require(
+            _underlyingContest.downvotingAllowed() == 0,
+            "RewardsModule: the Red Black tree does not work with negative values, downvoting cannot be enabled on the underlying contest"
+        );
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
 
         // calculate the descending ranking of this proposal
-        (uint256 forVotes, ) = _underlyingContest.proposalVotes(proposalId);
+        (uint256 forVotes,) = _underlyingContest.proposalVotes(proposalId);
         require(forVotes > 0, "RewardsModule: this proposal does not have any For votes cast on it");
-        require(_underlyingContest.exists(forVotes), "RewardsModule: no clue how you got here but this proposals For vote amount is not in the RB tree");
+        require(
+            _underlyingContest.exists(forVotes),
+            "RewardsModule: no clue how you got here but this proposals For vote amount is not in the RB tree"
+        );
         uint256 currentProposalAscendingRank = _underlyingContest.getRank(forVotes); // ascending rank = highest number rank is highest value (rank 1 = lowest number of votes)
         uint256 highestAscendingRank = _underlyingContest.getRank(_underlyingContest.last());
         uint256 ranking = (highestAscendingRank - currentProposalAscendingRank) + 1; // flip ranking to descending (1st place is the highest number of votes)
@@ -259,15 +271,15 @@ contract RewardsModule is Context {
             "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
         );
 
-        // _totalReleased is the sum of all values in _released.
-        // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
-        _totalReleased += payment;
+        // _erc20TotalReleased[token] is the sum of all values in _erc20Released.
+        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[account] += payment" cannot overflow.
+        _erc20TotalReleased[token] += payment;
         unchecked {
             _released[ranking] += payment;
         }
 
         IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(proposalId);
-        
+
         bool isTied = _underlyingContest.voteAmountCount(forVotes) > 1;
 
         // send rewards to winner only if the ranking is higher than the highest tied ranking

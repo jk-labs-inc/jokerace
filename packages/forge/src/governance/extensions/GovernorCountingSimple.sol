@@ -141,7 +141,7 @@ abstract contract GovernorCountingSimple is Governor, BokkyPooBahsRedBlackTreeRa
             // INSERTION
 
             //// dupe keys cannot be inserted
-            if (!exists(newVotes)){
+            if (!exists(newVotes)) {
                 //// insert the vote amount into the tree
                 _insert(proposalvote.proposalVoteCounts.forVotes);
             }

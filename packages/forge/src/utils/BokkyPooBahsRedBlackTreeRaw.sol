@@ -20,37 +20,49 @@ contract BokkyPooBahsRedBlackTreeRaw {
 
     BokkyPooBahsRedBlackTreeLibrary.Tree _tree;
 
-    event Log(string where, uint key, uint value);
+    event Log(string where, uint256 key, uint256 value);
 
-    function root() public view returns (uint _key) {
+    function root() public view returns (uint256 _key) {
         _key = _tree.root;
     }
-    function first() public view returns (uint _key) {
+
+    function first() public view returns (uint256 _key) {
         _key = _tree.first();
     }
-    function last() public view returns (uint _key) {
+
+    function last() public view returns (uint256 _key) {
         _key = _tree.last();
     }
-    function next(uint key) public view returns (uint _key) {
+
+    function next(uint256 key) public view returns (uint256 _key) {
         _key = _tree.next(key);
     }
-    function prev(uint key) public view returns (uint _key) {
+
+    function prev(uint256 key) public view returns (uint256 _key) {
         _key = _tree.prev(key);
     }
-    function exists(uint key) public view returns (bool _exists) {
+
+    function exists(uint256 key) public view returns (bool _exists) {
         _exists = _tree.exists(key);
     }
-    function getNode(uint _key) public view returns (uint key, uint parent, uint left, uint right, bool red) {
+
+    function getNode(uint256 _key)
+        public
+        view
+        returns (uint256 key, uint256 parent, uint256 left, uint256 right, bool red)
+    {
         (key, parent, left, right, red) = _tree.getNode(_key);
     }
-    function getRank(uint _key) public view returns (uint rank) {
+
+    function getRank(uint256 _key) public view returns (uint256 rank) {
         rank = _tree.getRank(_key);
     }
 
-    function _insert(uint _key) internal {
+    function _insert(uint256 _key) internal {
         _tree.insert(_key);
     }
-    function _remove(uint _key) internal {
+
+    function _remove(uint256 _key) internal {
         _tree.remove(_key);
     }
 }
