@@ -32,7 +32,7 @@ library BokkyPooBahsRedBlackTreeLibrary {
 
     function getCount(Tree storage self, uint key) internal view returns (uint) {
         if (key == _EMPTY) {
-            return 0;
+            return _EMPTY;
         }
         return self.nodes[key].count;
     }
@@ -116,8 +116,9 @@ library BokkyPooBahsRedBlackTreeLibrary {
 
         // After inserting, adjust counts of ancestors
         while (self.nodes[key].parent != _EMPTY) {
-            self.nodes[self.nodes[key].parent].count++;
-            key = self.nodes[key].parent;
+            uint currentParent = self.nodes[key].parent;
+            self.nodes[currentParent].count++;
+            key = currentParent;
         }
     }
     function remove(Tree storage self, uint key) internal {
@@ -129,9 +130,10 @@ library BokkyPooBahsRedBlackTreeLibrary {
         uint index = 0;
         uint temp = key;
         while (self.nodes[temp].parent != _EMPTY) {
-            ancestors[index] = self.nodes[temp].parent;
+            uint currentParent = self.nodes[temp].parent;
+            ancestors[index] = currentParent;
             index++;
-            temp = self.nodes[temp].parent;
+            temp = currentParent;
         }
 
         uint probe;
@@ -350,7 +352,7 @@ library BokkyPooBahsRedBlackTreeLibrary {
     // (highest number key will be the highest number rank - if the numbers 7 and 99 are being sorted, 
     // 99 will be rank 2 while 7 will be rank 1)
     function getRank(Tree storage self, uint key) internal view returns (uint rank) {
-        require(exists(self, key), "Key does not exist");
+        require(exists(self, key), "key does not exist");
         rank = getCount(self, self.nodes[key].left) + 1;
         uint parent = self.nodes[key].parent;
         while (parent != _EMPTY) {
