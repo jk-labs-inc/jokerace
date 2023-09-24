@@ -62,7 +62,7 @@ abstract contract GovernorSorting {
         uint256 tmp2;
         for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
             tmp2 = sortedRanks[index];
-            sortedRanks[index] = sortedRanks[tmp1];
+            sortedRanks[index] = tmp1;
             tmp1 = tmp2;
         }
 
