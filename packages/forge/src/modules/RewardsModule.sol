@@ -271,11 +271,11 @@ contract RewardsModule is Context {
             "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
         );
 
-        // _erc20TotalReleased[token] is the sum of all values in _erc20Released.
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[account] += payment" cannot overflow.
+        // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
+        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
         _erc20TotalReleased[token] += payment;
         unchecked {
-            _released[ranking] += payment;
+            _erc20Released[token][ranking];
         }
 
         IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(proposalId);
