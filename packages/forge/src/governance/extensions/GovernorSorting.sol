@@ -2,231 +2,60 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/utils/math/SafeCast.sol";
-import "./GovernorCountingSimple.sol";
-
 /**
  * @dev Extension of {GovernorCountingSimple} for sorting and ranking.
  *
  * _Available since v4.3._
  */
-abstract contract GovernorSorting is GovernorCountingSimple {
-    bool public setSortedAndTiedProposalsHasBeenRun = false;
-    mapping(uint256 => uint256) public tiedAdjustedRankingPosition; // key is ranking, value is index of the last iteration of that ranking's value in the _sortedProposalIds array taking ties into account
+abstract contract GovernorSorting {
+    // TODO: implement usage in RewardsModule (proposalId -> forVotes -> ranking, maybe a forVotes -> proposalId map too which could be helpful to go ranking -> proposalId)
 
-    mapping(uint256 => bool) private _isTied; // whether a ranking is tied. key is ranking.
-    uint256[] private _sortedProposalIds;
-    uint256 private _lowestRanking; // worst ranking (1 is the best possible ranking, 8 is a lower/worse ranking than 1)
-    uint256 private _highestTiedRanking; // best (1 is better than 8) ranking that is tied
+    uint256 public constant RANK_LIMIT = 25;
 
-    /**
-     * @dev Getter if a given ranking is tied.
-     */
-    function isTied(uint256 ranking) public view returns (bool) {
-        require(
-            setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value"
-        );
-        return _isTied[ranking];
-    }
+    uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
+    mapping(uint256 => uint256) public copyCounts; // key is forVotes amount, value is the number of copies of that number that are present in sortedRanks
 
-    /**
-     * @dev Getter for tiedAdjustedRankingPosition of a ranking.
-     */
-    function rankingPosition(uint256 ranking) public view returns (uint256) {
-        require(
-            setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value"
-        );
-        return tiedAdjustedRankingPosition[ranking];
-    }
-
-    /**
-     * @dev Getter for _sortedProposalIds.
-     */
-    function sortedProposalIds() public view returns (uint256[] memory) {
-        require(
-            setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value"
-        );
-        return _sortedProposalIds;
-    }
-
-    /**
-     * @dev Getter for the lowest ranking.
-     */
-    function lowestRanking() public view returns (uint256) {
-        require(
-            setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value"
-        );
-        return _lowestRanking;
-    }
-
-    /**
-     * @dev Getter for highest tied ranking.
-     */
-    function highestTiedRanking() public view returns (uint256) {
-        require(
-            setSortedAndTiedProposalsHasBeenRun, "RewardsModule: run setSortedAndTiedProposals() to populate this value"
-        );
-        return _highestTiedRanking;
-    }
-
-    /**
-     * @dev Accessor to the internal vote counts for a given proposal.
-     */
-    function allProposalTotalVotes()
-        public
-        view
-        virtual
-        returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
-    {
-        uint256[] memory proposalIds = getAllProposalIds();
-        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            proposalVoteCountsArray[i] = proposalVotesStructs[proposalIds[i]].proposalVoteCounts;
+    // keep things sorted as we go
+    // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
+    function updateRanks(uint256 proposalForVotes) public {
+        // 1. if proposalForVotes *was* a tie, then decrement the count of that position
+        if (copyCounts[proposalForVotes] > 1) {
+            copyCounts[proposalForVotes]--;
         }
-        return (proposalIds, proposalVoteCountsArray);
-    }
 
-    /**
-     * @dev Accessor to the internal vote counts for a given proposal that excludes deleted proposals.
-     */
-    function allProposalTotalVotesWithoutDeleted()
-        public
-        view
-        virtual
-        returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
-    {
-        uint256[] memory proposalIds = getAllProposalIds();
-        uint256[] memory proposalIdsWithoutDeleted = new uint256[](proposalIds.length);
-        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
-
-        uint256 newArraysIndexCounter = 0;
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            if (!isProposalDeleted(proposalIds[i])) {
-                proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIds[i];
-                proposalVoteCountsArray[newArraysIndexCounter] = proposalVotesStructs[proposalIds[i]].proposalVoteCounts;
-                newArraysIndexCounter += 1;
-            }
+        // 2. is the current proposal's forVotes less than that of the last element in the sorted
+        // array? if so, then we're done here.
+        if (proposalForVotes < sortedRanks[sortedRanks.length - 1]) {
+            return;
         }
-        return (proposalIdsWithoutDeleted, proposalVoteCountsArray);
-    }
 
-    function _sortItem(uint256 pos, int256[] memory netProposalVotes, uint256[] memory proposalIds)
-        internal
-        pure
-        returns (bool)
-    {
-        uint256 wMin = pos;
-        for (uint256 i = pos; i < netProposalVotes.length; i++) {
-            if (netProposalVotes[i] < netProposalVotes[wMin]) {
-                wMin = i;
-            }
-        }
-        if (wMin == pos) return false;
-        int256 votesTmp = netProposalVotes[pos];
-        netProposalVotes[pos] = netProposalVotes[wMin];
-        netProposalVotes[wMin] = votesTmp;
-        uint256 proposalIdsTmp = proposalIds[pos];
-        proposalIds[pos] = proposalIds[wMin];
-        proposalIds[wMin] = proposalIdsTmp;
-        return true;
-    }
+        // 3. find where it should go - find the index that it is larger than or equal to
+        uint256 indexToInsertAt;
+        for (uint256 index = 0; index < RANK_LIMIT; index++) {
+            uint256 valueToCheck = sortedRanks[index];
 
-    /**
-     * @dev Accessor to sorted list of proposalIds in ascending order.
-     */
-    function sortedProposals(bool excludeDeletedProposals)
-        public
-        view
-        virtual
-        returns (uint256[] memory sortedProposalIdsReturn)
-    {
-        (uint256[] memory proposalIdList, VoteCounts[] memory proposalVoteCountsArray) =
-            excludeDeletedProposals ? allProposalTotalVotesWithoutDeleted() : allProposalTotalVotes();
-        require(proposalIdList.length > 0, "GovernorSorting: cannot sort a list of zero length");
-        int256[] memory netProposalVotes = new int256[](proposalIdList.length);
-        for (uint256 i = 0; i < proposalVoteCountsArray.length; i++) {
-            netProposalVotes[i] = SafeCast.toInt256(proposalVoteCountsArray[i].forVotes)
-                - SafeCast.toInt256(proposalVoteCountsArray[i].againstVotes);
-        }
-        for (uint256 i = 0; i < proposalIdList.length - 1; i++) {
-            // Only goes to length minus 1 because sorting the last item would be redundant
-            _sortItem(i, netProposalVotes, proposalIdList);
-        }
-        return proposalIdList;
-    }
-
-    /**
-     * @dev Setter for _sortedProposalIds, tiedAdjustedRankingPosition, _isTied, _lowestRanking,
-     * and _highestTiedRanking. Will only be called once and only needs to be called once because once the contest
-     * is complete these values don't change. Determines if a ranking is tied and also where the last
-     * iteration of a ranking is in the _sortedProposalIds list taking ties into account.
-     */
-    function setSortedAndTiedProposals() public virtual {
-        require(
-            state() == IGovernor.ContestState.Completed,
-            "GovernorSorting: contest must be to calculate sorted and tied proposals"
-        );
-        require(
-            !setSortedAndTiedProposalsHasBeenRun,
-            "GovernorSorting: setSortedAndTiedProposals() has already been run and its respective values set"
-        );
-
-        _sortedProposalIds = sortedProposals(true);
-
-        int256 lastTotalVotes;
-        uint256 rankingBeingChecked = 1;
-        _highestTiedRanking = _sortedProposalIds.length + 1; // set as default so that it isn't 0 if no ties are found
-        uint256 sortedProposalIdsLength = _sortedProposalIds.length;
-        for (uint256 i = 0; i < sortedProposalIdsLength; i++) {
-            uint256 lastSortedItemIndex = _sortedProposalIds.length - 1;
-
-            // decrement through the ascending sorted list
-            (uint256 currentForVotes, uint256 currentAgainstVotes) =
-                proposalVotes(_sortedProposalIds[lastSortedItemIndex - i]);
-            int256 currentTotalVotes = SafeCast.toInt256(currentForVotes) - SafeCast.toInt256(currentAgainstVotes);
-
-            // if on first item, set lastTotalVotes and continue
-            if (i == 0) {
-                lastTotalVotes = currentTotalVotes;
-
-                // if on last item, then the value at the current index is
-                // the last iteration of the last ranking's value
-                if (_sortedProposalIds.length == 1) {
-                    tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex;
-                    _lowestRanking = rankingBeingChecked;
-                }
-
-                continue;
+            // in the case of a tie
+            if (proposalForVotes == valueToCheck) {
+                // increment the copy count and return, nothing more to do
+                copyCounts[valueToCheck]++;
+                return;
             }
 
-            // if there is a tie, mark that this ranking is tied
-            if (currentTotalVotes == lastTotalVotes) {
-                if (!_isTied[rankingBeingChecked]) {
-                    // if this is not already set
-                    _isTied[rankingBeingChecked] = true;
-                }
-                if (_highestTiedRanking == _sortedProposalIds.length + 1) {
-                    // if this is the first tie found, set it as the highest tied ranking
-                    _highestTiedRanking = rankingBeingChecked;
-                }
-            } else {
-                // otherwise, mark that the last iteration of this ranking's value is at the index
-                // above the current index in the sorted list, then increment the ranking being checked
-
-                // index we last decremented from is the last iteration of the current rank's value
-                tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;
-                rankingBeingChecked++;
+            if (proposalForVotes > valueToCheck) {
+                // then this is the index that the new value should be inserted at
+                indexToInsertAt = index;
+                break;
             }
 
-            // if on last item, then the value at the current index is the last iteration of the last ranking's value
-            if (i + 1 == _sortedProposalIds.length) {
-                tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i;
-                _lowestRanking = rankingBeingChecked;
+            // if we reach the end of the array without finding a value that proposalForVotes
+            // is greater than or equal to, then our work here is done
+            if (index == RANK_LIMIT - 1) {
+                return;
             }
-
-            lastTotalVotes = currentTotalVotes;
         }
 
-        setSortedAndTiedProposalsHasBeenRun = true;
+        // TODO: implement this function
+        // 3. insert it there, pushing everything behind it down
+        // insert(index) -> make a tmp array of what everything under that index should be (what that index was -> the 2nd to last item) -> go through and change the values of `index` and everything under it   
     }
 }
