@@ -126,27 +126,29 @@ abstract contract GovernorCountingSimple is Governor, BokkyPooBahsRedBlackTreeRa
 
             // REMOVAL
 
-            //// if there are multiple proposals with the old vote amount on this proposal, decrement the number's copy count
-            if (voteAmountCount[oldVotes] > 0) {
+            //// if the old number of votes for this proposal was 0, you don't need to remove anything
+            //// if it was more, then we do need to deal with the old value
+            if (oldVotes > 0) {
+                //// decrement the copy count of the old value
                 voteAmountCount[oldVotes] = voteAmountCount[oldVotes] - 1;
-            }
 
-            //// if there are no more proposals left with this proposals old number of votes after decrementing, remove the vote amount number from the tree
-            if (voteAmountCount[oldVotes] == 0) {
-                remove(oldVotes);
+                //// only remove from the tree if there are no more proposals left with this proposal's old number of votes after decrementing
+                if (voteAmountCount[oldVotes] == 0) {
+                    _remove(oldVotes);
+                }
             }
 
             // INSERTION
 
             //// dupe keys cannot be inserted
-            if (exists(newVotes)){
-                //// increment the copy count of the new vote amount for the proposal
-                //// that's all we need to do because that vote amount is already in the tree and sorted
-                voteAmountCount[newVotes]++;
-            } else {
+            if (!exists(newVotes)){
                 //// insert the vote amount into the tree
-                insert(proposalvote.proposalVoteCounts.forVotes);
+                _insert(proposalvote.proposalVoteCounts.forVotes);
             }
+
+            //// increment the copy count of the new vote amount for the proposal
+            //// this is how we keep track of dupes
+            voteAmountCount[newVotes]++;
         }
     }
 }
