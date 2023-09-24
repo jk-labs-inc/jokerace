@@ -10,6 +10,7 @@ pragma solidity ^0.8.0;
 abstract contract GovernorSorting {
     uint256 public constant RANK_LIMIT = 25; // cannot be 0
 
+    // TODO: add a highest non-zero index counter to sortedRanks so we don't have to go through a bunch of 0s
     uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
     mapping(uint256 => uint256) public copyCounts; // key is forVotes amount, value is the number of copies of that number that are present in sortedRanks
 
@@ -54,25 +55,18 @@ abstract contract GovernorSorting {
             sortedRanks[insertingIndex] = newValue;
         }
 
-        // if we do need to push things down, make a tmp array of what everything at and
-        // under that index should be (what that index was -> through the last item)
-        uint256 tmpArrayLen = RANK_LIMIT - insertingIndex;
-        uint256[] memory tmp = new uint256[](tmpArrayLen);
-        for (uint256 index = 0; index < tmpArrayLen; index++) {
-            tmp[index] = sortedRanks[insertingIndex + index];
-        }
-
         // go through and change the values of `index` and everything under it in sortedRanks
         // NOTE: if sortedRanks is full, the last item of sortedRanks will not be used because
         // it gets dropped off of the array
         for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
-            sortedRanks[index] = tmp[index - (insertingIndex + 1)];
+            sortedRanks[index] = sortedRanks[index - 1];
         }
 
         // now that everything's been swapped out and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
         sortedRanks[insertingIndex] = newValue;
     }
 
+    // TODO: gas optimize the fuck out of this and _insertRank
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
     function updateRanks(uint256 oldProposalForVotes, uint256 newProposalForVotes) public {
@@ -87,6 +81,7 @@ abstract contract GovernorSorting {
             return;
         }
 
+        // TODO: start from lowest item in array (would be len - 2, but thinking about using a highest non-zero index counter, but still - 1 bc we know it's bigger than the *smallest*) bc more likely in the majority of cases
         // 3. find where it should go - find the index that newProposalForVotes is larger than or equal to
         uint256 indexToInsertAt;
         for (uint256 index = 0; index < RANK_LIMIT; index++) {
