@@ -156,7 +156,7 @@ abstract contract GovernorCountingSimple is Governor, GovernorSorting {
 
         // sorting and consequently rewards module compatability is only available if downvoting is disabled
         if (downvotingAllowed() == 0) {
-            updateRanks(proposalvote.proposalVoteCounts.forVotes);
+            updateRanks(proposalvote.proposalVoteCounts.forVotes - numVotes, proposalvote.proposalVoteCounts.forVotes);
         }
     }
 }

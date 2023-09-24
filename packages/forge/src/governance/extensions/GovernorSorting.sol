@@ -17,10 +17,10 @@ abstract contract GovernorSorting {
 
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
-    function updateRanks(uint256 proposalForVotes) public {
-        // 1. if proposalForVotes *was* a tie, then decrement the count of that position
-        if (copyCounts[proposalForVotes] > 1) {
-            copyCounts[proposalForVotes]--;
+    function updateRanks(uint256 oldProposalForVotes, uint256 proposalForVotes) public {
+        // 1. decrement the count of the position of oldProposalForVotes
+        if (copyCounts[oldProposalForVotes] > 1) {
+            copyCounts[oldProposalForVotes]--;
         }
 
         // 2. is the current proposal's forVotes less than that of the last element in the sorted
