@@ -43,11 +43,14 @@ contract BokkyPooBahsRedBlackTreeRaw {
     function getNode(uint _key) public view returns (uint key, uint parent, uint left, uint right, bool red) {
         (key, parent, left, right, red) = _tree.getNode(_key);
     }
+    function getRank(uint _key) public view returns (uint rank) {
+        rank = _tree.getRank(_key);
+    }
 
-    function insert(uint _key) public {
+    function _insert(uint _key) internal {
         _tree.insert(_key);
     }
-    function remove(uint _key) public {
+    function _remove(uint _key) internal {
         _tree.remove(_key);
     }
 }

@@ -346,7 +346,9 @@ library BokkyPooBahsRedBlackTreeLibrary {
         self.nodes[key].red = false;
     }
 
-    // Additional function to calculate rank of a key
+    // Additional function to calculate rank of a key 
+    // (highest number key will be the highest number rank - if the numbers 7 and 99 are being sorted, 
+    // 99 will be rank 2 while 7 will be rank 1)
     function getRank(Tree storage self, uint key) internal view returns (uint rank) {
         require(exists(self, key), "Key does not exist");
         rank = getCount(self, self.nodes[key].left) + 1;
