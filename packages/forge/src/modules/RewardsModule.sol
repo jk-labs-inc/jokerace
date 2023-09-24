@@ -275,7 +275,7 @@ contract RewardsModule is Context {
         // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
         _erc20TotalReleased[token] += payment;
         unchecked {
-            _erc20Released[token][ranking];
+            _erc20Released[token][ranking] += payment;
         }
 
         IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(proposalId);
