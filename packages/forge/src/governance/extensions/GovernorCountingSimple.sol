@@ -130,7 +130,7 @@ abstract contract GovernorCountingSimple is Governor, BokkyPooBahsRedBlackTreeRa
             //// if it was more, then we do need to deal with the old value
             if (oldVotes > 0) {
                 //// decrement the copy count of the old value
-                voteAmountCount[oldVotes] = voteAmountCount[oldVotes] - 1;
+                voteAmountCount[oldVotes] -= 1;
 
                 //// only remove from the tree if there are no more proposals left with this proposal's old number of votes after decrementing
                 if (voteAmountCount[oldVotes] == 0) {
