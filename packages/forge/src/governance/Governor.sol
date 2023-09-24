@@ -159,10 +159,21 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev Retrieve proposal data"_.
+     * @dev Retrieve proposal data.
      */
     function getProposal(uint256 proposalId) public view virtual returns (ProposalCore memory) {
         return _proposals[proposalId];
+    }
+
+    /**
+     * @dev Retrieve data from multiple proposals.
+     */
+    function getProposals(uint256[] memory proposalIds) public view virtual returns (ProposalCore[] memory) {
+        ProposalCore[] memory proposals = new ProposalCore[](proposalIds.length);
+        for (uint256 index = 0; index < proposalIds.length; index++) {
+            proposals[index] = getProposal(proposalIds[index]);
+        }
+        return proposals;
     }
 
     /**
