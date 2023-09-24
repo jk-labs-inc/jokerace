@@ -58,8 +58,12 @@ abstract contract GovernorSorting {
         // go through and change the values of `index` and everything under it in sortedRanks
         // NOTE: if sortedRanks is full, the last item of sortedRanks will not be used because
         // it gets dropped off of the array
+        uint256 tmp1 = sortedRanks[insertingIndex];
+        uint256 tmp2;
         for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
-            sortedRanks[index] = sortedRanks[index - 1];
+            tmp2 = sortedRanks[index];
+            sortedRanks[index] = sortedRanks[tmp1];
+            tmp1 = tmp2;
         }
 
         // now that everything's been swapped out and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
