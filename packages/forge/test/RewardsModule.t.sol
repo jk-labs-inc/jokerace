@@ -369,25 +369,25 @@ contract RewardsModuleTest is Test {
     }
 
     // 2 proposals with different authors, at 1 and 5 votes; release to target of rank 1
-    // function testReleaseToTargetFirstPlace2WithERC20() public {
-    //     vm.warp(1681650001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_2);
-    //     uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
-    //     vm.warp(1681660001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+    function testReleaseToTargetFirstPlace2WithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
 
-    //     vm.warp(1681670001);
-    //     vm.prank(CREATOR_ADDRESS_1);
-    //     testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
-    //     rewardsModulePaysTarget.release(testERC20, proposalId1);
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysTarget.release(testERC20, proposalId2);
 
-    //     assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 50);
-    // }
+        assertEq(testERC20.balanceOf(PERMISSIONED_ADDRESS_2), 50);
+    }
 
     /////////////////////////////
 
@@ -500,58 +500,58 @@ contract RewardsModuleTest is Test {
     //     rewardsModulePaysAuthor.release(testERC20, 2);
     // }
 
-    // //// 3 PROPOSALS FROM 2 DIFFERENT AUTHORS
+    //// 3 PROPOSALS FROM 2 DIFFERENT AUTHORS
 
-    // // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote; send back to creator
-    // function testSecondPlaceTieWithNative() public {
-    //     vm.warp(1681650001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_2);
-    //     uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
-    //     vm.warp(1681660001);
-    //     vm.startPrank(PERMISSIONED_ADDRESS_1);
-    //     contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
-    //     contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
-    //     contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
-    //     vm.stopPrank();
+    // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote; send back to creator
+    function testSecondPlaceTieWithNative() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
 
-    //     vm.warp(1681670001);
-    //     vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-    //     rewardsModulePaysAuthor.release(2);
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(proposalId2);
 
-    //     assertEq(CREATOR_ADDRESS_1.balance, 33);
-    // }
+        assertEq(CREATOR_ADDRESS_1.balance, 33);
+    }
 
-    // // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote; send back to creator
-    // function testSecondPlaceTieWithERC20() public {
-    //     vm.warp(1681650001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_2);
-    //     uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
-    //     vm.warp(1681660001);
-    //     vm.startPrank(PERMISSIONED_ADDRESS_1);
-    //     contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
-    //     contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
-    //     contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
-    //     vm.stopPrank();
+    // 3 proposals from 2 different authors, 1 at 3 votes and 2 at 1 vote; send back to creator
+    function testSecondPlaceTieWithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 3 ether, votingProof1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
 
-    //     vm.warp(1681670001);
-    //     vm.prank(CREATOR_ADDRESS_1);
-    //     testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-    //     rewardsModulePaysAuthor.release(testERC20, 2);
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysAuthor.release(testERC20, proposalId2);
 
-    //     assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 33);
-    // }
+        assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 33);
+    }
 
-    // //// 4 PROPOSALS FROM 2 DIFFERENT AUTHORS
+    //// 4 PROPOSALS FROM 2 DIFFERENT AUTHORS
 
-    // // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
+    // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
     // function testSecondPlaceTiePayOutThirdPlaceWithNative() public {
     //     vm.warp(1681650001);
     //     vm.prank(PERMISSIONED_ADDRESS_1);
@@ -572,12 +572,12 @@ contract RewardsModuleTest is Test {
 
     //     vm.warp(1681670001);
     //     vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-    //     rewardsModulePaysAuthor.release(3);
+    //     rewardsModulePaysAuthor.release(proposalId4);
 
     //     assertEq(CREATOR_ADDRESS_1.balance, 16);
     // }
 
-    // // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
+    // 4 proposals from 2 different authors, 1 at 3 votes and 2 at 2 votes, and 1 at 1 vote; send back to creator
     // function testSecondPlaceTiePayOutThirdPlaceWithERC20() public {
     //     vm.warp(1681650001);
     //     vm.prank(PERMISSIONED_ADDRESS_1);
@@ -604,11 +604,11 @@ contract RewardsModuleTest is Test {
     //     assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 16);
     // }
 
-    // /////////////////////////////
+    /////////////////////////////
 
-    // // NO PROPOSALS
+    // NO PROPOSALS
 
-    // // No proposals; revert with error message
+    // No proposals; revert with error message
     // function testFirstPlaceTieWithZeroProposalsWithNative() public {
     //     vm.warp(1681670001);
     //     vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
@@ -616,7 +616,7 @@ contract RewardsModuleTest is Test {
     //     rewardsModulePaysAuthor.release(1);
     // }
 
-    // // No proposals; revert with error message
+    // No proposals; revert with error message
     // function testFirstPlaceTieWithZeroProposalsWithERC20() public {
     //     vm.warp(1681670001);
     //     vm.prank(CREATOR_ADDRESS_1);
@@ -625,11 +625,11 @@ contract RewardsModuleTest is Test {
     //     rewardsModulePaysAuthor.release(testERC20, 1);
     // }
 
-    // /////////////////////////////
+    /////////////////////////////
 
-    // // RELEASES WITH DELETIONS
+    // RELEASES WITH DELETIONS
 
-    // //// 2 PROPOSALS WITH DIFFERENT AUTHORS, 1 DELETED
+    //// 2 PROPOSALS WITH DIFFERENT AUTHORS, 1 DELETED
 
     // // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to author of rank 1
     // function testReleaseToAuthorFirstPlace2WithActualFirstPlaceDeleted() public {
@@ -655,7 +655,7 @@ contract RewardsModuleTest is Test {
     //     assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     // }
 
-    // // 2 proposals with different authors, at 1 and 5 votes, the one with 1 vote is deleted; release to author of rank 1
+    // 2 proposals with different authors, at 1 and 5 votes, the one with 1 vote is deleted; release to author of rank 1
     // function testReleaseToAuthorFirstPlace2WithActualSecondPlaceDeleted() public {
     //     vm.warp(1681650001);
     //     vm.prank(PERMISSIONED_ADDRESS_1);
