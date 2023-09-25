@@ -307,6 +307,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
                 // this proposal now won't count towards the total number allowed in the contest
                 // it will still count towards the total number of proposals that the user is allowed to submit though
                 _deletedProposalIds.push(currentProposalId);
+
+                // TODO: if !downvoting - add logic to remove proposalIds from forVotesToProposalId
+                // TODO: if !downvoting - also add logic to delete to decrement the copy count of that voteAmount
             }
         }
 

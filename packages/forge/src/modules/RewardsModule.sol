@@ -224,9 +224,8 @@ contract RewardsModule is Context {
         }
         //// otherwise, determine proposal at ranking and pay out according to that
         else {
-            //// TODO: determine the proposal to be paid out (pay out target)
             IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-                _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
+                _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
             );
             addressToPayOut =
                 _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author);
@@ -279,9 +278,8 @@ contract RewardsModule is Context {
         }
         //// otherwise, determine proposal at ranking
         else {
-            //// TODO: determine the proposal to be paid out (pay out target)
             IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-                _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
+                _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
             );
             addressToPayOut =
                 _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author);

@@ -32,6 +32,8 @@ abstract contract GovernorCountingSimple is Governor, GovernorSorting {
     mapping(address => uint256) public addressTotalCastVoteCounts;
     mapping(uint256 => ProposalVote) public proposalVotesStructs;
 
+    mapping(uint256 => uint256[]) public forVotesToProposalId;
+
     /**
      * @dev Accessor to the internal vote counts for a given proposal.
      */
@@ -118,6 +120,22 @@ abstract contract GovernorCountingSimple is Governor, GovernorSorting {
     }
 
     /**
+     * @dev Get the only proposal id with this many for votes.
+     * NOTE: Should only get called at a point at which you are sure there is only one proposal id
+     *       with a certain number of forVotes (we only use it in the RewardsModule after ties have
+     *       been checked for).
+     */
+    function getOnlyProposalIdWithThisManyForVotes(uint256 forVotes) public view returns (uint256 proposalId) {
+        uint256[] memory proposalIdList = forVotesToProposalId[forVotes];
+        for (uint256 i = 0; i < proposalIdList.length; i++) {
+            if (proposalIdList[i] != 0) {
+                return proposalIdList[i];
+            }
+        }
+        revert("GovernorCountingSimple: tried to call getOnlyProposalIdWithThisManyForVotes and couldn't find one");
+    }
+
+    /**
      * @dev See {Governor-_countVote}. In this module, the support follows the `VoteType` enum (from Governor Bravo).
      */
     function _countVote(uint256 proposalId, address account, uint8 support, uint256 numVotes, uint256 totalVotes)
@@ -156,8 +174,19 @@ abstract contract GovernorCountingSimple is Governor, GovernorSorting {
 
         // sorting and consequently rewards module compatability is only available if downvoting is disabled
         if (downvotingAllowed() == 0) {
-            // TODO: update a map of forVotes => proposalId[] to be able to go from rank => proposalId
-            // TODO: also add logic to delete to decrement the copy count of that voteAmount
+            // update a map of forVotes => proposalId[] to be able to go from rank => proposalId
+            uint256 oldForVotes = proposalvote.proposalVoteCounts.forVotes - numVotes;
+            if (oldForVotes > 0) {
+                uint256[] memory oldPropIdList = forVotesToProposalId[oldForVotes];
+                for (uint256 i = 0; i < oldPropIdList.length; i++) {
+                    if (oldPropIdList[i] == proposalId) {
+                        delete oldPropIdList[i];
+                        break;
+                    }
+                }
+            }
+            forVotesToProposalId[proposalvote.proposalVoteCounts.forVotes].push(proposalId);
+
             updateRanks(proposalvote.proposalVoteCounts.forVotes - numVotes, proposalvote.proposalVoteCounts.forVotes);
         }
     }
