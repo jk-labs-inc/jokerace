@@ -14,7 +14,7 @@ abstract contract GovernorSorting {
     uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
     mapping(uint256 => uint256) public copyCounts; // key is forVotes amount, value is the number of copies of that number that are present in sortedRanks
 
-    // get the idx of sortedRanks considered to be the inputted rank taking deleted proposals
+    // get the idx of sortedRanks considered to be the queried rank taking deleted proposals
     // into account
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
         require(rank != 0, "GovernorSorting: rank cannot equal 0");
