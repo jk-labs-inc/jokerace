@@ -61,7 +61,7 @@ const ContestRewards = () => {
       return (
         <p className="text-[16px]">
           For this contest, you cannot create a rewards module; the maximum number of submissions for the contest must
-          be <b>100</b> in order to be able to create a rewards module.
+          be <b>100</b> or less in order to be able to create a rewards module.
         </p>
       );
     }

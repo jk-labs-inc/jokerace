@@ -99,7 +99,7 @@ const CreateContestParams = () => {
               min={1}
             />
             <p className="text-neutral-11 text-[16px]">
-              leave blank to set at a maximum of 1000, please note that only a maximum of 100 submissions are allowed
+              leave blank to set at a maximum of 1000, please note that only a maximum of 100 submissions or less is allowed
               for attaching rewards to the contest.
             </p>
           </div>
