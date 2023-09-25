@@ -120,17 +120,6 @@ const ContestRewards = () => {
                       {rewardsStore?.rewards?.contractAddress}
                     </a>
                     <p className="text-[12px] font-bold text-neutral-11">
-                      please note this is unaudited code that can be verified on our{" "}
-                      <a
-                        className="underline"
-                        href="https://github.com/jk-labs-inc/jokerace"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        github
-                      </a>
-                      .
-                      <br />
                       {creator ? (
                         <>
                           you can withdraw funds at any time{" "}
