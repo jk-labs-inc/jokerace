@@ -204,7 +204,7 @@ abstract contract GovernorCountingSimple is Governor {
         addressTotalCastVoteCounts[account] += numVotes;
         totalVotesCast += numVotes;
 
-        // sorting and consequently rewards module compatability is only available if downvoting is disabled
+        // sorting and consequently rewards module compatibility is only available if downvoting is disabled
         if (downvotingAllowed() == 0) {
             // update a map of forVotes => proposalId[] to be able to go from rank => proposalId
             uint256 oldForVotes = proposalvote.proposalVoteCounts.forVotes - numVotes;
