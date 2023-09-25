@@ -116,7 +116,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
         )}
         {contestStatus !== ContestStatus.SubmissionOpen && proposal.votes > 0 && (
           <ProposalVotesWrapper>
-            <ListProposalVotes proposalId={proposalId} proposal={proposal} />
+            <ListProposalVotes proposalId={proposalId} />
           </ProposalVotesWrapper>
         )}
       </div>
