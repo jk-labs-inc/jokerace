@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 /**
- * @dev Extension of {GovernorCountingSimple} for sorting and ranking.
+ * @dev Logic for sorting and ranking.
  *
  * _Available since v4.3._
  */
