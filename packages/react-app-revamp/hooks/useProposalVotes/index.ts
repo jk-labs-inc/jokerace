@@ -14,7 +14,7 @@ import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useProposalVotesStore } from "./store";
 
-const VOTES_PER_PAGE = 5;
+export const VOTES_PER_PAGE = 5;
 
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
@@ -42,6 +42,7 @@ export function useProposalVotes(id: number | string) {
     setIsListVotersSuccess,
     setIsPageVotesLoading,
     setIsPageVotesError,
+    setVotedAddressesCount,
     setCurrentPagePaginationVotes,
     setIndexPaginationVotesPerId,
     setTotalPagesPaginationVotes,
@@ -76,6 +77,8 @@ export function useProposalVotes(id: number | string) {
         args: [id],
       })) as any;
 
+      setVotedAddressesCount(list.length);
+
       const usersListWithCurrentUserFirst = Array.from(list);
       // Make sure that current user address appears first in the list
       if (accountData?.address && list.includes(accountData?.address)) {
@@ -88,7 +91,7 @@ export function useProposalVotes(id: number | string) {
       const totalPagesPaginationVotes = Math.ceil(list?.length / VOTES_PER_PAGE);
       setTotalPagesPaginationVotes(totalPagesPaginationVotes);
       setCurrentPagePaginationVotes(0);
-      //@ts-ignore
+
       const paginationChunks = arrayToChunks(usersListWithCurrentUserFirst, VOTES_PER_PAGE);
       setTotalPagesPaginationVotes(paginationChunks.length);
       setIndexPaginationVotesPerId(paginationChunks);
