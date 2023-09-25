@@ -1,24 +1,41 @@
 import { supabase } from "@config/supabase";
+import getPagination from "@helpers/getPagination";
 
 interface ProposalCriteria {
   user_address: string;
   [key: string]: any;
 }
 
-async function fetchProposals(criteria: ProposalCriteria, range: { from: number; to: number }) {
-  const result = await supabase
-    .from("analytics_contest_participants_v3")
-    .select("network_name, contest_address, proposal_id, created_at")
-    .match(criteria)
-    .range(range.from, range.to);
+async function fetchProposals(
+  criteria: ProposalCriteria,
+  range: { from: number; to: number },
+): Promise<{ data: any[]; count: number }> {
+  let result;
 
-  const { data, error } = result;
-  if (error) {
-    console.error(error);
-    return [];
+  if (criteria.vote_amount === null) {
+    result = await supabase
+      .from("analytics_contest_participants_v3")
+      .select("network_name, contest_address, proposal_id, created_at", { count: "exact" })
+      .eq("user_address", criteria.user_address)
+      .is("vote_amount", criteria.vote_amount)
+      .range(range.from, range.to);
+  } else {
+    result = await supabase
+      .from("analytics_contest_participants_v3")
+      .select("network_name, contest_address, proposal_id, created_at")
+      .eq("user_address", criteria.user_address)
+      .neq("vote_amount", null)
+      .range(range.from, range.to);
   }
 
-  return data;
+  const { data, count, error } = result;
+
+  if (error) {
+    console.error(error);
+    return { data: [], count: 0 };
+  }
+
+  return { data, count: count ?? 0 };
 }
 
 async function getContestDetailsByAddresses(contestAddresses: string[]) {
@@ -33,12 +50,6 @@ async function getContestDetailsByAddresses(contestAddresses: string[]) {
   return data;
 }
 
-function getPagination(currentPage: number, itemsPerPage: number) {
-  const from = (currentPage - 1) * itemsPerPage;
-  const to = currentPage * itemsPerPage - 1;
-  return { from, to };
-}
-
 // Merge proposals with their respective contest details
 function mergeProposalsWithContests(proposals: any[], contests: any[]): any[] {
   return proposals.map(proposal => {
@@ -50,29 +61,34 @@ function mergeProposalsWithContests(proposals: any[], contests: any[]): any[] {
   });
 }
 
-export async function fetchUserSubmissions(
+export async function getUserSubmissions(
   userAddress: string,
   currentPage: number,
   itemsPerPage: number,
-): Promise<any[]> {
+): Promise<{ data: any[]; count: number }> {
   const range = getPagination(currentPage, itemsPerPage);
   const criteria: ProposalCriteria = { user_address: userAddress, vote_amount: null };
 
-  const proposals = await fetchProposals(criteria, range);
+  const { data: proposals, count } = await fetchProposals(criteria, range);
+
   const contestAddresses = proposals.map(p => p.contest_address);
   const contests = await getContestDetailsByAddresses(contestAddresses);
 
-  return mergeProposalsWithContests(proposals, contests);
+  return { data: mergeProposalsWithContests(proposals, contests), count };
 }
 
-export async function fetchUserVotes(userAddress: string, currentPage: number, itemsPerPage: number): Promise<any[]> {
+export async function getUserVotes(
+  userAddress: string,
+  currentPage: number,
+  itemsPerPage: number,
+): Promise<{ data: any[]; count: number }> {
   const range = getPagination(currentPage, itemsPerPage);
   const criteria: ProposalCriteria = { user_address: userAddress };
   criteria["vote_amount"] = { neq: null };
 
-  const proposals = await fetchProposals(criteria, range);
+  const { data: proposals, count } = await fetchProposals(criteria, range);
   const contestAddresses = proposals.map(p => p.contest_address);
   const contests = await getContestDetailsByAddresses(contestAddresses);
 
-  return mergeProposalsWithContests(proposals, contests);
+  return { data: mergeProposalsWithContests(proposals, contests), count };
 }
