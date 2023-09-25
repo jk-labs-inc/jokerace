@@ -10,6 +10,9 @@ import GateSubmissionsOpenContract from "@contracts/bytecodeAndAbi/Contest.2.9.g
 import MerkleVotesContract from "@contracts/bytecodeAndAbi/Contest.3.1.merkleVotes.sol/Contest.json";
 import CantVoteOnDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.10.cantVoteOnDeletedProps.sol/Contest.json";
 import AuditMinorFixesContract from "@contracts/bytecodeAndAbi/Contest.3.11.auditMinorFixes.sol/Contest.json";
+import AuditInfoAndOptimizationsContract from "@contracts/bytecodeAndAbi/Contest.3.12.auditInfoAndOptimizations.sol/Contest.json";
+import CleanUpContractDocsContract from "@contracts/bytecodeAndAbi/Contest.3.13.cleanUpContractDocs.sol/Contest.json";
+import TrackProposalAuthorsContract from "@contracts/bytecodeAndAbi/Contest.3.14.trackProposalAuthors.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
@@ -20,6 +23,7 @@ import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.mak
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
+import { BaseError, TransactionExecutionError } from "viem";
 import { getEthersProvider } from "./ethers";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 
@@ -61,6 +65,12 @@ export async function getContestContractVersion(address: string, chainId: number
       return { abi: CantVoteOnDeletedContract.abi, version };
     } else if (version === "3.11") {
       return { abi: AuditMinorFixesContract.abi, version };
+    } else if (version === "3.12") {
+      return { abi: AuditInfoAndOptimizationsContract.abi, version };
+    } else if (version === "3.13") {
+      return { abi: CleanUpContractDocsContract.abi, version };
+    } else if (version === "3.14") {
+      return { abi: TrackProposalAuthorsContract.abi, version };
     }
 
     if (version === "1") {
@@ -82,7 +92,7 @@ export async function getContestContractVersion(address: string, chainId: number
     }
 
     return { abi: DeployedContestContract.abi, version };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error(`Error while fetching the contract version for address ${address} on chainId ${chainId}:`, error);
     return { abi: null, version: "error" };
   }

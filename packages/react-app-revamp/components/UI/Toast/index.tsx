@@ -6,24 +6,22 @@ import WarningToast from "./components/Warning";
 
 let toastId: any = null;
 
-const createToast = (type: any, content: JSX.Element) => {
-  if (toastId === null) {
-    toastId = toast(content, {
-      type,
-      autoClose: type !== toast.TYPE.INFO ? 4000 : false,
-      icon: false,
-      onClose: () => {
-        toastId = null;
-      },
-    });
-  } else {
-    toast.update(toastId, {
-      type,
-      autoClose: type !== toast.TYPE.INFO ? 4000 : false,
-      render: content,
-      icon: false,
-    });
+const commonSettings = {
+  autoClose: 4000,
+  icon: false,
+  onClose: () => {
+    toastId = null;
+  },
+};
+
+const createToast = (type: any, content: JSX.Element, additionalSettings: any = {}) => {
+  const settings = { ...commonSettings, ...additionalSettings, type };
+
+  if (toastId !== null) {
+    toast.dismiss(toastId);
   }
+
+  toastId = toast(content, settings);
 };
 
 export const toastSuccess = (message: string) => {
@@ -31,7 +29,9 @@ export const toastSuccess = (message: string) => {
 };
 
 export const toastError = (message: string, messageToCopy?: string) => {
-  createToast(toast.TYPE.ERROR, <ErrorToast messageToShow={message} messageToCopy={messageToCopy} />);
+  createToast(toast.TYPE.ERROR, <ErrorToast messageToShow={message} messageToCopy={messageToCopy} />, {
+    className: "error-toast",
+  });
 };
 
 export const toastWarning = (message: string) => {
@@ -39,7 +39,9 @@ export const toastWarning = (message: string) => {
 };
 
 export const toastLoading = (message: string, showSignMessage?: boolean) => {
-  createToast(toast.TYPE.INFO, <LoadingToast message={message} showSignMessage={showSignMessage} />);
+  createToast(toast.TYPE.INFO, <LoadingToast message={message} showSignMessage={showSignMessage} />, {
+    autoClose: false,
+  });
 };
 
 export const toastDismiss = () => {

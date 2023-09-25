@@ -167,7 +167,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
             "GovernorSorting: contest must be to calculate sorted and tied proposals"
         );
         require(
-            setSortedAndTiedProposalsHasBeenRun == false,
+            !setSortedAndTiedProposalsHasBeenRun,
             "GovernorSorting: setSortedAndTiedProposals() has already been run and its respective values set"
         );
 
@@ -176,7 +176,8 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         int256 lastTotalVotes;
         uint256 rankingBeingChecked = 1;
         _highestTiedRanking = _sortedProposalIds.length + 1; // set as default so that it isn't 0 if no ties are found
-        for (uint256 i = 0; i < _sortedProposalIds.length; i++) {
+        uint256 sortedProposalIdsLength = _sortedProposalIds.length;
+        for (uint256 i = 0; i < sortedProposalIdsLength; i++) {
             uint256 lastSortedItemIndex = _sortedProposalIds.length - 1;
 
             // decrement through the ascending sorted list
@@ -191,7 +192,7 @@ abstract contract GovernorSorting is GovernorCountingSimple {
                 // if on last item, then the value at the current index is
                 // the last iteration of the last ranking's value
                 if (_sortedProposalIds.length == 1) {
-                    tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i;
+                    tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex;
                     _lowestRanking = rankingBeingChecked;
                 }
 
@@ -208,10 +209,10 @@ abstract contract GovernorSorting is GovernorCountingSimple {
                     // if this is the first tie found, set it as the highest tied ranking
                     _highestTiedRanking = rankingBeingChecked;
                 }
-            }
-            // otherwise, mark that the last iteration of this ranking's value is at the index
-            // above the current index in the sorted list, then increment the ranking being checked
-            if (currentTotalVotes != lastTotalVotes) {
+            } else {
+                // otherwise, mark that the last iteration of this ranking's value is at the index
+                // above the current index in the sorted list, then increment the ranking being checked
+
                 // index we last decremented from is the last iteration of the current rank's value
                 tiedAdjustedRankingPosition[rankingBeingChecked] = lastSortedItemIndex - i + 1;
                 rankingBeingChecked++;

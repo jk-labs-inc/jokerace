@@ -44,9 +44,9 @@ contract RewardsModule is Context {
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
 
-    GovernorSorting private _underlyingContest;
-    address private _creator;
-    bool private _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
+    GovernorSorting private immutable _underlyingContest;
+    address private immutable _creator;
+    bool private immutable _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
 
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
@@ -79,10 +79,6 @@ contract RewardsModule is Context {
      * @dev The Ether received will be logged with {PaymentReceived} events. Note that these events are not fully
      * reliable: it's possible for a contract to receive Ether without triggering this function. This only affects the
      * reliability of the events, and not the actual splitting of Ether.
-     *
-     * To learn more about this see the Solidity documentation for
-     * https://solidity.readthedocs.io/en/latest/contracts.html#fallback-function[fallback
-     * functions].
      */
     receive() external payable virtual {
         emit PaymentReceived(msg.sender, msg.value);
@@ -92,7 +88,7 @@ contract RewardsModule is Context {
      * @dev Version of the rewards module. Default: "1"
      */
     function version() public view virtual returns (string memory) {
-        return "3.11";
+        return "3.14";
     }
 
     /**
@@ -257,9 +253,7 @@ contract RewardsModule is Context {
         );
 
         // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then
-        // "_erc20Released[token][account] += payment"
-        // cannot overflow.
+        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
         _erc20TotalReleased[token] += payment;
         unchecked {
             _erc20Released[token][ranking] += payment;
@@ -292,14 +286,14 @@ contract RewardsModule is Context {
     }
 
     function withdrawRewards() public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "RewardsModule: only the creator can withdraw rewards");
 
         emit RewardWithdrawn(creator(), address(this).balance);
         Address.sendValue(payable(creator()), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public virtual {
-        require(msg.sender == creator());
+        require(msg.sender == creator(), "RewardsModule: only the creator can withdraw rewards");
 
         emit ERC20RewardWithdrawn(token, creator(), token.balanceOf(address(this)));
         SafeERC20.safeTransfer(token, payable(creator()), token.balanceOf(address(this)));

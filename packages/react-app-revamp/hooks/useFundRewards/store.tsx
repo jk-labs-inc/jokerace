@@ -1,4 +1,3 @@
-import { CustomError } from "types/error";
 import { create } from "zustand";
 
 export type Reward = {
@@ -8,7 +7,7 @@ export type Reward = {
 
 interface FundRewardsState {
   isLoading: boolean;
-  error: CustomError | null;
+  error: string;
   isSuccess: boolean;
   transactionData: any;
   rewards: Reward[];
@@ -21,13 +20,13 @@ interface FundRewardsState {
   setIsLoading: (value: boolean) => void;
   setCancel: (value: boolean) => void;
   setIsSuccess: (value: boolean) => void;
-  setError: (value: CustomError | null) => void;
+  setError: (value: string) => void;
   setTransactionData: (data: any) => void;
 }
 
 export const useFundRewardsStore = create<FundRewardsState>(set => ({
   isLoading: false,
-  error: null,
+  error: "",
   rewards: [],
   cancel: false,
   isSuccess: false,

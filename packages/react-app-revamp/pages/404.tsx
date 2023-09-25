@@ -14,7 +14,7 @@ const Page: NextPage = () => {
           execute, and reward decisions"
         />
       </Head>
-      <div className="container m-auto sm:text-center">
+      <div className="container m-auto sm:text-center animate-appear">
         <h1 className="text-[40px] font-black mb-3 text-primary-10 font-sabo">Page not found</h1>
         <p className="text-neutral-11 mb-6 text-[16px]">
           Sorry ! The page you are looking for was deleted or it doesn't exist.

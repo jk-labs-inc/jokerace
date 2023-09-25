@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import ContestParameters from "@components/Parameters";
 import ContestRewards from "@components/Rewards";
@@ -10,9 +11,8 @@ import { toastError } from "@components/UI/Toast";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTEST } from "@config/routes";
+import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { ArrowLeftIcon } from "@heroicons/react/solid";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
@@ -183,6 +183,21 @@ const LayoutViewContest = (props: any) => {
     }
   }, [tab]);
 
+  if (error && !isLoading) {
+    return (
+      <div className="flex flex-col gap-6 m-auto animate-appear">
+        <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10 text-center">ruh-roh!</h1>
+        <p className="text-[16px] font-bold text-neutral-11 text-center">
+          we were unable to fetch this contest — please check url to make sure it's accurate <i>or</i> search for
+          contests{" "}
+          <Link href={ROUTE_VIEW_CONTESTS} className="text-primary-10">
+            here
+          </Link>
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-7 lg:w-[750px] mx-auto`}>
       <div
@@ -214,32 +229,6 @@ const LayoutViewContest = (props: any) => {
 
         {
           <>
-            {(account?.address && chain?.id !== chainId) === false && error && !isLoading && (
-              <div className="my-6 md:my-0 animate-appear flex flex-col">
-                <div className="bg-negative-1 py-4 px-5 rounded-md border-solid border border-negative-4">
-                  <p className="text-sm font-bold text-negative-10 text-center">
-                    Something went wrong while fetching this contest.
-                  </p>
-                </div>
-                {error?.message === "CALL_EXCEPTION" ? (
-                  <div className="animate-appear text-center my-3 space-y-3">
-                    <p>
-                      Looks like this contract doesn&apos;t exist on {chain?.name}. <br /> Try switching to another
-                      network.
-                    </p>
-                  </div>
-                ) : (
-                  <Button
-                    onClick={() => retry()}
-                    className="mt-5 mb-8 w-full mx-auto py-1 xs:w-auto xs:min-w-fit-content"
-                    intent="neutral-outline"
-                  >
-                    Try again
-                  </Button>
-                )}
-              </div>
-            )}
-
             {isSuccess && !error && !isLoading && (
               <>
                 {displayReloadBanner && (

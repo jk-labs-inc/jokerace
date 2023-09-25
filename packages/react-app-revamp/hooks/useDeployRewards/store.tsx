@@ -5,7 +5,7 @@ interface DeployRewardsState {
   shares: number[];
   isLoading: boolean;
   isSuccess: boolean;
-  isError: boolean;
+  error: string;
   cancel: boolean;
   deployRewardsData: {
     hash: string;
@@ -22,7 +22,7 @@ interface DeployRewardsState {
   setDeployRewardsData: (hash: string, address: string) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
-  setIsError: (isError: boolean) => void;
+  setError: (error: string) => void;
   setCancel: (cancel: boolean) => void;
   setRanks: (rank: number[]) => void;
   setShares: (share: number[]) => void;
@@ -36,7 +36,7 @@ export const useDeployRewardsStore = create<DeployRewardsState>(set => {
     shares: [],
     isLoading: false,
     isSuccess: false,
-    isError: false,
+    error: "",
     cancel: false,
     validationError: {
       uniqueRanks: undefined,
@@ -56,7 +56,7 @@ export const useDeployRewardsStore = create<DeployRewardsState>(set => {
     setValidationError: error => set({ validationError: error }),
     setIsLoading: isLoading => set({ isLoading }),
     setIsSuccess: isSuccess => set({ isSuccess }),
-    setIsError: isError => set({ isError }),
+    setError: error => set({ error }),
     setCancel: cancel => set({ cancel: cancel }),
     setDeployRewardsData: (hash, address) => set(state => ({ deployRewardsData: { hash, address } })),
     setRanks: ranks => set({ ranks }),
