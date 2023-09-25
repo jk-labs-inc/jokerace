@@ -12,6 +12,7 @@ import CantVoteOnDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.10.ca
 import AuditMinorFixesContract from "@contracts/bytecodeAndAbi/Contest.3.11.auditMinorFixes.sol/Contest.json";
 import AuditInfoAndOptimizationsContract from "@contracts/bytecodeAndAbi/Contest.3.12.auditInfoAndOptimizations.sol/Contest.json";
 import CleanUpContractDocsContract from "@contracts/bytecodeAndAbi/Contest.3.13.cleanUpContractDocs.sol/Contest.json";
+import TrackProposalAuthorsContract from "@contracts/bytecodeAndAbi/Contest.3.14.trackProposalAuthors.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
@@ -68,6 +69,8 @@ export async function getContestContractVersion(address: string, chainId: number
       return { abi: AuditInfoAndOptimizationsContract.abi, version };
     } else if (version === "3.13") {
       return { abi: CleanUpContractDocsContract.abi, version };
+    } else if (version === "3.14") {
+      return { abi: TrackProposalAuthorsContract.abi, version };
     }
 
     if (version === "1") {

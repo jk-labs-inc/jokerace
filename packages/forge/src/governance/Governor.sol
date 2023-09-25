@@ -30,6 +30,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     bool private _canceled;
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
+    address[] private _proposalAuthors;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -70,7 +71,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.13";
+        return "3.14";
     }
 
     /**
@@ -114,6 +115,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function getAllProposalIds() public view virtual returns (uint256[] memory) {
         return _proposalIds;
+    }
+
+    /**
+     * @dev Return all proposal authors.
+     */
+    function getAllProposalAuthors() public view virtual returns (address[] memory) {
+        return _proposalAuthors;
     }
 
     /**
@@ -272,6 +280,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         _proposalIds.push(proposalId);
         _proposals[proposalId] = proposal;
         _numSubmissions[msg.sender] += 1;
+        _proposalAuthors.push(msg.sender);
 
         emit ProposalCreated(proposalId, msg.sender);
 
