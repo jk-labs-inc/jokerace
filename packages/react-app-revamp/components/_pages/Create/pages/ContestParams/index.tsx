@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
+import { DEFAULT_SUBMISSIONS, MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
@@ -8,6 +8,7 @@ import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
+import { useNextStep } from "../../hooks/useNextStep";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
@@ -90,14 +91,17 @@ const CreateContestParams = () => {
           <div className="flex flex-col gap-2">
             <CreateTextInput
               value={maxSubmissions}
-              placeholder="200"
+              placeholder={DEFAULT_SUBMISSIONS.toString()}
               className="w-full md:w-[280px]"
               type="number"
               onChange={onMaxSubmissionsChange}
               max={MAX_SUBMISSIONS_LIMIT}
               min={1}
             />
-            <p className="text-neutral-11 text-[16px]">leave blank to set at max of 1000</p>
+            <p className="text-neutral-11 text-[16px]">
+              leave blank to set at a maximum of 1000, please note that only a maximum of 100 submissions are allowed
+              for attaching rewards to the contest.
+            </p>
           </div>
         </div>
         <div className="flex flex-col gap-5">

@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
-
 import { toastDismiss } from "@components/UI/Toast";
+import { DEFAULT_SUBMISSIONS } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -26,14 +25,15 @@ const CreateContestDeploying = () => {
   const { setShowRewards } = useShowRewardsStore(state => state);
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && deployContestData) {
       toastDismiss();
       setTimeout(() => {
         router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
-        setShowRewards(true);
+
+        if (deployContestData.maxSubmissions <= DEFAULT_SUBMISSIONS) setShowRewards(true);
       }, 3000);
     }
-  }, [isSuccess]);
+  }, [deployContestData, isSuccess, router, setShowRewards]);
 
   return (
     <div className="flex flex-col gap-4 mt-12 lg:mt-[100px] animate-swingInLeft">
