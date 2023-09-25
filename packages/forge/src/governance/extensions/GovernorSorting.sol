@@ -48,6 +48,7 @@ abstract contract GovernorSorting {
         return false;
     }
 
+    // TODO: use last non-zero index here too (in this case it + 2 as the < check in the for loop) so we're not moving around a bunch of 0s
     // insert a new value into sortedRanks at insertingIndex
     function _insertRank(uint256 newValue, uint256 insertingIndex) internal {
         // if either of these cases, then we can just swap out, there is nothing to push down
