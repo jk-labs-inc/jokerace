@@ -135,6 +135,32 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
+     * @dev See {Governor-_removeDeletedProposalIds}.
+     */
+    function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds)
+        internal
+        virtual
+        override
+    {
+        for (uint256 i = 0; i < proposalIds.length; i++) {
+            uint256 currentProposalId = proposalIds[i];
+            uint256 currentProposalsForVotes = proposalVotesStructs[currentProposalId].proposalVoteCounts.forVotes;
+
+            // remove this proposalId from the list of proposalIds that share its current forVotes
+            // value in forVotesToProposalId
+            uint256[] memory currentForVotesPropList = forVotesToProposalId[currentProposalsForVotes]; // copy into memory array for cheaper access
+            for (uint256 j = 0; j < currentForVotesPropList.length; j++) {
+                if (currentForVotesPropList[j] == currentProposalId) {
+                    delete forVotesToProposalId[currentProposalsForVotes][j];
+                    break;
+                }
+            }
+            // decrement copy counts of the forVotes of proposalIds
+            copyCounts[currentProposalsForVotes]--;
+        }
+    }
+
+    /**
      * @dev See {Governor-_countVote}. In this module, the support follows the `VoteType` enum (from Governor Bravo).
      */
     function _countVote(uint256 proposalId, address account, uint8 support, uint256 numVotes, uint256 totalVotes)
@@ -179,6 +205,9 @@ abstract contract GovernorCountingSimple is Governor {
                 uint256[] memory oldPropIdList = forVotesToProposalId[oldForVotes];
                 for (uint256 i = 0; i < oldPropIdList.length; i++) {
                     if (oldPropIdList[i] == proposalId) {
+                        // TODO: swap to end and delete (https://stackoverflow.com/questions/49051856/is-there-a-pop-functionality-for-solidity-arrays) bc we don't care about order,
+                        // makes things cleaner, and saves on gas if there end up being a ton of proposals that pass through having a certain number of votes
+                        // throughout the contest
                         delete oldPropIdList[i];
                         break;
                     }

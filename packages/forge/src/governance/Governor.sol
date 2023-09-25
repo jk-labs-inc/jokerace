@@ -189,6 +189,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     }
 
     /**
+     * @dev Remove deleted proposalIds from forVotesToProposalId and decrement copy counts of the forVotes of proposalIds.
+     */
+    function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds)
+        internal
+        virtual;
+
+    /**
      * @dev Register a vote with a given support and voting weight.
      *
      * Note: Support is generic and can represent various things depending on the voting system used.
@@ -309,8 +316,11 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
                 // it will still count towards the total number of proposals that the user is allowed to submit though
                 _deletedProposalIds.push(currentProposalId);
 
-                // TODO: if !downvoting - add logic to remove proposalIds from forVotesToProposalId
-                // TODO: if !downvoting - also add logic to delete to decrement the copy count of that voteAmount
+                // we don't do sorting if downvoting is enabled
+                if (downvotingAllowed() == 0) {
+                    // remove proposalIds from forVotesToProposalId and decrement the copy count of that voteAmount
+                    _deletedProposalsSortingCleanup(proposalIds);
+                }
             }
         }
 
