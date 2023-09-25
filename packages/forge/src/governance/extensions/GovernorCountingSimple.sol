@@ -3,12 +3,11 @@
 pragma solidity ^0.8.0;
 
 import "../Governor.sol";
-import "./GovernorSorting.sol";
 
 /**
  * @dev Extension of {Governor} for simple, 3 options, vote counting.
  */
-abstract contract GovernorCountingSimple is Governor, GovernorSorting {
+abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Supported vote types. Matches Governor Bravo ordering.
      */

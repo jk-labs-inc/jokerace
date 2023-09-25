@@ -10,11 +10,12 @@ import "@openzeppelin/utils/Address.sol";
 import "@openzeppelin/utils/Context.sol";
 import "./IGovernor.sol";
 import "./GovernorMerkleVotes.sol";
+import "./extensions/GovernorSorting.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
+abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
