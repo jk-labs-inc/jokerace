@@ -2,7 +2,9 @@
 
 Check out the live site at [jokerace.xyz](https://jokerace.xyz/)!
 
-You can also find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io)!
+Also, our smart contracts were audited by Certik in September 2023, check out the audit report [here](https://github.com/jk-labs-inc/jokerace-audits/blob/main/audit-reports/Sept23_Certik_Final_Report.pdf)!
+
+One other fun thing: you can find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io)!
 
 ## Pre-requisites
 - `yarn` installed
