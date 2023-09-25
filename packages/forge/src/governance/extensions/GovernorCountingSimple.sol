@@ -125,23 +125,17 @@ abstract contract GovernorCountingSimple is Governor {
      *       been checked for).
      */
     function getOnlyProposalIdWithThisManyForVotes(uint256 forVotes) public view returns (uint256 proposalId) {
-        uint256[] memory proposalIdList = forVotesToProposalId[forVotes];
-        for (uint256 i = 0; i < proposalIdList.length; i++) {
-            if (proposalIdList[i] != 0) {
-                return proposalIdList[i];
-            }
-        }
-        revert("GovernorCountingSimple: tried to call getOnlyProposalIdWithThisManyForVotes and couldn't find one");
+        require(
+            forVotesToProposalId[forVotes].length == 1,
+            "GovernorCountingSimple: tried to call getOnlyProposalIdWithThisManyForVotes and couldn't find one"
+        );
+        return forVotesToProposalId[forVotes][0];
     }
 
     /**
      * @dev See {Governor-_removeDeletedProposalIds}.
      */
-    function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds)
-        internal
-        virtual
-        override
-    {
+    function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds) internal virtual override {
         for (uint256 i = 0; i < proposalIds.length; i++) {
             uint256 currentProposalId = proposalIds[i];
             uint256 currentProposalsForVotes = proposalVotesStructs[currentProposalId].proposalVoteCounts.forVotes;
@@ -151,10 +145,16 @@ abstract contract GovernorCountingSimple is Governor {
             uint256[] memory currentForVotesPropList = forVotesToProposalId[currentProposalsForVotes]; // copy into memory array for cheaper access
             for (uint256 j = 0; j < currentForVotesPropList.length; j++) {
                 if (currentForVotesPropList[j] == currentProposalId) {
-                    delete forVotesToProposalId[currentProposalsForVotes][j];
+                    // swap with last item and pop bc we don't care about order.
+                    // makes things cleaner and saves on gas if there end up being a ton of proposals that pass
+                    // through having a certain number of votes throughout the contest.
+                    forVotesToProposalId[currentProposalsForVotes][j] =
+                        forVotesToProposalId[currentProposalsForVotes][currentForVotesPropList.length - 1];
+                    forVotesToProposalId[currentProposalsForVotes].pop();
                     break;
                 }
             }
+
             // decrement copy counts of the forVotes of proposalIds
             copyCounts[currentProposalsForVotes]--;
         }
@@ -205,10 +205,12 @@ abstract contract GovernorCountingSimple is Governor {
                 uint256[] memory oldPropIdList = forVotesToProposalId[oldForVotes];
                 for (uint256 i = 0; i < oldPropIdList.length; i++) {
                     if (oldPropIdList[i] == proposalId) {
-                        // TODO: swap to end and delete (https://stackoverflow.com/questions/49051856/is-there-a-pop-functionality-for-solidity-arrays) bc we don't care about order,
-                        // makes things cleaner, and saves on gas if there end up being a ton of proposals that pass through having a certain number of votes
-                        // throughout the contest
-                        delete oldPropIdList[i];
+                        // swap with last item and pop bc we don't care about order.
+                        // makes things cleaner and saves on gas if there end up being a ton of proposals that pass
+                        // through having a certain number of votes throughout the contest.
+                        forVotesToProposalId[oldForVotes][i] =
+                            forVotesToProposalId[oldForVotes][oldPropIdList.length - 1];
+                        forVotesToProposalId[oldForVotes].pop();
                         break;
                     }
                 }

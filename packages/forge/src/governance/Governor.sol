@@ -191,9 +191,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     /**
      * @dev Remove deleted proposalIds from forVotesToProposalId and decrement copy counts of the forVotes of proposalIds.
      */
-    function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds)
-        internal
-        virtual;
+    function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds) internal virtual;
 
     /**
      * @dev Register a vote with a given support and voting weight.
