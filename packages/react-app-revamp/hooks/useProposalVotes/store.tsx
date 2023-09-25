@@ -5,6 +5,7 @@ interface ProposalVotesState {
   isListVotersSuccess: boolean;
   isListVotersError: string | null;
   isListVotersLoading: boolean;
+  votedAddressesCount: number;
   votesPerAddress: Record<string, any>;
   isPageVotesLoading: boolean;
   isPageVotesSuccess: boolean;
@@ -20,6 +21,7 @@ interface ProposalVotesState {
   setIndexPaginationVotesPerId: (votesPages: Array<any>) => void;
   setTotalPagesPaginationVotes: (newTotal: number) => void;
   setHasPaginationVotesNextPage: (hasNextPage: boolean) => void;
+  setVotedAddressesCount: (value: number) => void;
   setVotesPerAddress: ({ address, value }: { address: string; value: any }) => void;
   setIsListVotersLoading: (value: boolean) => void;
   setIsListVotersSuccess: (value: boolean) => void;
@@ -36,9 +38,11 @@ export const createProposalVotesStore = () =>
     isPageVotesSuccess: false,
     isPageVotesError: "",
     indexPaginationVotes: [],
+    votedAddressesCount: 0,
     totalPagesPaginationVotes: 0,
     currentPagePaginationVotes: 0,
     hasPaginationVotesNextPage: false,
+    setVotedAddressesCount: value => set({ votedAddressesCount: value }),
     setIsPageVotesLoading: value => set({ isPageVotesLoading: value }),
     setIsPageVotesSuccess: value => set({ isPageVotesSuccess: value }),
     setIsPageVotesError: value => set({ isPageVotesError: value }),
