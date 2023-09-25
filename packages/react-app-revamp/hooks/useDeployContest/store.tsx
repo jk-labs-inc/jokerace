@@ -25,6 +25,7 @@ export interface DeployContestState {
     chainId: number;
     hash: string;
     address: string;
+    maxSubmissions: number;
   };
   type: string;
   title: string;
@@ -51,7 +52,7 @@ export interface DeployContestState {
   furthestStep: number;
   submissionTab: number;
 
-  setDeployContestData: (chain: string, chainId: number, hash: string, address: string) => void;
+  setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
@@ -93,6 +94,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       chainId: 0,
       hash: "",
       address: "",
+      maxSubmissions: 0,
     },
     type: "",
     title: "",
@@ -110,7 +112,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     submissionAllowlistFields: Array(15).fill(EMPTY_FIELDS_SUBMISSION),
     submissionMerkle: null,
     allowedSubmissionsPerUser: 0,
-    maxSubmissions: 200,
+    maxSubmissions: 100,
     downvote: true,
     isLoading: false,
     isSuccess: false,
@@ -123,8 +125,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
   return {
     ...initialState,
 
-    setDeployContestData: (chain: string, chainId: number, hash: string, address: string) =>
-      set({ deployContestData: { chain, chainId, hash, address } }),
+    setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) =>
+      set({ deployContestData: { chain, chainId, hash, address, maxSubmissions } }),
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),

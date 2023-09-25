@@ -19,6 +19,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
+export const DEFAULT_SUBMISSIONS = 100;
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useDeployContest() {
@@ -110,6 +111,7 @@ export function useDeployContest() {
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
         contractContest.address,
+        maxSubmissions,
       );
 
       const contestData = {
@@ -175,7 +177,6 @@ export function useDeployContest() {
       stateContestDeployment.setIsLoading(false);
       stateContestDeployment.setError(error);
       setIsLoading(false);
-
       throw e;
     }
   }
