@@ -1,4 +1,4 @@
-export const MAX_TIME_TO_WAIT_FOR_RPC = 5000;
+export const MAX_TIME_TO_WAIT_FOR_RPC = 10000;
 
 export async function executeWithTimeout<T>(timeoutDuration: number, targetPromise: Promise<T>): Promise<T> {
   let timeoutPromise = new Promise<T>((_, reject) => {
