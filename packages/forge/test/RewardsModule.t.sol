@@ -118,12 +118,12 @@ contract RewardsModuleTest is Test {
 
         rewardsModulePaysTarget = new RewardsModule(payees,
                                           shares,
-                                          GovernorSorting(contest),
+                                          Contest(contest),
                                           true);
 
         rewardsModulePaysAuthor = new RewardsModule(payees,
                                           shares,
-                                          GovernorSorting(contest),
+                                          Contest(contest),
                                           false);
 
         vm.stopPrank();
