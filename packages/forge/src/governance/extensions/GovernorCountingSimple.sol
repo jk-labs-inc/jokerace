@@ -133,6 +133,24 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
+     * @dev Remove this proposalId from the list of proposalIds that share its current forVotes
+     *      value in forVotesToProposalId.
+     */
+    function _rmProposalIdFromForVotesMap(uint256 proposalId, uint256 forVotes) internal {
+        uint256[] memory tmpForVotesPropList = forVotesToProposalId[forVotes]; // copy into memory array for cheaper access
+        for (uint256 i = 0; i < tmpForVotesPropList.length; i++) {
+            if (tmpForVotesPropList[i] == proposalId) {
+                // swap with last item and pop bc we don't care about order.
+                // makes things cleaner and saves on gas if there end up being a ton of proposals that pass
+                // through having a certain number of votes throughout the contest.
+                forVotesToProposalId[forVotes][i] = forVotesToProposalId[forVotes][tmpForVotesPropList.length - 1];
+                forVotesToProposalId[forVotes].pop();
+                break;
+            }
+        }
+    }
+
+    /**
      * @dev See {Governor-_removeDeletedProposalIds}.
      */
     function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds) internal virtual override {
@@ -142,18 +160,7 @@ abstract contract GovernorCountingSimple is Governor {
 
             // remove this proposalId from the list of proposalIds that share its current forVotes
             // value in forVotesToProposalId
-            uint256[] memory currentForVotesPropList = forVotesToProposalId[currentProposalsForVotes]; // copy into memory array for cheaper access
-            for (uint256 j = 0; j < currentForVotesPropList.length; j++) {
-                if (currentForVotesPropList[j] == currentProposalId) {
-                    // swap with last item and pop bc we don't care about order.
-                    // makes things cleaner and saves on gas if there end up being a ton of proposals that pass
-                    // through having a certain number of votes throughout the contest.
-                    forVotesToProposalId[currentProposalsForVotes][j] =
-                        forVotesToProposalId[currentProposalsForVotes][currentForVotesPropList.length - 1];
-                    forVotesToProposalId[currentProposalsForVotes].pop();
-                    break;
-                }
-            }
+            _rmProposalIdFromForVotesMap(currentProposalId, currentProposalsForVotes);
 
             // decrement copy counts of the forVotes of proposalIds
             copyCounts[currentProposalsForVotes]--;
@@ -202,18 +209,7 @@ abstract contract GovernorCountingSimple is Governor {
             // update a map of forVotes => proposalId[] to be able to go from rank => proposalId
             uint256 oldForVotes = proposalvote.proposalVoteCounts.forVotes - numVotes;
             if (oldForVotes > 0) {
-                uint256[] memory oldPropIdList = forVotesToProposalId[oldForVotes];
-                for (uint256 i = 0; i < oldPropIdList.length; i++) {
-                    if (oldPropIdList[i] == proposalId) {
-                        // swap with last item and pop bc we don't care about order.
-                        // makes things cleaner and saves on gas if there end up being a ton of proposals that pass
-                        // through having a certain number of votes throughout the contest.
-                        forVotesToProposalId[oldForVotes][i] =
-                            forVotesToProposalId[oldForVotes][oldPropIdList.length - 1];
-                        forVotesToProposalId[oldForVotes].pop();
-                        break;
-                    }
-                }
+                _rmProposalIdFromForVotesMap(proposalId, oldForVotes);
             }
             forVotesToProposalId[proposalvote.proposalVoteCounts.forVotes].push(proposalId);
 
