@@ -40,7 +40,7 @@ const LandingHeader = () => {
         </Link>
         <div className="hidden lg:flex items-center gap-3">
           {isClient && address && (
-            <Link href={`${ROUTE_VIEW_USER}/${address}`}>
+            <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
               <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
             </Link>
           )}
@@ -86,7 +86,7 @@ const LandingHeader = () => {
                     {isClient && address && (
                       <Menu.Item>
                         {({ active }) => (
-                          <MenuLink active={active} href={`${ROUTE_VIEW_USER}/${address}`}>
+                          <MenuLink active={active} href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
                             Profile
                           </MenuLink>
                         )}

@@ -6,6 +6,7 @@ import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { chains } from "@config/wagmi";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
+import { goToProposalPage } from "@helpers/routing";
 import {
   loadSubmissionFromLocalStorage,
   saveSubmissionToLocalStorage,
@@ -37,7 +38,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { asPath } = useRouter();
-  const { sendProposal, isLoading, isSuccess, goToProposalPage } = useSubmitProposal();
+  const { sendProposal, isLoading } = useSubmitProposal();
   const { contestPrompt, votesOpen } = useContestStore(state => state);
   const chainName = asPath.split("/")[2];
   const contestId = asPath.split("/")[3];
