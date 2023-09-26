@@ -23,7 +23,6 @@ import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.mak
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
-import { BaseError, TransactionExecutionError } from "viem";
 import { getEthersProvider } from "./ethers";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 

@@ -4,6 +4,7 @@ import { useAvatarStore } from "@hooks/useAvatar";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEnsAvatar, fetchEnsName, mainnet } from "@wagmi/core";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
@@ -76,30 +77,26 @@ const EthereumAddress = ({
     },
   });
 
-  const onUserProfileRoute = () => {
-    router.push(`${ROUTE_VIEW_USER}/${ethereumAddress}`);
-  };
-
   const avatarUrl = queryProfileAndAvatar.data?.avatarUrl || DEFAULT_AVATAR_URL;
   const isLoading = queryProfileAndAvatar?.status === "loading";
   const displayName = queryProfileAndAvatar?.data?.handle || (shortenOnFallback && shortAddress) || ethereumAddress;
 
   if (textualVersion) {
     return (
-      <a target="_blank" rel="noopener noreferrer" href={`${ROUTE_VIEW_USER}/${ethereumAddress}`}>
+      <Link target="_blank" rel="noopener noreferrer" href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}>
         {displayName}
-      </a>
+      </Link>
     );
   }
 
   if (avatarVersion) {
     return (
-      <div
+      <Link
+        href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
         className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}
-        onClick={onUserProfileRoute}
       >
         <img src={avatarUrl} alt="avatar" />
-      </div>
+      </Link>
     );
   }
 
@@ -116,7 +113,7 @@ const EthereumAddress = ({
             className={`no-underline ${textSizeClass} text-neutral-11 font-bold`}
             target="_blank"
             rel="noopener noreferrer"
-            href={includeSocials ? undefined : `${ROUTE_VIEW_USER}/${ethereumAddress}`}
+            href={includeSocials ? undefined : `${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
           >
             {displayName}
           </a>
