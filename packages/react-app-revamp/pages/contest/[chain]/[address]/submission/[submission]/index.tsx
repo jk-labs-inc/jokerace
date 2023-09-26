@@ -77,12 +77,22 @@ const fetchProposalData = async (address: string, chainId: number, submission: s
       functionName: "proposalVotes",
       args: [submission],
     },
+    {
+      address,
+      abi,
+      chainId,
+      functionName: "isProposalDeleted",
+      args: [submission],
+    },
   ];
 
   //@ts-ignore
   const results = (await readContracts({ contracts })) as any;
   const data = results[0].result;
 
+  const isDeleted = results[2].result;
+
+  const content = isDeleted ? "This proposal has been deleted by the author" : data.description;
   const isContentImage = isUrlToImage(data.description);
   const forVotesBigInt = results[1].result[0] as bigint;
   const againstVotesBigInt = results[1].result[1] as bigint;
@@ -91,7 +101,7 @@ const fetchProposalData = async (address: string, chainId: number, submission: s
 
   return {
     authorEthereumAddress: data.author,
-    content: data.description,
+    content: content,
     isContentImage,
     exists: data.exists,
     votes,
