@@ -89,7 +89,7 @@ export function useContest() {
       const { abi, version } = await getContestContractVersion(address, chainId);
 
       if (abi === null) {
-        const errorMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
+        const errorMessage = `RPC call failed`;
         setError(errorMessage);
         setIsSuccess(false);
         setIsListProposalsSuccess(false);
