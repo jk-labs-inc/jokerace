@@ -5,16 +5,16 @@ import arrayToChunks from "@helpers/arrayToChunks";
 import { getEthersProvider } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { useError } from "@hooks/useError";
 import { fetchEnsName, getAccount, readContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { CustomError } from "types/error";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useProposalVotesStore } from "./store";
 
-const VOTES_PER_PAGE = 5;
+export const VOTES_PER_PAGE = 5;
 
 export function useProposalVotes(id: number | string) {
   const { asPath } = useRouter();
@@ -31,7 +31,7 @@ export function useProposalVotes(id: number | string) {
   );
   const provider = getEthersProvider({ chainId });
   const [address] = useState(url[3]);
-
+  const { error, handleError } = useError();
   const {
     isListVotersSuccess,
     isListVotersError,
@@ -42,6 +42,7 @@ export function useProposalVotes(id: number | string) {
     setIsListVotersSuccess,
     setIsPageVotesLoading,
     setIsPageVotesError,
+    setVotedAddressesCount,
     setCurrentPagePaginationVotes,
     setIndexPaginationVotesPerId,
     setTotalPagesPaginationVotes,
@@ -76,6 +77,8 @@ export function useProposalVotes(id: number | string) {
         args: [id],
       })) as any;
 
+      setVotedAddressesCount(list.length);
+
       const usersListWithCurrentUserFirst = Array.from(list);
       // Make sure that current user address appears first in the list
       if (accountData?.address && list.includes(accountData?.address)) {
@@ -88,7 +91,7 @@ export function useProposalVotes(id: number | string) {
       const totalPagesPaginationVotes = Math.ceil(list?.length / VOTES_PER_PAGE);
       setTotalPagesPaginationVotes(totalPagesPaginationVotes);
       setCurrentPagePaginationVotes(0);
-      //@ts-ignore
+
       const paginationChunks = arrayToChunks(usersListWithCurrentUserFirst, VOTES_PER_PAGE);
       setTotalPagesPaginationVotes(paginationChunks.length);
       setIndexPaginationVotesPerId(paginationChunks);
@@ -97,18 +100,15 @@ export function useProposalVotes(id: number | string) {
       setIsListVotersError(null);
       setIsListVotersLoading(false);
     } catch (e) {
-      const customError = e as CustomError;
-
-      setIsListVotersError(customError.code ?? "");
+      handleError(e, "There was an error while fetching the votes");
+      setIsListVotersError(error);
       setIsListVotersSuccess(false);
       setIsListVotersLoading(false);
-
-      toastError("There was an error while fetching the votes", customError.message);
     }
   }
 
   /**
-   * Fetch the data of each vote in page X
+   * Fetch the data of each vote in page Xz
    * @param pageIndex - index of the page of votes to fetch
    * @param slice - Array of the addresses that have cast a vote for a given proposal
    * @param totalPagesPaginationVotes - total of pages in the pagination
@@ -116,7 +116,7 @@ export function useProposalVotes(id: number | string) {
   async function fetchVotesPage(pageIndex: number, slice: Array<any>, totalPagesPaginationVotes: number) {
     setCurrentPagePaginationVotes(pageIndex);
     setIsPageVotesLoading(true);
-    setIsPageVotesError(null);
+    setIsPageVotesError("");
     try {
       await Promise.all(
         slice.map(async (userAddress: string) => {
@@ -124,14 +124,12 @@ export function useProposalVotes(id: number | string) {
         }),
       );
       setIsPageVotesLoading(false);
-      setIsPageVotesError(null);
+      setIsPageVotesError("");
       setHasPaginationVotesNextPage(pageIndex + 1 < totalPagesPaginationVotes);
     } catch (e) {
-      const customError = e as CustomError;
-
+      handleError(e, "There was an error while fetching the votes");
       setIsPageVotesLoading(false);
-      setIsPageVotesError(customError);
-      toastError("There was an error while fetching the votes", customError.message);
+      setIsPageVotesError(error);
     }
   }
 
@@ -146,7 +144,7 @@ export function useProposalVotes(id: number | string) {
       if (abi === null) {
         const errorMessage = "This contract doesn't exist on this chain.";
         toastError(errorMessage);
-        setIsPageVotesError({ message: errorMessage });
+        setIsPageVotesError(errorMessage);
         setIsPageVotesLoading(false);
         return;
       }
@@ -187,9 +185,7 @@ export function useProposalVotes(id: number | string) {
         value: { displayAddress, votes },
       });
     } catch (e) {
-      const customError = e as CustomError;
-
-      toastError("There was an error while fetching the votes", customError.message);
+      handleError(e, "There was an error while fetching the votes.");
     }
   }
 

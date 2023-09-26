@@ -4,11 +4,11 @@ import arrayToChunks from "@helpers/arrayToChunks";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
+import { useError } from "@hooks/useError";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { Result } from "ethers/lib/utils";
 import { useRouter } from "next/router";
-import { CustomError } from "types/error";
 import { useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
 
@@ -33,13 +33,8 @@ export function useProposal() {
   const [chainName, address] = asPath.split("/").slice(2, 4);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
+  const { error, handleError } = useError();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
-
-  function onContractError(err: any) {
-    let toastMessage = err?.message ?? err;
-    if (err.code === "CALL_EXCEPTION") toastMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-    toastError(toastMessage);
-  }
 
   /**
    * Fetch the data of each proposals in page X
@@ -50,7 +45,7 @@ export function useProposal() {
   async function fetchProposalsPage(pageIndex: number, slice: Array<any>, totalPagesPaginationProposals: number) {
     setCurrentPagePaginationProposals(pageIndex);
     setIsPageProposalsLoading(true);
-    setIsPageProposalsError(null);
+    setIsPageProposalsError("");
 
     try {
       const { abi } = await getContestContractVersion(address, chainId);
@@ -58,7 +53,7 @@ export function useProposal() {
       if (abi === null) {
         const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
         toastError(errorMsg);
-        setIsPageProposalsError({ message: errorMsg });
+        setIsPageProposalsError(errorMsg);
         setIsPageProposalsLoading(false);
         return;
       }
@@ -97,20 +92,12 @@ export function useProposal() {
       }
 
       setIsPageProposalsLoading(false);
-      setIsPageProposalsError(null);
+      setIsPageProposalsError("");
       setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals);
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      toastError("Something went wrong while getting proposals.", customError.message);
-      setIsPageProposalsError({
-        code: customError.code,
-        message: customError.message,
-      });
+      handleError(e, "Something went wrong while getting proposals.");
+      setIsPageProposalsError(error);
       setIsPageProposalsLoading(false);
-      setIsPageProposalsError(null);
     }
   }
 
@@ -161,7 +148,7 @@ export function useProposal() {
    * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
    * @param abi - ABI to use
    */
-  async function fetchProposalsIdsList(abi: any) {
+  async function fetchProposalsIdsList(abi: any, version: string) {
     setIsListProposalsLoading(true);
 
     try {
@@ -179,7 +166,7 @@ export function useProposal() {
         )?.id,
       };
 
-      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
+      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);
 
       let proposalsIds: Result;
       if (!useLegacyGetAllProposalsIdFn) {
@@ -230,12 +217,8 @@ export function useProposal() {
 
       if (proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      onContractError(e);
-      setError(customError);
+      handleError(e, "Something went wrong while getting proposal ids.");
+      setError(error);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -243,7 +226,7 @@ export function useProposal() {
     }
   }
 
-  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
+  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean, version: string) {
     if (isLegacy) {
       return (await readContract({
         ...contractConfig,
@@ -302,9 +285,72 @@ export function useProposal() {
     }
   };
 
+  /**
+   * Fetch a single proposal based on its ID.
+   * @param proposalId - the ID of the proposal to fetch
+   */
+  async function fetchSingleProposal(proposalId: any) {
+    try {
+      const { abi } = await getContestContractVersion(address, chainId);
+
+      if (abi === null) {
+        const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
+        toastError(errorMsg);
+        setIsPageProposalsError(errorMsg);
+        return;
+      }
+
+      const contractConfig: any = {
+        address: address as `0x${string}`,
+        abi: abi,
+        chainId: chains.find(
+          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
+        )?.id,
+      };
+
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "getProposal",
+          args: [proposalId],
+        },
+        {
+          ...contractConfig,
+          functionName: "proposalVotes",
+          args: [proposalId],
+        },
+      ];
+
+      const results: any = await readContracts({ contracts });
+
+      const data = results[0].result;
+
+      const isContentImage = isUrlToImage(data.description) ? true : false;
+
+      const forVotesBigInt = results[1].result[0] as bigint;
+      const againstVotesBigInt = results[1].result[1] as bigint;
+      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
+      const votes = Number(utils.formatEther(votesBigNumber));
+
+      const proposalData = {
+        authorEthereumAddress: data.author,
+        content: data.description,
+        isContentImage,
+        exists: data.exists,
+        votes,
+      };
+
+      setProposalData({ id: proposalId, data: proposalData });
+    } catch (e) {
+      handleError(e, "Something went wrong while getting the proposal.");
+      setIsPageProposalsError(error);
+    }
+  }
+
   return {
     fetchProposal,
     fetchProposalsPage,
+    fetchSingleProposal,
     fetchProposalsIdsList,
   };
 }

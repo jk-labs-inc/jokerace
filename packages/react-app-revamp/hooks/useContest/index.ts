@@ -5,6 +5,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser, { EMPTY_ROOT } from "@hooks/useUser";
@@ -16,8 +17,7 @@ import { loadFileFromBucket } from "lib/buckets";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { CustomError } from "types/error";
+import { useState } from "react";
 import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
@@ -78,18 +78,10 @@ export function useContest() {
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
   const { contestStatus } = useContestStatusStore(state => state);
+  const { error: errorMessage, handleError } = useError();
   const alchemyRpc = chains
     .filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.rpcUrls.default.http[0].includes("alchemy");
-
-  /**
-   * Display an error toast in the UI for any contract related error
-   */
-  function onContractError(err: any) {
-    let toastMessage = err?.message ?? err;
-    if (err.code === "CALL_EXCEPTION") toastMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-    toastError(toastMessage);
-  }
 
   // Generate config for the contract
   async function getContractConfig(): Promise<ContractConfigResult | undefined> {
@@ -98,8 +90,7 @@ export function useContest() {
 
       if (abi === null) {
         const errorMessage = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-        toastError(errorMessage);
-        setError({ message: errorMessage });
+        setError(errorMessage);
         setIsSuccess(false);
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
@@ -114,12 +105,8 @@ export function useContest() {
       };
 
       return { contractConfig, version };
-    } catch (error) {
-      const customError = error as CustomError;
-      if (!customError) return;
-
-      onContractError(error);
-      setError(customError);
+    } catch (e) {
+      setError(errorMessage);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -170,28 +157,29 @@ export function useContest() {
       setCanUpdateVotesInRealTime(false);
     }
 
-    setError(null);
+    setError("");
     setIsSuccess(true);
     setIsLoading(false);
   }
 
-  async function fetchV3ContestInfo(contractConfig: ContractConfig, contestRewardModuleAddress: string | undefined) {
+  async function fetchV3ContestInfo(
+    contractConfig: ContractConfig,
+    contestRewardModuleAddress: string | undefined,
+    version: string,
+  ) {
     try {
       setIsListProposalsLoading(false);
 
       await Promise.all([
         fetchContestContractData(contractConfig),
-        fetchProposalsIdsList(contractConfig.abi),
+        fetchProposalsIdsList(contractConfig.abi, version),
         processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
         fetchTotalVotesCast(),
       ]);
-    } catch (error) {
-      const customError = error as CustomError;
-      if (!customError) return;
-
-      setError(customError);
-      toastError(`error while fetching contest data`, customError.message);
+    } catch (e) {
+      handleError(e, "Something went wrong while fetching the contest data.");
+      setError(errorMessage);
       setIsLoading(false);
       setIsUserStoreLoading(false);
       setIsListProposalsLoading(false);
@@ -199,7 +187,7 @@ export function useContest() {
     }
   }
 
-  async function fetchV1ContestInfo(contractConfig: ContractConfig) {
+  async function fetchV1ContestInfo(contractConfig: ContractConfig, version: string) {
     try {
       const contracts = getV1Contracts(contractConfig);
       const results = await readContracts({ contracts });
@@ -207,7 +195,7 @@ export function useContest() {
       setIsV3(false);
 
       // List of proposals for this contest
-      await fetchProposalsIdsList(contractConfig.abi);
+      await fetchProposalsIdsList(contractConfig.abi, version);
 
       const closingVoteDate = new Date(Number(results[6].result) * 1000 + 1000);
       const submissionsOpenDate = new Date(Number(results[5].result) * 1000 + 1000);
@@ -234,17 +222,13 @@ export function useContest() {
         setContestPrompt(results[contracts.length - indexToCheck].result as string);
       }
 
-      setError(null);
+      setError("");
       setIsSuccess(true);
       setIsLoading(false);
       setIsListProposalsLoading(false);
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      onContractError(e);
-      setError(customError);
+      handleError(e, "Something went wrong while fetching the contest data.");
+      setError(errorMessage);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -294,9 +278,9 @@ export function useContest() {
     }
 
     if (parseFloat(version) >= 3) {
-      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress);
+      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
     } else {
-      await fetchV1ContestInfo(contractConfig);
+      await fetchV1ContestInfo(contractConfig, version);
     }
   }
 
@@ -369,9 +353,8 @@ export function useContest() {
       setTotalVotes(totalVotes);
       setVoters(votingMerkleTreeData || []);
       setSubmitters(submissionMerkleTreeData || []);
-    } catch (error) {
-      const customError = error as CustomError;
-      toastError("error while fetching data from db", customError.message);
+    } catch (e) {
+      toastError("error while fetching data from db", errorMessage);
       setIsUserStoreLoading(false);
     }
   }
@@ -421,8 +404,8 @@ export function useContest() {
           if (erc20Tokens && erc20Tokens.length > 0) {
             rewardToken = await fetchFirstToken(contestRewardModuleAddress, chainId, erc20Tokens[0].contractAddress);
           }
-        } catch (error) {
-          console.error("Error fetching token balances:", error);
+        } catch (e) {
+          console.error("Error fetching token balances:", e);
           return;
         }
       }
@@ -471,7 +454,6 @@ export function useContest() {
 
   return {
     getContractConfig,
-    onContractError,
     address,
     fetchContestInfo,
     fetchTotalVotesCast,

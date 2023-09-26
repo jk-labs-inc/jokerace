@@ -11,6 +11,7 @@ import { RewardsTableShare } from "@components/_pages/RewardsTable";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
+import { DEFAULT_SUBMISSIONS } from "@hooks/useDeployContest";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
@@ -19,7 +20,8 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 const ContestRewards = () => {
-  const { isSuccess, isLoading, supportsRewardsModule, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { isSuccess, isLoading, supportsRewardsModule, contestAuthorEthereumAddress, contestMaxProposalCount } =
+    useContestStore(state => state);
   const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
   const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
@@ -46,15 +48,23 @@ const ContestRewards = () => {
 
   if (!supportsRewardsModule && !creator) {
     return (
-      <div className="text-[16px]">
+      <p className="text-[16px]">
         For this contest, there is no rewards module; the contest creator is the only one who may configure one.
-      </div>
+      </p>
     );
   }
 
   if (!supportsRewardsModule && creator) {
     if (isRewardsPoolDeploying) return <Loader scale="page">Deploying rewards pool...</Loader>;
 
+    if (contestMaxProposalCount > DEFAULT_SUBMISSIONS) {
+      return (
+        <p className="text-[16px]">
+          For this contest, you cannot create a rewards module; the maximum number of submissions for the contest must
+          be <b>100</b> or less in order to be able to create a rewards module.
+        </p>
+      );
+    }
     return (
       <div className="flex flex-col gap-12">
         <p className="text-[24px] font-bold text-neutral-11">create a rewards pool</p>
@@ -102,9 +112,7 @@ const ContestRewards = () => {
                 <p className="text-[24px] text-neutral-11 font-bold">rewards pool parameters</p>
                 <div className="flex flex-col gap-5">
                   <div className="flex flex-col gap-3">
-                    <p className="text-[16px] text-neutral-11 font-bold">
-                      rewards pool address:
-                    </p>
+                    <p className="text-[16px] text-neutral-11 font-bold">rewards pool address:</p>
                     <a
                       className="text-positive-11 text-[16px] font-bold underline break-all"
                       href={`${rewardsStore?.rewards?.blockExplorers?.url}address/${rewardsStore?.rewards?.contractAddress}`}
@@ -112,17 +120,6 @@ const ContestRewards = () => {
                       {rewardsStore?.rewards?.contractAddress}
                     </a>
                     <p className="text-[12px] font-bold text-neutral-11">
-                      please note this is unaudited code that can be verified on our{" "}
-                      <a
-                        className="underline"
-                        href="https://github.com/jk-labs-inc/jokerace"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        github
-                      </a>
-                      .
-                      <br />
                       {creator ? (
                         <>
                           you can withdraw funds at any time{" "}

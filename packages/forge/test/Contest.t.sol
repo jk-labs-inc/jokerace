@@ -267,4 +267,128 @@ contract ContestTest is Test {
     }
 
     /////////////////////////////
+
+    // SORTING
+
+    //// NO VOTES
+
+    function testSort0FromZeroToZero() public {
+        vm.warp(1681650001);
+
+        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
+        contest.sortedProposals(true);
+    }
+
+    function testSort0FromZeroToOneHundred() public {
+        vm.warp(1681650001);
+
+        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
+        contest.sortedProposals(true);
+    }
+
+    function testSort1NoVotesFromZeroToZero() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
+
+        assertEq(sortedProposalIds[0], proposalId);
+    }
+
+    function testSort1NoVotesFromZeroToOneHundred() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
+
+        assertEq(sortedProposalIds[0], proposalId);
+    }
+
+    function testSort2NoVotesFromZeroToZero() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
+
+        assertEq(sortedProposalIds[0], proposalId1);
+        assertEq(sortedProposalIds[1], proposalId2);
+    }
+
+    function testSort2NoVotesFromZeroToOneHundred() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
+
+        assertEq(sortedProposalIds[0], proposalId1);
+        assertEq(sortedProposalIds[1], proposalId2);
+    }
+
+    //// WITH VOTES
+
+    function testSort1WithVotesFromZeroToZero() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
+
+        assertEq(sortedProposalIds[0], proposalId);
+    }
+
+    function testSort1WithVotesFromZeroToOneHundred() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
+
+        assertEq(sortedProposalIds[0], proposalId);
+    }
+
+    function testSort2WithVotesFromZeroToZero() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        vm.warp(1681650001);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
+        vm.warp(1681660001);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
+
+        assertEq(sortedProposalIds[0], proposalId2);
+        assertEq(sortedProposalIds[1], proposalId1);
+    }
+
+    function testSort2WithVotesFromZeroToOneHundred() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+        vm.warp(1681650001);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
+        vm.warp(1681660001);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.stopPrank();
+
+        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
+
+        assertEq(sortedProposalIds[0], proposalId2);
+        assertEq(sortedProposalIds[1], proposalId1);
+    }
+
+    /////////////////////////////
 }

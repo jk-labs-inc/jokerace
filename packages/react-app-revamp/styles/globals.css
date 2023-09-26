@@ -268,6 +268,10 @@ li {
     @apply font-bold px-4 py-3;
   }
 
+  .error-toast {
+    width: 460px !important;
+  }
+
   .prose :where(strong):not(:where([class~="not-prose"] *)) {
     color: inherit !important;
   }
@@ -275,12 +279,6 @@ li {
   .prose :where(a):not(:where([class~="not-prose"] *)) {
     color: inherit !important;
   }
-
-  /* .prose a,
-  .with-link-highlighted a,
-  .link {
-    @apply cursor-pointer font-bold text-positive-9 underline focus:text-positive-10 hover:no-underline;
-  } */
 
   .prose :where(hr):not(:where([class~="not-prose"] *)) {
     margin-top: 1.5em !important;

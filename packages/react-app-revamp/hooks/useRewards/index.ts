@@ -2,9 +2,9 @@ import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
+import { useError } from "@hooks/useError";
 import { readContract, readContracts } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { CustomError } from "types/error";
 import { Abi } from "viem";
 import { useNetwork, useQuery } from "wagmi";
 import { useRewardsStore } from "./store";
@@ -15,9 +15,11 @@ export function useRewardsModule() {
   const contestChainName = asPath.split("/")[2];
   const { chain } = useNetwork();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
+  const { error, handleError } = useError();
   const chainId = chains.filter(
     chain => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
+
   const { refetch: refetchBalanceRewardsModule } = useQuery(
     ["balance-rewards-module", rewards?.contractAddress],
     async () => {
@@ -60,7 +62,7 @@ export function useRewardsModule() {
 
   async function getContestRewardsModule() {
     setIsLoading(true);
-    setError(null);
+    setError("");
     setIsSuccess(false);
 
     try {
@@ -118,15 +120,8 @@ export function useRewardsModule() {
       setIsLoading(false);
       setIsSuccess(true);
     } catch (e) {
-      const customError = e as CustomError;
-
-      if (!customError) return;
-
-      toastError("Something went wrong and the rewards module couldn't be retrieved.", customError.message);
-      setError({
-        code: customError.code,
-        message: customError.message,
-      });
+      handleError(e, "Something went wrong and the rewards module couldn't be retrieved.");
+      setError(error);
       setIsLoading(false);
       setIsSuccess(false);
     }
@@ -152,7 +147,7 @@ export function useRewardsModule() {
 
       return contestRewardModuleAddress;
     } catch (error) {
-      toastError("failed to fetch rewards module address");
+      handleError(error, "failed to fetch rewards module address.");
       return;
     }
   }

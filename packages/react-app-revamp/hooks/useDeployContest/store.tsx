@@ -4,7 +4,7 @@ import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { create } from "zustand";
 
-type CustomError = {
+type ContestDeployError = {
   step: number;
   message: string;
 };
@@ -25,6 +25,7 @@ export interface DeployContestState {
     chainId: number;
     hash: string;
     address: string;
+    maxSubmissions: number;
   };
   type: string;
   title: string;
@@ -46,12 +47,12 @@ export interface DeployContestState {
   downvote: boolean;
   isLoading: boolean;
   isSuccess: boolean;
-  errors: CustomError[];
+  errors: ContestDeployError[];
   step: number;
   furthestStep: number;
   submissionTab: number;
 
-  setDeployContestData: (chain: string, chainId: number, hash: string, address: string) => void;
+  setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
@@ -72,7 +73,7 @@ export interface DeployContestState {
   setDownvote: (downvote: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
-  setError: (step: number, error: CustomError) => void;
+  setError: (step: number, error: ContestDeployError) => void;
   setStep: (step: number) => void;
   setFurthestStep: (furthestStep: number) => void;
   setSubmissionTab: (tab: number) => void;
@@ -93,6 +94,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       chainId: 0,
       hash: "",
       address: "",
+      maxSubmissions: 0,
     },
     type: "",
     title: "",
@@ -110,7 +112,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     submissionAllowlistFields: Array(15).fill(EMPTY_FIELDS_SUBMISSION),
     submissionMerkle: null,
     allowedSubmissionsPerUser: 0,
-    maxSubmissions: 200,
+    maxSubmissions: 100,
     downvote: true,
     isLoading: false,
     isSuccess: false,
@@ -123,8 +125,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
   return {
     ...initialState,
 
-    setDeployContestData: (chain: string, chainId: number, hash: string, address: string) =>
-      set({ deployContestData: { chain, chainId, hash, address } }),
+    setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) =>
+      set({ deployContestData: { chain, chainId, hash, address, maxSubmissions } }),
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),
@@ -147,7 +149,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setDownvote: (downvote: boolean) => set({ downvote }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
-    setError: (step: number, error: CustomError) => {
+    setError: (step: number, error: ContestDeployError) => {
       let errorsCopy = [...get().errors];
 
       errorsCopy = errorsCopy.filter(error => error.step !== step);
