@@ -6,10 +6,11 @@ export async function getAddressProps(pathAddress: string) {
   let actualAddress = pathAddress;
   let ensName: string | null = null;
 
-  if (pathAddress.endsWith(".eth")) {
+  if (!REGEX_ETHEREUM_ADDRESS.test(pathAddress)) {
+    actualAddress = pathAddress.endsWith(".eth") ? pathAddress : `${pathAddress}.eth`;
     try {
       const resolvedAddress = await fetchEnsAddress({
-        name: pathAddress,
+        name: actualAddress,
         chainId: 1,
       });
 
@@ -22,12 +23,9 @@ export async function getAddressProps(pathAddress: string) {
       console.error("Error resolving ENS address:", error);
       return { notFound: true };
     }
-  } else if (!REGEX_ETHEREUM_ADDRESS.test(pathAddress)) {
-    return { notFound: true };
   }
 
-  // If it's not an ENS name and is a valid Ethereum address, get the ENS name for it
-  if (actualAddress === pathAddress) {
+  if (REGEX_ETHEREUM_ADDRESS.test(actualAddress)) {
     try {
       const fetchedEnsName = await fetchEnsName({
         address: actualAddress as `0x${string}`,
