@@ -1,14 +1,16 @@
 import UserSubmissions from "@components/_pages/User/components/SubmissionsList";
+import UserVotes from "@components/_pages/User/components/VotingList";
 import { isSupabaseConfigured } from "@helpers/database";
 import { getAddressProps } from "@helpers/getAddressProps";
 import LayoutUser from "@layouts/LayoutUser";
 import { useQuery } from "@tanstack/react-query";
 import { ITEMS_PER_PAGE } from "lib/contests";
-import { getUserSubmissions } from "lib/user";
+import { getUserSubmissions, getUserVotes } from "lib/user";
 import { SubmissionsResult } from "lib/user/types";
 import { FC, useState } from "react";
 import { UserPageProps } from "..";
-function useUserSubmissions(userAddress: string) {
+
+function useUserVotes(userAddress: string) {
   const [page, setPage] = useState(0);
   const queryOptions = {
     keepPreviousData: true,
@@ -16,13 +18,13 @@ function useUserSubmissions(userAddress: string) {
   };
 
   const {
-    data: userSubmissionsData,
+    data: userVotesData,
     isError: isError,
     isFetching: isLoading,
   } = useQuery<SubmissionsResult>(
-    ["userSubmissions", userAddress, page],
+    ["userVotes", userAddress, page],
     () => {
-      return getUserSubmissions(userAddress, page, ITEMS_PER_PAGE);
+      return getUserVotes(userAddress, page, ITEMS_PER_PAGE);
     },
     {
       ...queryOptions,
@@ -33,20 +35,20 @@ function useUserSubmissions(userAddress: string) {
   return {
     page,
     setPage,
-    userSubmissionsData,
+    userVotesData,
     isError,
     isLoading,
   };
 }
 
 const Page: FC<UserPageProps> = ({ address }) => {
-  const { page, setPage, userSubmissionsData, isLoading, isError } = useUserSubmissions(address);
+  const { page, setPage, userVotesData, isLoading, isError } = useUserVotes(address);
 
   return (
     <LayoutUser address={address}>
       {isSupabaseConfigured ? (
-        <UserSubmissions
-          submissions={userSubmissionsData}
+        <UserVotes
+          submissions={userVotesData}
           page={page}
           itemsPerPage={ITEMS_PER_PAGE}
           setPage={setPage}

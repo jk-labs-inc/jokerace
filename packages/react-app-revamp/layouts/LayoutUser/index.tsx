@@ -25,7 +25,7 @@ const navLinks = [
   },
   {
     href: ROUTE_VIEW_USER_VOTING,
-    label: "Voting",
+    label: "Votes",
   },
 ];
 
@@ -63,13 +63,13 @@ const LayoutUser = (props: LayoutUserProps) => {
             <EthereumAddress ethereumAddress={address} shortenOnFallback isLarge includeSocials />
           )}
 
-          <div className="relative mt-6 flex-col gap-2">
+          <div className="relative mt-12 flex-col gap-2">
             <div className="flex gap-4 justify-start mb-4 sm:gap-8 sm:px-0">
               {navLinks.map((link, index) => (
                 <Link href={link.href.replace("[address]", address)} key={link.href}>
                   <div
                     ref={el => (tabRefs.current[index] = el)}
-                    className={`navLink-desktop whitespace-nowrap font-sabo text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
+                    className={`font-sabo py-2 text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
                       activeTab === link.href ? "text-primary-10" : "text-neutral-11"
                     }`}
                     onClick={() => setActiveTab(link.href)}

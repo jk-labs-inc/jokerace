@@ -32,7 +32,7 @@ function useContests(creatorAddress: string, initialData: any) {
     error,
     isFetching: isContestDataFetching,
   } = useQuery(
-    ["searchedContests", creatorAddress, page],
+    ["userContests", creatorAddress, page],
     () => {
       return searchContests(
         {

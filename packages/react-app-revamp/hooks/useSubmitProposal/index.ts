@@ -135,17 +135,8 @@ export function useSubmitProposal() {
     return proposalIdDecimal;
   }
 
-  function goToProposalPage(chain: string, address: string, submission: string) {
-    const path = ROUTE_CONTEST_PROPOSAL.replace("[chain]", chain)
-      .replace("[address]", address)
-      .replace("[submission]", submission);
-
-    router.push(path);
-  }
-
   return {
     sendProposal,
-    goToProposalPage,
     isLoading,
     isSuccess,
     error,
