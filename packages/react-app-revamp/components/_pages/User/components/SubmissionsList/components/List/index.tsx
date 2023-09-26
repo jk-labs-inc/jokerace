@@ -22,7 +22,7 @@ const UserSubmissionList: FC<UserSubmissionListProps> = ({ submission }) => {
       >
         <Image src={chainsImages[submission.network_name]} width={32} height={32} alt={""} />
         <p>
-          Proposal #{submission.index} in the {submission.contest.title} contest
+          Proposal {submission.proposal_id.slice(0, 5)} in the {submission.contest.title} contest
         </p>
       </div>
     </Link>

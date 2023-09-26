@@ -18,21 +18,6 @@ function mergeSubmissionsWithContests(submissions: Submission[], contests: Conte
   return results;
 }
 
-function assignIndicesToSubmissions(submissions: Submission[]): void {
-  const groupedByContest = Object.values(
-    submissions.reduce((acc, submission) => {
-      (acc[submission.contest_address] = acc[submission.contest_address] || []).push(submission);
-      return acc;
-    }, {} as Record<string, Submission[]>),
-  );
-
-  groupedByContest.forEach(group => {
-    group.forEach((submission, index) => {
-      submission.index = index + 1;
-    });
-  });
-}
-
 async function fetchSubmissions(
   criteria: SubmissionCriteria,
   range: { from: number; to: number },
@@ -98,7 +83,6 @@ export async function getUserSubmissions(
   const contests = await getContestDetailsByAddresses(contestAddresses);
 
   const mergedSubmissions = mergeSubmissionsWithContests(submissions, contests);
-  assignIndicesToSubmissions(mergedSubmissions);
 
   return { data: mergedSubmissions, count };
 }
@@ -117,7 +101,6 @@ export async function getUserVotes(
   const contests = await getContestDetailsByAddresses(contestAddresses);
 
   const mergedSubmissions = mergeSubmissionsWithContests(submissions, contests);
-  assignIndicesToSubmissions(mergedSubmissions);
 
   return { data: mergedSubmissions, count };
 }
