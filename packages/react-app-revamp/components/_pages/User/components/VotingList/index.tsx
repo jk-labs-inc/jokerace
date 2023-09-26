@@ -46,10 +46,7 @@ const UserVotes: FC<UserVotesProps> = ({ submissions, page, itemsPerPage, setPag
       )}
       {!isLoading && submissions?.count === 0 ? (
         <div className="container mx-auto flex flex-col gap-2 animate-appear mt-6 p-0">
-          <p className="text-[16px] font-bold text-neutral-11">
-            user has no voting activity — it appears that this user is a serious lurker and has never voted on a
-            proposal.
-          </p>
+          <p className="text-[16px] font-bold text-neutral-11">user hasn't voted in any contests... yet 👀</p>
           <p className="text-[12px] font-bold text-neutral-11">
             note: all proposals that are submitted before <b>September 13, 2023</b> aren't tracked in the user profile.
           </p>

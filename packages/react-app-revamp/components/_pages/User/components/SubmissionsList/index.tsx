@@ -46,9 +46,7 @@ const UserSubmission: FC<UserSubmissionsProps> = ({ submissions, page, itemsPerP
       )}
       {!isLoading && submissions?.count === 0 ? (
         <div className="container mx-auto flex flex-col gap-2 animate-appear mt-6 p-0">
-          <p className="text-[16px] font-bold text-neutral-11">
-            user has no submissions — it appears that this user is a serious lurker and has not submitted any proposals.
-          </p>
+          <p className="text-[16px] font-bold text-neutral-11">user hasn't submitted in any contests... yet 👀</p>
           <p className="text-[12px] font-bold text-neutral-11">
             note: all proposals that are submitted before <b>September 13, 2023</b> aren't tracked in the user profile.
           </p>
