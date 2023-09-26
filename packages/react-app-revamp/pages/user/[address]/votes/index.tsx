@@ -1,11 +1,10 @@
-import UserSubmissions from "@components/_pages/User/components/SubmissionsList";
 import UserVotes from "@components/_pages/User/components/VotingList";
 import { isSupabaseConfigured } from "@helpers/database";
 import { getAddressProps } from "@helpers/getAddressProps";
 import LayoutUser from "@layouts/LayoutUser";
 import { useQuery } from "@tanstack/react-query";
 import { ITEMS_PER_PAGE } from "lib/contests";
-import { getUserSubmissions, getUserVotes } from "lib/user";
+import { getUserVotes } from "lib/user";
 import { SubmissionsResult } from "lib/user/types";
 import { FC, useState } from "react";
 import { UserPageProps } from "..";

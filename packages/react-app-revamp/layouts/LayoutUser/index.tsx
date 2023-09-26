@@ -3,11 +3,9 @@ import EthereumAddress from "@components/UI/EtheuremAddress";
 import { ROUTE_VIEW_USER, ROUTE_VIEW_USER_SUBMISSIONS, ROUTE_VIEW_USER_VOTING } from "@config/routes";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { UserPageProps } from "pages/user/[address]";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { getLayout as getBaseLayout } from "../LayoutBase";
 
 interface LayoutUserProps {
   address: string;

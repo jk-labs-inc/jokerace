@@ -1,10 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import { getAddressProps } from "@helpers/getAddressProps";
-import LayoutUser, { getLayout } from "@layouts/LayoutUser";
+import LayoutUser from "@layouts/LayoutUser";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEnsAddress, fetchEnsName } from "@wagmi/core";
 import { getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
