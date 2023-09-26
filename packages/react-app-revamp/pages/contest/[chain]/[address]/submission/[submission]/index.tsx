@@ -6,7 +6,6 @@ import isUrlToImage from "@helpers/isUrlToImage";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
-import { useProposalStore } from "@hooks/useProposal/store";
 import { getLayout } from "@layouts/LayoutViewContest";
 import { readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
@@ -17,16 +16,14 @@ import { FC, useEffect } from "react";
 interface PageProps {
   address: string;
   chain: string;
-  proposalData: Proposal;
+  proposal: Proposal;
 }
 
-const Page: FC<PageProps> = ({ proposalData, address, chain }) => {
+const Page: FC<PageProps> = ({ proposal, address, chain }) => {
   const router = useRouter();
   const { contestPrompt, contestName } = useContestStore(state => state);
   const { setPickedProposal } = useCastVotesStore(state => state);
-  const { listProposalsData } = useProposalStore(state => state);
   const id = router.query.submission as string;
-  const proposal = listProposalsData[id] || proposalData;
 
   useEffect(() => {
     setPickedProposal(id);
@@ -38,18 +35,22 @@ const Page: FC<PageProps> = ({ proposalData, address, chain }) => {
 
   return (
     <>
-      <Head>
-        <title>
-          proposal by {shortenEthereumAddress(proposal.authorEthereumAddress)} for {contestName}
-        </title>
-      </Head>
-      <DialogModalProposal
-        proposalId={id}
-        prompt={contestPrompt}
-        isOpen={true}
-        proposal={proposal}
-        onClose={onModalClose}
-      />
+      {proposal && (
+        <>
+          <Head>
+            <title>
+              proposal by {shortenEthereumAddress(proposal.authorEthereumAddress)} for {contestName}
+            </title>
+          </Head>
+          <DialogModalProposal
+            proposalId={id}
+            prompt={contestPrompt}
+            isOpen={true}
+            proposal={proposal}
+            onClose={onModalClose}
+          />
+        </>
+      )}
     </>
   );
 };
@@ -77,12 +78,22 @@ const fetchProposalData = async (address: string, chainId: number, submission: s
       functionName: "proposalVotes",
       args: [submission],
     },
+    {
+      address,
+      abi,
+      chainId,
+      functionName: "isProposalDeleted",
+      args: [submission],
+    },
   ];
 
   //@ts-ignore
   const results = (await readContracts({ contracts })) as any;
   const data = results[0].result;
 
+  const isDeleted = results[2].result;
+
+  const content = isDeleted ? "This proposal has been deleted by the creator" : data.description;
   const isContentImage = isUrlToImage(data.description);
   const forVotesBigInt = results[1].result[0] as bigint;
   const againstVotesBigInt = results[1].result[1] as bigint;
@@ -91,7 +102,7 @@ const fetchProposalData = async (address: string, chainId: number, submission: s
 
   return {
     authorEthereumAddress: data.author,
-    content: data.description,
+    content: content,
     isContentImage,
     exists: data.exists,
     votes,
@@ -117,13 +128,13 @@ export async function getStaticProps({ params }: any) {
     const chainId = getChainId(chain);
 
     if (!chainId) return;
-    const proposalData = await fetchProposalData(address, chainId, submission);
+    const proposal = await fetchProposalData(address, chainId, submission);
 
     return {
       props: {
         address,
         chain,
-        proposalData,
+        proposal,
       },
     };
   } catch (error) {
