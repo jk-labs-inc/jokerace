@@ -25,8 +25,8 @@ const UserVotesList: FC<UserVotesListProps> = ({ submission, isLoading }) => {
         <Image src={chainsImages[submission.network_name]} width={32} height={32} alt={""} />
         <p>
           The user cast <span className="text-positive-11 font-bold">{submission.vote_amount}</span> vote
-          {submission.vote_amount > 1 ? "s" : ""} for Proposal #{submission.index} in the {submission.contest.title}{" "}
-          contest.
+          {submission.vote_amount > 1 ? "s" : ""} for Proposal {submission.proposal_id.slice(0, 5)} in the{" "}
+          {submission.contest.title} contest.
         </p>
       </div>
     </Link>
