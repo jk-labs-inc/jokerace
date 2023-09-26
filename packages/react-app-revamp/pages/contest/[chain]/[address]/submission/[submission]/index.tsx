@@ -93,7 +93,7 @@ const fetchProposalData = async (address: string, chainId: number, submission: s
 
   const isDeleted = results[2].result;
 
-  const content = isDeleted ? "This proposal has been deleted by the author" : data.description;
+  const content = isDeleted ? "This proposal has been deleted by the creator" : data.description;
   const isContentImage = isUrlToImage(data.description);
   const forVotesBigInt = results[1].result[0] as bigint;
   const againstVotesBigInt = results[1].result[1] as bigint;
