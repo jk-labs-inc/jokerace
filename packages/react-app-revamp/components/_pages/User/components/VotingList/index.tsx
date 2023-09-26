@@ -27,7 +27,7 @@ const UserVotes: FC<UserVotesProps> = ({ submissions, page, itemsPerPage, setPag
       <div className="container mx-auto flex flex-col gap-6 animate-appear mt-6">
         <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10">ruh-roh!</h1>
         <p className="text-[16px] font-bold text-neutral-11">
-          we were unable to fetch submissions for this user — please check url to make sure it's accurate <i>or</i>{" "}
+          we were unable to fetch voting activity for this user — please check url to make sure it's accurate <i>or</i>{" "}
           search for contests{" "}
           <Link href={ROUTE_VIEW_CONTESTS} className="text-primary-10">
             here
@@ -47,7 +47,8 @@ const UserVotes: FC<UserVotesProps> = ({ submissions, page, itemsPerPage, setPag
       {!isLoading && submissions?.count === 0 ? (
         <div className="container mx-auto flex flex-col gap-2 animate-appear mt-6 p-0">
           <p className="text-[16px] font-bold text-neutral-11">
-            user has no submissions — it appears that this user is a serious lurker and has not submitted any proposals.
+            user has no voting activity — it appears that this user is a serious lurker and has never voted on a
+            proposal.
           </p>
           <p className="text-[12px] font-bold text-neutral-11">
             note: all proposals that are submitted before <b>September 13, 2023</b> aren't tracked in the user profile.

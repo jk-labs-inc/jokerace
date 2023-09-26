@@ -32,14 +32,11 @@ const navLinks = [
 const LayoutUser = (props: LayoutUserProps) => {
   const { children, address } = props;
   const { pathname } = useRouter();
-  const [activeTab, setActiveTab] = useState(pathname);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    //@TODO check why twice is being redered
-
-    const activeTabIndex = navLinks.findIndex(link => link.href === activeTab);
+    const activeTabIndex = navLinks.findIndex(link => link.href === pathname);
     const activeTabRef = tabRefs.current[activeTabIndex];
 
     if (activeTabRef) {
@@ -48,7 +45,7 @@ const LayoutUser = (props: LayoutUserProps) => {
         width: `${activeTabRef.offsetWidth}px`,
       });
     }
-  }, [activeTab]);
+  }, [pathname]);
 
   return (
     <>
@@ -70,9 +67,8 @@ const LayoutUser = (props: LayoutUserProps) => {
                   <div
                     ref={el => (tabRefs.current[index] = el)}
                     className={`font-sabo py-2 text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
-                      activeTab === link.href ? "text-primary-10" : "text-neutral-11"
+                      pathname === link.href ? "text-primary-10" : "text-neutral-11"
                     }`}
-                    onClick={() => setActiveTab(link.href)}
                   >
                     {link.label}
                   </div>
@@ -114,10 +110,6 @@ const LayoutUser = (props: LayoutUserProps) => {
       </ErrorBoundary>
     </>
   );
-};
-
-export const getLayout = (children: ReactNode, pageProps: UserPageProps) => {
-  return getBaseLayout(<LayoutUser address={pageProps.address}>{children}</LayoutUser>);
 };
 
 export default LayoutUser;
