@@ -60,10 +60,13 @@ abstract contract GovernorSorting {
     // insert a new value into sortedRanks at insertingIndex
     // this is only called when we've already checked that insertingIndex isn't tied and is before smallestNonZeroSortedRanksValueIdx
     function _insertRank(uint256 newValue, uint256 insertingIndex) internal {
+        // if smallestNonZeroSortedRanksValueIdx is at the highest possible index due to the limit already, then we want to drop the value currently there off of the array in shifting
+        uint256 maxIdxOfShiftingArray = smallestNonZeroSortedRanksValueIdx + 1 == RANK_LIMIT ? smallestNonZeroSortedRanksValueIdx + 1 : smallestNonZeroSortedRanksValueIdx + 1;
+
         // go through and shift the value of `insertingIndex` and everything under it down one in sortedRanks
         uint256 tmp1 = sortedRanks[insertingIndex];
         uint256 tmp2;
-        for (uint256 index = insertingIndex + 1; index < smallestNonZeroSortedRanksValueIdx + 1; index++) {
+        for (uint256 index = insertingIndex + 1; index < maxIdxOfShiftingArray; index++) {
             tmp2 = sortedRanks[index];
             sortedRanks[index] = tmp1;
             tmp1 = tmp2;
@@ -73,16 +76,16 @@ abstract contract GovernorSorting {
         sortedRanks[insertingIndex] = newValue;
 
         // if smallestNonZeroSortedRanksValueIdx isn't already at the limit, bump it one
-        smallestNonZeroSortedRanksValueIdx++;
+        if (smallestNonZeroSortedRanksValueIdx + 1 != RANK_LIMIT) {
+            smallestNonZeroSortedRanksValueIdx++;
+        }
     }
 
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
     function _updateRanks(uint256 oldProposalForVotes, uint256 newProposalForVotes) internal {
         // 1. decrement the count of oldProposalForVotes
-        if (copyCounts[oldProposalForVotes] > 1) {
-            copyCounts[oldProposalForVotes]--;
-        }
+        copyCounts[oldProposalForVotes]--;
 
         // 2. is it after smallestNonZeroSortedRanksValueIdx?
         // is the current proposal's forVotes less than that of the currently lowest value element in the sorted
@@ -95,7 +98,7 @@ abstract contract GovernorSorting {
                 // otherwise, put this value in the index after the current smallest value and increment
                 // smallestNonZeroSortedRanksValueIdx to reflect the updated state
                 sortedRanks[smallestNonZeroSortedRanksValueIdx] = newProposalForVotes;
-                smallestNonZeroSortedRanksValueIdx += 1;
+                smallestNonZeroSortedRanksValueIdx++;
                 return;
             }
         }
@@ -117,6 +120,7 @@ abstract contract GovernorSorting {
             if (newProposalForVotes > valueToCheck) {
                 // then this is the index that the new value should be inserted at
                 indexToInsertAt = smallestNonZeroSortedRanksValueIdx - index;
+                copyCounts[valueToCheck]++;
                 break;
             }
         }
