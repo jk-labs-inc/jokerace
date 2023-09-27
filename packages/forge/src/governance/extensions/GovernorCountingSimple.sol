@@ -31,6 +31,7 @@ abstract contract GovernorCountingSimple is Governor {
     mapping(address => uint256) public addressTotalCastVoteCounts;
     mapping(uint256 => ProposalVote) public proposalVotesStructs;
 
+    // TODO: rename to forVotesToProposalIds
     mapping(uint256 => uint256[]) public forVotesToProposalId;
 
     /**

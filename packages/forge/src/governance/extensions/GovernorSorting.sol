@@ -8,6 +8,9 @@ pragma solidity ^0.8.0;
  * _Available since v4.3._
  */
 abstract contract GovernorSorting {
+
+    // WE KEEP TRACK OF TIES (if > 1) AS WELL AS DELETES (if == 0) W forVotesToProposalId
+
     uint256 public constant RANK_LIMIT = 25; // cannot be 0
 
     uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
@@ -68,22 +71,9 @@ abstract contract GovernorSorting {
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
-        // delete old then insert new so that we don't lose info when the array is full
-        if (oldValue > 0) {
-            if (getNumProposalsWithThisManyForVotes(oldValue) == 0) {
-                // if there are no proposals left at oldValue, then skip over it, thereby dropping it
-                // if there are, then carry on as normal
-                // TODO: deal with deleted here - just do another shift, make own func, you can start at insertingIndex + 1 bc we don't let votes be 0, and account for smallestIdxMemVar decreasing
-                return;
-            }
-        }
-
-        // are there other props that already have newValue forVotes and so this one is now tied? just return
-        if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
-            return;
-        }
-
-        // go through and shift the value of `insertingIndex` and everything under it down one in sortedRanks
+        // go through and shift the value of `insertingIndex` and everything under it (until we hit oldValue, if we do) down one in sortedRanks
+        bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are other props with oldValue, we don't want to be removing it
+        bool hitOldValue = false;
         uint256 tmp1 = sortedRanksMemVar[insertingIndex];
         uint256 tmp2;
         for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
@@ -91,16 +81,23 @@ abstract contract GovernorSorting {
             sortedRanks[index] = tmp1;
             tmp1 = tmp2;
 
+            // once I shift a value into the index oldValue was in (if it's in here) I can stop!
+            if (checkForOldValue && (sortedRanksMemVar[tmp1] == oldValue)) {
+                hitOldValue = true; // if I hit oldValue, smallestNonZeroSortedRanksValueIdx should not be incremented
+                break;
+            }
+
             if (index == smallestIdxMemVar + 1) {
-                break; // if I've populated this index, then everything after will just be 0s, which I can skip
+                // if I've populated this index, then everything after will just be 0s, which I can skip
+                break;
             }
         }
 
         // now that everything's been swapped out and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
         sortedRanks[insertingIndex] = newValue;
 
-        // if smallestNonZeroSortedRanksValueIdx isn't already at the limit, bump it one
-        if (smallestIdxMemVar + 1 != RANK_LIMIT) {
+        if (!hitOldValue && (smallestIdxMemVar + 1 != RANK_LIMIT)) {
+            // if smallestNonZeroSortedRanksValueIdx isn't already at the limit, bump it one
             smallestNonZeroSortedRanksValueIdx++;
         }
     }
@@ -111,10 +108,17 @@ abstract contract GovernorSorting {
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
-        // 1. is it after smallestNonZeroSortedRanksValueIdx?
+        // TIED? - are there other props that already have newValue forVotes and so this one is now tied?
+        // if so, no need to insert anything, we just need to remove oldVotes
+        if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
+            // TODO: add function to rm/shift to the left oldValue + decrement smallestIdxMemVar
+            return;
+        }
+
+        // SMALLER THAN CURRENT SMALLEST NON-ZERO VAL? - is it after smallestNonZeroSortedRanksValueIdx?
         // is the current proposal's forVotes less than that of the currently lowest value element in the sorted
         // array? if so, just insert it after it. if that index would be RANK_LIMIT, then we're done.
-        // this also means that the old value was 0 so all good there.
+        // this also means that the old value was 0 or less than that at smallestNonZeroSortedRanksValueIdx so all good there.
         if (newValue < sortedRanksMemVar[smallestIdxMemVar]) {
             if (smallestIdxMemVar + 1 == RANK_LIMIT) {
                 // if we've reached the size limit of sortedRanks, then we're done here
@@ -122,27 +126,25 @@ abstract contract GovernorSorting {
             } else {
                 // otherwise, put this value in the index after the current smallest value and increment
                 // smallestNonZeroSortedRanksValueIdx to reflect the updated state
-                sortedRanks[smallestIdxMemVar] = newValue;
+                sortedRanks[smallestIdxMemVar + 1] = newValue;
                 smallestNonZeroSortedRanksValueIdx++;
                 return;
             }
         }
 
-        // 2. if not, then find where it should go at or before smallestNonZeroSortedRanksValueIdx
+        // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
         // find the index that newValue is larger than or equal to.
-        // working right to left starting at smallestNonZeroSortedRanksValueIdx.
+        // working right to left starting with the smallestNonZeroSortedRanksValueIdx - 1 bc of above logic.
         uint256 indexToInsertAt;
-        for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
-            uint256 valueToCheck = sortedRanksMemVar[smallestIdxMemVar - index];
-
-            if (newValue >= valueToCheck) { // will deal with ties in _insertRank bc still need to deal with oldValue
+        for (uint256 index = 0; index < smallestIdxMemVar; index++) {
+            if (newValue > sortedRanksMemVar[smallestIdxMemVar - 1 - index]) {
                 // then this is the index that the new value should be inserted at
-                indexToInsertAt = smallestIdxMemVar - index;
+                indexToInsertAt = smallestIdxMemVar - 1 - index;
                 break;
             }
         }
 
-        // 3. insert it there, pushing everything behind it down and removing oldValue unless there is still at least 1 prop at it
+        // insert it there, pushing everything behind it down and removing oldValue unless there is still at least 1 prop at it
         _insertRank(oldValue, newValue, indexToInsertAt);
     }
 }
