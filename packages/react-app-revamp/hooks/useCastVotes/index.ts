@@ -2,7 +2,6 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { getTimestampFromReceipt } from "@helpers/timestamp";
 import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
@@ -128,9 +127,9 @@ export function useCastVotes() {
         contest_address: contestId,
         user_address: userAddress,
         network_name: chainName,
-        created_at: await getTimestampFromReceipt(receipt, chainId),
         proposal_id: pickedProposal !== null ? pickedProposal : undefined,
         vote_amount: amount,
+        created_at: Math.floor(Date.now() / 1000),
       });
     } catch (e) {
       handleError(e, "something went wrong while casting your votes");
