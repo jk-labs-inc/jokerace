@@ -1,5 +1,4 @@
 import { toastSuccess } from "@components/UI/Toast";
-import { getTimestampFromReceipt } from "@helpers/timestamp";
 import { useError } from "@hooks/useError";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
@@ -102,7 +101,7 @@ export const useDistributeRewards = (
         amount: amountReleased.data ?? 0,
         operation: "distribute",
         token_address: tokenAddress ? tokenAddress : null,
-        created_at: txRelease.data ? await getTimestampFromReceipt(txRelease.data, chainId) : undefined,
+        created_at: Math.floor(Date.now() / 1000),
       });
     },
   });
