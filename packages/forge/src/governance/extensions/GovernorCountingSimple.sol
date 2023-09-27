@@ -213,7 +213,7 @@ abstract contract GovernorCountingSimple is Governor {
             }
             forVotesToProposalId[proposalvote.proposalVoteCounts.forVotes].push(proposalId);
 
-            updateRanks(proposalvote.proposalVoteCounts.forVotes - numVotes, proposalvote.proposalVoteCounts.forVotes);
+            _updateRanks(proposalvote.proposalVoteCounts.forVotes - numVotes, proposalvote.proposalVoteCounts.forVotes);
         }
     }
 }

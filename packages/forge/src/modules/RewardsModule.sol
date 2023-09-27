@@ -217,9 +217,8 @@ contract RewardsModule is Context {
         // determine who to pay out
         address payable addressToPayOut;
 
-        //// if there aren't any votes on the ranking we land on, or that ranking is tied, or it's below a tied ranking,
-        //// send to creator
-        if (rankValue == 0 || _underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
+        //// if the ranking that we land on is tied or it's below a tied ranking, send to creator
+        if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
             addressToPayOut = payable(creator());
         }
         //// otherwise, determine proposal at ranking and pay out according to that

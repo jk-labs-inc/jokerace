@@ -10,18 +10,20 @@ pragma solidity ^0.8.0;
 abstract contract GovernorSorting {
     uint256 public constant RANK_LIMIT = 25; // cannot be 0
 
-    // TODO: add a highest non-zero index counter to sortedRanks so we don't have to go through a bunch of 0s
     uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
+    uint256 public smallestNonZeroSortedRanksValueIdx = 0; // the index of the smallest non-zero value in sortedRanks, useful to finding where sortedRanks has been populated to
     mapping(uint256 => uint256) public copyCounts; // key is forVotes amount, value is the number of copies of that number that are present in sortedRanks
 
-    // get the idx of sortedRanks considered to be the queried rank taking deleted proposals
-    // into account
+    // TODO: gas optimize state array calls
+
+    // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account
+    // a rank has to have > 0 votes to be considered valid
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
         require(rank != 0, "GovernorSorting: rank cannot equal 0");
         uint256 counter = 1;
-        for (uint256 index = 0; index < sortedRanks.length; index++) {
+        for (uint256 index = 0; index < smallestNonZeroSortedRanksValueIdx + 1; index++) {
             // if this is a deleted proposal, go forwards without incrementing the counter
-            if (copyCounts[sortedRanks[index]] > 1) {
+            if (copyCounts[sortedRanks[index]] == 0) {
                 continue;
             }
             // if the counter is at the rank we are looking for, then return with it
@@ -30,16 +32,23 @@ abstract contract GovernorSorting {
             }
             counter++;
         }
+
         // if there's no valid index for that rank in sortedRanks, revert
         // (how you would get here is it you deleted the top 25 voted proposals with a RANK_LIMIT of 25
-        // and then tried to pay out rank 1, or any rank for that matter)
+        // and then tried to pay out rank 1, or any rank for that matter; or just don't have enough proposals with forVotes on them
+        // to get to this rank)
         revert(
-            "GovernorSorting: there is not a valid proposal within the allowed range for that rank taking deleted proposals into account"
+            "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
         );
     }
 
     // returns whether a given index in sortedRanks is tied or is below a tied rank
     function isOrIsBelowTiedRank(uint256 idx) public view returns (bool atOrBelowTiedRank) {
+        if (idx > smallestNonZeroSortedRanksValueIdx) {
+            // if `idx` hasn't been populated, then it's not a valid index to be checking and something is wrong
+            revert("GovernorSorting: this index or one above it has not been populated");
+        }
+        
         for (uint256 index = 0; index < idx + 1; index++) {
             if (copyCounts[index] > 1) {
                 return true;
@@ -48,20 +57,13 @@ abstract contract GovernorSorting {
         return false;
     }
 
-    // TODO: use last non-zero index here too (in this case it + 2 as the < check in the for loop) so we're not moving around a bunch of 0s
     // insert a new value into sortedRanks at insertingIndex
+    // this is only called when we've already checked that insertingIndex isn't tied and is before smallestNonZeroSortedRanksValueIdx
     function _insertRank(uint256 newValue, uint256 insertingIndex) internal {
-        // if either of these cases, then we can just swap out, there is nothing to push down
-        if ((insertingIndex == RANK_LIMIT) || RANK_LIMIT == 1) {
-            sortedRanks[insertingIndex] = newValue;
-        }
-
-        // go through and change the values of `index` and everything under it in sortedRanks
-        // NOTE: if sortedRanks is full, the last item of sortedRanks will not be used because
-        // it gets dropped off of the array
+        // go through and shift the value of `insertingIndex` and everything under it down one in sortedRanks
         uint256 tmp1 = sortedRanks[insertingIndex];
         uint256 tmp2;
-        for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
+        for (uint256 index = insertingIndex + 1; index < smallestNonZeroSortedRanksValueIdx + 1; index++) {
             tmp2 = sortedRanks[index];
             sortedRanks[index] = tmp1;
             tmp1 = tmp2;
@@ -69,28 +71,41 @@ abstract contract GovernorSorting {
 
         // now that everything's been swapped out and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
         sortedRanks[insertingIndex] = newValue;
+
+        // if smallestNonZeroSortedRanksValueIdx isn't already at the limit, bump it one
+        smallestNonZeroSortedRanksValueIdx++;
     }
 
-    // TODO: gas optimize the fuck out of this and _insertRank
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
-    function updateRanks(uint256 oldProposalForVotes, uint256 newProposalForVotes) public {
-        // 1. decrement the count of the position of oldProposalForVotes
+    function _updateRanks(uint256 oldProposalForVotes, uint256 newProposalForVotes) internal {
+        // 1. decrement the count of oldProposalForVotes
         if (copyCounts[oldProposalForVotes] > 1) {
             copyCounts[oldProposalForVotes]--;
         }
 
-        // 2. is the current proposal's forVotes less than that of the last element in the sorted
-        // array? if so, then we're done here.
-        if (newProposalForVotes < sortedRanks[sortedRanks.length - 1]) {
-            return;
+        // 2. is it after smallestNonZeroSortedRanksValueIdx?
+        // is the current proposal's forVotes less than that of the currently lowest value element in the sorted
+        // array? if so, just insert it after it. if that index would be RANK_LIMIT, then we're done.
+        if (newProposalForVotes < sortedRanks[smallestNonZeroSortedRanksValueIdx]) {
+            if (smallestNonZeroSortedRanksValueIdx + 1 == RANK_LIMIT) {
+                // if we've reached the size limit of sortedRanks, then we're done here
+                return;
+            } else {
+                // otherwise, put this value in the index after the current smallest value and increment
+                // smallestNonZeroSortedRanksValueIdx to reflect the updated state
+                sortedRanks[smallestNonZeroSortedRanksValueIdx] = newProposalForVotes;
+                smallestNonZeroSortedRanksValueIdx += 1;
+                return;
+            }
         }
 
-        // TODO: start from lowest item in array (would be len - 2, but thinking about using a highest non-zero index counter, but still - 1 bc we know it's bigger than the *smallest*) bc more likely in the majority of cases
-        // 3. find where it should go - find the index that newProposalForVotes is larger than or equal to
+        // 3. if not, then find where it should go at or before smallestNonZeroSortedRanksValueIdx
+        // find the index that newProposalForVotes is larger than or equal to.
+        // working right to left starting at smallestNonZeroSortedRanksValueIdx.
         uint256 indexToInsertAt;
-        for (uint256 index = 0; index < RANK_LIMIT; index++) {
-            uint256 valueToCheck = sortedRanks[index];
+        for (uint256 index = 0; index < smallestNonZeroSortedRanksValueIdx + 1; index++) {
+            uint256 valueToCheck = sortedRanks[smallestNonZeroSortedRanksValueIdx - index];
 
             // in the case of a tie
             if (newProposalForVotes == valueToCheck) {
@@ -101,15 +116,8 @@ abstract contract GovernorSorting {
 
             if (newProposalForVotes > valueToCheck) {
                 // then this is the index that the new value should be inserted at
-                indexToInsertAt = index;
+                indexToInsertAt = smallestNonZeroSortedRanksValueIdx - index;
                 break;
-            }
-
-            // if we reach the end of the array without finding a value that proposalForVotes
-            // is greater than or equal to, then our work here is done, we don't need to include in
-            // the array
-            if (index == RANK_LIMIT - 1) {
-                return;
             }
         }
 
