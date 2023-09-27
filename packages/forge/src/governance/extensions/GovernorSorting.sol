@@ -14,8 +14,6 @@ abstract contract GovernorSorting {
     uint256 public smallestNonZeroSortedRanksValueIdx = 0; // the index of the smallest non-zero value in sortedRanks, useful to finding where sortedRanks has been populated to
     mapping(uint256 => uint256) public copyCounts; // key is forVotes amount, value is the number of copies of that number that are present in sortedRanks
 
-    // TODO: gas optimize state array calls
-
     // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account
     // a rank has to have > 0 votes to be considered valid
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
