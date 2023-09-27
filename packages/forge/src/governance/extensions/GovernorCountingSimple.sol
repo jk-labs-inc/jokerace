@@ -211,14 +211,16 @@ abstract contract GovernorCountingSimple is Governor {
 
         // sorting and consequently rewards module compatibility is only available if downvoting is disabled
         if (downvotingAllowed() == 0) {
+            uint256 newForVotes = proposalvote.proposalVoteCounts.forVotes; // only check state var once to save on gas
+
             // update a map of forVotes => proposalId[] to be able to go from rank => proposalId
-            uint256 oldForVotes = proposalvote.proposalVoteCounts.forVotes - numVotes;
+            uint256 oldForVotes = newForVotes - numVotes;
             if (oldForVotes > 0) {
                 _rmProposalIdFromForVotesMap(proposalId, oldForVotes);
             }
-            forVotesToProposalId[proposalvote.proposalVoteCounts.forVotes].push(proposalId);
+            forVotesToProposalId[newForVotes].push(proposalId);
 
-            _updateRanks(proposalvote.proposalVoteCounts.forVotes);
+            _updateRanks(oldForVotes, newForVotes);
         }
     }
 }
