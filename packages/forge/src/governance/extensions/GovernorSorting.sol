@@ -19,11 +19,14 @@ abstract contract GovernorSorting {
     // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account
     // a rank has to have > 0 votes to be considered valid
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
+        uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
+        uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
+
         require(rank != 0, "GovernorSorting: rank cannot equal 0");
         uint256 counter = 1;
-        for (uint256 index = 0; index < smallestNonZeroSortedRanksValueIdx + 1; index++) {
+        for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
             // if this is a deleted proposal, go forwards without incrementing the counter
-            if (copyCounts[sortedRanks[index]] == 0) {
+            if (copyCounts[sortedRanksMemVar[index]] == 0) {
                 continue;
             }
             // if the counter is at the rank we are looking for, then return with it
@@ -60,14 +63,17 @@ abstract contract GovernorSorting {
     // insert a new value into sortedRanks at insertingIndex
     // this is only called when we've already checked that insertingIndex isn't tied and is before smallestNonZeroSortedRanksValueIdx
     function _insertRank(uint256 newValue, uint256 insertingIndex) internal {
-        // if smallestNonZeroSortedRanksValueIdx is at the highest possible index due to the limit already, then we want to drop the value currently there off of the array in shifting
-        uint256 maxIdxOfShiftingArray = smallestNonZeroSortedRanksValueIdx + 1 == RANK_LIMIT ? smallestNonZeroSortedRanksValueIdx + 1 : smallestNonZeroSortedRanksValueIdx + 1;
+        uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
+        uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
+
+        // if smallestNonZeroSortedRanksValueIdx is at the highest possible index due to the limit already, then we want to drop the value currently there off of the array in shifting. if not then we'll just shift the value there into the next index.
+        uint256 maxIdxOfShiftedArray = smallestIdxMemVar + 1 == RANK_LIMIT ? smallestIdxMemVar : smallestIdxMemVar + 1;
 
         // go through and shift the value of `insertingIndex` and everything under it down one in sortedRanks
-        uint256 tmp1 = sortedRanks[insertingIndex];
+        uint256 tmp1 = sortedRanksMemVar[insertingIndex];
         uint256 tmp2;
-        for (uint256 index = insertingIndex + 1; index < maxIdxOfShiftingArray; index++) {
-            tmp2 = sortedRanks[index];
+        for (uint256 index = insertingIndex + 1; index < maxIdxOfShiftedArray + 1; index++) {
+            tmp2 = sortedRanksMemVar[index];
             sortedRanks[index] = tmp1;
             tmp1 = tmp2;
         }
@@ -76,7 +82,7 @@ abstract contract GovernorSorting {
         sortedRanks[insertingIndex] = newValue;
 
         // if smallestNonZeroSortedRanksValueIdx isn't already at the limit, bump it one
-        if (smallestNonZeroSortedRanksValueIdx + 1 != RANK_LIMIT) {
+        if (smallestIdxMemVar + 1 != RANK_LIMIT) {
             smallestNonZeroSortedRanksValueIdx++;
         }
     }
@@ -84,20 +90,23 @@ abstract contract GovernorSorting {
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
     function _updateRanks(uint256 oldProposalForVotes, uint256 newProposalForVotes) internal {
+        uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
+        uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
+
         // 1. decrement the count of oldProposalForVotes
         copyCounts[oldProposalForVotes]--;
 
         // 2. is it after smallestNonZeroSortedRanksValueIdx?
         // is the current proposal's forVotes less than that of the currently lowest value element in the sorted
         // array? if so, just insert it after it. if that index would be RANK_LIMIT, then we're done.
-        if (newProposalForVotes < sortedRanks[smallestNonZeroSortedRanksValueIdx]) {
-            if (smallestNonZeroSortedRanksValueIdx + 1 == RANK_LIMIT) {
+        if (newProposalForVotes < sortedRanksMemVar[smallestIdxMemVar]) {
+            if (smallestIdxMemVar + 1 == RANK_LIMIT) {
                 // if we've reached the size limit of sortedRanks, then we're done here
                 return;
             } else {
                 // otherwise, put this value in the index after the current smallest value and increment
                 // smallestNonZeroSortedRanksValueIdx to reflect the updated state
-                sortedRanks[smallestNonZeroSortedRanksValueIdx] = newProposalForVotes;
+                sortedRanks[smallestIdxMemVar] = newProposalForVotes;
                 smallestNonZeroSortedRanksValueIdx++;
                 return;
             }
@@ -107,8 +116,8 @@ abstract contract GovernorSorting {
         // find the index that newProposalForVotes is larger than or equal to.
         // working right to left starting at smallestNonZeroSortedRanksValueIdx.
         uint256 indexToInsertAt;
-        for (uint256 index = 0; index < smallestNonZeroSortedRanksValueIdx + 1; index++) {
-            uint256 valueToCheck = sortedRanks[smallestNonZeroSortedRanksValueIdx - index];
+        for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
+            uint256 valueToCheck = sortedRanksMemVar[smallestIdxMemVar - index];
 
             // in the case of a tie
             if (newProposalForVotes == valueToCheck) {
@@ -119,7 +128,7 @@ abstract contract GovernorSorting {
 
             if (newProposalForVotes > valueToCheck) {
                 // then this is the index that the new value should be inserted at
-                indexToInsertAt = smallestNonZeroSortedRanksValueIdx - index;
+                indexToInsertAt = smallestIdxMemVar - index;
                 copyCounts[valueToCheck]++;
                 break;
             }
