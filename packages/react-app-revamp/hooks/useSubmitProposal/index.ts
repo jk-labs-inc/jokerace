@@ -110,13 +110,16 @@ export function useSubmitProposal() {
         fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
 
-        addUserActionForAnalytics({
-          contest_address: address,
-          user_address: userAddress,
-          network_name: chainName,
-          created_at: await getTimestampFromReceipt(receipt, chainId),
-          proposal_id: proposalId,
-        });
+        addUserActionForAnalytics(
+          {
+            contest_address: address,
+            user_address: userAddress,
+            network_name: chainName,
+            proposal_id: proposalId,
+          },
+          receipt,
+          chainId,
+        );
       } catch (e) {
         handleError(e, `Something went wrong while submitting your proposal.`);
         setError(errorMessage);

@@ -1,4 +1,6 @@
 import { isSupabaseConfigured } from "@helpers/database";
+import { getTimestampFromReceiptWithRetries } from "@helpers/timestamp";
+import { TransactionReceipt } from "viem";
 
 interface SaveToAnalyticsContestParticipantsOptions {
   contest_address: string;
@@ -9,8 +11,27 @@ interface SaveToAnalyticsContestParticipantsOptions {
   vote_amount?: number;
 }
 
-export const addUserActionForAnalytics = async (options: SaveToAnalyticsContestParticipantsOptions) => {
-  await saveToAnalyticsContestParticipantsV3(options);
+export const addUserActionForAnalytics = async (
+  options: SaveToAnalyticsContestParticipantsOptions,
+  receipt?: TransactionReceipt,
+  chainId?: number,
+) => {
+  let createdAt = Math.floor(Date.now() / 1000);
+
+  if (receipt && chainId) {
+    try {
+      createdAt = await getTimestampFromReceiptWithRetries(receipt, chainId, 5);
+    } catch (error) {
+      console.error("failed to retrieve timestamp, using fallbvack value", error);
+    }
+  } else {
+    console.error("receipt or chainId is missing");
+  }
+
+  await saveToAnalyticsContestParticipantsV3({
+    ...options,
+    created_at: createdAt,
+  });
 };
 
 const saveToAnalyticsContestParticipantsV3 = async (options: SaveToAnalyticsContestParticipantsOptions) => {

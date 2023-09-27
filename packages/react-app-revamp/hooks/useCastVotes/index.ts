@@ -124,14 +124,17 @@ export function useCastVotes() {
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");
 
-      addUserActionForAnalytics({
-        contest_address: contestId,
-        user_address: userAddress,
-        network_name: chainName,
-        created_at: await getTimestampFromReceipt(receipt, chainId),
-        proposal_id: pickedProposal !== null ? pickedProposal : undefined,
-        vote_amount: amount,
-      });
+      addUserActionForAnalytics(
+        {
+          contest_address: contestId,
+          user_address: userAddress,
+          network_name: chainName,
+          proposal_id: pickedProposal !== null ? pickedProposal : undefined,
+          vote_amount: amount,
+        },
+        receipt,
+        chainId,
+      );
     } catch (e) {
       handleError(e, "something went wrong while casting your votes");
       setError(errorMessage);

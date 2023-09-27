@@ -9,3 +9,20 @@ export async function getTimestampFromReceipt(receipt: TransactionReceipt, chain
 
   return block.timestamp;
 }
+
+export async function getTimestampFromReceiptWithRetries(
+  receipt: TransactionReceipt,
+  chainId: number,
+  retries: number,
+): Promise<number> {
+  while (retries > 0) {
+    try {
+      return await getTimestampFromReceipt(receipt, chainId);
+    } catch (error) {
+      console.error("error retrieving timestamp, retrying:", error);
+      retries--;
+    }
+  }
+
+  throw new Error("failed to retrieve timestamp after multiple attempts");
+}
