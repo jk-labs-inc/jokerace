@@ -31,7 +31,6 @@ abstract contract GovernorCountingSimple is Governor {
     mapping(address => uint256) public addressTotalCastVoteCounts;
     mapping(uint256 => ProposalVote) public proposalVotesStructs;
 
-    // TODO: make a function to access this in GovernorSorting and replace copyCounts
     mapping(uint256 => uint256[]) public forVotesToProposalId;
 
     /**
