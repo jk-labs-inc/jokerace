@@ -242,6 +242,10 @@ contract RewardsModule is Context {
      * contract.
      */
     function release(IERC20 token, uint256 ranking) public virtual {
+        require(
+            _underlyingContest.downvotingAllowed() == 0,
+            "RewardsModule: rankings don't work with downvoting enabled on the contest"
+        );
         require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
