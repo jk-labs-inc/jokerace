@@ -1,10 +1,8 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
-import { getTimestampFromReceipt } from "@helpers/timestamp";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
@@ -110,16 +108,13 @@ export function useSubmitProposal() {
         fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
 
-        addUserActionForAnalytics(
-          {
-            contest_address: address,
-            user_address: userAddress,
-            network_name: chainName,
-            proposal_id: proposalId,
-          },
-          receipt,
-          chainId,
-        );
+        addUserActionForAnalytics({
+          contest_address: address,
+          user_address: userAddress,
+          network_name: chainName,
+          proposal_id: proposalId,
+          created_at: Math.floor(Date.now() / 1000),
+        });
       } catch (e) {
         handleError(e, `Something went wrong while submitting your proposal.`);
         setError(errorMessage);

@@ -1,5 +1,4 @@
 import { chains } from "@config/wagmi";
-import { getTimestampFromReceipt } from "@helpers/timestamp";
 import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
 import { prepareSendTransaction, sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
@@ -120,7 +119,7 @@ export function useFundRewardsModule() {
       amount: parseFloat(utils.formatUnits(amount, decimals)),
       operation: "deposit",
       token_address: tokenAddress?.startsWith("$") ? null : tokenAddress,
-      created_at: await getTimestampFromReceipt(receipt, chainId),
+      created_at: Math.floor(Date.now() / 1000),
     });
 
     return {
