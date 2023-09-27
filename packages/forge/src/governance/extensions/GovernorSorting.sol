@@ -82,7 +82,7 @@ abstract contract GovernorSorting {
             tmp1 = tmp2;
 
             // once I shift a value into the index oldValue was in (if it's in here) I can stop!
-            if (checkForOldValue && (sortedRanksMemVar[tmp1] == oldValue)) {
+            if (checkForOldValue && (tmp1 == oldValue)) {
                 hitOldValue = true; // if I hit oldValue, smallestNonZeroSortedRanksValueIdx should not be incremented
                 break;
             }
@@ -111,7 +111,7 @@ abstract contract GovernorSorting {
         // TIED? - are there other props that already have newValue forVotes and so this one is now tied?
         // if so, no need to insert anything, we just need to remove oldVotes
         if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
-            // TODO: add function to rm/shift to the left oldValue + decrement smallestIdxMemVar
+            // TODO: add function to rm/shift to the left oldValue + decrement smallestNonZeroSortedRanksValueIdx - start at smallestIdxMemVar
             return;
         }
 
