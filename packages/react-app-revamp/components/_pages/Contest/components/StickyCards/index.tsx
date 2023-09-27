@@ -1,9 +1,9 @@
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import LayoutContestCountdown from "./components/Countdown";
-import LayoutContestQualifier from "./components/Qualifier";
+import ContestCountdown from "./components/Countdown";
+import ContestQualifier from "./components/Qualifier";
 
-const ContestLayoutStickyCards = () => {
+const ContestStickyCards = () => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { displayReloadBanner } = useContestEvents();
 
@@ -15,10 +15,10 @@ const ContestLayoutStickyCards = () => {
         displayReloadBanner ? "top-[105px]" : "top-0"
       } z-10 bg-true-black`}
     >
-      <LayoutContestCountdown />
-      <LayoutContestQualifier />
+      <ContestCountdown />
+      <ContestQualifier />
     </div>
   );
 };
 
-export default ContestLayoutStickyCards;
+export default ContestStickyCards;

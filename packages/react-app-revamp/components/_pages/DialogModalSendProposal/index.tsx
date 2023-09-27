@@ -4,6 +4,7 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
+import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { chains } from "@config/wagmi";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import { goToProposalPage } from "@helpers/routing";
@@ -16,7 +17,6 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useUploadImageStore } from "@hooks/useUploadImage";
-import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -171,7 +171,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   return (
     <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px]">
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
-        <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
+        <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
         <div className="flex flex-col gap-2">
           <EthereumAddress ethereumAddress={address ?? ""} shortenOnFallback={true} />
           <p className="font-bold text-neutral-10">{formattedDate}</p>

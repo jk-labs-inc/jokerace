@@ -11,7 +11,7 @@ const formatDuration = (duration: moment.Duration) => {
   return { days, hours, minutes, seconds };
 };
 
-const LayoutContestCountdown = () => {
+const ContestCountdown = () => {
   const { submissionsOpen, votesOpen, votesClose } = useContestStore(state => state);
   const [duration, setDuration] = useState(formatDuration(moment.duration(0)));
   const [phase, setPhase] = useState("start");
@@ -80,4 +80,4 @@ const LayoutContestCountdown = () => {
   );
 };
 
-export default LayoutContestCountdown;
+export default ContestCountdown;

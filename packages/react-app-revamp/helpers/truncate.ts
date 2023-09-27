@@ -1,8 +1,18 @@
-export function truncate(str: string, length: number) {
-  if (str.length <= length) {
-    return str;
-  }
-  return str.slice(0, length) + "...";
-}
+export function truncateText(input: string, maxLength: number) {
+  if (input.length <= maxLength) return input;
 
-export default truncate;
+  let truncated = input.substring(0, maxLength);
+
+  // Find the last whitespace character in the truncated string
+  let lastWhitespaceIndex = truncated.lastIndexOf(" ");
+
+  // If we found a whitespace character, truncate the string at that index
+  if (lastWhitespaceIndex > 0) {
+    truncated = truncated.substr(0, lastWhitespaceIndex);
+  }
+
+  // Append ellipsis to indicate that the text is truncated
+  truncated += "...";
+
+  return truncated;
+}

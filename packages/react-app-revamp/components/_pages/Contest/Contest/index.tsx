@@ -9,10 +9,10 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import moment from "moment";
 import { useAccount } from "wagmi";
-import LayoutContestPrompt from "../Prompt";
-import ProposalStatistics from "../ProposalStatistics";
-import ContestLayoutStickyCards from "../StickyCards";
-import LayoutContestTimeline from "../TimelineV3";
+import ContestPrompt from "../components/Prompt";
+import ProposalStatistics from "../components/ProposalStatistics";
+import ContestStickyCards from "../components/StickyCards";
+import ContestTimeline from "../components/Timeline";
 
 const ContestTab = () => {
   const { submissionsOpen, contestPrompt } = useContestStore(state => state);
@@ -35,11 +35,11 @@ const ContestTab = () => {
   return (
     <div>
       <div className="mt-4">
-        <LayoutContestTimeline />
+        <ContestTimeline />
       </div>
 
       <div className="mt-8">
-        <LayoutContestPrompt prompt={contestPrompt} hidePrompt={contestStatus === ContestStatus.VotingClosed} />
+        <ContestPrompt prompt={contestPrompt} type="page" />
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && (
         <div className="mt-8">
@@ -55,7 +55,7 @@ const ContestTab = () => {
           )}
         </div>
       )}
-      <ContestLayoutStickyCards />
+      <ContestStickyCards />
 
       {contestStatus === ContestStatus.ContestOpen && (
         <div className="mt-8">

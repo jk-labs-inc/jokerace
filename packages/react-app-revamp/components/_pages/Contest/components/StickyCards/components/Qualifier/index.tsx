@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { formatNumber } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -9,7 +8,7 @@ import { useMemo } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
 
-const LayoutContestQualifier = () => {
+const ContestQualifier = () => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { currentUserQualifiedToSubmit, currentUserAvailableVotesAmount, currentUserTotalVotesAmount, isLoading } =
@@ -88,4 +87,4 @@ const LayoutContestQualifier = () => {
   );
 };
 
-export default LayoutContestQualifier;
+export default ContestQualifier;

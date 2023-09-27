@@ -1,13 +1,15 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
-import ContestParameters from "@components/Parameters";
-import ContestRewards from "@components/Rewards";
 import ShareDropdown from "@components/Share";
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
 import { toastError } from "@components/UI/Toast";
+import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
+import ContestTab from "@components/_pages/Contest/Contest";
+import ContestParameters from "@components/_pages/Contest/Parameters";
+import ContestRewards from "@components/_pages/Contest/Rewards";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
@@ -35,8 +37,6 @@ import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
-import ContestTab from "./Contest";
-import ContestLayoutTabs, { Tab } from "./Tabs";
 
 const MAX_MS_TIMEOUT: number = 100000000;
 
@@ -293,7 +293,7 @@ const LayoutViewContest = (props: any) => {
                   </div>
 
                   <div className="mt-8 mb-8 gap-3 flex flex-col">
-                    <ContestLayoutTabs onChange={tab => setTab(tab)} />
+                    <ContestTabs onChange={tab => setTab(tab)} />
                   </div>
 
                   {renderTabs}
