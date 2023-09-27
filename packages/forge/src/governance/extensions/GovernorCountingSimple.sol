@@ -31,6 +31,7 @@ abstract contract GovernorCountingSimple is Governor {
     mapping(address => uint256) public addressTotalCastVoteCounts;
     mapping(uint256 => ProposalVote) public proposalVotesStructs;
 
+    // TODO: make a function to access this in GovernorSorting and replace copyCounts
     mapping(uint256 => uint256[]) public forVotesToProposalId;
 
     /**
@@ -137,13 +138,13 @@ abstract contract GovernorCountingSimple is Governor {
      *      value in forVotesToProposalId.
      */
     function _rmProposalIdFromForVotesMap(uint256 proposalId, uint256 forVotes) internal {
-        uint256[] memory tmpForVotesPropList = forVotesToProposalId[forVotes]; // copy into memory array for cheaper access
-        for (uint256 i = 0; i < tmpForVotesPropList.length; i++) {
-            if (tmpForVotesPropList[i] == proposalId) {
+        uint256[] memory forVotesToPropIdMemVar = forVotesToProposalId[forVotes]; // only check state var once to save on gas
+        for (uint256 i = 0; i < forVotesToPropIdMemVar.length; i++) {
+            if (forVotesToPropIdMemVar[i] == proposalId) {
                 // swap with last item and pop bc we don't care about order.
-                // makes things cleaner and saves on gas if there end up being a ton of proposals that pass
+                // makes things cleaner (than just deleting) and saves on gas if there end up being a ton of proposals that pass
                 // through having a certain number of votes throughout the contest.
-                forVotesToProposalId[forVotes][i] = forVotesToProposalId[forVotes][tmpForVotesPropList.length - 1];
+                forVotesToProposalId[forVotes][i] = forVotesToProposalId[forVotes][forVotesToPropIdMemVar.length - 1];
                 forVotesToProposalId[forVotes].pop();
                 break;
             }
@@ -154,8 +155,9 @@ abstract contract GovernorCountingSimple is Governor {
      * @dev See {Governor-_removeDeletedProposalIds}.
      */
     function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds) internal virtual override {
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            uint256 currentProposalId = proposalIds[i];
+        uint256[] memory proposalIdsMemVar = proposalIds; // only check state var once to save on gas
+        for (uint256 i = 0; i < proposalIdsMemVar.length; i++) {
+            uint256 currentProposalId = proposalIdsMemVar[i];
             uint256 currentProposalsForVotes = proposalVotesStructs[currentProposalId].proposalVoteCounts.forVotes;
 
             // remove this proposalId from the list of proposalIds that share its current forVotes
