@@ -120,6 +120,13 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
+     * @dev See {GovernorSorting-getNumProposalsWithThisManyForVotes}. Get the number of proposals that have `forVotes` number of for votes.
+     */
+    function getNumProposalsWithThisManyForVotes(uint256 forVotes) public view override returns (uint256 count) {
+        return forVotesToProposalId[forVotes].length;
+    }
+
+    /**
      * @dev Get the only proposal id with this many for votes.
      * NOTE: Should only get called at a point at which you are sure there is only one proposal id
      *       with a certain number of forVotes (we only use it in the RewardsModule after ties have
@@ -163,9 +170,6 @@ abstract contract GovernorCountingSimple is Governor {
             // remove this proposalId from the list of proposalIds that share its current forVotes
             // value in forVotesToProposalId
             _rmProposalIdFromForVotesMap(currentProposalId, currentProposalsForVotes);
-
-            // decrement copy counts of the forVotes of proposalIds
-            copyCounts[currentProposalsForVotes]--;
         }
     }
 
@@ -215,7 +219,7 @@ abstract contract GovernorCountingSimple is Governor {
             }
             forVotesToProposalId[proposalvote.proposalVoteCounts.forVotes].push(proposalId);
 
-            _updateRanks(proposalvote.proposalVoteCounts.forVotes - numVotes, proposalvote.proposalVoteCounts.forVotes);
+            _updateRanks(proposalvote.proposalVoteCounts.forVotes);
         }
     }
 }

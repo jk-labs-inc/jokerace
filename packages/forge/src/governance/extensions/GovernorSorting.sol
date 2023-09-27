@@ -12,7 +12,11 @@ abstract contract GovernorSorting {
 
     uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
     uint256 public smallestNonZeroSortedRanksValueIdx = 0; // the index of the smallest non-zero value in sortedRanks, useful to finding where sortedRanks has been populated to
-    mapping(uint256 => uint256) public copyCounts; // key is forVotes amount, value is the number of copies of that number that are present in sortedRanks
+
+    /**
+     * @dev Get the number of proposals that have `forVotes` number of for votes.
+     */
+    function getNumProposalsWithThisManyForVotes(uint256 forVotes) public view virtual returns (uint256 count);
 
     // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account
     // a rank has to have > 0 votes to be considered valid
@@ -24,7 +28,7 @@ abstract contract GovernorSorting {
         uint256 counter = 1;
         for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
             // if this is a deleted proposal, go forwards without incrementing the counter
-            if (copyCounts[sortedRanksMemVar[index]] == 0) {
+            if (getNumProposalsWithThisManyForVotes(sortedRanksMemVar[index]) == 0) {
                 continue;
             }
             // if the counter is at the rank we are looking for, then return with it
@@ -49,9 +53,9 @@ abstract contract GovernorSorting {
             // if `idx` hasn't been populated, then it's not a valid index to be checking and something is wrong
             revert("GovernorSorting: this index or one above it has not been populated");
         }
-        
+
         for (uint256 index = 0; index < idx + 1; index++) {
-            if (copyCounts[index] > 1) {
+            if (getNumProposalsWithThisManyForVotes(index) > 1) {
                 return true;
             }
         }
@@ -87,14 +91,11 @@ abstract contract GovernorSorting {
 
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
-    function _updateRanks(uint256 oldProposalForVotes, uint256 newProposalForVotes) internal {
+    function _updateRanks(uint256 newProposalForVotes) internal {
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
-        // 1. decrement the count of oldProposalForVotes
-        copyCounts[oldProposalForVotes]--;
-
-        // 2. is it after smallestNonZeroSortedRanksValueIdx?
+        // 1. is it after smallestNonZeroSortedRanksValueIdx?
         // is the current proposal's forVotes less than that of the currently lowest value element in the sorted
         // array? if so, just insert it after it. if that index would be RANK_LIMIT, then we're done.
         if (newProposalForVotes < sortedRanksMemVar[smallestIdxMemVar]) {
@@ -110,29 +111,26 @@ abstract contract GovernorSorting {
             }
         }
 
-        // 3. if not, then find where it should go at or before smallestNonZeroSortedRanksValueIdx
+        // 2. if not, then find where it should go at or before smallestNonZeroSortedRanksValueIdx
         // find the index that newProposalForVotes is larger than or equal to.
         // working right to left starting at smallestNonZeroSortedRanksValueIdx.
         uint256 indexToInsertAt;
         for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
             uint256 valueToCheck = sortedRanksMemVar[smallestIdxMemVar - index];
 
-            // in the case of a tie
+            // in the case of a tie, there's nothing more to do
             if (newProposalForVotes == valueToCheck) {
-                // increment the copy count and return, nothing more to do
-                copyCounts[valueToCheck]++;
                 return;
             }
 
             if (newProposalForVotes > valueToCheck) {
                 // then this is the index that the new value should be inserted at
                 indexToInsertAt = smallestIdxMemVar - index;
-                copyCounts[valueToCheck]++;
                 break;
             }
         }
 
-        // 4. insert it there, pushing everything behind it down
+        // 3. insert it there, pushing everything behind it down
         _insertRank(newProposalForVotes, indexToInsertAt);
     }
 }
