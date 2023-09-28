@@ -181,6 +181,31 @@ contract RewardsModule is Context {
     }
 
     /**
+     * @dev Return address to pay out for a given ranking.
+     */
+    function getAddressToPayOut(uint256 ranking) public view returns (address) {
+        uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
+        uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
+
+        // determine who to pay out
+        address addressToPayOut;
+
+        //// if the ranking that we land on is tied or it's below a tied ranking, send to creator
+        if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
+            addressToPayOut = creator();
+        }
+        //// otherwise, determine proposal at ranking and pay out according to that
+        else {
+            IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
+                _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
+            );
+            addressToPayOut = _paysOutTarget ? rankingProposal.targetMetadata.targetAddress : rankingProposal.author;
+        }
+
+        return addressToPayOut;
+    }
+
+    /**
      * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
      */
@@ -210,26 +235,7 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
-        // TODO: make the below into a function and rm the code duplication in the 2 relese functions
-        // get idx and value of item at ranking - accounts for deletes
-        uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
-        uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
-
-        // determine who to pay out
-        address payable addressToPayOut;
-
-        //// if the ranking that we land on is tied or it's below a tied ranking, send to creator
-        if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
-            addressToPayOut = payable(creator());
-        }
-        //// otherwise, determine proposal at ranking and pay out according to that
-        else {
-            IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-                _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
-            );
-            addressToPayOut =
-                _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author);
-        }
+        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
@@ -268,25 +274,7 @@ contract RewardsModule is Context {
             _erc20Released[token][ranking] += payment;
         }
 
-        // get idx and value of item at ranking - accounts for deletes
-        uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
-        uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
-
-        // determine who to pay out
-        address payable addressToPayOut;
-
-        //// if the ranking that we land on is tied or it's below a tied ranking, send to creator
-        if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
-            addressToPayOut = payable(creator());
-        }
-        //// otherwise, determine proposal at ranking and pay out according to that
-        else {
-            IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-                _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
-            );
-            addressToPayOut =
-                _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author);
-        }
+        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
