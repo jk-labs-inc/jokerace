@@ -78,12 +78,12 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         virtual
         returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
     {
-        uint256[] memory proposalIds = getAllProposalIds();
-        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            proposalVoteCountsArray[i] = proposalVotesStructs[proposalIds[i]].proposalVoteCounts;
+        uint256[] memory proposalIdsMemVar = proposalIds;
+        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIdsMemVar.length);
+        for (uint256 i = 0; i < proposalIdsMemVar.length; i++) {
+            proposalVoteCountsArray[i] = proposalVotesStructs[proposalIdsMemVar[i]].proposalVoteCounts;
         }
-        return (proposalIds, proposalVoteCountsArray);
+        return (proposalIdsMemVar, proposalVoteCountsArray);
     }
 
     /**
@@ -95,15 +95,16 @@ abstract contract GovernorSorting is GovernorCountingSimple {
         virtual
         returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
     {
-        uint256[] memory proposalIds = getAllProposalIds();
-        uint256[] memory proposalIdsWithoutDeleted = new uint256[](proposalIds.length);
-        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIds.length);
+        uint256[] memory proposalIdsMemVar = proposalIds;
+        uint256[] memory proposalIdsWithoutDeleted = new uint256[](proposalIdsMemVar.length);
+        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIdsMemVar.length);
 
         uint256 newArraysIndexCounter = 0;
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            if (!isProposalDeleted(proposalIds[i])) {
-                proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIds[i];
-                proposalVoteCountsArray[newArraysIndexCounter] = proposalVotesStructs[proposalIds[i]].proposalVoteCounts;
+        for (uint256 i = 0; i < proposalIdsMemVar.length; i++) {
+            if (!isProposalDeleted(proposalIdsMemVar[i])) {
+                proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIdsMemVar[i];
+                proposalVoteCountsArray[newArraysIndexCounter] =
+                    proposalVotesStructs[proposalIdsMemVar[i]].proposalVoteCounts;
                 newArraysIndexCounter += 1;
             }
         }
