@@ -236,82 +236,82 @@ contract RewardsModuleTest is Test {
     }
 
     // 1 proposal at 1 vote; release to author of rank 2; revert with error message
-    // function testReleaseToAuthorSecondPlace1WithNative() public {
-    //     vm.startPrank(PERMISSIONED_ADDRESS_1);
+    function testReleaseToAuthorSecondPlace1WithNative() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
 
-    //     vm.warp(1681650001);
-    //     uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.warp(1681660001);
-    //     contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
 
-    //     vm.stopPrank();
+        vm.stopPrank();
 
-    //     vm.warp(1681670001);
-    //     vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-    //     vm.expectRevert(
-    //         bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
-    //     );
-    //     rewardsModulePaysAuthor.release(2);
-    // }
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+        );
+        rewardsModulePaysAuthor.release(2);
+    }
 
     // 1 proposal at 1 vote; release to author of rank 2; revert with error message
-    // function testReleaseToAuthorSecondPlace1WithERC20() public {
-    //     vm.startPrank(PERMISSIONED_ADDRESS_1);
+    function testReleaseToAuthorSecondPlace1WithERC20() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
 
-    //     vm.warp(1681650001);
-    //     uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.warp(1681660001);
-    //     contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
 
-    //     vm.stopPrank();
+        vm.stopPrank();
 
-    //     vm.warp(1681670001);
-    //     vm.prank(CREATOR_ADDRESS_1);
-    //     testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-    //     vm.expectRevert(
-    //         bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
-    //     );
-    //     rewardsModulePaysAuthor.release(testERC20, 2);
-    // }
-
-    // 1 proposal at 1 vote; release to target of rank 2; revert with error message
-    // function testReleaseToTargetSecondPlace1WithNative() public {
-    //     vm.startPrank(PERMISSIONED_ADDRESS_1);
-
-    //     vm.warp(1681650001);
-    //     uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.warp(1681660001);
-    //     contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
-
-    //     vm.stopPrank();
-
-    //     vm.warp(1681670001);
-    //     vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
-    //     vm.expectRevert(
-    //         bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
-    //     );
-    //     rewardsModulePaysTarget.release(2);
-    // }
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(
+            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+        );
+        rewardsModulePaysAuthor.release(testERC20, 2);
+    }
 
     // 1 proposal at 1 vote; release to target of rank 2; revert with error message
-    // function testReleaseToTargetSecondPlace1WithERC20() public {
-    //     vm.startPrank(PERMISSIONED_ADDRESS_1);
+    function testReleaseToTargetSecondPlace1WithNative() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
 
-    //     vm.warp(1681650001);
-    //     uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.warp(1681660001);
-    //     contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
 
-    //     vm.stopPrank();
+        vm.stopPrank();
 
-    //     vm.warp(1681670001);
-    //     vm.prank(CREATOR_ADDRESS_1);
-    //     testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
-    //     vm.expectRevert(
-    //         bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
-    //     );
-    //     rewardsModulePaysTarget.release(testERC20, 2);
-    // }
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+        );
+        rewardsModulePaysTarget.release(2);
+    }
+
+    // 1 proposal at 1 vote; release to target of rank 2; revert with error message
+    function testReleaseToTargetSecondPlace1WithERC20() public {
+        vm.startPrank(PERMISSIONED_ADDRESS_1);
+
+        vm.warp(1681650001);
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.warp(1681660001);
+        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
+
+        vm.stopPrank();
+
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(
+            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+        );
+        rewardsModulePaysTarget.release(testERC20, 2);
+    }
 
     //// 2 PROPOSALS WITH DIFFERENT AUTHORS
 
@@ -476,37 +476,37 @@ contract RewardsModuleTest is Test {
     // }
 
     // 2 proposals with different authors, both at 0 votes; send back to creator
-    // function testSecondPlaceTieWithZeroVotesWithNative() public {
-    //     vm.warp(1681650001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_2);
-    //     contest.propose(firstProposalPA2, submissionProof2);
+    function testSecondPlaceTieWithZeroVotesWithNative() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.propose(firstProposalPA2, submissionProof2);
 
-    //     vm.warp(1681670001);
-    //     vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-    //     vm.expectRevert(
-    //         bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
-    //     );
-    //     rewardsModulePaysAuthor.release(2);
-    // }
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+        );
+        rewardsModulePaysAuthor.release(2);
+    }
 
     // 2 proposals with different authors, both at 0 votes; send back to creator
-    // function testSecondPlaceTieWithZeroVotesWithERC20() public {
-    //     vm.warp(1681650001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_2);
-    //     contest.propose(firstProposalPA2, submissionProof2);
+    function testSecondPlaceTieWithZeroVotesWithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        contest.propose(firstProposalPA2, submissionProof2);
 
-    //     vm.warp(1681670001);
-    //     vm.prank(CREATOR_ADDRESS_1);
-    //     testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-    //     vm.expectRevert(
-    //         bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
-    //     );
-    //     rewardsModulePaysAuthor.release(testERC20, 2);
-    // }
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(
+            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+        );
+        rewardsModulePaysAuthor.release(testERC20, 2);
+    }
 
     //// 3 PROPOSALS FROM 2 DIFFERENT AUTHORS
 
@@ -617,21 +617,21 @@ contract RewardsModuleTest is Test {
     // NO PROPOSALS
 
     // No proposals; revert with error message
-    // function testFirstPlaceTieWithZeroProposalsWithNative() public {
-    //     vm.warp(1681670001);
-    //     vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-    //     vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
-    //     rewardsModulePaysAuthor.release(1);
-    // }
+    function testFirstPlaceTieWithZeroProposalsWithNative() public {
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"));
+        rewardsModulePaysAuthor.release(1);
+    }
 
     // No proposals; revert with error message
-    // function testFirstPlaceTieWithZeroProposalsWithERC20() public {
-    //     vm.warp(1681670001);
-    //     vm.prank(CREATOR_ADDRESS_1);
-    //     testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-    //     vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
-    //     rewardsModulePaysAuthor.release(testERC20, 1);
-    // }
+    function testFirstPlaceTieWithZeroProposalsWithERC20() public {
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"));
+        rewardsModulePaysAuthor.release(testERC20, 1);
+    }
 
     /////////////////////////////
 
