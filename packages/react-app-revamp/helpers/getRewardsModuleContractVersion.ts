@@ -30,46 +30,46 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "1") {
-      return LegacyDeployedRewardsModuleContract.abi;
-    } else if (version === "2.3") {
-      return NumberedVersioningRewards.abi;
-    } else if (version === "2.4") {
-      return GateSubmissionsOpenRewards.abi;
-    } else if (version === "2.5") {
-      return BetterRewardsNotesRewards.abi;
-    } else if (version === "3.1") {
-      return MerkleVotesRewards.abi;
-    } else if (version === "3.2") {
-      return TotalVotesCastRewards.abi;
-    } else if (version === "3.3") {
-      return SetCompilerRewards.abi;
-    } else if (version === "3.4") {
-      return AddIsDeletedRewards.abi;
-    } else if (version === "3.5") {
-      return DeletedDontHitLimitRewards.abi;
-    } else if (version === "3.6") {
-      return BringBackDeletedIdsRewards.abi;
-    } else if (version === "3.7") {
-      return ArrayOfDeletedIdsRewards.abi;
-    } else if (version === "3.8") {
-      return DeletedIdAccessorRewards.abi;
-    } else if (version === "3.9") {
-      return PrivateDeletedIdsRewards.abi;
-    } else if (version === "3.10") {
-      return CantVoteOnDeletedPropsRewards.abi;
-    } else if (version === "3.11") {
-      return AuditMinorFixesRewards.abi;
-    } else if (version === "3.12") {
-      return AuditInfoAndOptimizationsRewards.abi;
-    } else if (version === "3.13") {
-      return CleanUpContractDocsRewards.abi;
-    } else if (version === "3.14") {
-      return TrackProposalAuthorsRewards.abi;
+    if (version === "3.16") {
+      return MakeVarsPublicRewards.abi;
     } else if (version === "3.15") {
       return TrackVotersRewards.abi;
-    } else if (version === "3.16") {
-      return MakeVarsPublicRewards.abi;
+    } else if (version === "3.14") {
+      return TrackProposalAuthorsRewards.abi;
+    } else if (version === "3.13") {
+      return CleanUpContractDocsRewards.abi;
+    } else if (version === "3.12") {
+      return AuditInfoAndOptimizationsRewards.abi;
+    } else if (version === "3.11") {
+      return AuditMinorFixesRewards.abi;
+    } else if (version === "3.10") {
+      return CantVoteOnDeletedPropsRewards.abi;
+    } else if (version === "3.9") {
+      return PrivateDeletedIdsRewards.abi;
+    } else if (version === "3.8") {
+      return DeletedIdAccessorRewards.abi;
+    } else if (version === "3.7") {
+      return ArrayOfDeletedIdsRewards.abi;
+    } else if (version === "3.6") {
+      return BringBackDeletedIdsRewards.abi;
+    } else if (version === "3.5") {
+      return DeletedDontHitLimitRewards.abi;
+    } else if (version === "3.4") {
+      return AddIsDeletedRewards.abi;
+    } else if (version === "3.3") {
+      return SetCompilerRewards.abi;
+    } else if (version === "3.2") {
+      return TotalVotesCastRewards.abi;
+    } else if (version === "3.1") {
+      return MerkleVotesRewards.abi;
+    } else if (version === "2.5") {
+      return BetterRewardsNotesRewards.abi;
+    } else if (version === "2.4") {
+      return GateSubmissionsOpenRewards.abi;
+    } else if (version === "2.3") {
+      return NumberedVersioningRewards.abi;
+    } else if (version === "1") {
+      return LegacyDeployedRewardsModuleContract.abi;
     } else {
       return DeployedRewardsContract.abi;
     }
