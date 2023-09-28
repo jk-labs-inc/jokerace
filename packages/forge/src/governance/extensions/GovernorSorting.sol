@@ -102,6 +102,7 @@ abstract contract GovernorSorting {
         }
     }
 
+    // TODO: lay out all of the cases with this/its inputs
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
@@ -111,7 +112,7 @@ abstract contract GovernorSorting {
         // TIED? - are there other props that already have newValue forVotes and so this one is now tied?
         // if so, no need to insert anything, we just need to remove oldVotes
         if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
-            // TODO: add function to rm/shift to the left oldValue + decrement smallestNonZeroSortedRanksValueIdx - start at smallestIdxMemVar
+            // TODO: add function to rm/shift to the left oldValue + decrement smallestNonZeroSortedRanksValueIdx - start at smallestIdxMemVar and work back (make a function for this - index to start at (inclusive) and work back from and what val you want to find the index of -> put here and further down)
             return;
         }
 
