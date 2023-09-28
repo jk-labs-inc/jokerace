@@ -102,7 +102,7 @@ abstract contract GovernorSorting {
         }
     }
 
-    // TODO: lay out all of the cases with this/its inputs
+    // TODO: lay out all of the cases with this/its inputs + constraints (they'll never be the same)
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
@@ -133,6 +133,7 @@ abstract contract GovernorSorting {
             }
         }
 
+        // TODO: I think I can get rid of this actually and make this whole function strictly O(n) - just find indexToInsert at as I go
         // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
         // find the index that newValue is larger than or equal to.
         // working right to left starting with the smallestNonZeroSortedRanksValueIdx - 1 bc of above logic.
