@@ -65,11 +65,21 @@ abstract contract GovernorSorting {
         return false;
     }
 
-    // insert a new value into sortedRanks at insertingIndex
-    // we know at this point that insertingIndex is before smallestNonZeroSortedRanksValueIdx
-    function _insertRank(uint256 oldValue, uint256 newValue, uint256 insertingIndex) internal {
+    // insert a new value into sortedRanks
+    // we know at this point it's 
+    //      -in [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
+    //      -not tied
+    function _insertRank(uint256 oldValue, uint256 newValue) internal {
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
+
+        // TODO: find indexToInsert -> start the next for-loop from there same as I did before
+        uint256 insertingIndex;
+        for (uint256 index = 0; index < RANK_LIMIT; index++) {
+            if (newValue > sortedRanksMemVar[index]) {
+                insertingIndex = index;
+            }
+        }
 
         // go through and shift the value of `insertingIndex` and everything under it (until we hit oldValue, if we do) down one in sortedRanks
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are other props with oldValue, we don't want to be removing it
@@ -112,7 +122,7 @@ abstract contract GovernorSorting {
         // TIED? - are there other props that already have newValue forVotes and so this one is now tied?
         // if so, no need to insert anything, we just need to remove oldVotes
         if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
-            // TODO: add function to rm/shift to the left oldValue + decrement smallestNonZeroSortedRanksValueIdx - start at smallestIdxMemVar and work back (make a function for this - index to start at (inclusive) and work back from and what val you want to find the index of -> put here and further down)
+            // TODO: rm/shift to the left oldValue + decrement smallestNonZeroSortedRanksValueIdx - start at smallestIdxMemVar and work back
             return;
         }
 
@@ -133,20 +143,8 @@ abstract contract GovernorSorting {
             }
         }
 
-        // TODO: I think I can get rid of this actually and make this whole function strictly O(n) - just find indexToInsert at as I go
         // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
-        // find the index that newValue is larger than or equal to.
-        // working right to left starting with the smallestNonZeroSortedRanksValueIdx - 1 bc of above logic.
-        uint256 indexToInsertAt;
-        for (uint256 index = 0; index < smallestIdxMemVar; index++) {
-            if (newValue > sortedRanksMemVar[smallestIdxMemVar - 1 - index]) {
-                // then this is the index that the new value should be inserted at
-                indexToInsertAt = smallestIdxMemVar - 1 - index;
-                break;
-            }
-        }
-
-        // insert it there, pushing everything behind it down and removing oldValue unless there is still at least 1 prop at it
-        _insertRank(oldValue, newValue, indexToInsertAt);
+        // find where it should go and insert it
+        _insertRank(oldValue, newValue);
     }
 }
