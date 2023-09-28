@@ -180,6 +180,24 @@ contract RewardsModule is Context {
         return _pendingPayment(ranking, totalReceived, released(token, ranking));
     }
 
+
+
+    /**
+     * @dev Run release checks.
+     */
+    function runReleaseChecks(uint256 ranking) public view {
+        require(
+            _underlyingContest.downvotingAllowed() == 0,
+            "RewardsModule: rankings don't work with downvoting enabled on the contest"
+        );
+        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
+        require(
+            _underlyingContest.state() == IGovernor.ContestState.Completed,
+            "RewardsModule: contest must be completed for rewards to be paid out"
+        );
+        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
+    }
+
     /**
      * @dev Return address to pay out for a given ranking.
      */
@@ -209,16 +227,7 @@ contract RewardsModule is Context {
      * total shares and their previous withdrawals.
      */
     function release(uint256 ranking) public virtual {
-        require(
-            _underlyingContest.downvotingAllowed() == 0,
-            "RewardsModule: rankings don't work with downvoting enabled on the contest"
-        );
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
-        require(
-            _underlyingContest.state() == IGovernor.ContestState.Completed,
-            "RewardsModule: contest must be completed for rewards to be paid out"
-        );
-        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
+        runReleaseChecks(ranking);
 
         uint256 payment = releasable(ranking);
 
@@ -248,16 +257,7 @@ contract RewardsModule is Context {
      * contract.
      */
     function release(IERC20 token, uint256 ranking) public virtual {
-        require(
-            _underlyingContest.downvotingAllowed() == 0,
-            "RewardsModule: rankings don't work with downvoting enabled on the contest"
-        );
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
-        require(
-            _underlyingContest.state() == IGovernor.ContestState.Completed,
-            "RewardsModule: contest must be completed for rewards to be paid out"
-        );
-        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
+        runReleaseChecks(ranking);
 
         uint256 payment = releasable(token, ranking);
 

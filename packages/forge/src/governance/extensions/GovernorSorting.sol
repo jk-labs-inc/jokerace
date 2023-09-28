@@ -128,8 +128,8 @@ abstract contract GovernorSorting {
     }
 
     // TODO: lay out all of the cases with this/its inputs + constraints (old and new value will never be the same for example)
-    // keep things sorted as we go
-    // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
+    // keep things sorted as we go.
+    // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas.
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
