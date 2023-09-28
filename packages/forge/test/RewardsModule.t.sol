@@ -250,7 +250,7 @@ contract RewardsModuleTest is Test {
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysAuthor.release(2);
@@ -272,7 +272,7 @@ contract RewardsModuleTest is Test {
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysAuthor.release(testERC20, 2);
@@ -293,7 +293,7 @@ contract RewardsModuleTest is Test {
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysTarget.release(2);
@@ -315,7 +315,7 @@ contract RewardsModuleTest is Test {
         testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysTarget.release(testERC20, 2);
@@ -464,7 +464,7 @@ contract RewardsModuleTest is Test {
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysAuthor.release(1);
@@ -483,7 +483,7 @@ contract RewardsModuleTest is Test {
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysAuthor.release(testERC20, 1);
@@ -501,7 +501,7 @@ contract RewardsModuleTest is Test {
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysAuthor.release(2);
@@ -520,7 +520,7 @@ contract RewardsModuleTest is Test {
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysAuthor.release(testERC20, 2);
@@ -640,7 +640,7 @@ contract RewardsModuleTest is Test {
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysAuthor.release(1);
@@ -653,7 +653,7 @@ contract RewardsModuleTest is Test {
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
             bytes(
-                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
             )
         );
         rewardsModulePaysAuthor.release(testERC20, 1);
