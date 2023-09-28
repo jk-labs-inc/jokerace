@@ -57,11 +57,8 @@ abstract contract GovernorSorting {
         }
 
         // if there's no valid index for that rank in sortedRanks, revert
-        // (how you would get here is it you deleted the top 25 voted proposals with a RANK_LIMIT of 25
-        // and then tried to pay out rank 1, or any rank for that matter; or just don't have enough proposals with forVotes on them
-        // to get to this rank)
         revert(
-            "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
         );
     }
 
