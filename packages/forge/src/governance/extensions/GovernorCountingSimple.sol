@@ -31,8 +31,7 @@ abstract contract GovernorCountingSimple is Governor {
     mapping(address => uint256) public addressTotalCastVoteCounts;
     mapping(uint256 => ProposalVote) public proposalVotesStructs;
 
-    // TODO: rename to forVotesToProposalIds
-    mapping(uint256 => uint256[]) public forVotesToProposalId;
+    mapping(uint256 => uint256[]) public forVotesToProposalIds;
 
     /**
      * @dev Accessor to the internal vote counts for a given proposal.
@@ -123,7 +122,7 @@ abstract contract GovernorCountingSimple is Governor {
      * @dev See {GovernorSorting-getNumProposalsWithThisManyForVotes}. Get the number of proposals that have `forVotes` number of for votes.
      */
     function getNumProposalsWithThisManyForVotes(uint256 forVotes) public view override returns (uint256 count) {
-        return forVotesToProposalId[forVotes].length;
+        return forVotesToProposalIds[forVotes].length;
     }
 
     /**
@@ -134,25 +133,25 @@ abstract contract GovernorCountingSimple is Governor {
      */
     function getOnlyProposalIdWithThisManyForVotes(uint256 forVotes) public view returns (uint256 proposalId) {
         require(
-            forVotesToProposalId[forVotes].length == 1,
+            forVotesToProposalIds[forVotes].length == 1,
             "GovernorCountingSimple: tried to call getOnlyProposalIdWithThisManyForVotes and couldn't find one"
         );
-        return forVotesToProposalId[forVotes][0];
+        return forVotesToProposalIds[forVotes][0];
     }
 
     /**
      * @dev Remove this proposalId from the list of proposalIds that share its current forVotes
-     *      value in forVotesToProposalId.
+     *      value in forVotesToProposalIds.
      */
     function _rmProposalIdFromForVotesMap(uint256 proposalId, uint256 forVotes) internal {
-        uint256[] memory forVotesToPropIdMemVar = forVotesToProposalId[forVotes]; // only check state var once to save on gas
+        uint256[] memory forVotesToPropIdMemVar = forVotesToProposalIds[forVotes]; // only check state var once to save on gas
         for (uint256 i = 0; i < forVotesToPropIdMemVar.length; i++) {
             if (forVotesToPropIdMemVar[i] == proposalId) {
                 // swap with last item and pop bc we don't care about order.
                 // makes things cleaner (than just deleting) and saves on gas if there end up being a ton of proposals that pass
                 // through having a certain number of votes throughout the contest.
-                forVotesToProposalId[forVotes][i] = forVotesToPropIdMemVar[forVotesToPropIdMemVar.length - 1];
-                forVotesToProposalId[forVotes].pop();
+                forVotesToProposalIds[forVotes][i] = forVotesToPropIdMemVar[forVotesToPropIdMemVar.length - 1];
+                forVotesToProposalIds[forVotes].pop();
                 break;
             }
         }
@@ -167,7 +166,7 @@ abstract contract GovernorCountingSimple is Governor {
             uint256 currentProposalsForVotes = proposalVotesStructs[currentProposalId].proposalVoteCounts.forVotes;
 
             // remove this proposalId from the list of proposalIds that share its current forVotes
-            // value in forVotesToProposalId
+            // value in forVotesToProposalIds
             _rmProposalIdFromForVotesMap(currentProposalId, currentProposalsForVotes);
         }
     }
@@ -218,7 +217,7 @@ abstract contract GovernorCountingSimple is Governor {
             if (oldForVotes > 0) {
                 _rmProposalIdFromForVotesMap(proposalId, oldForVotes);
             }
-            forVotesToProposalId[newForVotes].push(proposalId);
+            forVotesToProposalIds[newForVotes].push(proposalId);
 
             _updateRanks(oldForVotes, newForVotes);
         }

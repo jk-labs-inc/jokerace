@@ -189,7 +189,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     }
 
     /**
-     * @dev Remove deleted proposalIds from forVotesToProposalId and decrement copy counts of the forVotes of proposalIds.
+     * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
      */
     function _deletedProposalsSortingCleanup(uint256[] calldata proposalIds) internal virtual;
 
@@ -316,7 +316,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
 
                 // we don't do sorting if downvoting is enabled
                 if (downvotingAllowed() == 0) {
-                    // remove proposalIds from forVotesToProposalId and decrement the copy count of that voteAmount
+                    // remove proposalIds from forVotesToProposalIds and decrement the copy count of that voteAmount
                     _deletedProposalsSortingCleanup(proposalIds);
                 }
             }

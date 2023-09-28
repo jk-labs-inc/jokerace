@@ -180,8 +180,6 @@ contract RewardsModule is Context {
         return _pendingPayment(ranking, totalReceived, released(token, ranking));
     }
 
-
-
     /**
      * @dev Run release checks.
      */
@@ -190,11 +188,11 @@ contract RewardsModule is Context {
             _underlyingContest.downvotingAllowed() == 0,
             "RewardsModule: rankings don't work with downvoting enabled on the contest"
         );
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
+        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
         require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
     }
 
