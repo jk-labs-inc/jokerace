@@ -92,7 +92,7 @@ abstract contract GovernorSorting {
     ) internal {
         // find the index to insert newValue at
         uint256 insertingIndex;
-        for (uint256 index = 0; index < RANK_LIMIT; index++) {
+        for (uint256 index = 0; index < smallestIdxMemVar; index++) {
             if (newValue > sortedRanksMemVar[index]) {
                 insertingIndex = index;
                 break;
@@ -101,14 +101,14 @@ abstract contract GovernorSorting {
 
         // go through and shift the value of `insertingIndex` and everything under it (until we hit oldValue, if we do) down one in sortedRanks
         // (if we hit the limit then the last item will just be dropped)
-        bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are other props with oldValue votes, we don't want to remove it
-        bool hitOldValue = false;
+        bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
+        bool haveHitOldValue = false;
         for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
             sortedRanks[index] = sortedRanksMemVar[index - 1];
 
             // once I shift a value into the index oldValue was in (if it's in here) I can stop!
             if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
-                hitOldValue = true; // if I hit oldValue, smallestNonZeroSortedRanksValueIdx should not be incremented
+                haveHitOldValue = true; // if I hit oldValue, smallestNonZeroSortedRanksValueIdx should not be incremented
                 break;
             }
 
@@ -121,7 +121,7 @@ abstract contract GovernorSorting {
         // now that everything's been shifted down and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
         sortedRanks[insertingIndex] = newValue;
 
-        if (!hitOldValue && (smallestIdxMemVar + 1 != RANK_LIMIT)) {
+        if (!haveHitOldValue && (smallestIdxMemVar + 1 != RANK_LIMIT)) {
             // if smallestNonZeroSortedRanksValueIdx isn't already at the limit, bump it one
             smallestNonZeroSortedRanksValueIdx++;
         }
@@ -136,7 +136,8 @@ abstract contract GovernorSorting {
 
         // TIED?
         if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
-            // we just need to treat these cases of oldValues that get left behind like deletes - these are the TTs mentioned at the top.
+            // we don't need to insert anything, so we just need to treat these cases of oldValues that get 
+            // left behind like deletes (these are the TTs mentioned at the top) because of the array rule.
             return;
         }
 
