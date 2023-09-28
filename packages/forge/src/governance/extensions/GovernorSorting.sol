@@ -8,11 +8,24 @@ pragma solidity ^0.8.0;
  * _Available since v4.3._
  */
 abstract contract GovernorSorting {
+    // Because of the array rule below, the actual number of rankings that this contract will be able to track is determined by three things:
+    //      - RANK_LIMIT
+    //      - Woulda Beens (WBs)
+    //          The number of would-be ranked proposals (at the end of the contest if rankings were counted
+    //          without taking out deleted proposals) within the limit that are deleted that are not tied.
+    //      - To Tied (TTs)
+    //          The number of times a proposal is voted into a ranking to tie it or a ranking that is already tied
+    //          from a ranking that was in the tracked rankings at the time that vote was cast.
+    //
+    // The equation to calcluate how many rankings this contract will actually be able to track is:
+    // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTs
+    //
+    // With this in mind, it is strongly reccomended to set RANK_LIMIT sufficiently high to create a buffer for
+    // WBs and TTs that may occur in your contest. The thing to consider with regard to making it too high is just
+    // that it is more gas for users on average the higher that RANK_LIMIT is set.
+    uint256 public constant RANK_LIMIT = 250; // cannot be 0
 
-    // WE KEEP TRACK OF TIES (if > 1) AS WELL AS DELETES (if == 0) W forVotesToProposalId
-
-    uint256 public constant RANK_LIMIT = 25; // cannot be 0
-
+    // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
     uint256 public smallestNonZeroSortedRanksValueIdx = 0; // the index of the smallest non-zero value in sortedRanks, useful to finding where sortedRanks has been populated to
 
@@ -65,14 +78,16 @@ abstract contract GovernorSorting {
         return false;
     }
 
-    // insert a new value into sortedRanks
-    // we know at this point it's 
+    // insert a new value into sortedRanks.
+    // we know at this point it's:
     //      -in [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
     //      -not tied
-    function _insertRank(uint256 oldValue, uint256 newValue) internal {
-        uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
-        uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
-
+    function _insertRank(
+        uint256 oldValue,
+        uint256 newValue,
+        uint256 smallestIdxMemVar,
+        uint256[] memory sortedRanksMemVar
+    ) internal {
         // find the index to insert newValue at
         uint256 insertingIndex;
         for (uint256 index = 0; index < RANK_LIMIT; index++) {
@@ -83,7 +98,7 @@ abstract contract GovernorSorting {
         }
 
         // go through and shift the value of `insertingIndex` and everything under it (until we hit oldValue, if we do) down one in sortedRanks
-        bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are other props with oldValue, we don't want to be removing it
+        bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are other props with oldValue votes, we don't want to remove it
         bool hitOldValue = false;
         uint256 tmp1 = sortedRanksMemVar[insertingIndex];
         uint256 tmp2;
@@ -113,24 +128,21 @@ abstract contract GovernorSorting {
         }
     }
 
-    // TODO: lay out all of the cases with this/its inputs + constraints (they'll never be the same)
+    // TODO: lay out all of the cases with this/its inputs + constraints (old and new value will never be the same for example)
     // keep things sorted as we go
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
-        // TIED? - are there other props that already have newValue forVotes and so this one is now tied?
-        // if so, no need to insert anything, we just need to remove oldVotes
+        // TIED?
         if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
-            // TODO: rm/shift to the left oldValue + decrement smallestNonZeroSortedRanksValueIdx - start at smallestIdxMemVar and work back
+            // we just need to treat these cases of oldValues that get left behind like deletes.
             return;
         }
 
         // SMALLER THAN CURRENT SMALLEST NON-ZERO VAL? - is it after smallestNonZeroSortedRanksValueIdx?
-        // is the current proposal's forVotes less than that of the currently lowest value element in the sorted
-        // array? if so, just insert it after it. if that index would be RANK_LIMIT, then we're done.
-        // this also means that the old value was 0 or less than that at smallestNonZeroSortedRanksValueIdx so all good there.
+        // this also means that the old value was 0 or less than that so all good there.
         if (newValue < sortedRanksMemVar[smallestIdxMemVar]) {
             if (smallestIdxMemVar + 1 == RANK_LIMIT) {
                 // if we've reached the size limit of sortedRanks, then we're done here
@@ -145,7 +157,7 @@ abstract contract GovernorSorting {
         }
 
         // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
-        // find where it should go and insert it
-        _insertRank(oldValue, newValue);
+        // find where it should go and insert it.
+        _insertRank(oldValue, newValue, smallestIdxMemVar, sortedRanksMemVar);
     }
 }

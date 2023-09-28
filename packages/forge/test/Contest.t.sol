@@ -32,7 +32,7 @@ pragma solidity ^0.8.13;
 //             }
 //         }
 
-//         Submission merkle tree (both are value 10 because that's just the dummy value 
+//         Submission merkle tree (both are value 10 because that's just the dummy value
 //         that we make proposal merkle trees have and check against for a simpler flow):
 //         {
 //             "decimals": 18,
