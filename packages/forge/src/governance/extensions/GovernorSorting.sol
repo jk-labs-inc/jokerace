@@ -103,15 +103,11 @@ abstract contract GovernorSorting {
         // (if we hit the limit then the last item will just be dropped)
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are other props with oldValue votes, we don't want to remove it
         bool hitOldValue = false;
-        uint256 tmp1 = sortedRanksMemVar[insertingIndex];
-        uint256 tmp2;
         for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
-            tmp2 = sortedRanksMemVar[index];
-            sortedRanks[index] = tmp1;
-            tmp1 = tmp2;
+            sortedRanks[index] = sortedRanksMemVar[index - 1];
 
             // once I shift a value into the index oldValue was in (if it's in here) I can stop!
-            if (checkForOldValue && (tmp1 == oldValue)) {
+            if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
                 hitOldValue = true; // if I hit oldValue, smallestNonZeroSortedRanksValueIdx should not be incremented
                 break;
             }
