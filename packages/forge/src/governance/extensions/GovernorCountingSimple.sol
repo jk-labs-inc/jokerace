@@ -5,7 +5,7 @@ pragma solidity ^0.8.0;
 import "../Governor.sol";
 
 /**
- * @dev Extension of {Governor} for simple, 3 options, vote counting.
+ * @dev Extension of {Governor} for simple vote counting.
  */
 abstract contract GovernorCountingSimple is Governor {
     /**
@@ -211,9 +211,10 @@ abstract contract GovernorCountingSimple is Governor {
         // sorting and consequently rewards module compatibility is only available if downvoting is disabled
         if (downvotingAllowed() == 0) {
             uint256 newForVotes = proposalvote.proposalVoteCounts.forVotes; // only check state var once to save on gas
-
-            // update a map of forVotes => proposalId[] to be able to go from rank => proposalId
             uint256 oldForVotes = newForVotes - numVotes;
+
+            // update map of forVotes => proposalId[] to be able to go from rank => proposalId.
+            // if oldForVotes is 0, then this proposal will not already be in this map, so we don't need to rm it
             if (oldForVotes > 0) {
                 _rmProposalIdFromForVotesMap(proposalId, oldForVotes);
             }

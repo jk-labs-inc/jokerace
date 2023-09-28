@@ -200,10 +200,8 @@ contract RewardsModule is Context {
      * @dev Return address to pay out for a given ranking.
      */
     function getAddressToPayOut(uint256 ranking) public view returns (address) {
-        uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
-        uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
-
         address addressToPayOut;
+        uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
 
         // if the ranking that we land on is tied or it's below a tied ranking, send to creator
         if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
@@ -211,6 +209,7 @@ contract RewardsModule is Context {
         }
         // otherwise, determine proposal at ranking and pay out according to that
         else {
+            uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
             IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
                 _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
             );

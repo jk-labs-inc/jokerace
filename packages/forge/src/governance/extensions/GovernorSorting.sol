@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 
 /**
  * @dev Logic for sorting and ranking.
- *
- * _Available since v4.3._
  */
 abstract contract GovernorSorting {
     // Because of the array rule below, the actual number of rankings that this contract will be able to track is determined by three things:
