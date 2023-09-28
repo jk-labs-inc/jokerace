@@ -249,7 +249,9 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(
-            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            )
         );
         rewardsModulePaysAuthor.release(2);
     }
@@ -269,7 +271,9 @@ contract RewardsModuleTest is Test {
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
-            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            )
         );
         rewardsModulePaysAuthor.release(testERC20, 2);
     }
@@ -288,7 +292,9 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
         vm.expectRevert(
-            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            )
         );
         rewardsModulePaysTarget.release(2);
     }
@@ -308,7 +314,9 @@ contract RewardsModuleTest is Test {
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
-            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            )
         );
         rewardsModulePaysTarget.release(testERC20, 2);
     }
@@ -404,45 +412,45 @@ contract RewardsModuleTest is Test {
     //// 2 PROPOSALS WITH DIFFERENT AUTHORS
 
     // 2 proposals with different authors, both at 1 vote; send back to creator
-    // function testFirstPlaceTieWithNative() public {
-    //     vm.warp(1681650001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_2);
-    //     uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
-    //     vm.warp(1681660001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+    function testFirstPlaceTieWithNative() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
 
-    //     vm.warp(1681670001);
-    //     vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-    //     rewardsModulePaysAuthor.release(1);
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
 
-    //     assertEq(CREATOR_ADDRESS_1.balance, 50);
-    // }
+        assertEq(CREATOR_ADDRESS_1.balance, 50);
+    }
 
     // 2 proposals with different authors, both at 1 vote; send back to creator
-    // function testFirstPlaceTieWithERC20() public {
-    //     vm.warp(1681650001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_2);
-    //     uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
-    //     vm.warp(1681660001);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
-    //     vm.prank(PERMISSIONED_ADDRESS_1);
-    //     contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+    function testFirstPlaceTieWithERC20() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
 
-    //     vm.warp(1681670001);
-    //     vm.prank(CREATOR_ADDRESS_1);
-    //     testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-    //     rewardsModulePaysAuthor.release(testERC20, 1);
+        vm.warp(1681670001);
+        vm.prank(CREATOR_ADDRESS_1);
+        testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        rewardsModulePaysAuthor.release(testERC20, 1);
 
-    //     assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
-    // }
+        assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
+    }
 
     // 2 proposals with different authors, both at 0 votes; send back to creator
     // function testFirstPlaceTieWithZeroVotesWithNative() public {
@@ -486,7 +494,9 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(
-            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            )
         );
         rewardsModulePaysAuthor.release(2);
     }
@@ -503,7 +513,9 @@ contract RewardsModuleTest is Test {
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
-            bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            )
         );
         rewardsModulePaysAuthor.release(testERC20, 2);
     }
@@ -620,7 +632,11 @@ contract RewardsModuleTest is Test {
     function testFirstPlaceTieWithZeroProposalsWithNative() public {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"));
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            )
+        );
         rewardsModulePaysAuthor.release(1);
     }
 
@@ -629,7 +645,11 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(bytes("GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"));
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals into account"
+            )
+        );
         rewardsModulePaysAuthor.release(testERC20, 1);
     }
 

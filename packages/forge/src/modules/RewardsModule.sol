@@ -210,6 +210,7 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
+        // TODO: make the below into a function and rm the code duplication in the 2 relese functions
         // get idx and value of item at ranking - accounts for deletes
         uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
         uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
@@ -274,12 +275,11 @@ contract RewardsModule is Context {
         // determine who to pay out
         address payable addressToPayOut;
 
-        //// if there aren't any votes on the ranking we land on, or that ranking is tied, or it's below a tied ranking,
-        //// send to creator
-        if (rankValue == 0 || _underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
+        //// if the ranking that we land on is tied or it's below a tied ranking, send to creator
+        if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
             addressToPayOut = payable(creator());
         }
-        //// otherwise, determine proposal at ranking
+        //// otherwise, determine proposal at ranking and pay out according to that
         else {
             IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
                 _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one

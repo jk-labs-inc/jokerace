@@ -71,7 +71,7 @@ abstract contract GovernorSorting {
         }
 
         for (uint256 index = 0; index < idx + 1; index++) {
-            if (getNumProposalsWithThisManyForVotes(index) > 1) {
+            if (getNumProposalsWithThisManyForVotes(sortedRanks[index]) > 1) {
                 return true;
             }
         }
