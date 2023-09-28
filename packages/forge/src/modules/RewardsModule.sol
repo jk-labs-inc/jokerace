@@ -187,14 +187,13 @@ contract RewardsModule is Context {
         uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
         uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
 
-        // determine who to pay out
         address addressToPayOut;
 
-        //// if the ranking that we land on is tied or it's below a tied ranking, send to creator
+        // if the ranking that we land on is tied or it's below a tied ranking, send to creator
         if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
             addressToPayOut = creator();
         }
-        //// otherwise, determine proposal at ranking and pay out according to that
+        // otherwise, determine proposal at ranking and pay out according to that
         else {
             IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
                 _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one

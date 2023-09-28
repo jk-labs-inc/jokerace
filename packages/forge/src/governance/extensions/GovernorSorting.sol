@@ -35,13 +35,14 @@ abstract contract GovernorSorting {
      */
     function getNumProposalsWithThisManyForVotes(uint256 forVotes) public view virtual returns (uint256 count);
 
-    // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account
-    // a rank has to have > 0 votes to be considered valid
+    // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account.
+    // a rank has to have > 0 votes to be considered valid.
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
+        require(rank != 0, "GovernorSorting: rank cannot equal 0");
+
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
-        require(rank != 0, "GovernorSorting: rank cannot equal 0");
         uint256 counter = 1;
         for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
             // if this is a deleted proposal, go forwards without incrementing the counter
@@ -68,7 +69,7 @@ abstract contract GovernorSorting {
     function isOrIsBelowTiedRank(uint256 idx) public view returns (bool atOrBelowTiedRank) {
         if (idx > smallestNonZeroSortedRanksValueIdx) {
             // if `idx` hasn't been populated, then it's not a valid index to be checking and something is wrong
-            revert("GovernorSorting: this index or one above it has not been populated");
+            revert("GovernorSorting: this index has not been populated");
         }
 
         for (uint256 index = 0; index < idx + 1; index++) {
@@ -79,7 +80,7 @@ abstract contract GovernorSorting {
         return false;
     }
 
-    // insert a new value into sortedRanks.
+    // insert a new value into sortedRanks (this function is strictly O(n)).
     // we know at this point it's:
     //      -in [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
     //      -not tied
@@ -99,6 +100,7 @@ abstract contract GovernorSorting {
         }
 
         // go through and shift the value of `insertingIndex` and everything under it (until we hit oldValue, if we do) down one in sortedRanks
+        // (if we hit the limit then the last item will just be dropped)
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are other props with oldValue votes, we don't want to remove it
         bool hitOldValue = false;
         uint256 tmp1 = sortedRanksMemVar[insertingIndex];
@@ -138,7 +140,7 @@ abstract contract GovernorSorting {
 
         // TIED?
         if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
-            // we just need to treat these cases of oldValues that get left behind like deletes.
+            // we just need to treat these cases of oldValues that get left behind like deletes - these are the TTs mentioned at the top.
             return;
         }
 
