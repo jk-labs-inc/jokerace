@@ -73,11 +73,12 @@ abstract contract GovernorSorting {
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
-        // TODO: find indexToInsert -> start the next for-loop from there same as I did before
+        // find the index to insert newValue at
         uint256 insertingIndex;
         for (uint256 index = 0; index < RANK_LIMIT; index++) {
             if (newValue > sortedRanksMemVar[index]) {
                 insertingIndex = index;
+                break;
             }
         }
 
@@ -98,12 +99,12 @@ abstract contract GovernorSorting {
             }
 
             if (index == smallestIdxMemVar + 1) {
-                // if I've populated this index, then everything after will just be 0s, which I can skip
+                // if I've populated this index, everything after will just be 0s, which I can skip
                 break;
             }
         }
 
-        // now that everything's been swapped out and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
+        // now that everything's been shifted down and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
         sortedRanks[insertingIndex] = newValue;
 
         if (!hitOldValue && (smallestIdxMemVar + 1 != RANK_LIMIT)) {
