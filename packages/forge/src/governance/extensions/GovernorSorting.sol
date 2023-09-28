@@ -23,6 +23,7 @@ abstract contract GovernorSorting {
     // With this in mind, it is strongly reccomended to set RANK_LIMIT sufficiently high to create a buffer for
     // WBs and TTs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
+    // TODO: make configurable + test ranges
     uint256 public constant RANK_LIMIT = 250; // cannot be 0
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
