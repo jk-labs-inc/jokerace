@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
 import ButtonV3 from "@components/UI/ButtonV3";
@@ -10,6 +9,7 @@ import MarkdownText from "@components/UI/Markdown/components/MarkdownText";
 import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
 import { formatNumber } from "@helpers/formatNumber";
 import { isUrlTweet } from "@helpers/isUrlTweet";
+import ordinalize from "@helpers/ordinalize";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
@@ -17,7 +17,7 @@ import { load } from "cheerio";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Children, FC, useEffect, useMemo, useRef, useState } from "react";
+import React, { Children, FC, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
@@ -38,12 +38,13 @@ interface ProposalContentProps {
   id: string;
   proposal: Proposal;
   votingOpen: Date;
+  rank: number;
 }
 
 const MAX_LENGTH = 200;
 let MAX_LENGTH_PARAGRAPH = 200;
 
-const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, rank }) => {
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
@@ -55,24 +56,10 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen })
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
   const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
-  const previousVotesRef = useRef(proposal.votes);
-  const [isVoteChanged, setIsVoteChanged] = useState(false);
   const showVoteButton = !isConnected || currentUserAvailableVotesAmount > 0;
-  const voteButtonMessage = isConnected ? "vote" : "connect wallet to vote";
+  const voteButtonMessage = isConnected ? "add votes" : "connect wallet to vote";
 
-  useEffect(() => {
-    let timer: any;
-    if (previousVotesRef.current !== proposal.votes) {
-      setIsVoteChanged(true);
-      timer = setTimeout(() => setIsVoteChanged(false), 1000);
-      previousVotesRef.current = proposal.votes;
-    }
-    return () => {
-      if (timer) {
-        clearTimeout(timer);
-      }
-    };
-  }, [proposal.votes]);
+  console.log({ proposal });
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
     switch (contestStatus) {
@@ -85,14 +72,11 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen })
         );
       case ContestStatus.VotingOpen:
         return (
-          <>
-            <p className={`text-positive-11 ${isVoteChanged ? "animate-flicker" : ""}`}>
-              {formatNumber(proposal.votes)} votes
-            </p>
-            {showVoteButton && (
+          <div>
+            {showVoteButton ? (
               <ButtonV3
                 type="txAction"
-                color="bg-gradient-vote rounded-[40px]"
+                color="bg-gradient-next rounded-[40px]"
                 size="large"
                 onClick={() => {
                   setPickProposal(id);
@@ -101,16 +85,13 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen })
               >
                 {voteButtonMessage}
               </ButtonV3>
+            ) : (
+              <p className="text-[16px] text-neutral-10 font-bold">only allowlisted wallets can play</p>
             )}
-          </>
+          </div>
         );
       case ContestStatus.VotingClosed:
-        return (
-          <>
-            <p className="text-positive-11">{formatNumber(proposal.votes)} votes</p>
-            <p className="text-neutral-10">voting closed</p>
-          </>
-        );
+        return <p className="text-neutral-10">voting closed</p>;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount, setPickProposal, isConnected]);
@@ -148,6 +129,17 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen })
 
   return (
     <div className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+      <div className="px-4 mt-4 flex items-center gap-1">
+        <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+
+        {rank > 0 && (
+          <>
+            <span className="text-neutral-9">&#8226;</span>{" "}
+            <p className="text-[16px] font-bold text-neutral-9">{ordinalize(rank).label} place</p>{" "}
+          </>
+        )}
+      </div>
+
       <Link
         href={`/contest/${chainName}/${contestAddress}/submission/${id}`}
         shallow
@@ -187,12 +179,11 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen })
         </>
       </Link>
 
-      <div className="border-t border-neutral-10 h-2/5 md:h-1/4 flex flex-col md:flex-row items-center">
-        <div className="flex pl-8 w-full md:w-1/2 h-full border-b md:border-r border-neutral-10">
-          <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
-        </div>
-        <div className="flex items-center justify-between pl-8 md:pl-4 pr-4 w-full md:w-1/2 h-full text-[16px] font-bold">
-          {ProposalAction}
+      <div className="h-2/5 md:h-2/4 px-8">
+        <div className={`flex flex-col md:flex-row items-center ${showVoteButton ? "" : "border-t border-primary-2"}`}>
+          <div className="flex items-center py-4 justify-between w-full md:w-1/2 h-full text-[16px] font-bold">
+            {ProposalAction}
+          </div>
         </div>
       </div>
 

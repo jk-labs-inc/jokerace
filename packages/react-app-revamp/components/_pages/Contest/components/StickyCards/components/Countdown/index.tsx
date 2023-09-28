@@ -2,6 +2,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import moment from "moment";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import ContestCountdownTimeUnit from "./components/TimeUnit";
 
 const formatDuration = (duration: moment.Duration) => {
   const days = Math.floor(duration.asDays());
@@ -49,31 +50,37 @@ const ContestCountdown = () => {
     };
   }, [memoizedSubmissionsOpen, memoizedVotesOpen, memoizedVotesClose]);
 
-  const displayText = () => {
-    if (duration.days > 0) {
-      return `${duration.days} days ${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec `;
-    } else if (duration.hours > 0) {
-      return `${duration.hours} hr ${duration.minutes} min ${duration.seconds} sec `;
-    } else if (duration.minutes > 0) {
-      return `${duration.minutes} min ${duration.seconds} sec `;
-    } else {
-      return `${duration.seconds} sec `;
+  //@TODO - add pluralization for these fields
+  const displayTime = () => {
+    const elements = [];
+    if (duration.days > 0) elements.push(<ContestCountdownTimeUnit value={duration.days} label=" days " />);
+    if (duration.hours > 0) elements.push(<ContestCountdownTimeUnit value={duration.hours} label=" hr " />);
+    if (duration.minutes > 0) elements.push(<ContestCountdownTimeUnit value={duration.minutes} label=" min " />);
+    elements.push(<ContestCountdownTimeUnit value={duration.seconds} label=" sec" />);
+    return elements;
+  };
+
+  const displayText = (phase: string) => {
+    switch (phase) {
+      case "start":
+        return "Contest opens in";
+      case "submit":
+        return "Deadline to submit";
+      case "vote":
+        return "Deadline to vote";
     }
   };
 
   return (
-    <div className={`w-full h-12 bg-neutral-0 flex gap-3 border border-transparent rounded-[10px] p-4 items-center`}>
-      <Image src="/contest/timer.svg" width={24} height={24} alt="timer" />
+    <div className="w-full flex flex-col gap-4 border-r-primary-2 border-r-2">
+      <div className="flex gap-2">
+        <Image src="/contest/timer.svg" width={16} height={16} alt="timer" />
+        <p className="text-[16px] uppercase text-neutral-9">{displayText(phase)}</p>
+      </div>
       <div className="flex items-center">
-        <div className="text-[16px]">
-          <span className="font-bold text-neutral-11">{displayText()}</span>
-          {phase === "start" ? (
-            <span className="text-neutral-11"> until contest opens</span>
-          ) : phase === "submit" ? (
-            <span className="text-neutral-11"> to submit</span>
-          ) : (
-            <span className="text-neutral-11"> to vote</span>
-          )}
+        <div className="text-[24px]">
+          {/* //@TODO: add neutral-9 when submissions aren't open */}
+          <span className="font-bold text-neutral-11">{displayTime()}</span>
         </div>
       </div>
     </div>

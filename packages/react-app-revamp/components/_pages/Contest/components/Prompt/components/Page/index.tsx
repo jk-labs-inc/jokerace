@@ -20,6 +20,7 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [contestType, contestTitle, contestPrompt] = prompt.split("|");
   const truncatedPrompt = isV3 ? truncateText(contestPrompt, 100) : truncateText(prompt, 100);
+  const displayReadMore = isV3 ? contestPrompt.length > 100 : prompt.length > 100;
 
   useEffect(() => {
     if (contentRef.current) {
@@ -55,16 +56,18 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
                   />
                 </div>
               </div>
-              <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>
-                <p className="text-[16px] text-positive-11 font-bold">{isExpanded ? "Read Less" : "Read More"}</p>
-                <Image
-                  src="/contest/chevron.svg"
-                  width={24}
-                  height={24}
-                  alt="toggleRead"
-                  className={`transition-transform duration-300 ${isExpanded ? "transform rotate-180" : ""}`}
-                />
-              </div>
+              {displayReadMore && (
+                <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>
+                  <p className="text-[16px] text-positive-11 font-bold">{isExpanded ? "Read Less" : "Read More"}</p>
+                  <Image
+                    src="/contest/chevron.svg"
+                    width={24}
+                    height={24}
+                    alt="toggleRead"
+                    className={`transition-transform duration-300 ${isExpanded ? "transform rotate-180 pt-0" : "pt-1"}`}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -103,16 +106,18 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
                   {prompt}
                 </ReactMarkdown>
               </div>
-              <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>
-                <p className="text-[16px] text-positive-11 font-bold">{isExpanded ? "Read Less" : "Read More"}</p>
-                <Image
-                  src="/contest/chevron.svg"
-                  width={24}
-                  height={24}
-                  alt="toggleRead"
-                  className={`transition-transform duration-300 ${isExpanded ? "transform rotate-180" : ""}`}
-                />
-              </div>
+              {displayReadMore && (
+                <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>
+                  <p className="text-[16px] text-positive-11 font-bold">{isExpanded ? "Read Less" : "Read More"}</p>
+                  <Image
+                    src="/contest/chevron.svg"
+                    width={24}
+                    height={24}
+                    alt="toggleRead"
+                    className={`transition-transform duration-300 ${isExpanded ? "transform rotate-180" : ""}`}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>

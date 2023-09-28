@@ -101,7 +101,7 @@ const EthereumAddress = ({
   }
 
   return (
-    <span className={`flex ${isLarge ? "gap-6" : "gap-4"} items-center ${textSizeClass} text-neutral-11 font-bold`}>
+    <span className={`flex ${isLarge ? "gap-6" : "gap-2"} items-center ${textSizeClass} text-neutral-11 font-bold`}>
       <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
         <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={avatarUrl} alt="avatar" />
       </div>

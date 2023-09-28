@@ -58,7 +58,7 @@ const ButtonV3: React.FC<ButtonV3Props> = ({
 
   return (
     <button
-      className={`text-[16px] tracking-tighter rounded-[10px]  font-bold text-${textColor} ${color} ${sizeClasses} ${isDisabled} `}
+      className={`text-[16px] tracking-tighter rounded-[10px] font-bold text-${textColor} ${color} ${sizeClasses} ${isDisabled} `}
       onClick={onClickHandler}
     >
       {children}

@@ -6,7 +6,7 @@ interface MarkdownTextProps {
 }
 
 const MarkdownText: FC<MarkdownTextProps> = ({ children, props }) => (
-  <p {...props} className="m-0 text-[16px]">
+  <p {...props} className="m-0 text-[20px]">
     {children}
   </p>
 );

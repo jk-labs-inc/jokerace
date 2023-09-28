@@ -8,7 +8,7 @@ export function truncateText(input: string, maxLength: number) {
 
   // If we found a whitespace character, truncate the string at that index
   if (lastWhitespaceIndex > 0) {
-    truncated = truncated.substr(0, lastWhitespaceIndex);
+    truncated = truncated.substring(0, lastWhitespaceIndex);
   }
 
   // Append ellipsis to indicate that the text is truncated

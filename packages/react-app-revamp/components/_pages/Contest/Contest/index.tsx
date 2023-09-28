@@ -46,7 +46,7 @@ const ContestTab = () => {
           {showSubmitButton && (
             <ButtonV3
               type="txAction"
-              color="bg-gradient-create rounded-[40px]"
+              color="bg-gradient-vote rounded-[40px]"
               size="extraLargeLong"
               onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
             >
@@ -57,17 +57,9 @@ const ContestTab = () => {
       )}
       <ContestStickyCards />
 
-      {contestStatus === ContestStatus.ContestOpen && (
-        <div className="mt-8">
-          <p className="text-[16px] text-primary-10 font-bold">
-            submissions open {moment(submissionsOpen).format("MMMM Do, h:mm a")}
-          </p>
-        </div>
-      )}
-
-      <div className="mt-8">
+      <div className="mt-4">
         <div className="flex flex-col gap-5">
-          <hr className="border-neutral-10" />
+          <hr className="border-primary-2 border-2" />
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
             <ProposalStatistics contestStatus={contestStatus} />
           )}

@@ -4,6 +4,7 @@ import CircularProgressBar from "@components/Clock";
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import { ROUTE_VIEW_CONTEST_BASE_PATH, ROUTE_VIEW_UPCOMING_CONTESTS } from "@config/routes";
 import { chains, chainsImages } from "@config/wagmi";
+import { pluralize } from "@helpers/pluralize";
 import useContestInfo from "@hooks/useContestInfo";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -148,10 +149,6 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, rewards
     setOnCountdownComplete(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [contest, onCountdownComplete]);
-
-  const pluralize = (count: number, singular: string, plural: string) => {
-    return count === 1 ? `${count} ${singular}` : `${count} ${plural}`;
-  };
 
   const renderer = ({ days, hours, minutes, seconds }: CountdownRenderProps, targetDate: moment.Moment) => {
     if (days > 5) {
