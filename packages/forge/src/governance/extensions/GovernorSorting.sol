@@ -101,7 +101,7 @@ abstract contract GovernorSorting {
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
         bool haveHitOldValue = false;
 
-        // if we're checking for oldValue, check for if is at insertingIndex
+        // if we're checking for oldValue, check for if it is at insertingIndex
         if (checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue)) {
             haveHitOldValue = true;
         }
@@ -149,7 +149,7 @@ abstract contract GovernorSorting {
         }
 
         // SMALLER THAN CURRENT SMALLEST NON-ZERO VAL? - is it after smallestNonZeroSortedRanksValueIdx?
-        // this also means that the old value was 0 or less than that so all good there.
+        // this also means that the old value was 0 (or less than the lowest value if smallestNonZeroSortedRanksValueIdx == RANK_LIMIT - 1) that so all good there.
         if (newValue < sortedRanksMemVar[smallestIdxMemVar]) {
             if (smallestIdxMemVar + 1 == RANK_LIMIT) {
                 // if we've reached the size limit of sortedRanks, then we're done here
