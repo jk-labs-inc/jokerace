@@ -53,7 +53,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
       {!isLoading && !isSuccess && (
         <div className="flex items-center gap-3">
           {address && (
-            <Link href={`${ROUTE_VIEW_USER}/${address}`}>
+            <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
               <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
             </Link>
           )}

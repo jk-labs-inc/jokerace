@@ -13,6 +13,8 @@ import AuditMinorFixesContract from "@contracts/bytecodeAndAbi/Contest.3.11.audi
 import AuditInfoAndOptimizationsContract from "@contracts/bytecodeAndAbi/Contest.3.12.auditInfoAndOptimizations.sol/Contest.json";
 import CleanUpContractDocsContract from "@contracts/bytecodeAndAbi/Contest.3.13.cleanUpContractDocs.sol/Contest.json";
 import TrackProposalAuthorsContract from "@contracts/bytecodeAndAbi/Contest.3.14.trackProposalAuthors.sol/Contest.json";
+import TrackVotersContract from "@contracts/bytecodeAndAbi/Contest.3.15.trackVoters.sol/Contest.json";
+import MakeVarsPublicContract from "@contracts/bytecodeAndAbi/Contest.3.16.makeVarsPublic.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
@@ -23,7 +25,6 @@ import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.mak
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
-import { BaseError, TransactionExecutionError } from "viem";
 import { getEthersProvider } from "./ethers";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
 
@@ -37,40 +38,44 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "2.8") {
-      return { abi: NumberedVersioningContract.abi, version };
-    } else if (version === "2.9") {
-      return { abi: GateSubmissionsOpenContract.abi, version };
-    } else if (version === "2.10") {
-      return { abi: BetterRewardsNotesContract.abi, version };
-    } else if (version === "3.1") {
-      return { abi: MerkleVotesContract.abi, version };
-    } else if (version === "3.2") {
-      return { abi: TotalVotesCastContract.abi, version };
-    } else if (version === "3.3") {
-      return { abi: SetCompilerContract.abi, version };
-    } else if (version === "3.4") {
-      return { abi: AddIsDeletedContract.abi, version };
-    } else if (version === "3.5") {
-      return { abi: DeletedDontHitLimitContract.abi, version };
-    } else if (version === "3.6") {
-      return { abi: BringBackDeletedIdsContract.abi, version };
-    } else if (version === "3.7") {
-      return { abi: ArrayOfDeletedIdsContract.abi, version };
-    } else if (version === "3.8") {
-      return { abi: DeletedIdAccessorContract.abi, version };
-    } else if (version === "3.9") {
-      return { abi: PrivateDeletedIdsContract.abi, version };
-    } else if (version === "3.10") {
-      return { abi: CantVoteOnDeletedContract.abi, version };
-    } else if (version === "3.11") {
-      return { abi: AuditMinorFixesContract.abi, version };
-    } else if (version === "3.12") {
-      return { abi: AuditInfoAndOptimizationsContract.abi, version };
-    } else if (version === "3.13") {
-      return { abi: CleanUpContractDocsContract.abi, version };
+    if (version === "3.16") {
+      return { abi: MakeVarsPublicContract.abi, version };
+    } else if (version === "3.15") {
+      return { abi: TrackVotersContract.abi, version };
     } else if (version === "3.14") {
       return { abi: TrackProposalAuthorsContract.abi, version };
+    } else if (version === "3.13") {
+      return { abi: CleanUpContractDocsContract.abi, version };
+    } else if (version === "3.12") {
+      return { abi: AuditInfoAndOptimizationsContract.abi, version };
+    } else if (version === "3.11") {
+      return { abi: AuditMinorFixesContract.abi, version };
+    } else if (version === "3.10") {
+      return { abi: CantVoteOnDeletedContract.abi, version };
+    } else if (version === "3.9") {
+      return { abi: PrivateDeletedIdsContract.abi, version };
+    } else if (version === "3.8") {
+      return { abi: DeletedIdAccessorContract.abi, version };
+    } else if (version === "3.7") {
+      return { abi: ArrayOfDeletedIdsContract.abi, version };
+    } else if (version === "3.6") {
+      return { abi: BringBackDeletedIdsContract.abi, version };
+    } else if (version === "3.5") {
+      return { abi: DeletedDontHitLimitContract.abi, version };
+    } else if (version === "3.4") {
+      return { abi: AddIsDeletedContract.abi, version };
+    } else if (version === "3.3") {
+      return { abi: SetCompilerContract.abi, version };
+    } else if (version === "3.2") {
+      return { abi: TotalVotesCastContract.abi, version };
+    } else if (version === "3.1") {
+      return { abi: MerkleVotesContract.abi, version };
+    } else if (version === "2.10") {
+      return { abi: BetterRewardsNotesContract.abi, version };
+    } else if (version === "2.9") {
+      return { abi: GateSubmissionsOpenContract.abi, version };
+    } else if (version === "2.8") {
+      return { abi: NumberedVersioningContract.abi, version };
     }
 
     if (version === "1") {

@@ -37,12 +37,11 @@ const navLinks = [
 const LayoutContests = (props: LayoutContestsProps) => {
   const { children } = props;
   const { pathname } = useRouter();
-  const [activeTab, setActiveTab] = useState(pathname);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const activeTabIndex = navLinks.findIndex(link => link.href === activeTab);
+    const activeTabIndex = navLinks.findIndex(link => link.href === pathname);
     const activeTabRef = tabRefs.current[activeTabIndex];
 
     if (activeTabRef) {
@@ -51,7 +50,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
         width: `${activeTabRef.offsetWidth}px`,
       });
     }
-  }, [activeTab]);
+  }, [pathname]);
 
   return (
     <>
@@ -62,9 +61,8 @@ const LayoutContests = (props: LayoutContestsProps) => {
               <div
                 ref={el => (tabRefs.current[index] = el)}
                 className={`navLink-desktop whitespace-nowrap font-sabo text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
-                  activeTab === link.href ? "text-primary-10" : "text-neutral-11"
+                  pathname === link.href ? "text-primary-10" : "text-neutral-11"
                 }`}
-                onClick={() => setActiveTab(link.href)}
               >
                 {link.label}
               </div>

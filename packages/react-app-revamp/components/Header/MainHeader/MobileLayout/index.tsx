@@ -40,7 +40,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
         {isConnected ? (
           <div className="flex gap-2">
             {address && (
-              <Link href={`${ROUTE_VIEW_USER}/${address}`}>
+              <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
                 <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
               </Link>
             )}

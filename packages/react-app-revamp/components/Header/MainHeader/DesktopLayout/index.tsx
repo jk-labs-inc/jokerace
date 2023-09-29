@@ -32,7 +32,7 @@ const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected
 
       <div className="flex gap-3 items-center" style={{ minWidth: "260pxs" }}>
         {address ? (
-          <Link href={`${ROUTE_VIEW_USER}/${address}`}>
+          <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
             <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
           </Link>
         ) : null}
