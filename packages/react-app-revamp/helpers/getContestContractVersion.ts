@@ -38,44 +38,44 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "2.8") {
-      return { abi: NumberedVersioningContract.abi, version };
-    } else if (version === "2.9") {
-      return { abi: GateSubmissionsOpenContract.abi, version };
-    } else if (version === "2.10") {
-      return { abi: BetterRewardsNotesContract.abi, version };
-    } else if (version === "3.1") {
-      return { abi: MerkleVotesContract.abi, version };
-    } else if (version === "3.2") {
-      return { abi: TotalVotesCastContract.abi, version };
-    } else if (version === "3.3") {
-      return { abi: SetCompilerContract.abi, version };
-    } else if (version === "3.4") {
-      return { abi: AddIsDeletedContract.abi, version };
-    } else if (version === "3.5") {
-      return { abi: DeletedDontHitLimitContract.abi, version };
-    } else if (version === "3.6") {
-      return { abi: BringBackDeletedIdsContract.abi, version };
-    } else if (version === "3.7") {
-      return { abi: ArrayOfDeletedIdsContract.abi, version };
-    } else if (version === "3.8") {
-      return { abi: DeletedIdAccessorContract.abi, version };
-    } else if (version === "3.9") {
-      return { abi: PrivateDeletedIdsContract.abi, version };
-    } else if (version === "3.10") {
-      return { abi: CantVoteOnDeletedContract.abi, version };
-    } else if (version === "3.11") {
-      return { abi: AuditMinorFixesContract.abi, version };
-    } else if (version === "3.12") {
-      return { abi: AuditInfoAndOptimizationsContract.abi, version };
-    } else if (version === "3.13") {
-      return { abi: CleanUpContractDocsContract.abi, version };
-    } else if (version === "3.14") {
-      return { abi: TrackProposalAuthorsContract.abi, version };
+    if (version === "3.16") {
+      return { abi: MakeVarsPublicContract.abi, version };
     } else if (version === "3.15") {
       return { abi: TrackVotersContract.abi, version };
-    } else if (version === "3.16") {
-      return { abi: MakeVarsPublicContract.abi, version };
+    } else if (version === "3.14") {
+      return { abi: TrackProposalAuthorsContract.abi, version };
+    } else if (version === "3.13") {
+      return { abi: CleanUpContractDocsContract.abi, version };
+    } else if (version === "3.12") {
+      return { abi: AuditInfoAndOptimizationsContract.abi, version };
+    } else if (version === "3.11") {
+      return { abi: AuditMinorFixesContract.abi, version };
+    } else if (version === "3.10") {
+      return { abi: CantVoteOnDeletedContract.abi, version };
+    } else if (version === "3.9") {
+      return { abi: PrivateDeletedIdsContract.abi, version };
+    } else if (version === "3.8") {
+      return { abi: DeletedIdAccessorContract.abi, version };
+    } else if (version === "3.7") {
+      return { abi: ArrayOfDeletedIdsContract.abi, version };
+    } else if (version === "3.6") {
+      return { abi: BringBackDeletedIdsContract.abi, version };
+    } else if (version === "3.5") {
+      return { abi: DeletedDontHitLimitContract.abi, version };
+    } else if (version === "3.4") {
+      return { abi: AddIsDeletedContract.abi, version };
+    } else if (version === "3.3") {
+      return { abi: SetCompilerContract.abi, version };
+    } else if (version === "3.2") {
+      return { abi: TotalVotesCastContract.abi, version };
+    } else if (version === "3.1") {
+      return { abi: MerkleVotesContract.abi, version };
+    } else if (version === "2.10") {
+      return { abi: BetterRewardsNotesContract.abi, version };
+    } else if (version === "2.9") {
+      return { abi: GateSubmissionsOpenContract.abi, version };
+    } else if (version === "2.8") {
+      return { abi: NumberedVersioningContract.abi, version };
     }
 
     if (version === "1") {
