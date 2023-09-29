@@ -31,6 +31,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
     address[] private _proposalAuthors;
+    address[] private _addressesThatHaveVoted;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -71,7 +72,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.14";
+        return "3.15";
     }
 
     /**
@@ -122,6 +123,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function getAllProposalAuthors() public view virtual returns (address[] memory) {
         return _proposalAuthors;
+    }
+
+    /**
+     * @dev Return all addresses that have voted.
+     */
+    function getAllAddressesThatHaveVoted() public view virtual returns (address[] memory) {
+        return _addressesThatHaveVoted;
     }
 
     /**
@@ -397,6 +405,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
             "Governor: you need to verify your number of votes against the merkle root first"
         );
         _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);
+
+        _addressesThatHaveVoted.push(msg.sender);
 
         emit VoteCast(account, proposalId, support, numVotes);
 
