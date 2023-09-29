@@ -105,7 +105,9 @@ const Page: NextPage = props => {
             <Button intent={`${isConnected ? "primary" : "neutral-outline"}`} className="hidden xs:flex">
               Create contest
             </Button>
-            <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+            <div className="hidden md:flex">
+              <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+            </div>
           </div>
         </div>
 

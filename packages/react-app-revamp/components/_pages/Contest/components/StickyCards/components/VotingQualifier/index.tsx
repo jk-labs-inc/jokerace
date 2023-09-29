@@ -7,6 +7,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { useMemo } from "react";
 import Skeleton from "react-loading-skeleton";
+import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 
 const VotingContestQualifier = () => {
@@ -15,6 +16,7 @@ const VotingContestQualifier = () => {
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount, isLoading } = useUserStore(state => state);
   const { contestStatus } = useContestStatusStore(state => state);
   const isReadOnly = useContestStore(state => state.isReadOnly);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const qualifiedMessage = useMemo(() => {
     const canVote = currentUserAvailableVotesAmount > 0;
@@ -53,7 +55,13 @@ const VotingContestQualifier = () => {
       </div>
       {isConnected ? (
         isLoading ? (
-          <Skeleton height={24} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />
+          <Skeleton
+            height={isMobile ? 16 : 24}
+            width={isMobile ? 100 : 200}
+            baseColor="#706f78"
+            highlightColor="#FFE25B"
+            duration={1}
+          />
         ) : (
           qualifiedMessage
         )

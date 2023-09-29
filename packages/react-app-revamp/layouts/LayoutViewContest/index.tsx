@@ -35,6 +35,7 @@ import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { useMediaQuery } from "react-responsive";
 import { useAccount, useNetwork } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 
@@ -73,6 +74,7 @@ const LayoutViewContest = (props: any) => {
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const [previousStatus, setPreviousStatus] = useState(account.status);
   const didConnect = previousStatus === "disconnected" && account.status === "connected";
+  const isTabletOrDesktop = useMediaQuery({ minWidth: 768 });
 
   useEffect(() => {
     if (account.status === "connecting") return;
@@ -279,7 +281,11 @@ const LayoutViewContest = (props: any) => {
                       {rewards && !isRewardsLoading && (
                         <div className="flex shrink-0 h-8 p-4 items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11">
                           {rewards?.token.value} $<span className="uppercase mr-1">{rewards?.token.symbol} </span>
-                          {/* to{" "} {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"} */}
+                          {/* {isTabletOrDesktop ? (
+                            <>
+                              to {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}
+                            </>
+                          ) : null} */}
                         </div>
                       )}
 

@@ -65,10 +65,10 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
                 <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
               </Link>
             )}
-            <Image width={30} height={30} src="/create-flow/wallet-connected.svg" alt="wallet-connected" />
+            <Image width={30} height={30} src="/header/wallet-connected.svg" alt="wallet-connected" />
           </div>
         ) : (
-          <Image width={30} height={30} src="/create-flow/wallet.svg" alt="wallet" />
+          <Image width={30} height={30} src="/header/wallet.svg" alt="wallet" />
         )}
       </div>
       <div className="hidden md:flex">

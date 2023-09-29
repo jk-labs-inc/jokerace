@@ -55,10 +55,10 @@ const ContestCountdown = () => {
   //@TODO - add pluralization for these fields
   const displayTime = () => {
     const elements = [];
-    const dayLabel = isMobile ? " d " : " days ";
-    const hourLabel = isMobile ? " h " : " hr ";
-    const minuteLabel = isMobile ? " m " : " min ";
-    const secondLabel = " sec"; // Assuming 'sec' is same for both mobile and desktop
+    const dayLabel = isMobile ? "d " : " days ";
+    const hourLabel = isMobile ? "h " : " hr ";
+    const minuteLabel = isMobile ? "m " : " min ";
+    const secondLabel = isMobile ? "s " : "sec";
 
     if (duration.days > 0) elements.push(<ContestCountdownTimeUnit value={duration.days} label={dayLabel} />);
     if (duration.hours > 0) elements.push(<ContestCountdownTimeUnit value={duration.hours} label={hourLabel} />);

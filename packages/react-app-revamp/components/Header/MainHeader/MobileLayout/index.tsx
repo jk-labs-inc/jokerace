@@ -1,9 +1,8 @@
-import EthereumAddress from "@components/UI/EtheuremAddress";
-import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_USER } from "@config/routes";
-import { HomeIcon } from "@heroicons/react/outline";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ROUTE_CREATE_CONTEST, ROUTE_LANDING, ROUTE_VIEW_CONTESTS, ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { HomeIcon, SearchIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { FC } from "react";
 
 interface MainHeaderMobileLayoutProps {
@@ -19,39 +18,46 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
   openConnectModal,
   openAccountModal,
 }) => {
+  const router = useRouter();
+  const isActive = (route: string) => (router.pathname === route ? "text-primary-10 transition-colors" : "");
+
   return (
-    <header className="flex flex-row items-center justify-between px-4 mt-4">
-      <Link href={"/"}>
-        <HomeIcon width={30} height={30} />
+    <header className="flex flex-row bottom-0 right-0 left-0 fixed h-12 items-center justify-between border-t-neutral-2 border-t-2 px-8 mt-4 bg-true-black z-10">
+      <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+        <HomeIcon width={31} height={26} />
+        <p className="text-[12px]">home</p>
       </Link>
 
-      <div className="flex items-center gap-5 text-[18px] md:text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header">
-        <Link href="/" className="text-primary-10">
-          play
-        </Link>
-        <Link href={ROUTE_CREATE_CONTEST} className="text-neutral-11">
-          create
-        </Link>
-      </div>
+      <Link href={ROUTE_VIEW_CONTESTS} className="flex flex-col">
+        <SearchIcon className="w-[27px]" />
+        <p className="text-[12px]">search</p>
+      </Link>
+
+      <Link href={ROUTE_VIEW_LIVE_CONTESTS} className="flex flex-col">
+        <Image src="/header/trophy.svg" width={27} height={27} alt="search" />
+        <p className="text-[12px] text-center">play</p>
+      </Link>
+
+      <Link href={ROUTE_CREATE_CONTEST} className="flex flex-col items-center">
+        <Image src="/header/create.svg" width={27} height={27} alt="search" />
+        <p className="text-[12px]">create</p>
+      </Link>
+
       <div
         onClick={isConnected ? openAccountModal : openConnectModal}
         className="md:hidden transition-all duration-500"
       >
         {isConnected ? (
-          <div className="flex gap-2">
-            {address && (
-              <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-                <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
-              </Link>
-            )}
-            <Image width={30} height={30} src="/create-flow/wallet-connected.svg" alt="wallet-connected" />
+          <div className="flex flex-col items-center">
+            <Image width={27} height={27} src="/header/wallet-connected.svg" alt="wallet-connected" />
+            <p className="text-[12px]">wallet</p>
           </div>
         ) : (
-          <Image width={30} height={30} src="/create-flow/wallet.svg" alt="wallet" />
+          <div className="flex flex-col items-center">
+            <Image width={27} height={27} src="/header/wallet.svg" alt="wallet" />
+            <p className="text-[12px]">wallet</p>
+          </div>
         )}
-      </div>
-      <div className="hidden md:flex">
-        <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
       </div>
     </header>
   );
