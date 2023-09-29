@@ -327,7 +327,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
                 // we don't do sorting if downvoting is enabled
                 if (downvotingAllowed() == 0) {
                     // remove proposalIds from forVotesToProposalIds
-                    _multiRmProposalIdFromForVotesMap(proposalIds);
+                    _multiRmProposalIdFromForVotesMap(proposalIdsToDelete);
                 }
             }
         }
