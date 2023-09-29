@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import Loader from "@components/UI/Loader";
 import DialogCheckBalanceRewardsModule from "@components/_pages/DialogCheckBalanceRewardsModule";
@@ -76,8 +76,8 @@ const ContestRewards = () => {
             <br /> with whatever tokens you like.
           </p>
           <ButtonV3
-            color={`bg-gradient-create rounded-[40px] mt-3`}
-            size="large"
+            colorClass={`bg-gradient-create rounded-[40px] mt-3`}
+            size={ButtonSize.LARGE}
             onClick={() => setIsDeployRewardsOpen(true)}
           >
             create rewards pool
@@ -155,8 +155,8 @@ const ContestRewards = () => {
                   {creator && (
                     <>
                       <ButtonV3
-                        color={`bg-gradient-create rounded-[40px] mt-3`}
-                        size="large"
+                        colorClass={`bg-gradient-create rounded-[40px] mt-3`}
+                        size={ButtonSize.LARGE}
                         onClick={() => setIsFundRewardsOpen(true)}
                       >
                         fund pool

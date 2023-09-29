@@ -91,7 +91,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   return (
     <div className="md:w-[370px]">
       <div className="flex justify-end">
-        <ButtonV3 onClick={handleAddRecipient} color="bg-primary-10">
+        <ButtonV3 onClick={handleAddRecipient} colorClass="bg-primary-10">
           + Add recipient
         </ButtonV3>
       </div>

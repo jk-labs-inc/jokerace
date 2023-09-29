@@ -7,8 +7,8 @@ interface TimeUnitProps {
 
 const ContestCountdownTimeUnit: FC<TimeUnitProps> = ({ value, label }) => (
   <>
-    <span className="text-[24px] font-bold">{value}</span>
-    <span className="text-[16px]">{label}</span>
+    <span className="text-[16px] md:text-[24px] font-bold">{value}</span>
+    <span className="text-[12px] md:text-[16px]">{label}</span>
   </>
 );
 

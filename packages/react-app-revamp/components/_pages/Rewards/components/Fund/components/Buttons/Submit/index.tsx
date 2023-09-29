@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import Image from "next/image";
@@ -78,7 +78,11 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
 
       <div className="flex gap-2 items-start pb-5 md:pb-0">
         <div className={`flex flex-col items-center gap-2`}>
-          <ButtonV3 color={`bg-gradient-create ${shake ? "animate-shakeTop" : ""}`} size="large" onClick={handleClick}>
+          <ButtonV3
+            colorClass={`bg-gradient-create ${shake ? "animate-shakeTop" : ""}`}
+            size={ButtonSize.LARGE}
+            onClick={handleClick}
+          >
             fund pool!
           </ButtonV3>
 

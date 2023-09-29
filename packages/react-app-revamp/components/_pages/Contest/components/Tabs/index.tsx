@@ -39,7 +39,7 @@ const ContestTabs: FC<ContestTabsProps> = ({ onChange }) => {
           <div
             ref={el => (tabRefs.current[index] = el)}
             key={tabKey}
-            className={`text-[24px] cursor-pointer font-bold transition-colors duration-200 ${
+            className={`text-[16px] md:text-[24px] cursor-pointer font-bold transition-colors duration-200 ${
               tabKey === activeTab ? "text-primary-10" : "text-neutral-11"
             }`}
             onClick={() => onTabChange(Tab[tabKey as keyof typeof Tab])}

@@ -41,7 +41,7 @@ import { getLayout as getBaseLayout } from "./../LayoutBase";
 const MAX_MS_TIMEOUT: number = 100000000;
 
 const LayoutViewContest = (props: any) => {
-  const { query, asPath, pathname, reload } = useRouter();
+  const { asPath, pathname, reload } = useRouter();
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
@@ -215,7 +215,7 @@ const LayoutViewContest = (props: any) => {
   }
 
   return (
-    <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-7 lg:w-[750px] mx-auto`}>
+    <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-6 md:px-7 lg:w-[750px] mx-auto`}>
       <div
         className={`md:pt-5 md:pb-20 flex flex-col ${
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
@@ -253,18 +253,19 @@ const LayoutViewContest = (props: any) => {
                       <span>Let&apos;s refresh!</span>
                       <p className="font-normal">Looks like live updates were frozen.</p>
                     </div>
-                    <ButtonV3 color="bg-gradient-create" onClick={() => reload()}>
+                    <ButtonV3 colorClass="bg-gradient-create" onClick={() => reload()}>
                       Refresh
                     </ButtonV3>
                   </div>
                 )}
                 <div className="animate-appear pt-3 md:pt-0">
                   <div className="flex flex-col mt-10 gap-4">
-                    <p className="text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
-                    <div className="flex flex-col md:flex-row gap-3 md:gap-4 md:items-center">
-                      {/* //TODO: add gap for eth address to match */}
+                    <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
+                    <div className="flex flex-row gap-3 md:gap-4 md:items-center">
+                      {/*TODO: add gap for eth address to match */}
                       <EthereumAddress ethereumAddress={contestAuthorEthereumAddress} shortenOnFallback />
 
+                      {/* TODO: create skeleton for mobile */}
                       {isRewardsLoading && (
                         <SkeletonTheme baseColor="#000000" highlightColor="#212121" duration={1}>
                           <Skeleton
@@ -277,8 +278,8 @@ const LayoutViewContest = (props: any) => {
 
                       {rewards && !isRewardsLoading && (
                         <div className="flex shrink-0 h-8 p-4 items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11">
-                          {rewards?.token.value} $<span className="uppercase mr-1">{rewards?.token.symbol} </span> to{" "}
-                          {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}
+                          {rewards?.token.value} $<span className="uppercase mr-1">{rewards?.token.symbol} </span>
+                          {/* to{" "} {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"} */}
                         </div>
                       )}
 

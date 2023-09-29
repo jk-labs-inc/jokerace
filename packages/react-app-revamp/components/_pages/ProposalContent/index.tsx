@@ -1,13 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
 import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
 import MarkdownOrderedList from "@components/UI/Markdown/components/MarkdownOrderedList";
 import MarkdownText from "@components/UI/Markdown/components/MarkdownText";
 import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
-import { formatNumber } from "@helpers/formatNumber";
 import { isUrlTweet } from "@helpers/isUrlTweet";
 import ordinalize from "@helpers/ordinalize";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -59,8 +58,6 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
   const showVoteButton = !isConnected || currentUserAvailableVotesAmount > 0;
   const voteButtonMessage = isConnected ? "add votes" : "connect wallet to vote";
 
-  console.log({ proposal });
-
   const ProposalAction = useMemo<React.ReactNode>(() => {
     switch (contestStatus) {
       case ContestStatus.ContestOpen:
@@ -75,9 +72,9 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
           <div>
             {showVoteButton ? (
               <ButtonV3
-                type="txAction"
-                color="bg-gradient-next rounded-[40px]"
-                size="large"
+                type={ButtonType.TX_ACTION}
+                colorClass="bg-gradient-next rounded-[40px]"
+                size={ButtonSize.LARGE}
                 onClick={() => {
                   setPickProposal(id);
                   setIsVotingModalOpen(true);

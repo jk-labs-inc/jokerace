@@ -6,6 +6,7 @@ import Skeleton from "react-loading-skeleton";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
 
+//TODO: modify sticky cards to append on scroll
 const ContestStickyCards = () => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { currentUserQualifiedToSubmit, isLoading } = useUserStore(state => state);
@@ -42,11 +43,7 @@ const ContestStickyCards = () => {
   return (
     <div className="flex flex-col gap-8 mt-8">
       {qualifiedToSubmitMessage}
-      <div
-        className={`flex flex-col md:flex-row gap-4 md:sticky ${
-          displayReloadBanner ? "top-[105px]" : "top-0"
-        } z-10 bg-true-black`}
-      >
+      <div className={`flex gap-4 md:sticky ${displayReloadBanner ? "top-[105px]" : "top-0"} z-10 bg-true-black`}>
         <ContestCountdown />
         <VotingContestQualifier />
       </div>

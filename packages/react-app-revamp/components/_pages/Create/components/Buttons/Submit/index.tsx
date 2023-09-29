@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
@@ -38,11 +38,11 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
     <div className="flex gap-4 items-start pb-5 md:pb-0">
       <div className={`flex flex-col items-center gap-2`}>
         <ButtonV3
-          color={`bg-gradient-create text-[24px] rounded-[10px] font-bold ${
+          colorClass={`bg-gradient-create text-[24px] rounded-[10px] font-bold ${
             shake ? "animate-shakeTop" : ""
           }  text-true-black`}
-          size="extraLarge"
-          type="txAction"
+          size={ButtonSize.EXTRA_LARGE}
+          type={ButtonType.TX_ACTION}
           onClick={handleClick}
         >
           create contest!

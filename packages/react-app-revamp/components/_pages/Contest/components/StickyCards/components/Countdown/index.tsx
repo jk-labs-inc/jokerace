@@ -2,6 +2,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import moment from "moment";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import ContestCountdownTimeUnit from "./components/TimeUnit";
 
 const formatDuration = (duration: moment.Duration) => {
@@ -19,6 +20,7 @@ const ContestCountdown = () => {
   const memoizedSubmissionsOpen = useMemo(() => submissionsOpen, [submissionsOpen]);
   const memoizedVotesOpen = useMemo(() => votesOpen, [votesOpen]);
   const memoizedVotesClose = useMemo(() => votesClose, [votesClose]);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   useEffect(() => {
     const calculateDuration = () => {
@@ -53,10 +55,15 @@ const ContestCountdown = () => {
   //@TODO - add pluralization for these fields
   const displayTime = () => {
     const elements = [];
-    if (duration.days > 0) elements.push(<ContestCountdownTimeUnit value={duration.days} label=" days " />);
-    if (duration.hours > 0) elements.push(<ContestCountdownTimeUnit value={duration.hours} label=" hr " />);
-    if (duration.minutes > 0) elements.push(<ContestCountdownTimeUnit value={duration.minutes} label=" min " />);
-    elements.push(<ContestCountdownTimeUnit value={duration.seconds} label=" sec" />);
+    const dayLabel = isMobile ? " d " : " days ";
+    const hourLabel = isMobile ? " h " : " hr ";
+    const minuteLabel = isMobile ? " m " : " min ";
+    const secondLabel = " sec"; // Assuming 'sec' is same for both mobile and desktop
+
+    if (duration.days > 0) elements.push(<ContestCountdownTimeUnit value={duration.days} label={dayLabel} />);
+    if (duration.hours > 0) elements.push(<ContestCountdownTimeUnit value={duration.hours} label={hourLabel} />);
+    if (duration.minutes > 0) elements.push(<ContestCountdownTimeUnit value={duration.minutes} label={minuteLabel} />);
+    elements.push(<ContestCountdownTimeUnit value={duration.seconds} label={secondLabel} />);
     return elements;
   };
 
@@ -72,16 +79,14 @@ const ContestCountdown = () => {
   };
 
   return (
-    <div className="w-full flex flex-col gap-4 border-r-primary-2 border-r-2">
+    <div className="w-full flex flex-col gap-2 md:gap-4 border-r-primary-2 border-r-2 pr-3">
       <div className="flex gap-2">
         <Image src="/contest/timer.svg" width={16} height={16} alt="timer" />
-        <p className="text-[16px] uppercase text-neutral-9">{displayText(phase)}</p>
+        <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">{displayText(phase)}</p>
       </div>
       <div className="flex items-center">
-        <div className="text-[24px]">
-          {/* //@TODO: add neutral-9 when submissions aren't open */}
-          <span className="font-bold text-neutral-11">{displayTime()}</span>
-        </div>
+        {/* //@TODO: add neutral-9 when submissions aren't open */}
+        <span className="font-bold text-neutral-11">{displayTime()}</span>
       </div>
     </div>
   );

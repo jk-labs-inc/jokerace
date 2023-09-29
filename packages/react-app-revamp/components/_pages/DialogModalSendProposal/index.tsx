@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
@@ -195,15 +195,15 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
         <div className="mt-2">
           {isCorrectNetwork ? (
             <ButtonV3
-              color="bg-gradient-create rounded-[40px]"
-              size="large"
+              colorClass="bg-gradient-create rounded-[40px]"
+              size={ButtonSize.LARGE}
               onClick={onSubmitProposal}
-              disabled={isLoading || !proposal.length}
+              isDisabled={isLoading || !proposal.length}
             >
               submit!
             </ButtonV3>
           ) : (
-            <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large" onClick={onSwitchNetwork}>
+            <ButtonV3 colorClass="bg-gradient-create rounded-[40px]" size={ButtonSize.LARGE} onClick={onSwitchNetwork}>
               switch network
             </ButtonV3>
           )}
