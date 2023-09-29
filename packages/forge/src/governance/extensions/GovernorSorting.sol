@@ -100,18 +100,28 @@ abstract contract GovernorSorting {
         // (if we hit the limit then the last item will just be dropped)
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
         bool haveHitOldValue = false;
-        for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
-            sortedRanks[index] = sortedRanksMemVar[index - 1];
 
-            // once I shift a value into the index oldValue was in (if it's in here) I can stop!
-            if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
-                haveHitOldValue = true; // if I hit oldValue, smallestNonZeroSortedRanksValueIdx should not be incremented
-                break;
-            }
+        // if we're checking for oldValue, check for if is at insertingIndex
+        if (checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue)) {
+            haveHitOldValue = true;
+        }
 
-            if (index == smallestIdxMemVar + 1) {
-                // if I've populated this index, everything after will just be 0s, which I can skip
-                break;
+        // if that's not the case, then go through and shift everything down until/if we hit oldValue
+        if (!haveHitOldValue) {
+            for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
+                // account for if the index of oldValue is at insertingIndex
+                sortedRanks[index] = sortedRanksMemVar[index - 1];
+
+                // once I shift a value into the index oldValue was in (if it's in here) I can stop!
+                if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
+                    haveHitOldValue = true; // if I hit oldValue, smallestNonZeroSortedRanksValueIdx should not be incremented
+                    break;
+                }
+
+                if (index == smallestIdxMemVar + 1) {
+                    // if I've populated this index, everything after will just be 0s, which I can skip
+                    break;
+                }
             }
         }
 
