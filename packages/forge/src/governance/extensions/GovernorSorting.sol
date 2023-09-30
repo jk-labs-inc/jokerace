@@ -99,30 +99,36 @@ abstract contract GovernorSorting {
         // are we checking for the oldValue?
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
 
+        // TODO: what if oldValue is at smallestIdxMemVar? what if you reach smallestIdxMemVar and it isn't at RANK_LIMIT in the shifting for?
         // if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
-        if (checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue)) {
-            sortedRanks[insertingIndex] = newValue;
-        } else {
-            // otherwise, go through and shift everything down until/if we hit oldValue.
-            // (if we hit the limit then the last item will just be dropped).
-            for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar + 2; index++) {
-                sortedRanks[index] = sortedRanksMemVar[index - 1];
-
-                // once I shift a value into the index oldValue was in (if it's in here) I can stop!
-                if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
-                    break;
-                }
-
-                // if we haven't hit RANK_LIMIT yet, then we should shift into the next previously unpopulated index and bump smallestNonZeroSortedRanksValueIdx
-                if ((index - 1 == smallestIdxMemVar) && (index < RANK_LIMIT)) {
+        // otherwise, continue.
+        if (!(checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue))) {
+            if (!(insertingIndex == smallestIdxMemVar)) {
+                // if neither of the above if statements are the case, go through and shift everything down until/if we hit oldValue.
+                // (if we hit the limit then the last item will just be dropped).
+                // we know at this point that insertingIndex is less than smallestIdxMemVar because it's not equal and it's not less than.
+                for (uint256 index = insertingIndex; index < smallestIdxMemVar; index++) {
                     sortedRanks[index] = sortedRanksMemVar[index - 1];
+
+                    // once I shift a value into the index oldValue was in (if it's in here) I can stop!
+                    if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
+                        break;
+                    }
+                }
+            }
+            // if oldValue is at smallestIdxMemVar then we don't need to do anything
+            if (!(sortedRanksMemVar[smallestIdxMemVar] == oldValue)) {
+                // shift down and bump smallestNonZeroSortedRanksValueIdx if we wouldn't be trying to shift into index RANK_LIMIT, which if we did
+                // would get us an out of bounds error.
+                if (smallestIdxMemVar + 1 < RANK_LIMIT) {
+                    sortedRanks[smallestIdxMemVar + 1] = sortedRanksMemVar[smallestIdxMemVar];
                     smallestNonZeroSortedRanksValueIdx++;
                 }
             }
-            
-            // now that everything's been shifted down and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
-            sortedRanks[insertingIndex] = newValue;
         }
+
+        // now that everything's been accounted for, let's correctly set sortedRanks[insertingIndex]
+        sortedRanks[insertingIndex] = newValue;
     }
 
     // TODO: lay out all of the cases with this/its inputs + constraints (old and new value will never be the same for example)
@@ -160,7 +166,7 @@ abstract contract GovernorSorting {
             }
         }
 
-        // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
+        // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx]
         // find where it should go and insert it.
         _insertRank(oldValue, newValue, smallestIdxMemVar, sortedRanksMemVar);
     }
