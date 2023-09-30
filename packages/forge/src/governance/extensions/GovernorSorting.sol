@@ -97,46 +97,46 @@ abstract contract GovernorSorting {
             }
         }
 
-        // are we checking for the oldValue?
-        bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
-        bool haveFoundOldValue = false;
-
-        // what we care about accounting for below is oldValue and the items below insertingIndex - we need to make sure all cases are accounted for:
+        // what we care about accounting for below is oldValue and the items at + below insertingIndex - we need to make sure all cases are accounted for:
         //      - oldValue is at insertingIndex
         //      - oldValue is at smallestIdxMemVar
         //      - oldValue is between (exclusive) insertingIndex and smallestIdxMemVar (can't be > than insertingIndex bc no downvoting)
         //      - insertingIndex == smallestIdxMemVar
-        //      - insertingIndex > smallestIdxMemVar and oldValue is between them
-        //      - insertingIndex > smallestIdxMemVar and oldValue is not between them (it isn't present in the array - means it's either 0 or that the array is full and oldValue is too small to be in it)
         //      - smallestIdxMemVar + 1 == RANK_LIMIT
         //      - smallestIdxMemVar + 1 < RANK_LIMIT
         //      - and all of the above cases if we aren't looking for oldValue too (if it's tied or it was 0 to begin with)
+        //      - and all of the ranges that insertingIndex ([0, smallestIdxMemVar]) and smallestIdxMemVar could be ([0, RANK_LIMIT - 1])
 
-        // if we're checking for it and oldValue is at insertingIndex or smallestIdxMemVar, then we're good, we don't need to update anything besides insertingIndex 
-        // otherwise, continue.
-        if (!(checkForOldValue && ((sortedRanksMemVar[insertingIndex] == oldValue) || (sortedRanksMemVar[smallestIdxMemVar] == oldValue)))) {
-            // if insertingIndex == smallestIdxMemVar, then we only need to worry about the if clause that comes after this
+        // are we checking for the oldValue?
+        bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
+        bool haveFoundOldValue = false;
+
+        // DO ANY SHIFTING? - if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
+        if (!(checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue))) {
+            // DO SHIFTING FROM [0, smallestIdxMemVar]? - if insertingIndex == smallestIdxMemVar, then there's nothing after it to shift down
             if (!(insertingIndex == smallestIdxMemVar)) {
-                // go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
+                // SHIFT UNTIL/IF YOU FIND OLD VALUE - go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
                 // we know at this point that insertingIndex is less than smallestIdxMemVar because it's not equal and it's not greater than.
-                for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar; index++) {
+                for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar + 1; index++) {
                     sortedRanks[index] = sortedRanksMemVar[index - 1];
 
-                    // once I shift a value into the index oldValue was in (if it's in here) I can stop!
+                    // STOP ONCE YOU FIND OLD VALUE - if I'm looking for it, once I shift a value into the index oldValue was in (if it's in here) I can stop!
                     if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
                         haveFoundOldValue = true;
                         break;
                     }
                 }
             }
-            // shift down and bump smallestNonZeroSortedRanksValueIdx if we didn't run into oldValue and we wouldn't be trying to shift into index RANK_LIMIT.
+
+            // SHIFT INTO UNPOPULATED AREA? - if we didn't run into oldValue, oldValue is not at smallestIdxMemVar, and we wouldn't be trying to shift into index RANK_LIMIT; then
+            // go ahead and shift what was in smallestIdxMemVar into the next idx (that was previously unpopulated) and bump smallestNonZeroSortedRanksValueIdx
             if (!haveFoundOldValue && (smallestIdxMemVar + 1 < RANK_LIMIT)) {
                 sortedRanks[smallestIdxMemVar + 1] = sortedRanksMemVar[smallestIdxMemVar];
                 smallestNonZeroSortedRanksValueIdx++;
             }
         }
 
-        // now that everything's been accounted for, let's correctly set sortedRanks[insertingIndex]
+        // SET INSERTING IDX - now that everything's been accounted for, let's correctly set sortedRanks[insertingIndex]
         sortedRanks[insertingIndex] = newValue;
     }
 
@@ -175,7 +175,7 @@ abstract contract GovernorSorting {
             }
         }
 
-        // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx]
+        // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx]!
         // find where it should go and insert it.
         _insertRank(oldValue, newValue, smallestIdxMemVar, sortedRanksMemVar);
     }
