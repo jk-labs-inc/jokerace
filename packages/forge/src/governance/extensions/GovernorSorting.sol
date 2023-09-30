@@ -79,8 +79,8 @@ abstract contract GovernorSorting {
 
     // insert a new value into sortedRanks (this function is strictly O(n)).
     // we know at this point it's:
-    //      -in [0, smallestNonZeroSortedRanksValueIdx) (exclusive on the end bc it's not tied and it's not less than)
     //      -not tied
+    //      -the idx where it should go is in [0, smallestNonZeroSortedRanksValueIdx]
     function _insertRank(
         uint256 oldValue,
         uint256 newValue,
@@ -89,48 +89,39 @@ abstract contract GovernorSorting {
     ) internal {
         // find the index to insert newValue at
         uint256 insertingIndex;
-        for (uint256 index = 0; index < smallestIdxMemVar; index++) {
+        for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
             if (newValue > sortedRanksMemVar[index]) {
                 insertingIndex = index;
                 break;
             }
         }
 
-        // go through and shift the value of `insertingIndex` and everything under it (until we hit oldValue, if we do) down one in sortedRanks
-        // (if we hit the limit then the last item will just be dropped)
+        // are we checking for the oldValue?
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
-        bool haveHitOldValue = false;
 
-        // if we're checking for oldValue, check for if it is at insertingIndex
+        // if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
         if (checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue)) {
-            haveHitOldValue = true;
-        }
-
-        // if that's not the case, then go through and shift everything down until/if we hit oldValue
-        if (!haveHitOldValue) {
-            for (uint256 index = insertingIndex + 1; index < RANK_LIMIT; index++) {
-                // account for if the index of oldValue is at insertingIndex
+            sortedRanks[insertingIndex] = newValue;
+        } else {
+            // otherwise, go through and shift everything down until/if we hit oldValue.
+            // (if we hit the limit then the last item will just be dropped).
+            for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar + 2; index++) {
                 sortedRanks[index] = sortedRanksMemVar[index - 1];
 
                 // once I shift a value into the index oldValue was in (if it's in here) I can stop!
                 if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
-                    haveHitOldValue = true; // if I hit oldValue, smallestNonZeroSortedRanksValueIdx should not be incremented
                     break;
                 }
 
-                if (index == smallestIdxMemVar + 1) {
-                    // if I've populated this index, everything after will just be 0s, which I can skip
-                    break;
+                // if we haven't hit RANK_LIMIT yet, then we should shift into the next previously unpopulated index and bump smallestNonZeroSortedRanksValueIdx
+                if ((index - 1 == smallestIdxMemVar) && (index < RANK_LIMIT)) {
+                    sortedRanks[index] = sortedRanksMemVar[index - 1];
+                    smallestNonZeroSortedRanksValueIdx++;
                 }
             }
-        }
-
-        // now that everything's been shifted down and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
-        sortedRanks[insertingIndex] = newValue;
-
-        if (!haveHitOldValue && (smallestIdxMemVar + 1 != RANK_LIMIT)) {
-            // if smallestNonZeroSortedRanksValueIdx isn't already at the limit, bump it one
-            smallestNonZeroSortedRanksValueIdx++;
+            
+            // now that everything's been shifted down and sortedRanks[insertingIndex] == sortedRanks[insertingIndex + 1], let's correctly set sortedRanks[insertingIndex]
+            sortedRanks[insertingIndex] = newValue;
         }
     }
 
@@ -140,6 +131,12 @@ abstract contract GovernorSorting {
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
         uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
+
+        // FIRST ENTRY? - if this is the first item ever then we just need to put it in idx 0 and that's it
+        if ((smallestIdxMemVar == 0) && (sortedRanksMemVar[smallestIdxMemVar] == 0)) {
+            sortedRanks[smallestIdxMemVar] = newValue;
+            return;
+        }
 
         // TIED?
         if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
