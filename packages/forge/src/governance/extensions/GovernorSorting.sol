@@ -108,6 +108,8 @@ abstract contract GovernorSorting {
         //      - insertingIndex == smallestIdxMemVar
         //      - insertingIndex > smallestIdxMemVar and oldValue is between them
         //      - insertingIndex > smallestIdxMemVar and oldValue is not between them (it isn't present in the array - means it's either 0 or that the array is full and oldValue is too small to be in it)
+        //      - smallestIdxMemVar + 1 == RANK_LIMIT
+        //      - smallestIdxMemVar + 1 < RANK_LIMIT
         //      - and all of the above cases if we aren't looking for oldValue too (if it's tied or it was 0 to begin with)
 
         // if we're checking for it and oldValue is at insertingIndex or smallestIdxMemVar, then we're good, we don't need to update anything besides insertingIndex 
