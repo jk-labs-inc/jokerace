@@ -100,12 +100,12 @@ abstract contract GovernorSorting {
         // what we care about accounting for below is oldValue and the items at + below insertingIndex - we need to make sure all cases are accounted for:
         //      - oldValue is at insertingIndex
         //      - oldValue is at smallestIdxMemVar
-        //      - oldValue is between (exclusive) insertingIndex and smallestIdxMemVar (can't be > than insertingIndex bc no downvoting)
+        //      - oldValue is between (exclusive) insertingIndex and smallestIdxMemVar (oldValue !> insertingIndex bc no downvoting)
         //      - insertingIndex == smallestIdxMemVar
         //      - smallestIdxMemVar + 1 == RANK_LIMIT
         //      - smallestIdxMemVar + 1 < RANK_LIMIT
         //      - and all of the above cases if we aren't looking for oldValue too (if it's tied or it was 0 to begin with)
-        //      - and all of the ranges that insertingIndex ([0, smallestIdxMemVar]) and smallestIdxMemVar could be ([0, RANK_LIMIT - 1])
+        //      - and all of the ranges that insertingIndex ([0, smallestIdxMemVar]), smallestIdxMemVar ([0, RANK_LIMIT - 1]), and oldValue ([insertingIndex, smallestIdxMemVar]) could be
 
         // are we checking for the oldValue?
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
@@ -113,9 +113,11 @@ abstract contract GovernorSorting {
 
         // DO ANY SHIFTING? - if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
         if (!(checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue))) {
-            // DO SHIFTING FROM [0, smallestIdxMemVar]? - if insertingIndex == smallestIdxMemVar, then there's nothing after it to shift down
+            // DO SHIFTING FROM (insertingIndex, smallestIdxMemVar]?
+            //      - if insertingIndex == smallestIdxMemVar, then there's nothing after it to shift down. 
+            //      - also don't need to worry about oldValue if this is the case bc if insertingIndex == smallestIdxMemVar and it's not at insertingIndex, then it's not in the array
             if (!(insertingIndex == smallestIdxMemVar)) {
-                // SHIFT UNTIL/IF YOU FIND OLD VALUE - go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
+                // SHIFT UNTIL/IF YOU FIND OLD VALUE IN THE RANGE (insertingIndex, smallestIdxMemVar] - go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
                 // we know at this point that insertingIndex is less than smallestIdxMemVar because it's not equal and it's not greater than.
                 for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar + 1; index++) {
                     sortedRanks[index] = sortedRanksMemVar[index - 1];
@@ -128,7 +130,7 @@ abstract contract GovernorSorting {
                 }
             }
 
-            // SHIFT INTO UNPOPULATED AREA? - if we didn't run into oldValue, oldValue is not at smallestIdxMemVar, and we wouldn't be trying to shift into index RANK_LIMIT; then
+            // SHIFT INTO UNPOPULATED AREA? - if we didn't run into oldValue and we wouldn't be trying to shift into index RANK_LIMIT, then
             // go ahead and shift what was in smallestIdxMemVar into the next idx (that was previously unpopulated) and bump smallestNonZeroSortedRanksValueIdx
             if (!haveFoundOldValue && (smallestIdxMemVar + 1 < RANK_LIMIT)) {
                 sortedRanks[smallestIdxMemVar + 1] = sortedRanksMemVar[smallestIdxMemVar];
