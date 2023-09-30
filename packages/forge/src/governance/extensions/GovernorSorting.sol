@@ -24,6 +24,7 @@ abstract contract GovernorSorting {
 
     // TODO: add option to disable rank tracking for gas savings
     // TODO: make configurable + test ranges
+    // TODO: flesh out tests a ton for different edge cases w oldValue, smallestNonZeroSortedRanksValueIdx, and RANK_LIMIT overlaps
     uint256 public constant RANK_LIMIT = 250; // cannot be 0
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
@@ -98,32 +99,38 @@ abstract contract GovernorSorting {
 
         // are we checking for the oldValue?
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
+        bool haveFoundOldValue = false;
 
-        // TODO: what if oldValue is at smallestIdxMemVar? what if you reach smallestIdxMemVar and it isn't at RANK_LIMIT in the shifting for?
-        // if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
+        // what we care about accounting for below is oldValue and the items below insertingIndex - we need to make sure all cases are accounted for:
+        //      - oldValue is at insertingIndex
+        //      - oldValue is at smallestIdxMemVar
+        //      - oldValue is between (exclusive) insertingIndex and smallestIdxMemVar (can't be > than insertingIndex bc no downvoting)
+        //      - insertingIndex == smallestIdxMemVar
+        //      - insertingIndex > smallestIdxMemVar and oldValue is between them
+        //      - insertingIndex > smallestIdxMemVar and oldValue is not between them (it isn't present in the array - means it's either 0 or that the array is full and oldValue is too small to be in it)
+        //      - and all of the above cases if we aren't looking for oldValue too (if it's tied or it was 0 to begin with)
+
+        // if we're checking for it and oldValue is at insertingIndex or smallestIdxMemVar, then we're good, we don't need to update anything besides insertingIndex 
         // otherwise, continue.
-        if (!(checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue))) {
+        if (!(checkForOldValue && ((sortedRanksMemVar[insertingIndex] == oldValue) || (sortedRanksMemVar[smallestIdxMemVar] == oldValue)))) {
+            // if insertingIndex == smallestIdxMemVar, then we only need to worry about the if clause that comes after this
             if (!(insertingIndex == smallestIdxMemVar)) {
-                // if neither of the above if statements are the case, go through and shift everything down until/if we hit oldValue.
-                // (if we hit the limit then the last item will just be dropped).
-                // we know at this point that insertingIndex is less than smallestIdxMemVar because it's not equal and it's not less than.
-                for (uint256 index = insertingIndex; index < smallestIdxMemVar; index++) {
+                // go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
+                // we know at this point that insertingIndex is less than smallestIdxMemVar because it's not equal and it's not greater than.
+                for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar; index++) {
                     sortedRanks[index] = sortedRanksMemVar[index - 1];
 
                     // once I shift a value into the index oldValue was in (if it's in here) I can stop!
                     if (checkForOldValue && (sortedRanksMemVar[index] == oldValue)) {
+                        haveFoundOldValue = true;
                         break;
                     }
                 }
             }
-            // if oldValue is at smallestIdxMemVar then we don't need to do anything
-            if (!(sortedRanksMemVar[smallestIdxMemVar] == oldValue)) {
-                // shift down and bump smallestNonZeroSortedRanksValueIdx if we wouldn't be trying to shift into index RANK_LIMIT, which if we did
-                // would get us an out of bounds error.
-                if (smallestIdxMemVar + 1 < RANK_LIMIT) {
-                    sortedRanks[smallestIdxMemVar + 1] = sortedRanksMemVar[smallestIdxMemVar];
-                    smallestNonZeroSortedRanksValueIdx++;
-                }
+            // shift down and bump smallestNonZeroSortedRanksValueIdx if we didn't run into oldValue and we wouldn't be trying to shift into index RANK_LIMIT.
+            if (!haveFoundOldValue && (smallestIdxMemVar + 1 < RANK_LIMIT)) {
+                sortedRanks[smallestIdxMemVar + 1] = sortedRanksMemVar[smallestIdxMemVar];
+                smallestNonZeroSortedRanksValueIdx++;
             }
         }
 
