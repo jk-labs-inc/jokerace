@@ -111,14 +111,13 @@ abstract contract GovernorSorting {
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
         bool haveFoundOldValue = false;
 
-        // DO ANY SHIFTING? - if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
+        // DO ANY SHIFTING? - not if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
         if (!(checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue))) {
             // DO SHIFTING FROM (insertingIndex, smallestIdxMemVar]?
-            //      - if insertingIndex == smallestIdxMemVar, then there's nothing after it to shift down. 
-            //      - also don't need to worry about oldValue if this is the case bc if insertingIndex == smallestIdxMemVar and it's not at insertingIndex, then it's not in the array
+            //      - if insertingIndex == smallestIdxMemVar, then there's nothing after it to shift down.
+            //      - also if this is the case then don't need to worry about oldValue if this is the case bc if insertingIndex == smallestIdxMemVar and it's not at insertingIndex, then it's not in the array.
             if (!(insertingIndex == smallestIdxMemVar)) {
                 // SHIFT UNTIL/IF YOU FIND OLD VALUE IN THE RANGE (insertingIndex, smallestIdxMemVar] - go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
-                // we know at this point that insertingIndex is less than smallestIdxMemVar because it's not equal and it's not greater than.
                 for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar + 1; index++) {
                     sortedRanks[index] = sortedRanksMemVar[index - 1];
 
