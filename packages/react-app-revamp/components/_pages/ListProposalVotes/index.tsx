@@ -27,6 +27,9 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
   const skeletonsCount = isPageVotesLoading ? Math.min(remainingItems, VOTES_PER_PAGE) : 0;
   const placeholders = new Array(skeletonsCount).fill(null);
 
+  console.log("made it to proposal voters");
+  console.log("isVotersOpen:", isVotersOpen);
+
   const onLoadMore = () => {
     fetchVotesPage(
       currentPagePaginationVotes + 1,
