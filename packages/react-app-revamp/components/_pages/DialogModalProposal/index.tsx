@@ -112,12 +112,12 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                 to see if you qualify
               </p>
             )}
+            {proposal.votes > 0 && (
+              <ProposalVotesWrapper>
+                <ListProposalVotes proposalId={proposalId} />
+              </ProposalVotesWrapper>
+            )}
           </div>
-        )}
-        {contestStatus !== ContestStatus.SubmissionOpen && proposal.votes > 0 && (
-          <ProposalVotesWrapper>
-            <ListProposalVotes proposalId={proposalId} />
-          </ProposalVotesWrapper>
         )}
       </div>
     </DialogModalV3>
