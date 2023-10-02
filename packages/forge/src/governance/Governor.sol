@@ -18,19 +18,22 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     using SafeCast for uint256;
 
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
+
+    string private _name;
+    string private _prompt;
+
+    uint256[] public proposalIds;
+    uint256[] public deletedProposalIds;
+    mapping(uint256 => bool) public proposalIsDeleted;
+    bool public canceled;
+    mapping(uint256 => ProposalCore) public proposals;
+    mapping(address => uint256) public numSubmissions;
+    address[] public proposalAuthors;
+    address[] public addressesThatHaveVoted;
+
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
     mapping(address => bool) public addressSubmitterVerified;
-
-    uint256[] private _proposalIds;
-    uint256[] private _deletedProposalIds;
-    mapping(uint256 => bool) private _proposalIsDeleted;
-    string private _name;
-    string private _prompt;
-    bool private _canceled;
-    mapping(uint256 => ProposalCore) private _proposals;
-    mapping(address => uint256) private _numSubmissions;
-    address[] private _proposalAuthors;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -71,7 +74,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.14";
+        return "3.16";
     }
 
     /**
@@ -85,7 +88,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-state}.
      */
     function state() public view virtual override returns (ContestState) {
-        if (_canceled) {
+        if (canceled) {
             return ContestState.Canceled;
         }
 
@@ -114,21 +117,28 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev Return all proposals.
      */
     function getAllProposalIds() public view virtual returns (uint256[] memory) {
-        return _proposalIds;
+        return proposalIds;
     }
 
     /**
      * @dev Return all proposal authors.
      */
     function getAllProposalAuthors() public view virtual returns (address[] memory) {
-        return _proposalAuthors;
+        return proposalAuthors;
+    }
+
+    /**
+     * @dev Return all addresses that have voted.
+     */
+    function getAllAddressesThatHaveVoted() public view virtual returns (address[] memory) {
+        return addressesThatHaveVoted;
     }
 
     /**
      * @dev Return all deleted proposals.
      */
     function getAllDeletedProposalIds() public view virtual returns (uint256[] memory) {
-        return _deletedProposalIds;
+        return deletedProposalIds;
     }
 
     /**
@@ -146,7 +156,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev _"The number of proposals that an address who is qualified to propose can submit for this contest"_.
+     * @dev The number of proposals that an address who is qualified to propose can submit for this contest.
      */
     function numAllowedProposalSubmissions() public view virtual returns (uint256) {
         return 1;
@@ -167,24 +177,24 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev Retrieve proposal data"_.
+     * @dev Retrieve proposal data.
      */
     function getProposal(uint256 proposalId) public view virtual returns (ProposalCore memory) {
-        return _proposals[proposalId];
+        return proposals[proposalId];
     }
 
     /**
      * @dev Get the number of proposal submissions for a given address.
      */
     function getNumSubmissions(address account) public view virtual returns (uint256) {
-        return _numSubmissions[account];
+        return numSubmissions[account];
     }
 
     /**
      * @dev Returns if a proposal has been deleted or not.
      */
     function isProposalDeleted(uint256 proposalId) public view virtual returns (bool) {
-        return _proposalIsDeleted[proposalId];
+        return proposalIsDeleted[proposalId];
     }
 
     /**
@@ -266,21 +276,21 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     function _castProposal(ProposalCore memory proposal) internal virtual returns (uint256) {
         require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
         require(
-            _numSubmissions[msg.sender] < numAllowedProposalSubmissions(),
+            numSubmissions[msg.sender] < numAllowedProposalSubmissions(),
             "Governor: the same address cannot submit more than the numAllowedProposalSubmissions for this contest"
         );
         require(
-            (_proposalIds.length - _deletedProposalIds.length) < maxProposalCount(),
+            (proposalIds.length - deletedProposalIds.length) < maxProposalCount(),
             "Governor: the max number of proposals have been submitted"
         );
 
         uint256 proposalId = hashProposal(proposal);
-        require(!_proposals[proposalId].exists, "Governor: duplicate proposals not allowed");
+        require(!proposals[proposalId].exists, "Governor: duplicate proposals not allowed");
 
-        _proposalIds.push(proposalId);
-        _proposals[proposalId] = proposal;
-        _numSubmissions[msg.sender] += 1;
-        _proposalAuthors.push(msg.sender);
+        proposalIds.push(proposalId);
+        proposals[proposalId] = proposal;
+        numSubmissions[msg.sender] += 1;
+        proposalAuthors.push(msg.sender);
 
         emit ProposalCreated(proposalId, msg.sender);
 
@@ -292,21 +302,21 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      *
      * Emits a {IGovernor-ProposalsDeleted} event.
      */
-    function deleteProposals(uint256[] calldata proposalIds) public virtual {
+    function deleteProposals(uint256[] calldata proposalIdsToDelete) public virtual {
         require(msg.sender == creator(), "Governor: only the contest creator can delete proposals");
         require(
             state() != ContestState.Completed,
             "Governor: deletion of proposals after the end of a contest is not allowed"
         );
 
-        for (uint256 index = 0; index < proposalIds.length; index++) {
-            uint256 currentProposalId = proposalIds[index];
-            if (!_proposalIsDeleted[currentProposalId]) {
+        for (uint256 index = 0; index < proposalIdsToDelete.length; index++) {
+            uint256 currentProposalId = proposalIdsToDelete[index];
+            if (!proposalIsDeleted[currentProposalId]) {
                 // if this proposal hasn't already been deleted
-                _proposalIsDeleted[currentProposalId] = true;
+                proposalIsDeleted[currentProposalId] = true;
                 // this proposal now won't count towards the total number allowed in the contest
                 // it will still count towards the total number of proposals that the user is allowed to submit though
-                _deletedProposalIds.push(currentProposalId);
+                deletedProposalIds.push(currentProposalId);
             }
         }
 
@@ -324,7 +334,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         ContestState status = state();
 
         require(status != ContestState.Canceled && status != ContestState.Completed, "Governor: contest not active");
-        _canceled = true;
+        canceled = true;
 
         emit ContestCanceled();
     }
@@ -397,6 +407,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
             "Governor: you need to verify your number of votes against the merkle root first"
         );
         _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);
+
+        addressesThatHaveVoted.push(msg.sender);
 
         emit VoteCast(account, proposalId, support, numVotes);
 
