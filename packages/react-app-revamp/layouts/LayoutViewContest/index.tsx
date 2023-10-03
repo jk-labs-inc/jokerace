@@ -262,9 +262,8 @@ const LayoutViewContest = (props: any) => {
                 )}
                 <div className="animate-appear pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
-                    <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
+                    <p className="text-[18px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
                     <div className="flex flex-row gap-3 md:gap-4 items-center">
-                      {/*TODO: add gap for eth address to match */}
                       <EthereumAddress
                         ethereumAddress={contestAuthorEthereumAddress}
                         shortenOnFallback

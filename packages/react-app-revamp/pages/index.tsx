@@ -2,14 +2,16 @@ import Explainer from "@components/Explainer";
 import Subscribe from "@components/Subscribe";
 import Button from "@components/UI/Button";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import ListContests from "@components/_pages/ListContests";
-import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedContests, getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import router from "next/router";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -64,7 +66,7 @@ function useContests(initialData: any, searchValue: string) {
 const Page: NextPage = props => {
   const initialData = props;
   const [searchValue, setSearchValue] = useState("");
-  const { isConnected } = useAccount();
+  const { address } = useAccount();
 
   const {
     page,
@@ -103,6 +105,17 @@ const Page: NextPage = props => {
             execute, and reward decisions
           </p>
         </div>
+
+        {address && (
+          <div className="flex items-center gap-2 lg:hidden">
+            <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
+              <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+            </Link>
+            <div>
+              <ConnectButtonCustom displayOptions={{ onlyChainSwitcher: true, showChainName: false }} />
+            </div>
+          </div>
+        )}
 
         <div className="hidden lg:full-width-grid-cols lg:gap-0">
           <div>
