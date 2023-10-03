@@ -30,11 +30,9 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   openAccountModal,
   onPreviousStep,
 }) => {
-  const justifyContentClass = pageAction === "create" && step > 0 ? "justify-between" : "justify-end";
-
   return (
     <>
-      <header className={`flex flex-row items-center ${justifyContentClass} px-4 mt-4`}>
+      <header className={`flex flex-row items-center justify-between px-[30px] mt-4`}>
         {pageAction === "create" && step > 0 && (
           <div onClick={onPreviousStep}>
             <Image src="/create-flow/back_mobile.svg" className="mt-[5px]" width={30} height={30} alt="back" />
