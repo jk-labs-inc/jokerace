@@ -1,4 +1,5 @@
 import Button from "@components/UI/Button";
+import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_USER } from "@config/routes";
 import { MediaQuery } from "@helpers/mediaQuery";
@@ -36,6 +37,7 @@ const LandingHeader = () => {
         </p>
         <Link href={ROUTE_CREATE_CONTEST}>
           <Button className="hidden lg:flex h-10" intent={`${isConnected ? "primary" : "neutral-outline"}`}>
+            {/* //TODO: same font sizes for create contest + connect wallet */}
             Create contest
           </Button>
         </Link>
@@ -45,9 +47,7 @@ const LandingHeader = () => {
               <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
             </Link>
           )}
-        </div>
-        <div className="hidden md:flex">
-          <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+          <ConnectButtonCustom />
         </div>
       </div>
 

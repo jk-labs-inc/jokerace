@@ -74,7 +74,7 @@ const LayoutViewContest = (props: any) => {
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const [previousStatus, setPreviousStatus] = useState(account.status);
   const didConnect = previousStatus === "disconnected" && account.status === "connected";
-  const isTabletOrDesktop = useMediaQuery({ minWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   useEffect(() => {
     if (account.status === "connecting") return;
@@ -261,19 +261,22 @@ const LayoutViewContest = (props: any) => {
                   </div>
                 )}
                 <div className="animate-appear pt-3 md:pt-0">
-                  <div className="flex flex-col mt-10 gap-4">
+                  <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
-                    <div className="flex flex-row gap-3 md:gap-4 md:items-center">
+                    <div className="flex flex-row gap-3 md:gap-4 items-center">
                       {/*TODO: add gap for eth address to match */}
-                      <EthereumAddress ethereumAddress={contestAuthorEthereumAddress} shortenOnFallback />
+                      <EthereumAddress
+                        ethereumAddress={contestAuthorEthereumAddress}
+                        shortenOnFallback
+                        textualVersion={isMobile}
+                      />
 
-                      {/* TODO: create skeleton for mobile */}
                       {isRewardsLoading && (
                         <SkeletonTheme baseColor="#000000" highlightColor="#212121" duration={1}>
                           <Skeleton
                             borderRadius={10}
                             className="h-8 shrink-0 p-2 border border-neutral-11"
-                            width={200}
+                            width={isMobile ? 100 : 200}
                           />
                         </SkeletonTheme>
                       )}
@@ -281,11 +284,11 @@ const LayoutViewContest = (props: any) => {
                       {rewards && !isRewardsLoading && (
                         <div className="flex shrink-0 h-8 p-4 items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11">
                           {rewards?.token.value} $<span className="uppercase mr-1">{rewards?.token.symbol} </span>
-                          {/* {isTabletOrDesktop ? (
+                          {!isMobile ? (
                             <>
                               to {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}
                             </>
-                          ) : null} */}
+                          ) : null}
                         </div>
                       )}
 

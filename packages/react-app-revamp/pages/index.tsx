@@ -1,6 +1,7 @@
 import Explainer from "@components/Explainer";
 import Subscribe from "@components/Subscribe";
 import Button from "@components/UI/Button";
+import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import ListContests from "@components/_pages/ListContests";
 import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
@@ -101,21 +102,13 @@ const Page: NextPage = props => {
             contests for communities to make, <br />
             execute, and reward decisions
           </p>
-          <div className="flex items-center gap-5 text-[18px] font-bold lg:hidden">
-            <Button intent={`${isConnected ? "primary" : "neutral-outline"}`} className="hidden xs:flex">
-              Create contest
-            </Button>
-            <div className="hidden md:flex">
-              <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
-            </div>
-          </div>
         </div>
 
         <div className="hidden lg:full-width-grid-cols lg:gap-0">
           <div>
             <div className="text-[16px] font-bold  mb-1">stage one</div>
             <div className="h-1 bg-secondary-11"></div>
-            <div className="text-[16px]  font-bold mt-1 text-secondary-11">creator asks a prompt</div>
+            <div className="text-[16px] font-bold mt-1 text-secondary-11">creator asks a prompt</div>
           </div>
           <div>
             <div className="text-[16px] font-bold   mb-1">stage two</div>

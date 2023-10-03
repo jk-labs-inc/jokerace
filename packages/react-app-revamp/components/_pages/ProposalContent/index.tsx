@@ -12,12 +12,14 @@ import ordinalize from "@helpers/ordinalize";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { load } from "cheerio";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Children, FC, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
+import { useMediaQuery } from "react-responsive";
 import { TwitterTweetEmbed } from "react-twitter-embed";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
@@ -38,12 +40,14 @@ interface ProposalContentProps {
   proposal: Proposal;
   votingOpen: Date;
   rank: number;
+  isTied: boolean;
 }
 
 const MAX_LENGTH = 200;
-let MAX_LENGTH_PARAGRAPH = 200;
 
-const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, rank }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, rank, isTied }) => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const { openConnectModal } = useConnectModal();
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
@@ -55,8 +59,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
   const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
-  const showVoteButton = !isConnected || currentUserAvailableVotesAmount > 0;
-  const voteButtonMessage = isConnected ? "add votes" : "connect wallet to vote";
+  const canVote = currentUserAvailableVotesAmount > 0;
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
     switch (contestStatus) {
@@ -69,29 +72,33 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
         );
       case ContestStatus.VotingOpen:
         return (
-          <div>
-            {showVoteButton ? (
+          <>
+            {!isConnected ? (
+              <p className="text-[16px] text-positive-11 font-bold" onClick={openConnectModal}>
+                connect wallet to vote
+              </p>
+            ) : canVote ? (
               <ButtonV3
                 type={ButtonType.TX_ACTION}
                 colorClass="bg-gradient-next rounded-[40px]"
-                size={ButtonSize.LARGE}
+                size={isMobile ? ButtonSize.FULL : ButtonSize.LARGE}
                 onClick={() => {
                   setPickProposal(id);
                   setIsVotingModalOpen(true);
                 }}
               >
-                {voteButtonMessage}
+                add votes
               </ButtonV3>
             ) : (
               <p className="text-[16px] text-neutral-10 font-bold">only allowlisted wallets can play</p>
             )}
-          </div>
+          </>
         );
       case ContestStatus.VotingClosed:
         return <p className="text-neutral-10">voting closed</p>;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount, setPickProposal, isConnected]);
+  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount, setPickProposal, isConnected, isMobile]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];
@@ -112,8 +119,8 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
 
     contentElements.each((_, element) => {
       const currentText = $(element).text();
-      if (totalTextLength + currentText.length > MAX_LENGTH_PARAGRAPH) {
-        const remainingLength = MAX_LENGTH_PARAGRAPH - totalTextLength;
+      if (totalTextLength + currentText.length > MAX_LENGTH) {
+        const remainingLength = MAX_LENGTH - totalTextLength;
         const truncatedText = currentText.substring(0, remainingLength) + "...";
         $(element).text(truncatedText);
         return false; // This stops the each loop
@@ -125,27 +132,28 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
   }
 
   return (
-    <div className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <div className="px-4 mt-4 flex items-center gap-1">
         <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
 
         {rank > 0 && (
           <>
             <span className="text-neutral-9">&#8226;</span>{" "}
-            <p className="text-[16px] font-bold text-neutral-9">{ordinalize(rank).label} place</p>{" "}
+            <p className="text-[16px] font-bold text-neutral-9">
+              {ordinalize(rank).label} place {isTied ? "(tied)" : ""}
+            </p>
           </>
         )}
       </div>
-
       <Link
         href={`/contest/${chainName}/${contestAddress}/submission/${id}`}
         shallow
         scroll={false}
-        className="flex items-center overflow-hidden px-8 py-2 h-3/5 md:h-3/4"
+        className="flex items-center overflow-hidden px-14 h-3/4 md:h-3/4"
       >
         <>
           <ReactMarkdown
-            className="markdown max-w-full"
+            className="markdown max-w-full text-[16px]"
             components={{
               div: ({ node, children, ...props }) => (
                 <div {...props} className="flex gap-5 items-center markdown">
@@ -153,7 +161,6 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
                 </div>
               ),
               img: ({ node, ...props }) => <MarkdownImage imageSize="compact" src={props.src ?? ""} />,
-              p: ({ node, children, ...props }) => <MarkdownText children={children} props={props} />,
               ul: ({ node, children, ...props }) => {
                 const truncatedChildren = Children.toArray(children).slice(0, 3);
                 const combinedChildren =
@@ -175,15 +182,13 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
           />
         </>
       </Link>
-
-      <div className="h-2/5 md:h-2/4 px-8">
-        <div className={`flex flex-col md:flex-row items-center ${showVoteButton ? "" : "border-t border-primary-2"}`}>
-          <div className="flex items-center py-4 justify-between w-full md:w-1/2 h-full text-[16px] font-bold">
+      <div className="px-14 flex-shrink-0">
+        <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
+          <div className="flex items-center py-4 justify-between w-full md:w-1/2 text-[16px] font-bold">
             {ProposalAction}
           </div>
         </div>
       </div>
-
       <DialogModalVoteForProposal isOpen={isVotingModalOpen} setIsOpen={setIsVotingModalOpen} proposal={proposal} />
     </div>
   );

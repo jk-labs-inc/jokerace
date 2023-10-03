@@ -1,3 +1,4 @@
+import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
@@ -57,7 +58,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
               <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
             </Link>
           )}
-          <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+          <ConnectButtonCustom />
         </div>
       )}
     </header>

@@ -66,7 +66,7 @@ const VotingContestQualifier = () => {
           qualifiedMessage
         )
       ) : (
-        <p className="text-[24px] text-positive-11 font-bold cursor-pointer" onClick={openConnectModal}>
+        <p className="text-[16px] md:text-[24px] text-positive-11 font-bold cursor-pointer" onClick={openConnectModal}>
           connect wallet to see votes
         </p>
       )}
