@@ -28,7 +28,7 @@ const VotingContestQualifier = () => {
     if (canVote && votingOpen) {
       return (
         <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
-          {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount > 0 ? "s" : ""}
+          {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount > 0 ? "s" : ""} left
         </p>
       );
     }
@@ -45,13 +45,13 @@ const VotingContestQualifier = () => {
       return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you're out of votes :(</p>;
 
     return <p className="text-[16px] md:text-[24px] text-primary-10 font-bold">ineligible to vote</p>;
-  }, [currentUserAvailableVotesAmount, isReadOnly, contestStatus, currentUserTotalVotesAmount]);
+  }, [contestStatus, currentUserTotalVotesAmount, isReadOnly, currentUserAvailableVotesAmount]);
 
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4  md:pl-8">
       <div className="flex items-center gap-2">
         <Image src="/contest/ballot.svg" width={16} height={16} alt="timer" />
-        <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">your votes</p>
+        <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">my votes</p>
       </div>
       {isConnected ? (
         isLoading ? (
