@@ -132,7 +132,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
   }
 
   return (
-    <div className="flex flex-col w-full h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <div className="px-4 mt-4 flex items-center gap-1">
         <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
 
@@ -182,7 +182,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
           />
         </>
       </Link>
-      <div className="px-14 flex-shrink-0">
+      <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
         <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
           <div className="flex items-center py-4 justify-between w-full md:w-1/2 text-[16px] font-bold">
             {ProposalAction}
