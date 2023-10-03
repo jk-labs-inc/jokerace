@@ -94,7 +94,7 @@ export const ListProposals = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 mt-6">
         {(() => {
           const ranks: RankDictionary = {};
           let rank = 0;
@@ -123,7 +123,7 @@ export const ListProposals = () => {
             return (
               <div key={id} className="relative">
                 {listProposalsData[id].votes > 0 && (
-                  <div className="absolute -top-0 right-0 -mr-2 -mt-4 p-4 z-10 h-7 rounded-[16px] bg-true-black flex items-center justify-center text-[16px] font-bold text-neutral-11 border border-neutral-11">
+                  <div className="absolute top-0 right-0 -mr-2 -mt-4 p-4 z-10 h-7 rounded-[16px] bg-true-black flex items-center justify-center text-[16px] font-bold text-neutral-11 border border-neutral-11">
                     {formatNumber(listProposalsData[id].votes)} votes
                   </div>
                 )}

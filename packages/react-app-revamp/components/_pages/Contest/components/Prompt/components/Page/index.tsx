@@ -21,6 +21,7 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const [contestType, contestTitle, contestPrompt] = prompt.split("|");
   const truncatedPrompt = isV3 ? truncateText(contestPrompt, 100) : truncateText(prompt, 100);
   const displayReadMore = isV3 ? contestPrompt.length > 100 : prompt.length > 100;
+  const content = isExpanded ? contestPrompt : truncatedPrompt;
 
   useEffect(() => {
     if (contentRef.current) {
@@ -46,14 +47,11 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
             <div className="border-l border-true-white">
               <div
                 className=" overflow-hidden transition-max-height duration-500 ease-in-out"
-                style={{ maxHeight: isExpanded ? maxHeight : "3em" }}
+                style={{ maxHeight: isExpanded ? maxHeight : "10em" }}
                 ref={contentRef}
               >
                 <div className="prose prose-invert pl-5">
-                  <Interweave
-                    content={isExpanded ? contestPrompt : truncatedPrompt}
-                    matchers={[new UrlMatcher("url")]}
-                  />
+                  <Interweave content={content} matchers={[new UrlMatcher("url")]} />
                 </div>
               </div>
               {displayReadMore && (

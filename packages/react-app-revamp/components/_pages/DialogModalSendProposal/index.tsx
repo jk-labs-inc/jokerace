@@ -55,8 +55,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const editorProposal = useEditor({
     extensions: [
       StarterKit,
-      ShiftEnterCreateExtension,
-      DisableEnter,
       Image,
       TiptapExtensionLink,
       Placeholder.configure({
@@ -104,29 +102,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     }
   };
 
-  useEffect(() => {
-    if (contestStatus !== ContestStatus.SubmissionOpen) return;
-
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.shiftKey) {
-        return;
-      }
-      if (event.key === "Enter") {
-        if (!isCorrectNetwork) {
-          onSwitchNetwork();
-          return;
-        }
-        onSubmitProposal();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [contestStatus, onSubmitProposal]);
-
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragging(false);
@@ -156,18 +131,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setIsDragging(false);
   };
 
-  const tipMessage = () => {
-    return (
-      <p className="hidden md:flex items-center">
-        <span className="font-bold flex items-center gap-1 mr-1">
-          shift <NextImage src="/create-flow/shift.png" alt="shift" width={14} height={14} /> + enter{" "}
-          <NextImage src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
-        </span>
-        to make a line break.
-      </p>
-    );
-  };
-
   return (
     <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px]">
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
@@ -190,7 +153,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
               isDragging ? "backdrop-blur-md opacity-70" : ""
             }`}
           />
-          <p className="text-[16px] text-neutral-11 mt-2">{tipMessage()}</p>
         </div>
         <div className="mt-2">
           {isCorrectNetwork ? (

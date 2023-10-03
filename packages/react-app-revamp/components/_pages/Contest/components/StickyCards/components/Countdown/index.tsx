@@ -85,8 +85,9 @@ const ContestCountdown = () => {
         <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">{displayText(phase)}</p>
       </div>
       <div className="flex items-center">
-        {/* //@TODO: add neutral-9 when submissions aren't open */}
-        <span className="font-bold text-neutral-11">{displayTime()}</span>
+        <span className={`font-bold ${phase === "start" ? "text-neutral-9" : "text-neutral-11"} text-neutral-11`}>
+          {displayTime()}
+        </span>
       </div>
     </div>
   );

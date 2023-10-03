@@ -36,9 +36,9 @@ export const ConnectButtonCustom: FC<ConnectButtonCustomProps> = ({ displayOptio
                   <button
                     onClick={openConnectModal}
                     type="button"
-                    className="flex items-center gap-1 py-2 px-3 bg-primary-10 rounded-xl text-true-black font-bold text-[16px]"
+                    className="flex items-center gap-1 py-2 px-3 bg-primary-10 rounded-xl text-true-black font-bold text-[18px]"
                   >
-                    connect Wallet
+                    connect wallet
                   </button>
                 );
               }

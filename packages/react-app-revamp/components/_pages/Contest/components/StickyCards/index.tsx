@@ -3,17 +3,19 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useUserStore } from "@hooks/useUser/store";
 import { useMemo } from "react";
 import Skeleton from "react-loading-skeleton";
+import { useAccount } from "wagmi";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
 
-//TODO: modify sticky cards to append on scroll
 const ContestStickyCards = () => {
+  const { isDisconnected } = useAccount();
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const { currentUserQualifiedToSubmit, isLoading } = useUserStore(state => state);
   const { displayReloadBanner } = useContestEvents();
 
   const qualifiedToSubmitMessage = useMemo(() => {
-    if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) return null;
+    if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed || isDisconnected)
+      return null;
     if (isLoading)
       return <Skeleton height={16} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
 
@@ -36,7 +38,7 @@ const ContestStickyCards = () => {
     }
 
     return null;
-  }, [contestStatus, currentUserQualifiedToSubmit, isLoading]);
+  }, [contestStatus, currentUserQualifiedToSubmit, isLoading, isDisconnected]);
 
   if (contestStatus === ContestStatus.VotingClosed) return null;
 

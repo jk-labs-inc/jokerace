@@ -18,6 +18,7 @@ import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { Children, FC, useMemo, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 import ReactMarkdown from "react-markdown";
 import { useMediaQuery } from "react-responsive";
 import { TwitterTweetEmbed } from "react-twitter-embed";
@@ -49,7 +50,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { openConnectModal } = useConnectModal();
   let truncatedContent =
-    proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
+    proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
   const { isConnected } = useAccount();
   const { asPath } = useRouter();
@@ -58,7 +59,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
-  const currentUserAvailableVotesAmount = useUserStore(state => state.currentUserAvailableVotesAmount);
+  const { currentUserAvailableVotesAmount, isLoading } = useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
@@ -78,17 +79,28 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
                 connect wallet to vote
               </p>
             ) : canVote ? (
-              <ButtonV3
-                type={ButtonType.TX_ACTION}
-                colorClass="bg-gradient-next rounded-[40px]"
-                size={isMobile ? ButtonSize.FULL : ButtonSize.LARGE}
-                onClick={() => {
-                  setPickProposal(id);
-                  setIsVotingModalOpen(true);
-                }}
-              >
-                add votes
-              </ButtonV3>
+              isLoading ? (
+                <Skeleton
+                  height={isMobile ? 32 : 40}
+                  width={isMobile ? 100 : 160}
+                  borderRadius={40}
+                  baseColor="#706f78"
+                  highlightColor="#FFE25B"
+                  duration={1}
+                />
+              ) : (
+                <ButtonV3
+                  type={ButtonType.TX_ACTION}
+                  colorClass="bg-gradient-next rounded-[40px]"
+                  size={isMobile ? ButtonSize.FULL : ButtonSize.LARGE}
+                  onClick={() => {
+                    setPickProposal(id);
+                    setIsVotingModalOpen(true);
+                  }}
+                >
+                  add votes
+                </ButtonV3>
+              )
             ) : (
               <p className="text-[16px] text-neutral-10 font-bold">only allowlisted wallets can play</p>
             )}
@@ -98,7 +110,15 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
         return <p className="text-neutral-10">voting closed</p>;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contestStatus, proposal.votes, currentUserAvailableVotesAmount, setPickProposal, isConnected, isMobile]);
+  }, [
+    contestStatus,
+    proposal.votes,
+    currentUserAvailableVotesAmount,
+    setPickProposal,
+    isConnected,
+    isMobile,
+    isLoading,
+  ]);
 
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];
@@ -178,8 +198,9 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
               },
             }}
             rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
-            children={truncatedContent}
-          />
+          >
+            {truncatedContent}
+          </ReactMarkdown>
         </>
       </Link>
       <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
