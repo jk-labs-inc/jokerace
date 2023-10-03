@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { toastLoading } from "@components/UI/Toast";
 import { useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
 import { utils } from "ethers";
@@ -25,9 +25,9 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
           <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
         </p>
         <ButtonV3
-          disabled={txWithdraw.isLoading}
-          size="extraSmall"
-          color="bg-gradient-withdraw"
+          isDisabled={txWithdraw.isLoading}
+          size={ButtonSize.EXTRA_SMALL}
+          colorClass="bg-gradient-withdraw"
           onClick={() => {
             setIsLoading(true);
             toastLoading("withdrawing funds...");

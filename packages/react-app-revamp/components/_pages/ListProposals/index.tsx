@@ -1,6 +1,7 @@
 import Button from "@components/UI/Button";
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
+import { formatNumber } from "@helpers/formatNumber";
 import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -10,6 +11,20 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
+
+interface RankDictionary {
+  [key: string]: number;
+}
+
+const checkForTiedRanks = (ranks: RankDictionary, currentRank: number) => {
+  let count = 0;
+  Object.values(ranks).forEach(rank => {
+    if (rank === currentRank) {
+      count++;
+    }
+  });
+  return count > 1;
+};
 
 const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlightColor: string }) => (
   <SkeletonTheme baseColor="#000000" highlightColor={highlightColor} duration={1}>
@@ -79,65 +94,79 @@ export const ListProposals = () => {
 
   return (
     <div>
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8 mt-6">
         {(() => {
+          const ranks: RankDictionary = {};
           let rank = 0;
           let lastVotes: number | null = null;
 
-          return Object.keys(listProposalsData)
-            .sort((a, b) => listProposalsData[b].votes - listProposalsData[a].votes)
-            .map(id => {
-              if (deletingProposalIds.includes(id) && isDeleteInProcess) {
-                return <ProposalSkeleton key={id} highlightColor="#FF78A9" />;
-              }
-              const votes = listProposalsData[id].votes;
+          const sortedProposalIds = Object.keys(listProposalsData).sort(
+            (a, b) => listProposalsData[b].votes - listProposalsData[a].votes,
+          );
 
-              if (votes !== lastVotes) {
-                rank++;
-                lastVotes = votes;
-              }
+          sortedProposalIds.forEach(id => {
+            const votes = listProposalsData[id].votes;
+            if (votes !== lastVotes && votes > 0) {
+              rank++;
+              lastVotes = votes;
+            }
+            ranks[id] = votes > 0 ? rank : 0;
+          });
 
-              return (
-                <div key={id} className="relative">
-                  {votes > 0 && (
-                    <div className="absolute -top-0 left-0 -mt-6 -ml-6 w-12 z-10 h-12 rounded-full bg-true-black flex items-center justify-center text-[24px] font-bold text-neutral-11 border border-neutral-11">
-                      {rank}
+          return sortedProposalIds.map(id => {
+            const isTied = listProposalsData[id].votes && checkForTiedRanks(ranks, ranks[id]);
+
+            if (deletingProposalIds.includes(id) && isDeleteInProcess) {
+              return <ProposalSkeleton key={id} highlightColor="#FF78A9" />;
+            }
+
+            return (
+              <div key={id} className="relative">
+                {listProposalsData[id].votes > 0 && (
+                  <div className="absolute top-0 right-0 -mr-2 -mt-4 p-4 z-10 h-7 rounded-[16px] bg-true-black flex items-center justify-center text-[16px] font-bold text-neutral-11 border border-neutral-11">
+                    {formatNumber(listProposalsData[id].votes)} votes
+                  </div>
+                )}
+                <ProposalContent
+                  id={id}
+                  proposal={listProposalsData[id]}
+                  votingOpen={votesOpen}
+                  rank={ranks[id]}
+                  isTied={isTied}
+                />
+                {allowDelete && (
+                  <div
+                    className="absolute cursor-pointer -bottom-0 right-0 z-10"
+                    onClick={() => toggleProposalSelection(id)}
+                  >
+                    <div className="relative h-6 w-6">
+                      <CheckIcon
+                        className={`absolute transform transition-all ease-in-out duration-300 
+                 ${selectedProposalIds.includes(id) ? "opacity-100" : "opacity-0"}
+                h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+                shadow-md hover:shadow-lg rounded-md`}
+                      />
+
+                      <TrashIcon
+                        className={`absolute transition-opacity duration-300  ${
+                          selectedProposalIds.includes(id) ? "opacity-0" : "opacity-100"
+                        }
+                 h-8 text-negative-11 bg-true-black hover:text-negative-10`}
+                      />
                     </div>
-                  )}
-                  <ProposalContent id={id} proposal={listProposalsData[id]} votingOpen={votesOpen} />
-                  {allowDelete && (
-                    <div
-                      className="absolute cursor-pointer -top-0 right-0 -mt-4 z-10"
-                      onClick={() => toggleProposalSelection(id)}
-                    >
-                      <div className="relative h-6 w-6">
-                        <CheckIcon
-                          className={`absolute transform transition-all ease-in-out duration-300 
-                           ${selectedProposalIds.includes(id) ? "opacity-100" : "opacity-0"}
-                          h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
-                          shadow-md hover:shadow-lg rounded-md`}
-                        />
-
-                        <TrashIcon
-                          className={`absolute transition-opacity duration-300  ${
-                            selectedProposalIds.includes(id) ? "opacity-0" : "opacity-100"
-                          }
-                           h-8 text-negative-11 bg-true-black hover:text-negative-10`}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              );
-            });
+                  </div>
+                )}
+              </div>
+            );
+          });
         })()}
       </div>
 
       {showDeleteButton && (
         <div className="flex sticky bottom-0 left-0 right-0 p-4 bg-white shadow-lg">
           <ButtonV3
-            size="extraLarge"
-            color="bg-gradient-withdraw mx-auto animate-appear"
+            size={ButtonSize.EXTRA_LARGE}
+            colorClass="bg-gradient-withdraw mx-auto animate-appear"
             onClick={onDeleteSelectedProposals}
           >
             Delete {selectedProposalIds.length} {selectedProposalIds.length === 1 ? "submission" : "submissions"}

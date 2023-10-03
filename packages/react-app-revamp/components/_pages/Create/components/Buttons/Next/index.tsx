@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
@@ -38,10 +38,10 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
     <div className="flex gap-4 items-start mb-5">
       <div className={`flex flex-col items-center gap-2`}>
         <ButtonV3
-          color={`bg-gradient-next rounded-[10px] font-bold ${
+          colorClass={`bg-gradient-next rounded-[10px] font-bold ${
             shake ? "animate-shakeTop" : ""
           } text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
-          size="large"
+          size={ButtonSize.LARGE}
           onClick={handleClick}
         >
           next

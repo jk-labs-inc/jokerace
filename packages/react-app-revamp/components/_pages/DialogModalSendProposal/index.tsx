@@ -1,9 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
+import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { chains } from "@config/wagmi";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import { goToProposalPage } from "@helpers/routing";
@@ -16,7 +17,6 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useUploadImageStore } from "@hooks/useUploadImage";
-import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -55,8 +55,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const editorProposal = useEditor({
     extensions: [
       StarterKit,
-      ShiftEnterCreateExtension,
-      DisableEnter,
       Image,
       TiptapExtensionLink,
       Placeholder.configure({
@@ -104,29 +102,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     }
   };
 
-  useEffect(() => {
-    if (contestStatus !== ContestStatus.SubmissionOpen) return;
-
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.shiftKey) {
-        return;
-      }
-      if (event.key === "Enter") {
-        if (!isCorrectNetwork) {
-          onSwitchNetwork();
-          return;
-        }
-        onSubmitProposal();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [contestStatus, onSubmitProposal]);
-
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     setIsDragging(false);
@@ -156,22 +131,10 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setIsDragging(false);
   };
 
-  const tipMessage = () => {
-    return (
-      <p className="hidden md:flex items-center">
-        <span className="font-bold flex items-center gap-1 mr-1">
-          shift <NextImage src="/create-flow/shift.png" alt="shift" width={14} height={14} /> + enter{" "}
-          <NextImage src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
-        </span>
-        to make a line break.
-      </p>
-    );
-  };
-
   return (
     <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px]">
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
-        <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
+        <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
         <div className="flex flex-col gap-2">
           <EthereumAddress ethereumAddress={address ?? ""} shortenOnFallback={true} />
           <p className="font-bold text-neutral-10">{formattedDate}</p>
@@ -190,20 +153,19 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
               isDragging ? "backdrop-blur-md opacity-70" : ""
             }`}
           />
-          <p className="text-[16px] text-neutral-11 mt-2">{tipMessage()}</p>
         </div>
         <div className="mt-2">
           {isCorrectNetwork ? (
             <ButtonV3
-              color="bg-gradient-create rounded-[40px]"
-              size="large"
+              colorClass="bg-gradient-create rounded-[40px]"
+              size={ButtonSize.LARGE}
               onClick={onSubmitProposal}
-              disabled={isLoading || !proposal.length}
+              isDisabled={isLoading || !proposal.length}
             >
               submit!
             </ButtonV3>
           ) : (
-            <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large" onClick={onSwitchNetwork}>
+            <ButtonV3 colorClass="bg-gradient-create rounded-[40px]" size={ButtonSize.LARGE} onClick={onSwitchNetwork}>
               switch network
             </ButtonV3>
           )}

@@ -1,12 +1,12 @@
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
+import ContestPrompt from "@components/_pages/Contest/components/Prompt";
+import ContestProposal from "@components/_pages/Contest/components/Proposal";
 import useCastVotes from "@hooks/useCastVotes";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
-import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
-import LayoutContestProposal from "@layouts/LayoutViewContest/Proposal";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
@@ -83,10 +83,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
       className="xl:w-[1110px] 3xl:w-[1300px]"
       onClose={onClose}
     >
-      <div className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[60px] pb-[60px]">
-        <LayoutContestPrompt prompt={prompt} hidePrompt />
+      <div className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[20px] md:mt-[60px] pb-[60px]">
+        <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
-        <LayoutContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
+        <ContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
         {contestStatus === ContestStatus.VotingOpen && (
           <div className="flex flex-col gap-8">
             <p className="text-neutral-11 text-[24px] font-bold">vote</p>

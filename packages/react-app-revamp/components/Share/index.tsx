@@ -1,4 +1,5 @@
 import { Menu, Transition } from "@headlessui/react";
+import { MediaQuery } from "@helpers/mediaQuery";
 import { generateLensShareUrl, generateTwitterShareUrl, generateUrlToCopy } from "@helpers/share";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import Image from "next/image";
@@ -17,11 +18,16 @@ interface ShareDropdownProps {
 const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, chain }) => {
   return (
     <Menu as="div" className="relative inline-block text-left">
-      <div>
-        <Menu.Button className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
-          Share <Image src="/forward.png" alt="share" className="ml-1 w-4" width={20} height={20} />
+      <MediaQuery maxWidth={768}>
+        <Menu.Button className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11">
+          <Image src="/forward.png" alt="share" className="m-auto" width={15} height={13} />
         </Menu.Button>
-      </div>
+      </MediaQuery>
+      <MediaQuery minWidth={769}>
+        <Menu.Button className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
+          Share <Image src="/forward.png" alt="share" className="ml-1" width={20} height={20} />
+        </Menu.Button>
+      </MediaQuery>
 
       <Transition
         as={Fragment}

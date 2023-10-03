@@ -6,11 +6,11 @@ export enum Tab {
   Rewards = "Rewards",
 }
 
-interface ContestLayoutTabsProps {
+interface ContestTabsProps {
   onChange?: (tab: Tab) => void;
 }
 
-const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ onChange }) => {
+const ContestTabs: FC<ContestTabsProps> = ({ onChange }) => {
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Contest);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -39,7 +39,7 @@ const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ onChange }) => {
           <div
             ref={el => (tabRefs.current[index] = el)}
             key={tabKey}
-            className={`text-[24px] cursor-pointer font-bold transition-colors duration-200 ${
+            className={`text-[16px] md:text-[24px] cursor-pointer font-bold transition-colors duration-200 ${
               tabKey === activeTab ? "text-primary-10" : "text-neutral-11"
             }`}
             onClick={() => onTabChange(Tab[tabKey as keyof typeof Tab])}
@@ -54,4 +54,4 @@ const ContestLayoutTabs: FC<ContestLayoutTabsProps> = ({ onChange }) => {
   );
 };
 
-export default ContestLayoutTabs;
+export default ContestTabs;

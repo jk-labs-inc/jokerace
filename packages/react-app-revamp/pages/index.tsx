@@ -1,16 +1,18 @@
 import Explainer from "@components/Explainer";
 import Subscribe from "@components/Subscribe";
 import Button from "@components/UI/Button";
+import { ConnectButtonCustom } from "@components/UI/ConnectButton";
+import EthereumAddress from "@components/UI/EtheuremAddress";
 import ListContests from "@components/_pages/ListContests";
-import { ROUTE_VIEW_LIVE_CONTESTS } from "@config/routes";
+import { ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedContests, getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import router from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 function useContests(initialData: any, searchValue: string) {
@@ -63,7 +65,12 @@ function useContests(initialData: any, searchValue: string) {
 const Page: NextPage = props => {
   const initialData = props;
   const [searchValue, setSearchValue] = useState("");
-  const { isConnected } = useAccount();
+  const { address } = useAccount();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const {
     page,
@@ -101,19 +108,24 @@ const Page: NextPage = props => {
             contests for communities to make, <br />
             execute, and reward decisions
           </p>
-          <div className="flex items-center gap-5 text-[18px] font-bold lg:hidden">
-            <Button intent={`${isConnected ? "primary" : "neutral-outline"}`} className="hidden xs:flex">
-              Create contest
-            </Button>
-            <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
-          </div>
         </div>
+
+        {isClient && address && (
+          <div className="flex items-center gap-2 lg:hidden">
+            <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
+              <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+            </Link>
+            <div>
+              <ConnectButtonCustom displayOptions={{ onlyChainSwitcher: true, showChainName: false }} />
+            </div>
+          </div>
+        )}
 
         <div className="hidden lg:full-width-grid-cols lg:gap-0">
           <div>
             <div className="text-[16px] font-bold  mb-1">stage one</div>
             <div className="h-1 bg-secondary-11"></div>
-            <div className="text-[16px]  font-bold mt-1 text-secondary-11">creator asks a prompt</div>
+            <div className="text-[16px] font-bold mt-1 text-secondary-11">creator asks a prompt</div>
           </div>
           <div>
             <div className="text-[16px] font-bold   mb-1">stage two</div>

@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import Dropdown from "@components/UI/Dropdown";
 import FormField from "@components/UI/FormField";
 import { FC, useCallback, useEffect, useState } from "react";
@@ -89,8 +89,8 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
       </FormField>
 
       <ButtonV3
-        color={`bg-gradient-next rounded-[10px] font-bold text-true-black mb-2 ${error ? "animate-shakeTop" : ""}`}
-        size="large"
+        colorClass={`bg-gradient-next rounded-[10px] font-bold text-true-black mb-2 ${error ? "animate-shakeTop" : ""}`}
+        size={ButtonSize.LARGE}
         onClick={executeSearch}
       >
         Search

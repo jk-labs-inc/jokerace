@@ -1,6 +1,7 @@
 import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
 import { getLayout } from "@layouts/LayoutViewContest";
+
 import type { NextPage } from "next";
 import Head from "next/head";
 

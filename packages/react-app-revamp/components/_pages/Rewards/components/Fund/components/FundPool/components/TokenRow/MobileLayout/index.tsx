@@ -74,7 +74,7 @@ const CreateRewardsFundPoolMobileLayout: FC<CreateRewardsFundPoolMobileLayoutPro
           </div>
 
           {rows.length > 1 && (
-            <ButtonV3 color="bg-negative-11 text-true-black" onClick={() => handleRemoveRow?.(idx)}>
+            <ButtonV3 colorClass="bg-negative-11 text-true-black" onClick={() => handleRemoveRow?.(idx)}>
               remove token
             </ButtonV3>
           )}

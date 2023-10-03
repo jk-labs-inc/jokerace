@@ -5,7 +5,6 @@ import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEnsAvatar, fetchEnsName, mainnet } from "@wagmi/core";
 import Link from "next/link";
-import { useRouter } from "next/router";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
 
@@ -26,7 +25,6 @@ const EthereumAddress = ({
   shortenOnFallback,
   isLarge,
 }: EthereumAddressProps) => {
-  const router = useRouter();
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
   const { setAvatar } = useAvatarStore(state => state);
   const avatarSizeClass = isLarge ? "w-[100px] h-[100px]" : "w-8 h-8";
@@ -83,7 +81,12 @@ const EthereumAddress = ({
 
   if (textualVersion) {
     return (
-      <Link target="_blank" rel="noopener noreferrer" href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}>
+      <Link
+        className="text-[16px] font-bold"
+        target="_blank"
+        rel="noopener noreferrer"
+        href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
+      >
         {displayName}
       </Link>
     );

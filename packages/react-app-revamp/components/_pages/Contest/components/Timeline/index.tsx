@@ -8,7 +8,7 @@ interface Stage {
   date: Date;
 }
 
-const LayoutContestTimeline = () => {
+const ContestTimeline = () => {
   const { submissionsOpen, votesClose, votesOpen } = useContestStore(state => state);
 
   const stages: Stage[] = [
@@ -69,4 +69,4 @@ const LayoutContestTimeline = () => {
   );
 };
 
-export default LayoutContestTimeline;
+export default ContestTimeline;
