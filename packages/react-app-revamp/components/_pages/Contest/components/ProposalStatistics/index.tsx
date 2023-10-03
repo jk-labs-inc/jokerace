@@ -17,40 +17,24 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
       case ContestStatus.SubmissionOpen:
         return (
           <p className="text-[16px] text-neutral-11">
-            {listProposalsIds.length}/{contestMaxProposalCount.toString()} submitted
+            {listProposalsIds.length} submission{listProposalsIds.length > 1 ? "s" : ""} &#8226;{" "}
+            {contestMaxProposalCount.toString()} allowed
           </p>
         );
       case ContestStatus.VotingOpen:
       case ContestStatus.VotingClosed:
         return (
           <p className="text-[16px] text-neutral-11">
-            {totalVotesCast >= 0
-              ? `${formatNumber(totalVotesCast)} votes deployed/${formatNumber(
-                  totalVotes,
-                )} available votes in the contest`
-              : `${formatNumber(totalVotes)} available votes in the contest`}
+            {listProposalsIds.length} submission{listProposalsIds.length > 1 ? "s" : ""} &#8226;{" "}
+            {formatNumber(totalVotesCast)} out of {formatNumber(totalVotes)} votes deployed in contest
           </p>
         );
-      default:
-        break;
     }
   }, [contestStatus, listProposalsIds.length, contestMaxProposalCount, totalVotesCast, totalVotes]);
 
-  const heading = useMemo<string>(() => {
-    switch (contestStatus) {
-      case ContestStatus.SubmissionOpen:
-      case ContestStatus.VotingOpen:
-        return "submissions";
-      case ContestStatus.VotingClosed:
-        return "votes";
-      default:
-        return "submissions";
-    }
-  }, [contestStatus]);
-
   return (
     <div className="flex flex-col">
-      <p className="text-[24px] text-neutral-11 font-bold">{heading}</p>
+      <p className="text-[24px] text-neutral-11 font-bold">submissions</p>
       {content}
     </div>
   );

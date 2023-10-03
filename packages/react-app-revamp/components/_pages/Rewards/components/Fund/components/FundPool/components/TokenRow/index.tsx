@@ -126,7 +126,7 @@ const CreateRewardsFundPoolTokenRow = () => {
       </MediaQuery>
       <div className="flex justify-end md:rewards-funding-grid">
         <div className="col-start-4 col-span-1 justify-self-end mt-[15px] md:-mt-[5px]">
-          <ButtonV3 onClick={handleAddField} color="bg-primary-10">
+          <ButtonV3 onClick={handleAddField} colorClass="bg-primary-10">
             + add token
           </ButtonV3>
         </div>

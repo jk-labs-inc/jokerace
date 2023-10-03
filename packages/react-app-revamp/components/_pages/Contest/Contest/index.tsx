@@ -1,21 +1,21 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal";
 import ListProposals from "@components/_pages/ListProposals";
 import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
+import { useMediaQuery } from "react-responsive";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
-import moment from "moment";
 import { useAccount } from "wagmi";
-import LayoutContestPrompt from "../Prompt";
-import ProposalStatistics from "../ProposalStatistics";
-import ContestLayoutStickyCards from "../StickyCards";
-import LayoutContestTimeline from "../TimelineV3";
+import ContestPrompt from "../components/Prompt";
+import ProposalStatistics from "../components/ProposalStatistics";
+import ContestStickyCards from "../components/StickyCards";
+import ContestTimeline from "../components/Timeline";
 
 const ContestTab = () => {
-  const { submissionsOpen, contestPrompt } = useContestStore(state => state);
+  const { contestPrompt } = useContestStore(state => state);
   const { isConnected } = useAccount();
   const { contestStatus } = useContestStatusStore(state => state);
   const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount } = useUserStore(
@@ -31,23 +31,24 @@ const ContestTab = () => {
   const qualifiedToSubmit =
     currentUserQualifiedToSubmit && currentUserProposalCount <= contestMaxNumberSubmissionsPerUser;
   const showSubmitButton = !isConnected || qualifiedToSubmit;
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   return (
     <div>
       <div className="mt-4">
-        <LayoutContestTimeline />
+        <ContestTimeline />
       </div>
 
       <div className="mt-8">
-        <LayoutContestPrompt prompt={contestPrompt} hidePrompt={contestStatus === ContestStatus.VotingClosed} />
+        <ContestPrompt prompt={contestPrompt} type="page" />
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && (
         <div className="mt-8">
           {showSubmitButton && (
             <ButtonV3
-              type="txAction"
-              color="bg-gradient-create rounded-[40px]"
-              size="extraLargeLong"
+              type={ButtonType.TX_ACTION}
+              colorClass="bg-gradient-vote rounded-[40px]"
+              size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}
               onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
             >
               {submitButtonText}
@@ -55,19 +56,11 @@ const ContestTab = () => {
           )}
         </div>
       )}
-      <ContestLayoutStickyCards />
+      <ContestStickyCards />
 
-      {contestStatus === ContestStatus.ContestOpen && (
-        <div className="mt-8">
-          <p className="text-[16px] text-primary-10 font-bold">
-            submissions open {moment(submissionsOpen).format("MMMM Do, h:mm a")}
-          </p>
-        </div>
-      )}
-
-      <div className="mt-8">
+      <div className="mt-4">
         <div className="flex flex-col gap-5">
-          <hr className="border-neutral-10" />
+          <hr className="border-primary-2 border-2" />
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
             <ProposalStatistics contestStatus={contestStatus} />
           )}

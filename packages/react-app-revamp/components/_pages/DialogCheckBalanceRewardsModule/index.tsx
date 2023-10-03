@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
@@ -118,14 +118,14 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
               {queryTokenBalance?.symbol}
             </li>
             <div className="flex gap-2">
-              <ButtonV3 size="extraSmall" color="bg-gradient-distribute" onClick={addReward}>
+              <ButtonV3 size={ButtonSize.EXTRA_SMALL} colorClass="bg-gradient-distribute" onClick={addReward}>
                 add
               </ButtonV3>
               {creator && (
                 <ButtonV3
-                  disabled={txWithdraw.isLoading}
-                  size="extraSmall"
-                  color="bg-gradient-withdraw"
+                  isDisabled={txWithdraw.isLoading}
+                  size={ButtonSize.EXTRA_SMALL}
+                  colorClass="bg-gradient-withdraw"
                   onClick={() => contractWriteWithdrawReward.write()}
                 >
                   Withdraw

@@ -1,69 +1,73 @@
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import React, { useMemo } from "react";
 import { useAccount } from "wagmi";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
-type ButtonSize = "extraSmall" | "small" | "default" | "large" | "extraLarge" | "extraLargeLong";
-
-interface ButtonV3Props {
-  type?: "default" | "txAction";
-  color?: string;
-  textColor?: string;
-  size?: ButtonSize;
-  children?: React.ReactNode;
-  disabled?: boolean;
-  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+export enum ButtonType {
+  DEFAULT = "default",
+  TX_ACTION = "txAction",
 }
 
-const sizes = {
-  extraSmall: "w-20 h-6",
-  small: "w-24",
-  default: "w-[120px] h-[32px]",
-  large: "w-40 h-[40px]",
-  extraLarge: "w-[200px] h-12",
-  extraLargeLong: "w-[240px] h-[40px]",
+export enum ButtonSize {
+  EXTRA_SMALL = "extraSmall",
+  SMALL = "small",
+  DEFAULT = "default",
+  LARGE = "large",
+  EXTRA_LARGE = "extraLarge",
+  EXTRA_LARGE_LONG = "extraLargeLong",
+  FULL = "full",
+}
+
+interface ButtonProps {
+  type?: ButtonType;
+  colorClass?: string;
+  size?: ButtonSize;
+  textColorClass?: string;
+  isDisabled?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  children?: React.ReactNode;
+}
+
+const sizeClasses = {
+  [ButtonSize.EXTRA_SMALL]: "w-20 h-6",
+  [ButtonSize.SMALL]: "w-24",
+  [ButtonSize.DEFAULT]: "w-[120px] h-[32px]",
+  [ButtonSize.LARGE]: "w-40 h-[40px]",
+  [ButtonSize.EXTRA_LARGE]: "w-[200px] h-12",
+  [ButtonSize.EXTRA_LARGE_LONG]: "w-[240px] h-[40px]",
+  [ButtonSize.FULL]: "w-full h-[40px]",
 };
 
-const ButtonV3: React.FC<ButtonV3Props> = ({
-  type = "default",
-  color = "yellow",
-  size = "default",
-  textColor = "true-black",
-  disabled,
+const Button: React.FC<ButtonProps> = ({
+  type = ButtonType.DEFAULT,
+  colorClass = "yellow",
+  size = ButtonSize.DEFAULT,
+  textColorClass = "text-true-black",
+  isDisabled,
   onClick,
   children,
 }) => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const sizeClasses = sizes[size] || "";
 
-  const onClickHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (type === "txAction") {
-      if (!isConnected) {
-        openConnectModal?.();
-      } else {
-        onClick?.(e);
-      }
+  const handleOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (type === ButtonType.TX_ACTION && !isConnected) {
+      openConnectModal?.();
     } else {
       onClick?.(e);
     }
   };
 
-  const isDisabled = useMemo<string>(() => {
-    if (disabled) {
-      return "opacity-50 pointer-events-none";
-    }
-
-    return "";
-  }, [disabled]);
+  const disabledClasses = useMemo(() => (isDisabled ? "opacity-50 pointer-events-none" : ""), [isDisabled]);
 
   return (
     <button
-      className={`text-[16px] tracking-tighter rounded-[10px]  font-bold text-${textColor} ${color} ${sizeClasses} ${isDisabled} `}
-      onClick={onClickHandler}
+      className={`text-[16px] tracking-tighter rounded-[10px] font-bold ${textColorClass} ${colorClass} ${sizeClasses[size]} ${disabledClasses}`}
+      onClick={handleOnClick}
+      disabled={isDisabled}
     >
       {children}
     </button>
   );
 };
 
-export default ButtonV3;
+export default Button;

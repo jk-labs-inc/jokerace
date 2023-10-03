@@ -16,7 +16,7 @@ const Header: React.FC = () => {
     return <CreateFlowHeader />;
   }
 
-  return <MainHeader />;
+  return <MainHeader showProfile />;
 };
 
 export default Header;

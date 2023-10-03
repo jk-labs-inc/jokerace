@@ -5,20 +5,20 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC, useEffect, useState } from "react";
-import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import ReactMarkdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
 
-interface LayoutContestPromptProps {
+interface ContestPromptModalProps {
   prompt: string;
   hidePrompt?: boolean;
 }
 
-const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt = false }) => {
+const ContestPromptModal: FC<ContestPromptModalProps> = ({ prompt, hidePrompt = false }) => {
   const { isV3, votesClose } = useContestStore(state => state);
   const [isPromptOpen, setIsPromptOpen] = useState(moment().isBefore(votesClose) && !hidePrompt);
-  const [type, title, promptText] = prompt.split("|");
+  const [contestType, contestTitle, contestPrompt] = prompt.split("|");
 
   useEffect(() => {
     setIsPromptOpen(!hidePrompt);
@@ -28,10 +28,10 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
     <>
       {isV3 ? (
         <div className="flex flex-col gap-4">
-          <div className="flex gap-4 items-center">
-            <p className="text-[24px] text-primary-10 font-bold">{title}</p>
-            <div className="flex items-center px-4 leading-tight py-[1px] bg-neutral-10 rounded-[5px] text-true-black text-[16px] font-bold">
-              {type}
+          <div className="flex gap-1 md:gap-4 items-center">
+            <p className="text-[24px] text-neutral-11 font-bold">{contestTitle}</p>
+            <div className="hidden md:flex items-center px-4 leading-tight py-[1px] bg-neutral-10 rounded-[5px] text-true-black text-[16px] font-bold">
+              {contestType}
             </div>
             <button
               onClick={() => setIsPromptOpen(!isPromptOpen)}
@@ -45,7 +45,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
               <Collapsible isOpen={isPromptOpen}>
                 <div className="border-l border-true-white ">
                   <div className="prose prose-invert pl-5">
-                    <Interweave content={promptText} matchers={[new UrlMatcher("url")]} />
+                    <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} />
                   </div>
                 </div>
               </Collapsible>
@@ -88,7 +88,7 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
                       ),
                     }}
                   >
-                    {prompt}
+                    {contestPrompt}
                   </ReactMarkdown>
                 </div>
               </div>
@@ -100,4 +100,4 @@ const LayoutContestPrompt: FC<LayoutContestPromptProps> = ({ prompt, hidePrompt 
   );
 };
 
-export default LayoutContestPrompt;
+export default ContestPromptModal;

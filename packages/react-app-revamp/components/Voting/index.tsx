@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
 import { chains } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
@@ -125,10 +125,10 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         <div className="mt-4">
           {isCorrectNetwork ? (
             <ButtonV3
-              type="txAction"
-              disabled={voteDisabled}
-              color="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
-              size="large"
+              type={ButtonType.TX_ACTION}
+              isDisabled={voteDisabled}
+              colorClass="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
+              size={ButtonSize.LARGE}
               onClick={() => onVote?.(amount, isUpvote)}
             >
               <span className="w-full text-center">add votes</span>
@@ -136,9 +136,9 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
             </ButtonV3>
           ) : (
             <ButtonV3
-              type="txAction"
-              color="flex items-center justify-center bg-gradient-vote rounded-[40px] w-full"
-              size="large"
+              type={ButtonType.TX_ACTION}
+              colorClass="flex items-center justify-center bg-gradient-vote rounded-[40px] w-full"
+              size={ButtonSize.LARGE}
               onClick={onSwitchNetwork}
             >
               switch network

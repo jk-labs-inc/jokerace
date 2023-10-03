@@ -74,11 +74,11 @@ const DialogModalV3: FC<DialogModalProps> = ({
                           setShowConfirmation(false);
                           setIsOpen?.(true);
                         }}
-                        color="bg-primary-10"
+                        colorClass="bg-primary-10"
                       >
                         Cancel
                       </ButtonV3>
-                      <ButtonV3 onClick={handleClose} color="bg-negative-11">
+                      <ButtonV3 onClick={handleClose} colorClass="bg-negative-11">
                         close
                       </ButtonV3>
                     </div>

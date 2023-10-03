@@ -1,24 +1,15 @@
-/* eslint-disable @next/next/no-img-element */
-/* eslint-disable react/no-children-prop */
 import Collapsible from "@components/UI/Collapsible";
-import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
-import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
-import MarkdownText from "@components/UI/Markdown/components/MarkdownText";
-import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
 import { Proposal } from "@components/_pages/ProposalContent";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import { load } from "cheerio";
-import moment from "moment";
-import { FC, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
-import rehypeSanitize from "rehype-sanitize";
+import moment from "moment";
+import { FC, useState } from "react";
 
-interface LayoutContestProposalProps {
+interface ContestProposalProps {
   proposal: Proposal;
   contestStatus?: ContestStatus;
   collapsible?: boolean;
@@ -42,7 +33,7 @@ const extractImageAndTextContent = (content: string) => {
   return { imgTags, totalContent };
 };
 
-const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, contestStatus, collapsible = true }) => {
+const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, collapsible = true }) => {
   const votesOpen = useContestStore(state => state.votesOpen);
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
   const [isProposalOpen, setIsProposalOpen] = useState(false);
@@ -111,4 +102,4 @@ const LayoutContestProposal: FC<LayoutContestProposalProps> = ({ proposal, conte
   );
 };
 
-export default LayoutContestProposal;
+export default ContestProposal;
