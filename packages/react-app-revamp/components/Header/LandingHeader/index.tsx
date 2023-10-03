@@ -3,7 +3,7 @@ import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_USER } from "@config/routes";
 import { MediaQuery } from "@helpers/mediaQuery";
-import { ConnectButton, useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
+import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
