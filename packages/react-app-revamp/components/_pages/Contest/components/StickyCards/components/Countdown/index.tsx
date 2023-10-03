@@ -60,7 +60,7 @@ const ContestCountdown = () => {
   const displayTime = () => {
     const elements = [];
     const dayLabel = isMobile ? "d " : pluralizeLabel(duration.days, " day ", " days ");
-    const hourLabel = isMobile ? "h " : pluralizeLabel(duration.hours, " hr", " hrs ");
+    const hourLabel = isMobile ? "h " : pluralizeLabel(duration.hours, " hr ", " hrs ");
     const minuteLabel = isMobile ? "m " : pluralizeLabel(duration.minutes, " min ", " mins ");
     const secondLabel = isMobile ? "s " : pluralizeLabel(duration.seconds, " sec ", " secs ");
 
