@@ -38,7 +38,7 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
       {isV3 ? (
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 items-center">
-            <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">{contestTitle}</p>
+            <p className="text-[20px] md:text-[24px] text-neutral-11 font-bold">{contestTitle}</p>
             <div className="hidden md:flex items-center px-4 leading-tight py-[1px] bg-neutral-10 rounded-[5px] text-true-black text-[16px] font-bold">
               {contestType}
             </div>

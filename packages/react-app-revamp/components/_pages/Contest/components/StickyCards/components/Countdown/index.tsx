@@ -1,3 +1,4 @@
+import { pluralize } from "@helpers/pluralize";
 import { useContestStore } from "@hooks/useContest/store";
 import moment from "moment";
 import Image from "next/image";
@@ -11,6 +12,10 @@ const formatDuration = (duration: moment.Duration) => {
   const minutes = Math.floor(duration.asMinutes()) % 60;
   const seconds = Math.floor(duration.asSeconds()) % 60;
   return { days, hours, minutes, seconds };
+};
+
+const pluralizeLabel = (count: number, singular: string, plural: string) => {
+  return count === 1 ? singular : plural;
 };
 
 const ContestCountdown = () => {
@@ -52,18 +57,18 @@ const ContestCountdown = () => {
     };
   }, [memoizedSubmissionsOpen, memoizedVotesOpen, memoizedVotesClose]);
 
-  //@TODO - add pluralization for these fields
   const displayTime = () => {
     const elements = [];
-    const dayLabel = isMobile ? "d " : " days ";
-    const hourLabel = isMobile ? "h " : " hr ";
-    const minuteLabel = isMobile ? "m " : " min ";
-    const secondLabel = isMobile ? "s " : "sec";
+    const dayLabel = isMobile ? "d " : pluralizeLabel(duration.days, " day ", " days ");
+    const hourLabel = isMobile ? "h " : pluralizeLabel(duration.hours, " hr", " hrs ");
+    const minuteLabel = isMobile ? "m " : pluralizeLabel(duration.minutes, " min ", " mins ");
+    const secondLabel = isMobile ? "s " : pluralizeLabel(duration.seconds, " sec ", " secs ");
 
     if (duration.days > 0) elements.push(<ContestCountdownTimeUnit value={duration.days} label={dayLabel} />);
     if (duration.hours > 0) elements.push(<ContestCountdownTimeUnit value={duration.hours} label={hourLabel} />);
     if (duration.minutes > 0) elements.push(<ContestCountdownTimeUnit value={duration.minutes} label={minuteLabel} />);
     elements.push(<ContestCountdownTimeUnit value={duration.seconds} label={secondLabel} />);
+
     return elements;
   };
 

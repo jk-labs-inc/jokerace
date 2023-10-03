@@ -50,7 +50,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { openConnectModal } = useConnectModal();
   let truncatedContent =
-    proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}` : proposal.content;
+    proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const formattedVotingOpen = moment(votingOpen);
   const { isConnected } = useAccount();
   const { asPath } = useRouter();
