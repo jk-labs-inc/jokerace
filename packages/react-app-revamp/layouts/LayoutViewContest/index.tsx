@@ -282,7 +282,10 @@ const LayoutViewContest = (props: any) => {
 
                       {rewards && !isRewardsLoading && (
                         <div className="flex shrink-0 h-8 p-4 items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11">
-                          {rewards?.token.value} $<span className="uppercase mr-1">{rewards?.token.symbol} </span>
+                          {rewards?.token.value} $
+                          <span className="uppercase mr-1 truncate inline-block overflow-hidden max-w-[50px] md:max-w-[100px]">
+                            {rewards?.token.symbol}
+                          </span>
                           {!isMobile ? (
                             <>
                               to {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}
