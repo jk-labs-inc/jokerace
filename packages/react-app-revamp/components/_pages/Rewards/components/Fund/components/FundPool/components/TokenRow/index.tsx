@@ -1,5 +1,6 @@
 import ButtonV3 from "@components/UI/ButtonV3";
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { isTokenShorthand } from "@helpers/isTokenShorthand";
 import { MediaQuery } from "@helpers/mediaQuery";
 import CHAIN_CONFIGS, { TokenConfig } from "@helpers/tokens";
@@ -28,7 +29,7 @@ const formatNativeToken = (nativeToken?: NativeCurrency): TokenConfig | undefine
 
 const CreateRewardsFundPoolTokenRow = () => {
   const { asPath } = useRouter();
-  const chainName = asPath.split("/")[2];
+  const { chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const { setRewards, setValidationError } = useFundRewardsStore(state => state);
   const [rows, setRows] = useState<Reward[]>([{ address: "", amount: "" }]);

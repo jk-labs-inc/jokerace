@@ -6,7 +6,7 @@ import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { chains } from "@config/wagmi";
-import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
+import { extractPathSegments } from "@helpers/extractPath";
 import { goToProposalPage } from "@helpers/routing";
 import {
   loadSubmissionFromLocalStorage,
@@ -14,7 +14,6 @@ import {
   SubmissionCache,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import Image from "@tiptap/extension-image";
@@ -24,9 +23,8 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchNetwork } from "@wagmi/core";
 import moment from "moment";
-import NextImage from "next/image";
 import router, { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 
 interface DialogModalSendProposalProps {
@@ -38,13 +36,11 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { asPath } = useRouter();
+  const { chainName, address: contestId } = extractPathSegments(asPath);
   const { sendProposal, isLoading } = useSubmitProposal();
   const { contestPrompt, votesOpen } = useContestStore(state => state);
-  const chainName = asPath.split("/")[2];
-  const contestId = asPath.split("/")[3];
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
-  const { contestStatus } = useContestStatusStore(state => state);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const [proposal, setProposal] = useState(savedProposal?.content || "");
   const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;

@@ -1,6 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -12,6 +13,7 @@ import { useDeleteProposalStore } from "./store";
 
 export function useDeleteProposal() {
   const { asPath } = useRouter();
+  const { chainName, address } = extractPathSegments(asPath);
   const { chain } = useNetwork();
   const { softDeleteProposals } = useProposalStore(state => state);
   const {
@@ -34,8 +36,6 @@ export function useDeleteProposal() {
     setError("");
     setTransactionData(null);
 
-    const address = asPath.split("/")[3];
-    const chainName = asPath.split("/")[2];
     const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
 
     const abi = await getContestContractVersion(address, chainId);

@@ -2,6 +2,7 @@
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -20,6 +21,7 @@ interface VotingWidgetProps {
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
   const currentUserTotalVotesCast = useUserStore(state => state.currentUserTotalVotesCast);
   const { asPath } = useRouter();
+  const { chainName } = extractPathSegments(asPath);
   const { chain } = useNetwork();
   const isLoading = useCastVotesStore(state => state.isLoading);
   const [isUpvote, setIsUpvote] = useState(true);
@@ -27,7 +29,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
   const voteDisabled = isLoading || amount === 0 || isInvalid;
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const isCorrectNetwork = chainId === chain?.id;
 
   useEffect(() => {

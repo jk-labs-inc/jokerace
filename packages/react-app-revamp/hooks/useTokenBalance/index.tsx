@@ -1,4 +1,5 @@
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { fetchBalance, FetchBalanceResult } from "@wagmi/core";
 import { useRouter } from "next/router";
@@ -8,6 +9,7 @@ import { handleError } from "utils/error";
 export const useTokenBalance = (inputToken: string) => {
   const rewardsStore = useRewardsStore(state => state);
   const { asPath } = useRouter();
+  const { chainName } = extractPathSegments(asPath);
   const [queryTokenBalance, setQueryTokenBalance] = useState<FetchBalanceResult>();
   const [error, setError] = useState("");
 
@@ -20,9 +22,7 @@ export const useTokenBalance = (inputToken: string) => {
 
     const fetchTokenBalance = async () => {
       if (inputToken?.match(/^0x[a-fA-F0-9]{40}$/)) {
-        const chainId = chains.filter(
-          chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
-        )?.[0]?.id;
+        const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
         try {
           const balance = await fetchBalance({
             chainId,
@@ -43,7 +43,7 @@ export const useTokenBalance = (inputToken: string) => {
     };
 
     fetchTokenBalance();
-  }, [asPath, inputToken, rewardsStore?.rewards?.contractAddress]);
+  }, [chainName, inputToken, rewardsStore?.rewards?.contractAddress]);
 
   return { queryTokenBalance, error };
 };

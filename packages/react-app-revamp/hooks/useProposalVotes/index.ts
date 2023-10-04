@@ -3,6 +3,7 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { getEthersProvider } from "@helpers/ethers";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useError } from "@hooks/useError";
@@ -25,12 +26,11 @@ export function useProposalVotes(id: number | string) {
       }
     },
   });
-  const [url] = useState(asPath.split("/"));
+  const { chainName, address } = extractPathSegments(asPath);
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
   );
   const provider = getEthersProvider({ chainId });
-  const [address] = useState(url[3]);
   const { error, handleError } = useError();
   const {
     isListVotersSuccess,

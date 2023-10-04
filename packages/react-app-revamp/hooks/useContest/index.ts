@@ -2,6 +2,7 @@ import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -18,7 +19,6 @@ import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/con
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getV3Contracts } from "./v3/contracts";
@@ -39,13 +39,15 @@ interface ContractConfig {
 }
 
 export function useContest() {
-  const { asPath, ...router } = useRouter();
-  const { chain } = useNetwork();
+  const router = useRouter();
+  const { asPath } = router;
+  const { chainName: chainFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
+  const [chainName, setChainName] = useState(chainFromUrl);
+  const [address, setAddress] = useState(addressFromUrl);
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainFromUrl)?.[0]?.id,
   );
-  const [address, setAddress] = useState(asPath.split("/")[3]);
-  const [chainName, setChainName] = useState(asPath.split("/")[2]);
+
   const {
     setError,
     isLoading,
