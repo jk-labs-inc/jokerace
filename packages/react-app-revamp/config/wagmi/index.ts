@@ -1,5 +1,5 @@
 import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { okxWallet, tahoWallet, argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
+import { metaMaskWallet, walletConnectWallet, rainbowWallet, okxWallet, tahoWallet, coinbaseWallet, argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig, mainnet } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
@@ -132,19 +132,16 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(t
 
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
 
-const { wallets } = getDefaultWallets({
-  appName: "jokerace",
-  chains,
-  projectId: WALLETCONECT_PROJECT_ID,
-});
-
 const connectors = connectorsForWallets([
-  ...wallets,
   {
-    groupName: "Other",
+    groupName: "Wallets",
     wallets: [
+      metaMaskWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      walletConnectWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      rainbowWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       okxWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       tahoWallet({ chains }),
+      coinbaseWallet({ chains, appName: "jokerace" }),
       argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       ledgerWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
