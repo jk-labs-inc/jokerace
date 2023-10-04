@@ -21,7 +21,6 @@ const ContestParameters = () => {
   const {
     contestMaxNumberSubmissionsPerUser,
     currentUserQualifiedToSubmit,
-    currentUserQualifiedToVote,
     currentUserAvailableVotesAmount,
     currentUserTotalVotesAmount,
   } = useUserStore(state => state);
@@ -110,7 +109,7 @@ const ContestParameters = () => {
             contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {contestMaxProposalCount.toString()}{" "}
             submissions
           </li>
-          <li className="list-disc">{address ? qualifyToSubmitMessage : walletNotConnected}</li>
+          <li className="list-disc">{address || !submitters.length ? qualifyToSubmitMessage : walletNotConnected}</li>
           {submitters.length ? (
             <li className="list-disc">
               see full allowlist{" "}
