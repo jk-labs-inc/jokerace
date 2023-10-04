@@ -14,6 +14,7 @@ import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDepl
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTESTS } from "@config/routes";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
@@ -36,7 +37,7 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 
 const MAX_MS_TIMEOUT: number = 100000000;
@@ -50,10 +51,9 @@ const LayoutViewContest = (props: any) => {
       }
     },
   });
-  const { chain } = useNetwork();
+  const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
   const showRewards = useShowRewardsStore(state => state.showRewards);
-  const { isLoading, address, fetchContestInfo, isSuccess, error, retry, chainId, chainName, setChainId } =
-    useContest();
+  const { isLoading, address, fetchContestInfo, isSuccess, error, chainId, chainName } = useContest();
 
   const {
     submissionsOpen,
@@ -67,7 +67,6 @@ const LayoutViewContest = (props: any) => {
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
-
   const { contestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
@@ -158,7 +157,7 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     fetchContestInfo();
-  }, [asPath.split("/")[2], asPath.split("/")[3]]);
+  }, [chainNameFromUrl, addressFromUrl]);
 
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
@@ -282,7 +281,10 @@ const LayoutViewContest = (props: any) => {
 
                       {rewards && !isRewardsLoading && (
                         <div className="flex shrink-0 h-8 p-4 items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11">
-                          {rewards?.token.value} $<span className="uppercase mr-1">{rewards?.token.symbol} </span>
+                          {rewards?.token.value} $
+                          <span className="uppercase mr-1 truncate inline-block overflow-hidden max-w-[50px] md:max-w-[100px]">
+                            {rewards?.token.symbol}
+                          </span>
                           {!isMobile ? (
                             <>
                               to {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}

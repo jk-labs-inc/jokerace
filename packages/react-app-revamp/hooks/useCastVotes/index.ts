@@ -1,6 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
@@ -39,7 +40,7 @@ export function useCastVotes() {
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const { error: errorMessage, handleError } = useError();
-  const [contestId, chainName] = [asPath.split("/")[3], asPath.split("/")[2]];
+  const { address: contestAddress, chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.id;
 
@@ -49,7 +50,7 @@ export function useCastVotes() {
     setIsSuccess(false);
     setError("");
     setTransactionData(null);
-    const { abi } = await getContestContractVersion(contestId, chainId);
+    const { abi } = await getContestContractVersion(contestAddress, chainId);
 
     try {
       const proofs = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
@@ -58,7 +59,7 @@ export function useCastVotes() {
 
       if (proofs) {
         txRequest = await prepareWriteContract({
-          address: contestId as `0x${string}`,
+          address: contestAddress as `0x${string}`,
           //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVote",
@@ -72,7 +73,7 @@ export function useCastVotes() {
         });
       } else {
         txRequest = await prepareWriteContract({
-          address: contestId as `0x${string}`,
+          address: contestAddress as `0x${string}`,
           //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
@@ -96,7 +97,7 @@ export function useCastVotes() {
       // We need this to update the votes either if there is more than 2 hours
       if (!canUpdateVotesInRealTime) {
         const voteResponse = (await readContract({
-          address: asPath.split("/")[3] as `0x${string}`,
+          address: contestAddress as `0x${string}`,
           abi: DeployedContestContract.abi,
           functionName: "proposalVotes",
           args: [pickedProposal],
@@ -124,7 +125,7 @@ export function useCastVotes() {
       toastSuccess("your votes have been deployed successfully");
 
       addUserActionForAnalytics({
-        contest_address: contestId,
+        contest_address: contestAddress,
         user_address: userAddress,
         network_name: chainName,
         proposal_id: pickedProposal !== null ? pickedProposal : undefined,
