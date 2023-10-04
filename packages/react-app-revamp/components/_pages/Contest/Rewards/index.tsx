@@ -10,6 +10,7 @@ import RewardsDistributionTable from "@components/_pages/RewardsDistributionTabl
 import { RewardsTableShare } from "@components/_pages/RewardsTable";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { DEFAULT_SUBMISSIONS } from "@hooks/useDeployContest";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
@@ -20,6 +21,9 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
 const ContestRewards = () => {
+  const { asPath } = useRouter();
+  const { chainName } = extractPathSegments(asPath);
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const { isSuccess, isLoading, supportsRewardsModule, contestAuthorEthereumAddress, contestMaxProposalCount } =
     useContestStore(state => state);
   const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
@@ -36,7 +40,6 @@ const ContestRewards = () => {
       }
     },
   });
-  const { asPath } = useRouter();
   const creator = contestAuthorEthereumAddress == currentAccount.address;
 
   useEffect(() => {
@@ -120,6 +123,7 @@ const ContestRewards = () => {
                       {rewardsStore?.rewards?.contractAddress}
                     </a>
                     <p className="text-[12px] font-bold text-neutral-11">
+                      .
                       {creator ? (
                         <>
                           you can withdraw funds at any time{" "}
@@ -140,11 +144,7 @@ const ContestRewards = () => {
                   {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
                     <RewardsTableShare
                       key={`rank-${`${payee}`}`}
-                      chainId={
-                        chains.filter(
-                          chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2],
-                        )?.[0]?.id
-                      }
+                      chainId={chainId}
                       payee={payee}
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                       abiRewardsModule={rewardsStore.rewards.abi}
@@ -193,10 +193,7 @@ const ContestRewards = () => {
                 {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
                   <RewardsDistributionTable
                     key={index}
-                    chainId={
-                      chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
-                        ?.id
-                    }
+                    chainId={chainId}
                     payee={payee}
                     erc20Tokens={rewardsStore.rewards.balance}
                     contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
@@ -212,10 +209,7 @@ const ContestRewards = () => {
                 {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
                   <RewardsDistributionTable
                     key={index}
-                    chainId={
-                      chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]
-                        ?.id
-                    }
+                    chainId={chainId}
                     payee={payee}
                     erc20Tokens={rewardsStore.rewards.balance}
                     contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}

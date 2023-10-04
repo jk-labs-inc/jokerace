@@ -1,4 +1,5 @@
 import { toastSuccess } from "@components/UI/Toast";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
@@ -28,10 +29,10 @@ export const useDistributeRewards = (
   tokenAddress?: string,
 ) => {
   const { asPath } = useRouter();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const { setIsLoading } = useDistributeRewardStore(state => state);
   const tokenDataRes = useToken({ address: tokenAddress as `0x${string}`, chainId });
   const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;
-  const [chainName, contestAddress] = asPath.split("/").slice(2, 4);
   const { handleError } = useError();
 
   const transform = (data: unknown[]) => {

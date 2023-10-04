@@ -1,5 +1,6 @@
 import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { useError } from "@hooks/useError";
@@ -11,8 +12,7 @@ import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
-  const contestAddress = asPath.split("/")[3];
-  const contestChainName = asPath.split("/")[2];
+  const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath);
   const { chain } = useNetwork();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();

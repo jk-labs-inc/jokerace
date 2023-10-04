@@ -1,6 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
 import { useError } from "@hooks/useError";
@@ -25,13 +26,13 @@ const safeMetadata = {
 };
 
 export function useSubmitProposal() {
-  const { asPath, ...router } = useRouter();
+  const { asPath } = useRouter();
+  const { chainName, address } = extractPathSegments(asPath);
   const { address: userAddress } = useAccount();
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
-  const [chainName, address] = asPath.split("/").slice(2, 4);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.id;
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =

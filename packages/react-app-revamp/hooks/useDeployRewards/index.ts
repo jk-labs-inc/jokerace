@@ -1,6 +1,7 @@
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { useEthersSigner } from "@helpers/ethers";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
@@ -11,12 +12,12 @@ import { useDeployRewardsStore } from "./store";
 
 export function useDeployRewardsPool() {
   const { asPath } = useRouter();
+  const { address: contestAddress } = extractPathSegments(asPath);
   const stateContestDeployment = useContractFactoryStore(state => state);
   const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
   const { ranks, shares, setDeployRewardsData, setIsLoading, setError, setIsSuccess, setDisplayCreatePool } =
     useDeployRewardsStore(state => state);
   const { error, handleError } = useError();
-  const contestAddress = asPath.split("/")[3];
   const signer = useEthersSigner();
 
   function deployRewardsPool() {

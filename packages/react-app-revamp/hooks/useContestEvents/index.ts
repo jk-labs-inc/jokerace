@@ -1,6 +1,7 @@
 import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { getEthersProvider } from "@helpers/ethers";
+import { extractPathSegments } from "@helpers/extractPath";
 import isUrlToImage from "@helpers/isUrlToImage";
 import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
@@ -13,7 +14,8 @@ import { useEffect, useRef, useState } from "react";
 
 export function useContestEvents() {
   const { asPath } = useRouter();
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const { address: contestAddress, chainName } = extractPathSegments(asPath);
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const provider = getEthersProvider({ chainId });
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { fetchTotalVotesCast } = useContest();
@@ -30,7 +32,7 @@ export function useContestEvents() {
     try {
       const proposalId = args[0].args.proposalId;
       const votesRaw = (await readContract({
-        address: asPath.split("/")[3] as `0x${string}`,
+        address: contestAddress as `0x${string}`,
         abi: DeployedContestContract.abi,
         functionName: "proposalVotes",
         args: [proposalId],
@@ -50,7 +52,7 @@ export function useContestEvents() {
         });
       } else {
         const proposal = (await readContract({
-          address: asPath.split("/")[3] as `0x${string}`,
+          address: contestAddress as `0x${string}`,
           abi: DeployedContestContract.abi,
           functionName: "getProposal",
           args: [proposalId],
@@ -96,7 +98,7 @@ export function useContestEvents() {
       if (ContestStatus.VotingOpen === contestStatus && canUpdateVotesInRealTime) {
         watchContractEvent(
           {
-            address: asPath.split("/")[3] as `0x${string}`,
+            address: contestAddress as `0x${string}`,
             abi: DeployedContestContract.abi,
             eventName: "VoteCast",
           },

@@ -1,15 +1,12 @@
-import { toastError } from "@components/UI/Toast";
 import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { useContestStore } from "@hooks/useContest/store";
-import { useError } from "@hooks/useError";
-import { useProposalStore } from "@hooks/useProposal/store";
 import { getAccount, readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useUserStore } from "./store";
 
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -25,7 +22,7 @@ export function useUser() {
     currentUserTotalVotesAmount,
   } = useUserStore(state => state);
   const { asPath } = useRouter();
-  const [chainName, address] = asPath.split("/").slice(2, 4);
+  const { chainName, address } = extractPathSegments(asPath);
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName)?.[0]?.id;
 

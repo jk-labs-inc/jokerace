@@ -1,5 +1,6 @@
 import Loader from "@components/UI/Loader";
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { ordinalSuffix } from "@helpers/ordinalSuffix";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
@@ -18,10 +19,11 @@ interface RewardsTableShareProps {
 export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares } = props;
   const { asPath } = useRouter();
+  const { chainName } = extractPathSegments(asPath);
   const { data, isError, isLoading } = useContractRead({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
-    chainId: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id,
+    chainId: chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
     functionName: "shares",
     args: [Number(payee)],
   }) as any;

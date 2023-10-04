@@ -1,4 +1,5 @@
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
 import { loadFileFromBucket } from "lib/buckets";
@@ -14,12 +15,11 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 
 export function useGenerateProof() {
   const { asPath } = useRouter();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const account = useAccount();
-  const [url] = useState(asPath.split("/"));
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === url[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
   );
-  const contestAddress = url[3];
 
   async function getContractConfig() {
     const { abi } = await getContestContractVersion(contestAddress, chainId);
