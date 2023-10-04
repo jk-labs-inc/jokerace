@@ -1,5 +1,5 @@
 import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
+import { okxWallet, argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig, mainnet } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
@@ -143,6 +143,7 @@ const connectors = connectorsForWallets([
   {
     groupName: "Other",
     wallets: [
+      okxWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       ledgerWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
