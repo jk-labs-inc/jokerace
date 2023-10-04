@@ -87,38 +87,40 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
         <ContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
-        {contestStatus === ContestStatus.VotingOpen && (
-          <div className="flex flex-col gap-8">
-            <p className="text-neutral-11 text-[24px] font-bold">vote</p>
-            {isConnected ? (
-              currentUserAvailableVotesAmount > 0 ? (
-                <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onSubmitCastVotes} />
-              ) : outOfVotes ? (
-                <p className="text-[16px] text-neutral-11">
-                  looks like you’ve used up all your votes this contest <br />
-                  feel free to try connecting another wallet to see if it has more votes!
-                </p>
+        <div className="flex flex-col gap-8">
+          {contestStatus === ContestStatus.VotingOpen && (
+            <>
+              <p className="text-neutral-11 text-[24px] font-bold">vote</p>
+              {isConnected ? (
+                currentUserAvailableVotesAmount > 0 ? (
+                  <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onSubmitCastVotes} />
+                ) : outOfVotes ? (
+                  <p className="text-[16px] text-neutral-11">
+                    looks like you’ve used up all your votes this contest <br />
+                    feel free to try connecting another wallet to see if it has more votes!
+                  </p>
+                ) : (
+                  <p className="text-[16px] text-neutral-11">
+                    unfortunately your wallet didn’t qualify to vote in this contest <br />
+                    feel free to try connecting another wallet!
+                  </p>
+                )
               ) : (
-                <p className="text-[16px] text-neutral-11">
-                  unfortunately your wallet didn’t qualify to vote in this contest <br />
-                  feel free to try connecting another wallet!
+                <p className="text-[16px] font-bold text-neutral-11 mt-2">
+                  <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
+                    connect wallet
+                  </span>{" "}
+                  to see if you qualify
                 </p>
-              )
-            ) : (
-              <p className="text-[16px] font-bold text-neutral-11 mt-2">
-                <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
-                  connect wallet
-                </span>{" "}
-                to see if you qualify
-              </p>
-            )}
-            {proposal.votes > 0 && (
-              <ProposalVotesWrapper>
-                <ListProposalVotes proposalId={proposalId} />
-              </ProposalVotesWrapper>
-            )}
-          </div>
-        )}
+              )}
+            </>
+          )}
+          {proposal.votes > 0 && (
+            <ProposalVotesWrapper>
+              <ListProposalVotes proposalId={proposalId} />
+            </ProposalVotesWrapper>
+          )}
+        </div>
       </div>
     </DialogModalV3>
   );

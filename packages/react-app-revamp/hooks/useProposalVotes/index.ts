@@ -35,6 +35,7 @@ export function useProposalVotes(id: number | string) {
   const {
     isListVotersSuccess,
     isListVotersError,
+    isPageVotesLoading,
     isListVotersLoading,
     setIsListVotersLoading,
     setIsListVotersError,
@@ -53,6 +54,7 @@ export function useProposalVotes(id: number | string) {
    * Fetch all votes of a given proposals (amount of votes, + detailed list of voters and the amount of votes they casted)
    */
   async function fetchProposalVotes() {
+    setIsPageVotesLoading(true);
     setIsListVotersLoading(true);
 
     const { abi } = await getContestContractVersion(address, chainId);
@@ -108,14 +110,14 @@ export function useProposalVotes(id: number | string) {
   }
 
   /**
-   * Fetch the data of each vote in page Xz
+   * Fetch the data of each vote in page X
    * @param pageIndex - index of the page of votes to fetch
    * @param slice - Array of the addresses that have cast a vote for a given proposal
    * @param totalPagesPaginationVotes - total of pages in the pagination
    */
   async function fetchVotesPage(pageIndex: number, slice: Array<any>, totalPagesPaginationVotes: number) {
-    setCurrentPagePaginationVotes(pageIndex);
     setIsPageVotesLoading(true);
+    setCurrentPagePaginationVotes(pageIndex);
     setIsPageVotesError("");
     try {
       await Promise.all(
@@ -192,34 +194,12 @@ export function useProposalVotes(id: number | string) {
   useEffect(() => {
     if (account?.connector) {
       account?.connector.on("change", data => {
-        //@ts-ignore
+        if (!data.chain) return;
+
         setChainId(data.chain.id);
       });
     }
   }, [account?.connector]);
-
-  // TODO: will monitor this for now, we should prolly use this event listener as well to update list live when a vote is cast, but not until i check if RPC calls are all good.
-  // useEffect(() => {
-  //   if (contestStatus === ContestStatus.VotingClosed) {
-  //     const contract = getContract({
-  //       addressOrName: asPath.split("/")[3],
-  //       contractInterface: DeployedContestContract.abi,
-  //     });
-  //     contract.removeAllListeners();
-  //   } else if (contestStatus === ContestStatus.VotingOpen) {
-  //     // Only watch VoteCast events when voting is open and we are <=1h before end of voting
-  //     watchContractEvent(
-  //       {
-  //         addressOrName: asPath.split("/")[3],
-  //         contractInterface: DeployedContestContract.abi,
-  //       },
-  //       "VoteCast",
-  //       args => {
-  //         fetchVotesOfAddress(args[0]);
-  //       },
-  //     );
-  //   }
-  // }, [contestStatus]);
 
   useEffect(() => {
     const fetchProposalVotesAndListenForEvents = async () => {
@@ -244,6 +224,7 @@ export function useProposalVotes(id: number | string) {
 
   return {
     isLoading: isListVotersLoading,
+    isPageVotesLoading: isPageVotesLoading,
     retry: fetchProposalVotes,
     isSuccess: isListVotersSuccess,
     isError: isListVotersError,
