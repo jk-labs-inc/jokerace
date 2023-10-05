@@ -36,6 +36,13 @@ abstract contract GovernorSorting {
      */
     function getNumProposalsWithThisManyForVotes(uint256 forVotes) public view virtual returns (uint256 count);
 
+    /**
+     * @dev Get the sortedRanks array.
+     */
+    function getSortedRanks() public view virtual returns (uint256[] memory sortedRanksArray) {
+        return sortedRanks;
+    }
+
     // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account.
     // a rank has to have > 0 votes to be considered valid.
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
@@ -113,9 +120,9 @@ abstract contract GovernorSorting {
 
         // DO ANY SHIFTING? - not if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
         if (!(checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue))) {
-            // DO SHIFTING FROM (insertingIndex, smallestIdxMemVar]?
+            // DO SHIFTING FROM (insertingIndex, smallestIdxMemVar] (exclusive insertingIndex, inclusive smallestIdxMemVar)?
             //      - if insertingIndex == smallestIdxMemVar, then there's nothing after it to shift down.
-            //      - also if this is the case then don't need to worry about oldValue if this is the case bc if insertingIndex == smallestIdxMemVar and it's not at insertingIndex, then it's not in the array.
+            //      - also if this is the case then don't need to worry about oldValue bc if insertingIndex == smallestIdxMemVar and oldValue's not at insertingIndex, then it's not in the array.
             if (!(insertingIndex == smallestIdxMemVar)) {
                 // SHIFT UNTIL/IF YOU FIND OLD VALUE IN THE RANGE (insertingIndex, smallestIdxMemVar] - go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
                 for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar + 1; index++) {
@@ -141,7 +148,6 @@ abstract contract GovernorSorting {
         sortedRanks[insertingIndex] = newValue;
     }
 
-    // TODO: lay out all of the cases with this/its inputs + constraints (old and new value will never be the same for example)
     // keep things sorted as we go.
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas.
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
@@ -162,7 +168,7 @@ abstract contract GovernorSorting {
         }
 
         // SMALLER THAN CURRENT SMALLEST NON-ZERO VAL? - is it after smallestNonZeroSortedRanksValueIdx?
-        // this also means that the old value was 0 (or less than the lowest value if smallestNonZeroSortedRanksValueIdx == RANK_LIMIT - 1) that so all good there.
+        // this also means that the old value was 0 (or less than the lowest value if smallestNonZeroSortedRanksValueIdx == RANK_LIMIT - 1/the array is full), so all good with regards to oldValue.
         if (newValue < sortedRanksMemVar[smallestIdxMemVar]) {
             if (smallestIdxMemVar + 1 == RANK_LIMIT) {
                 // if we've reached the size limit of sortedRanks, then we're done here
