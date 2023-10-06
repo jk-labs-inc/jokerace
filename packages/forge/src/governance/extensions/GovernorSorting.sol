@@ -10,7 +10,8 @@ abstract contract GovernorSorting {
     //      - RANK_LIMIT
     //      - Woulda Beens (WBs)
     //          The number of would-be ranked proposals (at the end of the contest if rankings were counted
-    //          without taking out deleted proposals) within the limit that are deleted that are not tied.
+    //          without taking out deleted proposals) within the limit that are deleted and do not have other, non-deleted proposals
+    //          with the same amounts of votes/that are tied with them.
     //      - To Tied (TTs)
     //          The number of times a proposal is voted into a ranking to tie it or a ranking that is already tied
     //          from a ranking that was in the tracked rankings at the time that vote was cast.
@@ -23,12 +24,12 @@ abstract contract GovernorSorting {
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
     // TODO: add option to disable rank tracking for gas savings
-    // TODO: make configurable + test ranges
+    // TODO: make RANK_LIMIT configurable + test ranges
     // TODO: flesh out tests a ton for different edge cases w oldValue, smallestNonZeroSortedRanksValueIdx, and RANK_LIMIT overlaps
     uint256 public constant RANK_LIMIT = 250; // cannot be 0
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
-    uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts
+    uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts, has the constraint of no duplicate values except for 0 bc it's instantiated with 0 values.
     uint256 public smallestNonZeroSortedRanksValueIdx = 0; // the index of the smallest non-zero value in sortedRanks, useful to finding where sortedRanks has been populated to
 
     /**
@@ -161,7 +162,7 @@ abstract contract GovernorSorting {
         }
 
         // TIED?
-        if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
+        if (getNumProposalsWithThisManyForVotes(newValue) >= 1) {
             // we don't need to insert anything, so we just need to treat these cases of oldValues that get
             // left behind like deletes (these are the TTs mentioned at the top) because of the array rule.
             return;
