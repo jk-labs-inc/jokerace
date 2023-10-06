@@ -162,7 +162,7 @@ abstract contract GovernorSorting {
         }
 
         // TIED?
-        if (getNumProposalsWithThisManyForVotes(newValue) >= 1) {
+        if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
             // we don't need to insert anything, so we just need to treat these cases of oldValues that get
             // left behind like deletes (these are the TTs mentioned at the top) because of the array rule.
             return;
