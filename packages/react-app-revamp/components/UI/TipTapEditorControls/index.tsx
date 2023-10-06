@@ -1,48 +1,33 @@
 import {
   IconEditorAnchor,
   IconEditorBold,
-  IconEditorClearFormat,
-  IconEditorCode,
-  IconEditorCodeBlock,
-  IconEditorH1,
-  IconEditorH2,
-  IconEditorH3,
-  IconEditorH4,
-  IconEditorH5,
   IconEditorImage,
   IconEditorItalic,
   IconEditorListOrdered,
   IconEditorListUnordered,
-  IconEditorParagraph,
   IconEditorQuote,
-  IconEditorRedo,
   IconEditorRemoveAnchor,
-  IconEditorStrike,
-  IconEditorUndo,
 } from "@components/UI/Icons";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import { Editor } from "@tiptap/react";
-import { uploadToImgur } from "lib/image/imgur";
 import { useRef } from "react";
+import { useMediaQuery } from "react-responsive";
+import TipTapEditorControlsTextDropdown from "./components/Dropdown";
 import styles from "./styles.module.css";
-
-const Separator = () => {
-  return (
-    <div className="flex items-center" aria-hidden="true">
-      <div className="h-3/4 border-is-2 border-solid border-true-white border-opacity-10" />
-    </div>
-  );
-};
 
 interface TipTapEditorControlsProps {
   editor: Editor | null;
   className?: string;
 }
 
+type Level = 1 | 2 | 3 | 4 | 5 | 6;
+type ExtendedLevel = 0 | Level;
+
 export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { uploadImage } = useUploadImageStore(state => state);
   const { editor } = props;
+  const isTabletOrDesktop = useMediaQuery({ minWidth: "768px" });
 
   if (!editor) {
     return null;
@@ -63,8 +48,18 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
     }
   };
 
+  const handleHeadingChange = (selectedValue: string) => {
+    const level = parseInt(selectedValue, 10) as ExtendedLevel;
+    if (level === 0) {
+      editor.chain().focus().setParagraph().run();
+    } else {
+      editor.chain().focus().toggleHeading({ level }).run();
+    }
+  };
+
   return (
-    <div className={`inline-flex flex-wrap space-i-1 ${props.className}`}>
+    <div className={`inline-flex flex-wrap gap-2 ${props.className}`}>
+      <TipTapEditorControlsTextDropdown onSelectionChange={handleHeadingChange} />
       <button
         type="button"
         onClick={() => editor.chain().focus().toggleBold().run()}
@@ -80,71 +75,6 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       >
         <IconEditorItalic />
         <span className="sr-only">Toggle italic text formatting</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleStrike().run()}
-        className={`${styles.control} ${editor.isActive("strike") ? styles["control--active"] : ""}`}
-      >
-        <IconEditorStrike />
-        <span className="sr-only">Toggle striked text formatting</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleCode().run()}
-        className={`${styles.control} ${editor.isActive("code") ? styles["control--active"] : ""}`}
-      >
-        <IconEditorCode />
-        <span className="sr-only">Toggle code text formatting</span>
-      </button>
-      <Separator />
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().setParagraph().run()}
-        className={`${styles.control} ${editor.isActive("paragraph") ? styles["control--active"] : ""}`}
-      >
-        <IconEditorParagraph />
-        <span className="sr-only">Toggle paragraph formatting</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={`${styles.control} ${editor.isActive("heading", { level: 1 }) ? styles["control--active"] : ""}`}
-      >
-        <IconEditorH1 />
-        <span className="sr-only">Toggle heading 1 text formatting</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={`${styles.control} ${editor.isActive("heading", { level: 2 }) ? styles["control--active"] : ""}`}
-      >
-        <IconEditorH2 />
-        <span className="sr-only">Toggle heading 2 text formatting</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={`${styles.control} ${editor.isActive("heading", { level: 3 }) ? styles["control--active"] : ""}`}
-      >
-        <IconEditorH3 />
-        <span className="sr-only">Toggle heading 3 text formatting</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}
-        className={`${styles.control} ${editor.isActive("heading", { level: 4 }) ? styles["control--active"] : ""}`}
-      >
-        <IconEditorH4 />
-        <span className="sr-only">Toggle heading 4 text formatting</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleHeading({ level: 5 }).run()}
-        className={`${styles.control} ${editor.isActive("heading", { level: 5 }) ? styles["control--active"] : ""}`}
-      >
-        <IconEditorH5 />
-        <span className="sr-only">Toggle heading 5 text formatting</span>
       </button>
       <button
         type="button"
@@ -172,19 +102,6 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
       </button>
 
       <button
-        className={`${styles.control} disabled:opacity-50`}
-        disabled={!editor.isActive("link")}
-        onClick={() => {
-          editor.commands.unsetLink();
-        }}
-        title="Remove link"
-        type="button"
-      >
-        <IconEditorRemoveAnchor />
-        <span className="sr-only">Remove link from selected text</span>
-      </button>
-
-      <button
         type="button"
         onClick={() => editor.chain().focus().toggleBulletList().run()}
         className={`${styles.control} ${editor.isActive("bulletList") ? styles["control--active"] : ""}`}
@@ -200,22 +117,17 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
         <IconEditorListOrdered />
         <span className="sr-only">Toggle ordered list text formatting</span>
       </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        className={`${styles.control} ${editor.isActive("codeBlock") ? styles["control--active"] : ""}`}
-      >
-        <IconEditorCodeBlock />
-        <span className="sr-only">Toggle code block text formatting</span>
-      </button>
-      <button
-        type="button"
-        onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={`${styles.control} ${editor.isActive("blockquote") ? styles["control--active"] : ""}`}
-      >
-        <IconEditorQuote />
-        <span className="sr-only">Toggle blockquote text formatting</span>
-      </button>
+      {isTabletOrDesktop && (
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={`${styles.control} ${editor.isActive("blockquote") ? styles["control--active"] : ""}`}
+        >
+          <IconEditorQuote />
+          <span className="sr-only">Toggle blockquote text formatting</span>
+        </button>
+      )}
+
       <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
 
       <button
@@ -226,28 +138,16 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
         <IconEditorImage />
         <span className="sr-only">Add an image</span>
       </button>
-      <Separator />
-      <button
-        type="button"
-        className={`${styles.text} ${styles.control}`}
-        onClick={() => editor.chain().focus().setHorizontalRule().run()}
-      >
-        <span className="text-2xs">Divider</span>
-        <span className="sr-only">Add a divider</span>
-      </button>
-      <Separator />
-      <button type="button" className={styles.control} onClick={() => editor.chain().focus().undo().run()}>
-        <IconEditorUndo />
-        <span className="sr-only">Undo previous action</span>
-      </button>
-      <button type="button" className={styles.control} onClick={() => editor.chain().focus().redo().run()}>
-        <IconEditorRedo />
-        <span className="sr-only">Redo previous action</span>
-      </button>
-      <button type="button" className={styles.control} onClick={() => editor.chain().focus().clearNodes().run()}>
-        <IconEditorClearFormat />
-        <span className="sr-only">Clear all formatting in seleted text</span>
-      </button>
+      {isTabletOrDesktop && (
+        <button
+          type="button"
+          className={`${styles.text} ${styles.control}`}
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        >
+          <span className="text-2xs">Divider</span>
+          <span className="sr-only">Add a divider</span>
+        </button>
+      )}
     </div>
   );
 };

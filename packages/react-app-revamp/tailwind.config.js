@@ -92,6 +92,10 @@ module.exports = {
       "7xl": clamp(8),
       "8xl": clamp(9),
       "9xl": clamp(10),
+      "custom-h1": clamp(3),
+      "custom-h2": clamp(1.5),
+      "custom-h3": clamp(1.2),
+      "custom-h4": clamp(0.5),
     },
     colors: {
       transparent: "transparent",
