@@ -155,6 +155,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       className="w-full xl:w-[1110px] 3xl:w-[1300px]"
+      isProposingOnMobile={isMobile}
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />

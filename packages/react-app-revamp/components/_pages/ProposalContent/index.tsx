@@ -159,7 +159,14 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
           <>
             <span className="text-neutral-9">&#8226;</span>{" "}
             <p className="text-[16px] font-bold text-neutral-9">
-              {ordinalize(rank).label} place {isTied ? "(tied)" : ""}
+              {isMobile ? (
+                <>
+                  {rank}
+                  <sup>{ordinalize(rank).suffix}</sup> place {isTied ? "(tied)" : ""}
+                </>
+              ) : (
+                `${ordinalize(rank).label} place ${isTied ? "(tied)" : ""}`
+              )}
             </p>
           </>
         )}

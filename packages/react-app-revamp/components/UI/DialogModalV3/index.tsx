@@ -1,19 +1,16 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Dialog } from "@headlessui/react";
 import Image from "next/image";
-import { FC, useCallback, useState } from "react";
-import ButtonV3 from "../ButtonV3";
+import { FC, useCallback } from "react";
 
 interface DialogModalProps {
   isOpen: boolean;
   title: string;
   children: React.ReactNode;
-  disableClose?: boolean;
+  className?: string;
+  isProposingOnMobile?: boolean;
   setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
-  className?: string;
-  doubleCheckClose?: boolean;
-  doubleCheckMessage?: string;
 }
 
 const DialogModalV3: FC<DialogModalProps> = ({
@@ -23,27 +20,14 @@ const DialogModalV3: FC<DialogModalProps> = ({
   children,
   onClose,
   className,
-  disableClose,
-  doubleCheckClose = false,
-  doubleCheckMessage,
+  isProposingOnMobile,
 }) => {
-  const [showConfirmation, setShowConfirmation] = useState(false);
-
   const handleClose = useCallback(() => {
-    if (doubleCheckClose && !showConfirmation) {
-      setShowConfirmation(true);
-    } else {
-      if (disableClose) {
-        return;
-      }
-
-      setIsOpen?.(false);
-      if (onClose) {
-        onClose();
-      }
-      setShowConfirmation(false);
+    setIsOpen?.(false);
+    if (onClose) {
+      onClose();
     }
-  }, [setIsOpen, onClose, doubleCheckClose, showConfirmation, disableClose]);
+  }, [setIsOpen, onClose]);
 
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
@@ -58,43 +42,24 @@ const DialogModalV3: FC<DialogModalProps> = ({
               <button
                 onClick={handleClose}
                 title="Close this"
-                className="hidden md:flex absolute z-10 top-0 right-[30px] inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11"
+                className={`${
+                  isProposingOnMobile ? "hidden" : "flex"
+                }  absolute z-10 top-0 right-[30px] inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11`}
               >
                 <Image src="/modal/modal_close.svg" width={39} height={33} alt="close" />
                 <span className="sr-only">Close modal</span>
               </button>
-              <button
-                onClick={handleClose}
-                title="Close this"
-                className="flex md:hidden absolute z-10 text-[16px] text-left font-bold top-0 right-0 inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11"
-              >
-                <p>cancel</p>
-              </button>
-              {showConfirmation && (
-                <div className="w-full h-full flex gap-4 items-start justify-start bg-white bg-opacity-80 pl-[100px] animate-swingInLeft">
-                  <div className="flex flex-col gap-2 p-4 bg-white rounded shadow">
-                    <p className="text-neutral-11">Are you sure you want to close?</p>
-                    <p className="text-neutral-11">{doubleCheckMessage}</p>
-                    <div className="flex gap-4">
-                      <ButtonV3
-                        onClick={() => {
-                          setShowConfirmation(false);
-                          setIsOpen?.(true);
-                        }}
-                        colorClass="bg-primary-10"
-                      >
-                        Cancel
-                      </ButtonV3>
-                      <ButtonV3 onClick={handleClose} colorClass="bg-negative-11">
-                        close
-                      </ButtonV3>
-                    </div>
-                  </div>
-                </div>
+              {isProposingOnMobile && (
+                <button
+                  onClick={handleClose}
+                  title="Close this"
+                  className="flex md:hidden absolute z-10 text-[16px] text-left font-bold top-0 right-0 inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11"
+                >
+                  <p>cancel</p>
+                </button>
               )}
-              <div className={`pt-20 2xs:pt-3 pie-3 ${showConfirmation ? "opacity-20" : "opacity-100"}`}>
-                {children}
-              </div>
+
+              <div className="pt-20 2xs:pt-3 pie-3">{children}</div>
             </div>
           </Dialog.Panel>
         </div>

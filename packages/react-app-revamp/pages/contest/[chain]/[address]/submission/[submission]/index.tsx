@@ -1,5 +1,5 @@
-import DialogModalProposal from "@components/_pages/DialogModalProposal";
 import { Proposal } from "@components/_pages/ProposalContent";
+import SubmissionPage from "@components/_pages/Submission";
 import { chains } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
@@ -29,10 +29,6 @@ const Page: FC<PageProps> = ({ proposal, address, chain }) => {
     setPickedProposal(id);
   }, [id, setPickedProposal]);
 
-  const onModalClose = () => {
-    router.push(`/contest/${chain}/${address}`, undefined, { shallow: true, scroll: false });
-  };
-
   return (
     <>
       {proposal && (
@@ -42,13 +38,7 @@ const Page: FC<PageProps> = ({ proposal, address, chain }) => {
               proposal by {shortenEthereumAddress(proposal.authorEthereumAddress)} for {contestName}
             </title>
           </Head>
-          <DialogModalProposal
-            proposalId={id}
-            prompt={contestPrompt}
-            isOpen={true}
-            proposal={proposal}
-            onClose={onModalClose}
-          />
+          <SubmissionPage chain={chain} address={address} proposalId={id} prompt={contestPrompt} proposal={proposal} />
         </>
       )}
     </>

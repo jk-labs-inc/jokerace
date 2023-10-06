@@ -28,6 +28,6 @@
       "@services/*": ["services/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/_pages/Submission/Mobile/index.tsx"],
   "exclude": ["node_modules"]
 }
