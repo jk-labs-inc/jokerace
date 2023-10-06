@@ -7,6 +7,8 @@ interface SubmissionPageDesktopLayoutProps {
   prompt: string;
   proposal: Proposal;
   onClose?: () => void;
+  onVote?: (amount: number, isUpvote: boolean) => void;
+  onConnectWallet?: () => void;
 }
 
 const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
@@ -14,9 +16,19 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
   prompt,
   proposal,
   onClose,
+  onVote,
+  onConnectWallet,
 }) => {
   return (
-    <DialogModalProposal proposalId={proposalId} prompt={prompt} isOpen={true} proposal={proposal} onClose={onClose} />
+    <DialogModalProposal
+      proposalId={proposalId}
+      prompt={prompt}
+      isOpen={true}
+      proposal={proposal}
+      onClose={onClose}
+      onVote={onVote}
+      onConnectWallet={onConnectWallet}
+    />
   );
 };
 

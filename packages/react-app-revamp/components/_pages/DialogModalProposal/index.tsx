@@ -7,7 +7,6 @@ import useCastVotes from "@hooks/useCastVotes";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
@@ -20,6 +19,8 @@ interface DialogModalProposalProps {
   proposal: Proposal;
   setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
+  onVote?: (amount: number, isUpvote: boolean) => void;
+  onConnectWallet?: () => void;
 }
 
 const DialogModalProposal: FC<DialogModalProposalProps> = ({
@@ -29,47 +30,14 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   proposal,
   proposalId,
   onClose,
+  onVote,
+  onConnectWallet,
 }) => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const { openConnectModal } = useConnectModal();
   const { isConnected } = useAccount();
-  const { castVotes, isSuccess } = useCastVotes();
-  const {
-    currentUserAvailableVotesAmount,
-    currentUserTotalVotesAmount,
-    decreaseCurrentUserAvailableVotesAmount,
-    increaseCurrentUserAvailableVotesAmount,
-    increaseCurrentUserTotalVotesCast,
-    decreaseCurrentUserTotalVotesCast,
-  } = useUserStore(state => state);
+  const { isSuccess } = useCastVotes();
+  const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
-
-  const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
-    decreaseCurrentUserAvailableVotesAmount(amount);
-    increaseCurrentUserTotalVotesCast(amount);
-
-    castVotes(amount, isUpvote).catch(error => {
-      increaseCurrentUserAvailableVotesAmount(amount);
-      decreaseCurrentUserTotalVotesCast(amount);
-    });
-  };
-
-  async function requestAccount() {
-    try {
-      const accounts = await window.ethereum?.request({
-        method: "eth_requestAccounts",
-      });
-      return accounts?.[0];
-    } catch (error) {
-      console.error("User denied account access");
-      return null;
-    }
-  }
-
-  const onConnectWallet = async () => {
-    await requestAccount();
-    openConnectModal?.();
-  };
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
@@ -93,7 +61,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               <p className="text-neutral-11 text-[24px] font-bold">vote</p>
               {isConnected ? (
                 currentUserAvailableVotesAmount > 0 ? (
-                  <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onSubmitCastVotes} />
+                  <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onVote} />
                 ) : outOfVotes ? (
                   <p className="text-[16px] text-neutral-11">
                     looks like you’ve used up all your votes this contest <br />

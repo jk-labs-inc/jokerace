@@ -1,16 +1,39 @@
+import EthereumAddress from "@components/UI/EtheuremAddress";
+import VotingWidget from "@components/Voting";
+import ContestPrompt from "@components/_pages/Contest/components/Prompt";
+import ContestProposal from "@components/_pages/Contest/components/Proposal";
+import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
+import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
 import { FC } from "react";
+import { useAccount } from "wagmi";
 
 interface SubmissionPageMobileLayoutProps {
   proposalId: string;
   prompt: string;
   proposal: Proposal;
   onClose?: () => void;
+  onVote?: (amount: number, isUpvote: boolean) => void;
+  onConnectWallet?: () => void;
 }
 
-const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = () => {
+const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
+  proposalId,
+  prompt,
+  proposal,
+  onClose,
+  onVote,
+  onConnectWallet,
+}) => {
+  const { isConnected } = useAccount();
+  const { contestStatus } = useContestStatusStore(state => state);
+  const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
+  const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
+
   return (
     <div className="fixed top-0 left-0 right-0 bottom-0 z-10 bg-true-black overflow-y-auto w-screen -ml-6 mt-7 pl-9">
       <div className="flex justify-between pr-9">
@@ -39,6 +62,47 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = () => {
           >
             <Image src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
           </div>
+        </div>
+      </div>
+      <div className="flex flex-col gap-8 mt-9">
+        <div className="flex flex-col gap-4">
+          <ContestPrompt type="modal" prompt={prompt} hidePrompt />
+          <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+        </div>
+        <ContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
+        <div className="flex flex-col gap-8">
+          {contestStatus === ContestStatus.VotingOpen && (
+            <>
+              <p className="text-neutral-11 text-[24px] font-bold">vote</p>
+              {isConnected ? (
+                currentUserAvailableVotesAmount > 0 ? (
+                  <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onVote} />
+                ) : outOfVotes ? (
+                  <p className="text-[16px] text-neutral-11">
+                    looks like you’ve used up all your votes this contest <br />
+                    feel free to try connecting another wallet to see if it has more votes!
+                  </p>
+                ) : (
+                  <p className="text-[16px] text-neutral-11">
+                    unfortunately your wallet didn’t qualify to vote in this contest <br />
+                    feel free to try connecting another wallet!
+                  </p>
+                )
+              ) : (
+                <p className="text-[16px] font-bold text-neutral-11 mt-2">
+                  <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
+                    connect wallet
+                  </span>{" "}
+                  to see if you qualify
+                </p>
+              )}
+            </>
+          )}
+          {proposal.votes > 0 && (
+            <ProposalVotesWrapper>
+              <ListProposalVotes proposalId={proposalId} />
+            </ProposalVotesWrapper>
+          )}
         </div>
       </div>
     </div>
