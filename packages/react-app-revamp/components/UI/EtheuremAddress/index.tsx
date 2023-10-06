@@ -1,9 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { ROUTE_VIEW_USER } from "@config/routes";
+import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import { useAvatarStore } from "@hooks/useAvatar";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEnsAvatar, fetchEnsName, mainnet } from "@wagmi/core";
+import { fetchEnsAvatar, fetchEnsName } from "@wagmi/core";
 import Link from "next/link";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
@@ -29,7 +30,7 @@ const EthereumAddress = ({
   const { setAvatar } = useAvatarStore(state => state);
   const avatarSizeClass = isLarge ? "w-[100px] h-[100px]" : "w-8 h-8";
   const textSizeClass = isLarge ? "text-[24px] font-sabo" : "text-[16px]";
-  const etherscan = mainnet.blockExplorers.etherscan.url;
+  const etherscan = mainnet.blockExplorers?.etherscan.url;
 
   const fetchAvatarAndProfile = async () => {
     try {
