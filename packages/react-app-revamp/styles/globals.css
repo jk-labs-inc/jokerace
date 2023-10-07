@@ -182,6 +182,11 @@ li {
   color: black !important;
 }
 
+.imgMobileClass img {
+  width: 90%;
+  object-fit: contain;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

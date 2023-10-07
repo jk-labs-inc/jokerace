@@ -1,14 +1,11 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import SubmissionPage from "@components/_pages/Submission";
 import { chains } from "@config/wagmi";
-import getContestContractVersion from "@helpers/getContestContractVersion";
-import isUrlToImage from "@helpers/isUrlToImage";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { getLayout } from "@layouts/LayoutViewContest";
-import { readContracts } from "@wagmi/core";
-import { BigNumber, utils } from "ethers";
+import { fetchProposalData } from "lib/proposal";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
@@ -49,54 +46,6 @@ const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 const getChainId = (chain: string) => {
   return chains.find(c => c.name.toLowerCase().replace(" ", "") === chain)?.id;
-};
-
-const fetchProposalData = async (address: string, chainId: number, submission: string) => {
-  const { abi } = await getContestContractVersion(address, chainId);
-  const contracts = [
-    {
-      address,
-      abi,
-      chainId,
-      functionName: "getProposal",
-      args: [submission],
-    },
-    {
-      address,
-      abi,
-      chainId,
-      functionName: "proposalVotes",
-      args: [submission],
-    },
-    {
-      address,
-      abi,
-      chainId,
-      functionName: "isProposalDeleted",
-      args: [submission],
-    },
-  ];
-
-  //@ts-ignore
-  const results = (await readContracts({ contracts })) as any;
-  const data = results[0].result;
-
-  const isDeleted = results[2].result;
-
-  const content = isDeleted ? "This proposal has been deleted by the creator" : data.description;
-  const isContentImage = isUrlToImage(data.description);
-  const forVotesBigInt = results[1].result[0] as bigint;
-  const againstVotesBigInt = results[1].result[1] as bigint;
-  const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
-  const votes = Number(utils.formatEther(votesBigNumber));
-
-  return {
-    authorEthereumAddress: data.author,
-    content: content,
-    isContentImage,
-    exists: data.exists,
-    votes,
-  };
 };
 
 export async function getStaticPaths() {

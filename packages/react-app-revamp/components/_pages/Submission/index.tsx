@@ -1,3 +1,4 @@
+import { chains } from "@config/wagmi";
 import useCastVotes from "@hooks/useCastVotes";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
@@ -16,9 +17,10 @@ interface SubmissionPageProps {
   proposal: Proposal;
 }
 
-const SubmissionPage: FC<SubmissionPageProps> = ({ chain, address, proposalId, prompt, proposal }) => {
+const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, proposalId, prompt, proposal }) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const { openConnectModal } = useConnectModal();
   const { castVotes } = useCastVotes();
   const {
@@ -56,7 +58,11 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain, address, proposalId, p
   };
 
   const onClose = () => {
-    router.push(`/contest/${chain}/${address}`, undefined, { shallow: true, scroll: false });
+    router.push(`/contest/${chainName}/${address}`, undefined, { shallow: true, scroll: false });
+  };
+
+  const onSwipe = (proposalId: string) => {
+    router.push(`/contest/${chainName}/${address}/submission/${proposalId}`);
   };
 
   if (isMobile) {
@@ -68,6 +74,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain, address, proposalId, p
         onClose={onClose}
         onVote={handleCastVotes}
         onConnectWallet={onConnectWallet}
+        onSwipe={onSwipe}
       />
     );
   }

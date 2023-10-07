@@ -55,7 +55,11 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
   if (!collapsible) {
     return (
       <div className="flex flex-col gap-4">
-        <Interweave className="prose prose-invert" content={proposal.content} matchers={[new UrlMatcher("url")]} />
+        <Interweave
+          className="prose prose-invert imgMobileClass"
+          content={proposal.content}
+          matchers={[new UrlMatcher("url")]}
+        />
         {contestStatus === ContestStatus.SubmissionOpen && (
           <p className="text-[16px] text-primary-10">voting opens {formattedVotesOpen}</p>
         )}
@@ -66,7 +70,11 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
   const CollapsibleContent = (
     <div>
       <Collapsible isOpen={isProposalOpen}>
-        <Interweave className="prose prose-invert" content={proposal.content} matchers={[new UrlMatcher("url")]} />
+        <Interweave
+          className="prose prose-invert imgMobileClass"
+          content={proposal.content}
+          matchers={[new UrlMatcher("url")]}
+        />
       </Collapsible>
     </div>
   );
@@ -74,25 +82,41 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
   return (
     <div className="flex flex-col gap-4">
       {isOnlyImage && (
-        <Interweave className="prose prose-invert" content={totalContent} matchers={[new UrlMatcher("url")]} />
+        <Interweave
+          className="prose prose-invert imgMobileClass"
+          content={totalContent}
+          matchers={[new UrlMatcher("url")]}
+        />
       )}
 
       {isOnlyText && totalContent.length >= 90 ? (
         <>
           <div className="flex gap-4 items-center">
-            <Interweave className="prose prose-invert" content={totalContent} matchers={[new UrlMatcher("url")]} />
+            <Interweave
+              className="prose prose-invert imgMobileClass"
+              content={totalContent}
+              matchers={[new UrlMatcher("url")]}
+            />
             {arrowButton}
           </div>
           {CollapsibleContent}
         </>
       ) : (
-        <Interweave className="prose prose-invert" content={totalContent} matchers={[new UrlMatcher("url")]} />
+        <Interweave
+          className="prose prose-invert imgMobileClass"
+          content={totalContent}
+          matchers={[new UrlMatcher("url")]}
+        />
       )}
 
       {isImageAndText && (
         <>
           <div className="flex gap-4 prose prose-invert items-center">
-            <Interweave className="prose prose-invert" content={truncatedContent} matchers={[new UrlMatcher("url")]} />
+            <Interweave
+              className="prose prose-invert imgMobileClass"
+              content={truncatedContent}
+              matchers={[new UrlMatcher("url")]}
+            />
             {arrowButton}
           </div>
           {CollapsibleContent}
