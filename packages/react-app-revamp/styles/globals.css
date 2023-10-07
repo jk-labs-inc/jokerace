@@ -202,11 +202,12 @@ li {
     text-transform: none !important;
   }
 
-  html {
+  html,
+  body {
     --brand: theme("colors.primary.10");
     scrollbar-color: var(--brand) Canvas;
     color-scheme: dark;
-    overflow-y: scroll;
+    overscroll-behavior-x: none;
   }
 
   :root {

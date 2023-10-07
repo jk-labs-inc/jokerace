@@ -14,6 +14,16 @@ import { FC, useEffect, useState } from "react";
 import { useSwipeable } from "react-swipeable";
 import { useAccount } from "wagmi";
 
+const config = {
+  delta: 10, // min distance(px) before a swipe starts. *See Notes*
+  preventScrollOnSwipe: false, // prevents scroll during swipe (*See Details*)
+  trackTouch: true, // track touch input
+  trackMouse: false, // track mouse input
+  rotationAngle: 0, // set a rotation angle
+  swipeDuration: Infinity, // allowable duration of a swipe (ms). *See Notes*
+  touchEventOptions: { passive: true }, // options for touch listeners (*See Details*)
+};
+
 interface SubmissionPageMobileLayoutProps {
   proposalId: string;
   prompt: string;
@@ -40,6 +50,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const [currentIdx, setCurrentIdx] = useState(0);
   const handlers = useSwipeable({
     onSwipedLeft: async () => {
+      console.log("Swiped left", { currentIdx, listProposalsIdsLength: listProposalsIds.length });
       if (currentIdx > 0) {
         const newIdx = currentIdx - 1;
         onSwipe?.(listProposalsIds[newIdx]);
@@ -47,20 +58,23 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
       }
     },
     onSwipedRight: async () => {
-      console.log(currentIdx, listProposalsIds.length - 1);
+      console.log("Swiped right", { currentIdx, listProposalsIdsLength: listProposalsIds.length });
       if (currentIdx < listProposalsIds.length - 1) {
         const newIdx = currentIdx + 1;
         onSwipe?.(listProposalsIds[newIdx]);
         setCurrentIdx(newIdx);
       }
     },
+    ...config,
   });
 
-  console.log(listProposalsIds);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
 
   useEffect(() => {
-    const idx = listProposalsIds.indexOf(proposalId);
+    const stringProposalId = proposalId.toString();
+    const stringListProposalsIds = listProposalsIds.map(bigIntValue => bigIntValue.toString());
+    const idx = stringListProposalsIds.indexOf(stringProposalId);
+
     if (idx !== -1) {
       setCurrentIdx(idx);
     }
