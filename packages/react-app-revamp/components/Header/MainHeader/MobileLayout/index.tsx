@@ -44,14 +44,14 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
         </header>
       )}
 
-      <header className="flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 py-1 px-8 mt-4 bg-true-black z-10">
+      <header className="flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 pb-8 px-8 mt-4 bg-true-black z-10">
         <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
-          <HomeIcon width={27} />
+          <HomeIcon width={30} />
           <p className="text-[12px]">home</p>
         </Link>
 
         <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-          <SearchIcon width={27} />
+          <SearchIcon width={30} />
           <p className="text-[12px]">search</p>
         </Link>
 
@@ -59,24 +59,24 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
           href={ROUTE_VIEW_LIVE_CONTESTS}
           className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
         >
-          <IconTrophy width={27} height={27} />
+          <IconTrophy width={30} height={30} />
           <p className="text-[12px] text-center">play</p>
         </Link>
 
         <Link href={ROUTE_CREATE_CONTEST} className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}>
-          <PencilAltIcon width={27} />
+          <PencilAltIcon width={30} />
           <p className="text-[12px]">create</p>
         </Link>
 
         <div onClick={isConnected ? openAccountModal : openConnectModal} className="transition-all duration-500">
           {isConnected ? (
             <div className="flex flex-col items-center">
-              <Image width={25} height={25} src="/header/wallet-connected.svg" alt="wallet-connected" />
+              <Image width={28} height={28} src="/header/wallet-connected.svg" alt="wallet-connected" />
               <p className="text-[12px]">wallet</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <Image width={25} height={25} src="/header/wallet.svg" alt="wallet" />
+              <Image width={28} height={28} src="/header/wallet.svg" alt="wallet" />
               <p className="text-[12px]">wallet</p>
             </div>
           )}
