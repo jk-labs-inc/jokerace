@@ -1,5 +1,6 @@
 import Collapsible from "@components/UI/Collapsible";
 import { Proposal } from "@components/_pages/ProposalContent";
+import { isUrlTweet } from "@helpers/isUrlTweet";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
@@ -8,6 +9,8 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import { Tweet } from "react-tweet";
 
 interface ContestProposalProps {
   proposal: Proposal;
@@ -51,6 +54,14 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
       <ChevronUpIcon height={30} />
     </button>
   );
+  if (isUrlTweet(truncatedContent)) {
+    const tweetId = new URL(truncatedContent).pathname.split("/")[3];
+    return (
+      <div className="dark">
+        <Tweet id={tweetId} key={tweetId} />
+      </div>
+    );
+  }
 
   if (!collapsible) {
     return (

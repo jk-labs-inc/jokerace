@@ -2,6 +2,11 @@
   font-face rules (custom fonts declarations)
 */
 
+html,
+body {
+  overscroll-behavior-x: none;
+}
+
 @font-face {
   src: url("/Sabo-Filled.otf") format("opentype");
   font-family: "Sabo";
@@ -202,12 +207,11 @@ li {
     text-transform: none !important;
   }
 
-  html,
-  body {
+  html {
     --brand: theme("colors.primary.10");
     scrollbar-color: var(--brand) Canvas;
     color-scheme: dark;
-    overscroll-behavior-x: none;
+    overflow-y: scroll;
   }
 
   :root {

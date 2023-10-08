@@ -21,7 +21,7 @@ import React, { Children, FC, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import ReactMarkdown from "react-markdown";
 import { useMediaQuery } from "react-responsive";
-import { TwitterTweetEmbed } from "react-twitter-embed";
+import { Tweet } from "react-tweet";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
@@ -119,18 +119,6 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
     isLoading,
   ]);
 
-  if (isUrlTweet(truncatedContent)) {
-    const tweetId = new URL(truncatedContent).pathname.split("/")[3];
-    return (
-      <>
-        <a target="_blank" rel="nofollow noreferrer" className="link mb-1 text-2xs" href={truncatedContent}>
-          View on Twitter
-        </a>
-        <TwitterTweetEmbed tweetId={tweetId} options={{ theme: "dark", dnt: "true" }} />
-      </>
-    );
-  }
-
   if (proposal.isContentImage) {
     const $ = load(proposal.content);
     const contentElements = $("*").not("script, style, img");
@@ -179,7 +167,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
       >
         <>
           <ReactMarkdown
-            className="markdown max-w-full text-[16px]"
+            className="markdown max-w-full text-[16px] overflow-hidden md:overflow-auto"
             components={{
               div: ({ node, children, ...props }) => (
                 <div {...props} className="flex gap-5 items-center markdown">
