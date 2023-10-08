@@ -10,7 +10,7 @@ import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import { Tweet } from "react-tweet";
+import { Tweet, TweetNotFound } from "react-tweet";
 
 interface ContestProposalProps {
   proposal: Proposal;
@@ -45,6 +45,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
   const isOnlyImage = imgTags.length > 0 && totalContent.length === 0;
   const isOnlyText = imgTags.length === 0 && totalContent.length > 0;
   const isImageAndText = imgTags.length > 0 && totalContent.length > 0;
+  const [isTweetNotFound, setIsTweetNotFound] = useState(false);
 
   const arrowButton = (
     <button
@@ -54,11 +55,22 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
       <ChevronUpIcon height={30} />
     </button>
   );
+
   if (isUrlTweet(truncatedContent)) {
     const tweetId = new URL(truncatedContent).pathname.split("/")[3];
     return (
       <div className="dark">
-        <Tweet id={tweetId} key={tweetId} />
+        <Tweet
+          apiUrl={tweetId && `/api/tweet/${tweetId}`}
+          id={tweetId}
+          key={tweetId}
+          onError={() => setIsTweetNotFound(true)}
+        />
+        {isTweetNotFound && (
+          <a target="_blank" rel="nofollow noreferrer" className="text-[16px] underline" href={truncatedContent}>
+            {truncatedContent}
+          </a>
+        )}
       </div>
     );
   }
