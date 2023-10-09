@@ -20,7 +20,6 @@ interface SubmissionPageProps {
 const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, proposalId, prompt, proposal }) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const { openConnectModal } = useConnectModal();
   const { castVotes } = useCastVotes();
   const {
@@ -61,10 +60,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
     router.push(`/contest/${chainName}/${address}`, undefined, { shallow: true, scroll: false });
   };
 
-  const onSwipe = (proposalId: string) => {
-    router.push(`/contest/${chainName}/${address}/submission/${proposalId}`);
-  };
-
   if (isMobile) {
     return (
       <SubmissionPageMobileLayout
@@ -74,7 +69,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
         onClose={onClose}
         onVote={handleCastVotes}
         onConnectWallet={onConnectWallet}
-        onSwipe={onSwipe}
       />
     );
   }

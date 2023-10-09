@@ -6,23 +6,11 @@ import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { useProposalStore } from "@hooks/useProposal/store";
 import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
-import { FC, useEffect, useState } from "react";
-import { useSwipeable } from "react-swipeable";
+import { FC } from "react";
 import { useAccount } from "wagmi";
-
-const config = {
-  delta: 10, // min distance(px) before a swipe starts. *See Notes*
-  preventScrollOnSwipe: false, // prevents scroll during swipe (*See Details*)
-  trackTouch: true, // track touch input
-  trackMouse: false, // track mouse input
-  rotationAngle: 0, // set a rotation angle
-  swipeDuration: Infinity, // allowable duration of a swipe (ms). *See Notes*
-  touchEventOptions: { passive: true }, // options for touch listeners (*See Details*)
-};
 
 interface SubmissionPageMobileLayoutProps {
   proposalId: string;
@@ -31,7 +19,6 @@ interface SubmissionPageMobileLayoutProps {
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
   onConnectWallet?: () => void;
-  onSwipe?: (proposalId: string) => void;
 }
 
 const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
@@ -41,50 +28,14 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   onClose,
   onVote,
   onConnectWallet,
-  onSwipe,
 }) => {
   const { isConnected } = useAccount();
-  const { listProposalsIds } = useProposalStore(state => state);
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const handlers = useSwipeable({
-    onSwipedLeft: async () => {
-      console.log("Swiped left", { currentIdx, listProposalsIdsLength: listProposalsIds.length });
-      if (currentIdx > 0) {
-        const newIdx = currentIdx - 1;
-        onSwipe?.(listProposalsIds[newIdx]);
-        setCurrentIdx(newIdx);
-      }
-    },
-    onSwipedRight: async () => {
-      console.log("Swiped right", { currentIdx, listProposalsIdsLength: listProposalsIds.length });
-      if (currentIdx < listProposalsIds.length - 1) {
-        const newIdx = currentIdx + 1;
-        onSwipe?.(listProposalsIds[newIdx]);
-        setCurrentIdx(newIdx);
-      }
-    },
-    ...config,
-  });
-
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
 
-  useEffect(() => {
-    const stringProposalId = proposalId.toString();
-    const stringListProposalsIds = listProposalsIds.map(bigIntValue => bigIntValue.toString());
-    const idx = stringListProposalsIds.indexOf(stringProposalId);
-
-    if (idx !== -1) {
-      setCurrentIdx(idx);
-    }
-  }, [proposalId, listProposalsIds]);
-
   return (
-    <div
-      {...handlers}
-      className="fixed top-0 left-0 right-0 bottom-0 z-10 bg-true-black overflow-y-auto w-screen -ml-6 mt-7 px-9"
-    >
+    <div className="fixed top-0 left-0 right-0 bottom-0 z-10 bg-true-black overflow-y-auto w-screen -ml-6 mt-7 px-9">
       <div className="flex justify-between">
         <ArrowLeftIcon width={24} onClick={onClose} />
         <div className="flex gap-2 self-end">
@@ -154,6 +105,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           )}
         </div>
       </div>
+      <div className="fixed bottom-0">aa</div>
     </div>
   );
 };
