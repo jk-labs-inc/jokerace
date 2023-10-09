@@ -110,7 +110,7 @@ const fetchProposalData = async (address: string, chainId: number, submission: s
 };
 
 export async function getStaticPaths() {
-  return { paths: [], fallback: true };
+  return { paths: [], fallback: false };
 }
 
 export async function getStaticProps({ params }: any) {

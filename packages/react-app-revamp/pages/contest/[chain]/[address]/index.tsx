@@ -1,23 +1,21 @@
 import { chains } from "@config/wagmi";
-import { useContestStore } from "@hooks/useContest/store";
 import { getLayout } from "@layouts/LayoutViewContest";
-
-import type { NextPage } from "next";
 import Head from "next/head";
 
+import type { NextPage } from "next";
 interface PageProps {
   address: string;
+  contestName: string;
 }
+
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
-  const { address } = props;
-  const { contestName } = useContestStore(state => state);
+  const { contestName } = props;
 
   return (
     <>
       <Head>
-        <title>{contestName ? contestName : address} - jokerace</title>
-        <meta name="description" content="@TODO: change this" />
+        <title>{contestName} - jokerace</title>
       </Head>
     </>
   );
@@ -26,7 +24,7 @@ const Page: NextPage = (props: PageProps) => {
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 export async function getStaticPaths() {
-  return { paths: [], fallback: true };
+  return { paths: [], fallback: false };
 }
 
 export async function getStaticProps({ params }: any) {
@@ -39,9 +37,12 @@ export async function getStaticProps({ params }: any) {
   }
 
   try {
+    const contestName = "test passed data";
+
     return {
       props: {
         address,
+        contestName,
       },
     };
   } catch (error) {
