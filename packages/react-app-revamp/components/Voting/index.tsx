@@ -129,7 +129,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
             <ButtonV3
               type={ButtonType.TX_ACTION}
               isDisabled={voteDisabled}
-              colorClass="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
+              colorClass="flex items-center px-[20px] justify-between bg-gradient-next rounded-[40px] w-full"
               size={ButtonSize.LARGE}
               onClick={() => onVote?.(amount, isUpvote)}
             >

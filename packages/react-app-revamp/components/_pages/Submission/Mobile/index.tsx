@@ -105,7 +105,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           )}
         </div>
       </div>
-      <div className="fixed bottom-0">aa</div>
+      <div className=" bottom-0 sticky">aa</div>
     </div>
   );
 };

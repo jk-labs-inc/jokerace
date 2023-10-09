@@ -30,6 +30,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
   openAccountModal,
 }) => {
   const router = useRouter();
+  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const isActive = (route: string) => (router.pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(router.pathname) ? "text-primary-10 transition-colors font-bold" : "";
@@ -44,7 +45,11 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
         </header>
       )}
 
-      <header className="flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 pb-8 px-8 mt-4 bg-true-black z-10">
+      <header
+        className={`flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 ${
+          isInPwaMode ? "pb-8" : "pb-2"
+        } px-8 mt-4 bg-true-black z-50`}
+      >
         <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
           <HomeIcon width={30} />
           <p className="text-[12px]">home</p>
