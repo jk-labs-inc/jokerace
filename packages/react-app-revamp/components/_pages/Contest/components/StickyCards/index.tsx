@@ -1,5 +1,7 @@
+import { useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useMemo } from "react";
 import Skeleton from "react-loading-skeleton";
@@ -10,10 +12,20 @@ import VotingContestQualifier from "./components/VotingQualifier";
 const ContestStickyCards = () => {
   const { isDisconnected } = useAccount();
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const { currentUserQualifiedToSubmit, isLoading } = useUserStore(state => state);
+  const { submissionMerkleRoot } = useContestStore(state => state);
+  const { currentUserQualifiedToSubmit, isLoading, contestMaxNumberSubmissionsPerUser, currentUserProposalCount } =
+    useUserStore(state => state);
   const { displayReloadBanner } = useContestEvents();
+  const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
   const qualifiedToSubmitMessage = useMemo(() => {
+    if (contestStatus === ContestStatus.ContestOpen && anyoneCanSubmit) {
+      return (
+        <p className="text-[16px] text-primary-10">
+          good news: you qualify to submit a response once the contest opens
+        </p>
+      );
+    }
     if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed || isDisconnected)
       return null;
     if (isLoading)
@@ -22,10 +34,13 @@ const ContestStickyCards = () => {
     if (contestStatus === ContestStatus.ContestOpen && currentUserQualifiedToSubmit) {
       return (
         <p className="text-[16px] text-primary-10">
-          good news: you qualify to submit a response once the contest opens!
+          good news: you qualify to submit a response once the contest opens
         </p>
       );
     } else if (contestStatus === ContestStatus.SubmissionOpen) {
+      if (currentUserProposalCount >= contestMaxNumberSubmissionsPerUser) {
+        return <p className="text-[16px] text-primary-10">you’ve reached your max submissions with this account</p>;
+      }
       if (!currentUserQualifiedToSubmit) {
         return (
           <p className="text-[16px] text-primary-10">
@@ -38,7 +53,15 @@ const ContestStickyCards = () => {
     }
 
     return null;
-  }, [contestStatus, currentUserQualifiedToSubmit, isLoading, isDisconnected]);
+  }, [
+    contestStatus,
+    anyoneCanSubmit,
+    isDisconnected,
+    isLoading,
+    currentUserQualifiedToSubmit,
+    currentUserProposalCount,
+    contestMaxNumberSubmissionsPerUser,
+  ]);
 
   if (contestStatus === ContestStatus.VotingClosed) return null;
 

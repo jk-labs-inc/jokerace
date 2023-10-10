@@ -29,7 +29,7 @@ interface ButtonProps {
 
 const sizeClasses = {
   [ButtonSize.EXTRA_SMALL]: "w-20 h-6",
-  [ButtonSize.SMALL]: "w-24",
+  [ButtonSize.SMALL]: "w-24 h-6",
   [ButtonSize.DEFAULT]: "w-[120px] h-[32px]",
   [ButtonSize.LARGE]: "w-40 h-[40px]",
   [ButtonSize.EXTRA_LARGE]: "w-[200px] h-12",

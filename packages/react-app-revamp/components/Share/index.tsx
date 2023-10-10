@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import { MediaQuery } from "@helpers/mediaQuery";
-import { generateLensShareUrl, generateTwitterShareUrl, generateUrlToCopy } from "@helpers/share";
+import { generateLensShareUrlForContest, generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import { FC, Fragment } from "react";
@@ -20,12 +20,12 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
     <Menu as="div" className="relative inline-block text-left">
       <MediaQuery maxWidth={768}>
         <Menu.Button className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11">
-          <Image src="/forward.png" alt="share" className="m-auto" width={15} height={13} />
+          <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
         </Menu.Button>
       </MediaQuery>
       <MediaQuery minWidth={769}>
         <Menu.Button className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
-          Share <Image src="/forward.png" alt="share" className="ml-1" width={20} height={20} />
+          Share <Image src="/forward.svg" alt="share" className="ml-1" width={20} height={20} />
         </Menu.Button>
       </MediaQuery>
 
@@ -43,7 +43,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
             {({ active }) => (
               <a
                 target="_blank"
-                href={generateLensShareUrl(contestName, contestAddress, chain)}
+                href={generateLensShareUrlForContest(contestName, contestAddress, chain)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                   "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
@@ -58,7 +58,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
           <Menu.Item>
             {({ active }) => (
               <a
-                href={generateTwitterShareUrl(contestName, contestAddress, chain)}
+                href={generateTwitterShareUrlForContest(contestName, contestAddress, chain)}
                 target="_blank"
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",

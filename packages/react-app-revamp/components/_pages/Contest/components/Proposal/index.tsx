@@ -1,5 +1,6 @@
 import Collapsible from "@components/UI/Collapsible";
 import { Proposal } from "@components/_pages/ProposalContent";
+import { isUrlTweet } from "@helpers/isUrlTweet";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
@@ -8,6 +9,8 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC, useState } from "react";
+import Skeleton from "react-loading-skeleton";
+import { Tweet, TweetNotFound } from "react-tweet";
 
 interface ContestProposalProps {
   proposal: Proposal;
@@ -42,6 +45,8 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
   const isOnlyImage = imgTags.length > 0 && totalContent.length === 0;
   const isOnlyText = imgTags.length === 0 && totalContent.length > 0;
   const isImageAndText = imgTags.length > 0 && totalContent.length > 0;
+  const [isTweetNotFound, setIsTweetNotFound] = useState(false);
+  const interweaveClass = "prose prose-invert imgMobileClass overflow-hidden";
 
   const arrowButton = (
     <button
@@ -52,10 +57,29 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
     </button>
   );
 
+  if (isUrlTweet(truncatedContent)) {
+    const tweetId = new URL(truncatedContent).pathname.split("/")[3];
+    return (
+      <div className="dark">
+        <Tweet
+          apiUrl={tweetId && `/api/tweet/${tweetId}`}
+          id={tweetId}
+          key={tweetId}
+          onError={() => setIsTweetNotFound(true)}
+        />
+        {isTweetNotFound && (
+          <a target="_blank" rel="nofollow noreferrer" className="text-[16px] underline" href={truncatedContent}>
+            {truncatedContent}
+          </a>
+        )}
+      </div>
+    );
+  }
+
   if (!collapsible) {
     return (
       <div className="flex flex-col gap-4">
-        <Interweave className="prose prose-invert" content={proposal.content} matchers={[new UrlMatcher("url")]} />
+        <Interweave className={interweaveClass} content={proposal.content} matchers={[new UrlMatcher("url")]} />
         {contestStatus === ContestStatus.SubmissionOpen && (
           <p className="text-[16px] text-primary-10">voting opens {formattedVotesOpen}</p>
         )}
@@ -66,7 +90,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
   const CollapsibleContent = (
     <div>
       <Collapsible isOpen={isProposalOpen}>
-        <Interweave className="prose prose-invert" content={proposal.content} matchers={[new UrlMatcher("url")]} />
+        <Interweave className={interweaveClass} content={proposal.content} matchers={[new UrlMatcher("url")]} />
       </Collapsible>
     </div>
   );
@@ -74,25 +98,25 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, contestStatus, co
   return (
     <div className="flex flex-col gap-4">
       {isOnlyImage && (
-        <Interweave className="prose prose-invert" content={totalContent} matchers={[new UrlMatcher("url")]} />
+        <Interweave className={interweaveClass} content={totalContent} matchers={[new UrlMatcher("url")]} />
       )}
 
       {isOnlyText && totalContent.length >= 90 ? (
         <>
           <div className="flex gap-4 items-center">
-            <Interweave className="prose prose-invert" content={totalContent} matchers={[new UrlMatcher("url")]} />
+            <Interweave className={interweaveClass} content={totalContent} matchers={[new UrlMatcher("url")]} />
             {arrowButton}
           </div>
           {CollapsibleContent}
         </>
       ) : (
-        <Interweave className="prose prose-invert" content={totalContent} matchers={[new UrlMatcher("url")]} />
+        <Interweave className={interweaveClass} content={totalContent} matchers={[new UrlMatcher("url")]} />
       )}
 
       {isImageAndText && (
         <>
           <div className="flex gap-4 prose prose-invert items-center">
-            <Interweave className="prose prose-invert" content={truncatedContent} matchers={[new UrlMatcher("url")]} />
+            <Interweave className={interweaveClass} content={truncatedContent} matchers={[new UrlMatcher("url")]} />
             {arrowButton}
           </div>
           {CollapsibleContent}

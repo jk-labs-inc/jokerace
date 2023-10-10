@@ -83,7 +83,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   };
 
   return (
-    <div className="flex flex-col gap-7 w-60">
+    <div className="flex flex-col gap-7 w-full md:w-60">
       <div className="flex flex-col gap-4">
         <div
           className={`flex h-8 justify-between items-center pl-6 pr-4 text-[16px] bg-transparent font-bold ${
@@ -129,7 +129,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
             <ButtonV3
               type={ButtonType.TX_ACTION}
               isDisabled={voteDisabled}
-              colorClass="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
+              colorClass="flex items-center px-[20px] justify-between bg-gradient-next rounded-[40px] w-full"
               size={ButtonSize.LARGE}
               onClick={() => onVote?.(amount, isUpvote)}
             >

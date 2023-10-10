@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { useMediaQuery } from "react-responsive";
 
 interface LayoutUserProps {
   address: string;
@@ -32,6 +33,7 @@ const LayoutUser = (props: LayoutUserProps) => {
   const { pathname } = useRouter();
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isMobile = useMediaQuery({ maxWidth: "768px" });
 
   useEffect(() => {
     const activeTabIndex = navLinks.findIndex(link => link.href === pathname);
@@ -55,7 +57,12 @@ const LayoutUser = (props: LayoutUserProps) => {
               <Skeleton height={24} width={200} />
             </div>
           ) : (
-            <EthereumAddress ethereumAddress={address} shortenOnFallback isLarge includeSocials />
+            <EthereumAddress
+              ethereumAddress={address}
+              shortenOnFallback
+              size={isMobile ? "medium" : "large"}
+              includeSocials
+            />
           )}
 
           <div className="relative mt-12 flex-col gap-2">

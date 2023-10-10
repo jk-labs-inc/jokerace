@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { DEFAULT_SUBMISSIONS, MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
@@ -8,7 +9,6 @@ import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
-import { useNextStep } from "../../hooks/useNextStep";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
@@ -19,6 +19,7 @@ const CreateContestParams = () => {
   const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
     useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
+  const [alertOnRewards, setAlertOnRewards] = useState<boolean>(false);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -44,6 +45,14 @@ const CreateContestParams = () => {
       window.removeEventListener("keydown", handleEnterPress);
     };
   }, [deployContest, isLoading]);
+
+  useEffect(() => {
+    if (maxSubmissions > DEFAULT_SUBMISSIONS) {
+      setAlertOnRewards(true);
+    } else {
+      setAlertOnRewards(false);
+    }
+  }, [maxSubmissions]);
 
   const handleClick = (value: boolean) => {
     setIsEnabled(value);
@@ -98,10 +107,11 @@ const CreateContestParams = () => {
               max={MAX_SUBMISSIONS_LIMIT}
               min={1}
             />
-            <p className="text-neutral-11 text-[16px]">
-              leave blank to set at a maximum of 1000, please note that only a maximum of 100 submissions or less is allowed
-              for attaching rewards to the contest.
-            </p>
+            {alertOnRewards ? (
+              <p className="text-negative-11 text-[16px]">
+                please note you won't be able to add a rewards pool if you enable over {DEFAULT_SUBMISSIONS} submissions
+              </p>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-col gap-5">
