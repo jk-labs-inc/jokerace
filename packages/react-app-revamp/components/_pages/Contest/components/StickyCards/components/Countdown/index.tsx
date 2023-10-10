@@ -64,10 +64,19 @@ const ContestCountdown = () => {
     const minuteLabel = isMobile ? "m " : pluralizeLabel(duration.minutes, " min ", " mins ");
     const secondLabel = isMobile ? "s " : pluralizeLabel(duration.seconds, " sec ", " secs ");
 
-    if (duration.days > 0) elements.push(<ContestCountdownTimeUnit value={duration.days} label={dayLabel} />);
-    if (duration.hours > 0) elements.push(<ContestCountdownTimeUnit value={duration.hours} label={hourLabel} />);
-    if (duration.minutes > 0) elements.push(<ContestCountdownTimeUnit value={duration.minutes} label={minuteLabel} />);
-    elements.push(<ContestCountdownTimeUnit value={duration.seconds} label={secondLabel} />);
+    if (duration.days > 0)
+      elements.push(<ContestCountdownTimeUnit key={`${duration.days}-days`} value={duration.days} label={dayLabel} />);
+    if (duration.hours > 0)
+      elements.push(
+        <ContestCountdownTimeUnit key={`${duration.hours}-hours`} value={duration.hours} label={hourLabel} />,
+      );
+    if (duration.minutes > 0)
+      elements.push(
+        <ContestCountdownTimeUnit key={`${duration.minutes}-minutes`} value={duration.minutes} label={minuteLabel} />,
+      );
+    elements.push(
+      <ContestCountdownTimeUnit key={`${duration.seconds}-seconds`} value={duration.seconds} label={secondLabel} />,
+    );
 
     return elements;
   };

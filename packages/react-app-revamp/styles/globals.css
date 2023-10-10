@@ -2,6 +2,11 @@
   font-face rules (custom fonts declarations)
 */
 
+html,
+body {
+  overscroll-behavior-x: none;
+}
+
 @font-face {
   src: url("/Sabo-Filled.otf") format("opentype");
   font-family: "Sabo";
@@ -182,6 +187,11 @@ li {
   color: black !important;
 }
 
+.imgMobileClass img {
+  width: 90%;
+  object-fit: contain;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -302,7 +312,7 @@ li {
 
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-empty:first-child::before {
-    color: #adb5bd;
+    color: #6a6a6a;
     content: attr(data-placeholder);
     float: left;
     height: 0;

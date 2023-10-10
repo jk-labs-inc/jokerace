@@ -78,7 +78,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <div className="flex gap-4 items-center mb-8">
+      <div className="flex gap-4 items-center">
         <p className="text-[24px] text-neutral-11 font-bold">voters</p>
         <button
           onClick={toggleVotersOpen}
@@ -88,7 +88,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
         </button>
       </div>
       <Collapsible isOpen={isVotersOpen}>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 mb-12 sm:mb-0">
           <div className="flex flex-col gap-4 md:w-[350px]">
             <VotersList votesPerAddress={votesPerAddress} />
             {isPageVotesLoading && <LoadingSkeleton count={skeletonsCount} />}

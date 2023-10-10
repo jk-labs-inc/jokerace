@@ -16,6 +16,7 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { generateUrlContest } from "@helpers/share";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
@@ -26,11 +27,11 @@ import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { RewardsWrapper } from "@hooks/useRewards/store";
-import { SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
 import useUser from "@hooks/useUser";
 import { UserWrapper, useUserStore } from "@hooks/useUser/store";
 import { readContract } from "@wagmi/core";
 import moment from "moment";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useMemo, useState } from "react";
@@ -261,7 +262,7 @@ const LayoutViewContest = (props: any) => {
                 )}
                 <div className="animate-appear pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
-                    <p className="text-[18px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
+                    <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
                     <div className="flex flex-row gap-3 md:gap-4 items-center">
                       <EthereumAddress
                         ethereumAddress={contestAuthorEthereumAddress}
@@ -292,15 +293,25 @@ const LayoutViewContest = (props: any) => {
                           ) : null}
                         </div>
                       )}
-
-                      <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
+                      {isMobile ? (
+                        <div
+                          className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
+                          onClick={() =>
+                            navigator.share({
+                              url: generateUrlContest(address, chainName),
+                            })
+                          }
+                        >
+                          <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
+                        </div>
+                      ) : (
+                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
+                      )}
                     </div>
                   </div>
-
                   <div className="mt-8 mb-8 gap-3 flex flex-col">
                     <ContestTabs onChange={tab => setTab(tab)} />
                   </div>
-
                   {renderTabs}
 
                   {props.children}
@@ -331,15 +342,13 @@ export const getLayout = (page: any) => {
         <ProposalWrapper>
           <DeleteProposalWrapper>
             <UserWrapper>
-              <SubmitProposalWrapper>
-                <CastVotesWrapper>
-                  <ContractFactoryWrapper>
-                    <RewardsWrapper>
-                      <LayoutViewContest>{page}</LayoutViewContest>
-                    </RewardsWrapper>
-                  </ContractFactoryWrapper>
-                </CastVotesWrapper>
-              </SubmitProposalWrapper>
+              <CastVotesWrapper>
+                <ContractFactoryWrapper>
+                  <RewardsWrapper>
+                    <LayoutViewContest>{page}</LayoutViewContest>
+                  </RewardsWrapper>
+                </ContractFactoryWrapper>
+              </CastVotesWrapper>
             </UserWrapper>
           </DeleteProposalWrapper>
         </ProposalWrapper>

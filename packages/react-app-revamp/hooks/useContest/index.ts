@@ -64,6 +64,8 @@ export function useContest() {
     setIsV3,
     setVoters,
     setSubmitters,
+    setSubmissionsMerkleRoot,
+    setVotingMerkleRoot,
     setTotalVotesCast,
     setTotalVotes,
     setVotesClose,
@@ -324,6 +326,9 @@ export function useContest() {
     const submissionMerkleRoot = results[0].result as unknown as string;
     const votingMerkleRoot = results[1].result as unknown as string;
     const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
+
+    setSubmissionsMerkleRoot(submissionMerkleRoot);
+    setVotingMerkleRoot(votingMerkleRoot);
 
     if (!isSupabaseConfigured) {
       setIsReadOnly(true);
