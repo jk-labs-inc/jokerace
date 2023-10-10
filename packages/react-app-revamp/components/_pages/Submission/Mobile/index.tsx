@@ -48,10 +48,11 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
+  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
   return (
     <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
-      <div className="flex justify-between">
+      <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-6"}`}>
         <ArrowLeftIcon width={24} onClick={onClose} />
         <div className="flex gap-2 self-end">
           <a

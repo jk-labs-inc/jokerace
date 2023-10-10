@@ -33,10 +33,11 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   onSubmitProposal,
 }) => {
   const { contestPrompt } = useContestStore(state => state);
+  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
   return (
     <DialogModalV3 isOpen={isOpen} title="sendProposalMobile" isMobile>
-      <div className="flex flex-col gap-8">
+      <div className={`flex flex-col gap-8 ${isInPwaMode ? "mt-0" : "mt-6"}`}>
         <div className="flex justify-between items-center">
           <p className="text-neutral-11 text-[16px] font-bold" onClick={() => setIsOpen(false)}>
             cancel

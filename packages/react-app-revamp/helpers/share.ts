@@ -56,3 +56,7 @@ export const generateUrlSubmissions = (contestAddress: string, chain: string, pr
   const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${proposalId}`;
   return url;
 };
+export const generateUrlContest = (contestAddress: string, chain: string) => {
+  const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}`;
+  return url;
+};
