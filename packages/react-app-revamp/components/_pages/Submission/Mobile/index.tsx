@@ -134,12 +134,14 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             </ProposalVotesWrapper>
           )}
         </div>
-        <MainHeaderMobileLayout
-          isConnected={isConnected}
-          address={address}
-          openAccountModal={openAccountModal}
-          openConnectModal={openConnectModal}
-        />
+        <div className="mt-12">
+          <MainHeaderMobileLayout
+            isConnected={isConnected}
+            address={address}
+            openAccountModal={openAccountModal}
+            openConnectModal={openConnectModal}
+          />
+        </div>
       </div>
     </DialogModalV3>
   );
