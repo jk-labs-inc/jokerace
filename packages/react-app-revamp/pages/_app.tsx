@@ -1,3 +1,4 @@
+import { jokeraceTheme } from "@config/rainbowkit";
 import { chains, config } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
@@ -11,8 +12,6 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
-
-import { jokeraceTheme } from "@config/rainbowkit";
 import { WagmiConfig } from "wagmi";
 
 const queryClient = new QueryClient({
@@ -26,6 +25,11 @@ const queryClient = new QueryClient({
 });
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const title: string = pageProps.title ? `${pageProps.title}` : "jokerace";
+  const description: string = pageProps.description
+    ? pageProps.description
+    : "jokerace - contests for communities to make, execute, and reward decisions.";
+
   //@ts-ignore
   const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase>{page}</LayoutBase>);
 
@@ -37,20 +41,13 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="color-scheme" content="dark" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://jokerace.xyz/" />
-        <meta property="og:title" content="jokerace" />
-        <meta
-          property="og:description"
-          content="jokerace - contests for communities to make,
-          execute, and reward decisions"
-        />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} key="main" />
         <meta property="og:locale" content="en_GB" />
         <meta property="og:image" content="https://jokerace.xyz/jokerace.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@jokerace_xyz" />
-        <meta
-          name="twitter:description"
-          content="jokerace - contests for communities to make, execute, and reward decisions."
-        />
+        <meta name="twitter:description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="twitter:image" content="https://jokerace.xyz/jokerace.png" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
@@ -62,6 +59,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="preload" href="/fantom.png" as="image" />
         <link rel="preload" href="/gnosis.png" as="image" />
       </Head>
+
       <WagmiConfig config={config}>
         <RainbowKitProvider chains={chains} theme={jokeraceTheme} modalSize="wide">
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>

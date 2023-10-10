@@ -1,6 +1,6 @@
 import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
 import { metaMaskWallet, walletConnectWallet, rainbowWallet, okxWallet, tahoWallet, coinbaseWallet, argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
-import { Chain, configureChains, createConfig, mainnet } from "wagmi";
+import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { avaxCChain } from "./custom-chains/avaxCChain";
@@ -26,6 +26,7 @@ import { lootChain } from "./custom-chains/lootChain";
 import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
 import { lukso } from "./custom-chains/lukso";
 import { luksoTestnet } from "./custom-chains/luksoTestnet";
+import { mainnet } from "./custom-chains/mainnet";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { modeTestnet } from "./custom-chains/modeTestnet";
