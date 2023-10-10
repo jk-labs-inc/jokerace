@@ -6,7 +6,12 @@ import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
-import { generateLensShareUrlForSubmission, generateTwitterShareUrlForSubmission } from "@helpers/share";
+import {
+  generateLensShareUrlForSubmission,
+  generateTwitterShareUrlForSubmission,
+  generateUrlSubmissions,
+  generateUrlToCopy,
+} from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
@@ -75,9 +80,14 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               alt="avatar"
             />
           </a>
-          {/* // TODO: what does forward do? */}
+
           <div
-            className={`flex items-center  bg-true-black rounded-full border-neutral-11 border overflow-hidden w-8 h-8`}
+            className={`flex items-center bg-true-black rounded-full border-neutral-11 border overflow-hidden w-8 h-8`}
+            onClick={() =>
+              navigator.share({
+                url: generateUrlSubmissions(address, chain, proposalId),
+              })
+            }
           >
             <Image src="/forward.svg" alt="share" className="object-cover m-auto" width={15} height={13} />
           </div>

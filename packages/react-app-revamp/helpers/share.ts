@@ -51,3 +51,8 @@ export const generateUrlToCopy = (contestAddress: string, chain: string) => {
   const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}`;
   copyToClipboard(url, "Contest url copied to clipboard!");
 };
+
+export const generateUrlSubmissions = (contestAddress: string, chain: string, proposalId: string) => {
+  const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${proposalId}`;
+  return url;
+};
