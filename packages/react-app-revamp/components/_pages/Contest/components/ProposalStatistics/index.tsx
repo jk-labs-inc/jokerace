@@ -17,7 +17,8 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
       case ContestStatus.SubmissionOpen:
         return (
           <p className="text-[16px] text-neutral-11">
-            {listProposalsIds.length} submission{listProposalsIds.length > 1 ? "s" : ""} &#8226;{" "}
+            {listProposalsIds.length} submission
+            {listProposalsIds.length > 1 || listProposalsIds.length === 0 ? "s" : ""} &#8226;{" "}
             {contestMaxProposalCount.toString()} allowed
           </p>
         );
@@ -30,7 +31,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
           </p>
         );
     }
-  }, [contestStatus, listProposalsIds.length, contestMaxProposalCount, totalVotesCast, totalVotes]);
+  }, [contestStatus, listProposalsIds, contestMaxProposalCount, totalVotesCast, totalVotes]);
 
   return (
     <div className="flex flex-col">

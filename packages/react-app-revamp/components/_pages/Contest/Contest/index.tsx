@@ -3,21 +3,19 @@ import DialogModalSendProposal from "@components/_pages/DialogModalSendProposal"
 import ListProposals from "@components/_pages/ListProposals";
 import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
-import { useMediaQuery } from "react-responsive";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
+import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import ContestPrompt from "../components/Prompt";
 import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
 import ContestTimeline from "../components/Timeline";
-import { useRouter } from "next/router";
 
 const ContestTab = () => {
   const { contestPrompt } = useContestStore(state => state);
-  const router = useRouter();
   const { isConnected } = useAccount();
   const { contestStatus } = useContestStatusStore(state => state);
   const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount } = useUserStore(
@@ -31,7 +29,7 @@ const ContestTab = () => {
   }));
   const submitButtonText = isConnected ? "submit a response" : "connect wallet to submit";
   const qualifiedToSubmit =
-    currentUserQualifiedToSubmit && currentUserProposalCount <= contestMaxNumberSubmissionsPerUser;
+    currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
   const showSubmitButton = !isConnected || qualifiedToSubmit;
   const isMobile = useMediaQuery({ maxWidth: 768 });
 

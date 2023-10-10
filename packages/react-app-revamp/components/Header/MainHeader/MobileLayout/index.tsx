@@ -8,13 +8,11 @@ import {
   ROUTE_VIEW_LIVE_CONTESTS,
   ROUTE_VIEW_USER,
 } from "@config/routes";
-import { HomeIcon, PencilAltIcon, PencilIcon, SearchIcon } from "@heroicons/react/outline";
-import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
+import { HomeIcon, PencilAltIcon, SearchIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FC } from "react";
-import { useMediaQuery } from "react-responsive";
 
 interface MainHeaderMobileLayoutProps {
   isConnected: boolean;
@@ -32,17 +30,14 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
   openAccountModal,
 }) => {
   const router = useRouter();
-  const { isModalOpen } = useSubmitProposalStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const isMobile = useMediaQuery({ maxWidth: "768px" });
-  const hideProfile = isModalOpen && isMobile;
   const isActive = (route: string) => (router.pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(router.pathname) ? "text-primary-10 transition-colors font-bold" : "";
 
   return (
     <>
-      {address && showProfile && !hideProfile && (
+      {address && showProfile && (
         <header className="top-0 right-0 left-0 px-4 mt-4">
           <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
             <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />

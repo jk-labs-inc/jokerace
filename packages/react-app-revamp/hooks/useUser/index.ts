@@ -35,11 +35,6 @@ export function useUser() {
     const abi = await getContestContractVersion(address, chainId);
     const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
-    if (contestStatus === ContestStatus.ContestOpen && anyoneCanSubmit) {
-      setCurrentUserQualifiedToSubmit(true);
-      return;
-    }
-
     if (!userAddress || !abi) return;
 
     const contractConfig = {

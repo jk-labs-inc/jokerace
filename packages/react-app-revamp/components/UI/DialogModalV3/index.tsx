@@ -22,7 +22,7 @@ const DialogModalV3: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, childre
   }, [setIsOpen, onClose]);
 
   return (
-    <Dialog open={isOpen} onClose={handleClose} className="relative z-40">
+    <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <div className="fixed inset-0 pointer-events-none bg-true-black bg-opacity-80" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex min-h-full w-full items-center justify-center">

@@ -1,3 +1,4 @@
+import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
@@ -10,6 +11,7 @@ import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
+import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { FC } from "react";
 import { useAccount } from "wagmi";
@@ -36,6 +38,8 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   onConnectWallet,
 }) => {
   const { isConnected } = useAccount();
+  const { openConnectModal } = useConnectModal();
+  const { openAccountModal } = useAccountModal();
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
@@ -119,6 +123,12 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             </ProposalVotesWrapper>
           )}
         </div>
+        <MainHeaderMobileLayout
+          isConnected={isConnected}
+          address={address}
+          openAccountModal={openAccountModal}
+          openConnectModal={openConnectModal}
+        />
       </div>
     </DialogModalV3>
   );
