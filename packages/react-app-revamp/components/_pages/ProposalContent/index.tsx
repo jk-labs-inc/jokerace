@@ -87,11 +87,21 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
                   highlightColor="#FFE25B"
                   duration={1}
                 />
+              ) : isMobile ? (
+                <Link href={`/contest/${chainName}/${contestAddress}/submission/${id}`} className="w-full">
+                  <ButtonV3
+                    type={ButtonType.TX_ACTION}
+                    colorClass="bg-gradient-next rounded-[40px]"
+                    size={ButtonSize.FULL}
+                  >
+                    add votes
+                  </ButtonV3>
+                </Link>
               ) : (
                 <ButtonV3
                   type={ButtonType.TX_ACTION}
                   colorClass="bg-gradient-next rounded-[40px]"
-                  size={isMobile ? ButtonSize.FULL : ButtonSize.LARGE}
+                  size={ButtonSize.LARGE}
                   onClick={() => {
                     setPickProposal(id);
                     setIsVotingModalOpen(true);

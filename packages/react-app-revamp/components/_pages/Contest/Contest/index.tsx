@@ -27,7 +27,7 @@ const ContestTab = () => {
     isSubmitProposalModalOpen: state.isModalOpen,
     setIsSubmitProposalModalOpen: state.setIsModalOpen,
   }));
-  const submitButtonText = isConnected ? "submit a response" : "connect wallet to submit";
+  const submitButtonText = isConnected ? "submit a response" : "connect wallet to submit entry";
   const qualifiedToSubmit =
     currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
   const showSubmitButton = !isConnected || qualifiedToSubmit;
