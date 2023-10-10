@@ -32,6 +32,7 @@ const ContestTab = () => {
     currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
   const showSubmitButton = !isConnected || qualifiedToSubmit;
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
   return (
     <div>
@@ -58,7 +59,7 @@ const ContestTab = () => {
       )}
       <ContestStickyCards />
 
-      <div className="mt-4">
+      <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
         <div className="flex flex-col gap-5">
           <hr className="border-primary-2 border-2" />
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
