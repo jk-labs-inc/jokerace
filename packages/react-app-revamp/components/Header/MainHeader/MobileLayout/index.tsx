@@ -31,13 +31,14 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
 }) => {
   const router = useRouter();
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
+  const displayProfile = showProfile && !router.pathname.includes("user");
   const isActive = (route: string) => (router.pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(router.pathname) ? "text-primary-10 transition-colors font-bold" : "";
 
   return (
     <>
-      {address && showProfile && (
+      {address && displayProfile && (
         <header className="top-0 right-0 left-0 px-4 mt-4">
           <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
             <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
