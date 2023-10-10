@@ -52,7 +52,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
 
   return (
     <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
-      <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-6"}`}>
+      <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-12"}`}>
         <ArrowLeftIcon width={24} onClick={onClose} />
         <div className="flex gap-2 self-end">
           <a
