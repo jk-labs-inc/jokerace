@@ -26,7 +26,6 @@ import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
 import { ProposalWrapper } from "@hooks/useProposal/store";
 import { RewardsWrapper } from "@hooks/useRewards/store";
-import { SubmitProposalWrapper } from "@hooks/useSubmitProposal/store";
 import useUser from "@hooks/useUser";
 import { UserWrapper, useUserStore } from "@hooks/useUser/store";
 import { readContract } from "@wagmi/core";
@@ -296,11 +295,9 @@ const LayoutViewContest = (props: any) => {
                       <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                     </div>
                   </div>
-
                   <div className="mt-8 mb-8 gap-3 flex flex-col">
                     <ContestTabs onChange={tab => setTab(tab)} />
                   </div>
-
                   {renderTabs}
 
                   {props.children}
@@ -331,15 +328,13 @@ export const getLayout = (page: any) => {
         <ProposalWrapper>
           <DeleteProposalWrapper>
             <UserWrapper>
-              <SubmitProposalWrapper>
-                <CastVotesWrapper>
-                  <ContractFactoryWrapper>
-                    <RewardsWrapper>
-                      <LayoutViewContest>{page}</LayoutViewContest>
-                    </RewardsWrapper>
-                  </ContractFactoryWrapper>
-                </CastVotesWrapper>
-              </SubmitProposalWrapper>
+              <CastVotesWrapper>
+                <ContractFactoryWrapper>
+                  <RewardsWrapper>
+                    <LayoutViewContest>{page}</LayoutViewContest>
+                  </RewardsWrapper>
+                </ContractFactoryWrapper>
+              </CastVotesWrapper>
             </UserWrapper>
           </DeleteProposalWrapper>
         </ProposalWrapper>

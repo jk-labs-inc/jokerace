@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import { MediaQuery } from "@helpers/mediaQuery";
-import { generateLensShareUrl, generateTwitterShareUrl, generateUrlToCopy } from "@helpers/share";
+import { generateLensShareUrlForContest, generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
 import { DuplicateIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import { FC, Fragment } from "react";
@@ -43,7 +43,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
             {({ active }) => (
               <a
                 target="_blank"
-                href={generateLensShareUrl(contestName, contestAddress, chain)}
+                href={generateLensShareUrlForContest(contestName, contestAddress, chain)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                   "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
@@ -58,7 +58,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
           <Menu.Item>
             {({ active }) => (
               <a
-                href={generateTwitterShareUrl(contestName, contestAddress, chain)}
+                href={generateTwitterShareUrlForContest(contestName, contestAddress, chain)}
                 target="_blank"
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",

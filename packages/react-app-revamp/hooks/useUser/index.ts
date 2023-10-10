@@ -2,6 +2,7 @@ import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { getAccount, readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
@@ -13,6 +14,7 @@ export const EMPTY_ROOT = "0x000000000000000000000000000000000000000000000000000
 
 export function useUser() {
   const { address: userAddress } = useAccount();
+  const { contestStatus } = useContestStatusStore(state => state);
   const {
     setCurrentUserQualifiedToSubmit,
     setCurrentUserAvailableVotesAmount,
@@ -31,6 +33,12 @@ export function useUser() {
     contestMaxNumberSubmissionsPerUser: number,
   ) => {
     const abi = await getContestContractVersion(address, chainId);
+    const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
+
+    if (contestStatus === ContestStatus.ContestOpen && anyoneCanSubmit) {
+      setCurrentUserQualifiedToSubmit(true);
+      return;
+    }
 
     if (!userAddress || !abi) return;
 
@@ -40,7 +48,7 @@ export function useUser() {
       chainId: chainId,
     };
 
-    if (submissionMerkleRoot === EMPTY_ROOT) {
+    if (anyoneCanSubmit) {
       const numOfSubmittedProposalsRaw = await readContract({
         ...contractConfig,
         functionName: "getNumSubmissions",

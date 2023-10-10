@@ -1,9 +1,11 @@
+import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
+import { generateLensShareUrlForSubmission, generateTwitterShareUrlForSubmission } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
@@ -13,6 +15,8 @@ import { FC } from "react";
 import { useAccount } from "wagmi";
 
 interface SubmissionPageMobileLayoutProps {
+  address: string;
+  chain: string;
   proposalId: string;
   prompt: string;
   proposal: Proposal;
@@ -22,6 +26,8 @@ interface SubmissionPageMobileLayoutProps {
 }
 
 const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
+  address,
+  chain,
   proposalId,
   prompt,
   proposal,
@@ -35,11 +41,15 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
 
   return (
-    <div className="fixed top-0 left-0 right-0 bottom-0 z-10 bg-true-black overflow-y-auto w-screen -ml-6 mt-7 px-9">
+    <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
       <div className="flex justify-between">
         <ArrowLeftIcon width={24} onClick={onClose} />
         <div className="flex gap-2 self-end">
-          <div className={`flex items-center  bg-neutral-12 rounded-full overflow-hidden w-8 h-8`}>
+          <a
+            className={`flex items-center  bg-neutral-12 rounded-full overflow-hidden w-8 h-8`}
+            href={generateLensShareUrlForSubmission(address, chain, proposalId)}
+            target="_blank"
+          >
             <Image
               width={32}
               height={32}
@@ -47,8 +57,12 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               src="/socials/lens-leaf.svg"
               alt="avatar"
             />
-          </div>
-          <div className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}>
+          </a>
+          <a
+            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
+            href={generateTwitterShareUrlForSubmission(address, chain, proposalId)}
+            target="_blank"
+          >
             <Image
               width={28}
               height={28}
@@ -56,7 +70,8 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               src="/socials/twitter-light.svg"
               alt="avatar"
             />
-          </div>
+          </a>
+          {/* // TODO: what does forward do? */}
           <div
             className={`flex items-center  bg-true-black rounded-full border-neutral-11 border overflow-hidden w-8 h-8`}
           >
@@ -105,8 +120,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           )}
         </div>
       </div>
-      <div className=" bottom-0 sticky">aa</div>
-    </div>
+    </DialogModalV3>
   );
 };
 

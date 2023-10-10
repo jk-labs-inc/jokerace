@@ -63,6 +63,8 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
   if (isMobile) {
     return (
       <SubmissionPageMobileLayout
+        address={address}
+        chain={chainName}
         prompt={prompt}
         proposal={proposal}
         proposalId={proposalId}

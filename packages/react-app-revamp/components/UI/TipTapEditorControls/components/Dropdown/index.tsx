@@ -50,7 +50,7 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute bottom-[50px] left-0 md:bottom-auto md:left-auto right-0 z-10 mt-2 w-52 origin-top-right overflow-x-clip rounded-[5px] bg-white border border-neutral-11 bg-true-black focus:outline-none">
+        <Menu.Items className="absolute left-[5px] md:left-auto right-0 z-10 mt-2 w-52 origin-top-right overflow-x-clip rounded-[5px] bg-white border border-neutral-11 bg-true-black focus:outline-none">
           <div className="py-1">
             <Menu.Item>
               {({ active }) => (

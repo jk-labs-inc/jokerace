@@ -52,6 +52,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const isCorrectNetwork = chainId === chain?.id;
   const [isDragging, setIsDragging] = useState(false);
   const { uploadImage } = useUploadImageStore(state => state);
+  const placeholderText = isMobile ? "this is my submission..." : "this is my submission and here’s why...";
 
   const editorProposal = useEditor({
     extensions: [
@@ -66,7 +67,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       TiptapExtensionLink,
       Placeholder.configure({
         emptyEditorClass: "is-editor-empty",
-        placeholder: "this is my submission and here’s why...",
+        placeholder: placeholderText,
       }),
       Iframe,
     ],

@@ -36,7 +36,8 @@ const VotingContestQualifier = () => {
     if (canVote) {
       return (
         <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">
-          {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount > 0 ? "s" : ""} to deploy
+          {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount > 0 ? "s" : ""}{" "}
+          {isMobile ? "to use" : "to deploy"}
         </p>
       );
     }
@@ -45,7 +46,7 @@ const VotingContestQualifier = () => {
       return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you're out of votes :(</p>;
 
     return <p className="text-[16px] md:text-[24px] text-primary-10 font-bold">ineligible to vote</p>;
-  }, [contestStatus, currentUserTotalVotesAmount, isReadOnly, currentUserAvailableVotesAmount]);
+  }, [contestStatus, currentUserTotalVotesAmount, isReadOnly, currentUserAvailableVotesAmount, isMobile]);
 
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4  md:pl-8">

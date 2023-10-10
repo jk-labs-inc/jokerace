@@ -2,6 +2,7 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import Dropdown from "@components/UI/Dropdown";
 import FormField from "@components/UI/FormField";
 import { FC, useCallback, useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface SearchCriteria {
   query: string;
@@ -23,6 +24,7 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({ query: "", filterType: "title" });
   const [currentPlaceholder, setCurrentPlaceholder] = useState<string>("Search by title");
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useMediaQuery({ maxWidth: "768px" });
 
   const handleFilterTypeChange = (value: string) => {
     setSearchCriteria({ ...searchCriteria, filterType: value });
@@ -90,7 +92,7 @@ export const SearchBar: FC<SearchBarProps> = ({ isInline, onSearch }) => {
 
       <ButtonV3
         colorClass={`bg-gradient-next rounded-[10px] font-bold text-true-black mb-2 ${error ? "animate-shakeTop" : ""}`}
-        size={ButtonSize.LARGE}
+        size={isMobile ? ButtonSize.DEFAULT : ButtonSize.LARGE}
         onClick={executeSearch}
       >
         Search

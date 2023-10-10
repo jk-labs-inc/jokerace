@@ -58,7 +58,7 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
   };
 
   return (
-    <div className={`inline-flex flex-wrap gap-2 ${props.className}`}>
+    <div className={`inline-flex flex-wrap sm:gap-2 ${props.className}`}>
       <TipTapEditorControlsTextDropdown onSelectionChange={handleHeadingChange} />
       <button
         type="button"

@@ -13,9 +13,11 @@ import ContestPrompt from "../components/Prompt";
 import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
 import ContestTimeline from "../components/Timeline";
+import { useRouter } from "next/router";
 
 const ContestTab = () => {
   const { contestPrompt } = useContestStore(state => state);
+  const router = useRouter();
   const { isConnected } = useAccount();
   const { contestStatus } = useContestStatusStore(state => state);
   const { contestMaxNumberSubmissionsPerUser, currentUserQualifiedToSubmit, currentUserProposalCount } = useUserStore(
@@ -72,6 +74,7 @@ const ContestTab = () => {
           )}
         </div>
       </div>
+
       <DialogModalSendProposal isOpen={isSubmitProposalModalOpen} setIsOpen={setIsSubmitProposalModalOpen} />
     </div>
   );
