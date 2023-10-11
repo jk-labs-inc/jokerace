@@ -7,12 +7,14 @@ import "@styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
 import { WagmiConfig } from "wagmi";
+import PullToRefresh from "pulltorefreshjs";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,6 +34,24 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   //@ts-ignore
   const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase>{page}</LayoutBase>);
+
+  useEffect(() => {
+    const standalone = window.matchMedia("(display-mode: standalone)").matches;
+
+    if (!standalone) {
+      return;
+    }
+
+    PullToRefresh.init({
+      onRefresh() {
+        location.reload();
+      },
+    });
+
+    return () => {
+      PullToRefresh.destroyAll();
+    };
+  }, []);
 
   return (
     <>
