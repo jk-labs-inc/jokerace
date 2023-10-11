@@ -1,0 +1,52 @@
+/* eslint-disable react/no-unescaped-entities */
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { FC, useState } from "react";
+
+interface AddToHomeScreenNotSupportedBrowserProps {
+  onClose?: () => void;
+}
+
+const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserProps> = ({ onClose }) => {
+  const [step, setStep] = useState(1);
+  return (
+    <>
+      {step === 1 ? (
+        <div className="flex flex-col gap-5">
+          <p className="text-[24px] font-bold">please change browser</p>
+          <div className="flex flex-col gap-2">
+            <p className="text-[16px]">to install JokeRace as an app, you’ll need to add it to your home screen.</p>
+            <p className="text-[16px]">please open it in a supported browser like safari or chrome to install.</p>
+          </div>
+          <div className="flex flex-col gap-2">
+            <ButtonV3 colorClass="bg-gradient-vote rounded-[40px]" size={ButtonSize.FULL} onClick={() => setStep(2)}>
+              i’ll change my browser now
+            </ButtonV3>
+            <p className="text-[12px] text-center cursor-pointer" onClick={onClose}>
+              i prefer to use this browser for now
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-5">
+          <div className="flex justify-between items-center">
+            <p className="text-[24px] font-bold">great! here’s what’s next:</p>
+          </div>
+          <div className="markdown pl-1">
+            <ol className="flex flex-col gap-3">
+              <li className="text-[16px]">open jokerace.xyz in safari / chrome</li>
+              <li className="text-[16px]">
+                tap the <b>share icon</b>
+              </li>
+              <li className="text-[16px]">
+                tap <b>add to home screen</b>
+              </li>
+            </ol>
+          </div>
+          <p className="text-[16px]">and you're set!</p>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default AddToHomeScreenNotSupportedBrowser;

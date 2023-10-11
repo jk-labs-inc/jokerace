@@ -194,9 +194,8 @@ li {
 
 /* // Edit pull-to-refresh styles */
 .ptr--ptr {
-  top: 20px !important;
-  left: 50% !important;
-  transform: translateX(-45%) !important;
+  left: 50%;
+  transform: translateX(-45%);
 }
 
 @tailwind base;
