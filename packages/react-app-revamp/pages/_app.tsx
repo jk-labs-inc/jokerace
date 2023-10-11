@@ -45,11 +45,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     }
 
     PullToRefresh.init({
-      onRefresh() {
-        location.reload();
-      },
-      iconArrow: ReactDOMServer.renderToString(<ArrowUpIcon className="w-6 h-6" />),
-      iconRefreshing: ReactDOMServer.renderToString(<RefreshIcon className="w-6 h-6 animate-spin" />),
+      iconArrow: ReactDOMServer.renderToString(<ArrowUpIcon className="w-6 h-6 text-true-white" />),
+      iconRefreshing: ReactDOMServer.renderToString(<RefreshIcon className="w-6 h-6 animate-spin  text-true-white" />),
     });
 
     return () => {

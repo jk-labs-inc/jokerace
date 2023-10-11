@@ -9,7 +9,6 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { useQuery } from "@tanstack/react-query";
 import { getFeaturedContests, getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
-import Head from "next/head";
 import Link from "next/link";
 import router from "next/router";
 import { useEffect, useState } from "react";
