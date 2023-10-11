@@ -15,6 +15,8 @@ import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
 import { WagmiConfig } from "wagmi";
 import PullToRefresh from "pulltorefreshjs";
+import ReactDOMServer from "react-dom/server";
+import { ArrowUpIcon, RefreshIcon } from "@heroicons/react/outline";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -46,6 +48,8 @@ function MyApp({ Component, pageProps }: AppProps) {
       onRefresh() {
         location.reload();
       },
+      iconArrow: ReactDOMServer.renderToString(<ArrowUpIcon className="w-6 h-6" />),
+      iconRefreshing: ReactDOMServer.renderToString(<RefreshIcon className="w-6 h-6 animate-spin" />),
     });
 
     return () => {
