@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import Image from "next/image";
 import { FC } from "react";
 
@@ -30,7 +29,7 @@ const AddToHomeScreenSupportedBrowser: FC<AddToHomeScreenSupportedBrowserProps> 
           </li>
         </ol>
       </div>
-      <p className="text-[16px]">and that's it!</p>
+      <p className="text-[16px]">and that’s it!</p>
     </div>
   );
 };

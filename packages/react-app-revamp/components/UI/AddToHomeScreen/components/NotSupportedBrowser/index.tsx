@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC, useState } from "react";
 
@@ -42,7 +41,7 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
               </li>
             </ol>
           </div>
-          <p className="text-[16px]">and you're set!</p>
+          <p className="text-[16px]">and you’re set!</p>
         </div>
       )}
     </>

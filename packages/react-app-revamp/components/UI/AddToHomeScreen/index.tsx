@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 import { Dialog } from "@headlessui/react";
 import { hidePopupForever, shouldShowPopup } from "@helpers/pwa";
 import { useEffect, useState } from "react";
