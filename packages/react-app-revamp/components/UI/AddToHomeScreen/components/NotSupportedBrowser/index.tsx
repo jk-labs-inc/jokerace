@@ -41,7 +41,9 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
               </li>
             </ol>
           </div>
-          <p className="text-[16px]">and you’re set!</p>
+          <p className="text-[16px]">
+            and you’re set! see you soon in safari <i>or</i> chrome, where we’ll give these instructions again :) 
+          </p>
         </div>
       )}
     </>
