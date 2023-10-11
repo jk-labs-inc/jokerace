@@ -37,7 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <link rel="icon" href="/favicon.png" />
-        <meta name="theme-color" content="#ffef5c" />
+        <meta name="theme-color" content="#000000" />
         <meta name="color-scheme" content="dark" />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://jokerace.xyz/" />
