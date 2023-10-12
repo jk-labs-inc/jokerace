@@ -48,6 +48,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     {
         _name = name_;
         _prompt = prompt_;
+
+        emit JokeraceCreated(); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     /**
@@ -75,7 +77,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.17";
+        return "3.18";
     }
 
     /**
