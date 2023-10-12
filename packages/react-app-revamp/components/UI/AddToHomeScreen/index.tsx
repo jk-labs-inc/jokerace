@@ -1,9 +1,8 @@
 import { Dialog } from "@headlessui/react";
-import { hidePopupForever, shouldShowPopup } from "@helpers/pwa";
 import { useEffect, useState } from "react";
+import { isChrome, isIE, isSafari } from "react-device-detect";
 import AddToHomeScreenNotSupportedBrowser from "./components/NotSupportedBrowser";
 import AddToHomeScreenSupportedBrowser from "./components/SupportedBrowser";
-import { isSafari, isIE, isChrome } from "react-device-detect";
 
 const AddToHomeScreenPopup = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -11,26 +10,21 @@ const AddToHomeScreenPopup = () => {
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
   useEffect(() => {
-    const checkConditions = () => {
-      const shouldShow = shouldShowPopup();
-      setShowPopup(shouldShow);
-    };
-    checkConditions();
+    const popupShown = sessionStorage.getItem("popupShown");
+    if (!popupShown) {
+      setShowPopup(true);
+    }
   }, []);
 
   const handleClose = () => {
-    hidePopupForever();
     setShowPopup(false);
+    sessionStorage.setItem("popupShown", "true");
   };
 
-  const handleCloseOnNonSupportedBrowser = () => {
-    setShowPopup(false);
-  };
-
-  if (!showPopup || isInPwaMode) return null;
+  if (isInPwaMode) return null;
 
   return (
-    <Dialog open={showPopup} onClose={() => null} className="relative z-50">
+    <Dialog open={showPopup} onClose={handleClose} className="relative z-50">
       <div
         className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-40 backdrop-blur-[10px]"
         aria-hidden="true"
@@ -46,7 +40,7 @@ const AddToHomeScreenPopup = () => {
                 {isSupportedBrowser ? (
                   <AddToHomeScreenSupportedBrowser onClose={handleClose} />
                 ) : (
-                  <AddToHomeScreenNotSupportedBrowser onClose={handleCloseOnNonSupportedBrowser} />
+                  <AddToHomeScreenNotSupportedBrowser onClose={handleClose} />
                 )}
               </div>
             </div>
