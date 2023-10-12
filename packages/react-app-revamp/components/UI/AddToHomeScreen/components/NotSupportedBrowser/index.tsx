@@ -16,7 +16,7 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
             <p className="text-[16px]">to install JokeRace as an app, you’ll need to add it to your home screen.</p>
             <p className="text-[16px]">please open it in a supported browser like safari or chrome to install.</p>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-4">
             <ButtonV3 colorClass="bg-gradient-vote rounded-[40px]" size={ButtonSize.FULL} onClick={() => setStep(2)}>
               i’ll change my browser now
             </ButtonV3>
@@ -32,7 +32,7 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
           </div>
           <div className="markdown pl-1">
             <ol className="flex flex-col gap-3">
-              <li className="text-[16px]">open jokerace.xyz in safari / chrome</li>
+              <li className="text-[16px]">open jokerace.xyz in safari</li>
               <li className="text-[16px]">
                 tap the <b>share icon</b>
               </li>
@@ -42,7 +42,7 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
             </ol>
           </div>
           <p className="text-[16px]">
-            and you’re set! see you soon in safari <i>or</i> chrome, where we’ll give these instructions again :) 
+            and you’re set! see you soon in your other browser, where we’ll give these instructions again :)
           </p>
         </div>
       )}
