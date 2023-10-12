@@ -224,4 +224,5 @@ export const chainsImages: ChainImages = {
   eostestnet: "/eos.svg",
   fuse: "/fuse.svg",
   kroma: "/kroma.svg",
+  mainnet: "/ethereum.svg",
 };
