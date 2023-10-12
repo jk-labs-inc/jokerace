@@ -15,6 +15,8 @@ import CleanUpContractDocsContract from "@contracts/bytecodeAndAbi/Contest.3.13.
 import TrackProposalAuthorsContract from "@contracts/bytecodeAndAbi/Contest.3.14.trackProposalAuthors.sol/Contest.json";
 import TrackVotersContract from "@contracts/bytecodeAndAbi/Contest.3.15.trackVoters.sol/Contest.json";
 import MakeVarsPublicContract from "@contracts/bytecodeAndAbi/Contest.3.16.makeVarsPublic.sol/Contest.json";
+import LetJkLabsCancelContract from "@contracts/bytecodeAndAbi/Contest.3.17.letJkLabsCancel.sol/Contest.json";
+import AddJokeraceCreatedEventContract from "@contracts/bytecodeAndAbi/Contest.3.18.addJokeraceCreatedEvent.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
@@ -38,7 +40,11 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "3.16") {
+    if (version === "3.18") {
+      return { abi: AddJokeraceCreatedEventContract.abi, version};
+    } else if (version === "3.17") {
+      return { abi: LetJkLabsCancelContract.abi, version};
+    } else if (version === "3.16") {
       return { abi: MakeVarsPublicContract.abi, version };
     } else if (version === "3.15") {
       return { abi: TrackVotersContract.abi, version };

@@ -169,7 +169,7 @@ module.exports = {
         5: "#2e2e32",
         6: "#34343a",
         7: "#3e3e44",
-        8: "#504f57",
+        8: "#5E707666",
         9: "#9D9D9D",
         10: "#6A6A6A",
         11: "#E5E5E5",
@@ -326,6 +326,7 @@ module.exports = {
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(255, 226, 91, 0.6)",
         "timer-container": "3px 3px 4px rgba(106, 106, 106, 1)",
+        dialog: "0px 1px 6px 1px rgba(157, 157, 157, 1)",
       },
       backgroundColor: {
         ffdd3e: "#FFDD3E",

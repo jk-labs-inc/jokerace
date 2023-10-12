@@ -41,6 +41,11 @@ abstract contract IGovernor is IERC165 {
     }
 
     /**
+     * @dev Emitted when a jokerace is created.
+     */
+    event JokeraceCreated(string name, address creator);
+
+    /**
      * @dev Emitted when a proposal is created.
      */
     event ProposalCreated(uint256 proposalId, address proposer);
