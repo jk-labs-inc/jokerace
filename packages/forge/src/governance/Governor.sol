@@ -49,7 +49,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         _name = name_;
         _prompt = prompt_;
 
-        emit JokeraceCreated(); // emit upon creation to be able to easily find jokeraces on a chain
+        emit JokeraceCreated(name_, msg.sender); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     /**
