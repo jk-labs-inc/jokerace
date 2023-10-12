@@ -3,11 +3,11 @@ import { hidePopupForever, shouldShowPopup } from "@helpers/pwa";
 import { useEffect, useState } from "react";
 import AddToHomeScreenNotSupportedBrowser from "./components/NotSupportedBrowser";
 import AddToHomeScreenSupportedBrowser from "./components/SupportedBrowser";
-import { browserName } from "react-device-detect";
+import { isSafari, isIE, isChrome } from "react-device-detect";
 
 const AddToHomeScreenPopup = () => {
   const [showPopup, setShowPopup] = useState(false);
-  const isSupportedBrowser = browserName === "Chrome" || browserName === "Safari" || browserName === "Edge";
+  const isSupportedBrowser = isSafari || isChrome || isIE;
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
   useEffect(() => {
