@@ -2,11 +2,6 @@
   font-face rules (custom fonts declarations)
 */
 
-html,
-body {
-  overscroll-behavior-x: none;
-}
-
 @font-face {
   src: url("/Sabo-Filled.otf") format("opentype");
   font-family: "Sabo";

@@ -4,8 +4,11 @@ import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { useContestStore } from "@hooks/useContest/store";
+import useSubmitProposal from "@hooks/useSubmitProposal";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
-import { FC } from "react";
+import { FC, useEffect } from "react";
+import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
 interface DialogModalSendProposalMobileLayoutProps {
   proposal: string;
@@ -13,7 +16,6 @@ interface DialogModalSendProposalMobileLayoutProps {
   address: string;
   formattedDate: string | null;
   isOpen: boolean;
-  isLoading: boolean;
   isCorrectNetwork: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onSwitchNetwork?: () => void;
@@ -26,18 +28,35 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   address,
   formattedDate,
   isOpen,
-  isLoading,
   isCorrectNetwork,
   setIsOpen,
   onSwitchNetwork,
   onSubmitProposal,
 }) => {
+  const { isLoading, error } = useSubmitProposal();
+  const { isMobileConfirmModalOpen, setIsMobileConfirmModalOpen } = useSubmitProposalStore(state => state);
   const { contestPrompt } = useContestStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
+  useEffect(() => {
+    if (error) {
+      setIsMobileConfirmModalOpen(false);
+    }
+  }, [error, setIsMobileConfirmModalOpen]);
+
   return (
     <DialogModalV3 isOpen={isOpen} title="sendProposalMobile" isMobile>
-      <div className={`flex flex-col gap-8 ${isInPwaMode ? "mt-0" : "mt-12"}`}>
+      <div
+        className={`${
+          isMobileConfirmModalOpen ? "fixed" : "hidden"
+        } inset-0 z-50 pointer-events-none bg-neutral-8 bg-opacity-40 backdrop-blur-[10px]`}
+        aria-hidden="true"
+      />
+      <div
+        className={`flex flex-col gap-8 ${isInPwaMode ? "mt-0" : "mt-12"} ${
+          isMobileConfirmModalOpen ? "pointer-events-none" : ""
+        }`}
+      >
         <div className="flex justify-between items-center">
           <p className="text-neutral-11 text-[16px] font-bold" onClick={() => setIsOpen(false)}>
             cancel
@@ -46,7 +65,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
             <ButtonV3
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.SMALL}
-              onClick={() => onSubmitProposal?.()}
+              onClick={() => setIsMobileConfirmModalOpen(true)}
               isDisabled={isLoading || !proposal.length || !editorProposal?.getText().length}
             >
               submit!
@@ -78,6 +97,13 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
             />
           </div>
         </div>
+      </div>
+      <div>
+        <DialogModalSendProposalMobileLayoutConfirm
+          isOpen={isMobileConfirmModalOpen}
+          onConfirm={() => onSubmitProposal?.()}
+          onClose={() => setIsMobileConfirmModalOpen(false)}
+        />
       </div>
     </DialogModalV3>
   );

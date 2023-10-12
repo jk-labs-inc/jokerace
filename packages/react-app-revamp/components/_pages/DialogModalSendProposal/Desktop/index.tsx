@@ -4,6 +4,7 @@ import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { useContestStore } from "@hooks/useContest/store";
+import useSubmitProposal from "@hooks/useSubmitProposal";
 import { Editor, EditorContent } from "@tiptap/react";
 import { FC } from "react";
 
@@ -13,7 +14,6 @@ interface DialogModalSendProposalDesktopLayoutProps {
   address: string;
   formattedDate: string | null;
   isOpen: boolean;
-  isLoading: boolean;
   isCorrectNetwork: boolean;
   isDragging: boolean;
   setIsOpen: (isOpen: boolean) => void;
@@ -30,7 +30,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   address,
   formattedDate,
   isOpen,
-  isLoading,
   isCorrectNetwork,
   isDragging,
   setIsOpen,
@@ -41,6 +40,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   onSubmitProposal,
 }) => {
   const { contestPrompt } = useContestStore(state => state);
+  const { isLoading } = useSubmitProposal();
 
   return (
     <DialogModalV3

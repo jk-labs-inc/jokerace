@@ -2,7 +2,6 @@
 import Iframe from "@components/tiptap/Iframe";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { goToProposalPage } from "@helpers/routing";
 import {
   loadSubmissionFromLocalStorage,
   saveSubmissionToLocalStorage,
@@ -11,6 +10,7 @@ import {
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import Document from "@tiptap/extension-document";
 import Heading from "@tiptap/extension-heading";
@@ -23,7 +23,7 @@ import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchNetwork } from "@wagmi/core";
 import moment from "moment";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useNetwork } from "wagmi";
@@ -42,6 +42,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { chainName, address: contestId } = extractPathSegments(asPath);
   const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
+  const setProposalId = useSubmitProposalStore(state => state.setProposalId);
   const { votesOpen } = useContestStore(state => state);
   const { setRevertTextOption } = useEditorStore(state => state);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
@@ -106,14 +107,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const onSubmitProposal = async () => {
     const result = await sendProposal(proposal.trim());
     if (result) {
-      const handleRouteChangeComplete = () => {
-        setIsOpen(false);
-        editorProposal?.commands.clearContent();
-        router.events.off("routeChangeComplete", handleRouteChangeComplete);
-      };
-
-      router.events.on("routeChangeComplete", handleRouteChangeComplete);
-      goToProposalPage(chainName, contestId, result.proposalId);
+      setProposalId(result.proposalId);
     }
   };
 
@@ -155,7 +149,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           address={address ?? ""}
           formattedDate={formattedDate}
           isOpen={isOpen}
-          isLoading={isLoading}
           isCorrectNetwork={isCorrectNetwork}
           setIsOpen={setIsOpen}
           onSwitchNetwork={onSwitchNetwork}
@@ -168,7 +161,6 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           address={address ?? ""}
           formattedDate={formattedDate}
           isOpen={isOpen}
-          isLoading={isLoading}
           isCorrectNetwork={isCorrectNetwork}
           isDragging={isDragging}
           setIsOpen={setIsOpen}
