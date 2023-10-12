@@ -11,6 +11,7 @@ import {
   ledgerWallet,
   omniWallet,
   trustWallet,
+  bitKeepWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
@@ -160,6 +161,7 @@ const connectors = connectorsForWallets([
       ledgerWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      bitKeepWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
     ],
   },
 ]);
