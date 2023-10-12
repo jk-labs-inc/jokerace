@@ -1,5 +1,17 @@
 import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { metaMaskWallet, walletConnectWallet, rainbowWallet, okxWallet, tahoWallet, coinbaseWallet, argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
+import {
+  metaMaskWallet,
+  walletConnectWallet,
+  rainbowWallet,
+  okxWallet,
+  tahoWallet,
+  coinbaseWallet,
+  argentWallet,
+  imTokenWallet,
+  ledgerWallet,
+  omniWallet,
+  trustWallet,
+} from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
@@ -210,4 +222,5 @@ export const chainsImages: ChainImages = {
   eostestnet: "/eos.svg",
   fuse: "/fuse.svg",
   kroma: "/kroma.svg",
+  mainnet: "/ethereum.svg",
 };
