@@ -1,31 +1,30 @@
 import { Dialog } from "@headlessui/react";
-import { hidePopupForever, shouldShowPopup } from "@helpers/pwa";
 import { useEffect, useState } from "react";
+import { isChrome, isIE, isSafari } from "react-device-detect";
 import AddToHomeScreenNotSupportedBrowser from "./components/NotSupportedBrowser";
 import AddToHomeScreenSupportedBrowser from "./components/SupportedBrowser";
-import { browserName } from "react-device-detect";
 
 const AddToHomeScreenPopup = () => {
   const [showPopup, setShowPopup] = useState(false);
-  const isSupportedBrowser = browserName === "Chrome" || browserName === "Safari" || browserName === "Edge";
+  const isSupportedBrowser = isSafari || isChrome || isIE;
+  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
   useEffect(() => {
-    const checkConditions = () => {
-      const shouldShow = shouldShowPopup();
-      setShowPopup(shouldShow);
-    };
-    checkConditions();
+    const popupShown = sessionStorage.getItem("popupShown");
+    if (!popupShown) {
+      setShowPopup(true);
+    }
   }, []);
 
   const handleClose = () => {
-    hidePopupForever();
     setShowPopup(false);
+    sessionStorage.setItem("popupShown", "true");
   };
 
-  if (!showPopup) return null;
+  if (isInPwaMode) return null;
 
   return (
-    <Dialog open={showPopup} onClose={() => null} className="relative z-50">
+    <Dialog open={showPopup} onClose={handleClose} className="relative z-50">
       <div
         className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-40 backdrop-blur-[10px]"
         aria-hidden="true"
