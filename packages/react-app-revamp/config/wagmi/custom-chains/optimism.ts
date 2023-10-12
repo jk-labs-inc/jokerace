@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const optimism: Chain = {
   id: 10,
   name: "optimism",
   network: "optimism",
+  iconUrl: "/optimism.svg",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",
