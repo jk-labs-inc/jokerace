@@ -23,6 +23,10 @@ const AddToHomeScreenPopup = () => {
     setShowPopup(false);
   };
 
+  const handleCloseOnNonSupportedBrowser = () => {
+    setShowPopup(false);
+  };
+
   if (!showPopup || isInPwaMode) return null;
 
   return (
@@ -42,7 +46,7 @@ const AddToHomeScreenPopup = () => {
                 {isSupportedBrowser ? (
                   <AddToHomeScreenSupportedBrowser onClose={handleClose} />
                 ) : (
-                  <AddToHomeScreenNotSupportedBrowser onClose={handleClose} />
+                  <AddToHomeScreenNotSupportedBrowser onClose={handleCloseOnNonSupportedBrowser} />
                 )}
               </div>
             </div>
