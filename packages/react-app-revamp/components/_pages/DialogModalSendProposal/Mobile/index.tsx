@@ -34,7 +34,8 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   onSubmitProposal,
 }) => {
   const { isLoading, error } = useSubmitProposal();
-  const { isMobileConfirmModalOpen, setIsMobileConfirmModalOpen } = useSubmitProposalStore(state => state);
+  const { isMobileConfirmModalOpen, setIsMobileConfirmModalOpen, setIsLoading, setIsSuccess, setProposalId } =
+    useSubmitProposalStore(state => state);
   const { contestPrompt } = useContestStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
@@ -43,6 +44,13 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
       setIsMobileConfirmModalOpen(false);
     }
   }, [error, setIsMobileConfirmModalOpen]);
+
+  const resetStatesAndProceed = () => {
+    setIsLoading(false);
+    setIsSuccess(false);
+    setProposalId("");
+    setIsMobileConfirmModalOpen(true);
+  };
 
   return (
     <DialogModalV3 isOpen={isOpen} title="sendProposalMobile" isMobile>
@@ -65,7 +73,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
             <ButtonV3
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.SMALL}
-              onClick={() => setIsMobileConfirmModalOpen(true)}
+              onClick={resetStatesAndProceed}
               isDisabled={isLoading || !proposal.length || !editorProposal?.getText().length}
             >
               submit!

@@ -12,6 +12,7 @@ import { waitForTransaction, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
+import { useMediaQuery } from "react-responsive";
 import { TransactionReceipt } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
@@ -28,6 +29,8 @@ const safeMetadata = {
 export function useSubmitProposal() {
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
+  const isMobile = useMediaQuery({ maxWidth: "768px" });
+  const showToast = !isMobile;
   const { address: userAddress } = useAccount();
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
@@ -40,7 +43,7 @@ export function useSubmitProposal() {
   const { chain } = useNetwork();
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
-    toastLoading("proposal is deploying...");
+    if (showToast) toastLoading("proposal is deploying...");
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
@@ -103,9 +106,8 @@ export function useSubmitProposal() {
 
         setIsLoading(false);
         setIsSuccess(true);
-        toastSuccess("proposal submitted successfully!");
+        if (showToast) toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
-        removeSubmissionFromLocalStorage("submissions", address);
         fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
 

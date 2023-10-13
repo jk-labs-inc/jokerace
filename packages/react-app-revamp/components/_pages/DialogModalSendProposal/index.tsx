@@ -4,6 +4,7 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import {
   loadSubmissionFromLocalStorage,
+  removeSubmissionFromLocalStorage,
   saveSubmissionToLocalStorage,
   SubmissionCache,
 } from "@helpers/submissionCaching";
@@ -41,8 +42,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { asPath } = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { chainName, address: contestId } = extractPathSegments(asPath);
-  const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
-  const setProposalId = useSubmitProposalStore(state => state.setProposalId);
+  const { sendProposal } = useSubmitProposal();
+  const { setProposalId, setIsMobileConfirmModalOpen } = useSubmitProposalStore(state => state);
   const { votesOpen } = useContestStore(state => state);
   const { setRevertTextOption } = useEditorStore(state => state);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
@@ -108,6 +109,14 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     const result = await sendProposal(proposal.trim());
     if (result) {
       setProposalId(result.proposalId);
+      editorProposal?.commands.clearContent();
+      removeSubmissionFromLocalStorage("submissions", contestId);
+      if (isMobile) {
+        setIsOpen(true);
+        setIsMobileConfirmModalOpen(true);
+      } else {
+        setIsOpen(true);
+      }
     }
   };
 
