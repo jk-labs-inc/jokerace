@@ -18,6 +18,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     using SafeCast for uint256;
 
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
 
     string private _name;
     string private _prompt;
@@ -47,6 +48,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     {
         _name = name_;
         _prompt = prompt_;
+
+        emit JokeraceCreated(name_, msg.sender); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     /**
@@ -74,7 +77,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.16";
+        return "3.18";
     }
 
     /**
@@ -329,7 +332,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * Emits a {IGovernor-ContestCanceled} event.
      */
     function cancel() public virtual {
-        require(msg.sender == creator(), "Governor: only the creator can cancel a contest");
+        require(
+            ((msg.sender == creator()) || (msg.sender == JK_LABS_ADDRESS)),
+            "Governor: only creator or jk labs can cancel a contest"
+        );
 
         ContestState status = state();
 

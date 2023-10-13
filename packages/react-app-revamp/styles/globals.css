@@ -187,6 +187,12 @@ li {
   object-fit: contain;
 }
 
+/* // Edit pull-to-refresh styles */
+.ptr--ptr {
+  left: 50%;
+  transform: translateX(-45%);
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
