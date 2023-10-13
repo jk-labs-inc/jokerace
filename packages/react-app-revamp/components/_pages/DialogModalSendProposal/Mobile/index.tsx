@@ -11,6 +11,8 @@ import { FC, useEffect } from "react";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
 interface DialogModalSendProposalMobileLayoutProps {
+  chainName: string;
+  contestId: string;
   proposal: string;
   editorProposal: Editor | null;
   address: string;
@@ -23,6 +25,8 @@ interface DialogModalSendProposalMobileLayoutProps {
 }
 
 const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayoutProps> = ({
+  chainName,
+  contestId,
   proposal,
   editorProposal,
   address,
@@ -108,6 +112,8 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
       </div>
       <div>
         <DialogModalSendProposalMobileLayoutConfirm
+          chainName={chainName}
+          contestId={contestId}
           isOpen={isMobileConfirmModalOpen}
           onConfirm={() => onSubmitProposal?.()}
           onClose={() => setIsMobileConfirmModalOpen(false)}

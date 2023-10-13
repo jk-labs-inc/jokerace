@@ -10,7 +10,7 @@ const SendProposalMobileLayoutConfirmLoadingContent = () => {
       </div>
       <div className="relative w-[260px] h-[157px] border-4 border-true-black rounded-[10px] mt-4 overflow-hidden">
         <div className="absolute top-0 left-0 bg-black py-1 px-2">
-          <span className="text-[10px] text-true-white font-sabo font-bold">JOKETV</span>
+          <span className="text-[8px] text-true-white font-sabo font-bold">JOKETV</span>
         </div>
         <img src="/contest/dancing-dance.gif" className="w-full h-full" alt="Loading GIF" />
       </div>

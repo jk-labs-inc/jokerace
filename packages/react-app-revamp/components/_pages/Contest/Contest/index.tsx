@@ -23,10 +23,11 @@ const ContestTab = () => {
   );
   const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
-  const { isSubmitProposalModalOpen, setIsSubmitProposalModalOpen } = useSubmitProposalStore(state => ({
-    isSubmitProposalModalOpen: state.isModalOpen,
-    setIsSubmitProposalModalOpen: state.setIsModalOpen,
-  }));
+  const {
+    isModalOpen: isSubmitProposalModalOpen,
+    setIsModalOpen: setIsSubmitProposalModalOpen,
+    setIsSuccess: setIsSubmitProposalSuccess,
+  } = useSubmitProposalStore(state => state);
   const submitButtonText = isConnected ? "submit a response" : "connect wallet to submit entry";
   const qualifiedToSubmit =
     currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
@@ -50,7 +51,10 @@ const ContestTab = () => {
               type={ButtonType.TX_ACTION}
               colorClass="bg-gradient-vote rounded-[40px]"
               size={isMobile ? ButtonSize.FULL : ButtonSize.EXTRA_LARGE_LONG}
-              onClick={() => setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen)}
+              onClick={() => {
+                setIsSubmitProposalSuccess(false);
+                setIsSubmitProposalModalOpen(!isSubmitProposalModalOpen);
+              }}
             >
               {submitButtonText}
             </ButtonV3>

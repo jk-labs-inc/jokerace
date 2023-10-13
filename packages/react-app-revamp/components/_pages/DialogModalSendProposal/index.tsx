@@ -2,6 +2,7 @@
 import Iframe from "@components/tiptap/Iframe";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { emailRegex } from "@helpers/regex";
 import {
   loadSubmissionFromLocalStorage,
   removeSubmissionFromLocalStorage,
@@ -10,6 +11,7 @@ import {
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
+import useEmailSignup from "@hooks/useEmailSignup";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
@@ -41,9 +43,17 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
+  const { subscribeUser, isEmailExists } = useEmailSignup();
   const { chainName, address: contestId } = extractPathSegments(asPath);
   const { sendProposal } = useSubmitProposal();
-  const { setProposalId, setIsMobileConfirmModalOpen } = useSubmitProposalStore(state => state);
+  const {
+    setProposalId,
+    setIsMobileConfirmModalOpen,
+    wantsSubscription,
+    emailForSubscription,
+    setWantsSubscription,
+    setEmailForSubscription,
+  } = useSubmitProposalStore(state => state);
   const { votesOpen } = useContestStore(state => state);
   const { setRevertTextOption } = useEditorStore(state => state);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
@@ -105,18 +115,47 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     await switchNetwork({ chainId });
   };
 
+  const handleSubscription = async () => {
+    if (!wantsSubscription || !emailForSubscription || !emailForSubscription.match(emailRegex)) {
+      return null;
+    }
+
+    // Check if the email already exists
+    const emailExists = await isEmailExists(emailForSubscription);
+    if (emailExists) {
+      return null;
+    }
+
+    return subscribeUser(emailForSubscription, address ?? "");
+  };
+
   const onSubmitProposal = async () => {
-    const result = await sendProposal(proposal.trim());
-    if (result) {
-      setProposalId(result.proposalId);
-      editorProposal?.commands.clearContent();
-      removeSubmissionFromLocalStorage("submissions", contestId);
-      if (isMobile) {
-        setIsOpen(true);
-        setIsMobileConfirmModalOpen(true);
-      } else {
-        setIsOpen(true);
+    const promises = [sendProposal(proposal.trim())];
+
+    const subscriptionPromise = await handleSubscription();
+    if (subscriptionPromise) {
+      promises.push(subscriptionPromise);
+    }
+
+    try {
+      const [proposalResult] = await Promise.all(promises);
+
+      if (proposalResult) {
+        setProposalId(proposalResult.proposalId);
+        editorProposal?.commands.clearContent();
+        removeSubmissionFromLocalStorage("submissions", contestId);
+        if (isMobile) {
+          setIsOpen(true);
+          setIsMobileConfirmModalOpen(true);
+        } else {
+          setIsOpen(true);
+        }
       }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setWantsSubscription(false);
+      setEmailForSubscription("");
     }
   };
 
@@ -153,6 +192,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     <>
       {isMobile ? (
         <DialogModalSendProposalMobileLayout
+          chainName={chainName}
+          contestId={contestId}
           proposal={proposal}
           editorProposal={editorProposal}
           address={address ?? ""}
@@ -166,6 +207,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       ) : (
         <DialogModalSendProposalDesktopLayout
           proposal={proposal}
+          chainName={chainName}
+          contestId={contestId}
           editorProposal={editorProposal}
           address={address ?? ""}
           formattedDate={formattedDate}

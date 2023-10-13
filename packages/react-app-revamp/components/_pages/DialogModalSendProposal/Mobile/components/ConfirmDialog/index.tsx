@@ -1,18 +1,21 @@
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import DialogModalSendProposalSuccessLayout from "@components/_pages/DialogModalSendProposal/components/SuccessLayout";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import Image from "next/image";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import SendProposalMobileLayoutConfirmInitialContent from "./components/InitialContent";
 import SendProposalMobileLayoutConfirmLoadingContent from "./components/LoadingContent";
-import SendProposalMobileLayoutConfirmSuccessContent from "./components/SuccessContent";
 
 interface DialogModalSendProposalMobileLayoutConfirmProps {
+  chainName: string;
+  contestId: string;
   isOpen?: boolean;
   onConfirm?: () => void;
   onClose?: () => void;
 }
 
 const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobileLayoutConfirmProps> = ({
+  chainName,
+  contestId,
   isOpen,
   onConfirm,
   onClose,
@@ -28,13 +31,16 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
 
   const renderContent = () => {
     if (isLoading) return <SendProposalMobileLayoutConfirmLoadingContent />;
-    if (isSuccess && proposalId) return <SendProposalMobileLayoutConfirmSuccessContent proposalId={proposalId} />;
+    if (isSuccess && proposalId)
+      return (
+        <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
+      );
     return <SendProposalMobileLayoutConfirmInitialContent onConfirm={onConfirm} />;
   };
 
   return (
     <div className="fixed z-50 left-0 right-0 bottom-0 bg-true-black w-full border-t border-neutral-9 rounded-t-[40px] animate-appear px-10 py-8 ">
-      <div className={`flex flex-col ${isSuccess ? "gap-8" : "gap-8"}`}>
+      <div className={`flex flex-col ${isSuccess ? "gap-8" : "gap-4"} transition-all`}>
         <div className="flex justify-between items-center">
           <p className="text-[24px] font-bold">{title}</p>
           <Image src="/modal/modal_close.svg" width={24} height={24} alt="close" onClick={onClose} />
