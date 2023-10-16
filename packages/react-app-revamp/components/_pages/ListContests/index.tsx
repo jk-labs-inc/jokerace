@@ -17,6 +17,7 @@ interface ListContestsProps {
   rewardsData?: any;
   error?: any;
   className?: string;
+  allowToHide?: boolean;
   includeFullSearch?: boolean;
   includeSearch?: boolean;
   customTitle?: string;
@@ -37,6 +38,7 @@ export const ListContests: FC<ListContestsProps> = ({
   rewardsData,
   isRewardsFetching,
   itemsPerPage,
+  allowToHide,
   isContestDataFetching,
   compact = false,
   onSearchChange,
@@ -235,6 +237,7 @@ export const ListContests: FC<ListContestsProps> = ({
                         key={`contest-${index}`}
                         contest={contest}
                         compact={compact}
+                        allowToHide={allowToHide}
                         loading={loading}
                         rewards={rewardsData}
                         rewardsLoading={isRewardsFetching}
