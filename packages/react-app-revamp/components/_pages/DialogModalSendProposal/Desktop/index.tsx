@@ -7,8 +7,9 @@ import { useContestStore } from "@hooks/useContest/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
-import { FC } from "react";
+import { FC, useState } from "react";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
+import { emailRegex } from "@helpers/regex";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -50,13 +51,36 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
     useSubmitProposalStore(state => state);
   const { isLoading, isSuccess } = useSubmitProposal();
   const { proposalId } = useSubmitProposalStore(state => state);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWantsSubscription(event.target.checked);
+    setEmailError(null);
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmailForSubscription(event.target.value);
+    setEmailError(null);
+  };
+
+  const handleConfirm = () => {
+    if (wantsSubscription && !emailForSubscription) {
+      setEmailError("Please enter an email address.");
+      return;
+    }
+
+    if (!wantsSubscription && emailForSubscription) {
+      setEmailError("Please check the box if you want to be notified.");
+      return;
+    }
+
+    if (emailForSubscription && !emailRegex.test(emailForSubscription)) {
+      setEmailError("Invalid email address.");
+      return;
+    }
+
+    setEmailError(null);
+    onSubmitProposal?.();
   };
 
   return (
@@ -96,12 +120,11 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               />
               <div className="flex flex-col gap-4 mt-8">
                 <div className="flex gap-4">
-                  <input
-                    type="checkbox"
-                    className="w-6 h-6 rounded-[4px] border-neutral-9 border bg-true-black"
-                    checked={wantsSubscription}
-                    onChange={handleCheckboxChange}
-                  />
+                  <label className="checkbox-container">
+                    <input type="checkbox" checked={wantsSubscription} onChange={handleCheckboxChange} />
+                    <span className="checkmark"></span>
+                  </label>
+
                   <p className="text-[16px] text-neutral-9">
                     i’d like to receive notifications about contests and future opportunities on{" "}
                     <span className="normal-case">JokeRace</span>
@@ -115,6 +138,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                     placeholder="myemail@email.com"
                     onChange={handleEmailChange}
                   />
+                  {emailError && <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>}
                 </div>
               </div>
             </div>
@@ -123,7 +147,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                 <ButtonV3
                   colorClass="bg-gradient-vote rounded-[40px]"
                   size={ButtonSize.EXTRA_LARGE_LONG}
-                  onClick={() => onSubmitProposal?.()}
+                  onClick={handleConfirm}
                   isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty}
                 >
                   submit!
