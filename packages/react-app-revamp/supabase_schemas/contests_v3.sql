@@ -15,7 +15,7 @@ create table
     uuid uuid not null default gen_random_uuid (),
     votingMerkleRoot character varying null,
     submissionMerkleRoot character varying null,
-    hidden boolean false,
+    hidden boolean null default false,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 
