@@ -9,11 +9,21 @@ interface DialogModalProps {
   children: React.ReactNode;
   className?: string;
   isMobile?: boolean;
+  disableClose?: boolean;
   setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
 }
 
-const DialogModalV3: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children, onClose, isMobile, className }) => {
+const DialogModalV3: FC<DialogModalProps> = ({
+  isOpen,
+  setIsOpen,
+  title,
+  children,
+  onClose,
+  isMobile,
+  disableClose,
+  className,
+}) => {
   const handleClose = useCallback(() => {
     setIsOpen?.(false);
     if (onClose) {
@@ -38,7 +48,7 @@ const DialogModalV3: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, childre
                 onClick={handleClose}
                 title="Close this"
                 className={`${
-                  isMobile ? "hidden" : "absolute"
+                  isMobile || disableClose ? "hidden" : "absolute"
                 } z-10 top-0 right-[30px] inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11`}
               >
                 <Image src="/modal/modal_close.svg" width={39} height={33} alt="close" />

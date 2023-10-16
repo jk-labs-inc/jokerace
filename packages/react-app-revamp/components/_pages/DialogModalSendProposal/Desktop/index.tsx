@@ -65,6 +65,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
       isOpen={isOpen}
       setIsOpen={setIsOpen}
       className="w-full xl:w-[1110px] 3xl:w-[1300px]"
+      disableClose={!!(isSuccess && proposalId)}
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         {isSuccess && proposalId ? (
@@ -110,7 +111,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   <input
                     value={emailForSubscription}
                     type="text"
-                    className="w-[350px] rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-9  focus:outline-none"
+                    className="w-[350px] rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-9 focus:outline-none submission-subscription-input"
                     placeholder="myemail@email.com"
                     onChange={handleEmailChange}
                   />
@@ -121,16 +122,16 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               {isCorrectNetwork ? (
                 <ButtonV3
                   colorClass="bg-gradient-vote rounded-[40px]"
-                  size={ButtonSize.LARGE}
+                  size={ButtonSize.EXTRA_LARGE_LONG}
                   onClick={() => onSubmitProposal?.()}
-                  isDisabled={isLoading || !proposal.length || !editorProposal?.getText().length}
+                  isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty}
                 >
                   submit!
                 </ButtonV3>
               ) : (
                 <ButtonV3
                   colorClass="bg-gradient-create rounded-[40px]"
-                  size={ButtonSize.LARGE}
+                  size={ButtonSize.EXTRA_LARGE_LONG}
                   onClick={onSwitchNetwork}
                 >
                   switch network

@@ -4,7 +4,7 @@ interface UrlParams {
   [key: string]: string;
 }
 
-const BASE_LENSTER_URL = "https://lenster.xyz/?";
+const BASE_LENSTER_URL = "https://hey.xyz/?";
 const BASE_JOKERACE_URL = "https://jokerace.xyz/contest/";
 const BASE_TWITTER_URL = "https://twitter.com/intent/tweet?";
 const BASE_LINKEDIN_URL = "https://www.linkedin.com/sharing/share-offsite/?";

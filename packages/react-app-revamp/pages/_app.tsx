@@ -75,10 +75,10 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Black.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/avalanche.png" as="image" />
-        <link rel="preload" href="/harmony.png" as="image" />
-        <link rel="preload" href="/fantom.png" as="image" />
-        <link rel="preload" href="/gnosis.png" as="image" />
+        <link rel="preload" href="/avalanche.png" as="image" crossOrigin="anonymous" />
+        <link rel="preload" href="/harmony.png" as="image" crossOrigin="anonymous" />
+        <link rel="preload" href="/fantom.png" as="image" crossOrigin="anonymous" />
+        <link rel="preload" href="/gnosis.png" as="image" crossOrigin="anonymous" />
       </Head>
 
       <WagmiConfig config={config}>

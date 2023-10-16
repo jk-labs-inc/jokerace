@@ -54,7 +54,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
       <div className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[20px] md:mt-[60px] pb-[60px]">
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
-        <ContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
+        <ContestProposal proposal={proposal} contestStatus={contestStatus} proposalId={proposalId} displaySocials />
         <div className="flex flex-col gap-8">
           {contestStatus === ContestStatus.VotingOpen && (
             <>

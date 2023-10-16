@@ -372,6 +372,10 @@ li {
   .twitter-tweet.twitter-tweet-rendered > iframe {
     @apply !max-w-full !xs:max-w-screen-2xs;
   }
+
+  .submission-subscription-input::placeholder {
+    font-weight: 700;
+  }
 }
 
 [aria-labelledby="rk_chain_modal_title"] [tabindex="0"] ~ [role="document"] > div > div {

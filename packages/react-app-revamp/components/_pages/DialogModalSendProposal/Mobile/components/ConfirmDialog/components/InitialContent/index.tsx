@@ -33,7 +33,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
       <div>
         <input
           type="text"
-          className="w-full rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-9  focus:outline-none"
+          className="w-full rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-9 focus:outline-none submission-subscription-input"
           placeholder="myemail@email.com"
           onChange={handleEmailChange}
         />
