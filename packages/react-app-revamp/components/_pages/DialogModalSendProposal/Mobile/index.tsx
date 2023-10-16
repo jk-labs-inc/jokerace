@@ -78,7 +78,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
               colorClass="bg-gradient-vote rounded-[40px]"
               size={ButtonSize.SMALL}
               onClick={resetStatesAndProceed}
-              isDisabled={isLoading || !proposal.length || !editorProposal?.getText().length}
+              isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty}
             >
               submit!
             </ButtonV3>

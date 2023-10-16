@@ -12,7 +12,6 @@ import {
   generateLinkedInShareUrlForSubmission,
   generateTwitterShareUrlForSubmission,
   generateUrlSubmissions,
-  generateUrlToCopy,
 } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -84,26 +83,26 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             />
           </a>
           <a
-            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
+            className={`flex items-center rounded-full overflow-hidden w-8 h-8`}
             href={generateFacebookShareUrlForSubmission(address, chain, proposalId)}
             target="_blank"
           >
             <Image
-              width={28}
-              height={28}
+              width={30}
+              height={30}
               className="object-cover m-auto grayscale"
               src="/socials/share-submission/facebook.svg"
               alt="avatar"
             />
           </a>
           <a
-            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
+            className={`flex items-center   rounded-full overflow-hidden w-8 h-8`}
             href={generateLinkedInShareUrlForSubmission(address, chain, proposalId)}
             target="_blank"
           >
             <Image
-              width={28}
-              height={28}
+              width={34}
+              height={34}
               className="object-cover m-auto grayscale"
               src="/socials/share-submission/linkedin.svg"
               alt="avatar"

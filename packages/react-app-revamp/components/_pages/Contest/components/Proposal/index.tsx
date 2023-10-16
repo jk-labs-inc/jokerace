@@ -2,7 +2,9 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import { extractPathSegments } from "@helpers/extractPath";
 import { isUrlTweet } from "@helpers/isUrlTweet";
 import {
+  generateFacebookShareUrlForSubmission,
   generateLensShareUrlForSubmission,
+  generateLinkedInShareUrlForSubmission,
   generateTwitterShareUrlForSubmission,
   generateUrlSubmissions,
 } from "@helpers/share";
@@ -87,26 +89,26 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
             />
           </a>
           <a
-            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
-            href={generateTwitterShareUrlForSubmission(address, chainName, proposalId)}
+            className={`flex items-center rounded-full overflow-hidden w-8 h-8`}
+            href={generateFacebookShareUrlForSubmission(address, chainName, proposalId)}
             target="_blank"
           >
             <Image
-              width={28}
-              height={28}
+              width={30}
+              height={30}
               className="object-cover m-auto grayscale"
               src="/socials/share-submission/facebook.svg"
               alt="avatar"
             />
           </a>
           <a
-            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
-            href={generateTwitterShareUrlForSubmission(address, chainName, proposalId)}
+            className={`flex items-center   rounded-full overflow-hidden w-8 h-8`}
+            href={generateLinkedInShareUrlForSubmission(address, chainName, proposalId)}
             target="_blank"
           >
             <Image
-              width={28}
-              height={28}
+              width={34}
+              height={34}
               className="object-cover m-auto grayscale"
               src="/socials/share-submission/linkedin.svg"
               alt="avatar"
