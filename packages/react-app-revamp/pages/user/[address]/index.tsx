@@ -3,10 +3,11 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { getAddressProps } from "@helpers/getAddressProps";
 import LayoutUser from "@layouts/LayoutUser";
 import { useQuery } from "@tanstack/react-query";
-import { getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { getRewards, getUserContests, ITEMS_PER_PAGE } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
+import { useAccount } from "wagmi";
 
 export interface UserPageProps {
   address: string;
@@ -32,16 +33,7 @@ function useContests(creatorAddress: string, initialData: any) {
   } = useQuery(
     ["userContests", creatorAddress, page],
     () => {
-      return searchContests(
-        {
-          searchString: creatorAddress,
-          searchColumn: "author_address",
-          pagination: {
-            currentPage: page,
-          },
-        },
-        creatorAddress,
-      );
+      return getUserContests(page, ITEMS_PER_PAGE, creatorAddress);
     },
     {
       ...queryOptions,
@@ -75,12 +67,13 @@ const Page: NextPage = (props: UserPageProps) => {
   const { address, ensName, initialData } = props;
   const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
     useContests(address, initialData?.data);
+  const { address: userWalletConnectedAddress } = useAccount();
+  const isCreator = userWalletConnectedAddress === address;
 
   return (
     <LayoutUser address={address}>
       <Head>
         <title>{ensName || address} - jokerace</title>
-        <meta name="description" content="@TODO: change this" />
       </Head>
 
       {isSupabaseConfigured ? (
@@ -92,6 +85,7 @@ const Page: NextPage = (props: UserPageProps) => {
             error={error}
             page={page}
             setPage={setPage}
+            allowToHide={isCreator}
             contestData={contestData}
             rewardsData={rewardsData}
             isRewardsFetching={isRewardsFetching}
