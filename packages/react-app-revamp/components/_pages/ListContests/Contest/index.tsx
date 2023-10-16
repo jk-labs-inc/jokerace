@@ -260,6 +260,19 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
+      <div className="flex lg:hidden border-t border-neutral-9 pt-4 pl-3">
+        {allowToHide ? (
+          <div className="flex items-center justify-center gap-8">
+            <img
+              className="w-8 h-8 hover:opacity-80 ml-[10px]"
+              src={isHidden ? "/user/private.svg" : "/user/public.svg"}
+              alt={isHidden ? "private" : "public"}
+              onClick={handleToggleContestView}
+            />
+            <p className="text-[16px] uppercase">{isHidden ? "private" : "public"}</p>
+          </div>
+        ) : null}
+      </div>
       <Link href={getContestUrl(contest)}>
         <div
           className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-4 p-3 
@@ -407,8 +420,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
         {/*  Mobile */}
 
         <div
-          className="flex flex-col gap-2 mb-4 pl-3 border-t border-neutral-9 pt-8 p-3 
-          hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer lg:hidden"
+          className={`flex flex-col gap-2 mb-4 pl-3 ${allowToHide ? "" : "border-t border-neutral-9"} pt-8 p-3 
+          hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer lg:hidden`}
         >
           <div className="flex items-center gap-6">
             {loading ? (
