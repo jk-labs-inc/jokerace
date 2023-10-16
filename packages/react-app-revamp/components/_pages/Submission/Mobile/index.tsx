@@ -7,10 +7,11 @@ import ContestProposal from "@components/_pages/Contest/components/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
 import {
+  generateFacebookShareUrlForSubmission,
   generateLensShareUrlForSubmission,
+  generateLinkedInShareUrlForSubmission,
   generateTwitterShareUrlForSubmission,
   generateUrlSubmissions,
-  generateUrlToCopy,
 } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -81,6 +82,32 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               alt="avatar"
             />
           </a>
+          <a
+            className={`flex items-center rounded-full overflow-hidden w-8 h-8`}
+            href={generateFacebookShareUrlForSubmission(address, chain, proposalId)}
+            target="_blank"
+          >
+            <Image
+              width={30}
+              height={30}
+              className="object-cover m-auto grayscale"
+              src="/socials/share-submission/facebook.svg"
+              alt="avatar"
+            />
+          </a>
+          <a
+            className={`flex items-center   rounded-full overflow-hidden w-8 h-8`}
+            href={generateLinkedInShareUrlForSubmission(address, chain, proposalId)}
+            target="_blank"
+          >
+            <Image
+              width={34}
+              height={34}
+              className="object-cover m-auto grayscale"
+              src="/socials/share-submission/linkedin.svg"
+              alt="avatar"
+            />
+          </a>
 
           <div
             className={`flex items-center bg-true-black rounded-full border-neutral-11 border overflow-hidden w-8 h-8`}
@@ -99,7 +126,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           <ContestPrompt type="modal" prompt={prompt} hidePrompt />
           <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
         </div>
-        <ContestProposal proposal={proposal} collapsible={false} contestStatus={contestStatus} />
+        <ContestProposal proposal={proposal} contestStatus={contestStatus} />
         <div className="flex flex-col gap-8">
           {contestStatus === ContestStatus.VotingOpen && (
             <>

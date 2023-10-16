@@ -69,16 +69,16 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@jokerace_xyz" />
         <meta name="twitter:description" content={description} />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="twitter:image" content="https://jokerace.xyz/jokerace.png" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Black.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
-        <link rel="preload" href="/avalanche.png" as="image" />
-        <link rel="preload" href="/harmony.png" as="image" />
-        <link rel="preload" href="/fantom.png" as="image" />
-        <link rel="preload" href="/gnosis.png" as="image" />
+        <link rel="preload" href="/avalanche.png" as="image" crossOrigin="anonymous" />
+        <link rel="preload" href="/harmony.png" as="image" crossOrigin="anonymous" />
+        <link rel="preload" href="/fantom.png" as="image" crossOrigin="anonymous" />
+        <link rel="preload" href="/gnosis.png" as="image" crossOrigin="anonymous" />
       </Head>
 
       <WagmiConfig config={config}>
