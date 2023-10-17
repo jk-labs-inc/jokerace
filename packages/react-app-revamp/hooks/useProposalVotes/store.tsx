@@ -26,6 +26,7 @@ interface ProposalVotesState {
   setIsListVotersLoading: (value: boolean) => void;
   setIsListVotersSuccess: (value: boolean) => void;
   setIsListVotersError: (value: string | null) => void;
+  resetVotesPerAddress: () => void;
 }
 
 export const createProposalVotesStore = () =>
@@ -67,6 +68,7 @@ export const createProposalVotesStore = () =>
     setIsListVotersLoading: value => set({ isListVotersLoading: value }),
     setIsListVotersSuccess: value => set({ isListVotersSuccess: value }),
     setIsListVotersError: value => set({ isListVotersError: value }),
+    resetVotesPerAddress: () => set({ votesPerAddress: {} }),
   }));
 
 export const ProposalVotesContext = createContext<ReturnType<typeof createProposalVotesStore> | null>(null);

@@ -40,6 +40,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
+import { RefreshIcon } from "@heroicons/react/outline";
 
 const MAX_MS_TIMEOUT: number = 100000000;
 
@@ -75,6 +76,7 @@ const LayoutViewContest = (props: any) => {
   const [previousStatus, setPreviousStatus] = useState(account.status);
   const didConnect = previousStatus === "disconnected" && account.status === "connected";
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isInPwaMode = typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches;
 
   useEffect(() => {
     if (account.status === "connecting") return;
@@ -294,16 +296,26 @@ const LayoutViewContest = (props: any) => {
                         </div>
                       )}
                       {isMobile ? (
-                        <div
-                          className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
-                          onClick={() =>
-                            navigator.share({
-                              url: generateUrlContest(address, chainName),
-                            })
-                          }
-                        >
-                          <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
-                        </div>
+                        <>
+                          <div
+                            className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
+                            onClick={() =>
+                              navigator.share({
+                                url: generateUrlContest(address, chainName),
+                              })
+                            }
+                          >
+                            <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
+                          </div>
+                          {isInPwaMode ? (
+                            <div
+                              className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
+                              onClick={() => window.location.reload()}
+                            >
+                              <RefreshIcon className="w-4 h-4 m-auto" />
+                            </div>
+                          ) : null}
+                        </>
                       ) : (
                         <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                       )}
