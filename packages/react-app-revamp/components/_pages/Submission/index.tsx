@@ -8,6 +8,9 @@ import { useMediaQuery } from "react-responsive";
 import { Proposal } from "../ProposalContent";
 import SubmissionPageDesktopLayout from "./Desktop";
 import SubmissionPageMobileLayout from "./Mobile";
+import { useProposalStore } from "@hooks/useProposal/store";
+import { goToProposalPage } from "@helpers/routing";
+import useProposalVotes from "@hooks/useProposalVotes";
 
 interface SubmissionPageProps {
   chain: string;
@@ -21,7 +24,9 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
+  const { retry: refreshVotes } = useProposalVotes(proposalId);
   const { castVotes } = useCastVotes();
+  const { listProposalsIds } = useProposalStore(state => state);
   const {
     decreaseCurrentUserAvailableVotesAmount,
     increaseCurrentUserAvailableVotesAmount,
@@ -60,6 +65,26 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
     router.push(`/contest/${chainName}/${address}`, undefined, { shallow: true, scroll: false });
   };
 
+  const handleOnNextEntryChange = () => {
+    const stringifiedProposalsIds = listProposalsIds.map(id => id.toString()); // Convert BigInt to string
+    const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
+    if (currentIndex !== -1 && currentIndex < stringifiedProposalsIds.length - 1) {
+      const nextProposalId = stringifiedProposalsIds[currentIndex + 1];
+      refreshVotes();
+      goToProposalPage(chainName, address, nextProposalId);
+    }
+  };
+
+  const handleOnPreviousEntryChange = () => {
+    const stringifiedProposalsIds = listProposalsIds.map(id => id.toString()); // Convert BigInt to string
+    const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
+    if (currentIndex > 0) {
+      const previousProposalId = stringifiedProposalsIds[currentIndex - 1];
+      refreshVotes();
+      goToProposalPage(chainName, address, previousProposalId);
+    }
+  };
+
   if (isMobile) {
     return (
       <SubmissionPageMobileLayout
@@ -75,7 +100,16 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
     );
   }
 
-  return <SubmissionPageDesktopLayout prompt={prompt} proposal={proposal} proposalId={proposalId} onClose={onClose} />;
+  return (
+    <SubmissionPageDesktopLayout
+      prompt={prompt}
+      proposal={proposal}
+      proposalId={proposalId}
+      onClose={onClose}
+      onNextEntry={handleOnNextEntryChange}
+      onPreviousEntry={handleOnPreviousEntryChange}
+    />
+  );
 };
 
 export default SubmissionPage;

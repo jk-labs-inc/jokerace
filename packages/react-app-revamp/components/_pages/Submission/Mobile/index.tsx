@@ -155,13 +155,9 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               )}
             </>
           )}
-          {proposal.votes > 0 && (
-            <ProposalVotesWrapper>
-              <ListProposalVotes proposalId={proposalId} />
-            </ProposalVotesWrapper>
-          )}
+          {proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
         </div>
-        <div className="mt-12">
+        <div className="mt-12 flex flex-col">
           <MainHeaderMobileLayout
             isConnected={isConnected}
             address={address}
