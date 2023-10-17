@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useNetwork } from "wagmi";
 import { useDeleteProposalStore } from "./store";
+import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
 
 export function useDeleteProposal() {
   const { asPath } = useRouter();
@@ -68,6 +69,8 @@ export function useDeleteProposal() {
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess(`Proposal deleted successfully!`);
+
+      saveUpdatedProposalsStatusToAnalyticsV3(proposalIds, true);
     } catch (e) {
       handleError(e, `something went wrong and the proposal couldn't be deleted`);
       setError(errorMessage);
