@@ -196,6 +196,7 @@ export const chainsImages: ChainImages = {
   polygontestnet: "/polygon.svg",
   polygonzktestnet: "/polygon.svg",
   polygonzk: "/polygon.svg",
+  scroll: "/scroll.png",
   scrolltestnet: "/scroll.png",
   base: "/base.svg",
   gnosis: "/gnosis.png",
