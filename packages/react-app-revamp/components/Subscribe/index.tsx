@@ -1,3 +1,4 @@
+import { emailRegex } from "@helpers/regex";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import useEmailSignup from "@hooks/useEmailSignup";
 import React, { useState } from "react";
@@ -25,7 +26,6 @@ const Subscribe = () => {
   };
 
   const isEmailValid = () => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 

@@ -2,11 +2,6 @@
   font-face rules (custom fonts declarations)
 */
 
-html,
-body {
-  overscroll-behavior-x: none;
-}
-
 @font-face {
   src: url("/Sabo-Filled.otf") format("opentype");
   font-family: "Sabo";
@@ -198,6 +193,16 @@ li {
   transform: translateX(-45%);
 }
 
+.standalone-pwa {
+  display: none;
+}
+
+@media all and (display-mode: standalone) {
+  .standalone-pwa {
+    display: flex;
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -376,6 +381,70 @@ li {
   .twitter-tweet.twitter-tweet-rendered,
   .twitter-tweet.twitter-tweet-rendered > iframe {
     @apply !max-w-full !xs:max-w-screen-2xs;
+  }
+
+  .submission-subscription-input::placeholder {
+    font-weight: 700;
+  }
+
+  /* Customize the label (the container) */
+  .checkbox-container {
+    display: block;
+    position: relative;
+    padding-left: 25px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Hide the browser's default checkbox */
+  .checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  /* Create a custom checkbox */
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 24px;
+    width: 24px;
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid #9d9d9d;
+  }
+
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  /* Show the checkmark when checked */
+  .checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+  }
+
+  /* Style the checkmark/indicator */
+  .checkbox-container .checkmark:after {
+    left: 8px;
+    top: 4px;
+    width: 6px;
+    height: 13px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
   }
 }
 

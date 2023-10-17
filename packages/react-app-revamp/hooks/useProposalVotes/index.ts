@@ -45,6 +45,7 @@ export function useProposalVotes(id: number | string) {
     setIsPageVotesError,
     setVotedAddressesCount,
     setCurrentPagePaginationVotes,
+    resetVotesPerAddress,
     setIndexPaginationVotesPerId,
     setTotalPagesPaginationVotes,
     setHasPaginationVotesNextPage,
@@ -191,6 +192,12 @@ export function useProposalVotes(id: number | string) {
     }
   }
 
+  async function refreshVotes() {
+    resetVotesPerAddress();
+
+    await fetchProposalVotes();
+  }
+
   useEffect(() => {
     if (account?.connector) {
       account?.connector.on("change", data => {
@@ -225,7 +232,7 @@ export function useProposalVotes(id: number | string) {
   return {
     isLoading: isListVotersLoading,
     isPageVotesLoading: isPageVotesLoading,
-    retry: fetchProposalVotes,
+    retry: refreshVotes,
     isSuccess: isListVotersSuccess,
     isError: isListVotersError,
     fetchVotesPage: fetchVotesPage,

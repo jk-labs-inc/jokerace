@@ -59,9 +59,9 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
 
   const handleSliderChange = (value: any) => {
     setSliderValue(value);
-    const newAmount = (value / 100) * amountOfVotes;
+    const newAmount = ((value / 100) * amountOfVotes).toFixed(4);
 
-    setAmount(newAmount);
+    setAmount(parseFloat(newAmount));
   };
 
   const handleChange = (e: any) => {

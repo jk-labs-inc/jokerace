@@ -28,4 +28,5 @@ export const publicGoodsNetworkTestnet: Chain = {
       url: "https://explorer.sepolia.publicgoods.network/",
     },
   },
+  testnet: true,
 };

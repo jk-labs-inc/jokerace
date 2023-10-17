@@ -1,11 +1,13 @@
 import { isSupabaseConfigured } from "@helpers/database";
 
+type RewardOperation = "deposit" | "distribute" | "withdraw";
+
 interface RewardAnalyticsUpdateOptions {
   contest_address: string;
   rewards_module_address: string;
   network_name: string;
   amount: number;
-  operation: "deposit" | "distribute";
+  operation: RewardOperation;
   token_address: string | null;
   created_at?: number;
 }
@@ -25,6 +27,7 @@ export const updateRewardAnalytics = async (options: RewardAnalyticsUpdateOption
       token_address: token_address ? token_address.toLowerCase() : null,
       amount_paid_in: operation === "deposit" ? amount : 0,
       amount_paid_out: operation === "distribute" ? amount : 0,
+      amount_withdrawn: operation === "withdraw" ? amount : 0,
       created_at,
     };
 

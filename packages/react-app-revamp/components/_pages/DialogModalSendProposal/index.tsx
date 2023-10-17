@@ -2,15 +2,18 @@
 import Iframe from "@components/tiptap/Iframe";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { goToProposalPage } from "@helpers/routing";
+import { emailRegex } from "@helpers/regex";
 import {
   loadSubmissionFromLocalStorage,
+  removeSubmissionFromLocalStorage,
   saveSubmissionToLocalStorage,
   SubmissionCache,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
+import useEmailSignup from "@hooks/useEmailSignup";
 import useSubmitProposal from "@hooks/useSubmitProposal";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import Document from "@tiptap/extension-document";
 import Heading from "@tiptap/extension-heading";
@@ -23,7 +26,7 @@ import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchNetwork } from "@wagmi/core";
 import moment from "moment";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useNetwork } from "wagmi";
@@ -40,8 +43,17 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
+  const { subscribeUser, isEmailExists } = useEmailSignup();
   const { chainName, address: contestId } = extractPathSegments(asPath);
-  const { sendProposal, isLoading, isSuccess } = useSubmitProposal();
+  const { sendProposal } = useSubmitProposal();
+  const {
+    setProposalId,
+    setIsMobileConfirmModalOpen,
+    wantsSubscription,
+    emailForSubscription,
+    setWantsSubscription,
+    setEmailForSubscription,
+  } = useSubmitProposalStore(state => state);
   const { votesOpen } = useContestStore(state => state);
   const { setRevertTextOption } = useEditorStore(state => state);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
@@ -103,17 +115,47 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     await switchNetwork({ chainId });
   };
 
-  const onSubmitProposal = async () => {
-    const result = await sendProposal(proposal.trim());
-    if (result) {
-      const handleRouteChangeComplete = () => {
-        setIsOpen(false);
-        editorProposal?.commands.clearContent();
-        router.events.off("routeChangeComplete", handleRouteChangeComplete);
-      };
+  const handleSubscription = async () => {
+    if (!wantsSubscription || !emailForSubscription || !emailForSubscription.match(emailRegex)) {
+      return null;
+    }
 
-      router.events.on("routeChangeComplete", handleRouteChangeComplete);
-      goToProposalPage(chainName, contestId, result.proposalId);
+    // Check if the email already exists
+    const emailExists = await isEmailExists(emailForSubscription);
+    if (emailExists) {
+      return null;
+    }
+
+    return subscribeUser(emailForSubscription, address ?? "", false);
+  };
+
+  const onSubmitProposal = async () => {
+    const promises = [sendProposal(proposal.trim())];
+
+    const subscriptionPromise = await handleSubscription();
+    if (subscriptionPromise) {
+      promises.push(subscriptionPromise);
+    }
+
+    try {
+      const [proposalResult] = await Promise.all(promises);
+
+      if (proposalResult) {
+        setProposalId(proposalResult.proposalId);
+        editorProposal?.commands.clearContent();
+        removeSubmissionFromLocalStorage("submissions", contestId);
+        if (isMobile) {
+          setIsOpen(true);
+          setIsMobileConfirmModalOpen(true);
+        } else {
+          setIsOpen(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setWantsSubscription(false);
+      setEmailForSubscription("");
     }
   };
 
@@ -150,12 +192,13 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     <>
       {isMobile ? (
         <DialogModalSendProposalMobileLayout
+          chainName={chainName}
+          contestId={contestId}
           proposal={proposal}
           editorProposal={editorProposal}
           address={address ?? ""}
           formattedDate={formattedDate}
           isOpen={isOpen}
-          isLoading={isLoading}
           isCorrectNetwork={isCorrectNetwork}
           setIsOpen={setIsOpen}
           onSwitchNetwork={onSwitchNetwork}
@@ -164,11 +207,12 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
       ) : (
         <DialogModalSendProposalDesktopLayout
           proposal={proposal}
+          chainName={chainName}
+          contestId={contestId}
           editorProposal={editorProposal}
           address={address ?? ""}
           formattedDate={formattedDate}
           isOpen={isOpen}
-          isLoading={isLoading}
           isCorrectNetwork={isCorrectNetwork}
           isDragging={isDragging}
           setIsOpen={setIsOpen}

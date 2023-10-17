@@ -1,7 +1,7 @@
 import Collapsible from "@components/UI/Collapsible";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import { formatNumber } from "@helpers/formatNumber";
-import { ChevronUpIcon } from "@heroicons/react/outline";
+import { ChevronUpIcon, RefreshIcon } from "@heroicons/react/outline";
 import useProposalVotes, { VOTES_PER_PAGE } from "@hooks/useProposalVotes";
 import { useProposalVotesStore } from "@hooks/useProposalVotes/store";
 import { FC, useCallback, useRef, useState } from "react";
@@ -13,17 +13,18 @@ interface ListProposalVotesProps {
 
 const VotersList: FC<{ votesPerAddress: any }> = ({ votesPerAddress }) => (
   <div className="flex flex-col gap-4 md:w-[350px]">
-    {Object.keys(votesPerAddress).map((address: string, index, self) => (
-      <div
-        key={address}
-        className={`flex justify-between items-end text-[16px] font-bold pb-3 ${
-          index !== self.length - 1 ? "border-b border-neutral-10" : ""
-        }`}
-      >
-        <EthereumAddress ethereumAddress={address} shortenOnFallback={true} />
-        <p>{formatNumber(votesPerAddress[address].votes)} votes</p>
-      </div>
-    ))}
+    {votesPerAddress &&
+      Object.keys(votesPerAddress).map((address: string, index, self) => (
+        <div
+          key={address}
+          className={`flex justify-between items-end text-[16px] font-bold pb-3 ${
+            index !== self.length - 1 ? "border-b border-neutral-10" : ""
+          }`}
+        >
+          <EthereumAddress ethereumAddress={address} shortenOnFallback={true} />
+          <p>{formatNumber(votesPerAddress[address].votes)} votes</p>
+        </div>
+      ))}
   </div>
 );
 
@@ -42,7 +43,7 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
 );
 
 export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) => {
-  const { fetchVotesPage } = useProposalVotes(proposalId);
+  const { fetchVotesPage, retry: refreshVotes } = useProposalVotes(proposalId);
   const {
     isPageVotesLoading,
     votesPerAddress,
@@ -86,6 +87,12 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
         >
           <ChevronUpIcon height={30} />
         </button>
+
+        {isVotersOpen ? (
+          <div onClick={refreshVotes} className="standalone-pwa cursor-pointer">
+            <RefreshIcon className="w-6 h-6 m-auto" />
+          </div>
+        ) : null}
       </div>
       <Collapsible isOpen={isVotersOpen}>
         <div className="flex flex-col gap-5 mb-12 sm:mb-0">

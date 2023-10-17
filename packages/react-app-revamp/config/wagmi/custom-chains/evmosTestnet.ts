@@ -22,4 +22,5 @@ export const evmosTestnet: Chain = {
     mintscan: { name: "Mintscan", url: "https://testnet.mintscan.io/evmos-testnet/" },
     default: { name: "Mintscan", url: "https://testnet.mintscan.io/evmos-testnet/" },
   },
+  testnet: true,
 };

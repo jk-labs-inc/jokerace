@@ -1,5 +1,8 @@
 import { toastSuccess } from "@components/UI/Toast";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
+import { updateRewardAnalytics } from "lib/analytics/rewards";
+import { useRouter } from "next/router";
 import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
 import { create } from "zustand";
 
@@ -21,6 +24,8 @@ export const useWithdrawReward = (
   tokenType: TokenType,
   tokenAddress?: string,
 ) => {
+  const { asPath } = useRouter();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const { chain } = useNetwork();
   const { setIsLoading } = useWithdrawRewardStore(state => state);
   const { handleError } = useError();
@@ -53,6 +58,16 @@ export const useWithdrawReward = (
       await queryTokenBalance.refetch();
       setIsLoading(false);
       toastSuccess("Funds withdrawn successfully !");
+
+      updateRewardAnalytics({
+        contest_address: contestAddress,
+        rewards_module_address: contractRewardsModuleAddress,
+        network_name: chainName,
+        amount: parseFloat(queryTokenBalance.data?.formatted ?? ""),
+        operation: "withdraw",
+        token_address: tokenAddress ? tokenAddress : null,
+        created_at: Math.floor(Date.now() / 1000),
+      });
     },
   });
 

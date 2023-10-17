@@ -40,6 +40,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
+import { RefreshIcon } from "@heroicons/react/outline";
 
 const MAX_MS_TIMEOUT: number = 100000000;
 
@@ -307,6 +308,12 @@ const LayoutViewContest = (props: any) => {
                       ) : (
                         <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                       )}
+                      <div
+                        className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
+                        onClick={() => window.location.reload()}
+                      >
+                        <RefreshIcon className="w-4 h-4 m-auto" />
+                      </div>
                     </div>
                   </div>
                   <div className="mt-8 mb-8 gap-3 flex flex-col">

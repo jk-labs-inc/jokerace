@@ -7,7 +7,6 @@ import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
 import MarkdownOrderedList from "@components/UI/Markdown/components/MarkdownOrderedList";
 import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
 import { extractPathSegments } from "@helpers/extractPath";
-import { isUrlTweet } from "@helpers/isUrlTweet";
 import ordinalize from "@helpers/ordinalize";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -21,7 +20,6 @@ import React, { Children, FC, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import ReactMarkdown from "react-markdown";
 import { useMediaQuery } from "react-responsive";
-import { Tweet } from "react-tweet";
 import rehypeRaw from "rehype-raw";
 import rehypeSanitize from "rehype-sanitize";
 import remarkGfm from "remark-gfm";
@@ -44,7 +42,7 @@ interface ProposalContentProps {
   isTied: boolean;
 }
 
-const MAX_LENGTH = 200;
+const MAX_LENGTH = 150;
 
 const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, rank, isTied }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
