@@ -7,6 +7,7 @@ create table
     proposal_id character varying null,
     vote_amount numeric null,
     created_at int4 null,
+    deleted boolean null default false,
     constraint analytics_contest_participants_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 
