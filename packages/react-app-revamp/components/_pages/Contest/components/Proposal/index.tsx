@@ -1,6 +1,6 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import { extractPathSegments } from "@helpers/extractPath";
-import { isUrlTweet } from "@helpers/isUrlTweet";
+import { containsTweetUrl, extractTwitterUrlFromHTML } from "@helpers/isUrlTweet";
 import {
   generateFacebookShareUrlForSubmission,
   generateLensShareUrlForSubmission,
@@ -32,23 +32,18 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
   const { chainName, address } = extractPathSegments(asPath);
   const votesOpen = useContestStore(state => state.votesOpen);
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
-  const [isTweetNotFound, setIsTweetNotFound] = useState(false);
 
-  if (isUrlTweet(proposal.content)) {
-    const tweetId = new URL(proposal.content).pathname.split("/")[3];
+  if (containsTweetUrl(proposal.content)) {
+    const tweetUrl = extractTwitterUrlFromHTML(proposal.content);
+    const tweetId = new URL(tweetUrl ?? "").pathname.split("/")[3];
     return (
       <div className="dark">
-        <Tweet
-          apiUrl={tweetId && `/api/tweet/${tweetId}`}
-          id={tweetId}
-          key={tweetId}
-          onError={() => setIsTweetNotFound(true)}
+        <Tweet apiUrl={tweetId && `/api/tweet/${tweetId}`} id={tweetId} key={tweetId} />
+        <Interweave
+          className="prose prose-invert imgMobileClass overflow-hidden"
+          content={proposal.content}
+          matchers={[new UrlMatcher("url")]}
         />
-        {isTweetNotFound && (
-          <a target="_blank" rel="nofollow noreferrer" className="text-[16px] underline" href={proposal.content}>
-            {proposal.content}
-          </a>
-        )}
       </div>
     );
   }
