@@ -22,4 +22,5 @@ export const polygonTestnet: Chain = {
     etherscan: { name: "Polygon Mumbai Etherscan", url: "https://mumbai.polygonscan.com/" },
     default: { name: "Polygon Mumbai Etherscan", url: "https://mumbai.polygonscan.com/" },
   },
+  testnet: true,
 };

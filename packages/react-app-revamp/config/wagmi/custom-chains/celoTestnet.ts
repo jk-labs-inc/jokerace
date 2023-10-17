@@ -22,4 +22,5 @@ export const celoTestnet: Chain = {
     etherscan: { name: "Celo Testnet Block Explorer", url: "https://explorer.celo.org/alfajores/" },
     default: { name: "Celo Testnet Block Explorer", url: "https://explorer.celo.org/alfajores/" },
   },
+  testnet: true,
 };
