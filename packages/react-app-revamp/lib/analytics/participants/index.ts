@@ -27,7 +27,12 @@ export const addUserActionForAnalytics = async (options: SaveToAnalyticsContestP
   await saveToAnalyticsContestParticipantsV3(options);
 };
 
-export const saveUpdatedProposalsStatusToAnalyticsV3 = async (proposal_ids: string[], deleted: boolean) => {
+export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
+  contestAddress: string,
+  chainName: string,
+  proposal_ids: string[],
+  deleted: boolean,
+) => {
   if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
@@ -36,6 +41,8 @@ export const saveUpdatedProposalsStatusToAnalyticsV3 = async (proposal_ids: stri
       const { error: updateError } = await supabase
         .from("analytics_contest_participants_v3")
         .update({ deleted: deleted })
+        .eq("contest_address", contestAddress)
+        .eq("network_name", chainName)
         .eq("proposal_id", proposal_id);
 
       if (updateError) {

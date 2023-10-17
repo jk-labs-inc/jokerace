@@ -70,7 +70,7 @@ export function useDeleteProposal() {
       setIsSuccess(true);
       toastSuccess(`Proposal deleted successfully!`);
 
-      saveUpdatedProposalsStatusToAnalyticsV3(proposalIds, true);
+      saveUpdatedProposalsStatusToAnalyticsV3(address, chainName, proposalIds, true);
     } catch (e) {
       handleError(e, `something went wrong and the proposal couldn't be deleted`);
       setError(errorMessage);
