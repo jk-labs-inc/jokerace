@@ -19,7 +19,7 @@ export const scroll: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Scroll Block Explorer", url: "https://scrollscan.com" },
-    default: { name: "Scroll Block Explorer", url: "https://scrollscan.com" },
+    etherscan: { name: "Scroll Block Explorer", url: "https://scrollscan.com/" },
+    default: { name: "Scroll Block Explorer", url: "https://scrollscan.com/" },
   },
 };
