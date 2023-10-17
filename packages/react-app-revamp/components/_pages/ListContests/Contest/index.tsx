@@ -260,8 +260,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
-      <div className="flex lg:hidden border-t border-neutral-9 pt-4 pl-3">
-        {allowToHide ? (
+      {allowToHide ? (
+        <div className="flex lg:hidden border-t border-neutral-9 pt-4 pl-3">
           <div className="flex items-center justify-center gap-8">
             <img
               className="w-8 h-8 hover:opacity-80 ml-[10px]"
@@ -271,8 +271,9 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
             />
             <p className="text-[16px] uppercase">{isHidden ? "private" : "public"}</p>
           </div>
-        ) : null}
-      </div>
+        </div>
+      ) : null}
+
       <Link href={getContestUrl(contest)}>
         <div
           className="hidden lg:full-width-grid-cols md:items-center border-t border-neutral-9 py-4 p-3 
