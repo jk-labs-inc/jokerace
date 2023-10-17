@@ -6,7 +6,6 @@ import useProposalVotes, { VOTES_PER_PAGE } from "@hooks/useProposalVotes";
 import { useProposalVotesStore } from "@hooks/useProposalVotes/store";
 import { FC, useCallback, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { useMediaQuery } from "react-responsive";
 
 interface ListProposalVotesProps {
   proposalId: string;
@@ -64,7 +63,6 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
       ? Math.min(remainingItems, VOTES_PER_PAGE)
       : 5
     : 0;
-  const isMobile = useMediaQuery({ maxWidth: "768px" });
 
   const toggleVotersOpen = useCallback(() => {
     setIsVotersOpen(prev => !prev);
@@ -89,11 +87,10 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
         >
           <ChevronUpIcon height={30} />
         </button>
-        {isMobile ? (
-          <div onClick={refreshVotes}>
-            <RefreshIcon className="w-6 h-6 m-auto" />
-          </div>
-        ) : null}
+
+        <div onClick={refreshVotes} className="standalone-pwa">
+          <RefreshIcon className="w-6 h-6 m-auto" />
+        </div>
       </div>
       <Collapsible isOpen={isVotersOpen}>
         <div className="flex flex-col gap-5 mb-12 sm:mb-0">

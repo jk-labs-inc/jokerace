@@ -76,7 +76,6 @@ const LayoutViewContest = (props: any) => {
   const [previousStatus, setPreviousStatus] = useState(account.status);
   const didConnect = previousStatus === "disconnected" && account.status === "connected";
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const isInPwaMode = typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches;
 
   useEffect(() => {
     if (account.status === "connecting") return;
@@ -307,14 +306,12 @@ const LayoutViewContest = (props: any) => {
                           >
                             <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
                           </div>
-                          {isInPwaMode ? (
-                            <div
-                              className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
-                              onClick={() => window.location.reload()}
-                            >
-                              <RefreshIcon className="w-4 h-4 m-auto" />
-                            </div>
-                          ) : null}
+                          <div
+                            className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11"
+                            onClick={() => window.location.reload()}
+                          >
+                            <RefreshIcon className="w-4 h-4 m-auto" />
+                          </div>
                         </>
                       ) : (
                         <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />

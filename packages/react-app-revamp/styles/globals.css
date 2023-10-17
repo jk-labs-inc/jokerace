@@ -198,6 +198,16 @@ li {
   transform: translateX(-45%);
 }
 
+.standalone-pwa {
+  display: none;
+}
+
+@media all and (display-mode: standalone) {
+  .standalone-pwa {
+    display: flex;
+  }
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
