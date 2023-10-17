@@ -31,7 +31,6 @@ async function fetchSubmissions(
         .select("network_name, contest_address, proposal_id, created_at", { count: "exact" })
         .eq("user_address", criteria.user_address)
         .is("vote_amount", criteria.vote_amount)
-        .is("deleted", false)
         .order("created_at", { ascending: false })
         .range(range.from, range.to);
     } else {
@@ -39,7 +38,6 @@ async function fetchSubmissions(
         .from("analytics_contest_participants_v3")
         .select("network_name, contest_address, proposal_id, created_at, vote_amount")
         .eq("user_address", criteria.user_address)
-        .is("deleted", false)
         .not("vote_amount", "is", null)
         .order("created_at", { ascending: false })
         .range(range.from, range.to);
