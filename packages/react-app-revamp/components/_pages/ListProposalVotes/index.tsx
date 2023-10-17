@@ -88,9 +88,11 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
           <ChevronUpIcon height={30} />
         </button>
 
-        <div onClick={refreshVotes} className="standalone-pwa">
-          <RefreshIcon className="w-6 h-6 m-auto" />
-        </div>
+        {isVotersOpen ? (
+          <div onClick={refreshVotes} className="standalone-pwa cursor-pointer">
+            <RefreshIcon className="w-6 h-6 m-auto" />
+          </div>
+        ) : null}
       </div>
       <Collapsible isOpen={isVotersOpen}>
         <div className="flex flex-col gap-5 mb-12 sm:mb-0">

@@ -295,27 +295,25 @@ const LayoutViewContest = (props: any) => {
                         </div>
                       )}
                       {isMobile ? (
-                        <>
-                          <div
-                            className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
-                            onClick={() =>
-                              navigator.share({
-                                url: generateUrlContest(address, chainName),
-                              })
-                            }
-                          >
-                            <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
-                          </div>
-                          <div
-                            className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11"
-                            onClick={() => window.location.reload()}
-                          >
-                            <RefreshIcon className="w-4 h-4 m-auto" />
-                          </div>
-                        </>
+                        <div
+                          className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
+                          onClick={() =>
+                            navigator.share({
+                              url: generateUrlContest(address, chainName),
+                            })
+                          }
+                        >
+                          <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
+                        </div>
                       ) : (
                         <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
                       )}
+                      <div
+                        className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
+                        onClick={() => window.location.reload()}
+                      >
+                        <RefreshIcon className="w-4 h-4 m-auto" />
+                      </div>
                     </div>
                   </div>
                   <div className="mt-8 mb-8 gap-3 flex flex-col">
