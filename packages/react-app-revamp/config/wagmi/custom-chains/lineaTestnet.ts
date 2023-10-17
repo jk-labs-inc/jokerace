@@ -22,4 +22,5 @@ export const lineaTestnet: Chain = {
     etherscan: { name: "Linea Testnet Scan", url: "https://goerli.lineascan.build/" },
     default: { name: "Linea Testnet Scan", url: "https://goerli.lineascan.build/" },
   },
+  testnet: true,
 };

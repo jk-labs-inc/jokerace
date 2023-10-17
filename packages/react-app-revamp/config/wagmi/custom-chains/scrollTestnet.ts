@@ -22,4 +22,5 @@ export const scrollTestnet: Chain = {
     etherscan: { name: "Scroll Goerli Scan", url: "https://blockscout.scroll.io/" },
     default: { name: "Scroll Goerli Scan", url: "https://blockscout.scroll.io/" },
   },
+  testnet: true,
 };

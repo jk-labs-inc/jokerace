@@ -22,4 +22,5 @@ export const optimismTestnet: Chain = {
     etherscan: { name: "Optimism Testnet Etherscan", url: "https://goerli-optimism.etherscan.io/" },
     default: { name: "Optimism Testnet Etherscan", url: "https://goerli-optimism.etherscan.io/" },
   },
+  testnet: true,
 };

@@ -22,4 +22,5 @@ export const mantleTestnet: Chain = {
     etherscan: { name: "Mantle Testnet Scan", url: "https://explorer.testnet.mantle.xyz/" },
     default: { name: "Mantle Testnet Scan", url: "https://explorer.testnet.mantle.xyz/" },
   },
+  testnet: true,
 };

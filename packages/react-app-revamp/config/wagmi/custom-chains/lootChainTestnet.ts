@@ -22,4 +22,5 @@ export const lootChainTestnet: Chain = {
     etherscan: { name: "Loot Chain Testnet Block Explorer", url: "https://testnet.explorer.lootchain.com/" },
     default: { name: "Loot Chain Testnet Block Explorer", url: "https://testnet.explorer.lootchain.com/" },
   },
+  testnet: true,
 };

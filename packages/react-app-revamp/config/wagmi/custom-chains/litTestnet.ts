@@ -22,4 +22,5 @@ export const litTestnet: Chain = {
     etherscan: { name: "Chronicle Block Explorer", url: "https://chain.litprotocol.com/" },
     default: { name: "Chronicle Block Explorer", url: "https://chain.litprotocol.com/" },
   },
+  testnet: true,
 };

@@ -22,4 +22,5 @@ export const qChainTestnet: Chain = {
     etherscan: { name: "Q Testnet Scan", url: "https://explorer.qtestnet.org/" },
     default: { name: "Q Testnet Scan", url: "https://explorer.qtestnet.org/" },
   },
+  testnet: true,
 };
