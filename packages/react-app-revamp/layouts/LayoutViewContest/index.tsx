@@ -41,6 +41,7 @@ import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 import { RefreshIcon } from "@heroicons/react/outline";
+import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 
 const MAX_MS_TIMEOUT: number = 100000000;
 
@@ -352,7 +353,9 @@ export const getLayout = (page: any) => {
               <CastVotesWrapper>
                 <ContractFactoryWrapper>
                   <RewardsWrapper>
-                    <LayoutViewContest>{page}</LayoutViewContest>
+                    <ProposalVotesWrapper>
+                      <LayoutViewContest>{page}</LayoutViewContest>
+                    </ProposalVotesWrapper>
                   </RewardsWrapper>
                 </ContractFactoryWrapper>
               </CastVotesWrapper>

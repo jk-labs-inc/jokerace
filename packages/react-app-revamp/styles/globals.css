@@ -182,11 +182,6 @@ li {
   color: black !important;
 }
 
-.imgMobileClass img {
-  width: 90%;
-  object-fit: contain;
-}
-
 /* // Edit pull-to-refresh styles */
 .ptr--ptr {
   left: 50%;

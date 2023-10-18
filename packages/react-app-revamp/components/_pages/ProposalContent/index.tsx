@@ -13,16 +13,13 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { load } from "cheerio";
+import { Interweave, Node } from "interweave";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Children, FC, useMemo, useState } from "react";
+import React, { Children, FC, ReactNode, useMemo, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import ReactMarkdown from "react-markdown";
 import { useMediaQuery } from "react-responsive";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
-import remarkGfm from "remark-gfm";
 import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 
@@ -43,6 +40,29 @@ interface ProposalContentProps {
 }
 
 const MAX_LENGTH = 150;
+
+const transform = (node: HTMLElement, children: Node[]): ReactNode => {
+  const element = node.tagName.toLowerCase();
+
+  if (element === "div") {
+    return <div className="flex gap-5 items-center markdown">{children}</div>;
+  } else if (element === "img") {
+    return <MarkdownImage imageSize="compact" src={node.getAttribute("src") ?? ""} />;
+  } else if (element === "ul") {
+    const truncatedChildren = Children.toArray(children).slice(0, 3);
+    const combinedChildren =
+      children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
+
+    return <MarkdownUnorderedList children={combinedChildren} />;
+  } else if (element === "li") {
+    return <MarkdownList children={children} />;
+  } else if (element === "ol") {
+    const truncatedChildren = Children.toArray(children).slice(0, 3);
+    const finalChildren = children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
+
+    return <MarkdownOrderedList children={finalChildren} />;
+  }
+};
 
 const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, rank, isTied }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -174,35 +194,11 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
         className="flex items-center overflow-hidden px-14 h-3/4 md:h-3/4"
       >
         <>
-          <ReactMarkdown
-            className="markdown max-w-full text-[16px] overflow-hidden md:overflow-auto"
-            components={{
-              div: ({ node, children, ...props }) => (
-                <div {...props} className="flex gap-5 items-center markdown">
-                  {children}
-                </div>
-              ),
-              img: ({ node, ...props }) => <MarkdownImage imageSize="compact" src={props.src ?? ""} />,
-              ul: ({ node, children, ...props }) => {
-                const truncatedChildren = Children.toArray(children).slice(0, 3);
-                const combinedChildren =
-                  children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
-
-                return <MarkdownUnorderedList children={combinedChildren} props={props} />;
-              },
-              li: ({ node, children, ...props }) => <MarkdownList children={children} props={props} />,
-              ol: ({ node, children, ...props }) => {
-                const truncatedChildren = Children.toArray(children).slice(0, 3);
-                const finalChildren =
-                  children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
-
-                return <MarkdownOrderedList children={finalChildren} props={props} />;
-              },
-            }}
-            rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
-          >
-            {truncatedContent}
-          </ReactMarkdown>
+          <Interweave
+            className="markdown max-w-full text-[16px] overflow-y-hidden md:overflow-auto"
+            content={truncatedContent}
+            transform={transform}
+          />
         </>
       </Link>
       <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
