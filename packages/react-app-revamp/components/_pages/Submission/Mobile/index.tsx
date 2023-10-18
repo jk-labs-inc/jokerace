@@ -167,13 +167,13 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         </div>
         <div className="mt-20">
           <div
-            className={`fixed ${isInPwaMode ? "bottom-[88px]" : "bottom-16"} left-0 right-0 flex ${
+            className={`fixed ${isInPwaMode ? "bottom-[88" : "bottom-16"} left-0 right-0 flex ${
               currentIndex === 0 || currentIndex === totalProposals - 1 ? "justify-center" : "justify-between"
             } px-8 py-5 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
           >
             {currentIndex !== 0 && (
               <div
-                className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold"
+                className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold transform transition-transform duration-200 active:scale-95"
                 onClick={onPreviousEntry}
               >
                 <Image
@@ -188,7 +188,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             )}
             {currentIndex !== totalProposals - 1 && (
               <div
-                className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold"
+                className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold transform transition-transform duration-200 active:scale-95"
                 onClick={onNextEntry}
               >
                 next entry
