@@ -21,4 +21,5 @@ export const baseTestnet: Chain = {
     etherscan: { name: "Base Testnet Scan", url: "https://goerli.basescan.org/" },
     default: { name: "Base Testnet Scan", url: "https://goerli.basescan.org/" },
   },
+  testnet: true,
 };

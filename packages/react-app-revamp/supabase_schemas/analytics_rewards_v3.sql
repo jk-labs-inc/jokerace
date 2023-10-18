@@ -4,8 +4,9 @@ create table public.analytics_rewards_v3 (
     rewards_module_address character varying not null,
     network_name character varying not null,
     token_address character varying default null,
-    amount_paid_in numeric default 0,   
-    amount_paid_out numeric default 0,
-    created_at int4 null  
+    amount_paid_in numeric null,   
+    amount_paid_out numeric null,
+    created_at int4 null,
+    amount_withdrawn numeric null
     constraint analytics_rewards_v3_pkey primary key (uuid)
 ) tablespace pg_default;

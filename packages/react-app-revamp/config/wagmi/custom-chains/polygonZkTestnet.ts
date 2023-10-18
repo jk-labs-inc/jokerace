@@ -22,4 +22,5 @@ export const polygonZkTestnet: Chain = {
     etherscan: { name: "Polygon zkEvm Testnet Scan", url: "https://explorer.public.zkevm-test.net/" },
     default: { name: "Polygon zkEvm Testnet Scan", url: "https://explorer.public.zkevm-test.net/" },
   },
+  testnet: true,
 };

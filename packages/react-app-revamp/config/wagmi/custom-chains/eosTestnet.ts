@@ -22,4 +22,5 @@ export const eosTestnet: Chain = {
     escan: { name: "EOS Testnet Block Explorer", url: "https://explorer.testnet.evm.eosnetwork.com/" },
     default: { name: "EOS Testnet Block Explorer", url: "https://explorer.testnet.evm.eosnetwork.com/" },
   },
+  testnet: true,
 };

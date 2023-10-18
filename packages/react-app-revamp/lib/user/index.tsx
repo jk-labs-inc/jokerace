@@ -31,6 +31,7 @@ async function fetchSubmissions(
         .select("network_name, contest_address, proposal_id, created_at", { count: "exact" })
         .eq("user_address", criteria.user_address)
         .is("vote_amount", criteria.vote_amount)
+        .order("created_at", { ascending: false })
         .range(range.from, range.to);
     } else {
       result = await supabase
@@ -38,6 +39,7 @@ async function fetchSubmissions(
         .select("network_name, contest_address, proposal_id, created_at, vote_amount")
         .eq("user_address", criteria.user_address)
         .not("vote_amount", "is", null)
+        .order("created_at", { ascending: false })
         .range(range.from, range.to);
     }
 

@@ -59,6 +59,7 @@ import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
+import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
@@ -95,6 +96,7 @@ const totalChains: Chain[] = [
   degenChain,
   fuse,
   kroma,
+  scroll,
   polygonTestnet,
   sepolia,
   goerli,
@@ -194,6 +196,7 @@ export const chainsImages: ChainImages = {
   polygontestnet: "/polygon.svg",
   polygonzktestnet: "/polygon.svg",
   polygonzk: "/polygon.svg",
+  scroll: "/scroll.png",
   scrolltestnet: "/scroll.png",
   base: "/base.svg",
   gnosis: "/gnosis.png",

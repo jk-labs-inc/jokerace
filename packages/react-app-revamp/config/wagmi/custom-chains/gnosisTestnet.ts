@@ -22,4 +22,5 @@ export const gnosisTestnet: Chain = {
     etherscan: { name: "Gnosis Testnet Etherscan", url: "https://gnosis-chiado.blockscout.com/" },
     default: { name: "Gnosis Testnet Etherscan", url: "https://gnosis-chiado.blockscout.com/" },
   },
+  testnet: true,
 };

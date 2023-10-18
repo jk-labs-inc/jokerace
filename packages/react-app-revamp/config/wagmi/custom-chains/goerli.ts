@@ -21,4 +21,5 @@ export const goerli: Chain = {
     etherscan: { name: "Goerli Etherscan", url: "https://goerli.etherscan.io/" },
     default: { name: "Goerli Etherscan", url: "https://goerli.etherscan.io/" },
   },
+  testnet: true,
 };

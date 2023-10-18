@@ -22,4 +22,5 @@ export const nearTestnet: Chain = {
     etherscan: { name: "Near Aurora Testnet Block Explorer", url: "https://testnet.aurorascan.dev/" },
     default: { name: "Near Aurora Testnet Block Explorer", url: "https://testnet.aurorascan.dev/" },
   },
+  testnet: true,
 };

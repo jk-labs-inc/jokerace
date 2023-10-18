@@ -22,4 +22,5 @@ export const sepolia: Chain = {
     etherscan: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan/" },
     default: { name: "Sepolia Otterscan", url: "https://sepolia.otterscan/" },
   },
+  testnet: true,
 };

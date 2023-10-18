@@ -21,4 +21,5 @@ export const modeTestnet: Chain = {
     etherscan: { name: "Mantle Testnet Scan", url: "https://sepolia.explorer.mode.network/" },
     default: { name: "Mantle Testnet Scan", url: "https://sepolia.explorer.mode.network/" },
   },
+  testnet: true,
 };
