@@ -1,17 +1,25 @@
 import { truncateText } from "@helpers/truncate";
 import { useContestStore } from "@hooks/useContest/store";
-import { Interweave } from "interweave";
+import { Interweave, Node } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import Image from "next/image";
-import { FC, useEffect, useRef, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
-import remarkGfm from "remark-gfm";
+import { FC, ReactNode, useEffect, useRef, useState } from "react";
 
 interface ContestPromptPageProps {
   prompt: string;
 }
+
+const transform = (node: HTMLElement, children: Node[]): ReactNode => {
+  const element = node.tagName.toLowerCase();
+
+  if (element === "p") {
+    return <p className="text-[16px]">{children}</p>;
+  } else if (element === "ul") {
+    return <ul className="list-disc list-inside list-explainer">{children}</ul>;
+  } else if (element === "li") {
+    return <li className="flex items-center">{children}</li>;
+  }
+};
 
 const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const { isV3 } = useContestStore(state => state);
@@ -81,28 +89,7 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
                 style={{ maxHeight: isExpanded ? maxHeight : "3em" }}
                 ref={contentRef}
               >
-                <ReactMarkdown
-                  rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
-                  components={{
-                    p: ({ node, children, ...props }) => (
-                      <p {...props} className="text-[16px]">
-                        {children}
-                      </p>
-                    ),
-                    ul: ({ node, children, ...props }) => (
-                      <ul {...props} className="list-disc list-inside  list-explainer">
-                        {children}
-                      </ul>
-                    ),
-                    li: ({ node, children, ...props }) => (
-                      <li {...props} className="flex items-center">
-                        {children}
-                      </li>
-                    ),
-                  }}
-                >
-                  {prompt}
-                </ReactMarkdown>
+                <Interweave content={prompt} matchers={[new UrlMatcher("url")]} transform={transform} />
               </div>
               {displayReadMore && (
                 <div className="flex gap-1 items-center pl-5 mt-4 cursor-pointer" onClick={handleToggle}>

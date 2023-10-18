@@ -1,19 +1,27 @@
 import Collapsible from "@components/UI/Collapsible";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
-import { Interweave } from "interweave";
+import { Interweave, Node } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
-import { FC, useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import rehypeSanitize from "rehype-sanitize";
-import remarkGfm from "remark-gfm";
+import { FC, ReactNode, useEffect, useState } from "react";
 
 interface ContestPromptModalProps {
   prompt: string;
   hidePrompt?: boolean;
 }
+
+const transform = (node: HTMLElement, children: Node[]): ReactNode => {
+  const element = node.tagName.toLowerCase();
+
+  if (element === "p") {
+    return <p className="text-[16px]">{children}</p>;
+  } else if (element === "ul") {
+    return <ul className="list-disc list-inside list-explainer">{children}</ul>;
+  } else if (element === "li") {
+    return <li className="flex items-center">{children}</li>;
+  }
+};
 
 const ContestPromptModal: FC<ContestPromptModalProps> = ({ prompt, hidePrompt = false }) => {
   const { isV3, votesClose } = useContestStore(state => state);
@@ -68,28 +76,7 @@ const ContestPromptModal: FC<ContestPromptModalProps> = ({ prompt, hidePrompt = 
             <Collapsible isOpen={isPromptOpen}>
               <div className="border-l border-true-white ">
                 <div className="prose prose-invert pl-5 ">
-                  <ReactMarkdown
-                    rehypePlugins={[rehypeRaw, rehypeSanitize, remarkGfm]}
-                    components={{
-                      p: ({ node, children, ...props }) => (
-                        <p {...props} className="text-[16px]">
-                          {children}
-                        </p>
-                      ),
-                      ul: ({ node, children, ...props }) => (
-                        <ul {...props} className="list-disc list-inside  list-explainer">
-                          {children}
-                        </ul>
-                      ),
-                      li: ({ node, children, ...props }) => (
-                        <li {...props} className="flex items-center">
-                          {children}
-                        </li>
-                      ),
-                    }}
-                  >
-                    {contestPrompt}
-                  </ReactMarkdown>
+                  <Interweave content={contestPrompt} matchers={[new UrlMatcher("url")]} transform={transform} />
                 </div>
               </div>
             </Collapsible>
