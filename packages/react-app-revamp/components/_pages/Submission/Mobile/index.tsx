@@ -167,7 +167,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         </div>
         <div className="mt-20">
           <div
-            className={`fixed bottom-16 left-0 right-0 flex ${
+            className={`fixed ${isInPwaMode ? "bottom-18" : "bottom-16"} left-0 right-0 flex ${
               currentIndex === 0 || currentIndex === totalProposals - 1 ? "justify-center" : "justify-between"
             } px-8 py-5 z-50 border-t-neutral-2 border-t-2 bg-true-black`}
           >
