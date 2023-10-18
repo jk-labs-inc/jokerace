@@ -101,6 +101,7 @@
     "@vercel/node": "^3.0.7",
     "autoprefixer": "^10.4.7",
     "eslint-config-next": "^13.5.3",
+    "interweave-ssr": "^2.0.0",
     "postcss": "^8.4.14",
     "tailwindcss": "^3.0.24",
     "tailwindcss-logical": "^3.0.0",
