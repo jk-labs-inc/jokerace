@@ -1,5 +1,7 @@
-import { chains } from "@config/wagmi";
+import { goToProposalPage } from "@helpers/routing";
 import useCastVotes from "@hooks/useCastVotes";
+import { useProposalStore } from "@hooks/useProposal/store";
+import useProposalVotes from "@hooks/useProposalVotes";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/router";
@@ -8,9 +10,6 @@ import { useMediaQuery } from "react-responsive";
 import { Proposal } from "../ProposalContent";
 import SubmissionPageDesktopLayout from "./Desktop";
 import SubmissionPageMobileLayout from "./Mobile";
-import { useProposalStore } from "@hooks/useProposal/store";
-import { goToProposalPage } from "@helpers/routing";
-import useProposalVotes from "@hooks/useProposalVotes";
 
 interface SubmissionPageProps {
   chain: string;
@@ -33,6 +32,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
     increaseCurrentUserTotalVotesCast,
     decreaseCurrentUserTotalVotesCast,
   } = useUserStore(state => state);
+  const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
 
   const handleCastVotes = (amount: number, isUpvote: boolean) => {
     decreaseCurrentUserAvailableVotesAmount(amount);
@@ -66,7 +66,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
   };
 
   const handleOnNextEntryChange = () => {
-    const stringifiedProposalsIds = listProposalsIds.map(id => id.toString()); // Convert BigInt to string
     const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
     if (currentIndex !== -1 && currentIndex < stringifiedProposalsIds.length - 1) {
       const nextProposalId = stringifiedProposalsIds[currentIndex + 1];
@@ -76,7 +75,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
   };
 
   const handleOnPreviousEntryChange = () => {
-    const stringifiedProposalsIds = listProposalsIds.map(id => id.toString()); // Convert BigInt to string
     const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
     if (currentIndex > 0) {
       const previousProposalId = stringifiedProposalsIds[currentIndex - 1];
@@ -96,6 +94,8 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
         onClose={onClose}
         onVote={handleCastVotes}
         onConnectWallet={onConnectWallet}
+        onPreviousEntry={handleOnPreviousEntryChange}
+        onNextEntry={handleOnNextEntryChange}
       />
     );
   }

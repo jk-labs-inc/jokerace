@@ -68,7 +68,6 @@ export async function getStaticProps({ params }: any) {
 
     if (!chainId) return;
     const proposal = await fetchProposalData(address, chainId, submission);
-    // const proposalIds = await fetchProposalsIdsList(address, chainId);
 
     return {
       props: {

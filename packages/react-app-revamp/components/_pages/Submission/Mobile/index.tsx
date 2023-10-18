@@ -1,4 +1,5 @@
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
@@ -15,7 +16,6 @@ import {
 } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
@@ -30,6 +30,8 @@ interface SubmissionPageMobileLayoutProps {
   proposal: Proposal;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
+  onPreviousEntry?: () => void;
+  onNextEntry?: () => void;
   onConnectWallet?: () => void;
 }
 
@@ -41,6 +43,8 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   proposal,
   onClose,
   onVote,
+  onPreviousEntry,
+  onNextEntry,
   onConnectWallet,
 }) => {
   const { isConnected } = useAccount();
@@ -157,7 +161,29 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           )}
           {proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
         </div>
-        <div className="mt-12 flex flex-col">
+        <div className="mt-20">
+          <div className="fixed bottom-16 left-0 right-0 flex justify-between px-8 py-5 z-50 border-t-neutral-2 border-t-2 bg-true-black">
+            <div
+              className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold"
+              onClick={onPreviousEntry}
+            >
+              <Image
+                src="/contest/previous-entry-mobile.svg"
+                alt="prev-entry"
+                width={16}
+                height={16}
+                className="mt-1"
+              />
+              previous entry
+            </div>
+            <div
+              className="flex items-center justify-center gap-2 text-positive-11 text-[16px] font-bold"
+              onClick={onNextEntry}
+            >
+              next entry
+              <Image src="/contest/next-entry-mobile.svg" alt="prev-entry" width={16} height={16} className="mt-1" />
+            </div>
+          </div>
           <MainHeaderMobileLayout
             isConnected={isConnected}
             address={address}

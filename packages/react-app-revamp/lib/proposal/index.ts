@@ -1,11 +1,7 @@
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
-import { readContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-import { Result } from "ethers/lib/utils";
 import { readContracts } from "wagmi";
-
-const divisor = BigInt("1000000000000000000"); // Equivalent to 1e18
 
 export const fetchProposalData = async (address: string, chainId: number, submission: string) => {
   const { abi } = await getContestContractVersion(address, chainId);
