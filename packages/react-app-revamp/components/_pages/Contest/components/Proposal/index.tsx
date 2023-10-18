@@ -40,7 +40,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
       <div className="dark">
         <Tweet apiUrl={tweetId && `/api/tweet/${tweetId}`} id={tweetId} key={tweetId} />
         <Interweave
-          className="prose prose-invert imgMobileClass overflow-hidden"
+          className="prose prose-invert overflow-hidden"
           content={proposal.content}
           matchers={[new UrlMatcher("url")]}
         />
@@ -51,7 +51,7 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
   return (
     <div className="flex flex-col gap-4">
       <Interweave
-        className="prose prose-invert imgMobileClass overflow-hidden"
+        className="prose prose-invert overflow-hidden"
         content={proposal.content}
         matchers={[new UrlMatcher("url")]}
       />

@@ -8,6 +8,8 @@ interface SubmissionPageDesktopLayoutProps {
   proposal: Proposal;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
+  onPreviousEntry?: () => void;
+  onNextEntry?: () => void;
   onConnectWallet?: () => void;
 }
 
@@ -17,6 +19,8 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
   proposal,
   onClose,
   onVote,
+  onPreviousEntry,
+  onNextEntry,
   onConnectWallet,
 }) => {
   return (
@@ -28,6 +32,8 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
       onClose={onClose}
       onVote={onVote}
       onConnectWallet={onConnectWallet}
+      onNextEntry={onNextEntry}
+      onPreviousEntry={onPreviousEntry}
     />
   );
 };

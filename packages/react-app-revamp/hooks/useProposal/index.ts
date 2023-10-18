@@ -157,14 +157,10 @@ export function useProposal() {
       const useLegacyGetAllProposalsIdFn =
         abi?.filter((el: { name: string }) => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
 
-      if (!chains) return;
-
       const contractConfig = {
         address: address as `0x${string}`,
         abi: abi,
-        chainId: chains.find(
-          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
-        )?.id,
+        chainId: chainId,
       };
 
       const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);

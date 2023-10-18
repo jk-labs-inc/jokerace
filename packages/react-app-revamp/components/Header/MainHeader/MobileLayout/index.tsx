@@ -6,7 +6,6 @@ import {
   ROUTE_VIEW_CONTEST,
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
-  ROUTE_VIEW_USER,
 } from "@config/routes";
 import { HomeIcon, PencilAltIcon, SearchIcon } from "@heroicons/react/outline";
 import Image from "next/image";
@@ -40,9 +39,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
     <>
       {address && displayProfile && (
         <header className="top-0 right-0 left-0 px-4 mt-4">
-          <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-            <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
-          </Link>
+          <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
         </header>
       )}
 
