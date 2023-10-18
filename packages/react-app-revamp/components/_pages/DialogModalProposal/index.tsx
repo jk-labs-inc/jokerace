@@ -67,7 +67,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
           {currentIndex !== 0 && (
             <ButtonV3
               colorClass="bg-primary-2"
-              textColorClass="flex items-center justify-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[40px] group"
+              textColorClass="flex items-center justify-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[40px] group transform transition-transform duration-200 active:scale-95"
               size={ButtonSize.LARGE}
               onClick={onPreviousEntry}
             >
@@ -80,7 +80,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
           {currentIndex !== totalProposals - 1 && (
             <ButtonV3
               colorClass="bg-primary-2"
-              textColorClass="flex items-center justify-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[40px] group"
+              textColorClass="flex items-center justify-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[40px] group transform transition-transform duration-200 active:scale-95"
               size={ButtonSize.LARGE}
               onClick={onNextEntry}
             >
