@@ -6,7 +6,6 @@ import {
   ROUTE_VIEW_CONTEST,
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
-  ROUTE_VIEW_USER,
 } from "@config/routes";
 import { HomeIcon, PencilAltIcon, SearchIcon } from "@heroicons/react/outline";
 import Image from "next/image";
