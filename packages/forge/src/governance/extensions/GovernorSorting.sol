@@ -112,8 +112,7 @@ abstract contract GovernorSorting {
         //      - oldValue is between (exclusive) insertingIndex and last value (oldValue !> insertingIndex bc no downvoting)
         //      - insertingIndex == sortedRanks.length - 1
         //      - sortedRanks.length == RANK_LIMIT
-        //      - sortedRanks.length < RANK_LIMIT
-        //      - and all of the above cases if we aren't looking for oldValue too (if it's tied or it was 0 to begin with)
+        //      - and the above 2 cases if we aren't looking for oldValue too (if it's tied or it was 0 to begin with)
         //      - and all of the ranges that insertingIndex ([0, sortedRanks.length - 1]), sortedRanks.length - 1 ([0, RANK_LIMIT - 1]), and oldValue ([insertingIndex, sortedRanks.length - 1]) could be
 
         // are we checking for the oldValue?
@@ -122,11 +121,12 @@ abstract contract GovernorSorting {
 
         // DO ANY SHIFTING? - not if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
         if (!(checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue))) {
-            // DO SHIFTING FROM (insertingIndex, smallestIdxMemVar] (exclusive insertingIndex, inclusive smallestIdxMemVar)?
-            //      - if insertingIndex == smallestIdxMemVar, then there's nothing after it to shift down.
-            //      - also if this is the case then don't need to worry about oldValue bc if insertingIndex == smallestIdxMemVar and oldValue's not at insertingIndex, then it's not in the array.
+            // DO SHIFTING FROM (insertingIndex, sortedRanksLength)?
+            //      - if insertingIndex == sortedRanksLength - 1, then there's nothing after it to shift down.
+            //      - also if this is the case + oldValue's not at insertingIndex, then don't need to worry about oldValue bc it's not in the array.
             if (!(insertingIndex == sortedRanksLength - 1)) {
-                // SHIFT UNTIL/IF YOU FIND OLD VALUE IN THE RANGE (insertingIndex, smallestIdxMemVar] - go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
+                // SHIFT UNTIL/IF YOU FIND OLD VALUE IN THE RANGE (insertingIndex, sortedRanksLength) - go through and shift everything down until/if we hit oldValue.
+                // if we hit the limit then the last item will just be dropped).
                 for (uint256 index = insertingIndex + 1; index < sortedRanksLength; index++) {
                     sortedRanks[index] = sortedRanksMemVar[index - 1];
 
@@ -139,7 +139,7 @@ abstract contract GovernorSorting {
             }
 
             // SHIFT INTO NEW INDEX? - if we didn't run into oldValue and we wouldn't be trying to shift into index RANK_LIMIT, then
-            // go ahead and shift what was in smallestIdxMemVar into the next idx
+            // go ahead and shift what was in sortedRanksLength - 1 into the next idx
             if (!haveFoundOldValue && (sortedRanksLength < RANK_LIMIT)) {
                 sortedRanks.push(sortedRanksMemVar[sortedRanksLength - 1]);
             }
