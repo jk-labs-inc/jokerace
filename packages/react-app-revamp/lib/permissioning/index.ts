@@ -7,6 +7,7 @@ export type VoteCalculationMethod = "token" | "token holder";
 export async function fetchNftHolders(
   contractAddress: string,
   chainName: string,
+  minTokensRequired: number = 1,
   votesPerUnit: number = 100,
   voteCalculationMethod: string = "token",
 ): Promise<Record<string, number> | Error> {
@@ -73,6 +74,7 @@ export async function fetchNftHolders(
       ownersData: allOwnersData,
       votesPerUnit,
       voteCalculationMethod,
+      minTokensRequired,
     });
   });
 }

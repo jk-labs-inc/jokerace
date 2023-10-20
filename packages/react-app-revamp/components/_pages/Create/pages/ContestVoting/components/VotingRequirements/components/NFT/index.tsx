@@ -21,7 +21,7 @@ const CreateVotingRequirementsNftSettings = () => {
   const onMinTokensRequiredChange = (minTokens: string) => {
     setVotingRequirements({
       ...votingRequirements,
-      minTokensRequired: minTokens,
+      minTokensRequired: parseFloat(minTokens),
     });
   };
 
@@ -45,7 +45,7 @@ const CreateVotingRequirementsNftSettings = () => {
       settingType="erc721"
       chain={votingRequirements.chain}
       tokenAddress={votingRequirements.tokenAddress}
-      minTokensRequired="1"
+      minTokensRequired={votingRequirements.minTokensRequired.toString()}
       powerType={votingRequirements.powerType}
       powerValue={votingRequirements.powerValue.toString()}
       onChainChange={onVotingRequirementChainChange}

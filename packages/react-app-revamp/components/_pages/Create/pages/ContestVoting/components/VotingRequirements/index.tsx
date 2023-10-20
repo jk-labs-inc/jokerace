@@ -83,6 +83,7 @@ const CreateVotingRequirements = () => {
     const result = await fetchNftHolders(
       votingRequirements.tokenAddress,
       votingRequirements.chain,
+      votingRequirements.minTokensRequired,
       votingRequirements.powerValue,
       votingRequirements.powerType,
     );

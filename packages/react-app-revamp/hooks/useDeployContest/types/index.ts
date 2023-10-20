@@ -14,7 +14,7 @@ export type VotingRequirements = {
   type: string;
   chain: string;
   tokenAddress: string;
-  minTokensRequired: string;
+  minTokensRequired: number;
   powerType: string;
   powerValue: number;
 };
@@ -23,5 +23,5 @@ export type SubmissionRequirements = {
   type: string;
   chain: string;
   tokenAddress: string;
-  minTokensRequired: string;
+  minTokensRequired: number;
 };

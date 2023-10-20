@@ -8,6 +8,8 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useEffect } from "react";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
+import { SubmissionMerkle } from "@hooks/useDeployContest/types";
+import { fetchNftHolders } from "lib/permissioning";
 
 const options: Option[] = [{ value: "anyone" }, { value: "voters (same requirements)" }, { value: "NFT holders" }];
 
@@ -24,6 +26,7 @@ const CreateSubmissionRequirements = () => {
     setSubmissionAllowlistFields,
     submissionMerkle,
     setSubmissionMerkle,
+    submissionRequirements,
     votingAllowlist,
   } = useDeployContestStore(state => state);
   const submissionRequirementsValidation = validationFunctions.get(step);
@@ -91,7 +94,12 @@ const CreateSubmissionRequirements = () => {
     }
   };
 
-  const handleNextStep = () => {
+  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    setSubmissionMerkle("manual", value);
+    setSubmissionMerkle("prefilled", value);
+  };
+
+  const handleNextStep = async () => {
     if (submissionRequirementsOption === "voters (same requirements)") {
       if (submissionMerkle.prefilled) {
         onNextStep();
@@ -109,9 +117,27 @@ const CreateSubmissionRequirements = () => {
         decimals: 18,
         allowList: submissionAllowlist,
       });
+    } else if (submissionRequirementsOption === "NFT holders") {
+      toastLoading("processing your allowlist...", false);
+      const result = await fetchNftHolders(
+        submissionRequirements.tokenAddress,
+        submissionRequirements.chain,
+        submissionRequirements.minTokensRequired,
+      );
+
+      if (result instanceof Error) {
+        toastError(result.message);
+        return;
+      } else {
+        const worker = initializeWorker();
+        worker.postMessage({
+          decimals: 18,
+          allowList: result,
+        });
+      }
     } else {
       setSubmissionAllowlistFields([]);
-      setSubmissionMerkle();
+      setBothSubmissionMerkles(null);
       onNextStep();
     }
   };

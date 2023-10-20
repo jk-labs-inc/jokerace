@@ -21,7 +21,7 @@ const CreateSubmissionRequirementsNftSettings = () => {
   const onSubmissionsRequirementMinTokensRequiredChange = (minTokens: string) => {
     setSubmissionRequirements({
       ...submissionRequirements,
-      minTokensRequired: minTokens,
+      minTokensRequired: parseFloat(minTokens),
     });
   };
 
@@ -31,7 +31,7 @@ const CreateSubmissionRequirementsNftSettings = () => {
       settingType="erc721"
       chain={submissionRequirements.chain}
       tokenAddress={submissionRequirements.tokenAddress}
-      minTokensRequired="1"
+      minTokensRequired={submissionRequirements.minTokensRequired.toString()}
       onChainChange={onSubmissionsRequirementChainChange}
       onTokenAddressChange={onSubmissionsRequirementTokenAddressChange}
       onMinTokensRequiredChange={onSubmissionsRequirementMinTokensRequiredChange}
