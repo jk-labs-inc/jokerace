@@ -25,12 +25,13 @@ abstract contract GovernorSorting {
 
     // TODO: add option to disable rank tracking for gas savings
     // TODO: make RANK_LIMIT configurable + test ranges
-    // TODO: flesh out tests a ton for different edge cases w oldValue, smallestNonZeroSortedRanksValueIdx, and RANK_LIMIT overlaps
-    uint256 public constant RANK_LIMIT = 250; // cannot be 0
+    // TODO: flesh out tests a ton for different edge cases w oldValue, smallest sorted ranks value, and RANK_LIMIT overlaps
+    
+    // RULE: cannot be 0
+    uint256 public constant RANK_LIMIT = 250;
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
-    uint256[] public sortedRanks = new uint256[](RANK_LIMIT); // value is forVotes counts, has the constraint of no duplicate values except for 0 bc it's instantiated with 0 values.
-    uint256 public smallestNonZeroSortedRanksValueIdx = 0; // the index of the smallest non-zero value in sortedRanks, useful to finding where sortedRanks has been populated to
+    uint256[] public sortedRanks; // value is forVotes counts, has the constraint of no duplicate values.
 
     /**
      * @dev Get the number of proposals that have `forVotes` number of for votes.
@@ -49,11 +50,11 @@ abstract contract GovernorSorting {
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
         require(rank != 0, "GovernorSorting: rank cannot equal 0");
 
-        uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
+        uint256 sortedRanksLength = sortedRanks.length; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
         uint256 counter = 1;
-        for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
+        for (uint256 index = 0; index < sortedRanksLength; index++) {
             // if this is a deleted proposal, go forwards without incrementing the counter
             if (getNumProposalsWithThisManyForVotes(sortedRanksMemVar[index]) == 0) {
                 continue;
@@ -73,7 +74,7 @@ abstract contract GovernorSorting {
 
     // returns whether a given index in sortedRanks is tied or is below a tied rank
     function isOrIsBelowTiedRank(uint256 idx) public view returns (bool atOrBelowTiedRank) {
-        if (idx > smallestNonZeroSortedRanksValueIdx) {
+        if (idx > sortedRanks.length - 1) {
             // if `idx` hasn't been populated, then it's not a valid index to be checking and something is wrong
             revert("GovernorSorting: this index has not been populated");
         }
@@ -89,16 +90,16 @@ abstract contract GovernorSorting {
     // insert a new value into sortedRanks (this function is strictly O(n)).
     // we know at this point it's:
     //      -not tied
-    //      -the idx where it should go is in [0, smallestNonZeroSortedRanksValueIdx]
+    //      -the idx where it should go is in [0, sortedRanks.length - 1]
     function _insertRank(
         uint256 oldValue,
         uint256 newValue,
-        uint256 smallestIdxMemVar,
+        uint256 sortedRanksLength,
         uint256[] memory sortedRanksMemVar
     ) internal {
         // find the index to insert newValue at
         uint256 insertingIndex;
-        for (uint256 index = 0; index < smallestIdxMemVar + 1; index++) {
+        for (uint256 index = 0; index < sortedRanksLength; index++) {
             if (newValue > sortedRanksMemVar[index]) {
                 insertingIndex = index;
                 break;
@@ -107,13 +108,13 @@ abstract contract GovernorSorting {
 
         // what we care about accounting for below is oldValue and the items at + below insertingIndex - we need to make sure all cases are accounted for:
         //      - oldValue is at insertingIndex
-        //      - oldValue is at smallestIdxMemVar
-        //      - oldValue is between (exclusive) insertingIndex and smallestIdxMemVar (oldValue !> insertingIndex bc no downvoting)
-        //      - insertingIndex == smallestIdxMemVar
-        //      - smallestIdxMemVar + 1 == RANK_LIMIT
-        //      - smallestIdxMemVar + 1 < RANK_LIMIT
+        //      - oldValue is at sortedRanks.length - 1
+        //      - oldValue is between (exclusive) insertingIndex and last value (oldValue !> insertingIndex bc no downvoting)
+        //      - insertingIndex == sortedRanks.length - 1
+        //      - sortedRanks.length == RANK_LIMIT
+        //      - sortedRanks.length < RANK_LIMIT
         //      - and all of the above cases if we aren't looking for oldValue too (if it's tied or it was 0 to begin with)
-        //      - and all of the ranges that insertingIndex ([0, smallestIdxMemVar]), smallestIdxMemVar ([0, RANK_LIMIT - 1]), and oldValue ([insertingIndex, smallestIdxMemVar]) could be
+        //      - and all of the ranges that insertingIndex ([0, sortedRanks.length - 1]), sortedRanks.length - 1 ([0, RANK_LIMIT - 1]), and oldValue ([insertingIndex, sortedRanks.length - 1]) could be
 
         // are we checking for the oldValue?
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
@@ -124,9 +125,9 @@ abstract contract GovernorSorting {
             // DO SHIFTING FROM (insertingIndex, smallestIdxMemVar] (exclusive insertingIndex, inclusive smallestIdxMemVar)?
             //      - if insertingIndex == smallestIdxMemVar, then there's nothing after it to shift down.
             //      - also if this is the case then don't need to worry about oldValue bc if insertingIndex == smallestIdxMemVar and oldValue's not at insertingIndex, then it's not in the array.
-            if (!(insertingIndex == smallestIdxMemVar)) {
+            if (!(insertingIndex == sortedRanksLength - 1)) {
                 // SHIFT UNTIL/IF YOU FIND OLD VALUE IN THE RANGE (insertingIndex, smallestIdxMemVar] - go through and shift everything down until/if we hit oldValue (if we hit the limit then the last item will just be dropped).
-                for (uint256 index = insertingIndex + 1; index < smallestIdxMemVar + 1; index++) {
+                for (uint256 index = insertingIndex + 1; index < sortedRanksLength; index++) {
                     sortedRanks[index] = sortedRanksMemVar[index - 1];
 
                     // STOP ONCE YOU FIND OLD VALUE - if I'm looking for it, once I shift a value into the index oldValue was in (if it's in here) I can stop!
@@ -137,11 +138,10 @@ abstract contract GovernorSorting {
                 }
             }
 
-            // SHIFT INTO UNPOPULATED AREA? - if we didn't run into oldValue and we wouldn't be trying to shift into index RANK_LIMIT, then
-            // go ahead and shift what was in smallestIdxMemVar into the next idx (that was previously unpopulated) and bump smallestNonZeroSortedRanksValueIdx
-            if (!haveFoundOldValue && (smallestIdxMemVar + 1 < RANK_LIMIT)) {
-                sortedRanks[smallestIdxMemVar + 1] = sortedRanksMemVar[smallestIdxMemVar];
-                smallestNonZeroSortedRanksValueIdx++;
+            // SHIFT INTO NEW INDEX? - if we didn't run into oldValue and we wouldn't be trying to shift into index RANK_LIMIT, then
+            // go ahead and shift what was in smallestIdxMemVar into the next idx
+            if (!haveFoundOldValue && (sortedRanksLength < RANK_LIMIT)) {
+                sortedRanks.push(sortedRanksMemVar[sortedRanksLength - 1]);
             }
         }
 
@@ -152,12 +152,12 @@ abstract contract GovernorSorting {
     // keep things sorted as we go.
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas.
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
-        uint256 smallestIdxMemVar = smallestNonZeroSortedRanksValueIdx; // only check state var once to save on gas
+        uint256 sortedRanksLength = sortedRanks.length; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
         // FIRST ENTRY? - if this is the first item ever then we just need to put it in idx 0 and that's it
-        if ((smallestIdxMemVar == 0) && (sortedRanksMemVar[smallestIdxMemVar] == 0)) {
-            sortedRanks[smallestIdxMemVar] = newValue;
+        if (sortedRanksLength == 0) {
+            sortedRanks.push(newValue);
             return;
         }
 
@@ -168,23 +168,21 @@ abstract contract GovernorSorting {
             return;
         }
 
-        // SMALLER THAN CURRENT SMALLEST NON-ZERO VAL? - is it after smallestNonZeroSortedRanksValueIdx?
-        // this also means that the old value was 0 (or less than the lowest value if smallestNonZeroSortedRanksValueIdx == RANK_LIMIT - 1/the array is full), so all good with regards to oldValue.
-        if (newValue < sortedRanksMemVar[smallestIdxMemVar]) {
-            if (smallestIdxMemVar + 1 == RANK_LIMIT) {
+        // SMALLER THAN CURRENT SMALLEST VAL?
+        // this also means that the old value was 0 (or less than the lowest value if sortedRanks.length == RANK_LIMIT and/or the array is full), so all good with regards to oldValue.
+        if (newValue < sortedRanksMemVar[sortedRanksLength - 1]) {
+            if (sortedRanksLength == RANK_LIMIT) {
                 // if we've reached the size limit of sortedRanks, then we're done here
                 return;
             } else {
-                // otherwise, put this value in the index after the current smallest value and increment
-                // smallestNonZeroSortedRanksValueIdx to reflect the updated state
-                sortedRanks[smallestIdxMemVar + 1] = newValue;
-                smallestNonZeroSortedRanksValueIdx++;
+                // otherwise, put this value in the index after the current smallest value
+                sortedRanks.push(newValue);
                 return;
             }
         }
 
-        // SO IT'S IN [0, smallestNonZeroSortedRanksValueIdx]!
+        // SO IT'S IN [0, smallestValue]!
         // find where it should go and insert it.
-        _insertRank(oldValue, newValue, smallestIdxMemVar, sortedRanksMemVar);
+        _insertRank(oldValue, newValue, sortedRanksLength, sortedRanksMemVar);
     }
 }
