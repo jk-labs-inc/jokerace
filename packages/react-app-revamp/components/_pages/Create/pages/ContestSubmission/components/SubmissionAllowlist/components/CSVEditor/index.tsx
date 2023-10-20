@@ -88,7 +88,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
 
   const clearFields = () => {
     addEmptyFields();
-    setSubmissionMerkle(null);
+    setSubmissionMerkle("manual", null);
     setError(currentStep, { step: currentStep, message: "" });
     setUploadSuccess(false);
   };
