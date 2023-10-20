@@ -16,7 +16,8 @@ import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { useAccount, useNetwork } from "wagmi";
-import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
+import { useDeployContestStore } from "./store";
+import { SubmissionMerkle, VotingMerkle } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const DEFAULT_SUBMISSIONS = 100;
@@ -34,8 +35,8 @@ export function useDeployContest() {
     submissionOpen,
     votingOpen,
     votingClose,
-    votingMerkle,
-    submissionMerkle,
+    votingMerkle: votingMerkleData,
+    submissionMerkle: submissionMerkleData,
     allowedSubmissionsPerUser,
     maxSubmissions,
     downvote,
@@ -71,6 +72,8 @@ export function useDeployContest() {
         signer,
       );
       const contestInfo = type + "|" + summary + "|" + prompt;
+      const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
+      const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
       const finalAllowedSubmissionsPerUser =
@@ -241,6 +244,9 @@ export function useDeployContest() {
   }
 
   async function checkForSpoofing(address: string) {
+    const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
+    const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
+
     const exceedsVotingMaxRows = votingMerkle && votingMerkle.voters.length > MAX_ROWS;
     const exceedsSubmissionMaxRows = submissionMerkle && submissionMerkle.submitters.length > MAX_ROWS;
 

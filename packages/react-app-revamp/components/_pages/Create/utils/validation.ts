@@ -1,6 +1,5 @@
-import { Recipient } from "lib/merkletree/generateMerkleTree";
 import moment from "moment";
-import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
+import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
 export type StateKey =
   | "type"
@@ -67,6 +66,8 @@ const votingMerkleValidation = (allowList: Record<string, number>) => {
 
   return "";
 };
+
+const votingRequirementsValidation = (allowList: Record<string, number>, tokenAddress: string) => {};
 
 const submissionMerkleValidation = (allowList: Record<string, number>, submissionTab: string) => {
   if (submissionTab === "submissionMerkle" && Object.keys(allowList).length === 0) {

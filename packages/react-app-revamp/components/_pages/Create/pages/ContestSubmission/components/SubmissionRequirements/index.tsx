@@ -5,10 +5,11 @@ import CreateDropdown, { Option } from "@components/_pages/Create/components/Dro
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { generateMerkleTree, Recipient } from "lib/merkletree/generateMerkleTree";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useEffect } from "react";
+import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 
-const options: Option[] = [{ value: "anyone" }, { value: "voters (same requirements)" }];
+const options: Option[] = [{ value: "anyone" }, { value: "voters (same requirements)" }, { value: "NFT holders" }];
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -18,8 +19,8 @@ type WorkerMessageData = {
 const CreateSubmissionRequirements = () => {
   const {
     step,
-    submissionRequirements,
-    setSubmissionRequirements,
+    submissionRequirementsOption,
+    setSubmissionRequirementsOption,
     setSubmissionAllowlistFields,
     submissionMerkle,
     setSubmissionMerkle,
@@ -27,11 +28,20 @@ const CreateSubmissionRequirements = () => {
   } = useDeployContestStore(state => state);
   const submissionRequirementsValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([
-    () => submissionRequirementsValidation?.[1].validation(submissionRequirements, "submissionRequirements"),
+    () => submissionRequirementsValidation?.[1].validation(submissionRequirementsOption, "submissionRequirements"),
   ]);
 
-  const onSubmissionRequirementsChange = (value: string) => {
-    setSubmissionRequirements(value);
+  const renderLayout = () => {
+    switch (submissionRequirementsOption) {
+      case "NFT holders":
+        return <CreateSubmissionRequirementsNftSettings />;
+      default:
+        return null;
+    }
+  };
+
+  const onSubmissionRequirementsOptionChange = (value: string) => {
+    setSubmissionRequirementsOption(value);
   };
 
   useEffect(() => {
@@ -60,7 +70,7 @@ const CreateSubmissionRequirements = () => {
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
-    setSubmissionMerkle({ merkleRoot, submitters: recipients });
+    setSubmissionMerkle("prefilled", { merkleRoot, submitters: recipients });
     setSubmissionAllowlistFields([]);
     onNextStep();
     toastSuccess("allowlist processed successfully.");
@@ -82,8 +92,8 @@ const CreateSubmissionRequirements = () => {
   };
 
   const handleNextStep = () => {
-    if (submissionRequirements === "voters (same requirements)") {
-      if (submissionMerkle) {
+    if (submissionRequirementsOption === "voters (same requirements)") {
+      if (submissionMerkle.prefilled) {
         onNextStep();
         return;
       }
@@ -101,7 +111,7 @@ const CreateSubmissionRequirements = () => {
       });
     } else {
       setSubmissionAllowlistFields([]);
-      setSubmissionMerkle(null);
+      setSubmissionMerkle();
       onNextStep();
     }
   };
@@ -111,12 +121,13 @@ const CreateSubmissionRequirements = () => {
       <div className="flex flex-col gap-5">
         <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can submit?</p>
         <CreateDropdown
-          value={submissionRequirements}
+          value={submissionRequirementsOption}
           options={options}
-          className="w-full md:w-[300px] text-[20px]"
+          className="w-full md:w-[300px] text-[20px] cursor-pointer"
           searchEnabled={false}
-          onChange={onSubmissionRequirementsChange}
+          onChange={onSubmissionRequirementsOptionChange}
         />
+        {renderLayout()}
       </div>
       <div className="mt-8">
         <CreateNextButton step={step + 1} onClick={handleNextStep} />
