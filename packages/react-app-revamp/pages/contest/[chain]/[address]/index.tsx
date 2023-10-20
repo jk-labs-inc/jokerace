@@ -67,24 +67,29 @@ export async function getStaticProps({ params }: any) {
     return { notFound: true };
   }
 
+  let contestTitle = "";
+  let contestDescription = "";
+
   try {
     const contestDetails = await getContestDetails(address, chain);
-    const contestTitle = contestDetails[0].result as string;
     const prompt = contestDetails[1].result as string;
     const contestDescriptionRaw = prompt.split("|")[2];
-    const contestDescription = parse(contestDescriptionRaw).textContent;
 
-    return {
-      props: {
-        address,
-        title: contestTitle,
-        description: contestDescription,
-      },
-    };
+    contestTitle = contestDetails[0].result as string;
+    contestDescription = parse(contestDescriptionRaw).textContent;
   } catch (error) {
-    return { notFound: true };
+    console.error("failed to retrieve title or description for metatags:", error);
   }
+
+  return {
+    props: {
+      address,
+      title: contestTitle,
+      description: contestDescription,
+    },
+  };
 }
+
 //@ts-ignore
 Page.getLayout = getLayout;
 
