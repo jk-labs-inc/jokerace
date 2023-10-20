@@ -2,9 +2,8 @@ import { FC, ReactNode } from "react";
 
 interface MarkdownListProps {
   children: ReactNode & ReactNode[];
-  props: any;
 }
 
-const MarkdownList: FC<MarkdownListProps> = ({ children, props }) => <li {...props}>{children}</li>;
+const MarkdownList: FC<MarkdownListProps> = ({ children }) => <li>{children}</li>;
 
 export default MarkdownList;

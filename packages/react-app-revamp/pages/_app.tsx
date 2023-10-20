@@ -1,3 +1,5 @@
+import { polyfill } from "interweave-ssr";
+polyfill();
 import { jokeraceTheme } from "@config/rainbowkit";
 import { chains, config } from "@config/wagmi";
 import LayoutBase from "@layouts/LayoutBase";
