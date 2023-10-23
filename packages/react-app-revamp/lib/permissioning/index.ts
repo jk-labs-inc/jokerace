@@ -1,4 +1,5 @@
 import { chains } from "@config/wagmi";
+import { MAX_ROWS } from "@helpers/csvConstants";
 
 const apiKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
@@ -47,7 +48,7 @@ export async function fetchNftHolders(
       const ownersData = data.ownerAddresses || [];
       allOwnersData.push(...ownersData);
 
-      if (allOwnersData.length > 100000) {
+      if (allOwnersData.length > MAX_ROWS) {
         return new Error("NFT collection has more than 100k holders, which is not supported.");
       }
 

@@ -5,7 +5,6 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { useEthersSigner } from "@helpers/ethers";
 import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
-import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
 import { waitForTransaction } from "@wagmi/core";
@@ -25,7 +24,6 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
-  const { indexContestParticipantsV3 } = useContestParticipantsIndexV3();
   const stateContestDeployment = useContractFactoryStore(state => state);
   const {
     type,
@@ -198,41 +196,46 @@ export function useDeployContest() {
     votingMerkle: VotingMerkle | null,
     submissionMerkle: SubmissionMerkle | null,
   ) {
+    const participantsWorker = new Worker(new URL("/workers/indexContestParticipants", import.meta.url));
+
     try {
       if (!isSupabaseConfigured) {
         throw new Error("Supabase is not configured");
       }
 
+      if (!votingMerkle) return null;
+
       const tasks = [];
 
       tasks.push(indexContestV3(contestData));
 
-      if (votingMerkle) {
-        const submitters = submissionMerkle ? submissionMerkle.submitters : [];
-        const voterSet = new Set(votingMerkle.voters.map(voter => voter.address));
-        const submitterSet = new Set(submitters.map(submitter => submitter.address));
+      const workerData = {
+        contestData,
+        votingMerkle,
+        submissionMerkle,
+      };
 
-        // Combine voters and submitters, removing duplicates
-        const allParticipants = Array.from(
-          new Set([
-            ...votingMerkle.voters.map(voter => voter.address),
-            ...submitters.map(submitter => submitter.address),
-          ]),
-        );
+      const workerTask = new Promise<void>((resolve, reject) => {
+        participantsWorker.onmessage = event => {
+          if (event.data.success) {
+            resolve();
+          } else {
+            reject(new Error(event.data.error));
+          }
+        };
 
-        const everyoneCanSubmit = submitters.length === 0;
-        tasks.push(
-          indexContestParticipantsV3(
-            contestData.contractAddress,
-            allParticipants,
-            voterSet,
-            submitterSet,
-            votingMerkle.voters,
-            contestData.networkName,
-            everyoneCanSubmit,
-          ),
-        );
-      }
+        participantsWorker.onerror = error => {
+          stateContestDeployment.setIsLoading(false);
+          stateContestDeployment.setError(error.message);
+          setIsLoading(false);
+          toastError(`contest deployment failed to index in db`, error.message);
+          reject(error);
+        };
+
+        participantsWorker.postMessage(workerData);
+      });
+
+      tasks.push(workerTask);
 
       await Promise.all(tasks);
     } catch (e) {
@@ -240,6 +243,8 @@ export function useDeployContest() {
       stateContestDeployment.setError(error);
       setIsLoading(false);
       toastError(`contest deployment failed to index in db`, error);
+    } finally {
+      participantsWorker.terminate();
     }
   }
 

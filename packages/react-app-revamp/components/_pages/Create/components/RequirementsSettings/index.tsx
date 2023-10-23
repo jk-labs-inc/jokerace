@@ -1,10 +1,7 @@
 import CreateDropdown from "@components/_pages/Create/components/Dropdown";
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
 import { FC } from "react";
-import {
-  chainDropdownOptions,
-  votingPowerOptions,
-} from "../../pages/ContestVoting/components/VotingRequirements/config";
+import { chainDropdownOptions, votingPowerOptions } from "./config";
 
 interface CreateVotingRequirementsSettingsProps {
   step: "voting" | "submission";
@@ -14,6 +11,7 @@ interface CreateVotingRequirementsSettingsProps {
   minTokensRequired: string;
   powerType?: string;
   powerValue?: string;
+  error?: Record<string, string | undefined>;
   onChainChange?: (chain: string) => void;
   onTokenAddressChange?: (address: string) => void;
   onMinTokensRequiredChange?: (minTokens: string) => void;
@@ -27,6 +25,7 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
   chain,
   tokenAddress,
   minTokensRequired,
+  error,
   powerType,
   powerValue,
   onChainChange,
@@ -65,6 +64,7 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
             placeholder="1"
             onChange={onMinTokensRequiredChange}
           />
+          <p className="text-negative-11 text-[14px] font-bold animate-appear">{error?.minTokensRequiredError}</p>
         </div>
         <div className="flex flex-col gap-1">
           <p className="text-[16px] text-primary-10 font-bold uppercase">token address</p>
@@ -74,16 +74,17 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
             placeholder="0x495f947276749ce646f68ac8c248420045cb7b5e"
             onChange={onTokenAddressChange}
           />
+          <p className="text-negative-11 text-[14px] font-bold animate-appear">{error?.tokenAddressError}</p>
         </div>
         {step === "voting" ? (
           <div className="flex flex-col gap-1">
             <p className="text-[16px] text-primary-10 font-bold uppercase">voting power</p>
-            <div className="flex gap-3">
+            <div className="flex justify-between md:justify-normal md:gap-3">
               <CreateTextInput
-                className="w-full md:w-20 text-[16px] md:text-[24px]"
+                className="w-24 md:w-20 text-[16px] md:text-[24px]"
                 type="number"
                 value={powerValue ?? ""}
-                placeholder="1"
+                placeholder="100"
                 onChange={onPowerValueChange}
               />
               <p className="text-[16px] md:text-[24px]">votes per</p>
@@ -95,6 +96,7 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
                 onChange={onPowerTypeChange}
               />
             </div>
+            <p className="text-negative-11 text-[14px] font-bold animate-appear">{error?.powerValueError}</p>
           </div>
         ) : null}
       </div>

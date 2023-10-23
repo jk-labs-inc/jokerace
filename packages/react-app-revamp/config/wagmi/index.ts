@@ -1,17 +1,17 @@
-import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
+import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
-  metaMaskWallet,
-  walletConnectWallet,
-  rainbowWallet,
-  okxWallet,
-  tahoWallet,
-  coinbaseWallet,
   argentWallet,
+  bitKeepWallet,
+  coinbaseWallet,
   imTokenWallet,
   ledgerWallet,
+  metaMaskWallet,
+  okxWallet,
   omniWallet,
+  rainbowWallet,
+  tahoWallet,
   trustWallet,
-  bitKeepWallet,
+  walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";

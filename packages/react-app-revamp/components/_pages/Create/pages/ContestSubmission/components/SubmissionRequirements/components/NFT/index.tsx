@@ -1,7 +1,12 @@
 import CreateVotingRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { FC } from "react";
 
-const CreateSubmissionRequirementsNftSettings = () => {
+interface CreateSubmissionRequirementsNftSettingsProps {
+  error?: Record<string, string | undefined>;
+}
+
+const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNftSettingsProps> = ({ error }) => {
   const { submissionRequirements, setSubmissionRequirements } = useDeployContestStore(state => state);
 
   const onSubmissionsRequirementChainChange = (option: string) => {
@@ -29,6 +34,7 @@ const CreateSubmissionRequirementsNftSettings = () => {
     <CreateVotingRequirementsSettings
       step="submission"
       settingType="erc721"
+      error={error}
       chain={submissionRequirements.chain}
       tokenAddress={submissionRequirements.tokenAddress}
       minTokensRequired={submissionRequirements.minTokensRequired.toString()}

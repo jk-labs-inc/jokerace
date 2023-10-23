@@ -1,7 +1,14 @@
 import CreateVotingRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { FC } from "react";
 
-const CreateVotingRequirementsNftSettings = () => {
+type VotingRequirementsNftSettingsError = Record<string, string | undefined>;
+
+interface CreateVotingRequirementsNftSettingsProps {
+  error?: VotingRequirementsNftSettingsError;
+}
+
+const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSettingsProps> = ({ error }) => {
   const { votingRequirements, setVotingRequirements } = useDeployContestStore(state => state);
 
   const onVotingRequirementChainChange = (option: string) => {
@@ -44,6 +51,7 @@ const CreateVotingRequirementsNftSettings = () => {
       step="voting"
       settingType="erc721"
       chain={votingRequirements.chain}
+      error={error}
       tokenAddress={votingRequirements.tokenAddress}
       minTokensRequired={votingRequirements.minTokensRequired.toString()}
       powerType={votingRequirements.powerType}

@@ -67,7 +67,7 @@ const CreateSubmissionAllowlist = () => {
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
-
+    setSubmissionMerkle("prefilled", null);
     terminateWorker(event.target as Worker);
   };
 

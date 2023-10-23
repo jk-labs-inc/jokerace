@@ -4,12 +4,13 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import CreateDropdown, { Option } from "@components/_pages/Create/components/Dropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
+import { tokenAddressRegex } from "@helpers/regex";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { useEffect } from "react";
-import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
+import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders } from "lib/permissioning";
+import { useEffect, useState } from "react";
+import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 
 const options: Option[] = [{ value: "anyone" }, { value: "voters (same requirements)" }, { value: "NFT holders" }];
 
@@ -33,11 +34,12 @@ const CreateSubmissionRequirements = () => {
   const onNextStep = useNextStep([
     () => submissionRequirementsValidation?.[1].validation(submissionRequirementsOption, "submissionRequirements"),
   ]);
+  const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
 
   const renderLayout = () => {
     switch (submissionRequirementsOption) {
       case "NFT holders":
-        return <CreateSubmissionRequirementsNftSettings />;
+        return <CreateSubmissionRequirementsNftSettings error={inputError} />;
       default:
         return null;
     }
@@ -99,42 +101,65 @@ const CreateSubmissionRequirements = () => {
     setSubmissionMerkle("prefilled", value);
   };
 
-  const handleNextStep = async () => {
-    if (submissionRequirementsOption === "voters (same requirements)") {
-      if (submissionMerkle.prefilled) {
-        onNextStep();
-        return;
-      }
+  const validateInput = () => {
+    const errors: Record<string, string | undefined> = {};
 
-      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist).reduce((acc, address) => {
-        acc[address] = 10;
-        return acc;
-      }, {} as Record<string, number>);
+    if (
+      submissionRequirements.tokenAddress === "" ||
+      tokenAddressRegex.test(submissionRequirements.tokenAddress) === false
+    ) {
+      errors.tokenAddressError = "Invalid token address";
+    }
 
-      toastLoading("processing your allowlist...", false);
+    if (submissionRequirements.minTokensRequired === 0 || isNaN(submissionRequirements.minTokensRequired)) {
+      errors.minTokensRequiredError = "Minimum tokens required should be greater than 0";
+    }
+
+    setInputError(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleVotersSameRequirements = () => {
+    toastLoading("processing your allowlist...", false);
+    const worker = initializeWorker();
+    const allowList = Object.keys(votingAllowlist.manual).length ? votingAllowlist.manual : votingAllowlist.prefilled;
+
+    worker.postMessage({
+      decimals: 18,
+      allowList,
+    });
+  };
+
+  const handleNftHolders = async () => {
+    const isValid = validateInput();
+
+    if (!isValid) {
+      return;
+    }
+    toastLoading("processing your allowlist...", false);
+    const result = await fetchNftHolders(
+      submissionRequirements.tokenAddress,
+      submissionRequirements.chain,
+      submissionRequirements.minTokensRequired,
+    );
+
+    if (result instanceof Error) {
+      toastError(result.message);
+      return;
+    } else {
       const worker = initializeWorker();
       worker.postMessage({
         decimals: 18,
-        allowList: submissionAllowlist,
+        allowList: result,
       });
-    } else if (submissionRequirementsOption === "NFT holders") {
-      toastLoading("processing your allowlist...", false);
-      const result = await fetchNftHolders(
-        submissionRequirements.tokenAddress,
-        submissionRequirements.chain,
-        submissionRequirements.minTokensRequired,
-      );
+    }
+  };
 
-      if (result instanceof Error) {
-        toastError(result.message);
-        return;
-      } else {
-        const worker = initializeWorker();
-        worker.postMessage({
-          decimals: 18,
-          allowList: result,
-        });
-      }
+  const handleNextStep = async () => {
+    if (submissionRequirementsOption === "voters (same requirements)") {
+      handleVotersSameRequirements();
+    } else if (submissionRequirementsOption === "NFT holders") {
+      handleNftHolders();
     } else {
       setSubmissionAllowlistFields([]);
       setBothSubmissionMerkles(null);

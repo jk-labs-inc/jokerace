@@ -74,7 +74,6 @@ const CreateVotingAllowlist = () => {
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
-
     resetPrefilledAllowlist();
     terminateWorker(event.target as Worker);
   };
