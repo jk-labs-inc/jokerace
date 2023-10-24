@@ -14,6 +14,7 @@ import {
   generateUrlSubmissions,
 } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
@@ -52,6 +53,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const { openAccountModal } = useAccountModal();
   const { contestStatus } = useContestStatusStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
+  const { downvotingAllowed } = useContestStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
@@ -141,7 +143,11 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               <p className="text-neutral-11 text-[24px] font-bold">add votes</p>
               {isConnected ? (
                 currentUserAvailableVotesAmount > 0 ? (
-                  <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onVote} />
+                  <VotingWidget
+                    amountOfVotes={currentUserAvailableVotesAmount}
+                    onVote={onVote}
+                    downvoteAllowed={downvotingAllowed}
+                  />
                 ) : outOfVotes ? (
                   <p className="text-[16px] text-neutral-11">
                     looks like you’ve used up all your votes this contest <br />
