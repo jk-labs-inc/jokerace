@@ -7,6 +7,7 @@ import { chains, chainsImages } from "@config/wagmi";
 import { pluralize } from "@helpers/pluralize";
 import useContestInfo from "@hooks/useContestInfo";
 import { useError } from "@hooks/useError";
+import useNftTokenDetails from "@hooks/useNftTokenDetails";
 import { toggleContestVisibility } from "lib/creator";
 import moment from "moment";
 import Link from "next/link";
@@ -68,6 +69,15 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
     votingMinutes: 0,
     votingSeconds: 0,
   });
+
+  const votingRequirement = contest.voting_requirements;
+  const submissionRequirement = contest.submission_requirements;
+  const { tokenSymbol: votingRequirementToken, isLoading: isVotingRequirementTokenLoading } = useNftTokenDetails(
+    votingRequirement?.tokenAddress,
+    votingRequirement?.chain,
+  );
+  const { tokenSymbol: submissionRequirementToken, isLoading: isSubmissionRequirementTokenLoading } =
+    useNftTokenDetails(submissionRequirement?.tokenAddress, votingRequirement?.chain);
 
   const getContestUrl = (contest: { network_name: string; address: string }) => {
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", contest.network_name).replace("[address]", contest.address);
@@ -214,6 +224,12 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
             you qualify! <CheckmarkIcon />
           </span>
         );
+      } else if (submissionRequirement) {
+        return (
+          <p>
+            for <span className="uppercase">{submissionRequirementToken}</span> holders
+          </p>
+        );
       } else {
         return "you don't qualify :(";
       }
@@ -223,6 +239,12 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
           <span className="flex items-center gap-1">
             you qualify! <CheckmarkIcon />
           </span>
+        );
+      } else if (votingRequirement) {
+        return (
+          <p>
+            for <span className="uppercase">{votingRequirementToken}</span> holders
+          </p>
         );
       } else {
         return "you don't qualify :(";
@@ -476,6 +498,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
                       "voting closed"
                     )}
                   </li>
+
                   {rewardsLoading || loading ? (
                     <li>
                       <Skeleton width={100} />

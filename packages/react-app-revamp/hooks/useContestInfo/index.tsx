@@ -33,7 +33,6 @@ const useContestInfo = ({
   address = "",
   chains,
   submissionTimeLeft,
-  votingTimeLeft,
 }: ContestInfoProps): UseContestInfoReturn => {
   const [submissionClass, setSubmissionClass] = useState("");
   const [votingClass, setVotingClass] = useState("");
