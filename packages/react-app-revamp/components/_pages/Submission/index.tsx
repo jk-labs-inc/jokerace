@@ -107,7 +107,9 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
       proposalId={proposalId}
       onClose={onClose}
       onNextEntry={handleOnNextEntryChange}
+      onConnectWallet={onConnectWallet}
       onPreviousEntry={handleOnPreviousEntryChange}
+      onVote={handleCastVotes}
     />
   );
 };

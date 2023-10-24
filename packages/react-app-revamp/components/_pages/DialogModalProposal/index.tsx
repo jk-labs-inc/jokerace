@@ -13,6 +13,7 @@ import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
 import { useProposalStore } from "@hooks/useProposal/store";
+import { useContestStore } from "@hooks/useContest/store";
 
 interface DialogModalProposalProps {
   isOpen: boolean;
@@ -46,6 +47,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
   const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
   const totalProposals = listProposalsIds.length;
+  const { downvotingAllowed } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
 
@@ -99,7 +101,11 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               <p className="text-neutral-11 text-[24px] font-bold">vote</p>
               {isConnected ? (
                 currentUserAvailableVotesAmount > 0 ? (
-                  <VotingWidget amountOfVotes={currentUserAvailableVotesAmount} onVote={onVote} />
+                  <VotingWidget
+                    amountOfVotes={currentUserAvailableVotesAmount}
+                    onVote={onVote}
+                    downvoteAllowed={downvotingAllowed}
+                  />
                 ) : outOfVotes ? (
                   <p className="text-[16px] text-neutral-11">
                     looks like you’ve used up all your votes this contest <br />
