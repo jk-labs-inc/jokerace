@@ -23,8 +23,8 @@ const ContestParametersSubmissionRequirements = () => {
           href={`${chainExplorerUrl}token/${submissionRequirements.tokenAddress}`}
           target="_blank"
         >
-          {submissionRequirementToken}{" "}
-        </a>
+          {submissionRequirementToken}
+        </a>{" "}
         <span className="normal-case">NFT {submissionRequirements.minTokensRequired > 1 ? "s" : ""}</span>
       </li>
       <li className="list-disc">
@@ -34,7 +34,7 @@ const ContestParametersSubmissionRequirements = () => {
           href={`${chainExplorerUrl}token/${submissionRequirements.tokenAddress}`}
           target="_blank"
         >
-          {submissionRequirementToken}{" "}
+          {submissionRequirementToken}
         </a>{" "}
         holders was taken on {moment(submissionRequirements.timestamp).format("MMMM Do, h:mm a")}
       </li>

@@ -22,8 +22,8 @@ const ContestParametersVotingRequirements = () => {
           href={`${chainExplorerUrl}token/${votingRequirements.tokenAddress}`}
           target="_blank"
         >
-          {votingRequirementsToken}{" "}
-        </a>
+          {votingRequirementsToken}
+        </a>{" "}
         <span className="normal-case">NFT {votingRequirements.minTokensRequired > 1 ? "s" : ""}</span>
       </li>
       <li className="list-disc">
@@ -33,7 +33,7 @@ const ContestParametersVotingRequirements = () => {
           href={`${chainExplorerUrl}token/${votingRequirements.tokenAddress}`}
           target="_blank"
         >
-          {votingRequirementsToken}{" "}
+          {votingRequirementsToken}
         </a>{" "}
         holders was taken on {moment(votingRequirements.timestamp).format("MMMM Do, h:mm a")}
       </li>
