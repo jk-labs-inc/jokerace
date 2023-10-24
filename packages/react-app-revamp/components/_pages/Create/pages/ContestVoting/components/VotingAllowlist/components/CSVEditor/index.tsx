@@ -117,7 +117,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
 
   const clearFields = () => {
     addEmptyFields();
-    setVotingMerkle(null);
+    setVotingMerkle("manual", null);
     setError(currentStep, { step: currentStep, message: "" });
     setUploadSuccess(false);
   };
@@ -183,11 +183,11 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <table className="table-fixed  w-[300px] md:w-[600px] text-left">
+      <table className="table-fixed w-[360px] md:w-[600px] text-left">
         <thead>
           <tr className="text-[16px] font-bold">
-            <th className="w-2/3 py-2 uppercase">Address</th>
-            <th className="w-1/3 py-2 uppercase">
+            <th className="w-1/2 md:w-2/3 py-2 uppercase">Address</th>
+            <th className="w-1/2 md:w-1/3 py-2 uppercase">
               <div className="flex items-center justify-between">
                 <span className="uppercase">Number of Votes</span>
                 {fields.some(field => field.address !== "" || field.votes !== "") && (

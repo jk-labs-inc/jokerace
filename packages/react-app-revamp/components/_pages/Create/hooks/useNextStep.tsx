@@ -1,13 +1,13 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 
-export const useNextStep = (validateSteps: Array<() => string | undefined>) => {
+export const useNextStep = (validateSteps: Array<(arg?: any) => string | undefined>) => {
   const { setError, step, setStep, furthestStep, setFurthestStep } = useDeployContestStore(state => state);
 
-  const onNextStep = () => {
+  const onNextStep = (arg?: any) => {
     let hasError = false;
 
     for (const validateStep of validateSteps) {
-      const errorMessage = validateStep();
+      const errorMessage = validateStep(arg);
       if (errorMessage) {
         setError(step, { step, message: errorMessage });
         hasError = true;

@@ -5,7 +5,6 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { useEthersSigner } from "@helpers/ethers";
 import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
-import { useContestParticipantsIndexV3 } from "@hooks/useContestsParticipantsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
 import { waitForTransaction } from "@wagmi/core";
@@ -16,7 +15,8 @@ import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { useAccount, useNetwork } from "wagmi";
-import { SubmissionMerkle, useDeployContestStore, VotingMerkle } from "./store";
+import { useDeployContestStore } from "./store";
+import { SubmissionMerkle, VotingMerkle } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000;
 export const DEFAULT_SUBMISSIONS = 100;
@@ -24,7 +24,6 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 
 export function useDeployContest() {
   const { indexContestV3 } = useV3ContestsIndex();
-  const { indexContestParticipantsV3 } = useContestParticipantsIndexV3();
   const stateContestDeployment = useContractFactoryStore(state => state);
   const {
     type,
@@ -34,12 +33,14 @@ export function useDeployContest() {
     submissionOpen,
     votingOpen,
     votingClose,
-    votingMerkle,
-    submissionMerkle,
+    votingMerkle: votingMerkleData,
+    submissionMerkle: submissionMerkleData,
     allowedSubmissionsPerUser,
     maxSubmissions,
     downvote,
     setDeployContestData,
+    votingRequirements,
+    submissionRequirements,
     setIsLoading,
     setIsSuccess,
   } = useDeployContestStore(state => state);
@@ -71,6 +72,8 @@ export function useDeployContest() {
         signer,
       );
       const contestInfo = type + "|" + summary + "|" + prompt;
+      const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
+      const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
       const finalAllowedSubmissionsPerUser =
@@ -114,6 +117,28 @@ export function useDeployContest() {
         maxSubmissions,
       );
 
+      let votingReqDatabaseEntry = null;
+      let submissionReqDatabaseEntry = null;
+
+      if (votingMerkleData.prefilled) {
+        votingReqDatabaseEntry = {
+          tokenAddress: votingRequirements.tokenAddress,
+          chain: votingRequirements.chain,
+          description: `${votingRequirements.powerValue} per ${votingRequirements.powerType}`,
+          minTokensRequired: votingRequirements.minTokensRequired,
+          timestamp: votingRequirements.timestamp,
+        };
+      }
+
+      if (submissionMerkleData.prefilled && submissionRequirements.tokenAddress) {
+        submissionReqDatabaseEntry = {
+          tokenAddress: submissionRequirements.tokenAddress,
+          chain: submissionRequirements.chain,
+          minTokensRequired: submissionRequirements.minTokensRequired,
+          timestamp: submissionRequirements.timestamp,
+        };
+      }
+
       const contestData = {
         title: title,
         type: type,
@@ -127,6 +152,8 @@ export function useDeployContest() {
         submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
+        voting_requirements: votingReqDatabaseEntry,
+        submission_requirements: submissionReqDatabaseEntry,
       };
 
       await saveFilesToBucket(votingMerkle, submissionMerkle);
@@ -195,41 +222,46 @@ export function useDeployContest() {
     votingMerkle: VotingMerkle | null,
     submissionMerkle: SubmissionMerkle | null,
   ) {
+    const participantsWorker = new Worker(new URL("/workers/indexContestParticipants", import.meta.url));
+
     try {
       if (!isSupabaseConfigured) {
         throw new Error("Supabase is not configured");
       }
 
+      if (!votingMerkle) return null;
+
       const tasks = [];
 
       tasks.push(indexContestV3(contestData));
 
-      if (votingMerkle) {
-        const submitters = submissionMerkle ? submissionMerkle.submitters : [];
-        const voterSet = new Set(votingMerkle.voters.map(voter => voter.address));
-        const submitterSet = new Set(submitters.map(submitter => submitter.address));
+      const workerData = {
+        contestData,
+        votingMerkle,
+        submissionMerkle,
+      };
 
-        // Combine voters and submitters, removing duplicates
-        const allParticipants = Array.from(
-          new Set([
-            ...votingMerkle.voters.map(voter => voter.address),
-            ...submitters.map(submitter => submitter.address),
-          ]),
-        );
+      const workerTask = new Promise<void>((resolve, reject) => {
+        participantsWorker.onmessage = event => {
+          if (event.data.success) {
+            resolve();
+          } else {
+            reject(new Error(event.data.error));
+          }
+        };
 
-        const everyoneCanSubmit = submitters.length === 0;
-        tasks.push(
-          indexContestParticipantsV3(
-            contestData.contractAddress,
-            allParticipants,
-            voterSet,
-            submitterSet,
-            votingMerkle.voters,
-            contestData.networkName,
-            everyoneCanSubmit,
-          ),
-        );
-      }
+        participantsWorker.onerror = error => {
+          stateContestDeployment.setIsLoading(false);
+          stateContestDeployment.setError(error.message);
+          setIsLoading(false);
+          toastError(`contest deployment failed to index in db`, error.message);
+          reject(error);
+        };
+
+        participantsWorker.postMessage(workerData);
+      });
+
+      tasks.push(workerTask);
 
       await Promise.all(tasks);
     } catch (e) {
@@ -237,10 +269,15 @@ export function useDeployContest() {
       stateContestDeployment.setError(error);
       setIsLoading(false);
       toastError(`contest deployment failed to index in db`, error);
+    } finally {
+      participantsWorker.terminate();
     }
   }
 
   async function checkForSpoofing(address: string) {
+    const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
+    const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
+
     const exceedsVotingMaxRows = votingMerkle && votingMerkle.voters.length > MAX_ROWS;
     const exceedsSubmissionMaxRows = submissionMerkle && submissionMerkle.submitters.length > MAX_ROWS;
 

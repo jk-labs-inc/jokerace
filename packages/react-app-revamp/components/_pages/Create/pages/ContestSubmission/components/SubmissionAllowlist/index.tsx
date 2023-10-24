@@ -14,10 +14,10 @@ type WorkerMessageData = {
 };
 
 const CreateSubmissionAllowlist = () => {
-  const { step, setSubmissionMerkle, submissionMerkle, setError, submissionAllowList, setSubmissionAllowlist } =
+  const { step, setSubmissionMerkle, submissionMerkle, setError, submissionAllowlist, setSubmissionAllowlist } =
     useDeployContestStore(state => state);
   const submissionValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowList)]);
+  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowlist.manual)]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -48,7 +48,7 @@ const CreateSubmissionAllowlist = () => {
       newAllowList[field.address] = 10; // numVotes is hardcoded to 10
     }
 
-    setSubmissionAllowlist(hasError ? {} : newAllowList);
+    setSubmissionAllowlist("manual", hasError ? {} : newAllowList);
   };
 
   const initializeWorker = () => {
@@ -63,11 +63,11 @@ const CreateSubmissionAllowlist = () => {
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
-    setSubmissionMerkle({ merkleRoot, submitters: recipients });
+    setSubmissionMerkle("manual", { merkleRoot, submitters: recipients });
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
-
+    setSubmissionMerkle("prefilled", null);
     terminateWorker(event.target as Worker);
   };
 
@@ -85,18 +85,13 @@ const CreateSubmissionAllowlist = () => {
   };
 
   const handleNextStep = () => {
-    if (Object.keys(submissionAllowList).length === 0) return;
-
-    if (submissionMerkle) {
-      onNextStep();
-      return;
-    }
+    if (Object.keys(submissionAllowlist.manual).length === 0) return;
 
     toastLoading("processing your allowlist...", false);
     const worker = initializeWorker();
     worker.postMessage({
       decimals: 18,
-      allowList: submissionAllowList,
+      allowList: submissionAllowlist.manual,
     });
   };
 

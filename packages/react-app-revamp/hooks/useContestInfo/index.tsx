@@ -2,7 +2,9 @@
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
 import { TimeLeft } from "@components/_pages/ListContests/Contest";
+import useNftTokenDetails from "@hooks/useNftTokenDetails";
 import { useEffect, useState } from "react";
+import Skeleton from "react-loading-skeleton";
 import { Chain } from "wagmi";
 
 interface ContestInfoProps {
@@ -31,12 +33,19 @@ const useContestInfo = ({
   address = "",
   chains,
   submissionTimeLeft,
-  votingTimeLeft,
 }: ContestInfoProps): UseContestInfoReturn => {
   const [submissionClass, setSubmissionClass] = useState("");
   const [votingClass, setVotingClass] = useState("");
   const [submissionMessage, setSubmissionMessage] = useState<React.ReactNode>(null);
   const [votingMessage, setVotingMessage] = useState<React.ReactNode>(null);
+  const votingRequirement = contest.voting_requirements;
+  const submissionRequirement = contest.submission_requirements;
+  const { tokenSymbol: votingRequirementToken, isLoading: isVotingRequirementTokenLoading } = useNftTokenDetails(
+    votingRequirement?.tokenAddress,
+    votingRequirement?.chain,
+  );
+  const { tokenSymbol: submissionRequirementToken, isLoading: isSubmissionRequirementTokenLoading } =
+    useNftTokenDetails(submissionRequirement?.tokenAddress, votingRequirement?.chain);
 
   useEffect(() => {
     const newSubmissionClass = (() => {
@@ -106,9 +115,29 @@ const useContestInfo = ({
       if (!address) {
         if (contest.anyoneCanSubmit) {
           return "for everyone";
+        } else if (submissionRequirement) {
+          if (isSubmissionRequirementTokenLoading) {
+            return <Skeleton height={16} width={150} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
+          }
+          return (
+            <p>
+              for <span className="uppercase">{submissionRequirementToken}</span> holders
+            </p>
+          );
         } else {
           return "for allowlisted";
         }
+      }
+
+      if (submissionRequirement) {
+        if (isSubmissionRequirementTokenLoading) {
+          return <Skeleton height={16} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
+        }
+        return (
+          <p>
+            for <span className="uppercase">{submissionRequirementToken}</span> holders
+          </p>
+        );
       }
 
       return <p>you aren't allowlisted</p>;
@@ -128,6 +157,17 @@ const useContestInfo = ({
       }
 
       if (!address) {
+        if (votingRequirement) {
+          if (isVotingRequirementTokenLoading) {
+            return <Skeleton height={16} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
+          }
+          return (
+            <p>
+              for <span className="uppercase">{votingRequirementToken}</span> holders
+            </p>
+          );
+        }
+
         return <p>for allowlisted</p>;
       }
 
@@ -137,6 +177,17 @@ const useContestInfo = ({
             <CrossIcon />
             <p>you aren't allowlisted</p>
           </div>
+        );
+      }
+
+      if (votingRequirement) {
+        if (isVotingRequirementTokenLoading) {
+          return <Skeleton height={16} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
+        }
+        return (
+          <p>
+            for <span className="uppercase">{votingRequirementToken}</span> holders
+          </p>
         );
       }
 
@@ -157,6 +208,12 @@ const useContestInfo = ({
     contest.network_name,
     contest.anyoneCanSubmit,
     submissionTimeLeft.value,
+    submissionRequirement,
+    votingRequirement,
+    submissionRequirementToken,
+    votingRequirementToken,
+    isSubmissionRequirementTokenLoading,
+    isVotingRequirementTokenLoading,
   ]);
 
   return { submissionClass, votingClass, submissionMessage, votingMessage };
