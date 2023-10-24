@@ -73,6 +73,8 @@ export function useContest() {
     setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
+    setVotingRequirements,
+    setSubmissionRequirements,
     setIsReadOnly,
     setIsRewardsLoading,
   } = useContestStore(state => state);
@@ -139,7 +141,6 @@ export function useContest() {
     setVotesClose(closingVoteDate);
     setVotesOpen(votesOpenDate);
     setContestPrompt(results[8].result as string);
-
     setDownvotingAllowed(isDownvotingAllowed);
 
     // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
@@ -180,6 +181,7 @@ export function useContest() {
         processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
         fetchTotalVotesCast(),
+        processRequirementsData(),
       ]);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
@@ -363,6 +365,30 @@ export function useContest() {
     } catch (e) {
       toastError("error while fetching data from db", errorMessage);
       setIsUserStoreLoading(false);
+    }
+  }
+
+  async function processRequirementsData() {
+    if (!isSupabaseConfigured) return;
+
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+
+    try {
+      const result = await supabase
+        .from("contests_v3")
+        .select("voting_requirements, submission_requirements")
+        .eq("address", address)
+        .eq("network_name", chainName);
+
+      if (result.data) {
+        const { voting_requirements, submission_requirements } = result.data[0];
+        setVotingRequirements(voting_requirements || null);
+        setSubmissionRequirements(submission_requirements || null);
+      }
+    } catch (error) {
+      setVotingRequirements(null);
+      setSubmissionRequirements(null);
     }
   }
 

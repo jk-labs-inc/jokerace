@@ -1,3 +1,4 @@
+import { VotingRequirementsSchema } from "@hooks/useContestsIndexV3";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
@@ -31,6 +32,8 @@ export interface ContestState {
   supportsRewardsModule: boolean;
   submissionMerkleRoot: string;
   votingMerkleRoot: string;
+  votingRequirements: VotingRequirementsSchema | null;
+  submissionRequirements: VotingRequirementsSchema | null;
   submitters: {
     address: string;
   }[];
@@ -55,6 +58,8 @@ export interface ContestState {
   setSubmitters: (submitters: { address: string }[]) => void;
   setSubmissionsMerkleRoot: (merkleRoot: string) => void;
   setVotingMerkleRoot: (merkleRoot: string) => void;
+  setVotingRequirements: (votingRequirements: VotingRequirementsSchema | null) => void;
+  setSubmissionRequirements: (submissionRequirements: VotingRequirementsSchema | null) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: string) => void;
   setIsSuccess: (value: boolean) => void;
@@ -85,6 +90,8 @@ export const createContestStore = () =>
     contestMaxProposalCount: 0,
     downvotingAllowed: false,
     canUpdateVotesInRealTime: false,
+    votingRequirements: null,
+    submissionRequirements: null,
     isV3: false,
     isReadOnly: false,
     supportsRewardsModule: false,
@@ -108,6 +115,8 @@ export const createContestStore = () =>
     setTotalVotesCast: amount => set({ totalVotesCast: amount }),
     setTotalVotes: amount => set({ totalVotes: amount }),
     setRewards: rewards => set({ rewards: rewards }),
+    setVotingRequirements: votingRequirements => set({ votingRequirements: votingRequirements }),
+    setSubmissionRequirements: submissionRequirements => set({ submissionRequirements: submissionRequirements }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),

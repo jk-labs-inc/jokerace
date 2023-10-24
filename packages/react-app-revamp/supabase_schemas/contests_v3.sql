@@ -16,6 +16,8 @@ create table
     votingMerkleRoot character varying null,
     submissionMerkleRoot character varying null,
     hidden boolean null default false,
+    voting_requirements json null default null,
+    submission_requirements json null default null,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 

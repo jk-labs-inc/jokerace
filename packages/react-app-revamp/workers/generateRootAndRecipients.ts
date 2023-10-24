@@ -10,5 +10,5 @@ self.onmessage = (event: MessageEvent<MerkleTreeGenerationPayload>) => {
 
   const { merkleRoot, recipients } = generateMerkleTree(decimals, allowList);
 
-  postMessage({ merkleRoot, recipients });
+  postMessage({ merkleRoot, recipients, allowList });
 };

@@ -5,7 +5,7 @@ import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
 type WorkerMessageData = {
@@ -14,12 +14,18 @@ type WorkerMessageData = {
 };
 
 const CreateVotingAllowlist = () => {
-  const { step, setVotingMerkle, votingMerkle, setError, setVotingAllowlist, votingAllowlist } = useDeployContestStore(
-    state => state,
-  );
+  const {
+    step,
+    setVotingMerkle,
+    votingMerkle,
+    setError,
+    setVotingAllowlist,
+    votingAllowlist,
+    votingRequirements,
+    setVotingRequirements,
+  } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
-
-  const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist)]);
+  const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.manual)]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -49,7 +55,7 @@ const CreateVotingAllowlist = () => {
       }
     }
 
-    setVotingAllowlist(errorExists ? {} : newAllowList);
+    setVotingAllowlist("manual", errorExists ? {} : newAllowList);
   };
 
   const initializeWorker = () => {
@@ -64,11 +70,11 @@ const CreateVotingAllowlist = () => {
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
-    setVotingMerkle({ merkleRoot, voters: recipients });
+    setVotingMerkle("manual", { merkleRoot, voters: recipients });
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
-
+    resetPrefilledAllowlist();
     terminateWorker(event.target as Worker);
   };
 
@@ -85,7 +91,7 @@ const CreateVotingAllowlist = () => {
   };
 
   const handleNextStep = () => {
-    if (Object.keys(votingAllowlist).length === 0 || votingMerkle) {
+    if (Object.keys(votingAllowlist.manual).length === 0 || votingMerkle.manual) {
       onNextStep();
       return;
     }
@@ -94,7 +100,19 @@ const CreateVotingAllowlist = () => {
     const worker = initializeWorker();
     worker.postMessage({
       decimals: 18,
-      allowList: votingAllowlist,
+      allowList: votingAllowlist.manual,
+    });
+  };
+
+  const resetPrefilledAllowlist = () => {
+    setVotingMerkle("prefilled", null);
+    setVotingAllowlist("prefilled", {});
+    setVotingRequirements({
+      ...votingRequirements,
+      chain: "mainnet",
+      tokenAddress: "",
+      powerValue: 100,
+      powerType: "token",
     });
   };
 
