@@ -40,10 +40,13 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
   };
 
   const onPowerValueChange = (votingPower: string) => {
-    setVotingRequirements({
-      ...votingRequirements,
-      powerValue: parseFloat(votingPower),
-    });
+    const decimalPlaces = (votingPower.split(".")[1] || "").length;
+    if (decimalPlaces <= 4) {
+      setVotingRequirements({
+        ...votingRequirements,
+        powerValue: parseFloat(votingPower),
+      });
+    }
   };
 
   return (

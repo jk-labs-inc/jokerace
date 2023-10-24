@@ -2,6 +2,7 @@ import CreateDropdown from "@components/_pages/Create/components/Dropdown";
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
 import { FC } from "react";
 import { chainDropdownOptions, votingPowerOptions } from "./config";
+import { MAX_VOTES } from "@helpers/csvConstants";
 
 interface CreateVotingRequirementsSettingsProps {
   step: "voting" | "submission";
@@ -85,6 +86,7 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
                 type="number"
                 value={powerValue ?? ""}
                 placeholder="100"
+                max={MAX_VOTES}
                 onChange={onPowerValueChange}
               />
               <p className="text-[16px] md:text-[24px]">votes per</p>
