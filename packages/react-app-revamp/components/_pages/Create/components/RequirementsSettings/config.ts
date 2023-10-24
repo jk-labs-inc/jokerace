@@ -16,9 +16,6 @@ export const chainDropdownOptions: Option[] = [
     value: "optimism",
   },
   {
-    value: "arbitrum",
-  },
-  {
     value: "base",
   },
 ];

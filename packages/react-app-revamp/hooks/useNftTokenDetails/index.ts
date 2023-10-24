@@ -6,12 +6,9 @@ const useNftTokenDetails = (tokenAddress: string, chain: string) => {
   const [tokenSymbol, setTokenSymbol] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const chainId = chains.find(c => c.name === chain)?.id;
 
   useEffect(() => {
-    const adjustedChainName = adjustChainName(chain);
-
-    const chainId = chains.find(c => c.name === adjustedChainName)?.id;
-
     if (!tokenAddress || !chainId) return;
 
     const fetchTokenDetails = async () => {
@@ -33,9 +30,7 @@ const useNftTokenDetails = (tokenAddress: string, chain: string) => {
     };
 
     fetchTokenDetails();
-  }, [tokenAddress, chain]);
-
-  const adjustChainName = (chain: string) => (chain === "arbitrum" ? "arbitrumone" : chain);
+  }, [tokenAddress, chainId]);
 
   return { tokenSymbol, isLoading, isSuccess };
 };
