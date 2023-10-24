@@ -122,24 +122,30 @@ const CreateVotingRequirements = () => {
     if (!isValid) {
       return;
     }
-    toastLoading("processing your allowlist...", false);
-    const result = await fetchNftHolders(
-      votingRequirements.tokenAddress,
-      votingRequirements.chain,
-      votingRequirements.minTokensRequired,
-      votingRequirements.powerValue,
-      votingRequirements.powerType,
-    );
 
-    if (result instanceof Error) {
-      toastError(result.message);
+    toastLoading("processing your allowlist...", false);
+    try {
+      const result = await fetchNftHolders(
+        votingRequirements.tokenAddress,
+        votingRequirements.chain,
+        votingRequirements.minTokensRequired,
+        votingRequirements.powerValue,
+        votingRequirements.powerType,
+      );
+
+      if (result instanceof Error) {
+        toastError(result.message);
+        return;
+      } else {
+        const worker = initializeWorker();
+        worker.postMessage({
+          decimals: 18,
+          allowList: result,
+        });
+      }
+    } catch (error: any) {
+      toastError(error.message);
       return;
-    } else {
-      const worker = initializeWorker();
-      worker.postMessage({
-        decimals: 18,
-        allowList: result,
-      });
     }
   };
 

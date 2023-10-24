@@ -1,3 +1,4 @@
+import { MAX_ROWS } from "@helpers/csvConstants";
 import { VoteCalculationMethod } from "lib/permissioning";
 
 interface TokenBalance {
@@ -24,27 +25,34 @@ interface EventData {
 self.onmessage = (event: MessageEvent<EventData>) => {
   const { ownersData, voteCalculationMethod, votesPerUnit, minTokensRequired } = event.data;
   const ownersBalancesRecord: OwnersBalancesRecord = {};
+  let qualifiedOwnersCount = 0;
 
   for (const owner of ownersData) {
     const ownerAddress: string = owner.ownerAddress;
-
     const numTokens = owner.tokenBalances.reduce(
       (sum: number, tokenBalance: TokenBalance) => sum + tokenBalance.balance,
       0,
     );
 
     if (numTokens >= minTokensRequired) {
+      qualifiedOwnersCount++;
       let totalVotes: number = 0;
 
       if (voteCalculationMethod === "token") {
-        // scenario 1: X votes per NFT
         totalVotes = numTokens * votesPerUnit;
       } else if (voteCalculationMethod === "token holder") {
-        // scenario 2: X votes per unique holder of an NFT
         totalVotes = owner.tokenBalances.length > 0 ? votesPerUnit : 0;
       }
 
       ownersBalancesRecord[ownerAddress] = totalVotes;
+    }
+
+    if (qualifiedOwnersCount >= MAX_ROWS) {
+      self.postMessage({
+        error:
+          "NFT collection has more than 100k holders with specified minimum NFTs required, which is not supported.",
+      });
+      return;
     }
   }
 

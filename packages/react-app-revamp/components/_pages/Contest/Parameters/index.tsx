@@ -51,17 +51,10 @@ const ContestParameters = () => {
 
     if (currentUserQualifiedToSubmit) {
       return `you qualify to submit`;
-    } else if (submissionRequirements) {
-      return (
-        <>
-          <li className="list-disc">you don't qualify to submit.</li>
-          <ContestParametersSubmissionRequirements />
-        </>
-      );
     } else {
       return `you don't qualify to submit`;
     }
-  }, [currentUserQualifiedToSubmit, submissionRequirements, submitters.length]);
+  }, [currentUserQualifiedToSubmit, submitters.length]);
 
   const qualifyToVoteMessage = useMemo<string | JSX.Element>(() => {
     const canVote = currentUserAvailableVotesAmount > 0;
@@ -78,44 +71,18 @@ const ContestParameters = () => {
       );
     } else if (currentUserTotalVotesAmount > 0) {
       return "you're out of votes :(";
-    } else if (votingRequirements) {
-      return (
-        <>
-          <li className="list-disc">you don't qualify to vote.</li>
-          <ContestParametersVotingRequirements />
-        </>
-      );
     }
     return "to vote, you must be on the allowlist";
   }, [currentUserAvailableVotesAmount, currentUserTotalVotesAmount, votingRequirements]);
 
-  const walletNotConnected = (type: string) => {
-    if (type === "submission" && submissionRequirements) {
-      return (
-        <>
-          <ContestParametersSubmissionRequirements />
-          <li className="list-disc">
-            <span className="text-positive-11 cursor-pointer font-bold" onClick={openConnectModal}>
-              connect wallet
-            </span>{" "}
-            to see if you qualify
-          </li>
-        </>
-      );
-    } else if (type === "voting" && votingRequirements) {
-      return (
-        <>
-          <ContestParametersVotingRequirements />
-          <li className="list-disc">
-            <span className="text-positive-11 cursor-pointer font-bold" onClick={openConnectModal}>
-              connect wallet
-            </span>{" "}
-            to see if you qualify
-          </li>
-        </>
-      );
-    }
-  };
+  const walletNotConnected = (
+    <>
+      <span className="text-positive-11 cursor-pointer font-bold" onClick={openConnectModal}>
+        connect wallet
+      </span>{" "}
+      to see if you qualify
+    </>
+  );
 
   return (
     <div className="flex flex-col gap-16">
@@ -157,9 +124,8 @@ const ContestParameters = () => {
             contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {contestMaxProposalCount.toString()}{" "}
             submissions
           </li>
-          <li className="list-disc">
-            {address || !submitters.length ? qualifyToSubmitMessage : walletNotConnected("submission")}
-          </li>
+          <li className="list-disc">{address || !submitters.length ? qualifyToSubmitMessage : walletNotConnected}</li>
+          <ContestParametersSubmissionRequirements />
           {submitters.length ? (
             <li className="list-disc">
               see full allowlist{" "}
@@ -173,7 +139,8 @@ const ContestParameters = () => {
       <div className="flex flex-col gap-12">
         <p className="text-[24px] font-bold text-neutral-11">voting</p>
         <ul className="pl-4 text-[16px] font-bold">
-          <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected("voting")}</li>
+          <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
+          <ContestParametersVotingRequirements />
           <li className="list-disc">
             see full allowlist{" "}
             <CSVLink data={voters} filename={"voters.csv"} className="text-positive-11">

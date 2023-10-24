@@ -14,7 +14,7 @@ const ContestParametersVotingRequirements = () => {
   return (
     <>
       <li className="list-disc">
-        in order to receieve votes, you must own at least {votingRequirements.minTokensRequired}{" "}
+        in order to receive votes, you must own at least {votingRequirements.minTokensRequired}{" "}
         <span className="uppercase">{votingRequirementsToken} </span>
         <span className="normal-case">NFT {votingRequirements.minTokensRequired > 1 ? "s" : ""}</span>
       </li>

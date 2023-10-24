@@ -149,25 +149,31 @@ const CreateSubmissionRequirements = () => {
       return;
     }
     toastLoading("processing your allowlist...", false);
-    const result = await fetchNftHolders(
-      submissionRequirements.tokenAddress,
-      submissionRequirements.chain,
-      submissionRequirements.minTokensRequired,
-    );
 
-    if (result instanceof Error) {
-      toastError(result.message);
+    try {
+      const result = await fetchNftHolders(
+        submissionRequirements.tokenAddress,
+        submissionRequirements.chain,
+        submissionRequirements.minTokensRequired,
+      );
+
+      if (result instanceof Error) {
+        toastError(result.message);
+        return;
+      } else {
+        const worker = initializeWorker();
+        setSubmissionRequirements({
+          ...submissionRequirements,
+          timestamp: Date.now(),
+        });
+        worker.postMessage({
+          decimals: 18,
+          allowList: result,
+        });
+      }
+    } catch (error: any) {
+      toastError(error.message);
       return;
-    } else {
-      const worker = initializeWorker();
-      setSubmissionRequirements({
-        ...submissionRequirements,
-        timestamp: Date.now(),
-      });
-      worker.postMessage({
-        decimals: 18,
-        allowList: result,
-      });
     }
   };
 

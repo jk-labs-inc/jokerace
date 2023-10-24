@@ -1,9 +1,10 @@
 import { chains } from "@config/wagmi";
-import { MAX_ROWS } from "@helpers/csvConstants";
 
 const apiKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 
 export type VoteCalculationMethod = "token" | "token holder";
+
+const HARD_LIMIT = 400000;
 
 export async function fetchNftHolders(
   contractAddress: string,
@@ -56,8 +57,8 @@ export async function fetchNftHolders(
 
       allOwnersData.push(...ownersData);
 
-      if (allOwnersData.length > MAX_ROWS) {
-        return new Error("NFT collection has more than 100k holders, which is not supported.");
+      if (allOwnersData.length > HARD_LIMIT) {
+        return new Error(`NFT collection has  more than 400k holders, which is not supported.`);
       }
 
       nextPageKey = data.pageKey;
@@ -71,7 +72,12 @@ export async function fetchNftHolders(
 
   return new Promise((resolve, reject) => {
     worker.onmessage = event => {
-      resolve(event.data);
+      if (event.data.error) {
+        reject(new Error(event.data.error));
+        worker.terminate();
+      } else {
+        resolve(event.data);
+      }
       worker.terminate();
     };
     worker.onerror = error => {

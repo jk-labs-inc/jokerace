@@ -40,13 +40,13 @@ const CreateTab: React.FC<TabProps> = ({ options, defaultTab = 0, className, dis
               onClick={() => !isTabDisabled(index) && selectTab(option, index)}
             >
               {option.isNew ? (
-                <div className="flex flex-col gap-2">
+                <div className="flex gap-2 items-center">
+                  <p className="md:indent-6">{option.label}</p>
                   {option.isNew && (
-                    <span className="self-end border-2 border-positive-11 font-bold md:-mr-10 text-[10px] rounded-[5px] px-4 uppercase text-neutral-11 bg-neutral-2">
-                      New
+                    <span className="bg-positive-11 font-bold md:-mr-6 text-[12px] rounded-[5px] px-1 pt-[1px] text-true-black">
+                      New!
                     </span>
                   )}
-                  <p className="md:indent-6">{option.label}</p>
                 </div>
               ) : (
                 <p className="md:indent-6">{option.label}</p>
