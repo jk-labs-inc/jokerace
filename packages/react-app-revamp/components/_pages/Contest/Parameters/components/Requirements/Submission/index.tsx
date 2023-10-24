@@ -14,13 +14,12 @@ const ContestParametersSubmissionRequirements = () => {
   return (
     <>
       <li className="list-disc">
-        you must be a holder of at least {submissionRequirements.minTokensRequired}{" "}
+        in order to submit, you must own at least {submissionRequirements.minTokensRequired}{" "}
         <span className="uppercase">{submissionRequirementToken} </span>
-        <span className="normal-case">NFT {submissionRequirements.minTokensRequired > 1 ? "s" : ""}</span> in order to
-        submit.
+        <span className="normal-case">NFT {submissionRequirements.minTokensRequired > 1 ? "s" : ""}</span>
       </li>
       <li className="list-disc">
-        <span className="uppercase">{submissionRequirementToken}</span> holders snapshot was taken on{" "}
+        this snapshot of <span className="uppercase">{submissionRequirementToken}</span> holders was taken on{" "}
         {moment(submissionRequirements.timestamp).format("MMMM Do, h:mm a")}
       </li>
     </>

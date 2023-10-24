@@ -14,13 +14,12 @@ const ContestParametersVotingRequirements = () => {
   return (
     <>
       <li className="list-disc">
-        you must be a holder of at least {votingRequirements.minTokensRequired}{" "}
+        in order to receieve votes, you must own at least {votingRequirements.minTokensRequired}{" "}
         <span className="uppercase">{votingRequirementsToken} </span>
-        <span className="normal-case">NFT {votingRequirements.minTokensRequired > 1 ? "s" : ""}</span> in order to
-        receive votes.
+        <span className="normal-case">NFT {votingRequirements.minTokensRequired > 1 ? "s" : ""}</span>
       </li>
       <li className="list-disc">
-        <span className="uppercase">{votingRequirementsToken}</span> holders snapshot was taken on{" "}
+        this snapshot of <span className="uppercase">{votingRequirementsToken}</span> holders was taken on{" "}
         {moment(votingRequirements.timestamp).format("MMMM Do, h:mm a")}
       </li>
     </>
