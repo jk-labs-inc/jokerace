@@ -25,9 +25,10 @@ const CreateSubmissionRequirements = () => {
     submissionRequirementsOption,
     setSubmissionRequirementsOption,
     setSubmissionAllowlistFields,
-    submissionMerkle,
     setSubmissionMerkle,
     submissionRequirements,
+    votingRequirements,
+    setSubmissionRequirements,
     votingAllowlist,
   } = useDeployContestStore(state => state);
   const submissionRequirementsValidation = validationFunctions.get(step);
@@ -79,7 +80,6 @@ const CreateSubmissionRequirements = () => {
     setSubmissionAllowlistFields([]);
     onNextStep();
     toastSuccess("allowlist processed successfully.");
-
     terminateWorker(event.target as Worker);
   };
 
@@ -123,6 +123,18 @@ const CreateSubmissionRequirements = () => {
     toastLoading("processing your allowlist...", false);
     const worker = initializeWorker();
     const allowList = Object.keys(votingAllowlist.manual).length ? votingAllowlist.manual : votingAllowlist.prefilled;
+    const isVotingAllowlistPrefilled = allowList === votingAllowlist.prefilled;
+
+    if (isVotingAllowlistPrefilled) {
+      const { tokenAddress, minTokensRequired, timestamp, type, chain } = votingRequirements;
+      setSubmissionRequirements({
+        tokenAddress,
+        minTokensRequired,
+        timestamp,
+        type,
+        chain,
+      });
+    }
 
     worker.postMessage({
       decimals: 18,
@@ -148,6 +160,10 @@ const CreateSubmissionRequirements = () => {
       return;
     } else {
       const worker = initializeWorker();
+      setSubmissionRequirements({
+        ...submissionRequirements,
+        timestamp: Date.now(),
+      });
       worker.postMessage({
         decimals: 18,
         allowList: result,

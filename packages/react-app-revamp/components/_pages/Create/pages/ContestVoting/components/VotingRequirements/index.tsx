@@ -22,12 +22,11 @@ const CreateVotingRequirements = () => {
   const {
     step,
     setVotingMerkle,
-    votingMerkle,
     setError,
     setVotingAllowlist,
     setVotingAllowlistFields,
-    votingAllowlist,
     votingRequirements,
+    setVotingRequirements,
   } = useDeployContestStore(state => state);
   const [selectedRequirement, setSelectedRequirement] = useState(requirementsDropdownOptions[0].value);
   const votingValidation = validationFunctions.get(step);
@@ -74,8 +73,12 @@ const CreateVotingRequirements = () => {
 
     setVotingAllowlist("prefilled", allowList);
     setVotingMerkle("prefilled", { merkleRoot, voters: recipients });
-    onNextStep(allowList);
+    setVotingRequirements({
+      ...votingRequirements,
+      timestamp: Date.now(),
+    });
     setError(step + 1, { step: step + 1, message: "" });
+    onNextStep(allowList);
     toastSuccess("allowlist processed successfully.");
     resetManualAllowlist();
     terminateWorker(event.target as Worker);

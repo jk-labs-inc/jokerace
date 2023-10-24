@@ -39,6 +39,8 @@ export function useDeployContest() {
     maxSubmissions,
     downvote,
     setDeployContestData,
+    votingRequirements,
+    submissionRequirements,
     setIsLoading,
     setIsSuccess,
   } = useDeployContestStore(state => state);
@@ -115,6 +117,28 @@ export function useDeployContest() {
         maxSubmissions,
       );
 
+      let votingReqDatabaseEntry = null;
+      let submissionReqDatabaseEntry = null;
+
+      if (votingMerkleData.prefilled) {
+        votingReqDatabaseEntry = {
+          tokenAddress: votingRequirements.tokenAddress,
+          chain: votingRequirements.chain,
+          description: `${votingRequirements.powerValue} per ${votingRequirements.powerType}`,
+          minTokensRequired: votingRequirements.minTokensRequired,
+          timestamp: votingRequirements.timestamp,
+        };
+      }
+
+      if (submissionMerkleData.prefilled && submissionRequirements.tokenAddress) {
+        submissionReqDatabaseEntry = {
+          tokenAddress: submissionRequirements.tokenAddress,
+          chain: submissionRequirements.chain,
+          minTokensRequired: submissionRequirements.minTokensRequired,
+          timestamp: submissionRequirements.timestamp,
+        };
+      }
+
       const contestData = {
         title: title,
         type: type,
@@ -128,6 +152,8 @@ export function useDeployContest() {
         submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
+        voting_requirements: votingReqDatabaseEntry,
+        submission_requirements: submissionReqDatabaseEntry,
       };
 
       await saveFilesToBucket(votingMerkle, submissionMerkle);

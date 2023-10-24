@@ -87,11 +87,6 @@ const CreateSubmissionAllowlist = () => {
   const handleNextStep = () => {
     if (Object.keys(submissionAllowlist.manual).length === 0) return;
 
-    if (submissionMerkle) {
-      onNextStep();
-      return;
-    }
-
     toastLoading("processing your allowlist...", false);
     const worker = initializeWorker();
     worker.postMessage({

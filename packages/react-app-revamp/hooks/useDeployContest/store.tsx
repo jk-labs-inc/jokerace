@@ -125,6 +125,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       minTokensRequired: 1,
       powerType: "token",
       powerValue: 100,
+      timestamp: Date.now(),
     },
     submissionAllowlist: {
       manual: {},
@@ -140,6 +141,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       chain: "mainnet",
       tokenAddress: "",
       minTokensRequired: 1,
+      timestamp: Date.now(),
     },
     allowedSubmissionsPerUser: 0,
     maxSubmissions: 100,

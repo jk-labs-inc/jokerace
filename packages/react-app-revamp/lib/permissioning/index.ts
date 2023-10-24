@@ -12,6 +12,9 @@ export async function fetchNftHolders(
   votesPerUnit: number = 100,
   voteCalculationMethod: string = "token",
 ): Promise<Record<string, number> | Error> {
+  if (chainName.toLowerCase() === "arbitrum") {
+    chainName = "arbitrumone";
+  }
   let baseAlchemyAppUrl = chains.filter(chain => chain.name === chainName.toLowerCase())[0].rpcUrls.default.http[0];
 
   baseAlchemyAppUrl = baseAlchemyAppUrl.replace(/(v2\/).*/, "$1");
@@ -46,6 +49,11 @@ export async function fetchNftHolders(
 
       const data = await response.json();
       const ownersData = data.ownerAddresses || [];
+
+      if (ownersData.length === 0) {
+        return new Error("No owners found for the specified collection.");
+      }
+
       allOwnersData.push(...ownersData);
 
       if (allOwnersData.length > MAX_ROWS) {

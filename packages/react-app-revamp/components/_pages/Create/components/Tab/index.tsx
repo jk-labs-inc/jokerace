@@ -4,6 +4,7 @@ import { Tooltip } from "react-tooltip";
 type TabOption = {
   label: string;
   content: JSX.Element;
+  isNew?: boolean;
 };
 
 type TabProps = {
@@ -38,7 +39,19 @@ const CreateTab: React.FC<TabProps> = ({ options, defaultTab = 0, className, dis
               }`}
               onClick={() => !isTabDisabled(index) && selectTab(option, index)}
             >
-              <p className="md:indent-6">{option.label}</p>
+              {option.isNew ? (
+                <div className="flex flex-col gap-2">
+                  {option.isNew && (
+                    <span className="self-end border-2 border-positive-11 font-bold md:-mr-10 text-[10px] rounded-[5px] px-4 uppercase text-neutral-11 bg-neutral-2">
+                      New
+                    </span>
+                  )}
+                  <p className="md:indent-6">{option.label}</p>
+                </div>
+              ) : (
+                <p className="md:indent-6">{option.label}</p>
+              )}
+
               <div
                 className={`h-1 w-full mt-1 ${selectedTab === options[index] ? "bg-primary-10" : "bg-neutral-9"}`}
               ></div>

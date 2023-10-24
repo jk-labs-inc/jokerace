@@ -6,7 +6,7 @@ import CreateVotingRequirements from "./components/VotingRequirements";
 
 const tabOptions = [
   { label: "set allowlist manually", content: <CreateVotingAllowlist /> },
-  { label: "use prefilled requirements", content: <CreateVotingRequirements /> },
+  { label: "use prefilled requirements", content: <CreateVotingRequirements />, isNew: true },
 ];
 
 const CreateContestVoting = () => {
