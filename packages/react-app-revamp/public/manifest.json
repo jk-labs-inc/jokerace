@@ -7,11 +7,13 @@
   "name": "Jokerace",
   "short_name": "jokerace",
   "description": "contests for communities to make, execute, and reward decisions",
-  "url_handlers": [
-    {
-      "origin": "https://jokerace-git-enhancement-redirect-users-to-pwa-jokerace.vercel.app/"
-    }
-  ],
+  "handle_links": {
+    "platform": "web",
+    "url": "https://jokerace-git-enhancement-redirect-users-to-pwa-jokerace.vercel.app",
+    "delegate_permission": "none",
+    "exclude_paths": [],
+    "paths": ["/*"]
+  },
   "icons": [
     {
       "src": "/icon-192x192.png",
