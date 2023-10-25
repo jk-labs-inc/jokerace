@@ -20,11 +20,6 @@ const Page: NextPage = () => {
   });
   const { address } = useAccount();
 
-  const queryOptions = {
-    keepPreviousData: true,
-    staleTime: 5000,
-  };
-
   const handleSearch = async (criteria: { query: string; filterType: string }) => {
     if (criteria.filterType === "user") {
       let targetAddress = criteria.query;
@@ -67,7 +62,6 @@ const Page: NextPage = () => {
       );
     },
     {
-      ...queryOptions,
       enabled: searchCriteria.searchString !== "",
     },
   );
