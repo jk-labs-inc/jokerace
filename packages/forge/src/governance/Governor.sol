@@ -17,6 +17,8 @@ import "./GovernorMerkleVotes.sol";
 abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
+    event PaymentReleased(address to, uint256 amount);
+
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
 
@@ -31,6 +33,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(address => uint256) public numSubmissions;
     address[] public proposalAuthors;
     address[] public addressesThatHaveVoted;
+    uint256 private _costToPropose;
+    uint256 private _percentageToCreator;
 
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
@@ -42,12 +46,18 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev Sets the value for {name} and {version}
      */
-    constructor(string memory name_, string memory prompt_, bytes32 submissionMerkleRoot_, bytes32 votingMerkleRoot_)
-        GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_)
-        EIP712(name_, version())
-    {
+    constructor(
+        string memory name_,
+        string memory prompt_,
+        bytes32 submissionMerkleRoot_,
+        bytes32 votingMerkleRoot_,
+        uint256 costToPropose_,
+        uint256 percentageToCreator_
+    ) GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_) EIP712(name_, version()) {
         _name = name_;
         _prompt = prompt_;
+        _costToPropose = costToPropose_;
+        _percentageToCreator = percentageToCreator_;
 
         emit JokeraceCreated(name_, msg.sender); // emit upon creation to be able to easily find jokeraces on a chain
     }
@@ -74,10 +84,24 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
+     * @dev See {IGovernor-costToPropose}.
+     */
+    function costToPropose() public view virtual override returns (uint256) {
+        return _costToPropose;
+    }
+
+    /**
+     * @dev See {IGovernor-percentageToCreator}.
+     */
+    function percentageToCreator() public view virtual override returns (uint256) {
+        return _percentageToCreator;
+    }
+
+    /**
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "3.18";
+        return "3.19";
     }
 
     /**
@@ -255,13 +279,35 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      */
     function propose(ProposalCore calldata proposal, bytes32[] calldata proof)
         public
+        payable
         virtual
         override
         returns (uint256)
     {
+        require(
+            msg.value == _costToPropose,
+            "Governor: this transaction was not sent with the correct amount of funds needed to propose"
+        );
         require(verifyProposer(msg.sender, proof), "Governor: address is not permissioned to submit");
         require(validateProposalData(proposal), "Governor: proposal content failed validation");
-        return _castProposal(proposal);
+        uint256 proposalId = _castProposal(proposal);
+
+        if (_costToPropose > 0) {
+            // Send proposal fee to jk labs address and creator
+            uint256 sendingToJkLabs = (msg.value * (100 - _percentageToCreator)) / 100;
+            if (sendingToJkLabs > 0) {
+                Address.sendValue(payable(JK_LABS_ADDRESS), sendingToJkLabs);
+                emit PaymentReleased(JK_LABS_ADDRESS, sendingToJkLabs);
+            }
+
+            uint256 sendingToCreator = msg.value - sendingToJkLabs;
+            if (sendingToCreator > 0) {
+                Address.sendValue(payable(creator()), sendingToCreator); // creator gets the extra wei in the case of rounding
+                emit PaymentReleased(creator(), sendingToCreator);
+            }
+        }
+
+        return proposalId;
     }
 
     /**

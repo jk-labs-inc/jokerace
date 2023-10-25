@@ -24,6 +24,8 @@ contract RewardsModuleTest is Test {
         DOWNVOTING_ALLOWED
     ];
 
+    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
+
     /*
         Voting merkle tree:
         {
@@ -114,6 +116,7 @@ contract RewardsModuleTest is Test {
                               "hello world",
                               SUBMISSION_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
+                              ZERO_COST_TO_PROPOSE,
                               numParams);
 
         rewardsModulePaysTarget = new RewardsModule(payees,

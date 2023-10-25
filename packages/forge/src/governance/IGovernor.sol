@@ -79,6 +79,18 @@ abstract contract IGovernor is IERC165 {
 
     /**
      * @notice module:core
+     * @dev Cost to propose to this contest.
+     */
+    function costToPropose() public view virtual returns (uint256);
+
+    /**
+     * @notice module:core
+     * @dev Percent of the cost to propose that goes to the creator.
+     */
+    function percentageToCreator() public view virtual returns (uint256);
+
+    /**
+     * @notice module:core
      * @dev Version of the contest contract.
      */
     function version() public view virtual returns (string memory);
@@ -156,6 +168,7 @@ abstract contract IGovernor is IERC165 {
      */
     function propose(ProposalCore calldata proposal, bytes32[] calldata proof)
         public
+        payable
         virtual
         returns (uint256 proposalId);
 
