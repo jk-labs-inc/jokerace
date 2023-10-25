@@ -103,7 +103,6 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
         setSubmissionStatus("Submissions open in:");
       }
     } else if (now.isBefore(moment(contest.vote_start_at))) {
-      console.log({ contest });
       setSubmissionStatus("Submissions are open");
 
       const secondsLeft = moment(contest.vote_start_at).diff(now, "seconds");
