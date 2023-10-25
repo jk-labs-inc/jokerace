@@ -9,7 +9,7 @@
   "description": "contests for communities to make, execute, and reward decisions",
   "url_handlers": [
     {
-      "origin": "https://jokerace.xyz"
+      "origin": "https://jokerace-git-enhancement-redirect-users-to-pwa-jokerace.vercel.app/"
     }
   ],
   "icons": [
