@@ -10,7 +10,7 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
   return (
     <>
       {step === 1 ? (
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
           <p className="text-[24px] font-bold">please change browser</p>
           <div className="flex flex-col gap-2">
             <p className="text-[16px]">to install JokeRace as an app, you’ll need to add it to your home screen.</p>
