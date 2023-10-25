@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
@@ -76,8 +77,9 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
-  const { currentUserAvailableVotesAmount, isLoading } = useUserStore(state => state);
+  const { currentUserAvailableVotesAmount, isLoading, currentUserTotalVotesAmount } = useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
+  const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
 
   const ProposalAction = useMemo<React.ReactNode>(() => {
     switch (contestStatus) {
@@ -128,6 +130,8 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
                   add votes
                 </ButtonV3>
               )
+            ) : outOfVotes ? (
+              <p className="text-[16px] text-neutral-10 font-bold">you've deployed all your votes</p>
             ) : (
               <p className="text-[16px] text-neutral-10 font-bold">only allowlisted wallets can play</p>
             )}
