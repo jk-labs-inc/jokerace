@@ -7,6 +7,11 @@
   "name": "Jokerace",
   "short_name": "jokerace",
   "description": "contests for communities to make, execute, and reward decisions",
+  "url_handlers": [
+    {
+      "origin": "https://jokerace.xyz"
+    }
+  ],
   "icons": [
     {
       "src": "/icon-192x192.png",

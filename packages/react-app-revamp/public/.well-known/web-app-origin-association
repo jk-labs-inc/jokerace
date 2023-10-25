@@ -1,0 +1,6 @@
+{
+  "relation": [{
+    "relation_name": "delegate_permission/common.handle_urls",
+    "target": "/.well-known/pwa-url-handler"
+  }]
+}
