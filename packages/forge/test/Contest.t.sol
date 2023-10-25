@@ -57,6 +57,7 @@ contract ContestTest is Test {
         bytes32(0x7665f9790e783f13b614dacf6e7624e755b188e1bb086d301855d73f9b81fa85);
     bytes32 public constant SUB_ZERO_MERKLE_ROOT =
         bytes32(0x0000000000000000000000000000000000000000000000000000000000000000);
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
     address public constant CREATOR_ADDRESS_1 = 0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94;
     address public constant PERMISSIONED_ADDRESS_1 = 0xd698e31229aB86334924ed9DFfd096a71C686900;
     address public constant PERMISSIONED_ADDRESS_2 = 0x5b45e296C06ab3dAD836BCBc0fBd7a4b75b83C02;
@@ -259,6 +260,8 @@ contract ContestTest is Test {
             anyoneCanSubmitCostsAnEthContest.propose{value: 1 ether}(unpermissionedAuthorProposal1, proof0);
 
         assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(CREATOR_ADDRESS_1.balance, 0.5 ether);
+        assertEq(JK_LABS_ADDRESS.balance, 0.5 ether);
     }
 
     function testProposeAnyoneCanCostIsOneEtherNoMsgValue() public {
