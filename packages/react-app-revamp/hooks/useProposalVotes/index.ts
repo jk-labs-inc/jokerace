@@ -2,7 +2,6 @@ import { toastError } from "@components/UI/Toast";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
-import { getEthersProvider } from "@helpers/ethers";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
@@ -30,7 +29,6 @@ export function useProposalVotes(id: number | string) {
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
   );
-  const provider = getEthersProvider({ chainId });
   const { error, handleError } = useError();
   const {
     isListVotersSuccess,
@@ -57,6 +55,7 @@ export function useProposalVotes(id: number | string) {
   async function fetchProposalVotes() {
     setIsPageVotesLoading(true);
     setIsListVotersLoading(true);
+    resetVotesPerAddress();
 
     const { abi } = await getContestContractVersion(address, chainId);
 
@@ -193,8 +192,6 @@ export function useProposalVotes(id: number | string) {
   }
 
   async function refreshVotes() {
-    resetVotesPerAddress();
-
     await fetchProposalVotes();
   }
 
@@ -211,23 +208,11 @@ export function useProposalVotes(id: number | string) {
   useEffect(() => {
     const fetchProposalVotesAndListenForEvents = async () => {
       await fetchProposalVotes();
-
-      const onVisibilityChangeHandler = () => {
-        if (document.visibilityState === "hidden") {
-          provider.removeAllListeners();
-        }
-      };
-
-      document.addEventListener("visibilitychange", onVisibilityChangeHandler);
-
-      return () => {
-        document.removeEventListener("visibilitychange", onVisibilityChangeHandler);
-      };
     };
 
     fetchProposalVotesAndListenForEvents();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
   return {
     isLoading: isListVotersLoading,

@@ -69,7 +69,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
     const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
     if (currentIndex !== -1 && currentIndex < stringifiedProposalsIds.length - 1) {
       const nextProposalId = stringifiedProposalsIds[currentIndex + 1];
-      refreshVotes();
       goToProposalPage(chainName, address, nextProposalId);
     }
   };
@@ -78,7 +77,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
     const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
     if (currentIndex > 0) {
       const previousProposalId = stringifiedProposalsIds[currentIndex - 1];
-      refreshVotes();
       goToProposalPage(chainName, address, previousProposalId);
     }
   };
