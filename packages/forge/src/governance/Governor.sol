@@ -41,6 +41,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     mapping(uint256 => ProposalCore) private _proposals;
     mapping(address => uint256) private _numSubmissions;
     uint256 private _costToPropose;
+    uint256 private _percentageToCreator;
 
     /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
     error TooManyMetadatas();
@@ -53,11 +54,15 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
         string memory prompt_,
         bytes32 submissionMerkleRoot_,
         bytes32 votingMerkleRoot_,
-        uint256 costToPropose_
+        uint256 costToPropose_,
+        uint256 percentageToCreator_
     ) GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_) EIP712(name_, version()) {
+        require(percentageToCreator_ <= 100, "Governor: percentageToCreator_ must be less than or equal to 100");
+
         _name = name_;
         _prompt = prompt_;
         _costToPropose = costToPropose_;
+        _percentageToCreator = percentageToCreator_;
     }
 
     /**
@@ -283,12 +288,17 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
 
         if (_costToPropose > 0) {
             // Send proposal fee to jk labs address and creator
-            uint256 sendingToJkLabs = msg.value / 2;
-            Address.sendValue(payable(JK_LABS_REVENUE_ADDRESS), sendingToJkLabs);
-            emit PaymentReleased(JK_LABS_REVENUE_ADDRESS, sendingToJkLabs);
+            uint256 sendingToJkLabs = (msg.value * (100 - _percentageToCreator)) / 100;
+            if (sendingToJkLabs > 0) {
+                Address.sendValue(payable(JK_LABS_REVENUE_ADDRESS), sendingToJkLabs);
+                emit PaymentReleased(JK_LABS_REVENUE_ADDRESS, sendingToJkLabs);
+            }
+
             uint256 sendingToCreator = msg.value - sendingToJkLabs;
-            Address.sendValue(payable(creator()), sendingToCreator); // creator gets the extra wei in the case of rounding
-            emit PaymentReleased(creator(), sendingToCreator);
+            if (sendingToCreator > 0) {
+                Address.sendValue(payable(creator()), sendingToCreator); // creator gets the extra wei in the case of rounding
+                emit PaymentReleased(creator(), sendingToCreator);
+            }
         }
 
         return proposalId;
