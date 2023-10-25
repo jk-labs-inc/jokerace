@@ -25,10 +25,7 @@ const AddToHomeScreenPopup = () => {
 
   return (
     <Dialog open={showPopup} onClose={handleClose} className="relative z-50">
-      <div
-        className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-40 backdrop-blur-[10px]"
-        aria-hidden="true"
-      />
+      <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex min-h-full w-full items-center justify-center">
           <Dialog.Panel
