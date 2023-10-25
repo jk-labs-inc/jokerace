@@ -12,10 +12,6 @@ import { useAccount } from "wagmi";
 function useContests(initialData: any) {
   const [page, setPage] = useState(0);
   const { address } = useAccount();
-  const queryOptions = {
-    keepPreviousData: true,
-    staleTime: 5000,
-  };
 
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
@@ -25,7 +21,7 @@ function useContests(initialData: any) {
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(["liveContests", page, address], () => getLiveContests(page, ITEMS_PER_PAGE, address), queryOptions);
+  } = useQuery(["liveContests", page, address], () => getLiveContests(page, ITEMS_PER_PAGE, address));
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
     ["rewards", contestData],
@@ -111,7 +107,10 @@ export async function getStaticProps() {
 
     const result = await supabase
       .from("contests_v3")
-      .select("created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt", { count: "exact" })
+      .select(
+        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+        { count: "exact" },
+      )
       .lte("start_at", new Date().toISOString())
       .gte("end_at", new Date().toISOString())
       .order("end_at", { ascending: true })

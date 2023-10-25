@@ -17,10 +17,6 @@ export interface UserPageProps {
 
 function useContests(creatorAddress: string, initialData: any) {
   const [page, setPage] = useState(0);
-  const queryOptions = {
-    keepPreviousData: true,
-    staleTime: 5000,
-  };
 
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
@@ -36,7 +32,6 @@ function useContests(creatorAddress: string, initialData: any) {
       return getUserContests(page, ITEMS_PER_PAGE, creatorAddress);
     },
     {
-      ...queryOptions,
       enabled: !!creatorAddress,
     },
   );
