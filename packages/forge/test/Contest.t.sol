@@ -28,6 +28,7 @@ contract ContestTest is Test {
     // COST TO PROPOSE PARAMS
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
+    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
 
     // MERKLE TREE PARAMS
     /*
@@ -114,6 +115,7 @@ contract ContestTest is Test {
                               SUBMISSION_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
                               ZERO_COST_TO_PROPOSE,
+                              FIFTY_PERCENT_TO_CREATOR,
                               numParams);
 
         anyoneCanSubmitContest = new Contest("test",
@@ -121,6 +123,7 @@ contract ContestTest is Test {
                               SUB_ZERO_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
                               ZERO_COST_TO_PROPOSE,
+                              FIFTY_PERCENT_TO_CREATOR,
                               numParams);
 
         anyoneCanSubmitCostsAnEthContest = new Contest("test",
@@ -128,6 +131,7 @@ contract ContestTest is Test {
                         SUB_ZERO_MERKLE_ROOT,
                         VOTING_MERKLE_ROOT,
                         ONE_ETH_COST_TO_PROPOSE,
+                        FIFTY_PERCENT_TO_CREATOR,
                         numParams);
 
         vm.stopPrank();
