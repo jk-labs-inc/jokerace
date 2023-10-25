@@ -27,7 +27,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
 
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
-    address public constant JK_LABS_REVENUE_ADDRESS = 0xd698e31229aB86334924ed9DFfd096a71C686900;
+    address public constant JK_LABS_REVENUE_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
 
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
