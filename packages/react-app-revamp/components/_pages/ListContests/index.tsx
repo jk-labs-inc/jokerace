@@ -2,7 +2,8 @@
 import Search from "@components/Search";
 import Sort, { Sorting } from "@components/Sort";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
-import { FC, useEffect, useState } from "react";
+import { useSortedData } from "@hooks/useSortedData";
+import { FC, useState } from "react";
 import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";
 
@@ -43,98 +44,12 @@ export const ListContests: FC<ListContestsProps> = ({
   compact = false,
   onSearchChange,
 }) => {
-  const [sortedData, setSortedData] = useState<any[]>([]);
   const [sorting, setSorting] = useState<Sorting | null>(null);
+  const sortedData = useSortedData(contestData?.data, sorting);
   const [fadeBg, setFadeBg] = useState(false);
   const loading = status === "loading" || isContestDataFetching;
   const placeholderCount = compact ? 6 : 7;
   const placeholders = new Array(placeholderCount).fill(null);
-
-  useEffect(() => {
-    if (!contestData) return;
-
-    setSortedData(contestData.data);
-  }, [contestData]);
-
-  useEffect(() => {
-    handleSort();
-  }, [sorting]);
-
-  const sortData = (data: any, property: string, order: string) => {
-    return data.sort((a: any, b: any) => {
-      let valueA;
-      let valueB;
-      let reverseOrder = false;
-
-      switch (property) {
-        case "rewards":
-          valueA = a.rewards ? 1 : 0;
-          valueB = b.rewards ? 1 : 0;
-          break;
-        case "qualified":
-          valueA = a.qualifiedToSubmit || a.qualifiedToVote ? 1 : 0;
-          valueB = b.qualifiedToSubmit || b.qualifiedToVote ? 1 : 0;
-          break;
-        case "closest_deadline":
-          const aTimestamps = [
-            new Date(a.start_at).getTime(),
-            new Date(a.vote_start_at).getTime(),
-            new Date(a.end_at).getTime(),
-          ].filter(timestamp => timestamp >= Date.now());
-          const bTimestamps = [
-            new Date(b.start_at).getTime(),
-            new Date(b.vote_start_at).getTime(),
-            new Date(b.end_at).getTime(),
-          ].filter(timestamp => timestamp >= Date.now());
-
-          valueA = aTimestamps.length > 0 ? Math.min(...aTimestamps) : Infinity;
-          valueB = bTimestamps.length > 0 ? Math.min(...bTimestamps) : Infinity;
-          reverseOrder = true;
-          break;
-        case "can_submit":
-          valueA =
-            (a.qualifiedToSubmit ? 2 : 1) *
-            (new Date(a.start_at).getTime() <= Date.now() && Date.now() <= new Date(a.vote_start_at).getTime() ? 1 : 0);
-          valueB =
-            (b.qualifiedToSubmit ? 2 : 1) *
-            (new Date(b.start_at).getTime() <= Date.now() && Date.now() <= new Date(b.vote_start_at).getTime() ? 1 : 0);
-          break;
-        case "can_vote":
-          valueA =
-            (a.qualifiedToVote ? 2 : 1) *
-            (new Date(a.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(a.end_at).getTime() ? 1 : 0);
-          valueB =
-            (b.qualifiedToVote ? 2 : 1) *
-            (new Date(b.vote_start_at).getTime() <= Date.now() && Date.now() <= new Date(b.end_at).getTime() ? 1 : 0);
-          break;
-        default:
-          valueA = a[property];
-          valueB = b[property];
-      }
-
-      if (valueA < valueB) {
-        return order === "ascending" ? (reverseOrder ? 1 : -1) : reverseOrder ? -1 : 1;
-      }
-      if (valueA > valueB) {
-        return order === "ascending" ? (reverseOrder ? -1 : 1) : reverseOrder ? 1 : -1;
-      }
-      return 0;
-    });
-  };
-
-  const handleSort = () => {
-    if (!contestData) return;
-
-    if (!sorting) {
-      setSortedData(contestData.data); // Reset sorted data
-      return;
-    }
-
-    const { property, ascending } = sorting;
-    const order = ascending ? "ascending" : "descending";
-    const sorted = sortData([...contestData.data], property, order);
-    setSortedData(sorted);
-  };
 
   if (compact) {
     return (

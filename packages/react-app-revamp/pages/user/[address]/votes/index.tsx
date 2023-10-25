@@ -11,10 +11,6 @@ import { UserPageProps } from "..";
 
 function useUserVotes(userAddress: string) {
   const [page, setPage] = useState(0);
-  const queryOptions = {
-    keepPreviousData: true,
-    staleTime: 5000,
-  };
 
   const {
     data: userVotesData,
@@ -26,7 +22,6 @@ function useUserVotes(userAddress: string) {
       return getUserVotes(userAddress, page, ITEMS_PER_PAGE);
     },
     {
-      ...queryOptions,
       enabled: !!userAddress,
     },
   );
