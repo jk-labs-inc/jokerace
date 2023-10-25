@@ -17,7 +17,6 @@ import TrackVotersContract from "@contracts/bytecodeAndAbi/Contest.3.15.trackVot
 import MakeVarsPublicContract from "@contracts/bytecodeAndAbi/Contest.3.16.makeVarsPublic.sol/Contest.json";
 import LetJkLabsCancelContract from "@contracts/bytecodeAndAbi/Contest.3.17.letJkLabsCancel.sol/Contest.json";
 import AddJokeraceCreatedEventContract from "@contracts/bytecodeAndAbi/Contest.3.18.addJokeraceCreatedEvent.sol/Contest.json";
-import AddEntryChargeContract from "@contracts/bytecodeAndAbi/Contest.3.19.addEntryCharge.sol/Contest.json";
 import TotalVotesCastContract from "@contracts/bytecodeAndAbi/Contest.3.2.totalVotesCast.sol/Contest.json";
 import SetCompilerContract from "@contracts/bytecodeAndAbi/Contest.3.3.setCompilerTo8Dot19.sol/Contest.json";
 import AddIsDeletedContract from "@contracts/bytecodeAndAbi/Contest.3.4.addIsDeleted.sol/Contest.json";
@@ -26,6 +25,7 @@ import BringBackDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.6.b
 import ArrayOfDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.7.makeArrayOfDeletedIds.sol/Contest.json";
 import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.makeDeletedIdAccessor.sol/Contest.json";
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
+import AddEntryChargeContract from "@contracts/bytecodeAndAbi/Contest.4.1.addEntryCharge.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -41,7 +41,7 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "3.19") {
+    if (version === "4.1") {
       return { abi: AddEntryChargeContract.abi, version};
     } else if (version === "3.18") {
       return { abi: AddJokeraceCreatedEventContract.abi, version};
