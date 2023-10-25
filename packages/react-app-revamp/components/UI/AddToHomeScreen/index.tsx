@@ -44,7 +44,6 @@ const AddToHomeScreenPopup = () => {
           </Dialog.Panel>
         </div>
       </div>
-      g
     </Dialog>
   );
 };
