@@ -12,6 +12,7 @@ import TrackVotersRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.
 import MakeVarsPublicRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.16.makeVarsPublic.sol/RewardsModule.json";
 import LetJkLabsCancelRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.17.letJkLabsCancel.sol/RewardsModule.json";
 import AddJokeraceCreatedEventRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.18.addJokeraceCreatedEvent.sol/RewardsModule.json";
+import AddEntryChargeRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.19.addEntryCharge.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
 import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.3.setCompilerTo8Dot19.sol/RewardsModule.json";
 import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
@@ -32,7 +33,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "3.18") {
+    if (version === "3.19") {
+      return AddEntryChargeRewards.abi;
+    } else if (version === "3.18") {
       return AddJokeraceCreatedEventRewards.abi;
     } else if (version === "3.17") {
       return LetJkLabsCancelRewards.abi;
