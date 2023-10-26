@@ -127,8 +127,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   </label>
 
                   <p className="text-[16px] text-neutral-9 mt-[5px]">
-                    i’d like to receive notifications about contests and future opportunities on{" "}
-                    <span className="normal-case">JokeRace</span>
+                    i’d like to get updates on contests
                   </p>
                 </div>
                 <div>
