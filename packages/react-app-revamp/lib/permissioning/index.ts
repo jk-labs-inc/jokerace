@@ -7,6 +7,7 @@ export type VoteCalculationMethod = "token" | "token holder";
 const HARD_LIMIT = 400000;
 
 export async function fetchNftHolders(
+  type: "voting" | "submission",
   contractAddress: string,
   chainName: string,
   minTokensRequired: number = 1,
@@ -87,6 +88,7 @@ export async function fetchNftHolders(
       votesPerUnit,
       voteCalculationMethod,
       minTokensRequired,
+      eventType: type,
     });
   });
 }
