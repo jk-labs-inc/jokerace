@@ -92,6 +92,7 @@ export function useSubmitProposal() {
         }
 
         if (txConfig) {
+          //@ts-ignore
           const txSendProposal = await writeContract(txConfig);
           hash = txSendProposal.hash;
         }
