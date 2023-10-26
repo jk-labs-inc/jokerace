@@ -178,7 +178,7 @@ abstract contract IGovernor is IERC165 {
      *
      * Emits a {ProposalCreated} event.
      */
-    function proposeWithoutProof(ProposalCore calldata proposal) public virtual returns (uint256 proposalId);
+    function proposeWithoutProof(ProposalCore calldata proposal) public payable virtual returns (uint256 proposalId);
 
     /**
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.

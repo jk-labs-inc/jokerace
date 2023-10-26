@@ -275,23 +275,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     }
 
     /**
-     * @dev See {IGovernor-propose}.
+     * @dev Distribute the costToPropose to jk labs and the creator based on _percentageToCreator.
      */
-    function propose(ProposalCore calldata proposal, bytes32[] calldata proof)
-        public
-        payable
-        virtual
-        override
-        returns (uint256)
-    {
-        require(
-            msg.value == _costToPropose,
-            "Governor: this transaction was not sent with the correct amount of funds needed to propose"
-        );
-        require(verifyProposer(msg.sender, proof), "Governor: address is not permissioned to submit");
-        require(validateProposalData(proposal), "Governor: proposal content failed validation");
-        uint256 proposalId = _castProposal(proposal);
-
+    function _distributeCostToPropose() private {
         if (_costToPropose > 0) {
             // Send proposal fee to jk labs address and creator
             uint256 sendingToJkLabs = (msg.value * (100 - _percentageToCreator)) / 100;
@@ -306,6 +292,28 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
                 emit PaymentReleased(creator(), sendingToCreator);
             }
         }
+    }
+
+    /**
+     * @dev See {IGovernor-propose}.
+     */
+    function propose(ProposalCore calldata proposal, bytes32[] calldata proof)
+        public
+        payable
+        virtual
+        override
+        returns (uint256)
+    {
+        require(
+            msg.value == _costToPropose,
+            "Governor: this transaction was not sent with the correct amount of funds needed to propose"
+        );
+
+        require(verifyProposer(msg.sender, proof), "Governor: address is not permissioned to submit");
+        require(validateProposalData(proposal), "Governor: proposal content failed validation");
+        uint256 proposalId = _castProposal(proposal);
+
+        _distributeCostToPropose();
 
         return proposalId;
     }
@@ -313,13 +321,22 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     /**
      * @dev See {IGovernor-proposeWithoutProof}.
      */
-    function proposeWithoutProof(ProposalCore calldata proposal) public virtual override returns (uint256) {
+    function proposeWithoutProof(ProposalCore calldata proposal) public payable virtual override returns (uint256) {
+        require(
+            msg.value == _costToPropose,
+            "Governor: this transaction was not sent with the correct amount of funds needed to propose"
+        );
+
         if (submissionMerkleRoot != 0) {
             // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
             require(addressSubmitterVerified[msg.sender], "Governor: address is not permissioned to submit");
         }
         require(validateProposalData(proposal), "Governor: proposal content failed validation");
-        return _castProposal(proposal);
+        uint256 proposalId = _castProposal(proposal);
+
+        _distributeCostToPropose();
+
+        return proposalId;
     }
 
     function _castProposal(ProposalCore memory proposal) internal virtual returns (uint256) {
