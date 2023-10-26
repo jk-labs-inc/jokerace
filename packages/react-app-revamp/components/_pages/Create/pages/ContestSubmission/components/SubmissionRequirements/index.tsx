@@ -130,8 +130,6 @@ const CreateSubmissionRequirements = () => {
       return acc;
     }, {} as Record<string, number>);
 
-    console.log({ submissionAllowlist });
-
     if (isVotingAllowlistPrefilled) {
       const { tokenAddress, minTokensRequired, timestamp, type, chain } = votingRequirements;
       setSubmissionRequirements({

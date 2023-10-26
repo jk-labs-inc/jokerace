@@ -134,8 +134,6 @@ const CreateVotingRequirements = () => {
         votingRequirements.powerType,
       );
 
-      console.log({ result });
-
       if (result instanceof Error) {
         toastError(result.message);
         return;
