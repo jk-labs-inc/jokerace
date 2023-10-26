@@ -52,8 +52,7 @@ export function useSubmitProposal() {
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       const { abi } = await getContestContractVersion(address, chainId);
-
-      console.log({ entryCharge });
+      const entryChargeValue = entryCharge?.costToPropose ?? 0;
 
       try {
         const proofs = await getProofs(userAddress ?? "", "submission", "10");
@@ -81,13 +80,14 @@ export function useSubmitProposal() {
             ...contractConfig,
             functionName: "propose",
             args: [proposalCore, proofs],
-            value: [entryCharge?.costToPropose ?? 0],
+            value: isNaN(entryChargeValue) ? [] : [entryChargeValue],
           };
         } else {
           txConfig = {
             ...contractConfig,
             functionName: "proposeWithoutProof",
             args: [proposalCore],
+            value: isNaN(entryChargeValue) ? [] : [entryChargeValue],
           };
         }
 

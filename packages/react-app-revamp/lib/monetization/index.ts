@@ -8,7 +8,7 @@ export const fetchEntryChargeDetails = async (chainName: string): Promise<number
 
   try {
     const { data, error } = await supabase
-      .from("entry_charge")
+      .from("chain_params")
       .select("min_cost_to_propose")
       .eq("network_name", chainName)
       .limit(1)
