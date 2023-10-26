@@ -14,6 +14,7 @@ import { formatUnits } from "ethers/lib/utils";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
+import { parseEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useDeployContestStore } from "./store";
 import { SubmissionMerkle, VotingMerkle } from "./types";
@@ -41,6 +42,7 @@ export function useDeployContest() {
     setDeployContestData,
     votingRequirements,
     submissionRequirements,
+    entryCharge,
     setIsLoading,
     setIsSuccess,
   } = useDeployContestStore(state => state);
@@ -74,6 +76,9 @@ export function useDeployContest() {
       const contestInfo = type + "|" + summary + "|" + prompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
       const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
+      const { costToPropose, percentageToCreator } = entryCharge;
+      const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
+      const { merkleRoot: votingMerkleRoot } = votingMerkle || {};
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
       const finalAllowedSubmissionsPerUser =
@@ -94,8 +99,10 @@ export function useDeployContest() {
       const contractContest = await factoryCreateContest.deploy(
         title,
         contestInfo,
-        submissionMerkle ? submissionMerkle.merkleRoot : EMPTY_ROOT,
-        votingMerkle?.merkleRoot,
+        submissionMerkleRoot,
+        votingMerkleRoot,
+        parseEther(costToPropose.toString()),
+        percentageToCreator,
         contestParameters,
       );
 

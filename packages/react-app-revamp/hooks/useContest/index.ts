@@ -73,6 +73,7 @@ export function useContest() {
     setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
+    setEntryCharge,
     setVotingRequirements,
     setSubmissionRequirements,
     setIsReadOnly,
@@ -132,6 +133,8 @@ export function useContest() {
     const isDownvotingAllowed = Number(results[9].result) === 1;
     const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
     const contestMaxProposalCount = Number(results[3].result);
+    const entryChargeValue = Number(results[10].result);
+    const entryChargePercentage = Number(results[11].result);
 
     setContestName(results[0].result as string);
     setContestAuthor(results[1].result as string, results[1].result as string);
@@ -142,6 +145,10 @@ export function useContest() {
     setVotesOpen(votesOpenDate);
     setContestPrompt(results[8].result as string);
     setDownvotingAllowed(isDownvotingAllowed);
+    setEntryCharge({
+      costToPropose: entryChargeValue,
+      percentageToCreator: entryChargePercentage,
+    });
 
     // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
     if (isBefore(new Date(), closingVoteDate) && alchemyRpc && isAlchemyConfigured) {

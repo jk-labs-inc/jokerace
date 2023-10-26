@@ -3,6 +3,7 @@ import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 interface CreateContestButtonProps {
   step: number;
@@ -11,6 +12,7 @@ interface CreateContestButtonProps {
 
 const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) => {
   const { errors } = useDeployContestStore(state => state);
+  const { isConnected } = useAccount();
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
 
@@ -45,7 +47,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
           type={ButtonType.TX_ACTION}
           onClick={handleClick}
         >
-          create contest!
+          {isConnected ? "create contest!" : "connect wallet"}
         </ButtonV3>
 
         {step > 1 && (
@@ -60,11 +62,13 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
           </div>
         )}
       </div>
-      <div className="hidden lg:flex items-center mt-[15px] gap-[2px]">
-        <p className="text-[16px]">
-          press <span className="font-bold capitalize">enter</span>
-        </p>
-      </div>
+      {isConnected ? (
+        <div className="hidden lg:flex items-center mt-[15px] gap-[2px]">
+          <p className="text-[16px]">
+            press <span className="font-bold capitalize">enter</span>
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 };

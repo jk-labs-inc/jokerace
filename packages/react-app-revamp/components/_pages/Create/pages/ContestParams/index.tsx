@@ -1,25 +1,47 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
+import { chains } from "@config/wagmi";
 import { DEFAULT_SUBMISSIONS, MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import useEntryChargeDetails from "@hooks/useEntryChargeDetails";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMedia } from "react-use";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
+import CreateNumberInput from "../../components/NumberInput";
 import StepCircle from "../../components/StepCircle";
-import CreateTextInput from "../../components/TextInput";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
   const { isLoading } = useDeployContestStore(state => state);
   const { isConnected } = useAccount();
+  const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
   const isMobile = useMedia("(max-width: 768px)");
-  const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
-    useDeployContestStore(state => state);
+  const {
+    setMaxSubmissions,
+    setAllowedSubmissionsPerUser,
+    allowedSubmissionsPerUser,
+    maxSubmissions,
+    setDownvote,
+    downvote,
+    step,
+    entryCharge,
+    setEntryCharge,
+  } = useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
   const [alertOnRewards, setAlertOnRewards] = useState<boolean>(false);
+  const minCostToPropose = useEntryChargeDetails(chain?.name ?? "");
+  const chainUnitLabel = chains.find(c => c.name === chain?.name)?.nativeCurrency.symbol;
+  const [entryChargeError, setEntryChargeError] = useState<string>("");
+
+  useEffect(() => {
+    setEntryCharge({
+      ...entryCharge,
+      costToPropose: minCostToPropose,
+    });
+  }, [minCostToPropose, setEntryCharge]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -54,67 +76,91 @@ const CreateContestParams = () => {
     }
   }, [maxSubmissions]);
 
-  const handleClick = (value: boolean) => {
+  const handleClick = async (value: boolean) => {
     setIsEnabled(value);
     setDownvote(value);
   };
 
-  const onSubmissionsPerUserChange = (value: string) => {
-    setAllowedSubmissionsPerUser(parseInt(value));
+  const onSubmissionsPerUserChange = (value: number) => {
+    setAllowedSubmissionsPerUser(value);
   };
 
-  const onMaxSubmissionsChange = (value: string) => {
-    setMaxSubmissions(parseInt(value));
+  const onMaxSubmissionsChange = (value: number) => {
+    setMaxSubmissions(value);
   };
+
+  const onEntryChargeValueChange = (value: number) => {
+    if (value < minCostToPropose) {
+      setEntryChargeError(`must be at least ${minCostToPropose}`);
+    } else {
+      setEntryChargeError("");
+    }
+    setEntryCharge({
+      ...entryCharge,
+      costToPropose: value,
+    });
+  };
+
+  const onEntryChargePercentageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newPercentage = event.target.checked ? 0 : 50;
+    setEntryCharge({
+      ...entryCharge,
+      percentageToCreator: newPercentage,
+    });
+  };
+
+  const entryChargeInfoMessage = useMemo(() => {
+    if (!isConnected) {
+      return "you must have a wallet connected to set an entry charge";
+    }
+    if (minCostToPropose <= 0) {
+      return "chain on which are you connected is not on the list of supported chains! we support ( ethereum, polygon, arbitrum, base and optimism )";
+    }
+    return "we’ll split this with you 50/50—we recommend a number that will help keep out bots";
+  }, [isConnected, minCostToPropose]);
 
   const handleDeployContest = async () => {
     deployContest();
   };
 
   return (
-    <div className="flex flex-col gap-8 mt-12 lg:mt-[50px] animate-swingInLeft">
+    <div className="flex flex-col gap-12 mt-12 lg:mt-[50px] animate-swingInLeft">
       <div className="flex flex-col md:flex-row gap-5">
         <StepCircle step={step + 1} />
-        <div className="flex flex-col gap-5 mt-2">
+        <div className="flex flex-col gap-6 mt-2">
           <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
             how many submissions can each player enter?
           </p>
           <div className="flex flex-col gap-2">
-            <CreateTextInput
-              placeholder="20"
-              className="w-full md:w-[280px]"
+            <CreateNumberInput
+              value={allowedSubmissionsPerUser}
               onChange={onSubmissionsPerUserChange}
-              type="number"
               max={MAX_SUBMISSIONS_LIMIT}
-              min={1}
+              defaultValue={1}
             />
-            <p className="text-neutral-11 text-[16px]">leave blank to set at max of 1000</p>
           </div>
         </div>
       </div>
-      <div className="md:ml-[70px] flex flex-col gap-8">
-        <div className="flex flex-col gap-5">
+      <div className="md:ml-[70px] flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
           <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
             how many total submissions does your contest accept?
           </p>
           <div className="flex flex-col gap-2">
-            <CreateTextInput
+            <CreateNumberInput
               value={maxSubmissions}
-              placeholder={DEFAULT_SUBMISSIONS.toString()}
-              className="w-full md:w-[280px]"
-              type="number"
               onChange={onMaxSubmissionsChange}
               max={MAX_SUBMISSIONS_LIMIT}
-              min={1}
+              defaultValue={100}
+              errorMessage={
+                alertOnRewards
+                  ? ` please note you won't be able to add a rewards pool if you enable over ${DEFAULT_SUBMISSIONS} submissions`
+                  : ""
+              }
             />
-            {alertOnRewards ? (
-              <p className="text-negative-11 text-[16px]">
-                please note you won't be able to add a rewards pool if you enable over {DEFAULT_SUBMISSIONS} submissions
-              </p>
-            ) : null}
           </div>
         </div>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
           <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
             can players downvote—that is, vote <span className="italic">against</span> a submission?
           </p>
@@ -137,6 +183,35 @@ const CreateContestParams = () => {
                 {isMobile ? "no" : "disable downvoting"}
               </div>
             </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-6">
+          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
+            what is the entry charge for players to submit to the contest?
+          </p>
+          <div className="flex flex-col gap-2">
+            <CreateNumberInput
+              value={entryCharge.costToPropose}
+              defaultValue={minCostToPropose}
+              onChange={onEntryChargeValueChange}
+              readOnly={minCostToPropose <= 0}
+              unitLabel={minCostToPropose > 0 ? chainUnitLabel : ""}
+              errorMessage={entryChargeError}
+            />
+            {!entryChargeError && <p className="text-[16px] font-bold text-neutral-14">{entryChargeInfoMessage}</p>}
+          </div>
+          <div className="flex gap-4">
+            <label className="checkbox-container">
+              <input
+                type="checkbox"
+                checked={entryCharge.percentageToCreator === 0}
+                onChange={onEntryChargePercentageChange}
+              />
+              <span className="checkmark"></span>
+            </label>
+            <p className="text-[24px] text-neutral-9 -mt-1">
+              give my 50% to support <span className="normal-case">JokeRace</span> instead
+            </p>
           </div>
         </div>
         <div>

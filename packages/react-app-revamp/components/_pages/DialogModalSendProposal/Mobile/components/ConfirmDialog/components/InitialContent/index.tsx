@@ -51,7 +51,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
           <input type="checkbox" checked={wantsSubscription} onChange={handleCheckboxChange} />
           <span className="checkmark"></span>
         </label>
-        <p className="text-[16px] text-neutral-9">notify me to get updates on contests</p>
+        <p className="text-[16px] text-neutral-9 mt-[3px]">notify me to get updates on contests</p>
       </div>
       <div>
         <input

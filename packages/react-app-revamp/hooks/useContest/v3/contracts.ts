@@ -10,6 +10,8 @@ export function getV3Contracts(contractConfig: any) {
     "state",
     "prompt",
     "downvotingAllowed",
+    "costToPropose",
+    "percentageToCreator",
   ];
 
   const contracts = contractFunctionNames.map(functionName => ({

@@ -3,13 +3,14 @@ import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
+import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { FC, useState } from "react";
+import DialogModalSendProposalEntryChargeLayout from "../components/EntryCharge";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
-import { emailRegex } from "@helpers/regex";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -125,7 +126,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                     <span className="checkmark"></span>
                   </label>
 
-                  <p className="text-[16px] text-neutral-9">
+                  <p className="text-[16px] text-neutral-9 mt-[5px]">
                     i’d like to receive notifications about contests and future opportunities on{" "}
                     <span className="normal-case">JokeRace</span>
                   </p>
@@ -142,7 +143,8 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                 </div>
               </div>
             </div>
-            <div className="flex mt-14">
+            <div className="flex flex-col gap-8 mt-14">
+              <DialogModalSendProposalEntryChargeLayout />
               {isCorrectNetwork ? (
                 <ButtonV3
                   colorClass="bg-gradient-vote rounded-[40px]"

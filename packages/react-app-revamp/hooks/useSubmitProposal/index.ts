@@ -3,7 +3,7 @@ import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
+import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
@@ -32,6 +32,7 @@ export function useSubmitProposal() {
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const { address: userAddress } = useAccount();
+  const { entryCharge } = useContestStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
@@ -51,6 +52,8 @@ export function useSubmitProposal() {
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       const { abi } = await getContestContractVersion(address, chainId);
+
+      console.log({ entryCharge });
 
       try {
         const proofs = await getProofs(userAddress ?? "", "submission", "10");
@@ -78,6 +81,7 @@ export function useSubmitProposal() {
             ...contractConfig,
             functionName: "propose",
             args: [proposalCore, proofs],
+            value: [entryCharge?.costToPropose ?? 0],
           };
         } else {
           txConfig = {

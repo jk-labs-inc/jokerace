@@ -1,4 +1,5 @@
 import { VotingRequirementsSchema } from "@hooks/useContestsIndexV3";
+import { EntryCharge } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
@@ -32,6 +33,7 @@ export interface ContestState {
   supportsRewardsModule: boolean;
   submissionMerkleRoot: string;
   votingMerkleRoot: string;
+  entryCharge?: EntryCharge;
   votingRequirements: VotingRequirementsSchema | null;
   submissionRequirements: VotingRequirementsSchema | null;
   submitters: {
@@ -64,6 +66,7 @@ export interface ContestState {
   setError: (value: string) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
+  setEntryCharge: (entryCharge: EntryCharge) => void;
   setIsReadOnly: (value: boolean) => void;
   setIsRewardsLoading: (value: boolean) => void;
 }
@@ -86,6 +89,10 @@ export const createContestStore = () =>
     totalVotes: 0,
     isLoading: true,
     error: "",
+    entryCharge: {
+      costToPropose: 0,
+      percentageToCreator: 50,
+    },
     isSuccess: false,
     contestMaxProposalCount: 0,
     downvotingAllowed: false,
@@ -121,6 +128,7 @@ export const createContestStore = () =>
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
     setIsRewardsLoading: value => set({ isRewardsLoading: value }),
+    setEntryCharge: entryCharge => set({ entryCharge: entryCharge }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);
