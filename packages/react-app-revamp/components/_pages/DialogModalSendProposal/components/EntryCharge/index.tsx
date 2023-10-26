@@ -34,11 +34,11 @@ const DialogModalSendProposalEntryChargeLayout = () => {
         <ul className="flex flex-col gap-2 pl-2 list-disc list-inside list-entry-charge">
           {entryCharge.percentageToCreator > 0 ? (
             <>
-              <li className="text-[16px] text-neutral-9">creator comission</li>
-              <li className="text-[16px] text-neutral-9">jk labs comission</li>
+              <li className="text-[16px] text-neutral-9">creator commission</li>
+              <li className="text-[16px] text-neutral-9">jk labs commission</li>
             </>
           ) : (
-            <li className="text-[16px] text-neutral-9">jk labs comission</li>
+            <li className="text-[16px] text-neutral-9">jk labs commission</li>
           )}
         </ul>
       </div>
