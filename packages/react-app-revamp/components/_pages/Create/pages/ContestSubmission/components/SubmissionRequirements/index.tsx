@@ -125,6 +125,13 @@ const CreateSubmissionRequirements = () => {
     const allowList = Object.keys(votingAllowlist.manual).length ? votingAllowlist.manual : votingAllowlist.prefilled;
     const isVotingAllowlistPrefilled = allowList === votingAllowlist.prefilled;
 
+    const submissionAllowlist: Record<string, number> = Object.keys(allowList).reduce((acc, address) => {
+      acc[address] = 10;
+      return acc;
+    }, {} as Record<string, number>);
+
+    console.log({ submissionAllowlist });
+
     if (isVotingAllowlistPrefilled) {
       const { tokenAddress, minTokensRequired, timestamp, type, chain } = votingRequirements;
       setSubmissionRequirements({
@@ -138,7 +145,7 @@ const CreateSubmissionRequirements = () => {
 
     worker.postMessage({
       decimals: 18,
-      allowList,
+      allowList: submissionAllowlist,
     });
   };
 
@@ -152,6 +159,7 @@ const CreateSubmissionRequirements = () => {
 
     try {
       const result = await fetchNftHolders(
+        "submission",
         submissionRequirements.tokenAddress,
         submissionRequirements.chain,
         submissionRequirements.minTokensRequired,

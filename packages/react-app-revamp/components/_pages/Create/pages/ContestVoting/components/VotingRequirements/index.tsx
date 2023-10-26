@@ -126,12 +126,15 @@ const CreateVotingRequirements = () => {
     toastLoading("processing your allowlist...", false);
     try {
       const result = await fetchNftHolders(
+        "voting",
         votingRequirements.tokenAddress,
         votingRequirements.chain,
         votingRequirements.minTokensRequired,
         votingRequirements.powerValue,
         votingRequirements.powerType,
       );
+
+      console.log({ result });
 
       if (result instanceof Error) {
         toastError(result.message);
