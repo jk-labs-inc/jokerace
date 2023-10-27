@@ -77,7 +77,7 @@ const CreateContestParams = () => {
     }
   }, [maxSubmissions]);
 
-  const handleClick = async (value: boolean) => {
+  const handleDownvoteChange = async (value: boolean) => {
     setIsEnabled(value);
     setDownvote(value);
   };
@@ -179,7 +179,7 @@ const CreateContestParams = () => {
                 className={`w-full px-4 py-1 cursor-pointer ${
                   isEnabled ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
                 }`}
-                onClick={() => handleClick(true)}
+                onClick={() => handleDownvoteChange(true)}
               >
                 {isMobile ? "yes" : "enable downvoting"}
               </div>
@@ -187,7 +187,7 @@ const CreateContestParams = () => {
                 className={`w-full px-4 py-1 cursor-pointer ${
                   !isEnabled ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
                 }`}
-                onClick={() => handleClick(false)}
+                onClick={() => handleDownvoteChange(false)}
               >
                 {isMobile ? "no" : "disable downvoting"}
               </div>
@@ -234,7 +234,11 @@ const CreateContestParams = () => {
           </p>
         </div>
         <div>
-          <CreateContestButton step={step} onClick={handleDeployContest} />
+          <CreateContestButton
+            step={step}
+            onClick={handleDeployContest}
+            isDisabled={entryCharge.costToPropose < minCostToPropose}
+          />
         </div>
       </div>
     </div>

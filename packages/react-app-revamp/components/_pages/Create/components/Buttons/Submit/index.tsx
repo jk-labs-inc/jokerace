@@ -8,9 +8,10 @@ import { useAccount } from "wagmi";
 interface CreateContestButtonProps {
   step: number;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  isDisabled?: boolean;
 }
 
-const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) => {
+const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDisabled }) => {
   const { errors } = useDeployContestStore(state => state);
   const { isConnected } = useAccount();
   const [shake, setShake] = useState(false);
@@ -40,6 +41,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
     <div className="flex gap-4 items-start pb-5 md:pb-0">
       <div className={`flex flex-col items-center gap-2`}>
         <ButtonV3
+          isDisabled={isDisabled}
           colorClass={`bg-gradient-create text-[24px] rounded-[10px] font-bold ${
             shake ? "animate-shakeTop" : ""
           }  text-true-black`}
