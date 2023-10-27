@@ -32,9 +32,11 @@ const CreateContestParams = () => {
   } = useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
   const [alertOnRewards, setAlertOnRewards] = useState<boolean>(false);
-  const minCostToPropose = useEntryChargeDetails(chain?.name ?? "");
+  const { minCostToPropose, networkNames } = useEntryChargeDetails(chain?.name ?? "");
   const chainUnitLabel = chains.find(c => c.name === chain?.name)?.nativeCurrency.symbol;
   const [entryChargeError, setEntryChargeError] = useState<string>("");
+  const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
+  const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
 
   useEffect(() => {
     setEntryCharge({
@@ -83,10 +85,32 @@ const CreateContestParams = () => {
   };
 
   const onSubmissionsPerUserChange = (value: number) => {
+    if (value > maxSubmissions) {
+      setSubmissionsPerUserError("must be less than total submissions");
+    } else if (value < 1) {
+      setSubmissionsPerUserError("must be at least 1");
+    } else if (value > MAX_SUBMISSIONS_LIMIT) {
+      setSubmissionsPerUserError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
+    } else {
+      setSubmissionsPerUserError("");
+    }
     setAllowedSubmissionsPerUser(value);
   };
 
   const onMaxSubmissionsChange = (value: number) => {
+    if (value < allowedSubmissionsPerUser) {
+      setMaxSubmissionsError("must be greater than submissions per user");
+    } else if (value < 1) {
+      setMaxSubmissionsError("must be at least 1");
+    } else if (value > MAX_SUBMISSIONS_LIMIT) {
+      setMaxSubmissionsError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
+    } else if (value > DEFAULT_SUBMISSIONS && alertOnRewards) {
+      setMaxSubmissionsError(
+        `please note you won't be able to add a rewards pool if you enable over ${DEFAULT_SUBMISSIONS} submissions`,
+      );
+    } else {
+      setMaxSubmissionsError("");
+    }
     setMaxSubmissions(value);
   };
 
@@ -115,18 +139,17 @@ const CreateContestParams = () => {
       return "you must have a wallet connected to set an entry charge";
     }
     if (minCostToPropose <= 0) {
+      const networksList = networkNames.join(", ");
       return (
         <>
           {"we do not currently support entry charges on the chain you're connected to!"}
           <br />
-          {
-            "currently — ethereum, polygon, arbitrum, base and optimism are the chains that entry charges are enabled on"
-          }
+          {"currently — " + networksList + " are the chains that entry charges are enabled on"}
         </>
       );
     }
     return "we’ll split this with you 50/50—we recommend a number that will help keep out bots";
-  }, [isConnected, minCostToPropose]);
+  }, [isConnected, minCostToPropose, networkNames]);
 
   const handleDeployContest = async () => {
     deployContest();
@@ -145,7 +168,7 @@ const CreateContestParams = () => {
               value={allowedSubmissionsPerUser}
               onChange={onSubmissionsPerUserChange}
               max={MAX_SUBMISSIONS_LIMIT}
-              defaultValue={1}
+              errorMessage={submissionsPerUserError}
             />
           </div>
         </div>
@@ -160,12 +183,7 @@ const CreateContestParams = () => {
               value={maxSubmissions}
               onChange={onMaxSubmissionsChange}
               max={MAX_SUBMISSIONS_LIMIT}
-              defaultValue={100}
-              errorMessage={
-                alertOnRewards
-                  ? ` please note you won't be able to add a rewards pool if you enable over ${DEFAULT_SUBMISSIONS} submissions`
-                  : ""
-              }
+              errorMessage={maxSubmissionsError}
             />
           </div>
         </div>
@@ -201,7 +219,6 @@ const CreateContestParams = () => {
           <div className="flex flex-col gap-2">
             <CreateNumberInput
               value={entryCharge.costToPropose}
-              defaultValue={minCostToPropose}
               onChange={onEntryChargeValueChange}
               readOnly={minCostToPropose <= 0}
               unitLabel={minCostToPropose > 0 ? chainUnitLabel : ""}

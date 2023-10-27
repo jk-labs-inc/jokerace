@@ -1,7 +1,6 @@
 import { ChangeEventHandler, FC, useEffect, useState } from "react";
 
 interface CreateNumberInputProps {
-  defaultValue: number;
   value?: number;
   placeholder?: string;
   errorMessage?: string;
@@ -14,7 +13,6 @@ interface CreateNumberInputProps {
 }
 
 const CreateNumberInput: FC<CreateNumberInputProps> = ({
-  defaultValue,
   value: propValue,
   placeholder,
   errorMessage,
@@ -24,7 +22,7 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
   unitLabel,
   onChange,
 }) => {
-  const [value, setValue] = useState<number | "">(propValue || defaultValue);
+  const [value, setValue] = useState<number | "">(propValue ?? 0);
 
   useEffect(() => {
     if (propValue === undefined) return;
@@ -34,20 +32,14 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = event => {
     const newValue = event.target.value;
-    if (newValue === "") {
-      setValue(defaultValue);
-      if (onChange) {
-        onChange(defaultValue);
-      }
-    } else {
-      const parsedValue = parseFloat(newValue);
 
-      if (max && parsedValue > max) return;
+    const parsedValue = parseFloat(newValue);
 
-      setValue(parsedValue);
-      if (onChange && !isNaN(parsedValue)) {
-        onChange(parsedValue);
-      }
+    if (max && parsedValue > max) return;
+
+    setValue(parsedValue);
+    if (onChange && !isNaN(parsedValue)) {
+      onChange(parsedValue);
     }
   };
 
