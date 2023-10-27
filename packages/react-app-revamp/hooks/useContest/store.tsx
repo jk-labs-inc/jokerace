@@ -33,7 +33,7 @@ export interface ContestState {
   supportsRewardsModule: boolean;
   submissionMerkleRoot: string;
   votingMerkleRoot: string;
-  entryCharge?: EntryCharge;
+  entryCharge: EntryCharge | null;
   votingRequirements: VotingRequirementsSchema | null;
   submissionRequirements: VotingRequirementsSchema | null;
   submitters: {
@@ -66,7 +66,7 @@ export interface ContestState {
   setError: (value: string) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
-  setEntryCharge: (entryCharge: EntryCharge) => void;
+  setEntryCharge: (entryCharge: EntryCharge | null) => void;
   setIsReadOnly: (value: boolean) => void;
   setIsRewardsLoading: (value: boolean) => void;
 }
@@ -89,10 +89,7 @@ export const createContestStore = () =>
     totalVotes: 0,
     isLoading: true,
     error: "",
-    entryCharge: {
-      costToPropose: 0,
-      percentageToCreator: 50,
-    },
+    entryCharge: null,
     isSuccess: false,
     contestMaxProposalCount: 0,
     downvotingAllowed: false,

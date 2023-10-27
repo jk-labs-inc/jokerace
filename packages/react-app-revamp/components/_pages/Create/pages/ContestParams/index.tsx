@@ -40,6 +40,7 @@ const CreateContestParams = () => {
     setEntryCharge({
       ...entryCharge,
       costToPropose: minCostToPropose,
+      percentageToCreator: 50,
     });
   }, [minCostToPropose, setEntryCharge]);
 
@@ -114,7 +115,15 @@ const CreateContestParams = () => {
       return "you must have a wallet connected to set an entry charge";
     }
     if (minCostToPropose <= 0) {
-      return "chain on which are you connected is not on the list of supported chains! we support ( ethereum, polygon, arbitrum, base and optimism )";
+      return (
+        <>
+          {"we do not currently support entry charges on the chain you're connected to!"}
+          <br />
+          {
+            "currently — ethereum, polygon, arbitrum, base and optimism are the chains that entry charges are enabled on"
+          }
+        </>
+      );
     }
     return "we’ll split this with you 50/50—we recommend a number that will help keep out bots";
   }, [isConnected, minCostToPropose]);
@@ -206,10 +215,15 @@ const CreateContestParams = () => {
                 type="checkbox"
                 checked={entryCharge.percentageToCreator === 0}
                 onChange={onEntryChargePercentageChange}
+                disabled={minCostToPropose <= 0}
               />
               <span className="checkmark"></span>
             </label>
-            <p className="text-[24px] text-neutral-9 -mt-1">
+            <p
+              className={`text-[24px] ${
+                entryCharge.percentageToCreator === 0 ? "text-neutral-11" : "text-neutral-9"
+              } -mt-1`}
+            >
               give my 50% to support <span className="normal-case">JokeRace</span> instead
             </p>
           </div>

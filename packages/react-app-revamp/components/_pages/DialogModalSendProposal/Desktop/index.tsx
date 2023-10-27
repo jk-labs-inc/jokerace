@@ -5,9 +5,11 @@ import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
+import { EntryCharge } from "@hooks/useDeployContest/types";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
+import { FetchBalanceResult } from "@wagmi/core";
 import { FC, useState } from "react";
 import DialogModalSendProposalEntryChargeLayout from "../components/EntryCharge";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
@@ -22,6 +24,8 @@ interface DialogModalSendProposalDesktopLayoutProps {
   isOpen: boolean;
   isCorrectNetwork: boolean;
   isDragging: boolean;
+  entryCharge: EntryCharge | null;
+  accountData: FetchBalanceResult | undefined;
   setIsOpen: (isOpen: boolean) => void;
   handleDrop?: (event: React.DragEvent<HTMLDivElement>) => void;
   handleDragOver?: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -39,6 +43,8 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   formattedDate,
   isOpen,
   isCorrectNetwork,
+  entryCharge,
+  accountData,
   isDragging,
   setIsOpen,
   handleDrop,
@@ -53,6 +59,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const { isLoading, isSuccess } = useSubmitProposal();
   const { proposalId } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const insufficientBalance = (accountData?.value ?? 0) < (entryCharge?.costToPropose ?? 0);
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWantsSubscription(event.target.checked);
@@ -119,37 +126,40 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   isDragging ? "backdrop-blur-md opacity-70" : ""
                 }`}
               />
-              <div className="flex flex-col gap-4 mt-8">
-                <div className="flex gap-4">
-                  <label className="checkbox-container">
-                    <input type="checkbox" checked={wantsSubscription} onChange={handleCheckboxChange} />
-                    <span className="checkmark"></span>
-                  </label>
+              {!insufficientBalance ? (
+                <div className="flex flex-col gap-4 mt-8">
+                  <div className="flex gap-4">
+                    <label className="checkbox-container">
+                      <input type="checkbox" checked={wantsSubscription} onChange={handleCheckboxChange} />
+                      <span className="checkmark"></span>
+                    </label>
 
-                  <p className="text-[16px] text-neutral-9 mt-[5px]">
-                    i’d like to get updates on contests
-                  </p>
+                    <p className="text-[16px] text-neutral-9 mt-[5px]">i’d like to get updates on contests</p>
+                  </div>
+                  <div>
+                    <input
+                      value={emailForSubscription}
+                      type="text"
+                      className="w-[350px] rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-9 focus:outline-none submission-subscription-input"
+                      placeholder="myemail@email.com"
+                      onChange={handleEmailChange}
+                    />
+                    {emailError && <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>}
+                  </div>
                 </div>
-                <div>
-                  <input
-                    value={emailForSubscription}
-                    type="text"
-                    className="w-[350px] rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-9 focus:outline-none submission-subscription-input"
-                    placeholder="myemail@email.com"
-                    onChange={handleEmailChange}
-                  />
-                  {emailError && <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>}
-                </div>
-              </div>
+              ) : null}
             </div>
             <div className="flex flex-col gap-8 mt-14">
-              <DialogModalSendProposalEntryChargeLayout />
+              {entryCharge && entryCharge.costToPropose && accountData ? (
+                <DialogModalSendProposalEntryChargeLayout entryCharge={entryCharge} accountData={accountData} />
+              ) : null}
+
               {isCorrectNetwork ? (
                 <ButtonV3
                   colorClass="bg-gradient-vote rounded-[40px]"
                   size={ButtonSize.EXTRA_LARGE_LONG}
                   onClick={handleConfirm}
-                  isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty}
+                  isDisabled={isLoading || !proposal.length || editorProposal?.isEmpty || insufficientBalance}
                 >
                   submit!
                 </ButtonV3>

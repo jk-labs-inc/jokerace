@@ -13,7 +13,7 @@ import { BigNumber, utils } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
-import { TransactionReceipt } from "viem";
+import { TransactionReceipt, formatEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
 
@@ -52,7 +52,6 @@ export function useSubmitProposal() {
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       const { abi } = await getContestContractVersion(address, chainId);
-      const entryChargeValue = entryCharge?.costToPropose ?? 0;
 
       try {
         const proofs = await getProofs(userAddress ?? "", "submission", "10");
@@ -80,14 +79,14 @@ export function useSubmitProposal() {
             ...contractConfig,
             functionName: "propose",
             args: [proposalCore, proofs],
-            value: isNaN(entryChargeValue) ? [] : [entryChargeValue],
+            value: entryCharge ? [entryCharge.costToPropose] : [],
           };
         } else {
           txConfig = {
             ...contractConfig,
             functionName: "proposeWithoutProof",
             args: [proposalCore],
-            value: isNaN(entryChargeValue) ? [] : [entryChargeValue],
+            value: entryCharge ? [entryCharge.costToPropose] : [],
           };
         }
 
@@ -122,6 +121,8 @@ export function useSubmitProposal() {
           network_name: chainName,
           proposal_id: proposalId,
           created_at: Math.floor(Date.now() / 1000),
+          amount_sent: entryCharge ? formatEther(BigInt(entryCharge.costToPropose)) : null,
+          percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
         });
       } catch (e) {
         handleError(e, `Something went wrong while submitting your proposal.`);
