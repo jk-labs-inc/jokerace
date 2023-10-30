@@ -149,7 +149,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       costToPropose: 0,
       percentageToCreator: 50,
     },
-    allowedSubmissionsPerUser: 1,
+    allowedSubmissionsPerUser: 2,
     maxSubmissions: 100,
     downvote: true,
     isLoading: false,

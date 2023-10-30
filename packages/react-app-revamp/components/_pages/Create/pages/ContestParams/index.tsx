@@ -37,6 +37,8 @@ const CreateContestParams = () => {
   const [entryChargeError, setEntryChargeError] = useState<string>("");
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
+  const disableDeploy =
+    entryCharge.costToPropose < minCostToPropose || Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
 
   useEffect(() => {
     setEntryCharge({
@@ -72,7 +74,7 @@ const CreateContestParams = () => {
   }, [deployContest, isLoading]);
 
   useEffect(() => {
-    if (maxSubmissions > DEFAULT_SUBMISSIONS) {
+    if (maxSubmissions > DEFAULT_SUBMISSIONS && maxSubmissions < MAX_SUBMISSIONS_LIMIT) {
       setAlertOnRewards(true);
     } else {
       setAlertOnRewards(false);
@@ -85,9 +87,7 @@ const CreateContestParams = () => {
   };
 
   const onSubmissionsPerUserChange = (value: number) => {
-    if (value > maxSubmissions) {
-      setSubmissionsPerUserError("must be less than total submissions");
-    } else if (value < 1) {
+    if (value < 1) {
       setSubmissionsPerUserError("must be at least 1");
     } else if (value > MAX_SUBMISSIONS_LIMIT) {
       setSubmissionsPerUserError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
@@ -98,16 +98,10 @@ const CreateContestParams = () => {
   };
 
   const onMaxSubmissionsChange = (value: number) => {
-    if (value < allowedSubmissionsPerUser) {
-      setMaxSubmissionsError("must be greater than submissions per user");
-    } else if (value < 1) {
+    if (value < 1) {
       setMaxSubmissionsError("must be at least 1");
     } else if (value > MAX_SUBMISSIONS_LIMIT) {
       setMaxSubmissionsError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
-    } else if (value > DEFAULT_SUBMISSIONS && alertOnRewards) {
-      setMaxSubmissionsError(
-        `please note you won't be able to add a rewards pool if you enable over ${DEFAULT_SUBMISSIONS} submissions`,
-      );
     } else {
       setMaxSubmissionsError("");
     }
@@ -167,7 +161,6 @@ const CreateContestParams = () => {
             <CreateNumberInput
               value={allowedSubmissionsPerUser}
               onChange={onSubmissionsPerUserChange}
-              max={MAX_SUBMISSIONS_LIMIT}
               errorMessage={submissionsPerUserError}
             />
           </div>
@@ -182,8 +175,11 @@ const CreateContestParams = () => {
             <CreateNumberInput
               value={maxSubmissions}
               onChange={onMaxSubmissionsChange}
-              max={MAX_SUBMISSIONS_LIMIT}
-              errorMessage={maxSubmissionsError}
+              errorMessage={
+                alertOnRewards
+                  ? `please note you won't be able to add a rewards pool if you enable over ${DEFAULT_SUBMISSIONS} submissions`
+                  : maxSubmissionsError
+              }
             />
           </div>
         </div>
@@ -251,11 +247,7 @@ const CreateContestParams = () => {
           </p>
         </div>
         <div>
-          <CreateContestButton
-            step={step}
-            onClick={handleDeployContest}
-            isDisabled={entryCharge.costToPropose < minCostToPropose}
-          />
+          <CreateContestButton step={step} onClick={handleDeployContest} isDisabled={disableDeploy} />
         </div>
       </div>
     </div>

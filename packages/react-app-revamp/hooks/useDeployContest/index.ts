@@ -161,6 +161,8 @@ export function useDeployContest() {
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
         voting_requirements: votingReqDatabaseEntry,
         submission_requirements: submissionReqDatabaseEntry,
+        cost_to_propose: costToPropose,
+        percentage_to_creator: percentageToCreator,
       };
 
       await saveFilesToBucket(votingMerkle, submissionMerkle);
