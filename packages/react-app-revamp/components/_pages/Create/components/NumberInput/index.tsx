@@ -6,7 +6,7 @@ interface CreateNumberInputProps {
   errorMessage?: string;
   readOnly?: boolean;
   className?: string;
-  onChange?: (value: number) => void;
+  onChange?: (value: number | null) => void;
   unitLabel?: string;
 }
 
@@ -28,24 +28,18 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
   }, [propValue]);
 
   const handleChange: ChangeEventHandler<HTMLInputElement> = event => {
-    const newValue = event.target.value;
+    const { value } = event.target;
 
-    if (!newValue) {
+    if (value === "") {
       setValue("");
-      onChange?.(0);
-      return;
+      onChange?.(null);
+    } else {
+      const parsedValue = parseFloat(value);
+      if (!isNaN(parsedValue)) {
+        setValue(parsedValue);
+        onChange?.(parsedValue);
+      }
     }
-
-    const parsedValue = parseFloat(newValue);
-
-    if (isNaN(parsedValue)) {
-      setValue("");
-      onChange?.(0);
-      return;
-    }
-
-    setValue(parsedValue);
-    onChange?.(parsedValue);
   };
 
   return (
@@ -62,6 +56,7 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
           value={value}
           placeholder={placeholder}
           readOnly={readOnly}
+          min={0}
         />
         {unitLabel && <span className="absolute inset-y-0 right-4 text-neutral-10 font-bold">{unitLabel}</span>}
       </div>

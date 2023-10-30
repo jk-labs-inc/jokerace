@@ -12,7 +12,8 @@ const useEntryChargeDetails = (chainName: string) => {
 
   const fetchNetworkNames = useCallback(async () => {
     const networkNames = await fetchAllNetworkNames();
-    setNetworkNames(networkNames);
+    const formattedNetworkNames = networkNames.map(name => (name === "arbitrumone" ? "arbitrum" : name));
+    setNetworkNames(formattedNetworkNames);
   }, []);
 
   useEffect(() => {

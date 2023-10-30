@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { chains } from "@config/wagmi";
 import { DEFAULT_SUBMISSIONS, MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
@@ -74,50 +73,47 @@ const CreateContestParams = () => {
   }, [deployContest, isLoading]);
 
   useEffect(() => {
-    if (maxSubmissions > DEFAULT_SUBMISSIONS && maxSubmissions < MAX_SUBMISSIONS_LIMIT) {
+    if (maxSubmissions > DEFAULT_SUBMISSIONS && maxSubmissions <= MAX_SUBMISSIONS_LIMIT) {
       setAlertOnRewards(true);
     } else {
       setAlertOnRewards(false);
     }
+
+    validateMaxSubmissions(maxSubmissions);
   }, [maxSubmissions]);
+
+  useEffect(() => {
+    validateSubmissionsPerUser(allowedSubmissionsPerUser);
+  }, [allowedSubmissionsPerUser]);
 
   const handleDownvoteChange = async (value: boolean) => {
     setIsEnabled(value);
     setDownvote(value);
   };
 
-  const onSubmissionsPerUserChange = (value: number) => {
-    if (value < 1) {
-      setSubmissionsPerUserError("must be at least 1");
-    } else if (value > MAX_SUBMISSIONS_LIMIT) {
-      setSubmissionsPerUserError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
-    } else {
-      setSubmissionsPerUserError("");
-    }
-    setAllowedSubmissionsPerUser(value);
+  const onSubmissionsPerUserChange = (value: number | null) => {
+    validateSubmissionsPerUser(value);
+    if (value) setAllowedSubmissionsPerUser(value);
   };
 
-  const onMaxSubmissionsChange = (value: number) => {
-    if (value < 1) {
-      setMaxSubmissionsError("must be at least 1");
-    } else if (value > MAX_SUBMISSIONS_LIMIT) {
-      setMaxSubmissionsError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
-    } else {
-      setMaxSubmissionsError("");
-    }
-    setMaxSubmissions(value);
+  const onMaxSubmissionsChange = (value: number | null) => {
+    validateMaxSubmissions(value);
+    if (value) setMaxSubmissions(value);
   };
 
-  const onEntryChargeValueChange = (value: number) => {
-    if (value < minCostToPropose) {
+  const onEntryChargeValueChange = (value: number | null) => {
+    if (value === null || value < minCostToPropose) {
       setEntryChargeError(`must be at least ${minCostToPropose}`);
     } else {
       setEntryChargeError("");
     }
-    setEntryCharge({
-      ...entryCharge,
-      costToPropose: value,
-    });
+
+    if (value) {
+      setEntryCharge({
+        ...entryCharge,
+        costToPropose: value,
+      });
+    }
   };
 
   const onEntryChargePercentageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -128,6 +124,26 @@ const CreateContestParams = () => {
     });
   };
 
+  const validateSubmissionsPerUser = (value: number | null) => {
+    if (value === null || value < 1) {
+      setSubmissionsPerUserError("must be at least 1");
+    } else if (value > MAX_SUBMISSIONS_LIMIT) {
+      setSubmissionsPerUserError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
+    } else {
+      setSubmissionsPerUserError("");
+    }
+  };
+
+  const validateMaxSubmissions = (value: number | null) => {
+    if (value === null || value < 1) {
+      setMaxSubmissionsError("must be at least 1");
+    } else if (value > MAX_SUBMISSIONS_LIMIT) {
+      setMaxSubmissionsError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
+    } else {
+      setMaxSubmissionsError("");
+    }
+  };
+
   const entryChargeInfoMessage = useMemo(() => {
     if (!isConnected) {
       return "you must have a wallet connected to set an entry charge";
@@ -136,7 +152,7 @@ const CreateContestParams = () => {
       const networksList = networkNames.join(", ");
       return (
         <>
-          {"we do not currently support entry charges on the chain you're connected to!"}
+          {`we do not currently support entry charges on ${chain?.name} chain!`}
           <br />
           {"currently — " + networksList + " are the chains that entry charges are enabled on"}
         </>
