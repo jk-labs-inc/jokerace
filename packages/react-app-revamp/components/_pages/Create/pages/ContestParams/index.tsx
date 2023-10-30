@@ -1,25 +1,51 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
+import { chains } from "@config/wagmi";
 import { DEFAULT_SUBMISSIONS, MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import useEntryChargeDetails from "@hooks/useEntryChargeDetails";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMedia } from "react-use";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
+import CreateNumberInput from "../../components/NumberInput";
 import StepCircle from "../../components/StepCircle";
-import CreateTextInput from "../../components/TextInput";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
   const { isLoading } = useDeployContestStore(state => state);
   const { isConnected } = useAccount();
+  const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
   const isMobile = useMedia("(max-width: 768px)");
-  const { setMaxSubmissions, setAllowedSubmissionsPerUser, maxSubmissions, setDownvote, downvote, step } =
-    useDeployContestStore(state => state);
+  const {
+    setMaxSubmissions,
+    setAllowedSubmissionsPerUser,
+    allowedSubmissionsPerUser,
+    maxSubmissions,
+    setDownvote,
+    downvote,
+    step,
+    entryCharge,
+    setEntryCharge,
+  } = useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
   const [alertOnRewards, setAlertOnRewards] = useState<boolean>(false);
+  const { minCostToPropose, networkNames } = useEntryChargeDetails(chain?.name ?? "");
+  const chainUnitLabel = chains.find(c => c.name === chain?.name)?.nativeCurrency.symbol;
+  const [entryChargeError, setEntryChargeError] = useState<string>("");
+  const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
+  const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
+  const disableDeploy =
+    entryCharge.costToPropose < minCostToPropose || Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
+
+  useEffect(() => {
+    setEntryCharge({
+      ...entryCharge,
+      costToPropose: minCostToPropose,
+      percentageToCreator: 50,
+    });
+  }, [minCostToPropose, setEntryCharge]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -35,6 +61,8 @@ const CreateContestParams = () => {
             return; // If connection fails, don't proceed with deploying contest
           }
         }
+        if (disableDeploy) return;
+
         handleDeployContest();
       }
     };
@@ -47,74 +75,139 @@ const CreateContestParams = () => {
   }, [deployContest, isLoading]);
 
   useEffect(() => {
-    if (maxSubmissions > DEFAULT_SUBMISSIONS) {
+    if (maxSubmissions > DEFAULT_SUBMISSIONS && maxSubmissions <= MAX_SUBMISSIONS_LIMIT) {
       setAlertOnRewards(true);
     } else {
       setAlertOnRewards(false);
     }
+
+    validateMaxSubmissions(maxSubmissions);
   }, [maxSubmissions]);
 
-  const handleClick = (value: boolean) => {
+  useEffect(() => {
+    validateSubmissionsPerUser(allowedSubmissionsPerUser);
+  }, [allowedSubmissionsPerUser]);
+
+  const handleDownvoteChange = async (value: boolean) => {
     setIsEnabled(value);
     setDownvote(value);
   };
 
-  const onSubmissionsPerUserChange = (value: string) => {
-    setAllowedSubmissionsPerUser(parseInt(value));
+  const onSubmissionsPerUserChange = (value: number | null) => {
+    validateSubmissionsPerUser(value);
+    if (value) setAllowedSubmissionsPerUser(value);
   };
 
-  const onMaxSubmissionsChange = (value: string) => {
-    setMaxSubmissions(parseInt(value));
+  const onMaxSubmissionsChange = (value: number | null) => {
+    validateMaxSubmissions(value);
+    if (value) setMaxSubmissions(value);
   };
+
+  const onEntryChargeValueChange = (value: number | null) => {
+    if (value === null || value < minCostToPropose) {
+      setEntryChargeError(`must be at least ${minCostToPropose}`);
+    } else {
+      setEntryChargeError("");
+    }
+
+    if (value) {
+      setEntryCharge({
+        ...entryCharge,
+        costToPropose: value,
+      });
+    }
+  };
+
+  const onEntryChargePercentageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newPercentage = event.target.checked ? 0 : 50;
+    setEntryCharge({
+      ...entryCharge,
+      percentageToCreator: newPercentage,
+    });
+  };
+
+  const validateSubmissionsPerUser = (value: number | null) => {
+    if (value === null || value < 1) {
+      setSubmissionsPerUserError("must be at least 1");
+    } else if (value > MAX_SUBMISSIONS_LIMIT) {
+      setSubmissionsPerUserError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
+    } else {
+      setSubmissionsPerUserError("");
+    }
+  };
+
+  const validateMaxSubmissions = (value: number | null) => {
+    if (value === null || value < 1) {
+      setMaxSubmissionsError("must be at least 1");
+    } else if (value > MAX_SUBMISSIONS_LIMIT) {
+      setMaxSubmissionsError(`must be less than ${MAX_SUBMISSIONS_LIMIT}`);
+    } else {
+      setMaxSubmissionsError("");
+    }
+  };
+
+  const entryChargeInfoMessage = useMemo(() => {
+    if (!isConnected) {
+      return "you must have a wallet connected to set an entry charge";
+    }
+
+    if (minCostToPropose <= 0) {
+      const networksList = networkNames.join(", ");
+      const isSingleNetwork = networkNames.length === 1;
+      const singleNetworkMessage = `currently — ${networkNames[0]} is the only chain that entry charges are enabled on.`;
+      const multipleNetworksMessage = `currently — ${networksList} are the chains that entry charges are enabled on`;
+
+      return (
+        <>
+          {`we do not currently support entry charges on ${chain?.name} chain!`}
+          <br />
+          {isSingleNetwork ? singleNetworkMessage : multipleNetworksMessage}
+        </>
+      );
+    }
+
+    return "we’ll split this with you 50/50—we recommend a number that will help keep out bots";
+  }, [isConnected, minCostToPropose, networkNames, chain]);
 
   const handleDeployContest = async () => {
     deployContest();
   };
 
   return (
-    <div className="flex flex-col gap-8 mt-12 lg:mt-[50px] animate-swingInLeft">
+    <div className="flex flex-col gap-12 mt-12 lg:mt-[50px] animate-swingInLeft">
       <div className="flex flex-col md:flex-row gap-5">
         <StepCircle step={step + 1} />
-        <div className="flex flex-col gap-5 mt-2">
+        <div className="flex flex-col gap-6 mt-2">
           <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
             how many submissions can each player enter?
           </p>
           <div className="flex flex-col gap-2">
-            <CreateTextInput
-              placeholder="20"
-              className="w-full md:w-[280px]"
+            <CreateNumberInput
+              value={allowedSubmissionsPerUser}
               onChange={onSubmissionsPerUserChange}
-              type="number"
-              max={MAX_SUBMISSIONS_LIMIT}
-              min={1}
+              errorMessage={submissionsPerUserError}
             />
-            <p className="text-neutral-11 text-[16px]">leave blank to set at max of 1000</p>
           </div>
         </div>
       </div>
-      <div className="md:ml-[70px] flex flex-col gap-8">
-        <div className="flex flex-col gap-5">
+      <div className="md:ml-[70px] flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
           <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
             how many total submissions does your contest accept?
           </p>
           <div className="flex flex-col gap-2">
-            <CreateTextInput
+            <CreateNumberInput
               value={maxSubmissions}
-              placeholder={DEFAULT_SUBMISSIONS.toString()}
-              className="w-full md:w-[280px]"
-              type="number"
               onChange={onMaxSubmissionsChange}
-              max={MAX_SUBMISSIONS_LIMIT}
-              min={1}
+              errorMessage={
+                alertOnRewards
+                  ? `please note you won't be able to add a rewards pool if you enable over ${DEFAULT_SUBMISSIONS} submissions`
+                  : maxSubmissionsError
+              }
             />
-            {alertOnRewards ? (
-              <p className="text-negative-11 text-[16px]">
-                please note you won't be able to add a rewards pool if you enable over {DEFAULT_SUBMISSIONS} submissions
-              </p>
-            ) : null}
           </div>
         </div>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-6">
           <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
             can players downvote—that is, vote <span className="italic">against</span> a submission?
           </p>
@@ -124,7 +217,7 @@ const CreateContestParams = () => {
                 className={`w-full px-4 py-1 cursor-pointer ${
                   isEnabled ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
                 }`}
-                onClick={() => handleClick(true)}
+                onClick={() => handleDownvoteChange(true)}
               >
                 {isMobile ? "yes" : "enable downvoting"}
               </div>
@@ -132,11 +225,44 @@ const CreateContestParams = () => {
                 className={`w-full px-4 py-1 cursor-pointer ${
                   !isEnabled ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
                 }`}
-                onClick={() => handleClick(false)}
+                onClick={() => handleDownvoteChange(false)}
               >
                 {isMobile ? "no" : "disable downvoting"}
               </div>
             </div>
+          </div>
+        </div>
+        <div className="flex flex-col gap-6">
+          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
+            what is the entry charge for players to submit to the contest?
+          </p>
+          <div className="flex flex-col gap-2">
+            <CreateNumberInput
+              value={entryCharge.costToPropose}
+              onChange={onEntryChargeValueChange}
+              readOnly={minCostToPropose <= 0}
+              unitLabel={minCostToPropose > 0 ? chainUnitLabel : ""}
+              errorMessage={entryChargeError}
+            />
+            {!entryChargeError && <p className="text-[16px] font-bold text-neutral-14">{entryChargeInfoMessage}</p>}
+          </div>
+          <div className="flex gap-4">
+            <label className="checkbox-container">
+              <input
+                type="checkbox"
+                checked={entryCharge.percentageToCreator === 0}
+                onChange={onEntryChargePercentageChange}
+                disabled={minCostToPropose <= 0}
+              />
+              <span className="checkmark"></span>
+            </label>
+            <p
+              className={`text-[16px] md:text-[24px] ${
+                entryCharge.percentageToCreator === 0 ? "text-neutral-11" : "text-neutral-9"
+              } md:-mt-1`}
+            >
+              give my 50% to support <span className="normal-case">JokeRace</span> instead
+            </p>
           </div>
         </div>
         <div>
@@ -145,7 +271,7 @@ const CreateContestParams = () => {
           </p>
         </div>
         <div>
-          <CreateContestButton step={step} onClick={handleDeployContest} />
+          <CreateContestButton step={step} onClick={handleDeployContest} isDisabled={disableDeploy} />
         </div>
       </div>
     </div>

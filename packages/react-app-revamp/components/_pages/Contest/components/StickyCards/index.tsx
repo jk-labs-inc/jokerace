@@ -19,26 +19,39 @@ const ContestStickyCards = () => {
   const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
   const qualifiedToSubmitMessage = useMemo(() => {
-    if (contestStatus === ContestStatus.ContestOpen && anyoneCanSubmit) {
-      return (
-        <p className="text-[16px] text-primary-10">
-          good news: you qualify to submit a response once the contest opens
-        </p>
-      );
-    }
-    if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed || isDisconnected)
-      return null;
-    if (isLoading)
-      return <Skeleton height={16} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
+    const isContestOpen = contestStatus === ContestStatus.ContestOpen;
+    const isVotingOpenOrClosed =
+      contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
+    const hasReachedMaxSubmissions = currentUserProposalCount >= contestMaxNumberSubmissionsPerUser;
+    const canSubmit = anyoneCanSubmit || currentUserQualifiedToSubmit;
 
-    if (contestStatus === ContestStatus.ContestOpen && currentUserQualifiedToSubmit) {
-      return (
-        <p className="text-[16px] text-primary-10">
-          good news: you qualify to submit a response once the contest opens
-        </p>
-      );
-    } else if (contestStatus === ContestStatus.SubmissionOpen) {
-      if (currentUserProposalCount >= contestMaxNumberSubmissionsPerUser) {
+    if (isLoading) {
+      return <Skeleton height={16} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
+    }
+
+    if (isVotingOpenOrClosed || isDisconnected) {
+      return null;
+    }
+
+    if (isContestOpen) {
+      if (canSubmit) {
+        return (
+          <p className="text-[16px] text-primary-10">
+            good news: you qualify to submit a response once the contest opens
+          </p>
+        );
+      }
+      if (!currentUserQualifiedToSubmit) {
+        return (
+          <p className="text-[16px] text-primary-10">
+            unfortunately, your wallet wasn’t allowlisted to submit in this contest.
+          </p>
+        );
+      }
+    }
+
+    if (contestStatus === ContestStatus.SubmissionOpen) {
+      if (hasReachedMaxSubmissions) {
         return <p className="text-[16px] text-primary-10">you’ve reached your max submissions with this account</p>;
       }
       if (!currentUserQualifiedToSubmit) {
@@ -47,8 +60,6 @@ const ContestStickyCards = () => {
             unfortunately, your wallet wasn’t allowlisted to submit in this contest.
           </p>
         );
-      } else {
-        return null;
       }
     }
 

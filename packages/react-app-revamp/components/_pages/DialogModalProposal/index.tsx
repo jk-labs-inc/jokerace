@@ -65,7 +65,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
     >
       <div className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[20px] md:mt-[60px] pb-[60px]">
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
-        <div className="flex gap-4">
+        <div className={`${totalProposals > 1 ? "flex" : "hidden"} gap-4`}>
           {currentIndex !== 0 && (
             <ButtonV3
               colorClass="bg-primary-2"

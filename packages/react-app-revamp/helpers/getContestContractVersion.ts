@@ -25,6 +25,7 @@ import BringBackDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.6.b
 import ArrayOfDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.7.makeArrayOfDeletedIds.sol/Contest.json";
 import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.makeDeletedIdAccessor.sol/Contest.json";
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
+import AddEntryChargeContract from "@contracts/bytecodeAndAbi/Contest.4.1.addEntryCharge.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -40,7 +41,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "3.18") {
+    if (version === "4.1") {
+      return { abi: AddEntryChargeContract.abi, version};
+    } else if (version === "3.18") {
       return { abi: AddJokeraceCreatedEventContract.abi, version};
     } else if (version === "3.17") {
       return { abi: LetJkLabsCancelContract.abi, version};
