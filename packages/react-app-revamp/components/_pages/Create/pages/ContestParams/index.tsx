@@ -150,18 +150,24 @@ const CreateContestParams = () => {
     if (!isConnected) {
       return "you must have a wallet connected to set an entry charge";
     }
+
     if (minCostToPropose <= 0) {
       const networksList = networkNames.join(", ");
+      const isSingleNetwork = networkNames.length === 1;
+      const singleNetworkMessage = `currently — ${networkNames[0]} is the only chain that entry charges are enabled on.`;
+      const multipleNetworksMessage = `currently — ${networksList} are the chains that entry charges are enabled on`;
+
       return (
         <>
           {`we do not currently support entry charges on ${chain?.name} chain!`}
           <br />
-          {"currently — " + networksList + " are the chains that entry charges are enabled on"}
+          {isSingleNetwork ? singleNetworkMessage : multipleNetworksMessage}
         </>
       );
     }
+
     return "we’ll split this with you 50/50—we recommend a number that will help keep out bots";
-  }, [isConnected, minCostToPropose, networkNames]);
+  }, [isConnected, minCostToPropose, networkNames, chain]);
 
   const handleDeployContest = async () => {
     deployContest();
