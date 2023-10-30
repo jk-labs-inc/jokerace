@@ -3,7 +3,7 @@ import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { removeSubmissionFromLocalStorage } from "@helpers/submissionCaching";
+import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
@@ -13,7 +13,7 @@ import { BigNumber, utils } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
-import { TransactionReceipt } from "viem";
+import { TransactionReceipt, formatEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
 
@@ -32,6 +32,7 @@ export function useSubmitProposal() {
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const { address: userAddress } = useAccount();
+  const { entryCharge } = useContestStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
@@ -78,16 +79,19 @@ export function useSubmitProposal() {
             ...contractConfig,
             functionName: "propose",
             args: [proposalCore, proofs],
+            value: entryCharge ? [entryCharge.costToPropose] : [],
           };
         } else {
           txConfig = {
             ...contractConfig,
             functionName: "proposeWithoutProof",
             args: [proposalCore],
+            value: entryCharge ? [entryCharge.costToPropose] : [],
           };
         }
 
         if (txConfig) {
+          //@ts-ignore
           const txSendProposal = await writeContract(txConfig);
           hash = txSendProposal.hash;
         }
@@ -117,6 +121,8 @@ export function useSubmitProposal() {
           network_name: chainName,
           proposal_id: proposalId,
           created_at: Math.floor(Date.now() / 1000),
+          amount_sent: entryCharge ? formatEther(BigInt(entryCharge.costToPropose)) : null,
+          percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
         });
       } catch (e) {
         handleError(e, `Something went wrong while submitting your proposal.`);

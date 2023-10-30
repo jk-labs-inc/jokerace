@@ -1,5 +1,5 @@
-export function getV3Contracts(contractConfig: any) {
-  const contractFunctionNames = [
+export function getContracts(contractConfig: any, version: number) {
+  const commonFunctionNames = [
     "name",
     "creator",
     "numAllowedProposalSubmissions",
@@ -11,6 +11,10 @@ export function getV3Contracts(contractConfig: any) {
     "prompt",
     "downvotingAllowed",
   ];
+
+  const v4FunctionNames = ["costToPropose", "percentageToCreator"];
+
+  const contractFunctionNames = version >= 4 ? [...commonFunctionNames, ...v4FunctionNames] : commonFunctionNames;
 
   const contracts = contractFunctionNames.map(functionName => ({
     ...contractConfig,

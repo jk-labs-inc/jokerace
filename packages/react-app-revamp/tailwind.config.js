@@ -175,6 +175,7 @@ module.exports = {
         11: "#E5E5E5",
         12: "#CDCDCD",
         13: "#8E8E8E",
+        14: "#A1A1A1",
       },
     },
     extend: {

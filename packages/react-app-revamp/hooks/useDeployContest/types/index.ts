@@ -27,3 +27,8 @@ export type SubmissionRequirements = {
   minTokensRequired: number;
   timestamp: number;
 };
+
+export type EntryCharge = {
+  costToPropose: number;
+  percentageToCreator: number;
+};
