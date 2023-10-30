@@ -61,6 +61,8 @@ const CreateContestParams = () => {
             return; // If connection fails, don't proceed with deploying contest
           }
         }
+        if (disableDeploy) return;
+
         handleDeployContest();
       }
     };
@@ -249,9 +251,9 @@ const CreateContestParams = () => {
               <span className="checkmark"></span>
             </label>
             <p
-              className={`text-[24px] ${
+              className={`text-[16px] md:text-[24px] ${
                 entryCharge.percentageToCreator === 0 ? "text-neutral-11" : "text-neutral-9"
-              } -mt-1`}
+              } md:-mt-1`}
             >
               give my 50% to support <span className="normal-case">JokeRace</span> instead
             </p>
