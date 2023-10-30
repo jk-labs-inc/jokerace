@@ -7,8 +7,8 @@ export const qChain: Chain = {
   iconUrl: "/qchain.svg",
   nativeCurrency: {
     decimals: 18,
-    name: "Q",
-    symbol: "Q",
+    name: "Qtoken",
+    symbol: "QTOKEN",
   },
   rpcUrls: {
     public: {
