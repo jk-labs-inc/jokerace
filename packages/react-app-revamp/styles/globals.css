@@ -52,12 +52,29 @@
   list-style: none !important;
 }
 
+.list-entry-charge {
+  list-style: none !important;
+}
+
 .list-explainer li::before {
   content: "";
   display: inline-block;
   width: 12px;
   height: 12px;
   background-image: url("/explainer/small-ellipse.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  margin-right: 10px;
+  vertical-align: middle;
+  transition: transform 0.3s ease;
+  margin-top: 5px;
+}
+.list-entry-charge li::before {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background-image: url("/explainer/small-ellipse-gray.svg");
   background-size: contain;
   background-repeat: no-repeat;
   margin-right: 10px;
@@ -96,6 +113,10 @@ li.no-funds-distributed::before {
 }
 
 .list-explainer li:hover::before {
+  transform: rotate(15deg);
+}
+
+.list-entry-charge li:hover::before {
   transform: rotate(15deg);
 }
 
@@ -410,10 +431,10 @@ li {
     position: absolute;
     top: 0;
     left: 0;
-    height: 24px;
-    width: 24px;
+    height: 32px;
+    width: 32px;
     background-color: transparent;
-    border-radius: 4px;
+    border-radius: 10px;
     border: 1px solid #9d9d9d;
   }
 
@@ -429,13 +450,18 @@ li {
     display: block;
   }
 
+  /* Change the border of the checkmark when the checkbox is checked */
+  .checkbox-container input:checked ~ .checkmark {
+    border: 1px solid #78ffc6;
+  }
+
   /* Style the checkmark/indicator */
   .checkbox-container .checkmark:after {
-    left: 8px;
-    top: 4px;
-    width: 6px;
-    height: 13px;
-    border: solid white;
+    left: 12px;
+    top: 6px;
+    width: 7px;
+    height: 15px;
+    border: 1px solid #78ffc6;
     border-width: 0 3px 3px 0;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);

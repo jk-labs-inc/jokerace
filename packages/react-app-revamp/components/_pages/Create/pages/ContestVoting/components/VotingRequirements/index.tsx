@@ -126,6 +126,7 @@ const CreateVotingRequirements = () => {
     toastLoading("processing your allowlist...", false);
     try {
       const result = await fetchNftHolders(
+        "voting",
         votingRequirements.tokenAddress,
         votingRequirements.chain,
         votingRequirements.minTokensRequired,

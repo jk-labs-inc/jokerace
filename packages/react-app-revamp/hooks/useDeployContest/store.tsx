@@ -2,7 +2,7 @@ import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { create } from "zustand";
-import { SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
+import { EntryCharge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
 
 type ContestDeployError = {
   step: number;
@@ -55,6 +55,7 @@ export interface DeployContestState {
   furthestStep: number;
   submissionTab: number;
   votingTab: number;
+  entryCharge: EntryCharge;
   setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
@@ -82,6 +83,7 @@ export interface DeployContestState {
   setFurthestStep: (furthestStep: number) => void;
   setSubmissionTab: (tab: number) => void;
   setVotingTab: (tab: number) => void;
+  setEntryCharge: (entryCharge: EntryCharge) => void;
   reset: () => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
@@ -143,7 +145,11 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       minTokensRequired: 1,
       timestamp: Date.now(),
     },
-    allowedSubmissionsPerUser: 0,
+    entryCharge: {
+      costToPropose: 0,
+      percentageToCreator: 50,
+    },
+    allowedSubmissionsPerUser: 2,
     maxSubmissions: 100,
     downvote: true,
     isLoading: false,
@@ -225,6 +231,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setFurthestStep: (furthestStep: number) => set({ furthestStep }),
     setSubmissionTab: (submissionTab: number) => set({ submissionTab }),
     setVotingTab: (votingTab: number) => set({ votingTab }),
+    setEntryCharge: (entryCharge: EntryCharge) => set({ entryCharge }),
     reset: () => set({ ...initialState }),
   };
 });

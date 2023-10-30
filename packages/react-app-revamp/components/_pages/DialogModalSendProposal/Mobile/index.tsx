@@ -9,12 +9,16 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { FC, useEffect } from "react";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
+import { EntryCharge } from "@hooks/useDeployContest/types";
+import { FetchBalanceResult } from "@wagmi/core";
 
 interface DialogModalSendProposalMobileLayoutProps {
   chainName: string;
   contestId: string;
   proposal: string;
   editorProposal: Editor | null;
+  entryCharge: EntryCharge | null;
+  accountData: FetchBalanceResult | undefined;
   address: string;
   formattedDate: string | null;
   isOpen: boolean;
@@ -30,6 +34,8 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   proposal,
   editorProposal,
   address,
+  entryCharge,
+  accountData,
   formattedDate,
   isOpen,
   isCorrectNetwork,
@@ -61,7 +67,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
       <div
         className={`${
           isMobileConfirmModalOpen ? "fixed" : "hidden"
-        } inset-0 z-50 pointer-events-none bg-neutral-8 bg-opacity-40 backdrop-blur-[10px]`}
+        } inset-0 z-50 pointer-events-none bg-neutral-8 bg-opacity-60`}
         aria-hidden="true"
       />
       <div
@@ -115,6 +121,8 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           chainName={chainName}
           contestId={contestId}
           isOpen={isMobileConfirmModalOpen}
+          entryCharge={entryCharge}
+          accountData={accountData}
           onConfirm={() => onSubmitProposal?.()}
           onClose={() => setIsMobileConfirmModalOpen(false)}
         />

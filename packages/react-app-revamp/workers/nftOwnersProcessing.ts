@@ -20,10 +20,11 @@ interface EventData {
   voteCalculationMethod: VoteCalculationMethod;
   votesPerUnit: number;
   minTokensRequired: number;
+  eventType: "voting" | "submission";
 }
 
 self.onmessage = (event: MessageEvent<EventData>) => {
-  const { ownersData, voteCalculationMethod, votesPerUnit, minTokensRequired } = event.data;
+  const { ownersData, voteCalculationMethod, votesPerUnit, minTokensRequired, eventType } = event.data;
   const ownersBalancesRecord: OwnersBalancesRecord = {};
   let qualifiedOwnersCount = 0;
 
@@ -38,10 +39,14 @@ self.onmessage = (event: MessageEvent<EventData>) => {
       qualifiedOwnersCount++;
       let totalVotes: number = 0;
 
-      if (voteCalculationMethod === "token") {
-        totalVotes = numTokens * votesPerUnit;
-      } else if (voteCalculationMethod === "token holder") {
-        totalVotes = owner.tokenBalances.length > 0 ? votesPerUnit : 0;
+      if (eventType === "voting") {
+        if (voteCalculationMethod === "token") {
+          totalVotes = numTokens * votesPerUnit;
+        } else if (voteCalculationMethod === "token holder") {
+          totalVotes = owner.tokenBalances.length > 0 ? votesPerUnit : 0;
+        }
+      } else if (eventType === "submission") {
+        totalVotes = 10; // hardcoded to 10 for submission allowlists
       }
 
       ownersBalancesRecord[ownerAddress] = totalVotes;

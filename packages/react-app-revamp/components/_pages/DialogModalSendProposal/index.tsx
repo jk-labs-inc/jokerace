@@ -29,7 +29,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useBalance, useNetwork } from "wagmi";
 import DialogModalSendProposalDesktopLayout from "./Desktop";
 import DialogModalSendProposalMobileLayout from "./Mobile";
 
@@ -54,7 +54,10 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setWantsSubscription,
     setEmailForSubscription,
   } = useSubmitProposalStore(state => state);
-  const { votesOpen } = useContestStore(state => state);
+  const { votesOpen, entryCharge } = useContestStore(state => state);
+  const { data: accountData } = useBalance({
+    address: address as `0x${string}`,
+  });
   const { setRevertTextOption } = useEditorStore(state => state);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
@@ -197,6 +200,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           proposal={proposal}
           editorProposal={editorProposal}
           address={address ?? ""}
+          entryCharge={entryCharge}
+          accountData={accountData}
           formattedDate={formattedDate}
           isOpen={isOpen}
           isCorrectNetwork={isCorrectNetwork}
@@ -211,6 +216,8 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           contestId={contestId}
           editorProposal={editorProposal}
           address={address ?? ""}
+          entryCharge={entryCharge}
+          accountData={accountData}
           formattedDate={formattedDate}
           isOpen={isOpen}
           isCorrectNetwork={isCorrectNetwork}

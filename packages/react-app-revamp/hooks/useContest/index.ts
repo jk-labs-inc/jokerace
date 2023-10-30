@@ -21,7 +21,8 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
-import { getV3Contracts } from "./v3/contracts";
+import { getContracts } from "./v3v4/contracts";
+import moment from "moment";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -73,6 +74,7 @@ export function useContest() {
     setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
+    setEntryCharge,
     setVotingRequirements,
     setSubmissionRequirements,
     setIsReadOnly,
@@ -120,10 +122,9 @@ export function useContest() {
     }
   }
 
-  async function fetchContestContractData(contractConfig: ContractConfig) {
-    const contracts = getV3Contracts(contractConfig);
+  async function fetchContestContractData(contractConfig: ContractConfig, version: number) {
+    const contracts = getContracts(contractConfig, version);
     const results = await readContracts({ contracts });
-
     setIsV3(true);
 
     const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
@@ -132,6 +133,18 @@ export function useContest() {
     const isDownvotingAllowed = Number(results[9].result) === 1;
     const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
     const contestMaxProposalCount = Number(results[3].result);
+
+    if (version >= 4 && moment().isBefore(votesOpenDate)) {
+      const entryChargeValue = Number(results[10].result);
+      const entryChargePercentage = Number(results[11].result);
+
+      setEntryCharge({
+        costToPropose: entryChargeValue,
+        percentageToCreator: entryChargePercentage,
+      });
+    } else {
+      setEntryCharge(null);
+    }
 
     setContestName(results[0].result as string);
     setContestAuthor(results[1].result as string, results[1].result as string);
@@ -176,7 +189,7 @@ export function useContest() {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        fetchContestContractData(contractConfig),
+        fetchContestContractData(contractConfig, parseFloat(version)),
         fetchProposalsIdsList(contractConfig.abi, version),
         processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),

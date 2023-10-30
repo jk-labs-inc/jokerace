@@ -8,6 +8,8 @@ interface SaveToAnalyticsContestParticipantsOptions {
   proposal_id?: string;
   vote_amount?: number;
   deleted?: boolean;
+  amount_sent?: string | null;
+  percentage_to_creator?: number | null;
 }
 
 const saveToAnalyticsContestParticipantsV3 = async (options: SaveToAnalyticsContestParticipantsOptions) => {
