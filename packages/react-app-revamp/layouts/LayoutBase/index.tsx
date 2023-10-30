@@ -17,7 +17,7 @@ const LayoutBase = (props: LayoutBaseProps) => {
     "Twitter",
     "Uniswap",
     "Report a bug",
-    "Terms of Service",
+    "Terms",
   ];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 

@@ -46,7 +46,7 @@ export const FOOTER_LINKS = [
     href: LINK_BUG_REPORT,
   },
   {
-    label: "Terms of Service",
+    label: "Terms",
     href: LINK_TOS,
   },
 ];
