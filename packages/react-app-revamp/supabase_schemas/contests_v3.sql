@@ -19,7 +19,7 @@ create table
     voting_requirements json null default null,
     submission_requirements json null default null,
     cost_to_propose numeric null,
-    percentage_to_creator numeric null
+    percentage_to_creator numeric null,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 
