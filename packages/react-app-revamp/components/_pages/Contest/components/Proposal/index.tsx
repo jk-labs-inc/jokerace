@@ -33,7 +33,11 @@ const transform = (node: HTMLElement): ReactNode => {
     const href = node.getAttribute("href");
     const tweetUrlMatch = href && href.match(twitterRegex);
     if (tweetUrlMatch) {
-      if (node.parentNode?.parentNode?.nodeName === "li" || node.parentNode?.parentNode?.nodeName === "ul") {
+      if (
+        node.parentNode?.parentNode?.nodeName === "li" ||
+        node.parentNode?.parentNode?.nodeName === "ul" ||
+        node.parentNode?.parentNode?.nodeName === "ol"
+      ) {
         return (
           <a href={href} target="_blank" rel="noopener noreferrer nofollow">
             {node.childNodes[0].textContent}
