@@ -3,7 +3,6 @@ import { chains } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { getProposalId } from "@helpers/getProposalId";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
@@ -103,7 +102,7 @@ export function useSubmitProposal() {
           hash,
         });
 
-        const proposalId = await getProposalId(proposalCore, contractConfig);
+        const proposalId = getProposalIdFromReceipt(receipt, abi);
 
         setTransactionData({
           chainId: chain?.id,
@@ -133,6 +132,16 @@ export function useSubmitProposal() {
         setIsLoading(false);
       }
     });
+  }
+
+  function getProposalIdFromReceipt(receipt: TransactionReceipt, abi: any): string {
+    const iface = new utils.Interface(abi);
+    const log = receipt.logs[0];
+    const event = iface.parseLog(log);
+
+    const proposalIdDecimal = BigNumber.from(event.args.proposalId).toString();
+
+    return proposalIdDecimal;
   }
 
   return {
