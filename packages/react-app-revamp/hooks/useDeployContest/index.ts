@@ -19,7 +19,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { useDeployContestStore } from "./store";
 import { SubmissionMerkle, VotingMerkle } from "./types";
 
-export const MAX_SUBMISSIONS_LIMIT = 1000;
+export const MAX_SUBMISSIONS_LIMIT = 100000;
 export const DEFAULT_SUBMISSIONS = 100;
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
