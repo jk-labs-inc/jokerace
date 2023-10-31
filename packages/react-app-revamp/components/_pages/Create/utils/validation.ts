@@ -34,12 +34,17 @@ const typeValidation = (type: string) => {
   return "";
 };
 
-const promptValidation = (prompt: string) => {
+const promptValidation = (prompt: { summarize: string; evaluateVoters: string }) => {
   let parser = new DOMParser();
-  const doc = parser.parseFromString(prompt, "text/html");
 
-  if (!doc.body.textContent?.trim()) {
-    return "Contest prompt length shouldn't be empty";
+  let docSummarize = parser.parseFromString(prompt.summarize, "text/html");
+  if (!docSummarize.body.textContent?.trim()) {
+    return "Contest summary shouldn't be empty";
+  }
+
+  let docEvaluateVoters = parser.parseFromString(prompt.evaluateVoters, "text/html");
+  if (!docEvaluateVoters.body.textContent?.trim()) {
+    return "Voter evaluation guidelines shouldn't be empty";
   }
 
   return "";
