@@ -52,7 +52,7 @@ const CreateContestPrompt = () => {
     ...createEditorConfig({
       content: prompt.summarize,
       placeholderText: isMobile
-        ? "our core team will vote on $1000 for best feature..."
+        ? "our core team will vote on..."
         : "our core team will vote on $1000 for best feature proposal",
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
@@ -70,7 +70,7 @@ const CreateContestPrompt = () => {
     ...createEditorConfig({
       content: prompt.evaluateVoters,
       placeholderText: isMobile
-        ? "voters should vote on the feature that will bring..."
+        ? "voters should vote on the feature..."
         : "voters should vote on the feature that will bring the most users",
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
