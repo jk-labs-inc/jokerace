@@ -7,12 +7,12 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
-import { Interweave } from "interweave";
 
 interface CreateEditorConfigArgs {
   content: string;
@@ -46,11 +46,14 @@ const CreateContestPrompt = () => {
   const promptValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => promptValidation?.[0].validation(prompt)]);
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const editorSummarize = useEditor({
     ...createEditorConfig({
       content: prompt.summarize,
-      placeholderText: "our core team will vote on $1000 for best feature proposal",
+      placeholderText: isMobile
+        ? "our core team will vote on $1000 for best feature..."
+        : "our core team will vote on $1000 for best feature proposal",
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
 
@@ -66,7 +69,9 @@ const CreateContestPrompt = () => {
   const editorEvaluateVoters = useEditor({
     ...createEditorConfig({
       content: prompt.evaluateVoters,
-      placeholderText: "voters should vote on the feature that will bring the most users",
+      placeholderText: isMobile
+        ? "voters should vote on the feature that will bring..."
+        : "voters should vote on the feature that will bring the most users",
       onUpdate: ({ editor }: { editor: Editor }) => {
         const content = editor.getHTML();
 
