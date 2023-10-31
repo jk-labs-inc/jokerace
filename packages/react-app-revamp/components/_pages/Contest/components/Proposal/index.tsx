@@ -1,6 +1,6 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import { extractPathSegments } from "@helpers/extractPath";
-import { containsTweetUrl, extractTwitterUrlFromHTML } from "@helpers/isUrlTweet";
+import { twitterRegex } from "@helpers/regex";
 import {
   generateFacebookShareUrlForSubmission,
   generateLensShareUrlForSubmission,
@@ -15,7 +15,7 @@ import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { FC, useState } from "react";
+import { FC, ReactNode } from "react";
 import { Tweet } from "react-tweet";
 
 interface ContestProposalProps {
@@ -26,6 +26,31 @@ interface ContestProposalProps {
   votingOpen?: Date;
 }
 
+const transform = (node: HTMLElement): ReactNode => {
+  const element = node.tagName.toLowerCase();
+
+  if (element === "a") {
+    const href = node.getAttribute("href");
+    const tweetUrlMatch = href && href.match(twitterRegex);
+    if (tweetUrlMatch) {
+      if (node.parentNode?.parentNode?.nodeName === "li" || node.parentNode?.parentNode?.nodeName === "ul") {
+        return (
+          <a href={href} target="_blank" rel="noopener noreferrer nofollow">
+            {node.childNodes[0].textContent}
+          </a>
+        );
+      }
+      const tweetId = tweetUrlMatch[4] || tweetUrlMatch[2];
+
+      return (
+        <div className="dark not-prose">
+          <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />
+        </div>
+      );
+    }
+  }
+};
+
 const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, contestStatus, displaySocials }) => {
   const router = useRouter();
   const asPath = router.asPath;
@@ -33,27 +58,13 @@ const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, conte
   const votesOpen = useContestStore(state => state.votesOpen);
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
 
-  if (containsTweetUrl(proposal.content)) {
-    const tweetUrl = extractTwitterUrlFromHTML(proposal.content);
-    const tweetId = new URL(tweetUrl ?? "").pathname.split("/")[3];
-    return (
-      <div className="dark">
-        <Tweet apiUrl={tweetId && `/api/tweet/${tweetId}`} id={tweetId} key={tweetId} />
-        <Interweave
-          className="prose prose-invert overflow-hidden"
-          content={proposal.content}
-          matchers={[new UrlMatcher("url")]}
-        />
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col gap-4">
       <Interweave
         className="prose prose-invert overflow-hidden"
         content={proposal.content}
         matchers={[new UrlMatcher("url")]}
+        transform={transform}
       />
       {displaySocials && proposalId ? (
         <div className="hidden md:flex gap-2">
