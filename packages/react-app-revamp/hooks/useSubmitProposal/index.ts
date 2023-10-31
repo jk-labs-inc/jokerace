@@ -93,6 +93,7 @@ export function useSubmitProposal() {
         if (txConfig) {
           //@ts-ignore
           const txSendProposal = await writeContract(txConfig);
+
           hash = txSendProposal.hash;
         }
 
@@ -100,6 +101,7 @@ export function useSubmitProposal() {
           chainId: chain?.id,
           hash,
         });
+
         const proposalId = getProposalIdFromReceipt(receipt, abi);
 
         setTransactionData({
