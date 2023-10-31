@@ -9,6 +9,11 @@ type ContestDeployError = {
   message: string;
 };
 
+type Prompt = {
+  summarize: string;
+  evaluateVoters: string;
+};
+
 export interface DeployContestState {
   deployContestData: {
     chain: string;
@@ -20,7 +25,7 @@ export interface DeployContestState {
   type: string;
   title: string;
   summary: string;
-  prompt: string;
+  prompt: Prompt;
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
@@ -60,7 +65,7 @@ export interface DeployContestState {
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
-  setPrompt: (prompt: string) => void;
+  setPrompt: (prompt: Prompt) => void;
   setSubmissionOpen: (submissionOpen: Date) => void;
   setVotingOpen: (votingOpen: Date) => void;
   setVotingClose: (votingClose: Date) => void;
@@ -106,7 +111,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     type: "",
     title: "",
     summary: "",
-    prompt: "",
+    prompt: {
+      summarize: "",
+      evaluateVoters: "",
+    },
     submissionOpen: initialSubmissionOpen,
     votingOpen: initialVotingOpen,
     votingClose: initialVotingClose,
@@ -169,7 +177,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),
-    setPrompt: (prompt: string) => set({ prompt }),
+    setPrompt: (prompt: Prompt) => set({ prompt }),
     setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
     setVotingClose: (votingClose: Date) => set({ votingClose }),

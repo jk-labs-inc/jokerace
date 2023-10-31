@@ -19,7 +19,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { useDeployContestStore } from "./store";
 import { SubmissionMerkle, VotingMerkle } from "./types";
 
-export const MAX_SUBMISSIONS_LIMIT = 1000;
+export const MAX_SUBMISSIONS_LIMIT = 100000;
 export const DEFAULT_SUBMISSIONS = 100;
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
@@ -73,7 +73,8 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
-      const contestInfo = type + "|" + summary + "|" + prompt;
+      const combinedPrompt = `${prompt.summarize} ${prompt.evaluateVoters}`;
+      const contestInfo = type + "|" + summary + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
       const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
       const { costToPropose, percentageToCreator } = entryCharge;
@@ -150,7 +151,7 @@ export function useDeployContest() {
         title: title,
         type: type,
         summary: summary,
-        prompt: prompt,
+        prompt: combinedPrompt,
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,

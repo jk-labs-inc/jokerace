@@ -1,145 +1,139 @@
-import Iframe from "@components/tiptap/Iframe";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
-import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
+import Iframe from "@components/tiptap/Iframe";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Image as TipTapImage } from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import { EditorContent, useEditor } from "@tiptap/react";
+import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
-import TipMessage from "../../components/Tip";
 import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
 
+interface CreateEditorConfigArgs {
+  content: string;
+  placeholderText: string;
+  onUpdate: any;
+}
+
+const createEditorConfig = ({ content, placeholderText, onUpdate }: CreateEditorConfigArgs) => ({
+  extensions: [
+    StarterKit,
+    TipTapImage,
+    TiptapExtensionLink,
+    Placeholder.configure({
+      emptyEditorClass: "is-editor-create-flow-empty",
+      placeholder: placeholderText,
+    }),
+    Iframe,
+  ],
+  content: content,
+  editorProps: {
+    attributes: {
+      class: "prose prose-invert flex-grow focus:outline-none",
+    },
+  },
+  onUpdate: onUpdate,
+});
+
 const CreateContestPrompt = () => {
   const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
-  const [isTextSelected, setIsTextSelected] = useState(false);
-  const [componentMounted, setComponentMounted] = useState(false);
-
   const currentStepError = errors.find(error => error.step === step);
   const promptValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => promptValidation?.[0].validation(prompt)]);
+  const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      ShiftEnterCreateExtension,
-      DisableEnter,
-      TipTapImage,
-      TiptapExtensionLink,
-      Placeholder.configure({
-        emptyEditorClass: "is-editor-create-flow-empty",
-        placeholder: "eg. “tell us why you should build this project — winner gets $10k”",
-      }),
-      Iframe,
-    ],
-    content: prompt,
-    editorProps: {
-      attributes: {
-        class: "prose prose-invert flex-grow focus:outline-none",
+  const editorSummarize = useEditor({
+    ...createEditorConfig({
+      content: prompt.summarize,
+      placeholderText: isMobile
+        ? "our core team will vote on..."
+        : "our core team will vote on $1000 for best feature proposal",
+      onUpdate: ({ editor }: { editor: Editor }) => {
+        const content = editor.getHTML();
+
+        setPrompt({
+          ...prompt,
+          summarize: content,
+        });
       },
-    },
-
-    onUpdate: ({ editor }) => {
-      const content = editor.getHTML();
-      setPrompt(content);
-    },
+    }),
+    onFocus: () => setActiveEditor(editorSummarize),
   });
 
-  // Not ideal approach, but for now the right one since handleDomEvents in editor config is not receiving the prompt at given time
-  useEffect(() => {
-    // Ignore "Enter" presses for the first 100ms after the component is mounted
-    const timeoutId = setTimeout(() => setComponentMounted(true), 100);
+  const editorEvaluateVoters = useEditor({
+    ...createEditorConfig({
+      content: prompt.evaluateVoters,
+      placeholderText: isMobile
+        ? "voters should vote on the feature..."
+        : "voters should vote on the feature that will bring the most users",
+      onUpdate: ({ editor }: { editor: Editor }) => {
+        const content = editor.getHTML();
 
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.shiftKey || !componentMounted) {
-        return;
-      }
-      if (event.key === "Enter") {
-        onNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep, componentMounted]);
-
-  useEffect(() => {
-    if (editor) {
-      const updateHandler = () => {
-        setIsTextSelected(!editor.state.selection.empty);
-      };
-
-      editor.on("update", updateHandler);
-      editor.on("selectionUpdate", updateHandler);
-
-      return () => {
-        editor.off("update", updateHandler);
-        editor.off("selectionUpdate", updateHandler);
-      };
-    }
-  }, [editor]);
-
-  const tipMessage = () => {
-    return (
-      <p className="hidden md:flex items-center">
-        <span className="font-bold flex items-center gap-1 mr-1">
-          shift <Image src="/create-flow/shift.png" alt="shift" width={14} height={14} /> + enter{" "}
-          <Image src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
-        </span>
-        to make a line break.
-        <span className="font-bold mr-1 ml-1">select text</span>
-        to access rich text options.
-      </p>
-    );
-  };
+        setPrompt({
+          ...prompt,
+          evaluateVoters: content,
+        });
+      },
+    }),
+    onFocus: () => setActiveEditor(editorEvaluateVoters),
+  });
 
   return (
-    <div className="mt-12 lg:mt-[100px] animate-swingInLeft">
+    <div className="flex flex-col gap-12 mt-12 lg:mt-[100px] animate-swingInLeft">
       <div className="flex flex-col lg:flex-row items-start gap-5 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
-        <div className="flex flex-col gap-5">
-          <p className="text-neutral-11 font-normal">
-            now let’s write a full description of your contest and how it works—with as many words as you like.
-          </p>
-          <p className="text-neutral-11 font-normal">what are the instructions for the contest? what are the rules?</p>
-          <p className="text-primary-10 font-bold">what’s the full prompt for your contest?</p>
+        <div className="flex flex-col gap-2 w-full">
+          <p className="text-neutral-11 font-bold">let’s let players know how this works.</p>
+          <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] px-1 py-2 border-y border-neutral-10">
+            <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
+          </div>
         </div>
       </div>
 
-      <div className="mt-4 lg:ml-[70px]">
-        {isTextSelected && (
-          <TipTapEditorControls editor={editor} className="rounded-[10px] bg-neutral-2 animate-fadeIn mb-2" />
-        )}
+      <div className="flex flex-col gap-8 lg:ml-[70px]">
+        <p className="text-primary-10 text-[24px] font-bold">summarize the contest, prizes, and voters:</p>
+        <div className="flex flex-col gap-2">
+          <EditorContent
+            editor={editorSummarize}
+            className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+          />
 
-        <EditorContent
-          editor={editor}
-          className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[600px] overflow-y-auto max-h-[300px] pb-2"
-        />
-
-        {currentStepError ? (
-          <ErrorMessage error={(currentStepError || { message: "" }).message} />
-        ) : (
-          <TipMessage tip={tipMessage()} error={""} />
-        )}
-
-        <div className="mt-12">
-          <CreateNextButton step={step + 1} onClick={onNextStep} />
+          {currentStepError?.message.includes("Contest summary") ? (
+            <ErrorMessage error={(currentStepError || { message: "" }).message} />
+          ) : null}
         </div>
+      </div>
+      <div className="flex flex-col gap-8 lg:ml-[70px]">
+        <p className="text-primary-10 text-[24px] font-bold">
+          how should voters evaluate if a submission is good? <br />
+          <span className="text-neutral-11 text-[24px] font-normal">
+            (ie 50% for originality, 50% for thoughtfulness)
+          </span>
+        </p>
+        <div className="flex flex-col gap-2">
+          <EditorContent
+            editor={editorEvaluateVoters}
+            className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+          />
+
+          {currentStepError?.message.includes("Voter evaluation") ? (
+            <ErrorMessage error={(currentStepError || { message: "" }).message} />
+          ) : (
+            <p className="text-[16px] font-bold text-neutral-14">
+              if you are offering rewards, voting must legally be based on skill or talent—not guessing
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="lg:ml-[70px]">
+        <CreateNextButton step={step + 1} onClick={onNextStep} enableEnter={false} />
       </div>
     </div>
   );
