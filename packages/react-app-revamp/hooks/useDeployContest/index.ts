@@ -73,7 +73,8 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
-      const contestInfo = type + "|" + summary + "|" + prompt;
+      const combinedPrompt = `${prompt.summarize} ${prompt.evaluateVoters}`;
+      const contestInfo = type + "|" + summary + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
       const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
       const { costToPropose, percentageToCreator } = entryCharge;
@@ -150,7 +151,7 @@ export function useDeployContest() {
         title: title,
         type: type,
         summary: summary,
-        prompt: prompt,
+        prompt: combinedPrompt,
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,
