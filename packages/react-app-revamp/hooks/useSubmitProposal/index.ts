@@ -135,16 +135,6 @@ export function useSubmitProposal() {
     });
   }
 
-  function getProposalIdFromReceipt(receipt: TransactionReceipt, abi: any): string {
-    const iface = new utils.Interface(abi);
-    const log = receipt.logs[0];
-    const event = iface.parseLog(log);
-
-    const proposalIdDecimal = BigNumber.from(event.args.proposalId).toString();
-
-    return proposalIdDecimal;
-  }
-
   return {
     sendProposal,
     isLoading,
