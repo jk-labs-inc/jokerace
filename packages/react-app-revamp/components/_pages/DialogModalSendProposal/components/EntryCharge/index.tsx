@@ -32,7 +32,7 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
   const commissionValue = entryCharge.percentageToCreator > 0 ? entryChargeHalfFormatted : entryChargeFormatted;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 w-full md:w-96">
       <div className="flex gap-8">
         <div className="flex flex-col">
           <div className="flex gap-3">
@@ -49,12 +49,12 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
           {insufficientBalance ? <p className="text-negative-11 text-[16px]">insufficient funds</p> : null}
         </div>
 
-        <p className={`text-[16px] ${insufficientBalance ? "text-negative-11" : "text-neutral-9"} ml-8 font-bold`}>
+        <p className={`text-[16px] ${insufficientBalance ? "text-negative-11" : "text-neutral-9"} ml-auto font-bold`}>
           {accountData.formatted.substring(0, 7)} <span className="uppercase">{accountData.symbol}</span> available
         </p>
       </div>
       <div className={`flex flex-col`}>
-        <div className="flex gap-16 items-center">
+        <div className="flex items-center">
           <div className="flex gap-2">
             <p className="text-[16px] text-neutral-9">entry charge</p>
             <button
@@ -67,7 +67,7 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
             </button>
           </div>
 
-          <p className="text-[16px] text-neutral-9">
+          <p className="text-[16px] text-neutral-9 ml-auto">
             {entryChargeFormatted} <span className="uppercase">{chainUnitLabel}</span> (+gas)
           </p>
         </div>
@@ -75,23 +75,23 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
           <ul className="flex flex-col gap-2 pl-2 mt-2 list-bullet-points">
             {entryCharge.percentageToCreator > 0 ? (
               <>
-                <div className="flex gap-12 items-center">
+                <div className="flex items-center">
                   <li className="text-[16px] text-neutral-9">creator commission</li>
-                  <p className="text-[16px] text-neutral-9">
+                  <p className="text-[16px] text-neutral-9 ml-auto">
                     {commissionValue} <span className="uppercase">{chainUnitLabel}</span>
                   </p>
                 </div>
                 <div className="flex gap-10 items-center">
                   <li className="text-[16px] text-neutral-9">jokerace commission</li>
-                  <p className="text-[16px] text-neutral-9">
+                  <p className="text-[16px] text-neutral-9 ml-auto">
                     {commissionValue} <span className="uppercase">{chainUnitLabel}</span>
                   </p>
                 </div>
               </>
             ) : (
-              <div className="flex gap-12 items-center">
+              <div className="flex items-center">
                 <li className="text-[16px] text-neutral-9">jokerace commission</li>
-                <p className="text-[16px] text-neutral-9">
+                <p className="text-[16px] text-neutral-9 ml-auto">
                   {commissionValue} <span className="uppercase">{chainUnitLabel}</span>
                 </p>
               </div>
