@@ -37,7 +37,7 @@ const ContestTab = () => {
 
   return (
     <div>
-      <div className="mt-4">
+      <div className="mt-8">
         <ContestTimeline />
       </div>
 

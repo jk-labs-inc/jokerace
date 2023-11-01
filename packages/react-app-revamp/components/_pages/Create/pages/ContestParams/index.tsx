@@ -31,7 +31,7 @@ const CreateContestParams = () => {
   } = useDeployContestStore(state => state);
   const [isEnabled, setIsEnabled] = useState(downvote);
   const [alertOnRewards, setAlertOnRewards] = useState<boolean>(false);
-  const { minCostToPropose, networkNames } = useEntryChargeDetails(chain?.name ?? "");
+  const minCostToPropose = useEntryChargeDetails(chain?.name ?? "");
   const chainUnitLabel = chains.find(c => c.name === chain?.name)?.nativeCurrency.symbol;
   const [entryChargeError, setEntryChargeError] = useState<string>("");
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
@@ -146,29 +146,6 @@ const CreateContestParams = () => {
     }
   };
 
-  const entryChargeInfoMessage = useMemo(() => {
-    if (!isConnected) {
-      return "you must have a wallet connected to set an entry charge";
-    }
-
-    if (minCostToPropose <= 0) {
-      const networksList = networkNames.join(", ");
-      const isSingleNetwork = networkNames.length === 1;
-      const singleNetworkMessage = `currently — ${networkNames[0]} is the only chain that entry charges are enabled on.`;
-      const multipleNetworksMessage = `currently — ${networksList} are the chains that entry charges are enabled on`;
-
-      return (
-        <>
-          {`we do not currently support entry charges on ${chain?.name} chain!`}
-          <br />
-          {isSingleNetwork ? singleNetworkMessage : multipleNetworksMessage}
-        </>
-      );
-    }
-
-    return "we’ll split this with you 50/50—we recommend a number that will help keep out bots";
-  }, [isConnected, minCostToPropose, networkNames, chain]);
-
   const handleDeployContest = async () => {
     deployContest();
   };
@@ -232,39 +209,45 @@ const CreateContestParams = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-6">
-          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-            what is the entry charge for players to submit to the contest?
-          </p>
-          <div className="flex flex-col gap-2">
-            <CreateNumberInput
-              value={entryCharge.costToPropose}
-              onChange={onEntryChargeValueChange}
-              readOnly={minCostToPropose <= 0}
-              unitLabel={minCostToPropose > 0 ? chainUnitLabel : ""}
-              errorMessage={entryChargeError}
-            />
-            {!entryChargeError && <p className="text-[16px] font-bold text-neutral-14">{entryChargeInfoMessage}</p>}
-          </div>
-          <div className="flex gap-4">
-            <label className="checkbox-container">
-              <input
-                type="checkbox"
-                checked={entryCharge.percentageToCreator === 0}
-                onChange={onEntryChargePercentageChange}
-                disabled={minCostToPropose <= 0}
-              />
-              <span className="checkmark"></span>
-            </label>
-            <p
-              className={`text-[16px] md:text-[24px] ${
-                entryCharge.percentageToCreator === 0 ? "text-neutral-11" : "text-neutral-9"
-              } md:-mt-1`}
-            >
-              give my 50% to support <span className="normal-case">JokeRace</span> instead
+        {isConnected && minCostToPropose > 0 ? (
+          <div className="flex flex-col gap-6">
+            <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
+              what is the entry charge for players to submit to the contest?
             </p>
+            <div className="flex flex-col gap-2">
+              <CreateNumberInput
+                value={entryCharge.costToPropose}
+                onChange={onEntryChargeValueChange}
+                unitLabel={chainUnitLabel}
+                errorMessage={entryChargeError}
+              />
+              {!entryChargeError && (
+                <p className="text-[16px] font-bold text-neutral-14">
+                  this can help keep out bots, and we’ll split it with you 50/50
+                </p>
+              )}
+            </div>
+            <div className="flex gap-4">
+              <label className="checkbox-container">
+                <input
+                  type="checkbox"
+                  checked={entryCharge.percentageToCreator === 0}
+                  onChange={onEntryChargePercentageChange}
+                  disabled={minCostToPropose <= 0}
+                />
+                <span className="checkmark"></span>
+              </label>
+              <p
+                className={`text-[16px] md:text-[24px] ${
+                  entryCharge.percentageToCreator === 0 ? "text-neutral-11" : "text-neutral-9"
+                } md:-mt-1`}
+              >
+                give my 50% to support <span className="normal-case">JokeRace</span> instead
+              </p>
+            </div>
           </div>
-        </div>
+        ) : null}
+
         <div>
           <p className="text-[24px] text-neutral-11">
             that’s it! now let’s create this contest—and then you can add rewards

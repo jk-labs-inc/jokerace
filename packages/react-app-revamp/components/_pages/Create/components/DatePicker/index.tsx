@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import ErrorMessage from "../Error";
 
@@ -13,7 +13,7 @@ interface CreateDatePicker {
 
 const CustomInput = forwardRef<HTMLInputElement, { value: string; onClick: () => void }>(({ value, onClick }, ref) => (
   <div
-    className="input-wrapper flex items-center justify-between w-full md:w-[400px] border-b border-neutral-11 bg-transparent outline-none focus:outline-none"
+    className="input-wrapper flex items-center justify-between w-full md:w-[440px] border-b border-neutral-11 bg-transparent outline-none focus:outline-none"
     onClick={onClick}
     ref={ref}
   >
@@ -40,7 +40,13 @@ const CustomInput = forwardRef<HTMLInputElement, { value: string; onClick: () =>
 CustomInput.displayName = "CustomInput";
 
 const CreateDatePicker: React.FC<CreateDatePicker> = ({ title, tip, onChange, minDate, error, defaultDate }) => {
-  const [startDate, setStartDate] = useState<Date | null>(defaultDate || null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (!defaultDate) return;
+
+    setStartDate(defaultDate);
+  }, [defaultDate]);
 
   const handleDateChange = (date: Date) => {
     setStartDate(date);
@@ -59,7 +65,7 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ title, tip, onChange, mi
           timeFormat="HH:mm"
           timeIntervals={1}
           timeCaption="time"
-          dateFormat="MMMM d, yyyy h:mm aa"
+          dateFormat="MMMM d, yyyy h:mm aa z"
           minDate={minDate}
           popperModifiers={[
             {
