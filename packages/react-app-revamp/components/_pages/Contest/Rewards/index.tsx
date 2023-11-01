@@ -188,6 +188,11 @@ const ContestRewards = () => {
                     </span>
                     .
                   </p>
+                  <p className="text-neutral-11 text-[12px]">
+                    <b>in case of ties, funds will be reverted to you to distribute manually.</b> please be aware of any
+                    obligations you might
+                    <br /> face for receiving funds.
+                  </p>
                 </div>
 
                 {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (

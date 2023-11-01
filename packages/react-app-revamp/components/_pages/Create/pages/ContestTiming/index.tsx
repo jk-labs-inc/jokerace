@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
@@ -9,7 +10,8 @@ import CreateSubmissionsOpenDate from "./components/SubmissionDate";
 import CreateVotesOpenDate from "./components/VotesDate";
 
 const CreateContestTiming = () => {
-  const { step, votingOpen, votingClose, submissionOpen } = useDeployContestStore(state => state);
+  const { step, votingOpen, votingClose, submissionOpen, setSubmissionOpen, setVotingOpen, setVotingClose } =
+    useDeployContestStore(state => state);
   const datesValidation = validationFunctions.get(step);
 
   const onNextStep = useNextStep([
@@ -30,6 +32,22 @@ const CreateContestTiming = () => {
       window.removeEventListener("keydown", handleEnterPress);
     };
   }, [onNextStep]);
+
+  useEffect(() => {
+    const now = new Date();
+    const submissionOpenLessThanNow = submissionOpen.getTime() < now.getTime();
+    if (submissionOpenLessThanNow) {
+      setSubmissionOpen(now);
+
+      const votingOpenDate = new Date(now);
+      votingOpenDate.setDate(now.getDate() + 7);
+      setVotingOpen(votingOpenDate);
+
+      const votingCloseDate = new Date(now);
+      votingCloseDate.setDate(now.getDate() + 14);
+      setVotingClose(votingCloseDate);
+    }
+  }, []);
 
   return (
     <div className="mt-12 lg:mt-[50px] flex flex-col lg:flex-row gap-5 animate-swingInLeft opacity-5">

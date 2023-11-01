@@ -1,88 +1,18 @@
-import { useContestStore } from "@hooks/useContest/store";
-import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { EMPTY_ROOT } from "@hooks/useUser";
-import { useUserStore } from "@hooks/useUser/store";
-import { useMemo } from "react";
-import Skeleton from "react-loading-skeleton";
-import { useAccount } from "wagmi";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
+import useContestEvents from "@hooks/useContestEvents";
 
 const ContestStickyCards = () => {
-  const { isDisconnected } = useAccount();
   const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const { submissionMerkleRoot } = useContestStore(state => state);
-  const { currentUserQualifiedToSubmit, isLoading, contestMaxNumberSubmissionsPerUser, currentUserProposalCount } =
-    useUserStore(state => state);
   const { displayReloadBanner } = useContestEvents();
-  const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
-
-  const qualifiedToSubmitMessage = useMemo(() => {
-    const isContestOpen = contestStatus === ContestStatus.ContestOpen;
-    const isVotingOpenOrClosed =
-      contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
-    const hasReachedMaxSubmissions = currentUserProposalCount >= contestMaxNumberSubmissionsPerUser;
-    const canSubmit = anyoneCanSubmit || currentUserQualifiedToSubmit;
-
-    if (isLoading) {
-      return <Skeleton height={16} width={200} baseColor="#706f78" highlightColor="#FFE25B" duration={1} />;
-    }
-
-    if (isVotingOpenOrClosed || isDisconnected) {
-      return null;
-    }
-
-    if (isContestOpen) {
-      if (canSubmit) {
-        return (
-          <p className="text-[16px] text-primary-10">
-            good news: you qualify to submit a response once the contest opens
-          </p>
-        );
-      }
-      if (!currentUserQualifiedToSubmit) {
-        return (
-          <p className="text-[16px] text-primary-10">
-            unfortunately, your wallet wasn’t allowlisted to submit in this contest.
-          </p>
-        );
-      }
-    }
-
-    if (contestStatus === ContestStatus.SubmissionOpen) {
-      if (hasReachedMaxSubmissions) {
-        return <p className="text-[16px] text-primary-10">you’ve reached your max submissions with this account</p>;
-      }
-      if (!currentUserQualifiedToSubmit) {
-        return (
-          <p className="text-[16px] text-primary-10">
-            unfortunately, your wallet wasn’t allowlisted to submit in this contest.
-          </p>
-        );
-      }
-    }
-
-    return null;
-  }, [
-    contestStatus,
-    anyoneCanSubmit,
-    isDisconnected,
-    isLoading,
-    currentUserQualifiedToSubmit,
-    currentUserProposalCount,
-    contestMaxNumberSubmissionsPerUser,
-  ]);
 
   if (contestStatus === ContestStatus.VotingClosed) return null;
 
   return (
-    <div className="flex flex-col gap-8 mt-8">
-      {qualifiedToSubmitMessage}
-      <div className={`flex gap-4 md:sticky ${displayReloadBanner ? "top-[105px]" : "top-0"} z-10 bg-true-black`}>
-        <ContestCountdown />
-        <VotingContestQualifier />
-      </div>
+    <div className={`flex gap-4 bg-true-black sticky ${displayReloadBanner ? "top-[105px]" : "top-0"} z-10 mt-8`}>
+      <ContestCountdown />
+      <VotingContestQualifier />
     </div>
   );
 };

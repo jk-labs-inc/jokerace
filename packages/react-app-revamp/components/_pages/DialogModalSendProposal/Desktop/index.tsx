@@ -13,6 +13,7 @@ import { FetchBalanceResult } from "@wagmi/core";
 import { FC, useState } from "react";
 import DialogModalSendProposalEntryChargeLayout from "../components/EntryCharge";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
+import { FOOTER_LINKS } from "@config/links";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -60,6 +61,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const { proposalId } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
   const insufficientBalance = (accountData?.value ?? 0) < (entryCharge?.costToPropose ?? 0);
+  const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWantsSubscription(event.target.checked);
@@ -136,7 +138,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
 
                     <p className="text-[16px] text-neutral-9 mt-[5px]">i’d like to get updates on contests</p>
                   </div>
-                  <div>
+                  <div className="flex flex-col gap-1">
                     <input
                       value={emailForSubscription}
                       type="text"
@@ -144,7 +146,22 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                       placeholder="myemail@email.com"
                       onChange={handleEmailChange}
                     />
-                    {emailError && <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>}
+                    {emailError ? (
+                      <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>
+                    ) : (
+                      <p className="ml-4 opacity-50 text-neutral-11 text-[12px]">
+                        by giving your email, you agree to share it with the contest <br />
+                        creator and jk labs, inc., according to{" "}
+                        <a
+                          className="text-positive-11 hover:text-positive-10"
+                          href={tosHref}
+                          rel="nofollow noreferrer"
+                          target="_blank"
+                        >
+                          our privacy policy
+                        </a>
+                      </p>
+                    )}
                   </div>
                 </div>
               ) : null}

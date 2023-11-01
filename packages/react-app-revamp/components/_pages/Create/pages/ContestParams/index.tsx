@@ -166,7 +166,7 @@ const CreateContestParams = () => {
       );
     }
 
-    return "we’ll split this with you 50/50—we recommend a number that will help keep out bots";
+    return "this can help keep out bots, and we’ll split it with you 50/50";
   }, [isConnected, minCostToPropose, networkNames, chain]);
 
   const handleDeployContest = async () => {
