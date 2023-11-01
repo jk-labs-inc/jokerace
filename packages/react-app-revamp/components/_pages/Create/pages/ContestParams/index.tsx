@@ -36,8 +36,7 @@ const CreateContestParams = () => {
   const [entryChargeError, setEntryChargeError] = useState<string>("");
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
-  const disableDeploy =
-    entryCharge.costToPropose < minCostToPropose || Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
+  const disableDeploy = Boolean(entryChargeError) || Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
 
   useEffect(() => {
     setEntryCharge({
