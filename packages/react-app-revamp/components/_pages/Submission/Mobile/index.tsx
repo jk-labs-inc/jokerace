@@ -3,7 +3,7 @@ import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
-import ContestProposal from "@components/_pages/Contest/components/Proposal";
+import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
 import {

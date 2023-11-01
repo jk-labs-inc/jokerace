@@ -39,7 +39,7 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
     <div className="md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-1">
-          <p className="text-[16px] text-primary-10 font-bold uppercase">chain</p>
+          <p className="text-[16px] text-primary-10 font-bold uppercase">chain of nft</p>
           <CreateDropdown
             value={chain}
             options={chainDropdownOptions}
@@ -75,7 +75,13 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
             placeholder="0x495f947276749ce646f68ac8c248420045cb7b5e"
             onChange={onTokenAddressChange}
           />
-          <p className="text-negative-11 text-[14px] font-bold animate-appear">{error?.tokenAddressError}</p>
+          {error?.tokenAddressError ? (
+            <p className="text-negative-11 text-[14px] font-bold animate-appear">{error.tokenAddressError}</p>
+          ) : (
+            <p className="text-[16px] text-neutral-14 font-bold">
+              when you press “next,” we’ll take a snapshot of all holders to allowlist
+            </p>
+          )}
         </div>
         {step === "voting" ? (
           <div className="flex flex-col gap-1">
