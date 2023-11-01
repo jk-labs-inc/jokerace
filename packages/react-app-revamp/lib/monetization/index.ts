@@ -10,7 +10,7 @@ export const fetchEntryChargeDetails = async (chainName: string): Promise<number
     const { data, error } = await supabase
       .from("chain_params")
       .select("min_cost_to_propose")
-      .eq("network_name", chainName)
+      .eq("network_name", chainName.toLowerCase())
       .limit(1)
       .single();
 
