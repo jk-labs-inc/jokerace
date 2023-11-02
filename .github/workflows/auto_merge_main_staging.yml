@@ -18,7 +18,7 @@ jobs:
     - name: Merge test-main back to dev
       run: |
           git status
-          git fetch
+          git fetch --unshallow
           git switch test-staging
           git pull
           git merge test-main
