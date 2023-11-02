@@ -18,6 +18,7 @@ jobs:
     - name: Merge test-main back to dev
       run: |
           git status
+          git fetch
           git switch test-staging
           git pull
           git merge test-main
