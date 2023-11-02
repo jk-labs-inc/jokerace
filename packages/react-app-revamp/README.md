@@ -1,6 +1,6 @@
 # jokerace • [![Forge Tests](https://github.com/jk-labs-inc/jokerace/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml)
 
-merge change 1
+merge change 2
 
 Check out the live site at [jokerace.xyz](https://jokerace.xyz/)!
 
