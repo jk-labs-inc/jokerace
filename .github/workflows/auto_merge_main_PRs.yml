@@ -1,0 +1,25 @@
+name: PRs to main
+
+on: 
+  pull_request:
+    branches: [main]
+    types: [closed]
+jobs:
+  merge-main-back-to-staging:
+    if: github.event.pull_request.merged == true
+    timeout-minutes: 2
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set Git config
+      run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "Github Actions"
+    - name: Merge main back to staging
+      run: |
+          git status
+          git fetch --unshallow
+          git switch staging
+          git pull
+          git merge main
+          git push
