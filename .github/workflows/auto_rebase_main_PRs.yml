@@ -5,7 +5,7 @@ on:
     branches: [main]
     types: [closed]
 jobs:
-  merge-main-back-to-staging:
+  rebase-main-back-to-staging:
     if: github.event.pull_request.merged == true
     timeout-minutes: 2
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
       run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "Github Actions"
-    - name: Rebase main to staging
+    - name: Rebase main back to staging
       run: |
           git status
           git fetch --unshallow
