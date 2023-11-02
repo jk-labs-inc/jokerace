@@ -15,6 +15,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
 import { WagmiConfig } from "wagmi";
+import { Portal } from "@headlessui/react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -65,18 +66,20 @@ function MyApp({ Component, pageProps }: AppProps) {
       <WagmiConfig config={config}>
         <RainbowKitProvider chains={chains} theme={jokeraceTheme} modalSize="wide">
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
-          <ToastContainer
-            position="bottom-center"
-            autoClose={4000}
-            hideProgressBar
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored"
-            bodyClassName={() => "text-[16px] flex items-center"}
-          />
+          <Portal>
+            <ToastContainer
+              position="bottom-center"
+              autoClose={4000}
+              hideProgressBar
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="colored"
+              bodyClassName={() => "text-[16px] flex items-center"}
+            />
+          </Portal>
         </RainbowKitProvider>
       </WagmiConfig>
     </>
