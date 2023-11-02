@@ -15,11 +15,11 @@ jobs:
       run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "Github Actions"
-    - name: Merge main back to staging
+    - name: Rebase main to staging
       run: |
           git status
           git fetch --unshallow
           git switch staging
           git pull
-          git merge main
+          git rebase main
           git push
