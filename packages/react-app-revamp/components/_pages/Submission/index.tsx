@@ -1,7 +1,6 @@
 import { goToProposalPage } from "@helpers/routing";
 import useCastVotes from "@hooks/useCastVotes";
 import { useProposalStore } from "@hooks/useProposal/store";
-import useProposalVotes from "@hooks/useProposalVotes";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useRouter } from "next/router";
@@ -23,7 +22,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
-  const { retry: refreshVotes } = useProposalVotes(proposalId);
   const { castVotes } = useCastVotes();
   const { listProposalsIds } = useProposalStore(state => state);
   const {
