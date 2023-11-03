@@ -8,6 +8,7 @@ import {
   metaMaskWallet,
   okxWallet,
   omniWallet,
+  rabbyWallet,
   rainbowWallet,
   tahoWallet,
   trustWallet,
@@ -164,6 +165,7 @@ const connectors = connectorsForWallets([
       imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       bitKeepWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      rabbyWallet({ chains }),
     ],
   },
 ]);
