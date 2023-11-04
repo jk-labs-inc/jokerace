@@ -4,38 +4,23 @@ about: Create a report to help us improve
 title: "bug: "
 labels: bug
 assignees: ''
-projects: jokedao roadmap organization
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Description of the bug:** 
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**Link to the contest:** 
+**Address that you are connected with:** 
+**vvv Paste what you get when you click "COPY ERROR DETAILS" here vvv**
+!!!!REPLACE ME WITH WHAT YOU GET WHEN YOU CLICK "COPY ERROR DETAILS"!!!!
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Wallet you are using:** 
+**Browser you are using:** 
+**Device you are using:** 
 
-**Screenshots**
-If applicable, add screenshots or a video (checkout [Loom](https://www.loom.com/)) to help explain your problem.
+**vvv ADD A SCREENSHOT OF THE ERROR HERE vvv**
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
- - Wallet [e.g MetaMask]
+--- 
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-  - Wallet [e.g Rainbow]
-
-**Additional context**
-Add any other context about the problem here.
+**BONUS ROUND IF YOU WANT TO HELP US FIGURE THIS OUT FASTER!!!**
+Please write out the steps that you took on the site that resulted in this error below so that we can follow them and reproduce the error.
