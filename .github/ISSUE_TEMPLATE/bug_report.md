@@ -1,26 +1,35 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: "bug: "
-labels: bug
-assignees: ''
+### What and Where
+
+Description of the bug: 
+
+Link to the contest: 
+
+Address that you are connected with: 
+
+### Essential Details
+Paste what you get when you click "copy error details" between the squiggles: 
+
+```
+
+```
+
+Add a screenshot of the error here:
+
+
+### How
+
+The wallet you are using: 
+
+The browser you are using: 
+
+The device you are using: 
 
 ---
 
-**Description of the bug:** 
+### If you really want to help us figure it out quickly
 
-**Link to the contest:** 
-**Address that you are connected with:** 
-**vvv Paste what you get when you click "COPY ERROR DETAILS" here vvv**
-!!!!REPLACE ME WITH WHAT YOU GET WHEN YOU CLICK "COPY ERROR DETAILS"!!!!
+Write out the steps for how you got from opening the browser to this error appearing:
 
-**Wallet you are using:** 
-**Browser you are using:** 
-**Device you are using:** 
-
-**vvv ADD A SCREENSHOT OF THE ERROR HERE vvv**
-
---- 
-
-**BONUS ROUND IF YOU WANT TO HELP US FIGURE THIS OUT FASTER!!!**
-Please write out the steps that you took on the site that resulted in this error below so that we can follow them and reproduce the error.
+1. 
+2. 
+3. 
