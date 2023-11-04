@@ -1,4 +1,4 @@
-### What and Where
+### Essential Details
 
 Description of the bug: 
 
@@ -6,17 +6,17 @@ Link to the contest:
 
 Address that you are connected with: 
 
-### Essential Details
-Paste what you get when you click "copy error details" between the squiggles: 
+Click "COPY ERROR DETAILS" and paste the result between the squiggles (if you don't see a red box, you can skip this): 
 
 ```
 
 ```
+
+---
+
+### Helpful Details
 
 Add a screenshot of the error here:
-
-
-### How
 
 The wallet you are using: 
 
