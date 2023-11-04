@@ -1,32 +1,24 @@
-### Essential Details
+### Essential: Please fill these out or else we won't be able to process the report
 
-Description of the bug: 
+Link: 
 
-Link to the contest: 
+Your Wallet Address: 
 
-Address that you are connected with: 
-
-Click "COPY ERROR DETAILS" and paste the result between the squiggles (if you don't see a red box, you can skip this): 
-
-```
-
-```
+Description - Please tap "copy error details" from the error message and paste it here if you're getting an error message. If you can, please include a screenshot as well: 
 
 ---
 
-### Helpful Details
+### Important info
 
-Add a screenshot of the error here:
+Device:
 
-The wallet you are using: 
+Wallet:
 
-The browser you are using: 
-
-The device you are using: 
+Browser: 
 
 ---
 
-### If you really want to help us figure it out quickly
+### Help us solve this quickly (optional)
 
 Write out the steps for how you got from opening the browser to this error appearing:
 
