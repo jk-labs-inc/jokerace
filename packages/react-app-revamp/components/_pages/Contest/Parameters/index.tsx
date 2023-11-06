@@ -64,8 +64,8 @@ const ContestParameters = () => {
         <p>
           you have{" "}
           <span className="font-bold">
-            {formatNumber(currentUserAvailableVotesAmount)} votes (
-            {votingRequirements ? `${votingRequirements.description}` : null})
+            {formatNumber(currentUserAvailableVotesAmount)} votes{" "}
+            {votingRequirements ? `(${votingRequirements.description})` : null}
           </span>
         </p>
       );
