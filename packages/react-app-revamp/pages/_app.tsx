@@ -1,21 +1,24 @@
-import { polyfill } from "interweave-ssr";
-polyfill();
 import { jokeraceTheme } from "@config/rainbowkit";
 import { chains, config } from "@config/wagmi";
+import { Portal } from "@headlessui/react";
 import LayoutBase from "@layouts/LayoutBase";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@styles/globals.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { polyfill } from "interweave-ssr";
 import type { AppProps } from "next/app";
 import Head from "next/head";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
 import { WagmiConfig } from "wagmi";
-import { Portal } from "@headlessui/react";
+import * as gtag from "../lib/gtag";
+polyfill();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,7 +30,10 @@ const queryClient = new QueryClient({
   },
 });
 
+const isProd = process.env.NODE_ENV === "production";
+
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
   const title: string = pageProps.title ? `${pageProps.title}` : "jokerace";
   const description: string = pageProps.description
     ? pageProps.description
@@ -35,6 +41,16 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   //@ts-ignore
   const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase>{page}</LayoutBase>);
+
+  useEffect(() => {
+    const handleRouteChange = (url: URL) => {
+      if (isProd) gtag.pageview(url);
+    };
+    router.events.on("routeChangeComplete", handleRouteChange);
+    return () => {
+      router.events.off("routeChangeComplete", handleRouteChange);
+    };
+  }, [router.events]);
 
   return (
     <>
