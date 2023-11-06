@@ -1,3 +1,13 @@
+---
+name: Bug report
+about: Create a report to help us improve
+title: "bug: "
+labels: bug
+assignees: ''
+projects: jokedao roadmap organization
+
+---
+
 ### Essential: Please fill these out or else we won't be able to process the report
 
 Link: 
