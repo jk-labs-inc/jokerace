@@ -12,7 +12,7 @@ const ContestStickyCards = () => {
 
   return (
     <div
-      className={`flex flex-col bg-true-black sticky ${displayReloadBanner ? "top-[105px]" : "-top-[1px]"} z-10 mt-12`}
+      className={`flex flex-col bg-true-black sticky ${displayReloadBanner ? "top-[105px]" : "-top-[1px]"} z-10 mt-8`}
     >
       <div className="flex gap-4 py-4">
         <ContestCountdown />
