@@ -10,7 +10,7 @@ projects: jokedao roadmap organization
 
 ### Essential: Please fill these out or else we won't be able to process the report
 
-Link: 
+Contest Link: 
 
 Your Wallet Address: 
 
