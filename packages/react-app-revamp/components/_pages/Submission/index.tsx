@@ -9,7 +9,6 @@ import { useMediaQuery } from "react-responsive";
 import { Proposal } from "../ProposalContent";
 import SubmissionPageDesktopLayout from "./Desktop";
 import SubmissionPageMobileLayout from "./Mobile";
-
 interface SubmissionPageProps {
   chain: string;
   address: string;

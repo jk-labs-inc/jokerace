@@ -1,76 +1,143 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
-import { useCallback, useEffect, useState } from "react";
+import { utils } from "ethers";
+import { useEffect, useState } from "react";
 import { Abi } from "viem";
 
 export const VOTES_PER_PAGE = 5;
 
+interface VoteEntry {
+  address: string;
+  votes: [bigint, bigint];
+}
+
+type VotesArray = VoteEntry[];
+
 export function useProposalVotes(contractAddress: string, proposalId: string, chainId: number) {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [addressesVoted, setAddressesVoted] = useState([]);
-  const [votesData, setVotesData] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [addressesVoted, setAddressesVoted] = useState<string[]>([]);
+  const [accumulatedVotesData, setAccumulatedVotesData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchContractVersion = async (address: string, chainId: number) => {
-    const { abi } = await getContestContractVersion(address, chainId);
-    if (abi === null) throw new Error("This contract doesn't exist on this chain.");
-    return abi;
+    try {
+      const { abi } = await getContestContractVersion(address, chainId);
+      if (abi === null) throw new Error("This contract doesn't exist on this chain.");
+      return abi;
+    } catch (error: any) {
+      setError(error.message);
+      throw error;
+    }
   };
 
-  const fetchVotesForAddress = useCallback(
-    async (address: string) => {
-      const abi = await fetchContractVersion(contractAddress, chainId);
-      const votes = await readContract({
-        address: contractAddress as `0x${string}`,
-        abi: abi as unknown as Abi,
-        chainId,
-        functionName: "proposalAddressVotes",
-        args: [proposalId, address],
-      });
-      return { address, votes };
-    },
-    [contractAddress, proposalId, chainId],
-  );
-
-  const fetchVotesData = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const fetchAddressesVoted = async () => {
     try {
-      const { abi } = await getContestContractVersion(contractAddress, chainId);
+      const abi = await fetchContractVersion(contractAddress, chainId);
       const addresses = (await readContract({
         address: contractAddress as `0x${string}`,
         abi: abi as unknown as Abi,
         chainId,
         functionName: "proposalAddressesHaveVoted",
         args: [proposalId],
-      })) as any;
+      })) as string[];
 
-      const votesPromises = addresses.map(address => fetchVotesForAddress(address));
-      const votesArray = await Promise.all(votesPromises);
-      const votesObj = votesArray.reduce((acc, { address, votes }) => {
-        acc[address] = votes;
+      setTotalPages(Math.ceil(addresses.length / VOTES_PER_PAGE));
+      return addresses;
+    } catch (error: any) {
+      setError(error.message);
+    }
+  };
+
+  const fetchVotesForAddress = async (address: string): Promise<VoteEntry> => {
+    try {
+      const abi = await fetchContractVersion(contractAddress, chainId);
+      const votes = (await readContract({
+        address: contractAddress as `0x${string}`,
+        abi: abi as unknown as Abi,
+        chainId,
+        functionName: "proposalAddressVotes",
+        args: [proposalId, address],
+      })) as [bigint, bigint];
+
+      return { address, votes };
+    } catch (error: any) {
+      setError(error.message);
+
+      return { address: "", votes: [BigInt(0), BigInt(0)] };
+    }
+  };
+
+  const fetchVotesPerProposal = async () => {
+    setIsLoading(true);
+
+    try {
+      const adresses = await fetchAddressesVoted();
+      if (!adresses) return;
+
+      const addressesPage = adresses.slice(0, 5);
+      const votesPromises = addressesPage.map((address: string) => fetchVotesForAddress(address));
+      const votesArray: VotesArray = await Promise.all(votesPromises);
+      const votesObj = votesArray.reduce((acc: Record<string, number>, { address, votes }: VoteEntry) => {
+        const netVotes = votes[0] - votes[1];
+        acc[address] = Number(utils.formatEther(netVotes.toString()));
         return acc;
       }, {});
 
-      setVotesData(votesObj);
-      setAddressesVoted(addresses);
-    } catch (e: any) {
-      setError(e.message || "Error fetching votes data");
-    } finally {
-      setLoading(false);
+      setAddressesVoted(adresses);
+      setAccumulatedVotesData(votesObj);
+      setIsLoading(false);
+    } catch (error: any) {
+      setError(error.message);
+      setIsLoading(false);
     }
-  }, [contractAddress, proposalId, chainId, fetchVotesForAddress]);
+  };
+
+  const fetchVotesPerPage = async (page: number) => {
+    setIsLoading(true);
+
+    try {
+      const start = page * VOTES_PER_PAGE;
+      const end = start + VOTES_PER_PAGE;
+      const addressesPage = addressesVoted.slice(start, end);
+
+      const votesPromises = addressesPage.map((address: string) => fetchVotesForAddress(address));
+      const votesArray: VotesArray = await Promise.all(votesPromises);
+      const votesObj = votesArray.reduce((acc: Record<string, number>, { address, votes }: VoteEntry) => {
+        const netVotes = votes[0] - votes[1];
+        acc[address] = Number(utils.formatEther(netVotes.toString()));
+        return acc;
+      }, {});
+
+      setAccumulatedVotesData(prev => ({ ...prev, ...votesObj }));
+      setIsLoading(false);
+    } catch (error: any) {
+      setError(error.message);
+      setIsLoading(false);
+    }
+  };
+
+  const refreshData = () => {
+    fetchVotesPerProposal();
+  };
 
   useEffect(() => {
-    fetchVotesData();
-  }, [fetchVotesData]);
+    setCurrentPage(0);
+    fetchVotesPerProposal();
+  }, [proposalId]);
 
   return {
-    loading,
+    isLoading,
     error,
-    votesData,
+    accumulatedVotesData,
     addressesVoted,
+    currentPage,
+    totalPages,
+    setCurrentPage,
+    refreshData,
+    fetchVotesPerProposal,
+    fetchVotesPerPage,
   };
 }
