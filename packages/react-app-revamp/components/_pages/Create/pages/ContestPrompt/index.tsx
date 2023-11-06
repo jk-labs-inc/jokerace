@@ -85,7 +85,7 @@ const CreateContestPrompt = () => {
   });
 
   return (
-    <div className="flex flex-col gap-12 mt-12 lg:mt-[100px] animate-swingInLeft">
+    <div className="create-contest-prompt flex flex-col gap-12 mt-12 lg:mt-[100px] animate-swingInLeft">
       <div className="flex flex-col lg:flex-row items-start gap-5 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-2 w-full">
@@ -101,7 +101,7 @@ const CreateContestPrompt = () => {
         <div className="flex flex-col gap-2">
           <EditorContent
             editor={editorSummarize}
-            className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+            className="border-b  border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
           />
 
           {currentStepError?.message.includes("Contest summary") ? (
