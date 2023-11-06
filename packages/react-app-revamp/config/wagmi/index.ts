@@ -17,6 +17,7 @@ import {
 import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
+import { artheraTestnet } from "./custom-chains/artheraTestnet";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
@@ -121,6 +122,7 @@ const totalChains: Chain[] = [
   eosTestnet,
   roninTestnet,
   scrollSepoliaTestnet,
+  artheraTestnet,
   mainnet,
 ];
 
