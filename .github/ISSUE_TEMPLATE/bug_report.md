@@ -1,41 +1,27 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: "bug: "
-labels: bug
-assignees: ''
-projects: jokedao roadmap organization
+### Essential: Please fill these out or else we won't be able to process the report
+
+Link: 
+
+Your Wallet Address: 
+
+Description - Please tap "copy error details" from the error message and paste it here if you're getting an error message. If you can, please include a screenshot as well: 
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+### Important info
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+Device:
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+Wallet:
 
-**Screenshots**
-If applicable, add screenshots or a video (checkout [Loom](https://www.loom.com/)) to help explain your problem.
+Browser: 
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
- - Wallet [e.g MetaMask]
+---
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-  - Wallet [e.g Rainbow]
+### Help us solve this quickly (optional)
 
-**Additional context**
-Add any other context about the problem here.
+Write out the steps for how you got from opening the browser to this error appearing:
+
+1. 
+2. 
+3. 
