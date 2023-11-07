@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Fragment, useRef, useState } from "react";
 import { MenuIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 
@@ -10,12 +10,18 @@ type BurgerMenuProps = {
 
 const BurgerMenu = ({ children, className }: BurgerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const initialFocusRef = useRef(null);
 
   return (
     <>
       <MenuIcon className="h-8 w-8" onClick={() => setIsOpen(true)} aria-label="Open menu" />
       <Transition.Root show={isOpen} as={Fragment}>
-        <Dialog as="div" className="fixed inset-0 overflow-hidden" onClose={() => setIsOpen(false)}>
+        <Dialog
+          as="div"
+          className="fixed inset-0 overflow-hidden"
+          onClose={() => setIsOpen(false)}
+          initialFocus={initialFocusRef}
+        >
           <div className="absolute inset-0 overflow-hidden">
             <Transition.Child
               as={Fragment}
