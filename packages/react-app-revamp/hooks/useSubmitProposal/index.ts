@@ -124,7 +124,7 @@ export function useSubmitProposal() {
           network_name: chainName,
           proposal_id: proposalId,
           created_at: Math.floor(Date.now() / 1000),
-          amount_sent: entryCharge ? formatEther(BigInt(entryCharge.costToPropose)) : null,
+          amount_sent: entryCharge ? Number(formatEther(BigInt(entryCharge.costToPropose))) : null,
           percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
         });
       } catch (e) {

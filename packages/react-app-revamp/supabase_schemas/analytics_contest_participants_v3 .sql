@@ -8,7 +8,7 @@ create table
     vote_amount numeric null,
     created_at int4 null,
     deleted boolean null default false,
-    amount_sent character varying null,
+    amount_sent numeric null,
     percentage_to_creator numeric null 
     constraint analytics_contest_participants_v3_pkey primary key (uuid)
   ) tablespace pg_default;
