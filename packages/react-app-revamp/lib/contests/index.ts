@@ -260,8 +260,13 @@ export async function getRewards(contests: any[]) {
   return Promise.all(contests.map(contest => processContestRewardsData(contest.address, contest.network_name)));
 }
 
-export async function getUserContests(currentPage: number, itemsPerPage: number, userAddress: string) {
-  if (isSupabaseConfigured && userAddress) {
+export async function getUserContests(
+  currentPage: number,
+  itemsPerPage: number,
+  profileAddress: string,
+  currentUserAddress: string,
+) {
+  if (isSupabaseConfigured && profileAddress) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(currentPage, itemsPerPage);
@@ -273,7 +278,7 @@ export async function getUserContests(currentPage: number, itemsPerPage: number,
           "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
-        .eq("author_address", userAddress)
+        .eq("author_address", profileAddress)
         .order("created_at", { ascending: false })
         .range(from, to);
 
@@ -282,7 +287,9 @@ export async function getUserContests(currentPage: number, itemsPerPage: number,
         throw new Error(error.message);
       }
 
-      const processedData = await Promise.all(data.map(contest => processContestQualifications(contest, userAddress)));
+      const processedData = await Promise.all(
+        data.map(contest => processContestQualifications(contest, currentUserAddress)),
+      );
 
       return { data: processedData, count };
     } catch (e) {

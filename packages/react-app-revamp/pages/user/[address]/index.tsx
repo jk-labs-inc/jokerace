@@ -15,7 +15,7 @@ export interface UserPageProps {
   ensName: string;
 }
 
-function useContests(creatorAddress: string, initialData: any) {
+function useContests(profileAddress: string, currentUserAddress: string, initialData: any) {
   const [page, setPage] = useState(0);
 
   //@ts-ignore
@@ -27,12 +27,12 @@ function useContests(creatorAddress: string, initialData: any) {
     error,
     isFetching: isContestDataFetching,
   } = useQuery(
-    ["userContests", creatorAddress, page],
+    ["userContests", profileAddress, page, currentUserAddress],
     () => {
-      return getUserContests(page, ITEMS_PER_PAGE, creatorAddress);
+      return getUserContests(page, ITEMS_PER_PAGE, profileAddress, currentUserAddress);
     },
     {
-      enabled: !!creatorAddress,
+      enabled: !!profileAddress,
     },
   );
 
@@ -60,10 +60,12 @@ function useContests(creatorAddress: string, initialData: any) {
 //@ts-ignore
 const Page: NextPage = (props: UserPageProps) => {
   const { address, ensName, initialData } = props;
+  const { address: currentUserAddress } = useAccount();
   const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
-    useContests(address, initialData?.data);
-  const { address: userWalletConnectedAddress } = useAccount();
-  const isCreator = userWalletConnectedAddress === address;
+    useContests(address, currentUserAddress as string, initialData?.data);
+  const isCreator = currentUserAddress === address;
+
+  console.log({ currentUserAddress });
 
   return (
     <LayoutUser address={address}>
