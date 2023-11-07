@@ -1,6 +1,8 @@
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
+import BurgerMenu from "@components/UI/BurgerMenu";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import EthereumAddress from "@components/UI/EtheuremAddress";
+import { FOOTER_LINKS } from "@config/links";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
 import Image from "next/image";
@@ -28,6 +30,8 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   openAccountModal,
   onPreviousStep,
 }) => {
+  const allowedLinks = ["Github", "Mirror", "Twitter", "Telegram", "Report a bug", "Terms"];
+  const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   return (
     <>
       <header className={`flex flex-row items-center justify-between px-[30px] mt-4`}>
@@ -54,6 +58,21 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
             </div>
           ) : null}
         </div>
+        <BurgerMenu>
+          <div className="flex flex-col gap-2">
+            {filteredLinks.map((link, key) => (
+              <a
+                className="font-sabo text-neutral-11 text-[24px] py-2 xs:px-2"
+                key={`footer-link-${key}`}
+                href={link.href}
+                rel="nofollow noreferrer"
+                target="_blank"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </BurgerMenu>
       </header>
       <MainHeaderMobileLayout
         isConnected={isConnected}

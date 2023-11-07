@@ -9,6 +9,7 @@ const LINK_REQUEST_FEATURE =
   "https://github.com/jk-labs-inc/jokerace/issues/new?assignees=&labels=enhancement%2C+question%2C+ux&template=feature_request.md&title=%5BFEAT.%5D";
 const LINK_FAQ = "https://joke.mirror.xyz/4wiTHmaeVgwAG_W2gK1XKeIE2NpKYJxrxKoqNdzR_co";
 const LINK_TOS = "https://github.com/jk-labs-inc/jokerace/blob/main/TOS.pdf";
+const LINK_TELEGRAM = "https://t.me/+rW5X0MqnTXBkOGIx";
 
 export const FOOTER_LINKS = [
   {
@@ -23,6 +24,10 @@ export const FOOTER_LINKS = [
   {
     label: "Twitter",
     href: LINK_TWITTER,
+  },
+  {
+    label: "Telegram",
+    href: LINK_TELEGRAM,
   },
   {
     label: "Github",
