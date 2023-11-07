@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
@@ -10,9 +11,14 @@ const ContestStickyCards = () => {
   if (contestStatus === ContestStatus.VotingClosed) return null;
 
   return (
-    <div className={`flex gap-4 bg-true-black sticky ${displayReloadBanner ? "top-[105px]" : "top-0"} z-10 mt-8`}>
-      <ContestCountdown />
-      <VotingContestQualifier />
+    <div
+      className={`flex flex-col bg-true-black sticky ${displayReloadBanner ? "top-[105px]" : "-top-[1px]"} z-10 mt-8`}
+    >
+      <div className="flex gap-4 py-4">
+        <ContestCountdown />
+        <VotingContestQualifier />
+      </div>
+      <hr className="border-primary-2 border" />
     </div>
   );
 };

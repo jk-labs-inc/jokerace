@@ -1,5 +1,7 @@
+import BurgerMenu from "@components/UI/BurgerMenu";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import { IconTrophy } from "@components/UI/Icons";
+import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
   ROUTE_LANDING,
@@ -34,14 +36,36 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
   const isActive = (route: string) => (router.pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(router.pathname) ? "text-primary-10 transition-colors font-bold" : "";
+  const allowedLinks = ["Github", "Mirror", "Twitter", "Telegram", "Report a bug", "Terms"];
+  const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 
   return (
     <>
-      {address && displayProfile && (
-        <header className="top-0 right-0 left-0 px-4 mt-4">
-          <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
-        </header>
-      )}
+      <div className="flex justify-between items-center px-4 mt-4">
+        {address && displayProfile ? (
+          <div className="top-0 right-0 left-0 ">
+            <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+          </div>
+        ) : null}
+
+        {displayProfile ? (
+          <BurgerMenu>
+            <div className="flex flex-col gap-2">
+              {filteredLinks.map((link, key) => (
+                <a
+                  className="font-sabo text-neutral-11 text-[24px] py-2 xs:px-2"
+                  key={`footer-link-${key}`}
+                  href={link.href}
+                  rel="nofollow noreferrer"
+                  target="_blank"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </BurgerMenu>
+        ) : null}
+      </div>
 
       <header
         className={`flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 ${

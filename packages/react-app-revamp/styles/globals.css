@@ -338,6 +338,11 @@ li {
     content: none !important;
   }
 
+  /* This will only target elements with the class 'prose' inside the create contest prompt component */
+  .create-contest-prompt .prose :where(p):not(:where([class~="not-prose"] *)) {
+    font-size: 20px !important;
+  }
+
   .prose > span:first-child > *:first-child {
     margin-top: 0 !important;
   }

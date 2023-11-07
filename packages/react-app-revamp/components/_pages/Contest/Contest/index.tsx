@@ -65,7 +65,6 @@ const ContestTab = () => {
 
       <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
         <div className="flex flex-col gap-5">
-          <hr className="border-primary-2 border-2" />
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
             <ProposalStatistics contestStatus={contestStatus} />
           )}

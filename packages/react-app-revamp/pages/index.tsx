@@ -1,9 +1,11 @@
 import Explainer from "@components/Explainer";
 import Subscribe from "@components/Subscribe";
+import BurgerMenu from "@components/UI/BurgerMenu";
 import Button from "@components/UI/Button";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import ListContests from "@components/_pages/ListContests";
+import { FOOTER_LINKS } from "@config/links";
 import { ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useQuery } from "@tanstack/react-query";
@@ -66,6 +68,8 @@ const Page: NextPage = props => {
   const [searchValue, setSearchValue] = useState("");
   const { address } = useAccount();
   const [isClient, setIsClient] = useState(false);
+  const allowedLinks = ["Github", "Mirror", "Twitter", "Telegram", "Report a bug", "Terms"];
+  const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 
   useEffect(() => {
     setIsClient(true);
@@ -94,23 +98,41 @@ const Page: NextPage = props => {
   return (
     <>
       <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-4 md:mt-14 lg:mt-6 max-w-[1350px] 3xl:pl-28 2xl:pr-0 ">
-        <div className="mb-8">
-          <p className="hidden lg:flex text-[18px] md:text-[20px] font-bold">
+        <div className="hidden lg:flex mb-8">
+          <p className="text-[18px] md:text-[20px] font-bold">
             contests for communities to make, <br />
             execute, and reward decisions
           </p>
         </div>
 
-        {isClient && address && (
-          <div className="flex items-center gap-2 lg:hidden">
-            <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-              <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
-            </Link>
-            <div>
+        <div className="flex items-center gap-2 lg:hidden">
+          {isClient && address ? (
+            <>
+              <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
+                <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+              </Link>
               <ConnectButtonCustom displayOptions={{ onlyChainSwitcher: true, showChainName: false }} />
-            </div>
+            </>
+          ) : null}
+
+          <div>
+            <BurgerMenu>
+              <div className="flex flex-col gap-2">
+                {filteredLinks.map((link, key) => (
+                  <a
+                    className="font-sabo text-neutral-11 text-[24px] py-2 xs:px-2"
+                    key={`footer-link-${key}`}
+                    href={link.href}
+                    rel="nofollow noreferrer"
+                    target="_blank"
+                  >
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            </BurgerMenu>
           </div>
-        )}
+        </div>
 
         <div className="hidden lg:full-width-grid-cols lg:gap-0">
           <div>

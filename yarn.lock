@@ -5703,6 +5703,11 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
+"@types/gtag.js@^0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@types/gtag.js/-/gtag.js-0.0.17.tgz#4f84440e3424149517b41f60bd787374900d0b55"
+  integrity sha512-OsSO6Yyuygr3DeeTovOY0ppLiAVHoXg4CSanO9/vzDQCV+e8pkZNE+HR2dVxGJfUbtRe2IqzC97PYuHSNUepJw==
+
 "@types/js-cookie@^2.2.6":
   version "2.2.7"
   resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-2.2.7.tgz#226a9e31680835a6188e887f3988e60c04d3f6a3"

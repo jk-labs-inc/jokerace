@@ -6,10 +6,10 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
 import { toastError } from "@components/UI/Toast";
-import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import ContestTab from "@components/_pages/Contest/Contest";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
+import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
@@ -17,6 +17,7 @@ import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { generateUrlContest } from "@helpers/share";
+import { RefreshIcon } from "@heroicons/react/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
@@ -40,8 +41,6 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
-import { RefreshIcon } from "@heroicons/react/outline";
-import { ProposalVotesWrapper } from "@hooks/useProposalVotes/store";
 
 const MAX_MS_TIMEOUT: number = 100000000;
 
@@ -353,9 +352,7 @@ export const getLayout = (page: any) => {
               <CastVotesWrapper>
                 <ContractFactoryWrapper>
                   <RewardsWrapper>
-                    <ProposalVotesWrapper>
-                      <LayoutViewContest>{page}</LayoutViewContest>
-                    </ProposalVotesWrapper>
+                    <LayoutViewContest>{page}</LayoutViewContest>
                   </RewardsWrapper>
                 </ContractFactoryWrapper>
               </CastVotesWrapper>
