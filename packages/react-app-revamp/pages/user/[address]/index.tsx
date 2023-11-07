@@ -65,8 +65,6 @@ const Page: NextPage = (props: UserPageProps) => {
     useContests(address, currentUserAddress as string, initialData?.data);
   const isCreator = currentUserAddress === address;
 
-  console.log({ currentUserAddress });
-
   return (
     <LayoutUser address={address}>
       <Head>
