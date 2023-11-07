@@ -30,6 +30,7 @@ export const toastSuccess = (message: string) => {
 
 export const toastError = (message: string, messageToCopy?: string) => {
   createToast(toast.TYPE.ERROR, <ErrorToast messageToShow={message} messageToCopy={messageToCopy} />, {
+    autoClose: false,
     className: "error-toast",
   });
 };
