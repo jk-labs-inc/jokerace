@@ -34,12 +34,10 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
 
   return (
     <Menu as="div" className="relative inline-block mt-[2px] text-left">
-      <div className="md:-mt-[5px]">
-        <Menu.Button className="inline-flex w-fit items-center justify-center gap-1 rounded-[5px] bg-transparent px-1 py-1 text-[14px] md:text-[16px] text-neutral-11 normal-case">
-          {selectedItem.label}
-          <ChevronDownIcon className="-mr-1 h-4 w-4 text-gray-400" aria-hidden="true" />
-        </Menu.Button>
-      </div>
+      <Menu.Button className="inline-flex w-fit items-center justify-center gap-1 rounded-[5px] bg-transparent px-1 py-1 text-[14px] md:text-[16px] text-neutral-11 normal-case">
+        {selectedItem.label}
+        <ChevronDownIcon className="-mr-1 h-4 w-4 text-gray-400" aria-hidden="true" />
+      </Menu.Button>
 
       <Transition
         as={Fragment}
