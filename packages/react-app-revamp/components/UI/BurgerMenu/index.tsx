@@ -22,6 +22,7 @@ const BurgerMenu = ({ children, className }: BurgerMenuProps) => {
           onClose={() => setIsOpen(false)}
           initialFocus={initialFocusRef}
         >
+          <div tabIndex={-1} ref={initialFocusRef} />
           <div className="absolute inset-0 overflow-hidden">
             <Transition.Child
               as={Fragment}
