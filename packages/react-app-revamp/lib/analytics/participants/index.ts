@@ -8,7 +8,7 @@ interface SaveToAnalyticsContestParticipantsOptions {
   proposal_id?: string;
   vote_amount?: number;
   deleted?: boolean;
-  amount_sent?: string | null;
+  amount_sent?: number | null;
   percentage_to_creator?: number | null;
 }
 
