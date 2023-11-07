@@ -26,6 +26,8 @@ Wallet:
 
 Browser: 
 
+Telegram Handle (so we can reach you if needed): 
+
 ---
 
 ### Help us solve this quickly (optional)
