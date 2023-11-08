@@ -63,6 +63,7 @@ const LayoutViewContest = (props: any) => {
     votesOpen,
     contestAuthorEthereumAddress,
     contestName,
+    contestPrompt,
     rewards,
     isReadOnly,
     isRewardsLoading,
@@ -71,6 +72,7 @@ const LayoutViewContest = (props: any) => {
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { contestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { setContestStatus } = useContestStatusStore(state => state);
+  const [, contestSummary] = contestPrompt.split("|");
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const [previousStatus, setPreviousStatus] = useState(account.status);
@@ -306,7 +308,13 @@ const LayoutViewContest = (props: any) => {
                           <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
                         </div>
                       ) : (
-                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
+                        <ShareDropdown
+                          contestAddress={address}
+                          chain={chainName}
+                          contestName={contestName}
+                          contestSummary={contestSummary}
+                          rewards={rewards}
+                        />
                       )}
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
