@@ -7,7 +7,6 @@ import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
-import { toastError } from "@components/UI/Toast";
 
 const options: Option[] = [
   { value: "hackathon" },
