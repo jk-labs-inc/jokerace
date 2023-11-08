@@ -57,7 +57,7 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
                 className="text-[10px] text-true-black uppercase hover:text-neutral-0 cursor-pointer"
                 onClick={copyToClipboard}
               >
-                {copySuccess ? "Copied!" : "see full error details"}
+                {copySuccess ? "Copied!" : "copy full error details"}
               </p>
             </div>
           ) : null}
@@ -70,7 +70,7 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
           >
             <FlagIcon className="w-4 h-4" />
             <p className="text-[11px] text-true-black uppercase font-bold hover:text-neutral-0">
-              please file a bug report so we can look into this
+              please file a <span className="underline uppercase">bug report</span> so we can look into this
             </p>
           </a>
         </div>
