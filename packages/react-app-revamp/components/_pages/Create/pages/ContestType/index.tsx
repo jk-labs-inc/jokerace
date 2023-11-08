@@ -7,6 +7,7 @@ import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
+import { toastError } from "@components/UI/Toast";
 
 const options: Option[] = [
   { value: "hackathon" },
@@ -74,6 +75,7 @@ const CreateContestType = () => {
         {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
         <div className={`mt-12 ${fadeBg ? "opacity-50" : "opacity-100"}  transition-opacity duration-300 ease-in-out `}>
           <CreateNextButton step={step + 1} onClick={onNextStep} />
+          <button onClick={() => toastError("Failed to upload an image, please try again.")}>trigger toast err</button>
         </div>
       </div>
     </div>

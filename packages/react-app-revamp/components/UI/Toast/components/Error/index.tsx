@@ -1,14 +1,27 @@
-import { ClipboardIcon } from "@heroicons/react/outline";
+import { extractPathSegments } from "@helpers/extractPath";
+import { populateBugReportLink } from "@helpers/githubIssue";
+import { ClipboardIcon, FlagIcon } from "@heroicons/react/outline";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { FC, useState } from "react";
+import { useAccount } from "wagmi";
 
 interface ErrorToastProps {
   messageToShow: string;
   messageToCopy?: string;
 }
 
+const getContestLink = (chainName: string, contestAddress: string) => {
+  return `https://jokerace.xyz/contest/${chainName}/${contestAddress}`;
+};
+
 const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
+  const { asPath } = useRouter();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const { address } = useAccount();
   const [copySuccess, setCopySuccess] = useState(false);
+  const contestLink = getContestLink(chainName, contestAddress);
+  const bugReportLink = populateBugReportLink(contestLink, address ?? "", messageToCopy ?? messageToShow);
 
   const copyToClipboard = async (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -18,6 +31,7 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
     try {
       await navigator.clipboard.writeText(messageToCopy);
       setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 2000);
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
@@ -35,17 +49,31 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
             </p>
           )}
         </div>
-        {messageToCopy && (
-          <div className="flex gap-1 items-center">
-            <ClipboardIcon className="w-4 h-4" />
-            <p
-              className="text-[10px] text-true-black uppercase font-bold hover:text-neutral-0 cursor-pointer"
-              onClick={copyToClipboard}
-            >
-              {copySuccess ? "Copied to clipboard!" : "Copy error details"}
+        <div className="flex flex-col gap-4">
+          <a
+            href={bugReportLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex gap-1 items-center cursor-pointer"
+            onClick={e => e.stopPropagation()}
+          >
+            <FlagIcon className="w-4 h-4" />
+            <p className="text-[10px] text-true-black uppercase font-bold hover:text-neutral-0">
+              please file a bug report so we can look into this
             </p>
-          </div>
-        )}
+          </a>
+          {messageToCopy ? (
+            <div className="flex gap-1 items-center">
+              <ClipboardIcon className="w-4 h-4" />
+              <p
+                className="text-[10px] text-true-black uppercase font-bold hover:text-neutral-0 cursor-pointer"
+                onClick={copyToClipboard}
+              >
+                {copySuccess ? "Copied!" : "see full error details"}
+              </p>
+            </div>
+          ) : null}
+        </div>
       </div>
     </div>
   );
