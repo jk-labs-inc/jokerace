@@ -18,27 +18,23 @@ const buildUrl = (baseUrl: string, params: UrlParams): string => {
   return `${baseUrl}${query}`;
 };
 
-const contestShareText = (contestName: string, contestSummary?: string, rewards?: Reward | null) => {
-  let rewardsText = "";
-  if (rewards && rewards.token && rewards.token.value && rewards.token.symbol) {
-    rewardsText = `to win ${rewards.token.value}$ ${rewards.token.symbol}`;
-  }
+const contestShareText = (contestName: string, rewards?: Reward | null) => {
+  let rewardsText =
+    rewards && rewards.token && rewards.token.value && rewards.token.symbol
+      ? ` to win ${rewards.token.value}$${rewards.token.symbol}`
+      : "";
 
-  const summaryText = contestSummary ? ` lets players compete to ${contestSummary}` : "";
-  const playText = contestSummary ? `\n\n come play it with me ${rewardsText}` : `\n\n come play it with me`;
-
-  return `${contestName} on @jokerace_xyz${summaryText}${playText}`;
+  return `Come play ${contestName} on @jokerace_xyz with me${rewardsText}!\n`;
 };
 
 export const generateLensShareUrlForContest = (
   contestName: string,
-  contestSummary: string,
   contestAddress: string,
   chain: string,
   rewards?: Reward | null,
 ) => {
   const params = {
-    text: contestShareText(contestName, contestSummary, rewards),
+    text: contestShareText(contestName, rewards),
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
   };
   return buildUrl(BASE_LENSTER_URL, params);
@@ -46,13 +42,12 @@ export const generateLensShareUrlForContest = (
 
 export const generateTwitterShareUrlForContest = (
   contestName: string,
-  contestSummary: string,
   contestAddress: string,
   chain: string,
   rewards?: Reward | null,
 ) => {
   const params = {
-    text: contestShareText(contestName, contestSummary, rewards),
+    text: contestShareText(contestName, rewards),
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
   };
   return buildUrl(BASE_TWITTER_URL, params);

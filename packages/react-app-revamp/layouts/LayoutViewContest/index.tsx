@@ -63,7 +63,6 @@ const LayoutViewContest = (props: any) => {
     votesOpen,
     contestAuthorEthereumAddress,
     contestName,
-    contestPrompt,
     rewards,
     isReadOnly,
     isRewardsLoading,
@@ -72,7 +71,6 @@ const LayoutViewContest = (props: any) => {
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { contestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { setContestStatus } = useContestStatusStore(state => state);
-  const [, contestSummary] = contestPrompt.split("|");
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const [previousStatus, setPreviousStatus] = useState(account.status);
@@ -312,7 +310,6 @@ const LayoutViewContest = (props: any) => {
                           contestAddress={address}
                           chain={chainName}
                           contestName={contestName}
-                          contestSummary={contestSummary}
                           rewards={rewards}
                         />
                       )}
