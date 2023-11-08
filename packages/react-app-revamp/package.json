@@ -44,6 +44,7 @@
     "moment": "^2.29.4",
     "next": "^13.5.3",
     "next-pwa": "^5.6.0",
+    "nextjs-current-url": "^1.0.3",
     "node-html-parser": "^6.1.10",
     "papaparse": "^5.4.1",
     "rc-slider": "^10.2.1",
