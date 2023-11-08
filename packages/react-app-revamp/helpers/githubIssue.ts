@@ -7,11 +7,9 @@ export const populateBugReportLink = (contestLink: string, walletAddress: string
 
   return `${bugReportLinkBase}&body=Contest+Link%3A+${encodeURIComponent(
     contestLink,
-  )}%0A%0AYour+Wallet+Address%3A+${encodeURIComponent(
-    walletAddress,
-  )}%0A%0ADescription+-+Please+tap+%22copy+error+details%22+from+the+error+message+and+paste+it+here+if+you're+getting+an+error+message.+If+you+can%2C+please+include+a+screenshot+as+well%3A+${encodeURIComponent(
-    errorDetails,
-  )}%0A%0A---%0A%0AImportant+info%0A%0ADevice%3A+${encodeURIComponent(
+  )}%0A%0AYour+Wallet+Address%3A+${encodeURIComponent(walletAddress)}%0A%0ADescription%3A%0A%0A${encodeURIComponent(
+    'Please tap "copy error details" from the error message and paste it here if you\'re getting an error message. If you can, please include a screenshot as well.', // This is the prompt for the user
+  )}%0A${encodeURIComponent(errorDetails)}%0A%0A---%0A%0AImportant+info%0A%0ADevice%3A+${encodeURIComponent(
     deviceType,
   )}%0AWallet%3A%0ABrowser%3A+${encodeURIComponent(
     browserInfo,
