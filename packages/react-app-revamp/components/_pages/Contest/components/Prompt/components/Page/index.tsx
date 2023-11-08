@@ -26,7 +26,7 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [maxHeight, setMaxHeight] = useState("0px");
   const contentRef = useRef<HTMLDivElement>(null);
-  const [contestType, contestTitle, contestPrompt] = prompt.split("|");
+  const [contestType, contestSummary, contestPrompt] = prompt.split("|");
   const truncatedPrompt = isV3 ? truncateText(contestPrompt, 100) : truncateText(prompt, 100);
   const displayReadMore = isV3 ? contestPrompt.length > 100 : prompt.length > 100;
   const content = isExpanded ? contestPrompt : truncatedPrompt;
@@ -46,7 +46,7 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
       {isV3 ? (
         <div className="flex flex-col gap-4">
           <div className="flex gap-4 items-center">
-            <p className="text-[20px] md:text-[24px] text-neutral-11 font-bold">{contestTitle}</p>
+            <p className="text-[20px] md:text-[24px] text-neutral-11 font-bold">{contestSummary}</p>
             <div className="hidden md:flex items-center px-4 leading-tight py-[1px] bg-neutral-10 rounded-[5px] text-true-black text-[16px] font-bold">
               {contestType}
             </div>

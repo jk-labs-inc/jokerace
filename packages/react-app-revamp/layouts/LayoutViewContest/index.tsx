@@ -306,7 +306,12 @@ const LayoutViewContest = (props: any) => {
                           <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
                         </div>
                       ) : (
-                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
+                        <ShareDropdown
+                          contestAddress={address}
+                          chain={chainName}
+                          contestName={contestName}
+                          rewards={rewards}
+                        />
                       )}
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"

@@ -4,7 +4,7 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
-type Reward = {
+export type Reward = {
   token: {
     symbol: string;
     value: number;
