@@ -16,6 +16,7 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { populateBugReportLink } from "@helpers/githubIssue";
 import { generateUrlContest } from "@helpers/share";
 import { RefreshIcon } from "@heroicons/react/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
@@ -35,6 +36,7 @@ import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -46,6 +48,7 @@ const MAX_MS_TIMEOUT: number = 100000000;
 
 const LayoutViewContest = (props: any) => {
   const { asPath, pathname, reload } = useRouter();
+  const url = useUrl();
   const account = useAccount({
     onConnect({ address }) {
       if (address != undefined && ofacAddresses.includes(address?.toString())) {
@@ -56,7 +59,6 @@ const LayoutViewContest = (props: any) => {
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
   const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainId, chainName } = useContest();
-
   const {
     submissionsOpen,
     votesClose,
@@ -76,6 +78,7 @@ const LayoutViewContest = (props: any) => {
   const [previousStatus, setPreviousStatus] = useState(account.status);
   const didConnect = previousStatus === "disconnected" && account.status === "connected";
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const bugReportLink = populateBugReportLink(url?.href ?? "", account.address ?? "", error);
 
   useEffect(() => {
     if (account.status === "connecting") return;
@@ -194,9 +197,9 @@ const LayoutViewContest = (props: any) => {
           <p className="text-[16px] font-bold text-neutral-11 text-center">
             it looks like we can’t connect to the chain to load this contest—please check the link as well as any
             malware blockers you have installed, or try on another browser or device. <br />
-            if that doesn’t work, please reach out to us at{" "}
-            <a href="https://t.me/+rW5X0MqnTXBkOGIx" target="no_blank" className="text-primary-10">
-              jokerace chat
+            if that doesn’t work,{" "}
+            <a href={bugReportLink} target="no_blank" className="text-primary-10">
+              please file a bug report so we can look into this
             </a>
           </p>
         </div>
