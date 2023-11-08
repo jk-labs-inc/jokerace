@@ -38,10 +38,10 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
   };
 
   return (
-    <div className="flex gap-4 items-center pl-6">
-      <Image src="/toast/sadboi.png" width={40} height={40} alt="error" />
+    <div className="flex gap-4 items-center pl-3 md:pl-6">
+      <Image className="hidden md:block" src="/toast/sadboi.png" width={40} height={40} alt="error" />
       <div className="flex flex-col gap-4 pl-1">
-        <div className="flex flex-col">
+        <div className="flex flex-col max-w-[350px] md:max-w-full">
           <p className="text-[14px] font-medium">{messageToShow}</p>
           {messageToCopy && (
             <p className="text-[10px]">
@@ -66,7 +66,7 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
             <div className="flex gap-1 items-center">
               <ClipboardIcon className="w-4 h-4" />
               <p
-                className="text-[11px] text-true-black uppercase font-bold hover:text-neutral-0 cursor-pointer"
+                className="text-[10px] text-true-black uppercase font-bold hover:text-neutral-0 cursor-pointer"
                 onClick={copyToClipboard}
               >
                 {copySuccess ? "Copied!" : "see full error details"}
