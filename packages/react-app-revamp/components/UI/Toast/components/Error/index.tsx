@@ -70,7 +70,8 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
           >
             <FlagIcon className="w-4 h-4" />
             <p className="text-[11px] text-true-black uppercase font-bold hover:text-neutral-0">
-              please file a <span className="underline uppercase">bug report</span> so we can look into this
+              please file a <span className="underline uppercase text-neutral-2">bug report</span> so we can look into
+              this
             </p>
           </a>
         </div>
