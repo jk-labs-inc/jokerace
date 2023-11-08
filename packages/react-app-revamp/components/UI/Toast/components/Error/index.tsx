@@ -58,7 +58,7 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
             onClick={e => e.stopPropagation()}
           >
             <FlagIcon className="w-4 h-4" />
-            <p className="text-[10px] text-true-black uppercase font-bold hover:text-neutral-0">
+            <p className="text-[11px] text-true-black uppercase font-bold hover:text-neutral-0">
               please file a bug report so we can look into this
             </p>
           </a>
@@ -66,7 +66,7 @@ const ErrorToast: FC<ErrorToastProps> = ({ messageToShow, messageToCopy }) => {
             <div className="flex gap-1 items-center">
               <ClipboardIcon className="w-4 h-4" />
               <p
-                className="text-[10px] text-true-black uppercase font-bold hover:text-neutral-0 cursor-pointer"
+                className="text-[11px] text-true-black uppercase font-bold hover:text-neutral-0 cursor-pointer"
                 onClick={copyToClipboard}
               >
                 {copySuccess ? "Copied!" : "see full error details"}
