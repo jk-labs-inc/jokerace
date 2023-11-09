@@ -31,24 +31,26 @@ const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRe
           messages[i].status = "completed";
           messages[i].message = messages[i].successMessage;
         } catch (error) {
-          setLoading(false);
-          break;
+          toast.dismiss(toastIdRef.current);
+          return;
         } finally {
-          setLoading(false);
-          setStep(i + 1);
+          // Only set loading to false and step to the next if no error occurred
+          if (messages[i].status !== "error") {
+            setLoading(false);
+            setStep(i + 1);
+          }
         }
       }
 
-      // Check if all promises are completed
+      // If all promises complete without error, show the success message
       const allCompleted = messages.every(msg => msg.status === "completed");
-      const timeout = allCompleted ? 4000 : 0;
-
-      // Update the toast with completion message and auto-close timeout
-      toast.update(toastIdRef.current, {
-        render: allCompleted ? successMessage : undefined,
-        type: allCompleted ? toast.TYPE.SUCCESS : undefined,
-        autoClose: timeout,
-      });
+      if (allCompleted) {
+        toast.update(toastIdRef.current, {
+          render: successMessage,
+          type: toast.TYPE.SUCCESS,
+          autoClose: 4000,
+        });
+      }
     };
 
     executePromises();

@@ -5,7 +5,7 @@ import { didUserReject, handleError as handleUtilityError } from "utils/error";
 export function useError() {
   const [error, setError] = useState<string>("");
 
-  const handleError = (e: unknown, defaultMessage: string) => {
+  const handleError = (e: any, defaultMessage: string) => {
     if (didUserReject(e)) {
       toastDismiss();
       return;

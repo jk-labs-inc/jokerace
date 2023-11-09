@@ -1,3 +1,5 @@
+import { ContractFunctionExecutionError, EstimateGasExecutionError } from "viem";
+
 export enum ErrorCodes {
   CALL_EXCEPTION = "CALL_EXCEPTION",
   INSUFFICIENT_FUNDS = "INSUFFICIENT_FUNDS",
@@ -8,11 +10,12 @@ export enum ErrorCodes {
   TRANSACTION_REPLACED = "TRANSACTION_REPLACED",
   UNPREDICTABLE_GAS_LIMIT = "UNPREDICTABLE_GAS_LIMIT",
   EXECUTION_REVERTED = "EXECUTION_REVERTED",
+  DUPLICATE_PROPOSAL = "DUPLICATE_PROPOSAL",
 }
 
 const errorMessages: { [key in ErrorCodes]?: string } = {
   [ErrorCodes.CALL_EXCEPTION]: "A contract call failed. Check the contract's conditions or requirements.",
-  [ErrorCodes.INSUFFICIENT_FUNDS]: "You don't have enough funds for this transaction. Consider gas and data costs.",
+  [ErrorCodes.INSUFFICIENT_FUNDS]: "You don't have enough funds for this transaction! Consider gas and data costs.",
   [ErrorCodes.MISSING_NEW]: "The 'new' keyword is missing in contract deployment.",
   [ErrorCodes.NONCE_EXPIRED]: "This nonce has been used before. Please try with a fresh nonce.",
   [ErrorCodes.NUMERIC_FAULT]: "A numeric operation resulted in an overflow or underflow.",
@@ -24,7 +27,16 @@ const errorMessages: { [key in ErrorCodes]?: string } = {
     "Gas estimation failed. Consider setting a gas limit manually, or ensure the transaction is valid.",
   [ErrorCodes.EXECUTION_REVERTED]:
     "Execution reverted, which could be due to the function call failing its requirements or the transaction running out of gas.",
+  [ErrorCodes.DUPLICATE_PROPOSAL]: "Duplicate proposals are not allowed. Please check your proposal details.",
 };
+
+function handleContractFunctionExecutionError(error: any): { message: string; codeFound: boolean } {
+  if (error.message.includes("duplicate proposals not allowed")) {
+    return { message: errorMessages[ErrorCodes.DUPLICATE_PROPOSAL]!, codeFound: true };
+  }
+
+  return { message: "The contract execution failed for an unknown reason.", codeFound: false };
+}
 
 export function didUserReject(error: any): boolean {
   const errorCode = error?.code ?? error?.cause?.code;
@@ -33,6 +45,14 @@ export function didUserReject(error: any): boolean {
 
 export function handleError(error: any): { message: string; codeFound: boolean } {
   const code = error.code as ErrorCodes;
+
+  if (error instanceof ContractFunctionExecutionError) {
+    return handleContractFunctionExecutionError(error);
+  }
+
+  if (error instanceof EstimateGasExecutionError) {
+    return { message: errorMessages[ErrorCodes.INSUFFICIENT_FUNDS]!, codeFound: true };
+  }
 
   // Check for revert reason ( for now out of gas )
   if (error.message && (error.message.includes("execution reverted") || error.message.includes("out of gas"))) {
@@ -43,7 +63,7 @@ export function handleError(error: any): { message: string; codeFound: boolean }
     return { message: errorMessages[code]!, codeFound: true };
   }
 
-  return { message: error.message, codeFound: false };
+  return { message: error.message ?? error.reason, codeFound: false };
 }
 
 export function isKnownErrorCodeMessage(message: string): boolean {
