@@ -1,6 +1,7 @@
 import Collapsible from "@components/UI/Collapsible";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { formatBalance } from "@helpers/formatBalance";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { EntryCharge } from "@hooks/useDeployContest/types";
@@ -30,9 +31,10 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
   const entryChargeFormatted = formatEther(BigInt(entryCharge.costToPropose));
   const entryChargeHalfFormatted = formatEther(BigInt(entryCharge.costToPropose / 2));
   const commissionValue = entryCharge.percentageToCreator > 0 ? entryChargeHalfFormatted : entryChargeFormatted;
+  const accountBalance = formatEther(accountData.value);
 
   return (
-    <div className="flex flex-col gap-2 w-full md:w-96">
+    <div className="flex flex-col gap-2 w-full md:w-[344px]">
       <div className="flex gap-8">
         <div className="flex flex-col">
           <div className="flex gap-3">
@@ -50,15 +52,17 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
         </div>
 
         <p className={`text-[16px] ${insufficientBalance ? "text-negative-11" : "text-neutral-9"} ml-auto font-bold`}>
-          {accountData.formatted.substring(0, 7)} <span className="uppercase">{accountData.symbol}</span> available
+          {formatBalance(accountBalance)} <span className="uppercase">{accountData.symbol}</span> available
         </p>
       </div>
       <div className={`flex flex-col`}>
         <div className="flex items-center">
-          <div className="flex gap-2">
+          <div
+            className="flex gap-2 cursor-pointer"
+            onClick={() => setIsEntryChargeDetailsOpen(!isEntryChargeDetailsOpen)}
+          >
             <p className="text-[16px] text-neutral-9">entry charge</p>
             <button
-              onClick={() => setIsEntryChargeDetailsOpen(!isEntryChargeDetailsOpen)}
               className={`transition-transform duration-500 ease-in-out transform ${
                 isEntryChargeDetailsOpen ? "" : "rotate-180"
               }`}
