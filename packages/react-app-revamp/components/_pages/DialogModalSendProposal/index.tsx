@@ -43,7 +43,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { chain } = useNetwork();
   const { asPath } = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
-  const { subscribeUser, isEmailExists } = useEmailSignup();
+  const { subscribeUser, checkIfEmailExists } = useEmailSignup();
   const { chainName, address: contestId } = extractPathSegments(asPath);
   const { sendProposal } = useSubmitProposal();
   const {
@@ -53,6 +53,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     emailForSubscription,
     setWantsSubscription,
     setEmailForSubscription,
+    setEmailAlreadyExists,
   } = useSubmitProposalStore(state => state);
   const { votesOpen, entryCharge } = useContestStore(state => state);
   const { data: accountData } = useBalance({
@@ -124,8 +125,9 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     }
 
     // Check if the email already exists
-    const emailExists = await isEmailExists(emailForSubscription);
+    const emailExists = await checkIfEmailExists(emailForSubscription);
     if (emailExists) {
+      setEmailAlreadyExists(true);
       return null;
     }
 

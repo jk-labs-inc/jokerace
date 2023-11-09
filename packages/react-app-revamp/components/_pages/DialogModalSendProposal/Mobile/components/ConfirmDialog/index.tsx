@@ -51,7 +51,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   };
 
   return (
-    <div className="fixed z-50 left-0 right-0 bottom-0 bg-true-black w-full border-t border-neutral-9 rounded-t-[40px] animate-appear px-8 py-8 ">
+    <div className="fixed z-50 left-0 right-0 bottom-0 bg-true-black w-full border-t border-neutral-9 rounded-t-[40px] animate-appear pl-10 pr-8 py-8 ">
       <div className={`flex flex-col ${isSuccess ? "gap-8" : "gap-5"} transition-all`}>
         <div className="flex justify-between items-center">
           <p className="text-[24px] font-bold">{title}</p>

@@ -1,13 +1,14 @@
 import { emailRegex } from "@helpers/regex";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import useEmailSignup from "@hooks/useEmailSignup";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAccount } from "wagmi";
 
 const Subscribe = () => {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
-  const { subscribeUser, isEmailExists, isLoading } = useEmailSignup();
+  const [emailAlreadyExistsMessage, setEmailAlreadyExistsMessage] = useState("");
+  const { subscribeUser, checkIfEmailExists, isLoading } = useEmailSignup();
   const { address } = useAccount();
 
   const handleSubscribe = async () => {
@@ -17,12 +18,20 @@ const Subscribe = () => {
       return;
     }
 
-    const emailExists = await isEmailExists(email);
+    const emailExists = await checkIfEmailExists(email);
     if (!emailExists) {
       await subscribeUser(email, address ?? null);
       setEmail("");
       setEmailError("");
+    } else {
+      setEmailAlreadyExistsMessage("your email has already been subscribed! :)");
     }
+  };
+
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(event.target.value);
+    setEmailError("");
+    setEmailAlreadyExistsMessage("");
   };
 
   const isEmailValid = () => {
@@ -37,10 +46,7 @@ const Subscribe = () => {
             className="bg-true-black w-full pl-4 py-2 text-[14px] md:text-[16px] placeholder-neutral-10 placeholder-bold rounded-[40px] border border-neutral-11 transition-opacity focus:outline-none"
             type="email"
             value={email}
-            onChange={e => {
-              setEmail(e.target.value);
-              setEmailError("");
-            }}
+            onChange={handleEmailChange}
             placeholder="enter email to get updates on top contests..."
             required
           />
@@ -54,7 +60,11 @@ const Subscribe = () => {
           </div>
         </div>
       </div>
-      {emailError && <p className="text-negative-11 text-[16px] font-bold pl-2">{emailError}</p>}
+      {emailError ? (
+        <p className="text-negative-11 text-[16px] font-bold pl-2">{emailError}</p>
+      ) : emailAlreadyExistsMessage ? (
+        <p className="text-positive-11 text-[16px] font-bold pl-2">{emailAlreadyExistsMessage}</p>
+      ) : null}
     </div>
   );
 };
