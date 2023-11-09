@@ -4,6 +4,7 @@ export const quartz: Chain = {
   id: 8881,
   name: "quartz",
   network: "quartz",
+  iconUrl: "/quartz.svg",
   nativeCurrency: {
     decimals: 18,
     name: "QTZ",

@@ -4,6 +4,7 @@ export const vitruveo: Chain = {
   id: 1490,
   name: "vitruveo",
   network: "vitruveo",
+  iconUrl: "/vitruveo.svg",
   nativeCurrency: {
     decimals: 18,
     name: "VTRU",

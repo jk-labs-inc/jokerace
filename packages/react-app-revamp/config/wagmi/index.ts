@@ -238,4 +238,7 @@ export const chainsImages: ChainImages = {
   fuse: "/fuse.svg",
   kroma: "/kroma.svg",
   mainnet: "/ethereum.svg",
+  quartz: "/quartz.svg",
+  unique: "/unique.svg",
+  vitruveo: "/vitruveo.svg",
 };
