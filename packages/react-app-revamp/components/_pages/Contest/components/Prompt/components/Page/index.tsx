@@ -26,10 +26,12 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [maxHeight, setMaxHeight] = useState("0px");
   const contentRef = useRef<HTMLDivElement>(null);
-  const [contestType, contestTitle, contestPrompt] = prompt.split("|");
-  const truncatedPrompt = isV3 ? truncateText(contestPrompt, 100) : truncateText(prompt, 100);
-  const displayReadMore = isV3 ? contestPrompt.length > 100 : prompt.length > 100;
-  const content = isExpanded ? contestPrompt : truncatedPrompt;
+  const [contestType, contestTitle, contestSummary, contestEvaluate] = prompt.split("|");
+  const truncatedSummaryPrompt = isV3 ? truncateText(contestSummary, 100) : truncateText(prompt, 100);
+  const truncatedEvaluatePrompt = truncateText(contestEvaluate, 100 - truncatedSummaryPrompt.length);
+  const displayReadMore = isV3 ? contestSummary.length > 100 : prompt.length > 100;
+  const summaryContent = isExpanded ? contestSummary : truncatedSummaryPrompt;
+  const evualuteContent = isExpanded ? contestEvaluate : truncatedEvaluatePrompt;
 
   useEffect(() => {
     if (contentRef.current) {
@@ -58,8 +60,14 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
                 style={{ maxHeight: isExpanded ? maxHeight : "10em" }}
                 ref={contentRef}
               >
-                <div className="prose prose-invert pl-5">
-                  <Interweave content={content} matchers={[new UrlMatcher("url")]} />
+                <div className="prose prose-invert pl-5 flex flex-col">
+                  <Interweave content={summaryContent} matchers={[new UrlMatcher("url")]} />
+                  {contestEvaluate ? (
+                    <div>
+                      <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] mt-10"></div>
+                      <Interweave content={evualuteContent} matchers={[new UrlMatcher("url")]} />
+                    </div>
+                  ) : null}
                 </div>
               </div>
               {displayReadMore && (
