@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
 import { toastLoading } from "@components/UI/Toast";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -45,9 +45,9 @@ export const DistributableReward = (props: DistributableRewardProps) => {
           <div data-tooltip-id={`tooltip-${queryTokenBalance?.data?.symbol}`}>
             {queryRankRewardsReleasable.data > 0 && (
               <ButtonV3
-                disabled={contestStatus !== ContestStatus.VotingClosed || txRelease.isLoading}
-                size="extraSmall"
-                color="bg-gradient-distribute"
+                isDisabled={contestStatus !== ContestStatus.VotingClosed || txRelease.isLoading}
+                size={ButtonSize.EXTRA_SMALL}
+                colorClass="bg-gradient-distribute"
                 onClick={async () => {
                   toastLoading("distributing rewards...");
                   setIsLoading(true);

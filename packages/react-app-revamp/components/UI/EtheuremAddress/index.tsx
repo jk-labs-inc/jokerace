@@ -1,22 +1,52 @@
 /* eslint-disable @next/next/no-img-element */
 import { ROUTE_VIEW_USER } from "@config/routes";
+import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import { useAvatarStore } from "@hooks/useAvatar";
 import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEnsAvatar, fetchEnsName, mainnet } from "@wagmi/core";
+import { fetchEnsAvatar, fetchEnsName } from "@wagmi/core";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { FC } from "react";
 
 const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
 
 interface EthereumAddressProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
+  size?: "small" | "medium" | "large";
   textualVersion?: boolean;
   avatarVersion?: boolean;
   includeSocials?: boolean;
-  isLarge?: boolean;
 }
+
+interface AvatarProps {
+  src: string;
+  size: "small" | "medium" | "large";
+}
+
+const SIZES = {
+  small: {
+    avatarSizeClass: "w-8 h-8",
+    textSizeClass: "text-[16px]",
+  },
+  medium: {
+    avatarSizeClass: "w-14 h-14",
+    textSizeClass: "text-[18px] font-sabo",
+  },
+  large: {
+    avatarSizeClass: "w-[100px] h-[100px]",
+    textSizeClass: "text-[24px] font-sabo",
+  },
+};
+
+const Avatar: FC<AvatarProps> = ({ src, size }) => {
+  const { avatarSizeClass } = SIZES[size];
+  return (
+    <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
+      <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={src} alt="avatar" />
+    </div>
+  );
+};
 
 const EthereumAddress = ({
   textualVersion,
@@ -24,14 +54,12 @@ const EthereumAddress = ({
   ethereumAddress,
   includeSocials,
   shortenOnFallback,
-  isLarge,
+  size = "small",
 }: EthereumAddressProps) => {
-  const router = useRouter();
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
   const { setAvatar } = useAvatarStore(state => state);
-  const avatarSizeClass = isLarge ? "w-[100px] h-[100px]" : "w-8 h-8";
-  const textSizeClass = isLarge ? "text-[24px] font-sabo" : "text-[16px]";
-  const etherscan = mainnet.blockExplorers.etherscan.url;
+  const { avatarSizeClass, textSizeClass } = SIZES[size];
+  const etherscan = mainnet.blockExplorers?.etherscan.url;
 
   const fetchAvatarAndProfile = async () => {
     try {
@@ -83,7 +111,12 @@ const EthereumAddress = ({
 
   if (textualVersion) {
     return (
-      <Link target="_blank" rel="noopener noreferrer" href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}>
+      <Link
+        className="text-[16px] font-bold"
+        target="_blank"
+        rel="noopener noreferrer"
+        href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
+      >
         {displayName}
       </Link>
     );
@@ -95,13 +128,17 @@ const EthereumAddress = ({
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
         className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}
       >
-        <img src={avatarUrl} alt="avatar" />
+        <Avatar src={avatarUrl} size={size} />
       </Link>
     );
   }
 
   return (
-    <span className={`flex ${isLarge ? "gap-6" : "gap-2"} items-center ${textSizeClass} text-neutral-11 font-bold`}>
+    <span
+      className={`flex ${
+        size === "large" ? "gap-6" : size === "medium" ? "gap-4" : "gap-2"
+      } items-center ${textSizeClass} text-neutral-11 font-bold`}
+    >
       <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
         <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={avatarUrl} alt="avatar" />
       </div>

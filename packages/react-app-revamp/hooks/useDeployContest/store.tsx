@@ -1,22 +1,17 @@
 import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
-import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { create } from "zustand";
+import { EntryCharge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
 
 type ContestDeployError = {
   step: number;
   message: string;
 };
 
-export type VotingMerkle = {
-  merkleRoot: string;
-  voters: Recipient[];
-};
-
-export type SubmissionMerkle = {
-  merkleRoot: string;
-  submitters: Recipient[];
+type Prompt = {
+  summarize: string;
+  evaluateVoters: string;
 };
 
 export interface DeployContestState {
@@ -30,18 +25,31 @@ export interface DeployContestState {
   type: string;
   title: string;
   summary: string;
-  prompt: string;
+  prompt: Prompt;
   submissionOpen: Date;
   votingOpen: Date;
   votingClose: Date;
-  votingRequirements: string;
-  submissionRequirements: string;
-  votingAllowlist: Record<string, number>;
+  votingRequirements: VotingRequirements;
+  submissionRequirementsOption: string;
+  votingAllowlist: {
+    manual: Record<string, number>;
+    prefilled: Record<string, number>;
+  };
+  votingMerkle: {
+    manual: VotingMerkle | null;
+    prefilled: VotingMerkle | null;
+  };
   votingAllowlistFields: VotingFieldObject[];
-  votingMerkle: VotingMerkle | null;
-  submissionAllowList: Record<string, number>;
+  submissionAllowlist: {
+    manual: Record<string, number>;
+    prefilled: Record<string, number>;
+  };
   submissionAllowlistFields: SubmissionFieldObject[];
-  submissionMerkle: SubmissionMerkle | null;
+  submissionMerkle: {
+    manual: SubmissionMerkle | null;
+    prefilled: SubmissionMerkle | null;
+  };
+  submissionRequirements: SubmissionRequirements;
   allowedSubmissionsPerUser: number;
   maxSubmissions: number;
   downvote: boolean;
@@ -51,23 +59,25 @@ export interface DeployContestState {
   step: number;
   furthestStep: number;
   submissionTab: number;
-
+  votingTab: number;
+  entryCharge: EntryCharge;
   setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
-  setPrompt: (prompt: string) => void;
+  setPrompt: (prompt: Prompt) => void;
   setSubmissionOpen: (submissionOpen: Date) => void;
   setVotingOpen: (votingOpen: Date) => void;
   setVotingClose: (votingClose: Date) => void;
-  setVotingRequirements: (votingRequirements: string) => void;
-  setSubmissionRequirements: (submissionRequirements: string) => void;
-  setVotingAllowlist: (votingAllowlist: Record<string, number>) => void;
+  setVotingRequirements: (votingRequirements: VotingRequirements) => void;
+  setSubmissionRequirementsOption: (submissionRequirementsOption: string) => void;
+  setVotingAllowlist: (type: "manual" | "prefilled", votingAllowlist: Record<string, number>) => void;
+  setVotingMerkle: (type: "manual" | "prefilled", votingMerkle: VotingMerkle | null) => void;
   setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
-  setVotingMerkle: (votingInfo: VotingMerkle | null) => void;
-  setSubmissionAllowlist: (submissionAllowlist: Record<string, number>) => void;
+  setSubmissionAllowlist: (type: "manual" | "prefilled", submissionAllowlist: Record<string, number>) => void;
+  setSubmissionMerkle: (type: "manual" | "prefilled", submissionMerkle: SubmissionMerkle | null) => void;
   setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) => void;
-  setSubmissionMerkle: (submissionInfo: SubmissionMerkle | null) => void;
+  setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => void;
   setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
   setMaxSubmissions: (maxSubmissions: number) => void;
   setDownvote: (downvote: boolean) => void;
@@ -77,6 +87,8 @@ export interface DeployContestState {
   setStep: (step: number) => void;
   setFurthestStep: (furthestStep: number) => void;
   setSubmissionTab: (tab: number) => void;
+  setVotingTab: (tab: number) => void;
+  setEntryCharge: (entryCharge: EntryCharge) => void;
   reset: () => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
@@ -99,19 +111,53 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     type: "",
     title: "",
     summary: "",
-    prompt: "",
+    prompt: {
+      summarize: "",
+      evaluateVoters: "",
+    },
     submissionOpen: initialSubmissionOpen,
     votingOpen: initialVotingOpen,
     votingClose: initialVotingClose,
-    votingRequirements: "",
-    submissionRequirements: "anyone",
-    votingAllowlist: {},
+    submissionRequirementsOption: "anyone",
+    votingAllowlist: {
+      manual: {},
+      prefilled: {},
+    },
     votingAllowlistFields: Array(15).fill(EMPTY_FIELDS_VOTING),
-    votingMerkle: null,
-    submissionAllowList: {},
+    votingMerkle: {
+      manual: null,
+      prefilled: null,
+    },
+    votingRequirements: {
+      type: "erc721",
+      chain: "mainnet",
+      tokenAddress: "",
+      minTokensRequired: 1,
+      powerType: "token",
+      powerValue: 100,
+      timestamp: Date.now(),
+    },
+    submissionAllowlist: {
+      manual: {},
+      prefilled: {},
+    },
     submissionAllowlistFields: Array(15).fill(EMPTY_FIELDS_SUBMISSION),
-    submissionMerkle: null,
-    allowedSubmissionsPerUser: 0,
+    submissionMerkle: {
+      manual: null,
+      prefilled: null,
+    },
+    submissionRequirements: {
+      type: "erc721",
+      chain: "mainnet",
+      tokenAddress: "",
+      minTokensRequired: 1,
+      timestamp: Date.now(),
+    },
+    entryCharge: {
+      costToPropose: 0,
+      percentageToCreator: 50,
+    },
+    allowedSubmissionsPerUser: 2,
     maxSubmissions: 100,
     downvote: true,
     isLoading: false,
@@ -120,6 +166,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     step: 0,
     furthestStep: 0,
     submissionTab: 0,
+    votingTab: 0,
   };
 
   return {
@@ -130,20 +177,48 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),
-    setPrompt: (prompt: string) => set({ prompt }),
+    setPrompt: (prompt: Prompt) => set({ prompt }),
     setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
     setVotingClose: (votingClose: Date) => set({ votingClose }),
-    setVotingRequirements: (votingRequirements: string) => set({ votingRequirements }),
-    setSubmissionRequirements: (submissionRequirements: string) => set({ submissionRequirements }),
-    setVotingAllowlist: (votingAllowlist: Record<string, number>) => set({ votingAllowlist }),
+    setSubmissionRequirementsOption: (submissionRequirementsOption: string) => set({ submissionRequirementsOption }),
+    setVotingAllowlist: (type, votingAllowlist) => {
+      set(state => ({
+        votingAllowlist: {
+          ...state.votingAllowlist,
+          [type]: votingAllowlist,
+        },
+      }));
+    },
+    setVotingMerkle: (type, votingMerkle) => {
+      set(state => ({
+        votingMerkle: {
+          ...state.votingMerkle,
+          [type]: votingMerkle,
+        },
+      }));
+    },
     setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => set({ votingAllowlistFields }),
-    setVotingMerkle: (votingMerkle: VotingMerkle | null) => set({ votingMerkle }),
-    setSubmissionAllowlist: (submissionAllowlist: Record<string, number>) =>
-      set({ submissionAllowList: submissionAllowlist }),
+    setSubmissionAllowlist: (type, submissionAllowlist) => {
+      set(state => ({
+        submissionAllowlist: {
+          ...state.submissionAllowlist,
+          [type]: submissionAllowlist,
+        },
+      }));
+    },
+    setVotingRequirements: (votingRequirements: VotingRequirements) => set({ votingRequirements }),
+    setSubmissionMerkle: (type, submissionMerkle) => {
+      set(state => ({
+        submissionMerkle: {
+          ...state.submissionMerkle,
+          [type]: submissionMerkle,
+        },
+      }));
+    },
     setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) =>
       set({ submissionAllowlistFields }),
-    setSubmissionMerkle: (submissionMerkle: SubmissionMerkle | null) => set({ submissionMerkle }),
+    setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => set({ submissionRequirements }),
     setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
     setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),
     setDownvote: (downvote: boolean) => set({ downvote }),
@@ -163,7 +238,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setStep: (step: number) => set({ step }),
     setFurthestStep: (furthestStep: number) => set({ furthestStep }),
     setSubmissionTab: (submissionTab: number) => set({ submissionTab }),
-
+    setVotingTab: (votingTab: number) => set({ votingTab }),
+    setEntryCharge: (entryCharge: EntryCharge) => set({ entryCharge }),
     reset: () => set({ ...initialState }),
   };
 });

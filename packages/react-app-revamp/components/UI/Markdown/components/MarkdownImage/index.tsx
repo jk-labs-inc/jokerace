@@ -8,7 +8,7 @@ interface MarkdownImageProps {
 
 const MarkdownImage: FC<MarkdownImageProps> = ({ src, imageSize }) => {
   const [error, setError] = useState(false);
-  const size = imageSize === "compact" ? "w-[170px]" : "w-[350px]";
+  const size = imageSize === "compact" ? "w-[100px]" : "w-[350px]";
 
   if (!src) {
     return <p>No image available</p>;

@@ -1,4 +1,4 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
@@ -7,9 +7,10 @@ import { FC, MouseEventHandler, useEffect, useState } from "react";
 interface CreateNextButtonProps {
   step: number;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  enableEnter?: boolean;
 }
 
-const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
+const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, enableEnter = true }) => {
   const { errors } = useDeployContestStore(state => state);
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
@@ -38,10 +39,10 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
     <div className="flex gap-4 items-start mb-5">
       <div className={`flex flex-col items-center gap-2`}>
         <ButtonV3
-          color={`bg-gradient-next rounded-[10px] font-bold ${
+          colorClass={`bg-gradient-next rounded-[10px] font-bold ${
             shake ? "animate-shakeTop" : ""
           } text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
-          size="large"
+          size={ButtonSize.LARGE}
           onClick={handleClick}
         >
           next
@@ -59,12 +60,14 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
           </div>
         )}
       </div>
-      <div className="hidden lg:flex lg:items-center mt-[5px] gap-[5px]">
-        <p className="text-[16px]">
-          press <span className="font-bold capitalize">enter</span>
-        </p>
-        <Image src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
-      </div>
+      {enableEnter ? (
+        <div className="hidden lg:flex lg:items-center mt-[5px] gap-[5px]">
+          <p className="text-[16px]">
+            press <span className="font-bold capitalize">enter</span>
+          </p>
+          <Image src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
+        </div>
+      ) : null}
     </div>
   );
 };

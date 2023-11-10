@@ -16,7 +16,7 @@ const Header: React.FC = () => {
     return <CreateFlowHeader />;
   }
 
-  return <MainHeader />;
+  return <MainHeader showProfile={!pathname.includes("submission")} />;
 };
 
 export default Header;

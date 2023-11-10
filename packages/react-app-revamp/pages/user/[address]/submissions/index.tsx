@@ -10,10 +10,6 @@ import { FC, useState } from "react";
 import { UserPageProps } from "..";
 function useUserSubmissions(userAddress: string) {
   const [page, setPage] = useState(0);
-  const queryOptions = {
-    keepPreviousData: true,
-    staleTime: 5000,
-  };
 
   const {
     data: userSubmissionsData,
@@ -25,7 +21,6 @@ function useUserSubmissions(userAddress: string) {
       return getUserSubmissions(userAddress, page, ITEMS_PER_PAGE);
     },
     {
-      ...queryOptions,
       enabled: !!userAddress,
     },
   );

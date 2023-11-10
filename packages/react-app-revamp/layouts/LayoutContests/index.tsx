@@ -60,7 +60,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
             <Link href={link.href} key={link.href}>
               <div
                 ref={el => (tabRefs.current[index] = el)}
-                className={`navLink-desktop whitespace-nowrap font-sabo text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
+                className={`navLink-desktop whitespace-nowrap font-sabo text-[14px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
                   pathname === link.href ? "text-primary-10" : "text-neutral-11"
                 }`}
               >

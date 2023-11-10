@@ -3,7 +3,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { fetchBalance, FetchBalanceResult, readContract } from "@wagmi/core";
+import { fetchBalance, readContract } from "@wagmi/core";
 import { BigNumber, ethers, utils } from "ethers";
 import moment from "moment";
 import { SearchOptions } from "types/search";
@@ -230,13 +230,14 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
       const result = await supabase
         .from(table)
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .textSearch(searchColumn, `${searchString}`, {
           type: "websearch",
           config: language,
         })
+        .eq("hidden", false)
         .range(from, to)
         .order(orderBy, { ascending });
 
@@ -255,9 +256,47 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
     }
   }
 }
-
 export async function getRewards(contests: any[]) {
   return Promise.all(contests.map(contest => processContestRewardsData(contest.address, contest.network_name)));
+}
+
+export async function getUserContests(
+  currentPage: number,
+  itemsPerPage: number,
+  profileAddress: string,
+  currentUserAddress: string,
+) {
+  if (isSupabaseConfigured && profileAddress) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(currentPage, itemsPerPage);
+
+    try {
+      const result = await supabase
+        .from("contests_v3")
+        .select(
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
+          { count: "exact" },
+        )
+        .eq("author_address", profileAddress)
+        .order("created_at", { ascending: false })
+        .range(from, to);
+
+      const { data, count, error } = result;
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const processedData = await Promise.all(
+        data.map(contest => processContestQualifications(contest, currentUserAddress)),
+      );
+
+      return { data: processedData, count };
+    } catch (e) {
+      console.error(e);
+    }
+    return { data: [], count: 0 };
+  }
 }
 
 export async function getFeaturedContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
@@ -271,7 +310,7 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
     const { data, count, error } = await config.supabase
       .from("contests_v3")
       .select(
-        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
+        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
         { count: "exact" },
       )
       .is("featured", true)
@@ -315,9 +354,10 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
       const result = await supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
+        .eq("hidden", false)
         .lte("start_at", new Date().toISOString())
         .gte("end_at", new Date().toISOString())
         .order("end_at", { ascending: true })
@@ -349,10 +389,10 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
       const result = await supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
-        // all rows whose votes end date is < to the current date.
+        .eq("hidden", false)
         .lt("end_at", new Date().toISOString())
         .order("end_at", { ascending: false })
         .range(from, to);
@@ -382,10 +422,11 @@ export async function getUpcomingContests(currentPage: number, itemsPerPage: num
       const result = await supabase
         .from("contests_v3")
         .select(
-          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot",
+          "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
+
           { count: "exact" },
         )
-        // all rows whose submissions start date is > to the current date.
+        .eq("hidden", false)
         .gt("start_at", new Date().toISOString())
         .order("start_at", { ascending: false })
         .range(from, to);

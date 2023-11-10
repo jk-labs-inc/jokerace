@@ -1,8 +1,10 @@
+import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
+import BurgerMenu from "@components/UI/BurgerMenu";
+import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import EthereumAddress from "@components/UI/EtheuremAddress";
+import { FOOTER_LINKS } from "@config/links";
 import { ROUTE_VIEW_USER } from "@config/routes";
-import { HomeIcon } from "@heroicons/react/outline";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import Link from "next/link";
 import { FC } from "react";
@@ -28,53 +30,57 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   openAccountModal,
   onPreviousStep,
 }) => {
+  const allowedLinks = ["Github", "Mirror", "Twitter", "Telegram", "Report a bug", "Terms"];
+  const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   return (
-    <header className="flex flex-row items-center justify-between px-4 mt-4">
-      {pageAction === "create" && step > 0 && (
-        <div onClick={onPreviousStep}>
-          <Image src="/create-flow/back_mobile.svg" className="mt-[5px]" width={30} height={30} alt="back" />
-        </div>
-      )}
-
-      <Link href={"/"}>
-        <HomeIcon width={30} height={30} />
-      </Link>
-
-      <div className="flex items-center gap-5 text-[18px] md:text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header">
-        <p
-          className={`cursor-pointer ${pageAction === "play" ? "text-primary-10" : "text-neutral-11"}`}
-          onClick={() => setPageAction?.("play")}
-        >
-          play
-        </p>
-        <p
-          className={`cursor-pointer ${pageAction === "create" ? "text-primary-10" : "text-neutral-11"}`}
-          onClick={() => setPageAction?.("create")}
-        >
-          create
-        </p>
-      </div>
-      <div
-        onClick={isConnected ? openAccountModal : openConnectModal}
-        className="md:hidden transition-all duration-500"
-      >
-        {isConnected ? (
-          <div className="flex gap-2">
-            {address && (
-              <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-                <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
-              </Link>
-            )}
-            <Image width={30} height={30} src="/create-flow/wallet-connected.svg" alt="wallet-connected" />
+    <>
+      <header className={`flex flex-row items-center justify-between px-[30px] mt-4`}>
+        {pageAction === "create" && step > 0 && (
+          <div onClick={onPreviousStep}>
+            <Image src="/create-flow/back_mobile.svg" className="mt-[5px]" width={30} height={30} alt="back" />
           </div>
-        ) : (
-          <Image width={30} height={30} src="/create-flow/wallet.svg" alt="wallet" />
         )}
-      </div>
-      <div className="hidden md:flex">
-        <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
-      </div>
-    </header>
+
+        <div
+          onClick={isConnected ? openAccountModal : openConnectModal}
+          className="md:hidden transition-all duration-500"
+        >
+          {isConnected ? (
+            <div className="flex gap-2 items-center">
+              {address && (
+                <>
+                  <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
+                    <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+                  </Link>
+                  <ConnectButtonCustom displayOptions={{ onlyChainSwitcher: true, showChainName: false }} />
+                </>
+              )}
+            </div>
+          ) : null}
+        </div>
+        <BurgerMenu>
+          <div className="flex flex-col gap-2">
+            {filteredLinks.map((link, key) => (
+              <a
+                className="font-sabo text-neutral-11 text-[24px] py-2 xs:px-2"
+                key={`footer-link-${key}`}
+                href={link.href}
+                rel="nofollow noreferrer"
+                target="_blank"
+              >
+                {link.label}
+              </a>
+            ))}
+          </div>
+        </BurgerMenu>
+      </header>
+      <MainHeaderMobileLayout
+        isConnected={isConnected}
+        address={address}
+        openAccountModal={openAccountModal}
+        openConnectModal={openConnectModal}
+      />
+    </>
   );
 };
 

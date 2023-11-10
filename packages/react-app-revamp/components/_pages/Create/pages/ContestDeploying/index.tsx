@@ -20,7 +20,8 @@ export const useShowRewardsStore = create<ShowRewardsStore>(set => ({
 const WARNING_MESSAGE_THRESHOLD = 10000;
 
 const CreateContestDeploying = () => {
-  const { isSuccess, deployContestData, votingMerkle } = useDeployContestStore(state => state);
+  const { isSuccess, deployContestData, votingMerkle: votingMerkleData } = useDeployContestStore(state => state);
+  const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
   const router = useRouter();
   const { setShowRewards } = useShowRewardsStore(state => state);
 

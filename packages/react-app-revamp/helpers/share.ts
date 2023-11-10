@@ -1,27 +1,97 @@
+import { Reward } from "@hooks/useContest/store";
 import { copyToClipboard } from "./copyToClipboard";
 
-export const generateLensShareUrl = (contestName: string, contestAddress: string, chain: string) => {
-  const baseLensterUrl = "https://lenster.xyz/?";
-  const text = encodeURIComponent(`just launched a contest on jokerace, ${contestName} — come play to win`);
-  const shareUrl = encodeURIComponent(`https://jokerace.xyz/contest/${chain}/${contestAddress}`);
+interface UrlParams {
+  [key: string]: string;
+}
 
-  const lensShareUrl = `${baseLensterUrl}text=${text}&url=${shareUrl}`;
+const BASE_LENSTER_URL = "https://hey.xyz/?";
+const BASE_JOKERACE_URL = "https://jokerace.xyz/contest/";
+const BASE_TWITTER_URL = "https://twitter.com/intent/tweet?";
+const BASE_LINKEDIN_URL = "https://www.linkedin.com/sharing/share-offsite/?";
+const BASE_FACEBOOK_URL = "https://www.facebook.com/sharer/sharer.php?";
 
-  return lensShareUrl;
+const buildUrl = (baseUrl: string, params: UrlParams): string => {
+  const query = Object.entries(params)
+    .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+    .join("&");
+  return `${baseUrl}${query}`;
 };
 
-export const generateTwitterShareUrl = (contestName: string, contestAddress: string, chain: string) => {
-  const baseTwitterUrl = "https://twitter.com/intent/tweet?";
-  const text = encodeURIComponent(`just launched a contest on jokerace, ${contestName} — come play to win`);
-  const shareUrl = encodeURIComponent(`https://jokerace.xyz/contest/${chain}/${contestAddress}`);
-  const viaParam = encodeURIComponent("jokerace_xyz");
+const contestShareText = (contestName: string, rewards?: Reward | null) => {
+  let rewardsText =
+    rewards && rewards.token && rewards.token.value && rewards.token.symbol
+      ? ` to win ${rewards.token.value}$${rewards.token.symbol}`
+      : "";
 
-  const twitterShareUrl = `${baseTwitterUrl}text=${text}&url=${shareUrl}&via=${viaParam}`;
+  return `Come play ${contestName} on @jokerace_xyz with me${rewardsText}!\n`;
+};
 
-  return twitterShareUrl;
+export const generateLensShareUrlForContest = (
+  contestName: string,
+  contestAddress: string,
+  chain: string,
+  rewards?: Reward | null,
+) => {
+  const params = {
+    text: contestShareText(contestName, rewards),
+    url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
+  };
+  return buildUrl(BASE_LENSTER_URL, params);
+};
+
+export const generateTwitterShareUrlForContest = (
+  contestName: string,
+  contestAddress: string,
+  chain: string,
+  rewards?: Reward | null,
+) => {
+  const params = {
+    text: contestShareText(contestName, rewards),
+    url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
+  };
+  return buildUrl(BASE_TWITTER_URL, params);
+};
+
+export const generateLensShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
+  const params = {
+    url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
+  };
+  return buildUrl(BASE_LENSTER_URL, params);
+};
+
+export const generateTwitterShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
+  const params = {
+    url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
+    via: "jokerace_xyz",
+  };
+  return buildUrl(BASE_TWITTER_URL, params);
+};
+
+export const generateLinkedInShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
+  const params = {
+    url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
+  };
+  return buildUrl(BASE_LINKEDIN_URL, params);
+};
+
+export const generateFacebookShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
+  const params = {
+    u: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
+  };
+  return buildUrl(BASE_FACEBOOK_URL, params);
 };
 
 export const generateUrlToCopy = (contestAddress: string, chain: string) => {
-  const url = `https://jokerace.xyz/contest/${chain}/${contestAddress}`;
+  const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}`;
   copyToClipboard(url, "Contest url copied to clipboard!");
+};
+
+export const generateUrlSubmissions = (contestAddress: string, chain: string, proposalId: string) => {
+  const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${proposalId}`;
+  return url;
+};
+export const generateUrlContest = (contestAddress: string, chain: string) => {
+  const url = `${BASE_JOKERACE_URL}${chain}/${contestAddress}`;
+  return url;
 };

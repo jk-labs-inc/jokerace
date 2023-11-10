@@ -1,6 +1,5 @@
-import { Recipient } from "lib/merkletree/generateMerkleTree";
 import moment from "moment";
-import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
+import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
 export type StateKey =
   | "type"
@@ -35,12 +34,17 @@ const typeValidation = (type: string) => {
   return "";
 };
 
-const promptValidation = (prompt: string) => {
+const promptValidation = (prompt: { summarize: string; evaluateVoters: string }) => {
   let parser = new DOMParser();
-  const doc = parser.parseFromString(prompt, "text/html");
 
-  if (!doc.body.textContent?.trim()) {
-    return "Contest prompt length shouldn't be empty";
+  let docSummarize = parser.parseFromString(prompt.summarize, "text/html");
+  if (!docSummarize.body.textContent?.trim()) {
+    return "Contest summary shouldn't be empty";
+  }
+
+  let docEvaluateVoters = parser.parseFromString(prompt.evaluateVoters, "text/html");
+  if (!docEvaluateVoters.body.textContent?.trim()) {
+    return "Voter evaluation guidelines shouldn't be empty";
   }
 
   return "";
@@ -68,15 +72,22 @@ const votingMerkleValidation = (allowList: Record<string, number>) => {
   return "";
 };
 
-const submissionMerkleValidation = (allowList: Record<string, number>, submissionTab: string) => {
-  if (submissionTab === "submissionMerkle" && Object.keys(allowList).length === 0) {
+const votingRequirementsValidation = (allowList: Record<string, number>) => {
+  if (!allowList || Object.keys(allowList).length === 0) {
     return "Merkle tree is empty";
   }
   return "";
 };
 
-const submissionRequirementsValidation = (submissionRequirements: string, submissionTab: string) => {
-  if (submissionTab === "submissionRequirements" && !submissionRequirements) {
+const submissionMerkleValidation = (allowList: Record<string, number>) => {
+  if (Object.keys(allowList).length === 0) {
+    return "Merkle tree is empty";
+  }
+  return "";
+};
+
+const submissionRequirementsValidation = (submissionRequirements: string) => {
+  if (!submissionRequirements) {
     return "Submission requirements should be a valid field";
   }
   return "";
@@ -95,7 +106,16 @@ export const validationFunctions = new Map<number, { validation: (...args: any[]
         { validation: votingEndsValidation, stateKeys: ["votingClose", "votingOpen", "submissionOpen"] },
       ],
     ],
-    [5, [{ validation: votingMerkleValidation, stateKeys: ["votingMerkle"] }]],
+    [
+      5,
+      [
+        { validation: votingMerkleValidation, stateKeys: ["votingMerkle"] },
+        {
+          validation: votingRequirementsValidation,
+          stateKeys: ["votingMerkle"],
+        },
+      ],
+    ],
     [
       6,
       [
@@ -106,7 +126,7 @@ export const validationFunctions = new Map<number, { validation: (...args: any[]
   ],
 );
 
-export const validateStep = (step: number, state: any, currentTab?: string) => {
+export const validateStep = (step: number, state: any) => {
   const validationConfigs = validationFunctions.get(step);
 
   if (!validationConfigs) return;
@@ -114,7 +134,7 @@ export const validateStep = (step: number, state: any, currentTab?: string) => {
   for (const validationConfig of validationConfigs) {
     const { validation, stateKeys } = validationConfig;
     const stateValues = stateKeys.map(key => state[key as StateKey]);
-    const errorMessage = validation(...stateValues, currentTab);
+    const errorMessage = validation(...stateValues);
 
     if (errorMessage) {
       return errorMessage;

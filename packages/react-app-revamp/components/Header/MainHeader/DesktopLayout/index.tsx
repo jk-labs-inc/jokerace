@@ -1,6 +1,6 @@
+import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_USER } from "@config/routes";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -11,7 +11,7 @@ interface MainHeaderDesktopLayoutProps {
 
 const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected, address }) => {
   return (
-    <header className="px-10  mx-auto flex items-center justify-between mt-2 mb-4">
+    <header className="px-10 flex items-center justify-between mt-2 mb-4">
       <Link href="/">
         <h1 className="font-sabo text-primary-10 text-[40px]">JOKERACE</h1>
       </Link>
@@ -30,13 +30,13 @@ const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected
         </div>
       </div>
 
-      <div className="flex gap-3 items-center" style={{ minWidth: "260pxs" }}>
+      <div className="flex gap-3 items-center">
         {address ? (
           <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
             <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
           </Link>
         ) : null}
-        <ConnectButton showBalance={false} accountStatus="address" label="Connect wallet" />
+        <ConnectButtonCustom />
       </div>
     </header>
   );

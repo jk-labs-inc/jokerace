@@ -10,6 +10,8 @@ import CleanUpContractDocsRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import TrackProposalAuthorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.14.trackProposalAuthors.sol/RewardsModule.json";
 import TrackVotersRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.15.trackVoters.sol/RewardsModule.json";
 import MakeVarsPublicRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.16.makeVarsPublic.sol/RewardsModule.json";
+import LetJkLabsCancelRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.17.letJkLabsCancel.sol/RewardsModule.json";
+import AddJokeraceCreatedEventRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.18.addJokeraceCreatedEvent.sol/RewardsModule.json";
 import TotalVotesCastRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.2.totalVotesCast.sol/RewardsModule.json";
 import SetCompilerRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.3.setCompilerTo8Dot19.sol/RewardsModule.json";
 import AddIsDeletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.4.addIsDeleted.sol/RewardsModule.json";
@@ -18,6 +20,7 @@ import BringBackDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/Reward
 import ArrayOfDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.7.makeArrayOfDeletedIds.sol/RewardsModule.json";
 import DeletedIdAccessorRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.8.makeDeletedIdAccessor.sol/RewardsModule.json";
 import PrivateDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.3.9.privateDeletedIds.sol/RewardsModule.json";
+import AddEntryChargeRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.1.addEntryCharge.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -30,7 +33,13 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "3.16") {
+    if (version === "4.1") {
+      return AddEntryChargeRewards.abi;
+    } else if (version === "3.18") {
+      return AddJokeraceCreatedEventRewards.abi;
+    } else if (version === "3.17") {
+      return LetJkLabsCancelRewards.abi;
+    } else if (version === "3.16") {
       return MakeVarsPublicRewards.abi;
     } else if (version === "3.15") {
       return TrackVotersRewards.abi;

@@ -21,7 +21,7 @@ const Dropdown: FC<DropdownProps> = ({ menuItems, onSelectionChange }) => {
   return (
     <Menu as="div" className="relative inline-block text-left w-[100px]">
       <div>
-        <Menu.Button className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-[5px] border border-neutral-11 bg-transparent px-1 py-1 text-[16px] font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+        <Menu.Button className="inline-flex w-full items-center justify-center gap-x-1.5 rounded-[5px] border border-neutral-11 bg-transparent px-1 py-1 text-[14px] sm:text-[16px] font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
           {selectedValue}
           <ChevronDownIcon className="-mr-1 h-4 w-4 text-gray-400" aria-hidden="true" />
         </Menu.Button>
@@ -46,7 +46,7 @@ const Dropdown: FC<DropdownProps> = ({ menuItems, onSelectionChange }) => {
                     onClick={() => handleSelection(item.value)}
                     className={classNames(
                       active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                      "block px-4 py-2 text-[16px] hover:bg-neutral-3 transition-colors duration-300 ease-in-out ",
+                      "block px-4 py-2 text-[14px] sm:text-[16px] hover:bg-neutral-3 transition-colors duration-300 ease-in-out ",
                     )}
                   >
                     {item.label}

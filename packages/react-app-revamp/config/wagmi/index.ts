@@ -1,8 +1,23 @@
-import { connectorsForWallets, getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { argentWallet, imTokenWallet, ledgerWallet, omniWallet, trustWallet } from "@rainbow-me/rainbowkit/wallets";
-import { Chain, configureChains, createConfig, mainnet } from "wagmi";
+import { connectorsForWallets } from "@rainbow-me/rainbowkit";
+import {
+  argentWallet,
+  bitKeepWallet,
+  coinbaseWallet,
+  imTokenWallet,
+  ledgerWallet,
+  metaMaskWallet,
+  okxWallet,
+  omniWallet,
+  rabbyWallet,
+  rainbowWallet,
+  tahoWallet,
+  trustWallet,
+  walletConnectWallet,
+} from "@rainbow-me/rainbowkit/wallets";
+import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
+import { artheraTestnet } from "./custom-chains/artheraTestnet";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
@@ -26,6 +41,7 @@ import { lootChain } from "./custom-chains/lootChain";
 import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
 import { lukso } from "./custom-chains/lukso";
 import { luksoTestnet } from "./custom-chains/luksoTestnet";
+import { mainnet } from "./custom-chains/mainnet";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { modeTestnet } from "./custom-chains/modeTestnet";
@@ -43,11 +59,15 @@ import { publicGoodsNetwork } from "./custom-chains/publicGoodsNetwork";
 import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
 import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
+import { quartz } from "./custom-chains/quartz";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
+import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
+import { unique } from "./custom-chains/unique";
+import { vitruveo } from "./custom-chains/vitruveo";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
 
@@ -81,6 +101,10 @@ const totalChains: Chain[] = [
   degenChain,
   fuse,
   kroma,
+  scroll,
+  quartz,
+  unique,
+  vitruveo,
   polygonTestnet,
   sepolia,
   goerli,
@@ -104,6 +128,7 @@ const totalChains: Chain[] = [
   eosTestnet,
   roninTestnet,
   scrollSepoliaTestnet,
+  artheraTestnet,
   mainnet,
 ];
 
@@ -132,22 +157,23 @@ export const { chains, publicClient, webSocketPublicClient } = configureChains(t
 
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
 
-const { wallets } = getDefaultWallets({
-  appName: "jokerace",
-  chains,
-  projectId: WALLETCONECT_PROJECT_ID,
-});
-
 const connectors = connectorsForWallets([
-  ...wallets,
   {
-    groupName: "Other",
+    groupName: "Wallets",
     wallets: [
+      metaMaskWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      walletConnectWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      rainbowWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      okxWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      tahoWallet({ chains }),
+      coinbaseWallet({ chains, appName: "jokerace" }),
       argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       ledgerWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      bitKeepWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      rabbyWallet({ chains }),
     ],
   },
 ]);
@@ -180,6 +206,7 @@ export const chainsImages: ChainImages = {
   polygontestnet: "/polygon.svg",
   polygonzktestnet: "/polygon.svg",
   polygonzk: "/polygon.svg",
+  scroll: "/scroll.png",
   scrolltestnet: "/scroll.png",
   base: "/base.svg",
   gnosis: "/gnosis.png",
@@ -210,4 +237,8 @@ export const chainsImages: ChainImages = {
   eostestnet: "/eos.svg",
   fuse: "/fuse.svg",
   kroma: "/kroma.svg",
+  mainnet: "/ethereum.svg",
+  quartz: "/quartz.svg",
+  unique: "/unique.svg",
+  vitruveo: "/vitruveo.svg",
 };

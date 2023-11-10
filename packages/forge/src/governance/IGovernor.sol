@@ -41,6 +41,11 @@ abstract contract IGovernor is IERC165 {
     }
 
     /**
+     * @dev Emitted when a jokerace is created.
+     */
+    event JokeraceCreated(string name, address creator);
+
+    /**
      * @dev Emitted when a proposal is created.
      */
     event ProposalCreated(uint256 proposalId, address proposer);
@@ -71,6 +76,18 @@ abstract contract IGovernor is IERC165 {
      * @dev Prompt of the contest.
      */
     function prompt() public view virtual returns (string memory);
+
+    /**
+     * @notice module:core
+     * @dev Cost to propose to this contest.
+     */
+    function costToPropose() public view virtual returns (uint256);
+
+    /**
+     * @notice module:core
+     * @dev Percent of the cost to propose that goes to the creator.
+     */
+    function percentageToCreator() public view virtual returns (uint256);
 
     /**
      * @notice module:core
@@ -151,6 +168,7 @@ abstract contract IGovernor is IERC165 {
      */
     function propose(ProposalCore calldata proposal, bytes32[] calldata proof)
         public
+        payable
         virtual
         returns (uint256 proposalId);
 
@@ -160,7 +178,7 @@ abstract contract IGovernor is IERC165 {
      *
      * Emits a {ProposalCreated} event.
      */
-    function proposeWithoutProof(ProposalCore calldata proposal) public virtual returns (uint256 proposalId);
+    function proposeWithoutProof(ProposalCore calldata proposal) public payable virtual returns (uint256 proposalId);
 
     /**
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.

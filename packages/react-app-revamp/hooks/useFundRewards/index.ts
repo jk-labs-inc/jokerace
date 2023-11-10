@@ -1,4 +1,5 @@
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
 import { prepareSendTransaction, sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
@@ -20,7 +21,7 @@ export interface RewardData {
 
 export function useFundRewardsModule() {
   const { asPath } = useRouter();
-  const [chainName, contestAddress] = asPath.split("/").slice(2, 4);
+  const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const { chain } = useNetwork();
   const {

@@ -1,10 +1,8 @@
 export function shortenEthereumAddress(address: string) {
-  let shortenedAddress = address;
-  const shortenedLength = 4;
-  const front = address.substr(0, shortenedLength);
+  const front = address.slice(0, 5); // Get first 5 characters
   const mid = "...";
-  const end = address.substr(-2);
-  shortenedAddress = front + mid + end;
+  const end = address.slice(-4); // Get last 4 characters
+  const shortenedAddress = front + mid + end;
   return shortenedAddress;
 }
 

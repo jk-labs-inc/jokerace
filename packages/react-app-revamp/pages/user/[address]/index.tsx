@@ -3,10 +3,11 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { getAddressProps } from "@helpers/getAddressProps";
 import LayoutUser from "@layouts/LayoutUser";
 import { useQuery } from "@tanstack/react-query";
-import { getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { getRewards, getUserContests, ITEMS_PER_PAGE } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
+import { useAccount } from "wagmi";
 
 export interface UserPageProps {
   address: string;
@@ -14,12 +15,8 @@ export interface UserPageProps {
   ensName: string;
 }
 
-function useContests(creatorAddress: string, initialData: any) {
+function useContests(profileAddress: string, currentUserAddress: string, initialData: any) {
   const [page, setPage] = useState(0);
-  const queryOptions = {
-    keepPreviousData: true,
-    staleTime: 5000,
-  };
 
   //@ts-ignore
   if (initialData?.data) queryOptions.initialData = initialData.data;
@@ -30,22 +27,12 @@ function useContests(creatorAddress: string, initialData: any) {
     error,
     isFetching: isContestDataFetching,
   } = useQuery(
-    ["userContests", creatorAddress, page],
+    ["userContests", profileAddress, page, currentUserAddress],
     () => {
-      return searchContests(
-        {
-          searchString: creatorAddress,
-          searchColumn: "author_address",
-          pagination: {
-            currentPage: page,
-          },
-        },
-        creatorAddress,
-      );
+      return getUserContests(page, ITEMS_PER_PAGE, profileAddress, currentUserAddress);
     },
     {
-      ...queryOptions,
-      enabled: !!creatorAddress,
+      enabled: !!profileAddress,
     },
   );
 
@@ -73,14 +60,15 @@ function useContests(creatorAddress: string, initialData: any) {
 //@ts-ignore
 const Page: NextPage = (props: UserPageProps) => {
   const { address, ensName, initialData } = props;
+  const { address: currentUserAddress } = useAccount();
   const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
-    useContests(address, initialData?.data);
+    useContests(address, currentUserAddress as string, initialData?.data);
+  const isCreator = currentUserAddress === address;
 
   return (
     <LayoutUser address={address}>
       <Head>
         <title>{ensName || address} - jokerace</title>
-        <meta name="description" content="@TODO: change this" />
       </Head>
 
       {isSupabaseConfigured ? (
@@ -92,6 +80,7 @@ const Page: NextPage = (props: UserPageProps) => {
             error={error}
             page={page}
             setPage={setPage}
+            allowToHide={isCreator}
             contestData={contestData}
             rewardsData={rewardsData}
             isRewardsFetching={isRewardsFetching}

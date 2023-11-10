@@ -1,6 +1,7 @@
 import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
@@ -30,11 +31,11 @@ export function useProposal() {
     setIndexPaginationProposalPerId,
   } = useProposalStore(state => state);
   const { asPath } = useRouter();
-  const [chainName, address] = asPath.split("/").slice(2, 4);
+  const { chainName, address } = extractPathSegments(asPath);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useNetwork();
   const { error, handleError } = useError();
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
 
   /**
    * Fetch the data of each proposals in page X
@@ -156,14 +157,10 @@ export function useProposal() {
       const useLegacyGetAllProposalsIdFn =
         abi?.filter((el: { name: string }) => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
 
-      if (!chains) return;
-
       const contractConfig = {
         address: address as `0x${string}`,
         abi: abi,
-        chainId: chains.find(
-          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
-        )?.id,
+        chainId: chainId,
       };
 
       const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);

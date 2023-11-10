@@ -92,6 +92,10 @@ module.exports = {
       "7xl": clamp(8),
       "8xl": clamp(9),
       "9xl": clamp(10),
+      "custom-h1": clamp(3),
+      "custom-h2": clamp(1.5),
+      "custom-h3": clamp(1.2),
+      "custom-h4": clamp(0.5),
     },
     colors: {
       transparent: "transparent",
@@ -101,7 +105,7 @@ module.exports = {
       "true-black": "#000000",
       primary: {
         1: "#1c1500",
-        2: "#221a00",
+        2: "#242424",
         3: "#2c2100",
         4: "#352800",
         5: "#3e3000",
@@ -164,12 +168,14 @@ module.exports = {
         4: "#28282c",
         5: "#2e2e32",
         6: "#34343a",
-        7: "#3e3e44",
-        8: "#504f57",
+        7: "#3d3d3d",
+        8: "#5E707699",
         9: "#9D9D9D",
         10: "#6A6A6A",
         11: "#E5E5E5",
-        12: "#D9D9D9",
+        12: "#CDCDCD",
+        13: "#8E8E8E",
+        14: "#A1A1A1",
       },
     },
     extend: {
@@ -314,6 +320,7 @@ module.exports = {
       backgroundImage: {
         "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
         "gradient-create": "linear-gradient(90deg, #BB65FF 0%, #FFE25B 96.62%)",
+        "gradient-share-submission": "linear-gradient(90deg, #FFE25B 0%, #BB65FF 96.62%)",
         "gradient-vote": "linear-gradient(93.06deg, #78FFC6 0%, #BB65FF 100%)",
         "gradient-distribute": "linear-gradient(180deg, #B0FED4 0%, #78FFC6 50%, #4A9575 100%)",
         "gradient-withdraw": "linear-gradient(180deg, #FF78A9 0%, #f04f88 50%, #e93d82 100%)",
@@ -321,6 +328,7 @@ module.exports = {
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(255, 226, 91, 0.6)",
         "timer-container": "3px 3px 4px rgba(106, 106, 106, 1)",
+        dialog: "0px 1px 6px 1px rgba(157, 157, 157, 1)",
       },
       backgroundColor: {
         ffdd3e: "#FFDD3E",

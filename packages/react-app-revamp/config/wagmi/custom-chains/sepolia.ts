@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const sepolia: Chain = {
   id: 11155111,
   name: "sepolia",
   network: "sepolia",
+  iconUrl: "/ethereum.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
@@ -21,4 +22,5 @@ export const sepolia: Chain = {
     etherscan: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan/" },
     default: { name: "Sepolia Otterscan", url: "https://sepolia.otterscan/" },
   },
+  testnet: true,
 };

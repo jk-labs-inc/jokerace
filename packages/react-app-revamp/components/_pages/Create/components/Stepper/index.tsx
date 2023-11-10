@@ -36,12 +36,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
 
     // Navigate forwards, validate each step from the current up to the clicked step
     for (let stepToValidate = currentStep; stepToValidate <= index; stepToValidate++) {
-      // If stepToValidate is submission step, pass submissionTab (as 'submissionRequirements' or 'submissionMerkle') to validateStep
-      const errorMessage = validateStep(
-        stepToValidate,
-        state,
-        stepToValidate === 6 ? (state.submissionTab === 0 ? "submissionRequirements" : "submissionMerkle") : undefined,
-      );
+      const errorMessage = validateStep(stepToValidate, state);
 
       // If an error is found, don't proceed and break out of the loop
       if (errorMessage) {

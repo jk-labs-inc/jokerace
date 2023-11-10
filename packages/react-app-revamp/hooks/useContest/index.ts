@@ -2,6 +2,7 @@ import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
+import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -18,10 +19,10 @@ import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/con
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useNetwork } from "wagmi";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
-import { getV3Contracts } from "./v3/contracts";
+import { getContracts } from "./v3v4/contracts";
+import moment from "moment";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -39,13 +40,15 @@ interface ContractConfig {
 }
 
 export function useContest() {
-  const { asPath, ...router } = useRouter();
-  const { chain } = useNetwork();
+  const router = useRouter();
+  const { asPath } = router;
+  const { chainName: chainFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
+  const [chainName, setChainName] = useState(chainFromUrl);
+  const [address, setAddress] = useState(addressFromUrl);
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")[2])?.[0]?.id,
+    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainFromUrl)?.[0]?.id,
   );
-  const [address, setAddress] = useState(asPath.split("/")[3]);
-  const [chainName, setChainName] = useState(asPath.split("/")[2]);
+
   const {
     setError,
     isLoading,
@@ -62,6 +65,8 @@ export function useContest() {
     setIsV3,
     setVoters,
     setSubmitters,
+    setSubmissionsMerkleRoot,
+    setVotingMerkleRoot,
     setTotalVotesCast,
     setTotalVotes,
     setVotesClose,
@@ -69,6 +74,9 @@ export function useContest() {
     setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
+    setEntryCharge,
+    setVotingRequirements,
+    setSubmissionRequirements,
     setIsReadOnly,
     setIsRewardsLoading,
   } = useContestStore(state => state);
@@ -114,10 +122,9 @@ export function useContest() {
     }
   }
 
-  async function fetchContestContractData(contractConfig: ContractConfig) {
-    const contracts = getV3Contracts(contractConfig);
+  async function fetchContestContractData(contractConfig: ContractConfig, version: number) {
+    const contracts = getContracts(contractConfig, version);
     const results = await readContracts({ contracts });
-
     setIsV3(true);
 
     const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
@@ -127,6 +134,18 @@ export function useContest() {
     const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
     const contestMaxProposalCount = Number(results[3].result);
 
+    if (version >= 4 && moment().isBefore(votesOpenDate)) {
+      const entryChargeValue = Number(results[10].result);
+      const entryChargePercentage = Number(results[11].result);
+
+      setEntryCharge({
+        costToPropose: entryChargeValue,
+        percentageToCreator: entryChargePercentage,
+      });
+    } else {
+      setEntryCharge(null);
+    }
+
     setContestName(results[0].result as string);
     setContestAuthor(results[1].result as string, results[1].result as string);
     setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
@@ -135,7 +154,6 @@ export function useContest() {
     setVotesClose(closingVoteDate);
     setVotesOpen(votesOpenDate);
     setContestPrompt(results[8].result as string);
-
     setDownvotingAllowed(isDownvotingAllowed);
 
     // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
@@ -171,11 +189,12 @@ export function useContest() {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        fetchContestContractData(contractConfig),
+        fetchContestContractData(contractConfig, parseFloat(version)),
         fetchProposalsIdsList(contractConfig.abi, version),
         processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
         fetchTotalVotesCast(),
+        processRequirementsData(),
       ]);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
@@ -323,6 +342,9 @@ export function useContest() {
     const votingMerkleRoot = results[1].result as unknown as string;
     const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
 
+    setSubmissionsMerkleRoot(submissionMerkleRoot);
+    setVotingMerkleRoot(votingMerkleRoot);
+
     if (!isSupabaseConfigured) {
       setIsReadOnly(true);
       if (submissionMerkleRoot === EMPTY_ROOT) {
@@ -356,6 +378,30 @@ export function useContest() {
     } catch (e) {
       toastError("error while fetching data from db", errorMessage);
       setIsUserStoreLoading(false);
+    }
+  }
+
+  async function processRequirementsData() {
+    if (!isSupabaseConfigured) return;
+
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+
+    try {
+      const result = await supabase
+        .from("contests_v3")
+        .select("voting_requirements, submission_requirements")
+        .eq("address", address)
+        .eq("network_name", chainName);
+
+      if (result.data) {
+        const { voting_requirements, submission_requirements } = result.data[0];
+        setVotingRequirements(voting_requirements || null);
+        setSubmissionRequirements(submission_requirements || null);
+      }
+    } catch (error) {
+      setVotingRequirements(null);
+      setSubmissionRequirements(null);
     }
   }
 

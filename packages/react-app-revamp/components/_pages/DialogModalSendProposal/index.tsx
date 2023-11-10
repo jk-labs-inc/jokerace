@@ -1,33 +1,37 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
-import ButtonV3 from "@components/UI/ButtonV3";
-import DialogModalV3 from "@components/UI/DialogModalV3";
-import EthereumAddress from "@components/UI/EtheuremAddress";
-import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import { chains } from "@config/wagmi";
-import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
-import { goToProposalPage } from "@helpers/routing";
+import { extractPathSegments } from "@helpers/extractPath";
+import { emailRegex } from "@helpers/regex";
 import {
   loadSubmissionFromLocalStorage,
+  removeSubmissionFromLocalStorage,
   saveSubmissionToLocalStorage,
   SubmissionCache,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useEditorStore } from "@hooks/useEditor/store";
+import useEmailSignup from "@hooks/useEmailSignup";
 import useSubmitProposal from "@hooks/useSubmitProposal";
+import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { useUploadImageStore } from "@hooks/useUploadImage";
-import LayoutContestPrompt from "@layouts/LayoutViewContest/Prompt";
+import Document from "@tiptap/extension-document";
+import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
 import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
+import Paragraph from "@tiptap/extension-paragraph";
 import Placeholder from "@tiptap/extension-placeholder";
-import { EditorContent, useEditor } from "@tiptap/react";
+import Text from "@tiptap/extension-text";
+import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchNetwork } from "@wagmi/core";
 import moment from "moment";
-import NextImage from "next/image";
-import router, { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useRouter } from "next/router";
+import { FC, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import { useAccount, useBalance, useNetwork } from "wagmi";
+import DialogModalSendProposalDesktopLayout from "./Desktop";
+import DialogModalSendProposalMobileLayout from "./Mobile";
 
 interface DialogModalSendProposalProps {
   isOpen: boolean;
@@ -38,37 +42,62 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   const { address } = useAccount();
   const { chain } = useNetwork();
   const { asPath } = useRouter();
-  const { sendProposal, isLoading } = useSubmitProposal();
-  const { contestPrompt, votesOpen } = useContestStore(state => state);
-  const chainName = asPath.split("/")[2];
-  const contestId = asPath.split("/")[3];
+  const isMobile = useMediaQuery({ maxWidth: "768px" });
+  const { subscribeUser, checkIfEmailExists } = useEmailSignup();
+  const { chainName, address: contestId } = extractPathSegments(asPath);
+  const { sendProposal } = useSubmitProposal();
+  const {
+    setProposalId,
+    setIsMobileConfirmModalOpen,
+    wantsSubscription,
+    emailForSubscription,
+    setWantsSubscription,
+    setEmailForSubscription,
+    setEmailAlreadyExists,
+  } = useSubmitProposalStore(state => state);
+  const { votesOpen, entryCharge } = useContestStore(state => state);
+  const { data: accountData } = useBalance({
+    address: address as `0x${string}`,
+  });
+  const { setRevertTextOption } = useEditorStore(state => state);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
-  const { contestStatus } = useContestStatusStore(state => state);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const [proposal, setProposal] = useState(savedProposal?.content || "");
   const formattedDate = lastEdited ? moment(lastEdited).format("MMMM D, h:mm a") : null;
   const isCorrectNetwork = chainId === chain?.id;
   const [isDragging, setIsDragging] = useState(false);
   const { uploadImage } = useUploadImageStore(state => state);
+  const placeholderText = isMobile ? "this is my submission..." : "this is my submission and here’s why...";
 
   const editorProposal = useEditor({
     extensions: [
       StarterKit,
-      ShiftEnterCreateExtension,
-      DisableEnter,
+      Document,
+      Paragraph,
+      Text,
       Image,
+      Heading.configure({
+        levels: [1, 2, 3, 4],
+      }),
       TiptapExtensionLink,
       Placeholder.configure({
         emptyEditorClass: "is-editor-empty",
-        placeholder: "this is my submission and here’s why...",
+        placeholder: placeholderText,
       }),
       Iframe,
     ],
     content: proposal,
     editorProps: {
       attributes: {
-        class: "prose prose-invert pt-6 flex-grow focus:outline-none",
+        class: "prose prose-invert pt-4 md:pt-12 flex-grow focus:outline-none",
+      },
+      handleDOMEvents: {
+        keydown: (view, event) => {
+          if (event.key === "Enter") {
+            setRevertTextOption(true);
+          }
+        },
       },
     },
     onUpdate: ({ editor }) => {
@@ -90,42 +119,50 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     await switchNetwork({ chainId });
   };
 
-  const onSubmitProposal = async () => {
-    const result = await sendProposal(proposal.trim());
-    if (result) {
-      const handleRouteChangeComplete = () => {
-        setIsOpen(false);
-        editorProposal?.commands.clearContent();
-        router.events.off("routeChangeComplete", handleRouteChangeComplete);
-      };
-
-      router.events.on("routeChangeComplete", handleRouteChangeComplete);
-      goToProposalPage(chainName, contestId, result.proposalId);
+  const handleSubscription = async () => {
+    if (!wantsSubscription || !emailForSubscription || !emailForSubscription.match(emailRegex)) {
+      return null;
     }
+
+    // Check if the email already exists
+    const emailExists = await checkIfEmailExists(emailForSubscription);
+    if (emailExists) {
+      setEmailAlreadyExists(true);
+      return null;
+    }
+
+    return subscribeUser(emailForSubscription, address ?? "", false);
   };
 
-  useEffect(() => {
-    if (contestStatus !== ContestStatus.SubmissionOpen) return;
+  const onSubmitProposal = async () => {
+    const promises = [sendProposal(proposal.trim())];
 
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.shiftKey) {
-        return;
-      }
-      if (event.key === "Enter") {
-        if (!isCorrectNetwork) {
-          onSwitchNetwork();
-          return;
+    const subscriptionPromise = await handleSubscription();
+    if (subscriptionPromise) {
+      promises.push(subscriptionPromise);
+    }
+
+    try {
+      const [proposalResult] = await Promise.all(promises);
+
+      if (proposalResult) {
+        setProposalId(proposalResult.proposalId);
+        editorProposal?.commands.clearContent();
+        removeSubmissionFromLocalStorage("submissions", contestId);
+        if (isMobile) {
+          setIsOpen(true);
+          setIsMobileConfirmModalOpen(true);
+        } else {
+          setIsOpen(true);
         }
-        onSubmitProposal();
       }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [contestStatus, onSubmitProposal]);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      setWantsSubscription(false);
+      setEmailForSubscription("");
+    }
+  };
 
   const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -156,60 +193,46 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setIsDragging(false);
   };
 
-  const tipMessage = () => {
-    return (
-      <p className="hidden md:flex items-center">
-        <span className="font-bold flex items-center gap-1 mr-1">
-          shift <NextImage src="/create-flow/shift.png" alt="shift" width={14} height={14} /> + enter{" "}
-          <NextImage src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
-        </span>
-        to make a line break.
-      </p>
-    );
-  };
-
   return (
-    <DialogModalV3 title="submission" isOpen={isOpen} setIsOpen={setIsOpen} className="xl:w-[1110px] 3xl:w-[1300px]">
-      <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
-        <LayoutContestPrompt prompt={contestPrompt} hidePrompt />
-        <div className="flex flex-col gap-2">
-          <EthereumAddress ethereumAddress={address ?? ""} shortenOnFallback={true} />
-          <p className="font-bold text-neutral-10">{formattedDate}</p>
-        </div>
-        <div className="flex flex-col min-h-[12rem] rounded-md ">
-          <div className="relative px-1 py-2 border-y-2 border-neutral-10">
-            <TipTapEditorControls editor={editorProposal} />
-          </div>
-
-          <EditorContent
-            editor={editorProposal}
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[600px] overflow-y-auto h-auto max-h-[300px] pb-2 ${
-              isDragging ? "backdrop-blur-md opacity-70" : ""
-            }`}
-          />
-          <p className="text-[16px] text-neutral-11 mt-2">{tipMessage()}</p>
-        </div>
-        <div className="mt-2">
-          {isCorrectNetwork ? (
-            <ButtonV3
-              color="bg-gradient-create rounded-[40px]"
-              size="large"
-              onClick={onSubmitProposal}
-              disabled={isLoading || !proposal.length}
-            >
-              submit!
-            </ButtonV3>
-          ) : (
-            <ButtonV3 color="bg-gradient-create rounded-[40px]" size="large" onClick={onSwitchNetwork}>
-              switch network
-            </ButtonV3>
-          )}
-        </div>
-      </div>
-    </DialogModalV3>
+    <>
+      {isMobile ? (
+        <DialogModalSendProposalMobileLayout
+          chainName={chainName}
+          contestId={contestId}
+          proposal={proposal}
+          editorProposal={editorProposal}
+          address={address ?? ""}
+          entryCharge={entryCharge}
+          accountData={accountData}
+          formattedDate={formattedDate}
+          isOpen={isOpen}
+          isCorrectNetwork={isCorrectNetwork}
+          setIsOpen={setIsOpen}
+          onSwitchNetwork={onSwitchNetwork}
+          onSubmitProposal={onSubmitProposal}
+        />
+      ) : (
+        <DialogModalSendProposalDesktopLayout
+          proposal={proposal}
+          chainName={chainName}
+          contestId={contestId}
+          editorProposal={editorProposal}
+          address={address ?? ""}
+          entryCharge={entryCharge}
+          accountData={accountData}
+          formattedDate={formattedDate}
+          isOpen={isOpen}
+          isCorrectNetwork={isCorrectNetwork}
+          isDragging={isDragging}
+          setIsOpen={setIsOpen}
+          handleDrop={handleDrop}
+          handleDragOver={handleDragOver}
+          handleDragLeave={handleDragLeave}
+          onSwitchNetwork={onSwitchNetwork}
+          onSubmitProposal={onSubmitProposal}
+        />
+      )}
+    </>
   );
 };
 

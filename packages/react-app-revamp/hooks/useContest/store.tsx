@@ -1,8 +1,10 @@
+import { VotingRequirementsSchema } from "@hooks/useContestsIndexV3";
+import { EntryCharge } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
-type Reward = {
+export type Reward = {
   token: {
     symbol: string;
     value: number;
@@ -29,6 +31,11 @@ export interface ContestState {
   downvotingAllowed: boolean;
   canUpdateVotesInRealTime: boolean;
   supportsRewardsModule: boolean;
+  submissionMerkleRoot: string;
+  votingMerkleRoot: string;
+  entryCharge: EntryCharge | null;
+  votingRequirements: VotingRequirementsSchema | null;
+  submissionRequirements: VotingRequirementsSchema | null;
   submitters: {
     address: string;
   }[];
@@ -51,10 +58,15 @@ export interface ContestState {
   setRewards: (rewards: Reward | null) => void;
   setVoters: (voters: Recipient[]) => void;
   setSubmitters: (submitters: { address: string }[]) => void;
+  setSubmissionsMerkleRoot: (merkleRoot: string) => void;
+  setVotingMerkleRoot: (merkleRoot: string) => void;
+  setVotingRequirements: (votingRequirements: VotingRequirementsSchema | null) => void;
+  setSubmissionRequirements: (submissionRequirements: VotingRequirementsSchema | null) => void;
   setIsLoading: (value: boolean) => void;
   setError: (value: string) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
+  setEntryCharge: (entryCharge: EntryCharge | null) => void;
   setIsReadOnly: (value: boolean) => void;
   setIsRewardsLoading: (value: boolean) => void;
 }
@@ -68,6 +80,8 @@ export const createContestStore = () =>
     submissionsOpen: new Date(),
     votesOpen: new Date(),
     votesClose: new Date(),
+    submissionMerkleRoot: "",
+    votingMerkleRoot: "",
     submitters: [],
     voters: [],
     totalVotesCast: 0,
@@ -75,10 +89,13 @@ export const createContestStore = () =>
     totalVotes: 0,
     isLoading: true,
     error: "",
+    entryCharge: null,
     isSuccess: false,
     contestMaxProposalCount: 0,
     downvotingAllowed: false,
     canUpdateVotesInRealTime: false,
+    votingRequirements: null,
+    submissionRequirements: null,
     isV3: false,
     isReadOnly: false,
     supportsRewardsModule: false,
@@ -97,13 +114,18 @@ export const createContestStore = () =>
     setVotesClose: datetime => set({ votesClose: datetime }),
     setVoters: voters => set({ voters: voters }),
     setSubmitters: submitters => set({ submitters: submitters }),
+    setSubmissionsMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
+    setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
     setTotalVotesCast: amount => set({ totalVotesCast: amount }),
     setTotalVotes: amount => set({ totalVotes: amount }),
     setRewards: rewards => set({ rewards: rewards }),
+    setVotingRequirements: votingRequirements => set({ votingRequirements: votingRequirements }),
+    setSubmissionRequirements: submissionRequirements => set({ submissionRequirements: submissionRequirements }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
     setIsRewardsLoading: value => set({ isRewardsLoading: value }),
+    setEntryCharge: entryCharge => set({ entryCharge: entryCharge }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

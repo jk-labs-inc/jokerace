@@ -1,9 +1,10 @@
-import { Chain } from "wagmi";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 export const optimismTestnet: Chain = {
   id: 420,
   name: "optimismTestnet",
   network: "optimismTestnet",
+  iconUrl: "/optimism.svg",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",
@@ -21,4 +22,5 @@ export const optimismTestnet: Chain = {
     etherscan: { name: "Optimism Testnet Etherscan", url: "https://goerli-optimism.etherscan.io/" },
     default: { name: "Optimism Testnet Etherscan", url: "https://goerli-optimism.etherscan.io/" },
   },
+  testnet: true,
 };

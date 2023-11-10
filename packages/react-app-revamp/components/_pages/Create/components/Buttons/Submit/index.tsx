@@ -1,16 +1,19 @@
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 
 interface CreateContestButtonProps {
   step: number;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  isDisabled?: boolean;
 }
 
-const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) => {
+const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDisabled }) => {
   const { errors } = useDeployContestStore(state => state);
+  const { isConnected } = useAccount();
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
 
@@ -38,14 +41,15 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
     <div className="flex gap-4 items-start pb-5 md:pb-0">
       <div className={`flex flex-col items-center gap-2`}>
         <ButtonV3
-          color={`bg-gradient-create text-[24px] rounded-[10px] font-bold ${
+          isDisabled={isDisabled}
+          colorClass={`bg-gradient-create text-[24px] rounded-[10px] font-bold ${
             shake ? "animate-shakeTop" : ""
           }  text-true-black`}
-          size="extraLarge"
-          type="txAction"
+          size={ButtonSize.EXTRA_LARGE}
+          type={ButtonType.TX_ACTION}
           onClick={handleClick}
         >
-          create contest!
+          {isConnected ? "create contest!" : "connect wallet"}
         </ButtonV3>
 
         {step > 1 && (
@@ -60,11 +64,13 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick }) =>
           </div>
         )}
       </div>
-      <div className="hidden lg:flex items-center mt-[15px] gap-[2px]">
-        <p className="text-[16px]">
-          press <span className="font-bold capitalize">enter</span>
-        </p>
-      </div>
+      {isConnected ? (
+        <div className="hidden lg:flex items-center mt-[15px] gap-[2px]">
+          <p className="text-[16px]">
+            press <span className="font-bold capitalize">enter</span>
+          </p>
+        </div>
+      ) : null}
     </div>
   );
 };

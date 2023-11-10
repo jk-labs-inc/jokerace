@@ -5,8 +5,11 @@ create table
     user_address character varying not null,
     network_name character varying not null,
     proposal_id character varying null,
-    vote_amount integer null,
-    created_at integer null,
+    vote_amount numeric null,
+    created_at int4 null,
+    deleted boolean null default false,
+    amount_sent numeric null,
+    percentage_to_creator numeric null 
     constraint analytics_contest_participants_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 

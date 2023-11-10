@@ -7,6 +7,9 @@ import "../src/Contest.sol";
 contract ContestTest is Test {
     Contest public contest;
     Contest public anyoneCanSubmitContest;
+    Contest public anyoneCanSubmitCostsAnEthContest;
+
+    // BASIC INT PARAMS
     uint64 public constant CONTEST_START = 1681650000;
     uint64 public constant VOTING_DELAY = 10000;
     uint64 public constant VOTING_PERIOD = 10000;
@@ -22,6 +25,12 @@ contract ContestTest is Test {
         DOWNVOTING_ALLOWED
     ];
 
+    // COST TO PROPOSE PARAMS
+    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
+    uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
+    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+
+    // MERKLE TREE PARAMS
     /*
         Voting merkle tree:
         {
@@ -48,6 +57,7 @@ contract ContestTest is Test {
         bytes32(0x7665f9790e783f13b614dacf6e7624e755b188e1bb086d301855d73f9b81fa85);
     bytes32 public constant SUB_ZERO_MERKLE_ROOT =
         bytes32(0x0000000000000000000000000000000000000000000000000000000000000000);
+    address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
     address public constant CREATOR_ADDRESS_1 = 0xc109636a2b47f8b290cc134dd446Fcd7d7e0cC94;
     address public constant PERMISSIONED_ADDRESS_1 = 0xd698e31229aB86334924ed9DFfd096a71C686900;
     address public constant PERMISSIONED_ADDRESS_2 = 0x5b45e296C06ab3dAD836BCBc0fBd7a4b75b83C02;
@@ -58,9 +68,11 @@ contract ContestTest is Test {
     bytes32[] public submissionProof1 = [bytes32(0x3525e2aa1b921658191cfccf7e63bf6bcac64a0315ca9eb04f2bcc08975d431f)];
     bytes32[] public submissionProof2 = [bytes32(0x3704b461c09457df5491016097977d5364e607b59049ca6d36dfb9c16d03a2bf)];
 
+    // METADATA PARAMS
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
 
+    // PROPOSALS PARAMS
     uint256[] public proposalsToDelete;
 
     IGovernor.ProposalCore public firstProposalPA1 = IGovernor.ProposalCore({
@@ -103,13 +115,25 @@ contract ContestTest is Test {
                               "hello world",
                               SUBMISSION_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
+                              ZERO_COST_TO_PROPOSE,
+                              FIFTY_PERCENT_TO_CREATOR,
                               numParams);
 
         anyoneCanSubmitContest = new Contest("test",
                               "hello world",
                               SUB_ZERO_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
+                              ZERO_COST_TO_PROPOSE,
+                              FIFTY_PERCENT_TO_CREATOR,
                               numParams);
+
+        anyoneCanSubmitCostsAnEthContest = new Contest("test",
+                        "hello world",
+                        SUB_ZERO_MERKLE_ROOT,
+                        VOTING_MERKLE_ROOT,
+                        ONE_ETH_COST_TO_PROPOSE,
+                        FIFTY_PERCENT_TO_CREATOR,
+                        numParams);
 
         vm.stopPrank();
     }
@@ -148,7 +172,7 @@ contract ContestTest is Test {
 
     /////////////////////////////
 
-    // PROPOSING AND VOTING
+    // PROPOSING
 
     function testValidate() public {
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -227,6 +251,39 @@ contract ContestTest is Test {
         contest.deleteProposals(proposalsToDelete);
         assertEq(contest.isProposalDeleted(proposalId), true);
     }
+
+    function testProposeAnyoneCanCostIsOneEther() public {
+        vm.warp(1681650001);
+        vm.deal(address(UNPERMISSIONED_ADDRESS_1), 1 ether); // give the proposer wei to pay the cost to propose
+        vm.prank(UNPERMISSIONED_ADDRESS_1);
+        uint256 proposalId =
+            anyoneCanSubmitCostsAnEthContest.propose{value: 1 ether}(unpermissionedAuthorProposal1, proof0);
+
+        assertEq(proposalId, 98473096201093600303872109595179192229910158899541901113356700720980320499920);
+        assertEq(CREATOR_ADDRESS_1.balance, 0.5 ether);
+        assertEq(JK_LABS_ADDRESS.balance, 0.5 ether);
+    }
+
+    function testProposeAnyoneCanCostIsOneEtherNoMsgValue() public {
+        vm.warp(1681650001);
+        vm.prank(UNPERMISSIONED_ADDRESS_1);
+        vm.expectRevert(
+            bytes("Governor: this transaction was not sent with the correct amount of funds needed to propose")
+        );
+        anyoneCanSubmitCostsAnEthContest.propose(unpermissionedAuthorProposal1, proof0);
+    }
+
+    function testProposeAnyoneCanCostIsOneEtherTooMuchMsgValue() public {
+        vm.warp(1681650001);
+        vm.deal(address(UNPERMISSIONED_ADDRESS_1), 2 ether); // give the proposer wei to pay the cost to propose
+        vm.prank(UNPERMISSIONED_ADDRESS_1);
+        vm.expectRevert(
+            bytes("Governor: this transaction was not sent with the correct amount of funds needed to propose")
+        );
+        anyoneCanSubmitCostsAnEthContest.propose{value: 2 ether}(unpermissionedAuthorProposal1, proof0);
+    }
+
+    // VOTING
 
     function testVote1() public {
         vm.startPrank(PERMISSIONED_ADDRESS_1);

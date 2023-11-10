@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import ButtonV3 from "@components/UI/ButtonV3";
+import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
 import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
@@ -20,6 +21,7 @@ interface VotingWidgetProps {
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
   const currentUserTotalVotesCast = useUserStore(state => state.currentUserTotalVotesCast);
   const { asPath } = useRouter();
+  const { chainName } = extractPathSegments(asPath);
   const { chain } = useNetwork();
   const isLoading = useCastVotesStore(state => state.isLoading);
   const [isUpvote, setIsUpvote] = useState(true);
@@ -27,7 +29,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
   const voteDisabled = isLoading || amount === 0 || isInvalid;
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === asPath.split("/")?.[2])?.[0]?.id;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const isCorrectNetwork = chainId === chain?.id;
 
   useEffect(() => {
@@ -57,9 +59,9 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
 
   const handleSliderChange = (value: any) => {
     setSliderValue(value);
-    const newAmount = (value / 100) * amountOfVotes;
+    const newAmount = ((value / 100) * amountOfVotes).toFixed(4);
 
-    setAmount(newAmount);
+    setAmount(parseFloat(newAmount));
   };
 
   const handleChange = (e: any) => {
@@ -81,7 +83,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   };
 
   return (
-    <div className="flex flex-col gap-7 w-60">
+    <div className="flex flex-col gap-7 w-full md:w-60">
       <div className="flex flex-col gap-4">
         <div
           className={`flex h-8 justify-between items-center pl-6 pr-4 text-[16px] bg-transparent font-bold ${
@@ -125,10 +127,10 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         <div className="mt-4">
           {isCorrectNetwork ? (
             <ButtonV3
-              type="txAction"
-              disabled={voteDisabled}
-              color="flex items-center px-[20px] justify-between bg-gradient-vote rounded-[40px] w-full"
-              size="large"
+              type={ButtonType.TX_ACTION}
+              isDisabled={voteDisabled}
+              colorClass="flex items-center px-[20px] justify-between bg-gradient-next rounded-[40px] w-full"
+              size={ButtonSize.LARGE}
               onClick={() => onVote?.(amount, isUpvote)}
             >
               <span className="w-full text-center">add votes</span>
@@ -136,9 +138,9 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
             </ButtonV3>
           ) : (
             <ButtonV3
-              type="txAction"
-              color="flex items-center justify-center bg-gradient-vote rounded-[40px] w-full"
-              size="large"
+              type={ButtonType.TX_ACTION}
+              colorClass="flex items-center justify-center bg-gradient-vote rounded-[40px] w-full"
+              size={ButtonSize.LARGE}
               onClick={onSwitchNetwork}
             >
               switch network

@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+
+const withPWA = require("next-pwa");
+
 const nextConfig = {
   reactStrictMode: false,
   i18n: {
@@ -12,6 +15,12 @@ const nextConfig = {
   images: {
     domains: ["lens.infura-ipfs.io", "ik.imagekit.io"],
   },
+  transpilePackages: ["react-tweet"],
 };
 
-module.exports = nextConfig;
+module.exports = withPWA({
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
+})(nextConfig);

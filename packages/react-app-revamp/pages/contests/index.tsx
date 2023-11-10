@@ -20,11 +20,6 @@ const Page: NextPage = () => {
   });
   const { address } = useAccount();
 
-  const queryOptions = {
-    keepPreviousData: true,
-    staleTime: 5000,
-  };
-
   const handleSearch = async (criteria: { query: string; filterType: string }) => {
     if (criteria.filterType === "user") {
       let targetAddress = criteria.query;
@@ -67,7 +62,6 @@ const Page: NextPage = () => {
       );
     },
     {
-      ...queryOptions,
       enabled: searchCriteria.searchString !== "",
     },
   );
@@ -92,7 +86,7 @@ const Page: NextPage = () => {
       <div>
         <div className={`container mx-auto ${adjustPaddingForInline}`}>
           {!searchCriteria.searchString.length && (
-            <h1 className="text-[18px] sm:text-[28px] font-sabo text-primary-10 font-bold mb-4 text-center">
+            <h1 className="text-[16px] sm:text-[28px] font-sabo text-primary-10 font-bold mb-4 text-center">
               Search contests
             </h1>
           )}

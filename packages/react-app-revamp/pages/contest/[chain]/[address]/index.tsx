@@ -1,22 +1,24 @@
 import { chains } from "@config/wagmi";
-import { useContestStore } from "@hooks/useContest/store";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 import { getLayout } from "@layouts/LayoutViewContest";
+import { readContracts } from "@wagmi/core";
 import type { NextPage } from "next";
 import Head from "next/head";
+import { parse } from "node-html-parser";
 
 interface PageProps {
   address: string;
+  title: string;
 }
+
 //@ts-ignore
 const Page: NextPage = (props: PageProps) => {
-  const { address } = props;
-  const { contestName } = useContestStore(state => state);
+  const { title } = props;
 
   return (
     <>
       <Head>
-        <title>{contestName ? contestName : address} - jokerace</title>
-        <meta name="description" content="@TODO: change this" />
+        <title>{title} - jokerace</title>
       </Head>
     </>
   );
@@ -28,6 +30,34 @@ export async function getStaticPaths() {
   return { paths: [], fallback: true };
 }
 
+// fn to get contest details for meta tags
+async function getContestDetails(address: string, chainName: string) {
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const { abi } = await getContestContractVersion(address, chainId);
+
+  const contracts = [
+    {
+      address,
+      abi,
+      chainId,
+      functionName: "name",
+      args: [],
+    },
+    {
+      address,
+      abi,
+      chainId,
+      functionName: "prompt",
+      args: [],
+    },
+  ];
+
+  //@ts-ignore
+  const results = (await readContracts({ contracts })) as any;
+
+  return results;
+}
+
 export async function getStaticProps({ params }: any) {
   const { chain, address } = params;
   if (
@@ -37,16 +67,29 @@ export async function getStaticProps({ params }: any) {
     return { notFound: true };
   }
 
+  let contestTitle = "";
+  let contestDescription = "";
+
   try {
-    return {
-      props: {
-        address,
-      },
-    };
+    const contestDetails = await getContestDetails(address, chain);
+    const prompt = contestDetails[1].result as string;
+    const contestDescriptionRaw = prompt.split("|")[2];
+
+    contestTitle = contestDetails[0].result as string;
+    contestDescription = parse(contestDescriptionRaw).textContent;
   } catch (error) {
-    return { notFound: true };
+    console.error("failed to retrieve title or description for metatags:", error);
   }
+
+  return {
+    props: {
+      address,
+      title: contestTitle,
+      description: contestDescription,
+    },
+  };
 }
+
 //@ts-ignore
 Page.getLayout = getLayout;
 
