@@ -390,8 +390,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
                 // it will still count towards the total number of proposals that the user is allowed to submit though
                 deletedProposalIds.push(currentProposalId);
 
-                // we don't do sorting if downvoting is enabled
-                if (downvotingAllowed() == 0) {
+                // we only do sorting if downvoting is disabled and if sorting is enabled
+                if (downvotingAllowed() == 0 && sortingEnabled == 1) {
                     // remove proposalIds from forVotesToProposalIds
                     _multiRmProposalIdFromForVotesMap(proposalIdsToDelete);
                 }
