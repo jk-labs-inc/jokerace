@@ -47,7 +47,7 @@ export async function getContestContractVersion(address: string, chainId: number
     } else if (version === "4.1") {
       return { abi: AddEntryChargeContract.abi, version};
     } else if (version === "3.18") {
-    return { abi: AddJokeraceCreatedEventContract.abi, version};
+      return { abi: AddJokeraceCreatedEventContract.abi, version};
     } else if (version === "3.17") {
       return { abi: LetJkLabsCancelContract.abi, version};
     } else if (version === "3.16") {
