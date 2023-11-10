@@ -88,7 +88,7 @@ abstract contract GovernorSorting {
         return false;
     }
 
-    // insert a new value into sortedRanks (this function is strictly O(n)).
+    // insert a new value into sortedRanks (this function is strictly O(n) or better).
     // we know at this point it's:
     //      -not tied
     //      -the idx where it should go is in [0, sortedRanks.length - 1]
@@ -111,7 +111,7 @@ abstract contract GovernorSorting {
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
         bool haveFoundOldValue = false;
 
-        // DO ANY SHIFTING? - not if we're checking for it and oldValue is at insertingIndex, then we're good, we don't need to update anything besides insertingIndex.
+        // DO ANY SHIFTING? - we do not need to if 1. if we're checking for oldValue and 2. oldValue is at insertingIndex - if both of those are the case, then we don't need to update anything besides insertingIndex.
         if (!(checkForOldValue && (sortedRanksMemVar[insertingIndex] == oldValue))) {
             // DO SHIFTING FROM (insertingIndex, sortedRanksLength)?
             //      - if insertingIndex == sortedRanksLength - 1, then there's nothing after it to shift down.
