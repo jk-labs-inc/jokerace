@@ -30,6 +30,11 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value) {
+      setWantsSubscription(true);
+    } else {
+      setWantsSubscription(false);
+    }
     setEmailForSubscription(event.target.value);
     setEmailError(null);
   };
@@ -67,12 +72,12 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
                 <input type="checkbox" checked={wantsSubscription} onChange={handleCheckboxChange} />
                 <span className="checkmark"></span>
               </label>
-              <p className="text-[16px] text-neutral-9 mt-[3px]">i’d like to get updates on contests</p>
+              <p className="text-[16px] text-neutral-9">i’d like to get updates on contests</p>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col gap-1 -mx-4">
               <input
                 type="text"
-                className="w-full rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-9 focus:outline-none submission-subscription-input"
+                className="w-full rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-7 focus:outline-none submission-subscription-input"
                 placeholder="myemail@email.com"
                 onChange={handleEmailChange}
               />

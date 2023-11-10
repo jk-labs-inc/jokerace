@@ -3,6 +3,7 @@ import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
+import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
 import { EntryCharge } from "@hooks/useDeployContest/types";
@@ -11,9 +12,9 @@ import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { FetchBalanceResult } from "@wagmi/core";
 import { FC, useState } from "react";
+import { useNetwork } from "wagmi";
 import DialogModalSendProposalEntryChargeLayout from "../components/EntryCharge";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
-import { FOOTER_LINKS } from "@config/links";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -55,13 +56,22 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   onSubmitProposal,
 }) => {
   const { contestPrompt } = useContestStore(state => state);
-  const { wantsSubscription, setWantsSubscription, setEmailForSubscription, emailForSubscription } =
-    useSubmitProposalStore(state => state);
+  const { chain } = useNetwork();
+  const {
+    wantsSubscription,
+    setWantsSubscription,
+    setEmailForSubscription,
+    emailForSubscription,
+    emailAlreadyExists,
+    setEmailAlreadyExists,
+  } = useSubmitProposalStore(state => state);
   const { isLoading, isSuccess } = useSubmitProposal();
   const { proposalId } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
   const insufficientBalance = (accountData?.value ?? 0) < (entryCharge?.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
+  const onCorrectNetwork = chain?.name.toLowerCase() === chainName.toLowerCase();
+  const showEntryCharge = entryCharge && entryCharge.costToPropose && accountData && onCorrectNetwork;
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWantsSubscription(event.target.checked);
@@ -69,8 +79,14 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   };
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value) {
+      setWantsSubscription(true);
+    } else {
+      setWantsSubscription(false);
+    }
     setEmailForSubscription(event.target.value);
     setEmailError(null);
+    setEmailAlreadyExists(false);
   };
 
   const handleConfirm = () => {
@@ -114,7 +130,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               <EthereumAddress ethereumAddress={address ?? ""} shortenOnFallback={true} />
               <p className="text-[16px] font-bold text-neutral-10">{formattedDate}</p>
             </div>
-            <div className="flex flex-col min-h-[12rem] rounded-md md:w-[650px]">
+            <div className="flex flex-col rounded-md md:w-[650px]">
               <div className="flex bg-true-black z-10 justify-start w-full px-1 py-2 border-y border-neutral-10">
                 <TipTapEditorControls editor={editorProposal} />
               </div>
@@ -128,26 +144,36 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                   isDragging ? "backdrop-blur-md opacity-70" : ""
                 }`}
               />
+            </div>
+            <div className="flex flex-col gap-11 mt-11">
+              {showEntryCharge ? (
+                <DialogModalSendProposalEntryChargeLayout entryCharge={entryCharge} accountData={accountData} />
+              ) : null}
+
               {!insufficientBalance ? (
-                <div className="flex flex-col gap-4 mt-8">
+                <div className="flex flex-col gap-4">
                   <div className="flex gap-4">
                     <label className="checkbox-container">
                       <input type="checkbox" checked={wantsSubscription} onChange={handleCheckboxChange} />
                       <span className="checkmark"></span>
                     </label>
 
-                    <p className="text-[16px] text-neutral-9 mt-[5px]">i’d like to get updates on contests</p>
+                    <p className="text-[16px] text-neutral-9">i’d like to get updates on contests</p>
                   </div>
-                  <div className="flex flex-col gap-1">
+                  <div className="flex flex-col gap-1 -mx-4">
                     <input
                       value={emailForSubscription}
                       type="text"
-                      className="w-[350px] rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-9 focus:outline-none submission-subscription-input"
+                      className="w-[360px] rounded-[40px] h-8 bg-true-black border border-neutral-9 indent-4 placeholder-neutral-7 focus:outline-none submission-subscription-input"
                       placeholder="myemail@email.com"
                       onChange={handleEmailChange}
                     />
                     {emailError ? (
                       <p className="text-[14px] text-negative-11 font-bold pl-2 mt-2">{emailError}</p>
+                    ) : emailAlreadyExists ? (
+                      <p className="text-positive-11 text-[12px] font-bold pl-2">
+                        your email has already been subscribed! :)
+                      </p>
                     ) : (
                       <p className="ml-4 opacity-50 text-neutral-11 text-[12px]">
                         by giving your email, you agree to share it with the contest <br />
@@ -164,11 +190,6 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
                     )}
                   </div>
                 </div>
-              ) : null}
-            </div>
-            <div className="flex flex-col gap-8 mt-14">
-              {entryCharge && entryCharge.costToPropose && accountData ? (
-                <DialogModalSendProposalEntryChargeLayout entryCharge={entryCharge} accountData={accountData} />
               ) : null}
 
               {isCorrectNetwork ? (

@@ -29,34 +29,33 @@ const useEmailSignup = () => {
     }
   };
 
-  const isEmailExists = async (email_address: string, showToasts: boolean = true) => {
+  const checkIfEmailExists = async (emailAddress: string, displayToasts: boolean = true) => {
     if (isSupabaseConfigured) {
       setLoading(true);
       try {
         const { data, error } = await supabase
           .from("email_signups")
           .select("email_address")
-          .eq("email_address", email_address);
+          .eq("email_address", emailAddress);
         setLoading(false);
         if (error) {
-          showToasts && toastError("There was an error while checking. Please try again later.", error.message);
+          displayToasts && toastError("There was an error while checking. Please try again later.", error.message);
           return false;
         }
         if (data?.length) {
-          showToasts && toastError("This email address is already subscribed.");
           return true;
         } else {
           return false;
         }
       } catch (error: any) {
         setLoading(false);
-        showToasts && toastError("There was an error while checking. Please try again later.", error.message);
+        displayToasts && toastError("There was an error while checking. Please try again later.", error.message);
         return false;
       }
     }
   };
 
-  return { subscribeUser, isEmailExists, isLoading };
+  return { subscribeUser, checkIfEmailExists, isLoading };
 };
 
 export default useEmailSignup;

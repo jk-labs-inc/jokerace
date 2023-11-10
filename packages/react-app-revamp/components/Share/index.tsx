@@ -2,6 +2,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { MediaQuery } from "@helpers/mediaQuery";
 import { generateLensShareUrlForContest, generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
 import { DuplicateIcon } from "@heroicons/react/outline";
+import { Reward } from "@hooks/useContest/store";
 import Image from "next/image";
 import { FC, Fragment } from "react";
 
@@ -13,9 +14,10 @@ interface ShareDropdownProps {
   contestName: string;
   contestAddress: string;
   chain: string;
+  rewards?: Reward | null;
 }
 
-const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, chain }) => {
+const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, chain, rewards }) => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <MediaQuery maxWidth={768}>
@@ -43,7 +45,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
             {({ active }) => (
               <a
                 target="_blank"
-                href={generateLensShareUrlForContest(contestName, contestAddress, chain)}
+                href={generateLensShareUrlForContest(contestName, contestAddress, chain, rewards)}
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                   "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
@@ -58,7 +60,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
           <Menu.Item>
             {({ active }) => (
               <a
-                href={generateTwitterShareUrlForContest(contestName, contestAddress, chain)}
+                href={generateTwitterShareUrlForContest(contestName, contestAddress, chain, rewards)}
                 target="_blank"
                 className={classNames(
                   active ? "bg-neutral-3 text-gray-900" : "text-gray-700",

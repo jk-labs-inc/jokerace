@@ -1,3 +1,4 @@
+import { Reward } from "@hooks/useContest/store";
 import { copyToClipboard } from "./copyToClipboard";
 
 interface UrlParams {
@@ -17,12 +18,39 @@ const buildUrl = (baseUrl: string, params: UrlParams): string => {
   return `${baseUrl}${query}`;
 };
 
-export const generateLensShareUrlForContest = (contestName: string, contestAddress: string, chain: string) => {
+const contestShareText = (contestName: string, rewards?: Reward | null) => {
+  let rewardsText =
+    rewards && rewards.token && rewards.token.value && rewards.token.symbol
+      ? ` to win ${rewards.token.value}$${rewards.token.symbol}`
+      : "";
+
+  return `Come play ${contestName} on @jokerace_xyz with me${rewardsText}!\n`;
+};
+
+export const generateLensShareUrlForContest = (
+  contestName: string,
+  contestAddress: string,
+  chain: string,
+  rewards?: Reward | null,
+) => {
   const params = {
-    text: `just launched a contest on jokerace, ${contestName} — come play to win`,
+    text: contestShareText(contestName, rewards),
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
   };
   return buildUrl(BASE_LENSTER_URL, params);
+};
+
+export const generateTwitterShareUrlForContest = (
+  contestName: string,
+  contestAddress: string,
+  chain: string,
+  rewards?: Reward | null,
+) => {
+  const params = {
+    text: contestShareText(contestName, rewards),
+    url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
+  };
+  return buildUrl(BASE_TWITTER_URL, params);
 };
 
 export const generateLensShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
@@ -30,15 +58,6 @@ export const generateLensShareUrlForSubmission = (contestAddress: string, chain:
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
   };
   return buildUrl(BASE_LENSTER_URL, params);
-};
-
-export const generateTwitterShareUrlForContest = (contestName: string, contestAddress: string, chain: string) => {
-  const params = {
-    text: `just launched a contest on jokerace, ${contestName} — come play to win`,
-    url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
-    via: "jokerace_xyz",
-  };
-  return buildUrl(BASE_TWITTER_URL, params);
 };
 
 export const generateTwitterShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
