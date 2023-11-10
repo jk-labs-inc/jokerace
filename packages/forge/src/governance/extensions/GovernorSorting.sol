@@ -143,6 +143,7 @@ abstract contract GovernorSorting {
 
     // keep things sorted as we go.
     // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas.
+    // because of no downvoting, and that a vote of 0 is not allowed, newValue will always be greater than oldValue.
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
         uint256 sortedRanksLength = sortedRanks.length; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
@@ -153,7 +154,7 @@ abstract contract GovernorSorting {
             return;
         }
 
-        // TIED?
+        // NEW VALUE TIED?
         if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
             // we don't need to insert anything, so we just need to treat these cases of oldValues that get
             // left behind like deletes (these are the TTs mentioned at the top) because of the array rule.
@@ -173,7 +174,7 @@ abstract contract GovernorSorting {
             }
         }
 
-        // SO IT'S IN [0, smallestValue]!
+        // SO IT'S IN [0, sortedRanksLength - 1]!
         // find where it should go and insert it.
         _insertRank(oldValue, newValue, sortedRanksLength, sortedRanksMemVar);
     }
