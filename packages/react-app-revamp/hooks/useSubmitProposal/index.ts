@@ -10,13 +10,13 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
-import { BigNumber, utils } from "ethers";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
-import { TransactionReceipt, formatEther } from "viem";
+import { formatEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
+import { useProposalStore } from "@hooks/useProposal/store";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -36,6 +36,7 @@ export function useSubmitProposal() {
   const { entryCharge } = useContestStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
+  const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
@@ -115,6 +116,7 @@ export function useSubmitProposal() {
         setIsSuccess(true);
         if (showToast) toastSuccess("proposal submitted successfully!");
         increaseCurrentUserProposalCount();
+        setSubmissionsCount(submissionsCount + 1);
         fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
 

@@ -10,28 +10,28 @@ interface ProposalStatisticsProps {
 
 const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
   const { contestMaxProposalCount, totalVotes, totalVotesCast } = useContestStore(state => state);
-  const { listProposalsIds } = useProposalStore(state => state);
+  const { submissionsCount } = useProposalStore(state => state);
 
   const content = useMemo<ReactNode>(() => {
     switch (contestStatus) {
       case ContestStatus.SubmissionOpen:
         return (
           <p className="text-[16px] text-neutral-11">
-            {listProposalsIds.length} submission
-            {listProposalsIds.length > 1 || listProposalsIds.length === 0 ? "s" : ""} &#8226;{" "}
-            {contestMaxProposalCount.toString()} allowed
+            {submissionsCount} submission
+            {submissionsCount > 1 || submissionsCount === 0 ? "s" : ""} &#8226; {contestMaxProposalCount.toString()}{" "}
+            allowed
           </p>
         );
       case ContestStatus.VotingOpen:
       case ContestStatus.VotingClosed:
         return (
           <p className="text-[16px] text-neutral-11">
-            {listProposalsIds.length} submission{listProposalsIds.length > 1 ? "s" : ""} &#8226;{" "}
-            {formatNumber(totalVotesCast)} out of {formatNumber(totalVotes)} votes deployed in contest
+            {submissionsCount} submission{submissionsCount > 1 ? "s" : ""} &#8226; {formatNumber(totalVotesCast)} out of{" "}
+            {formatNumber(totalVotes)} votes deployed in contest
           </p>
         );
     }
-  }, [contestStatus, listProposalsIds, contestMaxProposalCount, totalVotesCast, totalVotes]);
+  }, [contestStatus, submissionsCount, contestMaxProposalCount, totalVotesCast, totalVotes]);
 
   return (
     <div className="flex flex-col">
