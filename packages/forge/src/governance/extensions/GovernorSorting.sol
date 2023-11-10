@@ -107,15 +107,6 @@ abstract contract GovernorSorting {
             }
         }
 
-        // what we care about accounting for below is oldValue and the items at + below insertingIndex - we need to make sure all cases are accounted for:
-        //      - oldValue is at insertingIndex
-        //      - oldValue is at sortedRanks.length - 1
-        //      - oldValue is between (exclusive) insertingIndex and last value (oldValue !> insertingIndex bc no downvoting)
-        //      - insertingIndex == sortedRanks.length - 1
-        //      - sortedRanks.length == RANK_LIMIT
-        //      - and the above 2 cases if we aren't looking for oldValue too (if it's tied or it was 0 to begin with)
-        //      - and all of the ranges that insertingIndex ([0, sortedRanks.length - 1]), sortedRanks.length - 1 ([0, RANK_LIMIT - 1]), and oldValue ([insertingIndex, sortedRanks.length - 1]) could be
-
         // are we checking for the oldValue?
         bool checkForOldValue = (oldValue > 0) && (getNumProposalsWithThisManyForVotes(oldValue) == 0); // if there are props left with oldValue votes, we don't want to remove it
         bool haveFoundOldValue = false;
