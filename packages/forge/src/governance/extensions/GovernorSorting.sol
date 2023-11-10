@@ -23,15 +23,16 @@ abstract contract GovernorSorting {
     // WBs and TTs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
-    // TODO: add option to disable rank tracking for gas savings
-    // TODO: make RANK_LIMIT configurable + test ranges
-    // TODO: flesh out tests a ton for different edge cases w oldValue, smallest sorted ranks value, and RANK_LIMIT overlaps
-    
-    // RULE: cannot be 0
-    uint256 public constant RANK_LIMIT = 250;
+    uint256 public immutable sortingEnabled; // Either 0 for false or 1 for true
+    uint256 public immutable rankLimit; // RULE: Cannot be 0
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks; // value is forVotes counts, has the constraint of no duplicate values.
+
+    constructor(uint256 sortingEnabled_, uint256 rankLimit_) {
+        sortingEnabled = sortingEnabled_;
+        rankLimit = rankLimit_;
+    }
 
     /**
      * @dev Get the number of proposals that have `forVotes` number of for votes.
@@ -140,7 +141,7 @@ abstract contract GovernorSorting {
 
             // SHIFT INTO NEW INDEX? - if we didn't run into oldValue and we wouldn't be trying to shift into index RANK_LIMIT, then
             // go ahead and shift what was in sortedRanksLength - 1 into the next idx
-            if (!haveFoundOldValue && (sortedRanksLength < RANK_LIMIT)) {
+            if (!haveFoundOldValue && (sortedRanksLength < rankLimit)) {
                 sortedRanks.push(sortedRanksMemVar[sortedRanksLength - 1]);
             }
         }
@@ -171,7 +172,7 @@ abstract contract GovernorSorting {
         // SMALLER THAN CURRENT SMALLEST VAL?
         // this also means that the old value was 0 (or less than the lowest value if sortedRanks.length == RANK_LIMIT and/or the array is full), so all good with regards to oldValue.
         if (newValue < sortedRanksMemVar[sortedRanksLength - 1]) {
-            if (sortedRanksLength == RANK_LIMIT) {
+            if (sortedRanksLength == rankLimit) {
                 // if we've reached the size limit of sortedRanks, then we're done here
                 return;
             } else {

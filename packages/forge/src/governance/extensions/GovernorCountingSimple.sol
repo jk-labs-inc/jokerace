@@ -209,7 +209,7 @@ abstract contract GovernorCountingSimple is Governor {
         totalVotesCast += numVotes;
 
         // sorting and consequently rewards module compatibility is only available if downvoting is disabled
-        if (downvotingAllowed() == 0) {
+        if ((downvotingAllowed() == 0) && (sortingEnabled == 1)) {
             uint256 newForVotes = proposalvote.proposalVoteCounts.forVotes; // only check state var once to save on gas
             uint256 oldForVotes = newForVotes - numVotes;
 

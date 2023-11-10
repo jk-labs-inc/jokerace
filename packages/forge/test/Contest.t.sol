@@ -16,19 +16,41 @@ contract ContestTest is Test {
     uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 3;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
-    uint256[] public numParams = [
+
+    // COST TO PROPOSE INT PARAMS
+    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
+    uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
+    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+
+    // SORTING INT PARAMS
+    uint256 public constant SORTING_ENABLED = 1;
+    uint256 public constant RANK_LIMIT_250 = 250;
+
+    uint256[] public zeroCostToProposeNumParams = [
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
-        DOWNVOTING_ALLOWED
+        DOWNVOTING_ALLOWED,
+        ZERO_COST_TO_PROPOSE,
+        FIFTY_PERCENT_TO_CREATOR,
+        SORTING_ENABLED,
+        RANK_LIMIT_250
     ];
 
-    // COST TO PROPOSE PARAMS
-    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
-    uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
-    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+    uint256[] public oneEthToProposeNumParams = [
+        CONTEST_START,
+        VOTING_DELAY,
+        VOTING_PERIOD,
+        NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
+        MAX_PROPOSAL_COUNT,
+        DOWNVOTING_ALLOWED,
+        ONE_ETH_COST_TO_PROPOSE,
+        FIFTY_PERCENT_TO_CREATOR,
+        SORTING_ENABLED,
+        RANK_LIMIT_250
+    ];
 
     // MERKLE TREE PARAMS
     /*
@@ -115,25 +137,19 @@ contract ContestTest is Test {
                               "hello world",
                               SUBMISSION_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
-                              ZERO_COST_TO_PROPOSE,
-                              FIFTY_PERCENT_TO_CREATOR,
-                              numParams);
+                              zeroCostToProposeNumParams);
 
         anyoneCanSubmitContest = new Contest("test",
                               "hello world",
                               SUB_ZERO_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
-                              ZERO_COST_TO_PROPOSE,
-                              FIFTY_PERCENT_TO_CREATOR,
-                              numParams);
+                              zeroCostToProposeNumParams);
 
         anyoneCanSubmitCostsAnEthContest = new Contest("test",
                         "hello world",
                         SUB_ZERO_MERKLE_ROOT,
                         VOTING_MERKLE_ROOT,
-                        ONE_ETH_COST_TO_PROPOSE,
-                        FIFTY_PERCENT_TO_CREATOR,
-                        numParams);
+                        oneEthToProposeNumParams);
 
         vm.stopPrank();
     }

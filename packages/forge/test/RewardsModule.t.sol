@@ -9,23 +9,36 @@ import "../src/modules/RewardsModule.sol";
 contract RewardsModuleTest is Test {
     // CONTEST VARS
     Contest public contest;
+
+    // BASIC INT PARAMS
     uint64 public constant CONTEST_START = 1681650000;
     uint64 public constant VOTING_DELAY = 10000;
     uint64 public constant VOTING_PERIOD = 10000;
     uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 3;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
-    uint256[] public numParams = [
+
+    // COST TO PROPOSE INT PARAMS
+    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
+    uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
+    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+
+    // SORTING INT PARAMS
+    uint256 public constant SORTING_ENABLED = 1;
+    uint256 public constant RANK_LIMIT_250 = 250;
+
+    uint256[] public zeroCostToProposeNumParams = [
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
-        DOWNVOTING_ALLOWED
+        DOWNVOTING_ALLOWED,
+        ZERO_COST_TO_PROPOSE,
+        FIFTY_PERCENT_TO_CREATOR,
+        SORTING_ENABLED,
+        RANK_LIMIT_250
     ];
-
-    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
-    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
 
     /*
         Voting merkle tree:
@@ -117,9 +130,7 @@ contract RewardsModuleTest is Test {
                               "hello world",
                               SUBMISSION_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
-                              ZERO_COST_TO_PROPOSE,
-                              FIFTY_PERCENT_TO_CREATOR,
-                              numParams);
+                              zeroCostToProposeNumParams);
 
         rewardsModulePaysTarget = new RewardsModule(payees,
                                           shares,
