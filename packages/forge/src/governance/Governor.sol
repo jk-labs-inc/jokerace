@@ -102,7 +102,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "4.1";
+        return "4.2";
     }
 
     /**
