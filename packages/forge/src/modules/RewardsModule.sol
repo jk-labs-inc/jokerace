@@ -189,6 +189,10 @@ contract RewardsModule is Context {
             "RewardsModule: rankings don't work with downvoting enabled on the contest"
         );
         require(
+            _underlyingContest.sortingEnabled() == 1,
+            "RewardsModule: rankings don't work with sorting disabled on the contest"
+        );
+        require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
