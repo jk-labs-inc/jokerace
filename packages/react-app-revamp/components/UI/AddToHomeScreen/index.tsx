@@ -29,8 +29,8 @@ const AddToHomeScreenPopup = () => {
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex min-h-full w-full items-center justify-center">
           <Dialog.Panel
-            className="text-sm mx-auto w-[350px] overflow-y-auto rounded-[10px] 
-             px-4 pt-4 pb-6 bg-true-black"
+            className={`text-sm mx-auto w-[350px] overflow-y-auto rounded-[10px] 
+             px-4 pt-4 ${isSupportedBrowser ? "pb-0" : "pb-6"} bg-true-black`}
           >
             <div className="p-2 relative">
               <div className={`2xs:pt-3 pie-3`}>
