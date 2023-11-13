@@ -1,8 +1,8 @@
 import { useContestStore } from "@hooks/useContest/store";
 import moment from "moment";
 import { FC, useEffect, useState } from "react";
-import ContestPromptModalLegacyLayout from "./Layout/Legacy";
-import ContestPromptModalV3Layout from "./Layout/V3";
+import ContestPromptModalLegacyLayout from "./components/Layout/Legacy";
+import ContestPromptModalV3Layout from "./components/Layout/V3";
 
 interface ContestPromptModalProps {
   prompt: string;

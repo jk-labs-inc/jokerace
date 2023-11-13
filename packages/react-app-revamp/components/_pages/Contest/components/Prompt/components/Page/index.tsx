@@ -1,8 +1,8 @@
 import { truncateText } from "@helpers/truncate";
 import { useContestStore } from "@hooks/useContest/store";
 import { FC, useEffect, useRef, useState } from "react";
-import ContestPromptPageLegacyLayout from "./Layout/Legacy";
-import ContestPromptPageV3Layout from "./Layout/V3";
+import ContestPromptPageLegacyLayout from "./components/Layout/Legacy";
+import ContestPromptPageV3Layout from "./components/Layout/V3";
 
 interface ContestPromptPageProps {
   prompt: string;
