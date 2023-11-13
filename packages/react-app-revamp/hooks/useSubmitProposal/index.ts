@@ -9,7 +9,7 @@ import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useUserStore } from "@hooks/useUser/store";
-import { waitForTransaction, writeContract } from "@wagmi/core";
+import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
@@ -93,8 +93,10 @@ export function useSubmitProposal() {
         }
 
         if (txConfig) {
-          //@ts-ignore
-          const txSendProposal = await writeContract(txConfig);
+          // @ts-ignore
+          const request = await prepareWriteContract(txConfig);
+
+          const txSendProposal = await writeContract(request);
 
           hash = txSendProposal.hash;
         }
