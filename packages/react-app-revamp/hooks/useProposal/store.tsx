@@ -15,6 +15,7 @@ interface ProposalState {
   currentPagePaginationProposals: number;
   hasPaginationProposalsNextPage: boolean;
   canUpdateVotesInRealTime: boolean;
+  submissionsCount: number;
   addProposalId: (id: string) => void;
   setListProposalsIds: (list: string[]) => void;
   setIsListProposalsLoading: (value: boolean) => void;
@@ -24,6 +25,7 @@ interface ProposalState {
   setProposalVotes: (id: any, votes: any) => void;
   softDeleteProposals: (ids: string[]) => void;
   resetListProposals: () => void;
+  setSubmissionsCount: (value: number) => void;
   setIsPageProposalsLoading: (value: boolean) => void;
   setIsPageProposalsError: (value: string) => void;
   setIsPageProposalsSuccess: (value: boolean) => void;
@@ -49,6 +51,8 @@ export const createProposalStore = () =>
     currentPagePaginationProposals: 0,
     hasPaginationProposalsNextPage: false,
     canUpdateVotesInRealTime: false,
+    submissionsCount: 0,
+    setSubmissionsCount: value => set({ submissionsCount: value }),
     setIsPageProposalsLoading: value => set({ isPageProposalsLoading: value }),
     setIsPageProposalsSuccess: value => set({ isPageProposalSuccess: value }),
     setIsPageProposalsError: value => set({ isPageProposalsError: value }),

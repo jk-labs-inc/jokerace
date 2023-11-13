@@ -27,6 +27,7 @@ export function useProposal() {
     setIsListProposalsLoading,
     setIsListProposalsSuccess,
     setListProposalsIds,
+    setSubmissionsCount,
     setTotalPagesPaginationProposals,
     setIndexPaginationProposalPerId,
   } = useProposalStore(state => state);
@@ -196,9 +197,11 @@ export function useProposal() {
           .map((proposal: { id: any }) => proposal.id);
 
         setListProposalsIds(proposalsIds as string[]);
+        setSubmissionsCount(proposalsIds.length);
       } else {
         proposalsIds = proposalsIdsRawData;
         setListProposalsIds(proposalsIds as string[]);
+        setSubmissionsCount(proposalsIds.length);
       }
       setIsListProposalsSuccess(true);
       setIsListProposalsLoading(false);
