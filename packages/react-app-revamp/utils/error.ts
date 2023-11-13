@@ -46,11 +46,14 @@ export function didUserReject(error: any): boolean {
 export function handleError(error: any): { message: string; codeFound: boolean } {
   const code = error.code as ErrorCodes;
 
+  const isInsufficientFundsError =
+    error instanceof EstimateGasExecutionError || (error.code === -32603 && error.data?.code === -32000);
+
   if (error instanceof ContractFunctionExecutionError) {
     return handleContractFunctionExecutionError(error);
   }
 
-  if (error instanceof EstimateGasExecutionError) {
+  if (isInsufficientFundsError) {
     return { message: errorMessages[ErrorCodes.INSUFFICIENT_FUNDS]!, codeFound: true };
   }
 
