@@ -9,6 +9,7 @@ import "../src/modules/RewardsModule.sol";
 contract RewardsModuleTest is Test {
     // CONTEST VARS
     Contest public contest;
+    Contest public rankLimitOneContest;
 
     // BASIC INT PARAMS
     uint64 public constant CONTEST_START = 1681650000;
@@ -26,6 +27,7 @@ contract RewardsModuleTest is Test {
     // SORTING INT PARAMS
     uint256 public constant SORTING_ENABLED = 1;
     uint256 public constant RANK_LIMIT_250 = 250;
+    uint256 public constant RANK_LIMIT_1 = 1;
 
     uint256[] public zeroCostToProposeNumParams = [
         CONTEST_START,
@@ -38,6 +40,19 @@ contract RewardsModuleTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         SORTING_ENABLED,
         RANK_LIMIT_250
+    ];
+
+    uint256[] public zeroCostToProposeAndRankLimitOneNumParams = [
+        CONTEST_START,
+        VOTING_DELAY,
+        VOTING_PERIOD,
+        NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
+        MAX_PROPOSAL_COUNT,
+        DOWNVOTING_ALLOWED,
+        ZERO_COST_TO_PROPOSE,
+        FIFTY_PERCENT_TO_CREATOR,
+        SORTING_ENABLED,
+        RANK_LIMIT_1
     ];
 
     /*
@@ -110,6 +125,7 @@ contract RewardsModuleTest is Test {
     // REWARDS MODULE VARS
     RewardsModule public rewardsModulePaysTarget;
     RewardsModule public rewardsModulePaysAuthor;
+    RewardsModule public rewardsModulePaysAuthorToRankOneContest;
     uint256[] public payees = [1, 2, 3];
     uint256[] public shares = [3, 2, 1];
 
@@ -132,6 +148,12 @@ contract RewardsModuleTest is Test {
                               VOTING_MERKLE_ROOT,
                               zeroCostToProposeNumParams);
 
+        rankLimitOneContest = new Contest("test",
+                              "hello world",
+                              SUBMISSION_MERKLE_ROOT,
+                              VOTING_MERKLE_ROOT,
+                              zeroCostToProposeAndRankLimitOneNumParams);
+
         rewardsModulePaysTarget = new RewardsModule(payees,
                                           shares,
                                           Contest(contest),
@@ -140,6 +162,11 @@ contract RewardsModuleTest is Test {
         rewardsModulePaysAuthor = new RewardsModule(payees,
                                           shares,
                                           Contest(contest),
+                                          false);
+
+        rewardsModulePaysAuthorToRankOneContest = new RewardsModule(payees,
+                                          shares,
+                                          Contest(rankLimitOneContest),
                                           false);
 
         vm.stopPrank();
@@ -727,6 +754,53 @@ contract RewardsModuleTest is Test {
         rewardsModulePaysAuthor.release(1);
 
         assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    /////////////////////////////
+
+    // RELEASES WITH RANK LIMIT OF ONE (TESTING SORTING ALGORITHM)
+
+    // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 1
+    function testReleaseToAuthorFirstPlaceRankLimit1() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = rankLimitOneContest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthorToRankOneContest.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 2 - should error
+    function testReleaseToAuthorSecondPlaceRankLimit1() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = rankLimitOneContest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
+        );
+        rewardsModulePaysAuthorToRankOneContest.release(2);
     }
 
     /////////////////////////////
