@@ -73,7 +73,7 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
-      const combinedPrompt = `${prompt.summarize} ${prompt.evaluateVoters}`;
+      const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}`;
       const contestInfo = type + "|" + summary + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
       const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
