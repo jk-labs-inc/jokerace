@@ -10,8 +10,11 @@ interface Recipient {
   proportion: number;
 }
 
+const RANK_LIMIT = 50;
+
 const CreateRewardsPoolRecipients: React.FC = () => {
   const [recipients, setRecipients] = useState<Recipient[]>([{ id: 0, place: 1, proportion: 100 }]);
+  const [recipientsExceedLimit, setRecipientsExceedLimit] = useState("");
   const [nextId, setNextId] = useState(1);
   const { setRanks, setShares, setValidationError } = useDeployRewardsStore(state => state);
 
@@ -48,12 +51,21 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   }, [recipients, setRanks, setShares, setValidationError]);
 
   const handleAddRecipient = () => {
-    const nextPlace = recipients.length + 1 <= 100 ? recipients.length + 1 : 1;
+    if (recipients.length >= RANK_LIMIT) {
+      setRecipientsExceedLimit(`cannot add more than ${RANK_LIMIT} recipients.`);
+      return;
+    }
+
+    setRecipientsExceedLimit("");
+    const nextPlace = recipients.length + 1;
     setRecipients(prevRecipients => [...prevRecipients, { id: nextId, place: nextPlace, proportion: 0 }]);
     setNextId(prevId => prevId + 1);
   };
 
   const handleRemoveRecipient = (id: number) => {
+    if (recipients.length <= RANK_LIMIT) {
+      setRecipientsExceedLimit("");
+    }
     if (recipients.length > 1) {
       setRecipients(prevRecipients => prevRecipients.filter(recipient => recipient.id !== id));
     }
@@ -169,6 +181,9 @@ const CreateRewardsPoolRecipients: React.FC = () => {
             )}
           </div>
         </div>
+        {recipientsExceedLimit ? (
+          <p className="text-[16px] text-negative-11 font-bold">{recipientsExceedLimit}</p>
+        ) : null}
       </div>
     </div>
   );

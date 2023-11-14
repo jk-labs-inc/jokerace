@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
-import ContestParamsAdvancedOptions from "./components/Advanced";
+import ContestParamsDownvote from "./components/Downvote";
 import ContestParamsEntryCharge from "./components/EntryCharge";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
 import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
@@ -80,17 +80,10 @@ const CreateContestParams = () => {
     validateSubmissionsPerUser(allowedSubmissionsPerUser);
   }, [allowedSubmissionsPerUser]);
 
-  const handleDownvoteChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDownvoteChange = async (value: boolean) => {
     setAdvancedOptions({
       ...advancedOptions,
-      downvote: event.target.checked,
-    });
-  };
-
-  const handleSortingChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAdvancedOptions({
-      ...advancedOptions,
-      sorting: event.target.checked,
+      downvote: value,
     });
   };
 
@@ -167,6 +160,9 @@ const CreateContestParams = () => {
           submissionsPerContestError={maxSubmissionsError}
           onMaxSubmissionsChange={onMaxSubmissionsChange}
         />
+
+        <ContestParamsDownvote downvote={advancedOptions.downvote} onChange={handleDownvoteChange} />
+
         {isConnected && minCostToPropose > 0 ? (
           <ContestParamsEntryCharge
             entryCharge={entryCharge}
@@ -177,12 +173,6 @@ const CreateContestParams = () => {
             onEntryChargePercentageChange={onEntryChargePercentageChange}
           />
         ) : null}
-
-        <ContestParamsAdvancedOptions
-          advancedOptions={advancedOptions}
-          onDownvotingAllowedChange={handleDownvoteChange}
-          onSortingAllowedChange={handleSortingChange}
-        />
 
         <div>
           <p className="text-[24px] text-neutral-11">

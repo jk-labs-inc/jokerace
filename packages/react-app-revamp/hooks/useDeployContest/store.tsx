@@ -2,8 +2,8 @@ import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { create } from "zustand";
-import { EntryCharge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
 import { DEFAULT_SUBMISSIONS } from ".";
+import { EntryCharge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
 
 type ContestDeployError = {
   step: number;
@@ -18,6 +18,7 @@ type Prompt = {
 export type AdvancedOptions = {
   downvote: boolean;
   sorting: boolean;
+  rankLimit: number;
 };
 
 export interface DeployContestState {
@@ -26,7 +27,7 @@ export interface DeployContestState {
     chainId: number;
     hash: string;
     address: string;
-    maxSubmissions: number;
+    downvote: boolean;
   };
   type: string;
   title: string;
@@ -67,7 +68,7 @@ export interface DeployContestState {
   submissionTab: number;
   votingTab: number;
   entryCharge: EntryCharge;
-  setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) => void;
+  setDeployContestData: (chain: string, chainId: number, hash: string, address: string, downvote: boolean) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
@@ -112,7 +113,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       chainId: 0,
       hash: "",
       address: "",
-      maxSubmissions: 0,
+      downvote: false,
     },
     type: "",
     title: "",
@@ -168,6 +169,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     advancedOptions: {
       downvote: false,
       sorting: false,
+      rankLimit: 250,
     },
     isLoading: false,
     isSuccess: false,
@@ -181,8 +183,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
   return {
     ...initialState,
 
-    setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) =>
-      set({ deployContestData: { chain, chainId, hash, address, maxSubmissions } }),
+    setDeployContestData: (chain: string, chainId: number, hash: string, address: string, downvote: boolean) =>
+      set({ deployContestData: { chain, chainId, hash, address, downvote } }),
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),

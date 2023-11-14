@@ -88,23 +88,26 @@ export function useDeployContest() {
           : MAX_SUBMISSIONS_LIMIT;
       const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : MAX_SUBMISSIONS_LIMIT;
 
-      const contestParameters = [
-        getUnixTime(submissionOpen),
-        differenceInSeconds(votingOpen, submissionOpen),
-        differenceInSeconds(votingClose, votingOpen),
-        finalAllowedSubmissionsPerUser,
-        finalMaxSubmissions,
-        advancedOptions.downvote ? 1 : 0,
-        advancedOptions.sorting ? 1 : 0,
-      ];
+      const contestParametersObject = {
+        initialContestStart: getUnixTime(submissionOpen),
+        initialVotingDelay: differenceInSeconds(votingOpen, submissionOpen),
+        initialVotingPeriod: differenceInSeconds(votingClose, votingOpen),
+        initialNumAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
+        initialMaxProposalCount: finalMaxSubmissions,
+        initialDownvotingAllowed: advancedOptions.downvote ? 1 : 0,
+        costToPropose: parseEther(costToPropose.toString()),
+        percentageToCreator: percentageToCreator,
+        sortingEnabled: advancedOptions.sorting ? 1 : 0,
+        rankLimit: advancedOptions.rankLimit,
+      };
+
+      const contestParameters = Object.values(contestParametersObject);
 
       const contractContest = await factoryCreateContest.deploy(
         title,
         contestInfo,
         submissionMerkleRoot,
         votingMerkleRoot,
-        parseEther(costToPropose.toString()),
-        percentageToCreator,
         contestParameters,
       );
 
@@ -123,7 +126,7 @@ export function useDeployContest() {
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
         contractContest.address,
-        maxSubmissions,
+        advancedOptions.downvote,
       );
 
       let votingReqDatabaseEntry = null;

@@ -24,8 +24,14 @@ const ContestRewards = () => {
   const { asPath } = useRouter();
   const { chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const { isSuccess, isLoading, supportsRewardsModule, contestAuthorEthereumAddress, contestMaxProposalCount } =
-    useContestStore(state => state);
+  const {
+    isSuccess,
+    isLoading,
+    supportsRewardsModule,
+    contestAuthorEthereumAddress,
+    contestMaxProposalCount,
+    downvotingAllowed,
+  } = useContestStore(state => state);
   const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
   const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
@@ -60,11 +66,11 @@ const ContestRewards = () => {
   if (!supportsRewardsModule && creator) {
     if (isRewardsPoolDeploying) return <Loader scale="page">Deploying rewards pool...</Loader>;
 
-    if (contestMaxProposalCount > DEFAULT_SUBMISSIONS) {
+    if (downvotingAllowed) {
       return (
         <p className="text-[16px]">
-          For this contest, you cannot create a rewards module; the maximum number of submissions for the contest must
-          be <b>100</b> or less in order to be able to create a rewards module.
+          For this contest, you cannot create a rewards module; in order to create rewards module, you need to disable
+          downvoting in the creation process.
         </p>
       );
     }
