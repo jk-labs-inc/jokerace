@@ -42,6 +42,7 @@ import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
 import { lukso } from "./custom-chains/lukso";
 import { luksoTestnet } from "./custom-chains/luksoTestnet";
 import { mainnet } from "./custom-chains/mainnet";
+import { mantaPacific } from "./custom-chains/mantaPacific";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { modeTestnet } from "./custom-chains/modeTestnet";
@@ -105,6 +106,7 @@ const totalChains: Chain[] = [
   quartz,
   unique,
   vitruveo,
+  mantaPacific,
   polygonTestnet,
   sepolia,
   goerli,
@@ -224,6 +226,7 @@ export const chainsImages: ChainImages = {
   littestnet: "/lit.svg",
   lukso: "/lukso.svg",
   luksotestnet: "/lukso.svg",
+  mantaPacific: "/mantaPacific.svg",
   mantle: "/mantle.svg",
   mantletestnet: "/mantle.svg",
   nautilusChain: "/nautilusChain.png",
