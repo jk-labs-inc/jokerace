@@ -6,13 +6,7 @@ import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
-import {
-  generateFacebookShareUrlForSubmission,
-  generateLensShareUrlForSubmission,
-  generateLinkedInShareUrlForSubmission,
-  generateTwitterShareUrlForSubmission,
-  generateUrlSubmissions,
-} from "@helpers/share";
+import { generateUrlSubmissions } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -65,60 +59,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
     <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
       <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-12"}`}>
         <ArrowLeftIcon width={24} onClick={onClose} />
-        <div className="flex gap-2 self-end">
-          <a
-            className={`flex items-center  bg-neutral-12 rounded-full overflow-hidden w-8 h-8`}
-            href={generateLensShareUrlForSubmission(address, chain, proposalId)}
-            target="_blank"
-          >
-            <Image
-              width={32}
-              height={32}
-              className="object-cover grayscale"
-              src="/socials/lens-leaf.svg"
-              alt="avatar"
-            />
-          </a>
-          <a
-            className={`flex items-center  bg-neutral-13 rounded-full overflow-hidden w-8 h-8`}
-            href={generateTwitterShareUrlForSubmission(address, chain, proposalId)}
-            target="_blank"
-          >
-            <Image
-              width={28}
-              height={28}
-              className="object-cover m-auto"
-              src="/socials/twitter-light.svg"
-              alt="avatar"
-            />
-          </a>
-          <a
-            className={`flex items-center rounded-full overflow-hidden w-8 h-8`}
-            href={generateFacebookShareUrlForSubmission(address, chain, proposalId)}
-            target="_blank"
-          >
-            <Image
-              width={30}
-              height={30}
-              className="object-cover m-auto grayscale"
-              src="/socials/share-submission/facebook.svg"
-              alt="avatar"
-            />
-          </a>
-          <a
-            className={`flex items-center   rounded-full overflow-hidden w-8 h-8`}
-            href={generateLinkedInShareUrlForSubmission(address, chain, proposalId)}
-            target="_blank"
-          >
-            <Image
-              width={34}
-              height={34}
-              className="object-cover m-auto grayscale"
-              src="/socials/share-submission/linkedin.svg"
-              alt="avatar"
-            />
-          </a>
-
+        <div className="flex self-end">
           <div
             className={`flex items-center bg-true-black rounded-full border-neutral-11 border overflow-hidden w-8 h-8`}
             onClick={() =>
