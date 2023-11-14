@@ -732,6 +732,33 @@ contract RewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
+    // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to author of rank 2
+    function testReleaseToAuthorSecondPlace2WithActualFirstPlaceDeleted() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        proposalsToDelete.push(proposalId2);
+        vm.prank(CREATOR_ADDRESS_1);
+        contest.deleteProposals(proposalsToDelete);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
+        );
+        rewardsModulePaysAuthor.release(2);
+    }
+
     // 2 proposals with different authors, at 1 and 5 votes, the one with 1 vote is deleted; release to author of rank 1
     function testReleaseToAuthorFirstPlace2WithActualSecondPlaceDeleted() public {
         vm.warp(1681650001);
@@ -748,6 +775,32 @@ contract RewardsModuleTest is Test {
         proposalsToDelete.push(proposalId1);
         vm.prank(CREATOR_ADDRESS_1);
         contest.deleteProposals(proposalsToDelete);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    // 2 proposals with different authors, P1 gets 1 vote -> P1 is deleted -> P2 gets 1 vote; release to author of rank 1
+    function testReleaseToAuthorFirstPlace2WinnerWithSameVotesAsDeleted() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+
+        proposalsToDelete.push(proposalId1);
+        vm.prank(CREATOR_ADDRESS_1);
+        contest.deleteProposals(proposalsToDelete);
+
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
