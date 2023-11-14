@@ -42,7 +42,7 @@ import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
 import { lukso } from "./custom-chains/lukso";
 import { luksoTestnet } from "./custom-chains/luksoTestnet";
 import { mainnet } from "./custom-chains/mainnet";
-import { manta } from "./custom-chains/manta";
+import { mantaPacific } from "./custom-chains/mantaPacific";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { modeTestnet } from "./custom-chains/modeTestnet";
@@ -106,7 +106,7 @@ const totalChains: Chain[] = [
   quartz,
   unique,
   vitruveo,
-  manta,
+  mantaPacific,
   polygonTestnet,
   sepolia,
   goerli,

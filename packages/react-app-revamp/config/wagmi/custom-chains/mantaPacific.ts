@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const manta: Chain = {
+export const mantaPacific: Chain = {
   id: 169,
-  name: "manta",
-  network: "manta",
+  name: "mantaPacific",
+  network: "mantaPacific",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",
@@ -18,7 +18,7 @@ export const manta: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Manta Etherscan", url: "https://pacific-explorer.manta.network" },
-    default: { name: "Manta Etherscan", url: "https://pacific-explorer.manta.network" },
+    etherscan: { name: "Manta Pacific Etherscan", url: "https://pacific-explorer.manta.network" },
+    default: { name: "Manta Pacific Etherscan", url: "https://pacific-explorer.manta.network" },
   },
 };
