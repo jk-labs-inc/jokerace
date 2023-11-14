@@ -1,15 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { chains } from "@config/wagmi";
-import { DEFAULT_SUBMISSIONS, MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
+import { MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import useEntryChargeDetails from "@hooks/useEntryChargeDetails";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useEffect, useMemo, useState } from "react";
-import { useMedia } from "react-use";
+import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
-import CreateNumberInput from "../../components/NumberInput";
 import StepCircle from "../../components/StepCircle";
+import ContestParamsAdvancedOptions from "./components/Advanced";
+import ContestParamsEntryCharge from "./components/EntryCharge";
+import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
+import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
@@ -17,20 +19,17 @@ const CreateContestParams = () => {
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
   const { openConnectModal } = useConnectModal();
-  const isMobile = useMedia("(max-width: 768px)");
   const {
     setMaxSubmissions,
     setAllowedSubmissionsPerUser,
     allowedSubmissionsPerUser,
     maxSubmissions,
-    setDownvote,
-    downvote,
+    advancedOptions,
+    setAdvancedOptions,
     step,
     entryCharge,
     setEntryCharge,
   } = useDeployContestStore(state => state);
-  const [isEnabled, setIsEnabled] = useState(downvote);
-  const [alertOnRewards, setAlertOnRewards] = useState<boolean>(false);
   const minCostToPropose = useEntryChargeDetails(chain?.name ?? "");
   const chainUnitLabel = chains.find(c => c.name === chain?.name)?.nativeCurrency.symbol;
   const [entryChargeError, setEntryChargeError] = useState<string>("");
@@ -74,12 +73,6 @@ const CreateContestParams = () => {
   }, [deployContest, isLoading]);
 
   useEffect(() => {
-    if (maxSubmissions > DEFAULT_SUBMISSIONS && maxSubmissions <= MAX_SUBMISSIONS_LIMIT) {
-      setAlertOnRewards(true);
-    } else {
-      setAlertOnRewards(false);
-    }
-
     validateMaxSubmissions(maxSubmissions);
   }, [maxSubmissions]);
 
@@ -87,9 +80,18 @@ const CreateContestParams = () => {
     validateSubmissionsPerUser(allowedSubmissionsPerUser);
   }, [allowedSubmissionsPerUser]);
 
-  const handleDownvoteChange = async (value: boolean) => {
-    setIsEnabled(value);
-    setDownvote(value);
+  const handleDownvoteChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAdvancedOptions({
+      ...advancedOptions,
+      downvote: event.target.checked,
+    });
+  };
+
+  const handleSortingChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAdvancedOptions({
+      ...advancedOptions,
+      sorting: event.target.checked,
+    });
   };
 
   const onSubmissionsPerUserChange = (value: number | null) => {
@@ -153,99 +155,34 @@ const CreateContestParams = () => {
     <div className="flex flex-col gap-12 mt-12 lg:mt-[50px] animate-swingInLeft">
       <div className="flex flex-col md:flex-row gap-5">
         <StepCircle step={step + 1} />
-        <div className="flex flex-col gap-6 mt-2">
-          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-            how many submissions can each player enter?
-          </p>
-          <div className="flex flex-col gap-2">
-            <CreateNumberInput
-              value={allowedSubmissionsPerUser}
-              onChange={onSubmissionsPerUserChange}
-              errorMessage={submissionsPerUserError}
-            />
-          </div>
-        </div>
+        <ContestParamsSubmissionsPerPlayer
+          allowedSubmissionsPerUser={allowedSubmissionsPerUser}
+          submissionsPerUserError={submissionsPerUserError}
+          onSubmissionsPerUserChange={onSubmissionsPerUserChange}
+        />
       </div>
       <div className="md:ml-[70px] flex flex-col gap-12">
-        <div className="flex flex-col gap-6">
-          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-            how many total submissions does your contest accept?
-          </p>
-          <div className="flex flex-col gap-2">
-            <CreateNumberInput
-              value={maxSubmissions}
-              onChange={onMaxSubmissionsChange}
-              errorMessage={
-                alertOnRewards
-                  ? `please note you won't be able to add a rewards pool if you enable over ${DEFAULT_SUBMISSIONS} submissions`
-                  : maxSubmissionsError
-              }
-            />
-          </div>
-        </div>
-        <div className="flex flex-col gap-6">
-          <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-            can players downvote—that is, vote <span className="italic">against</span> a submission?
-          </p>
-          <div className="flex flex-col gap-2">
-            <div className="flex w-full md:w-[380px]  border border-neutral-10 rounded-[25px] overflow-hidden text-[20px] md:text-[18px]">
-              <div
-                className={`w-full px-4 py-1 cursor-pointer ${
-                  isEnabled ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
-                }`}
-                onClick={() => handleDownvoteChange(true)}
-              >
-                {isMobile ? "yes" : "enable downvoting"}
-              </div>
-              <div
-                className={`w-full px-4 py-1 cursor-pointer ${
-                  !isEnabled ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
-                }`}
-                onClick={() => handleDownvoteChange(false)}
-              >
-                {isMobile ? "no" : "disable downvoting"}
-              </div>
-            </div>
-          </div>
-        </div>
+        <ContestParamsSubmissionsPerContest
+          maxSubmissions={maxSubmissions}
+          submissionsPerContestError={maxSubmissionsError}
+          onMaxSubmissionsChange={onMaxSubmissionsChange}
+        />
         {isConnected && minCostToPropose > 0 ? (
-          <div className="flex flex-col gap-6">
-            <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-              what is the entry charge for players to submit to the contest?
-            </p>
-            <div className="flex flex-col gap-2">
-              <CreateNumberInput
-                value={entryCharge.costToPropose}
-                onChange={onEntryChargeValueChange}
-                unitLabel={chainUnitLabel}
-                errorMessage={entryChargeError}
-              />
-              {!entryChargeError && (
-                <p className="text-[16px] font-bold text-neutral-14">
-                  this can help keep out bots, and we’ll split it with you 50/50
-                </p>
-              )}
-            </div>
-            <div className="flex gap-4">
-              <label className="checkbox-container">
-                <input
-                  type="checkbox"
-                  checked={entryCharge.percentageToCreator === 0}
-                  onChange={onEntryChargePercentageChange}
-                  disabled={minCostToPropose <= 0}
-                />
-                <span className="checkmark"></span>
-              </label>
-              <p
-                className={`text-[16px] md:text-[24px] ${
-                  entryCharge.percentageToCreator === 0 ? "text-neutral-11" : "text-neutral-9"
-                } md:-mt-1`}
-              >
-                give my 50% to support <span className="normal-case">JokeRace</span> instead
-              </p>
-            </div>
-          </div>
+          <ContestParamsEntryCharge
+            entryCharge={entryCharge}
+            entryChargeError={entryChargeError}
+            minCostToPropose={minCostToPropose}
+            chainUnitLabel={chainUnitLabel}
+            onEntryChargeValueChange={onEntryChargeValueChange}
+            onEntryChargePercentageChange={onEntryChargePercentageChange}
+          />
         ) : null}
+
+        <ContestParamsAdvancedOptions
+          advancedOptions={advancedOptions}
+          onDownvotingAllowedChange={handleDownvoteChange}
+          onSortingAllowedChange={handleSortingChange}
+        />
 
         <div>
           <p className="text-[24px] text-neutral-11">

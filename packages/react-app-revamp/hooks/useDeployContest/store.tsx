@@ -3,6 +3,7 @@ import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSu
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { create } from "zustand";
 import { EntryCharge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
+import { DEFAULT_SUBMISSIONS } from ".";
 
 type ContestDeployError = {
   step: number;
@@ -12,6 +13,11 @@ type ContestDeployError = {
 type Prompt = {
   summarize: string;
   evaluateVoters: string;
+};
+
+export type AdvancedOptions = {
+  downvote: boolean;
+  sorting: boolean;
 };
 
 export interface DeployContestState {
@@ -52,7 +58,7 @@ export interface DeployContestState {
   submissionRequirements: SubmissionRequirements;
   allowedSubmissionsPerUser: number;
   maxSubmissions: number;
-  downvote: boolean;
+  advancedOptions: AdvancedOptions;
   isLoading: boolean;
   isSuccess: boolean;
   errors: ContestDeployError[];
@@ -80,7 +86,7 @@ export interface DeployContestState {
   setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => void;
   setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
   setMaxSubmissions: (maxSubmissions: number) => void;
-  setDownvote: (downvote: boolean) => void;
+  setAdvancedOptions: (advancedOptions: AdvancedOptions) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
   setError: (step: number, error: ContestDeployError) => void;
@@ -158,8 +164,11 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       percentageToCreator: 50,
     },
     allowedSubmissionsPerUser: 2,
-    maxSubmissions: 100,
-    downvote: true,
+    maxSubmissions: DEFAULT_SUBMISSIONS,
+    advancedOptions: {
+      downvote: false,
+      sorting: false,
+    },
     isLoading: false,
     isSuccess: false,
     errors: [],
@@ -220,8 +229,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       set({ submissionAllowlistFields }),
     setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => set({ submissionRequirements }),
     setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
+    setAdvancedOptions: (advancedOptions: AdvancedOptions) => set({ advancedOptions }),
     setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),
-    setDownvote: (downvote: boolean) => set({ downvote }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
     setError: (step: number, error: ContestDeployError) => {
