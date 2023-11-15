@@ -9,7 +9,7 @@ interface CollapsibleProps {
 const Collapsible: React.FC<CollapsibleProps> = ({ isOpen, children }) => {
   return (
     <div
-      className="transition-all duration-300 ease-in-out overflow-hidden"
+      className={`${isOpen ? "block" : "hidden"} transition-all duration-300 ease-in-out overflow-hidden`}
       style={{ maxHeight: isOpen ? "10000px" : "0" }}
     >
       {children}

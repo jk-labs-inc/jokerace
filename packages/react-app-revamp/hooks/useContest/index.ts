@@ -17,12 +17,12 @@ import { BigNumber, utils } from "ethers";
 import { loadFileFromBucket } from "lib/buckets";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
+import moment from "moment";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
-import moment from "moment";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -79,6 +79,7 @@ export function useContest() {
     setSubmissionRequirements,
     setIsReadOnly,
     setIsRewardsLoading,
+    setSortingEnabled,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds, resetListProposals } =
     useProposalStore(state => state);
@@ -144,6 +145,12 @@ export function useContest() {
       });
     } else {
       setEntryCharge(null);
+    }
+
+    if (version >= 4.2) {
+      const sortingEnabled = Number(results[12].result) === 1;
+
+      setSortingEnabled(sortingEnabled);
     }
 
     setContestName(results[0].result as string);

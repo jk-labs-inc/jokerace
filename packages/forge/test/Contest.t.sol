@@ -16,19 +16,41 @@ contract ContestTest is Test {
     uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 3;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
-    uint256[] public numParams = [
+
+    // COST TO PROPOSE INT PARAMS
+    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
+    uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
+    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+
+    // SORTING INT PARAMS
+    uint256 public constant SORTING_ENABLED = 1;
+    uint256 public constant RANK_LIMIT_250 = 250;
+
+    uint256[] public zeroCostToProposeNumParams = [
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
-        DOWNVOTING_ALLOWED
+        DOWNVOTING_ALLOWED,
+        ZERO_COST_TO_PROPOSE,
+        FIFTY_PERCENT_TO_CREATOR,
+        SORTING_ENABLED,
+        RANK_LIMIT_250
     ];
 
-    // COST TO PROPOSE PARAMS
-    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
-    uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
-    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+    uint256[] public oneEthToProposeNumParams = [
+        CONTEST_START,
+        VOTING_DELAY,
+        VOTING_PERIOD,
+        NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
+        MAX_PROPOSAL_COUNT,
+        DOWNVOTING_ALLOWED,
+        ONE_ETH_COST_TO_PROPOSE,
+        FIFTY_PERCENT_TO_CREATOR,
+        SORTING_ENABLED,
+        RANK_LIMIT_250
+    ];
 
     // MERKLE TREE PARAMS
     /*
@@ -41,7 +63,7 @@ contract ContestTest is Test {
             }
         }
 
-        Submission merkle tree (both are value 10 because that's just the dummy value 
+        Submission merkle tree (both are value 10 because that's just the dummy value
         that we make proposal merkle trees have and check against for a simpler flow):
         {
             "decimals": 18,
@@ -115,25 +137,19 @@ contract ContestTest is Test {
                               "hello world",
                               SUBMISSION_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
-                              ZERO_COST_TO_PROPOSE,
-                              FIFTY_PERCENT_TO_CREATOR,
-                              numParams);
+                              zeroCostToProposeNumParams);
 
         anyoneCanSubmitContest = new Contest("test",
                               "hello world",
                               SUB_ZERO_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
-                              ZERO_COST_TO_PROPOSE,
-                              FIFTY_PERCENT_TO_CREATOR,
-                              numParams);
+                              zeroCostToProposeNumParams);
 
         anyoneCanSubmitCostsAnEthContest = new Contest("test",
                         "hello world",
                         SUB_ZERO_MERKLE_ROOT,
                         VOTING_MERKLE_ROOT,
-                        ONE_ETH_COST_TO_PROPOSE,
-                        FIFTY_PERCENT_TO_CREATOR,
-                        numParams);
+                        oneEthToProposeNumParams);
 
         vm.stopPrank();
     }
@@ -321,130 +337,6 @@ contract ContestTest is Test {
         vm.stopPrank();
 
         assertEq(totalVotesWithoutProof, 10 ether);
-    }
-
-    /////////////////////////////
-
-    // SORTING
-
-    //// NO VOTES
-
-    function testSort0FromZeroToZero() public {
-        vm.warp(1681650001);
-
-        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
-        contest.sortedProposals(true);
-    }
-
-    function testSort0FromZeroToOneHundred() public {
-        vm.warp(1681650001);
-
-        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
-        contest.sortedProposals(true);
-    }
-
-    function testSort1NoVotesFromZeroToZero() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
-
-        assertEq(sortedProposalIds[0], proposalId);
-    }
-
-    function testSort1NoVotesFromZeroToOneHundred() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
-
-        assertEq(sortedProposalIds[0], proposalId);
-    }
-
-    function testSort2NoVotesFromZeroToZero() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
-
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
-
-        assertEq(sortedProposalIds[0], proposalId1);
-        assertEq(sortedProposalIds[1], proposalId2);
-    }
-
-    function testSort2NoVotesFromZeroToOneHundred() public {
-        vm.warp(1681650001);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        vm.prank(PERMISSIONED_ADDRESS_1);
-        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
-
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
-
-        assertEq(sortedProposalIds[0], proposalId1);
-        assertEq(sortedProposalIds[1], proposalId2);
-    }
-
-    //// WITH VOTES
-
-    function testSort1WithVotesFromZeroToZero() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-        vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-        vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
-        vm.stopPrank();
-
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
-
-        assertEq(sortedProposalIds[0], proposalId);
-    }
-
-    function testSort1WithVotesFromZeroToOneHundred() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-        vm.warp(1681650001);
-        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
-        vm.warp(1681660001);
-        contest.castVote(proposalId, 0, 10 ether, 1 ether, votingProof1);
-        vm.stopPrank();
-
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
-
-        assertEq(sortedProposalIds[0], proposalId);
-    }
-
-    function testSort2WithVotesFromZeroToZero() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-        vm.warp(1681650001);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
-        vm.warp(1681660001);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
-        vm.stopPrank();
-
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
-
-        assertEq(sortedProposalIds[0], proposalId2);
-        assertEq(sortedProposalIds[1], proposalId1);
-    }
-
-    function testSort2WithVotesFromZeroToOneHundred() public {
-        vm.startPrank(PERMISSIONED_ADDRESS_1);
-        vm.warp(1681650001);
-        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
-        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof2);
-        vm.warp(1681660001);
-        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
-        vm.stopPrank();
-
-        uint256[] memory sortedProposalIds = contest.sortedProposals(true);
-
-        assertEq(sortedProposalIds[0], proposalId2);
-        assertEq(sortedProposalIds[1], proposalId1);
     }
 
     /////////////////////////////

@@ -6,6 +6,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
 import { useRouter } from "next/router";
@@ -51,9 +52,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   }, [amount, isUpvote, onVote]);
 
   const handleClick = (value: boolean) => {
-    if (!downvoteAllowed) {
-      return;
-    }
     setIsUpvote(value);
   };
 
@@ -106,24 +104,27 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         <div>
           <StepSlider val={sliderValue} onChange={handleSliderChange} />
         </div>
-        <div className="flex w-full border border-neutral-10 rounded-[25px] overflow-hidden text-[16px] text-center">
-          <div
-            className={`w-full px-4 py-1 cursor-pointer ${
-              isUpvote ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
-            }`}
-            onClick={() => handleClick(true)}
-          >
-            upvote
+        {downvoteAllowed ? (
+          <div className="flex w-full border border-neutral-10 rounded-[25px] overflow-hidden text-[16px] text-center">
+            <div
+              className={`w-full px-4 py-1 cursor-pointer ${
+                isUpvote ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
+              }`}
+              onClick={() => handleClick(true)}
+            >
+              upvote
+            </div>
+            <div
+              className={`w-full px-4 py-1 cursor-pointer ${
+                !isUpvote ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
+              }`}
+              onClick={() => handleClick(false)}
+            >
+              downvote
+            </div>
           </div>
-          <div
-            className={`w-full px-4 py-1 cursor-pointer ${
-              !isUpvote ? "bg-neutral-11 text-true-black font-bold" : "bg-true-black text-neutral-10"
-            }`}
-            onClick={() => handleClick(false)}
-          >
-            downvote
-          </div>
-        </div>
+        ) : null}
+
         <div className="mt-4">
           {isCorrectNetwork ? (
             <ButtonV3
