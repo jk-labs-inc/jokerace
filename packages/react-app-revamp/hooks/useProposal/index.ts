@@ -9,6 +9,7 @@ import { useError } from "@hooks/useError";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { Result } from "ethers/lib/utils";
+import { shuffle } from "lodash";
 import { useRouter } from "next/router";
 import { useNetwork } from "wagmi";
 import { useProposalStore } from "./store";
@@ -16,6 +17,8 @@ import { useProposalStore } from "./store";
 export const PROPOSALS_PER_PAGE = 12;
 
 const divisor = BigInt("1000000000000000000"); // Equivalent to 1e18
+
+type SortOptions = "leastRecent" | "mostRecent" | "random" | "votes";
 
 export function useProposal() {
   const {
@@ -150,11 +153,10 @@ export function useProposal() {
    * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
    * @param abi - ABI to use
    */
-  async function fetchProposalsIdsList(abi: any, version: string) {
+  async function fetchProposalsIdsList(abi: any, contestDates: { submissionOpen: Date; votesOpen: Date }) {
     setIsListProposalsLoading(true);
 
     try {
-      // Get list of proposals (ids)
       const useLegacyGetAllProposalsIdFn =
         abi?.filter((el: { name: string }) => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
 
@@ -164,9 +166,11 @@ export function useProposal() {
         chainId: chainId,
       };
 
-      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);
+      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
 
       let proposalsIds: Result;
+      const currentDate = new Date();
+
       if (!useLegacyGetAllProposalsIdFn) {
         const extractVotes = (index: number) => {
           const forVotesValue = proposalsIdsRawData[1][index].forVotes?.toString() || "0";
@@ -192,14 +196,25 @@ export function useProposal() {
           };
         });
 
-        proposalsIds = mappedProposals
-          .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
-          .map((proposal: { id: any }) => proposal.id);
+        if (currentDate < contestDates.votesOpen) {
+          // Shuffle proposals if current date is before votesOpen
+          proposalsIds = shuffle(mappedProposals).map(proposal => proposal.id);
+        } else {
+          // Sort proposals by votes if current date is votesOpen or later
+          proposalsIds = mappedProposals
+            .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
+            .map((proposal: { id: any }) => proposal.id);
+        }
 
         setListProposalsIds(proposalsIds as string[]);
         setSubmissionsCount(proposalsIds.length);
       } else {
-        proposalsIds = proposalsIdsRawData;
+        if (currentDate < contestDates.votesOpen) {
+          // Shuffle proposals if current date is before votesOpen
+          proposalsIds = shuffle(proposalsIdsRawData);
+        } else {
+          proposalsIds = proposalsIdsRawData;
+        }
         setListProposalsIds(proposalsIds as string[]);
         setSubmissionsCount(proposalsIds.length);
       }
@@ -214,8 +229,6 @@ export function useProposal() {
       const paginationChunks = arrayToChunks(proposalsIds, PROPOSALS_PER_PAGE);
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
-
-      if (proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setError(error);
@@ -226,7 +239,7 @@ export function useProposal() {
     }
   }
 
-  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean, version: string) {
+  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
     if (isLegacy) {
       return (await readContract({
         ...contractConfig,
@@ -321,26 +334,9 @@ export function useProposal() {
         },
       ];
 
-      const results: any = await readContracts({ contracts });
+      const results = await readContracts({ contracts });
 
-      const data = results[0].result;
-
-      const isContentImage = isUrlToImage(data.description) ? true : false;
-
-      const forVotesBigInt = results[1].result[0] as bigint;
-      const againstVotesBigInt = results[1].result[1] as bigint;
-      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
-      const votes = Number(utils.formatEther(votesBigNumber));
-
-      const proposalData = {
-        authorEthereumAddress: data.author,
-        content: data.description,
-        isContentImage,
-        exists: data.exists,
-        votes,
-      };
-
-      setProposalData({ id: proposalId, data: proposalData });
+      fetchProposal(0, results, [proposalId]);
     } catch (e) {
       handleError(e, "Something went wrong while getting the proposal.");
       setIsPageProposalsError(error);

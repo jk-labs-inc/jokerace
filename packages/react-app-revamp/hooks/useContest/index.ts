@@ -178,6 +178,11 @@ export function useContest() {
     setError("");
     setIsSuccess(true);
     setIsLoading(false);
+
+    await fetchProposalsIdsList(contractConfig.abi, {
+      submissionOpen: submissionsOpenDate,
+      votesOpen: votesOpenDate,
+    });
   }
 
   async function fetchV3ContestInfo(
@@ -190,7 +195,6 @@ export function useContest() {
 
       await Promise.all([
         fetchContestContractData(contractConfig, parseFloat(version)),
-        fetchProposalsIdsList(contractConfig.abi, version),
         processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
         fetchTotalVotesCast(),
@@ -212,9 +216,6 @@ export function useContest() {
       const results = await readContracts({ contracts });
 
       setIsV3(false);
-
-      // List of proposals for this contest
-      await fetchProposalsIdsList(contractConfig.abi, version);
 
       const closingVoteDate = new Date(Number(results[6].result) * 1000 + 1000);
       const submissionsOpenDate = new Date(Number(results[5].result) * 1000 + 1000);
@@ -244,6 +245,13 @@ export function useContest() {
       setError("");
       setIsSuccess(true);
       setIsLoading(false);
+
+      // List of proposals for this contest
+      await fetchProposalsIdsList(contractConfig.abi, {
+        submissionOpen: submissionsOpenDate,
+        votesOpen: votesOpenDate,
+      });
+
       setIsListProposalsLoading(false);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");

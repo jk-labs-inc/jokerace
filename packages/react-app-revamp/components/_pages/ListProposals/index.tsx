@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Button from "@components/UI/Button";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
@@ -8,7 +9,7 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
 
@@ -59,6 +60,10 @@ export const ListProposals = () => {
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
   const remainingProposalsToLoad = listProposalsIds.length - Object.keys(listProposalsData).length;
   const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
+
+  useEffect(() => {
+    fetchProposalsPage(0, listProposalsIds, listProposalsIds.length);
+  }, [listProposalsIds]);
 
   const onDeleteSelectedProposals = async () => {
     setDeletingProposalIds(selectedProposalIds);
