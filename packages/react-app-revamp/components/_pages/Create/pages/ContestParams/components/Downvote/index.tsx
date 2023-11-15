@@ -35,7 +35,7 @@ const ContestParamsDownvote: FC<ContestParamsDownvoteProps> = ({ downvote, onCha
         </div>
         {downvote ? (
           <p className="text-[16px] text-negative-11 font-bold">
-            please be aware that if you enable downvoting, you will not be able to create rewards module.
+            please be aware that if you enable downvoting, you will not be able to create a rewards module.
           </p>
         ) : null}
       </div>
