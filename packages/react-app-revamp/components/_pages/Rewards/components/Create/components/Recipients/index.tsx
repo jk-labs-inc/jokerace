@@ -123,7 +123,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                     value={recipient.place}
                     onChange={event => handlePlaceChange(event, recipient.id)}
                   >
-                    {[...Array(100)].map((_, i) => (
+                    {[...Array(50)].map((_, i) => (
                       <option key={i} value={i + 1}>
                         {ordinalSuffix(i + 1)}
                       </option>

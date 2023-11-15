@@ -30,7 +30,7 @@ const CreateContestDeploying = () => {
       setTimeout(() => {
         router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
 
-        if (!deployContestData.downvote) setShowRewards(true);
+        if (!deployContestData.downvote && deployContestData.sortingEnabled) setShowRewards(true);
       }, 3000);
     }
   }, [deployContestData, isSuccess, router, setShowRewards]);

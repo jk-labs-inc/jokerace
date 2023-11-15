@@ -28,6 +28,7 @@ export interface DeployContestState {
     hash: string;
     address: string;
     downvote: boolean;
+    sortingEnabled: boolean;
   };
   type: string;
   title: string;
@@ -68,7 +69,14 @@ export interface DeployContestState {
   submissionTab: number;
   votingTab: number;
   entryCharge: EntryCharge;
-  setDeployContestData: (chain: string, chainId: number, hash: string, address: string, downvote: boolean) => void;
+  setDeployContestData: (
+    chain: string,
+    chainId: number,
+    hash: string,
+    address: string,
+    downvote: boolean,
+    sortingEnabled: boolean,
+  ) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
@@ -114,6 +122,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       hash: "",
       address: "",
       downvote: false,
+      sortingEnabled: false,
     },
     type: "",
     title: "",
@@ -168,7 +177,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     maxSubmissions: DEFAULT_SUBMISSIONS,
     advancedOptions: {
       downvote: false,
-      sorting: false,
+      sorting: true,
       rankLimit: 250,
     },
     isLoading: false,
@@ -183,8 +192,14 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
   return {
     ...initialState,
 
-    setDeployContestData: (chain: string, chainId: number, hash: string, address: string, downvote: boolean) =>
-      set({ deployContestData: { chain, chainId, hash, address, downvote } }),
+    setDeployContestData: (
+      chain: string,
+      chainId: number,
+      hash: string,
+      address: string,
+      downvote: boolean,
+      sortingEnabled: boolean,
+    ) => set({ deployContestData: { chain, chainId, hash, address, downvote, sortingEnabled } }),
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),

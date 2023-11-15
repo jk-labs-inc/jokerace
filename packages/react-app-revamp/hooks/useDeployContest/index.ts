@@ -7,17 +7,18 @@ import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
-import { waitForTransaction } from "@wagmi/core";
+import { readContract, waitForTransaction } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
-import { parseEther } from "viem";
+import { Abi, parseEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useDeployContestStore } from "./store";
 import { SubmissionMerkle, VotingMerkle } from "./types";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000001;
 export const DEFAULT_SUBMISSIONS = 1000000;
@@ -121,12 +122,15 @@ export function useDeployContest() {
         hash: contractContest.deployTransaction.hash as `0x${string}`,
       });
 
+      const sortingEnabled = await isSortingEnabled(contractContest.address, chain?.id ?? 0);
+
       setDeployContestData(
         chain?.name ?? "",
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
         contractContest.address,
         advancedOptions.downvote,
+        sortingEnabled,
       );
 
       let votingReqDatabaseEntry = null;
@@ -313,6 +317,33 @@ export function useDeployContest() {
     }
 
     return false;
+  }
+
+  async function isSortingEnabled(address: string, chainId: number) {
+    try {
+      const { abi } = await getContestContractVersion(address as `0x${string}`, chainId);
+
+      if (!abi) {
+        console.error("ABI not found");
+        return false;
+      }
+
+      const contractConfig = {
+        address: address as `0x${string}`,
+        abi: abi as unknown as Abi,
+        chainId: chainId,
+      };
+
+      const result = (await readContract({
+        ...contractConfig,
+        functionName: "sortingEnabled",
+      })) as number;
+
+      return Number(result) === 1;
+    } catch (error) {
+      console.error("error in isSortingEnabled:", error);
+      return false;
+    }
   }
 
   // Helper function to format recipients (either voters or submitters)
