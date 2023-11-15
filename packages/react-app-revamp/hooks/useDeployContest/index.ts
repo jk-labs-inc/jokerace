@@ -20,7 +20,7 @@ import { useDeployContestStore } from "./store";
 import { SubmissionMerkle, VotingMerkle } from "./types";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 
-export const MAX_SUBMISSIONS_LIMIT = 1000001;
+export const MAX_SUBMISSIONS_LIMIT = 1000000;
 export const DEFAULT_SUBMISSIONS = 1000000;
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
