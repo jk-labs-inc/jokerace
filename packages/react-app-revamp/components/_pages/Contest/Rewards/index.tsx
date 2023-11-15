@@ -12,7 +12,7 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
-import { DEFAULT_SUBMISSIONS } from "@hooks/useDeployContest";
+import useContractVersion from "@hooks/useContractVersion";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
@@ -22,10 +22,22 @@ import { useAccount } from "wagmi";
 
 const ContestRewards = () => {
   const { asPath } = useRouter();
-  const { chainName } = extractPathSegments(asPath);
+  const { chainName, address } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const { isSuccess, isLoading, supportsRewardsModule, contestAuthorEthereumAddress, contestMaxProposalCount } =
-    useContestStore(state => state);
+  const {
+    isSuccess,
+    isLoading,
+    supportsRewardsModule,
+    contestAuthorEthereumAddress,
+    sortingEnabled,
+    contestMaxProposalCount,
+    downvotingAllowed,
+  } = useContestStore(state => state);
+  const {
+    version,
+    isLoading: isContractVersionLoading,
+    error: isContractVersionError,
+  } = useContractVersion(address, chainId);
   const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
   const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
@@ -57,17 +69,33 @@ const ContestRewards = () => {
     );
   }
 
+  if (isContractVersionLoading) return <Loader scale="page" />;
+
   if (!supportsRewardsModule && creator) {
     if (isRewardsPoolDeploying) return <Loader scale="page">Deploying rewards pool...</Loader>;
 
-    if (contestMaxProposalCount > DEFAULT_SUBMISSIONS) {
-      return (
-        <p className="text-[16px]">
-          For this contest, you cannot create a rewards module; the maximum number of submissions for the contest must
-          be <b>100</b> or less in order to be able to create a rewards module.
-        </p>
-      );
+    if (version) {
+      if (version < 4.1) {
+        if (contestMaxProposalCount > 100) {
+          return (
+            <p className="text-[16px]">
+              For this contest, you cannot create a rewards module; the maximum number of submissions for the contest
+              must be <b>100</b> or less in order to be able to create a rewards module.
+            </p>
+          );
+        }
+      } else if (version >= 4.1) {
+        if (downvotingAllowed || !sortingEnabled) {
+          return (
+            <p className="text-[16px]">
+              For this contest, you cannot create a rewards module; in order to create rewards module, you need to
+              disable downvoting in the creation process.
+            </p>
+          );
+        }
+      }
     }
+
     return (
       <div className="flex flex-col gap-12">
         <p className="text-[24px] font-bold text-neutral-11">create a rewards pool</p>

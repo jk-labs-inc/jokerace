@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-unescaped-entities */
 import { toastDismiss } from "@components/UI/Toast";
-import { DEFAULT_SUBMISSIONS } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -31,7 +30,7 @@ const CreateContestDeploying = () => {
       setTimeout(() => {
         router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
 
-        if (deployContestData.maxSubmissions <= DEFAULT_SUBMISSIONS) setShowRewards(true);
+        if (!deployContestData.downvote && deployContestData.sortingEnabled) setShowRewards(true);
       }, 3000);
     }
   }, [deployContestData, isSuccess, router, setShowRewards]);
