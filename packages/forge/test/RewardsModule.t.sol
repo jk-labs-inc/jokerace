@@ -813,7 +813,7 @@ contract RewardsModuleTest is Test {
 
     // SORTING OLD VALUE TESTING
 
-    // Old value is at inserting index 
+    // Old value is at inserting index
     function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndex() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
