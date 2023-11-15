@@ -5,18 +5,24 @@ import "./governance/Governor.sol";
 import "./governance/extensions/GovernorSettings.sol";
 import "./governance/extensions/GovernorCountingSimple.sol";
 import "./governance/extensions/GovernorModuleRegistry.sol";
+import "./governance/extensions/GovernorSorting.sol";
 
-contract Contest is Governor, GovernorSettings, GovernorSorting, GovernorModuleRegistry {
+contract Contest is GovernorCountingSimple, GovernorSettings, GovernorModuleRegistry {
     constructor(
         string memory _name,
         string memory _prompt,
         bytes32 _submissionMerkleRoot,
         bytes32 _votingMerkleRoot,
-        uint256 _costToPropose,
-        uint256 _percentageToCreator,
         uint256[] memory _constructorIntParams
     )
-        Governor(_name, _prompt, _submissionMerkleRoot, _votingMerkleRoot, _costToPropose, _percentageToCreator)
+        Governor(
+            _name,
+            _prompt,
+            _submissionMerkleRoot,
+            _votingMerkleRoot,
+            _constructorIntParams[6], // _costToPropose
+            _constructorIntParams[7] // _percentageToCreator
+        )
         GovernorSettings(
             _constructorIntParams[0], // _initialContestStart
             _constructorIntParams[1], // _initialVotingDelay,
@@ -24,6 +30,10 @@ contract Contest is Governor, GovernorSettings, GovernorSorting, GovernorModuleR
             _constructorIntParams[3], // _initialNumAllowedProposalSubmissions,
             _constructorIntParams[4], // _initialMaxProposalCount
             _constructorIntParams[5] // _initialDownvotingAllowed
+        )
+        GovernorSorting(
+            _constructorIntParams[8], // sortingEnabled
+            _constructorIntParams[9] // rankLimit
         )
     {}
 

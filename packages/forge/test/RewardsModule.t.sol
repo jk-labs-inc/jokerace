@@ -9,23 +9,51 @@ import "../src/modules/RewardsModule.sol";
 contract RewardsModuleTest is Test {
     // CONTEST VARS
     Contest public contest;
+    Contest public rankLimitOneContest;
+
+    // BASIC INT PARAMS
     uint64 public constant CONTEST_START = 1681650000;
     uint64 public constant VOTING_DELAY = 10000;
     uint64 public constant VOTING_PERIOD = 10000;
     uint64 public constant NUM_ALLOWED_PROPOSAL_SUBMISSIONS = 3;
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
-    uint256[] public numParams = [
+
+    // COST TO PROPOSE INT PARAMS
+    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
+    uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
+    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+
+    // SORTING INT PARAMS
+    uint256 public constant SORTING_ENABLED = 1;
+    uint256 public constant RANK_LIMIT_250 = 250;
+    uint256 public constant RANK_LIMIT_1 = 1;
+
+    uint256[] public zeroCostToProposeNumParams = [
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
-        DOWNVOTING_ALLOWED
+        DOWNVOTING_ALLOWED,
+        ZERO_COST_TO_PROPOSE,
+        FIFTY_PERCENT_TO_CREATOR,
+        SORTING_ENABLED,
+        RANK_LIMIT_250
     ];
 
-    uint256 public constant ZERO_COST_TO_PROPOSE = 0;
-    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+    uint256[] public zeroCostToProposeAndRankLimitOneNumParams = [
+        CONTEST_START,
+        VOTING_DELAY,
+        VOTING_PERIOD,
+        NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
+        MAX_PROPOSAL_COUNT,
+        DOWNVOTING_ALLOWED,
+        ZERO_COST_TO_PROPOSE,
+        FIFTY_PERCENT_TO_CREATOR,
+        SORTING_ENABLED,
+        RANK_LIMIT_1
+    ];
 
     /*
         Voting merkle tree:
@@ -37,7 +65,7 @@ contract RewardsModuleTest is Test {
             }
         }
 
-        Submission merkle tree (both are value 10 because that's just the dummy value 
+        Submission merkle tree (both are value 10 because that's just the dummy value
         that we make proposal merkle trees have and check against for a simpler flow):
         {
             "decimals": 18,
@@ -97,6 +125,7 @@ contract RewardsModuleTest is Test {
     // REWARDS MODULE VARS
     RewardsModule public rewardsModulePaysTarget;
     RewardsModule public rewardsModulePaysAuthor;
+    RewardsModule public rewardsModulePaysAuthorToRankOneContest;
     uint256[] public payees = [1, 2, 3];
     uint256[] public shares = [3, 2, 1];
 
@@ -117,18 +146,27 @@ contract RewardsModuleTest is Test {
                               "hello world",
                               SUBMISSION_MERKLE_ROOT,
                               VOTING_MERKLE_ROOT,
-                              ZERO_COST_TO_PROPOSE,
-                              FIFTY_PERCENT_TO_CREATOR,
-                              numParams);
+                              zeroCostToProposeNumParams);
+
+        rankLimitOneContest = new Contest("test",
+                              "hello world",
+                              SUBMISSION_MERKLE_ROOT,
+                              VOTING_MERKLE_ROOT,
+                              zeroCostToProposeAndRankLimitOneNumParams);
 
         rewardsModulePaysTarget = new RewardsModule(payees,
                                           shares,
-                                          GovernorSorting(contest),
+                                          Contest(contest),
                                           true);
 
         rewardsModulePaysAuthor = new RewardsModule(payees,
                                           shares,
-                                          GovernorSorting(contest),
+                                          Contest(contest),
+                                          false);
+
+        rewardsModulePaysAuthorToRankOneContest = new RewardsModule(payees,
+                                          shares,
+                                          Contest(rankLimitOneContest),
                                           false);
 
         vm.stopPrank();
@@ -254,7 +292,9 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(
-            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
         );
         rewardsModulePaysAuthor.release(2);
     }
@@ -274,7 +314,9 @@ contract RewardsModuleTest is Test {
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
-            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
         );
         rewardsModulePaysAuthor.release(testERC20, 2);
     }
@@ -293,7 +335,9 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
         vm.expectRevert(
-            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
         );
         rewardsModulePaysTarget.release(2);
     }
@@ -313,7 +357,9 @@ contract RewardsModuleTest is Test {
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
-            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
         );
         rewardsModulePaysTarget.release(testERC20, 2);
     }
@@ -449,7 +495,7 @@ contract RewardsModuleTest is Test {
         assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
     }
 
-    // 2 proposals with different authors, both at 0 votes; send back to creator
+    // 2 proposals with different authors, both at 0 votes; reverted
     function testFirstPlaceTieWithZeroVotesWithNative() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -459,12 +505,15 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
+        );
         rewardsModulePaysAuthor.release(1);
-
-        assertEq(CREATOR_ADDRESS_1.balance, 50);
     }
 
-    // 2 proposals with different authors, both at 0 votes; send back to creator
+    // 2 proposals with different authors, both at 0 votes; reverted
     function testFirstPlaceTieWithZeroVotesWithERC20() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
@@ -475,9 +524,12 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
+        );
         rewardsModulePaysAuthor.release(testERC20, 1);
-
-        assertEq(testERC20.balanceOf(CREATOR_ADDRESS_1), 50);
     }
 
     // 2 proposals with different authors, both at 0 votes; send back to creator
@@ -491,7 +543,9 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
         vm.expectRevert(
-            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
         );
         rewardsModulePaysAuthor.release(2);
     }
@@ -508,7 +562,9 @@ contract RewardsModuleTest is Test {
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
         vm.expectRevert(
-            bytes("RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account")
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
         );
         rewardsModulePaysAuthor.release(testERC20, 2);
     }
@@ -625,7 +681,11 @@ contract RewardsModuleTest is Test {
     function testFirstPlaceTieWithZeroProposalsWithNative() public {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
+        );
         rewardsModulePaysAuthor.release(1);
     }
 
@@ -634,7 +694,11 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(bytes("GovernorSorting: cannot sort a list of zero length"));
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
+        );
         rewardsModulePaysAuthor.release(testERC20, 1);
     }
 
@@ -668,6 +732,33 @@ contract RewardsModuleTest is Test {
         assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
+    // 2 proposals with different authors, at 1 and 5 votes, the one with 5 votes is deleted; release to author of rank 2
+    function testReleaseToAuthorSecondPlace2WithActualFirstPlaceDeleted() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        proposalsToDelete.push(proposalId2);
+        vm.prank(CREATOR_ADDRESS_1);
+        contest.deleteProposals(proposalsToDelete);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
+        );
+        rewardsModulePaysAuthor.release(2);
+    }
+
     // 2 proposals with different authors, at 1 and 5 votes, the one with 1 vote is deleted; release to author of rank 1
     function testReleaseToAuthorFirstPlace2WithActualSecondPlaceDeleted() public {
         vm.warp(1681650001);
@@ -690,6 +781,228 @@ contract RewardsModuleTest is Test {
         rewardsModulePaysAuthor.release(1);
 
         assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    // 2 proposals with different authors, P1 gets 1 vote -> P1 is deleted -> P2 gets 1 vote; release to author of rank 1
+    function testReleaseToAuthorFirstPlace2WinnerWithSameVotesAsDeleted() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+
+        proposalsToDelete.push(proposalId1);
+        vm.prank(CREATOR_ADDRESS_1);
+        contest.deleteProposals(proposalsToDelete);
+
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    /////////////////////////////
+
+    // SORTING OLD VALUE TESTING
+
+    // Old value is at inserting index
+    function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndex() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 2 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    // Old value is after inserting index and in array
+    function testReleaseToAuthorFirstPlaceOldValueAfterInserting() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 2 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    // Old value is at inserting index and tied
+    function testReleaseToAuthorFirstPlaceOldValueAtInsertingIndexAndTied() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    // Old value is after inserting index, in array, and tied
+    function testReleaseToAuthorFirstPlaceOldValueAfterInsertingAndTied() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 2 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 3 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
+    }
+
+    // Old value is after inserting index, in array, tied, and the tied was deleted
+    function testReleaseToAuthorFirstPlaceOldValueAfterInsertingAndTiedAndTieDeleted() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = contest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId2 = contest.propose(secondProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId3 = contest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId1, 0, 10 ether, 2 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId3, 0, 10 ether, 1 ether, votingProof1);
+
+        proposalsToDelete.push(proposalId3);
+        vm.prank(CREATOR_ADDRESS_1);
+        contest.deleteProposals(proposalsToDelete);
+
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        contest.castVote(proposalId2, 0, 10 ether, 3 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthor.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
+    }
+
+    /////////////////////////////
+
+    // RELEASES WITH RANK LIMIT OF ONE (TESTING SORTING ALGORITHM)
+
+    // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 1
+    function testReleaseToAuthorFirstPlaceRankLimit1() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = rankLimitOneContest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthorToRankOneContest.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_2.balance, 50);
+    }
+
+    // 2 proposals, different authors, at 1 and 5 votes, on contest with rank limit of 1 - array already at limit, release to author of rank 2 - should error
+    function testReleaseToAuthorSecondPlaceRankLimit1() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = rankLimitOneContest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId2, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
+        vm.expectRevert(
+            bytes(
+                "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
+            )
+        );
+        rewardsModulePaysAuthorToRankOneContest.release(2);
+    }
+
+    // Old value is after inserting index and in array and at limit
+    function testReleaseToAuthorFirstPlaceOldValueInArrayAfterInsertingAtLimit() public {
+        vm.warp(1681650001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        uint256 proposalId1 = rankLimitOneContest.propose(firstProposalPA1, submissionProof1);
+        vm.prank(PERMISSIONED_ADDRESS_2);
+        uint256 proposalId2 = rankLimitOneContest.propose(firstProposalPA2, submissionProof2);
+        vm.warp(1681660001);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 1 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId2, 0, 10 ether, 2 ether, votingProof1);
+        vm.prank(PERMISSIONED_ADDRESS_1);
+        rankLimitOneContest.castVote(proposalId1, 0, 10 ether, 5 ether, votingProof1);
+
+        vm.warp(1681670001);
+        vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
+        rewardsModulePaysAuthorToRankOneContest.release(1);
+
+        assertEq(PERMISSIONED_ADDRESS_1.balance, 50);
     }
 
     /////////////////////////////
