@@ -315,7 +315,7 @@ export function useProposal() {
    * Update a single proposal and re-sort and re-rank all proposals
    * @param updatedProposal - the updated proposal data
    */
-  const updateAndRankSingleProposal = (updatedProposal: ProposalCore) => {
+  function updateAndRankSingleProposal(updatedProposal: ProposalCore) {
     const updatedProposals = listProposalsData
       .map(proposal => (proposal.id === updatedProposal.id ? updatedProposal : proposal))
       .sort((a, b) => b.netVotes - a.netVotes);
@@ -323,13 +323,13 @@ export function useProposal() {
     const proposals = formatProposalData(updatedProposals);
 
     setProposalData(proposals);
-  };
+  }
 
   /**
    * Remove a list of proposals and re-sort and re-rank all proposals
    * @param idsToDelete - the list of proposals ids to remove
    */
-  const removeAndRankProposals = (idsToDelete: string[]) => {
+  function removeAndRankProposals(idsToDelete: string[]) {
     const remainingProposals = listProposalsData
       .sort((a, b) => b.netVotes - a.netVotes)
       .filter(proposal => !idsToDelete.includes(proposal.id));
@@ -337,7 +337,7 @@ export function useProposal() {
     const proposals = formatProposalData(remainingProposals);
 
     setProposalData(proposals);
-  };
+  }
 
   return {
     fetchProposalsPage,
