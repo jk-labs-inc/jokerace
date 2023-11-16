@@ -49,13 +49,16 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
 
     error IncorrectCostToProposeSent(uint256 msgValue, uint256 costToPropose);
     error AddressNotPermissionedToSubmit();
-    
     error ContestMustBeQueuedToPropose(ContestState currentState);
+    error ContestMustBeActiveToVote(ContestState currentState);
     error SenderSubmissionLimitReached(uint256 numAllowedProposalSubmissions);
     error ContestSubmissionLimitReached(uint256 maxProposalCount);
     error DuplicateSubmission(uint256 proposalId);
-
     error CannotVoteOnDeletedProposal();
+    error NeedAtLeastOneVoteToVote();
+    
+    error NeedToSubmitWithProofFirst();
+    error NeedToVoteWithProofFirst();
 
     error OnlyCreatorCanDelete();
     error CannotDeleteWhenCompleted();
@@ -341,7 +344,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
 
         if (submissionMerkleRoot != 0) {
             // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
-            if (!addressSubmitterVerified[msg.sender]) revert AddressNotPermissionedToSubmit();
+            if (!addressSubmitterVerified[msg.sender]) revert NeedToSubmitWithProofFirst();
         }
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
@@ -454,11 +457,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
         returns (uint256)
     {
         address voter = msg.sender;
-        require(!isProposalDeleted(proposalId), "Governor: you cannot vote on a deleted proposal");
-        require(
-            addressTotalVotesVerified[voter],
-            "Governor: you need to cast a vote with the proof at least once and you haven't yet"
-        );
+        if (isProposalDeleted(proposalId)) revert CannotVoteOnDeletedProposal();
+        if (!addressTotalVotesVerified[voter]) revert NeedToVoteWithProofFirst();
         return _castVote(proposalId, voter, support, numVotes);
     }
 
@@ -473,13 +473,9 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
         virtual
         returns (uint256)
     {
-        require(state() == ContestState.Active, "Governor: vote not currently active");
-        require(numVotes > 0, "Governor: cannot vote with 0 or fewer votes");
+        if (state() != ContestState.Active) revert ContestMustBeActiveToVote(state());
+        if (numVotes == 0) revert NeedAtLeastOneVoteToVote();
 
-        require(
-            addressTotalVotesVerified[account],
-            "Governor: you need to verify your number of votes against the merkle root first"
-        );
         _countVote(proposalId, account, support, numVotes, addressTotalVotes[account]);
 
         addressesThatHaveVoted.push(msg.sender);
