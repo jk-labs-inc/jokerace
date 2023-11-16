@@ -258,8 +258,8 @@ contract ContestTest is Test {
     function testProposeDuplicateProposal() public {
         vm.warp(1681650001);
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-        contest.propose(firstProposalPA1, submissionProof1);
-        vm.expectRevert(bytes("Governor: duplicate proposals not allowed"));
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.expectRevert(abi.encodeWithSelector(Governor.DuplicateSubmission.selector, proposalId));
         contest.propose(firstProposalPA1, submissionProof1);
         vm.stopPrank();
     }

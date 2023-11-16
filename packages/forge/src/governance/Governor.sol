@@ -49,8 +49,14 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
 
     error IncorrectCostToProposeSent(uint256 msgValue, uint256 costToPropose);
     error AddressNotPermissionedToSubmit();
+    
+    error ContestMustBeQueuedToPropose(ContestState currentState);
+    error SenderSubmissionLimitReached(uint256 numAllowedProposalSubmissions);
+    error ContestSubmissionLimitReached(uint256 maxProposalCount);
+    error DuplicateSubmission(uint256 proposalId);
 
     error CannotVoteOnDeletedProposal();
+
 
     /**
      * @dev Sets the value for {name} and {version}
@@ -340,18 +346,12 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     }
 
     function _castProposal(ProposalCore memory proposal) internal virtual returns (uint256) {
-        require(state() == ContestState.Queued, "Governor: contest must be queued for proposals to be submitted");
-        require(
-            numSubmissions[msg.sender] < numAllowedProposalSubmissions(),
-            "Governor: the same address cannot submit more than the numAllowedProposalSubmissions for this contest"
-        );
-        require(
-            (proposalIds.length - deletedProposalIds.length) < maxProposalCount(),
-            "Governor: the max number of proposals have been submitted"
-        );
+        if (state() != ContestState.Queued) revert ContestMustBeQueuedToPropose(state());
+        if (numSubmissions[msg.sender] == numAllowedProposalSubmissions()) revert SenderSubmissionLimitReached(numAllowedProposalSubmissions());
+        if ((proposalIds.length - deletedProposalIds.length) == maxProposalCount()) revert ContestSubmissionLimitReached(maxProposalCount());
 
         uint256 proposalId = hashProposal(proposal);
-        require(!proposals[proposalId].exists, "Governor: duplicate proposals not allowed");
+        if (proposals[proposalId].exists) revert DuplicateSubmission(proposalId);
 
         proposalIds.push(proposalId);
         proposals[proposalId] = proposal;
