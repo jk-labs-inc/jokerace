@@ -12,7 +12,7 @@ import { shuffle } from "lodash";
 import { useRouter } from "next/router";
 import { useNetwork } from "wagmi";
 import { ProposalCore, useProposalStore } from "./store";
-import { mapResultToStringArray } from "./utils";
+import { formatProposalData, mapResultToStringArray } from "./utils";
 import isUrlToImage from "@helpers/isUrlToImage";
 
 export const PROPOSALS_PER_PAGE = 12;
@@ -110,49 +110,29 @@ export function useProposal() {
    * @param proposalIds (array of proposals ids)
    */
   function structureAndRankProposals(proposalsResults: Array<any>, proposalIds: Array<any>) {
-    // step 1: transform proposals data and calculate net votes
+    // Transform proposals data and calculate net votes
     const transformedProposals = proposalIds.map((id, index) => {
       const voteForBigInt = proposalsResults[index * 2 + 1].result[0];
       const voteAgainstBigInt = proposalsResults[index * 2 + 1].result[1];
       const netVotesBigNumber = BigNumber.from(voteForBigInt).sub(voteAgainstBigInt);
       const netVotes = Number(utils.formatEther(netVotesBigNumber));
       const proposalData = proposalsResults[index * 2].result;
-      const isContentImage = isUrlToImage(proposalData.description) ? true : false;
+      const isContentImage = isUrlToImage(proposalData.description);
 
       return {
         id: id,
-        ...proposalsResults[index * 2].result,
+        ...proposalData,
         isContentImage: isContentImage,
         netVotes: netVotes,
       };
     });
 
-    // step 2: combine new proposals with existing ones and sort by net votes
-    const allProposals = listProposalsData.concat(transformedProposals).sort((a, b) => b.netVotes - a.netVotes);
+    // Combine new proposals with existing ones and sort by net votes
+    const combinedProposals = listProposalsData.concat(transformedProposals).sort((a, b) => b.netVotes - a.netVotes);
 
-    // Step 3: assign ranks to proposals and identify ties
-    let currentRank = 0;
-    let previousVotes: number | null = null;
+    const rankedProposals = formatProposalData(combinedProposals);
 
-    allProposals.forEach((proposal, index) => {
-      if (proposal.netVotes > 0) {
-        if (proposal.netVotes !== previousVotes) {
-          currentRank++;
-          previousVotes = proposal.netVotes;
-        }
-        proposal.rank = currentRank;
-
-        // Determine if the current proposal is tied with another
-        proposal.isTied = allProposals.some(
-          (other, otherIndex) => other.netVotes === proposal.netVotes && otherIndex !== index,
-        );
-      } else {
-        proposal.rank = 0;
-        proposal.isTied = false;
-      }
-    });
-
-    setProposalData(allProposals);
+    setProposalData(rankedProposals);
   }
 
   /**
@@ -336,34 +316,11 @@ export function useProposal() {
    * @param updatedProposal - the updated proposal data
    */
   const updateAndRankSingleProposal = (updatedProposal: ProposalCore) => {
-    const updatedProposals = listProposalsData.map(proposal =>
-      proposal.id === updatedProposal.id ? updatedProposal : proposal,
-    );
+    const updatedProposals = listProposalsData
+      .map(proposal => (proposal.id === updatedProposal.id ? updatedProposal : proposal))
+      .sort((a, b) => b.netVotes - a.netVotes);
 
-    // Sort the proposals by netVotes
-    const sortedProposals = updatedProposals.sort((a, b) => b.netVotes - a.netVotes);
-
-    // Assign ranks and check for ties
-    let currentRank = 0;
-    let previousVotes: number | null = null;
-
-    const proposals = sortedProposals.map((proposal, index) => {
-      if (proposal.netVotes > 0) {
-        if (proposal.netVotes !== previousVotes) {
-          currentRank++;
-          previousVotes = proposal.netVotes;
-        }
-        proposal.rank = currentRank;
-        // Determine if the current proposal is tied with another
-        proposal.isTied = sortedProposals.some(
-          (other, otherIndex) => other.netVotes === proposal.netVotes && otherIndex !== index,
-        );
-      } else {
-        proposal.rank = 0;
-        proposal.isTied = false;
-      }
-      return proposal;
-    });
+    const proposals = formatProposalData(updatedProposals);
 
     setProposalData(proposals);
   };
@@ -373,31 +330,13 @@ export function useProposal() {
    * @param idsToDelete - the list of proposals ids to remove
    */
   const removeAndRankProposals = (idsToDelete: string[]) => {
-    const remainingProposals = listProposalsData.filter(proposal => !idsToDelete.includes(proposal.id));
+    const remainingProposals = listProposalsData
+      .sort((a, b) => b.netVotes - a.netVotes)
+      .filter(proposal => !idsToDelete.includes(proposal.id));
 
-    const sortedProposals = remainingProposals.sort((a, b) => b.netVotes - a.netVotes);
+    const proposals = formatProposalData(remainingProposals);
 
-    let currentRank = 0;
-    let previousVotes: number | null = null;
-
-    const reRankedProposals = sortedProposals.map((proposal, index) => {
-      if (proposal.netVotes > 0) {
-        if (proposal.netVotes !== previousVotes) {
-          currentRank++;
-          previousVotes = proposal.netVotes;
-        }
-        proposal.rank = currentRank;
-        proposal.isTied = sortedProposals.some(
-          (other, otherIndex) => other.netVotes === proposal.netVotes && otherIndex !== index,
-        );
-      } else {
-        proposal.rank = 0;
-        proposal.isTied = false;
-      }
-      return proposal;
-    });
-
-    setProposalData(reRankedProposals);
+    setProposalData(proposals);
   };
 
   return {

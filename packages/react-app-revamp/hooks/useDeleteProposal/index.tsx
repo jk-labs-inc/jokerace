@@ -18,6 +18,7 @@ export function useDeleteProposal() {
   const { chainName, address } = extractPathSegments(asPath);
   const { chain } = useNetwork();
   const { removeAndRankProposals } = useProposal();
+  const { submissionsCount, setSubmissionsCount } = useProposalStore(state => state);
   const {
     isLoading,
     error,
@@ -67,10 +68,10 @@ export function useDeleteProposal() {
       });
 
       removeAndRankProposals(proposalIds);
+      setSubmissionsCount(submissionsCount - proposalIds.length);
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess(`Proposal deleted successfully!`);
-
       saveUpdatedProposalsStatusToAnalyticsV3(address, chainName, proposalIds, true);
     } catch (e) {
       handleError(e, `something went wrong and the proposal couldn't be deleted`);
