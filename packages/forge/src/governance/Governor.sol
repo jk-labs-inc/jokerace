@@ -57,6 +57,12 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
 
     error CannotVoteOnDeletedProposal();
 
+    error OnlyCreatorCanDelete();
+    error CannotDeleteWhenCompleted();
+
+    error OnlyJkLabsOrCreatorCanCancel();
+    error ContestAlreadyCancelled();
+    error CannotCancelACompletedContest();
 
     /**
      * @dev Sets the value for {name} and {version}
@@ -369,11 +375,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
      * Emits a {IGovernor-ProposalsDeleted} event.
      */
     function deleteProposals(uint256[] calldata proposalIdsToDelete) public virtual {
-        require(msg.sender == creator(), "Governor: only the contest creator can delete proposals");
-        require(
-            state() != ContestState.Completed,
-            "Governor: deletion of proposals after the end of a contest is not allowed"
-        );
+        if (msg.sender != creator()) revert OnlyCreatorCanDelete();
+        if (state() == ContestState.Completed) revert CannotDeleteWhenCompleted();
 
         for (uint256 index = 0; index < proposalIdsToDelete.length; index++) {
             uint256 currentProposalId = proposalIdsToDelete[index];
@@ -401,14 +404,12 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
      * Emits a {IGovernor-ContestCanceled} event.
      */
     function cancel() public virtual {
-        require(
-            ((msg.sender == creator()) || (msg.sender == JK_LABS_ADDRESS)),
-            "Governor: only creator or jk labs can cancel a contest"
-        );
+        if (((msg.sender != creator()) && (msg.sender != JK_LABS_ADDRESS))) revert OnlyJkLabsOrCreatorCanCancel();
 
         ContestState status = state();
 
-        require(status != ContestState.Canceled && status != ContestState.Completed, "Governor: contest not active");
+        if (status == ContestState.Canceled) revert ContestAlreadyCancelled();
+        if (status == ContestState.Completed) revert CannotCancelACompletedContest();
         canceled = true;
 
         emit ContestCanceled();
