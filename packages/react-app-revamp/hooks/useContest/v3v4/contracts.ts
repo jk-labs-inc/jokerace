@@ -14,7 +14,15 @@ export function getContracts(contractConfig: any, version: number) {
 
   const v4FunctionNames = ["costToPropose", "percentageToCreator"];
 
-  const contractFunctionNames = version >= 4 ? [...commonFunctionNames, ...v4FunctionNames] : commonFunctionNames;
+  const v4_2FunctionNames = ["sortingEnabled"];
+
+  let contractFunctionNames = [...commonFunctionNames];
+  if (version >= 4) {
+    contractFunctionNames = [...contractFunctionNames, ...v4FunctionNames];
+  }
+  if (version >= 4.2) {
+    contractFunctionNames = [...contractFunctionNames, ...v4_2FunctionNames];
+  }
 
   const contracts = contractFunctionNames.map(functionName => ({
     ...contractConfig,

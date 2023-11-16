@@ -10,11 +10,12 @@ import "@openzeppelin/utils/Address.sol";
 import "@openzeppelin/utils/Context.sol";
 import "./IGovernor.sol";
 import "./GovernorMerkleVotes.sol";
+import "./extensions/GovernorSorting.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGovernor {
+abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
     event PaymentReleased(address to, uint256 amount);
@@ -101,7 +102,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "4.1";
+        return "4.2";
     }
 
     /**
@@ -223,6 +224,11 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
     function isProposalDeleted(uint256 proposalId) public view virtual returns (bool) {
         return proposalIsDeleted[proposalId];
     }
+
+    /**
+     * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
+     */
+    function _multiRmProposalIdFromForVotesMap(uint256[] calldata proposalIds) internal virtual;
 
     /**
      * @dev Register a vote with a given support and voting weight.
@@ -383,6 +389,12 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorMerkleVotes, IGov
                 // this proposal now won't count towards the total number allowed in the contest
                 // it will still count towards the total number of proposals that the user is allowed to submit though
                 deletedProposalIds.push(currentProposalId);
+
+                // we only do sorting if downvoting is disabled and if sorting is enabled
+                if (downvotingAllowed() == 0 && sortingEnabled == 1) {
+                    // remove proposalIds from forVotesToProposalIds
+                    _multiRmProposalIdFromForVotesMap(proposalIdsToDelete);
+                }
             }
         }
 

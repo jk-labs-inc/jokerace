@@ -2,6 +2,7 @@ import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { create } from "zustand";
+import { DEFAULT_SUBMISSIONS } from ".";
 import { EntryCharge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
 
 type ContestDeployError = {
@@ -14,13 +15,20 @@ type Prompt = {
   evaluateVoters: string;
 };
 
+export type AdvancedOptions = {
+  downvote: boolean;
+  sorting: boolean;
+  rankLimit: number;
+};
+
 export interface DeployContestState {
   deployContestData: {
     chain: string;
     chainId: number;
     hash: string;
     address: string;
-    maxSubmissions: number;
+    downvote: boolean;
+    sortingEnabled: boolean;
   };
   type: string;
   title: string;
@@ -52,7 +60,7 @@ export interface DeployContestState {
   submissionRequirements: SubmissionRequirements;
   allowedSubmissionsPerUser: number;
   maxSubmissions: number;
-  downvote: boolean;
+  advancedOptions: AdvancedOptions;
   isLoading: boolean;
   isSuccess: boolean;
   errors: ContestDeployError[];
@@ -61,7 +69,14 @@ export interface DeployContestState {
   submissionTab: number;
   votingTab: number;
   entryCharge: EntryCharge;
-  setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) => void;
+  setDeployContestData: (
+    chain: string,
+    chainId: number,
+    hash: string,
+    address: string,
+    downvote: boolean,
+    sortingEnabled: boolean,
+  ) => void;
   setType: (type: string) => void;
   setTitle: (title: string) => void;
   setSummary: (summary: string) => void;
@@ -80,7 +95,7 @@ export interface DeployContestState {
   setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => void;
   setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
   setMaxSubmissions: (maxSubmissions: number) => void;
-  setDownvote: (downvote: boolean) => void;
+  setAdvancedOptions: (advancedOptions: AdvancedOptions) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
   setError: (step: number, error: ContestDeployError) => void;
@@ -106,7 +121,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       chainId: 0,
       hash: "",
       address: "",
-      maxSubmissions: 0,
+      downvote: false,
+      sortingEnabled: false,
     },
     type: "",
     title: "",
@@ -158,8 +174,12 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       percentageToCreator: 50,
     },
     allowedSubmissionsPerUser: 2,
-    maxSubmissions: 100,
-    downvote: true,
+    maxSubmissions: DEFAULT_SUBMISSIONS,
+    advancedOptions: {
+      downvote: false,
+      sorting: true,
+      rankLimit: 250,
+    },
     isLoading: false,
     isSuccess: false,
     errors: [],
@@ -172,8 +192,14 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
   return {
     ...initialState,
 
-    setDeployContestData: (chain: string, chainId: number, hash: string, address: string, maxSubmissions: number) =>
-      set({ deployContestData: { chain, chainId, hash, address, maxSubmissions } }),
+    setDeployContestData: (
+      chain: string,
+      chainId: number,
+      hash: string,
+      address: string,
+      downvote: boolean,
+      sortingEnabled: boolean,
+    ) => set({ deployContestData: { chain, chainId, hash, address, downvote, sortingEnabled } }),
     setType: (type: string) => set({ type }),
     setTitle: (title: string) => set({ title }),
     setSummary: (summary: string) => set({ summary }),
@@ -220,8 +246,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       set({ submissionAllowlistFields }),
     setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => set({ submissionRequirements }),
     setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
+    setAdvancedOptions: (advancedOptions: AdvancedOptions) => set({ advancedOptions }),
     setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),
-    setDownvote: (downvote: boolean) => set({ downvote }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
     setError: (step: number, error: ContestDeployError) => {

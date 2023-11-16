@@ -6,7 +6,7 @@ import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/utils/Address.sol";
 import "@openzeppelin/utils/Context.sol";
 import "../governance/IGovernor.sol";
-import "../governance/extensions/GovernorSorting.sol";
+import "../governance/extensions/GovernorCountingSimple.sol";
 
 /**
  * @title RewardsModule
@@ -44,7 +44,7 @@ contract RewardsModule is Context {
     mapping(IERC20 => uint256) private _erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
 
-    GovernorSorting private immutable _underlyingContest;
+    GovernorCountingSimple private immutable _underlyingContest;
     address private immutable _creator;
     bool private immutable _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
 
@@ -58,7 +58,7 @@ contract RewardsModule is Context {
     constructor(
         uint256[] memory payees,
         uint256[] memory shares_,
-        GovernorSorting underlyingContest_,
+        GovernorCountingSimple underlyingContest_,
         bool paysOutTarget_
     ) payable {
         require(payees.length == shares_.length, "RewardsModule: payees and shares length mismatch");
@@ -88,7 +88,7 @@ contract RewardsModule is Context {
      * @dev Version of the rewards module. Default: "1"
      */
     function version() public view virtual returns (string memory) {
-        return "4.1";
+        return "4.2";
     }
 
     /**
@@ -181,16 +181,54 @@ contract RewardsModule is Context {
     }
 
     /**
-     * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
-     * total shares and their previous withdrawals.
+     * @dev Run release checks.
      */
-    function release(uint256 ranking) public virtual {
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
+    function runReleaseChecks(uint256 ranking) public view {
+        require(
+            _underlyingContest.downvotingAllowed() == 0,
+            "RewardsModule: rankings don't work with downvoting enabled on the contest"
+        );
+        require(
+            _underlyingContest.sortingEnabled() == 1,
+            "RewardsModule: rankings don't work with sorting disabled on the contest"
+        );
         require(
             _underlyingContest.state() == IGovernor.ContestState.Completed,
             "RewardsModule: contest must be completed for rewards to be paid out"
         );
+        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
         require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
+    }
+
+    /**
+     * @dev Return address to pay out for a given ranking.
+     */
+    function getAddressToPayOut(uint256 ranking) public view returns (address) {
+        address addressToPayOut;
+        uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
+
+        // if the ranking that we land on is tied or it's below a tied ranking, send to creator
+        if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
+            addressToPayOut = creator();
+        }
+        // otherwise, determine proposal at ranking and pay out according to that
+        else {
+            uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
+            IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
+                _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
+            );
+            addressToPayOut = _paysOutTarget ? rankingProposal.targetMetadata.targetAddress : rankingProposal.author;
+        }
+
+        return addressToPayOut;
+    }
+
+    /**
+     * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
+     * total shares and their previous withdrawals.
+     */
+    function release(uint256 ranking) public virtual {
+        runReleaseChecks(ranking);
 
         uint256 payment = releasable(ranking);
 
@@ -206,25 +244,7 @@ contract RewardsModule is Context {
             _released[ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
-        // _lowestRanking, and _highestTiedRanking
-        if (!_underlyingContest.setSortedAndTiedProposalsHasBeenRun()) {
-            _underlyingContest.setSortedAndTiedProposals();
-        }
-
-        require(
-            ranking <= _underlyingContest.lowestRanking(),
-            "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
-        );
-
-        IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-            _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
-        );
-
-        // send rewards to winner only if the ranking is higher than the highest tied ranking
-        address payable addressToPayOut = ranking < _underlyingContest.highestTiedRanking()
-            ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
-            : payable(creator());
+        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
@@ -238,12 +258,7 @@ contract RewardsModule is Context {
      * contract.
      */
     function release(IERC20 token, uint256 ranking) public virtual {
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
-        require(
-            _underlyingContest.state() == IGovernor.ContestState.Completed,
-            "RewardsModule: contest must be completed for rewards to be paid out"
-        );
-        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
+        runReleaseChecks(ranking);
 
         uint256 payment = releasable(token, ranking);
 
@@ -259,25 +274,7 @@ contract RewardsModule is Context {
             _erc20Released[token][ranking] += payment;
         }
 
-        // if not already set, set _sortedProposalIds, _tiedAdjustedRankingPosition, _isTied,
-        // _lowestRanking, and _highestTiedRanking
-        if (!_underlyingContest.setSortedAndTiedProposalsHasBeenRun()) {
-            _underlyingContest.setSortedAndTiedProposals();
-        }
-
-        require(
-            ranking <= _underlyingContest.lowestRanking(),
-            "RewardsModule: there are not enough proposals for that ranking to exist, taking ties into account"
-        );
-
-        IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-            _underlyingContest.sortedProposalIds()[_underlyingContest.tiedAdjustedRankingPosition(ranking)]
-        );
-
-        // send rewards to winner only if the ranking is higher than the highest tied ranking
-        address payable addressToPayOut = ranking < _underlyingContest.highestTiedRanking()
-            ? _paysOutTarget ? payable(rankingProposal.targetMetadata.targetAddress) : payable(rankingProposal.author)
-            : payable(creator());
+        address payable addressToPayOut = payable(getAddressToPayOut(ranking));
 
         require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
 
