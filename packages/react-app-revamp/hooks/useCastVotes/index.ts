@@ -17,11 +17,13 @@ import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
+import useProposal from "@hooks/useProposal";
 
 export function useCastVotes() {
   const { fetchTotalVotesCast } = useContest();
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
-  const { setProposalVotes } = useProposalStore(state => state);
+  const { updateAndRankSingleProposal } = useProposal();
+  const { listProposalsData } = useProposalStore(state => state);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -105,18 +107,19 @@ export function useCastVotes() {
 
         const forVotes = voteResponse[0] as bigint;
         const againstVotes = voteResponse[1] as bigint;
-
         const votesBigNumber = BigNumber.from(forVotes).sub(againstVotes);
-
         const votes = Number(utils.formatEther(votesBigNumber));
 
         await fetchTotalVotesCast();
 
-        //@ts-ignore
-        setProposalVotes({
-          id: pickedProposal,
-          votes,
-        });
+        const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
+
+        if (existingProposal) {
+          updateAndRankSingleProposal({
+            ...existingProposal,
+            netVotes: votes,
+          });
+        }
       }
 
       await updateCurrentUserVotes();

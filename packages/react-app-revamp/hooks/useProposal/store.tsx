@@ -1,9 +1,21 @@
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
+export interface ProposalCore {
+  id: string;
+  author: string;
+  description: string;
+  exists: boolean;
+  rank: number;
+  isTied: boolean;
+  netVotes: number;
+  isContentImage: boolean;
+}
+
 interface ProposalState {
+  initialListProposalsIds: string[];
   listProposalsIds: string[];
-  listProposalsData: any;
+  listProposalsData: ProposalCore[];
   isListProposalsLoading: boolean;
   isListProposalsSuccess: boolean;
   isListProposalsError: string;
@@ -17,14 +29,12 @@ interface ProposalState {
   canUpdateVotesInRealTime: boolean;
   submissionsCount: number;
   addProposalId: (id: string) => void;
+  setInitialListProposalsIds: (list: string[]) => void;
   setListProposalsIds: (list: string[]) => void;
   setIsListProposalsLoading: (value: boolean) => void;
   setIsListProposalsSuccess: (value: boolean) => void;
   setIsListProposalsError: (value: string) => void;
-  setProposalData: (proposal: any) => void;
-  setProposalVotes: (id: any, votes: any) => void;
-  softDeleteProposals: (ids: string[]) => void;
-  resetListProposals: () => void;
+  setProposalData: (proposals: ProposalCore[]) => void;
   setSubmissionsCount: (value: number) => void;
   setIsPageProposalsLoading: (value: boolean) => void;
   setIsPageProposalsError: (value: string) => void;
@@ -38,8 +48,9 @@ interface ProposalState {
 
 export const createProposalStore = () =>
   createStore<ProposalState>(set => ({
+    initialListProposalsIds: [],
     listProposalsIds: [],
-    listProposalsData: {},
+    listProposalsData: [],
     isListProposalsLoading: false,
     isListProposalsSuccess: false,
     isListProposalsError: "",
@@ -67,54 +78,13 @@ export const createProposalStore = () =>
     setTotalPagesPaginationProposals: newTotal => set({ totalPagesPaginationProposals: newTotal }),
     setHasPaginationProposalsNextPage: hasNextPage => set({ hasPaginationProposalsNextPage: hasNextPage }),
     addProposalId: id => set(state => ({ listProposalsIds: [...state.listProposalsIds, id] })),
-    setProposalVotes: ({ id, votes }) =>
-      set(state => ({
-        ...state,
-        listProposalsData: {
-          ...state.listProposalsData,
-          [id]: {
-            ...state.listProposalsData[id],
-            votes: votes,
-          },
-        },
-      })),
-    setProposalData: ({ id, data }) =>
-      set(state => ({
-        ...state,
-        listProposalsData: {
-          ...state.listProposalsData,
-          [id]: {
-            ...state.listProposalsData[id],
-            ...data,
-          },
-        },
-      })),
-    softDeleteProposals: (idsToDelete: string[]) =>
-      set(state => {
-        const updatedListProposalsData = { ...state.listProposalsData };
-        const idsToDeleteSet = new Set(idsToDelete.map(id => id.toString()));
-
-        const updatedListProposalsIds = state.listProposalsIds
-          .map(existingId => existingId.toString())
-          .filter(existingIdStr => !idsToDeleteSet.has(existingIdStr));
-
-        idsToDelete.forEach(id => {
-          delete updatedListProposalsData[id];
-        });
-
-        return {
-          ...state,
-          listProposalsData: updatedListProposalsData,
-          listProposalsIds: updatedListProposalsIds,
-        };
-      }),
-
-    resetListProposals: () => set({ listProposalsData: {}, listProposalsIds: [] }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setIsListProposalsLoading: value => set({ isListProposalsLoading: value }),
     setIsListProposalsError: value => set({ isListProposalsError: value }),
     setIsListProposalsSuccess: value => set({ isListProposalsSuccess: value }),
     setListProposalsIds: list => set({ listProposalsIds: list }),
+    setInitialListProposalsIds: list => set({ initialListProposalsIds: list }),
+    setProposalData: proposals => set({ listProposalsData: proposals }),
   }));
 
 export const ProposalContext = createContext<ReturnType<typeof createProposalStore> | null>(null);

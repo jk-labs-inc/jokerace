@@ -1,6 +1,7 @@
 import { formatNumber } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
+import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { FC, ReactNode, useMemo } from "react";
 
@@ -10,7 +11,7 @@ interface ProposalStatisticsProps {
 
 const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
   const { contestMaxProposalCount, totalVotes, totalVotesCast } = useContestStore(state => state);
-  const { submissionsCount, setListProposalsIds } = useProposalStore(state => state);
+  const { submissionsCount } = useProposalStore(state => state);
 
   const content = useMemo<ReactNode>(() => {
     switch (contestStatus) {

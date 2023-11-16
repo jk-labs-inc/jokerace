@@ -11,12 +11,13 @@ import { useEffect } from "react";
 import { useNetwork } from "wagmi";
 import { useDeleteProposalStore } from "./store";
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
+import useProposal from "@hooks/useProposal";
 
 export function useDeleteProposal() {
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
   const { chain } = useNetwork();
-  const { softDeleteProposals } = useProposalStore(state => state);
+  const { removeAndRankProposals } = useProposal();
   const {
     isLoading,
     error,
@@ -65,7 +66,7 @@ export function useDeleteProposal() {
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txDeleteProposals?.hash}`,
       });
 
-      softDeleteProposals(proposalIds);
+      removeAndRankProposals(proposalIds);
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess(`Proposal deleted successfully!`);

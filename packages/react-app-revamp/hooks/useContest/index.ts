@@ -80,8 +80,9 @@ export function useContest() {
     setIsReadOnly,
     setIsRewardsLoading,
   } = useContestStore(state => state);
-  const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds, resetListProposals } =
-    useProposalStore(state => state);
+  const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
+    state => state,
+  );
   const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
@@ -526,7 +527,6 @@ export function useContest() {
       setIsLoading(true);
       setIsListProposalsLoading(true);
       setListProposalsIds([]);
-      resetListProposals();
       setAddress(addr);
     },
   };

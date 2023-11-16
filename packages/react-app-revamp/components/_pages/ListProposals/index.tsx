@@ -2,6 +2,7 @@
 import Button from "@components/UI/Button";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
+import arrayToChunks from "@helpers/arrayToChunks";
 import { formatNumber } from "@helpers/formatNumber";
 import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
@@ -58,11 +59,15 @@ export const ListProposals = () => {
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
-  const remainingProposalsToLoad = listProposalsIds.length - Object.keys(listProposalsData).length;
+  const remainingProposalsToLoad = listProposalsIds.length - listProposalsData.length;
   const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
 
   useEffect(() => {
-    fetchProposalsPage(0, listProposalsIds, listProposalsIds.length);
+    if (!listProposalsIds.length) return;
+
+    const paginationChunks = arrayToChunks(listProposalsIds, PROPOSALS_PER_PAGE);
+
+    fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
   }, [listProposalsIds]);
 
   const onDeleteSelectedProposals = async () => {
@@ -88,7 +93,7 @@ export const ListProposals = () => {
     });
   };
 
-  if (isPageProposalsLoading && !Object.keys(listProposalsData)?.length) {
+  if (isPageProposalsLoading && !listProposalsData.length) {
     return (
       <ProposalSkeleton
         count={listProposalsIds.length > PROPOSALS_PER_PAGE ? PROPOSALS_PER_PAGE : listProposalsIds.length}
@@ -100,71 +105,57 @@ export const ListProposals = () => {
   return (
     <div>
       <div className="flex flex-col gap-8 mt-6">
-        {(() => {
-          const ranks: RankDictionary = {};
-          let rank = 0;
-          let lastVotes: number | null = null;
+        {listProposalsData.map((proposal, index) => {
+          if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
+            return <ProposalSkeleton key={proposal.id} highlightColor="#FF78A9" />;
+          }
 
-          const sortedProposalIds = Object.keys(listProposalsData).sort(
-            (a, b) => listProposalsData[b].votes - listProposalsData[a].votes,
+          return (
+            <div key={proposal.id} className="relative">
+              {proposal.netVotes > 0 ? (
+                <div className="absolute top-0 right-0 -mr-2 -mt-4 p-4 z-10 h-7 rounded-[16px] bg-true-black flex items-center justify-center text-[16px] font-bold text-neutral-11 border border-neutral-11">
+                  {formatNumber(proposal.netVotes)} votes
+                </div>
+              ) : null}
+              <ProposalContent
+                key={index}
+                id={proposal.id}
+                proposal={{
+                  authorEthereumAddress: proposal.author,
+                  content: proposal.description,
+                  exists: proposal.exists,
+                  isContentImage: proposal.isContentImage,
+                  votes: proposal.netVotes,
+                }}
+                votingOpen={votesOpen}
+                rank={proposal.rank}
+                isTied={proposal.isTied}
+              />
+              {allowDelete && (
+                <div
+                  className="absolute cursor-pointer -bottom-0 right-0 z-10"
+                  onClick={() => toggleProposalSelection(proposal.id)}
+                >
+                  <div className="relative h-6 w-6">
+                    <CheckIcon
+                      className={`absolute transform transition-all ease-in-out duration-300 
+        ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
+       h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
+       shadow-md hover:shadow-lg rounded-md`}
+                    />
+
+                    <TrashIcon
+                      className={`absolute transition-opacity duration-300  ${
+                        selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"
+                      }
+        h-8 text-negative-11 bg-true-black hover:text-negative-10`}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           );
-
-          sortedProposalIds.forEach(id => {
-            const votes = listProposalsData[id].votes;
-            if (votes !== lastVotes && votes > 0) {
-              rank++;
-              lastVotes = votes;
-            }
-            ranks[id] = votes > 0 ? rank : 0;
-          });
-
-          return sortedProposalIds.map(id => {
-            const isTied = listProposalsData[id].votes && checkForTiedRanks(ranks, ranks[id]);
-
-            if (deletingProposalIds.includes(id) && isDeleteInProcess) {
-              return <ProposalSkeleton key={id} highlightColor="#FF78A9" />;
-            }
-
-            return (
-              <div key={id} className="relative">
-                {listProposalsData[id].votes > 0 && (
-                  <div className="absolute top-0 right-0 -mr-2 -mt-4 p-4 z-10 h-7 rounded-[16px] bg-true-black flex items-center justify-center text-[16px] font-bold text-neutral-11 border border-neutral-11">
-                    {formatNumber(listProposalsData[id].votes)} votes
-                  </div>
-                )}
-                <ProposalContent
-                  id={id}
-                  proposal={listProposalsData[id]}
-                  votingOpen={votesOpen}
-                  rank={ranks[id]}
-                  isTied={isTied}
-                />
-                {allowDelete && (
-                  <div
-                    className="absolute cursor-pointer -bottom-0 right-0 z-10"
-                    onClick={() => toggleProposalSelection(id)}
-                  >
-                    <div className="relative h-6 w-6">
-                      <CheckIcon
-                        className={`absolute transform transition-all ease-in-out duration-300 
-                 ${selectedProposalIds.includes(id) ? "opacity-100" : "opacity-0"}
-                h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
-                shadow-md hover:shadow-lg rounded-md`}
-                      />
-
-                      <TrashIcon
-                        className={`absolute transition-opacity duration-300  ${
-                          selectedProposalIds.includes(id) ? "opacity-0" : "opacity-100"
-                        }
-                 h-8 text-negative-11 bg-true-black hover:text-negative-10`}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          });
-        })()}
+        })}
       </div>
 
       {showDeleteButton && (
@@ -179,11 +170,11 @@ export const ListProposals = () => {
         </div>
       )}
 
-      {isPageProposalsLoading && Object.keys(listProposalsData)?.length && (
+      {isPageProposalsLoading && listProposalsData.length && (
         <ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />
       )}
 
-      {Object.keys(listProposalsData)?.length < listProposalsIds.length && !isPageProposalsLoading && (
+      {listProposalsData.length < listProposalsIds.length && !isPageProposalsLoading && (
         <div className="pt-8 flex animate-appear">
           <Button
             intent="neutral-outline"
