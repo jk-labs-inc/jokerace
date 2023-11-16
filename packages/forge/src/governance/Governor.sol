@@ -48,7 +48,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     error EmptyProposalDescription();
     error IncorrectCostToProposeSent(uint256 msgValue, uint256 costToPropose);
     error AddressNotPermissionedToSubmit();
-    error ProposalValidationFailed();
+    error CannotVoteOnDeletedProposal();
 
     /**
      * @dev Sets the value for {name} and {version}
@@ -248,22 +248,21 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     /**
      * @dev See {IGovernor-verifyProposer}.
      */
-    function verifyProposer(address account, bytes32[] calldata proof) public override returns (bool verified) {
+    function verifyProposer(address account, bytes32[] calldata proof) public override {
         if (!addressSubmitterVerified[account]) {
             if (submissionMerkleRoot == 0) {
                 // if the submission root is 0, then anyone can submit
-                return true;
+                return;
             }
             checkProof(account, AMOUNT_FOR_SUMBITTER_PROOF, proof, false); // will revert with NotInMerkle if not valid
             addressSubmitterVerified[account] = true;
         }
-        return true;
     }
 
     /**
      * @dev See {IGovernor-validateProposalData}.
      */
-    function validateProposalData(ProposalCore memory proposal) public virtual override returns (bool dataValidated) {
+    function validateProposalData(ProposalCore memory proposal) public virtual override {
         if (proposal.author != msg.sender) revert AuthorIsNotSender(proposal.author, msg.sender);
         for (uint256 index = 0; index < METADATAS_COUNT; index++) {
             Metadatas currentMetadata = Metadatas(index);
@@ -277,7 +276,6 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
             }
         }
         if (bytes(proposal.description).length == 0) revert EmptyProposalDescription();
-        return true;
     }
 
     /**
@@ -312,8 +310,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     {
         if (msg.value != _costToPropose) revert IncorrectCostToProposeSent(msg.value, _costToPropose);
 
-        if (!verifyProposer(msg.sender, proof)) revert AddressNotPermissionedToSubmit();
-        if (!validateProposalData(proposal)) revert ProposalValidationFailed();
+        verifyProposer(msg.sender, proof);
+        validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
         _distributeCostToPropose();
@@ -325,16 +323,13 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
      * @dev See {IGovernor-proposeWithoutProof}.
      */
     function proposeWithoutProof(ProposalCore calldata proposal) public payable virtual override returns (uint256) {
-        require(
-            msg.value == _costToPropose,
-            "Governor: this transaction was not sent with the correct amount of funds needed to propose"
-        );
+        if (msg.value != _costToPropose) revert IncorrectCostToProposeSent(msg.value, _costToPropose);
 
         if (submissionMerkleRoot != 0) {
             // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
-            require(addressSubmitterVerified[msg.sender], "Governor: address is not permissioned to submit");
+            if (!addressSubmitterVerified[msg.sender]) revert AddressNotPermissionedToSubmit();
         }
-        require(validateProposalData(proposal), "Governor: proposal content failed validation");
+        validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
         _distributeCostToPropose();
@@ -423,14 +418,12 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof)
         public
         override
-        returns (bool verified)
     {
         if (!addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
             addressTotalVotesVerified[account] = true;
         }
-        return true;
     }
 
     /**
@@ -443,8 +436,8 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
         returns (uint256)
     {
         address voter = msg.sender;
-        require(!isProposalDeleted(proposalId), "Governor: you cannot vote on a deleted proposal");
-        require(verifyVoter(voter, totalVotes, proof), "Governor: this address is not permissioned to vote");
+        if (isProposalDeleted(proposalId)) revert CannotVoteOnDeletedProposal();
+        verifyVoter(voter, totalVotes, proof);
         return _castVote(proposalId, voter, support, numVotes);
     }
 

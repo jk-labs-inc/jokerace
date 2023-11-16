@@ -193,9 +193,7 @@ contract ContestTest is Test {
 
     function testValidate() public {
         vm.prank(PERMISSIONED_ADDRESS_1);
-        bool validated = contest.validateProposalData(firstProposalPA1);
-
-        assertEq(validated, true);
+        contest.validateProposalData(firstProposalPA1);
     }
 
     function testPropose() public {

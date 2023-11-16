@@ -153,12 +153,12 @@ abstract contract IGovernor is IERC165 {
     /**
      * @dev Verifies that `account` is permissioned to propose via merkle proof.
      */
-    function verifyProposer(address account, bytes32[] calldata proof) public virtual returns (bool);
+    function verifyProposer(address account, bytes32[] calldata proof) public virtual;
 
     /**
      * @dev Verifies that all of the metadata in the proposal is valid.
      */
-    function validateProposalData(ProposalCore memory proposal) public virtual returns (bool);
+    function validateProposalData(ProposalCore memory proposal) public virtual;
 
     /**
      * @dev Create a new proposal. Vote start {IGovernor-votingDelay} blocks after the proposal is created and ends
@@ -183,7 +183,7 @@ abstract contract IGovernor is IERC165 {
     /**
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
      */
-    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public virtual returns (bool);
+    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public virtual;
 
     /**
      * @dev Cast a vote with a merkle proof.
