@@ -69,6 +69,7 @@ import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
+import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
 
@@ -131,6 +132,7 @@ const totalChains: Chain[] = [
   roninTestnet,
   scrollSepoliaTestnet,
   artheraTestnet,
+  x1Testnet,
   mainnet,
 ];
 
