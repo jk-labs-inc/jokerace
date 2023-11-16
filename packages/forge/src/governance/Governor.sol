@@ -41,8 +41,14 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     mapping(address => bool) public addressTotalVotesVerified;
     mapping(address => bool) public addressSubmitterVerified;
 
-    /// @notice Thrown if there is metadata included in a proposal that isn't covered in data validation
-    error TooManyMetadatas();
+    error AuthorIsNotSender(address author, address sender);
+    error ZeroSignersInSafeMetadata();
+    error ZeroThresholdInSafeMetadata();
+    error UnexpectedMetadata(Metadatas unexpectedMetadata);
+    error EmptyProposalDescription();
+    error IncorrectCostToProposeSent(uint256 msgValue, uint256 costToPropose);
+    error AddressNotPermissionedToSubmit();
+    error ProposalValidationFailed();
 
     /**
      * @dev Sets the value for {name} and {version}
@@ -258,25 +264,19 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
      * @dev See {IGovernor-validateProposalData}.
      */
     function validateProposalData(ProposalCore memory proposal) public virtual override returns (bool dataValidated) {
-        require(proposal.author == msg.sender, "Governor: the proposal author must be msg.sender");
+        if (proposal.author != msg.sender) revert AuthorIsNotSender(proposal.author, msg.sender);
         for (uint256 index = 0; index < METADATAS_COUNT; index++) {
             Metadatas currentMetadata = Metadatas(index);
             if (currentMetadata == Metadatas.Target) {
                 continue; // Nothing to check here since strictly typed to address
             } else if (currentMetadata == Metadatas.Safe) {
-                require(
-                    proposal.safeMetadata.signers.length != 0,
-                    "GovernorMetadataValidation: there cannot be zero signers in safeMetadata"
-                );
-                require(
-                    proposal.safeMetadata.threshold != 0,
-                    "GovernorMetadataValidation: threshold cannot be zero in safeMetadata"
-                );
+                if (proposal.safeMetadata.signers.length == 0) revert ZeroSignersInSafeMetadata();
+                if (proposal.safeMetadata.threshold == 0) revert ZeroThresholdInSafeMetadata();
             } else {
-                revert TooManyMetadatas();
+                revert UnexpectedMetadata(currentMetadata);
             }
         }
-        require(bytes(proposal.description).length != 0, "Governor: empty proposal descriptions are not allowed");
+        if (bytes(proposal.description).length == 0) revert EmptyProposalDescription();
         return true;
     }
 
@@ -310,13 +310,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
         override
         returns (uint256)
     {
-        require(
-            msg.value == _costToPropose,
-            "Governor: this transaction was not sent with the correct amount of funds needed to propose"
-        );
+        if (msg.value != _costToPropose) revert IncorrectCostToProposeSent(msg.value, _costToPropose);
 
-        require(verifyProposer(msg.sender, proof), "Governor: address is not permissioned to submit");
-        require(validateProposalData(proposal), "Governor: proposal content failed validation");
+        if (!verifyProposer(msg.sender, proof)) revert AddressNotPermissionedToSubmit();
+        if (!validateProposalData(proposal)) revert ProposalValidationFailed();
         uint256 proposalId = _castProposal(proposal);
 
         _distributeCostToPropose();
