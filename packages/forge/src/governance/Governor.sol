@@ -46,8 +46,10 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
     error ZeroThresholdInSafeMetadata();
     error UnexpectedMetadata(Metadatas unexpectedMetadata);
     error EmptyProposalDescription();
+
     error IncorrectCostToProposeSent(uint256 msgValue, uint256 costToPropose);
     error AddressNotPermissionedToSubmit();
+
     error CannotVoteOnDeletedProposal();
 
     /**
