@@ -2,12 +2,10 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/utils/introspection/ERC165.sol";
-
 /**
  * @dev Interface of the {Governor} core.
  */
-abstract contract IGovernor is IERC165 {
+abstract contract IGovernor {
     enum ContestState {
         NotStarted,
         Active,

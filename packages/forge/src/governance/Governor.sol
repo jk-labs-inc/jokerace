@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/utils/introspection/ERC165.sol";
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
 import "@openzeppelin/utils/Context.sol";
@@ -14,7 +13,7 @@ import "./extensions/GovernorSorting.sol";
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is Context, ERC165, GovernorSorting, GovernorMerkleVotes, IGovernor {
+abstract contract Governor is Context, GovernorSorting, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
     event PaymentReleased(address to, uint256 amount);
@@ -83,13 +82,6 @@ abstract contract Governor is Context, ERC165, GovernorSorting, GovernorMerkleVo
         _percentageToCreator = percentageToCreator_;
 
         emit JokeraceCreated(name_, msg.sender); // emit upon creation to be able to easily find jokeraces on a chain
-    }
-
-    /**
-     * @dev See {IERC165-supportsInterface}.
-     */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(IERC165, ERC165) returns (bool) {
-        return interfaceId == type(IGovernor).interfaceId || super.supportsInterface(interfaceId);
     }
 
     /**
