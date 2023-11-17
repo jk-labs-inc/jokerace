@@ -33,6 +33,10 @@ abstract contract GovernorCountingSimple is Governor {
 
     mapping(uint256 => uint256[]) public forVotesToProposalIds;
 
+    error MoreThanOneProposalWithThisManyVotes();
+    error NotEnoughVotesLeft();
+    error DownvotingNotEnabled();
+
     /**
      * @dev Accessor to the internal vote counts for a given proposal.
      */
@@ -132,10 +136,7 @@ abstract contract GovernorCountingSimple is Governor {
      *       been checked for).
      */
     function getOnlyProposalIdWithThisManyForVotes(uint256 forVotes) public view returns (uint256 proposalId) {
-        require(
-            forVotesToProposalIds[forVotes].length == 1,
-            "GovernorCountingSimple: tried to call getOnlyProposalIdWithThisManyForVotes and couldn't find one"
-        );
+        if (forVotesToProposalIds[forVotes].length != 1) revert MoreThanOneProposalWithThisManyVotes();
         return forVotesToProposalIds[forVotes][0];
     }
 
@@ -181,10 +182,7 @@ abstract contract GovernorCountingSimple is Governor {
     {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
 
-        require(
-            numVotes <= (totalVotes - addressTotalCastVoteCounts[account]),
-            "GovernorVotingSimple: not enough votes left to cast"
-        );
+        if (numVotes > (totalVotes - addressTotalCastVoteCounts[account])) revert NotEnoughVotesLeft();
 
         bool firstTimeVoting = (
             proposalvote.addressVoteCounts[account].forVotes == 0
@@ -195,7 +193,7 @@ abstract contract GovernorCountingSimple is Governor {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
             proposalvote.addressVoteCounts[account].forVotes += numVotes;
         } else if (support == uint8(VoteType.Against)) {
-            require(downvotingAllowed() == 1, "GovernorVotingSimple: downvoting is not enabled for this Contest");
+            if (downvotingAllowed() != 1) revert DownvotingNotEnabled();
             proposalvote.proposalVoteCounts.againstVotes += numVotes;
             proposalvote.addressVoteCounts[account].againstVotes += numVotes;
         } else {
