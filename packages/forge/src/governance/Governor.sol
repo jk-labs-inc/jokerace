@@ -2,7 +2,6 @@
 
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
 import "./IGovernor.sol";
