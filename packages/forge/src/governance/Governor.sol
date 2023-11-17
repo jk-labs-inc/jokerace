@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "@openzeppelin/utils/cryptography/ECDSA.sol";
-import "@openzeppelin/utils/cryptography/draft-EIP712.sol";
 import "@openzeppelin/utils/introspection/ERC165.sol";
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
@@ -15,7 +14,7 @@ import "./extensions/GovernorSorting.sol";
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, GovernorMerkleVotes, IGovernor {
+abstract contract Governor is Context, ERC165, GovernorSorting, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
     event PaymentReleased(address to, uint256 amount);
@@ -77,7 +76,7 @@ abstract contract Governor is Context, ERC165, EIP712, GovernorSorting, Governor
         bytes32 votingMerkleRoot_,
         uint256 costToPropose_,
         uint256 percentageToCreator_
-    ) GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_) EIP712(name_, version()) {
+    ) GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_) {
         _name = name_;
         _prompt = prompt_;
         _costToPropose = costToPropose_;
