@@ -5,7 +5,6 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
-import "@openzeppelin/utils/Context.sol";
 import "./IGovernor.sol";
 import "./GovernorMerkleVotes.sol";
 import "./extensions/GovernorSorting.sol";
@@ -13,7 +12,7 @@ import "./extensions/GovernorSorting.sol";
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is Context, GovernorSorting, GovernorMerkleVotes, IGovernor {
+abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     using SafeCast for uint256;
 
     event PaymentReleased(address to, uint256 amount);
