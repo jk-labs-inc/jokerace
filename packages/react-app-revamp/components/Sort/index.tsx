@@ -35,7 +35,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
     setLabel(null);
     onSortChange?.(null);
 
-    close(); // Close the menu
+    close();
   };
 
   if (pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;

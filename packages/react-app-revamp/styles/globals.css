@@ -367,6 +367,10 @@ li {
     height: 0;
     pointer-events: none;
   }
+
+  .blurProposals {
+    opacity: 50% !important;
+  }
 }
 
 @layer components {

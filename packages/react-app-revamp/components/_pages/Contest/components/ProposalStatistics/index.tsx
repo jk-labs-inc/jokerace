@@ -2,17 +2,23 @@ import { formatNumber } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
 import useProposal from "@hooks/useProposal";
-import { useProposalStore } from "@hooks/useProposal/store";
+import { SortOptions, useProposalStore } from "@hooks/useProposal/store";
 import { FC, ReactNode, useMemo } from "react";
+import SortProposalsDropdown from "./components/SortDropdown";
 
 interface ProposalStatisticsProps {
   contestStatus: ContestStatus;
+  onMenuStateChange: (isOpen: boolean) => void;
 }
 
-const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
+const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenuStateChange }) => {
   const { contestMaxProposalCount, totalVotes, totalVotesCast } = useContestStore(state => state);
   const { submissionsCount, sortBy } = useProposalStore(state => state);
   const { sortProposalData } = useProposal();
+
+  const handleSortTypeChange = (value: string) => {
+    sortProposalData(value as SortOptions);
+  };
 
   const content = useMemo<ReactNode>(() => {
     switch (contestStatus) {
@@ -40,9 +46,11 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
       <p className="text-[24px] text-neutral-11 font-bold">submissions</p>
       <div className="flex justify-between items-center">
         {content}
-        <div className="text-[16px] text-positive-11" onClick={() => sortProposalData("mostRecent")}>
-          sort: {sortBy}
-        </div>
+        <SortProposalsDropdown
+          defaultValue={sortBy ?? ""}
+          onChange={handleSortTypeChange}
+          onMenuStateChange={onMenuStateChange}
+        />
       </div>
     </div>
   );
