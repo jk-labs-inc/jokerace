@@ -36,6 +36,7 @@ abstract contract GovernorCountingSimple is Governor {
     error MoreThanOneProposalWithThisManyVotes();
     error NotEnoughVotesLeft();
     error DownvotingNotEnabled();
+    error InvalidVoteType();
 
     /**
      * @dev Accessor to the internal vote counts for a given proposal.
@@ -197,7 +198,7 @@ abstract contract GovernorCountingSimple is Governor {
             proposalvote.proposalVoteCounts.againstVotes += numVotes;
             proposalvote.addressVoteCounts[account].againstVotes += numVotes;
         } else {
-            revert("GovernorVotingSimple: invalid value for enum VoteType");
+            revert InvalidVoteType();
         }
 
         if (firstTimeVoting) {

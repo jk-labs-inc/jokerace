@@ -30,6 +30,8 @@ abstract contract GovernorSorting {
     uint256[] public sortedRanks; // value is forVotes counts, has the constraint of no duplicate values.
 
     error RankCannotBeZero();
+    error RankIsNotInSortedRanks();
+    error IndexHasNotBeenPopulated();
 
     constructor(uint256 sortingEnabled_, uint256 rankLimit_) {
         sortingEnabled = sortingEnabled_;
@@ -70,16 +72,14 @@ abstract contract GovernorSorting {
         }
 
         // if there's no valid index for that rank in sortedRanks, revert
-        revert(
-            "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
-        );
+        revert RankIsNotInSortedRanks();
     }
 
     // returns whether a given index in sortedRanks is tied or is below a tied rank
     function isOrIsBelowTiedRank(uint256 idx) public view returns (bool atOrBelowTiedRank) {
         if (idx > sortedRanks.length - 1) {
             // if `idx` hasn't been populated, then it's not a valid index to be checking and something is wrong
-            revert("GovernorSorting: this index has not been populated");
+            revert IndexHasNotBeenPopulated();
         }
 
         for (uint256 index = 0; index < idx + 1; index++) {
