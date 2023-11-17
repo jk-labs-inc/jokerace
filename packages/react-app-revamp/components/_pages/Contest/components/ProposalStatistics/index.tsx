@@ -11,7 +11,8 @@ interface ProposalStatisticsProps {
 
 const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
   const { contestMaxProposalCount, totalVotes, totalVotesCast } = useContestStore(state => state);
-  const { submissionsCount } = useProposalStore(state => state);
+  const { submissionsCount, sortBy } = useProposalStore(state => state);
+  const { sortProposalData } = useProposal();
 
   const content = useMemo<ReactNode>(() => {
     switch (contestStatus) {
@@ -39,7 +40,9 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus }) => {
       <p className="text-[24px] text-neutral-11 font-bold">submissions</p>
       <div className="flex justify-between items-center">
         {content}
-        <div className="text-[16px] text-positive-11">sort: random</div>
+        <div className="text-[16px] text-positive-11" onClick={() => sortProposalData("mostRecent")}>
+          sort: {sortBy}
+        </div>
       </div>
     </div>
   );

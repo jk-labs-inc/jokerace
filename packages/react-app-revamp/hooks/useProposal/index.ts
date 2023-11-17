@@ -5,15 +5,14 @@ import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
-import { readContract, readContracts } from "@wagmi/core";
+import { readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { Result } from "ethers/lib/utils";
-import { shuffle } from "lodash";
+import { shuffle, sortBy as sortUnique } from "lodash";
 import { useRouter } from "next/router";
 import { useNetwork } from "wagmi";
-import { ProposalCore, useProposalStore } from "./store";
-import { formatProposalData, mapResultToStringArray } from "./utils";
-import isUrlToImage from "@helpers/isUrlToImage";
+import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
+import { formatProposalData, getProposalIdsRaw, sortProposals, transformProposalData } from "./utils";
 
 export const PROPOSALS_PER_PAGE = 12;
 
@@ -33,8 +32,9 @@ export function useProposal() {
     setSubmissionsCount,
     setTotalPagesPaginationProposals,
     setIndexPaginationProposalPerId,
-    setInitialListProposalsIds,
-    initialListProposalsIds,
+    setInitialMappedProposalIds,
+    setSortBy,
+    initialMappedProposalIds,
   } = useProposalStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -65,8 +65,14 @@ export function useProposal() {
    * @param pageIndex - index of the page of proposals to fetch
    * @param slice - Array of proposals ids to be fetched
    * @param totalPagesPaginationProposals - total of pages in the pagination
+   * @param sorting - boolean to know if we need to sort the proposals
    */
-  async function fetchProposalsPage(pageIndex: number, slice: Array<any>, totalPagesPaginationProposals: number) {
+  async function fetchProposalsPage(
+    pageIndex: number,
+    slice: Array<any>,
+    totalPagesPaginationProposals: number,
+    sorting?: boolean,
+  ) {
     setCurrentPagePaginationProposals(pageIndex);
     setIsPageProposalsLoading(true);
     setIsPageProposalsError("");
@@ -93,7 +99,8 @@ export function useProposal() {
 
       const results = await readContracts({ contracts });
 
-      structureAndRankProposals(results, slice);
+      structureAndRankProposals(results, slice, sorting);
+
       setIsPageProposalsLoading(false);
       setIsPageProposalsError("");
       setHasPaginationProposalsNextPage(pageIndex + 1 < totalPagesPaginationProposals);
@@ -103,38 +110,6 @@ export function useProposal() {
       setIsPageProposalsLoading(false);
     }
   }
-
-  /**
-   *
-   * @param proposalsResults (array of proposals data)
-   * @param proposalIds (array of proposals ids)
-   */
-  function structureAndRankProposals(proposalsResults: Array<any>, proposalIds: Array<any>) {
-    // Transform proposals data and calculate net votes
-    const transformedProposals = proposalIds.map((id, index) => {
-      const voteForBigInt = proposalsResults[index * 2 + 1].result[0];
-      const voteAgainstBigInt = proposalsResults[index * 2 + 1].result[1];
-      const netVotesBigNumber = BigNumber.from(voteForBigInt).sub(voteAgainstBigInt);
-      const netVotes = Number(utils.formatEther(netVotesBigNumber));
-      const proposalData = proposalsResults[index * 2].result;
-      const isContentImage = isUrlToImage(proposalData.description);
-
-      return {
-        id: id,
-        ...proposalData,
-        isContentImage: isContentImage,
-        netVotes: netVotes,
-      };
-    });
-
-    // Combine new proposals with existing ones and sort by net votes
-    const combinedProposals = listProposalsData.concat(transformedProposals).sort((a, b) => b.netVotes - a.netVotes);
-
-    const rankedProposals = formatProposalData(combinedProposals);
-
-    setProposalData(rankedProposals);
-  }
-
   /**
    * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
    * @param abi - ABI to use
@@ -159,50 +134,46 @@ export function useProposal() {
 
       if (!useLegacyGetAllProposalsIdFn) {
         const extractVotes = (index: number) => {
-          const forVotesValue = proposalsIdsRawData[1][index].forVotes?.toString() || "0";
-          const againstVotesValue = proposalsIdsRawData[1][index].againstVotes?.toString() || "0";
+          const forVotesValue = proposalsIdsRawData[1][index].forVotes;
+          const againstVotesValue = proposalsIdsRawData[1][index].againstVotes;
 
-          const forVotes = BigNumber.from(forVotesValue);
-          const againstVotes = BigNumber.from(againstVotesValue);
+          const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
+          const netVotes = Number(utils.formatEther(netVotesBigNumber));
 
-          return proposalsIdsRawData[1][index].length === 1 ? forVotes : forVotes.sub(againstVotes);
-        };
-
-        const computeVotes = (index: number) => {
-          const votesBigNumber = extractVotes(index);
-          const votesDivided = votesBigNumber.div(BigNumber.from(divisor?.toString() || "0"));
-
-          return parseFloat(utils.formatEther(votesDivided));
+          return netVotes;
         };
 
         const mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
+          const votes = extractVotes(index);
           return {
-            votes: computeVotes(index),
+            votes: votes,
             id: data,
           };
         });
 
-        setInitialListProposalsIds(mappedProposals.map((proposal: { id: any }) => proposal.id));
+        setInitialMappedProposalIds(mappedProposals);
 
         if (currentDate < contestDates.votesOpen) {
           // Shuffle proposals if current date is before votesOpen
-          proposalsIds = shuffle(mappedProposals).map(proposal => proposal.id);
+          proposalsIds = shuffle([...mappedProposals]).map(proposal => proposal.id);
+          setSortBy("random");
         } else {
-          // Sort proposals by votes if current date is votesOpen or later
-          proposalsIds = mappedProposals
+          proposalsIds = [...mappedProposals]
             .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
             .map((proposal: { id: any }) => proposal.id);
+          setSortBy("votes");
         }
 
         setListProposalsIds(proposalsIds as string[]);
         setSubmissionsCount(proposalsIds.length);
       } else {
-        setInitialListProposalsIds(proposalsIdsRawData);
         if (currentDate < contestDates.votesOpen) {
           // Shuffle proposals if current date is before votesOpen
           proposalsIds = shuffle(proposalsIdsRawData);
+          setSortBy("random");
         } else {
           proposalsIds = proposalsIdsRawData;
+          setSortBy("votes");
         }
         setListProposalsIds(proposalsIds as string[]);
         setSubmissionsCount(proposalsIds.length);
@@ -216,7 +187,6 @@ export function useProposal() {
       setCurrentPagePaginationProposals(0);
 
       const paginationChunks = arrayToChunks(proposalsIds as string[], PROPOSALS_PER_PAGE);
-
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
     } catch (e) {
@@ -226,57 +196,6 @@ export function useProposal() {
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
       setIsLoading(false);
-    }
-  }
-
-  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
-    if (isLegacy) {
-      return (await readContract({
-        ...contractConfig,
-        functionName: "getAllProposalIds",
-        args: [],
-      })) as any;
-    } else {
-      const contracts = [
-        {
-          ...contractConfig,
-          functionName: "allProposalTotalVotes",
-          args: [],
-        },
-        {
-          ...contractConfig,
-          functionName: "getAllDeletedProposalIds",
-          args: [],
-        },
-      ];
-
-      const results: any[] = await readContracts({ contracts });
-
-      const allProposals = results[0].result[0];
-      const deletedIdsArray = results[1]?.result;
-
-      if (!deletedIdsArray) {
-        return [allProposals, results[0].result[1]];
-      }
-
-      const deletedProposalSet = new Set(mapResultToStringArray(deletedIdsArray));
-
-      const validData = allProposals.reduce(
-        (
-          accumulator: { validProposalIds: any[]; correspondingVotes: any[] },
-          proposalId: { toString: () => string },
-          index: string | number,
-        ) => {
-          if (!deletedProposalSet.has(proposalId.toString())) {
-            accumulator.validProposalIds.push(proposalId);
-            accumulator.correspondingVotes.push(results[0].result[1][index]);
-          }
-          return accumulator;
-        },
-        { validProposalIds: [], correspondingVotes: [] },
-      );
-
-      return [validData.validProposalIds, validData.correspondingVotes];
     }
   }
 
@@ -312,15 +231,40 @@ export function useProposal() {
   }
 
   /**
+   * @param proposalsResults (array of proposals data)
+   * @param proposalIds (array of proposals ids)
+   * @param sorting (optional boolean to skip concatenation if true)
+   */
+  function structureAndRankProposals(proposalsResults: Array<any>, proposalIds: Array<any>, sorting?: boolean) {
+    // Transform proposals data and calculate net votes
+    const transformedProposals = proposalIds.map((id, index) =>
+      transformProposalData(id, proposalsResults[index * 2 + 1], proposalsResults[index * 2].result),
+    );
+
+    let combinedProposals;
+
+    // Concatenate only if sorting is false
+    if (!sorting) {
+      combinedProposals = listProposalsData.concat(transformedProposals);
+    } else {
+      combinedProposals = transformedProposals;
+    }
+
+    const rankedProposals = formatProposalData(combinedProposals, initialMappedProposalIds);
+
+    setProposalData(rankedProposals);
+  }
+
+  /**
    * Update a single proposal and re-sort and re-rank all proposals
    * @param updatedProposal - the updated proposal data
    */
-  function updateAndRankSingleProposal(updatedProposal: ProposalCore) {
+  function updateProposal(updatedProposal: ProposalCore) {
     const updatedProposals = listProposalsData
       .map(proposal => (proposal.id === updatedProposal.id ? updatedProposal : proposal))
       .sort((a, b) => b.netVotes - a.netVotes);
 
-    const proposals = formatProposalData(updatedProposals);
+    const proposals = formatProposalData(updatedProposals, initialMappedProposalIds);
 
     setProposalData(proposals);
   }
@@ -329,22 +273,42 @@ export function useProposal() {
    * Remove a list of proposals and re-sort and re-rank all proposals
    * @param idsToDelete - the list of proposals ids to remove
    */
-  function removeAndRankProposals(idsToDelete: string[]) {
+  function removeProposal(idsToDelete: string[]) {
     const remainingProposals = listProposalsData
       .sort((a, b) => b.netVotes - a.netVotes)
       .filter(proposal => !idsToDelete.includes(proposal.id));
 
-    const proposals = formatProposalData(remainingProposals);
+    const proposals = formatProposalData(remainingProposals, initialMappedProposalIds);
 
     setProposalData(proposals);
+  }
+
+  /**
+   * Sort proposals by a given sorting option
+   * @param sortBy - the sorting option to use
+   */
+  function sortProposalData(sortBy: SortOptions) {
+    const sortedIds = sortProposals(sortBy, initialMappedProposalIds);
+
+    if (listProposalsData.length === sortedIds.length) {
+      const sortedProposals = sortUnique(listProposalsData, v => sortedIds.indexOf(v.id));
+      setProposalData(sortedProposals);
+    } else {
+      const paginationChunks = arrayToChunks(sortedIds, PROPOSALS_PER_PAGE);
+      setIndexPaginationProposalPerId(paginationChunks);
+      setProposalData([]);
+
+      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, true);
+    }
   }
 
   return {
     fetchProposalsPage,
     fetchSingleProposal,
     fetchProposalsIdsList,
-    updateAndRankSingleProposal,
-    removeAndRankProposals,
+    updateProposal,
+    removeProposal,
+    sortProposalData,
   };
 }
 

@@ -21,7 +21,7 @@ export function useContestEvents() {
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { fetchTotalVotesCast } = useContest();
   const { contestStatus } = useContestStatusStore(state => state);
-  const { updateAndRankSingleProposal } = useProposal();
+  const { updateProposal } = useProposal();
   const { setProposalData, listProposalsData } = useProposalStore(state => state);
   const [displayReloadBanner, setDisplayReloadBanner] = useState(false);
   const contestStatusRef = useRef(contestStatus);
@@ -47,7 +47,7 @@ export function useContestEvents() {
       const votes = Number(utils.formatEther(votesBigNumber));
 
       if (listProposalsData[proposalId]) {
-        updateAndRankSingleProposal({
+        updateProposal({
           ...listProposalsData[proposalId],
           netVotes: votes,
         });

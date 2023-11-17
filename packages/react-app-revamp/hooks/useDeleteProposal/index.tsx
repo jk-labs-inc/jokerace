@@ -4,20 +4,20 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
+import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { waitForTransaction, writeContract } from "@wagmi/core";
+import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { useNetwork } from "wagmi";
 import { useDeleteProposalStore } from "./store";
-import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
-import useProposal from "@hooks/useProposal";
 
 export function useDeleteProposal() {
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
   const { chain } = useNetwork();
-  const { removeAndRankProposals } = useProposal();
+  const { removeProposal } = useProposal();
   const { submissionsCount, setSubmissionsCount } = useProposalStore(state => state);
   const {
     isLoading,
@@ -67,7 +67,7 @@ export function useDeleteProposal() {
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txDeleteProposals?.hash}`,
       });
 
-      removeAndRankProposals(proposalIds);
+      removeProposal(proposalIds);
       setSubmissionsCount(submissionsCount - proposalIds.length);
       setIsLoading(false);
       setIsSuccess(true);

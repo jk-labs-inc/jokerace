@@ -12,8 +12,15 @@ export interface ProposalCore {
   isContentImage: boolean;
 }
 
+export interface MappedProposalIds {
+  id: string;
+  votes: number;
+}
+
+export type SortOptions = "leastRecent" | "mostRecent" | "random" | "votes";
+
 interface ProposalState {
-  initialListProposalsIds: string[];
+  initialMappedProposalIds: MappedProposalIds[];
   listProposalsIds: string[];
   listProposalsData: ProposalCore[];
   isListProposalsLoading: boolean;
@@ -28,8 +35,9 @@ interface ProposalState {
   hasPaginationProposalsNextPage: boolean;
   canUpdateVotesInRealTime: boolean;
   submissionsCount: number;
+  sortBy: SortOptions | null;
   addProposalId: (id: string) => void;
-  setInitialListProposalsIds: (list: string[]) => void;
+  setInitialMappedProposalIds: (initialList: MappedProposalIds[]) => void;
   setListProposalsIds: (list: string[]) => void;
   setIsListProposalsLoading: (value: boolean) => void;
   setIsListProposalsSuccess: (value: boolean) => void;
@@ -44,11 +52,12 @@ interface ProposalState {
   setCurrentPagePaginationProposals: (value: number) => void;
   setHasPaginationProposalsNextPage: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
+  setSortBy: (sortBy: SortOptions | null) => void;
 }
 
 export const createProposalStore = () =>
   createStore<ProposalState>(set => ({
-    initialListProposalsIds: [],
+    initialMappedProposalIds: [],
     listProposalsIds: [],
     listProposalsData: [],
     isListProposalsLoading: false,
@@ -63,6 +72,7 @@ export const createProposalStore = () =>
     hasPaginationProposalsNextPage: false,
     canUpdateVotesInRealTime: false,
     submissionsCount: 0,
+    sortBy: null,
     setSubmissionsCount: value => set({ submissionsCount: value }),
     setIsPageProposalsLoading: value => set({ isPageProposalsLoading: value }),
     setIsPageProposalsSuccess: value => set({ isPageProposalSuccess: value }),
@@ -83,8 +93,9 @@ export const createProposalStore = () =>
     setIsListProposalsError: value => set({ isListProposalsError: value }),
     setIsListProposalsSuccess: value => set({ isListProposalsSuccess: value }),
     setListProposalsIds: list => set({ listProposalsIds: list }),
-    setInitialListProposalsIds: list => set({ initialListProposalsIds: list }),
+    setInitialMappedProposalIds: initialList => set({ initialMappedProposalIds: initialList }),
     setProposalData: proposals => set({ listProposalsData: proposals }),
+    setSortBy: sortBy => set({ sortBy }),
   }));
 
 export const ProposalContext = createContext<ReturnType<typeof createProposalStore> | null>(null);

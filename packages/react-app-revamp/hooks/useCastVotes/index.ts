@@ -22,8 +22,8 @@ import useProposal from "@hooks/useProposal";
 export function useCastVotes() {
   const { fetchTotalVotesCast } = useContest();
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
-  const { updateAndRankSingleProposal } = useProposal();
-  const { listProposalsData } = useProposalStore(state => state);
+  const { updateProposal } = useProposal();
+  const { listProposalsData, sortBy } = useProposalStore(state => state);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -115,7 +115,7 @@ export function useCastVotes() {
         const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
         if (existingProposal) {
-          updateAndRankSingleProposal({
+          updateProposal({
             ...existingProposal,
             netVotes: votes,
           });
