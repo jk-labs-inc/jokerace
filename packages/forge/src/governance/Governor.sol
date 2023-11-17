@@ -474,12 +474,4 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
 
         return addressTotalVotes[account];
     }
-
-    /**
-     * @dev Address through which the governor executes action. Will be overloaded by module that execute actions
-     * through another contract such as a timelock.
-     */
-    function _executor() internal view virtual returns (address) {
-        return address(this);
-    }
 }
