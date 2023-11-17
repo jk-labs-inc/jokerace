@@ -48,6 +48,22 @@ contract RewardsModule is Context {
     address private immutable _creator;
     bool private immutable _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
 
+    error PayeesSharesLengthMismatch();
+    error MustHaveAtLeastOnePayee();
+    error TotalSharesCannotBeZero();
+    error MustHaveDownvotingDisabled();
+    error MustHaveSortingEnabled();
+    error ContestMustBeCompleted();
+    error PayoutRankCannotBeZero();
+    error RankingHasNoShares();
+    error AccountNotDueNativePayment();
+    error CannotPayOutToZeroAddress();
+    error AccountNotDueERC20Payment();
+    error OnlyCreatorCanWithdraw();
+    error RankingCannotBeZero();
+    error SharesCannotBeZero();
+    error AccountAlreadyHasShares();
+
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
      * the matching position in the `shares` array.
@@ -61,14 +77,14 @@ contract RewardsModule is Context {
         GovernorCountingSimple underlyingContest_,
         bool paysOutTarget_
     ) payable {
-        require(payees.length == shares_.length, "RewardsModule: payees and shares length mismatch");
-        require(payees.length > 0, "RewardsModule: no payees");
+        if (payees.length != shares_.length) revert PayeesSharesLengthMismatch();
+        if (payees.length == 0) revert MustHaveAtLeastOnePayee();
 
         for (uint256 i = 0; i < payees.length; i++) {
             _addPayee(payees[i], shares_[i]);
         }
 
-        require(_totalShares != 0, "RewardsModule: the total number of shares cannot equal 0");
+        if (_totalShares == 0) revert TotalSharesCannotBeZero();
 
         _paysOutTarget = paysOutTarget_;
         _underlyingContest = underlyingContest_;
@@ -184,20 +200,11 @@ contract RewardsModule is Context {
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
-        require(
-            _underlyingContest.downvotingAllowed() == 0,
-            "RewardsModule: rankings don't work with downvoting enabled on the contest"
-        );
-        require(
-            _underlyingContest.sortingEnabled() == 1,
-            "RewardsModule: rankings don't work with sorting disabled on the contest"
-        );
-        require(
-            _underlyingContest.state() == IGovernor.ContestState.Completed,
-            "RewardsModule: contest must be completed for rewards to be paid out"
-        );
-        require(ranking != 0, "RewardsModule: ranking must be 1 or greater");
-        require(_shares[ranking] > 0, "RewardsModule: ranking has no shares");
+        if (_underlyingContest.downvotingAllowed() != 0) revert MustHaveDownvotingDisabled();
+        if (_underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
+        if (_underlyingContest.state() != IGovernor.ContestState.Completed) revert ContestMustBeCompleted();
+        if (ranking == 0) revert PayoutRankCannotBeZero();
+        if (_shares[ranking] == 0) revert RankingHasNoShares();
     }
 
     /**
@@ -232,10 +239,7 @@ contract RewardsModule is Context {
 
         uint256 payment = releasable(ranking);
 
-        require(
-            payment != 0,
-            "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
-        );
+        if (payment == 0) revert AccountNotDueNativePayment();
 
         // _totalReleased is the sum of all values in _released.
         // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
@@ -246,7 +250,7 @@ contract RewardsModule is Context {
 
         address payable addressToPayOut = payable(getAddressToPayOut(ranking));
 
-        require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
+        if (addressToPayOut == address(0)) revert CannotPayOutToZeroAddress();
 
         emit PaymentReleased(addressToPayOut, payment);
         Address.sendValue(addressToPayOut, payment);
@@ -262,10 +266,7 @@ contract RewardsModule is Context {
 
         uint256 payment = releasable(token, ranking);
 
-        require(
-            payment != 0,
-            "RewardsModule: account isn't due payment as there isn't any native currency in the module to pay out"
-        );
+        if (payment == 0) revert AccountNotDueERC20Payment();
 
         // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
         // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
@@ -276,21 +277,21 @@ contract RewardsModule is Context {
 
         address payable addressToPayOut = payable(getAddressToPayOut(ranking));
 
-        require(addressToPayOut != address(0), "RewardsModule: account is the zero address");
+        if (addressToPayOut == address(0)) revert CannotPayOutToZeroAddress();
 
         emit ERC20PaymentReleased(token, addressToPayOut, payment);
         SafeERC20.safeTransfer(token, addressToPayOut, payment);
     }
 
     function withdrawRewards() public virtual {
-        require(msg.sender == creator(), "RewardsModule: only the creator can withdraw rewards");
+        if (msg.sender != creator()) revert OnlyCreatorCanWithdraw();
 
         emit RewardWithdrawn(creator(), address(this).balance);
         Address.sendValue(payable(creator()), address(this).balance);
     }
 
     function withdrawRewards(IERC20 token) public virtual {
-        require(msg.sender == creator(), "RewardsModule: only the creator can withdraw rewards");
+        if (msg.sender != creator()) revert OnlyCreatorCanWithdraw();
 
         emit ERC20RewardWithdrawn(token, creator(), token.balanceOf(address(this)));
         SafeERC20.safeTransfer(token, payable(creator()), token.balanceOf(address(this)));
@@ -314,9 +315,9 @@ contract RewardsModule is Context {
      * @param shares_ The number of shares owned by the payee.
      */
     function _addPayee(uint256 ranking, uint256 shares_) private {
-        require(ranking > 0, "RewardsModule: ranking is 0, must be greater");
-        require(shares_ > 0, "RewardsModule: shares are 0");
-        require(_shares[ranking] == 0, "RewardsModule: account already has shares");
+        if (ranking == 0) revert RankingCannotBeZero();
+        if (shares_ == 0) revert SharesCannotBeZero();
+        if (_shares[ranking] != 0) revert AccountAlreadyHasShares();
 
         _payees.push(ranking);
         _shares[ranking] = shares_;
