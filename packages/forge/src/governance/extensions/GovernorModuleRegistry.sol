@@ -7,7 +7,6 @@ import "../../modules/RewardsModule.sol";
 
 /**
  * @dev Extension of {Governor} for module management.
- *
  */
 abstract contract GovernorModuleRegistry is Governor {
     event OfficialRewardsModuleSet(RewardsModule oldOfficialRewardsModule, RewardsModule newOfficialRewardsModule);
