@@ -52,7 +52,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     error DuplicateSubmission(uint256 proposalId);
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
-    
+
     error NeedToSubmitWithProofFirst();
     error NeedToVoteWithProofFirst();
 
@@ -345,8 +345,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
 
     function _castProposal(ProposalCore memory proposal) internal virtual returns (uint256) {
         if (state() != ContestState.Queued) revert ContestMustBeQueuedToPropose(state());
-        if (numSubmissions[msg.sender] == numAllowedProposalSubmissions()) revert SenderSubmissionLimitReached(numAllowedProposalSubmissions());
-        if ((proposalIds.length - deletedProposalIds.length) == maxProposalCount()) revert ContestSubmissionLimitReached(maxProposalCount());
+        if (numSubmissions[msg.sender] == numAllowedProposalSubmissions()) {
+            revert SenderSubmissionLimitReached(numAllowedProposalSubmissions());
+        }
+        if ((proposalIds.length - deletedProposalIds.length) == maxProposalCount()) {
+            revert ContestSubmissionLimitReached(maxProposalCount());
+        }
 
         uint256 proposalId = hashProposal(proposal);
         if (proposals[proposalId].exists) revert DuplicateSubmission(proposalId);
@@ -410,10 +414,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     /**
      * @dev See {IGovernor-verifyVoter}.
      */
-    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof)
-        public
-        override
-    {
+    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public override {
         if (!addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
