@@ -29,6 +29,8 @@ abstract contract GovernorSorting {
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks; // value is forVotes counts, has the constraint of no duplicate values.
 
+    error RankCannotBeZero();
+
     constructor(uint256 sortingEnabled_, uint256 rankLimit_) {
         sortingEnabled = sortingEnabled_;
         rankLimit = rankLimit_;
@@ -49,7 +51,7 @@ abstract contract GovernorSorting {
     // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account.
     // a rank has to have > 0 votes to be considered valid.
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
-        require(rank != 0, "GovernorSorting: rank cannot equal 0");
+        if (rank == 0) revert RankCannotBeZero();
 
         uint256 sortedRanksLength = sortedRanks.length; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
