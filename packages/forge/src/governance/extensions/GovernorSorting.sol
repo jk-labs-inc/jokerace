@@ -105,7 +105,7 @@ abstract contract GovernorSorting {
                 // if so, we don't need to insert anything and the oldValue of this doesn't get cleaned up
                 return;
             }
-            
+
             if (newValue > sortedRanksMemVar[index]) {
                 insertingIndex = index;
                 break;
