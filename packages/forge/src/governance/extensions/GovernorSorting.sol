@@ -13,9 +13,9 @@ abstract contract GovernorSorting {
     //          without taking out deleted proposals) within the limit that are deleted and do not have other, non-deleted proposals
     //          with the same amounts of votes/that are tied with them.
     //      - To Tied or Deleted (TTDs), or to a previous TTD
-    //          The number of times a proposal is voted into an index to tie it; an that is already tied; an index that was last deleted;
-    //          or an index that wasn't garbage collected because it last went to one of last three cases or a case of this fourth point,
-    //          from a ranking that was in the tracked rankings at the time that vote was cast.
+    //          The number of times a proposal's newValue goes into an index to tie it; an index that is already tied; an index that was last deleted;
+    //          or an index that wasn't garbage collected because it went to either one of last three cases or an index that also wasn't garbage
+    //          collected because of the same recursive logic, from a ranking that was in the tracked rankings at the time that vote was cast.
     //
     // The equation to calcluate how many rankings this contract will actually be able to track is:
     // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTDs
@@ -61,7 +61,8 @@ abstract contract GovernorSorting {
 
         uint256 counter = 1;
         for (uint256 index = 0; index < sortedRanksLength; index++) {
-            // if this is a deleted proposal, go forwards without incrementing the counter
+            // if this is a value of a deleted proposal or an ungarbage collected oldValue, go forwards without
+            // incrementing the counter
             if (getNumProposalsWithThisManyForVotes(sortedRanksMemVar[index]) == 0) {
                 continue;
             }
