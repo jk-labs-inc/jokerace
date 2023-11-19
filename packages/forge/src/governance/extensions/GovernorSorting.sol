@@ -12,15 +12,16 @@ abstract contract GovernorSorting {
     //          The number of would-be ranked proposals (at the end of the contest if rankings were counted
     //          without taking out deleted proposals) within the limit that are deleted and do not have other, non-deleted proposals
     //          with the same amounts of votes/that are tied with them.
-    //      - To Tied (TTs)
-    //          The number of times a proposal is voted into a ranking to tie it or a ranking that is already tied
+    //      - To Tied or Deleted (TTDs), or to a previous TTD
+    //          The number of times a proposal is voted into an index to tie it; an that is already tied; an index that was last deleted;
+    //          or an index that wasn't garbage collected because it last went to one of last three cases or a case of this fourth point,
     //          from a ranking that was in the tracked rankings at the time that vote was cast.
     //
     // The equation to calcluate how many rankings this contract will actually be able to track is:
-    // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTs
+    // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTDs
     //
     // With this in mind, it is strongly reccomended to set RANK_LIMIT sufficiently high to create a buffer for
-    // WBs and TTs that may occur in your contest. The thing to consider with regard to making it too high is just
+    // WBs and TTDs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
     uint256 public immutable sortingEnabled; // Either 0 for false or 1 for true
@@ -91,9 +92,7 @@ abstract contract GovernorSorting {
     }
 
     // insert a new value into sortedRanks (this function is strictly O(n) or better).
-    // we know at this point it's:
-    //      -not tied
-    //      -the idx where it should go is in [0, sortedRanks.length - 1]
+    // we know at this point the idx where it should go is in [0, sortedRanks.length - 1].
     function _insertRank(
         uint256 oldValue,
         uint256 newValue,
@@ -103,6 +102,12 @@ abstract contract GovernorSorting {
         // find the index to insert newValue at
         uint256 insertingIndex;
         for (uint256 index = 0; index < sortedRanksLength; index++) {
+            // is this value already in the array? (is this a TTD or to a previous TTD?)
+            if (newValue == sortedRanksMemVar[index]) {
+                // if so, we don't need to insert anything and the oldValue of this doesn't get cleaned up
+                return;
+            }
+
             if (newValue > sortedRanksMemVar[index]) {
                 insertingIndex = index;
                 break;
@@ -153,13 +158,6 @@ abstract contract GovernorSorting {
         // FIRST ENTRY? - if this is the first item ever then we just need to put it in idx 0 and that's it
         if (sortedRanksLength == 0) {
             sortedRanks.push(newValue);
-            return;
-        }
-
-        // NEW VALUE TIED?
-        if (getNumProposalsWithThisManyForVotes(newValue) > 1) {
-            // we don't need to insert anything, so we just need to treat these cases of oldValues that get
-            // left behind like deletes (these are the TTs mentioned at the top) because of the array rule.
             return;
         }
 
