@@ -98,33 +98,33 @@ contract ContestTest is Test {
     // PROPOSALS PARAMS
     uint256[] public proposalsToDelete;
 
-    IGovernor.ProposalCore public firstProposalPA1 = IGovernor.ProposalCore({
+    Governor.ProposalCore public firstProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "firstProposalPA1",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
-    IGovernor.ProposalCore public secondProposalPA1 = IGovernor.ProposalCore({
+    Governor.ProposalCore public secondProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "secondProposalPA1",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
-        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
-    IGovernor.ProposalCore public firstProposalPA2 = IGovernor.ProposalCore({
+    Governor.ProposalCore public firstProposalPA2 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_2,
         description: "firstProposalPA2",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
-        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
-    IGovernor.ProposalCore public unpermissionedAuthorProposal1 = IGovernor.ProposalCore({
+    Governor.ProposalCore public unpermissionedAuthorProposal1 = Governor.ProposalCore({
         author: UNPERMISSIONED_ADDRESS_1,
         description: "unpermissionedAuthorProposal1",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
 
     /////////////////////////////
@@ -272,7 +272,7 @@ contract ContestTest is Test {
         proposalsToDelete.push(proposalId);
         vm.prank(CREATOR_ADDRESS_1);
         contest.deleteProposals(proposalsToDelete);
-        assertEq(contest.isProposalDeleted(proposalId), true);
+        assertEq(contest.proposalIsDeleted(proposalId), true);
     }
 
     function testProposeAnyoneCanCostIsOneEther() public {

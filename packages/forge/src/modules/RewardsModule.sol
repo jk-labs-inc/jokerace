@@ -32,19 +32,35 @@ contract RewardsModule {
     event RewardWithdrawn(address by, uint256 amount);
     event ERC20RewardWithdrawn(IERC20 indexed token, address by, uint256 amount);
 
-    uint256 private _totalShares;
-    uint256 private _totalReleased;
+    uint256 public totalShares;
+    uint256 public totalReleased;
 
-    mapping(uint256 => uint256) private _shares;
-    mapping(uint256 => uint256) private _released;
-    uint256[] private _payees;
+    mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
+    mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
+    uint256[] public payees;
 
-    mapping(IERC20 => uint256) private _erc20TotalReleased;
-    mapping(IERC20 => mapping(uint256 => uint256)) private _erc20Released;
+    mapping(IERC20 => uint256) public erc20TotalReleased;
+    mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
 
-    GovernorCountingSimple private immutable _underlyingContest;
-    address private immutable _creator;
-    bool private immutable _paysOutTarget; // if true, pay out target address; if false, pay out proposal author
+    GovernorCountingSimple public immutable underlyingContest;
+    address public immutable creator;
+    bool public immutable paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
+
+    error PayeesSharesLengthMismatch();
+    error MustHaveAtLeastOnePayee();
+    error TotalSharesCannotBeZero();
+    error MustHaveDownvotingDisabled();
+    error MustHaveSortingEnabled();
+    error ContestMustBeCompleted();
+    error PayoutRankCannotBeZero();
+    error RankingHasNoShares();
+    error AccountNotDueNativePayment();
+    error CannotPayOutToZeroAddress();
+    error AccountNotDueERC20Payment();
+    error OnlyCreatorCanWithdraw();
+    error RankingCannotBeZero();
+    error SharesCannotBeZero();
+    error AccountAlreadyHasShares();
 
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
@@ -70,23 +86,23 @@ contract RewardsModule {
      * duplicates in `payees`.
      */
     constructor(
-        uint256[] memory payees,
+        uint256[] memory payees_,
         uint256[] memory shares_,
         GovernorCountingSimple underlyingContest_,
         bool paysOutTarget_
     ) payable {
-        if (payees.length != shares_.length) revert PayeesSharesLengthMismatch();
-        if (payees.length == 0) revert MustHaveAtLeastOnePayee();
+        if (payees_.length != shares_.length) revert PayeesSharesLengthMismatch();
+        if (payees_.length == 0) revert MustHaveAtLeastOnePayee();
 
-        for (uint256 i = 0; i < payees.length; i++) {
-            _addPayee(payees[i], shares_[i]);
+        for (uint256 i = 0; i < payees_.length; i++) {
+            _addPayee(payees_[i], shares_[i]);
         }
 
-        if (_totalShares == 0) revert TotalSharesCannotBeZero();
+        if (totalShares == 0) revert TotalSharesCannotBeZero();
 
-        _paysOutTarget = paysOutTarget_;
-        _underlyingContest = underlyingContest_;
-        _creator = msg.sender;
+        paysOutTarget = paysOutTarget_;
+        underlyingContest = underlyingContest_;
+        creator = msg.sender;
     }
 
     /**
@@ -94,95 +110,37 @@ contract RewardsModule {
      * reliable: it's possible for a contract to receive Ether without triggering this function. This only affects the
      * reliability of the events, and not the actual splitting of Ether.
      */
-    receive() external payable virtual {
+    receive() external payable {
         emit PaymentReceived(msg.sender, msg.value);
     }
 
     /**
      * @dev Version of the rewards module. Default: "1"
      */
-    function version() public view virtual returns (string memory) {
-        return "4.6";
-    }
-
-    /**
-     * @dev Getter for the total shares held by payees.
-     */
-    function totalShares() public view returns (uint256) {
-        return _totalShares;
-    }
-
-    /**
-     * @dev Getter for the creator of this rewards contract.
-     */
-    function creator() public view returns (address) {
-        return _creator;
-    }
-
-    /**
-     * @dev Getter for the total amount of Ether already released.
-     */
-    function totalReleased() public view returns (uint256) {
-        return _totalReleased;
-    }
-
-    /**
-     * @dev Getter for the total amount of `token` already released. `token` should be the address of an IERC20
-     * contract.
-     */
-    function totalReleased(IERC20 token) public view returns (uint256) {
-        return _erc20TotalReleased[token];
-    }
-
-    /**
-     * @dev Getter for the amount of shares held by a ranking.
-     */
-    function shares(uint256 ranking) public view returns (uint256) {
-        return _shares[ranking];
-    }
-
-    /**
-     * @dev Getter for the amount of Ether already released to a payee.
-     */
-    function released(uint256 ranking) public view returns (uint256) {
-        return _released[ranking];
-    }
-
-    /**
-     * @dev Getter for the amount of `token` tokens already released to a payee. `token` should be the address of an
-     * IERC20 contract.
-     */
-    function released(IERC20 token, uint256 ranking) public view returns (uint256) {
-        return _erc20Released[token][ranking];
+    function version() public pure returns (string memory) {
+        return "4.5";
     }
 
     /**
      * @dev Getter for list of rankings that will be paid out.
      */
     function getPayees() public view returns (uint256[] memory) {
-        return _payees;
-    }
-
-    /**
-     * @dev Getter for whether this pays out the target address or author of a proposal.
-     */
-    function paysOutTarget() public view returns (bool) {
-        return _paysOutTarget;
+        return payees;
     }
 
     /**
      * @dev Getter for the underlying contest.
      */
-    function underlyingContest() public view returns (GovernorCountingSimple) {
-        return _underlyingContest;
+    function getUnderlyingContest() public view returns (GovernorCountingSimple) {
+        return underlyingContest;
     }
 
     /**
      * @dev Getter for the amount of payee's releasable Ether.
      */
     function releasable(uint256 ranking) public view returns (uint256) {
-        uint256 totalReceived = address(this).balance + totalReleased();
-        return _pendingPayment(ranking, totalReceived, released(ranking));
+        uint256 totalReceived = address(this).balance + totalReleased;
+        return _pendingPayment(ranking, totalReceived, released[ranking]);
     }
 
     /**
@@ -190,19 +148,19 @@ contract RewardsModule {
      * IERC20 contract.
      */
     function releasable(IERC20 token, uint256 ranking) public view returns (uint256) {
-        uint256 totalReceived = token.balanceOf(address(this)) + totalReleased(token);
-        return _pendingPayment(ranking, totalReceived, released(token, ranking));
+        uint256 totalReceived = token.balanceOf(address(this)) + erc20TotalReleased[token];
+        return _pendingPayment(ranking, totalReceived, erc20Released[token][ranking]);
     }
 
     /**
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
-        if (_underlyingContest.downvotingAllowed() != 0) revert MustHaveDownvotingDisabled();
-        if (_underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
-        if (_underlyingContest.state() != IGovernor.ContestState.Completed) revert ContestMustBeCompleted();
+        if (underlyingContest.downvotingAllowed() != 0) revert MustHaveDownvotingDisabled();
+        if (underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
+        if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
-        if (_shares[ranking] == 0) revert RankingHasNoShares();
+        if (shares[ranking] == 0) revert RankingHasNoShares();
     }
 
     /**
@@ -210,19 +168,19 @@ contract RewardsModule {
      */
     function getAddressToPayOut(uint256 ranking) public view returns (address) {
         address addressToPayOut;
-        uint256 determinedRankingIdxInSortedRanks = _underlyingContest.getRankIndex(ranking);
+        uint256 determinedRankingIdxInSortedRanks = underlyingContest.getRankIndex(ranking);
 
         // if the ranking that we land on is tied or it's below a tied ranking, send to creator
-        if (_underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
-            addressToPayOut = creator();
+        if (underlyingContest.isOrIsBelowTiedRank(determinedRankingIdxInSortedRanks)) {
+            addressToPayOut = creator;
         }
         // otherwise, determine proposal at ranking and pay out according to that
         else {
-            uint256 rankValue = _underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
-            IGovernor.ProposalCore memory rankingProposal = _underlyingContest.getProposal(
-                _underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
+            uint256 rankValue = underlyingContest.sortedRanks(determinedRankingIdxInSortedRanks);
+            Governor.ProposalCore memory rankingProposal = underlyingContest.getProposal(
+                underlyingContest.getOnlyProposalIdWithThisManyForVotes(rankValue) // if no ties there should only be one
             );
-            addressToPayOut = _paysOutTarget ? rankingProposal.targetMetadata.targetAddress : rankingProposal.author;
+            addressToPayOut = paysOutTarget ? rankingProposal.targetMetadata.targetAddress : rankingProposal.author;
         }
 
         return addressToPayOut;
@@ -232,18 +190,18 @@ contract RewardsModule {
      * @dev Triggers a transfer to `ranking` of the amount of Ether they are owed, according to their percentage of the
      * total shares and their previous withdrawals.
      */
-    function release(uint256 ranking) public virtual {
+    function release(uint256 ranking) public {
         runReleaseChecks(ranking);
 
         uint256 payment = releasable(ranking);
 
         if (payment == 0) revert AccountNotDueNativePayment();
 
-        // _totalReleased is the sum of all values in _released.
-        // If "_totalReleased += payment" does not overflow, then "_released[account] += payment" cannot overflow.
-        _totalReleased += payment;
+        // totalReleased is the sum of all values in released.
+        // If "totalReleased += payment" does not overflow, then "released[account] += payment" cannot overflow.
+        totalReleased += payment;
         unchecked {
-            _released[ranking] += payment;
+            released[ranking] += payment;
         }
 
         address payable addressToPayOut = payable(getAddressToPayOut(ranking));
@@ -259,18 +217,18 @@ contract RewardsModule {
      * percentage of the total shares and their previous withdrawals. `token` must be the address of an IERC20
      * contract.
      */
-    function release(IERC20 token, uint256 ranking) public virtual {
+    function release(IERC20 token, uint256 ranking) public {
         runReleaseChecks(ranking);
 
         uint256 payment = releasable(token, ranking);
 
         if (payment == 0) revert AccountNotDueERC20Payment();
 
-        // _erc20TotalReleased[token] is the sum of all values in _erc20Released[token].
-        // If "_erc20TotalReleased[token] += payment" does not overflow, then "_erc20Released[token][account] += payment" cannot overflow.
-        _erc20TotalReleased[token] += payment;
+        // erc20TotalReleased[token] is the sum of all values in erc20Released[token].
+        // If "erc20TotalReleased[token] += payment" does not overflow, then "erc20Released[token][account] += payment" cannot overflow.
+        erc20TotalReleased[token] += payment;
         unchecked {
-            _erc20Released[token][ranking] += payment;
+            erc20Released[token][ranking] += payment;
         }
 
         address payable addressToPayOut = payable(getAddressToPayOut(ranking));
@@ -281,18 +239,18 @@ contract RewardsModule {
         SafeERC20.safeTransfer(token, addressToPayOut, payment);
     }
 
-    function withdrawRewards() public virtual {
-        if (msg.sender != creator()) revert OnlyCreatorCanWithdraw();
+    function withdrawRewards() public {
+        if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
 
-        emit RewardWithdrawn(creator(), address(this).balance);
-        Address.sendValue(payable(creator()), address(this).balance);
+        emit RewardWithdrawn(creator, address(this).balance);
+        Address.sendValue(payable(creator), address(this).balance);
     }
 
-    function withdrawRewards(IERC20 token) public virtual {
-        if (msg.sender != creator()) revert OnlyCreatorCanWithdraw();
+    function withdrawRewards(IERC20 token) public {
+        if (msg.sender != creator) revert OnlyCreatorCanWithdraw();
 
-        emit ERC20RewardWithdrawn(token, creator(), token.balanceOf(address(this)));
-        SafeERC20.safeTransfer(token, payable(creator()), token.balanceOf(address(this)));
+        emit ERC20RewardWithdrawn(token, creator, token.balanceOf(address(this)));
+        SafeERC20.safeTransfer(token, payable(creator), token.balanceOf(address(this)));
     }
 
     /**
@@ -304,7 +262,7 @@ contract RewardsModule {
         view
         returns (uint256)
     {
-        return (totalReceived * _shares[ranking]) / _totalShares - alreadyReleased;
+        return (totalReceived * shares[ranking]) / totalShares - alreadyReleased;
     }
 
     /**
@@ -315,11 +273,11 @@ contract RewardsModule {
     function _addPayee(uint256 ranking, uint256 shares_) private {
         if (ranking == 0) revert RankingCannotBeZero();
         if (shares_ == 0) revert SharesCannotBeZero();
-        if (_shares[ranking] != 0) revert AccountAlreadyHasShares();
+        if (shares[ranking] != 0) revert AccountAlreadyHasShares();
 
-        _payees.push(ranking);
-        _shares[ranking] = shares_;
-        _totalShares = _totalShares + shares_;
+        payees.push(ranking);
+        shares[ranking] = shares_;
+        totalShares = totalShares + shares_;
         emit PayeeAdded(ranking, shares_);
     }
 }

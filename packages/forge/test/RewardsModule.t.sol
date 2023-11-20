@@ -90,33 +90,33 @@ contract RewardsModuleTest is Test {
     address[] public safeSigners = [address(0)];
     uint8 public constant SAFE_THRESHOLD = 1;
 
-    IGovernor.ProposalCore public firstProposalPA1 = IGovernor.ProposalCore({
+    Governor.ProposalCore public firstProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "firstProposalPA1",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
-    IGovernor.ProposalCore public secondProposalPA1 = IGovernor.ProposalCore({
+    Governor.ProposalCore public secondProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "secondProposalPA1",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
-    IGovernor.ProposalCore public thirdProposalPA1 = IGovernor.ProposalCore({
+    Governor.ProposalCore public thirdProposalPA1 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_1,
         description: "thirdProposalPA1",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
-        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_1}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
-    IGovernor.ProposalCore public firstProposalPA2 = IGovernor.ProposalCore({
+    Governor.ProposalCore public firstProposalPA2 = Governor.ProposalCore({
         author: PERMISSIONED_ADDRESS_2,
         description: "firstProposalPA2",
         exists: true,
-        targetMetadata: IGovernor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
-        safeMetadata: IGovernor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
+        targetMetadata: Governor.TargetMetadata({targetAddress: PERMISSIONED_ADDRESS_2}),
+        safeMetadata: Governor.SafeMetadata({signers: safeSigners, threshold: SAFE_THRESHOLD})
     });
 
     // DELETION VARS
