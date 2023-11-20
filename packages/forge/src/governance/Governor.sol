@@ -135,7 +135,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.5";
+        return "4.7";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -211,7 +211,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     function getProposal(uint256 proposalId) public view returns (ProposalCore memory) {
         return proposals[proposalId];
     }
-
 
     /**
      * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
