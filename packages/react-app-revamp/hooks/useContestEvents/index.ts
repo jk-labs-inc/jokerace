@@ -6,6 +6,7 @@ import isUrlToImage from "@helpers/isUrlToImage";
 import useContest from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
@@ -20,7 +21,8 @@ export function useContestEvents() {
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { fetchTotalVotesCast } = useContest();
   const { contestStatus } = useContestStatusStore(state => state);
-  const { setProposalData, setProposalVotes, listProposalsData } = useProposalStore(state => state);
+  const { updateProposal } = useProposal();
+  const { setProposalData, listProposalsData } = useProposalStore(state => state);
   const [displayReloadBanner, setDisplayReloadBanner] = useState(false);
   const contestStatusRef = useRef(contestStatus);
 
@@ -45,10 +47,9 @@ export function useContestEvents() {
       const votes = Number(utils.formatEther(votesBigNumber));
 
       if (listProposalsData[proposalId]) {
-        //@ts-ignore
-        setProposalVotes({
-          id: proposalId,
-          votes,
+        updateProposal({
+          ...listProposalsData[proposalId],
+          netVotes: votes,
         });
       } else {
         const proposal = (await readContract({
@@ -69,6 +70,7 @@ export function useContestEvents() {
         }
 
         const proposalData: any = {
+          id: proposalId,
           authorEthereumAddress: proposal.author,
           author: author ?? proposal.author,
           content: proposal.description,
@@ -77,7 +79,7 @@ export function useContestEvents() {
           votes,
         };
 
-        setProposalData({ id: proposalId, data: proposalData });
+        setProposalData(proposalData);
       }
 
       await fetchTotalVotesCast();

@@ -13,6 +13,7 @@ import ContestPrompt from "../components/Prompt";
 import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
 import ContestTimeline from "../components/Timeline";
+import { useState } from "react";
 
 const ContestTab = () => {
   const { contestPrompt } = useContestStore(state => state);
@@ -33,6 +34,7 @@ const ContestTab = () => {
     currentUserQualifiedToSubmit && currentUserProposalCount < contestMaxNumberSubmissionsPerUser;
   const showSubmitButton = !isConnected || qualifiedToSubmit;
   const isMobile = useMediaQuery({ maxWidth: 768 });
+  const [blurProposals, setBlurProposals] = useState(false);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
 
   return (
@@ -66,11 +68,18 @@ const ContestTab = () => {
       <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
         <div className="flex flex-col gap-5">
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
-            <ProposalStatistics contestStatus={contestStatus} />
+            <ProposalStatistics
+              contestStatus={contestStatus}
+              onMenuStateChange={(value: boolean) => setBlurProposals(value)}
+            />
           )}
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
-            <div className={`animate-appear ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"}`}>
+            <div
+              className={`animate-appear ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"} ${
+                blurProposals ? "blurProposals" : ""
+              }`}
+            >
               <ListProposals />
             </div>
           )}
