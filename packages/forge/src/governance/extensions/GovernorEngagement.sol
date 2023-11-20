@@ -81,7 +81,7 @@ abstract contract GovernorEngagement is Governor {
         for (uint256 index = 0; index < commentIdsParamMemVar; index++) {
             uint256 currentCommentId = commentIdsParam[index];
 
-            if ((msg.sender != creator()) && (msg.sender != comments[currentCommentId].author)) {
+            if ((msg.sender != creator) && (msg.sender != comments[currentCommentId].author)) {
                 revert OnlyCreatorOrAuthorCanDeleteComments(currentCommentId);
             }
 
