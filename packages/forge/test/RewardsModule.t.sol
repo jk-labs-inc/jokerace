@@ -291,7 +291,7 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(2);
     }
 
@@ -309,7 +309,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(testERC20, 2);
     }
 
@@ -326,7 +326,7 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysTarget), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysTarget.release(2);
     }
 
@@ -344,7 +344,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysTarget), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysTarget.release(testERC20, 2);
     }
 
@@ -489,7 +489,7 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(1);
     }
 
@@ -504,7 +504,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(testERC20, 1);
     }
 
@@ -518,7 +518,7 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(2);
     }
 
@@ -533,7 +533,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(testERC20, 2);
     }
 
@@ -649,7 +649,7 @@ contract RewardsModuleTest is Test {
     function testFirstPlaceTieWithZeroProposalsWithNative() public {
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(1);
     }
 
@@ -658,7 +658,7 @@ contract RewardsModuleTest is Test {
         vm.warp(1681670001);
         vm.prank(CREATOR_ADDRESS_1);
         testERC20.transfer(address(rewardsModulePaysAuthor), 100); // give the rewards module ERC20 to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(testERC20, 1);
     }
 
@@ -711,7 +711,7 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthor), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthor.release(2);
     }
 
@@ -931,7 +931,7 @@ contract RewardsModuleTest is Test {
 
         vm.warp(1681670001);
         vm.deal(address(rewardsModulePaysAuthorToRankOneContest), 100); // give the rewards module wei to pay out
-        vm.expectRevert(abi.encodeWithSelector(GovernorSorting.RankIsNotInSortedRanks.selector));
+        vm.expectRevert(abi.encodeWithSelector(GovernorCountingSimple.RankIsNotInSortedRanks.selector));
         rewardsModulePaysAuthorToRankOneContest.release(2);
     }
 

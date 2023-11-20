@@ -102,7 +102,7 @@ contract RewardsModule {
      * @dev Version of the rewards module. Default: "1"
      */
     function version() public view virtual returns (string memory) {
-        return "4.4";
+        return "4.5";
     }
 
     /**
