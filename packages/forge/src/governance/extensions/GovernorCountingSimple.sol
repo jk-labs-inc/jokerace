@@ -234,11 +234,7 @@ abstract contract GovernorCountingSimple is Governor {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
             proposalvote.addressVoteCounts[account].forVotes += numVotes;
         } else if (support == uint8(VoteType.Against)) {
-<<<<<<< HEAD
-            if (downvotingAllowed() != 1) revert DownvotingNotEnabled();
-=======
             if (downvotingAllowed != 1) revert DownvotingNotEnabled();
->>>>>>> chore/rm-unnecessary-virtuals
             proposalvote.proposalVoteCounts.againstVotes += numVotes;
             proposalvote.addressVoteCounts[account].againstVotes += numVotes;
         } else {
