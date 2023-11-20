@@ -5,8 +5,8 @@ pragma solidity ^0.8.0;
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
 import "./IGovernor.sol";
-import "./GovernorMerkleVotes.sol";
-import "./extensions/GovernorSorting.sol";
+import "./utils/GovernorMerkleVotes.sol";
+import "./utils/GovernorSorting.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
@@ -114,7 +114,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "4.5";
+        return "4.6";
     }
 
     /**
