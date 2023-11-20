@@ -45,7 +45,7 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Accessor to the internal vote counts for a given proposal.
      */
-    function proposalVotes(uint256 proposalId) public view virtual returns (uint256 forVotes, uint256 againstVotes) {
+    function proposalVotes(uint256 proposalId) public view returns (uint256 forVotes, uint256 againstVotes) {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
         return (proposalvote.proposalVoteCounts.forVotes, proposalvote.proposalVoteCounts.againstVotes);
     }
@@ -56,7 +56,6 @@ abstract contract GovernorCountingSimple is Governor {
     function proposalAddressVotes(uint256 proposalId, address userAddress)
         public
         view
-        virtual
         returns (uint256 forVotes, uint256 againstVotes)
     {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
@@ -69,7 +68,7 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Accessor to which addresses have cast a vote for a given proposal.
      */
-    function proposalAddressesHaveVoted(uint256 proposalId) public view virtual returns (address[] memory) {
+    function proposalAddressesHaveVoted(uint256 proposalId) public view returns (address[] memory) {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
         return proposalvote.addressesVoted;
     }
@@ -77,12 +76,7 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Accessor to how many votes an address has cast total for the contest so far.
      */
-    function contestAddressTotalVotesCast(address userAddress)
-        public
-        view
-        virtual
-        returns (uint256 userTotalVotesCast)
-    {
+    function contestAddressTotalVotesCast(address userAddress) public view returns (uint256 userTotalVotesCast) {
         return addressTotalCastVoteCounts[userAddress];
     }
 
@@ -92,7 +86,6 @@ abstract contract GovernorCountingSimple is Governor {
     function allProposalTotalVotes()
         public
         view
-        virtual
         returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
     {
         uint256[] memory proposalIds = getAllProposalIds();
@@ -109,7 +102,6 @@ abstract contract GovernorCountingSimple is Governor {
     function allProposalTotalVotesWithoutDeleted()
         public
         view
-        virtual
         returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
     {
         uint256[] memory proposalIds = getAllProposalIds();
@@ -118,7 +110,7 @@ abstract contract GovernorCountingSimple is Governor {
 
         uint256 newArraysIndexCounter = 0;
         for (uint256 i = 0; i < proposalIds.length; i++) {
-            if (!isProposalDeleted(proposalIds[i])) {
+            if (!proposalIsDeleted[proposalIds[i]]) {
                 proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIds[i];
                 proposalVoteCountsArray[newArraysIndexCounter] = proposalVotesStructs[proposalIds[i]].proposalVoteCounts;
                 newArraysIndexCounter += 1;
@@ -211,7 +203,7 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev See {Governor-_multiRmProposalIdFromForVotesMap}.
      */
-    function _multiRmProposalIdFromForVotesMap(uint256[] calldata proposalIds) internal virtual override {
+    function _multiRmProposalIdFromForVotesMap(uint256[] calldata proposalIds) internal override {
         for (uint256 i = 0; i < proposalIds.length; i++) {
             uint256 currentProposalId = proposalIds[i];
             uint256 currentProposalsForVotes = proposalVotesStructs[currentProposalId].proposalVoteCounts.forVotes;
@@ -227,7 +219,6 @@ abstract contract GovernorCountingSimple is Governor {
      */
     function _countVote(uint256 proposalId, address account, uint8 support, uint256 numVotes, uint256 totalVotes)
         internal
-        virtual
         override
     {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
@@ -243,7 +234,7 @@ abstract contract GovernorCountingSimple is Governor {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
             proposalvote.addressVoteCounts[account].forVotes += numVotes;
         } else if (support == uint8(VoteType.Against)) {
-            if (downvotingAllowed() != 1) revert DownvotingNotEnabled();
+            if (downvotingAllowed != 1) revert DownvotingNotEnabled();
             proposalvote.proposalVoteCounts.againstVotes += numVotes;
             proposalvote.addressVoteCounts[account].againstVotes += numVotes;
         } else {
@@ -257,7 +248,7 @@ abstract contract GovernorCountingSimple is Governor {
         totalVotesCast += numVotes;
 
         // sorting and consequently rewards module compatibility is only available if downvoting is disabled and sorting enabled
-        if ((downvotingAllowed() == 0) && (sortingEnabled == 1)) {
+        if ((downvotingAllowed == 0) && (sortingEnabled == 1)) {
             uint256 newForVotes = proposalvote.proposalVoteCounts.forVotes; // only check state var once to save on gas
             uint256 oldForVotes = newForVotes - numVotes;
 

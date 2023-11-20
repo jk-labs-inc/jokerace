@@ -45,7 +45,7 @@ abstract contract GovernorSorting {
     /**
      * @dev Get the sortedRanks array.
      */
-    function getSortedRanks() public view virtual returns (uint256[] memory sortedRanksArray) {
+    function getSortedRanks() public view returns (uint256[] memory sortedRanksArray) {
         return sortedRanks;
     }
 
