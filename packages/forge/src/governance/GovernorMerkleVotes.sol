@@ -9,7 +9,7 @@ import {MerkleProof} from "@openzeppelin/utils/cryptography/MerkleProof.sol"; //
 abstract contract GovernorMerkleVotes {
     /// ============ Immutable storage ============
 
-    /// @notice ERC20-claimee inclusion root
+    /// @notice Participant inclusion roots
     bytes32 public immutable submissionMerkleRoot;
     bytes32 public immutable votingMerkleRoot;
 
@@ -21,8 +21,8 @@ abstract contract GovernorMerkleVotes {
     /// ============ Constructor ============
 
     /// @notice Creates a new GovernorMerkleVotes contract
-    /// @param _submissionMerkleRoot of claimees
-    /// @param _votingMerkleRoot of claimees
+    /// @param _submissionMerkleRoot of participants
+    /// @param _votingMerkleRoot of participants
     constructor(bytes32 _submissionMerkleRoot, bytes32 _votingMerkleRoot) {
         submissionMerkleRoot = _submissionMerkleRoot; // Update root
         votingMerkleRoot = _votingMerkleRoot; // Update root
@@ -31,8 +31,8 @@ abstract contract GovernorMerkleVotes {
     /// ============ Functions ============
 
     /// @notice Allows checking of proofs for an address
-    /// @param addressToCheck address of claimee
-    /// @param amount to check that the claimee has
+    /// @param addressToCheck address of participant
+    /// @param amount to check that the participant has the correct amount
     /// @param proof merkle proof to prove address and amount are in tree
     /// @param voting true if this is for a voting proof, false if this is for a submission proof
     function checkProof(address addressToCheck, uint256 amount, bytes32[] calldata proof, bool voting)

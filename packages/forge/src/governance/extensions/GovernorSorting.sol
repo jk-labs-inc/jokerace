@@ -13,9 +13,9 @@ abstract contract GovernorSorting {
     //          without taking out deleted proposals) within the limit that are deleted and do not have other, non-deleted proposals
     //          with the same amounts of votes/that are tied with them.
     //      - To Tied or Deleted (TTDs), or to a previous TTD
-    //          The number of times a proposal is voted into an index to tie it; an that is already tied; an index that was last deleted;
-    //          or an index that wasn't garbage collected because it last went to one of last three cases or a case of this fourth point,
-    //          from a ranking that was in the tracked rankings at the time that vote was cast.
+    //          The number of times a proposal's newValue goes into an index to tie it; an index that is already tied; an index that was last deleted;
+    //          or an index that wasn't garbage collected because it went to either one of last three cases or an index that also wasn't garbage
+    //          collected because of the same recursive logic, from a ranking that was in the tracked rankings at the time that vote was cast.
     //
     // The equation to calcluate how many rankings this contract will actually be able to track is:
     // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTDs
@@ -29,6 +29,10 @@ abstract contract GovernorSorting {
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks; // value is forVotes counts, has the constraint of no duplicate values.
+
+    error RankCannotBeZero();
+    error RankIsNotInSortedRanks();
+    error IndexHasNotBeenPopulated();
 
     constructor(uint256 sortingEnabled_, uint256 rankLimit_) {
         sortingEnabled = sortingEnabled_;
@@ -50,14 +54,15 @@ abstract contract GovernorSorting {
     // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account.
     // a rank has to have > 0 votes to be considered valid.
     function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
-        require(rank != 0, "GovernorSorting: rank cannot equal 0");
+        if (rank == 0) revert RankCannotBeZero();
 
         uint256 sortedRanksLength = sortedRanks.length; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
 
         uint256 counter = 1;
         for (uint256 index = 0; index < sortedRanksLength; index++) {
-            // if this is a deleted proposal, go forwards without incrementing the counter
+            // if this is a value of a deleted proposal or an ungarbage collected oldValue, go forwards without
+            // incrementing the counter
             if (getNumProposalsWithThisManyForVotes(sortedRanksMemVar[index]) == 0) {
                 continue;
             }
@@ -69,16 +74,14 @@ abstract contract GovernorSorting {
         }
 
         // if there's no valid index for that rank in sortedRanks, revert
-        revert(
-            "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
-        );
+        revert RankIsNotInSortedRanks();
     }
 
     // returns whether a given index in sortedRanks is tied or is below a tied rank
     function isOrIsBelowTiedRank(uint256 idx) public view returns (bool atOrBelowTiedRank) {
         if (idx > sortedRanks.length - 1) {
             // if `idx` hasn't been populated, then it's not a valid index to be checking and something is wrong
-            revert("GovernorSorting: this index has not been populated");
+            revert IndexHasNotBeenPopulated();
         }
 
         for (uint256 index = 0; index < idx + 1; index++) {
