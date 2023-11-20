@@ -32,6 +32,7 @@ import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCu
 import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";
 import RestructureExtensionsAndUtilsContract from "@contracts/bytecodeAndAbi/Contest.4.6.restructureExtensionsAndUtils.sol/Contest.json";
 import RmUnnecessaryVirtualsContract from "@contracts/bytecodeAndAbi/Contest.4.7.rmUnnecessaryVirtuals.sol/Contest.json";
+import DeleteInMapAfterForLoopContract from "@contracts/bytecodeAndAbi/Contest.4.8.deleteInMapAfterForLoop.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -47,7 +48,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.7") {
+    if (version === "4.8") {
+      return { abi: DeleteInMapAfterForLoopContract.abi, version};
+    } else if (version === "4.7") {
       return { abi: RmUnnecessaryVirtualsContract.abi, version};
     } else if (version === "4.6") {
       return { abi: RestructureExtensionsAndUtilsContract.abi, version};
