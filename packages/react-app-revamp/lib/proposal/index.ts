@@ -24,7 +24,7 @@ export const fetchProposalData = async (address: string, chainId: number, submis
       address,
       abi,
       chainId,
-      functionName: "isProposalDeleted",
+      functionName: "proposalIsDeleted",
       args: [submission],
     },
   ];

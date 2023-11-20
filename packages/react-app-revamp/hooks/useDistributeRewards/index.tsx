@@ -63,7 +63,7 @@ export const useDistributeRewards = (
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
     chainId,
-    functionName: "released",
+    functionName: tokenType === "erc20" ? "erc20Released" : "released",
     args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
     select: data => transform(data),
   });

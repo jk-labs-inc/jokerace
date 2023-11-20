@@ -46,7 +46,7 @@ export function useUser() {
     if (anyoneCanSubmit) {
       const numOfSubmittedProposalsRaw = await readContract({
         ...contractConfig,
-        functionName: "getNumSubmissions",
+        functionName: "numSubmissions",
         args: [userAddress],
       });
 
@@ -73,7 +73,7 @@ export function useUser() {
         if (data && data.length > 0 && data[0].can_submit) {
           const numOfSubmittedProposalsRaw = await readContract({
             ...contractConfig,
-            functionName: "getNumSubmissions",
+            functionName: "numSubmissions",
             args: [userAddress],
           });
 
