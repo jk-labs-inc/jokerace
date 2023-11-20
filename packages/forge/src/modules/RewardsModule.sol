@@ -62,22 +62,6 @@ contract RewardsModule {
     error SharesCannotBeZero();
     error AccountAlreadyHasShares();
 
-    error PayeesSharesLengthMismatch();
-    error MustHaveAtLeastOnePayee();
-    error TotalSharesCannotBeZero();
-    error MustHaveDownvotingDisabled();
-    error MustHaveSortingEnabled();
-    error ContestMustBeCompleted();
-    error PayoutRankCannotBeZero();
-    error RankingHasNoShares();
-    error AccountNotDueNativePayment();
-    error CannotPayOutToZeroAddress();
-    error AccountNotDueERC20Payment();
-    error OnlyCreatorCanWithdraw();
-    error RankingCannotBeZero();
-    error SharesCannotBeZero();
-    error AccountAlreadyHasShares();
-
     /**
      * @dev Creates an instance of `RewardsModule` where each ranking in `payees` is assigned the number of shares at
      * the matching position in the `shares` array.
