@@ -30,6 +30,7 @@ import UpdateSortingAlgoContract from "@contracts/bytecodeAndAbi/Contest.4.2.upd
 import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
 import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
 import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";
+import RestructureExtensionsAndUtilsContract from "@contracts/bytecodeAndAbi/Contest.4.6.restructureExtensionsAndUtils.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -45,7 +46,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.5") {
+    if (version === "4.6") {
+      return { abi: RestructureExtensionsAndUtilsContract.abi, version};
+    } else if (version === "4.5") {
       return { abi: CleanUpSortingContract.abi, version};
     } else if (version === "4.4") {
       return { abi: UseCustomErrorsContract.abi, version};

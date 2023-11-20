@@ -114,7 +114,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
      * @dev See {IGovernor-version}.
      */
     function version() public view virtual override returns (string memory) {
-        return "4.5";
+        return "4.6";
     }
 
     /**
