@@ -135,7 +135,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.7";
+        return "4.8";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -351,13 +351,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
                 // this proposal now won't count towards the total number allowed in the contest
                 // it will still count towards the total number of proposals that the user is allowed to submit though
                 deletedProposalIds.push(currentProposalId);
-
-                // we only do sorting if downvoting is disabled and if sorting is enabled
-                if (downvotingAllowed == 0 && sortingEnabled == 1) {
-                    // remove proposalIds from forVotesToProposalIds
-                    _multiRmProposalIdFromForVotesMap(proposalIdsToDelete);
-                }
             }
+        }
+
+        // we only do sorting if downvoting is disabled and if sorting is enabled
+        if (downvotingAllowed == 0 && sortingEnabled == 1) {
+            // remove proposalIds from forVotesToProposalIds
+            _multiRmProposalIdFromForVotesMap(proposalIdsToDelete);
         }
 
         emit ProposalsDeleted(proposalIds);
