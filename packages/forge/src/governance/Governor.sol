@@ -4,23 +4,67 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/utils/math/SafeCast.sol";
 import "@openzeppelin/utils/Address.sol";
-import "./IGovernor.sol";
 import "./utils/GovernorMerkleVotes.sol";
 import "./utils/GovernorSorting.sol";
 
 /**
  * @dev Core of the governance system, designed to be extended though various modules.
  */
-abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
+abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     using SafeCast for uint256;
 
+    enum ContestState {
+        NotStarted,
+        Active,
+        Canceled,
+        Queued,
+        Completed
+    }
+
+    enum Metadatas {
+        Target,
+        Safe
+    }
+
+    struct TargetMetadata {
+        address targetAddress;
+    }
+
+    struct SafeMetadata {
+        address[] signers;
+        uint256 threshold;
+    }
+
+    struct ProposalCore {
+        address author;
+        bool exists;
+        string description;
+        TargetMetadata targetMetadata;
+        SafeMetadata safeMetadata;
+    }
+
+    event JokeraceCreated(string name, address creator);
+    event ProposalCreated(uint256 proposalId, address proposer);
+    event ProposalsDeleted(uint256[] proposalIds);
+    event ContestCanceled();
+    event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes);
     event PaymentReleased(address to, uint256 amount);
 
+    uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
 
-    string private _name;
-    string private _prompt;
+    string public name; // The title of the contest
+    string public prompt;
+    address public creator;
+    uint256 public contestStart; // The Unix timestamp that the contest starts at.
+    uint256 public votingDelay; // Number of seconds that submissions are open.
+    uint256 public votingPeriod; // Number of seconds that voting is open.
+    uint256 public numAllowedProposalSubmissions; // The number of proposals that an address who is qualified to propose can submit for this contest.
+    uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
+    uint256 public downvotingAllowed; // If downvoting is enabled in this contest.
+    uint256 public costToPropose;
+    uint256 public percentageToCreator;
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -30,8 +74,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     mapping(address => uint256) public numSubmissions;
     address[] public proposalAuthors;
     address[] public addressesThatHaveVoted;
-    uint256 private _costToPropose;
-    uint256 private _percentageToCreator;
 
     mapping(address => uint256) public addressTotalVotes;
     mapping(address => bool) public addressTotalVotesVerified;
@@ -63,90 +105,57 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     error ContestAlreadyCancelled();
     error CannotCancelACompletedContest();
 
-    /**
-     * @dev Sets the value for {name} and {version}
-     */
     constructor(
         string memory name_,
         string memory prompt_,
         bytes32 submissionMerkleRoot_,
         bytes32 votingMerkleRoot_,
+        uint256 contestStart_,
+        uint256 votingDelay_,
+        uint256 votingPeriod_,
+        uint256 numAllowedProposalSubmissions_,
+        uint256 maxProposalCount_,
+        uint256 downvotingAllowed_,
         uint256 costToPropose_,
         uint256 percentageToCreator_
     ) GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_) {
-        _name = name_;
-        _prompt = prompt_;
-        _costToPropose = costToPropose_;
-        _percentageToCreator = percentageToCreator_;
+        name = name_;
+        prompt = prompt_;
+        creator = msg.sender;
+        contestStart = contestStart_;
+        votingDelay = votingDelay_;
+        votingPeriod = votingPeriod_;
+        numAllowedProposalSubmissions = numAllowedProposalSubmissions_;
+        maxProposalCount = maxProposalCount_;
+        downvotingAllowed = downvotingAllowed_;
+        costToPropose = costToPropose_;
+        percentageToCreator = percentageToCreator_;
 
         emit JokeraceCreated(name_, msg.sender); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
-    /**
-     * @dev See {IGovernor-name}.
-     */
-    function name() public view virtual override returns (string memory) {
-        return _name;
+    function version() public pure returns (string memory) {
+        return "4.7";
     }
 
-    /**
-     * @dev See {IGovernor-prompt}.
-     */
-    function prompt() public view virtual override returns (string memory) {
-        return _prompt;
-    }
-
-    /**
-     * @dev See {IGovernor-costToPropose}.
-     */
-    function costToPropose() public view virtual override returns (uint256) {
-        return _costToPropose;
-    }
-
-    /**
-     * @dev See {IGovernor-percentageToCreator}.
-     */
-    function percentageToCreator() public view virtual override returns (uint256) {
-        return _percentageToCreator;
-    }
-
-    /**
-     * @dev See {IGovernor-version}.
-     */
-    function version() public view virtual override returns (string memory) {
-        return "4.6";
-    }
-
-    /**
-     * @dev See {IGovernor-hashProposal}.
-     */
-    function hashProposal(ProposalCore memory proposal) public pure virtual override returns (uint256) {
+    function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
         return uint256(keccak256(abi.encode(proposal)));
     }
 
-    /**
-     * @dev See {IGovernor-state}.
-     */
-    function state() public view virtual override returns (ContestState) {
+    function state() public view returns (ContestState) {
         if (canceled) {
             return ContestState.Canceled;
         }
 
-        uint256 contestStartTimestamp = contestStart();
-
-        if (contestStartTimestamp >= block.timestamp) {
+        if (contestStart >= block.timestamp) {
             return ContestState.NotStarted;
         }
 
-        uint256 voteStartTimestamp = voteStart();
-
-        if (voteStartTimestamp >= block.timestamp) {
+        if (voteStart() >= block.timestamp) {
             return ContestState.Queued;
         }
 
-        uint256 deadlineTimestamp = contestDeadline();
-
-        if (deadlineTimestamp >= block.timestamp) {
+        if (contestDeadline() >= block.timestamp) {
             return ContestState.Active;
         }
 
@@ -156,85 +165,51 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     /**
      * @dev Return all proposals.
      */
-    function getAllProposalIds() public view virtual returns (uint256[] memory) {
+    function getAllProposalIds() public view returns (uint256[] memory) {
         return proposalIds;
     }
 
     /**
      * @dev Return all proposal authors.
      */
-    function getAllProposalAuthors() public view virtual returns (address[] memory) {
+    function getAllProposalAuthors() public view returns (address[] memory) {
         return proposalAuthors;
     }
 
     /**
      * @dev Return all addresses that have voted.
      */
-    function getAllAddressesThatHaveVoted() public view virtual returns (address[] memory) {
+    function getAllAddressesThatHaveVoted() public view returns (address[] memory) {
         return addressesThatHaveVoted;
     }
 
     /**
      * @dev Return all deleted proposals.
      */
-    function getAllDeletedProposalIds() public view virtual returns (uint256[] memory) {
+    function getAllDeletedProposalIds() public view returns (uint256[] memory) {
         return deletedProposalIds;
     }
 
     /**
-     * @dev See {IGovernor-voteStart}.
+     * @dev Timestamp the contest vote begins. Votes open at the end of this block, so it is possible to propose
+     * during this block.
      */
-    function voteStart() public view virtual override returns (uint256) {
-        return contestStart() + votingDelay();
-    }
-
-    /**
-     * @dev See {IGovernor-contestDeadline}.
-     */
-    function contestDeadline() public view virtual override returns (uint256) {
-        return voteStart() + votingPeriod();
-    }
-
-    /**
-     * @dev The number of proposals that an address who is qualified to propose can submit for this contest.
-     */
-    function numAllowedProposalSubmissions() public view virtual returns (uint256) {
-        return 1;
-    }
-
-    /**
-     * @dev Max number of proposals allowed in this contest
-     */
-    function maxProposalCount() public view virtual returns (uint256) {
-        return 100;
-    }
-
-    /**
-     * @dev If downvoting is enabled in this contest.
-     */
-    function downvotingAllowed() public view virtual returns (uint256) {
-        return 0; // 0 == false, 1 == true
-    }
-
-    /**
-     * @dev Retrieve proposal data.
-     */
-    function getProposal(uint256 proposalId) public view virtual returns (ProposalCore memory) {
-        return proposals[proposalId];
-    }
-
-    /**
-     * @dev Get the number of proposal submissions for a given address.
-     */
-    function getNumSubmissions(address account) public view virtual returns (uint256) {
-        return numSubmissions[account];
+    function voteStart() public view returns (uint256) {
+        return contestStart + votingDelay;
     }
 
     /**
      * @dev Returns if a proposal has been deleted or not.
      */
-    function isProposalDeleted(uint256 proposalId) public view virtual returns (bool) {
-        return proposalIsDeleted[proposalId];
+    function contestDeadline() public view returns (uint256) {
+        return voteStart() + votingPeriod;
+    }
+
+    /**
+     * @dev Retrieve proposal data.
+     */
+    function getProposal(uint256 proposalId) public view returns (ProposalCore memory) {
+        return proposals[proposalId];
     }
 
     /**
@@ -252,9 +227,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
         virtual;
 
     /**
-     * @dev See {IGovernor-verifyProposer}.
+     * @dev Verifies that `account` is permissioned to propose via merkle proof.
      */
-    function verifyProposer(address account, bytes32[] calldata proof) public override {
+    function verifyProposer(address account, bytes32[] calldata proof) public {
         if (!addressSubmitterVerified[account]) {
             if (submissionMerkleRoot == 0) {
                 // if the submission root is 0, then anyone can submit
@@ -266,9 +241,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     }
 
     /**
-     * @dev See {IGovernor-validateProposalData}.
+     * @dev Verifies that all of the metadata in the proposal is valid.
      */
-    function validateProposalData(ProposalCore memory proposal) public virtual override {
+    function validateProposalData(ProposalCore memory proposal) public view {
         if (proposal.author != msg.sender) revert AuthorIsNotSender(proposal.author, msg.sender);
         for (uint256 index = 0; index < METADATAS_COUNT; index++) {
             Metadatas currentMetadata = Metadatas(index);
@@ -288,9 +263,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
      * @dev Distribute the costToPropose to jk labs and the creator based on _percentageToCreator.
      */
     function _distributeCostToPropose() private {
-        if (_costToPropose > 0) {
+        if (costToPropose > 0) {
             // Send proposal fee to jk labs address and creator
-            uint256 sendingToJkLabs = (msg.value * (100 - _percentageToCreator)) / 100;
+            uint256 sendingToJkLabs = (msg.value * (100 - percentageToCreator)) / 100;
             if (sendingToJkLabs > 0) {
                 Address.sendValue(payable(JK_LABS_ADDRESS), sendingToJkLabs);
                 emit PaymentReleased(JK_LABS_ADDRESS, sendingToJkLabs);
@@ -298,23 +273,17 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
 
             uint256 sendingToCreator = msg.value - sendingToJkLabs;
             if (sendingToCreator > 0) {
-                Address.sendValue(payable(creator()), sendingToCreator); // creator gets the extra wei in the case of rounding
-                emit PaymentReleased(creator(), sendingToCreator);
+                Address.sendValue(payable(creator), sendingToCreator); // creator gets the extra wei in the case of rounding
+                emit PaymentReleased(creator, sendingToCreator);
             }
         }
     }
 
     /**
-     * @dev See {IGovernor-propose}.
+     * @dev Create a new proposal.
      */
-    function propose(ProposalCore calldata proposal, bytes32[] calldata proof)
-        public
-        payable
-        virtual
-        override
-        returns (uint256)
-    {
-        if (msg.value != _costToPropose) revert IncorrectCostToProposeSent(msg.value, _costToPropose);
+    function propose(ProposalCore calldata proposal, bytes32[] calldata proof) public payable returns (uint256) {
+        if (msg.value != costToPropose) revert IncorrectCostToProposeSent(msg.value, costToPropose);
 
         verifyProposer(msg.sender, proof);
         validateProposalData(proposal);
@@ -326,10 +295,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     }
 
     /**
-     * @dev See {IGovernor-proposeWithoutProof}.
+     * @dev Create a new proposal without a proof if you have already proposed with a proof.
      */
-    function proposeWithoutProof(ProposalCore calldata proposal) public payable virtual override returns (uint256) {
-        if (msg.value != _costToPropose) revert IncorrectCostToProposeSent(msg.value, _costToPropose);
+    function proposeWithoutProof(ProposalCore calldata proposal) public payable returns (uint256) {
+        if (msg.value != costToPropose) revert IncorrectCostToProposeSent(msg.value, costToPropose);
 
         if (submissionMerkleRoot != 0) {
             // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
@@ -343,13 +312,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
         return proposalId;
     }
 
-    function _castProposal(ProposalCore memory proposal) internal virtual returns (uint256) {
+    function _castProposal(ProposalCore memory proposal) internal returns (uint256) {
         if (state() != ContestState.Queued) revert ContestMustBeQueuedToPropose(state());
-        if (numSubmissions[msg.sender] == numAllowedProposalSubmissions()) {
-            revert SenderSubmissionLimitReached(numAllowedProposalSubmissions());
+        if (numSubmissions[msg.sender] == numAllowedProposalSubmissions) {
+            revert SenderSubmissionLimitReached(numAllowedProposalSubmissions);
         }
-        if ((proposalIds.length - deletedProposalIds.length) == maxProposalCount()) {
-            revert ContestSubmissionLimitReached(maxProposalCount());
+        if ((proposalIds.length - deletedProposalIds.length) == maxProposalCount) {
+            revert ContestSubmissionLimitReached(maxProposalCount);
         }
 
         uint256 proposalId = hashProposal(proposal);
@@ -370,8 +339,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
      *
      * Emits a {IGovernor-ProposalsDeleted} event.
      */
-    function deleteProposals(uint256[] calldata proposalIdsToDelete) public virtual {
-        if (msg.sender != creator()) revert OnlyCreatorCanDelete();
+    function deleteProposals(uint256[] calldata proposalIdsToDelete) public {
+        if (msg.sender != creator) revert OnlyCreatorCanDelete();
         if (state() == ContestState.Completed) revert CannotDeleteWhenCompleted();
 
         for (uint256 index = 0; index < proposalIdsToDelete.length; index++) {
@@ -384,7 +353,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
                 deletedProposalIds.push(currentProposalId);
 
                 // we only do sorting if downvoting is disabled and if sorting is enabled
-                if (downvotingAllowed() == 0 && sortingEnabled == 1) {
+                if (downvotingAllowed == 0 && sortingEnabled == 1) {
                     // remove proposalIds from forVotesToProposalIds
                     _multiRmProposalIdFromForVotesMap(proposalIdsToDelete);
                 }
@@ -395,12 +364,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     }
 
     /**
-     * @dev
+     * @dev Cancels the contest.
      *
      * Emits a {IGovernor-ContestCanceled} event.
      */
-    function cancel() public virtual {
-        if (((msg.sender != creator()) && (msg.sender != JK_LABS_ADDRESS))) revert OnlyJkLabsOrCreatorCanCancel();
+    function cancel() public {
+        if (((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS))) revert OnlyJkLabsOrCreatorCanCancel();
 
         ContestState status = state();
 
@@ -412,9 +381,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     }
 
     /**
-     * @dev See {IGovernor-verifyVoter}.
+     * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
      */
-    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public override {
+    function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public {
         if (!addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
@@ -423,31 +392,24 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
     }
 
     /**
-     * @dev See {IGovernor-castVote}.
+     * @dev Cast a vote with a merkle proof.
      */
     function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof)
         public
-        virtual
-        override
         returns (uint256)
     {
         address voter = msg.sender;
-        if (isProposalDeleted(proposalId)) revert CannotVoteOnDeletedProposal();
+        if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
         verifyVoter(voter, totalVotes, proof);
         return _castVote(proposalId, voter, support, numVotes);
     }
 
     /**
-     * @dev See {IGovernor-castVoteWithoutProof}.
+     * @dev Cast a vote without a proof if you have already voted with a proof.
      */
-    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes)
-        public
-        virtual
-        override
-        returns (uint256)
-    {
+    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes) public returns (uint256) {
         address voter = msg.sender;
-        if (isProposalDeleted(proposalId)) revert CannotVoteOnDeletedProposal();
+        if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
         if (!addressTotalVotesVerified[voter]) revert NeedToVoteWithProofFirst();
         return _castVote(proposalId, voter, support, numVotes);
     }
@@ -460,7 +422,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes, IGovernor {
      */
     function _castVote(uint256 proposalId, address account, uint8 support, uint256 numVotes)
         internal
-        virtual
         returns (uint256)
     {
         if (state() != ContestState.Active) revert ContestMustBeActiveToVote(state());

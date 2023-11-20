@@ -8,7 +8,7 @@ import { fetchEnsAvatar, fetchEnsName } from "@wagmi/core";
 import Link from "next/link";
 import { FC } from "react";
 
-const DEFAULT_AVATAR_URL = "/contest/avatar.svg";
+const DEFAULT_AVATAR_URL = "/contest/mona-lisa-moustache.png";
 
 interface EthereumAddressProps {
   ethereumAddress: string;
