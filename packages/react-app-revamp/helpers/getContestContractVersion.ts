@@ -47,7 +47,7 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.6") {
+    if (version === "4.7") {
       return { abi: RmUnnecessaryVirtualsContract.abi, version};
     } else if (version === "4.6") {
       return { abi: RestructureExtensionsAndUtilsContract.abi, version};
