@@ -122,7 +122,11 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev Get the whole array in `forVotesToProposalIds` for a given `forVotes` amount.
      */
-    function getProposalsWithThisManyForVotes(uint256 forVotes) public view returns (uint256[] memory proposalsWithThisManyForVotes) {
+    function getProposalsWithThisManyForVotes(uint256 forVotes)
+        public
+        view
+        returns (uint256[] memory proposalsWithThisManyForVotes)
+    {
         return forVotesToProposalIds[forVotes];
     }
 

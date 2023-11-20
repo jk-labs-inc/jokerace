@@ -135,7 +135,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.8";
+        return "4.9";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -356,7 +356,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
         // we only do sorting if downvoting is disabled and if sorting is enabled
         if (downvotingAllowed == 0 && sortingEnabled == 1) {
-            // remove proposalIds from forVotesToProposalIds
+            // remove proposalIds from forVotesToProposalIds (could contain proposalIds that have been deleted before, that's ok though)
             _multiRmProposalIdFromForVotesMap(proposalIdsToDelete);
         }
 
