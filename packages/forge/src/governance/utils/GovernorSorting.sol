@@ -38,7 +38,7 @@ abstract contract GovernorSorting {
     }
 
     /**
-     * @dev Get the number of proposals that have `forVotes` number of for votes.
+     * @dev See {GovernorCountingSimple-getNumProposalsWithThisManyForVotes}.
      */
     function getNumProposalsWithThisManyForVotes(uint256 forVotes) public view virtual returns (uint256 count);
 

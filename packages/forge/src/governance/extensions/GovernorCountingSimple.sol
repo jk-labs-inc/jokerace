@@ -120,7 +120,18 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
-     * @dev See {GovernorSorting-getNumProposalsWithThisManyForVotes}. Get the number of proposals that have `forVotes` number of for votes.
+     * @dev Get the whole array in `forVotesToProposalIds` for a given `forVotes` amount.
+     */
+    function getProposalsWithThisManyForVotes(uint256 forVotes)
+        public
+        view
+        returns (uint256[] memory proposalsWithThisManyForVotes)
+    {
+        return forVotesToProposalIds[forVotes];
+    }
+
+    /**
+     * @dev Get the number of proposals that have `forVotes` number of for votes.
      */
     function getNumProposalsWithThisManyForVotes(uint256 forVotes) public view override returns (uint256 count) {
         return forVotesToProposalIds[forVotes].length;
