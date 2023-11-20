@@ -102,7 +102,7 @@ contract RewardsModule {
      * @dev Version of the rewards module. Default: "1"
      */
     function version() public pure returns (string memory) {
-        return "4.8";
+        return "4.9";
     }
 
     /**
