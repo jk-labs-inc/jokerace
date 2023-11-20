@@ -28,6 +28,7 @@ import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.pri
 import AddEntryChargeContract from "@contracts/bytecodeAndAbi/Contest.4.1.addEntryCharge.sol/Contest.json";
 import UpdateSortingAlgoContract from "@contracts/bytecodeAndAbi/Contest.4.2.updateSortingAlgo.sol/Contest.json";
 import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
+import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -43,7 +44,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.3") {
+    if (version === "4.4") {
+      return { abi: UseCustomErrorsContract.abi, version};
+    } else if (version === "4.3") {
       return { abi: NewValueAlreadyInArrayContract.abi, version};
     } else if (version === "4.2") {
       return { abi: UpdateSortingAlgoContract.abi, version};

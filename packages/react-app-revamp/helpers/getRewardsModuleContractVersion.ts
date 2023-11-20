@@ -23,6 +23,7 @@ import PrivateDeletedIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsM
 import AddEntryChargeRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.1.addEntryCharge.sol/RewardsModule.json";
 import UpdateSortingAlgoRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.2.updateSortingAlgo.sol/RewardsModule.json";
 import NewValueAlreadyInArrayRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.3.newValueAlreadyInArray.sol/RewardsModule.json";
+import UseCustomErrorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.4.useCustomErrors.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -35,7 +36,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.3") {
+    if (version === "4.4") {
+      return UseCustomErrorsRewards.abi;
+    } else if (version === "4.3") {
       return NewValueAlreadyInArrayRewards.abi;
     } else if (version === "4.2") {
       return UpdateSortingAlgoRewards.abi;
