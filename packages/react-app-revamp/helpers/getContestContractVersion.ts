@@ -31,7 +31,7 @@ import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.
 import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
 import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";
 import RestructureExtensionsAndUtilsContract from "@contracts/bytecodeAndAbi/Contest.4.6.restructureExtensionsAndUtils.sol/Contest.json";
-import RmUnnecessaryVirtualsContract from "@contracts/bytecodeAndAbi/Contest.4.7.RmUnnecessaryVirtuals.sol/Contest.json";
+import RmUnnecessaryVirtualsContract from "@contracts/bytecodeAndAbi/Contest.4.7.rmUnnecessaryVirtuals.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
