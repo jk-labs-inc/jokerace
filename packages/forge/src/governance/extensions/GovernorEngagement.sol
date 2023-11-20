@@ -21,7 +21,7 @@ abstract contract GovernorEngagement is Governor {
     event CommentCreated(uint256 commentId);
 
     /**
-     * @dev Emitted when a comment is deleted.
+     * @dev Emitted when comments are deleted.
      */
     event CommentsDeleted(uint256[] commentIds);
 
