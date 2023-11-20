@@ -44,7 +44,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenu
   return (
     <div className="flex flex-col">
       <p className="text-[24px] text-neutral-11 font-bold">submissions</p>
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center">
         {content}
         <SortProposalsDropdown
           defaultValue={sortBy ?? ""}
