@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "@forge-std/Test.sol";
 import "../src/Contest.sol";
+import "../src/governance/Governor.sol";
 
 contract ContestTest is Test {
     Contest public contest;
@@ -192,9 +193,7 @@ contract ContestTest is Test {
 
     function testValidate() public {
         vm.prank(PERMISSIONED_ADDRESS_1);
-        bool validated = contest.validateProposalData(firstProposalPA1);
-
-        assertEq(validated, true);
+        contest.validateProposalData(firstProposalPA1);
     }
 
     function testPropose() public {
@@ -235,7 +234,11 @@ contract ContestTest is Test {
     function testProposeAuthorIsntSender() public {
         vm.warp(1681650001);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        vm.expectRevert(bytes("Governor: the proposal author must be msg.sender"));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Governor.AuthorIsNotSender.selector, unpermissionedAuthorProposal1.author, PERMISSIONED_ADDRESS_1
+            )
+        );
         contest.propose(unpermissionedAuthorProposal1, submissionProof1);
     }
 
@@ -244,15 +247,19 @@ contract ContestTest is Test {
         vm.prank(PERMISSIONED_ADDRESS_1);
         contest.propose(firstProposalPA1, submissionProof1);
         vm.prank(PERMISSIONED_ADDRESS_1);
-        vm.expectRevert(bytes("Governor: the proposal author must be msg.sender"));
+        vm.expectRevert(
+            abi.encodeWithSelector(
+                Governor.AuthorIsNotSender.selector, unpermissionedAuthorProposal1.author, PERMISSIONED_ADDRESS_1
+            )
+        );
         contest.proposeWithoutProof(unpermissionedAuthorProposal1);
     }
 
     function testProposeDuplicateProposal() public {
         vm.warp(1681650001);
         vm.startPrank(PERMISSIONED_ADDRESS_1);
-        contest.propose(firstProposalPA1, submissionProof1);
-        vm.expectRevert(bytes("Governor: duplicate proposals not allowed"));
+        uint256 proposalId = contest.propose(firstProposalPA1, submissionProof1);
+        vm.expectRevert(abi.encodeWithSelector(Governor.DuplicateSubmission.selector, proposalId));
         contest.propose(firstProposalPA1, submissionProof1);
         vm.stopPrank();
     }
@@ -283,9 +290,7 @@ contract ContestTest is Test {
     function testProposeAnyoneCanCostIsOneEtherNoMsgValue() public {
         vm.warp(1681650001);
         vm.prank(UNPERMISSIONED_ADDRESS_1);
-        vm.expectRevert(
-            bytes("Governor: this transaction was not sent with the correct amount of funds needed to propose")
-        );
+        vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostToProposeSent.selector, 0, 1 ether));
         anyoneCanSubmitCostsAnEthContest.propose(unpermissionedAuthorProposal1, proof0);
     }
 
@@ -293,9 +298,7 @@ contract ContestTest is Test {
         vm.warp(1681650001);
         vm.deal(address(UNPERMISSIONED_ADDRESS_1), 2 ether); // give the proposer wei to pay the cost to propose
         vm.prank(UNPERMISSIONED_ADDRESS_1);
-        vm.expectRevert(
-            bytes("Governor: this transaction was not sent with the correct amount of funds needed to propose")
-        );
+        vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostToProposeSent.selector, 2 ether, 1 ether));
         anyoneCanSubmitCostsAnEthContest.propose{value: 2 ether}(unpermissionedAuthorProposal1, proof0);
     }
 

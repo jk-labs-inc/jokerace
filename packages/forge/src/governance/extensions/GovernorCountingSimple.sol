@@ -33,6 +33,15 @@ abstract contract GovernorCountingSimple is Governor {
 
     mapping(uint256 => uint256[]) public forVotesToProposalIds;
 
+    error MoreThanOneProposalWithThisManyVotes();
+    error NotEnoughVotesLeft();
+    error DownvotingNotEnabled();
+    error InvalidVoteType();
+
+    error RankCannotBeZero();
+    error RankIsNotInSortedRanks();
+    error IndexHasNotBeenPopulated();
+
     /**
      * @dev Accessor to the internal vote counts for a given proposal.
      */
@@ -132,11 +141,53 @@ abstract contract GovernorCountingSimple is Governor {
      *       been checked for).
      */
     function getOnlyProposalIdWithThisManyForVotes(uint256 forVotes) public view returns (uint256 proposalId) {
-        require(
-            forVotesToProposalIds[forVotes].length == 1,
-            "GovernorCountingSimple: tried to call getOnlyProposalIdWithThisManyForVotes and couldn't find one"
-        );
+        if (forVotesToProposalIds[forVotes].length != 1) revert MoreThanOneProposalWithThisManyVotes();
         return forVotesToProposalIds[forVotes][0];
+    }
+
+    /**
+     * @dev Get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account.
+     *      A rank has to have > 0 votes to be considered valid.
+     */
+    function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
+        if (rank == 0) revert RankCannotBeZero();
+
+        uint256 sortedRanksLength = sortedRanks.length; // only check state var once to save on gas
+        uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
+
+        uint256 counter = 1;
+        for (uint256 index = 0; index < sortedRanksLength; index++) {
+            // if this is a value of a deleted proposal or an ungarbage collected oldValue, go forwards without
+            // incrementing the counter
+            if (getNumProposalsWithThisManyForVotes(sortedRanksMemVar[index]) == 0) {
+                continue;
+            }
+            // if the counter is at the rank we are looking for, then return with it
+            if (counter == rank) {
+                return index;
+            }
+            counter++;
+        }
+
+        // if there's no valid index for that rank in sortedRanks, revert
+        revert RankIsNotInSortedRanks();
+    }
+
+    /**
+     * @dev Returns whether a given index in sortedRanks is tied or is below a tied rank.
+     */
+    function isOrIsBelowTiedRank(uint256 idx) public view returns (bool atOrBelowTiedRank) {
+        if (idx > sortedRanks.length - 1) {
+            // if `idx` hasn't been populated, then it's not a valid index to be checking and something is wrong
+            revert IndexHasNotBeenPopulated();
+        }
+
+        for (uint256 index = 0; index < idx + 1; index++) {
+            if (getNumProposalsWithThisManyForVotes(sortedRanks[index]) > 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -181,10 +232,7 @@ abstract contract GovernorCountingSimple is Governor {
     {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
 
-        require(
-            numVotes <= (totalVotes - addressTotalCastVoteCounts[account]),
-            "GovernorVotingSimple: not enough votes left to cast"
-        );
+        if (numVotes > (totalVotes - addressTotalCastVoteCounts[account])) revert NotEnoughVotesLeft();
 
         bool firstTimeVoting = (
             proposalvote.addressVoteCounts[account].forVotes == 0
@@ -195,11 +243,11 @@ abstract contract GovernorCountingSimple is Governor {
             proposalvote.proposalVoteCounts.forVotes += numVotes;
             proposalvote.addressVoteCounts[account].forVotes += numVotes;
         } else if (support == uint8(VoteType.Against)) {
-            require(downvotingAllowed() == 1, "GovernorVotingSimple: downvoting is not enabled for this Contest");
+            if (downvotingAllowed() != 1) revert DownvotingNotEnabled();
             proposalvote.proposalVoteCounts.againstVotes += numVotes;
             proposalvote.addressVoteCounts[account].againstVotes += numVotes;
         } else {
-            revert("GovernorVotingSimple: invalid value for enum VoteType");
+            revert InvalidVoteType();
         }
 
         if (firstTimeVoting) {

@@ -6,6 +6,8 @@ pragma solidity ^0.8.0;
  * @dev Logic for sorting and ranking.
  */
 abstract contract GovernorSorting {
+    // TLDR: This code maintains a sorted array.
+
     // Because of the array rule below, the actual number of rankings that this contract will be able to track is determined by three things:
     //      - RANK_LIMIT
     //      - Woulda Beens (WBs)
@@ -13,9 +15,9 @@ abstract contract GovernorSorting {
     //          without taking out deleted proposals) within the limit that are deleted and do not have other, non-deleted proposals
     //          with the same amounts of votes/that are tied with them.
     //      - To Tied or Deleted (TTDs), or to a previous TTD
-    //          The number of times a proposal is voted into an index to tie it; an that is already tied; an index that was last deleted;
-    //          or an index that wasn't garbage collected because it last went to one of last three cases or a case of this fourth point,
-    //          from a ranking that was in the tracked rankings at the time that vote was cast.
+    //          The number of times a proposal's newValue goes into an index to tie it; an index that is already tied; an index that was last deleted;
+    //          or an index that wasn't garbage collected because it went to either one of last three cases or an index that also wasn't garbage
+    //          collected because of the same recursive logic, from a ranking that was in the tracked rankings at the time that vote was cast.
     //
     // The equation to calcluate how many rankings this contract will actually be able to track is:
     // # of rankings GovernorSorting can track for a given contest = RANK_LIMIT - WBs - TTDs
@@ -47,50 +49,10 @@ abstract contract GovernorSorting {
         return sortedRanks;
     }
 
-    // get the idx of sortedRanks considered to hold the queried rank taking deleted proposals into account.
-    // a rank has to have > 0 votes to be considered valid.
-    function getRankIndex(uint256 rank) public view returns (uint256 rankIndex) {
-        require(rank != 0, "GovernorSorting: rank cannot equal 0");
-
-        uint256 sortedRanksLength = sortedRanks.length; // only check state var once to save on gas
-        uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas
-
-        uint256 counter = 1;
-        for (uint256 index = 0; index < sortedRanksLength; index++) {
-            // if this is a deleted proposal, go forwards without incrementing the counter
-            if (getNumProposalsWithThisManyForVotes(sortedRanksMemVar[index]) == 0) {
-                continue;
-            }
-            // if the counter is at the rank we are looking for, then return with it
-            if (counter == rank) {
-                return index;
-            }
-            counter++;
-        }
-
-        // if there's no valid index for that rank in sortedRanks, revert
-        revert(
-            "GovernorSorting: this rank does not exist or is out of the allowed rank tracking range taking deleted proposals + TTs into account"
-        );
-    }
-
-    // returns whether a given index in sortedRanks is tied or is below a tied rank
-    function isOrIsBelowTiedRank(uint256 idx) public view returns (bool atOrBelowTiedRank) {
-        if (idx > sortedRanks.length - 1) {
-            // if `idx` hasn't been populated, then it's not a valid index to be checking and something is wrong
-            revert("GovernorSorting: this index has not been populated");
-        }
-
-        for (uint256 index = 0; index < idx + 1; index++) {
-            if (getNumProposalsWithThisManyForVotes(sortedRanks[index]) > 1) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // insert a new value into sortedRanks (this function is strictly O(n) or better).
-    // we know at this point the idx where it should go is in [0, sortedRanks.length - 1].
+    /**
+     * @dev Insert a new value into sortedRanks (this function is strictly O(n) or better).
+     *      We know at this point that the idx where it should go is in [0, sortedRanks.length - 1].
+     */
     function _insertRank(
         uint256 oldValue,
         uint256 newValue,
@@ -146,9 +108,11 @@ abstract contract GovernorSorting {
         sortedRanks[insertingIndex] = newValue;
     }
 
-    // keep things sorted as we go.
-    // only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas.
-    // because of no downvoting, and that a vote of 0 is not allowed, newValue will always be greater than oldValue.
+    /**
+     * @dev Keep things sorted as we go.
+     *      Only works for no downvoting bc dealing w what happens when something leaves the top ranks and needs to be *replaced* is an issue that necessitates the sorting of all the others, which we don't want to do bc gas.
+     *      Invariant: Because of no downvoting, and that a vote of 0 is not allowed, newValue will always be greater than oldValue.
+     */
     function _updateRanks(uint256 oldValue, uint256 newValue) internal {
         uint256 sortedRanksLength = sortedRanks.length; // only check state var once to save on gas
         uint256[] memory sortedRanksMemVar = sortedRanks; // only check state var once to save on gas

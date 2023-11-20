@@ -5,7 +5,7 @@ import "./governance/Governor.sol";
 import "./governance/extensions/GovernorSettings.sol";
 import "./governance/extensions/GovernorCountingSimple.sol";
 import "./governance/extensions/GovernorModuleRegistry.sol";
-import "./governance/extensions/GovernorSorting.sol";
+import "./governance/utils/GovernorSorting.sol";
 
 contract Contest is GovernorCountingSimple, GovernorSettings, GovernorModuleRegistry {
     constructor(

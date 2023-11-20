@@ -3,7 +3,6 @@
 pragma solidity ^0.8.0;
 
 import "../Governor.sol";
-import "@openzeppelin/utils/Timers.sol";
 
 /**
  * @dev Extension of {Governor} for settings updatable through governance.
@@ -26,6 +25,8 @@ abstract contract GovernorSettings is Governor {
     event MaxProposalCountSet(uint256 oldMaxProposalCount, uint256 newMaxProposalCount);
     event DownvotingAllowedSet(uint256 oldDownvotingAllowed, uint256 newDownvotingAllowed);
     event CreatorSet(address oldCreator, address newCreator);
+
+    error VotingPeriodCannotBeZero();
 
     /**
      * @dev Initialize the governance parameters.
@@ -123,7 +124,7 @@ abstract contract GovernorSettings is Governor {
      */
     function _setVotingPeriod(uint256 newVotingPeriod) internal virtual {
         // voting period must be at least one block long
-        require(newVotingPeriod > 0, "GovernorSettings: voting period too low");
+        if (newVotingPeriod == 0) revert VotingPeriodCannotBeZero();
         emit VotingPeriodSet(_votingPeriod, newVotingPeriod);
         _votingPeriod = newVotingPeriod;
     }

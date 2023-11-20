@@ -3,15 +3,16 @@ import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import isUrlToImage from "@helpers/isUrlToImage";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
-import { readContract, readContracts } from "@wagmi/core";
+import { readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { Result } from "ethers/lib/utils";
+import { shuffle, sortBy as sortUnique } from "lodash";
 import { useRouter } from "next/router";
 import { useNetwork } from "wagmi";
-import { useProposalStore } from "./store";
+import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
+import { formatProposalData, getProposalIdsRaw, sortProposals, transformProposalData } from "./utils";
 
 export const PROPOSALS_PER_PAGE = 12;
 
@@ -26,10 +27,14 @@ export function useProposal() {
     setProposalData,
     setIsListProposalsLoading,
     setIsListProposalsSuccess,
+    listProposalsData,
     setListProposalsIds,
     setSubmissionsCount,
     setTotalPagesPaginationProposals,
     setIndexPaginationProposalPerId,
+    setInitialMappedProposalIds,
+    setSortBy,
+    initialMappedProposalIds,
   } = useProposalStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -38,47 +43,52 @@ export function useProposal() {
   const { error, handleError } = useError();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
 
+  async function getContractConfig() {
+    const { abi } = await getContestContractVersion(address, chainId);
+
+    if (abi === null) {
+      const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
+      toastError(errorMsg);
+      setIsPageProposalsError(errorMsg);
+      return;
+    }
+
+    return {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId: chainId,
+    };
+  }
+
   /**
    * Fetch the data of each proposals in page X
    * @param pageIndex - index of the page of proposals to fetch
    * @param slice - Array of proposals ids to be fetched
    * @param totalPagesPaginationProposals - total of pages in the pagination
+   * @param sorting - boolean to know if we need to sort the proposals
    */
-  async function fetchProposalsPage(pageIndex: number, slice: Array<any>, totalPagesPaginationProposals: number) {
+  async function fetchProposalsPage(
+    pageIndex: number,
+    slice: Array<any>,
+    totalPagesPaginationProposals: number,
+    sorting?: boolean,
+  ) {
     setCurrentPagePaginationProposals(pageIndex);
     setIsPageProposalsLoading(true);
     setIsPageProposalsError("");
 
     try {
-      const { abi } = await getContestContractVersion(address, chainId);
-
-      if (abi === null) {
-        const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-        toastError(errorMsg);
-        setIsPageProposalsError(errorMsg);
-        setIsPageProposalsLoading(false);
-        return;
-      }
-
-      const contractConfig = {
-        address: address as `0x${string}`,
-        abi: abi,
-        chainId: chains.find(
-          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
-        )?.id,
-      };
+      const contractConfig = await getContractConfig();
 
       const contracts: any[] = [];
 
       for (const id of slice) {
         contracts.push(
-          // Proposal content
           {
             ...contractConfig,
             functionName: "getProposal",
             args: [id],
           },
-          // Votes received
           {
             ...contractConfig,
             functionName: "proposalVotes",
@@ -89,9 +99,7 @@ export function useProposal() {
 
       const results = await readContracts({ contracts });
 
-      for (let i = 0; i < slice.length; i++) {
-        await fetchProposal(i, results, slice);
-      }
+      structureAndRankProposals(results, slice, sorting);
 
       setIsPageProposalsLoading(false);
       setIsPageProposalsError("");
@@ -102,59 +110,14 @@ export function useProposal() {
       setIsPageProposalsLoading(false);
     }
   }
-
-  /**
-   * Set proposal data in zustand store
-   * @param i - index of the proposal id to be fetched
-   * @param results - array of smart contracts calls results (returned by `readContracts`)
-   * @param listIdsProposalsToBeFetched - array of proposals ids to be fetched
-   */
-  async function fetchProposal(i: number, results: Array<any>, listIdsProposalsToBeFetched: Array<any>) {
-    // Create an array of proposals
-    // A proposal is a pair of data
-    // A pair of a proposal data is [content, votes]
-    const proposalDataPerId = results.reduce((result, value, index, array) => {
-      if (index % 2 === 0) result.push(array.slice(index, index + 2));
-      return result;
-    }, []);
-
-    const data = proposalDataPerId[i][0].result;
-
-    const isContentImage = isUrlToImage(data.description) ? true : false;
-
-    let forVotesBigInt: bigint;
-    let againstVotesBigInt: bigint;
-    let votes: number;
-
-    if (Array.isArray(proposalDataPerId[i][1].result)) {
-      forVotesBigInt = proposalDataPerId[i][1].result[0] as bigint;
-      againstVotesBigInt = proposalDataPerId[i][1].result[1] as bigint;
-      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
-      votes = Number(utils.formatEther(votesBigNumber));
-    } else {
-      votes = Number(utils.formatEther(proposalDataPerId[i][1].result as bigint));
-    }
-
-    const proposalData = {
-      authorEthereumAddress: data.author,
-      content: data.description,
-      isContentImage,
-      exists: data.exists,
-      votes,
-    };
-
-    setProposalData({ id: listIdsProposalsToBeFetched[i], data: proposalData });
-  }
-
   /**
    * Fetch the list of proposals ids for this contest, order them by votes and set up pagination
    * @param abi - ABI to use
    */
-  async function fetchProposalsIdsList(abi: any, version: string) {
+  async function fetchProposalsIdsList(abi: any, contestDates: { submissionOpen: Date; votesOpen: Date }) {
     setIsListProposalsLoading(true);
 
     try {
-      // Get list of proposals (ids)
       const useLegacyGetAllProposalsIdFn =
         abi?.filter((el: { name: string }) => el.name === "allProposalTotalVotes")?.length > 0 ? false : true;
 
@@ -164,42 +127,54 @@ export function useProposal() {
         chainId: chainId,
       };
 
-      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn, version);
+      const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
 
       let proposalsIds: Result;
+      const currentDate = new Date();
+
       if (!useLegacyGetAllProposalsIdFn) {
         const extractVotes = (index: number) => {
-          const forVotesValue = proposalsIdsRawData[1][index].forVotes?.toString() || "0";
-          const againstVotesValue = proposalsIdsRawData[1][index].againstVotes?.toString() || "0";
+          const forVotesValue = proposalsIdsRawData[1][index].forVotes;
+          const againstVotesValue = proposalsIdsRawData[1][index].againstVotes;
 
-          const forVotes = BigNumber.from(forVotesValue);
-          const againstVotes = BigNumber.from(againstVotesValue);
+          const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
+          const netVotes = Number(utils.formatEther(netVotesBigNumber));
 
-          return proposalsIdsRawData[1][index].length === 1 ? forVotes : forVotes.sub(againstVotes);
-        };
-
-        const computeVotes = (index: number) => {
-          const votesBigNumber = extractVotes(index);
-          const votesDivided = votesBigNumber.div(BigNumber.from(divisor?.toString() || "0"));
-
-          return parseFloat(utils.formatEther(votesDivided));
+          return netVotes;
         };
 
         const mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
+          const votes = extractVotes(index);
           return {
-            votes: computeVotes(index),
+            votes: votes,
             id: data,
           };
         });
 
-        proposalsIds = mappedProposals
-          .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
-          .map((proposal: { id: any }) => proposal.id);
+        setInitialMappedProposalIds(mappedProposals);
+
+        if (currentDate < contestDates.votesOpen) {
+          // Shuffle proposals if current date is before votesOpen
+          proposalsIds = shuffle([...mappedProposals]).map(proposal => proposal.id);
+          setSortBy("random");
+        } else {
+          proposalsIds = [...mappedProposals]
+            .sort((a: { votes: number }, b: { votes: number }) => b.votes - a.votes)
+            .map((proposal: { id: any }) => proposal.id);
+          setSortBy("votes");
+        }
 
         setListProposalsIds(proposalsIds as string[]);
         setSubmissionsCount(proposalsIds.length);
       } else {
-        proposalsIds = proposalsIdsRawData;
+        if (currentDate < contestDates.votesOpen) {
+          // Shuffle proposals if current date is before votesOpen
+          proposalsIds = shuffle(proposalsIdsRawData);
+          setSortBy("random");
+        } else {
+          proposalsIds = proposalsIdsRawData;
+          setSortBy("votes");
+        }
         setListProposalsIds(proposalsIds as string[]);
         setSubmissionsCount(proposalsIds.length);
       }
@@ -210,12 +185,10 @@ export function useProposal() {
       const totalPagesPaginationProposals = Math.ceil(proposalsIdsRawData?.length / PROPOSALS_PER_PAGE);
       setTotalPagesPaginationProposals(totalPagesPaginationProposals);
       setCurrentPagePaginationProposals(0);
-      //@ts-ignore
-      const paginationChunks = arrayToChunks(proposalsIds, PROPOSALS_PER_PAGE);
+
+      const paginationChunks = arrayToChunks(proposalsIds as string[], PROPOSALS_PER_PAGE);
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
-
-      if (proposalsIds.length > 0) await fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setError(error);
@@ -226,87 +199,13 @@ export function useProposal() {
     }
   }
 
-  async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean, version: string) {
-    if (isLegacy) {
-      return (await readContract({
-        ...contractConfig,
-        functionName: "getAllProposalIds",
-        args: [],
-      })) as any;
-    } else {
-      const contracts = [
-        {
-          ...contractConfig,
-          functionName: "allProposalTotalVotes",
-          args: [],
-        },
-        {
-          ...contractConfig,
-          functionName: "getAllDeletedProposalIds",
-          args: [],
-        },
-      ];
-
-      const results: any[] = await readContracts({ contracts });
-
-      const allProposals = results[0].result[0];
-      const deletedIdsArray = results[1]?.result;
-
-      if (!deletedIdsArray) {
-        return [allProposals, results[0].result[1]];
-      }
-
-      const deletedProposalSet = new Set(mapResultToStringArray(deletedIdsArray));
-
-      const validData = allProposals.reduce(
-        (
-          accumulator: { validProposalIds: any[]; correspondingVotes: any[] },
-          proposalId: { toString: () => string },
-          index: string | number,
-        ) => {
-          if (!deletedProposalSet.has(proposalId.toString())) {
-            accumulator.validProposalIds.push(proposalId);
-            accumulator.correspondingVotes.push(results[0].result[1][index]);
-          }
-          return accumulator;
-        },
-        { validProposalIds: [], correspondingVotes: [] },
-      );
-
-      return [validData.validProposalIds, validData.correspondingVotes];
-    }
-  }
-
-  const mapResultToStringArray = (result: any): string[] => {
-    if (Array.isArray(result)) {
-      return result.map((id: bigint) => id.toString());
-    } else {
-      return [result.toString()];
-    }
-  };
-
   /**
    * Fetch a single proposal based on its ID.
    * @param proposalId - the ID of the proposal to fetch
    */
   async function fetchSingleProposal(proposalId: any) {
     try {
-      const { abi } = await getContestContractVersion(address, chainId);
-
-      if (abi === null) {
-        const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
-        toastError(errorMsg);
-        setIsPageProposalsError(errorMsg);
-        return;
-      }
-
-      const contractConfig: any = {
-        address: address as `0x${string}`,
-        abi: abi,
-        chainId: chains.find(
-          c => c.name.replace(/\s+/g, "").toLowerCase() === chainName.replace(/\s+/g, "").toLowerCase(),
-        )?.id,
-      };
+      const contractConfig = await getContractConfig();
 
       const contracts = [
         {
@@ -321,37 +220,95 @@ export function useProposal() {
         },
       ];
 
-      const results: any = await readContracts({ contracts });
+      //@ts-ignore
+      const results = await readContracts({ contracts });
 
-      const data = results[0].result;
-
-      const isContentImage = isUrlToImage(data.description) ? true : false;
-
-      const forVotesBigInt = results[1].result[0] as bigint;
-      const againstVotesBigInt = results[1].result[1] as bigint;
-      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
-      const votes = Number(utils.formatEther(votesBigNumber));
-
-      const proposalData = {
-        authorEthereumAddress: data.author,
-        content: data.description,
-        isContentImage,
-        exists: data.exists,
-        votes,
-      };
-
-      setProposalData({ id: proposalId, data: proposalData });
+      structureAndRankProposals(results, [proposalId]);
     } catch (e) {
       handleError(e, "Something went wrong while getting the proposal.");
       setIsPageProposalsError(error);
     }
   }
 
+  /**
+   * @param proposalsResults (array of proposals data)
+   * @param proposalIds (array of proposals ids)
+   * @param sorting (optional boolean to skip concatenation if true)
+   */
+  function structureAndRankProposals(proposalsResults: Array<any>, proposalIds: Array<any>, sorting?: boolean) {
+    // Transform proposals data and calculate net votes
+    const transformedProposals = proposalIds.map((id, index) =>
+      transformProposalData(id, proposalsResults[index * 2 + 1], proposalsResults[index * 2].result),
+    );
+
+    let combinedProposals;
+
+    // Concatenate only if sorting is false
+    if (!sorting) {
+      combinedProposals = listProposalsData.concat(transformedProposals);
+    } else {
+      combinedProposals = transformedProposals;
+    }
+
+    const rankedProposals = formatProposalData(combinedProposals, initialMappedProposalIds);
+
+    setProposalData(rankedProposals);
+  }
+
+  /**
+   * Update a single proposal and re-sort and re-rank all proposals
+   * @param updatedProposal - the updated proposal data
+   */
+  function updateProposal(updatedProposal: ProposalCore) {
+    const updatedProposals = listProposalsData
+      .map(proposal => (proposal.id === updatedProposal.id ? updatedProposal : proposal))
+      .sort((a, b) => b.netVotes - a.netVotes);
+
+    const proposals = formatProposalData(updatedProposals, initialMappedProposalIds);
+
+    setProposalData(proposals);
+  }
+
+  /**
+   * Remove a list of proposals and re-sort and re-rank all proposals
+   * @param idsToDelete - the list of proposals ids to remove
+   */
+  function removeProposal(idsToDelete: string[]) {
+    const remainingProposals = listProposalsData
+      .sort((a, b) => b.netVotes - a.netVotes)
+      .filter(proposal => !idsToDelete.includes(proposal.id));
+
+    const proposals = formatProposalData(remainingProposals, initialMappedProposalIds);
+
+    setProposalData(proposals);
+  }
+
+  /**
+   * Sort proposals by a given sorting option
+   * @param sortBy - the sorting option to use
+   */
+  function sortProposalData(sortBy: SortOptions) {
+    const sortedIds = sortProposals(sortBy, initialMappedProposalIds);
+
+    if (listProposalsData.length === sortedIds.length) {
+      const sortedProposals = sortUnique(listProposalsData, v => sortedIds.indexOf(v.id));
+      setProposalData(sortedProposals);
+    } else {
+      const paginationChunks = arrayToChunks(sortedIds, PROPOSALS_PER_PAGE);
+      setIndexPaginationProposalPerId(paginationChunks);
+      setProposalData([]);
+
+      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, true);
+    }
+  }
+
   return {
-    fetchProposal,
     fetchProposalsPage,
     fetchSingleProposal,
     fetchProposalsIdsList,
+    updateProposal,
+    removeProposal,
+    sortProposalData,
   };
 }
 
