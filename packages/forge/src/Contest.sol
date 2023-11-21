@@ -24,13 +24,12 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry {
             _constructorIntParams[2], // votingPeriod,
             _constructorIntParams[3], // numAllowedProposalSubmissions,
             _constructorIntParams[4], // maxProposalCount
-            _constructorIntParams[5], // downvotingAllowed
-            _constructorIntParams[6], // costToPropose
-            _constructorIntParams[7] // percentageToCreator
+            _constructorIntParams[5], // costToPropose
+            _constructorIntParams[6] // percentageToCreator
         )
         GovernorSorting(
-            _constructorIntParams[8], // sortingEnabled
-            _constructorIntParams[9] // rankLimit
+            _constructorIntParams[7], // sortingEnabled
+            _constructorIntParams[8] // rankLimit
         )
     {}
 }
