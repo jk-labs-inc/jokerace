@@ -197,7 +197,7 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
-     * @dev Register a vote with a given support and voting weight.
+     * @dev Register a vote with a voting weight of `numVotes` and `totalVotes` amount for the account that is voting.
      */
     function _countVote(uint256 proposalId, address account, uint256 numVotes, uint256 totalVotes) internal override {
         ProposalVote storage proposalVote = proposalVotesStructs[proposalId];
