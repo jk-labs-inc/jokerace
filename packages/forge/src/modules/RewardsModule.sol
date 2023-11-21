@@ -49,7 +49,6 @@ contract RewardsModule {
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
     error TotalSharesCannotBeZero();
-    error MustHaveDownvotingDisabled();
     error MustHaveSortingEnabled();
     error ContestMustBeCompleted();
     error PayoutRankCannotBeZero();
@@ -102,7 +101,7 @@ contract RewardsModule {
      * @dev Version of the rewards module.
      */
     function version() public pure returns (string memory) {
-        return "4.10";
+        return "4.11";
     }
 
     /**
@@ -140,7 +139,6 @@ contract RewardsModule {
      * @dev Run release checks.
      */
     function runReleaseChecks(uint256 ranking) public view {
-        if (underlyingContest.downvotingAllowed() != 0) revert MustHaveDownvotingDisabled();
         if (underlyingContest.sortingEnabled() != 1) revert MustHaveSortingEnabled();
         if (underlyingContest.state() != Governor.ContestState.Completed) revert ContestMustBeCompleted();
         if (ranking == 0) revert PayoutRankCannotBeZero();
