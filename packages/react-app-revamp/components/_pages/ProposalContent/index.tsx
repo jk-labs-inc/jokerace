@@ -1,13 +1,12 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
-import EthereumAddress from "@components/UI/EtheuremAddress";
 import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
 import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
 import MarkdownOrderedList from "@components/UI/Markdown/components/MarkdownOrderedList";
 import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
+import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import ordinalize from "@helpers/ordinalize";
 import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import { Interweave, Node } from "interweave";
@@ -17,6 +16,7 @@ import { Children, FC, ReactNode, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalContentAction from "./components/ProposalContentAction";
+import ProposalContentInfo from "./components/ProposalContentInfo";
 
 export interface Proposal {
   authorEthereumAddress: string;
@@ -64,6 +64,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
@@ -89,25 +90,12 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
 
   return (
     <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
-      <div className="px-4 mt-4 flex items-center gap-1">
-        <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
-
-        {rank > 0 && (
-          <>
-            <span className="text-neutral-9">&#8226;</span>{" "}
-            <p className="text-[16px] font-bold text-neutral-9">
-              {isMobile ? (
-                <>
-                  {rank}
-                  <sup>{ordinalize(rank).suffix}</sup> place {isTied ? "(tied)" : ""}
-                </>
-              ) : (
-                `${ordinalize(rank).label} place ${isTied ? "(tied)" : ""}`
-              )}
-            </p>
-          </>
-        )}
-      </div>
+      <ProposalContentInfo
+        authorAddress={proposal.authorEthereumAddress}
+        rank={rank}
+        isTied={isTied}
+        isMobile={isMobile}
+      />
       <Link
         href={`/contest/${chainName}/${contestAddress}/submission/${id}`}
         shallow

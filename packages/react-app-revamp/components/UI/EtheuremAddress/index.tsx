@@ -13,7 +13,7 @@ const DEFAULT_AVATAR_URL = "/contest/mona-lisa-moustache.png";
 interface EthereumAddressProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
-  size?: "small" | "medium" | "large";
+  size?: "extraSmall" | "small" | "medium" | "large";
   textualVersion?: boolean;
   avatarVersion?: boolean;
   includeSocials?: boolean;
@@ -21,10 +21,14 @@ interface EthereumAddressProps {
 
 interface AvatarProps {
   src: string;
-  size: "small" | "medium" | "large";
+  size: "extraSmall" | "small" | "medium" | "large";
 }
 
 const SIZES = {
+  extraSmall: {
+    avatarSizeClass: "w-6 h-6",
+    textSizeClass: "text-[14px]",
+  },
   small: {
     avatarSizeClass: "w-8 h-8",
     textSizeClass: "text-[16px]",
