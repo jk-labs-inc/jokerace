@@ -87,6 +87,44 @@ export function formatProposalData(
   });
 }
 
+export function updateAndRankProposals(
+  updatedProposals: ProposalCore[],
+  initialMappedProposalIds: MappedProposalIds[],
+): [ProposalCore[], MappedProposalIds[]] {
+  const sortedProposals = updatedProposals.sort((a, b) => b.netVotes - a.netVotes);
+
+  const ranks: RankDictionary = {};
+  let currentRank = 0;
+  let lastVotes: number | null = null;
+
+  sortedProposals.forEach(proposal => {
+    if (proposal.netVotes !== lastVotes) {
+      lastVotes = proposal.netVotes;
+      currentRank = lastVotes > 0 ? currentRank + 1 : currentRank;
+    }
+    ranks[proposal.id] = proposal.netVotes > 0 ? currentRank : 0;
+  });
+
+  const proposalsWithRanks = sortedProposals.map(proposal => {
+    const proposalRank = ranks[proposal.id];
+    const isTied = proposal.netVotes > 0 && checkForTiedRanks(ranks, proposalRank);
+
+    return {
+      ...proposal,
+      rank: proposalRank,
+      isTied: isTied,
+    };
+  });
+
+  // Update the initial proposal IDs map
+  const updatedMappedProposalIds = initialMappedProposalIds.map(idMap => {
+    const foundProposal = proposalsWithRanks.find(proposal => proposal.id === idMap.id);
+    return foundProposal ? { ...idMap, votes: foundProposal.netVotes } : idMap;
+  });
+
+  return [proposalsWithRanks, updatedMappedProposalIds];
+}
+
 /**
  * Transforms a single proposal's data based on its ID and result data.
  * @param id - The ID of the proposal.
