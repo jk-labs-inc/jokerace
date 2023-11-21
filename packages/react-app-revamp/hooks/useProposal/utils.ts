@@ -87,6 +87,11 @@ export function formatProposalData(
   });
 }
 
+/**
+ * Assign ranks to a proposals on update based on their net votes, using a complete list of all proposals.
+ * @param updatedProposals - Updated proposals ( either when user vote or delete it)
+ * @param initialMappedProposalIds - Array of all proposals with their IDs and votes.
+ */
 export function updateAndRankProposals(
   updatedProposals: ProposalCore[],
   initialMappedProposalIds: MappedProposalIds[],
