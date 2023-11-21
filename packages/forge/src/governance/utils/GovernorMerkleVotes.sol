@@ -10,8 +10,8 @@ abstract contract GovernorMerkleVotes {
     /// ============ Immutable storage ============
 
     /// @notice Participant inclusion roots
-    bytes32 public immutable submissionMerkleRoot;
-    bytes32 public immutable votingMerkleRoot;
+    bytes32 public submissionMerkleRoot;
+    bytes32 public votingMerkleRoot;
 
     /// ============ Errors ============
 
