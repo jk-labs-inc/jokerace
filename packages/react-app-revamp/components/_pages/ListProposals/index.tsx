@@ -51,7 +51,7 @@ export const ListProposals = () => {
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const allowDelete =
     (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
@@ -126,7 +126,6 @@ export const ListProposals = () => {
                   isContentImage: proposal.isContentImage,
                   votes: proposal.netVotes,
                 }}
-                votingOpen={votesOpen}
                 rank={proposal.rank}
                 isTied={proposal.isTied}
               />

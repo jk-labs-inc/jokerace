@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
-import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
 import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
@@ -9,20 +8,15 @@ import MarkdownOrderedList from "@components/UI/Markdown/components/MarkdownOrde
 import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
 import { extractPathSegments } from "@helpers/extractPath";
 import ordinalize from "@helpers/ordinalize";
-import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { load } from "cheerio";
 import { Interweave, Node } from "interweave";
-import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { Children, FC, ReactNode, useMemo, useState } from "react";
-import Skeleton from "react-loading-skeleton";
+import { Children, FC, ReactNode, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
+import ProposalContentAction from "./components/ProposalContentAction";
 
 export interface Proposal {
   authorEthereumAddress: string;
@@ -35,7 +29,6 @@ export interface Proposal {
 interface ProposalContentProps {
   id: string;
   proposal: Proposal;
-  votingOpen: Date;
   rank: number;
   isTied: boolean;
 }
@@ -65,91 +58,15 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   }
 };
 
-const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, rank, isTied }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { openConnectModal } = useConnectModal();
   let truncatedContent =
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
-  const formattedVotingOpen = moment(votingOpen);
-  const { isConnected } = useAccount();
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
-  const contestStatus = useContestStatusStore(state => state.contestStatus);
-  const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
-  const { currentUserAvailableVotesAmount, isLoading, currentUserTotalVotesAmount } = useUserStore(state => state);
+  const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
-  const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
-
-  const ProposalAction = useMemo<React.ReactNode>(() => {
-    switch (contestStatus) {
-      case ContestStatus.ContestOpen:
-      case ContestStatus.SubmissionOpen:
-        return (
-          <>
-            <p className="text-neutral-10">voting opens {formattedVotingOpen.format("MMMM Do, h:mm a")}</p>
-          </>
-        );
-      case ContestStatus.VotingOpen:
-        return (
-          <>
-            {!isConnected ? (
-              <p className="text-[16px] text-positive-11 font-bold" onClick={openConnectModal}>
-                connect wallet to vote
-              </p>
-            ) : canVote ? (
-              isLoading ? (
-                <Skeleton
-                  height={isMobile ? 32 : 40}
-                  width={isMobile ? 100 : 160}
-                  borderRadius={40}
-                  baseColor="#706f78"
-                  highlightColor="#FFE25B"
-                  duration={1}
-                />
-              ) : isMobile ? (
-                <Link href={`/contest/${chainName}/${contestAddress}/submission/${id}`} className="w-full">
-                  <ButtonV3
-                    type={ButtonType.TX_ACTION}
-                    colorClass="bg-gradient-next rounded-[40px]"
-                    size={ButtonSize.FULL}
-                  >
-                    add votes
-                  </ButtonV3>
-                </Link>
-              ) : (
-                <ButtonV3
-                  type={ButtonType.TX_ACTION}
-                  colorClass="bg-gradient-next rounded-[40px]"
-                  size={ButtonSize.LARGE}
-                  onClick={() => {
-                    setPickProposal(id);
-                    setIsVotingModalOpen(true);
-                  }}
-                >
-                  add votes
-                </ButtonV3>
-              )
-            ) : outOfVotes ? (
-              <p className="text-[16px] text-neutral-10 font-bold">you've deployed all your votes</p>
-            ) : (
-              <p className="text-[16px] text-neutral-10 font-bold">only allowlisted wallets can play</p>
-            )}
-          </>
-        );
-      case ContestStatus.VotingClosed:
-        return <p className="text-neutral-10">voting closed</p>;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    contestStatus,
-    proposal.votes,
-    currentUserAvailableVotesAmount,
-    setPickProposal,
-    isConnected,
-    isMobile,
-    isLoading,
-  ]);
 
   if (proposal.isContentImage) {
     const $ = load(proposal.content);
@@ -208,7 +125,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, votingOpen, r
       <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
         <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
           <div className="flex items-center py-4 justify-between w-full md:w-1/2 text-[16px] font-bold">
-            {ProposalAction}
+            <ProposalContentAction proposalId={id} onVotingModalOpen={value => setIsVotingModalOpen(value)} />
           </div>
         </div>
       </div>
