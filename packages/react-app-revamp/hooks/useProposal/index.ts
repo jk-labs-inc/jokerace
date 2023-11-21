@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
@@ -11,12 +12,16 @@ import { Result } from "ethers/lib/utils";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { useRouter } from "next/router";
 import { useNetwork } from "wagmi";
-import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
-import { formatProposalData, getProposalIdsRaw, sortProposals, transformProposalData } from "./utils";
+import { ProposalCore, SortOptions, useProposalStore } from "./store";
+import {
+  formatProposalData,
+  getProposalIdsRaw,
+  sortProposals,
+  transformProposalData,
+  updateAndRankProposals,
+} from "./utils";
 
 export const PROPOSALS_PER_PAGE = 12;
-
-const divisor = BigInt("1000000000000000000"); // Equivalent to 1e18
 
 export function useProposal() {
   const {
@@ -30,6 +35,7 @@ export function useProposal() {
     listProposalsData,
     setListProposalsIds,
     setSubmissionsCount,
+    submissionsCount,
     setTotalPagesPaginationProposals,
     setIndexPaginationProposalPerId,
     setInitialMappedProposalIds,
@@ -255,32 +261,25 @@ export function useProposal() {
     setProposalData(rankedProposals);
   }
 
-  /**
-   * Update a single proposal and re-sort and re-rank all proposals
-   * @param updatedProposal - the updated proposal data
-   */
   function updateProposal(updatedProposal: ProposalCore) {
-    const updatedProposals = listProposalsData
-      .map(proposal => (proposal.id === updatedProposal.id ? updatedProposal : proposal))
-      .sort((a, b) => b.netVotes - a.netVotes);
+    const updatedProposals = listProposalsData.map(proposal =>
+      proposal.id === updatedProposal.id ? updatedProposal : proposal,
+    );
 
-    const proposals = formatProposalData(updatedProposals, initialMappedProposalIds);
+    const [updatedProposalData, updatedIds] = updateAndRankProposals(updatedProposals, initialMappedProposalIds);
 
-    setProposalData(proposals);
+    setProposalData(updatedProposalData);
+    setInitialMappedProposalIds(updatedIds);
   }
 
-  /**
-   * Remove a list of proposals and re-sort and re-rank all proposals
-   * @param idsToDelete - the list of proposals ids to remove
-   */
   function removeProposal(idsToDelete: string[]) {
-    const remainingProposals = listProposalsData
-      .sort((a, b) => b.netVotes - a.netVotes)
-      .filter(proposal => !idsToDelete.includes(proposal.id));
+    const remainingProposals = listProposalsData.filter(proposal => !idsToDelete.includes(proposal.id));
 
-    const proposals = formatProposalData(remainingProposals, initialMappedProposalIds);
+    const [updatedProposalData, updatedIds] = updateAndRankProposals(remainingProposals, initialMappedProposalIds);
 
-    setProposalData(proposals);
+    setProposalData(updatedProposalData);
+    setInitialMappedProposalIds(updatedIds);
+    setSubmissionsCount(submissionsCount - idsToDelete.length);
   }
 
   /**
