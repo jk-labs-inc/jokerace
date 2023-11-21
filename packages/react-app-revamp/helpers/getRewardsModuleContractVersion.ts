@@ -30,6 +30,7 @@ import RmUnnecessaryVirtualsRewards from "@contracts/bytecodeAndAbi/modules/Rewa
 import DeleteInMapAfterForLoopRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.8.deleteInMapAfterForLoop.sol/RewardsModule.json";
 import AddGetPropIdsWithForVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.9.addGetPropIdsWithForVotes.sol/RewardsModule.json";
 import RmImmutableKeywordRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.10.rmImmutableKeyword.sol/RewardsModule.json";
+import RmDownvotingRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.11.rmDownvoting.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -42,7 +43,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.10") {
+    if (version === "4.11") {
+      return RmDownvotingRewards.abi;
+    } else if (version === "4.10") {
       return RmImmutableKeywordRewards.abi;
     } else if (version === "4.9") {
       return AddGetPropIdsWithForVotesRewards.abi;
