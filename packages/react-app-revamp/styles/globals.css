@@ -83,23 +83,6 @@
   margin-top: 5px;
 }
 
-/* Custom ordered list */
-.markdown ol {
-  list-style: none;
-  counter-reset: orderedListCounter;
-}
-
-.markdown ol li {
-  counter-increment: orderedListCounter;
-}
-
-.markdown ol li::before {
-  content: counter(orderedListCounter) ". ";
-  font-family: "Sabo", sans-serif;
-  font-weight: bold;
-  font-size: 16px;
-}
-
 li.funds-distributed::before {
   background: url("/rewards/distributed-ellipse.svg");
   background-size: contain;
@@ -225,6 +208,10 @@ li {
   .standalone-pwa {
     display: flex;
   }
+}
+
+.infiniteScroll {
+  overflow: visible !important;
 }
 
 @tailwind base;

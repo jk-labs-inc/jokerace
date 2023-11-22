@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Button from "@components/UI/Button";
+import { InfiniteLoader, List, AutoSizer } from "react-virtualized";
+import InfiniteScroll from "react-infinite-scroll-component";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
 import arrayToChunks from "@helpers/arrayToChunks";
@@ -90,7 +91,19 @@ export const ListProposals = () => {
   }
 
   return (
-    <div>
+    <InfiniteScroll
+      className="infiniteScroll"
+      dataLength={listProposalsData.length}
+      next={() =>
+        fetchProposalsPage(
+          currentPagePaginationProposals + 1,
+          indexPaginationProposals[currentPagePaginationProposals + 1],
+          totalPagesPaginationProposals,
+        )
+      }
+      hasMore={listProposalsData.length < submissionsCount}
+      loader={<ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />}
+    >
       <div className="flex flex-col gap-8 mt-6">
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
@@ -154,30 +167,7 @@ export const ListProposals = () => {
           </ButtonV3>
         </div>
       )}
-
-      {isPageProposalsLoading && listProposalsData.length && (
-        <ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />
-      )}
-
-      {listProposalsData.length < submissionsCount && !isPageProposalsLoading && (
-        <div className="pt-8 flex animate-appear">
-          <Button
-            intent="neutral-outline"
-            scale="sm"
-            className="mx-auto animate-appear"
-            onClick={() =>
-              fetchProposalsPage(
-                currentPagePaginationProposals + 1,
-                indexPaginationProposals[currentPagePaginationProposals + 1],
-                totalPagesPaginationProposals,
-              )
-            }
-          >
-            {isPageProposalsError ? "Try again" : "Show more proposals"}
-          </Button>
-        </div>
-      )}
-    </div>
+    </InfiniteScroll>
   );
 };
 

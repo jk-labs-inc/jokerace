@@ -1,8 +1,8 @@
-import isUrlToImage from "@helpers/isUrlToImage";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { shuffle } from "lodash";
 import { MappedProposalIds, ProposalCore, SortOptions } from "./store";
+import { isUrlToImage } from "@helpers/isUrlToImage";
 
 interface RankDictionary {
   [key: string]: number;

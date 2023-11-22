@@ -64,7 +64,6 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
     proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
