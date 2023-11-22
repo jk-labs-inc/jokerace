@@ -14,20 +14,6 @@ import { useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
 
-interface RankDictionary {
-  [key: string]: number;
-}
-
-const checkForTiedRanks = (ranks: RankDictionary, currentRank: number) => {
-  let count = 0;
-  Object.values(ranks).forEach(rank => {
-    if (rank === currentRank) {
-      count++;
-    }
-  });
-  return count > 1;
-};
-
 const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlightColor: string }) => (
   <SkeletonTheme baseColor="#000000" highlightColor={highlightColor} duration={1}>
     <Skeleton
@@ -48,6 +34,7 @@ export const ListProposals = () => {
     isPageProposalsError,
     currentPagePaginationProposals,
     indexPaginationProposals,
+    submissionsCount,
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
@@ -59,7 +46,7 @@ export const ListProposals = () => {
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
-  const remainingProposalsToLoad = listProposalsIds.length - listProposalsData.length;
+  const remainingProposalsToLoad = submissionsCount - listProposalsData.length;
   const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
 
   useEffect(() => {
@@ -172,7 +159,7 @@ export const ListProposals = () => {
         <ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />
       )}
 
-      {listProposalsData.length < listProposalsIds.length && !isPageProposalsLoading && (
+      {listProposalsData.length < submissionsCount && !isPageProposalsLoading && (
         <div className="pt-8 flex animate-appear">
           <Button
             intent="neutral-outline"
