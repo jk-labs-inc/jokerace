@@ -33,8 +33,6 @@ interface ProposalContentProps {
   isTied: boolean;
 }
 
-const MAX_HEIGHT = 200;
-
 const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   const element = node.tagName.toLowerCase();
 
@@ -60,9 +58,7 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
 
 const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const dynamicMaxHeight = isMobile ? 100 : 80;
-  // let truncatedContent =
-  //   proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
+  const dynamicMaxHeight = isMobile ? 195 : 80;
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
@@ -70,7 +66,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
   const canVote = currentUserAvailableVotesAmount > 0;
   const contentRef = useRef<HTMLDivElement>(null);
   const [isTruncated, setIsTruncated] = useState(false);
-  const contentStyle = isTruncated ? { maxHeight: MAX_HEIGHT, overflow: "hidden" } : {};
+  const contentStyle = isTruncated ? { maxHeight: dynamicMaxHeight, overflow: "hidden" } : {};
 
   useEffect(() => {
     const contentElement = contentRef.current;
@@ -78,7 +74,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
 
     const resizeObserver = new ResizeObserver(entries => {
       for (let entry of entries) {
-        if (entry.target.scrollHeight > MAX_HEIGHT) {
+        if (entry.target.scrollHeight > dynamicMaxHeight) {
           setIsTruncated(true);
         } else {
           setIsTruncated(false);
@@ -91,7 +87,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
     return () => {
       resizeObserver.disconnect();
     };
-  }, []);
+  }, [dynamicMaxHeight]);
 
   let displayedContent;
   if (proposal.isContentImage) {
@@ -99,24 +95,16 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
     const textContent = cheerio.text();
 
     if (textContent.length > 100) {
-      // Long text, display text only
       displayedContent = textContent.substring(0, 100) + `<span class="text-positive-11">...read more</span>`;
     } else {
-      // Short text, display image with text
       displayedContent = `<div>${proposal.content}</div>`;
     }
   } else {
-    if (isTruncated) {
-      displayedContent = proposal.content + "...";
-      console.log({ displayedContent });
-    } else {
-      console.log("in else");
-      displayedContent = proposal.content;
-    }
+    displayedContent = proposal.content;
   }
 
   return (
-    <div className="flex flex-col w-full h-80  animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <ProposalContentInfo
         authorAddress={proposal.authorEthereumAddress}
         rank={rank}
@@ -132,7 +120,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
         <div ref={contentRef} style={contentStyle}>
           <Interweave
             className="markdown max-w-full text-[18px] overflow-y-hidden md:overflow-auto"
-            content={proposal.content}
+            content={isTruncated ? displayedContent + "..." : displayedContent}
             transform={transform}
           />
         </div>
