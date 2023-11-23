@@ -12,7 +12,7 @@ import { load } from "cheerio";
 import { Interweave, Node } from "interweave";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Children, FC, ReactNode, useState } from "react";
+import { Children, FC, ReactNode, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalContentAction from "./components/ProposalContentAction";
@@ -33,7 +33,7 @@ interface ProposalContentProps {
   isTied: boolean;
 }
 
-const MAX_LENGTH = 150;
+const MAX_HEIGHT = 200;
 
 const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   const element = node.tagName.toLowerCase();
@@ -60,35 +60,63 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
 
 const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  let truncatedContent =
-    proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
+  const dynamicMaxHeight = isMobile ? 100 : 80;
+  // let truncatedContent =
+  //   proposal.content.length > MAX_LENGTH ? `${proposal.content.substring(0, MAX_LENGTH)}...` : proposal.content;
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+  const contentStyle = isTruncated ? { maxHeight: MAX_HEIGHT, overflow: "hidden" } : {};
 
-  if (proposal.isContentImage) {
-    const $ = load(proposal.content);
-    const contentElements = $("*").not("script, style, img");
-    let totalTextLength = 0;
+  useEffect(() => {
+    const contentElement = contentRef.current;
+    if (!contentElement) return;
 
-    contentElements.each((_, element) => {
-      const currentText = $(element).text();
-      if (totalTextLength + currentText.length > MAX_LENGTH) {
-        const remainingLength = MAX_LENGTH - totalTextLength;
-        const truncatedText = currentText.substring(0, remainingLength) + "...";
-        $(element).text(truncatedText);
-        return false; // This stops the each loop
+    const resizeObserver = new ResizeObserver(entries => {
+      for (let entry of entries) {
+        if (entry.target.scrollHeight > MAX_HEIGHT) {
+          setIsTruncated(true);
+        } else {
+          setIsTruncated(false);
+        }
       }
-      totalTextLength += currentText.length;
     });
 
-    truncatedContent = `<div>${$.html()}</div>`;
+    resizeObserver.observe(contentElement);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  let displayedContent;
+  if (proposal.isContentImage) {
+    const cheerio = load(proposal.content);
+    const textContent = cheerio.text();
+
+    if (textContent.length > 100) {
+      // Long text, display text only
+      displayedContent = textContent.substring(0, 100) + `<span class="text-positive-11">...read more</span>`;
+    } else {
+      // Short text, display image with text
+      displayedContent = `<div>${proposal.content}</div>`;
+    }
+  } else {
+    if (isTruncated) {
+      displayedContent = proposal.content + "...";
+      console.log({ displayedContent });
+    } else {
+      console.log("in else");
+      displayedContent = proposal.content;
+    }
   }
 
   return (
-    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-80  animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <ProposalContentInfo
         authorAddress={proposal.authorEthereumAddress}
         rank={rank}
@@ -99,15 +127,15 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
         href={`/contest/${chainName}/${contestAddress}/submission/${id}`}
         shallow
         scroll={false}
-        className="flex items-center overflow-hidden px-14 h-3/4 md:h-3/4"
+        className="flex items-center overflow-hidden px-14 h-60"
       >
-        <>
+        <div ref={contentRef} style={contentStyle}>
           <Interweave
-            className="markdown max-w-full text-[16px] overflow-y-hidden md:overflow-auto"
-            content={truncatedContent}
+            className="markdown max-w-full text-[18px] overflow-y-hidden md:overflow-auto"
+            content={proposal.content}
             transform={transform}
           />
-        </>
+        </div>
       </Link>
       <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
         <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
