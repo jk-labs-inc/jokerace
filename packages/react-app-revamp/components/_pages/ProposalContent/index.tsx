@@ -1,16 +1,12 @@
 /* eslint-disable react/no-children-prop */
 import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
-import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
-import MarkdownOrderedList from "@components/UI/Markdown/components/MarkdownOrderedList";
-import MarkdownUnorderedList from "@components/UI/Markdown/components/MarkdownUnorderedList";
-import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import { Interweave, Node } from "interweave";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Children, FC, ReactNode, useEffect, useRef, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import DialogModalVoteForProposal from "../DialogModalVoteForProposal";
 import ProposalContentAction from "./components/ProposalContentAction";
@@ -77,7 +73,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
         scroll={false}
         className="flex items-center overflow-hidden px-14 h-3/4"
       >
-        <Interweave className="line-clamp-3 markdown text-[18px] " content={truncatedContent} transform={transform} />
+        <Interweave className="line-clamp-3 markdown text-[18px]" content={truncatedContent} transform={transform} />
       </Link>
       <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
         <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
