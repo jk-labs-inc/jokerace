@@ -1,9 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { InfiniteLoader, List, AutoSizer } from "react-virtualized";
-import InfiniteScroll from "react-infinite-scroll-component";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
-import arrayToChunks from "@helpers/arrayToChunks";
 import { formatNumber } from "@helpers/formatNumber";
 import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
@@ -11,7 +8,8 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
 
@@ -49,14 +47,6 @@ export const ListProposals = () => {
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
   const remainingProposalsToLoad = submissionsCount - listProposalsData.length;
   const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
-
-  useEffect(() => {
-    if (!listProposalsIds.length) return;
-
-    const paginationChunks = arrayToChunks(listProposalsIds, PROPOSALS_PER_PAGE);
-
-    fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
-  }, [listProposalsIds]);
 
   const onDeleteSelectedProposals = async () => {
     setDeletingProposalIds(selectedProposalIds);

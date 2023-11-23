@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
@@ -195,6 +194,8 @@ export function useProposal() {
       const paginationChunks = arrayToChunks(proposalsIds as string[], PROPOSALS_PER_PAGE);
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
+
+      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setError(error);
