@@ -76,7 +76,7 @@ export function useSubmitProposal() {
         let hash = "" as `0x${string}`;
         let txConfig = null;
 
-        if (proofs) {
+        if (proofs.length) {
           txConfig = {
             ...contractConfig,
             functionName: "propose",

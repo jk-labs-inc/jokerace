@@ -59,7 +59,7 @@ export function useCastVotes() {
 
       let txRequest;
 
-      if (proofs) {
+      if (proofs.length) {
         txRequest = await prepareWriteContract({
           address: contestAddress as `0x${string}`,
           //@ts-ignore
