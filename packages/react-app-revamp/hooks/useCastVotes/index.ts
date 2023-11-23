@@ -92,7 +92,7 @@ export function useCastVotes() {
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txResult?.hash}`,
       });
 
-      addUserActionForAnalytics({
+      await addUserActionForAnalytics({
         contest_address: contestAddress,
         user_address: userAddress,
         network_name: chainName,

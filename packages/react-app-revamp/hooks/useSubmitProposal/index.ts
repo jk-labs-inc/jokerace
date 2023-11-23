@@ -108,7 +108,7 @@ export function useSubmitProposal() {
 
         const proposalId = await getProposalId(proposalCore, contractConfig);
 
-        addUserActionForAnalytics({
+        await addUserActionForAnalytics({
           contest_address: address,
           user_address: userAddress,
           network_name: chainName,
