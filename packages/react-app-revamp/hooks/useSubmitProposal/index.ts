@@ -108,6 +108,16 @@ export function useSubmitProposal() {
 
         const proposalId = await getProposalId(proposalCore, contractConfig);
 
+        await addUserActionForAnalytics({
+          contest_address: address,
+          user_address: userAddress,
+          network_name: chainName,
+          proposal_id: proposalId,
+          created_at: Math.floor(Date.now() / 1000),
+          amount_sent: entryCharge ? Number(formatEther(BigInt(entryCharge.costToPropose))) : null,
+          percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
+        });
+
         setTransactionData({
           chainId: chain?.id,
           hash: receipt.transactionHash,
@@ -121,16 +131,6 @@ export function useSubmitProposal() {
         setSubmissionsCount(submissionsCount + 1);
         fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
-
-        addUserActionForAnalytics({
-          contest_address: address,
-          user_address: userAddress,
-          network_name: chainName,
-          proposal_id: proposalId,
-          created_at: Math.floor(Date.now() / 1000),
-          amount_sent: entryCharge ? Number(formatEther(BigInt(entryCharge.costToPropose))) : null,
-          percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
-        });
       } catch (e) {
         handleError(e, `Something went wrong while submitting your proposal.`);
         setError(errorMessage);
