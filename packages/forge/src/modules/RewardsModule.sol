@@ -42,9 +42,9 @@ contract RewardsModule {
     mapping(IERC20 => uint256) public erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
 
-    GovernorCountingSimple public immutable underlyingContest;
-    address public immutable creator;
-    bool public immutable paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
+    GovernorCountingSimple public underlyingContest;
+    address public creator;
+    bool public paysOutTarget; // If true, pay out target address; if false, pay out proposal author.
 
     error PayeesSharesLengthMismatch();
     error MustHaveAtLeastOnePayee();
@@ -99,10 +99,10 @@ contract RewardsModule {
     }
 
     /**
-     * @dev Version of the rewards module. Default: "1"
+     * @dev Version of the rewards module.
      */
     function version() public pure returns (string memory) {
-        return "4.9";
+        return "4.10";
     }
 
     /**
