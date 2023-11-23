@@ -330,6 +330,7 @@ module.exports = {
         "timer-container": "3px 3px 4px rgba(106, 106, 106, 1)",
         dialog: "0px 1px 6px 1px rgba(157, 157, 157, 1)",
         sortProposalDropdown: "0px 1px 6px 1px #6A6A6A;",
+        "proposal-card": "1px 1px 5px 0px #E5E5E5",
       },
       backgroundColor: {
         ffdd3e: "#FFDD3E",
@@ -369,5 +370,5 @@ module.exports = {
       transform: ["hover"],
     },
   },
-  plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography")],
+  plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography"), require("@tailwindcss/line-clamp")],
 };

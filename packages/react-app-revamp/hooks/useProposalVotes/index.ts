@@ -14,7 +14,7 @@ interface VoteEntry {
 
 type VotesArray = VoteEntry[];
 
-export function useProposalVotes(contractAddress: string, proposalId: string, chainId: number) {
+export function useProposalVotes(contractAddress: string, proposalId: string, chainId: number, addressPerPage = 5) {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [addressesVoted, setAddressesVoted] = useState<string[]>([]);
@@ -77,7 +77,7 @@ export function useProposalVotes(contractAddress: string, proposalId: string, ch
       const adresses = await fetchAddressesVoted();
       if (!adresses) return;
 
-      const addressesPage = adresses.slice(0, 5);
+      const addressesPage = adresses.slice(0, addressPerPage);
       const votesPromises = addressesPage.map((address: string) => fetchVotesForAddress(address));
       const votesArray: VotesArray = await Promise.all(votesPromises);
       const votesObj = votesArray.reduce((acc: Record<string, number>, { address, votes }: VoteEntry) => {
