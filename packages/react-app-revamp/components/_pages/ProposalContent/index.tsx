@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable @next/next/no-img-element */
 /* eslint-disable react/no-children-prop */
 import MarkdownImage from "@components/UI/Markdown/components/MarkdownImage";
 import MarkdownList from "@components/UI/Markdown/components/MarkdownList";
@@ -40,71 +38,33 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
     return <div className="flex gap-5 items-center markdown">{children}</div>;
   } else if (element === "img") {
     return <MarkdownImage imageSize="compact" src={node.getAttribute("src") ?? ""} />;
-  } else if (element === "ul") {
-    const truncatedChildren = Children.toArray(children).slice(0, 3);
-    const combinedChildren =
-      children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
-
-    return <MarkdownUnorderedList children={combinedChildren} />;
-  } else if (element === "li") {
-    return <MarkdownList children={children} />;
-  } else if (element === "ol") {
-    const truncatedChildren = Children.toArray(children).slice(0, 3);
-    const finalChildren = children.length > 3 ? [...truncatedChildren, <li key="ellipsis">...</li>] : truncatedChildren;
-
-    return <MarkdownOrderedList children={finalChildren} />;
   }
 };
 
 const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const dynamicMaxHeight = isMobile ? 195 : 80;
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [isTruncated, setIsTruncated] = useState(false);
-  const contentStyle = isTruncated ? { maxHeight: dynamicMaxHeight, overflow: "hidden" } : {};
 
-  useEffect(() => {
-    const contentElement = contentRef.current;
-    if (!contentElement) return;
-
-    const resizeObserver = new ResizeObserver(entries => {
-      for (let entry of entries) {
-        if (entry.target.scrollHeight > dynamicMaxHeight) {
-          setIsTruncated(true);
-        } else {
-          setIsTruncated(false);
-        }
-      }
-    });
-
-    resizeObserver.observe(contentElement);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [dynamicMaxHeight]);
-
-  let displayedContent;
+  let truncatedContent = "";
   if (proposal.isContentImage) {
     const cheerio = load(proposal.content);
     const textContent = cheerio.text();
 
     if (textContent.length > 100) {
-      displayedContent = textContent.substring(0, 100) + `<span class="text-positive-11">...read more</span>`;
+      truncatedContent = textContent.substring(0, 100) + `...`;
     } else {
-      displayedContent = `<div>${proposal.content}</div>`;
+      truncatedContent = `<div>${proposal.content}</div>`;
     }
   } else {
-    displayedContent = proposal.content;
+    truncatedContent = proposal.content;
   }
 
   return (
-    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 shadow-proposal-card cursor-pointer transition-colors duration-500 ease-in-out">
       <ProposalContentInfo
         authorAddress={proposal.authorEthereumAddress}
         rank={rank}
@@ -115,15 +75,9 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
         href={`/contest/${chainName}/${contestAddress}/submission/${id}`}
         shallow
         scroll={false}
-        className="flex items-center overflow-hidden px-14 h-60"
+        className="flex items-center overflow-hidden px-14 h-3/4"
       >
-        <div ref={contentRef} style={contentStyle}>
-          <Interweave
-            className="markdown max-w-full text-[18px] overflow-y-hidden md:overflow-auto"
-            content={isTruncated ? displayedContent + "..." : displayedContent}
-            transform={transform}
-          />
-        </div>
+        <Interweave className="line-clamp-3 markdown text-[18px] " content={truncatedContent} transform={transform} />
       </Link>
       <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
         <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
