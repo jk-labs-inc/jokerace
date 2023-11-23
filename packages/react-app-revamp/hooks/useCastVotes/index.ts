@@ -92,6 +92,15 @@ export function useCastVotes() {
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txResult?.hash}`,
       });
 
+      addUserActionForAnalytics({
+        contest_address: contestAddress,
+        user_address: userAddress,
+        network_name: chainName,
+        proposal_id: pickedProposal !== null ? pickedProposal : undefined,
+        vote_amount: amount,
+        created_at: Math.floor(Date.now() / 1000),
+      });
+
       setTransactionData({
         hash: receipt.transactionHash,
       });
@@ -126,15 +135,6 @@ export function useCastVotes() {
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");
-
-      addUserActionForAnalytics({
-        contest_address: contestAddress,
-        user_address: userAddress,
-        network_name: chainName,
-        proposal_id: pickedProposal !== null ? pickedProposal : undefined,
-        vote_amount: amount,
-        created_at: Math.floor(Date.now() / 1000),
-      });
     } catch (e) {
       handleError(e, "something went wrong while casting your votes");
       setError(errorMessage);
