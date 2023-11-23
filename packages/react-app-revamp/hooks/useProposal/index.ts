@@ -195,7 +195,7 @@ export function useProposal() {
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
 
-      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
+      if (paginationChunks.length) fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setError(error);

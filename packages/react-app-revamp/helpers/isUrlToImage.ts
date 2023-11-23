@@ -1,7 +1,6 @@
 export function isUrlToImage(str: string) {
-  return /(https[^\?]*\.(jpg|jpeg|gif|avif|webp|png|tiff|bmp)(\?(.*))?)|(https[^\?]*\?(.*)(jpg|jpeg|gif|avif|webp|png|tiff|bmp)(.*))/gim.test(
-    str,
-  );
+  const hasImgTag = /<img\s+[^>]*src="[^"]*"[^>]*>/i.test(str);
+  return hasImgTag;
 }
 
 export default isUrlToImage;
