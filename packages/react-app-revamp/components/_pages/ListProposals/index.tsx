@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
 import { formatNumber } from "@helpers/formatNumber";
@@ -30,7 +29,7 @@ export const ListProposals = () => {
   const {
     listProposalsIds,
     isPageProposalsLoading,
-    isPageProposalsError,
+    initialMappedProposalIds,
     currentPagePaginationProposals,
     indexPaginationProposals,
     submissionsCount,
@@ -89,6 +88,7 @@ export const ListProposals = () => {
           currentPagePaginationProposals + 1,
           indexPaginationProposals[currentPagePaginationProposals + 1],
           totalPagesPaginationProposals,
+          initialMappedProposalIds,
         )
       }
       hasMore={listProposalsData.length < submissionsCount}

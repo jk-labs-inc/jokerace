@@ -11,7 +11,7 @@ import { Result } from "ethers/lib/utils";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { useRouter } from "next/router";
 import { useNetwork } from "wagmi";
-import { ProposalCore, SortOptions, useProposalStore } from "./store";
+import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
 import {
   formatProposalData,
   getProposalIdsRaw,
@@ -38,8 +38,8 @@ export function useProposal() {
     setTotalPagesPaginationProposals,
     setIndexPaginationProposalPerId,
     setInitialMappedProposalIds,
-    setSortBy,
     initialMappedProposalIds,
+    setSortBy,
   } = useProposalStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -76,6 +76,7 @@ export function useProposal() {
     pageIndex: number,
     slice: Array<any>,
     totalPagesPaginationProposals: number,
+    pageMappedProposals: MappedProposalIds[],
     sorting?: boolean,
   ) {
     setCurrentPagePaginationProposals(pageIndex);
@@ -104,7 +105,7 @@ export function useProposal() {
 
       const results = await readContracts({ contracts });
 
-      structureAndRankProposals(results, slice, sorting);
+      structureAndRankProposals(results, slice, pageMappedProposals, sorting);
 
       setIsPageProposalsLoading(false);
       setIsPageProposalsError("");
@@ -135,6 +136,7 @@ export function useProposal() {
       const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
 
       let proposalsIds: Result;
+      let mappedProposals: MappedProposalIds[] = [];
       const currentDate = new Date();
 
       if (!useLegacyGetAllProposalsIdFn) {
@@ -148,13 +150,13 @@ export function useProposal() {
           return netVotes;
         };
 
-        const mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
+        mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
           const votes = extractVotes(index);
           return {
             votes: votes,
             id: data,
           };
-        });
+        }) as MappedProposalIds[];
 
         setInitialMappedProposalIds(mappedProposals);
 
@@ -195,7 +197,7 @@ export function useProposal() {
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
 
-      if (paginationChunks.length) fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
+      if (paginationChunks.length) fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, mappedProposals);
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setError(error);
@@ -230,7 +232,7 @@ export function useProposal() {
       //@ts-ignore
       const results = await readContracts({ contracts });
 
-      structureAndRankProposals(results, [proposalId]);
+      structureAndRankProposals(results, [proposalId], initialMappedProposalIds);
     } catch (e) {
       handleError(e, "Something went wrong while getting the proposal.");
       setIsPageProposalsError(error);
@@ -242,7 +244,12 @@ export function useProposal() {
    * @param proposalIds (array of proposals ids)
    * @param sorting (optional boolean to skip concatenation if true)
    */
-  function structureAndRankProposals(proposalsResults: Array<any>, proposalIds: Array<any>, sorting?: boolean) {
+  function structureAndRankProposals(
+    proposalsResults: Array<any>,
+    proposalIds: Array<any>,
+    pageMappedProposals: MappedProposalIds[],
+    sorting?: boolean,
+  ) {
     // Transform proposals data and calculate net votes
     const transformedProposals = proposalIds.map((id, index) =>
       transformProposalData(id, proposalsResults[index * 2 + 1], proposalsResults[index * 2].result),
@@ -257,7 +264,7 @@ export function useProposal() {
       combinedProposals = transformedProposals;
     }
 
-    const rankedProposals = formatProposalData(combinedProposals, initialMappedProposalIds);
+    const rankedProposals = formatProposalData(combinedProposals, pageMappedProposals);
 
     setProposalData(rankedProposals);
   }
@@ -298,7 +305,7 @@ export function useProposal() {
       setIndexPaginationProposalPerId(paginationChunks);
       setProposalData([]);
 
-      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, true);
+      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, initialMappedProposalIds, true);
     }
   }
 
