@@ -60,7 +60,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
   }
 
   return (
-    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 shadow-proposal-card cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <ProposalContentInfo
         authorAddress={proposal.authorEthereumAddress}
         rank={rank}
@@ -73,7 +73,11 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
         scroll={false}
         className="flex items-center overflow-hidden px-14 h-3/4"
       >
-        <Interweave className="line-clamp-3 markdown text-[18px]" content={truncatedContent} transform={transform} />
+        <Interweave
+          className="line-clamp-3 markdown overflow-y-hidden text-[18px]"
+          content={truncatedContent}
+          transform={transform}
+        />
       </Link>
       <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
         <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
