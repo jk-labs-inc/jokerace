@@ -35,7 +35,7 @@ function handleContractFunctionExecutionError(error: any): { message: string; co
     return { message: errorMessages[ErrorCodes.DUPLICATE_PROPOSAL]!, codeFound: true };
   }
 
-  return { message: "The contract execution failed for an unknown reason.", codeFound: false };
+  return { message: error.message, codeFound: false };
 }
 
 export function didUserReject(error: any): boolean {
