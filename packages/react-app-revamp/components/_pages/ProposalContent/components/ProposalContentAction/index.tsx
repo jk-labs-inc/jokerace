@@ -77,8 +77,8 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
             ) : (
               <ButtonV3
                 type={ButtonType.TX_ACTION}
+                size={ButtonSize.DEFAULT_LONG}
                 colorClass="bg-gradient-next rounded-[40px]"
-                size={ButtonSize.LARGE}
                 onClick={() => {
                   setPickProposal(proposalId);
                   onVotingModalOpen(true);
