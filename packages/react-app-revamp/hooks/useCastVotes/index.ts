@@ -60,8 +60,6 @@ export function useCastVotes() {
       let txRequest;
 
       if (!isVerified) {
-        console.log("hey! you are not verified");
-
         txRequest = await prepareWriteContract({
           address: contestAddress as `0x${string}`,
           //@ts-ignore
@@ -76,7 +74,6 @@ export function useCastVotes() {
           ],
         });
       } else {
-        console.log("hey! you are verified");
         txRequest = await prepareWriteContract({
           address: contestAddress as `0x${string}`,
           //@ts-ignore
