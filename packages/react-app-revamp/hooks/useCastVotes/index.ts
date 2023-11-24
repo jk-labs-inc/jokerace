@@ -92,14 +92,18 @@ export function useCastVotes() {
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txResult?.hash}`,
       });
 
-      await addUserActionForAnalytics({
-        contest_address: contestAddress,
-        user_address: userAddress,
-        network_name: chainName,
-        proposal_id: pickedProposal !== null ? pickedProposal : undefined,
-        vote_amount: amount,
-        created_at: Math.floor(Date.now() / 1000),
-      });
+      try {
+        await addUserActionForAnalytics({
+          contest_address: contestAddress,
+          user_address: userAddress,
+          network_name: chainName,
+          proposal_id: pickedProposal !== null ? pickedProposal : undefined,
+          vote_amount: amount,
+          created_at: Math.floor(Date.now() / 1000),
+        });
+      } catch (error) {
+        console.error("Error in addUserActionForAnalytics:", error);
+      }
 
       setTransactionData({
         hash: receipt.transactionHash,
