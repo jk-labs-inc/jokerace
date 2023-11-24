@@ -57,7 +57,7 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
           ) : canVote ? (
             isLoading ? (
               <Skeleton
-                height={isMobile ? 32 : 40}
+                height={32}
                 width={isMobile ? 100 : 160}
                 borderRadius={40}
                 baseColor="#706f78"
@@ -78,7 +78,7 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
               <ButtonV3
                 type={ButtonType.TX_ACTION}
                 colorClass="bg-gradient-next rounded-[40px]"
-                size={ButtonSize.LARGE}
+                size={ButtonSize.DEFAULT_LONG}
                 onClick={() => {
                   setPickProposal(proposalId);
                   onVotingModalOpen(true);
