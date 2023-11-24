@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import ContestCountdown from "./components/Countdown";
 import VotingContestQualifier from "./components/VotingQualifier";
-import useContestEvents from "@hooks/useContestEvents";
 
 const ContestStickyCards = () => {
   const contestStatus = useContestStatusStore(state => state.contestStatus);
