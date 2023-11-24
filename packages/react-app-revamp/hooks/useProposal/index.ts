@@ -154,7 +154,7 @@ export function useProposal() {
           const votes = extractVotes(index);
           return {
             votes: votes,
-            id: data,
+            id: data.toString(),
           };
         }) as MappedProposalIds[];
 
@@ -299,6 +299,7 @@ export function useProposal() {
 
     if (listProposalsData.length === sortedIds.length) {
       const sortedProposals = sortUnique(listProposalsData, v => sortedIds.indexOf(v.id));
+
       setProposalData(sortedProposals);
     } else {
       const paginationChunks = arrayToChunks(sortedIds, PROPOSALS_PER_PAGE);

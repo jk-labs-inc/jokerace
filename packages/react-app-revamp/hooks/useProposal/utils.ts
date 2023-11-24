@@ -145,7 +145,7 @@ export function transformProposalData(id: any, voteData: any, proposalData: any)
   const isContentImage = isUrlToImage(proposalData.description);
 
   return {
-    id: id,
+    id: id.toString(),
     ...proposalData,
     isContentImage: isContentImage,
     netVotes: netVotes,
