@@ -55,11 +55,11 @@ export function useCastVotes() {
     const { abi } = await getContestContractVersion(contestAddress, chainId);
 
     try {
-      const proofs = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
+      const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
 
       let txRequest;
 
-      if (proofs) {
+      if (!isVerified) {
         txRequest = await prepareWriteContract({
           address: contestAddress as `0x${string}`,
           //@ts-ignore

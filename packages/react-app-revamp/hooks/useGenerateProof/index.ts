@@ -9,7 +9,12 @@ import { useAccount } from "wagmi";
 
 type ProofType = "submission" | "vote";
 
-type ProofResult = string[];
+type ProofResult = {
+  isVerified: boolean;
+  proofs: any[];
+};
+
+type GenerateProofResult = any[];
 
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
@@ -31,7 +36,7 @@ export function useGenerateProof() {
     };
   }
 
-  async function generateProofs(address: string, numVotes: string, merkleRoot: string): Promise<ProofResult> {
+  async function generateProofs(address: string, numVotes: string, merkleRoot: string): Promise<GenerateProofResult> {
     try {
       const recipients = await fetchFileFromBucket(merkleRoot);
 
@@ -68,8 +73,15 @@ export function useGenerateProof() {
   async function getProofs(address: string, proofType: ProofType, numVotes: string): Promise<ProofResult> {
     const isVerified = await checkIfUserIsVerified(address, proofType);
 
-    if (isVerified) return [];
+    const proofs = isVerified ? [] : await getProofsBasedOnType(proofType, address, numVotes);
 
+    return {
+      isVerified,
+      proofs,
+    };
+  }
+
+  async function getProofsBasedOnType(proofType: ProofType, address: string, numVotes: string): Promise<any[]> {
     const contractConfig = await getContractConfig();
 
     switch (proofType) {
@@ -83,8 +95,7 @@ export function useGenerateProof() {
         if (submissionMerkleRoot === EMPTY_ROOT) {
           return [];
         } else {
-          const submissionProofs = await generateProofs(address, numVotes, submissionMerkleRoot);
-          return submissionProofs;
+          return await generateProofs(address, numVotes, submissionMerkleRoot);
         }
       case "vote":
         //@ts-ignore
@@ -92,9 +103,7 @@ export function useGenerateProof() {
           ...contractConfig,
           functionName: "votingMerkleRoot",
         })) as string;
-        const votingProofs = await generateProofs(address, numVotes, votingMerkleRoot);
-
-        return votingProofs;
+        return await generateProofs(address, numVotes, votingMerkleRoot);
     }
   }
 

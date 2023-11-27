@@ -56,7 +56,7 @@ export function useSubmitProposal() {
       const { abi } = await getContestContractVersion(address, chainId);
 
       try {
-        const proofs = await getProofs(userAddress ?? "", "submission", "10");
+        const { proofs, isVerified } = await getProofs(userAddress ?? "", "submission", "10");
         const contractConfig = {
           address: address as `0x${string}`,
           abi: abi as any,
@@ -76,7 +76,7 @@ export function useSubmitProposal() {
         let hash = "" as `0x${string}`;
         let txConfig = null;
 
-        if (proofs) {
+        if (!isVerified) {
           txConfig = {
             ...contractConfig,
             functionName: "propose",
