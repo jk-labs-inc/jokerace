@@ -269,8 +269,8 @@ export function useProposal() {
     setProposalData(rankedProposals);
   }
 
-  function updateProposal(updatedProposal: ProposalCore) {
-    const updatedProposals = listProposalsData.map(proposal =>
+  function updateProposal(updatedProposal: ProposalCore, existingProposalsData: ProposalCore[]) {
+    const updatedProposals = existingProposalsData.map(proposal =>
       proposal.id === updatedProposal.id ? updatedProposal : proposal,
     );
 
