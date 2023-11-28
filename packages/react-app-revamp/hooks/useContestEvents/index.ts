@@ -25,6 +25,11 @@ export function useContestEvents() {
   const { setProposalData, listProposalsData } = useProposalStore(state => state);
   const [displayReloadBanner, setDisplayReloadBanner] = useState(false);
   const contestStatusRef = useRef(contestStatus);
+  const listProposalsDataRef = useRef(listProposalsData);
+
+  useEffect(() => {
+    listProposalsDataRef.current = listProposalsData;
+  }, [listProposalsData]);
 
   /**
    * Callback function triggered on "VoteCast" event
@@ -32,7 +37,7 @@ export function useContestEvents() {
    */
   async function onVoteCast(args: Array<any>) {
     try {
-      const proposalId = args[0].args.proposalId;
+      const proposalId = args[0].args.proposalId.toString();
       const votesRaw = (await readContract({
         address: contestAddress as `0x${string}`,
         abi: DeployedContestContract.abi,
@@ -46,11 +51,16 @@ export function useContestEvents() {
       const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
       const votes = Number(utils.formatEther(votesBigNumber));
 
-      if (listProposalsData[proposalId]) {
-        updateProposal({
-          ...listProposalsData[proposalId],
-          netVotes: votes,
-        });
+      const proposal = listProposalsDataRef.current.find(p => p.id === proposalId);
+
+      if (proposal) {
+        updateProposal(
+          {
+            ...proposal,
+            netVotes: votes,
+          },
+          listProposalsDataRef.current,
+        );
       } else {
         const proposal = (await readContract({
           address: contestAddress as `0x${string}`,
@@ -59,20 +69,9 @@ export function useContestEvents() {
           args: [proposalId],
         })) as any;
 
-        let author;
-        try {
-          author = await fetchEnsName({
-            address: proposal[0] as `0x${string}`,
-            chainId: 1,
-          });
-        } catch (error: any) {
-          author = proposal[0];
-        }
-
         const proposalData: any = {
           id: proposalId,
           authorEthereumAddress: proposal.author,
-          author: author ?? proposal.author,
           content: proposal.description,
           isContentImage: isUrlToImage(proposal.description) ? true : false,
           exists: proposal.exists,
@@ -120,6 +119,7 @@ export function useContestEvents() {
   function onVisibilityChangeHandler() {
     if (document.visibilityState === "hidden") {
       provider.removeAllListeners();
+
       if (contestStatusRef.current === ContestStatus.VotingOpen && canUpdateVotesInRealTime) {
         setDisplayReloadBanner(true);
       }

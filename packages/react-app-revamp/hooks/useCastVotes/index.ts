@@ -23,7 +23,7 @@ export function useCastVotes() {
   const { fetchTotalVotesCast } = useContest();
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { updateProposal } = useProposal();
-  const { listProposalsData, sortBy } = useProposalStore(state => state);
+  const { listProposalsData } = useProposalStore(state => state);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -55,11 +55,11 @@ export function useCastVotes() {
     const { abi } = await getContestContractVersion(contestAddress, chainId);
 
     try {
-      const proofs = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
+      const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
 
       let txRequest;
 
-      if (proofs) {
+      if (!isVerified) {
         txRequest = await prepareWriteContract({
           address: contestAddress as `0x${string}`,
           //@ts-ignore
@@ -128,10 +128,13 @@ export function useCastVotes() {
         const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
         if (existingProposal) {
-          updateProposal({
-            ...existingProposal,
-            netVotes: votes,
-          });
+          updateProposal(
+            {
+              ...existingProposal,
+              netVotes: votes,
+            },
+            listProposalsData,
+          );
         }
       }
 

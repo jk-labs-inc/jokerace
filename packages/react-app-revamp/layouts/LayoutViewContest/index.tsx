@@ -43,8 +43,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
-
-const MAX_MS_TIMEOUT: number = 100000000;
+import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 
 const LayoutViewContest = (props: any) => {
   const { asPath, pathname, reload } = useRouter();
