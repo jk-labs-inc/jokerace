@@ -69,20 +69,9 @@ export function useContestEvents() {
           args: [proposalId],
         })) as any;
 
-        let author;
-        try {
-          author = await fetchEnsName({
-            address: proposal[0] as `0x${string}`,
-            chainId: 1,
-          });
-        } catch (error: any) {
-          author = proposal[0];
-        }
-
         const proposalData: any = {
           id: proposalId,
           authorEthereumAddress: proposal.author,
-          author: author ?? proposal.author,
           content: proposal.description,
           isContentImage: isUrlToImage(proposal.description) ? true : false,
           exists: proposal.exists,
