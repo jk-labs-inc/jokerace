@@ -5,6 +5,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
+import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
@@ -38,10 +39,6 @@ interface ContractConfig {
   abi: any;
   chainId: number;
 }
-
-// Maximum delay for setTimeout in milliseconds
-// https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value
-const MAX_DELAY = 2147483647;
 
 export function useContest() {
   const router = useRouter();
@@ -179,7 +176,7 @@ export function useContest() {
           differenceInMilliseconds(closingVoteDate, new Date()) - minutesToMilliseconds(120);
 
         // Cap the delay at the maximum allowable value to prevent overflow
-        delayBeforeVotesCanBeUpdated = Math.min(delayBeforeVotesCanBeUpdated, MAX_DELAY);
+        delayBeforeVotesCanBeUpdated = Math.min(delayBeforeVotesCanBeUpdated, MAX_MS_TIMEOUT);
 
         setTimeout(() => {
           setCanUpdateVotesInRealTime(true);
