@@ -27,6 +27,7 @@ interface UserState {
   setCurrentUserVotesOnProposal: (amount: number) => void;
   setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
   decreaseCurrentUserAvailableVotesAmount: (amount: number) => void;
+  increaseCurrentUserProposalCount: () => void;
   increaseCurrentUserAvailableVotesAmount: (amount: number) => void;
   increaseCurrentUserTotalVotesCast: (amount: number) => void;
   decreaseCurrentUserTotalVotesCast: (amount: number) => void;
