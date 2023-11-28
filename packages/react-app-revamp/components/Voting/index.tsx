@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
@@ -7,11 +8,13 @@ import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
+import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import { useNetwork } from "wagmi";
+import Skeleton from "react-loading-skeleton";
+import { useAccount, useNetwork } from "wagmi";
 
 interface VotingWidgetProps {
   amountOfVotes: number;
@@ -20,11 +23,18 @@ interface VotingWidgetProps {
 }
 
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
-  const currentUserTotalVotesCast = useUserStore(state => state.currentUserTotalVotesCast);
+  const { address } = useAccount();
+  const { getUserVotesOnProposal } = useUser();
+  const {
+    currentUserTotalVotesAmount,
+    currentUserVotesOnProposal,
+    isCurrentUserVotesOnProposalLoading,
+    isCurrentUserVotesOnProposalError,
+  } = useUserStore(state => state);
   const { asPath } = useRouter();
   const { chainName } = extractPathSegments(asPath);
   const { chain } = useNetwork();
-  const isLoading = useCastVotesStore(state => state.isLoading);
+  const { isLoading, pickedProposal } = useCastVotesStore(state => state);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
@@ -32,6 +42,16 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   const voteDisabled = isLoading || amount === 0 || isInvalid;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const isCorrectNetwork = chainId === chain?.id;
+
+  useEffect(() => {
+    if (!address || !pickedProposal) return;
+
+    const fetchUserVotes = async () => {
+      await getUserVotesOnProposal(address, pickedProposal);
+    };
+
+    fetchUserVotes();
+  }, [pickedProposal, address]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -149,13 +169,25 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
           )}
         </div>
         <div className="flex flex-col mt-4">
-          <div className="flex justify-between text-[16px]">
-            <p className="text-neutral-11">used votes</p>
-            <p className="text-positive-11 font-bold">{formatNumber(currentUserTotalVotesCast)}</p>
+          <div
+            className={`flex ${
+              isCurrentUserVotesOnProposalError ? "flex-col" : "flex-row"
+            } justify-between text-[16px]`}
+          >
+            <p className="text-neutral-11">my votes on submission</p>
+            {isCurrentUserVotesOnProposalLoading ? (
+              <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />
+            ) : isCurrentUserVotesOnProposalError ? (
+              <p className="text-negative-11 font-bold">ruh roh! we couldn't load your votes on this proposal!</p>
+            ) : (
+              <p className="text-positive-11 font-bold">{formatNumber(currentUserVotesOnProposal)}</p>
+            )}
           </div>
           <div className="flex justify-between text-[16px]">
             <p className="text-neutral-11">my remaining votes</p>
-            <p className="text-positive-11 font-bold">{formatNumber(amountOfVotes)}</p>
+            <p className="text-positive-11 font-bold">
+              {formatNumber(amountOfVotes)}/{formatNumber(currentUserTotalVotesAmount)}
+            </p>
           </div>
         </div>
       </div>

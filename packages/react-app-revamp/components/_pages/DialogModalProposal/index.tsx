@@ -14,6 +14,7 @@ import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useContestStore } from "@hooks/useContest/store";
+import { formatNumber } from "@helpers/formatNumber";
 
 interface DialogModalProposalProps {
   isOpen: boolean;
@@ -93,7 +94,17 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             </ButtonV3>
           )}
         </div>
-        <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+        <div className="flex gap-2 items-center">
+          <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+          {proposal.votes > 0 ? (
+            <>
+              <span className="text-neutral-9">&#8226;</span>
+              <p className="text-[16px] text-neutral-11 font-bold">
+                {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
+              </p>
+            </>
+          ) : null}
+        </div>
         <ContestProposal proposal={proposal} contestStatus={contestStatus} proposalId={proposalId} displaySocials />
         <div className="flex flex-col gap-8">
           {contestStatus === ContestStatus.VotingOpen && (

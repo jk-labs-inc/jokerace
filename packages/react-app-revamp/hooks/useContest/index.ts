@@ -84,7 +84,7 @@ export function useContest() {
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
   );
-  const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
+  const { setContestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
   const { contestStatus } = useContestStatusStore(state => state);
@@ -212,7 +212,6 @@ export function useContest() {
       handleError(e, "Something went wrong while fetching the contest data.");
       setError(errorMessage);
       setIsLoading(false);
-      setIsUserStoreLoading(false);
       setIsListProposalsLoading(false);
       setIsRewardsLoading(false);
     }
@@ -267,7 +266,6 @@ export function useContest() {
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
-      setIsUserStoreLoading(false);
       setIsLoading(false);
     }
   }
@@ -277,12 +275,10 @@ export function useContest() {
    */
   async function fetchContestInfo() {
     setIsLoading(true);
-    setIsUserStoreLoading(true);
     const result = await getContractConfig();
 
     if (!result) {
       setIsLoading(false);
-      setIsUserStoreLoading(false);
       return;
     }
 
@@ -324,10 +320,7 @@ export function useContest() {
    */
   async function processContestData(contractConfig: ContractConfig) {
     // Do not fetch merkle tree data if the contest is not using it
-    if (contestStatus === ContestStatus.VotingClosed) {
-      setIsUserStoreLoading(false);
-      return;
-    }
+    if (contestStatus === ContestStatus.VotingClosed) return;
 
     const results = await readContracts({
       contracts: [
@@ -349,10 +342,7 @@ export function useContest() {
       ],
     });
 
-    if (!results) {
-      setIsUserStoreLoading(false);
-      return;
-    }
+    if (!results) return;
 
     const submissionMerkleRoot = results[0].result as unknown as string;
     const votingMerkleRoot = results[1].result as unknown as string;
@@ -365,10 +355,8 @@ export function useContest() {
       setIsReadOnly(true);
       if (submissionMerkleRoot === EMPTY_ROOT) {
         await checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser);
-        setIsUserStoreLoading(false);
         return;
       } else {
-        setIsUserStoreLoading(false);
         return;
       }
     }
@@ -377,8 +365,6 @@ export function useContest() {
       checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
       checkIfCurrentUserQualifyToVote(),
     ]);
-
-    setIsUserStoreLoading(false);
 
     try {
       const [votingMerkleTreeData, submissionMerkleTreeData] = await Promise.all([
@@ -393,7 +379,6 @@ export function useContest() {
       setSubmitters(submissionMerkleTreeData || []);
     } catch (e) {
       toastError("error while fetching data from db", errorMessage);
-      setIsUserStoreLoading(false);
     }
   }
 

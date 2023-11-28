@@ -71,7 +71,7 @@ const LayoutViewContest = (props: any) => {
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
-  const { contestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
+  const { contestMaxNumberSubmissionsPerUser, setIsCurrentUserVoteQualificationLoading } = useUserStore(state => state);
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
@@ -126,8 +126,6 @@ const LayoutViewContest = (props: any) => {
     const fetchUserData = async () => {
       try {
         if (accountChanged || didConnect) {
-          setIsUserStoreLoading(true);
-
           const { abi } = await getContestContractVersion(address, chainId);
 
           if (!abi) return;
@@ -148,11 +146,8 @@ const LayoutViewContest = (props: any) => {
             checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
             checkIfCurrentUserQualifyToVote(),
           ]);
-
-          setIsUserStoreLoading(false);
         }
       } catch (error) {
-        setIsUserStoreLoading(false);
         toastError("we couldn't fetch user data, please try again!");
       }
     };
