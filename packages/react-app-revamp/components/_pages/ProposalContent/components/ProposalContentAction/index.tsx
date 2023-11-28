@@ -29,7 +29,8 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
   const formattedVotingOpen = moment(votesOpen);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const setPickProposal = useCastVotesStore(state => state.setPickedProposal);
-  const { currentUserAvailableVotesAmount, isLoading, currentUserTotalVotesAmount } = useUserStore(state => state);
+  const { currentUserAvailableVotesAmount, isCurrentUserVoteQualificationLoading, currentUserTotalVotesAmount } =
+    useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
   const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
 
@@ -48,52 +49,61 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
       }
 
     case ContestStatus.VotingOpen:
-      return (
-        <>
-          {!isConnected ? (
-            <p className="text-[16px] text-positive-11 font-bold" onClick={openConnectModal}>
-              connect wallet to vote
-            </p>
-          ) : canVote ? (
-            isLoading ? (
-              <Skeleton
-                height={32}
-                width={isMobile ? 100 : 160}
-                borderRadius={40}
-                baseColor="#706f78"
-                highlightColor="#FFE25B"
-                duration={1}
-              />
-            ) : isMobile ? (
-              <Link href={`/contest/${chainName}/${contestAddress}/submission/${proposalId}`} className="w-full">
-                <ButtonV3
-                  type={ButtonType.TX_ACTION}
-                  colorClass="bg-gradient-next rounded-[40px]"
-                  size={ButtonSize.FULL}
-                >
-                  add votes
-                </ButtonV3>
-              </Link>
-            ) : (
-              <ButtonV3
-                type={ButtonType.TX_ACTION}
-                colorClass="bg-gradient-next rounded-[40px]"
-                size={ButtonSize.DEFAULT_LONG}
-                onClick={() => {
-                  setPickProposal(proposalId);
-                  onVotingModalOpen(true);
-                }}
-              >
+      if (!isConnected) {
+        return (
+          <p className="text-[16px] text-positive-11 font-bold" onClick={openConnectModal}>
+            connect wallet to vote
+          </p>
+        );
+      }
+
+      if (isCurrentUserVoteQualificationLoading) {
+        return (
+          <Skeleton
+            height={32}
+            width={isMobile ? 100 : 160}
+            borderRadius={40}
+            baseColor="#706f78"
+            highlightColor="#FFE25B"
+            duration={1}
+          />
+        );
+      }
+
+      if (canVote) {
+        if (isMobile) {
+          return (
+            <Link href={`/contest/${chainName}/${contestAddress}/submission/${proposalId}`} className="w-full">
+              <ButtonV3 type={ButtonType.TX_ACTION} colorClass="bg-gradient-next rounded-[40px]" size={ButtonSize.FULL}>
                 add votes
               </ButtonV3>
-            )
-          ) : outOfVotes ? (
-            <p className="text-[16px] text-neutral-10 font-bold">you've deployed all your votes</p>
-          ) : (
-            <p className="text-[16px] text-neutral-10 font-bold">only allowlisted wallets can play</p>
-          )}
-        </>
-      );
+            </Link>
+          );
+        } else {
+          return (
+            <ButtonV3
+              type={ButtonType.TX_ACTION}
+              colorClass="bg-gradient-next rounded-[40px]"
+              size={ButtonSize.DEFAULT_LONG}
+              onClick={() => {
+                setPickProposal(proposalId);
+                onVotingModalOpen(true);
+              }}
+            >
+              add votes
+            </ButtonV3>
+          );
+        }
+      }
+
+      if (outOfVotes) {
+        return <p className="text-[16px] text-neutral-10 font-bold">you've deployed all your votes</p>;
+      }
+
+      if (!canVote) {
+        return <p className="text-[16px] text-neutral-10 font-bold">only allowlisted wallets can play</p>;
+      }
+
     case ContestStatus.VotingClosed:
       return <p className="text-neutral-10">voting closed</p>;
   }
