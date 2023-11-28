@@ -7,8 +7,8 @@ export const qChainTestnet: Chain = {
   iconUrl: "/qchain.svg",
   nativeCurrency: {
     decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
+    name: "Qtoken",
+    symbol: "QTOKEN",
   },
   rpcUrls: {
     public: {
