@@ -39,6 +39,10 @@ interface ContractConfig {
   chainId: number;
 }
 
+// Maximum delay for setTimeout in milliseconds
+// https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#maximum_delay_value
+const MAX_DELAY = 2147483647;
+
 export function useContest() {
   const router = useRouter();
   const { asPath } = router;
@@ -167,14 +171,16 @@ export function useContest() {
     // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
     if (isBefore(new Date(), closingVoteDate) && alchemyRpc && isAlchemyConfigured) {
       if (differenceInMinutes(closingVoteDate, new Date()) <= 120) {
-        // If the difference between the closing date (end of votes) and now is <= to 2h
-        // reflect this in the state
         setCanUpdateVotesInRealTime(true);
       } else {
         setCanUpdateVotesInRealTime(false);
-        // Otherwise, update the state 2h before the closing date (end of votes)
-        const delayBeforeVotesCanBeUpdated =
+
+        let delayBeforeVotesCanBeUpdated =
           differenceInMilliseconds(closingVoteDate, new Date()) - minutesToMilliseconds(120);
+
+        // Cap the delay at the maximum allowable value to prevent overflow
+        delayBeforeVotesCanBeUpdated = Math.min(delayBeforeVotesCanBeUpdated, MAX_DELAY);
+
         setTimeout(() => {
           setCanUpdateVotesInRealTime(true);
         }, delayBeforeVotesCanBeUpdated);
