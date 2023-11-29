@@ -69,13 +69,6 @@ abstract contract GovernorEngagement is Governor {
     }
 
     /**
-     * @dev Returns if a comment has been deleted or not.
-     */
-    function isCommentDeleted(uint256 commentId) public view returns (bool) {
-        return commentIsDeleted[commentId];
-    }
-
-    /**
      * @dev Comment on a proposal.
      *
      * Emits a {CommentCreated} event.
