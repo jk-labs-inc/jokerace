@@ -36,14 +36,14 @@ abstract contract GovernorEngagement is Governor {
     /**
      * @dev Hashing function used to build the comment id from the comment details.
      */
-    function hashComment(CommentCore memory commentObj) public pure virtual returns (uint256) {
+    function hashComment(CommentCore memory commentObj) public pure returns (uint256) {
         return uint256(keccak256(abi.encode(commentObj)));
     }
 
     /**
      * @dev Returns if a comment has been deleted or not.
      */
-    function isCommentDeleted(uint256 commentId) public view virtual returns (bool) {
+    function isCommentDeleted(uint256 commentId) public view returns (bool) {
         return commentIsDeleted[commentId];
     }
 
@@ -52,7 +52,7 @@ abstract contract GovernorEngagement is Governor {
      *
      * Emits a {CommentCreated} event.
      */
-    function comment(uint256 proposalId, string memory commentContent) public virtual returns (uint256) {
+    function comment(uint256 proposalId, string memory commentContent) public returns (uint256) {
         CommentCore memory commentObject = CommentCore({
             author: msg.sender,
             timestamp: block.timestamp,
@@ -75,7 +75,7 @@ abstract contract GovernorEngagement is Governor {
      *
      * Emits a {CommentsDeleted} event.
      */
-    function deleteComments(uint256[] memory commentIdsParam) public virtual {
+    function deleteComments(uint256[] memory commentIdsParam) public {
         uint256 commentIdsParamMemVar = commentIdsParam.length;
 
         for (uint256 index = 0; index < commentIdsParamMemVar; index++) {
