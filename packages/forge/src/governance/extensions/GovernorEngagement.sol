@@ -87,6 +87,7 @@ abstract contract GovernorEngagement is Governor {
 
             if (!commentIsDeleted[currentCommentId]) {
                 commentIsDeleted[currentCommentId] = true;
+                deletedCommentIds.push(currentCommentId);
             }
         }
 
