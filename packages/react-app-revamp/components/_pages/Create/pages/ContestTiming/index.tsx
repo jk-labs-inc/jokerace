@@ -10,8 +10,7 @@ import CreateSubmissionsOpenDate from "./components/SubmissionDate";
 import CreateVotesOpenDate from "./components/VotesDate";
 
 const CreateContestTiming = () => {
-  const { step, votingOpen, votingClose, submissionOpen, setSubmissionOpen, setVotingOpen, setVotingClose } =
-    useDeployContestStore(state => state);
+  const { step, votingOpen, votingClose, submissionOpen, setSubmissionOpen } = useDeployContestStore(state => state);
   const datesValidation = validationFunctions.get(step);
 
   const onNextStep = useNextStep([
@@ -38,14 +37,6 @@ const CreateContestTiming = () => {
     const submissionOpenLessThanNow = submissionOpen.getTime() < now.getTime();
     if (submissionOpenLessThanNow) {
       setSubmissionOpen(now);
-
-      const votingOpenDate = new Date(now);
-      votingOpenDate.setDate(now.getDate() + 7);
-      setVotingOpen(votingOpenDate);
-
-      const votingCloseDate = new Date(now);
-      votingCloseDate.setDate(now.getDate() + 14);
-      setVotingClose(votingCloseDate);
     }
   }, []);
 
