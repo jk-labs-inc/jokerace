@@ -62,7 +62,7 @@ abstract contract GovernorEngagement is Governor {
     }
 
     /**
-     * @dev Return a comment object.
+     * @dev Return the array of commentIds on a given proposalId.
      */
     function getProposalComments(uint256 proposalId) public view returns (uint256[] memory) {
         return proposalComments[proposalId];
