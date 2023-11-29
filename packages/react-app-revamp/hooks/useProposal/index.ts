@@ -12,11 +12,15 @@ import { shuffle, sortBy as sortUnique } from "lodash";
 import { useRouter } from "next/router";
 import { useNetwork } from "wagmi";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
-import { formatProposalData, getProposalIdsRaw, sortProposals, transformProposalData } from "./utils";
+import {
+  formatProposalData,
+  getProposalIdsRaw,
+  sortProposals,
+  transformProposalData,
+  updateAndRankProposals,
+} from "./utils";
 
 export const PROPOSALS_PER_PAGE = 12;
-
-const divisor = BigInt("1000000000000000000"); // Equivalent to 1e18
 
 export function useProposal() {
   const {
@@ -30,11 +34,12 @@ export function useProposal() {
     listProposalsData,
     setListProposalsIds,
     setSubmissionsCount,
+    submissionsCount,
     setTotalPagesPaginationProposals,
     setIndexPaginationProposalPerId,
     setInitialMappedProposalIds,
-    setSortBy,
     initialMappedProposalIds,
+    setSortBy,
   } = useProposalStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -71,6 +76,7 @@ export function useProposal() {
     pageIndex: number,
     slice: Array<any>,
     totalPagesPaginationProposals: number,
+    pageMappedProposals: MappedProposalIds[],
     sorting?: boolean,
   ) {
     setCurrentPagePaginationProposals(pageIndex);
@@ -99,7 +105,7 @@ export function useProposal() {
 
       const results = await readContracts({ contracts });
 
-      structureAndRankProposals(results, slice, sorting);
+      structureAndRankProposals(results, slice, pageMappedProposals, sorting);
 
       setIsPageProposalsLoading(false);
       setIsPageProposalsError("");
@@ -130,6 +136,7 @@ export function useProposal() {
       const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
 
       let proposalsIds: Result;
+      let mappedProposals: MappedProposalIds[] = [];
       const currentDate = new Date();
 
       if (!useLegacyGetAllProposalsIdFn) {
@@ -143,13 +150,13 @@ export function useProposal() {
           return netVotes;
         };
 
-        const mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
+        mappedProposals = proposalsIdsRawData[0].map((data: any, index: number) => {
           const votes = extractVotes(index);
           return {
             votes: votes,
-            id: data,
+            id: data.toString(),
           };
-        });
+        }) as MappedProposalIds[];
 
         setInitialMappedProposalIds(mappedProposals);
 
@@ -189,6 +196,8 @@ export function useProposal() {
       const paginationChunks = arrayToChunks(proposalsIds as string[], PROPOSALS_PER_PAGE);
       setTotalPagesPaginationProposals(paginationChunks.length);
       setIndexPaginationProposalPerId(paginationChunks);
+
+      if (paginationChunks.length) fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, mappedProposals);
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
       setError(error);
@@ -223,7 +232,7 @@ export function useProposal() {
       //@ts-ignore
       const results = await readContracts({ contracts });
 
-      structureAndRankProposals(results, [proposalId]);
+      structureAndRankProposals(results, [proposalId], initialMappedProposalIds);
     } catch (e) {
       handleError(e, "Something went wrong while getting the proposal.");
       setIsPageProposalsError(error);
@@ -235,7 +244,12 @@ export function useProposal() {
    * @param proposalIds (array of proposals ids)
    * @param sorting (optional boolean to skip concatenation if true)
    */
-  function structureAndRankProposals(proposalsResults: Array<any>, proposalIds: Array<any>, sorting?: boolean) {
+  function structureAndRankProposals(
+    proposalsResults: Array<any>,
+    proposalIds: Array<any>,
+    pageMappedProposals: MappedProposalIds[],
+    sorting?: boolean,
+  ) {
     // Transform proposals data and calculate net votes
     const transformedProposals = proposalIds.map((id, index) =>
       transformProposalData(id, proposalsResults[index * 2 + 1], proposalsResults[index * 2].result),
@@ -250,37 +264,30 @@ export function useProposal() {
       combinedProposals = transformedProposals;
     }
 
-    const rankedProposals = formatProposalData(combinedProposals, initialMappedProposalIds);
+    const rankedProposals = formatProposalData(combinedProposals, pageMappedProposals);
 
     setProposalData(rankedProposals);
   }
 
-  /**
-   * Update a single proposal and re-sort and re-rank all proposals
-   * @param updatedProposal - the updated proposal data
-   */
-  function updateProposal(updatedProposal: ProposalCore) {
-    const updatedProposals = listProposalsData
-      .map(proposal => (proposal.id === updatedProposal.id ? updatedProposal : proposal))
-      .sort((a, b) => b.netVotes - a.netVotes);
+  function updateProposal(updatedProposal: ProposalCore, existingProposalsData: ProposalCore[]) {
+    const updatedProposals = existingProposalsData.map(proposal =>
+      proposal.id === updatedProposal.id ? updatedProposal : proposal,
+    );
 
-    const proposals = formatProposalData(updatedProposals, initialMappedProposalIds);
+    const [updatedProposalData, updatedIds] = updateAndRankProposals(updatedProposals, initialMappedProposalIds);
 
-    setProposalData(proposals);
+    setProposalData(updatedProposalData);
+    setInitialMappedProposalIds(updatedIds);
   }
 
-  /**
-   * Remove a list of proposals and re-sort and re-rank all proposals
-   * @param idsToDelete - the list of proposals ids to remove
-   */
   function removeProposal(idsToDelete: string[]) {
-    const remainingProposals = listProposalsData
-      .sort((a, b) => b.netVotes - a.netVotes)
-      .filter(proposal => !idsToDelete.includes(proposal.id));
+    const remainingProposals = listProposalsData.filter(proposal => !idsToDelete.includes(proposal.id));
 
-    const proposals = formatProposalData(remainingProposals, initialMappedProposalIds);
+    const [updatedProposalData, updatedIds] = updateAndRankProposals(remainingProposals, initialMappedProposalIds);
 
-    setProposalData(proposals);
+    setProposalData(updatedProposalData);
+    setInitialMappedProposalIds(updatedIds);
+    setSubmissionsCount(submissionsCount - idsToDelete.length);
   }
 
   /**
@@ -292,13 +299,14 @@ export function useProposal() {
 
     if (listProposalsData.length === sortedIds.length) {
       const sortedProposals = sortUnique(listProposalsData, v => sortedIds.indexOf(v.id));
+
       setProposalData(sortedProposals);
     } else {
       const paginationChunks = arrayToChunks(sortedIds, PROPOSALS_PER_PAGE);
       setIndexPaginationProposalPerId(paginationChunks);
       setProposalData([]);
 
-      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, true);
+      fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, initialMappedProposalIds, true);
     }
   }
 

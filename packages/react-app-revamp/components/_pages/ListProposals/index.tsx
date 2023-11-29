@@ -1,8 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import Button from "@components/UI/Button";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
-import arrayToChunks from "@helpers/arrayToChunks";
 import { formatNumber } from "@helpers/formatNumber";
 import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
@@ -10,23 +7,10 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import useDeleteProposal from "@hooks/useDeleteProposal";
 import useProposal, { PROPOSALS_PER_PAGE } from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
-
-interface RankDictionary {
-  [key: string]: number;
-}
-
-const checkForTiedRanks = (ranks: RankDictionary, currentRank: number) => {
-  let count = 0;
-  Object.values(ranks).forEach(rank => {
-    if (rank === currentRank) {
-      count++;
-    }
-  });
-  return count > 1;
-};
 
 const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlightColor: string }) => (
   <SkeletonTheme baseColor="#000000" highlightColor={highlightColor} duration={1}>
@@ -45,13 +29,14 @@ export const ListProposals = () => {
   const {
     listProposalsIds,
     isPageProposalsLoading,
-    isPageProposalsError,
+    initialMappedProposalIds,
     currentPagePaginationProposals,
     indexPaginationProposals,
+    submissionsCount,
     totalPagesPaginationProposals,
     listProposalsData,
   } = useProposalStore(state => state);
-  const { votesOpen, contestAuthorEthereumAddress } = useContestStore(state => state);
+  const { contestAuthorEthereumAddress } = useContestStore(state => state);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
   const allowDelete =
     (contestStatus === ContestStatus.SubmissionOpen || contestStatus === ContestStatus.VotingOpen) &&
@@ -59,16 +44,8 @@ export const ListProposals = () => {
   const [deletingProposalIds, setDeletingProposalIds] = useState<string[]>([]);
   const [selectedProposalIds, setSelectedProposalIds] = useState<string[]>([]);
   const showDeleteButton = selectedProposalIds.length > 0 && !isDeleteInProcess;
-  const remainingProposalsToLoad = listProposalsIds.length - listProposalsData.length;
+  const remainingProposalsToLoad = submissionsCount - listProposalsData.length;
   const skeletonRemainingLoaderCount = Math.min(remainingProposalsToLoad, PROPOSALS_PER_PAGE);
-
-  useEffect(() => {
-    if (!listProposalsIds.length) return;
-
-    const paginationChunks = arrayToChunks(listProposalsIds, PROPOSALS_PER_PAGE);
-
-    fetchProposalsPage(0, paginationChunks[0], paginationChunks.length);
-  }, [listProposalsIds]);
 
   const onDeleteSelectedProposals = async () => {
     setDeletingProposalIds(selectedProposalIds);
@@ -103,7 +80,20 @@ export const ListProposals = () => {
   }
 
   return (
-    <div>
+    <InfiniteScroll
+      className="infiniteScroll"
+      dataLength={listProposalsData.length}
+      next={() =>
+        fetchProposalsPage(
+          currentPagePaginationProposals + 1,
+          indexPaginationProposals[currentPagePaginationProposals + 1],
+          totalPagesPaginationProposals,
+          initialMappedProposalIds,
+        )
+      }
+      hasMore={listProposalsData.length < submissionsCount}
+      loader={<ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />}
+    >
       <div className="flex flex-col gap-8 mt-6">
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
@@ -126,7 +116,6 @@ export const ListProposals = () => {
                   isContentImage: proposal.isContentImage,
                   votes: proposal.netVotes,
                 }}
-                votingOpen={votesOpen}
                 rank={proposal.rank}
                 isTied={proposal.isTied}
               />
@@ -168,30 +157,7 @@ export const ListProposals = () => {
           </ButtonV3>
         </div>
       )}
-
-      {isPageProposalsLoading && listProposalsData.length && (
-        <ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />
-      )}
-
-      {listProposalsData.length < listProposalsIds.length && !isPageProposalsLoading && (
-        <div className="pt-8 flex animate-appear">
-          <Button
-            intent="neutral-outline"
-            scale="sm"
-            className="mx-auto animate-appear"
-            onClick={() =>
-              fetchProposalsPage(
-                currentPagePaginationProposals + 1,
-                indexPaginationProposals[currentPagePaginationProposals + 1],
-                totalPagesPaginationProposals,
-              )
-            }
-          >
-            {isPageProposalsError ? "Try again" : "Show more proposals"}
-          </Button>
-        </div>
-      )}
-    </div>
+    </InfiniteScroll>
   );
 };
 

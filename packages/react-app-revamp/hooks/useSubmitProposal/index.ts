@@ -56,7 +56,7 @@ export function useSubmitProposal() {
       const { abi } = await getContestContractVersion(address, chainId);
 
       try {
-        const proofs = await getProofs(userAddress ?? "", "submission", "10");
+        const { proofs, isVerified } = await getProofs(userAddress ?? "", "submission", "10");
         const contractConfig = {
           address: address as `0x${string}`,
           abi: abi as any,
@@ -76,7 +76,7 @@ export function useSubmitProposal() {
         let hash = "" as `0x${string}`;
         let txConfig = null;
 
-        if (proofs) {
+        if (!isVerified) {
           txConfig = {
             ...contractConfig,
             functionName: "propose",
@@ -108,6 +108,20 @@ export function useSubmitProposal() {
 
         const proposalId = await getProposalId(proposalCore, contractConfig);
 
+        try {
+          await addUserActionForAnalytics({
+            contest_address: address,
+            user_address: userAddress,
+            network_name: chainName,
+            proposal_id: proposalId,
+            created_at: Math.floor(Date.now() / 1000),
+            amount_sent: entryCharge ? Number(formatEther(BigInt(entryCharge.costToPropose))) : null,
+            percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
+          });
+        } catch (error) {
+          console.error("Error in addUserActionForAnalytics:", error);
+        }
+
         setTransactionData({
           chainId: chain?.id,
           hash: receipt.transactionHash,
@@ -121,16 +135,6 @@ export function useSubmitProposal() {
         setSubmissionsCount(submissionsCount + 1);
         fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
-
-        addUserActionForAnalytics({
-          contest_address: address,
-          user_address: userAddress,
-          network_name: chainName,
-          proposal_id: proposalId,
-          created_at: Math.floor(Date.now() / 1000),
-          amount_sent: entryCharge ? Number(formatEther(BigInt(entryCharge.costToPropose))) : null,
-          percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
-        });
       } catch (e) {
         handleError(e, `Something went wrong while submitting your proposal.`);
         setError(errorMessage);

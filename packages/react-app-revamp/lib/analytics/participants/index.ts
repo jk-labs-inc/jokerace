@@ -14,13 +14,16 @@ interface SaveToAnalyticsContestParticipantsOptions {
 
 const saveToAnalyticsContestParticipantsV3 = async (options: SaveToAnalyticsContestParticipantsOptions) => {
   if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
+    try {
+      const config = await import("@config/supabase");
+      const supabase = config.supabase;
 
-    const { error } = await supabase.from("analytics_contest_participants_v3").insert(options);
-
-    if (error) {
-      throw new Error(error.message);
+      const { error } = await supabase.from("analytics_contest_participants_v3").insert(options);
+      if (error) {
+        console.error("Error in saveToAnalyticsContestParticipantsV3:", error.message);
+      }
+    } catch (e) {
+      console.error("Unexpected error in saveToAnalyticsContestParticipantsV3:", e);
     }
   }
 };
@@ -36,20 +39,24 @@ export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
   deleted: boolean,
 ) => {
   if (isSupabaseConfigured) {
-    const config = await import("@config/supabase");
-    const supabase = config.supabase;
+    try {
+      const config = await import("@config/supabase");
+      const supabase = config.supabase;
 
-    for (let proposal_id of proposal_ids) {
-      const { error: updateError } = await supabase
-        .from("analytics_contest_participants_v3")
-        .update({ deleted: deleted })
-        .eq("contest_address", contestAddress)
-        .eq("network_name", chainName)
-        .eq("proposal_id", proposal_id);
+      for (let proposal_id of proposal_ids) {
+        const { error } = await supabase
+          .from("analytics_contest_participants_v3")
+          .update({ deleted: deleted })
+          .eq("contest_address", contestAddress)
+          .eq("network_name", chainName)
+          .eq("proposal_id", proposal_id);
 
-      if (updateError) {
-        throw new Error(updateError.message);
+        if (error) {
+          console.error("Error updating analytics for proposal:", proposal_id, "; Error:", error.message);
+        }
       }
+    } catch (e) {
+      console.error("Unexpected error in saveUpdatedProposalsStatusToAnalyticsV3:", e);
     }
   }
 };

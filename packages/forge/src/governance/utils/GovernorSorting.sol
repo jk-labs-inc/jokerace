@@ -26,8 +26,8 @@ abstract contract GovernorSorting {
     // WBs and TTDs that may occur in your contest. The thing to consider with regard to making it too high is just
     // that it is more gas for users on average the higher that RANK_LIMIT is set.
 
-    uint256 public immutable sortingEnabled; // Either 0 for false or 1 for true
-    uint256 public immutable rankLimit; // RULE: Cannot be 0
+    uint256 public sortingEnabled; // Either 0 for false or 1 for true
+    uint256 public rankLimit; // RULE: Cannot be 0
 
     // RULE: array length can never end lower than it started a transaction, otherwise erroneous ranking can happen
     uint256[] public sortedRanks; // value is forVotes counts, has the constraint of no duplicate values.
@@ -38,7 +38,7 @@ abstract contract GovernorSorting {
     }
 
     /**
-     * @dev Get the number of proposals that have `forVotes` number of for votes.
+     * @dev See {GovernorCountingSimple-getNumProposalsWithThisManyForVotes}.
      */
     function getNumProposalsWithThisManyForVotes(uint256 forVotes) public view virtual returns (uint256 count);
 

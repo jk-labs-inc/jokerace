@@ -23,7 +23,7 @@ export function useCastVotes() {
   const { fetchTotalVotesCast } = useContest();
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { updateProposal } = useProposal();
-  const { listProposalsData, sortBy } = useProposalStore(state => state);
+  const { listProposalsData } = useProposalStore(state => state);
   const {
     castPositiveAmountOfVotes,
     pickedProposal,
@@ -55,11 +55,11 @@ export function useCastVotes() {
     const { abi } = await getContestContractVersion(contestAddress, chainId);
 
     try {
-      const proofs = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
+      const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
 
       let txRequest;
 
-      if (proofs) {
+      if (!isVerified) {
         txRequest = await prepareWriteContract({
           address: contestAddress as `0x${string}`,
           //@ts-ignore
@@ -92,6 +92,19 @@ export function useCastVotes() {
         transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txResult?.hash}`,
       });
 
+      try {
+        await addUserActionForAnalytics({
+          contest_address: contestAddress,
+          user_address: userAddress,
+          network_name: chainName,
+          proposal_id: pickedProposal !== null ? pickedProposal : undefined,
+          vote_amount: amount,
+          created_at: Math.floor(Date.now() / 1000),
+        });
+      } catch (error) {
+        console.error("Error in addUserActionForAnalytics:", error);
+      }
+
       setTransactionData({
         hash: receipt.transactionHash,
       });
@@ -115,10 +128,13 @@ export function useCastVotes() {
         const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
         if (existingProposal) {
-          updateProposal({
-            ...existingProposal,
-            netVotes: votes,
-          });
+          updateProposal(
+            {
+              ...existingProposal,
+              netVotes: votes,
+            },
+            listProposalsData,
+          );
         }
       }
 
@@ -126,15 +142,6 @@ export function useCastVotes() {
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");
-
-      addUserActionForAnalytics({
-        contest_address: contestAddress,
-        user_address: userAddress,
-        network_name: chainName,
-        proposal_id: pickedProposal !== null ? pickedProposal : undefined,
-        vote_amount: amount,
-        created_at: Math.floor(Date.now() / 1000),
-      });
     } catch (e) {
       handleError(e, "something went wrong while casting your votes");
       setError(errorMessage);
