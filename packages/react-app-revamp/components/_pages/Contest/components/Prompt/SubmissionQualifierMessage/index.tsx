@@ -9,7 +9,6 @@ interface SubmissionQualifierMessageProps {
   currentUserProposalCount: number;
   contestMaxNumberSubmissionsPerUser: number;
   contestStatus: ContestStatus;
-  isDisconnected: boolean;
 }
 
 const SubmissionQualifierMessage: FC<SubmissionQualifierMessageProps> = ({
@@ -19,17 +18,12 @@ const SubmissionQualifierMessage: FC<SubmissionQualifierMessageProps> = ({
   currentUserProposalCount,
   contestMaxNumberSubmissionsPerUser,
   contestStatus,
-  isDisconnected,
 }) => {
   const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
   const isContestOpen = contestStatus === ContestStatus.ContestOpen;
-  const isVotingOpenOrClosed =
-    contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed;
   const hasReachedMaxSubmissions = currentUserProposalCount >= contestMaxNumberSubmissionsPerUser;
   const canSubmit = anyoneCanSubmit || currentUserQualifiedToSubmit;
   const canVote = currentUserAvailableVotesAmount > 0;
-
-  if (isVotingOpenOrClosed || isDisconnected) return null;
 
   if (isContestOpen) {
     if (canSubmit) {

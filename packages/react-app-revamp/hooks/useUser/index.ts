@@ -40,11 +40,17 @@ export function useUser() {
     submissionMerkleRoot: string,
     contestMaxNumberSubmissionsPerUser: number,
   ) => {
+    if (!userAddress) return;
     setIsCurrentUserSubmitQualificationLoading(true);
+
     const abi = await getContestContractVersion(address, chainId);
     const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
-    if (!userAddress || !abi) return;
+    if (!abi) {
+      setIsCurrentUserSubmitQualificationError(true);
+      setIsCurrentUserSubmitQualificationLoading(false);
+      return;
+    }
 
     const contractConfig = {
       address: address as `0x${string}`,
@@ -229,14 +235,20 @@ export function useUser() {
 
   async function getUserVotesOnProposal(userAddress: string, proposalId: string) {
     setIsCurrentUserVotesOnProposalLoading(true);
+    setCurrentUserVotesOnProposalError(false);
     const abi = await getContestContractVersion(address, chainId);
 
     if (!abi) return;
 
+    const contractConfig = {
+      address: address as `0x${string}`,
+      abi: abi.abi as unknown as Abi,
+      chainId: chainId,
+    };
+
     try {
       const userVotesOnProposalRaw = (await readContract({
-        address: address as `0x${string}`,
-        abi: abi.abi as unknown as Abi,
+        ...contractConfig,
         functionName: "proposalAddressVotes",
         args: [proposalId, userAddress],
       })) as [bigint, bigint];
