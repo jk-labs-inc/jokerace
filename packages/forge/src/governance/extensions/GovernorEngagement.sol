@@ -41,6 +41,34 @@ abstract contract GovernorEngagement is Governor {
     }
 
     /**
+     * @dev Return all commentIds.
+     */
+    function getAllCommentIds() public view returns (uint256[] memory) {
+        return commentIds;
+    }
+
+    /**
+     * @dev Return all deleted commentIds.
+     */
+    function getAllDeletedCommentIds() public view returns (uint256[] memory) {
+        return deletedCommentIds;
+    }
+
+    /**
+     * @dev Return a comment object.
+     */
+    function getComment(uint256 commentId) public view returns (CommentCore memory) {
+        return comments[commentId];
+    }
+
+    /**
+     * @dev Return a comment object.
+     */
+    function getProposalComments(uint256 proposalId) public view returns (uint256[] memory) {
+        return proposalComments[proposalId];
+    }
+
+    /**
      * @dev Returns if a comment has been deleted or not.
      */
     function isCommentDeleted(uint256 commentId) public view returns (bool) {
