@@ -23,6 +23,8 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     decreaseCurrentUserAvailableVotesAmount,
     increaseCurrentUserTotalVotesCast,
     increaseCurrentUserAvailableVotesAmount,
+    increaseCurrentUserVotesOnProposal,
+    decreaseCurrentUserVotesOnProposal,
     decreaseCurrentUserTotalVotesCast,
   } = useUserStore(state => state);
 
@@ -31,10 +33,12 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
     decreaseCurrentUserAvailableVotesAmount(amount);
     increaseCurrentUserTotalVotesCast(amount);
+    increaseCurrentUserVotesOnProposal(amount);
 
     castVotes(amount, isUpvote).catch(error => {
       increaseCurrentUserAvailableVotesAmount(amount);
       decreaseCurrentUserTotalVotesCast(amount);
+      decreaseCurrentUserVotesOnProposal(amount);
     });
   };
 

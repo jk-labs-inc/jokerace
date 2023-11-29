@@ -31,6 +31,8 @@ interface UserState {
   increaseCurrentUserAvailableVotesAmount: (amount: number) => void;
   increaseCurrentUserTotalVotesCast: (amount: number) => void;
   decreaseCurrentUserTotalVotesCast: (amount: number) => void;
+  increaseCurrentUserVotesOnProposal: (amount: number) => void;
+  decreaseCurrentUserVotesOnProposal: (amount: number) => void;
   setCurrentUserProposalCount: (amount: number) => void;
   setIsCurrentUserSubmitQualificationLoading: (value: boolean) => void;
   setIsCurrentUserSubmitQualificationSuccess: (value: boolean) => void;
@@ -83,6 +85,10 @@ export const createUserStore = () =>
       set(state => ({ currentUserTotalVotesCast: state.currentUserTotalVotesCast - amount })),
     increaseCurrentUserProposalCount: () =>
       set(state => ({ currentUserProposalCount: state.currentUserProposalCount + 1 })),
+    increaseCurrentUserVotesOnProposal: (amount: number) =>
+      set(state => ({ currentUserVotesOnProposal: state.currentUserVotesOnProposal + amount })),
+    decreaseCurrentUserVotesOnProposal: (amount: number) =>
+      set(state => ({ currentUserVotesOnProposal: state.currentUserVotesOnProposal - amount })),
     setIsCurrentUserSubmitQualificationLoading: value => set({ isCurrentUserSubmitQualificationLoading: value }),
     setIsCurrentUserSubmitQualificationSuccess: value => set({ isCurrentUserSubmitQualificationSuccess: value }),
     setIsCurrentUserSubmitQualificationError: value => set({ isCurrentUserSubmitQualificationError: value }),
