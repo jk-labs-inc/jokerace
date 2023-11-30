@@ -1,9 +1,10 @@
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react/no-unescaped-entities */
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import useTotalVotesOnContest from "@hooks/useTotalVotes";
+import { useTotalVotesOnContestStore } from "@hooks/useTotalVotes/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { useTotalVotesCastStore } from "@hooks/useTotalVotesCastOnContest/store";
 import { useRouter } from "next/router";
@@ -20,12 +21,12 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   const asPath = router.asPath;
   const { address, chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const { fetchTotalVotes, retry: retryTotalVotes } = useTotalVotesOnContest(address, chainId);
   const {
+    totalVotes,
     isLoading: isTotalVotesLoading,
     isError: isTotalVotesError,
-    totalVotes,
-    retry: retryTotalVotes,
-  } = useTotalVotesOnContest(address, chainId);
+  } = useTotalVotesOnContestStore(state => state);
   const { fetchTotalVotesCast, retry: retryTotalVotesCast } = useTotalVotesCastOnContest(address, chainId);
   const {
     totalVotesCast,
@@ -34,7 +35,11 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   } = useTotalVotesCastStore(state => state);
 
   useEffect(() => {
-    fetchTotalVotesCast();
+    const fetchVotes = async () => {
+      await Promise.all([fetchTotalVotes(), fetchTotalVotesCast()]);
+    };
+
+    fetchVotes();
   }, [address, chainId]);
 
   const renderTotalVotesCast = () => {

@@ -1,21 +1,20 @@
-import { useCallback, useEffect, useState } from "react";
+import getContestContractVersion from "@helpers/getContestContractVersion";
+import { readContract } from "@wagmi/core";
 import { fetchDataFromBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import { Abi } from "viem";
-import { readContract } from "@wagmi/core";
+import { useTotalVotesOnContestStore } from "./store";
 
 const useTotalVotesOnContest = (address: string, chainId: number) => {
-  const [totalVotes, setTotalVotes] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const { totalVotes, setTotalVotes, setIsError, setIsLoading, setIsSuccess } = useTotalVotesOnContestStore(
+    state => state,
+  );
 
   const calculateTotalVotes = (data: Recipient[]) => {
     return data.reduce((sum, vote) => sum + Number(vote.numVotes), 0);
   };
 
-  const getContractConfig = useCallback(async () => {
+  async function getContractConfig() {
     try {
       const { abi } = await getContestContractVersion(address, chainId);
 
@@ -37,9 +36,9 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
       setIsLoading(false);
       return null;
     }
-  }, [address, chainId]);
+  }
 
-  const getVotingMerkleRoot = useCallback(async () => {
+  async function getVotingMerkleRoot() {
     try {
       const contractConfig = await getContractConfig();
       if (!contractConfig) return null;
@@ -57,9 +56,9 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
       setIsLoading(false);
       return null;
     }
-  }, [getContractConfig]);
+  }
 
-  const fetchTotalVotes = useCallback(async () => {
+  async function fetchTotalVotes() {
     if (totalVotes > 0) return;
 
     setIsLoading(true);
@@ -90,17 +89,13 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
     }
 
     setIsLoading(false);
-  }, [getVotingMerkleRoot, totalVotes]);
+  }
 
   const retry = () => {
     fetchTotalVotes();
   };
 
-  useEffect(() => {
-    fetchTotalVotes();
-  }, [fetchTotalVotes]);
-
-  return { totalVotes, isLoading, isError, isSuccess, retry };
+  return { fetchTotalVotes, retry };
 };
 
 export default useTotalVotesOnContest;
