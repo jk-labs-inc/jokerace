@@ -3,12 +3,12 @@ import { chains } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
@@ -20,7 +20,6 @@ import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { fetchTotalVotesCast } = useContest();
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
@@ -45,6 +44,7 @@ export function useCastVotes() {
   const { address: contestAddress, chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.id;
+  const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
 
   async function castVotes(amount: number, isPositive: boolean) {
     toastLoading("votes are deploying...");
@@ -122,9 +122,6 @@ export function useCastVotes() {
         const againstVotes = voteResponse[1] as bigint;
         const votesBigNumber = BigNumber.from(forVotes).sub(againstVotes);
         const votes = Number(utils.formatEther(votesBigNumber));
-
-        await fetchTotalVotesCast();
-
         const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
         if (existingProposal) {
@@ -139,6 +136,7 @@ export function useCastVotes() {
       }
 
       await updateCurrentUserVotes();
+      fetchTotalVotesCast();
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");
