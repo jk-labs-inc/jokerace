@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export interface Comment {
   author: string;
-  timestamp: number;
+  createdAt: Date;
   content: string;
   proposalId: string;
 }
@@ -26,37 +26,21 @@ interface CommentsState {
   setTotalPages: (totalPages: number) => void;
 }
 
-export const useCommentsStore = create<CommentsState>((set, get) => ({
+export const useCommentsStore = create<CommentsState>(set => ({
   allCommentsIdsPerProposal: [],
   comments: [],
   isLoading: false,
+  isPaginating: false,
   isSuccess: false,
   error: "",
-  isPaginating: false,
   currentPage: 1,
-  totalPages: 0,
-  setIsPaginating: (isPaginating: boolean) => {
-    set({ isPaginating });
-  },
-  setCurrentPage: (currentPage: number) => {
-    set({ currentPage });
-  },
-  setTotalPages: (totalPages: number) => {
-    set({ totalPages });
-  },
-  setAllCommentsIdsPerProposal: (allCommentsIdsPerProposal: string[]) => {
-    set({ allCommentsIdsPerProposal });
-  },
-  setComments: (comments: Comment[]) => {
-    set({ comments });
-  },
-  setIsLoading: (isLoading: boolean) => {
-    set({ isLoading });
-  },
-  setIsSuccess: (isSuccess: boolean) => {
-    set({ isSuccess });
-  },
-  setError: (error: string) => {
-    set({ error });
-  },
+  totalPages: 1,
+  setAllCommentsIdsPerProposal: allCommentsIdsPerProposal => set({ allCommentsIdsPerProposal }),
+  setComments: comments => set({ comments }),
+  setIsLoading: isLoading => set({ isLoading }),
+  setIsPaginating: isPaginating => set({ isPaginating }),
+  setIsSuccess: isSuccess => set({ isSuccess }),
+  setError: error => set({ error }),
+  setCurrentPage: currentPage => set({ currentPage }),
+  setTotalPages: totalPages => set({ totalPages }),
 }));

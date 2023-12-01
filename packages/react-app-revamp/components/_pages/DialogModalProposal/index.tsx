@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
@@ -8,14 +9,19 @@ import useCastVotes from "@hooks/useCastVotes";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useContestStore } from "@hooks/useContest/store";
+import useComments from "@hooks/useComments";
+import { chains } from "@config/wagmi";
+import { useCommentsStore } from "@hooks/useComments/store";
 
 interface DialogModalProposalProps {
+  address: string;
+  chainName: string;
   isOpen: boolean;
   prompt: string;
   proposalId: string;
@@ -29,6 +35,8 @@ interface DialogModalProposalProps {
 }
 
 const DialogModalProposal: FC<DialogModalProposalProps> = ({
+  address,
+  chainName,
   isOpen,
   setIsOpen,
   prompt,
@@ -50,10 +58,30 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const { downvotingAllowed } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const { addComment, getAllCommentsIdsPerProposal } = useComments(address, chainId, proposalId);
+  const { comments } = useCommentsStore(state => state);
+  const [commentContent, setCommentContent] = useState("");
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
   }, [isSuccess, setIsOpen]);
+
+  useEffect(() => {
+    console.log(comments);
+  }, [comments]);
+
+  useEffect(() => {
+    getAllCommentsIdsPerProposal();
+  }, [proposalId]);
+
+  const onCommentInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCommentContent(e.target.value);
+  };
+
+  const onCommentSubmit = () => {
+    addComment(commentContent);
+  };
 
   return (
     <DialogModalV3
@@ -128,6 +156,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             </>
           )}
           {proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
+        </div>
+        <div>
+          <input type="text" onChange={onCommentInputChange} />
+          <button onClick={onCommentSubmit}>submit</button>
         </div>
       </div>
     </DialogModalV3>

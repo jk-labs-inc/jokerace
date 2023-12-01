@@ -97,6 +97,8 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
 
   return (
     <SubmissionPageDesktopLayout
+      address={address}
+      chainName={chainName}
       prompt={prompt}
       proposal={proposal}
       proposalId={proposalId}

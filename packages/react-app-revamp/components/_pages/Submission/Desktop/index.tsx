@@ -3,6 +3,8 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import { FC } from "react";
 
 interface SubmissionPageDesktopLayoutProps {
+  address: string;
+  chainName: string;
   proposalId: string;
   prompt: string;
   proposal: Proposal;
@@ -14,6 +16,8 @@ interface SubmissionPageDesktopLayoutProps {
 }
 
 const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
+  address,
+  chainName,
   proposalId,
   prompt,
   proposal,
@@ -25,6 +29,8 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
 }) => {
   return (
     <DialogModalProposal
+      address={address}
+      chainName={chainName}
       proposalId={proposalId}
       prompt={prompt}
       isOpen={true}

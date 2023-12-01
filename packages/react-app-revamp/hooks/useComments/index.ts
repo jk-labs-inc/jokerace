@@ -1,14 +1,24 @@
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { Comment, useCommentsStore } from "./store";
+import { useError } from "@hooks/useError";
+import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { Abi } from "viem";
-import { readContract } from "@wagmi/core";
+import { useAccount } from "wagmi";
+import { Comment, useCommentsStore } from "./store";
 
 const COMMENTS_PER_PAGE = 12;
 
+/**
+ * @param address - contest address
+ * @param chainId - contest chain ID
+ * @param proposalId - proposal ID
+ */
 const useComments = (address: string, chainId: number, proposalId: string) => {
+  const { address: accountAddress } = useAccount();
   const {
     setIsLoading,
     setIsSuccess,
+    comments,
     setError,
     setComments,
     allCommentsIdsPerProposal,
@@ -17,6 +27,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setCurrentPage,
     setTotalPages,
   } = useCommentsStore(state => state);
+  const { handleError } = useError();
 
   async function getContractConfig() {
     try {
@@ -53,18 +64,20 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
         args: [commentId],
       })) as any;
 
+      const timestampInMilliseconds = Number(comment.timestamp) * 1000;
+
       return {
         author: comment.author,
-        content: comment.content,
-        proposalId: comment.proposalId,
-        timestamp: comment.timestamp,
+        content: comment.commentContent,
+        proposalId: comment.proposalId.toString(),
+        createdAt: new Date(timestampInMilliseconds),
       };
     } catch (error) {
       return {
         author: "",
         content: `Failed to load comment ${commentId}`,
         proposalId: "",
-        timestamp: 0,
+        createdAt: new Date(),
       };
     }
   }
@@ -90,9 +103,10 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
     try {
       const commentsPromises = pageCommentsIds.map(id => getComment(id));
-      const comments = await Promise.all(commentsPromises);
+      const newComments = await Promise.all(commentsPromises);
 
-      setComments((prevComments: Comment[]) => [...prevComments, ...comments]);
+      const combinedComments = [...comments, ...newComments];
+      setComments(combinedComments);
       setCurrentPage(page);
     } catch (error) {
       setError("Error fetching comments for the page");
@@ -130,20 +144,47 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
   async function addComment(content: string) {
     const contractConfig = await getContractConfig();
-
+    toastLoading("Adding comment...");
     try {
+      let txRequest;
+
       //@ts-ignore
-      const comment = (await readContract({
+      txRequest = await prepareWriteContract({
         ...contractConfig,
         functionName: "comment",
         args: [proposalId, content],
-      })) as any;
-    } catch (error) {
-      setError("something went wrong while adding comment");
+      });
+
+      //@ts-ignore
+      const hash = await writeContract(txRequest);
+
+      await waitForTransaction({
+        hash,
+      });
+
+      const newComment: Comment = {
+        author: accountAddress as `0x${string}`,
+        content: content,
+        proposalId: proposalId,
+        createdAt: new Date(),
+      };
+
+      const combinedComments = [...comments, newComment];
+
+      setComments(combinedComments);
+      toastSuccess("Comment added successfully!");
+    } catch (error: any) {
+      handleError(error, "Error adding comment");
       setIsSuccess(false);
       setIsLoading(false);
     }
   }
+
+  return {
+    addComment,
+    getAllCommentsIdsPerProposal,
+    getCommentsPerPage,
+  };
 };
 
 export default useComments;
