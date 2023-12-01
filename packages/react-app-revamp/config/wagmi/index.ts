@@ -33,6 +33,7 @@ import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { goerli } from "./custom-chains/goerli";
+import { holesky } from "./custom-chains/holesky";
 import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
@@ -61,6 +62,7 @@ import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTes
 import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
 import { quartz } from "./custom-chains/quartz";
+import { redstoneHolesky } from "./custom-chains/redstoneHolesky";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
 import { scroll } from "./custom-chains/scroll";
@@ -108,6 +110,8 @@ const totalChains: Chain[] = [
   unique,
   vitruveo,
   mantaPacific,
+  holesky,
+  redstoneHolesky,
   polygonTestnet,
   sepolia,
   goerli,
