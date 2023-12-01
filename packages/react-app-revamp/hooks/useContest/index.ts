@@ -1,4 +1,3 @@
-import { toastError } from "@components/UI/Toast";
 import { chains } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
@@ -14,10 +13,8 @@ import useUser, { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
-import { BigNumber, utils } from "ethers";
-import { loadFileFromBucket } from "lib/buckets";
+import { utils } from "ethers";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
-import { Recipient } from "lib/merkletree/generateMerkleTree";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -64,12 +61,8 @@ export function useContest() {
     setContestAuthor,
     setContestMaxProposalCount,
     setIsV3,
-    setVoters,
-    setSubmitters,
     setSubmissionsMerkleRoot,
     setVotingMerkleRoot,
-    setTotalVotesCast,
-    setTotalVotes,
     setVotesClose,
     setVotesOpen,
     setRewards,
@@ -85,7 +78,7 @@ export function useContest() {
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
   );
-  const { setContestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
+  const { setContestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { fetchProposalsIdsList } = useProposal();
   const { contestStatus } = useContestStatusStore(state => state);
@@ -130,16 +123,19 @@ export function useContest() {
     const results = await readContracts({ contracts });
     setIsV3(true);
 
-    const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
-    const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
-    const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
-    const isDownvotingAllowed = Number(results[9].result) === 1;
+    const contestName = results[0].result as string;
+    const contestAuthor = results[1].result as string;
     const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
     const contestMaxProposalCount = Number(results[3].result);
+    const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
+    const closingVoteDate = new Date(Number(results[5].result) * 1000 + 1000);
+    const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
+    const contestPrompt = results[7].result as string;
+    const isDownvotingAllowed = Number(results[8].result) === 1;
 
     if (version >= 4 && moment().isBefore(votesOpenDate)) {
-      const entryChargeValue = Number(results[10].result);
-      const entryChargePercentage = Number(results[11].result);
+      const entryChargeValue = Number(results[9].result);
+      const entryChargePercentage = Number(results[10].result);
 
       setEntryCharge({
         costToPropose: entryChargeValue,
@@ -150,19 +146,19 @@ export function useContest() {
     }
 
     if (version >= 4.2) {
-      const sortingEnabled = Number(results[12].result) === 1;
+      const sortingEnabled = Number(results[11].result) === 1;
 
       setSortingEnabled(sortingEnabled);
     }
 
-    setContestName(results[0].result as string);
-    setContestAuthor(results[1].result as string, results[1].result as string);
+    setContestName(contestName);
+    setContestAuthor(contestAuthor, contestAuthor);
     setContestMaxNumberSubmissionsPerUser(contestMaxNumberSubmissionsPerUser);
     setContestMaxProposalCount(contestMaxProposalCount);
     setSubmissionsOpen(submissionsOpenDate);
     setVotesClose(closingVoteDate);
     setVotesOpen(votesOpenDate);
-    setContestPrompt(results[8].result as string);
+    setContestPrompt(contestPrompt);
     setDownvotingAllowed(isDownvotingAllowed);
 
     // We want to track VoteCast event only 2H before the end of the contest, and only if alchemy support is enabled and if alchemy is configured
@@ -208,14 +204,12 @@ export function useContest() {
         fetchContestContractData(contractConfig, parseFloat(version)),
         processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
-        fetchTotalVotesCast(),
         processRequirementsData(),
       ]);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
       setError(errorMessage);
       setIsLoading(false);
-      setIsUserStoreLoading(false);
       setIsListProposalsLoading(false);
       setIsRewardsLoading(false);
     }
@@ -270,7 +264,6 @@ export function useContest() {
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
-      setIsUserStoreLoading(false);
       setIsLoading(false);
     }
   }
@@ -280,12 +273,10 @@ export function useContest() {
    */
   async function fetchContestInfo() {
     setIsLoading(true);
-    setIsUserStoreLoading(true);
     const result = await getContractConfig();
 
     if (!result) {
       setIsLoading(false);
-      setIsUserStoreLoading(false);
       return;
     }
 
@@ -327,10 +318,7 @@ export function useContest() {
    */
   async function processContestData(contractConfig: ContractConfig) {
     // Do not fetch merkle tree data if the contest is not using it
-    if (contestStatus === ContestStatus.VotingClosed) {
-      setIsUserStoreLoading(false);
-      return;
-    }
+    if (contestStatus === ContestStatus.VotingClosed) return;
 
     const results = await readContracts({
       contracts: [
@@ -352,10 +340,7 @@ export function useContest() {
       ],
     });
 
-    if (!results) {
-      setIsUserStoreLoading(false);
-      return;
-    }
+    if (!results) return;
 
     const submissionMerkleRoot = results[0].result as unknown as string;
     const votingMerkleRoot = results[1].result as unknown as string;
@@ -368,10 +353,8 @@ export function useContest() {
       setIsReadOnly(true);
       if (submissionMerkleRoot === EMPTY_ROOT) {
         await checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser);
-        setIsUserStoreLoading(false);
         return;
       } else {
-        setIsUserStoreLoading(false);
         return;
       }
     }
@@ -380,24 +363,6 @@ export function useContest() {
       checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
       checkIfCurrentUserQualifyToVote(),
     ]);
-
-    setIsUserStoreLoading(false);
-
-    try {
-      const [votingMerkleTreeData, submissionMerkleTreeData] = await Promise.all([
-        fetchDataFromBucket(votingMerkleRoot),
-        submissionMerkleRoot !== EMPTY_ROOT ? fetchDataFromBucket(submissionMerkleRoot) : Promise.resolve(null),
-      ]);
-
-      const totalVotes = votingMerkleTreeData ? calculateTotalVotes(votingMerkleTreeData) : 0;
-
-      setTotalVotes(totalVotes);
-      setVoters(votingMerkleTreeData || []);
-      setSubmitters(submissionMerkleTreeData || []);
-    } catch (e) {
-      toastError("error while fetching data from db", errorMessage);
-      setIsUserStoreLoading(false);
-    }
   }
 
   async function processRequirementsData() {
@@ -423,19 +388,6 @@ export function useContest() {
       setSubmissionRequirements(null);
     }
   }
-
-  const fetchDataFromBucket = async (fileId: string): Promise<Recipient[] | null> => {
-    try {
-      const data = await loadFileFromBucket({ fileId });
-      return data || null;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const calculateTotalVotes = (data: Recipient[]): number => {
-    return data.reduce((sum, vote) => sum + Number(vote.numVotes), 0);
-  };
 
   /**
    * Fetch reward data from the rewards module contract
@@ -492,36 +444,10 @@ export function useContest() {
     }
   }
 
-  async function fetchTotalVotesCast() {
-    try {
-      const result = await getContractConfig();
-      if (!result) return;
-
-      const { contractConfig } = result;
-
-      if (!(contractConfig.abi?.filter((el: { name: string }) => el.name === "totalVotesCast").length > 0)) {
-        setTotalVotesCast(-1);
-        return;
-      }
-
-      const totalVotesCast = await readContract({
-        ...contractConfig,
-        functionName: "totalVotesCast",
-        args: [],
-      });
-
-      //@ts-ignore
-      setTotalVotesCast(totalVotesCast ? BigNumber.from(totalVotesCast) / 1e18 : 0);
-    } catch {
-      setTotalVotesCast(0);
-    }
-  }
-
   return {
     getContractConfig,
     address,
     fetchContestInfo,
-    fetchTotalVotesCast,
     setIsLoading,
     chainId,
     chainName,

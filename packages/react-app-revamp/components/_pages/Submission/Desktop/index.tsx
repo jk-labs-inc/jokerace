@@ -5,7 +5,7 @@ import { FC } from "react";
 interface SubmissionPageDesktopLayoutProps {
   proposalId: string;
   prompt: string;
-  proposal: Proposal;
+  proposal: Proposal | null;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
   onPreviousEntry?: () => void;

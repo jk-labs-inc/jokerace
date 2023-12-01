@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
@@ -6,7 +7,6 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
 import { useRouter } from "next/router";
@@ -20,11 +20,11 @@ interface VotingWidgetProps {
 }
 
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
-  const currentUserTotalVotesCast = useUserStore(state => state.currentUserTotalVotesCast);
+  const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { asPath } = useRouter();
   const { chainName } = extractPathSegments(asPath);
   const { chain } = useNetwork();
-  const isLoading = useCastVotesStore(state => state.isLoading);
+  const { isLoading } = useCastVotesStore(state => state);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
@@ -150,12 +150,11 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         </div>
         <div className="flex flex-col mt-4">
           <div className="flex justify-between text-[16px]">
-            <p className="text-neutral-11">used votes</p>
-            <p className="text-positive-11 font-bold">{formatNumber(currentUserTotalVotesCast)}</p>
-          </div>
-          <div className="flex justify-between text-[16px]">
             <p className="text-neutral-11">my remaining votes</p>
-            <p className="text-positive-11 font-bold">{formatNumber(amountOfVotes)}</p>
+            <p className="font-bold">
+              <span className="text-positive-11">{formatNumber(amountOfVotes)}</span>/
+              <span className="text-neutral-11">{formatNumber(currentUserTotalVotesAmount)}</span>
+            </p>
           </div>
         </div>
       </div>
