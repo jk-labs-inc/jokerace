@@ -7,6 +7,7 @@ import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
+import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
@@ -17,7 +18,6 @@ import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
-import useProposal from "@hooks/useProposal";
 
 export function useCastVotes() {
   const { fetchTotalVotesCast } = useContest();

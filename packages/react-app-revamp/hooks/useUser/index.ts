@@ -2,9 +2,8 @@ import { supabase } from "@config/supabase";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { getAccount, readContract } from "@wagmi/core";
-import { BigNumber } from "ethers";
+import { BigNumber, utils } from "ethers";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -14,7 +13,6 @@ export const EMPTY_ROOT = "0x000000000000000000000000000000000000000000000000000
 
 export function useUser() {
   const { address: userAddress } = useAccount();
-  const { contestStatus } = useContestStatusStore(state => state);
   const {
     setCurrentUserQualifiedToSubmit,
     setCurrentUserAvailableVotesAmount,
@@ -22,6 +20,12 @@ export function useUser() {
     setCurrentUserProposalCount,
     setCurrentuserTotalVotesCast,
     currentUserTotalVotesAmount,
+    setIsCurrentUserSubmitQualificationLoading,
+    setIsCurrentUserSubmitQualificationSuccess,
+    setIsCurrentUserSubmitQualificationError,
+    setIsCurrentUserVoteQualificationLoading,
+    setIsCurrentUserVoteQualificationSuccess,
+    setIsCurrentUserVoteQualificationError,
   } = useUserStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -32,10 +36,17 @@ export function useUser() {
     submissionMerkleRoot: string,
     contestMaxNumberSubmissionsPerUser: number,
   ) => {
+    if (!userAddress) return;
+    setIsCurrentUserSubmitQualificationLoading(true);
+
     const abi = await getContestContractVersion(address, chainId);
     const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
-    if (!userAddress || !abi) return;
+    if (!abi) {
+      setIsCurrentUserSubmitQualificationError(true);
+      setIsCurrentUserSubmitQualificationLoading(false);
+      return;
+    }
 
     const contractConfig = {
       address: address as `0x${string}`,
@@ -44,21 +55,32 @@ export function useUser() {
     };
 
     if (anyoneCanSubmit) {
-      const numOfSubmittedProposalsRaw = await readContract({
-        ...contractConfig,
-        functionName: "numSubmissions",
-        args: [userAddress],
-      });
+      try {
+        const numOfSubmittedProposalsRaw = await readContract({
+          ...contractConfig,
+          functionName: "numSubmissions",
+          args: [userAddress],
+        });
 
-      const numOfSubmittedProposals = BigNumber.from(numOfSubmittedProposalsRaw);
+        const numOfSubmittedProposals = BigNumber.from(numOfSubmittedProposalsRaw);
 
-      if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
+        if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
+          setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
+          setIsCurrentUserSubmitQualificationLoading(false);
+          setIsCurrentUserSubmitQualificationSuccess(true);
+          return;
+        }
+
         setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
-        return;
+        setCurrentUserQualifiedToSubmit(true);
+        setIsCurrentUserSubmitQualificationLoading(false);
+        setIsCurrentUserSubmitQualificationSuccess(true);
+      } catch (error) {
+        setIsCurrentUserSubmitQualificationError(true);
+        setCurrentUserQualifiedToSubmit(false);
+        setIsCurrentUserSubmitQualificationLoading(false);
+        setIsCurrentUserSubmitQualificationSuccess(false);
       }
-
-      setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
-      setCurrentUserQualifiedToSubmit(true);
     } else {
       const config = await import("@config/supabase");
       const supabase = config.supabase;
@@ -81,17 +103,26 @@ export function useUser() {
 
           if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
             setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
+            setIsCurrentUserSubmitQualificationLoading(false);
+            setIsCurrentUserSubmitQualificationSuccess(true);
             return;
           }
 
           setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
           setCurrentUserQualifiedToSubmit(true);
+          setIsCurrentUserSubmitQualificationLoading(false);
+          setIsCurrentUserSubmitQualificationSuccess(true);
         } else {
           setCurrentUserQualifiedToSubmit(false);
+          setIsCurrentUserSubmitQualificationLoading(false);
+          setIsCurrentUserSubmitQualificationSuccess(true);
         }
       } catch (error) {
         console.error("Error performing lookup in 'contest_participants_v3':", error);
+        setIsCurrentUserSubmitQualificationError(true);
         setCurrentUserQualifiedToSubmit(false);
+        setIsCurrentUserSubmitQualificationLoading(false);
+        setIsCurrentUserSubmitQualificationSuccess(false);
       }
     }
   };
@@ -101,6 +132,8 @@ export function useUser() {
    */
   async function checkIfCurrentUserQualifyToVote() {
     if (!userAddress) return;
+
+    setIsCurrentUserVoteQualificationLoading(true);
 
     try {
       // Perform a lookup in the 'contest_participants_v3' table.
@@ -136,21 +169,30 @@ export function useUser() {
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes - castVotes);
           setCurrentuserTotalVotesCast(castVotes);
+          setIsCurrentUserVoteQualificationSuccess(true);
+          setIsCurrentUserVoteQualificationLoading(false);
         } else {
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes);
           setCurrentuserTotalVotesCast(castVotes);
+          setIsCurrentUserVoteQualificationSuccess(true);
+          setIsCurrentUserVoteQualificationLoading(false);
         }
       } else {
         setCurrentUserTotalVotesAmount(0);
         setCurrentUserAvailableVotesAmount(0);
         setCurrentuserTotalVotesCast(0);
+        setIsCurrentUserVoteQualificationSuccess(true);
+        setIsCurrentUserVoteQualificationLoading(false);
       }
     } catch (error) {
       console.error("Error performing lookup in 'contest_participants_v3':", error);
       setCurrentUserTotalVotesAmount(0);
       setCurrentUserAvailableVotesAmount(0);
       setCurrentuserTotalVotesCast(0);
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationLoading(false);
+      setIsCurrentUserVoteQualificationSuccess(false);
     }
   }
 
@@ -159,6 +201,7 @@ export function useUser() {
    */
   async function updateCurrentUserVotes() {
     const abi = await getContestContractVersion(address, chainId);
+    setIsCurrentUserVoteQualificationLoading(true);
 
     if (!abi) return;
     const accountData = getAccount();
@@ -177,8 +220,12 @@ export function useUser() {
       setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount - currentUserTotalVotesCast / 1e18);
       //@ts-ignore
       setCurrentuserTotalVotesCast(currentUserTotalVotesCast / 1e18);
+      setIsCurrentUserVoteQualificationSuccess(true);
+      setIsCurrentUserVoteQualificationLoading(false);
     } catch (e) {
-      console.error(e);
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
     }
   }
 

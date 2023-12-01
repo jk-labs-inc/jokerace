@@ -1,52 +1,26 @@
 /* eslint-disable react/no-unescaped-entities */
-import { formatNumber } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
-import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
-import { useMemo } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import VotingQualifierMessage from "./components/VotingQualifierMessage";
 
 const VotingContestQualifier = () => {
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
-  const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount, isLoading } = useUserStore(state => state);
+  const {
+    currentUserAvailableVotesAmount,
+    currentUserTotalVotesAmount,
+    isCurrentUserVoteQualificationLoading,
+    isCurrentUserVoteQualificationError,
+  } = useUserStore(state => state);
   const { contestStatus } = useContestStatusStore(state => state);
   const isReadOnly = useContestStore(state => state.isReadOnly);
   const isMobile = useMediaQuery({ maxWidth: 768 });
-
-  const qualifiedMessage = useMemo(() => {
-    const canVote = currentUserAvailableVotesAmount > 0;
-    const votingOpen = contestStatus === ContestStatus.VotingOpen;
-    const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
-
-    if (isReadOnly) return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">vote is in read mode</p>;
-
-    if (canVote && votingOpen) {
-      return (
-        <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
-          {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount > 0 ? "s" : ""} left
-        </p>
-      );
-    }
-
-    if (canVote) {
-      return (
-        <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">
-          {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount > 0 ? "s" : ""}{" "}
-          {isMobile ? "to use" : "to deploy"}
-        </p>
-      );
-    }
-
-    if (outOfVotes)
-      return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you're out of votes :(</p>;
-
-    return <p className="text-[16px] md:text-[24px] text-primary-10 font-bold">ineligible to vote</p>;
-  }, [contestStatus, currentUserTotalVotesAmount, isReadOnly, currentUserAvailableVotesAmount, isMobile]);
 
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4  md:pl-8">
@@ -55,7 +29,7 @@ const VotingContestQualifier = () => {
         <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">my votes</p>
       </div>
       {isConnected ? (
-        isLoading ? (
+        isCurrentUserVoteQualificationLoading ? (
           <Skeleton
             height={isMobile ? 16 : 24}
             width={isMobile ? 100 : 200}
@@ -63,8 +37,18 @@ const VotingContestQualifier = () => {
             highlightColor="#FFE25B"
             duration={1}
           />
+        ) : isCurrentUserVoteQualificationError ? (
+          <p className="text-[16px] md:text-[24px] text-negative-11 font-bold">
+            ruh roh, we couldn't load your votes! please reload the page
+          </p>
         ) : (
-          qualifiedMessage
+          <VotingQualifierMessage
+            currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
+            currentUserTotalVotesAmount={currentUserTotalVotesAmount}
+            contestStatus={contestStatus}
+            isMobile={isMobile}
+            isReadOnly={isReadOnly}
+          />
         )
       ) : (
         <p className="text-[16px] md:text-[24px] text-positive-11 font-bold cursor-pointer" onClick={openConnectModal}>

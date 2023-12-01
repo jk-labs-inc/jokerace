@@ -5,7 +5,6 @@ import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
-import { toastError } from "@components/UI/Toast";
 import ContestTab from "@components/_pages/Contest/Contest";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
@@ -15,7 +14,6 @@ import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { generateUrlContest } from "@helpers/share";
 import { RefreshIcon } from "@heroicons/react/outline";
@@ -31,7 +29,6 @@ import { ProposalWrapper } from "@hooks/useProposal/store";
 import { RewardsWrapper } from "@hooks/useRewards/store";
 import useUser from "@hooks/useUser";
 import { UserWrapper, useUserStore } from "@hooks/useUser/store";
-import { readContract } from "@wagmi/core";
 import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
@@ -57,7 +54,7 @@ const LayoutViewContest = (props: any) => {
   });
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
   const showRewards = useShowRewardsStore(state => state.showRewards);
-  const { isLoading, address, fetchContestInfo, isSuccess, error, chainId, chainName } = useContest();
+  const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
   const {
     submissionsOpen,
     votesClose,
@@ -67,10 +64,11 @@ const LayoutViewContest = (props: any) => {
     rewards,
     isReadOnly,
     isRewardsLoading,
+    submissionMerkleRoot,
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
-  const { contestMaxNumberSubmissionsPerUser, setIsLoading: setIsUserStoreLoading } = useUserStore(state => state);
+  const { contestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
@@ -123,36 +121,11 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        if (accountChanged || didConnect) {
-          setIsUserStoreLoading(true);
-
-          const { abi } = await getContestContractVersion(address, chainId);
-
-          if (!abi) return;
-
-          const contractConfig = {
-            address: address as `0x${string}`,
-            abi: abi,
-            chainId: chainId,
-          };
-
-          //@ts-ignore
-          const submissionMerkleRoot = (await readContract({
-            ...contractConfig,
-            functionName: "submissionMerkleRoot",
-          })) as string;
-
-          await Promise.all([
-            checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
-            checkIfCurrentUserQualifyToVote(),
-          ]);
-
-          setIsUserStoreLoading(false);
-        }
-      } catch (error) {
-        setIsUserStoreLoading(false);
-        toastError("we couldn't fetch user data, please try again!");
+      if (accountChanged || didConnect) {
+        await Promise.all([
+          checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
+          checkIfCurrentUserQualifyToVote(),
+        ]);
       }
     };
 
