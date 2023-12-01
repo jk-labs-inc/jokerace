@@ -4,12 +4,12 @@ import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import { formatNumber } from "@helpers/formatNumber";
+import ordinalize from "@helpers/ordinalize";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { FC, useEffect } from "react";
 import { Proposal } from "../ProposalContent";
-import ordinalize from "@helpers/ordinalize";
 
 interface DialogModalVoteForProposalProps {
   isOpen: boolean;
@@ -24,7 +24,6 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     decreaseCurrentUserAvailableVotesAmount,
     increaseCurrentUserTotalVotesCast,
     increaseCurrentUserAvailableVotesAmount,
-
     decreaseCurrentUserTotalVotesCast,
   } = useUserStore(state => state);
 

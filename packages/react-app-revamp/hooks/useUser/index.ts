@@ -3,7 +3,7 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { getAccount, readContract } from "@wagmi/core";
-import { BigNumber, utils } from "ethers";
+import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";

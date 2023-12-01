@@ -1,14 +1,14 @@
-/* eslint-disable react/no-unescaped-entities */
 import { formatNumber } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
-import useNftTokenDetails from "@hooks/useNftTokenDetails";
+import { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { BigNumber } from "ethers";
 import moment from "moment";
 import { useMemo } from "react";
-import { CSVLink } from "react-csv";
 import { useAccount } from "wagmi";
+import ContestParamatersCSVSubmitters from "./components/CSV/Submitters";
+import ContestParamatersCSVVoters from "./components/CSV/Voters";
 import ContestParametersSubmissionRequirements from "./components/Requirements/Submission";
 import ContestParametersVotingRequirements from "./components/Requirements/Voting";
 
@@ -19,15 +19,13 @@ const ContestParameters = () => {
     submissionsOpen,
     votesClose,
     votesOpen,
-    voters,
-    submitters,
     contestMaxProposalCount,
     votingRequirements,
-    submissionRequirements,
+    submissionMerkleRoot,
+    votingMerkleRoot,
   } = useContestStore(state => state);
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
-
   const {
     contestMaxNumberSubmissionsPerUser,
     currentUserQualifiedToSubmit,
@@ -39,22 +37,17 @@ const ContestParameters = () => {
   const formattedVotesClosing = moment(votesClose).format("MMMM Do, h:mm a");
   const userMaxProposalCountBN = BigNumber.from(contestMaxNumberSubmissionsPerUser);
   const maxProposalsPerUserCapped = userMaxProposalCountBN.eq(UNLIMITED_PROPOSALS_PER_USER);
-
-  const processedSubmitters = useMemo(() => {
-    return submitters.map(submitter => ({
-      address: submitter.address,
-    }));
-  }, [submitters]);
+  const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
   const qualifyToSubmitMessage = useMemo<string | JSX.Element>(() => {
-    if (!submitters.length) return `anyone can submit`;
+    if (anyoneCanSubmit) return `anyone can submit`;
 
     if (currentUserQualifiedToSubmit) {
       return `you qualify to submit`;
     } else {
       return `you don't qualify to submit`;
     }
-  }, [currentUserQualifiedToSubmit, submitters.length]);
+  }, [currentUserQualifiedToSubmit, anyoneCanSubmit]);
 
   const qualifyToVoteMessage = useMemo<string | JSX.Element>(() => {
     const canVote = currentUserAvailableVotesAmount > 0;
@@ -124,16 +117,9 @@ const ContestParameters = () => {
             contest accept{contestMaxProposalCount > 1 ? "s" : ""} up to {contestMaxProposalCount.toString()}{" "}
             submissions
           </li>
-          <li className="list-disc">{address || !submitters.length ? qualifyToSubmitMessage : walletNotConnected}</li>
+          <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
           <ContestParametersSubmissionRequirements />
-          {submitters.length ? (
-            <li className="list-disc">
-              see full allowlist{" "}
-              <CSVLink data={processedSubmitters} filename={"submitters.csv"} className="text-positive-11">
-                here
-              </CSVLink>
-            </li>
-          ) : null}
+          {!anyoneCanSubmit ? <ContestParamatersCSVSubmitters submissionMerkleRoot={submissionMerkleRoot} /> : null}
         </ul>
       </div>
       <div className="flex flex-col gap-12">
@@ -141,12 +127,7 @@ const ContestParameters = () => {
         <ul className="pl-4 text-[16px] font-bold">
           <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
           <ContestParametersVotingRequirements />
-          <li className="list-disc">
-            see full allowlist{" "}
-            <CSVLink data={voters} filename={"voters.csv"} className="text-positive-11">
-              here
-            </CSVLink>
-          </li>
+          <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
         </ul>
       </div>
     </div>

@@ -7,7 +7,6 @@ export function getContracts(contractConfig: any, version: number) {
     "contestStart",
     "contestDeadline",
     "voteStart",
-    "state",
     "prompt",
     "downvotingAllowed",
   ];
@@ -17,6 +16,7 @@ export function getContracts(contractConfig: any, version: number) {
   const v4_2FunctionNames = ["sortingEnabled"];
 
   let contractFunctionNames = [...commonFunctionNames];
+
   if (version >= 4) {
     contractFunctionNames = [...contractFunctionNames, ...v4FunctionNames];
   }
