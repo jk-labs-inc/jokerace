@@ -9,30 +9,23 @@ interface UserState {
   contestMaxNumberSubmissionsPerUser: number;
   currentUserProposalCount: number;
   currentUserTotalVotesCast: number;
-  currentUserVotesOnProposal: number;
   isCurrentUserSubmitQualificationLoading: boolean;
   isCurrentUserSubmitQualificationSuccess: boolean;
   isCurrentUserSubmitQualificationError: boolean;
   isCurrentUserVoteQualificationLoading: boolean;
   isCurrentUserVoteQualificationSuccess: boolean;
   isCurrentUserVoteQualificationError: boolean;
-  isCurrentUserVotesOnProposalLoading: boolean;
-  isCurrentUserVotesOnProposalSuccess: boolean;
-  isCurrentUserVotesOnProposalError: boolean;
   setCurrentUserQualifiedToSubmit: (value: boolean) => void;
   setCurrentUserQualifiedToVote: (value: boolean) => void;
   setCurrentuserTotalVotesCast: (amount: number) => void;
   setCurrentUserAvailableVotesAmount: (amount: number) => void;
   setCurrentUserTotalVotesAmount: (amount: number) => void;
-  setCurrentUserVotesOnProposal: (amount: number) => void;
   setContestMaxNumberSubmissionsPerUser: (amount: number) => void;
   decreaseCurrentUserAvailableVotesAmount: (amount: number) => void;
   increaseCurrentUserProposalCount: () => void;
   increaseCurrentUserAvailableVotesAmount: (amount: number) => void;
   increaseCurrentUserTotalVotesCast: (amount: number) => void;
   decreaseCurrentUserTotalVotesCast: (amount: number) => void;
-  increaseCurrentUserVotesOnProposal: (amount: number) => void;
-  decreaseCurrentUserVotesOnProposal: (amount: number) => void;
   setCurrentUserProposalCount: (amount: number) => void;
   setIsCurrentUserSubmitQualificationLoading: (value: boolean) => void;
   setIsCurrentUserSubmitQualificationSuccess: (value: boolean) => void;
@@ -40,9 +33,6 @@ interface UserState {
   setIsCurrentUserVoteQualificationLoading: (value: boolean) => void;
   setIsCurrentUserVoteQualificationSuccess: (value: boolean) => void;
   setIsCurrentUserVoteQualificationError: (value: boolean) => void;
-  setIsCurrentUserVotesOnProposalLoading: (value: boolean) => void;
-  setIsCurrentUserVotesOnProposalSuccess: (value: boolean) => void;
-  setCurrentUserVotesOnProposalError: (value: boolean) => void;
 }
 
 export const createUserStore = () =>
@@ -54,7 +44,6 @@ export const createUserStore = () =>
     currentUserTotalVotesCast: 0,
     contestMaxNumberSubmissionsPerUser: 0,
     currentUserProposalCount: 0,
-    currentUserVotesOnProposal: 0,
     isLoading: false,
     isSuccess: false,
     error: "",
@@ -64,15 +53,11 @@ export const createUserStore = () =>
     isCurrentUserVoteQualificationLoading: false,
     isCurrentUserVoteQualificationSuccess: false,
     isCurrentUserVoteQualificationError: false,
-    isCurrentUserVotesOnProposalLoading: false,
-    isCurrentUserVotesOnProposalSuccess: false,
-    isCurrentUserVotesOnProposalError: false,
     setCurrentUserQualifiedToSubmit: value => set({ currentUserQualifiedToSubmit: value }),
     setCurrentUserQualifiedToVote: value => set({ currentUserQualifiedToVote: value }),
     setCurrentuserTotalVotesCast: amount => set({ currentUserTotalVotesCast: amount }),
     setCurrentUserAvailableVotesAmount: amount => set({ currentUserAvailableVotesAmount: amount }),
     setCurrentUserTotalVotesAmount: amount => set({ currentUserTotalVotesAmount: amount }),
-    setCurrentUserVotesOnProposal: amount => set({ currentUserVotesOnProposal: amount }),
     setContestMaxNumberSubmissionsPerUser: amount => set({ contestMaxNumberSubmissionsPerUser: amount }),
     setCurrentUserProposalCount: amount => set({ currentUserProposalCount: amount }),
     decreaseCurrentUserAvailableVotesAmount: (amount: number) =>
@@ -85,19 +70,12 @@ export const createUserStore = () =>
       set(state => ({ currentUserTotalVotesCast: state.currentUserTotalVotesCast - amount })),
     increaseCurrentUserProposalCount: () =>
       set(state => ({ currentUserProposalCount: state.currentUserProposalCount + 1 })),
-    increaseCurrentUserVotesOnProposal: (amount: number) =>
-      set(state => ({ currentUserVotesOnProposal: state.currentUserVotesOnProposal + amount })),
-    decreaseCurrentUserVotesOnProposal: (amount: number) =>
-      set(state => ({ currentUserVotesOnProposal: state.currentUserVotesOnProposal - amount })),
     setIsCurrentUserSubmitQualificationLoading: value => set({ isCurrentUserSubmitQualificationLoading: value }),
     setIsCurrentUserSubmitQualificationSuccess: value => set({ isCurrentUserSubmitQualificationSuccess: value }),
     setIsCurrentUserSubmitQualificationError: value => set({ isCurrentUserSubmitQualificationError: value }),
     setIsCurrentUserVoteQualificationLoading: value => set({ isCurrentUserVoteQualificationLoading: value }),
     setIsCurrentUserVoteQualificationSuccess: value => set({ isCurrentUserVoteQualificationSuccess: value }),
     setIsCurrentUserVoteQualificationError: value => set({ isCurrentUserVoteQualificationError: value }),
-    setIsCurrentUserVotesOnProposalLoading: value => set({ isCurrentUserVotesOnProposalLoading: value }),
-    setIsCurrentUserVotesOnProposalSuccess: value => set({ isCurrentUserVotesOnProposalSuccess: value }),
-    setCurrentUserVotesOnProposalError: value => set({ isCurrentUserVotesOnProposalError: value }),
   }));
 
 export const UserContext = createContext<ReturnType<typeof createUserStore> | null>(null);

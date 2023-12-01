@@ -14,7 +14,7 @@ interface SubmissionPageProps {
   address: string;
   proposalId: string;
   prompt: string;
-  proposal: Proposal;
+  proposal: Proposal | null;
 }
 
 const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, proposalId, prompt, proposal }) => {

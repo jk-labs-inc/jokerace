@@ -13,7 +13,7 @@ import { FC, useEffect } from "react";
 interface PageProps {
   address: string;
   chain: string;
-  proposal: Proposal;
+  proposal: Proposal | null;
 }
 
 const Page: FC<PageProps> = ({ proposal, address, chain }) => {
@@ -28,16 +28,12 @@ const Page: FC<PageProps> = ({ proposal, address, chain }) => {
 
   return (
     <>
-      {proposal && (
-        <>
-          <Head>
-            <title>
-              proposal by {shortenEthereumAddress(proposal.authorEthereumAddress)} for {contestName}
-            </title>
-          </Head>
-          <SubmissionPage chain={chain} address={address} proposalId={id} prompt={contestPrompt} proposal={proposal} />
-        </>
-      )}
+      <Head>
+        <title>
+          {proposal ? `proposal by ${shortenEthereumAddress(proposal.authorEthereumAddress)} for ${contestName}` : null}
+        </title>
+      </Head>
+      <SubmissionPage chain={chain} address={address} proposalId={id} prompt={contestPrompt} proposal={proposal} />
     </>
   );
 };
@@ -63,23 +59,19 @@ export async function getStaticProps({ params }: any) {
     return { notFound: true };
   }
 
-  try {
-    const chainId = getChainId(chain);
+  const chainId = getChainId(chain);
 
-    if (!chainId) return;
-    const proposal = await fetchProposalData(address, chainId, submission);
+  if (!chainId) return;
 
-    return {
-      props: {
-        address,
-        chain,
-        proposal,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return { notFound: true };
-  }
+  const proposal = await fetchProposalData(address, chainId, submission);
+
+  return {
+    props: {
+      address,
+      chain,
+      proposal,
+    },
+  };
 }
 
 //@ts-ignore

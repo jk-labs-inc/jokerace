@@ -15,12 +15,13 @@ import { Proposal } from "../ProposalContent";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { formatNumber } from "@helpers/formatNumber";
+import ordinalize from "@helpers/ordinalize";
 
 interface DialogModalProposalProps {
   isOpen: boolean;
   prompt: string;
   proposalId: string;
-  proposal: Proposal;
+  proposal: Proposal | null;
   setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
@@ -94,18 +95,31 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             </ButtonV3>
           )}
         </div>
-        <div className="flex gap-2 items-center">
-          <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
-          {proposal.votes > 0 ? (
-            <>
-              <span className="text-neutral-9">&#8226;</span>
-              <p className="text-[16px] text-neutral-11 font-bold">
-                {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
-              </p>
-            </>
-          ) : null}
-        </div>
-        <ContestProposal proposal={proposal} contestStatus={contestStatus} proposalId={proposalId} displaySocials />
+
+        {proposal ? (
+          <div className="flex flex-col gap-4">
+            {proposal.rank > 0 && (
+              <div className="flex gap-2 items-center">
+                <p className="text-[16px] font-bold text-neutral-11">
+                  {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
+                </p>
+                <span className="text-neutral-11">&#8226;</span>{" "}
+                <p className="text-[16px] font-bold text-neutral-11">
+                  {ordinalize(proposal.rank).label} place {proposal.isTied ? "(tied)" : ""}
+                </p>
+              </div>
+            )}
+            <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+          </div>
+        ) : null}
+
+        {proposal ? (
+          <ContestProposal proposal={proposal} contestStatus={contestStatus} proposalId={proposalId} displaySocials />
+        ) : (
+          <p className="text-[16px] text-negative-11 font-bold">
+            ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
+          </p>
+        )}
         <div className="flex flex-col gap-8">
           {contestStatus === ContestStatus.VotingOpen && (
             <>
@@ -138,7 +152,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               )}
             </>
           )}
-          {proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
+          {proposal && proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
         </div>
       </div>
     </DialogModalV3>

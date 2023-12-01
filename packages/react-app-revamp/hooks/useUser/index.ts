@@ -3,7 +3,7 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { getAccount, readContract } from "@wagmi/core";
-import { BigNumber, utils } from "ethers";
+import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -20,16 +20,12 @@ export function useUser() {
     setCurrentUserProposalCount,
     setCurrentuserTotalVotesCast,
     currentUserTotalVotesAmount,
-    setCurrentUserVotesOnProposal,
     setIsCurrentUserSubmitQualificationLoading,
     setIsCurrentUserSubmitQualificationSuccess,
     setIsCurrentUserSubmitQualificationError,
     setIsCurrentUserVoteQualificationLoading,
     setIsCurrentUserVoteQualificationSuccess,
     setIsCurrentUserVoteQualificationError,
-    setIsCurrentUserVotesOnProposalLoading,
-    setIsCurrentUserVotesOnProposalSuccess,
-    setCurrentUserVotesOnProposalError,
   } = useUserStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -233,47 +229,10 @@ export function useUser() {
     }
   }
 
-  async function getUserVotesOnProposal(userAddress: string, proposalId: string) {
-    setIsCurrentUserVotesOnProposalLoading(true);
-    setCurrentUserVotesOnProposalError(false);
-    const abi = await getContestContractVersion(address, chainId);
-
-    if (!abi) return;
-
-    const contractConfig = {
-      address: address as `0x${string}`,
-      abi: abi.abi as unknown as Abi,
-      chainId: chainId,
-    };
-
-    try {
-      const userVotesOnProposalRaw = (await readContract({
-        ...contractConfig,
-        functionName: "proposalAddressVotes",
-        args: [proposalId, userAddress],
-      })) as [bigint, bigint];
-
-      const positiveVotes = BigNumber.from(userVotesOnProposalRaw[0]);
-      const negativeVotes = BigNumber.from(userVotesOnProposalRaw[1]);
-
-      const netVotesBigInt = positiveVotes.sub(negativeVotes);
-
-      const netVotes = parseFloat(utils.formatEther(netVotesBigInt));
-      setCurrentUserVotesOnProposal(netVotes);
-      setIsCurrentUserVotesOnProposalSuccess(true);
-      setIsCurrentUserVotesOnProposalLoading(false);
-    } catch (error: any) {
-      setCurrentUserVotesOnProposalError(true);
-      setIsCurrentUserVotesOnProposalSuccess(false);
-      setIsCurrentUserVotesOnProposalLoading(false);
-    }
-  }
-
   return {
     checkIfCurrentUserQualifyToVote,
     checkIfCurrentUserQualifyToSubmit,
     updateCurrentUserVotes,
-    getUserVotesOnProposal,
   };
 }
 

@@ -13,18 +13,18 @@ import ProposalContentAction from "./components/ProposalContentAction";
 import ProposalContentInfo from "./components/ProposalContentInfo";
 
 export interface Proposal {
+  id: string;
   authorEthereumAddress: string;
   content: string;
   exists: boolean;
   isContentImage: boolean;
   votes: number;
+  rank: number;
+  isTied: boolean;
 }
 
 interface ProposalContentProps {
-  id: string;
   proposal: Proposal;
-  rank: number;
-  isTied: boolean;
 }
 
 const transform = (node: HTMLElement, children: Node[]): ReactNode => {
@@ -37,7 +37,7 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   }
 };
 
-const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied }) => {
+const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
@@ -63,12 +63,12 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
     <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <ProposalContentInfo
         authorAddress={proposal.authorEthereumAddress}
-        rank={rank}
-        isTied={isTied}
+        rank={proposal.rank}
+        isTied={proposal.isTied}
         isMobile={isMobile}
       />
       <Link
-        href={`/contest/${chainName}/${contestAddress}/submission/${id}`}
+        href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
         shallow
         scroll={false}
         className="flex items-center overflow-hidden px-14 h-3/4"
@@ -82,7 +82,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ id, proposal, rank, isTied 
       <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
         <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
           <div className="flex items-center py-4 justify-between w-full md:w-1/2 text-[16px] font-bold">
-            <ProposalContentAction proposalId={id} onVotingModalOpen={value => setIsVotingModalOpen(value)} />
+            <ProposalContentAction proposalId={proposal.id} onVotingModalOpen={value => setIsVotingModalOpen(value)} />
           </div>
         </div>
       </div>
