@@ -1,6 +1,9 @@
 packages/hardhat/*
 **/aws.json
 
+# Service workers
+packages/react-app-revamp/public/sw.js
+
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 **/node_modules
 
