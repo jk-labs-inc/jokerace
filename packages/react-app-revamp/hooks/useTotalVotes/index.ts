@@ -6,9 +6,7 @@ import { Abi } from "viem";
 import { useTotalVotesOnContestStore } from "./store";
 
 const useTotalVotesOnContest = (address: string, chainId: number) => {
-  const { totalVotes, setTotalVotes, setIsError, setIsLoading, setIsSuccess } = useTotalVotesOnContestStore(
-    state => state,
-  );
+  const { setTotalVotes, setIsError, setIsLoading, setIsSuccess } = useTotalVotesOnContestStore(state => state);
 
   const calculateTotalVotes = (data: Recipient[]) => {
     return data.reduce((sum, vote) => sum + Number(vote.numVotes), 0);
@@ -59,8 +57,6 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
   }
 
   async function fetchTotalVotes() {
-    if (totalVotes > 0) return;
-
     setIsLoading(true);
     setIsError(false);
 
