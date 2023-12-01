@@ -14,7 +14,7 @@ interface SubmissionPageProps {
   address: string;
   proposalId: string;
   prompt: string;
-  proposal: Proposal;
+  proposal: Proposal | null;
 }
 
 const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, proposalId, prompt, proposal }) => {
@@ -28,20 +28,16 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
     increaseCurrentUserAvailableVotesAmount,
     increaseCurrentUserTotalVotesCast,
     decreaseCurrentUserTotalVotesCast,
-    increaseCurrentUserVotesOnProposal,
-    decreaseCurrentUserVotesOnProposal,
   } = useUserStore(state => state);
   const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
 
   const handleCastVotes = (amount: number, isUpvote: boolean) => {
     decreaseCurrentUserAvailableVotesAmount(amount);
     increaseCurrentUserTotalVotesCast(amount);
-    increaseCurrentUserVotesOnProposal(amount);
 
     castVotes(amount, isUpvote).catch(error => {
       increaseCurrentUserAvailableVotesAmount(amount);
       decreaseCurrentUserTotalVotesCast(amount);
-      decreaseCurrentUserVotesOnProposal(amount);
     });
   };
 
