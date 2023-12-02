@@ -73,11 +73,11 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   };
 
   return (
-    <div className="flex gap-1 items-center">
+    <div className="flex flex-col md:flex-row gap-1 md:items-center">
       <p className="text-[16px] text-neutral-11">
         {submissionsCount} submission{submissionsCount > 1 ? "s" : ""}
       </p>
-      &#8226;
+      <span className="hidden md:block">&#8226;</span>
       <div className="flex gap-1 items-center text-[16px] text-neutral-11">
         {renderTotalVotesCast()} out of {renderTotalVotes()} votes deployed in contest
       </div>
