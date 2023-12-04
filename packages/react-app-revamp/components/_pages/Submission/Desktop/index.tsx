@@ -1,5 +1,6 @@
 import DialogModalProposal from "@components/_pages/DialogModalProposal";
 import { Proposal } from "@components/_pages/ProposalContent";
+import { Comment } from "@hooks/useComments/store";
 import { FC } from "react";
 
 interface SubmissionPageDesktopLayoutProps {

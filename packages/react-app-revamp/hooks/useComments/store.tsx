@@ -1,6 +1,17 @@
 import { create } from "zustand";
 
+/**
+ * Only used when calling contract methods, not for frontend state
+ */
+export interface CommentCore {
+  author: string;
+  timestamp: number;
+  proposalId: string;
+  commentContent: string;
+}
+
 export interface Comment {
+  id: string;
   author: string;
   createdAt: Date;
   content: string;

@@ -9,6 +9,8 @@ import { useMediaQuery } from "react-responsive";
 import { Proposal } from "../ProposalContent";
 import SubmissionPageDesktopLayout from "./Desktop";
 import SubmissionPageMobileLayout from "./Mobile";
+import { useCommentsStore } from "@hooks/useComments/store";
+import useContractVersion from "@hooks/useContractVersion";
 interface SubmissionPageProps {
   chain: string;
   address: string;
@@ -22,6 +24,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
   const { castVotes } = useCastVotes();
+  const { comments } = useCommentsStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
   const {
     decreaseCurrentUserAvailableVotesAmount,

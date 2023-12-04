@@ -1,23 +1,26 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import Comments from "@components/Comments";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
+import { chains } from "@config/wagmi";
+import { ChevronUpIcon } from "@heroicons/react/outline";
 import useCastVotes from "@hooks/useCastVotes";
+import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import useContractVersion from "@hooks/useContractVersion";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
 import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
-import { useProposalStore } from "@hooks/useProposal/store";
-import { useContestStore } from "@hooks/useContest/store";
-import useComments from "@hooks/useComments";
-import { chains } from "@config/wagmi";
-import { useCommentsStore } from "@hooks/useComments/store";
+
+const COMMENTS_VERSION = 4.11;
 
 interface DialogModalProposalProps {
   address: string;
@@ -59,29 +62,13 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const { addComment, getAllCommentsIdsPerProposal } = useComments(address, chainId, proposalId);
-  const { comments } = useCommentsStore(state => state);
-  const [commentContent, setCommentContent] = useState("");
+  const { version } = useContractVersion(address, chainId);
+  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
+  const commentsAllowed = version && version >= COMMENTS_VERSION;
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
   }, [isSuccess, setIsOpen]);
-
-  useEffect(() => {
-    console.log(comments);
-  }, [comments]);
-
-  useEffect(() => {
-    getAllCommentsIdsPerProposal();
-  }, [proposalId]);
-
-  const onCommentInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCommentContent(e.target.value);
-  };
-
-  const onCommentSubmit = () => {
-    addComment(commentContent);
-  };
 
   return (
     <DialogModalV3
@@ -157,10 +144,25 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
           )}
           {proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
         </div>
-        <div>
-          <input type="text" onChange={onCommentInputChange} />
-          <button onClick={onCommentSubmit}>submit</button>
-        </div>
+        {commentsAllowed ? (
+          <div className="flex flex-col gap-12">
+            <div className="flex gap-1 md:gap-4 items-center">
+              <p className="text-[24px] text-neutral-11 font-bold">comments</p>
+
+              <button
+                onClick={() => setIsCommentsOpen(!isCommentsOpen)}
+                className={`transition-transform duration-500 ease-in-out transform ${
+                  isCommentsOpen ? "" : "rotate-180"
+                }`}
+              >
+                <ChevronUpIcon height={30} />
+              </button>
+            </div>
+            {isCommentsOpen ? (
+              <Comments contestAddress={address} contestChainId={chainId} proposalId={proposalId} />
+            ) : null}
+          </div>
+        ) : null}
       </div>
     </DialogModalV3>
   );
