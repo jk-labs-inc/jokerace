@@ -13,7 +13,7 @@ const ProposalStatisticsPanelSubmissionOpen: FC<ProposalStatisticsPanelSubmissio
   return (
     <p className="text-[16px] text-neutral-11">
       {submissionsCount} submission
-      {submissionsCount > 1 || submissionsCount === 0 ? "s" : ""} &#8226; {contestMaxProposalCount.toString()} allowed
+      {submissionsCount !== 1 ? "s" : ""} &#8226; {contestMaxProposalCount.toString()} allowed
     </p>
   );
 };
