@@ -370,5 +370,5 @@ module.exports = {
       transform: ["hover"],
     },
   },
-  plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography"), require("@tailwindcss/line-clamp")],
+  plugins: [require("tailwindcss-logical"), require("@tailwindcss/typography")],
 };
