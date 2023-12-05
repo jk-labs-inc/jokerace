@@ -3,6 +3,8 @@ import EthereumAddress from "@components/UI/EtheuremAddress";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
+import { formatNumber } from "@helpers/formatNumber";
+import ordinalize from "@helpers/ordinalize";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
@@ -50,7 +52,22 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     >
       <div className="flex flex-col gap-4 md:pl-[50px] lg:pl-[100px] mt-[60px] mb-[60px]">
         <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
-        <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+        <div className="flex gap-2 items-center">
+          <div className="flex flex-col gap-4">
+            {proposal.rank > 0 && (
+              <div className="flex gap-2 items-center">
+                <p className="text-[16px] font-bold text-neutral-11">
+                  {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
+                </p>
+                <span className="text-neutral-11">&#8226;</span>{" "}
+                <p className="text-[16px] font-bold text-neutral-11">
+                  {ordinalize(proposal.rank).label} place {proposal.isTied ? "(tied)" : ""}
+                </p>
+              </div>
+            )}
+            <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+          </div>
+        </div>
         <div className="flex flex-col gap-7">
           <ContestProposal proposal={proposal} />
           <VotingWidget

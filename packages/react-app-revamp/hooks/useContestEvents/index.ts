@@ -8,6 +8,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
+import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { fetchEnsName, readContract, watchContractEvent } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { useRouter } from "next/router";
@@ -19,7 +20,7 @@ export function useContestEvents() {
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const provider = getEthersProvider({ chainId });
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
-  const { fetchTotalVotesCast } = useContest();
+  const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
   const { contestStatus } = useContestStatusStore(state => state);
   const { updateProposal } = useProposal();
   const { setProposalData, listProposalsData } = useProposalStore(state => state);
@@ -81,7 +82,7 @@ export function useContestEvents() {
         setProposalData(proposalData);
       }
 
-      await fetchTotalVotesCast();
+      fetchTotalVotesCast();
     } catch (e) {
       console.error(e);
     }

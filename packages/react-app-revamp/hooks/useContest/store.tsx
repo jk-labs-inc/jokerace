@@ -21,8 +21,6 @@ export interface ContestState {
   submissionsOpen: Date;
   votesOpen: Date;
   votesClose: Date;
-  totalVotesCast: number;
-  totalVotes: number;
   isLoading: boolean;
   error: string;
   isSuccess: boolean;
@@ -37,10 +35,6 @@ export interface ContestState {
   entryCharge: EntryCharge | null;
   votingRequirements: VotingRequirementsSchema | null;
   submissionRequirements: VotingRequirementsSchema | null;
-  submitters: {
-    address: string;
-  }[];
-  voters: Recipient[];
   rewards: Reward | null;
   isReadOnly: boolean;
   isRewardsLoading: boolean;
@@ -55,11 +49,7 @@ export interface ContestState {
   setSubmissionsOpen: (datetime: Date) => void;
   setVotesOpen: (datetime: Date) => void;
   setVotesClose: (datetime: Date) => void;
-  setTotalVotesCast: (amount: number) => void;
-  setTotalVotes: (amount: number) => void;
   setRewards: (rewards: Reward | null) => void;
-  setVoters: (voters: Recipient[]) => void;
-  setSubmitters: (submitters: { address: string }[]) => void;
   setSubmissionsMerkleRoot: (merkleRoot: string) => void;
   setVotingMerkleRoot: (merkleRoot: string) => void;
   setVotingRequirements: (votingRequirements: VotingRequirementsSchema | null) => void;
@@ -84,11 +74,7 @@ export const createContestStore = () =>
     votesClose: new Date(),
     submissionMerkleRoot: "",
     votingMerkleRoot: "",
-    submitters: [],
-    voters: [],
-    totalVotesCast: 0,
     rewards: null,
-    totalVotes: 0,
     isLoading: true,
     error: "",
     entryCharge: null,
@@ -116,12 +102,8 @@ export const createContestStore = () =>
     setSubmissionsOpen: datetime => set({ submissionsOpen: datetime }),
     setVotesOpen: datetime => set({ votesOpen: datetime }),
     setVotesClose: datetime => set({ votesClose: datetime }),
-    setVoters: voters => set({ voters: voters }),
-    setSubmitters: submitters => set({ submitters: submitters }),
     setSubmissionsMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
     setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
-    setTotalVotesCast: amount => set({ totalVotesCast: amount }),
-    setTotalVotes: amount => set({ totalVotes: amount }),
     setRewards: rewards => set({ rewards: rewards }),
     setVotingRequirements: votingRequirements => set({ votingRequirements: votingRequirements }),
     setSubmissionRequirements: submissionRequirements => set({ submissionRequirements: submissionRequirements }),

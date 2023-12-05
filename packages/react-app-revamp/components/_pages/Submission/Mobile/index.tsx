@@ -6,6 +6,8 @@ import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
+import { formatNumber } from "@helpers/formatNumber";
+import ordinalize from "@helpers/ordinalize";
 import { generateUrlSubmissions } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
@@ -22,7 +24,7 @@ interface SubmissionPageMobileLayoutProps {
   chain: string;
   proposalId: string;
   prompt: string;
-  proposal: Proposal;
+  proposal: Proposal | null;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
   onPreviousEntry?: () => void;
@@ -75,9 +77,30 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
       <div className="flex flex-col gap-8 mt-9">
         <div className="flex flex-col gap-4">
           <ContestPrompt type="modal" prompt={prompt} hidePrompt />
-          <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+          {proposal ? (
+            <div className="flex flex-col gap-4">
+              {proposal.rank > 0 && (
+                <div className="flex gap-2 items-center">
+                  <p className="text-[16px] font-bold text-neutral-11">
+                    {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
+                  </p>
+                  <span className="text-neutral-11">&#8226;</span>{" "}
+                  <p className="text-[16px] font-bold text-neutral-11">
+                    {ordinalize(proposal.rank).label} place {proposal.isTied ? "(tied)" : ""}
+                  </p>
+                </div>
+              )}
+              <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+            </div>
+          ) : null}
         </div>
-        <ContestProposal proposal={proposal} contestStatus={contestStatus} />
+        {proposal ? (
+          <ContestProposal proposal={proposal} contestStatus={contestStatus} />
+        ) : (
+          <p className="text-[16px] text-negative-11 font-bold">
+            ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
+          </p>
+        )}
         <div className="flex flex-col gap-8">
           {contestStatus === ContestStatus.VotingOpen && (
             <>
@@ -110,7 +133,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               )}
             </>
           )}
-          {proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
+          {proposal && proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
         </div>
         <div className="mt-20">
           <div
