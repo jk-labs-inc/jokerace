@@ -36,6 +36,7 @@ import DeleteInMapAfterForLoopContract from "@contracts/bytecodeAndAbi/Contest.4
 import AddGetPropIdsWithForVotesContract from "@contracts/bytecodeAndAbi/Contest.4.9.addGetPropIdsWithForVotes.sol/Contest.json";
 import RmImmutableKeywordContract from "@contracts/bytecodeAndAbi/Contest.4.10.rmImmutableKeyword.sol/Contest.json";
 import GasOptimizeGettersContract from "@contracts/bytecodeAndAbi/Contest.4.11.gasOptimizeGetters.sol/Contest.json";
+import AllowCancelCompletedContract from "@contracts/bytecodeAndAbi/Contest.4.12.allowCancelCompleted.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -51,7 +52,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.11") {
+    if (version === "4.12") {
+      return { abi: AllowCancelCompletedContract.abi, version};
+    } else if (version === "4.11") {
       return { abi: GasOptimizeGettersContract.abi, version};
     } else if (version === "4.10") {
       return { abi: RmImmutableKeywordContract.abi, version};

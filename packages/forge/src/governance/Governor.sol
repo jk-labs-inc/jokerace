@@ -103,7 +103,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     error OnlyJkLabsOrCreatorCanCancel();
     error ContestAlreadyCancelled();
-    error CannotCancelACompletedContest();
 
     constructor(
         string memory name_,
@@ -135,7 +134,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.11";
+        return "4.12";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -372,9 +371,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         if (((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS))) revert OnlyJkLabsOrCreatorCanCancel();
 
         ContestState status = state();
-
         if (status == ContestState.Canceled) revert ContestAlreadyCancelled();
-        if (status == ContestState.Completed) revert CannotCancelACompletedContest();
+
         canceled = true;
 
         emit ContestCanceled();
