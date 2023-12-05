@@ -81,7 +81,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
       className="xl:w-[1110px] 3xl:w-[1300px]"
       onClose={onClose}
     >
-      <div className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[20px] md:mt-[60px] pb-[60px]">
+      <div
+        className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[20px] md:mt-[60px] pb-[60px]"
+        id="custom-modal"
+      >
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         <div className={`${totalProposals > 1 ? "flex" : "hidden"} gap-4`}>
           {currentIndex !== 0 && (

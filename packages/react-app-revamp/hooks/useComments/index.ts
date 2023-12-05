@@ -1,12 +1,11 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { getBlockDetails } from "@helpers/getBlock";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
-import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { prepareWriteContract, readContract, readContracts, waitForTransaction, writeContract } from "@wagmi/core";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { Comment, CommentCore, useCommentsStore } from "./store";
-import { getEthersProvider } from "@helpers/ethers";
-import { getBlockDetails } from "@helpers/getBlock";
 
 export const COMMENTS_PER_PAGE = 12;
 
@@ -26,9 +25,11 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setComments,
     allCommentsIdsPerProposal,
     setAllCommentsIdsPerProposal,
-    setIsPaginating,
     setCurrentPage,
     setTotalPages,
+    setIsDeleting,
+    setIsDeletingError,
+    setIsDeletingSuccess,
   } = useCommentsStore(state => state);
   const { handleError } = useError();
 
@@ -118,14 +119,14 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   }
 
   async function getCommentsPerPage(page: number) {
-    setIsPaginating(true);
-
     const start = (page - 1) * COMMENTS_PER_PAGE;
     const end = start + COMMENTS_PER_PAGE;
+
     const pageCommentsIds = allCommentsIdsPerProposal.slice(start, end);
 
     try {
       const commentsPromises = pageCommentsIds.map(id => getComment(id));
+
       const newComments = await Promise.all(commentsPromises);
 
       const combinedComments = [...comments, ...newComments];
@@ -134,25 +135,36 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     } catch (error) {
       setError("Error fetching comments for the page");
     }
-
-    setIsPaginating(false);
   }
 
   async function getAllCommentsIdsPerProposal() {
     setIsLoading(true);
+    setComments([]);
     const contractConfig = await getContractConfig();
 
     try {
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "getProposalComments",
+          args: [proposalId],
+        },
+        {
+          ...contractConfig,
+          functionName: "getAllDeletedCommentIds",
+          args: [],
+        },
+      ];
+
       //@ts-ignore
-      const allCommentsIdsRaw = (await readContract({
-        ...contractConfig,
-        functionName: "getProposalComments",
-        args: [proposalId],
-      })) as bigint[];
+      const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts({ contracts });
 
-      if (!allCommentsIdsRaw.length) return;
+      const allCommentsIdsBigInt = allCommentsIdsRaw.result as bigint[];
+      const deletedCommentIdsBigInt = deletedCommentIdsRaw.result as bigint[];
 
-      const allCommentsIds = allCommentsIdsRaw.map(id => id.toString());
+      const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt.map(id => id.toString()));
+      const allCommentsIds = allCommentsIdsBigInt.map(id => id.toString()).filter(id => !deletedCommentIdsSet.has(id));
+
       const commentsForPage = allCommentsIds.slice(0, COMMENTS_PER_PAGE);
 
       setAllCommentsIdsPerProposal(allCommentsIds);
@@ -161,6 +173,8 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     } catch (error) {
       setError("something went wrong while getting all comments ids per proposal");
       setIsSuccess(false);
+      setIsLoading(false);
+    } finally {
       setIsLoading(false);
     }
   }
@@ -196,14 +210,15 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       setComments(combinedComments);
       toastSuccess("Comment added successfully!");
-    } catch (error) {
-      handleError(error instanceof Error ? error.message : error, "Error adding comment");
+    } catch (error: any) {
+      handleError(error.message, "Error adding comment");
       setIsSuccess(false);
       setIsLoading(false);
     }
   }
 
   async function deleteComments(commentsIds: string[]) {
+    setIsDeleting(true);
     try {
       const contractConfig = await getContractConfig();
 
@@ -222,10 +237,12 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       setComments(newComments);
       toastSuccess("Comment deleted successfully!");
-    } catch (error) {
-      handleError(error instanceof Error ? error.message : error, "Error deleting comment");
-      setIsSuccess(false);
-      setIsLoading(false);
+      setIsDeletingSuccess(true);
+      setIsDeleting(false);
+    } catch (error: any) {
+      handleError(error.message, "Error deleting comment");
+      setIsDeletingError(error.message);
+      setIsDeleting(false);
     }
   }
 
