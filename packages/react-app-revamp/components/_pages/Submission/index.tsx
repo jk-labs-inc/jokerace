@@ -9,22 +9,23 @@ import { useMediaQuery } from "react-responsive";
 import { Proposal } from "../ProposalContent";
 import SubmissionPageDesktopLayout from "./Desktop";
 import SubmissionPageMobileLayout from "./Mobile";
-import { useCommentsStore } from "@hooks/useComments/store";
-import useContractVersion from "@hooks/useContractVersion";
+
 interface SubmissionPageProps {
-  chain: string;
-  address: string;
+  contestInfo: {
+    address: string;
+    chain: string;
+    version: number;
+  };
+  proposal: Proposal | null;
   proposalId: string;
   prompt: string;
-  proposal: Proposal | null;
 }
 
-const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, proposalId, prompt, proposal }) => {
+const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal, proposalId }) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
   const { castVotes } = useCastVotes();
-  const { comments } = useCommentsStore(state => state);
   const { listProposalsIds } = useProposalStore(state => state);
   const {
     decreaseCurrentUserAvailableVotesAmount,
@@ -62,14 +63,14 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
   };
 
   const onClose = () => {
-    router.push(`/contest/${chainName}/${address}`, undefined, { shallow: true, scroll: false });
+    router.push(`/contest/${contestInfo.chain}/${contestInfo.address}`, undefined, { shallow: true, scroll: false });
   };
 
   const handleOnNextEntryChange = () => {
     const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
     if (currentIndex !== -1 && currentIndex < stringifiedProposalsIds.length - 1) {
       const nextProposalId = stringifiedProposalsIds[currentIndex + 1];
-      goToProposalPage(chainName, address, nextProposalId);
+      goToProposalPage(contestInfo.chain, contestInfo.address, nextProposalId);
     }
   };
 
@@ -77,15 +78,15 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
     const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
     if (currentIndex > 0) {
       const previousProposalId = stringifiedProposalsIds[currentIndex - 1];
-      goToProposalPage(chainName, address, previousProposalId);
+      goToProposalPage(contestInfo.chain, contestInfo.address, previousProposalId);
     }
   };
 
   if (isMobile) {
     return (
       <SubmissionPageMobileLayout
-        address={address}
-        chain={chainName}
+        address={contestInfo.address}
+        chain={contestInfo.chain}
         prompt={prompt}
         proposal={proposal}
         proposalId={proposalId}
@@ -100,8 +101,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ chain: chainName, address, pr
 
   return (
     <SubmissionPageDesktopLayout
-      address={address}
-      chainName={chainName}
+      contestInfo={contestInfo}
       prompt={prompt}
       proposal={proposal}
       proposalId={proposalId}

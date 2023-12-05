@@ -25,8 +25,11 @@ import ordinalize from "@helpers/ordinalize";
 const COMMENTS_VERSION = 4.11;
 
 interface DialogModalProposalProps {
-  address: string;
-  chainName: string;
+  contestInfo: {
+    address: string;
+    chain: string;
+    version: number;
+  };
   isOpen: boolean;
   prompt: string;
   proposalId: string;
@@ -40,8 +43,7 @@ interface DialogModalProposalProps {
 }
 
 const DialogModalProposal: FC<DialogModalProposalProps> = ({
-  address,
-  chainName,
+  contestInfo,
   isOpen,
   setIsOpen,
   prompt,
@@ -63,10 +65,9 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const { downvotingAllowed } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const { version } = useContractVersion(address, chainId);
-  const [isCommentsOpen, setIsCommentsOpen] = useState(false);
-  const commentsAllowed = version && version >= COMMENTS_VERSION;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
+  const [isCommentsOpen, setIsCommentsOpen] = useState(true);
+  const commentsAllowed = contestInfo.version >= COMMENTS_VERSION;
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
@@ -184,7 +185,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               </button>
             </div>
             {isCommentsOpen ? (
-              <Comments contestAddress={address} contestChainId={chainId} proposalId={proposalId} />
+              <Comments contestAddress={contestInfo.address} contestChainId={chainId} proposalId={proposalId} />
             ) : null}
           </div>
         ) : null}

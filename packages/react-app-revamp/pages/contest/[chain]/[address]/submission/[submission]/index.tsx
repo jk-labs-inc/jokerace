@@ -13,10 +13,12 @@ import { FC, useEffect } from "react";
 interface PageProps {
   address: string;
   chain: string;
+  version: number;
+
   proposal: Proposal | null;
 }
 
-const Page: FC<PageProps> = ({ proposal, address, chain }) => {
+const Page: FC<PageProps> = ({ address, chain, version, proposal }) => {
   const router = useRouter();
   const { contestPrompt, contestName } = useContestStore(state => state);
   const { setPickedProposal } = useCastVotesStore(state => state);
@@ -33,7 +35,16 @@ const Page: FC<PageProps> = ({ proposal, address, chain }) => {
           {proposal ? `proposal by ${shortenEthereumAddress(proposal.authorEthereumAddress)} for ${contestName}` : null}
         </title>
       </Head>
-      <SubmissionPage chain={chain} address={address} proposalId={id} prompt={contestPrompt} proposal={proposal} />
+      <SubmissionPage
+        contestInfo={{
+          address,
+          chain,
+          version,
+        }}
+        prompt={contestPrompt}
+        proposal={proposal}
+        proposalId={id}
+      />
     </>
   );
 };
@@ -63,13 +74,14 @@ export async function getStaticProps({ params }: any) {
 
   if (!chainId) return;
 
-  const proposal = await fetchProposalData(address, chainId, submission);
+  const data = await fetchProposalData(address, chainId, submission);
 
   return {
     props: {
       address,
       chain,
-      proposal,
+      version: data?.version,
+      proposal: data?.proposal,
     },
   };
 }

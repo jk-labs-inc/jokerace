@@ -1,11 +1,13 @@
 import DialogModalProposal from "@components/_pages/DialogModalProposal";
 import { Proposal } from "@components/_pages/ProposalContent";
-import { Comment } from "@hooks/useComments/store";
 import { FC } from "react";
 
 interface SubmissionPageDesktopLayoutProps {
-  address: string;
-  chainName: string;
+  contestInfo: {
+    address: string;
+    chain: string;
+    version: number;
+  };
   proposalId: string;
   prompt: string;
   proposal: Proposal | null;
@@ -17,8 +19,7 @@ interface SubmissionPageDesktopLayoutProps {
 }
 
 const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
-  address,
-  chainName,
+  contestInfo,
   proposalId,
   prompt,
   proposal,
@@ -30,8 +31,7 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
 }) => {
   return (
     <DialogModalProposal
-      address={address}
-      chainName={chainName}
+      contestInfo={contestInfo}
       proposalId={proposalId}
       prompt={prompt}
       isOpen={true}

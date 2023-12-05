@@ -10,6 +10,11 @@ interface RankDictionary {
   [key: string]: number;
 }
 
+interface ProposalData {
+  proposal: Proposal;
+  version: number;
+}
+
 const extractVotes = (forVotesValue: string, againstVotesValue: string) => {
   const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
   const netVotes = Number(utils.formatEther(netVotesBigNumber));
@@ -42,9 +47,9 @@ export const fetchProposalData = async (
   address: string,
   chainId: number,
   submission: string,
-): Promise<Proposal | null> => {
+): Promise<ProposalData | null> => {
   try {
-    const { abi } = await getContestContractVersion(address, chainId);
+    const { abi, version } = await getContestContractVersion(address, chainId);
 
     if (!abi) return null;
 
@@ -81,14 +86,17 @@ export const fetchProposalData = async (
 
     if (votes === 0) {
       return {
-        id: submission,
-        authorEthereumAddress: data.author,
-        content: data.description,
-        isContentImage: isUrlToImage(data.description),
-        exists: data.exists,
-        votes,
-        rank: 0,
-        isTied: false,
+        proposal: {
+          id: submission,
+          authorEthereumAddress: data.author,
+          content: data.description,
+          isContentImage: isUrlToImage(data.description),
+          exists: data.exists,
+          votes,
+          rank: 0,
+          isTied: false,
+        },
+        version: parseFloat(version),
       };
     }
 
@@ -109,14 +117,17 @@ export const fetchProposalData = async (
     const { targetRank, isTied } = assignRankAndCheckTies(mappedProposals, submission);
 
     return {
-      id: submission,
-      authorEthereumAddress: data.author,
-      content: data.description,
-      isContentImage: isUrlToImage(data.description),
-      exists: data.exists,
-      votes,
-      rank: targetRank,
-      isTied: isTied,
+      proposal: {
+        id: submission,
+        authorEthereumAddress: data.author,
+        content: data.description,
+        isContentImage: isUrlToImage(data.description),
+        exists: data.exists,
+        votes,
+        rank: targetRank,
+        isTied: isTied,
+      },
+      version: parseFloat(version),
     };
   } catch (error) {
     return null;
