@@ -103,7 +103,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     error OnlyJkLabsOrCreatorCanCancel();
     error ContestAlreadyCancelled();
-    error CannotCancelACompletedContest();
 
     constructor(
         string memory name_,
@@ -372,9 +371,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         if (((msg.sender != creator) && (msg.sender != JK_LABS_ADDRESS))) revert OnlyJkLabsOrCreatorCanCancel();
 
         ContestState status = state();
-
         if (status == ContestState.Canceled) revert ContestAlreadyCancelled();
-        if (status == ContestState.Completed) revert CannotCancelACompletedContest();
+
         canceled = true;
 
         emit ContestCanceled();
