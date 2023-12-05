@@ -31,6 +31,7 @@ import DeleteInMapAfterForLoopRewards from "@contracts/bytecodeAndAbi/modules/Re
 import AddGetPropIdsWithForVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.9.addGetPropIdsWithForVotes.sol/RewardsModule.json";
 import RmImmutableKeywordRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.10.rmImmutableKeyword.sol/RewardsModule.json";
 import GasOptimizeGettersRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.11.gasOptimizeGetters.sol/RewardsModule.json";
+import AllowCancelCompletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.12.allowCancelCompleted.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -43,7 +44,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.11") {
+    if (version === "4.12") {
+      return GasOptimizeGettersRewards.abi;
+    } else if (version === "4.11") {
       return GasOptimizeGettersRewards.abi;
     } else if (version === "4.10") {
       return RmImmutableKeywordRewards.abi;
