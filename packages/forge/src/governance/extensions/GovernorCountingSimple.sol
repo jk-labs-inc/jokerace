@@ -112,7 +112,8 @@ abstract contract GovernorCountingSimple is Governor {
         for (uint256 i = 0; i < proposalIdsMemVar.length; i++) {
             if (!proposalIsDeleted[proposalIdsMemVar[i]]) {
                 proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIdsMemVar[i];
-                proposalVoteCountsArray[newArraysIndexCounter] = proposalVotesStructs[proposalIdsMemVar[i]].proposalVoteCounts;
+                proposalVoteCountsArray[newArraysIndexCounter] =
+                    proposalVotesStructs[proposalIdsMemVar[i]].proposalVoteCounts;
                 newArraysIndexCounter += 1;
             }
         }
