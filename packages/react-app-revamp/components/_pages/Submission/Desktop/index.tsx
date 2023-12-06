@@ -3,9 +3,15 @@ import { Proposal } from "@components/_pages/ProposalContent";
 import { FC } from "react";
 
 interface SubmissionPageDesktopLayoutProps {
+  contestInfo: {
+    address: string;
+    chain: string;
+    version: number;
+  };
   proposalId: string;
   prompt: string;
   proposal: Proposal | null;
+  numberOfComments: number;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
   onPreviousEntry?: () => void;
@@ -14,9 +20,11 @@ interface SubmissionPageDesktopLayoutProps {
 }
 
 const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
+  contestInfo,
   proposalId,
   prompt,
   proposal,
+  numberOfComments,
   onClose,
   onVote,
   onPreviousEntry,
@@ -25,10 +33,12 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
 }) => {
   return (
     <DialogModalProposal
+      contestInfo={contestInfo}
       proposalId={proposalId}
       prompt={prompt}
       isOpen={true}
       proposal={proposal}
+      numberOfComments={numberOfComments}
       onClose={onClose}
       onVote={onVote}
       onConnectWallet={onConnectWallet}
