@@ -104,20 +104,20 @@ export const ListProposals = () => {
             <div key={index} className="relative">
               {proposal.netVotes > 0 ? (
                 <div className="absolute top-0 right-0 -mr-2 -mt-4 p-4 z-10 h-7 rounded-[16px] bg-true-black flex items-center justify-center text-[16px] font-bold text-neutral-11 border border-neutral-11">
-                  {formatNumber(proposal.netVotes)} votes
+                  {formatNumber(proposal.netVotes)} vote{proposal.netVotes > 1 ? "s" : ""}
                 </div>
               ) : null}
               <ProposalContent
-                id={proposal.id}
                 proposal={{
+                  id: proposal.id,
                   authorEthereumAddress: proposal.author,
                   content: proposal.description,
                   exists: proposal.exists,
                   isContentImage: proposal.isContentImage,
                   votes: proposal.netVotes,
+                  rank: proposal.rank,
+                  isTied: proposal.isTied,
                 }}
-                rank={proposal.rank}
-                isTied={proposal.isTied}
               />
               {allowDelete && (
                 <div

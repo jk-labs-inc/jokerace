@@ -60,3 +60,28 @@ export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Pr
     throw new Error(`Failed to save file with ID ${fileId} to bucket ${MERKLE_TREES_BUCKET}`);
   }
 };
+
+/**
+ * Fetches voter or submitter data from S3 bucket using web worker
+ * @param fileId
+ * @returns Voter or submitter data from S3 bucket
+ */
+export async function fetchDataFromBucket(fileId: string): Promise<Recipient[] | null> {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(new URL("/workers/fetchDataFromBucket", import.meta.url));
+
+    worker.onmessage = event => {
+      if (event.data.error) {
+        reject(event.data.error);
+      } else {
+        resolve(event.data.data);
+      }
+    };
+
+    worker.onerror = error => {
+      reject(error);
+    };
+
+    worker.postMessage({ fileId });
+  });
+}
