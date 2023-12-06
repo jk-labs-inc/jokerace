@@ -18,9 +18,10 @@ interface SubmissionPageProps {
   proposal: Proposal | null;
   proposalId: string;
   prompt: string;
+  numberOfComments: number;
 }
 
-const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal, proposalId }) => {
+const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal, proposalId, numberOfComments }) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
@@ -84,8 +85,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal
   if (isMobile) {
     return (
       <SubmissionPageMobileLayout
-        address={contestInfo.address}
-        chain={contestInfo.chain}
+        contestInfo={contestInfo}
         prompt={prompt}
         proposal={proposal}
         proposalId={proposalId}
@@ -94,6 +94,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal
         onConnectWallet={onConnectWallet}
         onPreviousEntry={handleOnPreviousEntryChange}
         onNextEntry={handleOnNextEntryChange}
+        numberOfComments={numberOfComments}
       />
     );
   }
@@ -109,6 +110,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal
       onConnectWallet={onConnectWallet}
       onPreviousEntry={handleOnPreviousEntryChange}
       onVote={handleCastVotes}
+      numberOfComments={numberOfComments}
     />
   );
 };

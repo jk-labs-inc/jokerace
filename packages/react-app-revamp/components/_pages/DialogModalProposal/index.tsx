@@ -7,22 +7,19 @@ import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import { chains } from "@config/wagmi";
-import { ChevronUpIcon } from "@heroicons/react/outline";
+import { formatNumber } from "@helpers/formatNumber";
+import ordinalize from "@helpers/ordinalize";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import useContractVersion from "@hooks/useContractVersion";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
-import { formatNumber } from "@helpers/formatNumber";
-import ordinalize from "@helpers/ordinalize";
-
-const COMMENTS_VERSION = 4.11;
+import { COMMENTS_VERSION } from "lib/proposal";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -34,6 +31,7 @@ interface DialogModalProposalProps {
   prompt: string;
   proposalId: string;
   proposal: Proposal | null;
+  numberOfComments: number;
   setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
@@ -49,6 +47,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   prompt,
   proposal,
   proposalId,
+  numberOfComments,
   onClose,
   onVote,
   onPreviousEntry,
@@ -66,7 +65,6 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
-  const [isCommentsOpen, setIsCommentsOpen] = useState(true);
   const commentsAllowed = contestInfo.version >= COMMENTS_VERSION;
 
   useEffect(() => {
@@ -174,23 +172,12 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
           {proposal && proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
         </div>
         {commentsAllowed ? (
-          <div className="flex flex-col gap-12">
-            <div className="flex gap-1 md:gap-4 items-center">
-              <p className="text-[24px] text-neutral-11 font-bold">comments</p>
-
-              <button
-                onClick={() => setIsCommentsOpen(!isCommentsOpen)}
-                className={`transition-transform duration-500 ease-in-out transform ${
-                  isCommentsOpen ? "" : "rotate-180"
-                }`}
-              >
-                <ChevronUpIcon height={30} />
-              </button>
-            </div>
-            {isCommentsOpen ? (
-              <Comments contestAddress={contestInfo.address} contestChainId={chainId} proposalId={proposalId} />
-            ) : null}
-          </div>
+          <Comments
+            contestAddress={contestInfo.address}
+            contestChainId={chainId}
+            proposalId={proposalId}
+            numberOfComments={numberOfComments}
+          />
         ) : null}
       </div>
     </DialogModalV3>

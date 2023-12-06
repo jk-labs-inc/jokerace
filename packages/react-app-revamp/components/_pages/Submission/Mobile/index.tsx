@@ -1,3 +1,4 @@
+import Comments from "@components/Comments";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
@@ -6,6 +7,7 @@ import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { Proposal } from "@components/_pages/ProposalContent";
+import { chains } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import { generateUrlSubmissions } from "@helpers/share";
@@ -15,13 +17,18 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
+import { COMMENTS_VERSION } from "lib/proposal";
 import Image from "next/image";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 
 interface SubmissionPageMobileLayoutProps {
-  address: string;
-  chain: string;
+  contestInfo: {
+    address: string;
+    chain: string;
+    version: number;
+  };
+  numberOfComments: number;
   proposalId: string;
   prompt: string;
   proposal: Proposal | null;
@@ -33,8 +40,8 @@ interface SubmissionPageMobileLayoutProps {
 }
 
 const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
-  address,
-  chain,
+  contestInfo,
+  numberOfComments,
   proposalId,
   prompt,
   proposal,
@@ -56,6 +63,8 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const totalProposals = listProposalsIds.length;
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
+  const commentsAllowed = contestInfo.version >= COMMENTS_VERSION;
+  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
 
   return (
     <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
@@ -66,7 +75,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             className={`flex items-center bg-true-black rounded-full border-neutral-11 border overflow-hidden w-8 h-8`}
             onClick={() =>
               navigator.share({
-                url: generateUrlSubmissions(address, chain, proposalId),
+                url: generateUrlSubmissions(contestInfo.address, contestInfo.chain, proposalId),
               })
             }
           >
@@ -101,6 +110,17 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
           </p>
         )}
+        {commentsAllowed ? (
+          <div className="mt-9">
+            <Comments
+              contestAddress={contestInfo.address}
+              contestChainId={chainId}
+              proposalId={proposalId}
+              numberOfComments={numberOfComments}
+            />
+          </div>
+        ) : null}
+
         <div className="flex flex-col gap-8">
           {contestStatus === ContestStatus.VotingOpen && (
             <>
@@ -170,7 +190,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           </div>
           <MainHeaderMobileLayout
             isConnected={isConnected}
-            address={address}
+            address={contestInfo.address}
             openAccountModal={openAccountModal}
             openConnectModal={openConnectModal}
           />

@@ -8,6 +8,7 @@ import { getUserSubmissions } from "lib/user";
 import { SubmissionsResult } from "lib/user/types";
 import { FC, useState } from "react";
 import { UserPageProps } from "..";
+
 function useUserSubmissions(userAddress: string) {
   const [page, setPage] = useState(0);
 

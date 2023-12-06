@@ -23,22 +23,32 @@ interface CommentsState {
   comments: Comment[];
   isLoading: boolean;
   isPaginating: boolean;
+  isPaginatingSuccess: boolean;
+  isPaginatingError: boolean;
   isSuccess: boolean;
-  error: string;
+  isError: boolean;
   currentPage: number;
   totalPages: number;
   isDeleting: boolean;
   isDeletingSuccess: boolean;
   isDeletingError: string;
+  isAdding: boolean;
+  isAddingSuccess: boolean;
+  isAddingError: string;
   setAllCommentsIdsPerProposal: (allCommentsIdsPerProposal: string[]) => void;
   setComments: (comments: Comment[]) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsPaginating: (isPaginating: boolean) => void;
+  setIsPaginatingSuccess: (isPaginatingSuccess: boolean) => void;
+  setIsPaginatingError: (isPaginatingError: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
-  setError: (error: string) => void;
+  setIsError: (error: boolean) => void;
   setIsDeleting: (isDeleting: boolean) => void;
   setIsDeletingSuccess: (isDeletingSuccess: boolean) => void;
   setIsDeletingError: (isDeletingError: string) => void;
+  setIsAdding: (isAdding: boolean) => void;
+  setIsAddingSuccess: (isAddingSuccess: boolean) => void;
+  setIsAddingError: (isAddingError: string) => void;
   setCurrentPage: (currentPage: number) => void;
   setTotalPages: (totalPages: number) => void;
 }
@@ -48,22 +58,32 @@ export const useCommentsStore = create<CommentsState>(set => ({
   comments: [],
   isLoading: false,
   isPaginating: false,
+  isPaginatingSuccess: false,
+  isPaginatingError: false,
   isSuccess: false,
-  error: "",
+  isError: false,
   currentPage: 1,
   totalPages: 1,
   isDeleting: false,
   isDeletingSuccess: false,
   isDeletingError: "",
+  isAdding: false,
+  isAddingSuccess: false,
+  isAddingError: "",
   setAllCommentsIdsPerProposal: allCommentsIdsPerProposal => set({ allCommentsIdsPerProposal }),
   setComments: comments => set({ comments }),
   setIsLoading: isLoading => set({ isLoading }),
   setIsPaginating: isPaginating => set({ isPaginating }),
+  setIsPaginatingSuccess: isPaginatingSuccess => set({ isPaginatingSuccess }),
+  setIsPaginatingError: isPaginatingError => set({ isPaginatingError }),
   setIsSuccess: isSuccess => set({ isSuccess }),
-  setError: error => set({ error }),
+  setIsError: isError => set({ isError }),
   setIsDeleting: isDeleting => set({ isDeleting }),
   setIsDeletingSuccess: isDeletingSuccess => set({ isDeletingSuccess }),
   setIsDeletingError: isDeletingError => set({ isDeletingError }),
+  setIsAdding: isAdding => set({ isAdding }),
+  setIsAddingSuccess: isAddingSuccess => set({ isAddingSuccess }),
+  setIsAddingError: isAddingError => set({ isAddingError }),
   setCurrentPage: currentPage => set({ currentPage }),
   setTotalPages: totalPages => set({ totalPages }),
 }));

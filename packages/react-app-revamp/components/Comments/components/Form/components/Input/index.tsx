@@ -1,60 +1,123 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import EthereumAddress from "@components/UI/EtheuremAddress";
-import { useState, useRef, useEffect } from "react";
-import { useAccount } from "wagmi";
+import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
+import Placeholder from "@tiptap/extension-placeholder";
+import { EditorContent, useEditor } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { switchNetwork } from "@wagmi/core";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { useMedia } from "react-use";
+import { useAccount, useNetwork } from "wagmi";
 
 interface CommentsFormInputProps {
+  contestChainId: number;
+  isAdding: boolean;
+  isAddingSuccess: boolean;
   onSend?: (comment: string) => void;
 }
 
-const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend = () => {} }) => {
-  const { address } = useAccount();
-  const [comment, setComment] = useState("");
-  const textInputRef = useRef<HTMLDivElement>(null);
+const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestChainId, isAddingSuccess, isAdding }) => {
+  const { openConnectModal } = useConnectModal();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+  const isUserOnCorrectNetwork = chain?.id === contestChainId;
+  const [commentContent, setCommentContent] = useState("");
+  const placeholderText = "add a comment...";
+  const [allowSend, setAllowSend] = useState(false);
+  const isMobile = useMedia("(max-width: 768px)");
+
+  const commentEditor = useEditor({
+    extensions: [
+      StarterKit,
+      ShiftEnterCreateExtension,
+      DisableEnter,
+      TiptapExtensionLink,
+      Placeholder.configure({
+        emptyEditorClass: "is-editor-comment-empty",
+        placeholder: placeholderText,
+      }),
+    ],
+    content: commentContent,
+    editorProps: {
+      attributes: {
+        class: "prose prose-invert flex-grow focus:outline-none text-true-white",
+      },
+    },
+    onUpdate: ({ editor }) => {
+      const content = editor.getHTML();
+
+      if (editor.getText().length > 0 && isConnected && isUserOnCorrectNetwork) {
+        setAllowSend(true);
+      } else {
+        setAllowSend(false);
+      }
+
+      setCommentContent(content);
+    },
+  });
 
   useEffect(() => {
-    if (textInputRef.current && !comment) {
-      textInputRef.current.textContent = "";
-    }
-  }, [comment]);
+    if (!isAddingSuccess) return;
 
-  const handleInputChange = (event: React.FormEvent<HTMLDivElement>) => {
-    setComment(event.currentTarget.textContent || "");
+    resetStates();
+  }, [isAddingSuccess]);
+
+  const resetStates = () => {
+    setCommentContent("");
+    setAllowSend(false);
+    commentEditor?.commands.clearContent();
   };
 
-  const handleSend = () => {
-    if (comment.trim()) {
-      onSend(comment.trim());
-      setComment("");
+  const onSendCommentHandler = () => {
+    if (!allowSend || isAdding) return;
+
+    onSend?.(commentContent);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      onSendCommentHandler();
     }
+  };
+
+  const onSwitchNetwork = async () => {
+    await switchNetwork({ chainId: contestChainId });
   };
 
   return (
-    <div className="relative flex  items-center bg-gray-800 rounded-lg">
-      <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
+    <div className="flex items-end px-2 py-3 gap-3 w-full md:w-[660px] rounded-[10px] bg-primary-2">
+      <div>
         <EthereumAddress avatarVersion ethereumAddress={address ?? ""} shortenOnFallback />
       </div>
-
-      <div
-        className={`text-[16px] pl-14 pr-12 flex-grow bg-neutral-9 rounded-[40px] p-2 text-true-black resize-none overflow-hidden focus:outline-none ${
-          !comment && "placeholder-gray-400"
-        }`}
-        contentEditable
-        role="textbox"
-        aria-multiline="true"
-        ref={textInputRef}
-        onInput={handleInputChange}
-        onBlur={() => !comment && setComment("")}
-        onFocus={() => !comment && setComment("")}
-        suppressContentEditableWarning={true}
-      >
-        {!comment && "add a comment..."}
-      </div>
-      <button
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-blue-500 rounded-lg text-white focus:outline-none focus:border-none"
-        onClick={handleSend}
-      >
-        Send
-      </button>
+      <EditorContent
+        editor={commentEditor}
+        className="bg-transparent outline-none w-full md:w-[660px] overflow-y-auto max-h-[300px] "
+        onKeyDown={handleKeyDown}
+      />
+      {!isConnected ? (
+        <ButtonV3 colorClass="bg-gradient-vote rounded-[40px]" size={ButtonSize.SMALL_LONG} onClick={openConnectModal}>
+          {isMobile ? "connect" : "connect wallet"}
+        </ButtonV3>
+      ) : !isUserOnCorrectNetwork ? (
+        <ButtonV3 colorClass="bg-gradient-create rounded-[40px]" size={ButtonSize.SMALL_LONG} onClick={onSwitchNetwork}>
+          {isMobile ? "switch chain" : "switch network"}
+        </ButtonV3>
+      ) : (
+        <Image
+          className={`ml-auto pr-1 ${allowSend ? "filter-send-commment-icon" : ""} ${
+            isAdding ? "filter-send-commment-icon opacity-50 pointer-events-none" : "cursor-pointer"
+          }`}
+          src="/comments/send.svg"
+          alt="send"
+          width={32}
+          height={32}
+          onClick={onSendCommentHandler}
+        />
+      )}
     </div>
   );
 };

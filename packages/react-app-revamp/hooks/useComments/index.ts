@@ -21,7 +21,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setIsLoading,
     setIsSuccess,
     comments,
-    setError,
+    setIsError,
     setComments,
     allCommentsIdsPerProposal,
     setAllCommentsIdsPerProposal,
@@ -30,6 +30,12 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setIsDeleting,
     setIsDeletingError,
     setIsDeletingSuccess,
+    setIsAdding,
+    setIsAddingError,
+    setIsAddingSuccess,
+    setIsPaginating,
+    setIsPaginatingError,
+    setIsPaginatingSuccess,
   } = useCommentsStore(state => state);
   const { handleError } = useError();
 
@@ -39,7 +45,8 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       if (abi === null) {
         const errorMessage = `RPC call failed`;
-        setError(errorMessage);
+        handleError(errorMessage, "Error fetching contract config");
+        setIsError(true);
         setIsSuccess(false);
         setIsLoading(false);
         return;
@@ -50,8 +57,9 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
         abi: abi as unknown as Abi,
         chainId: chainId,
       };
-    } catch (e) {
-      setError("something went wrong while getting contract config");
+    } catch (error: any) {
+      handleError(error.message, "Error fetching contract config");
+      setIsError(true);
       setIsSuccess(false);
       setIsLoading(false);
     }
@@ -69,7 +77,8 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
       })) as bigint;
 
       return commentId.toString();
-    } catch (error) {
+    } catch (error: any) {
+      handleError(error.message, "Error fetching comment id");
       return "";
     }
   }
@@ -111,14 +120,15 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
       const comments = await Promise.all(commentsPromises);
 
       setComments(comments);
-      setIsSuccess(true);
-      setIsLoading(false);
-    } catch (error) {
-      setError("Error fetching comments for the proposal");
+    } catch (error: any) {
+      handleError(error.message, "Error fetching comments for the proposal");
+      setIsError(true);
     }
   }
 
   async function getCommentsPerPage(page: number) {
+    setIsPaginating(true);
+    setCurrentPage(page);
     const start = (page - 1) * COMMENTS_PER_PAGE;
     const end = start + COMMENTS_PER_PAGE;
 
@@ -131,15 +141,20 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       const combinedComments = [...comments, ...newComments];
       setComments(combinedComments);
-      setCurrentPage(page);
-    } catch (error) {
-      setError("Error fetching comments for the page");
+      setIsPaginating(false);
+      setIsPaginatingSuccess(true);
+    } catch (error: any) {
+      handleError(error.message, `Error fetching comments for the page ${page}`);
+      setIsPaginatingError(true);
+      setIsPaginating(false);
+      setIsPaginatingSuccess(false);
     }
   }
 
   async function getAllCommentsIdsPerProposal() {
     setIsLoading(true);
     setComments([]);
+    setCurrentPage(1);
     const contractConfig = await getContractConfig();
 
     try {
@@ -169,17 +184,20 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       setAllCommentsIdsPerProposal(allCommentsIds);
       setTotalPages(Math.ceil(allCommentsIds.length / COMMENTS_PER_PAGE));
-      getCommentsPerProposal(commentsForPage);
-    } catch (error) {
-      setError("something went wrong while getting all comments ids per proposal");
-      setIsSuccess(false);
+      await getCommentsPerProposal(commentsForPage);
       setIsLoading(false);
-    } finally {
+      setIsSuccess(true);
+    } catch (error: any) {
+      handleError(error.message, "Error fetching all comments ids per proposal");
+      setIsError(true);
+      setIsSuccess(false);
       setIsLoading(false);
     }
   }
 
   async function addComment(content: string) {
+    setIsAdding(true);
+    setIsAddingSuccess(false);
     toastLoading("Adding comment...");
     try {
       const contractConfig = await getContractConfig();
@@ -210,15 +228,19 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       setComments(combinedComments);
       toastSuccess("Comment added successfully!");
+      setIsAddingSuccess(true);
+      setIsAdding(false);
     } catch (error: any) {
       handleError(error.message, "Error adding comment");
-      setIsSuccess(false);
-      setIsLoading(false);
+      setIsAddingError(error.message);
+      setIsAdding(false);
     }
   }
 
   async function deleteComments(commentsIds: string[]) {
     setIsDeleting(true);
+    setIsDeletingSuccess(false);
+    toastLoading("Deleting comment...");
     try {
       const contractConfig = await getContractConfig();
 
@@ -243,6 +265,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
       handleError(error.message, "Error deleting comment");
       setIsDeletingError(error.message);
       setIsDeleting(false);
+      setIsDeletingSuccess(false);
     }
   }
 

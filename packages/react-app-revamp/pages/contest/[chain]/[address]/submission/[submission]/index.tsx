@@ -14,11 +14,11 @@ interface PageProps {
   address: string;
   chain: string;
   version: number;
-
   proposal: Proposal | null;
+  numberOfComments: number;
 }
 
-const Page: FC<PageProps> = ({ address, chain, version, proposal }) => {
+const Page: FC<PageProps> = ({ address, chain, version, proposal, numberOfComments }) => {
   const router = useRouter();
   const { contestPrompt, contestName } = useContestStore(state => state);
   const { setPickedProposal } = useCastVotesStore(state => state);
@@ -44,6 +44,7 @@ const Page: FC<PageProps> = ({ address, chain, version, proposal }) => {
         prompt={contestPrompt}
         proposal={proposal}
         proposalId={id}
+        numberOfComments={numberOfComments}
       />
     </>
   );
@@ -82,6 +83,7 @@ export async function getStaticProps({ params }: any) {
       chain,
       version: data?.version,
       proposal: data?.proposal,
+      numberOfComments: data?.numberOfComments,
     },
   };
 }

@@ -10,6 +10,7 @@ export enum ButtonType {
 export enum ButtonSize {
   EXTRA_SMALL = "extraSmall",
   SMALL = "small",
+  SMALL_LONG = "smallLong",
   DEFAULT = "default",
   DEFAULT_LONG = "defaultLong",
   LARGE = "large",
@@ -31,6 +32,7 @@ interface ButtonProps {
 const sizeClasses = {
   [ButtonSize.EXTRA_SMALL]: "w-20 h-6",
   [ButtonSize.SMALL]: "w-24 h-6",
+  [ButtonSize.SMALL_LONG]: "w-36 h-6",
   [ButtonSize.DEFAULT]: "w-[120px] h-8",
   [ButtonSize.DEFAULT_LONG]: "w-40 h-8",
   [ButtonSize.LARGE]: "w-40 h-[40px]",
@@ -59,7 +61,7 @@ const Button: React.FC<ButtonProps> = ({
     }
   };
 
-  const disabledClasses = useMemo(() => (isDisabled ? "opacity-50 pointer-events-none" : ""), [isDisabled]);
+  const disabledClasses = useMemo(() => (isDisabled ? "button-delete-state" : ""), [isDisabled]);
 
   return (
     <button

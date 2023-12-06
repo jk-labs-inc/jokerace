@@ -1,16 +1,20 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { COMMENTS_PER_PAGE } from "@hooks/useComments";
 import { Comment as CommentType } from "@hooks/useComments/store";
-import { FC, useState } from "react";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { FC, useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import Comment from "../Comment";
+import { ChevronUpIcon } from "@heroicons/react/outline";
 
 interface CommentsListProps {
-  allCommentsIdsPerProposal: string[];
   comments: CommentType[];
   isLoading: boolean;
+  isPaginating: boolean;
   isDeleting: boolean;
+  currentPage: number;
+  numberOfComments: number;
+  totalPages: number;
+  isDeletingSuccess: boolean;
   onDeleteSelectedComments?: (selectedCommentIds: string[]) => void;
   onLoadMoreComments?: () => void;
 }
@@ -42,13 +46,23 @@ const CommentsList: FC<CommentsListProps> = ({
   isLoading,
   onDeleteSelectedComments,
   isDeleting,
-  allCommentsIdsPerProposal,
+  isPaginating,
+  isDeletingSuccess,
+  numberOfComments,
   onLoadMoreComments,
+  currentPage,
+  totalPages,
 }) => {
   const [selectedCommentIds, setSelectedCommentIds] = useState<string[]>([]);
-  const showDeleteButton = selectedCommentIds.length > 0;
-  const remainingCommentsToLoad = allCommentsIdsPerProposal.length - comments.length;
+  const showDeleteButton = selectedCommentIds.length > 0 && !isDeleting;
+  const remainingCommentsToLoad = numberOfComments - comments.length;
   const skeletonRemainingLoaderCount = Math.min(remainingCommentsToLoad, COMMENTS_PER_PAGE);
+
+  useEffect(() => {
+    if (isDeletingSuccess) {
+      setSelectedCommentIds([]);
+    }
+  }, [isDeletingSuccess]);
 
   const toggleCommentSelection = (commentId: string) => {
     setSelectedCommentIds(prevIds => {
@@ -60,52 +74,58 @@ const CommentsList: FC<CommentsListProps> = ({
     });
   };
 
+  const onDeleteSelectedCommentsHandler = () => {
+    onDeleteSelectedComments?.(selectedCommentIds);
+  };
+
+  const onLoadMoreCommentsHandler = () => {
+    onLoadMoreComments?.();
+  };
+
   if (isLoading) {
-    return <CommentsSkeleton length={12} />;
+    return <CommentsSkeleton length={numberOfComments > COMMENTS_PER_PAGE ? COMMENTS_PER_PAGE : numberOfComments} />;
   }
 
   return (
-    <InfiniteScroll
-      className="infiniteScroll"
-      dataLength={comments.length}
-      hasMore={comments.length < allCommentsIdsPerProposal.length}
-      loader={
-        <div className="mt-10">
-          <CommentsSkeleton length={skeletonRemainingLoaderCount} />
-        </div>
-      }
-      next={() => onLoadMoreComments?.()}
-      scrollableTarget="scrollableDiv"
-    >
-      <div className="flex flex-col gap-10">
-        {comments.map(comment => {
-          if (selectedCommentIds.includes(comment.id) && isDeleting) {
-            return <CommentsSkeleton key={comment.id} length={1} highlightColor="#FF78A9" />;
-          }
+    <div className="flex flex-col gap-10">
+      {comments.map(comment => {
+        if (selectedCommentIds.includes(comment.id) && isDeleting) {
+          return <CommentsSkeleton key={comment.id} length={1} highlightColor="#FF78A9" />;
+        }
 
-          return (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              selectedCommentIds={selectedCommentIds}
-              toggleCommentSelection={toggleCommentSelection}
-            />
-          );
-        })}
-        {showDeleteButton && (
-          <div className="flex sticky bottom-0 left-0 right-0 bg-white shadow-lg">
-            <ButtonV3
-              size={ButtonSize.EXTRA_LARGE}
-              colorClass="bg-gradient-withdraw mx-auto animate-appear"
-              onClick={() => onDeleteSelectedComments?.(selectedCommentIds)}
-              isDisabled={isDeleting}
-            >
-              Delete {selectedCommentIds.length} {selectedCommentIds.length === 1 ? "comment" : "comments"}
-            </ButtonV3>
-          </div>
-        )}
-      </div>
-    </InfiniteScroll>
+        return (
+          <Comment
+            key={comment.id}
+            comment={comment}
+            selectedCommentIds={selectedCommentIds}
+            toggleCommentSelection={toggleCommentSelection}
+          />
+        );
+      })}
+      {isPaginating && <CommentsSkeleton length={skeletonRemainingLoaderCount} />}
+      {currentPage < totalPages && !isLoading && (
+        <div className="flex gap-2 items-center mb-8 cursor-pointer" onClick={onLoadMoreCommentsHandler}>
+          <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+          <button
+            className="transition-transform duration-500 ease-in-out transform 
+            rotate-180"
+          >
+            <ChevronUpIcon height={20} className="text-positive-11" />
+          </button>
+        </div>
+      )}
+      {showDeleteButton && (
+        <div className="flex sticky bottom-0 left-0 right-0 bg-white shadow-lg">
+          <ButtonV3
+            size={ButtonSize.EXTRA_LARGE}
+            colorClass="bg-gradient-withdraw mx-auto animate-appear"
+            onClick={onDeleteSelectedCommentsHandler}
+          >
+            Delete {selectedCommentIds.length} {selectedCommentIds.length === 1 ? "comment" : "comments"}
+          </ButtonV3>
+        </div>
+      )}
+    </div>
   );
 };
 

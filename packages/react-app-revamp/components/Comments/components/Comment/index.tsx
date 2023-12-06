@@ -2,6 +2,8 @@ import EthereumAddress from "@components/UI/EtheuremAddress";
 import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { Comment } from "@hooks/useComments/store";
 import { useContestStore } from "@hooks/useContest/store";
+import { Interweave } from "interweave";
+import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC } from "react";
 import { useAccount } from "wagmi";
@@ -27,25 +29,25 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
           <EthereumAddress ethereumAddress={comment.author} shortenOnFallback />
           {allowDelete && (
             <div className="cursor-pointer" onClick={() => toggleCommentSelection?.(comment.id)}>
-              <div className="relative">
-                <CheckIcon
-                  className={`absolute transform transition-all ease-in-out duration-300 
-                    ${isSelected ? "opacity-100" : "opacity-0"}
+              <CheckIcon
+                className={`
+                    ${isSelected ? "block" : "hidden"}
                     h-7 w-7 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
                     shadow-md hover:shadow-lg rounded-full`}
-                />
-                <TrashIcon
-                  className={`absolute transition-opacity duration-300
-                    ${isSelected ? "opacity-0" : "opacity-100"}
+              />
+              <TrashIcon
+                className={`
+                    ${isSelected ? "hidden" : "block"}
                     h-7 w-7 text-negative-11 bg-true-black hover:text-negative-10`}
-                />
-              </div>
+              />
             </div>
           )}
         </div>
         <p className="text-[16px] text-neutral-10 font-bold normal-case">{formattedDate}</p>
       </div>
-      <div className="text-[16px] text-neutral-11 normal-case">{comment.content}</div>
+      <div className="prose prose-invert">
+        <Interweave content={comment.content} matchers={[new UrlMatcher("url")]} />
+      </div>
     </div>
   );
 };
