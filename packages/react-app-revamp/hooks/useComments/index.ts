@@ -240,7 +240,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   async function deleteComments(commentsIds: string[]) {
     setIsDeleting(true);
     setIsDeletingSuccess(false);
-    toastLoading("Deleting comment...");
+    toastLoading(`Deleting ${commentsIds.length} comment${commentsIds.length > 1 ? "s" : ""}...`);
     try {
       const contractConfig = await getContractConfig();
 
