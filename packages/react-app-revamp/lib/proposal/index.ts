@@ -16,7 +16,7 @@ interface ProposalData {
   numberOfComments: number;
 }
 
-export const COMMENTS_VERSION = 4.11;
+export const COMMENTS_VERSION = 4.13;
 
 const extractVotes = (forVotesValue: string, againstVotesValue: string) => {
   const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
@@ -107,11 +107,15 @@ export const fetchProposalData = async (
     const votes = extractVotes(forVotesBigInt.toString(), againstVotesBigInt.toString());
     const isDeleted = results[2].result;
     const content = isDeleted ? "This proposal has been deleted by the creator" : data.description;
-    const allCommentsIdsBigInt = results[3]?.result as bigint[];
-    const deletedCommentIdsBigInt = results[4]?.result as bigint[];
-    const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
+    let filteredCommentsCount = 0;
 
-    const filteredCommentsCount = allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
+    if (parseFloat(version) >= COMMENTS_VERSION) {
+      const allCommentsIdsBigInt = results[3]?.result as bigint[];
+      const deletedCommentIdsBigInt = results[4]?.result as bigint[];
+      const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
+
+      filteredCommentsCount = allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
+    }
 
     if (votes === 0) {
       return {

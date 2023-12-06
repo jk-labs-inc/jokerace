@@ -363,7 +363,7 @@ li {
 
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-comment-empty:first-child::before {
-    color: #ffffff;
+    color: #9d9d9d;
     font-weight: bold;
     content: attr(data-placeholder);
     float: left;

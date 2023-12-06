@@ -29,6 +29,7 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
   const placeholderText = "add a comment...";
   const [allowSend, setAllowSend] = useState(false);
   const isMobile = useMedia("(max-width: 768px)");
+  const [isMultiLine, setIsMultiLine] = useState(false);
 
   const commentEditor = useEditor({
     extensions: [
@@ -49,6 +50,9 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
     },
     onUpdate: ({ editor }) => {
       const content = editor.getHTML();
+      const paragraphCount = countParagraphs(content);
+
+      setIsMultiLine(paragraphCount > 1);
 
       if (editor.getText().length > 0 && isConnected && isUserOnCorrectNetwork) {
         setAllowSend(true);
@@ -72,6 +76,12 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
     commentEditor?.commands.clearContent();
   };
 
+  const countParagraphs = (htmlContent: string) => {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = htmlContent;
+    return tempDiv.querySelectorAll("p").length;
+  };
+
   const onSendCommentHandler = () => {
     if (!allowSend || isAdding) return;
 
@@ -89,7 +99,11 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
   };
 
   return (
-    <div className="flex items-end px-2 py-3 gap-3 w-full md:w-[660px] rounded-[10px] bg-primary-2">
+    <div
+      className={`flex ${
+        isMultiLine ? "items-end" : "items-center"
+      } p-2 gap-3 w-full md:w-[660px] rounded-[10px] bg-primary-2`}
+    >
       <div>
         <EthereumAddress avatarVersion ethereumAddress={address ?? ""} shortenOnFallback />
       </div>
