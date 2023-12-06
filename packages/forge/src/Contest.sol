@@ -4,9 +4,10 @@ pragma solidity ^0.8.4;
 import "./governance/Governor.sol";
 import "./governance/extensions/GovernorCountingSimple.sol";
 import "./governance/extensions/GovernorModuleRegistry.sol";
+import "./governance/extensions/GovernorEngagement.sol";
 import "./governance/utils/GovernorSorting.sol";
 
-contract Contest is GovernorCountingSimple, GovernorModuleRegistry {
+contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
     constructor(
         string memory _name,
         string memory _prompt,

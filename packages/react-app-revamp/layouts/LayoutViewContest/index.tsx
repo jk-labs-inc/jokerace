@@ -201,7 +201,9 @@ const LayoutViewContest = (props: any) => {
       >
         {isLoading && (
           <div className="animate-appear">
-            <Loader scale="page">Loading contest info...</Loader>
+            <Loader scale="page" classNameText="font-sabo">
+              Loading contest info...
+            </Loader>
           </div>
         )}
 

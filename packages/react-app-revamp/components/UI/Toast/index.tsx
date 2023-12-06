@@ -7,7 +7,7 @@ import WarningToast from "./components/Warning";
 let toastId: any = null;
 
 const commonSettings = {
-  autoClose: 4000,
+  autoClose: 2000,
   icon: false,
   onClose: () => {
     toastId = null;
