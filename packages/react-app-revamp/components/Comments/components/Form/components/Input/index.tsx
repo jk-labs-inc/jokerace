@@ -9,7 +9,7 @@ import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchNetwork } from "@wagmi/core";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useMedia } from "react-use";
 import { useAccount, useNetwork } from "wagmi";
 
@@ -29,7 +29,8 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
   const placeholderText = "add a comment...";
   const [allowSend, setAllowSend] = useState(false);
   const isMobile = useMedia("(max-width: 768px)");
-  const [isMultiLine, setIsMultiLine] = useState(false);
+  const [containerHeight, setContainerHeight] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const commentEditor = useEditor({
     extensions: [
@@ -50,9 +51,10 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
     },
     onUpdate: ({ editor }) => {
       const content = editor.getHTML();
-      const paragraphCount = countParagraphs(content);
 
-      setIsMultiLine(paragraphCount > 1);
+      if (containerRef.current) {
+        setContainerHeight(containerRef.current.clientHeight);
+      }
 
       if (editor.getText().length > 0 && isConnected && isUserOnCorrectNetwork) {
         setAllowSend(true);
@@ -76,12 +78,6 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
     commentEditor?.commands.clearContent();
   };
 
-  const countParagraphs = (htmlContent: string) => {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = htmlContent;
-    return tempDiv.querySelectorAll("p").length;
-  };
-
   const onSendCommentHandler = () => {
     if (!allowSend || isAdding) return;
 
@@ -100,8 +96,9 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
 
   return (
     <div
+      ref={containerRef}
       className={`flex ${
-        isMultiLine ? "items-end" : "items-center"
+        containerHeight > 48 ? "items-end" : "items-center"
       } p-2 gap-3 w-full md:w-[660px] rounded-[10px] bg-primary-2`}
     >
       <div>
