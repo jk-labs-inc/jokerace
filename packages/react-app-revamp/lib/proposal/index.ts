@@ -10,6 +10,14 @@ interface RankDictionary {
   [key: string]: number;
 }
 
+interface ProposalData {
+  proposal: Proposal;
+  version: number;
+  numberOfComments: number;
+}
+
+export const COMMENTS_VERSION = 4.13;
+
 const extractVotes = (forVotesValue: string, againstVotesValue: string) => {
   const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
   const netVotes = Number(utils.formatEther(netVotesBigNumber));
@@ -42,13 +50,13 @@ export const fetchProposalData = async (
   address: string,
   chainId: number,
   submission: string,
-): Promise<Proposal | null> => {
+): Promise<ProposalData | null> => {
   try {
-    const { abi } = await getContestContractVersion(address, chainId);
+    const { abi, version } = await getContestContractVersion(address, chainId);
 
     if (!abi) return null;
 
-    const contracts = [
+    let contracts = [
       {
         address,
         abi,
@@ -72,23 +80,57 @@ export const fetchProposalData = async (
       },
     ];
 
+    if (parseFloat(version) >= COMMENTS_VERSION) {
+      contracts.push(
+        {
+          address,
+          abi,
+          chainId,
+          functionName: "getProposalComments",
+          args: [submission],
+        },
+        {
+          address,
+          abi,
+          chainId,
+          functionName: "getAllDeletedCommentIds",
+          args: [],
+        },
+      );
+    }
+
     //@ts-ignore
     const results = (await readContracts({ contracts })) as any;
     const data = results[0].result;
     const forVotesBigInt = results[1].result[0] as bigint;
     const againstVotesBigInt = results[1].result[1] as bigint;
     const votes = extractVotes(forVotesBigInt.toString(), againstVotesBigInt.toString());
+    const isDeleted = results[2].result;
+    const content = isDeleted ? "This proposal has been deleted by the creator" : data.description;
+    let filteredCommentsCount = 0;
+
+    if (parseFloat(version) >= COMMENTS_VERSION) {
+      const allCommentsIdsBigInt = results[3]?.result as bigint[];
+      const deletedCommentIdsBigInt = results[4]?.result as bigint[];
+      const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
+
+      filteredCommentsCount = allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
+    }
 
     if (votes === 0) {
       return {
-        id: submission,
-        authorEthereumAddress: data.author,
-        content: data.description,
-        isContentImage: isUrlToImage(data.description),
-        exists: data.exists,
-        votes,
-        rank: 0,
-        isTied: false,
+        proposal: {
+          id: submission,
+          authorEthereumAddress: data.author,
+          content: content,
+          isContentImage: isUrlToImage(data.description),
+          exists: data.exists,
+          votes,
+          rank: 0,
+          isTied: false,
+        },
+        version: parseFloat(version),
+        numberOfComments: filteredCommentsCount,
       };
     }
 
@@ -109,14 +151,18 @@ export const fetchProposalData = async (
     const { targetRank, isTied } = assignRankAndCheckTies(mappedProposals, submission);
 
     return {
-      id: submission,
-      authorEthereumAddress: data.author,
-      content: data.description,
-      isContentImage: isUrlToImage(data.description),
-      exists: data.exists,
-      votes,
-      rank: targetRank,
-      isTied: isTied,
+      proposal: {
+        id: submission,
+        authorEthereumAddress: data.author,
+        content: data.description,
+        isContentImage: isUrlToImage(data.description),
+        exists: data.exists,
+        votes,
+        rank: targetRank,
+        isTied: isTied,
+      },
+      version: parseFloat(version),
+      numberOfComments: filteredCommentsCount,
     };
   } catch (error) {
     return null;

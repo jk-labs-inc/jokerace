@@ -214,6 +214,11 @@ li {
   overflow: visible !important;
 }
 
+.button-delete-state {
+  opacity: 0.5 !important;
+  pointer-events: none !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -345,6 +350,7 @@ li {
     height: 0;
     pointer-events: none;
   }
+
   /* Placeholder (at the top) */
   .ProseMirror p.is-editor-create-flow-empty:first-child::before {
     color: #6a6a6a;
@@ -353,6 +359,20 @@ li {
     float: left;
     height: 0;
     pointer-events: none;
+  }
+
+  /* Placeholder (at the top) */
+  .ProseMirror p.is-editor-comment-empty:first-child::before {
+    color: #9d9d9d;
+    font-weight: bold;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+
+  .filter-send-commment-icon {
+    filter: invert(76%) sepia(12%) saturate(1494%) hue-rotate(97deg) brightness(119%) contrast(101%);
   }
 
   .blurProposals {
