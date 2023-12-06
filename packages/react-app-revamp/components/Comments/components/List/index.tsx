@@ -34,7 +34,7 @@ const CommentsSkeleton: React.FC<CommentsSkeletonProps> = ({ length, highlightCo
             <Skeleton width={100} height={16} className="mt-3" />
           </div>
           <Skeleton height={15} width={200} />
-          <Skeleton height={50} width={600} />
+          <Skeleton height={50} width={660} />
         </div>
       ))}
     </div>
