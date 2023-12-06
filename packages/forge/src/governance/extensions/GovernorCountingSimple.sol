@@ -215,12 +215,12 @@ abstract contract GovernorCountingSimple is Governor {
     /**
      * @dev See {Governor-_multiRmProposalIdFromForVotesMap}.
      */
-    function _multiRmProposalIdFromForVotesMap(uint256[] calldata proposalIds) internal override {
-        for (uint256 i = 0; i < proposalIds.length; i++) {
-            uint256 currentProposalId = proposalIds[i];
+    function _multiRmProposalIdFromForVotesMap(uint256[] calldata proposalIdsToDelete) internal override {
+        for (uint256 i = 0; i < proposalIdsToDelete.length; i++) {
+            uint256 currentProposalId = proposalIdsToDelete[i];
             uint256 currentProposalsForVotes = proposalVotesStructs[currentProposalId].proposalVoteCounts.forVotes;
 
-            // remove this proposalId from the list of proposalIds that share its current forVotes
+            // remove this proposalId from the list of proposalIdsToDelete that share its current forVotes
             // value in forVotesToProposalIds
             _rmProposalIdFromForVotesMap(currentProposalId, currentProposalsForVotes);
         }

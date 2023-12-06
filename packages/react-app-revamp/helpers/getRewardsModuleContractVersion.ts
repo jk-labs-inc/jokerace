@@ -33,6 +33,7 @@ import RmImmutableKeywordRewards from "@contracts/bytecodeAndAbi/modules/Rewards
 import GasOptimizeGettersRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.11.gasOptimizeGetters.sol/RewardsModule.json";
 import AllowCancelCompletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.12.allowCancelCompleted.sol/RewardsModule.json";
 import AddCommentsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.13.addComments.sol/RewardsModule.json";
+import RmShadowingPropIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.14.rmShadowingPropIds.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -45,7 +46,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.13") {
+    if (version === "4.14") {
+      return RmShadowingPropIdsRewards.abi;
+    } else if (version === "4.13") {
       return AddCommentsRewards.abi;
     } else if (version === "4.12") {
       return GasOptimizeGettersRewards.abi;
