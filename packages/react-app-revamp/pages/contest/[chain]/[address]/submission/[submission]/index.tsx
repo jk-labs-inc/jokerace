@@ -29,6 +29,7 @@ const Page: FC<PageProps> = ({ address, chain, version, proposal, numberOfCommen
   }, [id, setPickedProposal]);
 
   console.log("version in submission page", version);
+  console.log("number of comments in submission page", numberOfComments);
 
   return (
     <>
