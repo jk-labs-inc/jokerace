@@ -28,6 +28,8 @@ const Page: FC<PageProps> = ({ address, chain, version, proposal, numberOfCommen
     setPickedProposal(id);
   }, [id, setPickedProposal]);
 
+  console.log("version in submission page", version);
+
   return (
     <>
       <Head>
