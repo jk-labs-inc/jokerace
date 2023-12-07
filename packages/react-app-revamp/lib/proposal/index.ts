@@ -54,8 +54,6 @@ export const fetchProposalData = async (
   try {
     const { abi, version } = await getContestContractVersion(address, chainId);
 
-    console.log("abi", abi, "version", version);
-
     if (!abi) return null;
 
     let contracts = [
