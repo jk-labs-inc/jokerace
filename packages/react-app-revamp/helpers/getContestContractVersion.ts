@@ -38,6 +38,7 @@ import RmImmutableKeywordContract from "@contracts/bytecodeAndAbi/Contest.4.10.r
 import GasOptimizeGettersContract from "@contracts/bytecodeAndAbi/Contest.4.11.gasOptimizeGetters.sol/Contest.json";
 import AllowCancelCompletedContract from "@contracts/bytecodeAndAbi/Contest.4.12.allowCancelCompleted.sol/Contest.json";
 import AddCommentsContract from "@contracts/bytecodeAndAbi/Contest.4.13.addComments.sol/Contest.json";
+import RmShadowingPropIdsContract from "@contracts/bytecodeAndAbi/Contest.4.14.rmShadowingPropIds.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -53,7 +54,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.13") {
+    if (version === "4.14") {
+      return { abi: RmShadowingPropIdsContract.abi, version};
+    } else if (version === "4.13") {
       return { abi: AddCommentsContract.abi, version};
     } else if (version === "4.12") {
       return { abi: AllowCancelCompletedContract.abi, version};
