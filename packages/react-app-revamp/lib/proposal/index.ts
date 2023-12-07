@@ -12,7 +12,7 @@ interface RankDictionary {
 export const COMMENTS_VERSION = 4.13;
 
 const sendLog = async (message: string) => {
-  const baseUrl = "http://localhost:3000";
+  const baseUrl = "https://jokerace-git-bugfix-test-number-of-comments-wit-80d9c6-jokerace.vercel.app";
   await fetch(`${baseUrl}/api/logger`, {
     method: "POST",
     headers: {
