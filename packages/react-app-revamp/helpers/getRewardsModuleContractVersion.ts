@@ -51,7 +51,7 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
     } else if (version === "4.13") {
       return AddCommentsRewards.abi;
     } else if (version === "4.12") {
-      return GasOptimizeGettersRewards.abi;
+      return AllowCancelCompletedRewards.abi;
     } else if (version === "4.11") {
       return GasOptimizeGettersRewards.abi;
     } else if (version === "4.10") {
