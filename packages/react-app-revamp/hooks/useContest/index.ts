@@ -21,6 +21,7 @@ import { useState } from "react";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
+import { compareVersions } from 'compare-versions';
 
 interface ContractConfigResult {
   contractConfig: {
@@ -133,7 +134,7 @@ export function useContest() {
     const contestPrompt = results[7].result as string;
     const isDownvotingAllowed = Number(results[8].result) === 1;
 
-    if (version >= 4 && moment().isBefore(votesOpenDate)) {
+    if ((compareVersions(version.toString(), "4.0") >= 0) && moment().isBefore(votesOpenDate)) {
       const entryChargeValue = Number(results[9].result);
       const entryChargePercentage = Number(results[10].result);
 
@@ -145,7 +146,7 @@ export function useContest() {
       setEntryCharge(null);
     }
 
-    if (version >= 4.2) {
+    if (compareVersions(version.toString(), "4.2") >= 0) {
       const sortingEnabled = Number(results[11].result) === 1;
 
       setSortingEnabled(sortingEnabled);

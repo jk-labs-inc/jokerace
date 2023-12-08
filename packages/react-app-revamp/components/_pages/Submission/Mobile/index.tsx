@@ -17,10 +17,11 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
-import { COMMENTS_VERSION } from "lib/proposal";
 import Image from "next/image";
 import { FC } from "react";
 import { useAccount } from "wagmi";
+import { compareVersions } from 'compare-versions';
+import { COMMENTS_VERSION } from "lib/proposal";
 
 interface SubmissionPageMobileLayoutProps {
   contestInfo: {
@@ -63,7 +64,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const totalProposals = listProposalsIds.length;
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const commentsAllowed = contestInfo.version >= COMMENTS_VERSION;
+  const commentsAllowed = compareVersions((contestInfo.version).toString(), COMMENTS_VERSION) == -1 ? false : true;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
 
   return (

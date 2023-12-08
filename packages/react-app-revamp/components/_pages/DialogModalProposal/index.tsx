@@ -17,6 +17,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
+import { compareVersions } from 'compare-versions';
 import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
 import { COMMENTS_VERSION } from "lib/proposal";
@@ -65,7 +66,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
-  const commentsAllowed = contestInfo.version >= COMMENTS_VERSION;
+  const commentsAllowed = compareVersions((contestInfo.version).toString(), COMMENTS_VERSION) == -1 ? false : true;
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
