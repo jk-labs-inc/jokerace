@@ -1,4 +1,4 @@
-import { compareVersions } from 'compare-versions';
+import { compareVersions } from "compare-versions";
 export function getContracts(contractConfig: any, version: number) {
   const commonFunctionNames = [
     "name",

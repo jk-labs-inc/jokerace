@@ -17,7 +17,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import Image from "next/image";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
-import { compareVersions } from 'compare-versions';
+import { compareVersions } from "compare-versions";
 import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
 import { COMMENTS_VERSION } from "lib/proposal";
