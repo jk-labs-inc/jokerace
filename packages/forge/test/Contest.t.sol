@@ -134,23 +134,14 @@ contract ContestTest is Test {
     function setUp() public {
         vm.startPrank(CREATOR_ADDRESS_1);
 
-        contest = new Contest("test",
-                              "hello world",
-                              SUBMISSION_MERKLE_ROOT,
-                              VOTING_MERKLE_ROOT,
-                              zeroCostToProposeNumParams);
+        contest =
+            new Contest("test", "hello world", SUBMISSION_MERKLE_ROOT, VOTING_MERKLE_ROOT, zeroCostToProposeNumParams);
 
-        anyoneCanSubmitContest = new Contest("test",
-                              "hello world",
-                              SUB_ZERO_MERKLE_ROOT,
-                              VOTING_MERKLE_ROOT,
-                              zeroCostToProposeNumParams);
+        anyoneCanSubmitContest =
+            new Contest("test", "hello world", SUB_ZERO_MERKLE_ROOT, VOTING_MERKLE_ROOT, zeroCostToProposeNumParams);
 
-        anyoneCanSubmitCostsAnEthContest = new Contest("test",
-                        "hello world",
-                        SUB_ZERO_MERKLE_ROOT,
-                        VOTING_MERKLE_ROOT,
-                        oneEthToProposeNumParams);
+        anyoneCanSubmitCostsAnEthContest =
+            new Contest("test", "hello world", SUB_ZERO_MERKLE_ROOT, VOTING_MERKLE_ROOT, oneEthToProposeNumParams);
 
         vm.stopPrank();
     }
