@@ -4,12 +4,13 @@ import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
 import { BigNumber, utils } from "ethers";
 import { readContracts } from "wagmi";
+import { compareVersions } from 'compare-versions';
 
 interface RankDictionary {
   [key: string]: number;
 }
 
-export const COMMENTS_VERSION = 4.13;
+export const COMMENTS_VERSION = "4.13";
 
 const extractVotes = (forVotesValue: string, againstVotesValue: string) => {
   const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
@@ -116,7 +117,7 @@ const fetchNumberOfComments = async (address: string, chainId: number, submissio
 
   if (!abi) return null;
 
-  if (parseFloat(version) < COMMENTS_VERSION) return 0;
+  if (compareVersions(version, COMMENTS_VERSION) == -1) return 0;
 
   const contracts = [
     {

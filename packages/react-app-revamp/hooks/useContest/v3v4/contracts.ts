@@ -1,3 +1,4 @@
+import { compareVersions } from 'compare-versions';
 export function getContracts(contractConfig: any, version: number) {
   const commonFunctionNames = [
     "name",
@@ -17,10 +18,10 @@ export function getContracts(contractConfig: any, version: number) {
 
   let contractFunctionNames = [...commonFunctionNames];
 
-  if (version >= 4) {
+  if (compareVersions(version.toString(), "4.0") >= 0) {
     contractFunctionNames = [...contractFunctionNames, ...v4FunctionNames];
   }
-  if (version >= 4.2) {
+  if (compareVersions(version.toString(), "4.2") >= 0) {
     contractFunctionNames = [...contractFunctionNames, ...v4_2FunctionNames];
   }
 

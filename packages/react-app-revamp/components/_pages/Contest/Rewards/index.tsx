@@ -19,6 +19,7 @@ import { useRewardsStore } from "@hooks/useRewards/store";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+import { compareVersions } from 'compare-versions';
 
 const ContestRewards = () => {
   const { asPath } = useRouter();
@@ -75,7 +76,7 @@ const ContestRewards = () => {
     if (isRewardsPoolDeploying) return <Loader scale="page">Deploying rewards pool...</Loader>;
 
     if (version) {
-      if (version < 4.1) {
+      if (compareVersions(version.toString(), "4.1") == -1) {
         if (contestMaxProposalCount > 100) {
           return (
             <p className="text-[16px]">
@@ -84,7 +85,7 @@ const ContestRewards = () => {
             </p>
           );
         }
-      } else if (version >= 4.1) {
+      } else if (compareVersions(version.toString(), "4.1") >= 0) {
         if (downvotingAllowed || !sortingEnabled) {
           return (
             <p className="text-[16px]">
