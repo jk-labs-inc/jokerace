@@ -108,7 +108,8 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "Enter" && !event.shiftKey) {
+    const allowEnter = !event.shiftKey && !isMobile;
+    if (event.key === "Enter" && allowEnter) {
       if (!isConnected) {
         openConnectModal?.();
       } else if (!isUserOnCorrectNetwork) {
