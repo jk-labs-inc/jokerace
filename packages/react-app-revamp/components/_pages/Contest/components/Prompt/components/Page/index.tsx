@@ -13,7 +13,6 @@ const MAX_LENGTH = 100;
 const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const { isV3 } = useContestStore(state => state);
   const [isExpanded, setIsExpanded] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
   const [contestType, contestTitle, contestSummary, contestEvaluate] = prompt.split("|");
 
   const shouldDisplayReadMore = () => {
@@ -54,7 +53,6 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
           summaryContent={getSummaryContent()}
           evaluateContent={getEvaluateContent()}
           isExpanded={isExpanded}
-          contentRef={contentRef}
           displayReadMore={shouldDisplayReadMore()}
           shouldDisplayEvaluate={shouldDisplayEvaluate()}
           handleToggle={toggleExpand}
@@ -63,7 +61,6 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
         <ContestPromptPageLegacyLayout
           prompt={prompt}
           isExpanded={isExpanded}
-          contentRef={contentRef}
           displayReadMore={shouldDisplayReadMore()}
           handleToggle={toggleExpand}
         />
