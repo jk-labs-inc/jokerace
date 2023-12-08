@@ -9,7 +9,6 @@ interface ContestPromptPageV3LayoutProps {
   summaryContent: string;
   evaluateContent: string;
   isExpanded: boolean;
-  maxHeight: string;
   contentRef: RefObject<HTMLDivElement>;
   displayReadMore: boolean;
   shouldDisplayEvaluate: boolean;
@@ -22,7 +21,6 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
   summaryContent,
   evaluateContent,
   isExpanded,
-  maxHeight,
   contentRef,
   displayReadMore,
   shouldDisplayEvaluate,
@@ -38,11 +36,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
       </div>
       <div className="pl-5">
         <div className="border-l border-true-white">
-          <div
-            className=" overflow-hidden transition-max-height duration-500 ease-in-out"
-            style={{ maxHeight: isExpanded ? maxHeight : "10em" }}
-            ref={contentRef}
-          >
+          <div className="overflow-hidden" style={{ maxHeight: "999em" }} ref={contentRef}>
             <div className="prose prose-invert pl-5 flex flex-col">
               <Interweave content={summaryContent} matchers={[new UrlMatcher("url")]} />
               {shouldDisplayEvaluate ? (

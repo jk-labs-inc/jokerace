@@ -13,15 +13,8 @@ const MAX_LENGTH = 100;
 const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const { isV3 } = useContestStore(state => state);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [maxHeight, setMaxHeight] = useState("0px");
   const contentRef = useRef<HTMLDivElement>(null);
   const [contestType, contestTitle, contestSummary, contestEvaluate] = prompt.split("|");
-
-  useEffect(() => {
-    if (contentRef.current) {
-      setMaxHeight(`${contentRef.current.scrollHeight}px`);
-    }
-  }, [contentRef, isExpanded]);
 
   const shouldDisplayReadMore = () => {
     if (!isV3) {
@@ -61,7 +54,6 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
           summaryContent={getSummaryContent()}
           evaluateContent={getEvaluateContent()}
           isExpanded={isExpanded}
-          maxHeight={maxHeight}
           contentRef={contentRef}
           displayReadMore={shouldDisplayReadMore()}
           shouldDisplayEvaluate={shouldDisplayEvaluate()}
@@ -71,7 +63,6 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
         <ContestPromptPageLegacyLayout
           prompt={prompt}
           isExpanded={isExpanded}
-          maxHeight={maxHeight}
           contentRef={contentRef}
           displayReadMore={shouldDisplayReadMore()}
           handleToggle={toggleExpand}

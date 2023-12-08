@@ -6,7 +6,6 @@ import { FC, ReactNode, RefObject } from "react";
 interface ContestPromptPageLegacyLayoutProps {
   prompt: string;
   isExpanded: boolean;
-  maxHeight: string;
   contentRef: RefObject<HTMLDivElement>;
   displayReadMore: boolean;
   handleToggle: () => void;
@@ -27,7 +26,6 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
 const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({
   prompt,
   isExpanded,
-  maxHeight,
   contentRef,
   displayReadMore,
   handleToggle,
@@ -39,11 +37,7 @@ const ContestPromptPageLegacyLayout: FC<ContestPromptPageLegacyLayoutProps> = ({
       </div>
       <div className="pl-5">
         <div className="border-l border-true-white">
-          <div
-            className="prose prose-invert pl-5 overflow-hidden transition-max-height duration-500 ease-in-out"
-            style={{ maxHeight: isExpanded ? maxHeight : "3em" }}
-            ref={contentRef}
-          >
+          <div className="prose prose-invert pl-5 overflow-hidden" style={{ maxHeight: "999em" }} ref={contentRef}>
             <Interweave content={prompt} matchers={[new UrlMatcher("url")]} transform={transform} />
           </div>
           {displayReadMore && (
