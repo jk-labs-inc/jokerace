@@ -27,7 +27,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   if (canVote && votingOpen) {
     return (
       <p className="text-[16px] md:text-[24px] text-neutral-11 font-bold">
-        {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount > 1 ? "s" : ""} left
+        {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"} left
       </p>
     );
   }
@@ -35,7 +35,7 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   if (canVote) {
     return (
       <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">
-        {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount > 1 ? "s" : ""}{" "}
+        {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"}{" "}
         {isMobile ? "to use" : "to deploy"}
       </p>
     );
