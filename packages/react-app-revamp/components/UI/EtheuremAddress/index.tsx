@@ -92,17 +92,17 @@ const EthereumAddress = ({
       if (ensName) {
         try {
           const ensAvatar = await fetchEnsAvatar({ name: ensName as string, chainId: 1 });
-          return { handle: ensName, avatarUrl: ensAvatar || DEFAULT_AVATAR_URL };
+          return { handle: ensName, avatarUrl: ensAvatar || DEFAULT_AVATAR_URL, lens: false };
         } catch (e) {
           console.error(e);
         }
-        return { handle: ensName, avatarUrl: DEFAULT_AVATAR_URL };
+        return { handle: ensName, avatarUrl: DEFAULT_AVATAR_URL, lens: false };
       }
     } catch (e) {
       console.error(e);
     }
 
-    return { handle: null, avatarUrl: DEFAULT_AVATAR_URL };
+    return { handle: null, avatarUrl: DEFAULT_AVATAR_URL, lens: false };
   };
 
   const queryProfileAndAvatar = useQuery(["profile-avatar", ethereumAddress], fetchAvatarAndProfile, {
