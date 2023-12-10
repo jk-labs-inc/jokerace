@@ -15,6 +15,7 @@
     "@graphql-codegen/fragment-matcher": "^3.3.1",
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^1.0.6",
+    "@lens-protocol/client": "^2.0.0-alpha.25",
     "@rainbow-me/rainbowkit": "^1.0.7",
     "@supabase/supabase-js": "^1.35.4",
     "@tailwindcss/line-clamp": "^0.4.4",

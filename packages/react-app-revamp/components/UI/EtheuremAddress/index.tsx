@@ -2,9 +2,10 @@
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import { useAvatarStore } from "@hooks/useAvatar";
-import { getDefaultProfile } from "@services/lens/getDefaultProfile";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEnsAvatar, fetchEnsName } from "@wagmi/core";
+import { lensClient } from "@config/lens";
+import { ProfilePictureSetFragment } from "@lens-protocol/client";
 import Link from "next/link";
 import { FC } from "react";
 
@@ -67,14 +68,15 @@ const EthereumAddress = ({
 
   const fetchAvatarAndProfile = async () => {
     try {
-      const lensProfile = await getDefaultProfile({ ethereumAddress });
-      if (lensProfile?.data?.defaultProfile) {
-        const avatarUrl =
-          lensProfile.data.defaultProfile.picture?.original?.url?.replace(
+      const lensProfile = await lensClient.profile.fetchDefault({for: ethereumAddress});
+      console.log("LENSPROFILE", lensProfile)
+      if (lensProfile) {
+        const avatarFragment = lensProfile.metadata?.picture as ProfilePictureSetFragment;
+        const avatarUrl = avatarFragment?.raw?.uri?.replace(
             "ipfs://",
             "https://lens.infura-ipfs.io/ipfs/",
           ) || DEFAULT_AVATAR_URL;
-        return { handle: lensProfile.data.defaultProfile.handle, avatarUrl };
+        return { handle: lensProfile.handle?.localName, avatarUrl, lens: true };
       }
     } catch (e) {
       console.error(e);
@@ -166,7 +168,7 @@ const EthereumAddress = ({
                   <img className="object-cover" src="/etherscan.svg" alt="Etherscan" />
                 </div>
               </a>
-              {queryProfileAndAvatar.data?.handle?.includes("lens") && (
+              {queryProfileAndAvatar.data?.lens && (
                 <a href={`https://lensfrens.xyz/${displayName}`} target="_blank">
                   <div className="w-12 h-12 flex justify-center items-center overflow-hidden rounded-full">
                     <img className="object-cover" src="/socials/lens.svg" alt="Lens" />
