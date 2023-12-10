@@ -69,7 +69,6 @@ const EthereumAddress = ({
   const fetchAvatarAndProfile = async () => {
     try {
       const lensProfile = await lensClient.profile.fetchDefault({for: ethereumAddress});
-      console.log("LENSPROFILE", lensProfile)
       if (lensProfile) {
         const avatarFragment = lensProfile.metadata?.picture as ProfilePictureSetFragment;
         const avatarUrl = avatarFragment?.raw?.uri?.replace(
