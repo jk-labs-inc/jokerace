@@ -13,6 +13,7 @@ import {
   tahoWallet,
   trustWallet,
   walletConnectWallet,
+  phantomWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
@@ -184,6 +185,7 @@ const connectors = connectorsForWallets([
       bitKeepWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       rabbyWallet({ chains }),
       luksoWallet(),
+      phantomWallet({ chains }),
     ],
   },
 ]);
