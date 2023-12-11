@@ -300,12 +300,14 @@ export function useProposal() {
     if (listProposalsData.length === sortedIds.length) {
       const sortedProposals = sortUnique(listProposalsData, v => sortedIds.indexOf(v.id));
 
+      setListProposalsIds(sortedIds);
       setProposalData(sortedProposals);
     } else {
       const paginationChunks = arrayToChunks(sortedIds, PROPOSALS_PER_PAGE);
       setIndexPaginationProposalPerId(paginationChunks);
       setProposalData([]);
 
+      setListProposalsIds(sortedIds);
       fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, initialMappedProposalIds, true);
     }
   }
