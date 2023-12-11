@@ -40,6 +40,7 @@ import AllowCancelCompletedContract from "@contracts/bytecodeAndAbi/Contest.4.12
 import AddCommentsContract from "@contracts/bytecodeAndAbi/Contest.4.13.addComments.sol/Contest.json";
 import RmShadowingPropIdsContract from "@contracts/bytecodeAndAbi/Contest.4.14.rmShadowingPropIds.sol/Contest.json";
 import RmUnusedViewFuncContract from "@contracts/bytecodeAndAbi/Contest.4.15.rmUnusedViewFunc.sol/Contest.json";
+import PinAllToSameContract from "@contracts/bytecodeAndAbi/Contest.4.16.pinAllToSame.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -55,7 +56,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.15") {
+    if (version === "4.16") {
+      return { abi: PinAllToSameContract.abi, version};
+    } else if (version === "4.15") {
       return { abi: RmUnusedViewFuncContract.abi, version};
     } else if (version === "4.14") {
       return { abi: RmShadowingPropIdsContract.abi, version};

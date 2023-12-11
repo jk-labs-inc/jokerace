@@ -20,7 +20,7 @@ import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { FC } from "react";
 import { useAccount } from "wagmi";
-import { compareVersions } from 'compare-versions';
+import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION } from "lib/proposal";
 
 interface SubmissionPageMobileLayoutProps {

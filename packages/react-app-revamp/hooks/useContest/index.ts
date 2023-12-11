@@ -21,7 +21,7 @@ import { useState } from "react";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
-import { compareVersions } from 'compare-versions';
+import { compareVersions } from "compare-versions";
 
 interface ContractConfigResult {
   contractConfig: {
