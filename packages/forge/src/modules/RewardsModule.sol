@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.19;
 
 import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
 import "@openzeppelin/utils/Address.sol";
@@ -102,7 +102,7 @@ contract RewardsModule {
      * @dev Version of the rewards module.
      */
     function version() public pure returns (string memory) {
-        return "4.15";
+        return "4.16";
     }
 
     /**
