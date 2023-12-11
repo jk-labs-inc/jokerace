@@ -142,32 +142,18 @@ contract RewardsModuleTest is Test {
 
         testERC20 = new ERC20PresetFixedSupply("test", "TEST", INITIAL_TEST_ERC20_SUPPLY, CREATOR_ADDRESS_1);
 
-        contest = new Contest("test",
-                              "hello world",
-                              SUBMISSION_MERKLE_ROOT,
-                              VOTING_MERKLE_ROOT,
-                              zeroCostToProposeNumParams);
+        contest =
+            new Contest("test", "hello world", SUBMISSION_MERKLE_ROOT, VOTING_MERKLE_ROOT, zeroCostToProposeNumParams);
 
-        rankLimitOneContest = new Contest("test",
-                              "hello world",
-                              SUBMISSION_MERKLE_ROOT,
-                              VOTING_MERKLE_ROOT,
-                              zeroCostToProposeAndRankLimitOneNumParams);
+        rankLimitOneContest = new Contest(
+            "test", "hello world", SUBMISSION_MERKLE_ROOT, VOTING_MERKLE_ROOT, zeroCostToProposeAndRankLimitOneNumParams
+        );
 
-        rewardsModulePaysTarget = new RewardsModule(payees,
-                                          shares,
-                                          Contest(contest),
-                                          true);
+        rewardsModulePaysTarget = new RewardsModule(payees, shares, Contest(contest), true);
 
-        rewardsModulePaysAuthor = new RewardsModule(payees,
-                                          shares,
-                                          Contest(contest),
-                                          false);
+        rewardsModulePaysAuthor = new RewardsModule(payees, shares, Contest(contest), false);
 
-        rewardsModulePaysAuthorToRankOneContest = new RewardsModule(payees,
-                                          shares,
-                                          Contest(rankLimitOneContest),
-                                          false);
+        rewardsModulePaysAuthorToRankOneContest = new RewardsModule(payees, shares, Contest(rankLimitOneContest), false);
 
         vm.stopPrank();
     }

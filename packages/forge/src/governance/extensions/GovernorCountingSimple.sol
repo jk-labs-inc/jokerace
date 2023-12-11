@@ -97,30 +97,6 @@ abstract contract GovernorCountingSimple is Governor {
     }
 
     /**
-     * @dev Accessor to the internal vote counts for a given proposal that excludes deleted proposals.
-     */
-    function allProposalTotalVotesWithoutDeleted()
-        public
-        view
-        returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
-    {
-        uint256[] memory proposalIdsMemVar = getAllProposalIds();
-        uint256[] memory proposalIdsWithoutDeleted = new uint256[](proposalIdsMemVar.length);
-        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIdsMemVar.length);
-
-        uint256 newArraysIndexCounter = 0;
-        for (uint256 i = 0; i < proposalIdsMemVar.length; i++) {
-            if (!proposalIsDeleted[proposalIdsMemVar[i]]) {
-                proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIdsMemVar[i];
-                proposalVoteCountsArray[newArraysIndexCounter] =
-                    proposalVotesStructs[proposalIdsMemVar[i]].proposalVoteCounts;
-                newArraysIndexCounter += 1;
-            }
-        }
-        return (proposalIdsWithoutDeleted, proposalVoteCountsArray);
-    }
-
-    /**
      * @dev Get the whole array in `forVotesToProposalIds` for a given `forVotes` amount.
      */
     function getProposalsWithThisManyForVotes(uint256 forVotes)
