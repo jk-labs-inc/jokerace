@@ -2,43 +2,75 @@ import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
 import { useRouter } from "next/router";
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-export type Sorting = {
+export type SortOption = {
   property: string;
-  ascending: boolean;
+  label: string;
 };
 
 export interface SortProps {
-  onSortChange?: (newSorting: Sorting | null) => void;
+  sortOptions: SortOption[];
+  onSortChange?: (sortBy: string) => void;
   onMenuStateChange?: (isOpen: boolean) => void;
 }
 
-const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
+const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [label, setLabel] = useState<string | null>(null);
-  const { pathname } = useRouter();
+  const router = useRouter();
+  const sortByFromQuery = router.query.sortBy as string;
+
+  useEffect(() => {
+    if (sortByFromQuery) {
+      setSelectedOption(sortByFromQuery);
+      setLabel(sortByFromQuery);
+    }
+  }, [sortByFromQuery]);
 
   const handleSortChange = (property: string, label: string) => {
     setSelectedOption(property);
     setLabel(label);
-    onSortChange?.({ property, ascending: false });
+    onSortChange?.(property);
+
+    if (sortByFromQuery) {
+      removeQueryParam("sortBy");
+    }
   };
 
   const handleResetSort = (event: React.MouseEvent, close: () => void) => {
     event.stopPropagation();
     setSelectedOption(null);
     setLabel(null);
-    onSortChange?.(null);
-
+    onSortChange?.("");
     close();
+
+    if (sortByFromQuery) {
+      removeQueryParam("sortBy");
+    }
   };
 
-  if (pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
+  const removeQueryParam = (param: string) => {
+    const { pathname, query } = router;
+
+    const params = new URLSearchParams();
+    Object.entries(query).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach(v => params.append(key, v));
+      } else {
+        params.set(key, value || "");
+      }
+    });
+
+    params.delete(param);
+    router.replace({ pathname, query: params.toString() }, undefined, { shallow: true });
+  };
+
+  if (router.pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
 
   return (
     <Menu as="div" className="relative inline-block text-left w-full md:w-[220px] text-[16px]">
@@ -71,13 +103,7 @@ const Sort: FC<SortProps> = ({ onSortChange, onMenuStateChange }) => {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute w-[220px] z-10 mt-4 origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
-                  {[
-                    { property: "rewards", label: "rewards" },
-                    { property: "qualified", label: "what i qualify for" },
-                    { property: "closest_deadline", label: "closest deadline" },
-                    { property: "can_submit", label: "submissions open" },
-                    { property: "can_vote", label: "voting open" },
-                  ].map(({ property, label }) => (
+                  {sortOptions.map(({ property, label }) => (
                     <Menu.Item key={property}>
                       {({ active, close }) => (
                         <div

@@ -16,7 +16,7 @@
     "@headlessui/react": "^1.7.14",
     "@heroicons/react": "^1.0.6",
     "@rainbow-me/rainbowkit": "^1.0.7",
-    "@supabase/supabase-js": "^1.35.4",
+    "@supabase/supabase-js": "^2.39.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tanstack/react-query": "^4.0.10",
     "@tiptap/core": "^2.0.0",

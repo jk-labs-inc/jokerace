@@ -1,8 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import Search from "@components/Search";
-import Sort, { Sorting } from "@components/Sort";
+import Sort, { SortOption } from "@components/Sort";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
-import { useSortedData } from "@hooks/useSortedData";
 import { FC, useState } from "react";
 import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";
@@ -23,8 +21,10 @@ interface ListContestsProps {
   includeSearch?: boolean;
   customTitle?: string;
   compact?: boolean;
+  sortOptions?: SortOption[];
   onFullSearchChange?: (value: string) => void;
   onSearchChange?: (value: string) => void;
+  onSortChange?: (sort: string) => void;
 }
 
 export const ListContests: FC<ListContestsProps> = ({
@@ -42,10 +42,10 @@ export const ListContests: FC<ListContestsProps> = ({
   allowToHide,
   isContestDataFetching,
   compact = false,
+  sortOptions,
   onSearchChange,
+  onSortChange,
 }) => {
-  const [sorting, setSorting] = useState<Sorting | null>(null);
-  const sortedData = useSortedData(contestData?.data, sorting);
   const [fadeBg, setFadeBg] = useState(false);
   const loading = status === "loading" || isContestDataFetching;
   const placeholderCount = compact ? 6 : 7;
@@ -57,7 +57,9 @@ export const ListContests: FC<ListContestsProps> = ({
         <div className="font-bold text-md grid-cols-1 grid gap-5 md:full-width-grid-cols items-center pie-1ex p-3">
           <h2 className="text-[20px] font-bold font-sabo">Featured Contests</h2>
           <Search onSearchChange={onSearchChange} />
-          <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
+          {sortOptions ? (
+            <Sort sortOptions={sortOptions} onSortChange={onSortChange} onMenuStateChange={setFadeBg} />
+          ) : null}
         </div>
         {!isContestDataFetching && contestData?.count === 0 ? (
           <div className="text-neutral-9 text-center italic mb-6 animate-appear mt-12">No contests found</div>
@@ -78,7 +80,7 @@ export const ListContests: FC<ListContestsProps> = ({
                     rewardsLoading={isRewardsFetching}
                   />
                 ))
-              : sortedData
+              : contestData?.data
                   .slice(0, 6)
                   .map((contest: any, index: number) => (
                     <Contest
@@ -108,11 +110,30 @@ export const ListContests: FC<ListContestsProps> = ({
             <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
           ) : (
             <div className={`${className}`}>
-              <div
-                className={`grid ${
-                  fadeBg ? "opacity-50" : "opacity-100"
-                } text-[16px] transition-opacity duration-300 ease-in-out`}
-              >
+              <div className={`grid text-[16px] transition-opacity duration-300 ease-in-out`}>
+                <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
+                  <div className="order-3 md:order-none">
+                    {customTitle ? (
+                      <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
+                    ) : (
+                      <span aria-hidden="true">
+                        🃏
+                        <span className={`pis-1ex text-[20px]`}>{contestData?.count} contests</span>
+                      </span>
+                    )}
+                  </div>
+                  {includeSearch && (
+                    <div className="order-1 md:order-none">
+                      <Search onSearchChange={onSearchChange} />
+                    </div>
+                  )}
+
+                  {sortOptions ? (
+                    <div className="order-2 md:order-none">
+                      <Sort sortOptions={sortOptions} onSortChange={onSortChange} onMenuStateChange={setFadeBg} />
+                    </div>
+                  ) : null}
+                </div>
                 {loading ? (
                   placeholders.map((_, index) => (
                     <Contest
@@ -125,29 +146,8 @@ export const ListContests: FC<ListContestsProps> = ({
                     />
                   ))
                 ) : (
-                  <>
-                    <div className="grid grid-cols-1 gap-4 md:full-width-grid-cols lg:gap-0 items-center mb-4 font-bold text-[18px] pie-1ex p-3">
-                      <div className="order-3 md:order-none">
-                        {customTitle ? (
-                          <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
-                        ) : (
-                          <span aria-hidden="true">
-                            🃏
-                            <span className={`pis-1ex text-[20px]`}>{contestData?.count} contests</span>
-                          </span>
-                        )}
-                      </div>
-                      {includeSearch && (
-                        <div className="order-1 md:order-none">
-                          <Search onSearchChange={onSearchChange} />
-                        </div>
-                      )}
-
-                      <div className="order-2 md:order-none">
-                        <Sort onSortChange={setSorting} onMenuStateChange={setFadeBg} />
-                      </div>
-                    </div>
-                    {sortedData.map((contest: any, index: number) => (
+                  <div className={`${fadeBg ? "opacity-50" : "opacity-100"}`}>
+                    {contestData?.data.map((contest: any, index: number) => (
                       <Contest
                         key={`contest-${index}`}
                         contest={contest}
@@ -158,7 +158,7 @@ export const ListContests: FC<ListContestsProps> = ({
                         rewardsLoading={isRewardsFetching}
                       />
                     ))}
-                  </>
+                  </div>
                 )}
               </div>
 

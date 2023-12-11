@@ -7,6 +7,7 @@ import { fetchBalance, readContract } from "@wagmi/core";
 import { BigNumber, ethers, utils } from "ethers";
 import moment from "moment";
 import { SearchOptions } from "types/search";
+import { sortContests } from "./utils/sortContests";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -209,7 +210,7 @@ const processContestQualifications = async (contest: any, userAddress: string) =
 };
 
 // Search for contests based on the search options provided, table is contests by default and column is title by default
-export async function searchContests(options: SearchOptions = {}, userAddress?: string) {
+export async function searchContests(options: SearchOptions = {}, userAddress?: string, sortBy?: string) {
   const {
     searchColumn = "title",
     searchString = "",
@@ -227,7 +228,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
     const supabase = config.supabase;
     const { from, to } = getPagination(currentPage, itemsPerPage);
     try {
-      const result = await supabase
+      let query = supabase
         .from(table)
         .select(
           "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
@@ -237,9 +238,15 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
           type: "websearch",
           config: language,
         })
-        .eq("hidden", false)
-        .range(from, to)
-        .order(orderBy, { ascending });
+        .eq("hidden", false);
+
+      if (sortBy) {
+        query = sortContests(query, sortBy);
+      }
+
+      query = query.range(from, to).order(orderBy, { ascending });
+
+      const result = await query;
 
       const { data, count, error } = result;
       if (error) {
@@ -256,6 +263,7 @@ export async function searchContests(options: SearchOptions = {}, userAddress?: 
     }
   }
 }
+
 export async function getRewards(contests: any[]) {
   return Promise.all(contests.map(contest => processContestRewardsData(contest.address, contest.network_name)));
 }
@@ -265,6 +273,7 @@ export async function getUserContests(
   itemsPerPage: number,
   profileAddress: string,
   currentUserAddress: string,
+  sortBy?: string,
 ) {
   if (isSupabaseConfigured && profileAddress) {
     const config = await import("@config/supabase");
@@ -272,16 +281,22 @@ export async function getUserContests(
     const { from, to } = getPagination(currentPage, itemsPerPage);
 
     try {
-      const result = await supabase
+      let query = supabase
         .from("contests_v3")
         .select(
           "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, hidden, votingMerkleRoot, voting_requirements, submission_requirements",
           { count: "exact" },
         )
         .eq("author_address", profileAddress)
-        .order("created_at", { ascending: false })
-        .range(from, to);
+        .order("created_at", { ascending: false });
 
+      if (sortBy) {
+        query = sortContests(query, sortBy);
+      }
+
+      query = query.range(from, to);
+
+      const result = await query;
       const { data, count, error } = result;
       if (error) {
         throw new Error(error.message);
@@ -294,9 +309,10 @@ export async function getUserContests(
       return { data: processedData, count };
     } catch (e) {
       console.error(e);
+      return { data: [], count: 0 };
     }
-    return { data: [], count: 0 };
   }
+  return { data: [], count: 0 };
 }
 
 export async function getFeaturedContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
@@ -345,13 +361,18 @@ export async function getFeaturedContests(currentPage: number, itemsPerPage: num
   }
 }
 
-export async function getLiveContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
+export async function getLiveContests(
+  currentPage: number,
+  itemsPerPage: number,
+  userAddress?: string,
+  sortBy?: string,
+) {
   if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(currentPage, itemsPerPage);
     try {
-      const result = await supabase
+      let query = supabase
         .from("contests_v3")
         .select(
           "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
@@ -359,9 +380,15 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
         )
         .eq("hidden", false)
         .lte("start_at", new Date().toISOString())
-        .gte("end_at", new Date().toISOString())
-        .order("end_at", { ascending: true })
-        .range(from, to);
+        .gte("end_at", new Date().toISOString());
+
+      if (sortBy) {
+        query = sortContests(query, sortBy);
+      }
+
+      query = query.range(from, to);
+
+      const result = await query;
 
       const { data, count, error } = result;
       if (error) {
@@ -375,8 +402,8 @@ export async function getLiveContests(currentPage: number, itemsPerPage: number,
       return { data: processedData, count };
     } catch (e) {
       console.error(e);
+      return { data: [], count: 0 };
     }
-    return { data: [], count: 0 };
   }
 }
 
@@ -413,23 +440,36 @@ export async function getPastContests(currentPage: number, itemsPerPage: number,
   }
 }
 
-export async function getUpcomingContests(currentPage: number, itemsPerPage: number, userAddress?: string) {
+export async function getUpcomingContests(
+  currentPage: number,
+  itemsPerPage: number,
+  userAddress?: string,
+  sortBy?: string,
+) {
   if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     const { from, to } = getPagination(currentPage, itemsPerPage);
+
     try {
-      const result = await supabase
+      let query = supabase
         .from("contests_v3")
         .select(
           "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt, submissionMerkleRoot, votingMerkleRoot, voting_requirements, submission_requirements",
-
           { count: "exact" },
         )
         .eq("hidden", false)
-        .gt("start_at", new Date().toISOString())
-        .order("start_at", { ascending: false })
-        .range(from, to);
+        .gt("start_at", new Date().toISOString());
+
+      if (sortBy) {
+        query = sortContests(query, sortBy);
+      } else {
+        query = query.order("start_at", { ascending: false });
+      }
+
+      query = query.range(from, to);
+
+      const result = await query;
       const { data, count, error } = result;
       if (error) {
         throw new Error(error.message);
@@ -442,7 +482,8 @@ export async function getUpcomingContests(currentPage: number, itemsPerPage: num
       return { data: processedData, count };
     } catch (e) {
       console.error(e);
+      return { data: [], count: 0 };
     }
-    return { data: [], count: 0 };
   }
+  return { data: [], count: 0 };
 }
