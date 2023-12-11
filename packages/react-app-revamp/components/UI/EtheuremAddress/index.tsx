@@ -122,7 +122,7 @@ const EthereumAddress = ({
         rel="noopener noreferrer"
         href={`${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
       >
-        {displayName}
+        {displayName}{queryProfileAndAvatar?.data?.lens ? ".lens" : ""}
       </Link>
     );
   }
@@ -157,7 +157,7 @@ const EthereumAddress = ({
             rel="noopener noreferrer"
             href={includeSocials ? undefined : `${ROUTE_VIEW_USER.replace("[address]", ethereumAddress)}`}
           >
-            {displayName}
+            {displayName}{queryProfileAndAvatar?.data?.lens ? ".lens" : ""}
           </a>
 
           {includeSocials ? (
