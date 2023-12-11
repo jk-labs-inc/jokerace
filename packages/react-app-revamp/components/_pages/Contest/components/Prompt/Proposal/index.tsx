@@ -32,25 +32,37 @@ const transform = (node: HTMLElement): ReactNode => {
   if (element === "a") {
     const href = node.getAttribute("href");
     const tweetUrlMatch = href && href.match(twitterRegex);
+
+    const isInsideList =
+      node.parentNode?.parentNode?.nodeName === "li" ||
+      node.parentNode?.parentNode?.nodeName === "ul" ||
+      node.parentNode?.parentNode?.nodeName === "ol";
+
     if (tweetUrlMatch) {
-      if (
-        node.parentNode?.parentNode?.nodeName === "li" ||
-        node.parentNode?.parentNode?.nodeName === "ul" ||
-        node.parentNode?.parentNode?.nodeName === "ol"
-      ) {
+      if (isInsideList) {
         return (
           <a href={href} target="_blank" rel="noopener noreferrer nofollow">
-            {node.childNodes[0].textContent}
+            {node.childNodes[0]?.textContent || ""}
           </a>
         );
       }
-      const tweetId = tweetUrlMatch[4] || tweetUrlMatch[2];
 
-      return (
-        <div className="dark not-prose">
-          <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />
-        </div>
-      );
+      const hasTextContent = node.childNodes[0]?.textContent && node.childNodes[0]?.textContent !== href;
+
+      if (hasTextContent) {
+        return (
+          <a href={href} target="_blank" rel="noopener noreferrer nofollow">
+            {node.childNodes[0]?.textContent}
+          </a>
+        );
+      } else {
+        const tweetId = tweetUrlMatch[4] || tweetUrlMatch[2];
+        return (
+          <div className="dark not-prose">
+            <Tweet apiUrl={`/api/tweet/${tweetId}`} id={tweetId} />
+          </div>
+        );
+      }
     }
   }
 };
