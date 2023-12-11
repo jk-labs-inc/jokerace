@@ -134,7 +134,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.15";
+        return "4.16";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
