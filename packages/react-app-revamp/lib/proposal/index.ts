@@ -4,7 +4,7 @@ import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
 import { BigNumber, utils } from "ethers";
 import { readContracts } from "wagmi";
-import { compareVersions } from 'compare-versions';
+import { compareVersions } from "compare-versions";
 
 interface RankDictionary {
   [key: string]: number;

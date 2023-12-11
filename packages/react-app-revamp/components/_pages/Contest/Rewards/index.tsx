@@ -19,7 +19,7 @@ import { useRewardsStore } from "@hooks/useRewards/store";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { compareVersions } from 'compare-versions';
+import { compareVersions } from "compare-versions";
 
 const ContestRewards = () => {
   const { asPath } = useRouter();
