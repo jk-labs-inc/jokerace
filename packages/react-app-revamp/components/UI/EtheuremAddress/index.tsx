@@ -69,7 +69,7 @@ const EthereumAddress = ({
   const fetchAvatarAndProfile = async () => {
     try {
       const lensProfile = await lensClient.profile.fetchDefault({for: ethereumAddress});
-      if (lensProfile) {
+      if (lensProfile?.handle) {
         const avatarFragment = lensProfile.metadata?.picture as ProfilePictureSetFragment;
         const avatarUrl = avatarFragment?.raw?.uri?.replace(
             "ipfs://",
@@ -81,16 +81,20 @@ const EthereumAddress = ({
       console.error(e);
     }
 
+    console.log("made it here");
+
     // If no lens profile found, attempt to fetch the ens name and avatar
     try {
       const ensName = await fetchEnsName({
         chainId: 1,
         address: ethereumAddress as `0x${string}`,
       });
+      console.log("ensName:",ensName);
 
       if (ensName) {
         try {
           const ensAvatar = await fetchEnsAvatar({ name: ensName as string, chainId: 1 });
+          console.log("ensAvatar:",ensAvatar);
           return { handle: ensName, avatarUrl: ensAvatar || DEFAULT_AVATAR_URL, lens: false };
         } catch (e) {
           console.error(e);
@@ -113,6 +117,8 @@ const EthereumAddress = ({
   const avatarUrl = queryProfileAndAvatar.data?.avatarUrl || DEFAULT_AVATAR_URL;
   const isLoading = queryProfileAndAvatar?.status === "loading";
   const displayName = queryProfileAndAvatar?.data?.handle || (shortenOnFallback && shortAddress) || ethereumAddress;
+  console.log("queryProfileAndAvatar", queryProfileAndAvatar);
+  console.log("displayName", displayName);
 
   if (textualVersion) {
     return (
