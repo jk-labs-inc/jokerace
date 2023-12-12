@@ -8,29 +8,30 @@ import ListContests from "@components/_pages/ListContests";
 import { FOOTER_LINKS } from "@config/links";
 import { ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
 import { isSupabaseConfigured } from "@helpers/database";
+import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
-import { getFeaturedContests, getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { ITEMS_PER_PAGE, getFeaturedContests, getLiveContests, getRewards, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Link from "next/link";
 import router from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
-function useContests(initialData: any, searchValue: string) {
+function useContests(searchValue: string, sortBy?: string) {
   const [page, setPage] = useState(0);
   const { address } = useAccount();
-
-  //@ts-ignore
-  if (initialData?.data) queryOptions.initialData = initialData.data;
 
   const {
     status,
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery([searchValue ? "featuredContests" : "liveContests", page, address, searchValue], () =>
-    searchValue
-      ? searchContests(
+  } = useQuery(
+    [searchValue || sortBy ? "searchedContests" : "featuredContests", page, address, searchValue, sortBy],
+    () => {
+      if (searchValue) {
+        // Call searchContests if there is a searchValue
+        return searchContests(
           {
             searchString: searchValue,
             pagination: {
@@ -38,8 +39,15 @@ function useContests(initialData: any, searchValue: string) {
             },
           },
           address,
-        )
-      : getFeaturedContests(page, 6, address),
+          sortBy,
+        );
+      } else if (sortBy) {
+        return getLiveContests(page, 6, address, sortBy);
+      } else {
+        // Call getFeaturedContests otherwise
+        return getFeaturedContests(page, 6, address);
+      }
+    },
   );
 
   const {
@@ -63,33 +71,26 @@ function useContests(initialData: any, searchValue: string) {
   };
 }
 
-const Page: NextPage = props => {
-  const initialData = props;
+const Page: NextPage = () => {
   const [searchValue, setSearchValue] = useState("");
   const { address } = useAccount();
   const [isClient, setIsClient] = useState(false);
   const allowedLinks = ["Github", "Mirror", "Twitter", "Telegram", "Report a bug", "Terms"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
+  const [sortBy, setSortBy] = useState<string>("");
+  const sortOptions = useContestSortOptions("liveContests");
+  const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
+    useContests(searchValue, sortBy);
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  const {
-    page,
-    setPage,
-    status,
-    contestData,
-    rewardsData,
-    isRewardsFetching,
-    error,
-    isContestDataFetching,
-    //@ts-ignore
-  } = useContests(initialData?.data, searchValue);
-
   const onViewAll = () => {
     if (searchValue) {
-      router.push(`/contests?title=${searchValue}`);
+      router.push(`/contests?title=${searchValue}&sortBy=${sortBy}`);
+    } else if (sortBy) {
+      router.push(`${ROUTE_VIEW_LIVE_CONTESTS}?sortBy=${sortBy}`);
     } else {
       router.push(ROUTE_VIEW_LIVE_CONTESTS);
     }
@@ -167,6 +168,8 @@ const Page: NextPage = props => {
                 rewardsData={rewardsData}
                 compact={true}
                 onSearchChange={setSearchValue}
+                onSortChange={setSortBy}
+                sortOptions={sortOptions}
               />
               <div className="flex flex-col md:flex-row gap-6 md:gap-0 justify-between mt-5">
                 <Subscribe />

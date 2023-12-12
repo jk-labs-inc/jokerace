@@ -1,6 +1,7 @@
 import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import getPagination from "@helpers/getPagination";
+import useContestSortOptions from "@hooks/useSortOptions";
 import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
 import { getRewards, getUpcomingContests, ITEMS_PER_PAGE } from "lib/contests";
@@ -9,19 +10,17 @@ import Head from "next/head";
 import { useState } from "react";
 import { useAccount } from "wagmi";
 
-function useContests(initialData: any) {
+function useContests(sortBy?: string) {
   const [page, setPage] = useState(0);
   const { address } = useAccount();
-
-  //@ts-ignore
-  if (initialData?.data) queryOptions.initialData = initialData.data;
-
   const {
     status,
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(["upcomingContests", page, address], () => getUpcomingContests(page, ITEMS_PER_PAGE, address));
+  } = useQuery(["upcomingContests", page, address, sortBy], () =>
+    getUpcomingContests(page, ITEMS_PER_PAGE, address, sortBy),
+  );
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
     ["rewards", contestData],
@@ -42,19 +41,11 @@ function useContests(initialData: any) {
     isRewardsFetching,
   };
 }
-const Page: NextPage = props => {
-  const initialData = props;
-  const {
-    page,
-    setPage,
-    status,
-    contestData,
-    rewardsData,
-    error,
-    isContestDataFetching,
-    isRewardsFetching,
-    //@ts-ignore
-  } = useContests(initialData?.data);
+const Page: NextPage = () => {
+  const [sortBy, setSortBy] = useState<string>("");
+  const sortOptions = useContestSortOptions("upcomingContests");
+  const { page, setPage, status, contestData, rewardsData, error, isContestDataFetching, isRewardsFetching } =
+    useContests(sortBy);
 
   return (
     <>
@@ -76,6 +67,8 @@ const Page: NextPage = props => {
             setPage={setPage}
             contestData={contestData}
             rewardsData={rewardsData}
+            sortOptions={sortOptions}
+            onSortChange={setSortBy}
           />
         ) : (
           <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">

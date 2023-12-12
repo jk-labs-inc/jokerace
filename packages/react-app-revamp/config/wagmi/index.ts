@@ -15,6 +15,8 @@ import {
   walletConnectWallet,
   phantomWallet,
 } from "@rainbow-me/rainbowkit/wallets";
+import { luksoWallet } from "./custom-wallets/luksoWallet";
+
 import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
@@ -47,6 +49,7 @@ import { mainnet } from "./custom-chains/mainnet";
 import { mantaPacific } from "./custom-chains/mantaPacific";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
+import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
@@ -75,7 +78,6 @@ import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
-import { luksoWallet } from "./custom-wallets/luksoWallet";
 
 type ChainImages = {
   [key: string]: string;
@@ -114,6 +116,7 @@ const totalChains: Chain[] = [
   mantaPacific,
   holesky,
   redstoneHolesky,
+  mode,
   polygonTestnet,
   sepolia,
   goerli,
@@ -254,4 +257,6 @@ export const chainsImages: ChainImages = {
   quartz: "/quartz.svg",
   unique: "/unique.svg",
   vitruveo: "/vitruveo.svg",
+  mode: "/mode.svg",
+  modetestnet: "/mode.svg",
 };
