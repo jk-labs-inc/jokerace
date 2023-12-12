@@ -4,6 +4,7 @@ export const modeTestnet: Chain = {
   id: 919,
   name: "modeTestnet",
   network: "modeTestnet",
+  iconUrl: "/mode.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
@@ -18,8 +19,8 @@ export const modeTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Mantle Testnet Scan", url: "https://sepolia.explorer.mode.network/" },
-    default: { name: "Mantle Testnet Scan", url: "https://sepolia.explorer.mode.network/" },
+    etherscan: { name: "Mode Testnet Scan", url: "https://sepolia.explorer.mode.network/" },
+    default: { name: "Mode Testnet Scan", url: "https://sepolia.explorer.mode.network/" },
   },
   testnet: true,
 };

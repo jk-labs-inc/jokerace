@@ -76,6 +76,7 @@ import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
 import { luksoWallet } from "./custom-wallets/luksoWallet";
+import { mode } from "./custom-chains/mode";
 
 type ChainImages = {
   [key: string]: string;
@@ -112,6 +113,7 @@ const totalChains: Chain[] = [
   unique,
   vitruveo,
   mantaPacific,
+  mode,
   holesky,
   redstoneHolesky,
   polygonTestnet,
@@ -254,4 +256,6 @@ export const chainsImages: ChainImages = {
   quartz: "/quartz.svg",
   unique: "/unique.svg",
   vitruveo: "/vitruveo.svg",
+  mode: "/mode.svg",
+  modetestnet: "/mode.svg",
 };
