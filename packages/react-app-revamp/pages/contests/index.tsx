@@ -1,6 +1,7 @@
 import ListContests from "@components/_pages/ListContests";
 import { SearchBar } from "@components/_pages/SearchBar";
 import { isSupabaseConfigured } from "@helpers/database";
+import useContestSortOptions from "@hooks/useSortOptions";
 import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
 import { fetchEnsAddress } from "@wagmi/core";
@@ -8,17 +9,85 @@ import { getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
+
+type SearchCriteria = {
+  searchString: string;
+  searchColumn: string;
+};
+
+function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
+  const [page, setPage] = useState(0);
+  const { address } = useAccount();
+
+  const {
+    status,
+    data: contestData,
+    error,
+    isFetching: isContestDataFetching,
+  } = useQuery(
+    ["searchedContests", searchCriteria.searchString, page, sortBy],
+    () => {
+      return searchContests(
+        {
+          searchString: searchCriteria.searchString,
+          searchColumn: searchCriteria.searchColumn,
+          pagination: {
+            currentPage: page,
+          },
+        },
+        address,
+        sortBy,
+      );
+    },
+    {
+      enabled: searchCriteria.searchString !== "",
+    },
+  );
+
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
+    ["rewards", contestData],
+    data => getRewards(contestData?.data ?? []),
+    {
+      enabled: !!contestData,
+    },
+  );
+
+  return {
+    page,
+    setPage,
+    status,
+    contestData,
+    rewardsData,
+    isRewardsFetching,
+    error,
+    isContestDataFetching,
+  };
+}
 
 const Page: NextPage = () => {
   const router = useRouter();
-  const [page, setPage] = useState(0);
-  const [searchCriteria, setSearchCriteria] = useState<{ searchString: string; searchColumn: string }>({
+  const [searchCriteria, setSearchCriteria] = useState<SearchCriteria>({
     searchString: "",
     searchColumn: "title",
   });
-  const { address } = useAccount();
+  const [sortBy, setSortBy] = useState<string>("");
+  const sortOptions = useContestSortOptions("liveContests");
+  const { page, setPage, status, contestData, rewardsData, error, isContestDataFetching, isRewardsFetching } =
+    useContests(searchCriteria, sortBy);
+
+  useEffect(() => {
+    const query = router.query;
+    if (query.title) {
+      setSearchCriteria({
+        searchString: query.title as string,
+        searchColumn: "title",
+      });
+
+      setSortBy(query.sortBy as string);
+    }
+  }, [router.query]);
 
   const handleSearch = async (criteria: { query: string; filterType: string }) => {
     if (criteria.filterType === "user") {
@@ -41,38 +110,6 @@ const Page: NextPage = () => {
       });
     }
   };
-
-  const {
-    status,
-    data: queryData,
-    error,
-    isFetching: isContestDataFetching,
-  } = useQuery(
-    ["searchedContests", searchCriteria.searchString, page],
-    () => {
-      return searchContests(
-        {
-          searchString: searchCriteria.searchString,
-          searchColumn: searchCriteria.searchColumn,
-          pagination: {
-            currentPage: page,
-          },
-        },
-        address,
-      );
-    },
-    {
-      enabled: searchCriteria.searchString !== "",
-    },
-  );
-
-  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
-    ["rewards", queryData],
-    data => getRewards(queryData?.data ?? []),
-    {
-      enabled: !!queryData,
-    },
-  );
 
   const adjustPaddingForInline = searchCriteria.searchString.length > 0 ? "p-3" : "p-20";
 
@@ -105,9 +142,11 @@ const Page: NextPage = () => {
                 error={error}
                 page={page}
                 setPage={setPage}
-                contestData={queryData}
+                contestData={contestData}
                 rewardsData={rewardsData}
                 isRewardsFetching={isRewardsFetching}
+                onSortChange={setSortBy}
+                sortOptions={sortOptions}
               />
             ) : (
               <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">

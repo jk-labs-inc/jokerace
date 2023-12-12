@@ -1,27 +1,26 @@
 import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import getPagination from "@helpers/getPagination";
+import useContestSortOptions from "@hooks/useSortOptions";
 import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
-import { getLiveContests, getRewards, ITEMS_PER_PAGE } from "lib/contests";
+import { ITEMS_PER_PAGE, getLiveContests, getRewards } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 
-function useContests(initialData: any) {
+function useContests(sortBy?: string) {
   const [page, setPage] = useState(0);
   const { address } = useAccount();
-
-  //@ts-ignore
-  if (initialData?.data) queryOptions.initialData = initialData.data;
 
   const {
     status,
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(["liveContests", page, address], () => getLiveContests(page, ITEMS_PER_PAGE, address));
+  } = useQuery(["liveContests", page, address, sortBy], () => getLiveContests(page, ITEMS_PER_PAGE, address, sortBy));
 
   const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
     ["rewards", contestData],
@@ -43,19 +42,19 @@ function useContests(initialData: any) {
   };
 }
 
-const Page: NextPage = props => {
-  const initialData = props;
-  const {
-    page,
-    setPage,
-    status,
-    contestData,
-    rewardsData,
-    isRewardsFetching,
-    error,
-    isContestDataFetching,
-    //@ts-ignore
-  } = useContests(initialData?.data);
+const Page: NextPage = () => {
+  const router = useRouter();
+  const [sortBy, setSortBy] = useState<string>("");
+  const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
+    useContests(sortBy);
+  const sortOptions = useContestSortOptions("liveContests");
+
+  useEffect(() => {
+    const query = router.query;
+    if (query.sortBy) {
+      setSortBy(query.sortBy as string);
+    }
+  }, [router.query]);
 
   return (
     <>
@@ -77,6 +76,8 @@ const Page: NextPage = props => {
             contestData={contestData}
             rewardsData={rewardsData}
             isRewardsFetching={isRewardsFetching}
+            sortOptions={sortOptions}
+            onSortChange={setSortBy}
           />
         ) : (
           <div className="border-neutral-4 animate-appear p-3 rounded-md border-solid border mb-5 text-sm font-bold">

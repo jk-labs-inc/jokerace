@@ -1,6 +1,7 @@
 import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
 import { getAddressProps } from "@helpers/getAddressProps";
+import useContestSortOptions from "@hooks/useSortOptions";
 import LayoutUser from "@layouts/LayoutUser";
 import { useQuery } from "@tanstack/react-query";
 import { getRewards, getUserContests, ITEMS_PER_PAGE } from "lib/contests";
@@ -15,11 +16,8 @@ export interface UserPageProps {
   ensName: string;
 }
 
-function useContests(profileAddress: string, currentUserAddress: string, initialData: any) {
+function useContests(profileAddress: string, currentUserAddress: string, sortBy?: string) {
   const [page, setPage] = useState(0);
-
-  //@ts-ignore
-  if (initialData?.data) queryOptions.initialData = initialData.data;
 
   const {
     status,
@@ -27,9 +25,9 @@ function useContests(profileAddress: string, currentUserAddress: string, initial
     error,
     isFetching: isContestDataFetching,
   } = useQuery(
-    ["userContests", profileAddress, page, currentUserAddress],
+    ["userContests", profileAddress, page, currentUserAddress, sortBy],
     () => {
-      return getUserContests(page, ITEMS_PER_PAGE, profileAddress, currentUserAddress);
+      return getUserContests(page, ITEMS_PER_PAGE, profileAddress, currentUserAddress, sortBy);
     },
     {
       enabled: !!profileAddress,
@@ -59,11 +57,13 @@ function useContests(profileAddress: string, currentUserAddress: string, initial
 
 //@ts-ignore
 const Page: NextPage = (props: UserPageProps) => {
-  const { address, ensName, initialData } = props;
+  const { address, ensName } = props;
   const { address: currentUserAddress } = useAccount();
-  const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
-    useContests(address, currentUserAddress as string, initialData?.data);
   const isCreator = currentUserAddress === address;
+  const [sortBy, setSortBy] = useState<string>("");
+  const sortOptions = useContestSortOptions("liveContests");
+  const { page, setPage, status, contestData, rewardsData, isRewardsFetching, error, isContestDataFetching } =
+    useContests(address, currentUserAddress as string, sortBy);
 
   return (
     <LayoutUser address={address}>
@@ -84,6 +84,8 @@ const Page: NextPage = (props: UserPageProps) => {
             contestData={contestData}
             rewardsData={rewardsData}
             isRewardsFetching={isRewardsFetching}
+            onSortChange={setSortBy}
+            sortOptions={sortOptions}
           />
         </div>
       ) : (
