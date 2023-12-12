@@ -13,6 +13,7 @@ import {
   tahoWallet,
   trustWallet,
   walletConnectWallet,
+  phantomWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
@@ -74,6 +75,7 @@ import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
+import { luksoWallet } from "./custom-wallets/luksoWallet";
 
 type ChainImages = {
   [key: string]: string;
@@ -182,6 +184,8 @@ const connectors = connectorsForWallets([
       omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       bitKeepWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       rabbyWallet({ chains }),
+      luksoWallet(),
+      phantomWallet({ chains }),
     ],
   },
 ]);

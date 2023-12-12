@@ -20,7 +20,7 @@ import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
 import { FC } from "react";
 import { useAccount } from "wagmi";
-import { compareVersions } from 'compare-versions';
+import { compareVersions } from "compare-versions";
 import { COMMENTS_VERSION } from "lib/proposal";
 
 interface SubmissionPageMobileLayoutProps {
@@ -64,7 +64,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const totalProposals = listProposalsIds.length;
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const commentsAllowed = compareVersions((contestInfo.version).toString(), COMMENTS_VERSION) == -1 ? false : true;
+  const commentsAllowed = compareVersions(contestInfo.version.toString(), COMMENTS_VERSION) == -1 ? false : true;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
 
   return (
@@ -111,16 +111,6 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
           </p>
         )}
-        {commentsAllowed ? (
-          <div className="mt-9">
-            <Comments
-              contestAddress={contestInfo.address}
-              contestChainId={chainId}
-              proposalId={proposalId}
-              numberOfComments={numberOfComments}
-            />
-          </div>
-        ) : null}
 
         <div className="flex flex-col gap-8">
           {contestStatus === ContestStatus.VotingOpen && (
@@ -156,6 +146,17 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           )}
           {proposal && proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
         </div>
+
+        {commentsAllowed ? (
+          <div className="mt-9">
+            <Comments
+              contestAddress={contestInfo.address}
+              contestChainId={chainId}
+              proposalId={proposalId}
+              numberOfComments={numberOfComments}
+            />
+          </div>
+        ) : null}
         <div className="mt-20">
           <div
             className={`${totalProposals > 1 ? "fixed" : "hidden"} ${

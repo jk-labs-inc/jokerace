@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.19;
 
 import "../Governor.sol";
 
@@ -94,30 +94,6 @@ abstract contract GovernorCountingSimple is Governor {
             proposalVoteCountsArray[i] = proposalVotesStructs[proposalIdsMemVar[i]].proposalVoteCounts;
         }
         return (proposalIdsMemVar, proposalVoteCountsArray);
-    }
-
-    /**
-     * @dev Accessor to the internal vote counts for a given proposal that excludes deleted proposals.
-     */
-    function allProposalTotalVotesWithoutDeleted()
-        public
-        view
-        returns (uint256[] memory proposalIdsReturn, VoteCounts[] memory proposalVoteCountsArrayReturn)
-    {
-        uint256[] memory proposalIdsMemVar = getAllProposalIds();
-        uint256[] memory proposalIdsWithoutDeleted = new uint256[](proposalIdsMemVar.length);
-        VoteCounts[] memory proposalVoteCountsArray = new VoteCounts[](proposalIdsMemVar.length);
-
-        uint256 newArraysIndexCounter = 0;
-        for (uint256 i = 0; i < proposalIdsMemVar.length; i++) {
-            if (!proposalIsDeleted[proposalIdsMemVar[i]]) {
-                proposalIdsWithoutDeleted[newArraysIndexCounter] = proposalIdsMemVar[i];
-                proposalVoteCountsArray[newArraysIndexCounter] =
-                    proposalVotesStructs[proposalIdsMemVar[i]].proposalVoteCounts;
-                newArraysIndexCounter += 1;
-            }
-        }
-        return (proposalIdsWithoutDeleted, proposalVoteCountsArray);
     }
 
     /**

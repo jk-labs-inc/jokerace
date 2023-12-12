@@ -34,6 +34,8 @@ import GasOptimizeGettersRewards from "@contracts/bytecodeAndAbi/modules/Rewards
 import AllowCancelCompletedRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.12.allowCancelCompleted.sol/RewardsModule.json";
 import AddCommentsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.13.addComments.sol/RewardsModule.json";
 import RmShadowingPropIdsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.14.rmShadowingPropIds.sol/RewardsModule.json";
+import RmUnusedViewFuncRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.15.rmUnusedViewFunc.sol/RewardsModule.json";
+import PinAllToSameRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.16.pinAllToSame.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -46,7 +48,11 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.14") {
+    if (version === "4.16") {
+      return PinAllToSameRewards.abi;
+    } else if (version === "4.15") {
+      return RmUnusedViewFuncRewards.abi;
+    } else if (version === "4.14") {
       return RmShadowingPropIdsRewards.abi;
     } else if (version === "4.13") {
       return AddCommentsRewards.abi;

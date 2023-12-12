@@ -33,7 +33,6 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal
     increaseCurrentUserTotalVotesCast,
     decreaseCurrentUserTotalVotesCast,
   } = useUserStore(state => state);
-  const stringifiedProposalsIds = listProposalsIds.map(id => id.toString());
 
   const handleCastVotes = (amount: number, isUpvote: boolean) => {
     decreaseCurrentUserAvailableVotesAmount(amount);
@@ -67,17 +66,17 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal
   };
 
   const handleOnNextEntryChange = () => {
-    const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
-    if (currentIndex !== -1 && currentIndex < stringifiedProposalsIds.length - 1) {
-      const nextProposalId = stringifiedProposalsIds[currentIndex + 1];
+    const currentIndex = listProposalsIds.indexOf(proposalId);
+    if (currentIndex !== -1 && currentIndex < listProposalsIds.length - 1) {
+      const nextProposalId = listProposalsIds[currentIndex + 1];
       goToProposalPage(contestInfo.chain, contestInfo.address, nextProposalId);
     }
   };
 
   const handleOnPreviousEntryChange = () => {
-    const currentIndex = stringifiedProposalsIds.indexOf(proposalId);
+    const currentIndex = listProposalsIds.indexOf(proposalId);
     if (currentIndex > 0) {
-      const previousProposalId = stringifiedProposalsIds[currentIndex - 1];
+      const previousProposalId = listProposalsIds[currentIndex - 1];
       goToProposalPage(contestInfo.chain, contestInfo.address, previousProposalId);
     }
   };
