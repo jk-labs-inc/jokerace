@@ -143,7 +143,9 @@ export const ListContests: FC<ListContestsProps> = ({
                 />
               ))
             ) : contestData?.count === 0 ? (
-              <div className="text-neutral-9 text-center italic mb-6 animate-appear">No contests found</div>
+              <div className="text-neutral-9 mt-20 font-sabo text-[24px] text-center italic mb-6 animate-appear">
+                No contests found
+              </div>
             ) : (
               <div className={`${fadeBg ? "opacity-50" : "opacity-100"}`}>
                 {contestData?.data.map((contest: any, index: number) => (
