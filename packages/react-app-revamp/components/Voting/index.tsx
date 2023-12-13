@@ -61,6 +61,26 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
     }
   };
 
+  const handleKeyDownSlider = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter") {
+      handleVote();
+    }
+  };
+
+  const handleKeyDownInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleVote();
+    }
+  };
+
+  const handleVote = () => {
+    if (isCorrectNetwork) {
+      onVote?.(amount, isUpvote);
+    } else {
+      onSwitchNetwork();
+    }
+  };
+
   const onSwitchNetwork = async () => {
     await switchNetwork({ chainId });
   };
@@ -81,14 +101,13 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
               onChange={e => handleChange(e.target.value)}
               placeholder="0.00 votes"
               max={amountOfVotes}
+              onKeyDown={handleKeyDownInput}
               className="text-right w-24 bg-transparent outline-none mr-1 placeholder-neutral-10"
             />
             {amount > 0 && <span>vote{amount !== 1 ? "s" : ""}</span>}
           </div>
         </div>
-        <div>
-          <StepSlider val={sliderValue} onChange={handleSliderChange} />
-        </div>
+        <StepSlider val={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
         {downvoteAllowed ? (
           <div className="flex w-full border border-neutral-10 rounded-[25px] overflow-hidden text-[16px] text-center">
             <div

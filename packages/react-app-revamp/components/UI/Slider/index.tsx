@@ -10,9 +10,18 @@ interface StepSliderProps {
   defaultValue?: number;
   step?: number;
   onChange?: (value: any) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
 }
 
-const StepSlider: FC<StepSliderProps> = ({ val, min = 0, max = 100, defaultValue = 0, step = 25, onChange }) => {
+const StepSlider: FC<StepSliderProps> = ({
+  val,
+  min = 0,
+  max = 100,
+  defaultValue = 0,
+  step = 25,
+  onChange,
+  onKeyDown,
+}) => {
   const [value, setValue] = useState(defaultValue);
 
   useEffect(() => {
@@ -50,35 +59,37 @@ const StepSlider: FC<StepSliderProps> = ({ val, min = 0, max = 100, defaultValue
   };
 
   return (
-    <Slider
-      className="w-60"
-      min={min}
-      max={max}
-      value={value}
-      dotStyle={dotStyle}
-      trackStyle={trackStyle}
-      handleStyle={handleStyle}
-      railStyle={railStyle}
-      onChange={handleSliderChange}
-      handleRender={renderProps => {
-        return (
-          <div {...renderProps.props} data-tooltip-id="voting-slider">
-            <Tooltip
-              id="voting-slider"
-              style={{
-                backgroundColor: "#6A6A6A",
-                marginTop: "-5px",
-                color: "white",
-                fontSize: "16px",
-                fontWeight: "bold",
-              }}
-            >
-              {value}%
-            </Tooltip>
-          </div>
-        );
-      }}
-    />
+    <div onKeyDown={onKeyDown} tabIndex={0}>
+      <Slider
+        className="w-60"
+        min={min}
+        max={max}
+        value={value}
+        dotStyle={dotStyle}
+        trackStyle={trackStyle}
+        handleStyle={handleStyle}
+        railStyle={railStyle}
+        onChange={handleSliderChange}
+        handleRender={renderProps => {
+          return (
+            <div {...renderProps.props} data-tooltip-id="voting-slider">
+              <Tooltip
+                id="voting-slider"
+                style={{
+                  backgroundColor: "#6A6A6A",
+                  marginTop: "-5px",
+                  color: "white",
+                  fontSize: "16px",
+                  fontWeight: "bold",
+                }}
+              >
+                {value}%
+              </Tooltip>
+            </div>
+          );
+        }}
+      />
+    </div>
   );
 };
 
