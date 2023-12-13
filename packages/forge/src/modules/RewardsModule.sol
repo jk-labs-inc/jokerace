@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: MIT
-
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/token/ERC20/utils/SafeERC20.sol";
@@ -102,7 +101,7 @@ contract RewardsModule {
      * @dev Version of the rewards module.
      */
     function version() public pure returns (string memory) {
-        return "4.16";
+        return "4.17";
     }
 
     /**

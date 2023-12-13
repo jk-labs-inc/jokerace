@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: MIT
-
+// SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/utils/math/SafeCast.sol";
@@ -134,7 +133,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.16";
+        return "4.17";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
