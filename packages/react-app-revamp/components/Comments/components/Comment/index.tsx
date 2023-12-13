@@ -23,7 +23,7 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
   const isSelected = selectedCommentIds.includes(comment.id);
 
   return (
-    <div className="flex flex-col gap-4 animate-appear">
+    <div className="flex flex-col gap-4 animate-appear" id={comment.id}>
       <div className="flex flex-col gap-2">
         <div className="flex justify-between">
           <EthereumAddress ethereumAddress={comment.author} shortenOnFallback />
