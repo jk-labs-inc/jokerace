@@ -10,6 +10,8 @@ export function getContracts(contractConfig: any, version: number) {
     "voteStart",
     "prompt",
     "downvotingAllowed",
+    "submissionMerkleRoot",
+    "votingMerkleRoot",
   ];
 
   const v4FunctionNames = ["costToPropose", "percentageToCreator"];
