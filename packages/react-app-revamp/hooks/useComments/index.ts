@@ -6,6 +6,8 @@ import { prepareWriteContract, readContract, readContracts, waitForTransaction, 
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { Comment, CommentCore, useCommentsStore } from "./store";
+import { addUserActionForAnalytics } from "lib/analytics/participants";
+import { chains } from "@config/wagmi";
 
 export const COMMENTS_PER_PAGE = 12;
 
@@ -222,6 +224,19 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
         proposalId: proposalId,
         timestamp: blockInfo.timestamp,
       });
+
+      try {
+        await addUserActionForAnalytics({
+          contest_address: address,
+          user_address: accountAddress,
+          network_name: chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase() ?? "",
+          proposal_id: proposalId,
+          created_at: Math.floor(Date.now() / 1000),
+          comment_id: commentId,
+        });
+      } catch (error) {
+        console.error("error in addUserActionForAnalytics on comment", error);
+      }
 
       const newComment = await getComment(commentId);
       const combinedComments = [...comments, newComment];

@@ -10,6 +10,7 @@ interface SaveToAnalyticsContestParticipantsOptions {
   deleted?: boolean;
   amount_sent?: number | null;
   percentage_to_creator?: number | null;
+  comment_id?: string;
 }
 
 const saveToAnalyticsContestParticipantsV3 = async (options: SaveToAnalyticsContestParticipantsOptions) => {
