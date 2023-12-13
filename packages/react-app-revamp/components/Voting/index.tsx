@@ -1,5 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
-/* eslint-disable react-hooks/exhaustive-deps */
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
 import { chains } from "@config/wagmi";
@@ -10,7 +8,7 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useNetwork } from "wagmi";
 
 interface VotingWidgetProps {
@@ -29,27 +27,9 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
-  const voteDisabled = isLoading || amount === 0 || isInvalid;
+  const voteDisabled = isLoading || amount === 0 || isInvalid || isNaN(amount);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const isCorrectNetwork = chainId === chain?.id;
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        if (!isCorrectNetwork) {
-          onSwitchNetwork();
-          return;
-        }
-        onVote?.(amount, isUpvote);
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [amount, isUpvote, onVote]);
 
   const handleClick = (value: boolean) => {
     setIsUpvote(value);
@@ -58,21 +38,26 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   const handleSliderChange = (value: any) => {
     setSliderValue(value);
     const newAmount = ((value / 100) * amountOfVotes).toFixed(4);
-
     setAmount(parseFloat(newAmount));
   };
 
-  const handleChange = (e: any) => {
-    const inputValue = e.target.value;
-    if (!isNaN(inputValue)) {
-      setAmount(parseFloat(inputValue));
-      if (inputValue === "0") {
-        setAmount(0);
-      } else {
-        const numericInput = parseFloat(inputValue);
-        setSliderValue((numericInput / amountOfVotes) * 100);
-        setIsInvalid(numericInput > amountOfVotes);
+  const handleChange = (value: string) => {
+    const numericInput = parseFloat(value);
+
+    setAmount(numericInput);
+
+    const isInputInvalid = numericInput === 0 || numericInput > amountOfVotes;
+    setIsInvalid(isInputInvalid);
+
+    if (isInputInvalid) {
+      if (numericInput === 0) {
+        setSliderValue(0);
+        return;
+      } else if (numericInput > amountOfVotes) {
+        setSliderValue(100);
       }
+    } else {
+      setSliderValue((numericInput / amountOfVotes) * 100);
     }
   };
 
@@ -92,13 +77,13 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
           <div className="flex items-center">
             <input
               type="number"
-              value={amount > 0 ? amount : ""}
-              onChange={handleChange}
+              value={amount}
+              onChange={e => handleChange(e.target.value)}
               placeholder="0.00 votes"
               max={amountOfVotes}
               className="text-right w-24 bg-transparent outline-none mr-1 placeholder-neutral-10"
             />
-            {amount > 0 && <span>votes</span>}
+            {amount > 0 && <span>vote{amount !== 1 ? "s" : ""}</span>}
           </div>
         </div>
         <div>

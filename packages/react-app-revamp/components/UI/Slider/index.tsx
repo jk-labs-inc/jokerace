@@ -4,7 +4,7 @@ import { FC, useEffect, useState } from "react";
 import { Tooltip } from "react-tooltip";
 
 interface StepSliderProps {
-  val?: number;
+  val: number;
   min?: number;
   max?: number;
   defaultValue?: number;
@@ -16,8 +16,6 @@ const StepSlider: FC<StepSliderProps> = ({ val, min = 0, max = 100, defaultValue
   const [value, setValue] = useState(defaultValue);
 
   useEffect(() => {
-    if (!val) return;
-
     setValue(val);
   }, [val]);
 
