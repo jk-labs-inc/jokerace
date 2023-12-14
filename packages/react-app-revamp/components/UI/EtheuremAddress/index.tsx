@@ -64,6 +64,7 @@ const EthereumAddress = ({
   const shortAddress = `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`;
   const { setAvatar } = useAvatarStore(state => state);
   const { avatarSizeClass, textSizeClass } = SIZES[size];
+  //@ts-ignore
   const etherscan = mainnet.blockExplorers?.etherscan.url;
 
   const fetchAvatarAndProfile = async () => {

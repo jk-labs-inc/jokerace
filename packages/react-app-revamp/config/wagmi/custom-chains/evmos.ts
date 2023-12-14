@@ -19,7 +19,7 @@ export const evmos: Chain = {
     },
   },
   blockExplorers: {
-    escan: { name: "escan.live", url: "https://escan.live/" },
+    etherscan: { name: "escan.live", url: "https://escan.live/" },
     default: { name: "escan.live", url: "https://escan.live/" },
   },
 };
