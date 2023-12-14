@@ -103,6 +103,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyJkLabsOrCreatorCanCancel();
     error ContestAlreadyCancelled();
 
+    error OnlyJkLabsCanAmend();
+
     constructor(
         string memory name_,
         string memory prompt_,
@@ -133,7 +135,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.17";
+        return "4.18";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -431,5 +433,15 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         emit VoteCast(account, proposalId, support, numVotes);
 
         return addressTotalVotes[account];
+    }
+
+    function setSubmissionMerkleRoot(bytes32 newSubmissionMerkleRoot) public {
+        if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        submissionMerkleRoot = newSubmissionMerkleRoot;
+    }
+
+    function setVotingMerkleRoot(bytes32 newVotingMerkleRoot) public {
+        if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        votingMerkleRoot = newVotingMerkleRoot;
     }
 }
