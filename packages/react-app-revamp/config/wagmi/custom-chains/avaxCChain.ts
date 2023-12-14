@@ -18,7 +18,7 @@ export const avaxCChain: Chain = {
     },
   },
   blockExplorers: {
-    escan: { name: "Snowtrace", url: "https://snowtrace.io/" },
+    etherscan: { name: "Snowtrace", url: "https://snowtrace.io/" },
     default: { name: "Snowtrace", url: "https://snowtrace.io/" },
   },
 };

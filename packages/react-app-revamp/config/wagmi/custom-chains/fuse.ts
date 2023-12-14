@@ -19,7 +19,7 @@ export const fuse: Chain = {
     },
   },
   blockExplorers: {
-    escan: { name: "Fuse Block Explorer", url: "https://explorer.fuse.io/" },
+    etherscan: { name: "Fuse Block Explorer", url: "https://explorer.fuse.io/" },
     default: { name: "Fuse Block Explorer", url: "https://explorer.fuse.io/" },
   },
 };
