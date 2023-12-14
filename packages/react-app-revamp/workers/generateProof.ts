@@ -1,4 +1,5 @@
-import { generateMerkleTree, generateProof, Recipient } from "lib/merkletree/generateMerkleTree";
+import { parseUnits } from "ethers/lib/utils";
+import { createMerkleTree, generateProof, Recipient } from "lib/merkletree/generateMerkleTree";
 
 interface MerkleTreeProofPayload {
   data: Recipient[];
@@ -9,12 +10,12 @@ interface MerkleTreeProofPayload {
 self.onmessage = (event: MessageEvent<MerkleTreeProofPayload>) => {
   const { address, numVotes, data } = event.data;
 
-  const dataRecord = data.reduce((acc: Record<string, number>, vote: Recipient) => {
-    acc[vote.address] = Number(vote.numVotes);
-    return acc;
-  }, {});
+  const convertedRecipients = data.map(vote => ({
+    ...vote,
+    numVotes: parseUnits(vote.numVotes, 18).toString(),
+  }));
 
-  const merkleTree = generateMerkleTree(18, dataRecord).merkleTree;
+  const merkleTree = createMerkleTree(convertedRecipients);
 
   const proofs = generateProof(merkleTree, address, numVotes);
 
