@@ -66,7 +66,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
-  const commentsAllowed = compareVersions((contestInfo.version).toString(), COMMENTS_VERSION) == -1 ? false : true;
+  const commentsAllowed = compareVersions(contestInfo.version.toString(), COMMENTS_VERSION) == -1 ? false : true;
 
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
@@ -116,7 +116,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
 
         {proposal ? (
           <div className="flex flex-col gap-4">
-            {proposal.rank > 0 && (
+            {/* {proposal.rank > 0 && (
               <div className="flex gap-2 items-center">
                 <p className="text-[16px] font-bold text-neutral-11">
                   {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
@@ -126,7 +126,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                   {ordinalize(proposal.rank).label} place {proposal.isTied ? "(tied)" : ""}
                 </p>
               </div>
-            )}
+            )} */}
             <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
           </div>
         ) : null}
