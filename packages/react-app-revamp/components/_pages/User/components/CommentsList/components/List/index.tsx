@@ -13,14 +13,17 @@ interface UserCommentsListProps {
 const UserCommentsList: FC<UserCommentsListProps> = ({ comment }) => {
   return (
     <Link
-      href={getProposalPagePath(comment.network_name, comment.contest_address, comment.proposal_id)}
+      href={{
+        pathname: getProposalPagePath(comment.network_name.toLowerCase(), comment.contest_address, comment.proposal_id),
+        query: { commentId: comment.comment_id },
+      }}
       target="_blank"
     >
       <div
         className="flex items-center gap-6 border-t border-neutral-9 py-4 p-3 
         hover:bg-neutral-3 transition-colors duration-500 ease-in-out cursor-pointer text-[16px]"
       >
-        <Image src={chainsImages[comment.network_name]} width={32} height={32} alt={""} />
+        <Image src={chainsImages[comment.network_name.toLowerCase()]} width={32} height={32} alt={""} />
         <p>
           Comment {comment.comment_id.slice(0, 5)} for the proposal {comment.proposal_id.slice(0, 5)} in the{" "}
           {comment.contest.title} contest

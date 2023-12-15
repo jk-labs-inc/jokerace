@@ -5,6 +5,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
+import { useRouter } from "next/router";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 
@@ -16,6 +17,7 @@ interface CommentProps {
 
 const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentSelection }) => {
   const { address } = useAccount();
+  const { query } = useRouter();
   const contestAuthor = useContestStore(state => state.contestAuthorEthereumAddress);
   const localDate = moment(comment.createdAt).local().format("MMMM D, YYYY, h:mma");
   const formattedDate = localDate.replace(/(am|pm)/, match => match.toUpperCase());
