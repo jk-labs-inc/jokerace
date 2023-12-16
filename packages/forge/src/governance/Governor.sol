@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-only
+// Forked from https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/Governor.sol
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/utils/math/SafeCast.sol";
@@ -135,7 +136,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.18";
+        return "4.19";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
