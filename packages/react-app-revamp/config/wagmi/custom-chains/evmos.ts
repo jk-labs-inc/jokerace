@@ -12,10 +12,10 @@ export const evmos: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://eth.bd.evmos.org:8545"],
+      http: ["https://evmos-evm.publicnode.com"],
     },
     default: {
-      http: ["https://eth.bd.evmos.org:8545"],
+      http: ["https://evmos-evm.publicnode.com"],
     },
   },
   blockExplorers: {
