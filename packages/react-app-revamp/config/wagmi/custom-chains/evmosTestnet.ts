@@ -12,10 +12,10 @@ export const evmosTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://eth.bd.evmos.dev:8545"],
+      http: ["https://jsonrpc-t.evmos.nodestake.top"],
     },
     default: {
-      http: ["https://eth.bd.evmos.dev:8545"],
+      http: ["https://jsonrpc-t.evmos.nodestake.top"],
     },
   },
   blockExplorers: {
