@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
-
+// SPDX-License-Identifier: AGPL-3.0-only
+// Forked from https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/governance/Governor.sol
 pragma solidity ^0.8.19;
 
 import "@openzeppelin/utils/math/SafeCast.sol";
@@ -104,6 +104,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyJkLabsOrCreatorCanCancel();
     error ContestAlreadyCancelled();
 
+    error OnlyJkLabsCanAmend();
+
     constructor(
         string memory name_,
         string memory prompt_,
@@ -134,7 +136,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.16";
+        return "4.19";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -432,5 +434,15 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         emit VoteCast(account, proposalId, support, numVotes);
 
         return addressTotalVotes[account];
+    }
+
+    function setSubmissionMerkleRoot(bytes32 newSubmissionMerkleRoot) public {
+        if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        submissionMerkleRoot = newSubmissionMerkleRoot;
+    }
+
+    function setVotingMerkleRoot(bytes32 newVotingMerkleRoot) public {
+        if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        votingMerkleRoot = newVotingMerkleRoot;
     }
 }

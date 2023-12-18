@@ -118,7 +118,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
 
         {proposal ? (
           <div className="flex flex-col gap-4">
-            {proposal.rank > 0 && (
+            {/* {proposal.rank > 0 && (
               <div className="flex gap-2 items-center">
                 <p className="text-[16px] font-bold text-neutral-11">
                   {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
@@ -128,7 +128,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                   {ordinalize(proposal.rank).label} place {proposal.isTied ? "(tied)" : ""}
                 </p>
               </div>
-            )}
+            )} */}
             <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
           </div>
         ) : null}

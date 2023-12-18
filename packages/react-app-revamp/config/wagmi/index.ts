@@ -4,7 +4,6 @@ import {
   bitKeepWallet,
   coinbaseWallet,
   imTokenWallet,
-  ledgerWallet,
   metaMaskWallet,
   okxWallet,
   omniWallet,
@@ -21,6 +20,7 @@ import { Chain, configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
+import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
@@ -54,6 +54,8 @@ import { modeTestnet } from "./custom-chains/modeTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
+import { neon } from "./custom-chains/neon";
+import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
 import { polygon } from "./custom-chains/polygon";
@@ -117,6 +119,8 @@ const totalChains: Chain[] = [
   holesky,
   redstoneHolesky,
   mode,
+  astriaDusk2,
+  neon,
   polygonTestnet,
   sepolia,
   goerli,
@@ -142,6 +146,7 @@ const totalChains: Chain[] = [
   scrollSepoliaTestnet,
   artheraTestnet,
   x1Testnet,
+  neonDevnet,
   mainnet,
 ];
 
@@ -182,7 +187,6 @@ const connectors = connectorsForWallets([
       coinbaseWallet({ chains, appName: "jokerace" }),
       argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      ledgerWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       bitKeepWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),

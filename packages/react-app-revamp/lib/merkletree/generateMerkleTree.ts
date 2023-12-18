@@ -55,7 +55,7 @@ const generateLeaf = (address: string, numVotes: string): Buffer => {
  * @param {Recipient[]} recipients array of recipients
  * @returns {MerkleTree} merkle tree
  */
-const createMerkleTree = (recipients: Recipient[]): MerkleTree => {
+export const createMerkleTree = (recipients: Recipient[]): MerkleTree => {
   return new MerkleTree(
     recipients.map(({ address, numVotes }) => generateLeaf(address, numVotes)),
     keccak256,
