@@ -3,10 +3,10 @@ import Collapsible from "@components/UI/Collapsible";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import useComments from "@hooks/useComments";
 import { useCommentsStore } from "@hooks/useComments/store";
+import { useRouter } from "next/router";
 import { FC, useEffect, useRef, useState } from "react";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
-import { useRouter } from "next/router";
 
 interface CommentsProps {
   contestAddress: string;
@@ -36,7 +36,7 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   useEffect(() => {
     if (query.commentId) {
       getCommentsWithSpecificFirst(query.commentId as string);
-      commentsRef.current?.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => commentsRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
       return;
     }
 
@@ -49,7 +49,7 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   };
 
   return (
-    <div className="flex flex-col gap-12" ref={commentsRef}>
+    <div className="flex flex-col gap-12" id="comments" ref={commentsRef}>
       <div className="flex gap-1 md:gap-4 items-center">
         <p className="text-[24px] text-neutral-11 font-bold">comments</p>
         <button

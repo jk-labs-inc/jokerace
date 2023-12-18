@@ -10,6 +10,7 @@ create table
     deleted boolean null default false,
     amount_sent numeric null,
     percentage_to_creator numeric null 
+    comment_id character varying null
     constraint analytics_contest_participants_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 

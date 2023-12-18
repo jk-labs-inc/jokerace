@@ -5,10 +5,8 @@ import { useContestStore } from "@hooks/useContest/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
-import { useRouter } from "next/router";
 import { FC } from "react";
 import { useAccount } from "wagmi";
-
 interface CommentProps {
   comment: Comment;
   toggleCommentSelection?: (commentId: string) => void;
@@ -17,7 +15,6 @@ interface CommentProps {
 
 const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentSelection }) => {
   const { address } = useAccount();
-  const { query } = useRouter();
   const contestAuthor = useContestStore(state => state.contestAuthorEthereumAddress);
   const localDate = moment(comment.createdAt).local().format("MMMM D, YYYY, h:mma");
   const formattedDate = localDate.replace(/(am|pm)/, match => match.toUpperCase());
@@ -25,7 +22,7 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
   const isSelected = selectedCommentIds.includes(comment.id);
 
   return (
-    <div className="flex flex-col gap-4 animate-appear" id={comment.id}>
+    <div className="flex flex-col gap-4 animate-appear">
       <div className="flex flex-col gap-2">
         <div className="flex justify-between">
           <EthereumAddress ethereumAddress={comment.author} shortenOnFallback />
