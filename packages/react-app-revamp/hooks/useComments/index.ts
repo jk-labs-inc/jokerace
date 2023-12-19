@@ -100,7 +100,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
           functionName: "commentIsDeleted",
           args: [commentId],
         },
-      ] as any;
+      ];
 
       //@ts-ignore
       const [commentResult, isDeletedResult] = await readContracts({ contracts });
@@ -113,7 +113,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
         id: commentId,
         author: comment.author,
         content: isDeleted
-          ? "This comment has been deleted by the contest author or the user who commented."
+          ? "This comment has been deleted by the contest creator or the user who commented."
           : comment.commentContent,
         proposalId: comment.proposalId.toString(),
         createdAt: new Date(timestampInMilliseconds),
