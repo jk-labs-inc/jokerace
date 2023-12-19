@@ -7,20 +7,18 @@ import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import { chains } from "@config/wagmi";
-import { formatNumber } from "@helpers/formatNumber";
-import ordinalize from "@helpers/ordinalize";
 import useCastVotes from "@hooks/useCastVotes";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
+import { compareVersions } from "compare-versions";
+import { COMMENTS_VERSION } from "lib/proposal";
 import Image from "next/image";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
-import { compareVersions } from "compare-versions";
 import ListProposalVotes from "../ListProposalVotes";
 import { Proposal } from "../ProposalContent";
-import { COMMENTS_VERSION } from "lib/proposal";
 
 interface DialogModalProposalProps {
   contestInfo: {

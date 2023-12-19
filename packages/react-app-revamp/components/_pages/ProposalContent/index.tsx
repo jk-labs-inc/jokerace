@@ -21,6 +21,7 @@ export interface Proposal {
   votes: number;
   rank: number;
   isTied: boolean;
+  commentsCount: number;
 }
 
 interface ProposalContentProps {
@@ -66,6 +67,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
         rank={proposal.rank}
         isTied={proposal.isTied}
         isMobile={isMobile}
+        commentsCount={proposal.commentsCount}
       />
       <Link
         href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
