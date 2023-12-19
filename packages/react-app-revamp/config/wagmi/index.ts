@@ -32,6 +32,7 @@ import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
+import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
@@ -145,6 +146,7 @@ const totalChains: Chain[] = [
   artheraTestnet,
   x1Testnet,
   neonDevnet,
+  frameTestnet,
   mainnet,
 ];
 
