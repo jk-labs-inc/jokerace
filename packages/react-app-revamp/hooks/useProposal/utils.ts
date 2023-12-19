@@ -137,18 +137,27 @@ export function updateAndRankProposals(
  * @param proposalData - The detailed data of the proposal.
  * @returns An object representing the transformed proposal data.
  */
-export function transformProposalData(id: any, voteData: any, proposalData: any) {
+export function transformProposalData(
+  id: any,
+  voteData: any,
+  proposalData: any,
+  proposalCommentsIds: bigint[] = [],
+  deletedCommentIds: bigint[] = [],
+) {
   const voteForBigInt = voteData.result[0];
   const voteAgainstBigInt = voteData.result[1];
   const netVotesBigNumber = BigNumber.from(voteForBigInt).sub(voteAgainstBigInt);
   const netVotes = Number(utils.formatEther(netVotesBigNumber));
   const isContentImage = isUrlToImage(proposalData.description);
+  const deletedCommentIdsSet = new Set(deletedCommentIds.map(id => id.toString()));
+  const allCommentsIds = proposalCommentsIds.map(id => id.toString()).filter(id => !deletedCommentIdsSet.has(id));
 
   return {
     id: id.toString(),
     ...proposalData,
     isContentImage: isContentImage,
     netVotes: netVotes,
+    commentsCount: allCommentsIds.length,
   };
 }
 

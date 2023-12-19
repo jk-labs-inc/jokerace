@@ -10,6 +10,7 @@ export interface ProposalCore {
   isTied: boolean;
   netVotes: number;
   isContentImage: boolean;
+  commentsCount: number;
 }
 
 export interface MappedProposalIds {
