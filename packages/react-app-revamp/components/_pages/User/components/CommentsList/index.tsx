@@ -64,8 +64,7 @@ const UserComments: FC<UserCommentsProps> = ({ comments, page, itemsPerPage, set
         <div className="container mx-auto flex flex-col gap-2 animate-appear mt-6 p-0">
           <p className="text-[16px] font-bold text-neutral-11">user hasn't commented in any contests... yet 👀</p>
           <p className="text-[12px] font-bold text-neutral-11">
-            {/* TODO: change date here */}
-            note: all comments that are posted before <b>September 13, 2023</b> aren't tracked in the user profile.
+            note: all comments that are posted before <b>December 19, 2023</b> aren't tracked in the user profile.
           </p>
         </div>
       ) : (
