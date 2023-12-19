@@ -3,7 +3,8 @@ import Collapsible from "@components/UI/Collapsible";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import useComments from "@hooks/useComments";
 import { useCommentsStore } from "@hooks/useComments/store";
-import { FC, useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { FC, useEffect, useRef, useState } from "react";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
 
@@ -15,11 +16,9 @@ interface CommentsProps {
 }
 
 const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments }) => {
-  const { getAllCommentsIdsPerProposal, addComment, deleteComments, getCommentsPerPage } = useComments(
-    contestAddress,
-    contestChainId,
-    proposalId,
-  );
+  const { query } = useRouter();
+  const { getAllCommentsIdsPerProposal, getCommentsWithSpecificFirst, addComment, deleteComments, getCommentsPerPage } =
+    useComments(contestAddress, contestChainId, proposalId);
   const [isCommentsOpen, setIsCommentsOpen] = useState(true);
   const {
     comments,
@@ -32,10 +31,17 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
     isAddingSuccess,
     isAdding,
   } = useCommentsStore(state => state);
+  const commentsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (query.commentId) {
+      getCommentsWithSpecificFirst(query.commentId as string);
+      setTimeout(() => commentsRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
+      return;
+    }
+
     getAllCommentsIdsPerProposal();
-  }, [proposalId]);
+  }, [proposalId, query]);
 
   const onLoadMoreComments = () => {
     const nextPage = currentPage + 1;
@@ -43,10 +49,9 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   };
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12" id="comments" ref={commentsRef}>
       <div className="flex gap-1 md:gap-4 items-center">
         <p className="text-[24px] text-neutral-11 font-bold">comments</p>
-
         <button
           onClick={() => setIsCommentsOpen(!isCommentsOpen)}
           className={`transition-transform duration-500 ease-in-out transform ${isCommentsOpen ? "" : "rotate-180"}`}

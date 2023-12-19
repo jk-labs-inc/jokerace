@@ -1,8 +1,10 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { chains } from "@config/wagmi";
 import { getBlockDetails } from "@helpers/getBlock";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
 import { prepareWriteContract, readContract, readContracts, waitForTransaction, writeContract } from "@wagmi/core";
+import { addUserActionForAnalytics, saveUpdatedProposalsCommentStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { Comment, CommentCore, useCommentsStore } from "./store";
@@ -14,7 +16,6 @@ export const COMMENTS_PER_PAGE = 12;
  * @param chainId - contest chain ID
  * @param proposalId - proposal ID
  */
-
 const useComments = (address: string, chainId: number, proposalId: string) => {
   const { address: accountAddress } = useAccount();
   const {
@@ -38,6 +39,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setIsPaginatingSuccess,
   } = useCommentsStore(state => state);
   const { handleError } = useError();
+  const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase() ?? "";
 
   async function getContractConfig() {
     try {
@@ -87,21 +89,35 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     const contractConfig = await getContractConfig();
 
     try {
-      //@ts-ignore
-      const comment = (await readContract({
-        ...contractConfig,
-        functionName: "getComment",
-        args: [commentId],
-      })) as any;
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "getComment",
+          args: [commentId],
+        },
+        {
+          ...contractConfig,
+          functionName: "commentIsDeleted",
+          args: [commentId],
+        },
+      ];
 
+      //@ts-ignore
+      const [commentResult, isDeletedResult] = await readContracts({ contracts });
+
+      const comment = commentResult.result as CommentCore;
+      const isDeleted = isDeletedResult.result as boolean;
       const timestampInMilliseconds = Number(comment.timestamp) * 1000;
 
       return {
         id: commentId,
         author: comment.author,
-        content: comment.commentContent,
+        content: isDeleted
+          ? "This comment has been deleted by the contest creator or the user who commented."
+          : comment.commentContent,
         proposalId: comment.proposalId.toString(),
         createdAt: new Date(timestampInMilliseconds),
+        isDeleted: isDeleted,
       };
     } catch (error) {
       return {
@@ -195,6 +211,53 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     }
   }
 
+  async function getCommentsWithSpecificFirst(commentId: string) {
+    setIsLoading(true);
+    setComments([]);
+    setCurrentPage(1);
+    const contractConfig = await getContractConfig();
+
+    try {
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "getProposalComments",
+          args: [proposalId],
+        },
+        {
+          ...contractConfig,
+          functionName: "getAllDeletedCommentIds",
+          args: [],
+        },
+      ];
+
+      //@ts-ignore
+      const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts({ contracts });
+
+      const allCommentsIdsBigInt = allCommentsIdsRaw.result as bigint[];
+      const deletedCommentIdsBigInt = deletedCommentIdsRaw.result as bigint[];
+
+      const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt.map(id => id.toString()));
+      let allCommentsIds = allCommentsIdsBigInt.map(id => id.toString()).filter(id => !deletedCommentIdsSet.has(id));
+
+      allCommentsIds = allCommentsIds.filter(id => id !== commentId);
+      allCommentsIds.unshift(commentId);
+
+      const commentsForPage = allCommentsIds.slice(0, COMMENTS_PER_PAGE);
+
+      setAllCommentsIdsPerProposal(allCommentsIds);
+      setTotalPages(Math.ceil(allCommentsIds.length / COMMENTS_PER_PAGE));
+      await getCommentsPerProposal(commentsForPage);
+      setIsLoading(false);
+      setIsSuccess(true);
+    } catch (error: any) {
+      handleError(error.message, "Error fetching comments with specific first");
+      setIsError(true);
+      setIsSuccess(false);
+      setIsLoading(false);
+    }
+  }
+
   async function addComment(content: string) {
     setIsAdding(true);
     setIsAddingSuccess(false);
@@ -222,6 +285,19 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
         proposalId: proposalId,
         timestamp: blockInfo.timestamp,
       });
+
+      try {
+        await addUserActionForAnalytics({
+          contest_address: address,
+          user_address: accountAddress,
+          network_name: chainName,
+          proposal_id: proposalId,
+          created_at: Math.floor(Date.now() / 1000),
+          comment_id: commentId,
+        });
+      } catch (error) {
+        console.error("error in addUserActionForAnalytics on comment", error);
+      }
 
       const newComment = await getComment(commentId);
       const combinedComments = [...comments, newComment];
@@ -255,6 +331,20 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       await waitForTransaction({ hash: txResult.hash });
 
+      try {
+        if (!accountAddress) return;
+
+        await saveUpdatedProposalsCommentStatusToAnalyticsV3(
+          accountAddress,
+          address,
+          chainName,
+          proposalId,
+          commentsIds,
+        );
+      } catch (error: any) {
+        console.error("Error in saveUpdatedProposalsCommentStatusToAnalyticsV3:", error.message);
+      }
+
       const newComments = comments.filter(comment => !commentsIds.includes(comment.id));
 
       setComments(newComments);
@@ -272,6 +362,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   return {
     addComment,
     getAllCommentsIdsPerProposal,
+    getCommentsWithSpecificFirst,
     getCommentsPerPage,
     getCommentId,
     deleteComments,

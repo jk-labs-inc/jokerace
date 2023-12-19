@@ -1,6 +1,6 @@
 import { supabase } from "@config/supabase";
 import getPagination from "@helpers/getPagination";
-import { Contest, Submission, SubmissionCriteria, SubmissionsResult } from "./types";
+import { Comment, CommentsResult, Contest, Submission, SubmissionCriteria, SubmissionsResult } from "./types";
 
 function mergeSubmissionsWithContests(submissions: Submission[], contests: Contest[]): SubmissionsResult["data"] {
   const validsubmissions = submissions.filter(submission =>
@@ -11,6 +11,22 @@ function mergeSubmissionsWithContests(submissions: Submission[], contests: Conte
     const matchedContest = contests.find(contest => contest.address === submission.contest_address)!;
     return {
       ...submission,
+      contest: matchedContest,
+    };
+  });
+
+  return results;
+}
+
+function mergeCommentsWithContests(comments: Comment[], contests: Contest[]): CommentsResult["data"] {
+  const validComments = comments.filter(comment =>
+    contests.some(contest => contest.address === comment.contest_address),
+  );
+
+  const results = validComments.map(comment => {
+    const matchedContest = contests.find(contest => contest.address === comment.contest_address)!;
+    return {
+      ...comment,
       contest: matchedContest,
     };
   });
@@ -31,6 +47,7 @@ async function fetchSubmissions(
         .select("network_name, contest_address, proposal_id, created_at", { count: "exact" })
         .eq("user_address", criteria.user_address)
         .is("vote_amount", criteria.vote_amount)
+        .is("comment_id", null)
         .order("created_at", { ascending: false })
         .range(range.from, range.to);
     } else {
@@ -42,6 +59,31 @@ async function fetchSubmissions(
         .order("created_at", { ascending: false })
         .range(range.from, range.to);
     }
+
+    const { data, count, error } = result;
+
+    if (error) {
+      throw error;
+    }
+
+    return { data, count: count ?? data.length };
+  } catch (error) {
+    throw error;
+  }
+}
+
+async function fetchComments(userAddress: string, range: { from: number; to: number }) {
+  try {
+    let result;
+
+    result = await supabase
+      .from("analytics_contest_participants_v3")
+      .select("network_name, contest_address, proposal_id, created_at, comment_id", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .eq("user_address", userAddress)
+      .not("comment_id", "is", null)
+      .not("deleted", "is", true)
+      .range(range.from, range.to);
 
     const { data, count, error } = result;
 
@@ -105,4 +147,20 @@ export async function getUserVotes(
   const mergedSubmissions = mergeSubmissionsWithContests(submissions, contests);
 
   return { data: mergedSubmissions, count };
+}
+
+export async function getUserComments(
+  userAddress: string,
+  currentPage: number,
+  itemsPerPage: number,
+): Promise<CommentsResult> {
+  const range = getPagination(currentPage, itemsPerPage);
+
+  const { data: comments, count } = await fetchComments(userAddress, range);
+  const contestAddresses = comments.map(c => c.contest_address);
+  const contests = await getContestDetailsByAddresses(contestAddresses);
+
+  const mergedComments = mergeCommentsWithContests(comments, contests);
+
+  return { data: mergedComments, count };
 }

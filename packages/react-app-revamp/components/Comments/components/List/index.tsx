@@ -1,10 +1,10 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { ChevronUpIcon } from "@heroicons/react/outline";
 import { COMMENTS_PER_PAGE } from "@hooks/useComments";
 import { Comment as CommentType } from "@hooks/useComments/store";
 import { FC, useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import Comment from "../Comment";
-import { ChevronUpIcon } from "@heroicons/react/outline";
 
 interface CommentsListProps {
   comments: CommentType[];

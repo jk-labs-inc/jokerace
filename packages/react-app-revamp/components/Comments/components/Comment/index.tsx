@@ -7,7 +7,6 @@ import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC } from "react";
 import { useAccount } from "wagmi";
-
 interface CommentProps {
   comment: Comment;
   toggleCommentSelection?: (commentId: string) => void;
@@ -19,7 +18,7 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
   const contestAuthor = useContestStore(state => state.contestAuthorEthereumAddress);
   const localDate = moment(comment.createdAt).local().format("MMMM D, YYYY, h:mma");
   const formattedDate = localDate.replace(/(am|pm)/, match => match.toUpperCase());
-  const allowDelete = address === comment.author || address === contestAuthor;
+  const allowDelete = (address === comment.author || address === contestAuthor) && !comment.isDeleted;
   const isSelected = selectedCommentIds.includes(comment.id);
 
   return (

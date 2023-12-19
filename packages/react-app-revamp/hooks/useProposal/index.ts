@@ -6,8 +6,10 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { BigNumber, utils } from "ethers";
 import { Result } from "ethers/lib/utils";
+import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { useRouter } from "next/router";
 import { useNetwork } from "wagmi";
@@ -21,6 +23,12 @@ import {
 } from "./utils";
 
 export const PROPOSALS_PER_PAGE = 12;
+
+interface ContractConfig {
+  address: `0x${string}`;
+  abi: any;
+  chainId: number;
+}
 
 export function useProposal() {
   const {
@@ -48,20 +56,23 @@ export function useProposal() {
   const { error, handleError } = useError();
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
 
-  async function getContractConfig() {
-    const { abi } = await getContestContractVersion(address, chainId);
+  async function getContractConfig(): Promise<{ config: ContractConfig; version: string } | null> {
+    const { abi, version } = await getContestContractVersion(address, chainId);
 
     if (abi === null) {
       const errorMsg = `This contract doesn't exist on ${chain?.name ?? "this chain"}.`;
       toastError(errorMsg);
       setIsPageProposalsError(errorMsg);
-      return;
+      return null;
     }
 
     return {
-      address: address as `0x${string}`,
-      abi: abi,
-      chainId: chainId,
+      config: {
+        address: address as `0x${string}`,
+        abi: abi,
+        chainId: chainId,
+      },
+      version,
     };
   }
 
@@ -84,23 +95,45 @@ export function useProposal() {
     setIsPageProposalsError("");
 
     try {
-      const contractConfig = await getContractConfig();
+      const contractConfigResult = await getContractConfig();
+
+      if (!contractConfigResult) return;
+
+      const { config, version } = contractConfigResult;
+
+      const commentsAllowed = compareVersions(version, COMMENTS_VERSION) == -1 ? false : true;
 
       const contracts: any[] = [];
 
       for (const id of slice) {
         contracts.push(
           {
-            ...contractConfig,
+            ...config,
             functionName: "getProposal",
             args: [id],
           },
           {
-            ...contractConfig,
+            ...config,
             functionName: "proposalVotes",
             args: [id],
           },
         );
+
+        if (commentsAllowed) {
+          contracts.push({
+            ...config,
+            functionName: "getProposalComments",
+            args: [id],
+          });
+        }
+      }
+
+      if (commentsAllowed) {
+        contracts.push({
+          ...config,
+          functionName: "getAllDeletedCommentIds",
+          args: [],
+        });
       }
 
       const results = await readContracts({ contracts });
@@ -214,16 +247,20 @@ export function useProposal() {
    */
   async function fetchSingleProposal(proposalId: any) {
     try {
-      const contractConfig = await getContractConfig();
+      const contractConfigResult = await getContractConfig();
+
+      if (!contractConfigResult) return;
+
+      const { config } = contractConfigResult;
 
       const contracts = [
         {
-          ...contractConfig,
+          ...config,
           functionName: "getProposal",
           args: [proposalId],
         },
         {
-          ...contractConfig,
+          ...config,
           functionName: "proposalVotes",
           args: [proposalId],
         },
@@ -250,10 +287,27 @@ export function useProposal() {
     pageMappedProposals: MappedProposalIds[],
     sorting?: boolean,
   ) {
-    // Transform proposals data and calculate net votes
-    const transformedProposals = proposalIds.map((id, index) =>
-      transformProposalData(id, proposalsResults[index * 2 + 1], proposalsResults[index * 2].result),
-    );
+    const hasCommentsData = proposalsResults.length > proposalIds.length * 2;
+    let deletedCommentIds: bigint[] = [];
+
+    if (hasCommentsData) {
+      deletedCommentIds = proposalsResults[proposalsResults.length - 1].result;
+    }
+
+    const transformedProposals = proposalIds.map((id, index) => {
+      // indexing depends whether or not we have comments data
+      const baseIndex = hasCommentsData ? index * 3 : index * 2;
+
+      const proposalData = proposalsResults[baseIndex].result;
+      const proposalVotes = proposalsResults[baseIndex + 1];
+      let proposalComments: bigint[] = [];
+
+      if (hasCommentsData) {
+        proposalComments = proposalsResults[baseIndex + 2].result;
+      }
+
+      return transformProposalData(id, proposalVotes, proposalData, proposalComments, deletedCommentIds);
+    });
 
     let combinedProposals;
 

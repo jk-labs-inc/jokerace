@@ -1,6 +1,11 @@
 import Button from "@components/UI/Button";
 import EthereumAddress from "@components/UI/EtheuremAddress";
-import { ROUTE_VIEW_USER, ROUTE_VIEW_USER_SUBMISSIONS, ROUTE_VIEW_USER_VOTING } from "@config/routes";
+import {
+  ROUTE_VIEW_USER,
+  ROUTE_VIEW_USER_COMMENTS,
+  ROUTE_VIEW_USER_SUBMISSIONS,
+  ROUTE_VIEW_USER_VOTING,
+} from "@config/routes";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactNode, useEffect, useRef, useState } from "react";
@@ -25,6 +30,10 @@ const navLinks = [
   {
     href: ROUTE_VIEW_USER_VOTING,
     label: "Votes",
+  },
+  {
+    href: ROUTE_VIEW_USER_COMMENTS,
+    label: "Comments",
   },
 ];
 

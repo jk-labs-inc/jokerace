@@ -117,6 +117,7 @@ export const ListProposals = () => {
                   votes: proposal.netVotes,
                   rank: proposal.rank,
                   isTied: proposal.isTied,
+                  commentsCount: proposal.commentsCount,
                 }}
               />
               {allowDelete && (
