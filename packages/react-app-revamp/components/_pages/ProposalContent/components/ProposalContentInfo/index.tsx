@@ -43,7 +43,7 @@ const ProposalContentInfo: FC<ProposalContentInfoProps> = ({
           <>
             <span className="text-neutral-9">&#8226;</span>{" "}
             <div className="flex items-center ml-1 gap-1">
-              <Image src="/contest/comment_icon.svg" className="mt-2" alt="comments" width={24} height={23} />
+              <Image src="/contest/comment_icon.svg" className="mt-[6px]" alt="comments" width={24} height={23} />
               <p className="text-[16px] font-bold text-neutral-9">{commentsCount}</p>
             </div>
           </>

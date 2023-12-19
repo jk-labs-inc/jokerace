@@ -16,6 +16,7 @@ export interface Comment {
   createdAt: Date;
   content: string;
   proposalId: string;
+  isDeleted?: boolean;
 }
 
 interface CommentsState {
