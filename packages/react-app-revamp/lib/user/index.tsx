@@ -47,6 +47,7 @@ async function fetchSubmissions(
         .select("network_name, contest_address, proposal_id, created_at", { count: "exact" })
         .eq("user_address", criteria.user_address)
         .is("vote_amount", criteria.vote_amount)
+        .is("comment_id", null)
         .order("created_at", { ascending: false })
         .range(range.from, range.to);
     } else {
@@ -81,6 +82,7 @@ async function fetchComments(userAddress: string, range: { from: number; to: num
       .order("created_at", { ascending: false })
       .eq("user_address", userAddress)
       .not("comment_id", "is", null)
+      .not("deleted", "is", true)
       .range(range.from, range.to);
 
     const { data, count, error } = result;
