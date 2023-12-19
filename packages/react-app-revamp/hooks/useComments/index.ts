@@ -1,8 +1,10 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
+import { chains } from "@config/wagmi";
 import { getBlockDetails } from "@helpers/getBlock";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
 import { prepareWriteContract, readContract, readContracts, waitForTransaction, writeContract } from "@wagmi/core";
+import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { Comment, CommentCore, useCommentsStore } from "./store";
@@ -195,6 +197,53 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     }
   }
 
+  async function getCommentsWithSpecificFirst(commentId: string) {
+    setIsLoading(true);
+    setComments([]);
+    setCurrentPage(1);
+    const contractConfig = await getContractConfig();
+
+    try {
+      const contracts = [
+        {
+          ...contractConfig,
+          functionName: "getProposalComments",
+          args: [proposalId],
+        },
+        {
+          ...contractConfig,
+          functionName: "getAllDeletedCommentIds",
+          args: [],
+        },
+      ];
+
+      //@ts-ignore
+      const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts({ contracts });
+
+      const allCommentsIdsBigInt = allCommentsIdsRaw.result as bigint[];
+      const deletedCommentIdsBigInt = deletedCommentIdsRaw.result as bigint[];
+
+      const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt.map(id => id.toString()));
+      let allCommentsIds = allCommentsIdsBigInt.map(id => id.toString()).filter(id => !deletedCommentIdsSet.has(id));
+
+      allCommentsIds = allCommentsIds.filter(id => id !== commentId);
+      allCommentsIds.unshift(commentId);
+
+      const commentsForPage = allCommentsIds.slice(0, COMMENTS_PER_PAGE);
+
+      setAllCommentsIdsPerProposal(allCommentsIds);
+      setTotalPages(Math.ceil(allCommentsIds.length / COMMENTS_PER_PAGE));
+      await getCommentsPerProposal(commentsForPage);
+      setIsLoading(false);
+      setIsSuccess(true);
+    } catch (error: any) {
+      handleError(error.message, "Error fetching comments with specific first");
+      setIsError(true);
+      setIsSuccess(false);
+      setIsLoading(false);
+    }
+  }
+
   async function addComment(content: string) {
     setIsAdding(true);
     setIsAddingSuccess(false);
@@ -222,6 +271,19 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
         proposalId: proposalId,
         timestamp: blockInfo.timestamp,
       });
+
+      try {
+        await addUserActionForAnalytics({
+          contest_address: address,
+          user_address: accountAddress,
+          network_name: chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase() ?? "",
+          proposal_id: proposalId,
+          created_at: Math.floor(Date.now() / 1000),
+          comment_id: commentId,
+        });
+      } catch (error) {
+        console.error("error in addUserActionForAnalytics on comment", error);
+      }
 
       const newComment = await getComment(commentId);
       const combinedComments = [...comments, newComment];
@@ -272,6 +334,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   return {
     addComment,
     getAllCommentsIdsPerProposal,
+    getCommentsWithSpecificFirst,
     getCommentsPerPage,
     getCommentId,
     deleteComments,

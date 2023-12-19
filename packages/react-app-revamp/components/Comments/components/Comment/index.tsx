@@ -7,7 +7,6 @@ import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import { FC } from "react";
 import { useAccount } from "wagmi";
-
 interface CommentProps {
   comment: Comment;
   toggleCommentSelection?: (commentId: string) => void;
