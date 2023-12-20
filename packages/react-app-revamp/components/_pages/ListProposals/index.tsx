@@ -17,7 +17,7 @@ const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlight
     <Skeleton
       borderRadius={10}
       count={count}
-      className="flex flex-col w-full h-96 md:h-56 animate-appear rounded-[10px] border border-neutral-11 mt-3"
+      className="flex flex-col w-full h-80 animate-appear rounded-[10px] border border-neutral-11 mt-3"
     />
   </SkeletonTheme>
 );
