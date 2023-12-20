@@ -63,7 +63,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
   }
 
   return (
-    <div className="flex flex-col w-full h-80 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-96 md:h-80 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <ProposalContentInfo
         authorAddress={proposal.authorEthereumAddress}
         rank={proposal.rank}
@@ -75,10 +75,10 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
         href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
         shallow
         scroll={false}
-        className="flex items-center overflow-hidden px-14 h-60"
+        className="flex items-center overflow-hidden px-14 h-80 md:h-72"
       >
         <Interweave
-          className="line-clamp-4 markdown overflow-y-hidden text-[16px] md:text-[18px]"
+          className="line-clamp-6 md:line-clamp-4 markdown overflow-y-hidden text-[16px] md:text-[18px]"
           content={truncatedContent}
           transform={transform}
         />
