@@ -39,6 +39,7 @@ import PinAllToSameRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule
 import MitToAGPLRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.17.mitToAGPL.sol/RewardsModule.json";
 import AddEmergencyFuncsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.18.addEmergencyFuncs.sol/RewardsModule.json";
 import AddMoreAttributionRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.19.addMoreAttribution.sol/RewardsModule.json";
+import AddGetDeletedAuthorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.20.addGetDeletedAuthors.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -51,7 +52,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.19") {
+    if (version === "4.20") {
+      return AddGetDeletedAuthorsRewards.abi;
+    } else if (version === "4.19") {
       return AddMoreAttributionRewards.abi;
     } else if (version === "4.18") {
       return AddEmergencyFuncsRewards.abi;

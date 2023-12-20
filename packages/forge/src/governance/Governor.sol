@@ -136,7 +136,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return "4.19";
+        return "4.20";
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -189,6 +189,18 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function getAllDeletedProposalIds() public view returns (uint256[] memory) {
         return deletedProposalIds;
+    }
+
+    /**
+     * @dev Return all authors of deleted proposals.
+     */
+    function getAllAuthorsOfDeletedProposals() public view returns (address[] memory) {
+        uint256[] memory deletedProposalIdsMemVar = deletedProposalIds;
+        address[] memory authorsArray = new address[](deletedProposalIdsMemVar.length);
+        for (uint256 i = 0; i < deletedProposalIdsMemVar.length; i++) {
+            authorsArray[i] = proposals[deletedProposalIdsMemVar[i]].author;
+        }
+        return authorsArray;
     }
 
     /**
