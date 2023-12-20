@@ -32,7 +32,7 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   const element = node.tagName.toLowerCase();
 
   if (element === "div") {
-    return <div className="flex gap-5 items-center markdown">{children}</div>;
+    return <div className="flex gap-5 flex-col md:flex-row items-start md:items-center markdown">{children}</div>;
   } else if (element === "img") {
     return <MarkdownImage imageSize="compact" src={node.getAttribute("src") ?? ""} />;
   }
@@ -49,19 +49,21 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
   let truncatedContent = "";
   if (proposal.isContentImage) {
     const cheerio = load(proposal.content);
-    const textContent = cheerio.text();
 
-    if (textContent.length > 100) {
-      truncatedContent = textContent.substring(0, 100) + `...`;
-    } else {
-      truncatedContent = `<div>${proposal.content}</div>`;
-    }
+    const firstImageSrc = cheerio("img").first().attr("src");
+
+    const textContent = cheerio.text();
+    const textLength = isMobile ? 100 : 200;
+
+    const truncatedText = textContent.length > textLength ? textContent.substring(0, textLength) + "..." : textContent;
+
+    truncatedContent = `<div><p>${truncatedText}</p><img src="${firstImageSrc}"/></div>`;
   } else {
     truncatedContent = proposal.content;
   }
 
   return (
-    <div className="flex flex-col w-full h-80 md:h-56 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
+    <div className="flex flex-col w-full h-80 animate-appear rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out">
       <ProposalContentInfo
         authorAddress={proposal.authorEthereumAddress}
         rank={proposal.rank}
@@ -73,10 +75,10 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
         href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
         shallow
         scroll={false}
-        className="flex items-center overflow-hidden px-14 h-3/4"
+        className="flex items-center overflow-hidden px-14 h-60"
       >
         <Interweave
-          className="line-clamp-3 markdown overflow-y-hidden text-[18px]"
+          className="line-clamp-4 markdown overflow-y-hidden text-[16px] md:text-[18px]"
           content={truncatedContent}
           transform={transform}
         />
