@@ -1,5 +1,5 @@
 import Collapsible from "@components/UI/Collapsible";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
@@ -23,7 +23,7 @@ const VotersList: FC<{ votesPerAddress: any }> = ({ votesPerAddress }) => (
             index !== self.length - 1 ? "border-b border-neutral-10" : ""
           }`}
         >
-          <EthereumAddress ethereumAddress={address} shortenOnFallback={true} />
+          <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} />
           <p>{formatNumber(votesPerAddress[address])} votes</p>
         </div>
       ))}

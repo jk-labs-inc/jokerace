@@ -3,8 +3,8 @@
 import ShareDropdown from "@components/Share";
 import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
-import EthereumAddress from "@components/UI/EtheuremAddress";
 import Loader from "@components/UI/Loader";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestTab from "@components/_pages/Contest/Contest";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
@@ -16,6 +16,7 @@ import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTESTS } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { generateUrlContest } from "@helpers/share";
+import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { RefreshIcon } from "@heroicons/react/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
@@ -40,7 +41,6 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
-import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 
 const LayoutViewContest = (props: any) => {
   const { asPath, pathname, reload } = useRouter();
@@ -242,7 +242,7 @@ const LayoutViewContest = (props: any) => {
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
                     <div className="flex flex-row gap-3 md:gap-4 items-center">
-                      <EthereumAddress
+                      <UserProfileDisplay
                         ethereumAddress={contestAuthorEthereumAddress}
                         shortenOnFallback
                         textualVersion={isMobile}

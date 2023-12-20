@@ -1,4 +1,4 @@
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ordinalize from "@helpers/ordinalize";
 import Image from "next/image";
 import { FC } from "react";
@@ -21,7 +21,7 @@ const ProposalContentInfo: FC<ProposalContentInfoProps> = ({
   return (
     <div className="px-4 mt-4 flex items-center gap-3">
       <div className="flex items-center gap-1">
-        <EthereumAddress ethereumAddress={authorAddress} shortenOnFallback={true} />
+        <UserProfileDisplay ethereumAddress={authorAddress} shortenOnFallback={true} />
 
         {rank > 0 && (
           <>

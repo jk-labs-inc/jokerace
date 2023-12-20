@@ -1,8 +1,7 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Link from "next/link";
 import { FC } from "react";
 import Confetti from "react-confetti";
@@ -55,7 +54,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
         <div className="flex items-center gap-3">
           {address && (
             <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-              <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+              <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
             </Link>
           )}
           <ConnectButtonCustom />

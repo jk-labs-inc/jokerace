@@ -1,7 +1,7 @@
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import BurgerMenu from "@components/UI/BurgerMenu";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { FOOTER_LINKS } from "@config/links";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
@@ -50,7 +50,7 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
               {address && (
                 <>
                   <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-                    <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+                    <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
                   </Link>
                   <ConnectButtonCustom displayOptions={{ onlyChainSwitcher: true, showChainName: false }} />
                 </>

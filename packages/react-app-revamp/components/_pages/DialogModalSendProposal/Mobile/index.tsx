@@ -1,16 +1,16 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { useContestStore } from "@hooks/useContest/store";
+import { EntryCharge } from "@hooks/useDeployContest/types";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
+import { FetchBalanceResult } from "@wagmi/core";
 import { FC, useEffect } from "react";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
-import { EntryCharge } from "@hooks/useDeployContest/types";
-import { FetchBalanceResult } from "@wagmi/core";
 
 interface DialogModalSendProposalMobileLayoutProps {
   chainName: string;
@@ -101,7 +101,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
         <div className="flex flex-col gap-4">
           <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
           <div className="flex flex-col gap-2">
-            <EthereumAddress ethereumAddress={address ?? ""} shortenOnFallback={true} />
+            <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
             <p className="text-[16px] font-bold text-neutral-10">{formattedDate}</p>
           </div>
           <div className="flex flex-col min-h-[12rem] rounded-md md:w-[650px]">

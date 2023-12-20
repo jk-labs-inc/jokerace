@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Placeholder from "@tiptap/extension-placeholder";
@@ -128,7 +128,7 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
       } p-2 gap-3 w-full md:w-[660px] rounded-[10px] bg-primary-2`}
     >
       <div>
-        <EthereumAddress avatarVersion ethereumAddress={address ?? ""} shortenOnFallback />
+        <UserProfileDisplay avatarVersion ethereumAddress={address ?? ""} shortenOnFallback />
       </div>
       <EditorContent
         editor={commentEditor}

@@ -1,6 +1,6 @@
 import BurgerMenu from "@components/UI/BurgerMenu";
-import EthereumAddress from "@components/UI/EtheuremAddress";
 import { IconTrophy } from "@components/UI/Icons";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
@@ -44,7 +44,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
       <div className="flex justify-between items-center px-4 mt-4">
         {address && displayProfile ? (
           <div className="top-0 right-0 left-0 ">
-            <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+            <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
           </div>
         ) : null}
 
