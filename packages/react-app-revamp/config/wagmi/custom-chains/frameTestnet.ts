@@ -21,4 +21,5 @@ export const frameTestnet: Chain = {
     etherscan: { name: "Frame Testnet Block Explorer", url: "https://explorer.testnet.frame.xyz/" },
     default: { name: "Frame Testnet Block Explorer", url: "https://explorer.testnet.frame.xyz/" },
   },
+  testnet: true,
 };
