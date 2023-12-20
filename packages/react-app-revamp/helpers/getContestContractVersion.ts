@@ -44,7 +44,7 @@ import PinAllToSameContract from "@contracts/bytecodeAndAbi/Contest.4.16.pinAllT
 import MitToAGPLContract from "@contracts/bytecodeAndAbi/Contest.4.17.mitToAGPL.sol/Contest.json";
 import AddEmergencyFuncsContract from "@contracts/bytecodeAndAbi/Contest.4.18.addEmergencyFuncs.sol/Contest.json";
 import AddMoreAttributionContract from "@contracts/bytecodeAndAbi/Contest.4.19.addMoreAttribution.sol/Contest.json";
-import AddGetDeletedAuthorsContract from "@contracts/bytecodeAndAbi/modules/Contest.4.20.addGetDeletedAuthors.sol/Contest.json";
+import AddGetDeletedAuthorsContract from "@contracts/bytecodeAndAbi/Contest.4.20.addGetDeletedAuthors.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
