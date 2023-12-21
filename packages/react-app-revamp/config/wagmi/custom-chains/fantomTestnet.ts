@@ -4,6 +4,7 @@ export const fantomTestnet: Chain = {
   id: 4002,
   name: "fantomTestnet",
   network: "fantomTestnet",
+  iconUrl: "/fantom.svg",
   nativeCurrency: {
     decimals: 18,
     name: "FTM",

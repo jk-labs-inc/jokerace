@@ -210,7 +210,6 @@ export const config = createConfig({
 
 export const chainsImages: ChainImages = {
   avalanche: "/avalanche.png",
-  fantom: "/fantom.png",
   harmony: "/harmony.png",
   arbitrum: "/arbitrum.svg",
   arbitrumone: "/arbitrum.svg",
@@ -267,4 +266,6 @@ export const chainsImages: ChainImages = {
   vitruveo: "/vitruveo.svg",
   mode: "/mode.svg",
   modetestnet: "/mode.svg",
+  fantom: "/fantom.svg",
+  fantomtestnet: "/fantom.svg",
 };
