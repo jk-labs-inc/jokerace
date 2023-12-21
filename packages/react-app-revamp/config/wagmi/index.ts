@@ -32,6 +32,8 @@ import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
+import { fantom } from "./custom-chains/fantom";
+import { fantomTestnet } from "./custom-chains/fantomTestnet";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
@@ -120,6 +122,7 @@ const totalChains: Chain[] = [
   redstoneHolesky,
   mode,
   astriaDusk2,
+  fantom,
   polygonTestnet,
   sepolia,
   goerli,
@@ -147,6 +150,7 @@ const totalChains: Chain[] = [
   x1Testnet,
   neonDevnet,
   frameTestnet,
+  fantomTestnet,
   mainnet,
 ];
 
@@ -206,7 +210,6 @@ export const config = createConfig({
 
 export const chainsImages: ChainImages = {
   avalanche: "/avalanche.png",
-  fantom: "/fantom.png",
   harmony: "/harmony.png",
   arbitrum: "/arbitrum.svg",
   arbitrumone: "/arbitrum.svg",
@@ -263,4 +266,6 @@ export const chainsImages: ChainImages = {
   vitruveo: "/vitruveo.svg",
   mode: "/mode.svg",
   modetestnet: "/mode.svg",
+  fantom: "/fantom.svg",
+  fantomtestnet: "/fantom.svg",
 };
