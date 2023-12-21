@@ -1,4 +1,4 @@
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { Comment } from "@hooks/useComments/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -25,7 +25,7 @@ const Comment: FC<CommentProps> = ({ comment, selectedCommentIds, toggleCommentS
     <div className="flex flex-col gap-4 animate-appear">
       <div className="flex flex-col gap-2">
         <div className="flex justify-between">
-          <EthereumAddress ethereumAddress={comment.author} shortenOnFallback />
+          <UserProfileDisplay ethereumAddress={comment.author} shortenOnFallback />
           {allowDelete && (
             <div className="cursor-pointer" onClick={() => toggleCommentSelection?.(comment.id)}>
               <CheckIcon

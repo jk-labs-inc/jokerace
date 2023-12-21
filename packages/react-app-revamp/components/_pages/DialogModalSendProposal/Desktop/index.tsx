@@ -1,7 +1,7 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import EthereumAddress from "@components/UI/EtheuremAddress";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
@@ -127,7 +127,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
           <>
             <ContestPrompt type="modal" prompt={contestPrompt} hidePrompt />
             <div className="flex flex-col gap-2">
-              <EthereumAddress ethereumAddress={address ?? ""} shortenOnFallback={true} />
+              <UserProfileDisplay ethereumAddress={address ?? ""} shortenOnFallback={true} />
               <p className="text-[16px] font-bold text-neutral-10">{formattedDate}</p>
             </div>
             <div className="flex flex-col rounded-md md:w-[650px]">

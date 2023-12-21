@@ -1,5 +1,5 @@
 import Button from "@components/UI/Button";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import {
   ROUTE_VIEW_USER,
   ROUTE_VIEW_USER_COMMENTS,
@@ -66,7 +66,7 @@ const LayoutUser = (props: LayoutUserProps) => {
               <Skeleton height={24} width={200} />
             </div>
           ) : (
-            <EthereumAddress
+            <UserProfileDisplay
               ethereumAddress={address}
               shortenOnFallback
               size={isMobile ? "medium" : "large"}

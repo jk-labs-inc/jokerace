@@ -3,7 +3,8 @@ import Subscribe from "@components/Subscribe";
 import BurgerMenu from "@components/UI/BurgerMenu";
 import Button from "@components/UI/Button";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import EthereumAddress from "@components/UI/UserProfileDisplay";
 import ListContests from "@components/_pages/ListContests";
 import { FOOTER_LINKS } from "@config/links";
 import { ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
@@ -110,7 +111,7 @@ const Page: NextPage = () => {
           {isClient && address ? (
             <>
               <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-                <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+                <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
               </Link>
               <ConnectButtonCustom displayOptions={{ onlyChainSwitcher: true, showChainName: false }} />
             </>

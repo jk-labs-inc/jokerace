@@ -1,5 +1,5 @@
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
@@ -65,7 +65,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
                 </p>
               </div>
             )}
-            <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+            <UserProfileDisplay ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
           </div>
         </div>
         <div className="flex flex-col gap-7">

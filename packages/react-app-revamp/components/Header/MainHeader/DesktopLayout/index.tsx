@@ -1,5 +1,5 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_USER } from "@config/routes";
 import Link from "next/link";
 import { FC } from "react";
@@ -33,7 +33,7 @@ const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected
       <div className="flex gap-3 items-center">
         {address ? (
           <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-            <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+            <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
           </Link>
         ) : null}
         <ConnectButtonCustom />
