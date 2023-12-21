@@ -12,6 +12,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useUser, { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { utils } from "ethers";
 import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
@@ -21,7 +22,6 @@ import { useState } from "react";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
-import { compareVersions } from "compare-versions";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -133,10 +133,14 @@ export function useContest() {
     const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
     const contestPrompt = results[7].result as string;
     const isDownvotingAllowed = Number(results[8].result) === 1;
+    const submissionMerkleRoot = results[9].result as string;
+    const votingMerkleRoot = results[10].result as string;
 
-    if ((compareVersions(version.toString(), "4.0") >= 0) && moment().isBefore(votesOpenDate)) {
-      const entryChargeValue = Number(results[9].result);
-      const entryChargePercentage = Number(results[10].result);
+    processUserQualifications(submissionMerkleRoot, votingMerkleRoot, contestMaxNumberSubmissionsPerUser);
+
+    if (compareVersions(version.toString(), "4.0") >= 0 && moment().isBefore(votesOpenDate)) {
+      const entryChargeValue = Number(results[11].result);
+      const entryChargePercentage = Number(results[12].result);
 
       setEntryCharge({
         costToPropose: entryChargeValue,
@@ -147,7 +151,7 @@ export function useContest() {
     }
 
     if (compareVersions(version.toString(), "4.2") >= 0) {
-      const sortingEnabled = Number(results[11].result) === 1;
+      const sortingEnabled = Number(results[13].result) === 1;
 
       setSortingEnabled(sortingEnabled);
     }
@@ -203,7 +207,6 @@ export function useContest() {
 
       await Promise.all([
         fetchContestContractData(contractConfig, parseFloat(version)),
-        processContestData(contractConfig),
         processRewardData(contestRewardModuleAddress),
         processRequirementsData(),
       ]);
@@ -317,35 +320,12 @@ export function useContest() {
   /**
    * Fetch merkle tree data from DB and re-create the tree
    */
-  async function processContestData(contractConfig: ContractConfig) {
-    // Do not fetch merkle tree data if the contest is not using it
+  async function processUserQualifications(
+    submissionMerkleRoot: string,
+    votingMerkleRoot: string,
+    contestMaxNumberSubmissionsPerUser: number,
+  ) {
     if (contestStatus === ContestStatus.VotingClosed) return;
-
-    const results = await readContracts({
-      contracts: [
-        {
-          ...contractConfig,
-          functionName: "submissionMerkleRoot",
-          args: [],
-        },
-        {
-          ...contractConfig,
-          functionName: "votingMerkleRoot",
-          args: [],
-        },
-        {
-          ...contractConfig,
-          functionName: "numAllowedProposalSubmissions",
-          args: [],
-        },
-      ],
-    });
-
-    if (!results) return;
-
-    const submissionMerkleRoot = results[0].result as unknown as string;
-    const votingMerkleRoot = results[1].result as unknown as string;
-    const contestMaxNumberSubmissionsPerUser = Number(results[2].result);
 
     setSubmissionsMerkleRoot(submissionMerkleRoot);
     setVotingMerkleRoot(votingMerkleRoot);
