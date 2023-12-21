@@ -1,7 +1,7 @@
 import Comments from "@components/Comments";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
@@ -126,7 +126,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                 </p>
               </div>
             )} */}
-            <EthereumAddress ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+            <UserProfileDisplay ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
           </div>
         ) : null}
 

@@ -44,6 +44,7 @@ import PinAllToSameContract from "@contracts/bytecodeAndAbi/Contest.4.16.pinAllT
 import MitToAGPLContract from "@contracts/bytecodeAndAbi/Contest.4.17.mitToAGPL.sol/Contest.json";
 import AddEmergencyFuncsContract from "@contracts/bytecodeAndAbi/Contest.4.18.addEmergencyFuncs.sol/Contest.json";
 import AddMoreAttributionContract from "@contracts/bytecodeAndAbi/Contest.4.19.addMoreAttribution.sol/Contest.json";
+import AddGetDeletedAuthorsContract from "@contracts/bytecodeAndAbi/Contest.4.20.addGetDeletedAuthors.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -59,7 +60,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.19") {
+    if (version === "4.20") {
+      return { abi: AddGetDeletedAuthorsContract.abi, version};
+    } else if (version === "4.19") {
       return { abi: AddMoreAttributionContract.abi, version};
     } else if (version === "4.18") {
       return { abi: AddEmergencyFuncsContract.abi, version};

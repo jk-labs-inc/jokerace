@@ -1,6 +1,6 @@
 import Button from "@components/UI/Button";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
-import EthereumAddress from "@components/UI/EtheuremAddress";
+import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_USER } from "@config/routes";
 import { MediaQuery } from "@helpers/mediaQuery";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
@@ -44,7 +44,7 @@ const LandingHeader = () => {
         <div className="hidden lg:flex items-center gap-3">
           {isClient && address && (
             <Link href={`${ROUTE_VIEW_USER.replace("[address]", address)}`}>
-              <EthereumAddress ethereumAddress={address} shortenOnFallback avatarVersion />
+              <UserProfileDisplay ethereumAddress={address} shortenOnFallback avatarVersion />
             </Link>
           )}
           <ConnectButtonCustom />
