@@ -5,8 +5,6 @@ import useProfileData from "@hooks/useProfileData";
 import Link from "next/link";
 import { FC } from "react";
 
-const DEFAULT_AVATAR_URL = "/contest/mona-lisa-moustache.png";
-
 interface UserProfileDisplayProps {
   ethereumAddress: string;
   shortenOnFallback: boolean;
@@ -43,18 +41,9 @@ const SIZES = {
 const Avatar: FC<AvatarProps> = ({ src, size }) => {
   const { avatarSizeClass } = SIZES[size];
 
-  const handleOnError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    e.currentTarget.src = DEFAULT_AVATAR_URL;
-  };
-
   return (
     <div className={`flex items-center ${avatarSizeClass} bg-neutral-5 rounded-full overflow-hidden`}>
-      <img
-        style={{ width: "100%", height: "100%", objectFit: "cover" }}
-        src={src}
-        alt="avatar"
-        onError={handleOnError}
-      />
+      <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={src} alt="avatar" />
     </div>
   );
 };
@@ -126,7 +115,7 @@ const UserProfileDisplay = ({
               </a>
 
               {isLens ? (
-                <a href={`https://lensfrens.xyz/${profileAvatar}`} target="_blank">
+                <a href={`https://lensfrens.xyz/${profileName.replace(".lens", "")}`} target="_blank">
                   <div className="w-12 h-12 flex justify-center items-center overflow-hidden rounded-full">
                     <img className="object-cover" src="/socials/lens.svg" alt="Lens" />
                   </div>

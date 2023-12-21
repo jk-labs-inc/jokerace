@@ -11,6 +11,28 @@ interface ProfileData {
   isLens: boolean;
 }
 
+const checkImageUrl = (url: string, timeout = 10000) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+
+    const timeoutId = setTimeout(() => {
+      img.onload = img.onerror = null;
+      reject(new Error("Timeout waiting for image to load"));
+    }, timeout);
+
+    img.onload = () => {
+      clearTimeout(timeoutId);
+      resolve(url);
+    };
+    img.onerror = () => {
+      clearTimeout(timeoutId);
+      reject(new Error("Image loading error"));
+    };
+
+    img.src = url;
+  });
+};
+
 const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): ProfileData => {
   const [data, setData] = useState<ProfileData>({
     profileName: shortenOnFallback
@@ -33,16 +55,30 @@ const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): Pr
         const lensProfile = await lensClient.profile.fetchDefault({ for: ethereumAddress });
         if (lensProfile?.handle) {
           const avatarFragment = lensProfile.metadata?.picture;
-          profileAvatar =
-            //@ts-ignore
-            avatarFragment?.raw?.uri?.replace("ipfs://", "https://lens.infura-ipfs.io/ipfs/") || DEFAULT_AVATAR_URL;
+          //@ts-ignore
+          let lensAvatar = avatarFragment?.raw?.uri?.replace("ipfs://", "https://lens.infura-ipfs.io/ipfs/");
+          if (lensAvatar) {
+            try {
+              await checkImageUrl(lensAvatar);
+              profileAvatar = lensAvatar;
+            } catch {
+              profileAvatar = DEFAULT_AVATAR_URL;
+            }
+          }
           profileName = lensProfile.handle?.localName ? lensProfile.handle.localName + ".lens" : profileName;
           isLens = true;
         } else {
           const ensName = await fetchEnsName({ chainId: 1, address: ethereumAddress as `0x${string}` });
           if (ensName) {
             const ensAvatar = await fetchEnsAvatar({ name: ensName, chainId: 1 });
-            profileAvatar = ensAvatar || DEFAULT_AVATAR_URL;
+            if (ensAvatar) {
+              try {
+                await checkImageUrl(ensAvatar);
+                profileAvatar = ensAvatar;
+              } catch {
+                profileAvatar = DEFAULT_AVATAR_URL;
+              }
+            }
             profileName = ensName || profileName;
           }
         }
