@@ -146,16 +146,14 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         </div>
 
         {commentsAllowed ? (
-          <div className="mt-9">
-            <Comments
-              contestAddress={contestInfo.address}
-              contestChainId={chainId}
-              proposalId={proposalId}
-              numberOfComments={numberOfComments}
-            />
-          </div>
+          <Comments
+            contestAddress={contestInfo.address}
+            contestChainId={chainId}
+            proposalId={proposalId}
+            numberOfComments={numberOfComments}
+          />
         ) : null}
-        <div className="mt-20">
+        <div className={`${isInPwaMode ? "mt-28" : "mt-20"}`}>
           <div
             className={`${totalProposals > 1 ? "fixed" : "hidden"} ${
               isInPwaMode ? "bottom-[88px]" : "bottom-16"

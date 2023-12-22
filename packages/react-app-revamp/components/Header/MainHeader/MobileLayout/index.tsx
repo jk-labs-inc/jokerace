@@ -70,7 +70,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
       <header
         className={`flex flex-row bottom-0 right-0 left-0 fixed items-center justify-between border-t-neutral-2 border-t-2 pt-2 ${
           isInPwaMode ? "pb-8" : "pb-2"
-        } px-8 mt-4 bg-true-black z-50`}
+        } px-8 mt-4 bg-true-black z-[10000]`}
       >
         <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
           <HomeIcon width={30} />

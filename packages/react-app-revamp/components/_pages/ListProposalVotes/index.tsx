@@ -102,7 +102,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
         ) : null}
       </div>
       <Collapsible isOpen={isVotersOpen}>
-        <div className="flex flex-col gap-5 mb-12 sm:mb-0">
+        <div className="flex flex-col gap-5 ">
           <div className="flex flex-col gap-4 md:w-[350px]">
             {isLoading && !onLoadMoreCalledRef.current ? (
               <LoadingSkeleton count={count} />
