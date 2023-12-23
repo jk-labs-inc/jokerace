@@ -142,7 +142,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               )}
             </>
           )}
-          {proposal && proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
+          <ListProposalVotes proposalId={proposalId} />
         </div>
 
         {commentsAllowed ? (
