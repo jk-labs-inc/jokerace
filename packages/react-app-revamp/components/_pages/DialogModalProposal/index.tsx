@@ -169,7 +169,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
               )}
             </>
           )}
-          {proposal && proposal.votes > 0 && <ListProposalVotes proposalId={proposalId} />}
+          <ListProposalVotes proposalId={proposalId} />
         </div>
         {commentsAllowed ? (
           <Comments
