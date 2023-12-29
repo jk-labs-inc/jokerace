@@ -108,7 +108,7 @@ const fetchProposalInfo = async (address: string, chainId: number, submission: s
       votes,
       ...rankInfo,
     },
-    version: parseFloat(version),
+    version: version,
   };
 };
 
