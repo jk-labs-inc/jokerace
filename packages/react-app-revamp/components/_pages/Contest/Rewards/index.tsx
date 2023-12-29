@@ -76,7 +76,7 @@ const ContestRewards = () => {
     if (isRewardsPoolDeploying) return <Loader scale="page">Deploying rewards pool...</Loader>;
 
     if (version) {
-      if (compareVersions(version.toString(), "4.1") == -1) {
+      if (compareVersions(version, "4.1") == -1) {
         if (contestMaxProposalCount > 100) {
           return (
             <p className="text-[16px]">
@@ -85,7 +85,7 @@ const ContestRewards = () => {
             </p>
           );
         }
-      } else if (compareVersions(version.toString(), "4.1") >= 0) {
+      } else if (compareVersions(version, "4.1") >= 0) {
         if (downvotingAllowed || !sortingEnabled) {
           return (
             <p className="text-[16px]">
