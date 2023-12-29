@@ -6,7 +6,7 @@ interface SubmissionPageDesktopLayoutProps {
   contestInfo: {
     address: string;
     chain: string;
-    version: number;
+    version: string;
   };
   proposalId: string;
   prompt: string;
