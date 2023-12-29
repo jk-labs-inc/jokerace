@@ -13,7 +13,7 @@ import { FC, useEffect } from "react";
 interface PageProps {
   address: string;
   chain: string;
-  version: number;
+  version: string;
   proposal: Proposal | null;
   numberOfComments: number;
 }

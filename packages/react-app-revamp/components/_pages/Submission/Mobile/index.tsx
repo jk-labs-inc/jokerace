@@ -25,7 +25,7 @@ interface SubmissionPageMobileLayoutProps {
   contestInfo: {
     address: string;
     chain: string;
-    version: number;
+    version: string;
   };
   numberOfComments: number;
   proposalId: string;
@@ -62,7 +62,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const totalProposals = listProposalsIds.length;
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const commentsAllowed = compareVersions(contestInfo.version.toString(), COMMENTS_VERSION) == -1 ? false : true;
+  const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
 
   return (
