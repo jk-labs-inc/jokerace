@@ -38,6 +38,7 @@ contract RewardsModule {
     mapping(uint256 => uint256) public shares; // Getter for the amount of shares held by a ranking.
     mapping(uint256 => uint256) public released; // Getter for the amount of Ether already released to a ranking.
     uint256[] public payees;
+    string private constant VERSION = "4.21"; // Private as to not clutter the ABI
 
     mapping(IERC20 => uint256) public erc20TotalReleased;
     mapping(IERC20 => mapping(uint256 => uint256)) public erc20Released;
@@ -102,7 +103,7 @@ contract RewardsModule {
      * @dev Version of the rewards module.
      */
     function version() public pure returns (string memory) {
-        return "4.20";
+        return VERSION;
     }
 
     /**

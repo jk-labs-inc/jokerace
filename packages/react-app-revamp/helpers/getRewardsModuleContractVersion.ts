@@ -40,6 +40,7 @@ import MitToAGPLRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.
 import AddEmergencyFuncsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.18.addEmergencyFuncs.sol/RewardsModule.json";
 import AddMoreAttributionRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.19.addMoreAttribution.sol/RewardsModule.json";
 import AddGetDeletedAuthorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.20.addGetDeletedAuthors.sol/RewardsModule.json";
+import AddContentToEventsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.21.addContentToEvents.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -52,7 +53,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.20") {
+    if (version === "4.21") {
+      return AddContentToEventsRewards.abi;
+    } else if (version === "4.20") {
       return AddGetDeletedAuthorsRewards.abi;
     } else if (version === "4.19") {
       return AddMoreAttributionRewards.abi;
