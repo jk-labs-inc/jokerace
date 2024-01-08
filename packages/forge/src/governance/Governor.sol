@@ -43,8 +43,16 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         SafeMetadata safeMetadata;
     }
 
-    event JokeraceCreated(string name, address creator);
-    event ProposalCreated(uint256 proposalId, address proposer);
+    event JokeraceCreated(
+        string version,
+        string name,
+        string prompt,
+        address creator,
+        uint256 contestStart,
+        uint256 votingDelay,
+        uint256 votingPeriod
+    );
+    event ProposalCreated(uint256 proposalId, address proposer, string proposalDescription);
     event ProposalsDeleted(uint256[] proposalIds);
     event ContestCanceled();
     event VoteCast(address indexed voter, uint256 proposalId, uint8 support, uint256 numVotes);
@@ -53,6 +61,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
+    string private constant VERSION = "4.21"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -132,11 +141,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         costToPropose = costToPropose_;
         percentageToCreator = percentageToCreator_;
 
-        emit JokeraceCreated(name_, msg.sender); // emit upon creation to be able to easily find jokeraces on a chain
+        emit JokeraceCreated(VERSION, name_, prompt_, msg.sender, contestStart_, votingDelay_, votingPeriod_); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     function version() public pure returns (string memory) {
-        return "4.20";
+        return VERSION;
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -342,7 +351,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         numSubmissions[msg.sender] += 1;
         proposalAuthors.push(msg.sender);
 
-        emit ProposalCreated(proposalId, msg.sender);
+        emit ProposalCreated(proposalId, msg.sender, proposal.description);
 
         return proposalId;
     }
