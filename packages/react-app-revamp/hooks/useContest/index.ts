@@ -119,7 +119,7 @@ export function useContest() {
     }
   }
 
-  async function fetchContestContractData(contractConfig: ContractConfig, version: number) {
+  async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
     const contracts = getContracts(contractConfig, version);
     const results = await readContracts({ contracts });
     setIsV3(true);
@@ -138,7 +138,7 @@ export function useContest() {
 
     processUserQualifications(submissionMerkleRoot, votingMerkleRoot, contestMaxNumberSubmissionsPerUser);
 
-    if (compareVersions(version.toString(), "4.0") >= 0 && moment().isBefore(votesOpenDate)) {
+    if (compareVersions(version, "4.0") >= 0 && moment().isBefore(votesOpenDate)) {
       const entryChargeValue = Number(results[11].result);
       const entryChargePercentage = Number(results[12].result);
 
@@ -150,7 +150,7 @@ export function useContest() {
       setEntryCharge(null);
     }
 
-    if (compareVersions(version.toString(), "4.2") >= 0) {
+    if (compareVersions(version, "4.2") >= 0) {
       const sortingEnabled = Number(results[13].result) === 1;
 
       setSortingEnabled(sortingEnabled);
@@ -206,7 +206,7 @@ export function useContest() {
       setIsListProposalsLoading(false);
 
       await Promise.all([
-        fetchContestContractData(contractConfig, parseFloat(version)),
+        fetchContestContractData(contractConfig, version),
         processRewardData(contestRewardModuleAddress),
         processRequirementsData(),
       ]);
@@ -310,10 +310,10 @@ export function useContest() {
       setIsRewardsLoading(true);
     }
 
-    if (parseFloat(version) >= 3) {
-      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
-    } else {
+    if (compareVersions(version, "3.0") == -1) {
       await fetchV1ContestInfo(contractConfig, version);
+    } else {
+      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
     }
   }
 
