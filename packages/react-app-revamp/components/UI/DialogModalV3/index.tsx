@@ -37,7 +37,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex items-center justify-center">
           <Dialog.Panel
-            className={`text-sm mx-auto h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-screen px-4 pb-6 2xs:pt-4  bg-true-black 2xs:rounded-[10px] ${className}`}
+            className={`text-sm mx-auto max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-screen px-4 pb-6 2xs:pt-4  bg-true-black 2xs:rounded-[10px] ${className}`}
           >
             <Dialog.Title className="sr-only">{title}</Dialog.Title>
             <div className="p-2 relative">
