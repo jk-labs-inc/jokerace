@@ -48,15 +48,6 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
         );
       }
 
-    case ContestStatus.VotingOpen:
-      if (!isConnected) {
-        return (
-          <p className="text-[16px] text-positive-11 font-bold" onClick={openConnectModal}>
-            connect wallet to vote
-          </p>
-        );
-      }
-
       if (isCurrentUserVoteQualificationLoading) {
         return (
           <Skeleton

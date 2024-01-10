@@ -6,12 +6,11 @@ import ProposalStatisticsPanelSubmissionOpen from "./components/SubmissionsOpen"
 import ProposalStatisticsPanelVotingOpenOrClosed from "./components/VotingOpenOrClosed";
 
 interface ProposalStatisticsPanelProps {
+  submissionsCount: number;
   contestStatus: ContestStatus;
 }
 
-const ProposalStatisticsPanel: FC<ProposalStatisticsPanelProps> = ({ contestStatus }) => {
-  const submissionsCount = useProposalStore(state => state.submissionsCount);
-
+const ProposalStatisticsPanel: FC<ProposalStatisticsPanelProps> = ({ submissionsCount, contestStatus }) => {
   if (contestStatus === ContestStatus.SubmissionOpen) {
     return <ProposalStatisticsPanelSubmissionOpen submissionsCount={submissionsCount} />;
   }

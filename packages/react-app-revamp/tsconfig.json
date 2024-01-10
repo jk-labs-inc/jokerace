@@ -24,7 +24,6 @@
       "@hooks/*": ["hooks/*"],
       "@layouts/*": ["layouts/*"],
       "@styles/*": ["styles/*"],
-      "@graphql/*": ["graphql/*"],
       "@services/*": ["services/*"]
     }
   },

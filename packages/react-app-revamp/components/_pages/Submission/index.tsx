@@ -13,7 +13,7 @@ interface SubmissionPageProps {
   contestInfo: {
     address: string;
     chain: string;
-    version: number;
+    version: string;
   };
   proposal: Proposal | null;
   proposalId: string;
