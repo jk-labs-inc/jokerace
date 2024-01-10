@@ -4,7 +4,7 @@ export const scrollTestnet: Chain = {
   id: 534353,
   name: "scrollTestnet",
   network: "scrollTestnet",
-  iconUrl: "/scroll.png",
+  iconUrl: "/scroll.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
