@@ -9,6 +9,7 @@ const ContestParametersVotingRequirements = () => {
     votingRequirements?.tokenAddress ?? "",
     votingRequirements?.chain ?? "",
   );
+
   const chainExplorerUrl = chains.find(chain => chain.name === votingRequirements?.chain)?.blockExplorers?.default.url;
 
   if (!votingRequirements) return null;
