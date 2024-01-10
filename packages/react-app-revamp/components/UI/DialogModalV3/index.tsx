@@ -35,10 +35,10 @@ const DialogModalV3: FC<DialogModalProps> = ({
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
       <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
-        <div className="flex min-h-full w-full items-center justify-center">
+        <div className="flex items-center justify-center">
           <Dialog.Panel
             id="scrollableDiv"
-            className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full px-4 pt-4 pb-6 bg-true-black 2xs:rounded-[10px] ${className}`}
+            className={`text-sm mx-auto h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-screen px-4 pt-4 pb-6 bg-true-black 2xs:rounded-[10px] ${className}`}
           >
             <Dialog.Title className="sr-only">{title}</Dialog.Title>
             <div className="p-2 relative">
