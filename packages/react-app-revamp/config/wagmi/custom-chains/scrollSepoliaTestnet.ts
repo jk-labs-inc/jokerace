@@ -4,7 +4,7 @@ export const scrollSepoliaTestnet: Chain = {
   id: 534351,
   name: "scrollSepoliaTestnet",
   network: "scrollSepoliaTestnet",
-  iconUrl: "/scroll.png",
+  iconUrl: "/scroll.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
