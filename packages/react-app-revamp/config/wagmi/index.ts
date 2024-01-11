@@ -77,6 +77,7 @@ import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
+import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
@@ -153,6 +154,7 @@ const totalChains: Chain[] = [
   frameTestnet,
   fantomTestnet,
   berachainTestnet,
+  taikoTestnet,
   mainnet,
 ];
 
