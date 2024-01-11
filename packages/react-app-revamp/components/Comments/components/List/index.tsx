@@ -83,7 +83,7 @@ const CommentsList: FC<CommentsListProps> = ({
   };
 
   if (isLoading) {
-    return <CommentsSkeleton length={COMMENTS_PER_PAGE} />;
+    return <CommentsSkeleton length={numberOfComments} />;
   }
 
   return (
