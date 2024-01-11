@@ -1,7 +1,6 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import SubmissionPage from "@components/_pages/Submission";
 import { chains } from "@config/wagmi";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -89,7 +88,6 @@ export async function getStaticProps({ params }: any) {
       proposal: data?.proposal,
       numberOfComments: data?.numberOfComments,
     },
-    revalidate: 10,
   };
 }
 
