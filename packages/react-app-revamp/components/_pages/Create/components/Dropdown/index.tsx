@@ -28,7 +28,6 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
   // Initial query state is set to the label of the option matching the value prop
   const [query, setQuery] = useState(options.find(option => option.value === value)?.label || value);
   const [showOptions, setShowOptions] = useState(false);
-
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,15 +56,16 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
             option.value.toLowerCase().includes(query.toLowerCase()),
         );
 
-  const handleInputChange = (inputValue: string) => {
-    setQuery(inputValue);
+  const handleInputChange = (value: string) => {
     if (searchEnabled) {
-      const matchingOptions = options.filter(
-        option =>
-          option.label.toLowerCase().includes(inputValue.toLowerCase()) ||
-          option.value.toLowerCase().includes(inputValue.toLowerCase()),
-      );
-      setShowOptions(matchingOptions.length > 0);
+      setQuery(value);
+      onChange?.(value);
+      const matchingOptions = options.filter(option => option.value.toLowerCase().startsWith(value.toLowerCase()));
+      if (value !== "" && matchingOptions.length > 0) {
+        setShowOptions(true);
+      } else {
+        setShowOptions(false);
+      }
     }
   };
 
@@ -78,7 +78,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     }
   };
 
-  const handleIconClick = () => {
+  const handleDropdownMenu = () => {
     if (filteredOptions.length > 0) {
       setShowOptions(!showOptions);
     } else {
@@ -92,11 +92,11 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
         value={query}
         readOnly={!searchEnabled}
         className={className}
-        onClick={() => setShowOptions(true)}
+        onClick={handleDropdownMenu}
         onChange={value => handleInputChange(value)}
         placeholder="select an option or type your own"
       />
-      <ChevronDownIcon className="w-5 cursor-pointer -ml-[35px]" onClick={handleIconClick} />
+      <ChevronDownIcon className="w-5 cursor-pointer -ml-[35px]" onClick={handleDropdownMenu} />
       {showOptions && (
         <ul
           className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
