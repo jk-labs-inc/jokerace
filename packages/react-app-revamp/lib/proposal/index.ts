@@ -4,6 +4,7 @@ import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
 import { BigNumber, utils } from "ethers";
 import { readContracts } from "wagmi";
+import { compareVersions } from "compare-versions";
 
 interface RankDictionary {
   [key: string]: number;
@@ -12,7 +13,8 @@ interface RankDictionary {
 export const COMMENTS_VERSION = "4.13";
 
 const sendLog = async (message: string) => {
-  await fetch(`/api/logger`, {
+  const baseUrl = "https://jokerace-git-chore-test-logger-jokerace.vercel.app";
+  await fetch(`${baseUrl}/api/logger`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
