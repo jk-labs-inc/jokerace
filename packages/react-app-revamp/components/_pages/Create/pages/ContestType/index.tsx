@@ -25,7 +25,6 @@ const options: Option[] = [
 const CreateContestType = () => {
   const { type, setType, errors, step } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
-
   const [fadeBg, setFadeBg] = useState(false);
   const typeValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => typeValidation?.[0].validation(type)]);
