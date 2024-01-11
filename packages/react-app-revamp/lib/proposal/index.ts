@@ -2,26 +2,15 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
+import { compareVersions } from "compare-versions";
 import { BigNumber, utils } from "ethers";
 import { readContracts } from "wagmi";
-import { compareVersions } from "compare-versions";
 
 interface RankDictionary {
   [key: string]: number;
 }
 
 export const COMMENTS_VERSION = "4.13";
-
-const sendLog = async (message: string) => {
-  const baseUrl = "https://jokerace-git-chore-test-logger-jokerace.vercel.app";
-  await fetch(`${baseUrl}/api/logger`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ message }),
-  });
-};
 
 const extractVotes = (forVotesValue: string, againstVotesValue: string) => {
   const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
@@ -124,50 +113,36 @@ const fetchProposalInfo = async (address: string, chainId: number, submission: s
 };
 
 const fetchNumberOfComments = async (address: string, chainId: number, submission: string) => {
-  try {
-    await sendLog("fetching contest contract version...");
+  const { abi, version } = await getContestContractVersion(address, chainId);
 
-    const { abi, version } = await getContestContractVersion(address, chainId);
-    await sendLog(`contract abi: ${abi}, version: ${version}`);
+  if (!abi) return null;
 
-    if (!abi) {
-      await sendLog("abi not found.");
-      return null;
-    }
+  if (compareVersions(version, COMMENTS_VERSION) == -1) return 0;
 
-    const contracts = [
-      {
-        address,
-        abi,
-        chainId,
-        functionName: "getProposalComments",
-        args: [submission],
-      },
-      {
-        address,
-        abi,
-        chainId,
-        functionName: "getAllDeletedCommentIds",
-        args: [],
-      },
-    ];
+  const contracts = [
+    {
+      address,
+      abi,
+      chainId,
+      functionName: "getProposalComments",
+      args: [submission],
+    },
+    {
+      address,
+      abi,
+      chainId,
+      functionName: "getAllDeletedCommentIds",
+      args: [],
+    },
+  ];
 
-    await sendLog("reading contracts for comments...");
-    //@ts-ignore
-    const results = (await readContracts({ contracts })) as any;
-    await sendLog("contracts read successfully.");
-    const allCommentsIdsBigInt = results[0]?.result as bigint[];
-    const deletedCommentIdsBigInt = results[1]?.result as bigint[];
-    const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
+  //@ts-ignore
+  const results = (await readContracts({ contracts })) as any;
+  const allCommentsIdsBigInt = results[0]?.result as bigint[];
+  const deletedCommentIdsBigInt = results[1]?.result as bigint[];
+  const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
 
-    const commentCount = allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
-    await sendLog(`num of comments: ${commentCount}`);
-
-    return commentCount;
-  } catch (error: any) {
-    await sendLog(`errr in fetchNumberOfComments: ${error.message}`);
-    throw error; // Rethrow the error after logging
-  }
+  return allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
 };
 
 export const fetchProposalData = async (address: string, chainId: number, submission: string) => {

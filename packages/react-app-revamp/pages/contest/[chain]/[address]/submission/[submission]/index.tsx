@@ -81,53 +81,6 @@ export async function getStaticProps({ params }: any) {
 
   const data = await fetchProposalData(address, chainId, submission);
 
-  const fetchNumberOfComments = async (address: string, chainId: number, submission: string) => {
-    try {
-      console.log("fetching contest contract version...");
-
-      const { abi, version } = await getContestContractVersion(address, chainId);
-      console.log(`contract abi: ${abi}, version: ${version}`);
-
-      if (!abi) {
-        console.log("abi not found.");
-        return null;
-      }
-
-      const contracts = [
-        {
-          address,
-          abi,
-          chainId,
-          functionName: "getProposalComments",
-          args: [submission],
-        },
-        {
-          address,
-          abi,
-          chainId,
-          functionName: "getAllDeletedCommentIds",
-          args: [],
-        },
-      ];
-
-      console.log("reading contracts for comments...");
-      //@ts-ignore
-      const results = (await readContracts({ contracts })) as any;
-      console.log("contracts read successfully.");
-      const allCommentsIdsBigInt = results[0]?.result as bigint[];
-      const deletedCommentIdsBigInt = results[1]?.result as bigint[];
-      const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
-
-      const commentCount = allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
-      console.log(`num of comments: ${commentCount}`);
-
-      return commentCount;
-    } catch (error: any) {
-      console.log(`errr in fetchNumberOfComments: ${error.message}`);
-      throw error; // Rethrow the error after logging
-    }
-  };
-
   return {
     props: {
       address,
@@ -136,6 +89,7 @@ export async function getStaticProps({ params }: any) {
       proposal: data?.proposal,
       numberOfComments: data?.numberOfComments,
     },
+    revalidate: 10,
   };
 }
 
