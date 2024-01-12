@@ -1,7 +1,7 @@
 import { ProposalData, fetchProposalData } from "lib/proposal";
 import { useCallback, useEffect, useState } from "react";
 
-const useFetchProposalData = (address: string, chainId: number, submission: string) => {
+const useFetchProposalData = (abi: any, version: string, address: string, chainId: number, submission: string) => {
   const [data, setData] = useState<ProposalData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -10,7 +10,7 @@ const useFetchProposalData = (address: string, chainId: number, submission: stri
     try {
       setLoading(true);
       setError(false);
-      const result = await fetchProposalData(address, chainId, submission);
+      const result = await fetchProposalData(abi, version, address, chainId, submission);
       setData(result);
     } catch (err: any) {
       setError(true);
@@ -18,7 +18,7 @@ const useFetchProposalData = (address: string, chainId: number, submission: stri
     } finally {
       setLoading(false);
     }
-  }, [address, chainId, submission]);
+  }, [abi, version, address, chainId, submission]);
 
   useEffect(() => {
     fetchData();

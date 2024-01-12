@@ -174,13 +174,13 @@ const fetchAddressesVoted = async (
 };
 
 export const fetchProposalData = async (
+  abi: any,
+  version: string,
   address: string,
   chainId: number,
   submission: string,
 ): Promise<ProposalData | null> => {
   try {
-    const { abi, version } = await getContestContractVersion(address, chainId);
-
     if (!abi || !version) return null;
 
     const results = await Promise.allSettled([

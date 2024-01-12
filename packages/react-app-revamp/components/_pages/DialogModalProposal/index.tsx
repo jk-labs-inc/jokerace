@@ -138,7 +138,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
         </div>
 
         {isProposalLoading ? (
-          <p className="loadingDots font-sabo text-[18px] mt-8 text-neutral-9">loading proposal info</p>
+          <p className="loadingDots font-sabo text-[18px] mt-8 text-neutral-9">loading submission info</p>
         ) : (
           <div className="animate-fadeIn flex flex-col gap-8">
             {proposalData?.proposal ? (

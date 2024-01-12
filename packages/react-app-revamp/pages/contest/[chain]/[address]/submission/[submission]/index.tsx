@@ -13,14 +13,15 @@ interface PageProps {
   address: string;
   chain: string;
   chainId: number;
+  abi: any;
   version: string;
   submission: string;
 }
 
-const Page: FC<PageProps> = ({ address, chain, submission, version, chainId }) => {
+const Page: FC<PageProps> = ({ address, chain, submission, abi, version, chainId }) => {
   const router = useRouter();
   const { contestPrompt, contestName } = useContestStore(state => state);
-  const { data, loading, error } = useFetchProposalData(address, chainId, submission);
+  const { data, loading, error } = useFetchProposalData(abi, version, address, chainId, submission);
   const { setPickedProposal } = useCastVotesStore(state => state);
   const id = router.query.submission as string;
 
@@ -76,13 +77,14 @@ export async function getStaticProps({ params }: any) {
   }
 
   const chainId = getChainId(chain);
-  const { version } = await getContestContractVersion(address, chainId);
+  const { abi, version } = await getContestContractVersion(address, chainId);
 
   return {
     props: {
       address,
       chain,
       submission,
+      abi,
       version,
       chainId,
     },
