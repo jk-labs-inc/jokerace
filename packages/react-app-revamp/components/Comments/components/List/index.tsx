@@ -92,6 +92,8 @@ const CommentsList: FC<CommentsListProps> = ({
   }
 
   if (isLoading) {
+    if (numberOfComments === 0) return null;
+
     return <CommentsSkeleton length={initialSkeletonCount} />;
   }
 
