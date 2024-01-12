@@ -50,18 +50,10 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const {
-    accumulatedVotesData,
-    currentPage,
-    totalPages,
-    setCurrentPage,
-    isLoading,
-    addressesVoted,
-    fetchVotesPerPage,
-    refreshData,
-  } = useProposalVotes(address, proposalId, chainId);
+  const { accumulatedVotesData, currentPage, totalPages, setCurrentPage, isLoading, fetchVotesPerPage, refreshData } =
+    useProposalVotes(address, proposalId, chainId);
   const onLoadMoreCalledRef = useRef(false);
-  const initialSkeletonCount = votedAddresses ? Math.min(votedAddresses.length, 5) : 5;
+  const initialSkeletonCount = votedAddresses ? Math.min(votedAddresses.length, VOTES_PER_PAGE) : VOTES_PER_PAGE;
   const remainingItems =
     onLoadMoreCalledRef.current && votedAddresses ? votedAddresses.length - currentPage * VOTES_PER_PAGE : 0;
   const count =

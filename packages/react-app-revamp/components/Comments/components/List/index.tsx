@@ -55,6 +55,7 @@ const CommentsList: FC<CommentsListProps> = ({
 }) => {
   const [selectedCommentIds, setSelectedCommentIds] = useState<string[]>([]);
   const showDeleteButton = selectedCommentIds.length > 0 && !isDeleting;
+  const initialSkeletonCount = numberOfComments ? Math.min(numberOfComments, COMMENTS_PER_PAGE) : COMMENTS_PER_PAGE;
   const remainingCommentsToLoad = numberOfComments ? numberOfComments - comments.length : 0;
   const skeletonRemainingLoaderCount = Math.min(remainingCommentsToLoad, COMMENTS_PER_PAGE);
 
@@ -91,7 +92,7 @@ const CommentsList: FC<CommentsListProps> = ({
   }
 
   if (isLoading) {
-    return <CommentsSkeleton length={numberOfComments} />;
+    return <CommentsSkeleton length={initialSkeletonCount} />;
   }
 
   return (
