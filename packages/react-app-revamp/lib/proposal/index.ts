@@ -1,13 +1,21 @@
+import { Proposal } from "@components/_pages/ProposalContent";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
+import { readContract } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { BigNumber, utils } from "ethers";
 import { readContracts } from "wagmi";
-import { compareVersions } from "compare-versions";
 
 interface RankDictionary {
   [key: string]: number;
+}
+
+export interface ProposalData {
+  proposal: Proposal | null;
+  numberOfComments: number | null;
+  votedAddresses: string[] | null;
 }
 
 export const COMMENTS_VERSION = "4.13";
@@ -40,11 +48,7 @@ const assignRankAndCheckTies = (mappedProposals: MappedProposalIds[], targetId: 
   return { rank, isTied };
 };
 
-const fetchProposalInfo = async (address: string, chainId: number, submission: string) => {
-  const { abi, version } = await getContestContractVersion(address, chainId);
-
-  if (!abi) return null;
-
+const fetchProposalInfo = async (abi: any, address: string, chainId: number, submission: string) => {
   let contracts = [
     {
       address,
@@ -99,24 +103,23 @@ const fetchProposalInfo = async (address: string, chainId: number, submission: s
   }
 
   return {
-    proposal: {
-      id: submission,
-      authorEthereumAddress: data.author,
-      content: content,
-      isContentImage: isUrlToImage(data.description),
-      exists: data.exists,
-      votes,
-      ...rankInfo,
-    },
-    version: version,
+    id: submission,
+    authorEthereumAddress: data.author,
+    content: content,
+    isContentImage: isUrlToImage(data.description),
+    exists: data.exists,
+    votes,
+    ...rankInfo,
   };
 };
 
-const fetchNumberOfComments = async (address: string, chainId: number, submission: string) => {
-  const { abi, version } = await getContestContractVersion(address, chainId);
-
-  if (!abi) return null;
-
+const fetchNumberOfComments = async (
+  abi: any,
+  version: string,
+  address: string,
+  chainId: number,
+  submission: string,
+): Promise<number | null> => {
   if (compareVersions(version, COMMENTS_VERSION) == -1) return 0;
 
   const contracts = [
@@ -136,27 +139,69 @@ const fetchNumberOfComments = async (address: string, chainId: number, submissio
     },
   ];
 
-  //@ts-ignore
-  const results = (await readContracts({ contracts })) as any;
-  const allCommentsIdsBigInt = results[0]?.result as bigint[];
-  const deletedCommentIdsBigInt = results[1]?.result as bigint[];
-  const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
+  try {
+    //@ts-ignore
+    const results = (await readContracts({ contracts })) as any;
+    const allCommentsIdsBigInt = results[0]?.result as bigint[];
+    const deletedCommentIdsBigInt = results[1]?.result as bigint[];
+    const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
 
-  return allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
+    return allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
+  } catch {
+    return null;
+  }
 };
 
-export const fetchProposalData = async (address: string, chainId: number, submission: string) => {
+const fetchAddressesVoted = async (
+  abi: any,
+  address: string,
+  chainId: number,
+  submission: string,
+): Promise<string[] | null> => {
   try {
-    const [proposalInfo, numberOfComments] = await Promise.all([
-      fetchProposalInfo(address, chainId, submission),
-      fetchNumberOfComments(address, chainId, submission),
+    const addresses = (await readContract({
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId,
+      functionName: "proposalAddressesHaveVoted",
+      args: [submission],
+    })) as string[];
+
+    return addresses;
+  } catch {
+    return null;
+  }
+};
+
+export const fetchProposalData = async (
+  abi: any,
+  version: string,
+  address: string,
+  chainId: number,
+  submission: string,
+): Promise<ProposalData | null> => {
+  try {
+    if (!abi || !version) return null;
+
+    const results = await Promise.allSettled([
+      fetchProposalInfo(abi, address, chainId, submission),
+      fetchNumberOfComments(abi, version, address, chainId, submission),
+      fetchAddressesVoted(abi, address, chainId, submission),
     ]);
 
-    if (!proposalInfo) return null;
+    const proposalInfo = results[0].status === "fulfilled" ? results[0].value : null;
+    const numberOfComments = results[1].status === "fulfilled" ? results[1].value : null;
+    const votedAddresses = results[2].status === "fulfilled" ? results[2].value : null;
 
     return {
-      ...proposalInfo,
+      proposal: proposalInfo
+        ? {
+            ...proposalInfo,
+            commentsCount: numberOfComments ?? 0,
+          }
+        : null,
       numberOfComments,
+      votedAddresses,
     };
   } catch (error) {
     console.error(error);
