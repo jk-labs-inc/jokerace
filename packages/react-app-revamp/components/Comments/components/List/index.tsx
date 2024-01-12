@@ -12,7 +12,7 @@ interface CommentsListProps {
   isPaginating: boolean;
   isDeleting: boolean;
   currentPage: number;
-  numberOfComments: number;
+  numberOfComments: number | null;
   totalPages: number;
   isDeletingSuccess: boolean;
   onDeleteSelectedComments?: (selectedCommentIds: string[]) => void;
@@ -55,7 +55,8 @@ const CommentsList: FC<CommentsListProps> = ({
 }) => {
   const [selectedCommentIds, setSelectedCommentIds] = useState<string[]>([]);
   const showDeleteButton = selectedCommentIds.length > 0 && !isDeleting;
-  const remainingCommentsToLoad = numberOfComments - comments.length;
+  const initialSkeletonCount = numberOfComments ? Math.min(numberOfComments, COMMENTS_PER_PAGE) : COMMENTS_PER_PAGE;
+  const remainingCommentsToLoad = numberOfComments ? numberOfComments - comments.length : 0;
   const skeletonRemainingLoaderCount = Math.min(remainingCommentsToLoad, COMMENTS_PER_PAGE);
 
   useEffect(() => {
@@ -82,8 +83,18 @@ const CommentsList: FC<CommentsListProps> = ({
     onLoadMoreComments?.();
   };
 
+  if (numberOfComments === null) {
+    return (
+      <p className="text-[16px] text-negative-11 font-bold">
+        ruh-roh! An error occurred when retrieving comments for this proposal; try refreshing the page.
+      </p>
+    );
+  }
+
   if (isLoading) {
-    return <CommentsSkeleton length={COMMENTS_PER_PAGE} />;
+    if (numberOfComments === 0) return null;
+
+    return <CommentsSkeleton length={initialSkeletonCount} />;
   }
 
   return (

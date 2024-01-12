@@ -12,7 +12,7 @@ interface CommentsProps {
   contestAddress: string;
   contestChainId: number;
   proposalId: string;
-  numberOfComments: number;
+  numberOfComments: number | null;
 }
 
 const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments }) => {

@@ -2,7 +2,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useEffect, useState } from "react";
 
 const useContractVersion = (address: string, chainId: number) => {
-  const [version, setVersion] = useState<string | null>(null);
+  const [version, setVersion] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
@@ -17,7 +17,7 @@ const useContractVersion = (address: string, chainId: number) => {
       } catch (error) {
         console.error("Error fetching contract version:", error);
 
-        setVersion(null);
+        setVersion("");
         setIsLoading(false);
         setError(true);
       }
