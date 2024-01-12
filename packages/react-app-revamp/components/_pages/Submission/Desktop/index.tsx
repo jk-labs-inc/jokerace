@@ -12,6 +12,8 @@ interface SubmissionPageDesktopLayoutProps {
   prompt: string;
   proposal: Proposal | null;
   numberOfComments: number;
+  isProposalLoading: boolean;
+  isProposalError: boolean;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
   onPreviousEntry?: () => void;
@@ -25,6 +27,8 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
   prompt,
   proposal,
   numberOfComments,
+  isProposalLoading,
+  isProposalError,
   onClose,
   onVote,
   onPreviousEntry,
@@ -39,6 +43,8 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
       isOpen={true}
       proposal={proposal}
       numberOfComments={numberOfComments}
+      isProposalLoading={isProposalLoading}
+      isProposalError={isProposalError}
       onClose={onClose}
       onVote={onVote}
       onConnectWallet={onConnectWallet}

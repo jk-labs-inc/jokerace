@@ -15,13 +15,23 @@ interface SubmissionPageProps {
     chain: string;
     version: string;
   };
+  isProposalLoading: boolean;
+  isProposalError: boolean;
   proposal: Proposal | null;
   proposalId: string;
   prompt: string;
   numberOfComments: number;
 }
 
-const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal, proposalId, numberOfComments }) => {
+const SubmissionPage: FC<SubmissionPageProps> = ({
+  contestInfo,
+  prompt,
+  proposal,
+  proposalId,
+  numberOfComments,
+  isProposalLoading,
+  isProposalError,
+}) => {
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
@@ -104,6 +114,8 @@ const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, prompt, proposal
       prompt={prompt}
       proposal={proposal}
       proposalId={proposalId}
+      isProposalLoading={isProposalLoading}
+      isProposalError={isProposalError}
       onClose={onClose}
       onNextEntry={handleOnNextEntryChange}
       onConnectWallet={onConnectWallet}

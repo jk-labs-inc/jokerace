@@ -1,11 +1,10 @@
-import { Proposal } from "@components/_pages/ProposalContent";
 import SubmissionPage from "@components/_pages/Submission";
 import { chains } from "@config/wagmi";
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
+import useFetchProposalData from "@hooks/useFetchProposalData";
 import { getLayout } from "@layouts/LayoutViewContest";
-import { fetchProposalData } from "lib/proposal";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
@@ -13,14 +12,15 @@ import { FC, useEffect } from "react";
 interface PageProps {
   address: string;
   chain: string;
+  chainId: number;
   version: string;
-  proposal: Proposal | null;
-  numberOfComments: number;
+  submission: string;
 }
 
-const Page: FC<PageProps> = ({ address, chain, version, proposal, numberOfComments }) => {
+const Page: FC<PageProps> = ({ address, chain, submission, version, chainId }) => {
   const router = useRouter();
   const { contestPrompt, contestName } = useContestStore(state => state);
+  const { data, loading, error } = useFetchProposalData(address, chainId, submission);
   const { setPickedProposal } = useCastVotesStore(state => state);
   const id = router.query.submission as string;
 
@@ -31,9 +31,7 @@ const Page: FC<PageProps> = ({ address, chain, version, proposal, numberOfCommen
   return (
     <>
       <Head>
-        <title>
-          {proposal ? `proposal by ${shortenEthereumAddress(proposal.authorEthereumAddress)} for ${contestName}` : null}
-        </title>
+        <title>{`proposal ${id} for ${contestName}`}</title>
       </Head>
       <SubmissionPage
         contestInfo={{
@@ -42,9 +40,11 @@ const Page: FC<PageProps> = ({ address, chain, version, proposal, numberOfCommen
           version,
         }}
         prompt={contestPrompt}
-        proposal={proposal}
+        proposal={data?.proposal}
+        isProposalLoading={loading}
+        isProposalError={error}
         proposalId={id}
-        numberOfComments={numberOfComments}
+        numberOfComments={data?.numberOfComments}
       />
     </>
   );
@@ -77,16 +77,15 @@ export async function getStaticProps({ params }: any) {
   }
 
   const chainId = getChainId(chain);
-
-  const data = await fetchProposalData(address, chainId, submission);
+  const { version } = await getContestContractVersion(address, chainId);
 
   return {
     props: {
       address,
       chain,
-      version: data?.version,
-      proposal: data?.proposal,
-      numberOfComments: data?.numberOfComments,
+      submission,
+      version,
+      chainId,
     },
   };
 }

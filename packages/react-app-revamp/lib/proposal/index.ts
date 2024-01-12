@@ -10,6 +10,22 @@ interface RankDictionary {
   [key: string]: number;
 }
 
+interface ProposalInfo {
+  id: string;
+  authorEthereumAddress: string;
+  content: string;
+  isContentImage: boolean;
+  exists: boolean;
+  votes: number;
+  rank: number;
+  isTied: boolean;
+}
+
+export interface ProposalData {
+  proposal: ProposalInfo;
+  numberOfComments: number;
+}
+
 export const COMMENTS_VERSION = "4.13";
 
 const extractVotes = (forVotesValue: string, againstVotesValue: string) => {
@@ -41,7 +57,7 @@ const assignRankAndCheckTies = (mappedProposals: MappedProposalIds[], targetId: 
 };
 
 const fetchProposalInfo = async (address: string, chainId: number, submission: string) => {
-  const { abi, version } = await getContestContractVersion(address, chainId);
+  const { abi } = await getContestContractVersion(address, chainId);
 
   if (!abi) return null;
 
@@ -99,23 +115,20 @@ const fetchProposalInfo = async (address: string, chainId: number, submission: s
   }
 
   return {
-    proposal: {
-      id: submission,
-      authorEthereumAddress: data.author,
-      content: content,
-      isContentImage: isUrlToImage(data.description),
-      exists: data.exists,
-      votes,
-      ...rankInfo,
-    },
-    version: version,
+    id: submission,
+    authorEthereumAddress: data.author,
+    content: content,
+    isContentImage: isUrlToImage(data.description),
+    exists: data.exists,
+    votes,
+    ...rankInfo,
   };
 };
 
 const fetchNumberOfComments = async (address: string, chainId: number, submission: string) => {
   const { abi, version } = await getContestContractVersion(address, chainId);
 
-  if (!abi) return null;
+  if (!abi) return 0;
 
   if (compareVersions(version, COMMENTS_VERSION) == -1) return 0;
 
@@ -145,7 +158,11 @@ const fetchNumberOfComments = async (address: string, chainId: number, submissio
   return allCommentsIdsBigInt.filter(id => !deletedCommentIdsSet.has(id)).length;
 };
 
-export const fetchProposalData = async (address: string, chainId: number, submission: string) => {
+export const fetchProposalData = async (
+  address: string,
+  chainId: number,
+  submission: string,
+): Promise<ProposalData | null> => {
   try {
     const [proposalInfo, numberOfComments] = await Promise.all([
       fetchProposalInfo(address, chainId, submission),
@@ -155,7 +172,7 @@ export const fetchProposalData = async (address: string, chainId: number, submis
     if (!proposalInfo) return null;
 
     return {
-      ...proposalInfo,
+      proposal: proposalInfo,
       numberOfComments,
     };
   } catch (error) {

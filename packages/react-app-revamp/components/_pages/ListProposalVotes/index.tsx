@@ -14,25 +14,19 @@ interface ListProposalVotesProps {
 }
 
 const VotersList: FC<{ votesPerAddress: any }> = ({ votesPerAddress }) => {
-  const hasVoters = votesPerAddress && Object.keys(votesPerAddress).length > 0;
-
   return (
     <div className="flex flex-col gap-4 md:w-[350px]">
-      {hasVoters ? (
-        Object.keys(votesPerAddress).map((address: string, index, self) => (
-          <div
-            key={address}
-            className={`flex justify-between items-end text-[16px] font-bold pb-3 ${
-              index !== self.length - 1 ? "border-b border-neutral-10" : ""
-            }`}
-          >
-            <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} />
-            <p>{formatNumber(votesPerAddress[address])} votes</p>
-          </div>
-        ))
-      ) : (
-        <p className="text-[16px] text-neutral-11">there are no voters for this proposal... yet 👀</p>
-      )}
+      {Object.keys(votesPerAddress).map((address: string, index, self) => (
+        <div
+          key={address}
+          className={`flex justify-between items-end text-[16px] font-bold pb-3 ${
+            index !== self.length - 1 ? "border-b border-neutral-10" : ""
+          }`}
+        >
+          <UserProfileDisplay ethereumAddress={address} shortenOnFallback={true} />
+          <p>{formatNumber(votesPerAddress[address])} votes</p>
+        </div>
+      ))}
     </div>
   );
 };
