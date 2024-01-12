@@ -3,10 +3,10 @@ import useCastVotes from "@hooks/useCastVotes";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { ProposalData } from "lib/proposal";
 import { useRouter } from "next/router";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
-import { Proposal } from "../ProposalContent";
 import SubmissionPageDesktopLayout from "./Desktop";
 import SubmissionPageMobileLayout from "./Mobile";
 interface SubmissionPageProps {
@@ -17,18 +17,16 @@ interface SubmissionPageProps {
   };
   isProposalLoading: boolean;
   isProposalError: boolean;
-  proposal: Proposal | null;
+  proposalData: ProposalData | null;
   proposalId: string;
   prompt: string;
-  numberOfComments: number;
 }
 
 const SubmissionPage: FC<SubmissionPageProps> = ({
   contestInfo,
   prompt,
-  proposal,
+  proposalData,
   proposalId,
-  numberOfComments,
   isProposalLoading,
   isProposalError,
 }) => {
@@ -91,39 +89,25 @@ const SubmissionPage: FC<SubmissionPageProps> = ({
     }
   };
 
+  const layoutProps = {
+    contestInfo,
+    prompt,
+    proposalData,
+    isProposalLoading,
+    isProposalError,
+    proposalId,
+    onClose,
+    onVote: handleCastVotes,
+    onConnectWallet,
+    onPreviousEntry: handleOnPreviousEntryChange,
+    onNextEntry: handleOnNextEntryChange,
+  };
+
   if (isMobile) {
-    return (
-      <SubmissionPageMobileLayout
-        contestInfo={contestInfo}
-        prompt={prompt}
-        proposal={proposal}
-        proposalId={proposalId}
-        onClose={onClose}
-        onVote={handleCastVotes}
-        onConnectWallet={onConnectWallet}
-        onPreviousEntry={handleOnPreviousEntryChange}
-        onNextEntry={handleOnNextEntryChange}
-        numberOfComments={numberOfComments}
-      />
-    );
+    return <SubmissionPageMobileLayout {...layoutProps} />;
   }
 
-  return (
-    <SubmissionPageDesktopLayout
-      contestInfo={contestInfo}
-      prompt={prompt}
-      proposal={proposal}
-      proposalId={proposalId}
-      isProposalLoading={isProposalLoading}
-      isProposalError={isProposalError}
-      onClose={onClose}
-      onNextEntry={handleOnNextEntryChange}
-      onConnectWallet={onConnectWallet}
-      onPreviousEntry={handleOnPreviousEntryChange}
-      onVote={handleCastVotes}
-      numberOfComments={numberOfComments}
-    />
-  );
+  return <SubmissionPageDesktopLayout {...layoutProps} />;
 };
 
 export default SubmissionPage;

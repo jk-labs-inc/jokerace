@@ -40,11 +40,10 @@ const Page: FC<PageProps> = ({ address, chain, submission, version, chainId }) =
           version,
         }}
         prompt={contestPrompt}
-        proposal={data?.proposal}
+        proposalData={data}
         isProposalLoading={loading}
         isProposalError={error}
         proposalId={id}
-        numberOfComments={data?.numberOfComments}
       />
     </>
   );

@@ -14,12 +14,11 @@ import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/st
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { compareVersions } from "compare-versions";
-import { COMMENTS_VERSION } from "lib/proposal";
+import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
 import Image from "next/image";
 import { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
 import ListProposalVotes from "../ListProposalVotes";
-import { Proposal } from "../ProposalContent";
 
 interface DialogModalProposalProps {
   contestInfo: {
@@ -30,8 +29,7 @@ interface DialogModalProposalProps {
   isOpen: boolean;
   prompt: string;
   proposalId: string;
-  proposal: Proposal | null;
-  numberOfComments: number;
+  proposalData: ProposalData | null;
   isProposalLoading: boolean;
   isProposalError: boolean;
   setIsOpen?: (isOpen: boolean) => void;
@@ -47,9 +45,8 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   isOpen,
   setIsOpen,
   prompt,
-  proposal,
+  proposalData,
   proposalId,
-  numberOfComments,
   isProposalLoading,
   isProposalError,
   onClose,
@@ -74,6 +71,27 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   useEffect(() => {
     if (isSuccess) setIsOpen?.(false);
   }, [isSuccess, setIsOpen]);
+
+  if (isProposalError) {
+    return (
+      <DialogModalV3
+        title="Proposal"
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        className="xl:w-[1110px] 3xl:w-[1300px]"
+        onClose={onClose}
+      >
+        <div
+          className="flex flex-col gap-8 md:pl-[50px] lg:pl-[100px] mt-[20px] md:mt-[60px] pb-[60px]"
+          id="custom-modal"
+        >
+          <p className="text-[16px] text-negative-11 font-bold">
+            ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
+          </p>
+        </div>
+      </DialogModalV3>
+    );
+  }
 
   return (
     <DialogModalV3
@@ -123,26 +141,30 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
           <p className="loadingDots font-sabo text-[18px] mt-8 text-neutral-9">loading proposal info</p>
         ) : (
           <div className="animate-fadeIn flex flex-col gap-8">
-            {proposal ? (
+            {proposalData?.proposal ? (
               <div className="flex flex-col gap-4">
-                {proposal.rank > 0 && (
+                {proposalData.proposal.rank > 0 && (
                   <div className="flex gap-2 items-center">
                     <p className="text-[16px] font-bold text-neutral-11">
-                      {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
+                      {formatNumber(proposalData.proposal.votes)} vote{proposalData.proposal.votes > 1 ? "s" : ""}
                     </p>
                     <span className="text-neutral-11">&#8226;</span>{" "}
                     <p className="text-[16px] font-bold text-neutral-11">
-                      {ordinalize(proposal.rank).label} place {proposal.isTied ? "(tied)" : ""}
+                      {ordinalize(proposalData.proposal.rank).label} place{" "}
+                      {proposalData.proposal.isTied ? "(tied)" : ""}
                     </p>
                   </div>
                 )}
-                <UserProfileDisplay ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
+                <UserProfileDisplay
+                  ethereumAddress={proposalData.proposal.authorEthereumAddress}
+                  shortenOnFallback={true}
+                />
               </div>
             ) : null}
 
-            {proposal ? (
+            {proposalData?.proposal ? (
               <ContestProposal
-                proposal={proposal}
+                proposal={proposalData.proposal}
                 contestStatus={contestStatus}
                 proposalId={proposalId}
                 displaySocials
@@ -185,14 +207,16 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                 </>
               )}
 
-              {proposal && proposal?.votes > 0 ? <ListProposalVotes proposalId={proposalId} /> : null}
+              {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 ? (
+                <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
+              ) : null}
             </div>
-            {commentsAllowed ? (
+            {commentsAllowed && proposalData ? (
               <Comments
                 contestAddress={contestInfo.address}
                 contestChainId={chainId}
                 proposalId={proposalId}
-                numberOfComments={numberOfComments}
+                numberOfComments={proposalData?.numberOfComments}
               />
             ) : null}
           </div>

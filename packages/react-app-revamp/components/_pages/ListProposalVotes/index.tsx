@@ -11,6 +11,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
 interface ListProposalVotesProps {
   proposalId: string;
+  votedAddresses: string[] | null;
 }
 
 const VotersList: FC<{ votesPerAddress: any }> = ({ votesPerAddress }) => {
@@ -45,7 +46,7 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
   </div>
 );
 
-export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) => {
+export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses }) => {
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
@@ -60,8 +61,11 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
     refreshData,
   } = useProposalVotes(address, proposalId, chainId);
   const onLoadMoreCalledRef = useRef(false);
-  const remainingItems = onLoadMoreCalledRef.current ? addressesVoted.length - currentPage * VOTES_PER_PAGE : 0;
-  const count = isLoading && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : 5;
+  const initialSkeletonCount = votedAddresses ? Math.min(votedAddresses.length, 5) : 5;
+  const remainingItems =
+    onLoadMoreCalledRef.current && votedAddresses ? votedAddresses.length - currentPage * VOTES_PER_PAGE : 0;
+  const count =
+    isLoading && onLoadMoreCalledRef.current ? Math.min(remainingItems, VOTES_PER_PAGE) : initialSkeletonCount;
   const [isVotersOpen, setIsVotersOpen] = useState(true);
 
   useEffect(() => {
@@ -104,24 +108,32 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId }) =>
       </div>
       <Collapsible isOpen={isVotersOpen}>
         <div className="flex flex-col gap-5 mb-12 sm:mb-0">
-          <div className="flex flex-col gap-4 md:w-[350px]">
-            {isLoading && !onLoadMoreCalledRef.current ? (
-              <LoadingSkeleton count={count} />
-            ) : (
-              <VotersList votesPerAddress={accumulatedVotesData} />
-            )}
-            {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
-          </div>
-          {currentPage < totalPages - 1 && !isLoading && (
-            <div className="flex gap-2 items-center mb-8 cursor-pointer" onClick={onLoadMore}>
-              <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
-              <button
-                className="transition-transform duration-500 ease-in-out transform 
+          {votedAddresses ? (
+            <>
+              <div className="flex flex-col gap-4 md:w-[350px]">
+                {isLoading && !onLoadMoreCalledRef.current ? (
+                  <LoadingSkeleton count={count} />
+                ) : (
+                  <VotersList votesPerAddress={accumulatedVotesData} />
+                )}
+                {isLoading && onLoadMoreCalledRef.current ? <LoadingSkeleton count={count} /> : null}
+              </div>
+              {currentPage < totalPages - 1 && !isLoading && (
+                <div className="flex gap-2 items-center mb-8 cursor-pointer" onClick={onLoadMore}>
+                  <p className="text-[16px] text-positive-11 font-bold uppercase">load more</p>
+                  <button
+                    className="transition-transform duration-500 ease-in-out transform 
             rotate-180"
-              >
-                <ChevronUpIcon height={20} className="text-positive-11" />
-              </button>
-            </div>
+                  >
+                    <ChevronUpIcon height={20} className="text-positive-11" />
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <p className="text-[16px] text-negative-11 font-bold">
+              ruh-roh! An error occurred when retrieving votes for this proposal; try refreshing the page.
+            </p>
           )}
         </div>
       </Collapsible>

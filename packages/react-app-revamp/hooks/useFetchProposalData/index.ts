@@ -14,6 +14,7 @@ const useFetchProposalData = (address: string, chainId: number, submission: stri
       setData(result);
     } catch (err: any) {
       setError(true);
+      setData(null);
     } finally {
       setLoading(false);
     }
