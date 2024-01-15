@@ -96,7 +96,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-8 mt-9">
+      <div className="flex flex-col gap-12 mt-9">
         <ContestPrompt type="modal" prompt={prompt} hidePrompt />
         {isProposalLoading ? (
           <p className="loadingDots font-sabo text-[18px] mt-12 text-neutral-9">loading submission info</p>
@@ -132,7 +132,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
               </p>
             )}
 
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-12">
               {contestStatus === ContestStatus.VotingOpen && (
                 <>
                   <p className="text-neutral-11 text-[24px] font-bold">add votes</p>

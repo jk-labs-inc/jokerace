@@ -140,7 +140,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
         {isProposalLoading ? (
           <p className="loadingDots font-sabo text-[18px] mt-8 text-neutral-9">loading submission info</p>
         ) : (
-          <div className="animate-fadeIn flex flex-col gap-8">
+          <div className="animate-fadeIn flex flex-col gap-12">
             {proposalData?.proposal ? (
               <div className="flex flex-col gap-4">
                 {proposalData.proposal.rank > 0 && (
@@ -174,7 +174,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                 ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
               </p>
             )}
-            <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-12">
               {contestStatus === ContestStatus.VotingOpen && (
                 <>
                   <p className="text-neutral-11 text-[24px] font-bold">vote</p>
