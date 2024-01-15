@@ -4,6 +4,7 @@ export const arbitrumOne: Chain = {
   id: 42161,
   name: "arbitrumone",
   network: "arbitrumone",
+  iconUrl: "/arbitrum.svg",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",

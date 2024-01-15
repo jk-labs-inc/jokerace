@@ -4,6 +4,7 @@ export const astriaDusk2: Chain = {
   id: 912559,
   name: "astriaDusk2",
   network: "astriaDusk2",
+  iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
     name: "RIA",

@@ -4,6 +4,7 @@ export const x1Testnet: Chain = {
   id: 195,
   name: "x1Testnet",
   network: "x1Testnet",
+  iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
     name: "OKB",
