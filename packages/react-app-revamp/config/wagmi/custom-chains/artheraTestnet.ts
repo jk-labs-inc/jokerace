@@ -4,6 +4,7 @@ export const artheraTestnet: Chain = {
   id: 10243,
   name: "artheraTestnet",
   network: "artheraTestnet",
+  iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
     name: "Arthera",

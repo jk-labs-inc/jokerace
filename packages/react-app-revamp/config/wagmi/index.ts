@@ -1,4 +1,4 @@
-import { connectorsForWallets } from "@rainbow-me/rainbowkit";
+import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   bitKeepWallet,
@@ -16,7 +16,7 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { luksoWallet } from "./custom-wallets/luksoWallet";
 
-import { Chain, configureChains, createConfig } from "wagmi";
+import { configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -212,64 +212,9 @@ export const config = createConfig({
   webSocketPublicClient,
 });
 
-export const chainsImages: ChainImages = {
-  avalanche: "/avalanche.png",
-  harmony: "/harmony.png",
-  arbitrum: "/arbitrum.svg",
-  arbitrumone: "/arbitrum.svg",
-  arbitrumrinkeby: "/arbitrum.svg",
-  optimismkovan: "/optimism.svg",
-  optimism: "/optimism.svg",
-  ethereum: "/ethereum.svg",
-  hardhat: "/hardhat.svg",
-  rinkeby: "/ethereum.svg",
-  ropsten: "/ethereum.svg",
-  sepolia: "/ethereum.svg",
-  localhost: "/ethereum.svg",
-  goerli: "/ethereum.svg",
-  kovan: "/ethereum.svg",
-  polygon: "/polygon.svg",
-  polygontestnet: "/polygon.svg",
-  polygonzktestnet: "/polygon.svg",
-  polygonzk: "/polygon.svg",
-  scroll: "/scroll.svg",
-  scrolltestnet: "/scroll.svg",
-  base: "/base.svg",
-  gnosis: "/gnosis.png",
-  gnosistestnet: "/gnosis.png",
-  publicgoodsnetwork: "/publicgoodsnetwork.svg",
-  publicgoodsnetworktestnet: "/publicgoodsnetwork.svg",
-  lootchain: "/lootchain.svg",
-  lootchaintestnet: "/lootchain.svg",
-  celo: "/celo.svg",
-  celotestnet: "/celo.svg",
-  evmos: "/evmos.svg",
-  evmostestnet: "/evmos.svg",
-  linea: "/linea.svg",
-  lineatestnet: "/linea.svg",
-  littestnet: "/lit.svg",
-  lukso: "/lukso.svg",
-  luksotestnet: "/lukso.svg",
-  mantaPacific: "/mantaPacific.svg",
-  mantle: "/mantle.svg",
-  mantletestnet: "/mantle.svg",
-  nautilusChain: "/nautilusChain.png",
-  near: "/aurora.svg",
-  neartestnet: "/aurora.svg",
-  zetatestnet: "/zeta.svg",
-  zora: "/zora.png",
-  qchain: "/qchain.svg",
-  qchaintestnet: "/qchain.svg",
-  eos: "/eos.svg",
-  eostestnet: "/eos.svg",
-  fuse: "/fuse.svg",
-  kroma: "/kroma.svg",
-  mainnet: "/ethereum.svg",
-  quartz: "/quartz.svg",
-  unique: "/unique.svg",
-  vitruveo: "/vitruveo.svg",
-  mode: "/mode.svg",
-  modetestnet: "/mode.svg",
-  fantom: "/fantom.svg",
-  fantomtestnet: "/fantom.svg",
-};
+export const chainsImages: ChainImages = totalChains.reduce((acc, chain) => {
+  if (chain.name && chain.iconUrl) {
+    acc[chain.name.toLowerCase()] = chain.iconUrl as string;
+  }
+  return acc;
+}, {} as ChainImages);

@@ -4,6 +4,7 @@ export const frameTestnet: Chain = {
   id: 68840142,
   name: "frameTestnet",
   network: "frameTestnet",
+  iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",

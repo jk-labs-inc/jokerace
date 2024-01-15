@@ -4,6 +4,7 @@ export const goerli: Chain = {
   id: 5,
   name: "goerli",
   network: "goerli",
+  iconUrl: "/ethereum.svg",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",

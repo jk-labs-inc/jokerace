@@ -4,6 +4,7 @@ export const taikoTestnet: Chain = {
   id: 167007,
   name: "taikoTestnet",
   network: "taikoTestnet",
+  iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",

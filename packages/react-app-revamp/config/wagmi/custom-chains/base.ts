@@ -4,6 +4,7 @@ export const base: Chain = {
   id: 8453,
   name: "base",
   network: "base",
+  iconUrl: "/base.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

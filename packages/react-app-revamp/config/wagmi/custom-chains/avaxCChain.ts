@@ -4,6 +4,7 @@ export const avaxCChain: Chain = {
   id: 43114,
   name: "Avalanche",
   network: "avaxCChain",
+  iconUrl: "/avalanche.png",
   nativeCurrency: {
     decimals: 18,
     name: "AVAX",
