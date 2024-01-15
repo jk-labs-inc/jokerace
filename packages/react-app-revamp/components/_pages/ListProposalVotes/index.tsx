@@ -99,7 +99,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
         ) : null}
       </div>
       <Collapsible isOpen={isVotersOpen}>
-        <div className="flex flex-col gap-5 mb-12 sm:mb-0">
+        <div className="flex flex-col gap-5">
           {votedAddresses ? (
             <>
               <div className="flex flex-col gap-4 md:w-[350px]">

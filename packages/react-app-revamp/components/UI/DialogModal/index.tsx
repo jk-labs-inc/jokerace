@@ -23,7 +23,7 @@ const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children,
       <div className="fixed inset-0 flex items-center justify-center 2xs:p-4">
         <div className="flex min-h-full w-full items-center justify-center">
           <Dialog.Panel
-            className={`text-sm mx-auto min-h-screen max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-primary-10 border-opacity-40 bg-neutral-0 2xs:rounded-lg ${className}`}
+            className={`text-sm mx-auto max-h-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] w-full max-w-screen-2xs border px-4 pt-4 pb-6 border-primary-10 border-opacity-40 bg-neutral-0 2xs:rounded-lg ${className}`}
           >
             <Dialog.Title className="sr-only">{title}</Dialog.Title>
             <div className="p-2 relative">
@@ -41,7 +41,7 @@ const DialogModal: FC<DialogModalProps> = ({ isOpen, setIsOpen, title, children,
                 <IconClose className="hidden 2xs:block" />
                 <span className="sr-only">Close modal</span>
               </button>
-              <div className="pt-20 2xs:pt-3 pie-3">{children}</div>
+              <div className="pt-20 2xs:pt-3 pie-2">{children}</div>
             </div>
           </Dialog.Panel>
         </div>

@@ -4,6 +4,7 @@ export const redstoneHolesky: Chain = {
   id: 17001,
   name: "redstoneHolesky",
   network: "redstoneHolesky",
+  iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",
