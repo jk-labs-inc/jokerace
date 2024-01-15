@@ -1,13 +1,15 @@
 import Comments from "@components/Comments";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import DialogModalV3 from "@components/UI/DialogModalV3";
+import Loader from "@components/UI/Loader";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
-import { Proposal } from "@components/_pages/ProposalContent";
 import { chains } from "@config/wagmi";
+import { formatNumber } from "@helpers/formatNumber";
+import ordinalize from "@helpers/ordinalize";
 import { generateUrlSubmissions } from "@helpers/share";
 import { ArrowLeftIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
@@ -16,7 +18,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useAccountModal, useConnectModal } from "@rainbow-me/rainbowkit";
 import { compareVersions } from "compare-versions";
-import { COMMENTS_VERSION } from "lib/proposal";
+import { COMMENTS_VERSION, ProposalData } from "lib/proposal";
 import Image from "next/image";
 import { FC } from "react";
 import { useAccount } from "wagmi";
@@ -27,10 +29,11 @@ interface SubmissionPageMobileLayoutProps {
     chain: string;
     version: string;
   };
-  numberOfComments: number;
   proposalId: string;
   prompt: string;
-  proposal: Proposal | null;
+  proposalData: ProposalData | null;
+  isProposalLoading: boolean;
+  isProposalError: boolean;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
   onPreviousEntry?: () => void;
@@ -40,10 +43,11 @@ interface SubmissionPageMobileLayoutProps {
 
 const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   contestInfo,
-  numberOfComments,
   proposalId,
   prompt,
-  proposal,
+  proposalData,
+  isProposalLoading,
+  isProposalError,
   onClose,
   onVote,
   onPreviousEntry,
@@ -65,6 +69,16 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain)?.[0]?.id;
 
+  if (isProposalError) {
+    return (
+      <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
+        <p className="text-[16px] text-negative-11 font-bold">
+          ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
+        </p>
+      </DialogModalV3>
+    );
+  }
+
   return (
     <DialogModalV3 isOpen={true} title="submissionMobile" isMobile>
       <div className={`flex justify-between ${isInPwaMode ? "mt-0" : "mt-12"}`}>
@@ -83,77 +97,90 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         </div>
       </div>
       <div className="flex flex-col gap-8 mt-9">
-        <div className="flex flex-col gap-4">
-          <ContestPrompt type="modal" prompt={prompt} hidePrompt />
-          {proposal ? (
-            <div className="flex flex-col gap-4">
-              {/* {proposal.rank > 0 && (
-                <div className="flex gap-2 items-center">
-                  <p className="text-[16px] font-bold text-neutral-11">
-                    {formatNumber(proposal.votes)} vote{proposal.votes > 1 ? "s" : ""}
-                  </p>
-                  <span className="text-neutral-11">&#8226;</span>{" "}
-                  <p className="text-[16px] font-bold text-neutral-11">
-                    {ordinalize(proposal.rank).label} place {proposal.isTied ? "(tied)" : ""}
-                  </p>
-                </div>
-              )} */}
-              <UserProfileDisplay ethereumAddress={proposal.authorEthereumAddress} shortenOnFallback={true} />
-            </div>
-          ) : null}
-        </div>
-        {proposal ? (
-          <ContestProposal proposal={proposal} contestStatus={contestStatus} />
+        <ContestPrompt type="modal" prompt={prompt} hidePrompt />
+        {isProposalLoading ? (
+          <p className="loadingDots font-sabo text-[18px] mt-12 text-neutral-9">loading submission info</p>
         ) : (
-          <p className="text-[16px] text-negative-11 font-bold">
-            ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
-          </p>
+          <div className="animate-fadeIn flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              {proposalData?.proposal ? (
+                <div className="flex flex-col gap-4">
+                  {proposalData.proposal.rank > 0 && (
+                    <div className="flex gap-2 items-center">
+                      <p className="text-[16px] font-bold text-neutral-11">
+                        {formatNumber(proposalData.proposal.votes)} vote{proposalData.proposal.votes > 1 ? "s" : ""}
+                      </p>
+                      <span className="text-neutral-11">&#8226;</span>{" "}
+                      <p className="text-[16px] font-bold text-neutral-11">
+                        {ordinalize(proposalData.proposal.rank).label} place{" "}
+                        {proposalData.proposal.isTied ? "(tied)" : ""}
+                      </p>
+                    </div>
+                  )}
+                  <UserProfileDisplay
+                    ethereumAddress={proposalData.proposal.authorEthereumAddress}
+                    shortenOnFallback={true}
+                  />
+                </div>
+              ) : null}
+            </div>
+            {proposalData?.proposal ? (
+              <ContestProposal proposal={proposalData.proposal} contestStatus={contestStatus} />
+            ) : (
+              <p className="text-[16px] text-negative-11 font-bold">
+                ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
+              </p>
+            )}
+
+            <div className="flex flex-col gap-8">
+              {contestStatus === ContestStatus.VotingOpen && (
+                <>
+                  <p className="text-neutral-11 text-[24px] font-bold">add votes</p>
+                  {isConnected ? (
+                    currentUserAvailableVotesAmount > 0 ? (
+                      <VotingWidget
+                        amountOfVotes={currentUserAvailableVotesAmount}
+                        onVote={onVote}
+                        downvoteAllowed={downvotingAllowed}
+                      />
+                    ) : outOfVotes ? (
+                      <p className="text-[16px] text-neutral-11">
+                        looks like you’ve used up all your votes this contest <br />
+                        feel free to try connecting another wallet to see if it has more votes!
+                      </p>
+                    ) : (
+                      <p className="text-[16px] text-neutral-11">
+                        unfortunately your wallet didn’t qualify to vote in this contest <br />
+                        feel free to try connecting another wallet!
+                      </p>
+                    )
+                  ) : (
+                    <p className="text-[16px] font-bold text-neutral-11 mt-2">
+                      <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
+                        connect wallet
+                      </span>{" "}
+                      to see if you qualify
+                    </p>
+                  )}
+                </>
+              )}
+              {proposalData && proposalData.proposal && proposalData.proposal.votes > 0 ? (
+                <ListProposalVotes proposalId={proposalId} votedAddresses={proposalData.votedAddresses} />
+              ) : null}
+            </div>
+
+            {commentsAllowed && proposalData ? (
+              <Comments
+                contestAddress={contestInfo.address}
+                contestChainId={chainId}
+                proposalId={proposalId}
+                numberOfComments={proposalData?.numberOfComments}
+              />
+            ) : null}
+          </div>
         )}
 
-        <div className="flex flex-col gap-8">
-          {contestStatus === ContestStatus.VotingOpen && (
-            <>
-              <p className="text-neutral-11 text-[24px] font-bold">add votes</p>
-              {isConnected ? (
-                currentUserAvailableVotesAmount > 0 ? (
-                  <VotingWidget
-                    amountOfVotes={currentUserAvailableVotesAmount}
-                    onVote={onVote}
-                    downvoteAllowed={downvotingAllowed}
-                  />
-                ) : outOfVotes ? (
-                  <p className="text-[16px] text-neutral-11">
-                    looks like you’ve used up all your votes this contest <br />
-                    feel free to try connecting another wallet to see if it has more votes!
-                  </p>
-                ) : (
-                  <p className="text-[16px] text-neutral-11">
-                    unfortunately your wallet didn’t qualify to vote in this contest <br />
-                    feel free to try connecting another wallet!
-                  </p>
-                )
-              ) : (
-                <p className="text-[16px] font-bold text-neutral-11 mt-2">
-                  <span className="text-positive-11 cursor-pointer" onClick={onConnectWallet}>
-                    connect wallet
-                  </span>{" "}
-                  to see if you qualify
-                </p>
-              )}
-            </>
-          )}
-          <ListProposalVotes proposalId={proposalId} />
-        </div>
-
-        {commentsAllowed ? (
-          <Comments
-            contestAddress={contestInfo.address}
-            contestChainId={chainId}
-            proposalId={proposalId}
-            numberOfComments={numberOfComments}
-          />
-        ) : null}
-        <div className={`${isInPwaMode ? "mt-28" : "mt-20"}`}>
+        <div className="mt-20">
           <div
             className={`${totalProposals > 1 ? "fixed" : "hidden"} ${
               isInPwaMode ? "bottom-[88px]" : "bottom-16"

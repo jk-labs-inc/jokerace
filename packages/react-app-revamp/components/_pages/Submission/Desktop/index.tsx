@@ -1,5 +1,6 @@
 import DialogModalProposal from "@components/_pages/DialogModalProposal";
 import { Proposal } from "@components/_pages/ProposalContent";
+import { ProposalData } from "lib/proposal";
 import { FC } from "react";
 
 interface SubmissionPageDesktopLayoutProps {
@@ -10,8 +11,9 @@ interface SubmissionPageDesktopLayoutProps {
   };
   proposalId: string;
   prompt: string;
-  proposal: Proposal | null;
-  numberOfComments: number;
+  proposalData: ProposalData | null;
+  isProposalLoading: boolean;
+  isProposalError: boolean;
   onClose?: () => void;
   onVote?: (amount: number, isUpvote: boolean) => void;
   onPreviousEntry?: () => void;
@@ -23,8 +25,9 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
   contestInfo,
   proposalId,
   prompt,
-  proposal,
-  numberOfComments,
+  proposalData,
+  isProposalLoading,
+  isProposalError,
   onClose,
   onVote,
   onPreviousEntry,
@@ -37,8 +40,9 @@ const SubmissionPageDesktopLayout: FC<SubmissionPageDesktopLayoutProps> = ({
       proposalId={proposalId}
       prompt={prompt}
       isOpen={true}
-      proposal={proposal}
-      numberOfComments={numberOfComments}
+      proposalData={proposalData}
+      isProposalLoading={isProposalLoading}
+      isProposalError={isProposalError}
       onClose={onClose}
       onVote={onVote}
       onConnectWallet={onConnectWallet}

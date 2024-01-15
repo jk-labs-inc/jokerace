@@ -12,7 +12,11 @@ import { fetchNftHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 
-const options: Option[] = [{ value: "anyone" }, { value: "voters (same requirements)" }, { value: "NFT holders" }];
+const options: Option[] = [
+  { value: "anyone", label: "anyone" },
+  { value: "voters", label: "voters (same requirements)" },
+  { value: "nftHolders", label: "NFT holders" },
+];
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -39,7 +43,7 @@ const CreateSubmissionRequirements = () => {
 
   const renderLayout = () => {
     switch (submissionRequirementsOption) {
-      case "NFT holders":
+      case "nftHolders":
         return <CreateSubmissionRequirementsNftSettings error={inputError} />;
       default:
         return null;
@@ -184,9 +188,9 @@ const CreateSubmissionRequirements = () => {
   };
 
   const handleNextStep = async () => {
-    if (submissionRequirementsOption === "voters (same requirements)") {
+    if (submissionRequirementsOption === "voters") {
       handleVotersSameRequirements();
-    } else if (submissionRequirementsOption === "NFT holders") {
+    } else if (submissionRequirementsOption === "nftHolders") {
       handleNftHolders();
     } else {
       setSubmissionAllowlistFields([]);

@@ -52,7 +52,7 @@ const CreateVotingRequirements = () => {
 
   const renderLayout = () => {
     switch (selectedRequirement) {
-      case "NFT holders":
+      case "nftHolders":
         return <CreateVotingRequirementsNftSettings error={inputError} />;
       default:
         return null;

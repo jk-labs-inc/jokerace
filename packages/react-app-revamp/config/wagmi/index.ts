@@ -77,11 +77,13 @@ import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
+import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
+import { berachainTestnet } from "./custom-chains/berachainTestnet";
 
 type ChainImages = {
   [key: string]: string;
@@ -151,6 +153,8 @@ const totalChains: Chain[] = [
   neonDevnet,
   frameTestnet,
   fantomTestnet,
+  berachainTestnet,
+  taikoTestnet,
   mainnet,
 ];
 
@@ -228,8 +232,8 @@ export const chainsImages: ChainImages = {
   polygontestnet: "/polygon.svg",
   polygonzktestnet: "/polygon.svg",
   polygonzk: "/polygon.svg",
-  scroll: "/scroll.png",
-  scrolltestnet: "/scroll.png",
+  scroll: "/scroll.svg",
+  scrolltestnet: "/scroll.svg",
   base: "/base.svg",
   gnosis: "/gnosis.png",
   gnosistestnet: "/gnosis.png",

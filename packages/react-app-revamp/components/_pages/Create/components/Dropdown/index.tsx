@@ -4,6 +4,7 @@ import CreateTextInput from "../TextInput";
 
 export interface Option {
   value: string;
+  label: string;
   disabled?: boolean;
 }
 
@@ -24,15 +25,9 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
   onChange,
   onMenuStateChange,
 }) => {
-  const [query, setQuery] = useState(value);
+  // Initial query state is set to the label of the option matching the value prop
+  const [query, setQuery] = useState(options.find(option => option.value === value)?.label || value);
   const [showOptions, setShowOptions] = useState(false);
-  const filteredOptions =
-    !searchEnabled || query === ""
-      ? options
-      : options.filter(option => {
-          return option.value.toLowerCase().includes(query.toLowerCase());
-        });
-
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,6 +47,15 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     };
   }, []);
 
+  const filteredOptions =
+    !searchEnabled || query === ""
+      ? options
+      : options.filter(
+          option =>
+            option.label.toLowerCase().includes(query.toLowerCase()) ||
+            option.value.toLowerCase().includes(query.toLowerCase()),
+        );
+
   const handleInputChange = (value: string) => {
     if (searchEnabled) {
       setQuery(value);
@@ -65,18 +69,19 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     }
   };
 
-  const handleOptionClick = (option: string) => {
-    setQuery(option);
-    setShowOptions(false);
-    onChange?.(option);
+  const handleOptionClick = (optionValue: string) => {
+    const selectedOption = options.find(option => option.value === optionValue);
+    if (selectedOption) {
+      setQuery(selectedOption.label);
+      setShowOptions(false);
+      onChange?.(selectedOption.value);
+    }
   };
 
-  const handleIconClick = () => {
-    // Only toggle `showOptions` if there are matching options
+  const handleDropdownMenu = () => {
     if (filteredOptions.length > 0) {
       setShowOptions(!showOptions);
     } else {
-      // Ensure `showOptions` is false if there are no matching options
       setShowOptions(false);
     }
   };
@@ -87,11 +92,11 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
         value={query}
         readOnly={!searchEnabled}
         className={className}
-        onClick={() => setShowOptions(true)}
+        onClick={handleDropdownMenu}
         onChange={value => handleInputChange(value)}
         placeholder="select an option or type your own"
       />
-      <ChevronDownIcon className="w-5 cursor-pointer -ml-[35px]" onClick={handleIconClick} />
+      <ChevronDownIcon className="w-5 cursor-pointer -ml-[35px]" onClick={handleDropdownMenu} />
       {showOptions && (
         <ul
           className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
@@ -107,7 +112,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
               key={option.value}
               onClick={() => handleOptionClick(option.value)}
             >
-              {option.value}
+              {option.label}
             </li>
           ))}
         </ul>

@@ -9,23 +9,22 @@ import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
 
 const options: Option[] = [
-  { value: "hackathon" },
-  { value: "grants round" },
-  { value: "bounty" },
-  { value: "pulse check" },
-  { value: "amend a proposal" },
-  { value: "contest competition" },
-  { value: "giveaway" },
-  { value: "feature request" },
-  { value: "curation" },
-  { value: "game" },
-  { value: "election" },
+  { value: "hackathon", label: "hackathon" },
+  { value: "grants round", label: "grants round" },
+  { value: "bounty", label: "bounty" },
+  { value: "pulse check", label: "pulse check" },
+  { value: "amend a proposal", label: "amend a proposal" },
+  { value: "contest competition", label: "contest competition" },
+  { value: "giveaway", label: "giveaway" },
+  { value: "feature request", label: "feature request" },
+  { value: "curation", label: "curation" },
+  { value: "game", label: "game" },
+  { value: "election", label: "election" },
 ];
 
 const CreateContestType = () => {
   const { type, setType, errors, step } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
-
   const [fadeBg, setFadeBg] = useState(false);
   const typeValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => typeValidation?.[0].validation(type)]);
