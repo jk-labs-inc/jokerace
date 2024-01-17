@@ -11,11 +11,13 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
+import CreateSubmissionRequirementsTokenSettings from "./components/Token";
 
 const options: Option[] = [
   { value: "anyone", label: "anyone" },
   { value: "voters", label: "voters (same requirements)" },
   { value: "nftHolders", label: "NFT holders" },
+  { value: "erc20Holders", label: "token holders" },
 ];
 
 type WorkerMessageData = {
@@ -45,6 +47,8 @@ const CreateSubmissionRequirements = () => {
     switch (submissionRequirementsOption) {
       case "nftHolders":
         return <CreateSubmissionRequirementsNftSettings error={inputError} />;
+      case "erc20Holders":
+        return <CreateSubmissionRequirementsTokenSettings error={inputError} />;
       default:
         return null;
     }
@@ -52,6 +56,7 @@ const CreateSubmissionRequirements = () => {
 
   const onSubmissionRequirementsOptionChange = (value: string) => {
     setSubmissionRequirementsOption(value);
+    setInputError({});
   };
 
   useEffect(() => {

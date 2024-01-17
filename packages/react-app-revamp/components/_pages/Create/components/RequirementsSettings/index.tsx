@@ -1,10 +1,10 @@
 import CreateDropdown from "@components/_pages/Create/components/Dropdown";
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
+import { MAX_VOTES } from "@helpers/csvConstants";
 import { FC } from "react";
 import { chainDropdownOptions, votingPowerOptions } from "./config";
-import { MAX_VOTES } from "@helpers/csvConstants";
 
-interface CreateVotingRequirementsSettingsProps {
+interface CreateRequirementsSettingsProps {
   step: "voting" | "submission";
   settingType: "erc721" | "erc20";
   chain: string;
@@ -20,7 +20,7 @@ interface CreateVotingRequirementsSettingsProps {
   onPowerValueChange?: (votingPower: string) => void;
 }
 
-const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps> = ({
+const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   step,
   settingType,
   chain,
@@ -35,14 +35,29 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
   onPowerTypeChange,
   onPowerValueChange,
 }) => {
+  const chainOptions = () => {
+    if (settingType === "erc20") {
+      return chainDropdownOptions.map(option => {
+        return {
+          ...option,
+          disabled: option.label !== "ethereum",
+        };
+      });
+    }
+
+    return chainDropdownOptions;
+  };
+
   return (
     <div className="md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-1">
-          <p className="text-[16px] text-primary-10 font-bold uppercase">chain of nft</p>
+          <p className="text-[16px] text-primary-10 font-bold uppercase">
+            chain of {settingType === "erc20" ? "token" : "nft"}
+          </p>
           <CreateDropdown
             value={chain}
-            options={chainDropdownOptions}
+            options={chainOptions()}
             className="w-full md:w-44 text-[16px] md:text-[24px] cursor-pointer"
             searchEnabled={false}
             onChange={onChainChange}
@@ -112,4 +127,4 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
   );
 };
 
-export default CreateVotingRequirementsSettings;
+export default CreateRequirementsSettings;

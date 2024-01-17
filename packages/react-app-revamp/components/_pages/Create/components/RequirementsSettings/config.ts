@@ -1,8 +1,8 @@
 import { Option } from "@components/_pages/Create/components/Dropdown";
 
 export const requirementsDropdownOptions: Option[] = [
+  { value: "erc20Holders", label: "token holders" },
   { value: "nftHolders", label: "NFT holders" },
-  { value: "erc20Holders", label: "token holders", disabled: true },
 ];
 
 export const chainDropdownOptions: Option[] = [

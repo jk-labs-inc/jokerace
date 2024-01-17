@@ -11,6 +11,7 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
+import CreateVotingRequirementsTokenSettings from "./components/Token";
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -32,7 +33,9 @@ const CreateVotingRequirements = () => {
   const votingValidation = validationFunctions.get(step);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
+
   const onRequirementChange = (option: string) => {
+    setInputError({});
     setSelectedRequirement(option);
   };
 
@@ -54,6 +57,8 @@ const CreateVotingRequirements = () => {
     switch (selectedRequirement) {
       case "nftHolders":
         return <CreateVotingRequirementsNftSettings error={inputError} />;
+      case "erc20Holders":
+        return <CreateVotingRequirementsTokenSettings error={inputError} />;
       default:
         return null;
     }
