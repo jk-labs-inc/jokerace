@@ -59,16 +59,16 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="theme-color" content="#000000" />
         <meta name="color-scheme" content="dark" />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://jokerace.io/" />
+        <meta property="og:url" content="https://jokerace.xyz/" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} key="main" />
         <meta property="og:locale" content="en_GB" />
-        <meta property="og:image" content="https://jokerace.io/jokerace.png" />
+        <meta property="og:image" content="https://jokerace.xyz/jokerace.png" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@jokerace_xyz" />
         <meta name="twitter:description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-        <meta name="twitter:image" content="https://jokerace.io/jokerace.png" />
+        <meta name="twitter:image" content="https://jokerace.xyz/jokerace.png" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />

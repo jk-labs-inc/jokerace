@@ -6,7 +6,7 @@ interface UrlParams {
 }
 
 const BASE_LENSTER_URL = "https://hey.xyz/?";
-const BASE_JOKERACE_URL = "https://jokerace.io/contest/";
+const BASE_JOKERACE_URL = "https://jokerace.xyz/contest/";
 const BASE_TWITTER_URL = "https://twitter.com/intent/tweet?";
 const BASE_LINKEDIN_URL = "https://www.linkedin.com/sharing/share-offsite/?";
 const BASE_FACEBOOK_URL = "https://www.facebook.com/sharer/sharer.php?";

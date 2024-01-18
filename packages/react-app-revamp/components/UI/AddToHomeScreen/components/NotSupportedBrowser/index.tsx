@@ -33,7 +33,7 @@ const AddToHomeScreenNotSupportedBrowser: FC<AddToHomeScreenNotSupportedBrowserP
           <div className="markdown pl-1">
             <ol className="flex flex-col gap-3">
               <li className="text-[16px]">
-                open jokerace.io in safari <i>or</i> chrome
+                open jokerace.xyz in safari <i>or</i> chrome
               </li>
               <li className="text-[16px]">
                 tap the <b>share icon</b>
