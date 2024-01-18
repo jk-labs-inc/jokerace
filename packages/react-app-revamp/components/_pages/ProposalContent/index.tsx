@@ -73,7 +73,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
         />
         <div className="flex items-center overflow-hidden px-14 h-64 md:h-52">
           <Interweave
-            className="line-clamp-6 md:line-clamp-4 markdown overflow-y-hidden text-[16px] md:text-[18px]"
+            className="line-clamp-6 md:line-clamp-5 markdown overflow-y-hidden text-[16px] md:text-[18px]"
             content={truncatedContent}
             transform={transform}
           />
