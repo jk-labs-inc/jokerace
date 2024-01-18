@@ -92,3 +92,12 @@ export async function fetchNftHolders(
     });
   });
 }
+
+export async function fetchTokenHolders(
+  type: "voting" | "submission",
+  contractAddress: string,
+  chainName: string,
+  minTokensRequired: number = 1,
+  votesPerUnit: number = 100,
+  voteCalculationMethod: string = "token",
+) {}

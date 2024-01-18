@@ -80,7 +80,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
             placeholder="1"
             onChange={onMinTokensRequiredChange}
           />
-          <p className="text-negative-11 text-[14px] font-bold animate-appear">{error?.minTokensRequiredError}</p>
+          <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.minTokensRequiredError}</p>
         </div>
         <div className="flex flex-col gap-1">
           <p className="text-[16px] text-primary-10 font-bold uppercase">token address</p>
@@ -91,7 +91,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
             onChange={onTokenAddressChange}
           />
           {error?.tokenAddressError ? (
-            <p className="text-negative-11 text-[14px] font-bold animate-appear">{error.tokenAddressError}</p>
+            <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error.tokenAddressError}</p>
           ) : (
             <p className="text-[16px] text-neutral-14 font-bold">
               when you press “next,” we’ll take a snapshot of all holders to allowlist
@@ -119,7 +119,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                 onChange={onPowerTypeChange}
               />
             </div>
-            <p className="text-negative-11 text-[14px] font-bold animate-appear">{error?.powerValueError}</p>
+            <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.powerValueError}</p>
           </div>
         ) : null}
       </div>

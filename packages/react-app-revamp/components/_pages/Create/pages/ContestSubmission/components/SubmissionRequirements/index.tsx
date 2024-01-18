@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDropdown, { Option } from "@components/_pages/Create/components/Dropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
@@ -8,7 +8,7 @@ import { tokenAddressRegex } from "@helpers/regex";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { fetchNftHolders } from "lib/permissioning";
+import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
@@ -16,8 +16,8 @@ import CreateSubmissionRequirementsTokenSettings from "./components/Token";
 const options: Option[] = [
   { value: "anyone", label: "anyone" },
   { value: "voters", label: "voters (same requirements)" },
-  { value: "nftHolders", label: "NFT holders" },
   { value: "erc20Holders", label: "token holders" },
+  { value: "nftHolders", label: "NFT holders" },
 ];
 
 type WorkerMessageData = {
@@ -156,16 +156,20 @@ const CreateSubmissionRequirements = () => {
     });
   };
 
-  const handleNftHolders = async () => {
+  const fetchRequirementsMerkleData = async (type: string) => {
     const isValid = validateInput();
 
     if (!isValid) {
       return;
     }
+
+    let result: Record<string, number>;
     toastLoading("processing your allowlist...", false);
 
     try {
-      const result = await fetchNftHolders(
+      const fetchMerkleData = type === "nftHolders" ? fetchNftHolders : fetchTokenHolders;
+
+      result = await fetchMerkleData(
         "submission",
         submissionRequirements.tokenAddress,
         submissionRequirements.chain,
@@ -173,21 +177,23 @@ const CreateSubmissionRequirements = () => {
       );
 
       if (result instanceof Error) {
-        toastError(result.message);
+        setInputError({
+          tokenAddressError: result.message,
+        });
+        toastDismiss();
         return;
-      } else {
-        const worker = initializeWorker();
-        setSubmissionRequirements({
-          ...submissionRequirements,
-          timestamp: Date.now(),
-        });
-        worker.postMessage({
-          decimals: 18,
-          allowList: result,
-        });
       }
+
+      const worker = initializeWorker();
+      worker.postMessage({
+        decimals: 18,
+        allowList: result,
+      });
     } catch (error: any) {
-      toastError(error.message);
+      setInputError({
+        tokenAddressError: error.message,
+      });
+      toastDismiss();
       return;
     }
   };
@@ -195,8 +201,8 @@ const CreateSubmissionRequirements = () => {
   const handleNextStep = async () => {
     if (submissionRequirementsOption === "voters") {
       handleVotersSameRequirements();
-    } else if (submissionRequirementsOption === "nftHolders") {
-      handleNftHolders();
+    } else if (submissionRequirementsOption) {
+      fetchRequirementsMerkleData(submissionRequirementsOption);
     } else {
       setSubmissionAllowlistFields([]);
       setBothSubmissionMerkles(null);
