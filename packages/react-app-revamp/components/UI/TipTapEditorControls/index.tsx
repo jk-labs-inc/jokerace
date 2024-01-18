@@ -6,7 +6,6 @@ import {
   IconEditorListOrdered,
   IconEditorListUnordered,
   IconEditorQuote,
-  IconEditorRemoveAnchor,
 } from "@components/UI/Icons";
 import { useUploadImageStore } from "@hooks/useUploadImage";
 import { Editor } from "@tiptap/react";
@@ -44,6 +43,10 @@ export const TipTapEditorControls = (props: TipTapEditorControlsProps) => {
         }
       } catch (error) {
         console.error("Failed to upload image:", error);
+      }
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
     }
   };
