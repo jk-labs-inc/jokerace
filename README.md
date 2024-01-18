@@ -1,6 +1,6 @@
 # jokerace • [![Forge Tests](https://github.com/jk-labs-inc/jokerace/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml)
 
-Check out the live site at [jokerace.xyz](https://jokerace.xyz/)!
+Check out the live site at [jokerace.io](https://jokerace.io/)!
 
 Also, our smart contracts were audited by Certik in September 2023, check out the audit report [here](https://github.com/jk-labs-inc/jokerace-audits/blob/main/audit-reports/Sept23_Certik_Final_Report.pdf)!
 
