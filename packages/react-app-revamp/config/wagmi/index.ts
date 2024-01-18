@@ -19,6 +19,7 @@ import { luksoWallet } from "./custom-wallets/luksoWallet";
 import { configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
+import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
@@ -125,6 +126,7 @@ const totalChains: Chain[] = [
   mode,
   astriaDusk2,
   fantom,
+  arthera,
   polygonTestnet,
   sepolia,
   goerli,
