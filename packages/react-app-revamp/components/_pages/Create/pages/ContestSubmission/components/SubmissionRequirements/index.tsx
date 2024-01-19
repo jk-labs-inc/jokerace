@@ -201,7 +201,7 @@ const CreateSubmissionRequirements = () => {
   const handleNextStep = async () => {
     if (submissionRequirementsOption === "voters") {
       handleVotersSameRequirements();
-    } else if (submissionRequirementsOption === "erc20Holders" || submissionRequirementsOption === "nftHolders") {
+    } else if (submissionRequirementsOption === "erc20" || submissionRequirementsOption === "erc721") {
       fetchRequirementsMerkleData(submissionRequirementsOption);
     } else {
       setSubmissionAllowlistFields([]);

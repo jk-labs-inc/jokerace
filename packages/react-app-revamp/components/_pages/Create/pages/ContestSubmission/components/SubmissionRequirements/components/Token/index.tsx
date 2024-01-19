@@ -38,7 +38,7 @@ const CreateSubmissionRequirementsTokenSettings: FC<CreateSubmissionRequirements
       error={error}
       chain={submissionRequirements.chain}
       tokenAddress={submissionRequirements.tokenAddress}
-      minTokensRequired={submissionRequirements.minTokensRequired.toString()}
+      minTokensRequired={submissionRequirements.minTokensRequired}
       onChainChange={onSubmissionsRequirementChainChange}
       onTokenAddressChange={onSubmissionsRequirementTokenAddressChange}
       onMinTokensRequiredChange={onSubmissionsRequirementMinTokensRequiredChange}

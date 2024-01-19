@@ -31,7 +31,7 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   onNextStep,
   onClick,
 }) => {
-  const { step, errors } = useDeployContestStore(state => state);
+  const { step } = useDeployContestStore(state => state);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -53,8 +53,10 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   }, [onNextStep, step, value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (type === "number") {
-      let val = parseFloat(e.target.value);
+    let newValue = e.target.value;
+
+    if (type === "number" && newValue) {
+      let val = parseFloat(newValue);
 
       if (min !== undefined && val < min) {
         val = min;
@@ -62,10 +64,10 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
         val = max;
       }
 
-      e.target.value = val.toString();
+      newValue = isNaN(val) ? newValue : val.toString();
     }
 
-    onChange?.(e.target.value);
+    onChange?.(newValue);
   };
 
   return (
@@ -77,8 +79,8 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
       className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 pb-2 ${className}`}
       placeholder={placeholder}
       readOnly={readOnly}
-      max={min}
-      min={max}
+      min={min}
+      max={max}
       maxLength={maxLength}
       minLength={minLength}
       onChange={handleChange}

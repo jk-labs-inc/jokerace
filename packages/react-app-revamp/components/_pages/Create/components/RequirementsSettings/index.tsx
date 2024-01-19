@@ -9,9 +9,9 @@ interface CreateRequirementsSettingsProps {
   settingType: string;
   chain: string;
   tokenAddress: string;
-  minTokensRequired: string;
+  minTokensRequired: number;
   powerType?: string;
-  powerValue?: string;
+  powerValue?: number;
   error?: Record<string, string | undefined>;
   onChainChange?: (chain: string) => void;
   onTokenAddressChange?: (address: string) => void;
@@ -73,11 +73,11 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
           )}
 
           <CreateTextInput
+            value={minTokensRequired}
             className="w-full md:w-44 text-[16px] md:text-[24px]"
             type="number"
-            min={1}
-            value={minTokensRequired}
-            placeholder="1"
+            placeholder={settingType === "erc20" ? "0.01" : "1"}
+            min={0}
             onChange={onMinTokensRequiredChange}
           />
           <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.minTokensRequiredError}</p>
@@ -105,7 +105,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
               <CreateTextInput
                 className="w-24 md:w-20 text-[16px] md:text-[24px]"
                 type="number"
-                value={powerValue ?? ""}
+                value={powerValue ?? 0}
                 placeholder="100"
                 max={MAX_VOTES}
                 onChange={onPowerValueChange}

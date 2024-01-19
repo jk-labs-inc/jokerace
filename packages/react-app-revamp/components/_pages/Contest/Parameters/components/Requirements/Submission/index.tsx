@@ -28,10 +28,12 @@ const ContestParametersSubmissionRequirements = () => {
           {submissionRequirements.type === "erc20" ? "$" : ""}
           {submissionRequirementToken}
         </a>{" "}
-        <span className="normal-case">
-          {submissionRequirements.type === "erc20" ? "TOKEN" : "NFT"}{" "}
-          {submissionRequirements.minTokensRequired > 1 ? "s" : ""}
-        </span>
+        {submissionRequirements.type === "erc721" ? (
+          <span className="normal-case">
+            NFT
+            {submissionRequirements.minTokensRequired > 1 ? "s" : ""}
+          </span>
+        ) : null}
       </li>
       <li className="list-disc">
         this snapshot of{" "}

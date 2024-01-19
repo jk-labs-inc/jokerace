@@ -56,9 +56,9 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
       chain={votingRequirements.chain}
       error={error}
       tokenAddress={votingRequirements.tokenAddress}
-      minTokensRequired={votingRequirements.minTokensRequired.toString()}
+      minTokensRequired={votingRequirements.minTokensRequired}
       powerType={votingRequirements.powerType}
-      powerValue={votingRequirements.powerValue.toString()}
+      powerValue={votingRequirements.powerValue}
       onChainChange={onVotingRequirementChainChange}
       onTokenAddressChange={onVotingRequirementTokenAddressChange}
       onMinTokensRequiredChange={onMinTokensRequiredChange}
