@@ -53,7 +53,7 @@ const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSet
   return (
     <CreateRequirementsSettings
       step="voting"
-      settingType="erc20"
+      settingType={votingRequirements.type}
       chain={votingRequirements.chain}
       error={error}
       tokenAddress={votingRequirements.tokenAddress}

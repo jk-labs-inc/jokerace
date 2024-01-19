@@ -6,7 +6,7 @@ import { chainDropdownOptions, votingPowerOptions } from "./config";
 
 interface CreateRequirementsSettingsProps {
   step: "voting" | "submission";
-  settingType: "erc721" | "erc20";
+  settingType: string;
   chain: string;
   tokenAddress: string;
   minTokensRequired: string;

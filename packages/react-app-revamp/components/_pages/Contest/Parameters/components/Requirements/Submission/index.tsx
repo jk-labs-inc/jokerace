@@ -1,14 +1,16 @@
 import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
-import useNftTokenDetails from "@hooks/useNftTokenDetails";
+import useTokenDetails from "@hooks/useTokenDetails";
 import moment from "moment";
 
 const ContestParametersSubmissionRequirements = () => {
   const { submissionRequirements } = useContestStore(state => state);
-  const { tokenSymbol: submissionRequirementToken } = useNftTokenDetails(
+  const { tokenSymbol: submissionRequirementToken } = useTokenDetails(
+    submissionRequirements?.type ?? "",
     submissionRequirements?.tokenAddress ?? "",
     submissionRequirements?.chain ?? "",
   );
+
   const chainExplorerUrl = chains.find(chain => chain.name === submissionRequirements?.chain)?.blockExplorers?.default
     .url;
 
@@ -23,9 +25,13 @@ const ContestParametersSubmissionRequirements = () => {
           href={`${chainExplorerUrl}token/${submissionRequirements.tokenAddress}`}
           target="_blank"
         >
+          {submissionRequirements.type === "erc20" ? "$" : ""}
           {submissionRequirementToken}
         </a>{" "}
-        <span className="normal-case">NFT {submissionRequirements.minTokensRequired > 1 ? "s" : ""}</span>
+        <span className="normal-case">
+          {submissionRequirements.type === "erc20" ? "TOKEN" : "NFT"}{" "}
+          {submissionRequirements.minTokensRequired > 1 ? "s" : ""}
+        </span>
       </li>
       <li className="list-disc">
         this snapshot of{" "}
@@ -34,6 +40,7 @@ const ContestParametersSubmissionRequirements = () => {
           href={`${chainExplorerUrl}token/${submissionRequirements.tokenAddress}`}
           target="_blank"
         >
+          {submissionRequirements.type === "erc20" ? "$" : ""}
           {submissionRequirementToken}
         </a>{" "}
         holders was taken on {moment(submissionRequirements.timestamp).format("MMMM Do, h:mm a")}

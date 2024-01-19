@@ -29,7 +29,7 @@ const CreateVotingRequirements = () => {
     votingRequirements,
     setVotingRequirements,
   } = useDeployContestStore(state => state);
-  const [selectedRequirement, setSelectedRequirement] = useState(requirementsDropdownOptions[0].value);
+  const [selectedRequirement, setSelectedRequirement] = useState(votingRequirements.type);
   const votingValidation = validationFunctions.get(step);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
@@ -37,6 +37,10 @@ const CreateVotingRequirements = () => {
   const onRequirementChange = (option: string) => {
     setInputError({});
     setSelectedRequirement(option);
+    setVotingRequirements({
+      ...votingRequirements,
+      type: option,
+    });
   };
 
   useEffect(() => {
@@ -55,9 +59,9 @@ const CreateVotingRequirements = () => {
 
   const renderLayout = () => {
     switch (selectedRequirement) {
-      case "nftHolders":
+      case "erc721":
         return <CreateVotingRequirementsNftSettings error={inputError} />;
-      case "erc20Holders":
+      case "erc20":
         return <CreateVotingRequirementsTokenSettings error={inputError} />;
       default:
         return null;
@@ -126,7 +130,7 @@ const CreateVotingRequirements = () => {
 
     toastLoading("processing your allowlist...", false);
     try {
-      const fetchMerkleData = type === "nftHolders" ? fetchNftHolders : fetchTokenHolders;
+      const fetchMerkleData = type === "erc721" ? fetchNftHolders : fetchTokenHolders;
 
       result = await fetchMerkleData(
         "voting",
@@ -179,7 +183,7 @@ const CreateVotingRequirements = () => {
       <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can vote?</p>
       <div className="flex flex-col gap-5">
         <CreateDropdown
-          value={requirementsDropdownOptions[0].value}
+          value={selectedRequirement}
           options={requirementsDropdownOptions}
           className="w-full md:w-48 text-[16px] md:text-[24px] cursor-pointer"
           searchEnabled={false}

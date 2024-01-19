@@ -149,9 +149,15 @@ export async function fetchTokenHolders(
       const data: EtherscanApiResponse = await response.json();
       const tokenHolders = data.result || [];
 
-      if (tokenHolders.length === 0) break;
-
       allTokenHoldersData.push(...tokenHolders);
+
+      if (tokenHolders.length === 0) {
+        if (page === 1) {
+          return new Error("No token holders found for the specified token.");
+        } else {
+          break;
+        }
+      }
 
       if (allTokenHoldersData.length > ERC20_HARD_LIMIT) {
         return new Error(`This token has more than ${formatNumber(ERC20_HARD_LIMIT)} holders, which is not supported.`);

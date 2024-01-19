@@ -52,7 +52,7 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
   return (
     <CreateRequirementsSettings
       step="voting"
-      settingType="erc721"
+      settingType={votingRequirements.type}
       chain={votingRequirements.chain}
       error={error}
       tokenAddress={votingRequirements.tokenAddress}

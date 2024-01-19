@@ -1,5 +1,4 @@
 import CreateRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
-import CreateVotingRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 
@@ -34,7 +33,7 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
   return (
     <CreateRequirementsSettings
       step="submission"
-      settingType="erc721"
+      settingType={submissionRequirements.type}
       error={error}
       chain={submissionRequirements.chain}
       tokenAddress={submissionRequirements.tokenAddress}

@@ -16,8 +16,8 @@ import CreateSubmissionRequirementsTokenSettings from "./components/Token";
 const options: Option[] = [
   { value: "anyone", label: "anyone" },
   { value: "voters", label: "voters (same requirements)" },
-  { value: "erc20Holders", label: "token holders" },
-  { value: "nftHolders", label: "NFT holders" },
+  { value: "erc20", label: "token holders" },
+  { value: "erc721", label: "NFT holders" },
 ];
 
 type WorkerMessageData = {
@@ -45,9 +45,9 @@ const CreateSubmissionRequirements = () => {
 
   const renderLayout = () => {
     switch (submissionRequirementsOption) {
-      case "nftHolders":
+      case "erc721":
         return <CreateSubmissionRequirementsNftSettings error={inputError} />;
-      case "erc20Holders":
+      case "erc20":
         return <CreateSubmissionRequirementsTokenSettings error={inputError} />;
       default:
         return null;

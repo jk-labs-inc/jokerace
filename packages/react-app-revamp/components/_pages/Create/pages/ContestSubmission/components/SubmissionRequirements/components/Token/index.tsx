@@ -34,7 +34,7 @@ const CreateSubmissionRequirementsTokenSettings: FC<CreateSubmissionRequirements
   return (
     <CreateRequirementsSettings
       step="submission"
-      settingType="erc20"
+      settingType={submissionRequirements.type}
       error={error}
       chain={submissionRequirements.chain}
       tokenAddress={submissionRequirements.tokenAddress}
