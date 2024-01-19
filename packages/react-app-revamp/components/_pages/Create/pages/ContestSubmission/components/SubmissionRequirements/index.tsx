@@ -163,7 +163,7 @@ const CreateSubmissionRequirements = () => {
       return;
     }
 
-    let result: Record<string, number>;
+    let result: Record<string, number> | Error;
     toastLoading("processing your allowlist...", false);
 
     try {
@@ -201,7 +201,7 @@ const CreateSubmissionRequirements = () => {
   const handleNextStep = async () => {
     if (submissionRequirementsOption === "voters") {
       handleVotersSameRequirements();
-    } else if (submissionRequirementsOption) {
+    } else if (submissionRequirementsOption === "erc20Holders" || submissionRequirementsOption === "nftHolders") {
       fetchRequirementsMerkleData(submissionRequirementsOption);
     } else {
       setSubmissionAllowlistFields([]);

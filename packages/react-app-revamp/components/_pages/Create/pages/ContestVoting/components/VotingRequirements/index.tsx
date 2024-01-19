@@ -122,7 +122,7 @@ const CreateVotingRequirements = () => {
   };
 
   const fetchRequirementsMerkleData = async (type: string) => {
-    let result: Record<string, number>;
+    let result: Record<string, number> | Error;
 
     toastLoading("processing your allowlist...", false);
     try {
