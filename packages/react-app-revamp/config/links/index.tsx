@@ -1,6 +1,6 @@
 const LINK_MIRROR = "https://joke.mirror.xyz";
 const LINK_GITHUB = "https://github.com/jk-labs-inc/jokerace";
-const LINK_TWITTER = "https://twitter.com/jokerace_xyz";
+const LINK_TWITTER = "https://twitter.com/jokerace_io";
 const LINK_TOKEN = "https://etherscan.io/address/0x84f508cd68e1cd97c1dcc0cd7b5ff295a382b2ed";
 const LINK_V1 = "https://jokedao.jokedao.io/";
 const LINK_BUG_REPORT =

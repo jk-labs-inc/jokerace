@@ -65,7 +65,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta property="og:locale" content="en_GB" />
         <meta property="og:image" content="https://jokerace.io/jokerace.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:site" content="@jokerace_xyz" />
+        <meta name="twitter:site" content="@jokerace_io" />
         <meta name="twitter:description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
         <meta name="twitter:image" content="https://jokerace.io/jokerace.png" />
