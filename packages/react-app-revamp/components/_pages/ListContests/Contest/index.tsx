@@ -7,7 +7,7 @@ import { chains, chainsImages } from "@config/wagmi";
 import { pluralize } from "@helpers/pluralize";
 import useContestInfo from "@hooks/useContestInfo";
 import { useError } from "@hooks/useError";
-import useNftTokenDetails from "@hooks/useNftTokenDetails";
+import useTokenDetails from "@hooks/useTokenDetails";
 import { toggleContestVisibility } from "lib/creator";
 import moment from "moment";
 import Link from "next/link";
@@ -72,12 +72,16 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
 
   const votingRequirement = contest.voting_requirements;
   const submissionRequirement = contest.submission_requirements;
-  const { tokenSymbol: votingRequirementToken, isLoading: isVotingRequirementTokenLoading } = useNftTokenDetails(
+  const { tokenSymbol: votingRequirementToken, isLoading: isVotingRequirementTokenLoading } = useTokenDetails(
+    votingRequirement?.type,
     votingRequirement?.tokenAddress,
     votingRequirement?.chain,
   );
-  const { tokenSymbol: submissionRequirementToken, isLoading: isSubmissionRequirementTokenLoading } =
-    useNftTokenDetails(submissionRequirement?.tokenAddress, votingRequirement?.chain);
+  const { tokenSymbol: submissionRequirementToken, isLoading: isSubmissionRequirementTokenLoading } = useTokenDetails(
+    submissionRequirement?.type,
+    submissionRequirement?.tokenAddress,
+    votingRequirement?.chain,
+  );
 
   const getContestUrl = (contest: { network_name: string; address: string }) => {
     return ROUTE_VIEW_CONTEST_BASE_PATH.replace("[chain]", contest.network_name).replace("[address]", contest.address);
@@ -227,7 +231,11 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
       } else if (submissionRequirement) {
         return (
           <p>
-            for <span className="uppercase">{submissionRequirementToken}</span> holders
+            for{" "}
+            <span className="uppercase">
+              {submissionRequirement?.type === "erc20" ? "$" : ""} {submissionRequirementToken}
+            </span>{" "}
+            holders
           </p>
         );
       } else {
@@ -243,7 +251,12 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
       } else if (votingRequirement) {
         return (
           <p>
-            for <span className="uppercase">{votingRequirementToken}</span> holders
+            for{" "}
+            <span className="uppercase">
+              {votingRequirement?.type === "erc20" ? "$" : ""}
+              {votingRequirementToken}
+            </span>{" "}
+            holders
           </p>
         );
       } else {

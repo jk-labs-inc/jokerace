@@ -2,7 +2,7 @@
 import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
 import { TimeLeft } from "@components/_pages/ListContests/Contest";
-import useNftTokenDetails from "@hooks/useNftTokenDetails";
+import useTokenDetails from "@hooks/useTokenDetails";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import { Chain } from "wagmi";
@@ -40,12 +40,16 @@ const useContestInfo = ({
   const [votingMessage, setVotingMessage] = useState<React.ReactNode>(null);
   const votingRequirement = contest.voting_requirements;
   const submissionRequirement = contest.submission_requirements;
-  const { tokenSymbol: votingRequirementToken, isLoading: isVotingRequirementTokenLoading } = useNftTokenDetails(
+  const { tokenSymbol: votingRequirementToken, isLoading: isVotingRequirementTokenLoading } = useTokenDetails(
+    votingRequirement?.type,
     votingRequirement?.tokenAddress,
     votingRequirement?.chain,
   );
-  const { tokenSymbol: submissionRequirementToken, isLoading: isSubmissionRequirementTokenLoading } =
-    useNftTokenDetails(submissionRequirement?.tokenAddress, votingRequirement?.chain);
+  const { tokenSymbol: submissionRequirementToken, isLoading: isSubmissionRequirementTokenLoading } = useTokenDetails(
+    submissionRequirement?.type,
+    submissionRequirement?.tokenAddress,
+    votingRequirement?.chain,
+  );
 
   useEffect(() => {
     const newSubmissionClass = (() => {
@@ -121,7 +125,11 @@ const useContestInfo = ({
           }
           return (
             <p>
-              for <span className="uppercase">{submissionRequirementToken}</span> holders
+              for{" "}
+              <span className="uppercase">
+                {submissionRequirement?.type === "erc20" ? "$" : ""} {submissionRequirementToken}
+              </span>{" "}
+              holders
             </p>
           );
         } else {
@@ -135,7 +143,11 @@ const useContestInfo = ({
         }
         return (
           <p>
-            for <span className="uppercase">{submissionRequirementToken}</span> holders
+            for{" "}
+            <span className="uppercase">
+              {submissionRequirement?.type === "erc20" ? "$" : ""} {submissionRequirementToken}
+            </span>{" "}
+            holders
           </p>
         );
       }
@@ -163,7 +175,12 @@ const useContestInfo = ({
           }
           return (
             <p>
-              for <span className="uppercase">{votingRequirementToken}</span> holders
+              for{" "}
+              <span className="uppercase">
+                {votingRequirement?.type === "erc20" ? "$" : ""}
+                {votingRequirementToken}
+              </span>{" "}
+              holders
             </p>
           );
         }
@@ -186,7 +203,12 @@ const useContestInfo = ({
         }
         return (
           <p>
-            for <span className="uppercase">{votingRequirementToken}</span> holders
+            for{" "}
+            <span className="uppercase">
+              {votingRequirement?.type === "erc20" ? "$" : ""}
+              {votingRequirementToken}
+            </span>{" "}
+            holders
           </p>
         );
       }
