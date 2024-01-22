@@ -24,7 +24,7 @@ const contestShareText = (contestName: string, rewards?: Reward | null) => {
       ? ` to win ${rewards.token.value}$${rewards.token.symbol}`
       : "";
 
-  return `Come play ${contestName} on @jokerace_xyz with me${rewardsText}!\n`;
+  return `Come play ${contestName} on @jokerace_io with me${rewardsText}!\n`;
 };
 
 export const generateLensShareUrlForContest = (
@@ -63,7 +63,7 @@ export const generateLensShareUrlForSubmission = (contestAddress: string, chain:
 export const generateTwitterShareUrlForSubmission = (contestAddress: string, chain: string, submissionId: string) => {
   const params = {
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}/submission/${submissionId}`,
-    via: "jokerace_xyz",
+    via: "jokerace_io",
   };
   return buildUrl(BASE_TWITTER_URL, params);
 };
