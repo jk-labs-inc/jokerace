@@ -1,4 +1,5 @@
 import { MAX_ROWS } from "@helpers/csvConstants";
+import { formatNumber } from "@helpers/formatNumber";
 import { VoteCalculationMethod } from "lib/permissioning";
 
 interface TokenBalance {
@@ -22,6 +23,8 @@ interface EventData {
   minTokensRequired: number;
   eventType: "voting" | "submission";
 }
+
+const BASE_LIMIT = 100000;
 
 self.onmessage = (event: MessageEvent<EventData>) => {
   const { ownersData, voteCalculationMethod, votesPerUnit, minTokensRequired, eventType } = event.data;
@@ -53,9 +56,12 @@ self.onmessage = (event: MessageEvent<EventData>) => {
     }
 
     if (qualifiedOwnersCount >= MAX_ROWS) {
+      const errorMessage = `cannot support over ${formatNumber(BASE_LIMIT)} ${
+        eventType === "voting" ? "voters" : "submitters"
+      }: raise min. NFTs required`;
+
       self.postMessage({
-        error:
-          "NFT collection has more than 100k holders with specified minimum NFTs required, which is not supported.",
+        error: errorMessage,
       });
       return;
     }

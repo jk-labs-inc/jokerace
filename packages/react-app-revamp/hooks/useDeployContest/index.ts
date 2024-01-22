@@ -138,6 +138,7 @@ export function useDeployContest() {
 
       if (votingMerkleData.prefilled) {
         votingReqDatabaseEntry = {
+          type: votingRequirements.type,
           tokenAddress: votingRequirements.tokenAddress,
           chain: votingRequirements.chain,
           description: `${votingRequirements.powerValue} per ${votingRequirements.powerType}`,
@@ -148,6 +149,7 @@ export function useDeployContest() {
 
       if (submissionMerkleData.prefilled && submissionRequirements.tokenAddress) {
         submissionReqDatabaseEntry = {
+          type: submissionRequirements.type,
           tokenAddress: submissionRequirements.tokenAddress,
           chain: submissionRequirements.chain,
           minTokensRequired: submissionRequirements.minTokensRequired,

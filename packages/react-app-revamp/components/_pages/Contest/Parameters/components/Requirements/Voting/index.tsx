@@ -1,11 +1,12 @@
 import { chains } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
-import useNftTokenDetails from "@hooks/useNftTokenDetails";
+import useTokenDetails from "@hooks/useTokenDetails";
 import moment from "moment";
 
 const ContestParametersVotingRequirements = () => {
   const { votingRequirements } = useContestStore(state => state);
-  const { tokenSymbol: votingRequirementsToken } = useNftTokenDetails(
+  const { tokenSymbol: votingRequirementsToken } = useTokenDetails(
+    votingRequirements?.type ?? "",
     votingRequirements?.tokenAddress ?? "",
     votingRequirements?.chain ?? "",
   );
@@ -23,9 +24,15 @@ const ContestParametersVotingRequirements = () => {
           href={`${chainExplorerUrl}token/${votingRequirements.tokenAddress}`}
           target="_blank"
         >
+          {votingRequirements.type === "erc20" ? "$" : ""}
           {votingRequirementsToken}
         </a>{" "}
-        <span className="normal-case">NFT {votingRequirements.minTokensRequired > 1 ? "s" : ""}</span>
+        {votingRequirements.type === "erc721" ? (
+          <span className="normal-case">
+            NFT
+            {votingRequirements.minTokensRequired > 1 ? "s" : ""}
+          </span>
+        ) : null}
       </li>
       <li className="list-disc">
         this snapshot of{" "}
@@ -34,6 +41,7 @@ const ContestParametersVotingRequirements = () => {
           href={`${chainExplorerUrl}token/${votingRequirements.tokenAddress}`}
           target="_blank"
         >
+          {votingRequirements.type === "erc20" ? "$" : ""}
           {votingRequirementsToken}
         </a>{" "}
         holders was taken on {moment(votingRequirements.timestamp).format("MMMM Do, h:mm a")}

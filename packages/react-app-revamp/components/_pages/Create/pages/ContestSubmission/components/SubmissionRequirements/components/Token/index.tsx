@@ -1,12 +1,13 @@
 import CreateRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
+import CreateVotingRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 
-interface CreateSubmissionRequirementsNftSettingsProps {
+interface CreateSubmissionRequirementsTokenSettingsProps {
   error?: Record<string, string | undefined>;
 }
 
-const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNftSettingsProps> = ({ error }) => {
+const CreateSubmissionRequirementsTokenSettings: FC<CreateSubmissionRequirementsTokenSettingsProps> = ({ error }) => {
   const { submissionRequirements, setSubmissionRequirements } = useDeployContestStore(state => state);
 
   const onSubmissionsRequirementChainChange = (option: string) => {
@@ -45,4 +46,4 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
   );
 };
 
-export default CreateSubmissionRequirementsNftSettings;
+export default CreateSubmissionRequirementsTokenSettings;

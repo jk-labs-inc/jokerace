@@ -1,6 +1,7 @@
 import { getAccount } from "@wagmi/core";
 
 export type VotingRequirementsSchema = {
+  type: string;
   tokenAddress: string;
   chain: string;
   description: string;
@@ -9,6 +10,7 @@ export type VotingRequirementsSchema = {
 };
 
 export type SubmissionRequirementsSchema = {
+  type: string;
   chain: string;
   tokenAddress: string;
   minTokensRequired: number;

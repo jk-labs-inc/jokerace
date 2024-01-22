@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDropdown from "@components/_pages/Create/components/Dropdown";
 import { requirementsDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
@@ -8,9 +8,10 @@ import { validationFunctions } from "@components/_pages/Create/utils/validation"
 import { tokenAddressRegex } from "@helpers/regex";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { fetchNftHolders } from "lib/permissioning";
+import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
+import CreateVotingRequirementsTokenSettings from "./components/Token";
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -28,12 +29,18 @@ const CreateVotingRequirements = () => {
     votingRequirements,
     setVotingRequirements,
   } = useDeployContestStore(state => state);
-  const [selectedRequirement, setSelectedRequirement] = useState(requirementsDropdownOptions[0].value);
+  const [selectedRequirement, setSelectedRequirement] = useState(votingRequirements.type);
   const votingValidation = validationFunctions.get(step);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
+
   const onRequirementChange = (option: string) => {
+    setInputError({});
     setSelectedRequirement(option);
+    setVotingRequirements({
+      ...votingRequirements,
+      type: option,
+    });
   };
 
   useEffect(() => {
@@ -52,8 +59,10 @@ const CreateVotingRequirements = () => {
 
   const renderLayout = () => {
     switch (selectedRequirement) {
-      case "nftHolders":
+      case "erc721":
         return <CreateVotingRequirementsNftSettings error={inputError} />;
+      case "erc20":
+        return <CreateVotingRequirementsTokenSettings error={inputError} />;
       default:
         return null;
     }
@@ -116,16 +125,14 @@ const CreateVotingRequirements = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleNextStep = async () => {
-    const isValid = validateInput();
-
-    if (!isValid) {
-      return;
-    }
+  const fetchRequirementsMerkleData = async (type: string) => {
+    let result: Record<string, number> | Error;
 
     toastLoading("processing your allowlist...", false);
     try {
-      const result = await fetchNftHolders(
+      const fetchMerkleData = type === "erc721" ? fetchNftHolders : fetchTokenHolders;
+
+      result = await fetchMerkleData(
         "voting",
         votingRequirements.tokenAddress,
         votingRequirements.chain,
@@ -135,19 +142,34 @@ const CreateVotingRequirements = () => {
       );
 
       if (result instanceof Error) {
-        toastError(result.message);
-        return;
-      } else {
-        const worker = initializeWorker();
-        worker.postMessage({
-          decimals: 18,
-          allowList: result,
+        setInputError({
+          tokenAddressError: result.message,
         });
+        toastDismiss();
+        return;
       }
+
+      const worker = initializeWorker();
+      worker.postMessage({
+        decimals: 18,
+        allowList: result,
+      });
     } catch (error: any) {
-      toastError(error.message);
+      setInputError({
+        tokenAddressError: error.message,
+      });
+      toastDismiss();
       return;
     }
+  };
+
+  const handleNextStep = async () => {
+    const isValid = validateInput();
+
+    if (!isValid) {
+      return;
+    }
+    fetchRequirementsMerkleData(selectedRequirement);
   };
 
   const resetManualAllowlist = () => {
@@ -161,7 +183,7 @@ const CreateVotingRequirements = () => {
       <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can vote?</p>
       <div className="flex flex-col gap-5">
         <CreateDropdown
-          value={requirementsDropdownOptions[0].value}
+          value={selectedRequirement}
           options={requirementsDropdownOptions}
           className="w-full md:w-48 text-[16px] md:text-[24px] cursor-pointer"
           searchEnabled={false}

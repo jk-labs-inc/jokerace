@@ -1,17 +1,17 @@
 import CreateDropdown from "@components/_pages/Create/components/Dropdown";
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
+import { MAX_VOTES } from "@helpers/csvConstants";
 import { FC } from "react";
 import { chainDropdownOptions, votingPowerOptions } from "./config";
-import { MAX_VOTES } from "@helpers/csvConstants";
 
-interface CreateVotingRequirementsSettingsProps {
+interface CreateRequirementsSettingsProps {
   step: "voting" | "submission";
-  settingType: "erc721" | "erc20";
+  settingType: string;
   chain: string;
   tokenAddress: string;
-  minTokensRequired: string;
+  minTokensRequired: number;
   powerType?: string;
-  powerValue?: string;
+  powerValue?: number;
   error?: Record<string, string | undefined>;
   onChainChange?: (chain: string) => void;
   onTokenAddressChange?: (address: string) => void;
@@ -20,7 +20,7 @@ interface CreateVotingRequirementsSettingsProps {
   onPowerValueChange?: (votingPower: string) => void;
 }
 
-const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps> = ({
+const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   step,
   settingType,
   chain,
@@ -35,14 +35,29 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
   onPowerTypeChange,
   onPowerValueChange,
 }) => {
+  const chainOptions = () => {
+    if (settingType === "erc20") {
+      return chainDropdownOptions.map(option => {
+        return {
+          ...option,
+          disabled: option.label !== "ethereum",
+        };
+      });
+    }
+
+    return chainDropdownOptions;
+  };
+
   return (
     <div className="md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-1">
-          <p className="text-[16px] text-primary-10 font-bold uppercase">chain of nft</p>
+          <p className="text-[16px] text-primary-10 font-bold uppercase">
+            chain of {settingType === "erc20" ? "token" : "nft"}
+          </p>
           <CreateDropdown
             value={chain}
-            options={chainDropdownOptions}
+            options={chainOptions()}
             className="w-full md:w-44 text-[16px] md:text-[24px] cursor-pointer"
             searchEnabled={false}
             onChange={onChainChange}
@@ -58,14 +73,14 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
           )}
 
           <CreateTextInput
+            value={minTokensRequired}
             className="w-full md:w-44 text-[16px] md:text-[24px]"
             type="number"
-            min={1}
-            value={minTokensRequired}
-            placeholder="1"
+            placeholder={settingType === "erc20" ? "0.01" : "1"}
+            min={0}
             onChange={onMinTokensRequiredChange}
           />
-          <p className="text-negative-11 text-[14px] font-bold animate-appear">{error?.minTokensRequiredError}</p>
+          <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.minTokensRequiredError}</p>
         </div>
         <div className="flex flex-col gap-1">
           <p className="text-[16px] text-primary-10 font-bold uppercase">token address</p>
@@ -76,7 +91,7 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
             onChange={onTokenAddressChange}
           />
           {error?.tokenAddressError ? (
-            <p className="text-negative-11 text-[14px] font-bold animate-appear">{error.tokenAddressError}</p>
+            <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error.tokenAddressError}</p>
           ) : (
             <p className="text-[16px] text-neutral-14 font-bold">
               when you press “next,” we’ll take a snapshot of all holders to allowlist
@@ -90,7 +105,7 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
               <CreateTextInput
                 className="w-24 md:w-20 text-[16px] md:text-[24px]"
                 type="number"
-                value={powerValue ?? ""}
+                value={powerValue ?? 0}
                 placeholder="100"
                 max={MAX_VOTES}
                 onChange={onPowerValueChange}
@@ -104,7 +119,7 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
                 onChange={onPowerTypeChange}
               />
             </div>
-            <p className="text-negative-11 text-[14px] font-bold animate-appear">{error?.powerValueError}</p>
+            <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.powerValueError}</p>
           </div>
         ) : null}
       </div>
@@ -112,4 +127,4 @@ const CreateVotingRequirementsSettings: FC<CreateVotingRequirementsSettingsProps
   );
 };
 
-export default CreateVotingRequirementsSettings;
+export default CreateRequirementsSettings;

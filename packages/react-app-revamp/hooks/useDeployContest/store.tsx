@@ -145,10 +145,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       prefilled: null,
     },
     votingRequirements: {
-      type: "erc721",
+      type: "erc20",
       chain: "mainnet",
       tokenAddress: "",
-      minTokensRequired: 1,
+      minTokensRequired: 0.01,
       powerType: "token",
       powerValue: 100,
       timestamp: Date.now(),
@@ -163,10 +163,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       prefilled: null,
     },
     submissionRequirements: {
-      type: "erc721",
+      type: "erc20",
       chain: "mainnet",
       tokenAddress: "",
-      minTokensRequired: 1,
+      minTokensRequired: 0.01,
       timestamp: Date.now(),
     },
     entryCharge: {
