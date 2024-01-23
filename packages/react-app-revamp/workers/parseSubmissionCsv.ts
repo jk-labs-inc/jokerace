@@ -21,6 +21,7 @@ self.onmessage = async (event: MessageEvent) => {
   const addressData: string[] = [];
   const invalidEntries: SubmissionInvalidEntry[] = [];
   const addresses: Set<string> = new Set();
+  const unexpectedHeaders = ["address"];
 
   if (data.length > MAX_ROWS) {
     if (userAddress) {
@@ -33,6 +34,17 @@ self.onmessage = async (event: MessageEvent) => {
       self.postMessage({ data: {}, invalidEntries, error: { kind: "limitExceeded" } });
       return;
     }
+  }
+
+  if (data[0].some((value: any) => unexpectedHeaders.includes(value.toString().toLowerCase()))) {
+    self.postMessage({
+      data: {},
+      invalidEntries,
+      error: {
+        kind: "unexpectedHeaders",
+      },
+    });
+    return;
   }
 
   const expectedColumns = 1;
