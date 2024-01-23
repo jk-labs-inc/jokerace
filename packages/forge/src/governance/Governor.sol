@@ -26,6 +26,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         Safe
     }
 
+    enum Actions {
+        Submit
+    }
+
     struct TargetMetadata {
         address targetAddress;
     }
@@ -284,8 +288,15 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     /**
      * @dev Distribute the costToPropose to jk labs and the creator based on _percentageToCreator.
      */
-    function _distributeCostToPropose() private {
-        if (costToPropose > 0) {
+    function _distributeCost(Actions currentAction) internal {
+        uint256 actionCost;
+        if (currentAction == Actions.Submit) {
+            actionCost = costToPropose;
+        } else {
+            actionCost = 0;
+        }
+
+        if (actionCost > 0) {
             // Send proposal fee to jk labs address and creator
             uint256 sendingToJkLabs = (msg.value * (100 - percentageToCreator)) / 100;
             if (sendingToJkLabs > 0) {
@@ -311,7 +322,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
-        _distributeCostToPropose();
+        _distributeCost(Actions.Submit);
 
         return proposalId;
     }
@@ -329,7 +340,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
-        _distributeCostToPropose();
+        _distributeCost(Actions.Submit);
 
         return proposalId;
     }
