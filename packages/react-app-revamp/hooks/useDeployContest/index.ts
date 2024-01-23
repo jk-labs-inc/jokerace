@@ -128,7 +128,7 @@ export function useDeployContest() {
         chain?.name ?? "",
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
-        contractContest.address,
+        contractContest.address.toLowerCase(),
         advancedOptions.downvote,
         sortingEnabled,
       );
@@ -165,7 +165,7 @@ export function useDeployContest() {
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,
-        contractAddress: contractContest.address,
+        contractAddress: contractContest.address.toLowerCase(),
         votingMerkleRoot: votingMerkle?.merkleRoot ?? EMPTY_ROOT,
         submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,

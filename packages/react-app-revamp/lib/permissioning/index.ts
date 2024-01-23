@@ -65,14 +65,14 @@ export async function fetchNftHolders(
       const ownersData = data.ownerAddresses || [];
 
       if (ownersData.length === 0) {
-        return new Error("No owners found for the specified collection.");
+        return new Error("according to alchemy, this collection has 0 holders.");
       }
 
       allOwnersData.push(...ownersData);
 
       if (allOwnersData.length > NFTS_HARD_LIMIT) {
         return new Error(
-          `NFT collection has more than ${formatNumber(NFTS_HARD_LIMIT)} holders, which is not supported.`,
+          `collections of more than ${formatNumber(NFTS_HARD_LIMIT)} holders aren’t currently supported`,
         );
       }
 
@@ -153,14 +153,14 @@ export async function fetchTokenHolders(
 
       if (tokenHolders.length === 0) {
         if (page === 1) {
-          return new Error("No token holders found for the specified token.");
+          return new Error("according to etherscan, this token has 0 holders.");
         } else {
           break;
         }
       }
 
       if (allTokenHoldersData.length > ERC20_HARD_LIMIT) {
-        return new Error(`This token has more than ${formatNumber(ERC20_HARD_LIMIT)} holders, which is not supported.`);
+        return new Error(`tokens of more than ${formatNumber(ERC20_HARD_LIMIT)} holders aren’t currently supported`);
       }
 
       page++;

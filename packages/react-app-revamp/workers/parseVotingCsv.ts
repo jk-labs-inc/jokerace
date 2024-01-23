@@ -33,6 +33,7 @@ self.onmessage = async (event: MessageEvent<ParseVotingCsvPayload>) => {
   const votesData: Record<string, number> = {};
   const invalidEntries: VotingInvalidEntry[] = [];
   const addresses: Set<string> = new Set();
+  const unexpectedHeaders = ["address", "number of votes", "numVotes"];
   let roundedZeroCount = 0;
 
   if (data.length > MAX_ROWS) {
@@ -46,6 +47,17 @@ self.onmessage = async (event: MessageEvent<ParseVotingCsvPayload>) => {
       self.postMessage({ data: {}, invalidEntries, error: { kind: "limitExceeded" } });
       return;
     }
+  }
+
+  if (data[0].some((value: any) => unexpectedHeaders.includes(value.toString().toLowerCase()))) {
+    self.postMessage({
+      data: {},
+      invalidEntries,
+      error: {
+        kind: "unexpectedHeaders",
+      },
+    });
+    return;
   }
 
   if (data[0].length !== 2) {
