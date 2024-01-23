@@ -10,6 +10,7 @@ export type SubmissionInvalidEntry = {
 };
 
 export type CommonValidationError =
+  | { kind: "unexpectedHeaders" }
   | { kind: "missingColumns" }
   | { kind: "limitExceeded" }
   | { kind: "duplicates" }

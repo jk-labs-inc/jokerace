@@ -126,6 +126,7 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     const results = await parseCsvVoting(file, address);
 
     switch (results.error?.kind) {
+      case "unexpectedHeaders":
       case "missingColumns":
       case "limitExceeded":
       case "duplicates":

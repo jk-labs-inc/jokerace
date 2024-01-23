@@ -2,7 +2,7 @@ import { MAX_ROWS } from "@helpers/csvConstants";
 import { formatNumber } from "@helpers/formatNumber";
 import { FC, ReactNode, useMemo } from "react";
 
-export type ParseError = "missingColumns" | "limitExceeded" | "duplicates" | "allZero" | "";
+export type ParseError = "unexpectedHeaders" | "missingColumns" | "limitExceeded" | "duplicates" | "allZero" | "";
 
 interface CSVParseErrorProps {
   step: "voting" | "submission";
@@ -15,6 +15,7 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
 
     switch (type) {
       case "missingColumns":
+      case "unexpectedHeaders":
         return (
           <div className="flex flex-col text-[16px] animate-fadeIn">
             {step === "voting" ? (

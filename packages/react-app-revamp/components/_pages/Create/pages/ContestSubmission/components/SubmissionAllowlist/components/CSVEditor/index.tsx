@@ -101,16 +101,11 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     const results = await parseSubmissionCsv(file, address);
 
     switch (results.error?.kind) {
+      case "unexpectedHeaders":
       case "missingColumns":
-        setParseError("missingColumns");
-        addEmptyFields();
-        return;
       case "limitExceeded":
-        setParseError("limitExceeded");
-        addEmptyFields();
-        return;
       case "duplicates":
-        setParseError("duplicates");
+        setParseError(results.error?.kind);
         addEmptyFields();
         return;
       default:
