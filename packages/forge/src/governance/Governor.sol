@@ -26,6 +26,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         Safe
     }
 
+    enum Actions {
+        Submit
+    }
+
     struct TargetMetadata {
         address targetAddress;
     }
@@ -61,7 +65,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
-    string private constant VERSION = "4.21"; // Private as to not clutter the ABI
+    string private constant VERSION = "4.22"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -284,8 +288,15 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     /**
      * @dev Distribute the costToPropose to jk labs and the creator based on _percentageToCreator.
      */
-    function _distributeCostToPropose() private {
-        if (costToPropose > 0) {
+    function _distributeCost(Actions currentAction) internal {
+        uint256 actionCost;
+        if (currentAction == Actions.Submit) {
+            actionCost = costToPropose;
+        } else {
+            actionCost = 0;
+        }
+
+        if (actionCost > 0) {
             // Send proposal fee to jk labs address and creator
             uint256 sendingToJkLabs = (msg.value * (100 - percentageToCreator)) / 100;
             if (sendingToJkLabs > 0) {
@@ -311,7 +322,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
-        _distributeCostToPropose();
+        _distributeCost(Actions.Submit);
 
         return proposalId;
     }
@@ -329,7 +340,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
-        _distributeCostToPropose();
+        _distributeCost(Actions.Submit);
 
         return proposalId;
     }
