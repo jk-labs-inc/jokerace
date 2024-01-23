@@ -65,7 +65,7 @@ export async function fetchNftHolders(
       const ownersData = data.ownerAddresses || [];
 
       if (ownersData.length === 0) {
-        return new Error("No owners found for the specified collection.");
+        return new Error("according to alchemy, no owners found for the specified collection.");
       }
 
       allOwnersData.push(...ownersData);
@@ -153,7 +153,7 @@ export async function fetchTokenHolders(
 
       if (tokenHolders.length === 0) {
         if (page === 1) {
-          return new Error("No token holders found for the specified token.");
+          return new Error("according to etherscan, this token has 0 holders.");
         } else {
           break;
         }
