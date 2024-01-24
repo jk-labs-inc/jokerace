@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const palma: Chain = {
+export const palm: Chain = {
   id: 11297108109,
-  name: "palma",
-  network: "palma",
+  name: "palm",
+  network: "palm",
   iconUrl: "/palm.png",
   nativeCurrency: {
     decimals: 18,
@@ -19,7 +19,7 @@ export const palma: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Palma Mainnet Scan", url: "https://www.ondora.xyz/network/palm" },
-    default: { name: "Palma Mainnet Scan", url: "https://www.ondora.xyz/network/palm" },
+    etherscan: { name: "Palm Mainnet Scan", url: "https://www.ondora.xyz/network/palm" },
+    default: { name: "Palm Mainnet Scan", url: "https://www.ondora.xyz/network/palm" },
   },
 };

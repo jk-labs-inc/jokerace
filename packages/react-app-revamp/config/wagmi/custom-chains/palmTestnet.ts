@@ -1,9 +1,9 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const palmaTestnet: Chain = {
+export const palmTestnet: Chain = {
   id: 11297108099,
-  name: "palmaTestnet",
-  network: "palmaTestnet",
+  name: "palmTestnet",
+  network: "palmTestnet",
   iconUrl: "/palm.png",
   nativeCurrency: {
     decimals: 18,
@@ -19,8 +19,8 @@ export const palmaTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Palma Testnet Scan", url: "https://www.ondora.xyz/network/palm-testnet" },
-    default: { name: "Palma Testnet Scan", url: "https://www.ondora.xyz/network/palm-testnet" },
+    etherscan: { name: "Palm Testnet Scan", url: "https://www.ondora.xyz/network/palm-testnet" },
+    default: { name: "Palm Testnet Scan", url: "https://www.ondora.xyz/network/palm-testnet" },
   },
   testnet: true,
 };
