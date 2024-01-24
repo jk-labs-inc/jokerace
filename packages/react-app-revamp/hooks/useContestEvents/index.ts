@@ -17,7 +17,7 @@ export function useContestEvents() {
   const { asPath } = useRouter();
   const { address: contestAddress, chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const provider = getEthersProvider({ chainId });
+  const provider = getEthersProvider(config, { chainId });
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
   const { contestStatus } = useContestStatusStore(state => state);

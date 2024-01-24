@@ -3,7 +3,7 @@ import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { MAX_ROWS } from "@helpers/csvConstants";
 import { isSupabaseConfigured } from "@helpers/database";
-import { useEthersSigner } from "@helpers/ethers";
+import { getEthersSigner } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
@@ -50,9 +50,9 @@ export function useDeployContest() {
   } = useDeployContestStore(state => state);
   const { error, handleError } = useError();
   const { address, chain } = useAccount();
-  const signer = useEthersSigner();
 
   async function deployContest() {
+    const signer = await getEthersSigner(config, { chainId: chain?.id });
     const isSpoofingDetected = await checkForSpoofing(signer?._address ?? "");
 
     if (isSpoofingDetected) {
