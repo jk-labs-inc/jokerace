@@ -21,15 +21,16 @@ function useContests(initialData: any) {
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(["pastContests", page, address], () => getPastContests(page, ITEMS_PER_PAGE, address));
+  } = useQuery({
+    queryKey: ["pastContests", page, address],
+    queryFn: () => getPastContests(page, ITEMS_PER_PAGE, address),
+  });
 
-  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
-    ["rewards", contestData],
-    data => getRewards(contestData?.data ?? []),
-    {
-      enabled: !!contestData,
-    },
-  );
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
+    queryKey: ["rewards", contestData],
+    queryFn: () => getRewards(contestData?.data ?? []),
+    enabled: !!contestData,
+  });
 
   return {
     page,

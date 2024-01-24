@@ -4,7 +4,6 @@ import BurgerMenu from "@components/UI/BurgerMenu";
 import Button from "@components/UI/Button";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
-import EthereumAddress from "@components/UI/UserProfileDisplay";
 import ListContests from "@components/_pages/ListContests";
 import { FOOTER_LINKS } from "@config/links";
 import { ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
@@ -27,9 +26,9 @@ function useContests(searchValue: string, sortBy?: string) {
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(
-    [searchValue || sortBy ? "searchedContests" : "featuredContests", page, address, searchValue, sortBy],
-    () => {
+  } = useQuery({
+    queryKey: [searchValue || sortBy ? "searchedContests" : "featuredContests", page, address, searchValue, sortBy],
+    queryFn: () => {
       if (searchValue) {
         // Call searchContests if there is a searchValue
         return searchContests(
@@ -49,14 +48,16 @@ function useContests(searchValue: string, sortBy?: string) {
         return getFeaturedContests(page, 6, address);
       }
     },
-  );
+  });
 
   const {
     status: rewardsStatus,
     data: rewardsData,
     error: rewardsError,
     isFetching: isRewardsFetching,
-  } = useQuery(["rewards", contestData], data => getRewards(contestData?.data ?? []), {
+  } = useQuery({
+    queryKey: ["rewards", contestData],
+    queryFn: () => getRewards(contestData?.data ?? []),
     enabled: !!contestData,
   });
 

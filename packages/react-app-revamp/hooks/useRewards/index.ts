@@ -21,9 +21,9 @@ export function useRewardsModule() {
     chain => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
 
-  const { refetch: refetchBalanceRewardsModule } = useQuery(
-    ["balance-rewards-module", rewards?.contractAddress],
-    async () => {
+  const { refetch: refetchBalanceRewardsModule } = useQuery({
+    queryKey: ["balance-rewards-module", rewards?.contractAddress],
+    queryFn: async () => {
       try {
         const contestRewardModuleAddress = rewards?.contractAddress;
         const alchemyAppUrl = chains.filter(chain => chain.name === contestChainName.toLowerCase())[0].rpcUrls.default
@@ -34,12 +34,12 @@ export function useRewardsModule() {
           body: JSON.stringify({
             jsonrpc: "2.0",
             method: "alchemy_getTokenBalances",
-            headers: {
-              "Content-Type": "application/json",
-            },
             params: [`${contestRewardModuleAddress}`, "erc20"],
             id: 42,
           }),
+          headers: {
+            "Content-Type": "application/json",
+          },
           redirect: "follow",
         });
 
@@ -54,12 +54,11 @@ export function useRewardsModule() {
         return balances;
       } catch (e) {
         setIsLoading(false);
+        throw e;
       }
     },
-    {
-      enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
-    },
-  );
+    enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
+  });
 
   async function getContestRewardsModule() {
     setIsLoading(true);
