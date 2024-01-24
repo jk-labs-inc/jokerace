@@ -1,8 +1,8 @@
 import { supabase } from "@config/supabase";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { getAccount, readContract } from "@wagmi/core";
+import { readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
@@ -56,7 +56,7 @@ export function useUser() {
 
     if (anyoneCanSubmit) {
       try {
-        const numOfSubmittedProposalsRaw = await readContract({
+        const numOfSubmittedProposalsRaw = await readContract(config, {
           ...contractConfig,
           functionName: "numSubmissions",
           args: [userAddress],
@@ -82,8 +82,8 @@ export function useUser() {
         setIsCurrentUserSubmitQualificationSuccess(false);
       }
     } else {
-      const config = await import("@config/supabase");
-      const supabase = config.supabase;
+      const supabaseConfig = await import("@config/supabase");
+      const supabase = supabaseConfig.supabase;
       try {
         const { data } = await supabase
           .from("contest_participants_v3")
@@ -93,7 +93,7 @@ export function useUser() {
           .eq("network_name", lowerCaseChainName);
 
         if (data && data.length > 0 && data[0].can_submit) {
-          const numOfSubmittedProposalsRaw = await readContract({
+          const numOfSubmittedProposalsRaw = await readContract(config, {
             ...contractConfig,
             functionName: "numSubmissions",
             args: [userAddress],
@@ -150,11 +150,11 @@ export function useUser() {
 
         const contractConfig = {
           address: address as `0x${string}`,
-          abi: abi.abi as unknown as Abi,
+          abi: abi.abi as Abi,
           chainId: chainId,
         };
 
-        const currentUserTotalVotesCast = await readContract({
+        const currentUserTotalVotesCast = await readContract(config, {
           ...contractConfig,
           functionName: "contestAddressTotalVotesCast",
           args: [userAddress],
@@ -204,14 +204,13 @@ export function useUser() {
     setIsCurrentUserVoteQualificationLoading(true);
 
     if (!abi) return;
-    const accountData = getAccount();
 
     try {
-      const currentUserTotalVotesCastRaw = await readContract({
+      const currentUserTotalVotesCastRaw = await readContract(config, {
         address: address as `0x${string}`,
-        abi: abi.abi as unknown as Abi,
+        abi: abi.abi as Abi,
         functionName: "contestAddressTotalVotesCast",
-        args: [accountData?.address],
+        args: [userAddress],
       });
 
       const currentUserTotalVotesCast = BigNumber.from(currentUserTotalVotesCastRaw);

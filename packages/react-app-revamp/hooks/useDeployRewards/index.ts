@@ -1,3 +1,4 @@
+import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { useEthersSigner } from "@helpers/ethers";
@@ -5,7 +6,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
-import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
 import { useRouter } from "next/router";
 import { useDeployRewardsStore } from "./store";
@@ -46,15 +47,20 @@ export function useDeployRewardsPool() {
         abi: DeployedContestContract.abi,
       };
 
-      const config = await prepareWriteContract({
+      //TODO: check simulate response to accomodate for writeContract
+      await simulateContract(config, {
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
         args: [contractRewardsModule!.address],
       });
 
-      const { hash } = await writeContract(config);
+      const hash = await writeContract(config, {
+        ...contractConfig,
+        functionName: "setOfficialRewardsModule",
+        args: [contractRewardsModule!.address],
+      });
 
-      await waitForTransaction({
+      await waitForTransactionReceipt(config, {
         hash,
       });
 

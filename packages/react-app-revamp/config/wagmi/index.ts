@@ -1,23 +1,20 @@
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
-  bitKeepWallet,
+  bitgetWallet,
   coinbaseWallet,
   imTokenWallet,
   metaMaskWallet,
   okxWallet,
   omniWallet,
+  phantomWallet,
   rabbyWallet,
   rainbowWallet,
   tahoWallet,
   trustWallet,
   walletConnectWallet,
-  phantomWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { luksoWallet } from "./custom-wallets/luksoWallet";
-
-import { configureChains, createConfig } from "wagmi";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { createConfig, http } from "wagmi";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -25,6 +22,7 @@ import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
+import { berachainTestnet } from "./custom-chains/berachainTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
@@ -84,13 +82,14 @@ import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
-import { berachainTestnet } from "./custom-chains/berachainTestnet";
+import { luksoWallet } from "./custom-wallets/luksoWallet";
+import { injected } from "@wagmi/connectors";
 
 type ChainImages = {
   [key: string]: string;
 };
 
-const totalChains: Chain[] = [
+export const chains: Chain[] = [
   polygon,
   arbitrumOne,
   optimism,
@@ -160,31 +159,9 @@ const totalChains: Chain[] = [
   mainnet,
 ];
 
-const publicClients =
-  process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY
-    ? [
-        jsonRpcProvider({
-          rpc: chain => {
-            return {
-              http: `${chain.rpcUrls.default.http[0]}`,
-            };
-          },
-        }),
-      ]
-    : [
-        jsonRpcProvider({
-          rpc: chain => {
-            return {
-              http: `${chain.rpcUrls.public.http[0]}`,
-            };
-          },
-        }),
-      ];
-
-export const { chains, publicClient, webSocketPublicClient } = configureChains(totalChains, publicClients);
-
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
 
+// TODO: we need rainbowkit upgrade in order to use this setting in createConfig
 const connectors = connectorsForWallets([
   {
     groupName: "Wallets",
@@ -199,7 +176,7 @@ const connectors = connectorsForWallets([
       trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      bitKeepWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
+      bitgetWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
       rabbyWallet({ chains }),
       luksoWallet(),
       phantomWallet({ chains }),
@@ -207,14 +184,17 @@ const connectors = connectorsForWallets([
   },
 ]);
 
+// TODO: add connectors and transports for each chain
 export const config = createConfig({
-  autoConnect: true,
-  connectors,
-  publicClient,
-  webSocketPublicClient,
+  chains: chains as any,
+  transports: {
+    [mainnet.id]: http("https://mainnet.example.com"),
+    [sepolia.id]: http("https://sepolia.example.com"),
+  },
+  connectors: [injected()],
 });
 
-export const chainsImages: ChainImages = totalChains.reduce((acc, chain) => {
+export const chainsImages: ChainImages = chains.reduce((acc, chain) => {
   if (chain.name && chain.iconUrl) {
     acc[chain.name.toLowerCase()] = chain.iconUrl as string;
   }

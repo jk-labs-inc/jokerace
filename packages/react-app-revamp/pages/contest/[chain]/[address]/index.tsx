@@ -1,10 +1,11 @@
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { getLayout } from "@layouts/LayoutViewContest";
 import { readContracts } from "@wagmi/core";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { parse } from "node-html-parser";
+import { Abi } from "viem";
 
 interface PageProps {
   address: string;
@@ -37,23 +38,22 @@ async function getContestDetails(address: string, chainName: string) {
 
   const contracts = [
     {
-      address,
-      abi,
+      address: address as `0x${string}`,
+      abi: abi as Abi,
       chainId,
       functionName: "name",
       args: [],
     },
     {
-      address,
-      abi,
+      address: address as `0x${string}`,
+      abi: abi as Abi,
       chainId,
       functionName: "prompt",
       args: [],
     },
   ];
 
-  //@ts-ignore
-  const results = (await readContracts({ contracts })) as any;
+  const results = (await readContracts(config, { contracts })) as any;
 
   return results;
 }

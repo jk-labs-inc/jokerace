@@ -1,8 +1,9 @@
+import { config } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-import { useTotalVotesCastStore } from "./store";
 import { Abi } from "viem";
+import { useTotalVotesCastStore } from "./store";
 
 const useTotalVotesCastOnContest = (address: string, chainId: number) => {
   const { setTotalVotesCast, setIsLoading, setIsError, setIsSuccess } = useTotalVotesCastStore(state => state);
@@ -20,7 +21,7 @@ const useTotalVotesCastOnContest = (address: string, chainId: number) => {
 
       const contractConfig = {
         address: address as `0x${string}`,
-        abi: abi as unknown as Abi,
+        abi: abi as Abi,
         chainId: chainId,
       };
 
@@ -36,11 +37,12 @@ const useTotalVotesCastOnContest = (address: string, chainId: number) => {
     try {
       setIsLoading(true);
       const result = await getContractConfig();
+
       if (!result) return;
 
       const { contractConfig } = result;
 
-      const totalVotesCast = (await readContract({
+      const totalVotesCast = (await readContract(config, {
         ...contractConfig,
         functionName: "totalVotesCast",
         args: [],

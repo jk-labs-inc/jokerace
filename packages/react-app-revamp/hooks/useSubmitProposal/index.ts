@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -8,15 +8,21 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
+import {
+  prepareWriteContract,
+  simulateContract,
+  waitForTransaction,
+  waitForTransactionReceipt,
+  writeContract,
+} from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useSubmitProposalStore } from "./store";
-import { useProposalStore } from "@hooks/useProposal/store";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -32,7 +38,6 @@ export function useSubmitProposal() {
   const { chainName, address } = extractPathSegments(asPath);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
-  const { address: userAddress } = useAccount();
   const { entryCharge } = useContestStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
@@ -43,7 +48,7 @@ export function useSubmitProposal() {
     ?.id;
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
-  const { chain } = useNetwork();
+  const { address: userAddress, chain } = useAccount();
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
     if (showToast) toastLoading("proposal is deploying...");
@@ -73,7 +78,7 @@ export function useSubmitProposal() {
           safeMetadata: safeMetadata,
         };
 
-        let hash = "" as `0x${string}`;
+        let hash: `0x${string}`;
         let txConfig = null;
 
         if (!isVerified) {
@@ -93,17 +98,17 @@ export function useSubmitProposal() {
         }
 
         if (txConfig) {
-          // @ts-ignore
-          const request = await prepareWriteContract(txConfig);
+          //TODO: figure out txConfig
+          await simulateContract(config, txConfig);
 
-          const txSendProposal = await writeContract(request);
+          const txSendProposalHash = await writeContract(config, txConfig);
 
-          hash = txSendProposal.hash;
+          hash = txSendProposalHash;
         }
 
-        const receipt = await waitForTransaction({
+        const receipt = await waitForTransactionReceipt(config, {
           chainId: chain?.id,
-          hash,
+          hash: hash,
         });
 
         const proposalId = await getProposalId(proposalCore, contractConfig);

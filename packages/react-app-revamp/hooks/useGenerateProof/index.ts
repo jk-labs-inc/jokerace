@@ -1,10 +1,11 @@
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
 import { loadFileFromBucket } from "lib/buckets";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { Abi } from "viem";
 import { useAccount } from "wagmi";
 
 type ProofType = "submission" | "vote";
@@ -31,7 +32,7 @@ export function useGenerateProof() {
 
     return {
       address: contestAddress as `0x${string}`,
-      abi: abi,
+      abi: abi as Abi,
       chainId: chainId,
     };
   }
@@ -86,8 +87,7 @@ export function useGenerateProof() {
 
     switch (proofType) {
       case "submission":
-        //@ts-ignore
-        const submissionMerkleRoot = (await readContract({
+        const submissionMerkleRoot = (await readContract(config, {
           ...contractConfig,
           functionName: "submissionMerkleRoot",
         })) as string;
@@ -98,8 +98,7 @@ export function useGenerateProof() {
           return await generateProofs(address, numVotes, submissionMerkleRoot);
         }
       case "vote":
-        //@ts-ignore
-        const votingMerkleRoot = (await readContract({
+        const votingMerkleRoot = (await readContract(config, {
           ...contractConfig,
           functionName: "votingMerkleRoot",
         })) as string;
@@ -114,16 +113,14 @@ export function useGenerateProof() {
 
     switch (proofType) {
       case "submission":
-        //@ts-ignore
-        verified = (await readContract({
+        verified = (await readContract(config, {
           ...contractConfig,
           functionName: "addressSubmitterVerified",
           args: [address as `0x${string}`],
         })) as boolean;
         break;
       case "vote":
-        //@ts-ignore
-        verified = (await readContract({
+        verified = (await readContract(config, {
           ...contractConfig,
           functionName: "addressTotalVotesVerified",
           args: [address as `0x${string}`],
@@ -146,6 +143,7 @@ export function useGenerateProof() {
 
   useEffect(() => {
     if (account?.connector) {
+      // TODO: explore connector change event
       account?.connector.on("change", data => {
         if (!data.chain) return;
 

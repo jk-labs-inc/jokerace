@@ -1,23 +1,23 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { waitForTransaction, writeContract } from "@wagmi/core";
+import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useDeleteProposalStore } from "./store";
+import { Abi } from "viem";
 
 export function useDeleteProposal() {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, chain } = useAccount();
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
-  const { chain } = useNetwork();
   const { removeProposal } = useProposal();
   const { submissionsCount, setSubmissionsCount } = useProposalStore(state => state);
   const {
@@ -46,26 +46,27 @@ export function useDeleteProposal() {
 
     const contractConfig = {
       address: address as `0x${string}`,
-      abi: abi ? abi.abi : DeployedContestContract.abi,
+      abi: abi ? (abi.abi as Abi) : (DeployedContestContract.abi as Abi),
     };
 
+    if (!contractConfig.abi) return;
+
     try {
-      //@ts-ignore
-      const txDeleteProposals = await writeContract({
+      const hash = await writeContract(config, {
         ...contractConfig,
         functionName: "deleteProposals",
         args: [proposalIds],
       });
 
-      const receipt = await waitForTransaction({
+      const receipt = await waitForTransactionReceipt(config, {
         chainId: chain?.id,
-        hash: txDeleteProposals.hash,
+        hash: hash,
       });
 
       setTransactionData({
         hash: receipt.transactionHash,
         chainId: chain?.id,
-        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txDeleteProposals?.hash}`,
+        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${hash}`,
       });
 
       try {

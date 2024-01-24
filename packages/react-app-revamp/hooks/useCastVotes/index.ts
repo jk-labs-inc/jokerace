@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -11,12 +11,12 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
@@ -34,8 +34,7 @@ export function useCastVotes() {
     setError,
     setTransactionData,
   } = useCastVotesStore(state => state);
-  const { address: userAddress } = useAccount();
-  const { chain } = useNetwork();
+  const { address: userAddress, chain } = useAccount();
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useUser();
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
@@ -60,9 +59,8 @@ export function useCastVotes() {
       let txRequest;
 
       if (!isVerified) {
-        txRequest = await prepareWriteContract({
+        txRequest = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
-          //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVote",
           args: [
@@ -74,22 +72,20 @@ export function useCastVotes() {
           ],
         });
       } else {
-        txRequest = await prepareWriteContract({
+        txRequest = await simulateContract(config, {
           address: contestAddress as `0x${string}`,
-          //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
         });
       }
 
-      const txResult = await writeContract(txRequest);
+      //TODO: remove this when we have the new version of the contract
+      const hash = await writeContract(config, txRequest);
 
-      const receipt = await waitForTransaction({
+      const receipt = await waitForTransactionReceipt(config, {
         chainId: chain?.id,
-        hash: txResult.hash,
-        //@ts-ignore
-        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txResult?.hash}`,
+        hash: hash,
       });
 
       try {
@@ -111,7 +107,7 @@ export function useCastVotes() {
 
       // We need this to update the votes either if there is more than 2 hours
       if (!canUpdateVotesInRealTime) {
-        const voteResponse = (await readContract({
+        const voteResponse = (await readContract(config, {
           address: contestAddress as `0x${string}`,
           abi: DeployedContestContract.abi,
           functionName: "proposalVotes",

@@ -1,19 +1,20 @@
 import { toastError } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { useError } from "@hooks/useError";
+import { useQuery } from "@tanstack/react-query";
 import { readContract, readContracts } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
-import { useNetwork, useQuery } from "wagmi";
+import { useAccount } from "wagmi";
 import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath);
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();
   const chainId = chains.filter(
@@ -85,7 +86,7 @@ export function useRewardsModule() {
 
       const configRewardsModuleContract = {
         address: contestRewardModuleAddress as `0x${string}`,
-        abi: abiRewardsModule,
+        abi: abiRewardsModule as Abi,
         chainId,
       };
       const contractsRewardsModule = [
@@ -103,8 +104,7 @@ export function useRewardsModule() {
         },
       ];
 
-      const rewardsModule = await readContracts({
-        //@ts-ignore
+      const rewardsModule = await readContracts(config, {
         contracts: contractsRewardsModule,
       });
 
@@ -138,9 +138,9 @@ export function useRewardsModule() {
     }
 
     try {
-      const contestRewardModuleAddress = (await readContract({
+      const contestRewardModuleAddress = (await readContract(config, {
         address: contestAddress as `0x${string}`,
-        abi: abiContest as unknown as Abi,
+        abi: abiContest as Abi,
         chainId,
         functionName: "officialRewardsModule",
       })) as string;

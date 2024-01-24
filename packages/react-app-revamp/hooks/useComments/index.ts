@@ -1,9 +1,9 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { getBlockDetails } from "@helpers/getBlock";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
-import { prepareWriteContract, readContract, readContracts, waitForTransaction, writeContract } from "@wagmi/core";
+import { readContract, readContracts, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics, saveUpdatedProposalsCommentStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -56,7 +56,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       return {
         address: address as `0x${string}`,
-        abi: abi as unknown as Abi,
+        abi: abi as Abi,
         chainId: chainId,
       };
     } catch (error: any) {
@@ -70,9 +70,10 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   async function getCommentId(comment: CommentCore): Promise<string> {
     const contractConfig = await getContractConfig();
 
+    if (!contractConfig) return "";
+
     try {
-      //@ts-ignore
-      const commentId = (await readContract({
+      const commentId = (await readContract(config, {
         ...contractConfig,
         functionName: "hashComment",
         args: [comment],
@@ -103,7 +104,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
       ];
 
       //@ts-ignore
-      const [commentResult, isDeletedResult] = await readContracts({ contracts });
+      const [commentResult, isDeletedResult] = await readContracts(config, { contracts });
 
       const comment = commentResult.result as CommentCore;
       const isDeleted = isDeletedResult.result as boolean;
@@ -188,7 +189,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
       ];
 
       //@ts-ignore
-      const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts({ contracts });
+      const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts(config, { contracts });
 
       const allCommentsIdsBigInt = allCommentsIdsRaw.result as bigint[];
       const deletedCommentIdsBigInt = deletedCommentIdsRaw.result as bigint[];
@@ -232,7 +233,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
       ];
 
       //@ts-ignore
-      const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts({ contracts });
+      const [allCommentsIdsRaw, deletedCommentIdsRaw] = await readContracts(config, { contracts });
 
       const allCommentsIdsBigInt = allCommentsIdsRaw.result as bigint[];
       const deletedCommentIdsBigInt = deletedCommentIdsRaw.result as bigint[];
@@ -265,16 +266,21 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     try {
       const contractConfig = await getContractConfig();
 
-      const txResult = await writeContract(
-        //@ts-ignore
-        await prepareWriteContract({
-          ...contractConfig,
-          functionName: "comment",
-          args: [proposalId, content],
-        }),
-      );
+      if (!contractConfig) return;
 
-      const txReceipt = await waitForTransaction({ hash: txResult.hash });
+      await simulateContract(config, {
+        ...contractConfig,
+        functionName: "comment",
+        args: [proposalId, content],
+      });
+
+      const hash = await writeContract(config, {
+        ...contractConfig,
+        functionName: "comment",
+        args: [proposalId, content],
+      });
+
+      const txReceipt = await waitForTransactionReceipt(config, { hash: hash });
       const blockInfo = await getBlockDetails(txReceipt.blockHash, chainId);
 
       if (!blockInfo) throw new Error("Error fetching block details");
@@ -320,16 +326,21 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     try {
       const contractConfig = await getContractConfig();
 
-      const txResult = await writeContract(
-        //@ts-ignore
-        await prepareWriteContract({
-          ...contractConfig,
-          functionName: "deleteComments",
-          args: [commentsIds],
-        }),
-      );
+      if (!contractConfig) return;
 
-      await waitForTransaction({ hash: txResult.hash });
+      await simulateContract(config, {
+        ...contractConfig,
+        functionName: "deleteComments",
+        args: [commentsIds],
+      });
+
+      const hash = await writeContract(config, {
+        ...contractConfig,
+        functionName: "deleteComments",
+        args: [commentsIds],
+      });
+
+      await waitForTransactionReceipt(config, { hash: hash });
 
       try {
         if (!accountAddress) return;

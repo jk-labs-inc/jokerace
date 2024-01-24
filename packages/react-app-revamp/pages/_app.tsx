@@ -16,7 +16,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
-import { WagmiConfig } from "wagmi";
+import { WagmiProvider } from "wagmi";
 import * as gtag from "../lib/gtag";
 polyfill();
 
@@ -79,7 +79,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="preload" href="/gnosis.png" as="image" crossOrigin="anonymous" />
       </Head>
 
-      <WagmiConfig config={config}>
+      <WagmiProvider config={config}>
         <RainbowKitProvider chains={chains} theme={jokeraceTheme} modalSize="wide">
           <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
           <Portal>
@@ -97,7 +97,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             />
           </Portal>
         </RainbowKitProvider>
-      </WagmiConfig>
+      </WagmiProvider>
     </>
   );
 }
