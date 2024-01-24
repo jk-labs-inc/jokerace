@@ -85,6 +85,8 @@ import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
 import { berachainTestnet } from "./custom-chains/berachainTestnet";
+import { palma } from "./custom-chains/palma";
+import { palmaTestnet } from "./custom-chains/palmaTestnet";
 
 type ChainImages = {
   [key: string]: string;
@@ -127,6 +129,7 @@ const totalChains: Chain[] = [
   astriaDusk2,
   fantom,
   arthera,
+  palma,
   polygonTestnet,
   sepolia,
   goerli,
@@ -157,6 +160,7 @@ const totalChains: Chain[] = [
   fantomTestnet,
   berachainTestnet,
   taikoTestnet,
+  palmaTestnet,
   mainnet,
 ];
 
