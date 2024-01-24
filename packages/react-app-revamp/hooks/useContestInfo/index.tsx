@@ -48,7 +48,7 @@ const useContestInfo = ({
   const { tokenSymbol: submissionRequirementToken, isLoading: isSubmissionRequirementTokenLoading } = useTokenDetails(
     submissionRequirement?.type,
     submissionRequirement?.tokenAddress,
-    votingRequirement?.chain,
+    submissionRequirement?.chain,
   );
 
   useEffect(() => {
@@ -127,7 +127,8 @@ const useContestInfo = ({
             <p>
               for{" "}
               <span className="uppercase">
-                {submissionRequirement?.type === "erc20" ? "$" : ""} {submissionRequirementToken}
+                {submissionRequirement?.type === "erc20" ? "$" : ""}
+                {submissionRequirementToken}
               </span>{" "}
               holders
             </p>
@@ -145,7 +146,8 @@ const useContestInfo = ({
           <p>
             for{" "}
             <span className="uppercase">
-              {submissionRequirement?.type === "erc20" ? "$" : ""} {submissionRequirementToken}
+              {submissionRequirement?.type === "erc20" ? "$" : ""}
+              {submissionRequirementToken}
             </span>{" "}
             holders
           </p>
