@@ -1,4 +1,4 @@
-import { toastSuccess } from "@components/UI/Toast";
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
@@ -33,38 +33,26 @@ export const useWithdrawReward = (
   const { handleError } = useError();
   const queryTokenBalance = useBalance({
     token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
-    chainId: chainId,
     address: contractRewardsModuleAddress as `0x${string}`,
+    chainId,
   });
 
-  const contractWriteWithdrawReward = async () => {
-    try {
-      setIsLoading(true);
+  const handleWithdraw = async () => {
+    setIsLoading(true);
+    toastLoading(`Withdrawing funds...`);
 
+    try {
       const hash = await writeContract(config, {
         address: contractRewardsModuleAddress as `0x${string}`,
         abi: abiRewardsModule,
         functionName: "withdrawRewards",
         args: tokenType === "erc20" ? [tokenAddress ?? ""] : [],
-        chainId: chainId,
       });
 
-      setIsLoading(false);
-      return hash;
-    } catch (e) {
-      handleError(e, `something went wrong and the funds couldn't be withdrawn`);
-      setIsLoading(false);
-    }
-  };
-
-  const txWithdraw = async (hash: string) => {
-    try {
-      await waitForTransactionReceipt(config, {
-        hash: hash as `0x${string}`,
-        chainId: chainId,
-      });
+      await waitForTransactionReceipt(config, { hash });
 
       await queryTokenBalance.refetch();
+      setIsLoading(false);
       toastSuccess("Funds withdrawn successfully!");
 
       updateRewardAnalytics({
@@ -76,12 +64,11 @@ export const useWithdrawReward = (
         token_address: tokenAddress ? tokenAddress : null,
         created_at: Math.floor(Date.now() / 1000),
       });
-    } catch (e) {
-      handleError(e, `something went wrong and the funds couldn't be withdrawn`);
-    } finally {
+    } catch (error: any) {
+      handleError(error, `something went wrong and the funds couldn't be withdrawn`);
       setIsLoading(false);
     }
   };
 
-  return { queryTokenBalance, contractWriteWithdrawReward, txWithdraw };
+  return { queryTokenBalance, handleWithdraw };
 };

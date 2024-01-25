@@ -5,7 +5,7 @@ import CrossIcon from "@components/UI/Icons/Cross";
 import { useContestStore } from "@hooks/useContest/store";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { useTokenBalance } from "@hooks/useTokenBalance";
-import { useWithdrawReward } from "@hooks/useWithdrawRewards";
+import { useWithdrawReward, useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
 import { utils } from "ethers";
 import { FC, useEffect, useState } from "react";
 import { useAccount } from "wagmi";
@@ -22,12 +22,13 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
   const { address, isConnected } = useAccount();
   const creator = isConnected && address ? contestAuthorEthereumAddress === address : false;
   const [inputRewardsModuleBalanceCheck, setInputRewardsModuleBalanceCheck] = useState("");
-  const { contractWriteWithdrawReward, txWithdraw } = useWithdrawReward(
+  const { handleWithdraw } = useWithdrawReward(
     rewardsStore?.rewards?.contractAddress,
     rewardsStore?.rewards?.abi,
     "erc20",
     inputRewardsModuleBalanceCheck,
   );
+  const { isLoading: isWithdrawLoading } = useWithdrawRewardStore(state => state);
   const { queryTokenBalance, error } = useTokenBalance(inputRewardsModuleBalanceCheck);
   const [tokenAlreadyAdded, setTokenAlreadyAdded] = useState(false);
 
@@ -111,6 +112,7 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
             </div>
           )}
         </div>
+        {/* TODO: check formatted value */}
         {queryTokenBalance?.formatted && !tokenAlreadyAdded && (
           <ul className="flex gap-6 text-[16px] pt-6 font-bold list-explainer animate-appear">
             <li className="flex items-center uppercase">
@@ -123,10 +125,10 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
               </ButtonV3>
               {creator && (
                 <ButtonV3
-                  isDisabled={txWithdraw.isLoading}
+                  isDisabled={isWithdrawLoading}
                   size={ButtonSize.EXTRA_SMALL}
                   colorClass="bg-gradient-withdraw"
-                  onClick={() => contractWriteWithdrawReward.write()}
+                  onClick={handleWithdraw}
                 >
                   Withdraw
                 </ButtonV3>

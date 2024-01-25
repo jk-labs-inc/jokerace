@@ -3,11 +3,12 @@ import Skeleton from "react-loading-skeleton";
 
 interface PreviouslyDistributedRewardProps {
   queryTokenBalance: any;
-  queryRankRewardsReleased: any;
+  queryRankRewardsReleased: number;
+  isReleasedRewardsLoading: boolean;
 }
 
 export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardProps) => {
-  const { queryTokenBalance, queryRankRewardsReleased } = props;
+  const { queryTokenBalance, queryRankRewardsReleased, isReleasedRewardsLoading } = props;
 
   if (queryTokenBalance.isLoading)
     return (
@@ -16,7 +17,7 @@ export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardPr
       </li>
     );
 
-  if (!queryRankRewardsReleased.data || queryRankRewardsReleased.data === 0) {
+  if (!queryRankRewardsReleased) {
     return (
       <li className="no-funds-distributed">
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds distributed
@@ -27,9 +28,9 @@ export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardPr
   return (
     <li className="flex items-center text-positive-11 funds-distributed">
       <section className="flex justify-between w-full">
-        {queryRankRewardsReleased.isLoading && <Loader scale="component">Loading info...</Loader>}
+        {isReleasedRewardsLoading && <Loader scale="component">Loading info...</Loader>}
         <p>
-          {queryRankRewardsReleased.data} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+          {queryRankRewardsReleased} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
         </p>
       </section>
     </li>

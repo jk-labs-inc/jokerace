@@ -1,4 +1,4 @@
-import { toastSuccess } from "@components/UI/Toast";
+import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
@@ -13,13 +13,21 @@ import { create } from "zustand";
 type TokenType = "erc20" | "native";
 
 type Store = {
-  isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
+  isReleasableRewardsLoading: boolean;
+  isReleasedRewardsLoading: boolean;
+  isDistributeRewardsLoading: boolean;
+  setIsDistributeRewardsLoading: (isLoading: boolean) => void;
+  setIsReleasedRewardsLoading: (isReleasedRewardsLoading: boolean) => void;
+  setIsReleasableRewardsLoading: (isReleasableRewardsLoading: boolean) => void;
 };
 
 export const useDistributeRewardStore = create<Store>(set => ({
-  isLoading: false,
-  setIsLoading: isLoading => set({ isLoading }),
+  isReleasableRewardsLoading: false,
+  isReleasedRewardsLoading: false,
+  isDistributeRewardsLoading: false,
+  setIsDistributeRewardsLoading: (isLoading: boolean) => set({ isDistributeRewardsLoading: isLoading }),
+  setIsReleasedRewardsLoading: (isReleasedRewardsLoading: boolean) => set({ isReleasedRewardsLoading }),
+  setIsReleasableRewardsLoading: (isReleasableRewardsLoading: boolean) => set({ isReleasableRewardsLoading }),
 }));
 
 export const useDistributeRewards = (
@@ -33,7 +41,8 @@ export const useDistributeRewards = (
 ) => {
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
-  const { setIsLoading } = useDistributeRewardStore(state => state);
+  const { setIsReleasableRewardsLoading, setIsReleasedRewardsLoading, setIsDistributeRewardsLoading } =
+    useDistributeRewardStore(state => state);
   const tokenResData = useTokenDecimals(tokenAddress as `0x${string}`, chainId);
   const tokenData = tokenType === "erc20" ? tokenResData : null;
   const { handleError } = useError();
@@ -52,6 +61,8 @@ export const useDistributeRewards = (
   };
 
   const queryRankRewardsReleasable = async () => {
+    setIsReleasableRewardsLoading(true);
+
     return await readContract(config, {
       address: contractRewardsModuleAddress as `0x${string}`,
       abi: abiRewardsModule,
@@ -59,13 +70,18 @@ export const useDistributeRewards = (
       functionName: "releasable",
       args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
     })
-      .then((data: any) => transform(data))
+      .then((data: any) => {
+        setIsReleasableRewardsLoading(false);
+        return transform(data);
+      })
       .catch((error: any) => {
+        setIsReleasableRewardsLoading(false);
         handleError(error, "Error while querying releasable rewards");
       });
   };
 
   const queryRankRewardsReleased = async () => {
+    setIsReleasedRewardsLoading(true);
     return await readContract(config, {
       address: contractRewardsModuleAddress as `0x${string}`,
       abi: abiRewardsModule,
@@ -73,13 +89,19 @@ export const useDistributeRewards = (
       functionName: tokenType === "erc20" ? "erc20Released" : "released",
       args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
     })
-      .then((data: any) => transform(data))
+      .then((data: any) => {
+        setIsReleasedRewardsLoading(false);
+        return transform(data);
+      })
       .catch((error: any) => {
+        setIsReleasedRewardsLoading(false);
         handleError(error, "Error while querying released rewards");
       });
   };
 
-  const contractWriteReleaseToken = async () => {
+  const handleDistributeRewards = async () => {
+    setIsDistributeRewardsLoading(true);
+    toastLoading(`Distributing funds...`);
     try {
       const hash = await writeContract(config, {
         address: contractRewardsModuleAddress as `0x${string}`,
@@ -89,38 +111,28 @@ export const useDistributeRewards = (
         chainId,
       });
 
-      const receipt = await waitForTransactionReceipt(config, { hash });
-      return receipt;
+      await waitForTransactionReceipt(config, { hash });
+
+      await queryTokenBalance.refetch();
+      await queryRankRewardsReleasable();
+      const amountReleased = await queryRankRewardsReleased();
+
+      setIsDistributeRewardsLoading(false);
+      toastSuccess("Funds distributed successfully!");
+
+      updateRewardAnalytics({
+        contest_address: contestAddress,
+        rewards_module_address: contractRewardsModuleAddress,
+        network_name: chainName,
+        amount: amountReleased ?? 0,
+        operation: "distribute",
+        token_address: tokenAddress ? tokenAddress : null,
+        created_at: Math.floor(Date.now() / 1000),
+      });
     } catch (error) {
       handleError(error, "Error while releasing token");
-      setIsLoading(false);
+      setIsDistributeRewardsLoading(false);
     }
-  };
-
-  const txRelease = async (hash: string) => {
-    return await waitForTransactionReceipt(config, { hash: hash as `0x${string}` })
-      .then(async () => {
-        await queryTokenBalance.refetch();
-        await queryRankRewardsReleasable();
-        const amountReleased = await queryRankRewardsReleased();
-
-        setIsLoading(false);
-        toastSuccess("Funds distributed successfully!");
-
-        updateRewardAnalytics({
-          contest_address: contestAddress,
-          rewards_module_address: contractRewardsModuleAddress,
-          network_name: chainName,
-          amount: amountReleased ?? 0,
-          operation: "distribute",
-          token_address: tokenAddress ? tokenAddress : null,
-          created_at: Math.floor(Date.now() / 1000),
-        });
-      })
-      .catch(error => {
-        handleError(error, "Error in transaction");
-        setIsLoading(false);
-      });
   };
 
   return {
@@ -129,7 +141,6 @@ export const useDistributeRewards = (
     queryTokenBalance,
     queryRankRewardsReleasable,
     queryRankRewardsReleased,
-    contractWriteReleaseToken,
-    txRelease,
+    handleDistributeRewards,
   };
 };

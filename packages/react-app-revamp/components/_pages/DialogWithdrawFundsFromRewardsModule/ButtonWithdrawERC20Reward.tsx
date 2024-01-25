@@ -1,4 +1,4 @@
-import { useWithdrawReward } from "@hooks/useWithdrawRewards";
+import { useWithdrawReward, useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
 import ButtonWithdraw from "./ButtonWithdraw";
 interface ButtonWithdrawErc20RewardProps {
   contractRewardsModuleAddress: string;
@@ -8,20 +8,15 @@ interface ButtonWithdrawErc20RewardProps {
 
 export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps) => {
   const { contractRewardsModuleAddress, tokenAddress, abiRewardsModule } = props;
-  const { queryTokenBalance, contractWriteWithdrawReward, txWithdraw } = useWithdrawReward(
+  const { queryTokenBalance, handleWithdraw } = useWithdrawReward(
     contractRewardsModuleAddress,
     abiRewardsModule,
     "erc20",
     tokenAddress,
   );
+  const { isLoading } = useWithdrawRewardStore(state => state);
 
-  return (
-    <ButtonWithdraw
-      contractWriteWithdraw={contractWriteWithdrawReward}
-      queryTokenBalance={queryTokenBalance}
-      txWithdraw={txWithdraw}
-    />
-  );
+  return <ButtonWithdraw queryTokenBalance={queryTokenBalance} handleWithdraw={handleWithdraw} isLoading={isLoading} />;
 };
 
 export default ButtonWithdrawERC20Reward;
