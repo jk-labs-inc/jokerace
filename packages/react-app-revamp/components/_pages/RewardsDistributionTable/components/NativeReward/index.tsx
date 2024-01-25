@@ -1,4 +1,4 @@
-import { useDistributeRewards } from "@hooks/useDistributeRewards";
+import { useDistributeRewardStore, useDistributeRewards } from "@hooks/useDistributeRewards";
 import Reward from "../Reward";
 
 interface PayeeNativeRewardProps {
@@ -12,19 +12,18 @@ interface PayeeNativeRewardProps {
 
 export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
   const { payee, share, contractRewardsModuleAddress, abiRewardsModule, chainId, showPreviouslyDistributed } = props;
-  const {
-    queryTokenBalance,
-    queryRankRewardsReleasable,
-    queryRankRewardsReleased,
-    contractWriteReleaseToken,
-    txRelease,
-  } = useDistributeRewards(
-    Number(payee),
-    Number(share),
-    contractRewardsModuleAddress,
-    abiRewardsModule,
-    chainId,
-    "native",
+  const { queryTokenBalance, queryRankRewardsReleasable, queryRankRewardsReleased, handleDistributeRewards } =
+    useDistributeRewards(
+      Number(payee),
+      Number(share),
+      contractRewardsModuleAddress,
+      abiRewardsModule,
+      chainId,
+      "native",
+    );
+
+  const { isDistributeRewardsLoading, isReleasableRewardsLoading, isReleasedRewardsLoading } = useDistributeRewardStore(
+    state => state,
   );
 
   return (
@@ -32,9 +31,11 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
       queryTokenBalance={queryTokenBalance}
       queryRankRewardsReleasable={queryRankRewardsReleasable}
       queryRankRewardsReleased={queryRankRewardsReleased}
-      contractWriteRelease={contractWriteReleaseToken}
       showPreviouslyDistributed={showPreviouslyDistributed}
-      txRelease={txRelease}
+      handleDistributeRewards={handleDistributeRewards}
+      isReleasableRewardsLoading={isReleasableRewardsLoading}
+      isDistributeRewardsLoading={isDistributeRewardsLoading}
+      isReleasedRewardsLoading={isReleasedRewardsLoading}
     />
   );
 };
