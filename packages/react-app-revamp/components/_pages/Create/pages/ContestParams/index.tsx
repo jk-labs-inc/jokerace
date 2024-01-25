@@ -5,7 +5,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import useEntryChargeDetails from "@hooks/useEntryChargeDetails";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import ContestParamsDownvote from "./components/Downvote";
@@ -16,8 +16,7 @@ import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
   const { isLoading } = useDeployContestStore(state => state);
-  const { isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const { isConnected, chain } = useAccount();
   const { openConnectModal } = useConnectModal();
   const {
     setMaxSubmissions,

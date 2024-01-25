@@ -1,9 +1,11 @@
 import { toastSuccess } from "@components/UI/Toast";
+import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
+import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
-import { useBalance, useContractWrite, useNetwork, useWaitForTransaction } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { create } from "zustand";
 
 type TokenType = "erc20" | "native";
@@ -26,38 +28,44 @@ export const useWithdrawReward = (
 ) => {
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
-  const { chain } = useNetwork();
+  const { chainId } = useAccount();
   const { setIsLoading } = useWithdrawRewardStore(state => state);
   const { handleError } = useError();
-
   const queryTokenBalance = useBalance({
     token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
-    chainId: chain?.id,
+    chainId: chainId,
     address: contractRewardsModuleAddress as `0x${string}`,
   });
 
-  const contractWriteWithdrawReward = useContractWrite({
-    address: contractRewardsModuleAddress as `0x${string}`,
-    abi: abiRewardsModule,
-    functionName: "withdrawRewards",
-    chainId: chain?.id,
-    args: tokenType === "erc20" ? [tokenAddress] : [],
-    onError(e) {
-      handleError(e, `something went wrong and the funds couldn't be withdrawn`);
-      setIsLoading(false);
-    },
-  });
+  const contractWriteWithdrawReward = async () => {
+    try {
+      setIsLoading(true);
 
-  const txWithdraw = useWaitForTransaction({
-    hash: contractWriteWithdrawReward?.data?.hash,
-    onError(e) {
+      const hash = await writeContract(config, {
+        address: contractRewardsModuleAddress as `0x${string}`,
+        abi: abiRewardsModule,
+        functionName: "withdrawRewards",
+        args: tokenType === "erc20" ? [tokenAddress ?? ""] : [],
+        chainId: chainId,
+      });
+
+      setIsLoading(false);
+      return hash;
+    } catch (e) {
       handleError(e, `something went wrong and the funds couldn't be withdrawn`);
       setIsLoading(false);
-    },
-    async onSuccess() {
+    }
+  };
+
+  const txWithdraw = async (hash: string) => {
+    try {
+      await waitForTransactionReceipt(config, {
+        hash: hash as `0x${string}`,
+        chainId: chainId,
+      });
+
       await queryTokenBalance.refetch();
-      setIsLoading(false);
-      toastSuccess("Funds withdrawn successfully !");
+      toastSuccess("Funds withdrawn successfully!");
 
       updateRewardAnalytics({
         contest_address: contestAddress,
@@ -68,8 +76,12 @@ export const useWithdrawReward = (
         token_address: tokenAddress ? tokenAddress : null,
         created_at: Math.floor(Date.now() / 1000),
       });
-    },
-  });
+    } catch (e) {
+      handleError(e, `something went wrong and the funds couldn't be withdrawn`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return { queryTokenBalance, contractWriteWithdrawReward, txWithdraw };
 };

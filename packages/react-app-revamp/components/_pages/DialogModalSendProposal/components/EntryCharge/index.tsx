@@ -5,7 +5,7 @@ import { formatBalance } from "@helpers/formatBalance";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { EntryCharge } from "@hooks/useDeployContest/types";
-import { FetchBalanceResult } from "@wagmi/core";
+import { type GetBalanceReturnType } from "@wagmi/core";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
@@ -14,7 +14,7 @@ import { useAccount } from "wagmi";
 
 interface DialogModalSendProposalEntryChargeLayoutProps {
   entryCharge: EntryCharge;
-  accountData: FetchBalanceResult;
+  accountData: GetBalanceReturnType;
 }
 
 const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({

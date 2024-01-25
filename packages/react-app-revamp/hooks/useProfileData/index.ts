@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { fetchEnsAvatar, fetchEnsName } from "@wagmi/core";
 import { lensClient } from "@config/lens";
+import { config } from "@config/wagmi";
+import { getEnsAvatar, getEnsName } from "@wagmi/core";
+import { useEffect, useState } from "react";
 
 const DEFAULT_AVATAR_URL = "/contest/mona-lisa-moustache.png";
 
@@ -68,9 +69,9 @@ const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): Pr
           profileName = lensProfile.handle?.localName ? lensProfile.handle.localName + ".lens" : profileName;
           isLens = true;
         } else {
-          const ensName = await fetchEnsName({ chainId: 1, address: ethereumAddress as `0x${string}` });
+          const ensName = await getEnsName(config, { chainId: 1, address: ethereumAddress as `0x${string}` });
           if (ensName) {
-            const ensAvatar = await fetchEnsAvatar({ name: ensName, chainId: 1 });
+            const ensAvatar = await getEnsAvatar(config, { name: ensName, chainId: 1 });
             if (ensAvatar) {
               try {
                 await checkImageUrl(ensAvatar);

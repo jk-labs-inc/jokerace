@@ -1,10 +1,13 @@
 import { toastSuccess } from "@components/UI/Toast";
+import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
+import { useTokenDecimals } from "@hooks/useTokenDecimals";
+import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
 import { formatEther, formatUnits } from "viem";
-import { useBalance, useContractRead, useContractWrite, useToken, useWaitForTransaction } from "wagmi";
+import { useBalance } from "wagmi";
 import { create } from "zustand";
 
 type TokenType = "erc20" | "native";
@@ -31,9 +34,14 @@ export const useDistributeRewards = (
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const { setIsLoading } = useDistributeRewardStore(state => state);
-  const tokenDataRes = useToken({ address: tokenAddress as `0x${string}`, chainId });
-  const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;
+  const tokenResData = useTokenDecimals(tokenAddress as `0x${string}`, chainId);
+  const tokenData = tokenType === "erc20" ? tokenResData : null;
   const { handleError } = useError();
+  const queryTokenBalance = useBalance({
+    address: contractRewardsModuleAddress as `0x${string}`,
+    chainId,
+    token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
+  });
 
   const transform = (data: unknown[]) => {
     const amount = data as unknown as bigint;
@@ -43,69 +51,77 @@ export const useDistributeRewards = (
       : parseFloat(formatEther(amount));
   };
 
-  const queryTokenBalance = useBalance({
-    address: contractRewardsModuleAddress as `0x${string}`,
-    chainId,
-    token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
-  });
-
-  const queryRankRewardsReleasable = useContractRead({
-    address: contractRewardsModuleAddress as `0x${string}`,
-    abi: abiRewardsModule,
-    chainId,
-    functionName: "releasable",
-    args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
-    select: data => transform(data),
-    async onError(e) {},
-  });
-
-  const queryRankRewardsReleased = useContractRead({
-    address: contractRewardsModuleAddress as `0x${string}`,
-    abi: abiRewardsModule,
-    chainId,
-    functionName: tokenType === "erc20" ? "erc20Released" : "released",
-    args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
-    select: data => transform(data),
-  });
-
-  const contractWriteReleaseToken = useContractWrite({
-    address: contractRewardsModuleAddress as `0x${string}`,
-    abi: abiRewardsModule,
-    functionName: "release",
-    args: tokenType === "erc20" ? [tokenAddress, payee] : [payee],
-    chainId,
-    async onError(e) {
-      handleError(e, "something went wrong and the the transaction failed");
-      setIsLoading(false);
-    },
-  });
-
-  const txRelease = useWaitForTransaction({
-    hash: contractWriteReleaseToken?.data?.hash,
-    chainId,
-    async onError(e) {
-      handleError(e, "something went wrong and the the transaction failed");
-      setIsLoading(false);
-    },
-    async onSuccess() {
-      await queryTokenBalance.refetch();
-      await queryRankRewardsReleasable.refetch();
-      const amountReleased = await queryRankRewardsReleased.refetch();
-
-      setIsLoading(false);
-      toastSuccess("funds distributed successfully !");
-
-      updateRewardAnalytics({
-        contest_address: contestAddress,
-        rewards_module_address: contractRewardsModuleAddress,
-        network_name: chainName,
-        amount: amountReleased.data ?? 0,
-        operation: "distribute",
-        token_address: tokenAddress ? tokenAddress : null,
-        created_at: Math.floor(Date.now() / 1000),
+  const queryRankRewardsReleasable = async () => {
+    return await readContract(config, {
+      address: contractRewardsModuleAddress as `0x${string}`,
+      abi: abiRewardsModule,
+      chainId,
+      functionName: "releasable",
+      args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
+    })
+      .then((data: any) => transform(data))
+      .catch((error: any) => {
+        handleError(error, "Error while querying releasable rewards");
       });
-    },
-  });
+  };
+
+  const queryRankRewardsReleased = async () => {
+    return await readContract(config, {
+      address: contractRewardsModuleAddress as `0x${string}`,
+      abi: abiRewardsModule,
+      chainId,
+      functionName: tokenType === "erc20" ? "erc20Released" : "released",
+      args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
+    })
+      .then((data: any) => transform(data))
+      .catch((error: any) => {
+        handleError(error, "Error while querying released rewards");
+      });
+  };
+
+  const contractWriteReleaseToken = async () => {
+    try {
+      const hash = await writeContract(config, {
+        address: contractRewardsModuleAddress as `0x${string}`,
+        abi: abiRewardsModule,
+        functionName: "release",
+        args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
+        chainId,
+      });
+
+      const receipt = await waitForTransactionReceipt(config, { hash });
+      return receipt;
+    } catch (error) {
+      handleError(error, "Error while releasing token");
+      setIsLoading(false);
+    }
+  };
+
+  const txRelease = async (hash: string) => {
+    return await waitForTransactionReceipt(config, { hash: hash as `0x${string}` })
+      .then(async () => {
+        await queryTokenBalance.refetch();
+        await queryRankRewardsReleasable();
+        const amountReleased = await queryRankRewardsReleased();
+
+        setIsLoading(false);
+        toastSuccess("Funds distributed successfully!");
+
+        updateRewardAnalytics({
+          contest_address: contestAddress,
+          rewards_module_address: contractRewardsModuleAddress,
+          network_name: chainName,
+          amount: amountReleased ?? 0,
+          operation: "distribute",
+          token_address: tokenAddress ? tokenAddress : null,
+          created_at: Math.floor(Date.now() / 1000),
+        });
+      })
+      .catch(error => {
+        handleError(error, "Error in transaction");
+        setIsLoading(false);
+      });
+  };
 
   return {
     share,

@@ -11,7 +11,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { readContract, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";

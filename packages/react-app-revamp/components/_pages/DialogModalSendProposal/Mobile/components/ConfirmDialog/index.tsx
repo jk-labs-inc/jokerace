@@ -1,7 +1,7 @@
 import DialogModalSendProposalSuccessLayout from "@components/_pages/DialogModalSendProposal/components/SuccessLayout";
 import { EntryCharge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { FetchBalanceResult } from "@wagmi/core";
+import { type GetBalanceReturnType } from "@wagmi/core";
 import Image from "next/image";
 import { FC } from "react";
 import SendProposalMobileLayoutConfirmInitialContent from "./components/InitialContent";
@@ -12,7 +12,7 @@ interface DialogModalSendProposalMobileLayoutConfirmProps {
   contestId: string;
   isOpen?: boolean;
   entryCharge: EntryCharge | null;
-  accountData: FetchBalanceResult | undefined;
+  accountData: GetBalanceReturnType | undefined;
   onConfirm?: () => void;
   onClose?: () => void;
 }

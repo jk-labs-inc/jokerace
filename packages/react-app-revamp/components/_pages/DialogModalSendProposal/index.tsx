@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import Iframe from "@components/tiptap/Iframe";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { emailRegex } from "@helpers/regex";
 import {
+  SubmissionCache,
   loadSubmissionFromLocalStorage,
   removeSubmissionFromLocalStorage,
   saveSubmissionToLocalStorage,
-  SubmissionCache,
 } from "@helpers/submissionCaching";
 import { useContestStore } from "@hooks/useContest/store";
 import { useEditorStore } from "@hooks/useEditor/store";
@@ -24,12 +24,12 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Text from "@tiptap/extension-text";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { switchNetwork } from "@wagmi/core";
+import { switchChain } from "@wagmi/core";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { useAccount, useBalance, useNetwork } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import DialogModalSendProposalDesktopLayout from "./Desktop";
 import DialogModalSendProposalMobileLayout from "./Mobile";
 
@@ -39,8 +39,7 @@ interface DialogModalSendProposalProps {
 }
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
-  const { address } = useAccount();
-  const { chain } = useNetwork();
+  const { address, chain } = useAccount();
   const { asPath } = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
@@ -116,7 +115,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
   });
 
   const onSwitchNetwork = async () => {
-    await switchNetwork({ chainId });
+    await switchChain(config, { chainId });
   };
 
   const handleSubscription = async () => {
