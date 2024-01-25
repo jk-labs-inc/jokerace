@@ -16,10 +16,10 @@ import useContractVersion from "@hooks/useContractVersion";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
+import { compareVersions } from "compare-versions";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
-import { compareVersions } from "compare-versions";
 
 const ContestRewards = () => {
   const { asPath } = useRouter();
@@ -46,14 +46,14 @@ const ContestRewards = () => {
   const [isCheckBalanceRewardsOpen, setIsCheckBalanceRewardsOpen] = useState(false);
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
-  const currentAccount = useAccount({
-    onConnect({ address }) {
-      if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
-      }
-    },
-  });
-  const creator = contestAuthorEthereumAddress == currentAccount.address;
+  const { isConnected, address: accountAddress } = useAccount();
+  const creator = contestAuthorEthereumAddress === accountAddress;
+
+  useEffect(() => {
+    if (isConnected && accountAddress && ofacAddresses.includes(accountAddress)) {
+      window.location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
+    }
+  }, [isConnected, accountAddress]);
 
   useEffect(() => {
     if (rewardsStore?.isSuccess) return;

@@ -45,13 +45,7 @@ import { getLayout as getBaseLayout } from "./../LayoutBase";
 const LayoutViewContest = (props: any) => {
   const { asPath, pathname, reload } = useRouter();
   const url = useUrl();
-  const account = useAccount({
-    onConnect({ address }) {
-      if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
-      }
-    },
-  });
+  const { status: accountStatus, address: accountAddress, isConnected } = useAccount();
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
   const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
@@ -72,16 +66,22 @@ const LayoutViewContest = (props: any) => {
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
-  const [previousStatus, setPreviousStatus] = useState(account.status);
-  const didConnect = previousStatus === "disconnected" && account.status === "connected";
+  const [previousStatus, setPreviousStatus] = useState(accountStatus);
+  const didConnect = previousStatus === "disconnected" && accountStatus === "connected";
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const bugReportLink = populateBugReportLink(url?.href ?? "", account.address ?? "", error);
+  const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error);
 
   useEffect(() => {
-    if (account.status === "connecting") return;
+    if (accountStatus === "connecting") return;
 
-    setPreviousStatus(account.status);
-  }, [account.status]);
+    setPreviousStatus(accountStatus);
+  }, [accountStatus]);
+
+  useEffect(() => {
+    if (isConnected && accountAddress && ofacAddresses.includes(accountAddress)) {
+      window.location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
+    }
+  }, [isConnected, accountAddress]);
 
   useEffect(() => {
     const now = moment();
