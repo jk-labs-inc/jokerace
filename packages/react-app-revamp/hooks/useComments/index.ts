@@ -328,16 +328,14 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
 
       if (!contractConfig) return;
 
-      await simulateContract(config, {
+      const { request } = await simulateContract(config, {
         ...contractConfig,
         functionName: "deleteComments",
         args: [commentsIds],
       });
 
       const hash = await writeContract(config, {
-        ...contractConfig,
-        functionName: "deleteComments",
-        args: [commentsIds],
+        ...request,
       });
 
       await waitForTransactionReceipt(config, { hash: hash });

@@ -10,13 +10,7 @@ import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
-import {
-  prepareWriteContract,
-  simulateContract,
-  waitForTransaction,
-  waitForTransactionReceipt,
-  writeContract,
-} from "@wagmi/core";
+import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "react-responsive";
@@ -79,31 +73,26 @@ export function useSubmitProposal() {
         };
 
         let hash: `0x${string}`;
-        let txConfig = null;
 
+        // TODO: investigate why this it is giving lint error on args and value
         if (!isVerified) {
-          txConfig = {
+          hash = await writeContract(config, {
             ...contractConfig,
             functionName: "propose",
+            //@ts-ignore
             args: [proposalCore, proofs],
+            //@ts-ignore
             value: entryCharge ? [entryCharge.costToPropose] : [],
-          };
+          });
         } else {
-          txConfig = {
+          hash = await writeContract(config, {
             ...contractConfig,
             functionName: "proposeWithoutProof",
+            //@ts-ignore
             args: [proposalCore],
+            //@ts-ignore
             value: entryCharge ? [entryCharge.costToPropose] : [],
-          };
-        }
-
-        if (txConfig) {
-          //TODO: figure out txConfig
-          await simulateContract(config, txConfig);
-
-          const txSendProposalHash = await writeContract(config, txConfig);
-
-          hash = txSendProposalHash;
+          });
         }
 
         const receipt = await waitForTransactionReceipt(config, {

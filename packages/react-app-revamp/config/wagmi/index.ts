@@ -89,6 +89,12 @@ type ChainImages = {
   [key: string]: string;
 };
 
+declare module "wagmi" {
+  interface Register {
+    config: typeof config;
+  }
+}
+
 export const chains: Chain[] = [
   polygon,
   arbitrumOne,

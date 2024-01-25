@@ -8,6 +8,7 @@ import {
   waitForTransactionReceipt,
   writeContract,
   type WaitForTransactionReceiptReturnType,
+  simulateContract,
 } from "@wagmi/core";
 import { utils } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
@@ -90,10 +91,14 @@ export function useFundRewardsModule() {
     if (isErc20) {
       const amountBigInt = BigInt(amount);
 
-      hash = await writeContract(config, {
+      const { request } = await simulateContract(config, {
         ...contractConfig,
         functionName: "transfer",
         args: [rewardsContractAddress as `0x${string}`, amountBigInt],
+      });
+
+      hash = await writeContract(config, {
+        ...request,
       });
 
       receipt = await waitForTransactionReceipt(config, {

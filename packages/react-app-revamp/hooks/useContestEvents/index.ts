@@ -97,18 +97,14 @@ export function useContestEvents() {
       setDisplayReloadBanner(false);
     } else {
       if (ContestStatus.VotingOpen === contestStatus && canUpdateVotesInRealTime) {
-        watchContractEvent(
-          config,
-          {
-            address: contestAddress as `0x${string}`,
-            abi: DeployedContestContract.abi,
-            eventName: "VoteCast",
+        watchContractEvent(config, {
+          address: contestAddress as `0x${string}`,
+          abi: DeployedContestContract.abi,
+          eventName: "VoteCast",
+          onLogs: eventLogs => {
+            onVoteCast(eventLogs).catch(err => console.log(err));
           },
-          //TODO: args fix
-          args => {
-            onVoteCast(args).catch(err => console.log(err));
-          },
-        );
+        });
       }
     }
 

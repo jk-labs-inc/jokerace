@@ -6,7 +6,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
+import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -52,10 +52,14 @@ export function useDeleteProposal() {
     if (!contractConfig.abi) return;
 
     try {
-      const hash = await writeContract(config, {
+      const { request } = await simulateContract(config, {
         ...contractConfig,
         functionName: "deleteProposals",
         args: [proposalIds],
+      });
+
+      const hash = await writeContract(config, {
+        ...request,
       });
 
       const receipt = await waitForTransactionReceipt(config, {

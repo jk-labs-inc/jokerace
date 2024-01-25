@@ -56,10 +56,10 @@ export function useCastVotes() {
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
 
-      let txRequest;
+      let hash: `0x${string}`;
 
       if (!isVerified) {
-        txRequest = await simulateContract(config, {
+        hash = await writeContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVote",
@@ -72,16 +72,13 @@ export function useCastVotes() {
           ],
         });
       } else {
-        txRequest = await simulateContract(config, {
+        hash = await writeContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
         });
       }
-
-      //TODO: remove this when we have the new version of the contract
-      const hash = await writeContract(config, txRequest);
 
       const receipt = await waitForTransactionReceipt(config, {
         chainId: chain?.id,

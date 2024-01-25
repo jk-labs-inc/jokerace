@@ -5,7 +5,7 @@ import { readContract } from "@wagmi/core";
 import { loadFileFromBucket } from "lib/buckets";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Abi } from "viem";
+import { Abi, Address } from "viem";
 import { useAccount } from "wagmi";
 
 type ProofType = "submission" | "vote";
@@ -22,7 +22,7 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 export function useGenerateProof() {
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
-  const account = useAccount();
+  const { connector } = useAccount();
   const [chainId, setChainId] = useState(
     chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
   );
@@ -142,15 +142,22 @@ export function useGenerateProof() {
   }
 
   useEffect(() => {
-    if (account?.connector) {
-      // TODO: explore connector change event
-      account?.connector.on("change", data => {
-        if (!data.chain) return;
+    const handleChange = (data: { accounts?: readonly Address[]; chainId?: number }) => {
+      if (data.chainId === undefined) return;
 
-        setChainId(data.chain.id);
-      });
+      setChainId(data.chainId);
+    };
+
+    if (connector && connector.emitter) {
+      connector.emitter.on("change", handleChange);
     }
-  }, [account?.connector]);
+
+    return () => {
+      if (connector && connector.emitter) {
+        connector.emitter.off("change", handleChange);
+      }
+    };
+  }, [connector]);
 
   return {
     getProofs,

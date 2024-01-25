@@ -50,17 +50,14 @@ export function useDeployRewardsPool() {
         abi: DeployedContestContract.abi,
       };
 
-      //TODO: check simulate response to accomodate for writeContract
-      await simulateContract(config, {
+      const { request } = await simulateContract(config, {
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
         args: [contractRewardsModule!.address],
       });
 
       const hash = await writeContract(config, {
-        ...contractConfig,
-        functionName: "setOfficialRewardsModule",
-        args: [contractRewardsModule!.address],
+        ...request,
       });
 
       await waitForTransactionReceipt(config, {
