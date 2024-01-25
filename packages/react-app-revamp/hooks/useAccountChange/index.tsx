@@ -1,23 +1,24 @@
 import { useEffect, useState } from "react";
-import { ConnectorData, useAccount } from "wagmi";
+import { useAccount } from "wagmi";
 
 export const useAccountChange = () => {
   const { connector: activeConnector } = useAccount();
   const [account, setAccount] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleConnectorUpdate = ({ account: updatedAccount }: ConnectorData) => {
+    //TODO: check type for updatedAccount and activeConnector
+    const handleConnectorUpdate = ({ account: updatedAccount }: any) => {
       if (updatedAccount) {
-        setAccount(updatedAccount);
+        setAccount(updatedAccount.address);
       }
     };
 
     if (activeConnector) {
-      activeConnector.on("change", handleConnectorUpdate);
+      activeConnector.emitter.on("change", handleConnectorUpdate);
     }
 
     return () => {
-      activeConnector?.off("change", handleConnectorUpdate);
+      activeConnector?.emitter.off("change", handleConnectorUpdate);
     };
   }, [activeConnector]);
 
