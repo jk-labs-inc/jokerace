@@ -1,4 +1,4 @@
-import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
+import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   bitgetWallet,
@@ -14,7 +14,8 @@ import {
   trustWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { injected } from "@wagmi/connectors";
+import { unique } from "underscore";
+import { Chain, Transport, fallback } from "viem";
 import { createConfig, http } from "wagmi";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
@@ -78,7 +79,6 @@ import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
-import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
@@ -87,6 +87,8 @@ import { zora } from "./custom-chains/zora";
 type ChainImages = {
   [key: string]: string;
 };
+
+type Transports = Record<Chain["id"], Transport>;
 
 declare module "wagmi" {
   interface Register {
@@ -166,36 +168,53 @@ export const chains: Chain[] = [
 
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
 
-// TODO: we need rainbowkit upgrade in order to use this setting in createConfig
-const connectors = connectorsForWallets([
-  {
-    groupName: "Wallets",
-    wallets: [
-      metaMaskWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      walletConnectWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      rainbowWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      okxWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      tahoWallet({ chains }),
-      coinbaseWallet({ chains, appName: "jokerace" }),
-      argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      bitgetWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      rabbyWallet({ chains }),
-      phantomWallet({ chains }),
-    ],
-  },
-]);
+const appName = "jokerace";
+const projectId = WALLETCONECT_PROJECT_ID;
 
-// TODO: add connectors and transports for each chain
-export const config = createConfig({
-  chains: chains as any,
-  transports: {
-    [mainnet.id]: http("https://mainnet.example.com"),
-    [sepolia.id]: http("https://sepolia.example.com"),
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Wallets",
+      wallets: [
+        metaMaskWallet,
+        walletConnectWallet,
+        rainbowWallet,
+        okxWallet,
+        tahoWallet,
+        coinbaseWallet,
+        argentWallet,
+        trustWallet,
+        imTokenWallet,
+        omniWallet,
+        bitgetWallet,
+        rabbyWallet,
+        phantomWallet,
+      ],
+    },
+  ],
+  {
+    projectId: projectId,
+    appName: appName,
   },
-  connectors: [injected()],
+);
+
+const transports: Transports = {
+  [mainnet.id]: fallback([http(mainnet)]),
+  [arbitrumOne.id]: http("https://rpc.ankr.com/arbitrum"),
+  [optimism.id]: http("https://mainnet.optimism.io"),
+  [polygonZk.id]: http("https://polygon.optimism.io"),
+  [neonDevnet.id]: fallback([http(neonDevnet.rpcUrls.default.http[0]), http(neonDevnet.rpcUrls.public.http[0])]),
+};
+
+export const config = createConfig({
+  connectors,
+  chains: chains,
+  transports: {
+    [mainnet.id]: http("https://eth.llamarpc.com"),
+    [arbitrumOne.id]: http("https://rpc.ankr.com/arbitrum"),
+    [optimism.id]: http("https://mainnet.optimism.io"),
+    [polygonZk.id]: http("https://polygon.optimism.io"),
+  },
 });
 
 export const chainsImages: ChainImages = chains.reduce((acc, chain) => {
