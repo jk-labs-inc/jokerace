@@ -3610,10 +3610,10 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
-"@rainbow-me/rainbowkit@^1.3.3":
-  version "1.3.3"
-  resolved "https://registry.yarnpkg.com/@rainbow-me/rainbowkit/-/rainbowkit-1.3.3.tgz#3826f7a4e6827c35f876a4c3008da43a8cbfed28"
-  integrity sha512-IsUlBCy4SZfo6zFEZgPvGr1MLe/rK4sZzoBtYHRPjRqDHTXrYqDsp3ThTIZWh2HSIq0jU5gMA/94mFnT5kwMLA==
+"@rainbow-me/rainbowkit@^2.0.0-beta.2":
+  version "2.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@rainbow-me/rainbowkit/-/rainbowkit-2.0.0-beta.2.tgz#6b7c2cbf42aa39ba44cea869af12e53861e7302f"
+  integrity sha512-sookd/7Rm9k8T3BgH2vQSb8FHImBKFvu4+YYmoxkB0pu9ySLYx/3k0t0N1b2q0DYw/z8xF4qeZm7DhotDPU2gw==
   dependencies:
     "@vanilla-extract/css" "1.14.0"
     "@vanilla-extract/dynamic" "2.1.0"
@@ -6182,7 +6182,19 @@
   resolved "https://registry.yarnpkg.com/@wagmi/chains/-/chains-1.6.0.tgz#eb992ad28dbaaab729b5bcab3e5b461e8a035656"
   integrity sha512-5FRlVxse5P4ZaHG3GTvxwVANSmYJas1eQrTBHhjxVtqXoorm0aLmCHbhmN8Xo1yu09PaWKlleEvfE98yH4AgIw==
 
-"@wagmi/connectors@4.1.9", "@wagmi/connectors@^4.1.9":
+"@wagmi/connectors@4.1.10":
+  version "4.1.10"
+  resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-4.1.10.tgz#1f36d05211f30ac5d84ecc30acb86c53f5f9b813"
+  integrity sha512-sevgZl9aTmFUb/IZcy9Jou+e/QM3LPjV+rm31aMFa8b5aRnQQoZ1KmDmy+v4rBR5jzfVErPDjh1/VdcMO5bmXA==
+  dependencies:
+    "@coinbase/wallet-sdk" "3.9.1"
+    "@metamask/sdk" "0.14.1"
+    "@safe-global/safe-apps-provider" "0.18.1"
+    "@safe-global/safe-apps-sdk" "8.1.0"
+    "@walletconnect/ethereum-provider" "2.11.0"
+    "@walletconnect/modal" "2.6.2"
+
+"@wagmi/connectors@^4.1.9":
   version "4.1.9"
   resolved "https://registry.yarnpkg.com/@wagmi/connectors/-/connectors-4.1.9.tgz#b7c82e59cd38ba8de1b9cf5f6d0da34947751cf0"
   integrity sha512-4pz+oZemPW9JOmBmR0oq7pNJlR0oyLfaZMH4IfgATApumZ0uDlMLe6KY1JEbW202rHk0g+NNYYlJsSHYwhCCUg==
@@ -6194,10 +6206,10 @@
     "@walletconnect/ethereum-provider" "2.11.0"
     "@walletconnect/modal" "2.6.2"
 
-"@wagmi/core@2.6.0", "@wagmi/core@^2.6.0":
-  version "2.6.0"
-  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.6.0.tgz#400780e933104c02aa10b21590d4610a6edc14dd"
-  integrity sha512-z/9lVFG+mCQnATtdS/rFsOLp/Kf3DlpBM5aiDAahwXG405BgXl5SdFt7HkLefFmEnVon7ZN8a1eExSPJGlaRlA==
+"@wagmi/core@2.6.1", "@wagmi/core@^2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@wagmi/core/-/core-2.6.1.tgz#f378b0c4df3831616f6e8428a4511c4ffe8fad14"
+  integrity sha512-8uE4cpkGqHObjFcDUU6ZGqn9KiOO2wsJOKZ+bXevLOXe2a6M268vOUKJUM2d6/Whn4aBFEyMcX8ESdLuySS78w==
   dependencies:
     eventemitter3 "5.0.1"
     mipd "0.0.5"
@@ -13768,13 +13780,13 @@ w3c-keyname@^2.2.0:
   resolved "https://registry.yarnpkg.com/w3c-keyname/-/w3c-keyname-2.2.8.tgz#7b17c8c6883d4e8b86ac8aba79d39e880f8869c5"
   integrity sha512-dpojBhNsCNN7T82Tm7k26A6G9ML3NkhDsnw9n/eoxSRlVBB4CEtIQ/KTCLI2Fwf3ataSXRhYFkQi3SlnFwPvPQ==
 
-wagmi@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.5.1.tgz#51736d94dfcc2990e88d06e28ca7302a35479436"
-  integrity sha512-ZDKz9B1hGH0R6GeRlBd6YAF9em5mK2D+A2LgKSMnlI3wDVlr+9hA4ej/rboCtmNMMnZ81/0xr77NG9H8sc1wyg==
+wagmi@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/wagmi/-/wagmi-2.5.2.tgz#db4c7f629dc4f6ae1bc006d853543fd2d1baab0c"
+  integrity sha512-epc0OmQYBWJfJGcitqE5CfpvlP/Ka79T8UPsRj6jsdE1qgoMoPAVYRdGbgOXB2/+KjeQJVVsD4wp3bTIh7p5tw==
   dependencies:
-    "@wagmi/connectors" "4.1.9"
-    "@wagmi/core" "2.6.0"
+    "@wagmi/connectors" "4.1.10"
+    "@wagmi/core" "2.6.1"
     use-sync-external-store "1.2.0"
 
 warning@^4.0.2:

@@ -74,7 +74,6 @@ import { quartz } from "./custom-chains/quartz";
 import { redstoneHolesky } from "./custom-chains/redstoneHolesky";
 import { ronin } from "./custom-chains/ronin";
 import { roninTestnet } from "./custom-chains/roninTestnet";
-import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sepolia } from "./custom-chains/sepolia";
@@ -83,6 +82,8 @@ import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
+import { scroll } from "./custom-chains/scroll";
+import { getClient } from "@wagmi/core";
 
 type ChainImages = {
   [key: string]: string;
@@ -96,7 +97,7 @@ declare module "wagmi" {
   }
 }
 
-export const chains: Chain[] = [
+export const chains: any[] = [
   polygon,
   arbitrumOne,
   optimism,

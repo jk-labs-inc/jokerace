@@ -1,10 +1,8 @@
-import { Chain } from "@rainbow-me/rainbowkit";
+import { Chain } from "wagmi/chains";
 
 export const neonDevnet: Chain = {
   id: 245022926,
   name: "neonDevnet",
-  network: "neonDevnet",
-  iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
     name: "NEON",

@@ -1,4 +1,4 @@
-import { getClient, getConnectorClient, type Config } from "@wagmi/core";
+import { getConnectorClient, type Config, getClient } from "@wagmi/core";
 import { providers } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 
@@ -21,6 +21,12 @@ export function clientToProvider(client: Client<Transport, Chain>) {
 /** Action to convert a viem Public Client to an ethers.js Provider. */
 export function getEthersProvider(config: Config, { chainId }: { chainId?: number } = {}) {
   const client = getClient(config, { chainId });
+
+  if (!client) {
+    console.error({ config, chainId });
+    throw new Error("Unable to get client");
+  }
+
   return clientToProvider(client);
 }
 

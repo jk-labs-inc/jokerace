@@ -1,5 +1,5 @@
 import { jokeraceTheme } from "@config/rainbowkit";
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import { Portal } from "@headlessui/react";
 import LayoutBase from "@layouts/LayoutBase";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
@@ -80,23 +80,25 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
 
       <WagmiProvider config={config}>
-        <RainbowKitProvider chains={chains} theme={jokeraceTheme} modalSize="wide">
-          <QueryClientProvider client={queryClient}>{getLayout(<Component {...pageProps} />)}</QueryClientProvider>
-          <Portal>
-            <ToastContainer
-              position="bottom-center"
-              autoClose={4000}
-              hideProgressBar
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-              theme="colored"
-              bodyClassName={() => "text-[16px] flex items-center"}
-            />
-          </Portal>
-        </RainbowKitProvider>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider theme={jokeraceTheme} modalSize="wide">
+            {getLayout(<Component {...pageProps} />)}
+            <Portal>
+              <ToastContainer
+                position="bottom-center"
+                autoClose={4000}
+                hideProgressBar
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                bodyClassName={() => "text-[16px] flex items-center"}
+              />
+            </Portal>
+          </RainbowKitProvider>
+        </QueryClientProvider>
       </WagmiProvider>
     </>
   );
