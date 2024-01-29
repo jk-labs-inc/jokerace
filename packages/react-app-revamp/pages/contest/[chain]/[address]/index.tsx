@@ -33,7 +33,9 @@ export async function getStaticPaths() {
 
 // fn to get contest details for meta tags
 async function getContestDetails(address: string, chainName: string) {
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const { abi } = await getContestContractVersion(address, chainId);
 
   const contracts = [
@@ -62,7 +64,7 @@ export async function getStaticProps({ params }: any) {
   const { chain, address } = params;
   if (
     !REGEX_ETHEREUM_ADDRESS.test(address) ||
-    chains.filter(c => c.name.toLowerCase().replace(" ", "") === chain).length === 0
+    chains.filter((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain).length === 0
   ) {
     return { notFound: true };
   }

@@ -16,7 +16,9 @@ import { useEffect, useRef, useState } from "react";
 export function useContestEvents() {
   const { asPath } = useRouter();
   const { address: contestAddress, chainName } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const provider = getEthersProvider(config, { chainId });
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
   const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
@@ -101,6 +103,7 @@ export function useContestEvents() {
           address: contestAddress as `0x${string}`,
           abi: DeployedContestContract.abi,
           eventName: "VoteCast",
+          //TODO: test logs with live voting
           onLogs: eventLogs => {
             onVoteCast(eventLogs).catch(err => console.log(err));
           },

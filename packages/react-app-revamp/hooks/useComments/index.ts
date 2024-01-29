@@ -39,7 +39,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setIsPaginatingSuccess,
   } = useCommentsStore(state => state);
   const { handleError } = useError();
-  const chainName = chains.filter(chain => chain.id === chainId)?.[0]?.name.toLowerCase() ?? "";
+  const chainName = chains.filter((chain: { id: number }) => chain.id === chainId)?.[0]?.name.toLowerCase() ?? "";
 
   async function getContractConfig() {
     try {

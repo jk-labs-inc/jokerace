@@ -38,8 +38,9 @@ export function useSubmitProposal() {
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
-    ?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
+  )?.[0]?.id;
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
   const { address: userAddress, chain } = useAccount();

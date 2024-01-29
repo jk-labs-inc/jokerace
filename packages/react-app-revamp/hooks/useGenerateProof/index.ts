@@ -24,7 +24,7 @@ export function useGenerateProof() {
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const { connector } = useAccount();
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
+    chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
   );
 
   async function getContractConfig() {

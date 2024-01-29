@@ -54,7 +54,9 @@ export function useProposal() {
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useAccount();
   const { error, handleError } = useError();
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
 
   async function getContractConfig(): Promise<{ contractConfig: ContractConfig; version: string } | null> {
     const { abi, version } = await getContestContractVersion(address, chainId);

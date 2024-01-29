@@ -59,7 +59,9 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     address: address as `0x${string}`,
   });
   const { setRevertTextOption } = useEditorStore(state => state);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const savedProposal = loadSubmissionFromLocalStorage("submissions", contestId);
   const [lastEdited, setLastEdited] = useState<Date>(new Date());
   const [proposal, setProposal] = useState(savedProposal?.content || "");

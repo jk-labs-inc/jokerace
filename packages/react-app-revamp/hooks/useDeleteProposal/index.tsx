@@ -40,7 +40,9 @@ export function useDeleteProposal() {
     setError("");
     setTransactionData(null);
 
-    const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+    const chainId = chains.filter(
+      (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+    )?.[0]?.id;
 
     const abi = await getContestContractVersion(address, chainId);
 

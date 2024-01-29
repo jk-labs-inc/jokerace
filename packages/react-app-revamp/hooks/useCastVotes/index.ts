@@ -41,8 +41,9 @@ export function useCastVotes() {
   const { getProofs } = useGenerateProof();
   const { error: errorMessage, handleError } = useError();
   const { address: contestAddress, chainName } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
-    ?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
+  )?.[0]?.id;
   const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
 
   async function castVotes(amount: number, isPositive: boolean) {

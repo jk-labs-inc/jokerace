@@ -20,7 +20,9 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   const router = useRouter();
   const asPath = router.asPath;
   const { address, chainName } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const { fetchTotalVotes, retry: retryTotalVotes } = useTotalVotesOnContest(address, chainId);
   const {
     totalVotes,
