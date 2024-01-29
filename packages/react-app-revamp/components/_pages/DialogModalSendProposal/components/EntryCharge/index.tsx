@@ -26,7 +26,7 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
   const asPath = router.asPath;
   const { chainName } = extractPathSegments(asPath);
   const [isEntryChargeDetailsOpen, setIsEntryChargeDetailsOpen] = useState(false);
-  const chainUnitLabel = chains.find(c => c.name === chainName)?.nativeCurrency.symbol;
+  const chainUnitLabel = chains.find((c: { name: string }) => c.name === chainName)?.nativeCurrency.symbol;
   const insufficientBalance = accountData.value < entryCharge.costToPropose;
   const entryChargeFormatted = formatEther(BigInt(entryCharge.costToPropose));
   const entryChargeHalfFormatted = formatEther(BigInt(entryCharge.costToPropose / 2));

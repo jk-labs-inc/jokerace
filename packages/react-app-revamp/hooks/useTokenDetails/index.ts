@@ -7,7 +7,7 @@ const useTokenDetails = (tokenType: string, tokenAddress: string, chain: string)
   const [tokenSymbol, setTokenSymbol] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const chainId = chains.find(c => c.name === chain)?.id;
+  const chainId = chains.find((c: { name: string }) => c.name === chain)?.id;
 
   useEffect(() => {
     if (!tokenAddress || !chainId || !tokenType) return;

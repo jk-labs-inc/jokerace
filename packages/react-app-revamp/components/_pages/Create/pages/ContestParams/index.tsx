@@ -30,7 +30,7 @@ const CreateContestParams = () => {
     setEntryCharge,
   } = useDeployContestStore(state => state);
   const minCostToPropose = useEntryChargeDetails(chain?.name ?? "");
-  const chainUnitLabel = chains.find(c => c.name === chain?.name)?.nativeCurrency.symbol;
+  const chainUnitLabel = chains.find((c: { name: string }) => c.name === chain?.name)?.nativeCurrency.symbol;
   const [entryChargeError, setEntryChargeError] = useState<string>("");
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
