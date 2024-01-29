@@ -7,12 +7,12 @@ import {
   metaMaskWallet,
   okxWallet,
   omniWallet,
+  phantomWallet,
   rabbyWallet,
   rainbowWallet,
   tahoWallet,
   trustWallet,
   walletConnectWallet,
-  phantomWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { luksoWallet } from "./custom-wallets/luksoWallet";
 
@@ -25,6 +25,7 @@ import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
+import { berachainTestnet } from "./custom-chains/berachainTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
@@ -49,6 +50,7 @@ import { lootChain } from "./custom-chains/lootChain";
 import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
 import { lukso } from "./custom-chains/lukso";
 import { luksoTestnet } from "./custom-chains/luksoTestnet";
+import { lyra } from "./custom-chains/lyra";
 import { mainnet } from "./custom-chains/mainnet";
 import { mantaPacific } from "./custom-chains/mantaPacific";
 import { mantle } from "./custom-chains/mantle";
@@ -61,6 +63,8 @@ import { nearTestnet } from "./custom-chains/nearTestnet";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
+import { palm } from "./custom-chains/palm";
+import { palmTestnet } from "./custom-chains/palmTestnet";
 import { polygon } from "./custom-chains/polygon";
 import { polygonTestnet } from "./custom-chains/polygonTestnet";
 import { polygonZk } from "./custom-chains/polygonZk";
@@ -84,8 +88,6 @@ import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
-import { berachainTestnet } from "./custom-chains/berachainTestnet";
-import { lyra } from "./custom-chains/lyra";
 
 type ChainImages = {
   [key: string]: string;
@@ -128,6 +130,7 @@ const totalChains: Chain[] = [
   astriaDusk2,
   fantom,
   arthera,
+  palm,
   lyra,
   polygonTestnet,
   sepolia,
@@ -159,6 +162,7 @@ const totalChains: Chain[] = [
   fantomTestnet,
   berachainTestnet,
   taikoTestnet,
+  palmTestnet,
   mainnet,
 ];
 
