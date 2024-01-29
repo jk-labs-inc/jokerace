@@ -61,7 +61,6 @@ import { nearTestnet } from "./custom-chains/nearTestnet";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
-import { polygon } from "./custom-chains/polygon";
 import { polygonTestnet } from "./custom-chains/polygonTestnet";
 import { polygonZk } from "./custom-chains/polygonZk";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
@@ -83,6 +82,7 @@ import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
+import { polygon } from "./custom-chains/polygon";
 
 type ChainImages = {
   [key: string]: string;
@@ -96,7 +96,7 @@ declare module "wagmi" {
   }
 }
 
-export const chains: any[] = [
+export const chains: any = [
   polygon,
   arbitrumOne,
   optimism,
@@ -199,25 +199,21 @@ const connectors = connectorsForWallets(
 );
 
 const transports: Transports = {
-  [mainnet.id]: fallback([http(mainnet)]),
-  [arbitrumOne.id]: http("https://rpc.ankr.com/arbitrum"),
-  [optimism.id]: http("https://mainnet.optimism.io"),
-  [polygonZk.id]: http("https://polygon.optimism.io"),
-  [neonDevnet.id]: fallback([http(neonDevnet.rpcUrls.default.http[0]), http(neonDevnet.rpcUrls.public.http[0])]),
+  [mainnet.id]: fallback([http(mainnet.rpcUrls.default.http[0]), http(mainnet.rpcUrls.public.http[0])]),
+  [arbitrumOne.id]: fallback([http(arbitrumOne.rpcUrls.default.http[0]), http(arbitrumOne.rpcUrls.public.http[0])]),
+  [mantleTestnet.id]: fallback([
+    http(mantleTestnet.rpcUrls.default.http[0]),
+    http(mantleTestnet.rpcUrls.public.http[0]),
+  ]),
 };
 
 export const config = createConfig({
   connectors,
-  chains: chains,
-  transports: {
-    [mainnet.id]: http("https://eth.llamarpc.com"),
-    [arbitrumOne.id]: http("https://rpc.ankr.com/arbitrum"),
-    [optimism.id]: http("https://mainnet.optimism.io"),
-    [polygonZk.id]: http("https://polygon.optimism.io"),
-  },
+  chains: [arbitrumOne, mainnet, mantleTestnet],
+  transports,
 });
 
-export const chainsImages: ChainImages = chains.reduce((acc, chain) => {
+export const chainsImages: ChainImages = chains.reduce((acc: any, chain: any) => {
   if (chain.name && chain.iconUrl) {
     acc[chain.name.toLowerCase()] = chain.iconUrl as string;
   }

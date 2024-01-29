@@ -22,7 +22,9 @@ export const useTokenBalance = (inputToken: string) => {
 
     const fetchTokenBalance = async () => {
       if (inputToken?.match(/^0x[a-fA-F0-9]{40}$/)) {
-        const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+        const chainId = chains.filter(
+          (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+        )?.[0]?.id;
         try {
           const balance = await getBalance(config, {
             chainId,

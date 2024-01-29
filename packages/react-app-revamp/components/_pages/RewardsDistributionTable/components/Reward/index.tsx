@@ -3,8 +3,8 @@ import { PreviouslyDistributedReward } from "./components/PreviouslyDistributedR
 
 export interface RewardProps {
   queryTokenBalance: any;
-  queryRankRewardsReleasable: any;
-  queryRankRewardsReleased: any;
+  rewardsReleasable: number;
+  rewardsReleased: number;
   showPreviouslyDistributed?: boolean;
   isReleasableRewardsLoading: boolean;
   isDistributeRewardsLoading: boolean;
@@ -16,8 +16,8 @@ export const Reward = (props: RewardProps) => {
   const {
     queryTokenBalance,
     handleDistributeRewards,
-    queryRankRewardsReleasable,
-    queryRankRewardsReleased,
+    rewardsReleasable,
+    rewardsReleased,
     showPreviouslyDistributed,
     isReleasedRewardsLoading,
     isDistributeRewardsLoading,
@@ -28,7 +28,7 @@ export const Reward = (props: RewardProps) => {
     return (
       <PreviouslyDistributedReward
         queryTokenBalance={queryTokenBalance}
-        queryRankRewardsReleased={queryRankRewardsReleased}
+        rewardsReleased={rewardsReleased}
         isReleasedRewardsLoading={isReleasedRewardsLoading}
       />
     );
@@ -37,7 +37,7 @@ export const Reward = (props: RewardProps) => {
   return (
     <DistributableReward
       queryTokenBalance={queryTokenBalance}
-      queryRankRewardsReleasable={queryRankRewardsReleasable}
+      rewardsReleasable={rewardsReleasable}
       handleDistributeRewards={handleDistributeRewards}
       isReleasableRewardsLoading={isReleasableRewardsLoading}
       isDistributeRewardsLoading={isDistributeRewardsLoading}

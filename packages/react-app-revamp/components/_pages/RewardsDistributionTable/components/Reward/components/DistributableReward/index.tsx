@@ -6,7 +6,7 @@ import { Tooltip } from "react-tooltip";
 
 interface DistributableRewardProps {
   queryTokenBalance: any;
-  queryRankRewardsReleasable: number;
+  rewardsReleasable: number;
   isReleasableRewardsLoading: boolean;
   isDistributeRewardsLoading: boolean;
   handleDistributeRewards?: () => Promise<void>;
@@ -16,7 +16,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
   const { contestStatus } = useContestStatusStore(state => state);
   const {
     queryTokenBalance,
-    queryRankRewardsReleasable,
+    rewardsReleasable,
     handleDistributeRewards,
     isDistributeRewardsLoading,
     isReleasableRewardsLoading,
@@ -29,7 +29,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
       </li>
     );
 
-  if (!queryRankRewardsReleasable || queryTokenBalance.data.value === 0) {
+  if (!rewardsReleasable || queryTokenBalance.data.value.toString() === "0") {
     return (
       <li>
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds to distribute
@@ -42,12 +42,12 @@ export const DistributableReward = (props: DistributableRewardProps) => {
       <section className="flex justify-between w-full">
         {isReleasableRewardsLoading && <Loader scale="component">Loading info...</Loader>}
         <p>
-          {queryRankRewardsReleasable} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+          {rewardsReleasable} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
         </p>
 
         {/* //TODO: check previous code here */}
         <div data-tooltip-id={`tooltip-${queryTokenBalance?.data?.symbol}`}>
-          {queryRankRewardsReleasable > 0 && (
+          {rewardsReleasable > 0 && (
             <ButtonV3
               isDisabled={contestStatus !== ContestStatus.VotingClosed || isDistributeRewardsLoading}
               size={ButtonSize.EXTRA_SMALL}

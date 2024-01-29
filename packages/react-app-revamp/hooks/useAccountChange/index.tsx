@@ -1,26 +1,21 @@
+import { config } from "@config/wagmi";
+import { watchAccount } from "@wagmi/core";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
 
 export const useAccountChange = () => {
-  const { connector: activeConnector } = useAccount();
-  const [account, setAccount] = useState<string | null>(null);
+  const [account, setAccount] = useState("");
 
   useEffect(() => {
-    //TODO: check type for updatedAccount and activeConnector
-    const handleConnectorUpdate = ({ account: updatedAccount }: any) => {
-      if (updatedAccount) {
-        setAccount(updatedAccount.address);
-      }
-    };
+    const unwatch = watchAccount(config, {
+      onChange(data) {
+        if (!data.address) return;
 
-    if (activeConnector) {
-      activeConnector.emitter.on("change", handleConnectorUpdate);
-    }
+        setAccount(data.address);
+      },
+    });
 
-    return () => {
-      activeConnector?.emitter.off("change", handleConnectorUpdate);
-    };
-  }, [activeConnector]);
+    return () => unwatch();
+  }, []);
 
   return account;
 };

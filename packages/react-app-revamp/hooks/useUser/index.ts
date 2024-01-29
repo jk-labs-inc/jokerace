@@ -30,7 +30,9 @@ export function useUser() {
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,
+  )?.[0]?.id;
 
   const checkIfCurrentUserQualifyToSubmit = async (
     submissionMerkleRoot: string,

@@ -10,16 +10,16 @@ interface ButtonWithdrawErc20RewardProps {
 export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
   const { queryTokenBalance, handleWithdraw, isLoading } = props;
 
-  if (queryTokenBalance.value.toString() === "") return null;
+  if (queryTokenBalance.data.value.toString() === "") return null;
 
   return (
     <li className="flex items-center">
       <section className="flex justify-between w-full md:w-[650px]">
         <p>
           {queryTokenBalance?.decimals <= 18
-            ? parseFloat(utils.formatEther(queryTokenBalance?.value))
-            : parseFloat(utils.formatUnits(queryTokenBalance?.value, queryTokenBalance.decimals))}{" "}
-          <span className="uppercase">${queryTokenBalance?.symbol}</span>
+            ? parseFloat(utils.formatEther(queryTokenBalance.data.value))
+            : parseFloat(utils.formatUnits(queryTokenBalance.data.value, queryTokenBalance.data.decimals))}{" "}
+          <span className="uppercase">${queryTokenBalance.data.symbol}</span>
         </p>
         <ButtonV3
           isDisabled={isLoading}

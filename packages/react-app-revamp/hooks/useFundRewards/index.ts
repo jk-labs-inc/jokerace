@@ -30,7 +30,9 @@ export interface RewardData {
 export function useFundRewardsModule() {
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const { chain } = useAccount();
   const {
     isModalOpen,

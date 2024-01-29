@@ -45,7 +45,7 @@ export function useContest() {
   const [chainName, setChainName] = useState(chainFromUrl);
   const [address, setAddress] = useState(addressFromUrl);
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainFromUrl)?.[0]?.id,
+    chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainFromUrl)?.[0]?.id,
   );
 
   const {
@@ -85,7 +85,7 @@ export function useContest() {
   const { contestStatus } = useContestStatusStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const alchemyRpc = chains
-    .filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
+    .filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.rpcUrls.default.http[0].includes("alchemy");
 
   // Generate config for the contract
@@ -440,7 +440,9 @@ export function useContest() {
     retry: fetchContestInfo,
     onSearch: (addr: string, chainName: string) => {
       setChainName(chainName);
-      setChainId(chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id);
+      setChainId(
+        chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
+      );
       setIsLoading(true);
       setIsListProposalsLoading(true);
       setListProposalsIds([]);

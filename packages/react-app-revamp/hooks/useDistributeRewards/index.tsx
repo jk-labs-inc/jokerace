@@ -6,6 +6,7 @@ import { useTokenDecimals } from "@hooks/useTokenDecimals";
 import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 import { formatEther, formatUnits } from "viem";
 import { useBalance } from "wagmi";
 import { create } from "zustand";
@@ -13,18 +14,26 @@ import { create } from "zustand";
 type TokenType = "erc20" | "native";
 
 type Store = {
+  releasableRewards: number;
+  releasedRewards: number;
   isReleasableRewardsLoading: boolean;
   isReleasedRewardsLoading: boolean;
   isDistributeRewardsLoading: boolean;
+  setReleaseableRewards: (rewards: number) => void;
+  setReleasedRewards: (rewards: number) => void;
   setIsDistributeRewardsLoading: (isLoading: boolean) => void;
   setIsReleasedRewardsLoading: (isReleasedRewardsLoading: boolean) => void;
   setIsReleasableRewardsLoading: (isReleasableRewardsLoading: boolean) => void;
 };
 
 export const useDistributeRewardStore = create<Store>(set => ({
+  releasableRewards: 0,
+  releasedRewards: 0,
   isReleasableRewardsLoading: false,
   isReleasedRewardsLoading: false,
   isDistributeRewardsLoading: false,
+  setReleaseableRewards: (rewards: number) => set({ releasableRewards: rewards }),
+  setReleasedRewards: (rewards: number) => set({ releasedRewards: rewards }),
   setIsDistributeRewardsLoading: (isLoading: boolean) => set({ isDistributeRewardsLoading: isLoading }),
   setIsReleasedRewardsLoading: (isReleasedRewardsLoading: boolean) => set({ isReleasedRewardsLoading }),
   setIsReleasableRewardsLoading: (isReleasableRewardsLoading: boolean) => set({ isReleasableRewardsLoading }),
@@ -41,8 +50,13 @@ export const useDistributeRewards = (
 ) => {
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
-  const { setIsReleasableRewardsLoading, setIsReleasedRewardsLoading, setIsDistributeRewardsLoading } =
-    useDistributeRewardStore(state => state);
+  const {
+    setIsReleasableRewardsLoading,
+    setIsReleasedRewardsLoading,
+    setIsDistributeRewardsLoading,
+    setReleaseableRewards,
+    setReleasedRewards,
+  } = useDistributeRewardStore(state => state);
   const tokenResData = useTokenDecimals(tokenAddress as `0x${string}`, chainId);
   const tokenData = tokenType === "erc20" ? tokenResData : null;
   const { handleError } = useError();
@@ -52,9 +66,7 @@ export const useDistributeRewards = (
     token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
   });
 
-  const transform = (data: unknown[]) => {
-    const amount = data as unknown as bigint;
-
+  const transform = (amount: bigint) => {
     return tokenType === "erc20"
       ? parseFloat(formatUnits(amount, tokenData?.decimals ?? 18))
       : parseFloat(formatEther(amount));
@@ -63,40 +75,47 @@ export const useDistributeRewards = (
   const queryRankRewardsReleasable = async () => {
     setIsReleasableRewardsLoading(true);
 
-    return await readContract(config, {
-      address: contractRewardsModuleAddress as `0x${string}`,
-      abi: abiRewardsModule,
-      chainId,
-      functionName: "releasable",
-      args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
-    })
-      .then((data: any) => {
-        setIsReleasableRewardsLoading(false);
-        return transform(data);
-      })
-      .catch((error: any) => {
-        setIsReleasableRewardsLoading(false);
-        handleError(error, "Error while querying releasable rewards");
-      });
+    try {
+      const rewardsReleasable = (await readContract(config, {
+        address: contractRewardsModuleAddress as `0x${string}`,
+        abi: abiRewardsModule,
+        chainId,
+        functionName: "releasable",
+        args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
+      })) as bigint;
+
+      setIsReleasableRewardsLoading(false);
+
+      const formattedReleasableRewards = transform(rewardsReleasable);
+
+      setReleaseableRewards(formattedReleasableRewards);
+    } catch (error) {
+      setIsReleasableRewardsLoading(false);
+      handleError(error, "Error while querying releasable rewards");
+    }
   };
 
   const queryRankRewardsReleased = async () => {
     setIsReleasedRewardsLoading(true);
-    return await readContract(config, {
-      address: contractRewardsModuleAddress as `0x${string}`,
-      abi: abiRewardsModule,
-      chainId,
-      functionName: tokenType === "erc20" ? "erc20Released" : "released",
-      args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
-    })
-      .then((data: any) => {
-        setIsReleasedRewardsLoading(false);
-        return transform(data);
-      })
-      .catch((error: any) => {
-        setIsReleasedRewardsLoading(false);
-        handleError(error, "Error while querying released rewards");
-      });
+
+    try {
+      const rewardsReleased = (await readContract(config, {
+        address: contractRewardsModuleAddress as `0x${string}`,
+        abi: abiRewardsModule,
+        chainId,
+        functionName: tokenType === "erc20" ? "erc20Released" : "released",
+        args: tokenType === "erc20" ? [tokenAddress ?? "", payee] : [payee],
+      })) as bigint;
+
+      const formattedReleasedRewards = transform(rewardsReleased);
+      setReleasedRewards(formattedReleasedRewards);
+      setIsReleasedRewardsLoading(false);
+
+      return formattedReleasedRewards;
+    } catch (error) {
+      setIsReleasedRewardsLoading(false);
+      handleError(error, "Error while querying released rewards");
+    }
   };
 
   const handleDistributeRewards = async () => {
@@ -134,6 +153,14 @@ export const useDistributeRewards = (
       setIsDistributeRewardsLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!contractRewardsModuleAddress) return;
+
+    queryRankRewardsReleasable();
+    queryRankRewardsReleased();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contractRewardsModuleAddress]);
 
   return {
     share,

@@ -12,25 +12,28 @@ interface PayeeNativeRewardProps {
 
 export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
   const { payee, share, contractRewardsModuleAddress, abiRewardsModule, chainId, showPreviouslyDistributed } = props;
-  const { queryTokenBalance, queryRankRewardsReleasable, queryRankRewardsReleased, handleDistributeRewards } =
-    useDistributeRewards(
-      Number(payee),
-      Number(share),
-      contractRewardsModuleAddress,
-      abiRewardsModule,
-      chainId,
-      "native",
-    );
-
-  const { isDistributeRewardsLoading, isReleasableRewardsLoading, isReleasedRewardsLoading } = useDistributeRewardStore(
-    state => state,
+  const { queryTokenBalance, handleDistributeRewards } = useDistributeRewards(
+    Number(payee),
+    Number(share),
+    contractRewardsModuleAddress,
+    abiRewardsModule,
+    chainId,
+    "native",
   );
+
+  const {
+    isDistributeRewardsLoading,
+    isReleasableRewardsLoading,
+    isReleasedRewardsLoading,
+    releasableRewards,
+    releasedRewards,
+  } = useDistributeRewardStore(state => state);
 
   return (
     <Reward
       queryTokenBalance={queryTokenBalance}
-      queryRankRewardsReleasable={queryRankRewardsReleasable}
-      queryRankRewardsReleased={queryRankRewardsReleased}
+      rewardsReleasable={releasableRewards}
+      rewardsReleased={releasedRewards}
       showPreviouslyDistributed={showPreviouslyDistributed}
       handleDistributeRewards={handleDistributeRewards}
       isReleasableRewardsLoading={isReleasableRewardsLoading}

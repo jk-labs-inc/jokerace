@@ -19,12 +19,14 @@ import { useRewardsStore } from "@hooks/useRewards/store";
 import { compareVersions } from "compare-versions";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useAccountEffect } from "wagmi";
 
 const ContestRewards = () => {
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const {
     isSuccess,
     isLoading,
@@ -46,14 +48,16 @@ const ContestRewards = () => {
   const [isCheckBalanceRewardsOpen, setIsCheckBalanceRewardsOpen] = useState(false);
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
-  const { isConnected, address: accountAddress } = useAccount();
+  const { address: accountAddress } = useAccount();
   const creator = contestAuthorEthereumAddress === accountAddress;
 
-  useEffect(() => {
-    if (isConnected && accountAddress && ofacAddresses.includes(accountAddress)) {
-      window.location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
-    }
-  }, [isConnected, accountAddress]);
+  useAccountEffect({
+    onConnect(data) {
+      if (ofacAddresses.includes(data.address)) {
+        window.location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
+      }
+    },
+  });
 
   useEffect(() => {
     if (rewardsStore?.isSuccess) return;
@@ -152,7 +156,6 @@ const ContestRewards = () => {
                       {rewardsStore?.rewards?.contractAddress}
                     </a>
                     <p className="text-[12px] font-bold text-neutral-11">
-                      .
                       {creator ? (
                         <>
                           you can withdraw funds at any time{" "}

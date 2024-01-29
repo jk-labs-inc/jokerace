@@ -3,12 +3,12 @@ import Skeleton from "react-loading-skeleton";
 
 interface PreviouslyDistributedRewardProps {
   queryTokenBalance: any;
-  queryRankRewardsReleased: number;
+  rewardsReleased: number;
   isReleasedRewardsLoading: boolean;
 }
 
 export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardProps) => {
-  const { queryTokenBalance, queryRankRewardsReleased, isReleasedRewardsLoading } = props;
+  const { queryTokenBalance, rewardsReleased, isReleasedRewardsLoading } = props;
 
   if (queryTokenBalance.isLoading)
     return (
@@ -17,7 +17,7 @@ export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardPr
       </li>
     );
 
-  if (!queryRankRewardsReleased) {
+  if (!rewardsReleased) {
     return (
       <li className="no-funds-distributed">
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds distributed
@@ -30,7 +30,7 @@ export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardPr
       <section className="flex justify-between w-full">
         {isReleasedRewardsLoading && <Loader scale="component">Loading info...</Loader>}
         <p>
-          {queryRankRewardsReleased} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+          {rewardsReleased} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
         </p>
       </section>
     </li>

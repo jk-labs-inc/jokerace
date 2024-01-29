@@ -39,13 +39,13 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { useAccount, useAccountEffect } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 
 const LayoutViewContest = (props: any) => {
   const { asPath, pathname, reload } = useRouter();
   const url = useUrl();
-  const { status: accountStatus, address: accountAddress, isConnected } = useAccount();
+  const { address: accountAddress } = useAccount();
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
   const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
@@ -66,22 +66,16 @@ const LayoutViewContest = (props: any) => {
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
-  const [previousStatus, setPreviousStatus] = useState(accountStatus);
-  const didConnect = previousStatus === "disconnected" && accountStatus === "connected";
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error);
 
-  useEffect(() => {
-    if (accountStatus === "connecting") return;
-
-    setPreviousStatus(accountStatus);
-  }, [accountStatus]);
-
-  useEffect(() => {
-    if (isConnected && accountAddress && ofacAddresses.includes(accountAddress)) {
-      window.location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
-    }
-  }, [isConnected, accountAddress]);
+  useAccountEffect({
+    onConnect(data) {
+      if (ofacAddresses.includes(data.address)) {
+        window.location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
+      }
+    },
+  });
 
   useEffect(() => {
     const now = moment();
@@ -121,7 +115,9 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (accountChanged || didConnect) {
+      if (accountChanged) {
+        if (accountAddress === accountChanged) return;
+
         await Promise.all([
           checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
           checkIfCurrentUserQualifyToVote(),
@@ -130,7 +126,7 @@ const LayoutViewContest = (props: any) => {
     };
 
     fetchUserData();
-  }, [accountChanged, didConnect]);
+  }, [accountChanged, accountAddress]);
 
   useEffect(() => {
     fetchContestInfo();
