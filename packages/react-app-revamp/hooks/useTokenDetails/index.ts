@@ -16,21 +16,28 @@ const useTokenDetails = (tokenType: string, tokenAddress: string, chain: string)
     const fetchTokenDetails = async () => {
       try {
         const abi = tokenType === "erc20" ? erc20ABI : erc721ABI;
-        const symbol = (await readContract({
+        const contractConfig = {
           address: tokenAddress as `0x${string}`,
           abi: abi as unknown as Abi,
           chainId: chainId,
+        };
+
+        let tokenSymbolOrName = (await readContract({
+          ...contractConfig,
           functionName: "symbol",
         })) as string;
 
-        setTokenSymbol(symbol);
-        setIsSuccess(true);
-      } catch (err: any) {
-        if (tokenType === "erc20") {
-          setTokenSymbol("ERC20 TOKEN");
-        } else {
-          setTokenSymbol("NFT");
+        if (!tokenSymbolOrName) {
+          tokenSymbolOrName = (await readContract({
+            ...contractConfig,
+            functionName: "name",
+          })) as string;
         }
+
+        setTokenSymbol(tokenSymbolOrName);
+        setIsSuccess(true);
+      } catch (err) {
+        setTokenSymbol(tokenType === "erc20" ? "ERC20 TOKEN" : "NFT");
       } finally {
         setIsLoading(false);
       }
