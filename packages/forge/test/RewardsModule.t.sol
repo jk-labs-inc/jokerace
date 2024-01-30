@@ -20,40 +20,43 @@ contract RewardsModuleTest is Test {
     uint64 public constant DOWNVOTING_ALLOWED = 0;
 
     // COST TO PROPOSE INT PARAMS
+    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
-    uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
+    uint256 public constant ZERO_COST_TO_VOTE = 0;
 
     // SORTING INT PARAMS
     uint256 public constant SORTING_ENABLED = 1;
     uint256 public constant RANK_LIMIT_250 = 250;
     uint256 public constant RANK_LIMIT_1 = 1;
 
-    uint256[] public zeroCostToProposeNumParams = [
+    Governor.ConstructorIntArgs public zeroCostToProposeNumParams = Governor.ConstructorIntArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
         DOWNVOTING_ALLOWED,
-        ZERO_COST_TO_PROPOSE,
-        FIFTY_PERCENT_TO_CREATOR,
         SORTING_ENABLED,
-        RANK_LIMIT_250
-    ];
+        RANK_LIMIT_250,
+        FIFTY_PERCENT_TO_CREATOR,
+        ZERO_COST_TO_PROPOSE,
+        ZERO_COST_TO_VOTE
+    );
 
-    uint256[] public zeroCostToProposeAndRankLimitOneNumParams = [
+    Governor.ConstructorIntArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorIntArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
         NUM_ALLOWED_PROPOSAL_SUBMISSIONS,
         MAX_PROPOSAL_COUNT,
         DOWNVOTING_ALLOWED,
-        ZERO_COST_TO_PROPOSE,
-        FIFTY_PERCENT_TO_CREATOR,
         SORTING_ENABLED,
-        RANK_LIMIT_1
-    ];
+        RANK_LIMIT_1,
+        FIFTY_PERCENT_TO_CREATOR,
+        ZERO_COST_TO_PROPOSE,
+        ZERO_COST_TO_VOTE
+    );
 
     /*
         Voting merkle tree:
