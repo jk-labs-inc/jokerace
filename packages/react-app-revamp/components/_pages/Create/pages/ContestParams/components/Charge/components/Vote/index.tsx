@@ -17,7 +17,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
   return (
     <div className="flex flex-col gap-6">
       <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-        what is the charge for players to vote in the contest?
+        what is the charge for players each time they vote?
       </p>
       <div className="flex flex-col gap-2">
         <CreateNumberInput
