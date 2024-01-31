@@ -72,6 +72,7 @@ export function useCastVotes() {
             parseUnits(amount.toString()),
             proofs,
           ],
+          //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
           value: charge ? [charge.charges.costToVote] : [],
         });
       } else {
@@ -81,6 +82,7 @@ export function useCastVotes() {
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
+          //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
           value: charge ? [charge.charges.costToVote] : [],
         });
       }

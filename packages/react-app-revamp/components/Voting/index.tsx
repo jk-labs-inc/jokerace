@@ -94,7 +94,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   };
 
   return (
-    <div className="flex flex-col gap-7 w-full md:w-60">
+    <div className={`flex flex-col gap-7 w-full ${charge?.charges.costToVote ? `md:w-[344px]` : `md-w-60`}`}>
       <div className="flex flex-col gap-4">
         <div
           className={`flex h-8 justify-between items-center pl-6 pr-4 text-[16px] bg-transparent font-bold ${
