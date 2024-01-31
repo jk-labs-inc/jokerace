@@ -3,7 +3,7 @@ import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSu
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { create } from "zustand";
 import { DEFAULT_SUBMISSIONS } from ".";
-import { EntryCharge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
+import { Charge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
 
 type ContestDeployError = {
   step: number;
@@ -68,7 +68,7 @@ export interface DeployContestState {
   furthestStep: number;
   submissionTab: number;
   votingTab: number;
-  entryCharge: EntryCharge;
+  charge: Charge;
   setDeployContestData: (
     chain: string,
     chainId: number,
@@ -103,7 +103,7 @@ export interface DeployContestState {
   setFurthestStep: (furthestStep: number) => void;
   setSubmissionTab: (tab: number) => void;
   setVotingTab: (tab: number) => void;
-  setEntryCharge: (entryCharge: EntryCharge) => void;
+  setCharge: (charge: Charge) => void;
   reset: () => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
@@ -169,9 +169,12 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       minTokensRequired: 0.01,
       timestamp: Date.now(),
     },
-    entryCharge: {
-      costToPropose: 0,
+    charge: {
       percentageToCreator: 50,
+      charges: {
+        costToPropose: 0,
+        costToVote: 0,
+      },
     },
     allowedSubmissionsPerUser: 3,
     maxSubmissions: DEFAULT_SUBMISSIONS,
@@ -265,7 +268,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setFurthestStep: (furthestStep: number) => set({ furthestStep }),
     setSubmissionTab: (submissionTab: number) => set({ submissionTab }),
     setVotingTab: (votingTab: number) => set({ votingTab }),
-    setEntryCharge: (entryCharge: EntryCharge) => set({ entryCharge }),
+    setCharge: (charge: Charge) => set({ charge }),
     reset: () => set({ ...initialState }),
   };
 });

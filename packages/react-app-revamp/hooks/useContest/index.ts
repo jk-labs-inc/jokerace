@@ -69,7 +69,7 @@ export function useContest() {
     setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
-    setEntryCharge,
+    setCharge,
     setVotingRequirements,
     setSubmissionRequirements,
     setIsReadOnly,
@@ -138,16 +138,30 @@ export function useContest() {
 
     processUserQualifications(submissionMerkleRoot, votingMerkleRoot, contestMaxNumberSubmissionsPerUser);
 
-    if (compareVersions(version, "4.0") >= 0 && moment().isBefore(votesOpenDate)) {
-      const entryChargeValue = Number(results[11].result);
-      const entryChargePercentage = Number(results[12].result);
+    if (compareVersions(version, "4.0") >= 0) {
+      const costToProposeTiming = moment().isBefore(votesOpenDate);
+      const costToVoteTiming = moment().isBefore(closingVoteDate);
+      const percentageToCreatorChargeValue = Number(results[11].result);
+      let costToPropose = 0;
+      let costToVote = 0;
 
-      setEntryCharge({
-        costToPropose: entryChargeValue,
-        percentageToCreator: entryChargePercentage,
+      if (costToProposeTiming) {
+        costToPropose = Number(results[12].result);
+      }
+
+      if (costToVoteTiming && compareVersions(version, "4.23") >= 0) {
+        costToVote = Number(results[14].result);
+      }
+
+      setCharge({
+        percentageToCreator: percentageToCreatorChargeValue,
+        charges: {
+          costToPropose,
+          costToVote,
+        },
       });
     } else {
-      setEntryCharge(null);
+      setCharge(null);
     }
 
     if (compareVersions(version, "4.2") >= 0) {

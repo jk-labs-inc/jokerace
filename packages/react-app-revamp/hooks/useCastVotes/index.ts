@@ -20,7 +20,7 @@ import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { canUpdateVotesInRealTime } = useContestStore(state => state);
+  const { canUpdateVotesInRealTime, charge } = useContestStore(state => state);
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -72,6 +72,7 @@ export function useCastVotes() {
             parseUnits(amount.toString()),
             proofs,
           ],
+          value: charge ? [charge.charges.costToVote] : [],
         });
       } else {
         txRequest = await prepareWriteContract({
@@ -80,6 +81,7 @@ export function useCastVotes() {
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
+          value: charge ? [charge.charges.costToVote] : [],
         });
       }
 
