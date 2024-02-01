@@ -16,6 +16,7 @@ import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
+import { formatEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -104,6 +105,7 @@ export function useCastVotes() {
           proposal_id: pickedProposal !== null ? pickedProposal : undefined,
           vote_amount: amount,
           created_at: Math.floor(Date.now() / 1000),
+          amount_sent: charge ? Number(formatEther(BigInt(charge.type.costToVote))) : null,
         });
       } catch (error) {
         console.error("Error in addUserActionForAnalytics:", error);
