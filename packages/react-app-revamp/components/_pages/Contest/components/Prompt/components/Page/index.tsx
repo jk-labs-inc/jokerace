@@ -1,6 +1,6 @@
 import { truncateText } from "@helpers/truncate";
 import { useContestStore } from "@hooks/useContest/store";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useState } from "react";
 import ContestPromptPageLegacyLayout from "./components/Layout/Legacy";
 import ContestPromptPageV3Layout from "./components/Layout/V3";
 
@@ -8,7 +8,7 @@ interface ContestPromptPageProps {
   prompt: string;
 }
 
-const MAX_LENGTH = 100;
+const MAX_LENGTH = 200;
 
 const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const { isV3 } = useContestStore(state => state);

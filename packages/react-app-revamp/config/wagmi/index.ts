@@ -70,8 +70,6 @@ import { polygonTestnet } from "./custom-chains/polygonTestnet";
 import { polygonZk } from "./custom-chains/polygonZk";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
 import { proteus } from "./custom-chains/proteus";
-import { publicGoodsNetwork } from "./custom-chains/publicGoodsNetwork";
-import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
 import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
 import { quartz } from "./custom-chains/quartz";
@@ -105,7 +103,6 @@ const totalChains: Chain[] = [
   bnb,
   linea,
   celo,
-  publicGoodsNetwork,
   lootChain,
   near,
   gnosis,
@@ -144,7 +141,6 @@ const totalChains: Chain[] = [
   zetaTestnet,
   celoTestnet,
   optimismTestnet,
-  publicGoodsNetworkTestnet,
   lootChainTestnet,
   nearTestnet,
   gnosisTestnet,

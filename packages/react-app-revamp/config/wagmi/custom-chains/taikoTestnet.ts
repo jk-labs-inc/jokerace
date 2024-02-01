@@ -12,15 +12,15 @@ export const taikoTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.jolnir.taiko.xyz"],
+      http: ["https://rpc.katla.taiko.xyz"],
     },
     default: {
-      http: ["https://rpc.jolnir.taiko.xyz"],
+      http: ["https://rpc.katla.taiko.xyz"],
     },
   },
   blockExplorers: {
-    etherscan: { name: "Taiko Testnet Scan", url: "https://explorer.jolnir.taiko.xyz" },
-    default: { name: "Taiko Testnet Scan", url: "https://explorer.jolnir.taiko.xyz" },
+    etherscan: { name: "Taiko Testnet Scan", url: "https://explorer.katla.taiko.xyz/" },
+    default: { name: "Taiko Testnet Scan", url: "https://explorer.katla.taiko.xyz/" },
   },
   testnet: true,
 };
