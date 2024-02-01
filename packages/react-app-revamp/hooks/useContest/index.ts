@@ -11,7 +11,7 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser, { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { FetchBalanceResult, ReadContractsResult, readContract, readContracts } from "@wagmi/core";
+import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { utils } from "ethers";
@@ -141,7 +141,7 @@ export function useContest() {
     if (compareVersions(version, "4.0") >= 0) {
       const costToProposeTiming = moment().isBefore(votesOpenDate);
       const costToVoteTiming = moment().isBefore(closingVoteDate);
-      const percentageToCreatorChargeValue = Number(results[11].result);
+      const percentageToCreator = Number(results[11].result);
       let costToPropose = 0;
       let costToVote = 0;
 
@@ -154,7 +154,7 @@ export function useContest() {
       }
 
       setCharge({
-        percentageToCreator: percentageToCreatorChargeValue,
+        percentageToCreator,
         type: {
           costToPropose,
           costToVote,

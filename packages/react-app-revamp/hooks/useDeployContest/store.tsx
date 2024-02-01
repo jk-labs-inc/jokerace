@@ -171,7 +171,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     charge: {
       percentageToCreator: 50,
-      charges: {
+      type: {
         costToPropose: 0,
         costToVote: 0,
       },

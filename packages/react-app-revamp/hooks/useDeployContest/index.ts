@@ -78,7 +78,7 @@ export function useDeployContest() {
       const contestInfo = type + "|" + summary + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
       const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
-      const { charges, percentageToCreator } = charge;
+      const { type: chargeType, percentageToCreator } = charge;
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
       const { merkleRoot: votingMerkleRoot } = votingMerkle || {};
 
@@ -99,8 +99,8 @@ export function useDeployContest() {
         sortingEnabled: advancedOptions.sorting ? 1 : 0,
         rankLimit: advancedOptions.rankLimit,
         percentageToCreator: percentageToCreator,
-        costToPropose: parseEther(charges.costToPropose.toString()),
-        costToVote: parseEther(charges.costToVote.toString()),
+        costToPropose: parseEther(chargeType.costToPropose.toString()),
+        costToVote: parseEther(chargeType.costToVote.toString()),
       };
 
       const contractContest = await factoryCreateContest.deploy(
@@ -183,8 +183,8 @@ export function useDeployContest() {
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
         voting_requirements: votingReqDatabaseEntry,
         submission_requirements: submissionReqDatabaseEntry,
-        cost_to_propose: charges.costToPropose,
-        cost_to_vote: charges.costToVote,
+        cost_to_propose: chargeType.costToPropose,
+        cost_to_vote: chargeType.costToVote,
         percentage_to_creator: percentageToCreator,
       };
 
