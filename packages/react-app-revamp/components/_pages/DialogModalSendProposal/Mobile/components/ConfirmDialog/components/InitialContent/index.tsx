@@ -1,27 +1,27 @@
+import ChargeLayout from "@components/ChargeLayout";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import DialogModalSendProposalEntryChargeLayout from "@components/_pages/DialogModalSendProposal/components/EntryCharge";
 import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
-import { EntryCharge } from "@hooks/useDeployContest/types";
+import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { FetchBalanceResult } from "@wagmi/core";
 import { FC, useState } from "react";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
-  entryCharge: EntryCharge | null;
+  charge: Charge | null;
   accountData: FetchBalanceResult | undefined;
   onConfirm?: () => void;
 }
 
 const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayoutConfirmInitialContentProps> = ({
-  entryCharge,
+  charge,
   accountData,
   onConfirm,
 }) => {
   const { wantsSubscription, emailForSubscription, setWantsSubscription, setEmailForSubscription } =
     useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const insufficientBalance = (accountData?.value ?? 0) < (entryCharge?.costToPropose ?? 0);
+  const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,8 +61,8 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
 
   return (
     <>
-      {entryCharge && entryCharge.costToPropose && accountData ? (
-        <DialogModalSendProposalEntryChargeLayout entryCharge={entryCharge} accountData={accountData} />
+      {charge && charge.type.costToPropose && accountData ? (
+        <ChargeLayout charge={charge} accountData={accountData} type="propose" />
       ) : null}
       <div className="flex flex-col gap-4 mt-4">
         {!insufficientBalance ? (

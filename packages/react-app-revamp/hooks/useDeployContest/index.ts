@@ -3,6 +3,7 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Cont
 import { MAX_ROWS } from "@helpers/csvConstants";
 import { isSupabaseConfigured } from "@helpers/database";
 import { useEthersSigner } from "@helpers/ethers";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
@@ -18,7 +19,6 @@ import { Abi, parseEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useDeployContestStore } from "./store";
 import { SubmissionMerkle, VotingMerkle } from "./types";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
 export const DEFAULT_SUBMISSIONS = 1000000;
@@ -43,7 +43,7 @@ export function useDeployContest() {
     setDeployContestData,
     votingRequirements,
     submissionRequirements,
-    entryCharge,
+    charge,
     setIsLoading,
     setIsSuccess,
   } = useDeployContestStore(state => state);
@@ -78,7 +78,7 @@ export function useDeployContest() {
       const contestInfo = type + "|" + summary + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
       const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
-      const { costToPropose, percentageToCreator } = entryCharge;
+      const { type: chargeType, percentageToCreator } = charge;
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
       const { merkleRoot: votingMerkleRoot } = votingMerkle || {};
 
@@ -90,26 +90,37 @@ export function useDeployContest() {
       const finalMaxSubmissions = !isNaN(maxSubmissions) && maxSubmissions > 0 ? maxSubmissions : MAX_SUBMISSIONS_LIMIT;
 
       const contestParametersObject = {
-        initialContestStart: getUnixTime(submissionOpen),
-        initialVotingDelay: differenceInSeconds(votingOpen, submissionOpen),
-        initialVotingPeriod: differenceInSeconds(votingClose, votingOpen),
-        initialNumAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
-        initialMaxProposalCount: finalMaxSubmissions,
-        initialDownvotingAllowed: advancedOptions.downvote ? 1 : 0,
-        costToPropose: parseEther(costToPropose.toString()),
-        percentageToCreator: percentageToCreator,
+        contestStart: getUnixTime(submissionOpen),
+        votingDelay: differenceInSeconds(votingOpen, submissionOpen),
+        votingPeriod: differenceInSeconds(votingClose, votingOpen),
+        numAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
+        maxProposalCount: finalMaxSubmissions,
+        downvotingAllowed: advancedOptions.downvote ? 1 : 0,
         sortingEnabled: advancedOptions.sorting ? 1 : 0,
         rankLimit: advancedOptions.rankLimit,
+        percentageToCreator: percentageToCreator,
+        costToPropose: parseEther(chargeType.costToPropose.toString()),
+        costToVote: parseEther(chargeType.costToVote.toString()),
       };
-
-      const contestParameters = Object.values(contestParametersObject);
 
       const contractContest = await factoryCreateContest.deploy(
         title,
         contestInfo,
         submissionMerkleRoot,
         votingMerkleRoot,
-        contestParameters,
+        [
+          contestParametersObject.contestStart,
+          contestParametersObject.votingDelay,
+          contestParametersObject.votingPeriod,
+          contestParametersObject.numAllowedProposalSubmissions,
+          contestParametersObject.maxProposalCount,
+          contestParametersObject.downvotingAllowed,
+          contestParametersObject.sortingEnabled,
+          contestParametersObject.rankLimit,
+          contestParametersObject.percentageToCreator,
+          contestParametersObject.costToPropose,
+          contestParametersObject.costToVote,
+        ],
       );
 
       const transactionPromise = contractContest.deployTransaction.wait();
@@ -172,7 +183,8 @@ export function useDeployContest() {
         networkName: chain?.name.toLowerCase().replace(" ", "") ?? "",
         voting_requirements: votingReqDatabaseEntry,
         submission_requirements: submissionReqDatabaseEntry,
-        cost_to_propose: costToPropose,
+        cost_to_propose: chargeType.costToPropose,
+        cost_to_vote: chargeType.costToVote,
         percentage_to_creator: percentageToCreator,
       };
 
