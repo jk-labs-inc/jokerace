@@ -73,7 +73,7 @@ export function useCastVotes() {
             proofs,
           ],
           //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
-          value: charge ? [charge.charges.costToVote] : [],
+          value: charge ? [charge.type.costToVote] : [],
         });
       } else {
         txRequest = await prepareWriteContract({
@@ -83,7 +83,7 @@ export function useCastVotes() {
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
           //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
-          value: charge ? [charge.charges.costToVote] : [],
+          value: charge ? [charge.type.costToVote] : [],
         });
       }
 

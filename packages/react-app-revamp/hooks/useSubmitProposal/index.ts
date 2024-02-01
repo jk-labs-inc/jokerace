@@ -81,14 +81,14 @@ export function useSubmitProposal() {
             ...contractConfig,
             functionName: "propose",
             args: [proposalCore, proofs],
-            value: charge ? [charge.charges.costToPropose] : [],
+            value: charge ? [charge.type.costToPropose] : [],
           };
         } else {
           txConfig = {
             ...contractConfig,
             functionName: "proposeWithoutProof",
             args: [proposalCore],
-            value: charge ? [charge.charges.costToPropose] : [],
+            value: charge ? [charge.type.costToPropose] : [],
           };
         }
 
@@ -115,7 +115,7 @@ export function useSubmitProposal() {
             network_name: chainName,
             proposal_id: proposalId,
             created_at: Math.floor(Date.now() / 1000),
-            amount_sent: charge ? Number(formatEther(BigInt(charge.charges.costToPropose))) : null,
+            amount_sent: charge ? Number(formatEther(BigInt(charge.type.costToPropose))) : null,
             percentage_to_creator: charge ? charge.percentageToCreator : null,
           });
         } catch (error) {

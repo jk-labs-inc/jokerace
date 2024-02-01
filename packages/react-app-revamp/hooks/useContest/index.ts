@@ -11,7 +11,7 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser, { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
+import { FetchBalanceResult, ReadContractsResult, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { utils } from "ethers";
@@ -155,7 +155,7 @@ export function useContest() {
 
       setCharge({
         percentageToCreator: percentageToCreatorChargeValue,
-        charges: {
+        type: {
           costToPropose,
           costToVote,
         },

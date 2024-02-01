@@ -30,7 +30,7 @@ export type SubmissionRequirements = {
 
 export type Charge = {
   percentageToCreator: number;
-  charges: {
+  type: {
     costToPropose: number;
     costToVote: number;
   };

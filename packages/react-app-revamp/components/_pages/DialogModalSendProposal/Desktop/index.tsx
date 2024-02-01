@@ -68,10 +68,10 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const { isLoading, isSuccess } = useSubmitProposal();
   const { proposalId } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const insufficientBalance = (accountData?.value ?? 0) < (charge?.charges.costToPropose ?? 0);
+  const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const onCorrectNetwork = chain?.name.toLowerCase() === chainName.toLowerCase();
-  const showEntryCharge = charge && charge.charges.costToPropose && accountData && onCorrectNetwork;
+  const showEntryCharge = charge && charge.type.costToPropose && accountData && onCorrectNetwork;
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWantsSubscription(event.target.checked);

@@ -21,7 +21,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
   const { wantsSubscription, emailForSubscription, setWantsSubscription, setEmailForSubscription } =
     useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const insufficientBalance = (accountData?.value ?? 0) < (charge?.charges.costToPropose ?? 0);
+  const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,7 +61,7 @@ const SendProposalMobileLayoutConfirmInitialContent: FC<SendProposalMobileLayout
 
   return (
     <>
-      {charge && charge.charges.costToPropose && accountData ? (
+      {charge && charge.type.costToPropose && accountData ? (
         <ChargeLayout charge={charge} accountData={accountData} type="propose" />
       ) : null}
       <div className="flex flex-col gap-4 mt-4">

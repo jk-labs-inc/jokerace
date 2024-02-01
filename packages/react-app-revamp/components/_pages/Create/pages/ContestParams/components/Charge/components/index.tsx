@@ -20,8 +20,8 @@ const ContestParamsCharge: FC<ContestParamsChargeProps> = ({ isConnected, chain,
   const [costToVoteError, setCostToVoteError] = useState("");
 
   useEffect(() => {
-    const isCostToProposeSet = charge.charges.costToPropose !== 0;
-    const isCostToVoteSet = charge.charges.costToVote !== 0;
+    const isCostToProposeSet = charge.type.costToPropose !== 0;
+    const isCostToVoteSet = charge.type.costToVote !== 0;
 
     if (minCostToPropose === 0 || minCostToVote === 0 || isCostToProposeSet || isCostToVoteSet) {
       return;
@@ -29,8 +29,8 @@ const ContestParamsCharge: FC<ContestParamsChargeProps> = ({ isConnected, chain,
 
     setCharge({
       ...charge,
-      charges: {
-        ...charge.charges,
+      type: {
+        ...charge.type,
         costToPropose: minCostToPropose,
         costToVote: minCostToVote,
       },
@@ -52,8 +52,8 @@ const ContestParamsCharge: FC<ContestParamsChargeProps> = ({ isConnected, chain,
 
     setCharge({
       ...charge,
-      charges: {
-        ...charge.charges,
+      type: {
+        ...charge.type,
         costToPropose: value,
       },
     });
@@ -71,8 +71,8 @@ const ContestParamsCharge: FC<ContestParamsChargeProps> = ({ isConnected, chain,
 
     setCharge({
       ...charge,
-      charges: {
-        ...charge.charges,
+      type: {
+        ...charge.type,
         costToVote: value,
       },
     });
@@ -90,13 +90,13 @@ const ContestParamsCharge: FC<ContestParamsChargeProps> = ({ isConnected, chain,
   return (
     <>
       <ContestParamsChargeSubmission
-        costToPropose={charge.charges.costToPropose}
+        costToPropose={charge.type.costToPropose}
         chainUnitLabel={chainUnitLabel ?? ""}
         costToProposeError={costToProposeError}
         onCostToProposeChange={handleCostToProposeChange}
       />
       <ContestParamsChargeVote
-        costToVote={charge.charges.costToVote}
+        costToVote={charge.type.costToVote}
         chainUnitLabel={chainUnitLabel ?? ""}
         costToVoteError={costToVoteError}
         onCostToVoteChange={handleCostToVoteChange}
