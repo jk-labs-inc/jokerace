@@ -1,7 +1,7 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
 export const taikoTestnet: Chain = {
-  id: 167007,
+  id: 167008,
   name: "taikoTestnet",
   network: "taikoTestnet",
   iconUrl: "/contest/mona-lisa-moustache.png",
