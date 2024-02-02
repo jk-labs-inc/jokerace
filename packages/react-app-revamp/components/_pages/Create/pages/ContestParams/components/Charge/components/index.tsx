@@ -1,7 +1,8 @@
+/* eslint-disable react/no-unescaped-entities */
 import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import ContestParamsChargePercentToCreator from "./PercentToCreator";
 import ContestParamsChargeSubmission from "./Submission";
 import ContestParamsChargeVote from "./Vote";
@@ -14,28 +15,22 @@ interface ContestParamsChargeProps {
 
 const ContestParamsCharge: FC<ContestParamsChargeProps> = ({ isConnected, chain, onError }) => {
   const chainUnitLabel = chains.find(c => c.name === chain)?.nativeCurrency.symbol;
-  const { minCostToPropose, minCostToVote } = useChargeDetails(chain);
+  const { minCostToPropose, minCostToVote, isError, refetch: refetchChargeDetails } = useChargeDetails(chain);
   const { charge, setCharge } = useDeployContestStore(state => state);
   const [costToProposeError, setCostToProposeError] = useState("");
   const [costToVoteError, setCostToVoteError] = useState("");
 
-  useEffect(() => {
-    const isCostToProposeSet = charge.type.costToPropose !== 0;
-    const isCostToVoteSet = charge.type.costToVote !== 0;
-
-    if (minCostToPropose === 0 || minCostToVote === 0 || isCostToProposeSet || isCostToVoteSet) {
-      return;
-    }
-
-    setCharge({
-      ...charge,
-      type: {
-        ...charge.type,
-        costToPropose: minCostToPropose,
-        costToVote: minCostToVote,
-      },
-    });
-  }, [charge, minCostToPropose, minCostToVote, setCharge]);
+  if (isError) {
+    onError?.(true);
+    return (
+      <p className="text-[24px] text-negative-11 font-bold">
+        ruh roh, we couldn't load charge details for this chain!{" "}
+        <span className="underline cursor-pointer" onClick={refetchChargeDetails}>
+          please try again
+        </span>
+      </p>
+    );
+  }
 
   if (!isConnected || minCostToPropose === 0 || minCostToVote === 0) return null;
 
