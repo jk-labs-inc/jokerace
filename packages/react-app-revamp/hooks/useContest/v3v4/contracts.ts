@@ -1,4 +1,5 @@
 import { compareVersions } from "compare-versions";
+
 export function getContracts(contractConfig: any, version: string) {
   const commonFunctionNames = [
     "name",
@@ -14,7 +15,7 @@ export function getContracts(contractConfig: any, version: string) {
     "votingMerkleRoot",
   ];
 
-  const v4FunctionNames = ["costToPropose", "percentageToCreator"];
+  const v4FunctionNames = ["percentageToCreator", "costToPropose"];
 
   const v4_2FunctionNames = ["sortingEnabled"];
 
@@ -25,6 +26,10 @@ export function getContracts(contractConfig: any, version: string) {
   }
   if (compareVersions(version, "4.2") >= 0) {
     contractFunctionNames = [...contractFunctionNames, ...v4_2FunctionNames];
+  }
+
+  if (compareVersions(version, "4.23") >= 0) {
+    contractFunctionNames = [...contractFunctionNames, "costToVote"];
   }
 
   const contracts = contractFunctionNames.map(functionName => ({

@@ -8,6 +8,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
+import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
@@ -16,7 +17,6 @@ import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useSubmitProposalStore } from "./store";
-import { useProposalStore } from "@hooks/useProposal/store";
 
 const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -33,7 +33,7 @@ export function useSubmitProposal() {
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const { address: userAddress } = useAccount();
-  const { entryCharge } = useContestStore(state => state);
+  const { charge } = useContestStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
@@ -81,14 +81,14 @@ export function useSubmitProposal() {
             ...contractConfig,
             functionName: "propose",
             args: [proposalCore, proofs],
-            value: entryCharge ? [entryCharge.costToPropose] : [],
+            value: charge ? [charge.type.costToPropose] : [],
           };
         } else {
           txConfig = {
             ...contractConfig,
             functionName: "proposeWithoutProof",
             args: [proposalCore],
-            value: entryCharge ? [entryCharge.costToPropose] : [],
+            value: charge ? [charge.type.costToPropose] : [],
           };
         }
 
@@ -115,8 +115,8 @@ export function useSubmitProposal() {
             network_name: chainName,
             proposal_id: proposalId,
             created_at: Math.floor(Date.now() / 1000),
-            amount_sent: entryCharge ? Number(formatEther(BigInt(entryCharge.costToPropose))) : null,
-            percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
+            amount_sent: charge ? Number(formatEther(BigInt(charge.type.costToPropose))) : null,
+            percentage_to_creator: charge ? charge.percentageToCreator : null,
           });
         } catch (error) {
           console.error("Error in addUserActionForAnalytics:", error);

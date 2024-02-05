@@ -27,7 +27,22 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     enum Actions {
-        Submit
+        Submit,
+        Vote
+    }
+
+    struct ConstructorIntArgs {
+        uint256 contestStart;
+        uint256 votingDelay;
+        uint256 votingPeriod;
+        uint256 numAllowedProposalSubmissions;
+        uint256 maxProposalCount;
+        uint256 downvotingAllowed;
+        uint256 sortingEnabled;
+        uint256 rankLimit;
+        uint256 percentageToCreator;
+        uint256 costToPropose;
+        uint256 costToVote;
     }
 
     struct TargetMetadata {
@@ -65,7 +80,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
-    string private constant VERSION = "4.22"; // Private as to not clutter the ABI
+    string private constant VERSION = "4.23"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -76,8 +91,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public numAllowedProposalSubmissions; // The number of proposals that an address who is qualified to propose can submit for this contest.
     uint256 public maxProposalCount; // Max number of proposals allowed in this contest.
     uint256 public downvotingAllowed; // If downvoting is enabled in this contest.
-    uint256 public costToPropose;
     uint256 public percentageToCreator;
+    uint256 public costToPropose;
+    uint256 public costToVote;
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -105,6 +121,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error SenderSubmissionLimitReached(uint256 numAllowedProposalSubmissions);
     error ContestSubmissionLimitReached(uint256 maxProposalCount);
     error DuplicateSubmission(uint256 proposalId);
+
+    error IncorrectCostToVoteSent(uint256 msgValue, uint256 costToVote);
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
 
@@ -124,28 +142,30 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         string memory prompt_,
         bytes32 submissionMerkleRoot_,
         bytes32 votingMerkleRoot_,
-        uint256 contestStart_,
-        uint256 votingDelay_,
-        uint256 votingPeriod_,
-        uint256 numAllowedProposalSubmissions_,
-        uint256 maxProposalCount_,
-        uint256 downvotingAllowed_,
-        uint256 costToPropose_,
-        uint256 percentageToCreator_
+        ConstructorIntArgs memory constructorIntArgs_
     ) GovernorMerkleVotes(submissionMerkleRoot_, votingMerkleRoot_) {
         name = name_;
         prompt = prompt_;
         creator = msg.sender;
-        contestStart = contestStart_;
-        votingDelay = votingDelay_;
-        votingPeriod = votingPeriod_;
-        numAllowedProposalSubmissions = numAllowedProposalSubmissions_;
-        maxProposalCount = maxProposalCount_;
-        downvotingAllowed = downvotingAllowed_;
-        costToPropose = costToPropose_;
-        percentageToCreator = percentageToCreator_;
+        contestStart = constructorIntArgs_.contestStart;
+        votingDelay = constructorIntArgs_.votingDelay;
+        votingPeriod = constructorIntArgs_.votingPeriod;
+        numAllowedProposalSubmissions = constructorIntArgs_.numAllowedProposalSubmissions;
+        maxProposalCount = constructorIntArgs_.maxProposalCount;
+        downvotingAllowed = constructorIntArgs_.downvotingAllowed;
+        percentageToCreator = constructorIntArgs_.percentageToCreator;
+        costToPropose = constructorIntArgs_.costToPropose;
+        costToVote = constructorIntArgs_.costToVote;
 
-        emit JokeraceCreated(VERSION, name_, prompt_, msg.sender, contestStart_, votingDelay_, votingPeriod_); // emit upon creation to be able to easily find jokeraces on a chain
+        emit JokeraceCreated(
+            VERSION,
+            name_,
+            prompt_,
+            msg.sender,
+            constructorIntArgs_.contestStart,
+            constructorIntArgs_.votingDelay,
+            constructorIntArgs_.votingPeriod
+        ); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
     function version() public pure returns (string memory) {
@@ -292,6 +312,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 actionCost;
         if (currentAction == Actions.Submit) {
             actionCost = costToPropose;
+        } else if (currentAction == Actions.Vote) {
+            actionCost = costToVote;
         } else {
             actionCost = 0;
         }
@@ -428,21 +450,36 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      */
     function castVote(uint256 proposalId, uint8 support, uint256 totalVotes, uint256 numVotes, bytes32[] calldata proof)
         public
+        payable
         returns (uint256)
     {
+        if (msg.value != costToVote) revert IncorrectCostToVoteSent(msg.value, costToVote);
+
         address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
         verifyVoter(voter, totalVotes, proof);
+
+        _distributeCost(Actions.Vote);
+
         return _castVote(proposalId, voter, support, numVotes);
     }
 
     /**
      * @dev Cast a vote without a proof if you have already voted with a proof.
      */
-    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes) public returns (uint256) {
+    function castVoteWithoutProof(uint256 proposalId, uint8 support, uint256 numVotes)
+        public
+        payable
+        returns (uint256)
+    {
+        if (msg.value != costToVote) revert IncorrectCostToVoteSent(msg.value, costToVote);
+
         address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
         if (!addressTotalVotesVerified[voter]) revert NeedToVoteWithProofFirst();
+
+        _distributeCost(Actions.Vote);
+
         return _castVote(proposalId, voter, support, numVotes);
     }
 
