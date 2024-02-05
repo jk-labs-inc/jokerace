@@ -28,7 +28,10 @@ export type SubmissionRequirements = {
   timestamp: number;
 };
 
-export type EntryCharge = {
-  costToPropose: number;
+export type Charge = {
   percentageToCreator: number;
+  type: {
+    costToPropose: number;
+    costToVote: number;
+  };
 };

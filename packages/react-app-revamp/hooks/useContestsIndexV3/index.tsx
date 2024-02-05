@@ -32,6 +32,7 @@ export interface ContestValues {
   voting_requirements: VotingRequirementsSchema | null;
   submission_requirements: SubmissionRequirementsSchema | null;
   cost_to_propose: number;
+  cost_to_vote: number;
   percentage_to_creator: number;
   authorAddress?: string;
   featured?: boolean;
@@ -62,6 +63,7 @@ export function useContestsIndexV3() {
           voting_requirements: values.voting_requirements,
           submission_requirements: values.submission_requirements,
           cost_to_propose: values.cost_to_propose,
+          cost_to_vote: values.cost_to_vote,
           percentage_to_creator: values.percentage_to_creator,
         },
       ]);

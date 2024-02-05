@@ -1,3 +1,4 @@
+import ChargeLayout from "@components/ChargeLayout";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
 import { chains } from "@config/wagmi";
@@ -5,11 +6,12 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { switchNetwork } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount, useBalance, useNetwork } from "wagmi";
 
 interface VotingWidgetProps {
   amountOfVotes: number;
@@ -18,8 +20,13 @@ interface VotingWidgetProps {
 }
 
 const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, onVote }) => {
+  const { charge } = useContestStore(state => state);
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { asPath } = useRouter();
+  const { address } = useAccount();
+  const { data: accountData } = useBalance({
+    address: address as `0x${string}`,
+  });
   const { chainName } = extractPathSegments(asPath);
   const { chain } = useNetwork();
   const { isLoading } = useCastVotesStore(state => state);
@@ -30,6 +37,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   const voteDisabled = isLoading || amount === 0 || isInvalid || isNaN(amount);
   const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
   const isCorrectNetwork = chainId === chain?.id;
+  const showVoteCharge = charge && charge.type.costToVote && accountData && isCorrectNetwork;
 
   const handleClick = (value: boolean) => {
     setIsUpvote(value);
@@ -86,7 +94,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   };
 
   return (
-    <div className="flex flex-col gap-7 w-full md:w-60">
+    <div className={`flex flex-col gap-7 w-full ${charge?.type.costToVote ? `md:w-[344px]` : `md:w-60`}`}>
       <div className="flex flex-col gap-4">
         <div
           className={`flex h-8 justify-between items-center pl-6 pr-4 text-[16px] bg-transparent font-bold ${
@@ -129,7 +137,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
           </div>
         ) : null}
 
-        <div className="mt-4">
+        <div className="mt-8 flex flex-col gap-8">
+          {showVoteCharge ? <ChargeLayout accountData={accountData} charge={charge} type="vote" /> : null}
           {isCorrectNetwork ? (
             <ButtonV3
               type={ButtonType.TX_ACTION}
