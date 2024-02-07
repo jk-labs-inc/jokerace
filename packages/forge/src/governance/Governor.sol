@@ -306,7 +306,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
-     * @dev .
+     * @dev Determines that the correct amount was sent with the transaction and returns that correct amount.
      */
     function _determineCorrectAmountSent(Actions currentAction) internal returns (uint256) {
         uint256 actionCost;
