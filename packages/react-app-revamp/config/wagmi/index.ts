@@ -37,6 +37,8 @@ import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
 import { frameTestnet } from "./custom-chains/frameTestnet";
+import { fraxtal } from "./custom-chains/fraxtal";
+import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
@@ -129,6 +131,7 @@ const totalChains: Chain[] = [
   arthera,
   palm,
   lyra,
+  fraxtal,
   polygonTestnet,
   sepolia,
   goerli,
@@ -159,6 +162,7 @@ const totalChains: Chain[] = [
   berachainTestnet,
   taikoTestnet,
   palmTestnet,
+  fraxtalTestnet,
   mainnet,
 ];
 
