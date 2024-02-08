@@ -43,6 +43,7 @@ import AddGetDeletedAuthorsRewards from "@contracts/bytecodeAndAbi/modules/Rewar
 import AddContentToEventsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.21.addContentToEvents.sol/RewardsModule.json";
 import RefactorDistributionFuncRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.22.refactorDistributionFunc.sol/RewardsModule.json";
 import AddCostToVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.23.addCostToVote.sol/RewardsModule.json";
+import RefactorCostDistroRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.24.refactorCostDistro.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -55,7 +56,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.23") {
+    if (version === "4.24") {
+      return RefactorCostDistroRewards.abi;
+    } else if (version === "4.23") {
       return AddCostToVoteRewards.abi;
     } else if (version === "4.22") {
       return RefactorDistributionFuncRewards.abi;
