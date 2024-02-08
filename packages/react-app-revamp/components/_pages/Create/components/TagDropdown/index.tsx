@@ -8,24 +8,15 @@ export interface Option {
   disabled?: boolean;
 }
 
-interface CreateDropdownProps {
+interface CreateTagDropdownProps {
   value: string;
   options: Option[];
-  searchEnabled?: boolean;
   className?: string;
   onChange?: (option: string) => void;
   onMenuStateChange?: (state: boolean) => void;
 }
 
-const CreateDropdown: FC<CreateDropdownProps> = ({
-  value,
-  options,
-  searchEnabled = true,
-  className,
-  onChange,
-  onMenuStateChange,
-}) => {
-  // Initial query state is set to the label of the option matching the value prop
+const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, className, onChange, onMenuStateChange }) => {
   const [query, setQuery] = useState(options.find(option => option.value === value)?.label || value);
   const [showOptions, setShowOptions] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -48,7 +39,7 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
   }, []);
 
   const filteredOptions =
-    !searchEnabled || query === ""
+    query === ""
       ? options
       : options.filter(
           option =>
@@ -57,15 +48,13 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
         );
 
   const handleInputChange = (value: string) => {
-    if (searchEnabled) {
-      setQuery(value);
-      onChange?.(value);
-      const matchingOptions = options.filter(option => option.value.toLowerCase().startsWith(value.toLowerCase()));
-      if (value !== "" && matchingOptions.length > 0) {
-        setShowOptions(true);
-      } else {
-        setShowOptions(false);
-      }
+    setQuery(value);
+    onChange?.(value);
+    const matchingOptions = options.filter(option => option.value.toLowerCase().startsWith(value.toLowerCase()));
+    if (value !== "" && matchingOptions.length > 0) {
+      setShowOptions(true);
+    } else {
+      setShowOptions(false);
     }
   };
 
@@ -90,13 +79,11 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
     <div className="flex relative" ref={wrapperRef}>
       <CreateTextInput
         value={query}
-        readOnly={!searchEnabled}
         className={className}
         onClick={handleDropdownMenu}
         onChange={value => handleInputChange(value)}
-        placeholder="select an option or type your own"
       />
-      <ChevronDownIcon className="w-5 cursor-pointer -ml-[35px]" onClick={handleDropdownMenu} />
+      <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleDropdownMenu} />
       {showOptions && (
         <ul
           className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
@@ -121,4 +108,4 @@ const CreateDropdown: FC<CreateDropdownProps> = ({
   );
 };
 
-export default CreateDropdown;
+export default CreateTagDropdown;

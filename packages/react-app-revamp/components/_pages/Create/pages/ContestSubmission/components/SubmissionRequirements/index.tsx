@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
-import CreateDropdown, { Option } from "@components/_pages/Create/components/Dropdown";
+import CreateDropdown, { Option } from "@components/_pages/Create/components/TagDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { tokenAddressRegex } from "@helpers/regex";
@@ -12,12 +12,13 @@ import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
+import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 
 const options: Option[] = [
   { value: "anyone", label: "anyone" },
-  { value: "voters", label: "voters (same requirements)" },
   { value: "erc20", label: "token holders" },
   { value: "erc721", label: "NFT holders" },
+  { value: "voters", label: "same people who can vote (define in next step)" },
 ];
 
 type WorkerMessageData = {
@@ -44,7 +45,7 @@ const CreateSubmissionRequirements = () => {
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
 
   const renderLayout = () => {
-    switch (submissionRequirementsOption) {
+    switch (submissionRequirementsOption.value) {
       case "erc721":
         return <CreateSubmissionRequirementsNftSettings error={inputError} />;
       case "erc20":
@@ -55,7 +56,10 @@ const CreateSubmissionRequirements = () => {
   };
 
   const onSubmissionRequirementsOptionChange = (value: string) => {
-    setSubmissionRequirementsOption(value);
+    setSubmissionRequirementsOption({
+      value,
+      label: options.find(option => option.value === value)?.label ?? "",
+    });
     setInputError({});
   };
 
@@ -199,10 +203,10 @@ const CreateSubmissionRequirements = () => {
   };
 
   const handleNextStep = async () => {
-    if (submissionRequirementsOption === "voters") {
+    if (submissionRequirementsOption.value === "voters") {
       handleVotersSameRequirements();
-    } else if (submissionRequirementsOption === "erc20" || submissionRequirementsOption === "erc721") {
-      fetchRequirementsMerkleData(submissionRequirementsOption);
+    } else if (submissionRequirementsOption.value === "erc20" || submissionRequirementsOption.value === "erc721") {
+      fetchRequirementsMerkleData(submissionRequirementsOption.value);
     } else {
       setSubmissionAllowlistFields([]);
       setBothSubmissionMerkles(null);
@@ -211,22 +215,19 @@ const CreateSubmissionRequirements = () => {
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-5">
-        <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can submit?</p>
-        <CreateDropdown
-          value={submissionRequirementsOption}
+    <div className="flex flex-col gap-16">
+      <div className="flex flex-col gap-4">
+        <p className="text-[16px] font-bold text-neutral-11 uppercase">who can submit?</p>
+        <CreateDefaultDropdown
+          defaultOption={submissionRequirementsOption}
           options={options}
-          className="w-full md:w-[300px] text-[20px] cursor-pointer"
-          searchEnabled={false}
+          className="w-full md:w-[240px]"
           onChange={onSubmissionRequirementsOptionChange}
         />
         {renderLayout()}
       </div>
-      <div className="mt-8">
-        <CreateNextButton step={step + 1} onClick={handleNextStep} />
-      </div>
-    </>
+      <CreateNextButton step={step + 1} onClick={handleNextStep} />
+    </div>
   );
 };
 

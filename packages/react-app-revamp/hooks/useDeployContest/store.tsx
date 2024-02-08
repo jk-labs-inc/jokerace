@@ -1,3 +1,4 @@
+import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
@@ -38,7 +39,7 @@ export interface DeployContestState {
   votingOpen: Date;
   votingClose: Date;
   votingRequirements: VotingRequirements;
-  submissionRequirementsOption: string;
+  submissionRequirementsOption: Option;
   votingAllowlist: {
     manual: Record<string, number>;
     prefilled: Record<string, number>;
@@ -85,7 +86,7 @@ export interface DeployContestState {
   setVotingOpen: (votingOpen: Date) => void;
   setVotingClose: (votingClose: Date) => void;
   setVotingRequirements: (votingRequirements: VotingRequirements) => void;
-  setSubmissionRequirementsOption: (submissionRequirementsOption: string) => void;
+  setSubmissionRequirementsOption: (submissionRequirementsOption: Option) => void;
   setVotingAllowlist: (type: "manual" | "prefilled", votingAllowlist: Record<string, number>) => void;
   setVotingMerkle: (type: "manual" | "prefilled", votingMerkle: VotingMerkle | null) => void;
   setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
@@ -124,7 +125,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       downvote: false,
       sortingEnabled: false,
     },
-    type: "",
+    type: "curation",
     title: "",
     summary: "",
     prompt: {
@@ -134,7 +135,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     submissionOpen: initialSubmissionOpen,
     votingOpen: initialVotingOpen,
     votingClose: initialVotingClose,
-    submissionRequirementsOption: "anyone",
+    submissionRequirementsOption: {
+      value: "anyone",
+      label: "anyone",
+    },
     votingAllowlist: {
       manual: {},
       prefilled: {},
@@ -210,7 +214,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
     setVotingClose: (votingClose: Date) => set({ votingClose }),
-    setSubmissionRequirementsOption: (submissionRequirementsOption: string) => set({ submissionRequirementsOption }),
+    setSubmissionRequirementsOption: (submissionRequirementsOption: Option) => set({ submissionRequirementsOption }),
     setVotingAllowlist: (type, votingAllowlist) => {
       set(state => ({
         votingAllowlist: {

@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
-import CreateDropdown from "@components/_pages/Create/components/Dropdown";
+import CreateDropdown from "@components/_pages/Create/components/TagDropdown";
 import { requirementsDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";

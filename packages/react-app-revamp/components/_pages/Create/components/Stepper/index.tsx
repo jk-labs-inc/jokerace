@@ -28,6 +28,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
   const handleStepClick = (index: number) => {
+    //TODO: check why step click isn't working ( could be due to step reorder )
     // Navigate backwards always allowed
     if (index < currentStep) {
       setCurrentStep(index);
@@ -86,16 +87,16 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
                 <hr
                   className={`w-32 3xl:w-36 border-2 transition-colors duration-500 ease-in-out ${
                     currentStep === index
-                      ? "border-primary-10"
+                      ? "border-neutral-11"
                       : currentStep > index
-                      ? "border-primary-7"
+                      ? "border-neutral-10"
                       : "border-neutral-10"
                   }`}
                 />
                 {currentStep === index ? (
-                  <p className="text-primary-10">{step.title}</p>
+                  <p className="text-neutral-11">{step.title}</p>
                 ) : hoveredStep === index ? (
-                  <p className={`${currentStep > index ? "text-primary-7" : "text-neutral-10"}`}>{step.title}</p>
+                  <p className="text-neutral-10">{step.title}</p>
                 ) : null}
               </div>
             ))}

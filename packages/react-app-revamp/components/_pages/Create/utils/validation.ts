@@ -2,10 +2,10 @@ import moment from "moment";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
 export type StateKey =
-  | "type"
+  | "tag"
   | "title"
   | "summary"
-  | "prompt"
+  | "description"
   | "votingOpen"
   | "votingClose"
   | "submissionOpen"
@@ -95,15 +95,22 @@ const submissionRequirementsValidation = (submissionRequirements: string) => {
 
 export const validationFunctions = new Map<number, { validation: (...args: any[]) => string; stateKeys: StateKey[] }[]>(
   [
-    [0, [{ validation: typeValidation, stateKeys: ["type"] }]],
-    [1, [{ validation: titleValidation, stateKeys: ["title"] }]],
+    [0, [{ validation: titleValidation, stateKeys: ["title"] }]],
+    [1, [{ validation: promptValidation, stateKeys: ["description"] }]],
     [2, [{ validation: summaryValidation, stateKeys: ["summary"] }]],
-    [3, [{ validation: promptValidation, stateKeys: ["prompt"] }]],
+    [3, [{ validation: typeValidation, stateKeys: ["tag"] }]],
     [
       4,
       [
         { validation: votingOpenValidation, stateKeys: ["votingOpen", "submissionOpen"] },
         { validation: votingEndsValidation, stateKeys: ["votingClose", "votingOpen", "submissionOpen"] },
+      ],
+    ],
+    [
+      6,
+      [
+        { validation: submissionMerkleValidation, stateKeys: ["submissionMerkle"] },
+        { validation: submissionRequirementsValidation, stateKeys: ["submissionRequirements"] },
       ],
     ],
     [
@@ -114,13 +121,6 @@ export const validationFunctions = new Map<number, { validation: (...args: any[]
           validation: votingRequirementsValidation,
           stateKeys: ["votingMerkle"],
         },
-      ],
-    ],
-    [
-      6,
-      [
-        { validation: submissionMerkleValidation, stateKeys: ["submissionMerkle"] },
-        { validation: submissionRequirementsValidation, stateKeys: ["submissionRequirements"] },
       ],
     ],
   ],

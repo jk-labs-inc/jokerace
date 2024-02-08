@@ -53,20 +53,20 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
   return (
     <div className="flex flex-col gap-2">
       <div
-        className={`relative flex w-full md:w-[200px] h-8 border rounded-[10px] bg-transparent border-neutral-10 ${
+        className={`relative flex w-full md:w-[216px] h-10 rounded-[5px] bg-neutral-14 ${
           readOnly ? "opacity-50" : ""
         } ${className}`}
       >
         <input
           type="number"
-          className="font-bold w-full h-full outline-none bg-transparent text-center"
+          className="w-full h-full outline-none bg-transparent pl-4 text-true-black"
           onChange={handleChange}
           value={value}
           placeholder={placeholder}
           readOnly={readOnly}
           min={0}
         />
-        {unitLabel && <span className="absolute inset-y-0 right-4 text-neutral-10 font-bold">{unitLabel}</span>}
+        {unitLabel ? <span className="absolute inset-y-0 right-4 text-neutral-10 font-bold">{unitLabel}</span> : null}
       </div>
       {errorMessage ? <p className="text-[16px] font-bold text-negative-11">{errorMessage}</p> : null}
     </div>

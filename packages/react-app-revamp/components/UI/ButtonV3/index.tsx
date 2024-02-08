@@ -65,6 +65,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      //TODO: button to 20px
       className={`text-[16px] tracking-tighter rounded-[10px] font-bold ${disabledClasses} ${textColorClass} ${colorClass} ${sizeClasses[size]} `}
       onClick={handleOnClick}
       disabled={isDisabled}

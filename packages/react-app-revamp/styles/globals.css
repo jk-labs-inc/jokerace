@@ -515,6 +515,12 @@ li {
   }
 }
 
+@layer utilities {
+  .placeholder-bold::placeholder {
+    @apply font-bold;
+  }
+}
+
 [aria-labelledby="rk_chain_modal_title"] [tabindex="0"] ~ [role="document"] > div > div {
   @apply overflow-y-auto md:max-h-unset;
   max-height: calc(100vh - 60px);

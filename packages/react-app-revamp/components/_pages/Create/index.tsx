@@ -11,13 +11,13 @@ import CreateContestType from "./pages/ContestType";
 import CreateContestVoting from "./pages/ContestVoting";
 
 const steps = [
-  { title: "contest type", content: <CreateContestType /> },
-  { title: "contest title", content: <CreateContestTitle /> },
+  { title: "title", content: <CreateContestTitle /> },
+  { title: "description", content: <CreateContestPrompt /> },
   { title: "summary", content: <CreateContestSummary /> },
-  { title: "prompt", content: <CreateContestPrompt /> },
+  { title: "tag", content: <CreateContestType /> },
   { title: "timing", content: <CreateContestTiming /> },
-  { title: "voting", content: <CreateContestVoting /> },
   { title: "submissions", content: <CreateContestSubmissions /> },
+  { title: "voting", content: <CreateContestVoting /> },
   { title: "parameters", content: <CreateContestParams /> },
 ];
 

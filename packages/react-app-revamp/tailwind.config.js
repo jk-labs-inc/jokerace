@@ -326,7 +326,7 @@ module.exports = {
         "gradient-withdraw": "linear-gradient(180deg, #FF78A9 0%, #f04f88 50%, #e93d82 100%)",
       },
       boxShadow: {
-        "create-header": "0 3px 4px 0 rgba(255, 226, 91, 0.6)",
+        "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",
         "timer-container": "3px 3px 4px rgba(106, 106, 106, 1)",
         dialog: "0px 1px 6px 1px rgba(157, 157, 157, 1)",
         sortProposalDropdown: "0px 1px 6px 1px #6A6A6A;",

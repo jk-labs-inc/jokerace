@@ -48,6 +48,8 @@ const CreateContestPrompt = () => {
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
+  console.log(promptValidation);
+
   const editorSummarize = useEditor({
     ...createEditorConfig({
       content: prompt.summarize,
@@ -85,55 +87,58 @@ const CreateContestPrompt = () => {
   });
 
   return (
-    <div className="create-contest-prompt flex flex-col gap-12 mt-12 lg:mt-[100px] animate-swingInLeft">
-      <div className="flex flex-col lg:flex-row items-start gap-5 text-[20px] md:text-[24px]">
+    <div className="create-contest-prompt flex flex-col gap-12 mt-12 lg:mt-[78px] animate-swingInLeft">
+      <div className="flex flex-col lg:flex-row items-start gap-10 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
-        <div className="flex flex-col gap-2 w-full">
-          <p className="text-neutral-11 font-bold">let’s let players know how this works.</p>
-          <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] px-1 py-2 border-y border-neutral-10">
-            <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
+        <div className="flex flex-col gap-12 w-full">
+          <div className="flex flex-col gap-2">
+            <p className="text-[24px] text-primary-10 font-bold">now for the description</p>
+            <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] px-1 py-2 border-y border-neutral-10">
+              <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
+            </div>
+          </div>
+          <div className="flex flex-col gap-8 ">
+            <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, prizes, and voters:</p>
+            <div className="flex flex-col gap-2">
+              <EditorContent
+                editor={editorSummarize}
+                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+              />
+
+              {currentStepError?.message.includes("Contest summary") ? (
+                <ErrorMessage error={(currentStepError || { message: "" }).message} />
+              ) : null}
+            </div>
+          </div>
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              <p className="text-[20px] text-neutral-11 font-bold">
+                how should voters evaluate if a submission is <i>good</i> ?
+              </p>
+              <p className="text-neutral-11 text-[16px] font-normal">
+                (ie 50% for originality, 50% for thoughtfulness)
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <EditorContent
+                editor={editorEvaluateVoters}
+                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+              />
+
+              {currentStepError?.message.includes("Voter evaluation") ? (
+                <ErrorMessage error={(currentStepError || { message: "" }).message} />
+              ) : (
+                <p className="text-[16px] font-bold text-neutral-14">
+                  if you are offering rewards, voting must legally be based on skill or talent—not guessing
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="mt-4">
+            <CreateNextButton step={step + 1} onClick={onNextStep} enableEnter={false} />
           </div>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-8 lg:ml-[70px]">
-        <p className="text-primary-10 text-[24px] font-bold">summarize the contest, prizes, and voters:</p>
-        <div className="flex flex-col gap-2">
-          <EditorContent
-            editor={editorSummarize}
-            className="border-b  border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
-          />
-
-          {currentStepError?.message.includes("Contest summary") ? (
-            <ErrorMessage error={(currentStepError || { message: "" }).message} />
-          ) : null}
-        </div>
-      </div>
-      <div className="flex flex-col gap-8 lg:ml-[70px]">
-        <p className="text-primary-10 text-[24px] font-bold">
-          how should voters evaluate if a submission is good? <br />
-          <span className="text-neutral-11 text-[24px] font-normal">
-            (ie 50% for originality, 50% for thoughtfulness)
-          </span>
-        </p>
-        <div className="flex flex-col gap-2">
-          <EditorContent
-            editor={editorEvaluateVoters}
-            className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
-          />
-
-          {currentStepError?.message.includes("Voter evaluation") ? (
-            <ErrorMessage error={(currentStepError || { message: "" }).message} />
-          ) : (
-            <p className="text-[16px] font-bold text-neutral-14">
-              if you are offering rewards, voting must legally be based on skill or talent—not guessing
-            </p>
-          )}
-        </div>
-      </div>
-
-      <div className="lg:ml-[70px]">
-        <CreateNextButton step={step + 1} onClick={onNextStep} enableEnter={false} />
       </div>
     </div>
   );

@@ -28,19 +28,20 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   return (
     <header className="flex flex-row items-center justify-between pl-[80px] pr-[60px] mt-8">
       <Link href="/">
-        <h1 className="font-sabo text-primary-10 text-[40px]">JOKERACE</h1>
+        {/* TODO: apply camel-case to jokerace */}
+        <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">JokeRace</h1>
       </Link>
 
       {!isLoading && !isSuccess && (
-        <div className="flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-primary-10 shadow-create-header">
+        <div className="flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-neutral-10 shadow-create-header">
           <p
-            className={`cursor-pointer ${pageAction === "play" ? "text-primary-10" : "text-neutral-11"}`}
+            className={`cursor-pointer ${pageAction === "play" ? "text-neutral-11" : "text-neutral-10"}`}
             onClick={() => setPageAction?.("play")}
           >
             play
           </p>
           <p
-            className={`cursor-pointer ${pageAction === "create" ? "text-primary-10" : "text-neutral-11"}`}
+            className={`cursor-pointer ${pageAction === "create" ? "text-neutral-11" : "text-neutral-10"}`}
             onClick={() => setPageAction?.("create")}
           >
             create
