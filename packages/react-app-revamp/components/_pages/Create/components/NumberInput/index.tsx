@@ -30,19 +30,11 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
   const handleChange: ChangeEventHandler<HTMLInputElement> = event => {
     const { value } = event.target;
 
-    const match = value.match(/^\d*\.?\d{0,5}/); // match up to 5 decimal places
-
-    if (match && match[0] !== value) {
-      event.target.value = match[0];
-    }
-
-    const newValue = match ? match[0] : "";
-
-    if (newValue === "") {
+    if (value === "") {
       setValue("");
       onChange?.(null);
     } else {
-      const parsedValue = parseFloat(newValue);
+      const parsedValue = parseFloat(value);
       if (!isNaN(parsedValue)) {
         setValue(parsedValue);
         onChange?.(parsedValue);
