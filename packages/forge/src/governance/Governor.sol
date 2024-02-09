@@ -80,7 +80,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
-    string private constant VERSION = "4.23"; // Private as to not clutter the ABI
+    string private constant VERSION = "4.24"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -114,7 +114,8 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error UnexpectedMetadata(Metadatas unexpectedMetadata);
     error EmptyProposalDescription();
 
-    error IncorrectCostToProposeSent(uint256 msgValue, uint256 costToPropose);
+    error IncorrectCostSent(uint256 msgValue, uint256 costToVote);
+
     error AddressNotPermissionedToSubmit();
     error ContestMustBeQueuedToPropose(ContestState currentState);
     error ContestMustBeActiveToVote(ContestState currentState);
@@ -122,7 +123,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error ContestSubmissionLimitReached(uint256 maxProposalCount);
     error DuplicateSubmission(uint256 proposalId);
 
-    error IncorrectCostToVoteSent(uint256 msgValue, uint256 costToVote);
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
 
@@ -306,9 +306,9 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     /**
-     * @dev Distribute the costToPropose to jk labs and the creator based on _percentageToCreator.
+     * @dev Determines that the correct amount was sent with the transaction and returns that correct amount.
      */
-    function _distributeCost(Actions currentAction) internal {
+    function _determineCorrectAmountSent(Actions currentAction) internal returns (uint256) {
         uint256 actionCost;
         if (currentAction == Actions.Submit) {
             actionCost = costToPropose;
@@ -318,6 +318,14 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
             actionCost = 0;
         }
 
+        if (msg.value != actionCost) revert IncorrectCostSent(msg.value, actionCost);
+        return actionCost;
+    }
+
+    /**
+     * @dev Distribute the costToPropose to jk labs and the creator based on _percentageToCreator.
+     */
+    function _distributeCost(uint256 actionCost) internal {
         if (actionCost > 0) {
             // Send proposal fee to jk labs address and creator
             uint256 sendingToJkLabs = (msg.value * (100 - percentageToCreator)) / 100;
@@ -338,13 +346,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Create a new proposal.
      */
     function propose(ProposalCore calldata proposal, bytes32[] calldata proof) public payable returns (uint256) {
-        if (msg.value != costToPropose) revert IncorrectCostToProposeSent(msg.value, costToPropose);
+        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit);
 
         verifyProposer(msg.sender, proof);
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
-        _distributeCost(Actions.Submit);
+        _distributeCost(actionCost);
 
         return proposalId;
     }
@@ -353,7 +361,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Create a new proposal without a proof if you have already proposed with a proof.
      */
     function proposeWithoutProof(ProposalCore calldata proposal) public payable returns (uint256) {
-        if (msg.value != costToPropose) revert IncorrectCostToProposeSent(msg.value, costToPropose);
+        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit);
 
         if (submissionMerkleRoot != 0) {
             // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
@@ -362,7 +370,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         validateProposalData(proposal);
         uint256 proposalId = _castProposal(proposal);
 
-        _distributeCost(Actions.Submit);
+        _distributeCost(actionCost);
 
         return proposalId;
     }
@@ -453,13 +461,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         payable
         returns (uint256)
     {
-        if (msg.value != costToVote) revert IncorrectCostToVoteSent(msg.value, costToVote);
+        uint256 actionCost = _determineCorrectAmountSent(Actions.Vote);
 
         address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
         verifyVoter(voter, totalVotes, proof);
 
-        _distributeCost(Actions.Vote);
+        _distributeCost(actionCost);
 
         return _castVote(proposalId, voter, support, numVotes);
     }
@@ -472,13 +480,13 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         payable
         returns (uint256)
     {
-        if (msg.value != costToVote) revert IncorrectCostToVoteSent(msg.value, costToVote);
+        uint256 actionCost = _determineCorrectAmountSent(Actions.Vote);
 
         address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
         if (!addressTotalVotesVerified[voter]) revert NeedToVoteWithProofFirst();
 
-        _distributeCost(Actions.Vote);
+        _distributeCost(actionCost);
 
         return _castVote(proposalId, voter, support, numVotes);
     }

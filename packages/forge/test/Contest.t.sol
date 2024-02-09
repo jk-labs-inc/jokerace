@@ -284,7 +284,7 @@ contract ContestTest is Test {
     function testProposeAnyoneCanCostIsOneEtherNoMsgValue() public {
         vm.warp(1681650001);
         vm.prank(UNPERMISSIONED_ADDRESS_1);
-        vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostToProposeSent.selector, 0, 1 ether));
+        vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostSent.selector, 0, 1 ether));
         anyoneCanSubmitCostsAnEthContest.propose(unpermissionedAuthorProposal1, proof0);
     }
 
@@ -292,7 +292,7 @@ contract ContestTest is Test {
         vm.warp(1681650001);
         vm.deal(address(UNPERMISSIONED_ADDRESS_1), 2 ether); // give the proposer wei to pay the cost to propose
         vm.prank(UNPERMISSIONED_ADDRESS_1);
-        vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostToProposeSent.selector, 2 ether, 1 ether));
+        vm.expectRevert(abi.encodeWithSelector(Governor.IncorrectCostSent.selector, 2 ether, 1 ether));
         anyoneCanSubmitCostsAnEthContest.propose{value: 2 ether}(unpermissionedAuthorProposal1, proof0);
     }
 
