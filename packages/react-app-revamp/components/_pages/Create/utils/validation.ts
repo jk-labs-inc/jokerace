@@ -107,14 +107,14 @@ export const validationFunctions = new Map<number, { validation: (...args: any[]
       ],
     ],
     [
-      6,
+      5,
       [
         { validation: submissionMerkleValidation, stateKeys: ["submissionMerkle"] },
         { validation: submissionRequirementsValidation, stateKeys: ["submissionRequirements"] },
       ],
     ],
     [
-      5,
+      6,
       [
         { validation: votingMerkleValidation, stateKeys: ["votingMerkle"] },
         {

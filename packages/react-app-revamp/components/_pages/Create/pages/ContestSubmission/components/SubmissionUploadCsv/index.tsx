@@ -1,38 +1,28 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { useEffect } from "react";
-import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
+import { SubmissionFieldObject } from "../SubmissionAllowlist/components/CSVEditor";
+import SubmissionCSVFileUploader from "./components/CSVUploadSubmission";
 
 type WorkerMessageData = {
   merkleRoot: string;
   recipients: Recipient[];
 };
 
-const CreateSubmissionAllowlist = () => {
-  const { step, setSubmissionMerkle, setError, submissionAllowlist, setSubmissionAllowlist } = useDeployContestStore(
-    state => state,
-  );
+const CreateSubmissionCSVUploader = () => {
+  const {
+    submissionAllowlistFields: fields,
+    submissionAllowlist,
+    setSubmissionMerkle,
+    setSubmissionAllowlist,
+    setError,
+    step,
+  } = useDeployContestStore(state => state);
   const submissionValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowlist.manual)]);
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
     const newAllowList: Record<string, number> = {};
@@ -99,18 +89,20 @@ const CreateSubmissionAllowlist = () => {
   return (
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-4">
-        <p className="text-[20px] text-neutral-11 font-bold">to set allowlist manually:</p>
+        <p className="text-[20px] text-neutral-11 font-bold">to format csv:</p>
         <ul className="flex flex-col  pl-8">
           <li className="text-[20px] text-neutral-11 list-disc">
-            write or copy up to 100 addresses in the left column
+            put up to 100,000 addresses in the left column (each starting with “0x”)
+          </li>
+          <li className="text-[20px] text-neutral-11 list-disc">
+            make sure there are no additional headers or columns
           </li>
         </ul>
-        <CSVEditorSubmission onChange={onAllowListChange} />
       </div>
-
+      <SubmissionCSVFileUploader onChange={onAllowListChange} />
       <CreateNextButton step={step + 1} onClick={handleNextStep} />
     </div>
   );
 };
 
-export default CreateSubmissionAllowlist;
+export default CreateSubmissionCSVUploader;

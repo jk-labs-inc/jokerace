@@ -1,4 +1,4 @@
-import { CloudIcon, DocumentAddIcon, DocumentIcon } from "@heroicons/react/outline";
+import { DocumentAddIcon } from "@heroicons/react/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useMemo, useRef, useState } from "react";
@@ -34,7 +34,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setIsDragOver(true); // set drag over state to true
+    setIsDragOver(true);
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -76,8 +76,8 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
     : isSuccess
     ? "border-positive-11 hover:border-positive-9"
     : isDragOver
-    ? "border-primary-10"
-    : "hover:border-primary-10";
+    ? "border-neutral-10"
+    : "border-neutral-10 hover:border-neutral-11";
 
   return (
     <div
@@ -85,9 +85,9 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
-      className={`inline-flex items-center gap-6 ${
+      className={`flex shadow-file-upload flex-col w-[328px] h-40 md:w-[520px] md:h-60 justify-center items-center gap-4 ${
         type === "csv" ? "py-7" : "py-3"
-      } px-10 border-2 border-dotted rounded-[10px] cursor-pointer transition-all duration-500 ease-in-out ${borderStyles}`}
+      } px-10 border-2 border-dotted rounded-[25px] cursor-pointer transition-all duration-500 ease-in-out ${borderStyles}`}
     >
       <input
         ref={fileInputRef}
@@ -99,17 +99,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
       {!entriesError && !isSuccess && Icon}
 
       <div className={`text-[16px] flex flex-col ${isSuccess ? "gap-3" : "gap-0"}`}>
-        {entriesError ? (
-          <>
-            <p className="font-bold text-negative-11 text-center">🚨 ruh-roh!</p>
-            <p className="text-center text-negative-11">
-              items in red above aren’t valid.
-              <br />
-              please edit or delete them—or <br />
-              clear allowlist and re-upload.
-            </p>
-          </>
-        ) : isSuccess ? (
+        {isSuccess ? (
           <>
             <div className="flex gap-4 items-center text-positive-11">
               <Image src="/create-flow/success.png" height={32} width={32} alt="success" />

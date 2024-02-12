@@ -1,9 +1,9 @@
 import CreateTextInput from "@components/_pages/Create/components/TextInput";
-import { MAX_VOTES } from "@helpers/csvConstants";
+import Image from "next/image";
 import { FC } from "react";
-import CreateDefaultDropdown from "../DefaultDropdown";
-import { chainDropdownOptions, votingPowerOptions } from "./config";
+import CreateDefaultDropdown, { Option } from "../DefaultDropdown";
 import CreateNumberInput from "../NumberInput";
+import { chainDropdownOptions, votingPowerOptions } from "./config";
 
 interface CreateRequirementsSettingsProps {
   step: "voting" | "submission";
@@ -16,9 +16,9 @@ interface CreateRequirementsSettingsProps {
   error?: Record<string, string | undefined>;
   onChainChange?: (chain: string) => void;
   onTokenAddressChange?: (address: string) => void;
-  onMinTokensRequiredChange?: (minTokens: string) => void;
+  onMinTokensRequiredChange?: (minTokens: number | null) => void;
   onPowerTypeChange?: (votingPowerType: string) => void;
-  onPowerValueChange?: (votingPower: string) => void;
+  onPowerValueChange?: (votingPower: number | null) => void;
 }
 
 const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
@@ -36,19 +36,19 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   onPowerTypeChange,
   onPowerValueChange,
 }) => {
-  const chainOptions = () => {
-    if (settingType === "erc20") {
-      return chainDropdownOptions.map(option => {
-        return {
-          ...option,
-          disabled: option.label !== "ethereum",
-        };
-      });
-    }
-
-    return chainDropdownOptions;
+  const chainOption = (chain: string): Option => {
+    return {
+      value: chain,
+      label: chainDropdownOptions.find(c => c.value === chain)?.label ?? "",
+    };
   };
 
+  const powerTypeOption = (powerType: string): Option => {
+    return {
+      value: powerType,
+      label: powerType,
+    };
+  };
   return (
     <div className="md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
       <div className="flex flex-col gap-8">
@@ -56,12 +56,19 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
           <p className="text-[16px] text-neutral-11 font-bold uppercase">
             chain of {settingType === "erc20" ? "token" : "nft"}
           </p>
-          <CreateDefaultDropdown
-            defaultOption={chainOptions()[0]}
-            options={chainOptions()}
-            className="w-full md:w-44 text-[16px] md:text-[24px] cursor-pointer"
-            onChange={onChainChange}
-          />
+          {settingType === "erc20" ? (
+            <div className="flex gap-2 items-center">
+              <Image src="/ethereum.svg" alt="ethereum" width={20} height={20} />
+              <p className="text-[16px] text-neutral-11 font-bold uppercase">ethereum</p>
+            </div>
+          ) : (
+            <CreateDefaultDropdown
+              defaultOption={chainOption(chain)}
+              options={chainDropdownOptions}
+              className="w-full md:w-44 text-[16px] md:text-[24px] cursor-pointer"
+              onChange={onChainChange}
+            />
+          )}
         </div>
         <div className="flex flex-col gap-4">
           {settingType === "erc721" ? (
@@ -75,9 +82,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
           <CreateNumberInput
             value={minTokensRequired}
             className="w-full md:w-44 text-[16px] md:text-[24px]"
-            type="number"
             placeholder={settingType === "erc20" ? "0.01" : "1"}
-            min={0}
             onChange={onMinTokensRequiredChange}
             errorMessage={error?.minTokensRequiredError}
           />
@@ -100,19 +105,17 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
         </div>
         {step === "voting" ? (
           <div className="flex flex-col gap-1">
-            <p className="text-[16px] text-primary-10 font-bold uppercase">voting power</p>
+            <p className="text-[16px] text-neutral-11 font-bold uppercase">voting power</p>
             <div className="flex justify-between md:justify-normal md:gap-3">
               <CreateNumberInput
                 className="text-[16px] md:text-[24px]"
-                type="number"
                 value={powerValue ?? 0}
                 placeholder="100"
-                max={MAX_VOTES}
                 onChange={onPowerValueChange}
               />
               <p className="text-[16px] md:text-[24px]">votes per</p>
               <CreateDefaultDropdown
-                defaultOption={votingPowerOptions[0]}
+                defaultOption={powerTypeOption(powerType ?? "")}
                 options={votingPowerOptions}
                 className="w-full md:w-44 text-[16px] md:text-[24px] cursor-pointer"
                 onChange={onPowerTypeChange}

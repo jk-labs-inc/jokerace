@@ -1,12 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
-import CreateDropdown from "@components/_pages/Create/components/TagDropdown";
-import { requirementsDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
+import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { tokenAddressRegex } from "@helpers/regex";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
@@ -19,24 +18,35 @@ type WorkerMessageData = {
   allowList: Record<string, number>;
 };
 
+const options: Option[] = [
+  { value: "erc20", label: "token holders" },
+  { value: "erc721", label: "NFT holders" },
+];
+
 const CreateVotingRequirements = () => {
   const {
     step,
+    submissionTypeOption,
     setVotingMerkle,
     setError,
     setVotingAllowlist,
     setVotingAllowlistFields,
     votingRequirements,
     setVotingRequirements,
+    setVotingRequirementsOption,
+    votingRequirementsOption,
   } = useDeployContestStore(state => state);
-  const [selectedRequirement, setSelectedRequirement] = useState(votingRequirements.type);
   const votingValidation = validationFunctions.get(step);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
+  const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
 
   const onRequirementChange = (option: string) => {
     setInputError({});
-    setSelectedRequirement(option);
+    setVotingRequirementsOption({
+      value: option,
+      label: options.find(o => o.value === option)?.label ?? "",
+    });
     setVotingRequirements({
       ...votingRequirements,
       type: option,
@@ -58,7 +68,7 @@ const CreateVotingRequirements = () => {
   }, [onNextStep]);
 
   const renderLayout = () => {
-    switch (selectedRequirement) {
+    switch (votingRequirementsOption.value) {
       case "erc721":
         return <CreateVotingRequirementsNftSettings error={inputError} />;
       case "erc20":
@@ -169,7 +179,7 @@ const CreateVotingRequirements = () => {
     if (!isValid) {
       return;
     }
-    fetchRequirementsMerkleData(selectedRequirement);
+    fetchRequirementsMerkleData(votingRequirementsOption.value);
   };
 
   const resetManualAllowlist = () => {
@@ -179,22 +189,18 @@ const CreateVotingRequirements = () => {
   };
 
   return (
-    <div className="mt-5 md:ml-[20px] flex flex-col gap-5">
-      <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can vote?</p>
-      <div className="flex flex-col gap-5">
-        <CreateDropdown
-          value={selectedRequirement}
-          options={requirementsDropdownOptions}
-          className="w-full md:w-48 text-[16px] md:text-[24px] cursor-pointer"
-          searchEnabled={false}
+    <div className="flex flex-col gap-16">
+      <div className="flex flex-col gap-4">
+        <p className="text-[16px] font-bold text-neutral-11 uppercase">who can submit?</p>
+        <CreateDefaultDropdown
+          defaultOption={votingRequirementsOption}
+          options={options}
+          className="w-full md:w-[240px]"
           onChange={onRequirementChange}
         />
         {renderLayout()}
       </div>
-
-      <div className="mt-8">
-        <CreateNextButton step={step + 1} onClick={handleNextStep} />
-      </div>
+      <CreateNextButton step={step + 1} onClick={handleNextStep} />
     </div>
   );
 };

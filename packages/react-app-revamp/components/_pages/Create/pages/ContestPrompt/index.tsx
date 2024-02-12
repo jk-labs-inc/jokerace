@@ -48,8 +48,6 @@ const CreateContestPrompt = () => {
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
-  console.log(promptValidation);
-
   const editorSummarize = useEditor({
     ...createEditorConfig({
       content: prompt.summarize,

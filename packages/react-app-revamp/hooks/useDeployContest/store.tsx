@@ -22,6 +22,16 @@ export type AdvancedOptions = {
   rankLimit: number;
 };
 
+export enum SubmissionType {
+  DifferentFromVoters = 0,
+  SameAsVoters = 1,
+}
+
+export interface SubmissionTypeOption {
+  value: SubmissionType;
+  label: string;
+}
+
 export interface DeployContestState {
   deployContestData: {
     chain: string;
@@ -40,6 +50,7 @@ export interface DeployContestState {
   votingClose: Date;
   votingRequirements: VotingRequirements;
   submissionRequirementsOption: Option;
+  votingRequirementsOption: Option;
   votingAllowlist: {
     manual: Record<string, number>;
     prefilled: Record<string, number>;
@@ -59,6 +70,7 @@ export interface DeployContestState {
     prefilled: SubmissionMerkle | null;
   };
   submissionRequirements: SubmissionRequirements;
+  submissionTypeOption: SubmissionTypeOption;
   allowedSubmissionsPerUser: number;
   maxSubmissions: number;
   advancedOptions: AdvancedOptions;
@@ -87,6 +99,7 @@ export interface DeployContestState {
   setVotingClose: (votingClose: Date) => void;
   setVotingRequirements: (votingRequirements: VotingRequirements) => void;
   setSubmissionRequirementsOption: (submissionRequirementsOption: Option) => void;
+  setVotingRequirementsOption: (votingRequirementsOption: Option) => void;
   setVotingAllowlist: (type: "manual" | "prefilled", votingAllowlist: Record<string, number>) => void;
   setVotingMerkle: (type: "manual" | "prefilled", votingMerkle: VotingMerkle | null) => void;
   setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
@@ -94,6 +107,7 @@ export interface DeployContestState {
   setSubmissionMerkle: (type: "manual" | "prefilled", submissionMerkle: SubmissionMerkle | null) => void;
   setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) => void;
   setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => void;
+  setSubmissionTypeOption: (submissionTypeOption: SubmissionTypeOption) => void;
   setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
   setMaxSubmissions: (maxSubmissions: number) => void;
   setAdvancedOptions: (advancedOptions: AdvancedOptions) => void;
@@ -139,6 +153,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       value: "anyone",
       label: "anyone",
     },
+    votingRequirementsOption: {
+      value: "erc20",
+      label: "token holders",
+    },
     votingAllowlist: {
       manual: {},
       prefilled: {},
@@ -172,6 +190,10 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       tokenAddress: "",
       minTokensRequired: 0.01,
       timestamp: Date.now(),
+    },
+    submissionTypeOption: {
+      value: SubmissionType.DifferentFromVoters,
+      label: "different from voters",
     },
     charge: {
       percentageToCreator: 50,
@@ -215,6 +237,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
     setVotingClose: (votingClose: Date) => set({ votingClose }),
     setSubmissionRequirementsOption: (submissionRequirementsOption: Option) => set({ submissionRequirementsOption }),
+    setVotingRequirementsOption: (votingRequirementsOption: Option) => set({ votingRequirementsOption }),
     setVotingAllowlist: (type, votingAllowlist) => {
       set(state => ({
         votingAllowlist: {
@@ -252,6 +275,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) =>
       set({ submissionAllowlistFields }),
     setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => set({ submissionRequirements }),
+    setSubmissionTypeOption: (submissionTypeOption: SubmissionTypeOption) => set({ submissionTypeOption }),
     setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
     setAdvancedOptions: (advancedOptions: AdvancedOptions) => set({ advancedOptions }),
     setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),

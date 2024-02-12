@@ -1,7 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
-import CreateDropdown, { Option } from "@components/_pages/Create/components/TagDropdown";
+import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
+import { Option } from "@components/_pages/Create/components/TagDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { tokenAddressRegex } from "@helpers/regex";
@@ -12,13 +13,11 @@ import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
-import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 
 const options: Option[] = [
   { value: "anyone", label: "anyone" },
   { value: "erc20", label: "token holders" },
   { value: "erc721", label: "NFT holders" },
-  { value: "voters", label: "same people who can vote (define in next step)" },
 ];
 
 type WorkerMessageData = {
@@ -33,10 +32,8 @@ const CreateSubmissionRequirements = () => {
     setSubmissionRequirementsOption,
     setSubmissionAllowlistFields,
     setSubmissionMerkle,
-    submissionRequirements,
-    votingRequirements,
     setSubmissionRequirements,
-    votingAllowlist,
+    submissionRequirements,
   } = useDeployContestStore(state => state);
   const submissionRequirementsValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([
@@ -59,6 +56,10 @@ const CreateSubmissionRequirements = () => {
     setSubmissionRequirementsOption({
       value,
       label: options.find(option => option.value === value)?.label ?? "",
+    });
+    setSubmissionRequirements({
+      ...submissionRequirements,
+      type: value,
     });
     setInputError({});
   };
@@ -132,35 +133,7 @@ const CreateSubmissionRequirements = () => {
     return Object.keys(errors).length === 0;
   };
 
-  const handleVotersSameRequirements = () => {
-    toastLoading("processing your allowlist...", false);
-    const worker = initializeWorker();
-    const allowList = Object.keys(votingAllowlist.manual).length ? votingAllowlist.manual : votingAllowlist.prefilled;
-    const isVotingAllowlistPrefilled = allowList === votingAllowlist.prefilled;
-
-    const submissionAllowlist: Record<string, number> = Object.keys(allowList).reduce((acc, address) => {
-      acc[address] = 10;
-      return acc;
-    }, {} as Record<string, number>);
-
-    if (isVotingAllowlistPrefilled) {
-      const { tokenAddress, minTokensRequired, timestamp, type, chain } = votingRequirements;
-      setSubmissionRequirements({
-        tokenAddress,
-        minTokensRequired,
-        timestamp,
-        type,
-        chain,
-      });
-    }
-
-    worker.postMessage({
-      decimals: 18,
-      allowList: submissionAllowlist,
-    });
-  };
-
-  const fetchRequirementsMerkleData = async (type: string) => {
+  const fetchRequirementsMerkleData = async (type: Option) => {
     const isValid = validateInput();
 
     if (!isValid) {
@@ -171,7 +144,7 @@ const CreateSubmissionRequirements = () => {
     toastLoading("processing your allowlist...", false);
 
     try {
-      const fetchMerkleData = type === "nftHolders" ? fetchNftHolders : fetchTokenHolders;
+      const fetchMerkleData = type.value === "erc721" ? fetchNftHolders : fetchTokenHolders;
 
       result = await fetchMerkleData(
         "submission",
@@ -203,10 +176,8 @@ const CreateSubmissionRequirements = () => {
   };
 
   const handleNextStep = async () => {
-    if (submissionRequirementsOption.value === "voters") {
-      handleVotersSameRequirements();
-    } else if (submissionRequirementsOption.value === "erc20" || submissionRequirementsOption.value === "erc721") {
-      fetchRequirementsMerkleData(submissionRequirementsOption.value);
+    if (submissionRequirementsOption.value === "erc20" || submissionRequirementsOption.value === "erc721") {
+      fetchRequirementsMerkleData(submissionRequirementsOption);
     } else {
       setSubmissionAllowlistFields([]);
       setBothSubmissionMerkles(null);

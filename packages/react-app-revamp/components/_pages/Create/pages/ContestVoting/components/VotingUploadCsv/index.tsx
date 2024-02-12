@@ -6,14 +6,15 @@ import { validationFunctions } from "@components/_pages/Create/utils/validation"
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useEffect } from "react";
-import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
+import { VotingFieldObject } from "../VotingAllowlist/components/CSVEditor";
+import VotingCSVFileUploader from "./components";
 
 type WorkerMessageData = {
   merkleRoot: string;
   recipients: Recipient[];
 };
 
-const CreateVotingAllowlist = () => {
+const CreateVotingCSVUploader = () => {
   const {
     step,
     setVotingMerkle,
@@ -116,24 +117,24 @@ const CreateVotingAllowlist = () => {
       powerType: "token",
     });
   };
-
   return (
-    <div className="mt-5 lg:ml-[20px]">
-      <div className="flex flex-col gap-2 mb-5">
-        <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can vote?</p>
-        <p className="text-[16px] text-neutral-11">
-          upload a csv below (up to 100k entries) <i>or</i> copy-paste an allowlist (up to 100 entries)
-        </p>
-        <p className="text-[16px] text-neutral-11">
-          allowlists are necessary to avoid luck-based voting—and cannot be edited afterwards.
-        </p>
+    <div className="flex flex-col gap-16">
+      <div className="flex flex-col gap-4">
+        <p className="text-[20px] text-neutral-11 font-bold">to format csv:</p>
+        <ul className="flex flex-col  pl-8">
+          <li className="text-[20px] text-neutral-11 list-disc">
+            put up to 100,000 addresses in the left column (each starting with “0x”)
+          </li>
+          <li className="text-[20px] text-neutral-11 list-disc">put number of votes in the right column</li>
+          <li className="text-[20px] text-neutral-11 list-disc">
+            make sure there are no additional headers or columns
+          </li>
+        </ul>
       </div>
-      <CSVEditorVoting onChange={handleAllowListChange} />
-      <div className="mt-8">
-        <CreateNextButton step={step + 1} onClick={handleNextStep} />
-      </div>
+      <VotingCSVFileUploader onChange={handleAllowListChange} />
+      <CreateNextButton step={step + 1} onClick={handleNextStep} />
     </div>
   );
 };
 
-export default CreateVotingAllowlist;
+export default CreateVotingCSVUploader;

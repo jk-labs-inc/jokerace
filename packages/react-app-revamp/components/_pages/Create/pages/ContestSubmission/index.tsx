@@ -1,72 +1,47 @@
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import StepCircle from "../../components/StepCircle";
-import CreateTab from "../../components/Tab";
-import CreateSubmissionAllowlist from "./components/SubmissionAllowlist";
-import CreateSubmissionRequirements from "./components/SubmissionRequirements";
-import { useEffect, useRef, useState } from "react";
-
-const tabOptions = [
-  { label: "use presets", content: <CreateSubmissionRequirements /> },
-  { label: "upload csv", content: <CreateSubmissionAllowlist /> },
-  { label: "write manually", content: <CreateSubmissionAllowlist /> },
-];
+import CreateSubmissionTabContent from "./components/SubmissionTabContent";
+import CreateSubmissionTabMessage from "./components/SubmissionTabMessage";
+import CreateSubmissionType from "./components/SubmissionType";
+import CreateNextButton from "../../components/Buttons/Next";
+import { useNextStep } from "../../hooks/useNextStep";
+import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 
 const CreateContestSubmissions = () => {
-  const { step, setSubmissionTab, submissionTab } = useDeployContestStore(state => state);
-  const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
-  const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const { step, submissionTypeOption, setSubmissionMerkle } = useDeployContestStore(state => state);
+  const onNextStep = useNextStep([]);
 
-  const onSubmissionTabChange = (tabIndex: number) => {
-    setSubmissionTab(tabIndex);
+  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    setSubmissionMerkle("manual", value);
+    setSubmissionMerkle("prefilled", value);
   };
 
-  useEffect(() => {
-    if (tabRefs.current[submissionTab]) {
-      const currentTab = tabRefs.current[submissionTab];
-      setIndicatorStyle({
-        left: `${currentTab?.offsetLeft}px`,
-        width: `${currentTab?.offsetWidth}px`,
-      });
-    }
-  }, [submissionTab]);
+  // Handle next step for same as voters option
+  const handleNextStep = () => {
+    setBothSubmissionMerkles(null);
+    onNextStep();
+  };
 
   return (
     <div className="mt-12 lg:mt-[78px] animate-swingInLeft">
       <div className="flex flex-col md:flex-row items-start gap-10 text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-16">
             <p className="text-[24px] text-primary-10 font-bold">Who can submit?</p>
-            <p className="text-[20px] text-neutral-11">
-              presets can save you time determining who can submit entries to your <br /> contest, but remember: you can
-              always upload a csv to allowlist to any <br />
-              addresses you like.
-            </p>
-          </div>
-
-          <div className="relative flex-col mt-16">
-            <div className="flex justify-between gap-2 lg:justify-start mb-4 sm:gap-8 sm:px-0">
-              {tabOptions.map((link, index) => (
-                <div
-                  key={index}
-                  ref={el => (tabRefs.current[index] = el)}
-                  className={`text-[16px] sm:text-[24px] font-bold cursor-pointer text-center transition-colors duration-200
-                  ${index === tabOptions.length - 1 ? "md:w-[240px]" : "md:w-[224px]"}
-                  ${submissionTab === index ? "text-primary-10" : "text-neutral-10"}`}
-                  onClick={() => onSubmissionTabChange(index)}
-                >
-                  {link.label}
-                </div>
-              ))}
-              <div className="absolute left-0 w-full md:w-[750px] h-1 bottom-0 bg-neutral-0"></div>
-              <div
-                style={indicatorStyle}
-                className="absolute bottom-0 h-1 bg-primary-10 transition-all duration-200"
-              ></div>
+            <div className="flex flex-col gap-12">
+              <CreateSubmissionType />
+              <CreateSubmissionTabMessage />
             </div>
           </div>
 
-          <div className="mt-12">{tabOptions[submissionTab].content}</div>
+          {submissionTypeOption.value === SubmissionType.DifferentFromVoters ? (
+            <CreateSubmissionTabContent />
+          ) : (
+            <div className="mt-16">
+              <CreateNextButton step={step + 1} onClick={handleNextStep} />
+            </div>
+          )}
         </div>
       </div>
     </div>

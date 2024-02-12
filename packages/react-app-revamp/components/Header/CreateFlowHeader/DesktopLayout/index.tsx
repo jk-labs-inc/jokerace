@@ -28,8 +28,9 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   return (
     <header className="flex flex-row items-center justify-between pl-[80px] pr-[60px] mt-8">
       <Link href="/">
-        {/* TODO: apply camel-case to jokerace */}
-        <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">JokeRace</h1>
+        <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">
+          J<span className="text-[30px]">oke</span>R<span className="text-[30px]">ace</span>
+        </h1>
       </Link>
 
       {!isLoading && !isSuccess && (
