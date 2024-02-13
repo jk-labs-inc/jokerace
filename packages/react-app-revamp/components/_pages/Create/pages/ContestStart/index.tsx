@@ -55,7 +55,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onClick }) => {
             create contest
           </ButtonV3>
         </div>
-        <div className="flex flex-col gap-4 w-[360px] h-48 py-6 pl-4 border-neutral-9 border rounded-[10px] opacity-50">
+        <div className="flex flex-col gap-4 w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] opacity-50">
           <p className="text-neutral-11 text-[20px] font-bold">recreate an old contest (coming soon)</p>
           <p className="text-neutral-14 text-[16px]">
             redeploy a preexisting contest by <br /> modifying it as much or as little as you like.
