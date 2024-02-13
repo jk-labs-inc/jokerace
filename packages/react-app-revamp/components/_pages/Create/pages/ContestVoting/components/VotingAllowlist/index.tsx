@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
@@ -6,7 +5,6 @@ import { validationFunctions } from "@components/_pages/Create/utils/validation"
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { useEffect } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
 type WorkerMessageData = {
@@ -27,20 +25,6 @@ const CreateVotingAllowlist = () => {
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.manual)]);
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
 
   const handleAllowListChange = (fields: VotingFieldObject[]) => {
     let newAllowList: Record<string, number> = {};

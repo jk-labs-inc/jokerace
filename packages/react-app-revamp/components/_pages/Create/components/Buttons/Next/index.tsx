@@ -8,10 +8,9 @@ import { FC, MouseEventHandler, useEffect, useState } from "react";
 interface CreateNextButtonProps {
   step: number;
   onClick?: MouseEventHandler<HTMLButtonElement>;
-  enableEnter?: boolean;
 }
 
-const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, enableEnter = true }) => {
+const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
   const { errors } = useDeployContestStore(state => state);
   const { setStartContest } = useCreateContestStartStore(state => state);
   const [shake, setShake] = useState(false);
@@ -57,7 +56,6 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, enableEnte
         >
           next
         </ButtonV3>
-
         <div
           className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
           onClick={() => onBackHandler(step)}
@@ -68,14 +66,6 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, enableEnte
           <p className="text-[16px]">back</p>
         </div>
       </div>
-      {enableEnter ? (
-        <div className="hidden lg:flex lg:items-center mt-[5px] gap-[5px]">
-          <p className="text-[16px]">
-            press <span className="font-bold capitalize">enter</span>
-          </p>
-          <Image src="/create-flow/enter.svg" alt="enter" width={14} height={14} />
-        </div>
-      ) : null}
     </div>
   );
 };

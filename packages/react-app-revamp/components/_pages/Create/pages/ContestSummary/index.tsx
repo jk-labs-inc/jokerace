@@ -47,7 +47,6 @@ const CreateContestSummary = () => {
                 minLength={CONTEST_TITLE_MIN_LENGTH}
                 maxLength={CONTEST_TITLE_MAX_LENGTH}
                 onChange={value => handleSummaryChange(value)}
-                onNextStep={onNextStep}
               />
               {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
             </div>

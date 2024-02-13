@@ -20,6 +20,14 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
   const [query, setQuery] = useState(options.find(option => option.value === value)?.label || value);
   const [showOptions, setShowOptions] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  let filteredOptions =
+    query === ""
+      ? options
+      : options.filter(
+          option =>
+            option.label.toLowerCase().includes(query.toLowerCase()) ||
+            option.value.toLowerCase().includes(query.toLowerCase()),
+        );
 
   useEffect(() => {
     onMenuStateChange?.(showOptions);
@@ -38,15 +46,6 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
     };
   }, []);
 
-  const filteredOptions =
-    query === ""
-      ? options
-      : options.filter(
-          option =>
-            option.label.toLowerCase().includes(query.toLowerCase()) ||
-            option.value.toLowerCase().includes(query.toLowerCase()),
-        );
-
   const handleInputChange = (value: string) => {
     setQuery(value);
     onChange?.(value);
@@ -59,6 +58,7 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
   };
 
   const handleOptionClick = (optionValue: string) => {
+    filteredOptions = options;
     const selectedOption = options.find(option => option.value === optionValue);
     if (selectedOption) {
       setQuery(selectedOption.label);
@@ -68,6 +68,7 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
   };
 
   const handleDropdownMenu = () => {
+    filteredOptions = options;
     if (filteredOptions.length > 0) {
       setShowOptions(!showOptions);
     } else {

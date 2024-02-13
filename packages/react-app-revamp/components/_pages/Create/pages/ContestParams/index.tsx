@@ -1,7 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import { useAccount, useNetwork } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
@@ -13,10 +11,8 @@ import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
-  const { isLoading } = useDeployContestStore(state => state);
   const { isConnected } = useAccount();
   const { chain } = useNetwork();
-  const { openConnectModal } = useConnectModal();
   const {
     setMaxSubmissions,
     setAllowedSubmissionsPerUser,
@@ -30,33 +26,6 @@ const CreateContestParams = () => {
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
   const disableDeploy = chargeError || Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (isLoading) return;
-
-      if (event.key === "Enter") {
-        if (!isConnected) {
-          try {
-            openConnectModal?.();
-            return;
-          } catch (err) {
-            console.error("Failed to connect wallet", err);
-            return; // If connection fails, don't proceed with deploying contest
-          }
-        }
-        if (disableDeploy) return;
-
-        handleDeployContest();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [deployContest, isLoading]);
 
   useEffect(() => {
     validateMaxSubmissions(maxSubmissions);

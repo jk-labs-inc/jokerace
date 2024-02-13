@@ -39,7 +39,6 @@ const CreateContestTitle = () => {
                 minLength={CONTEST_TITLE_MIN_LENGTH}
                 maxLength={CONTEST_TITLE_MAX_LENGTH}
                 onChange={value => handleTitleChange(value)}
-                onNextStep={onNextStep}
               />
               {/* TODO: display error message as you type */}
               {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}

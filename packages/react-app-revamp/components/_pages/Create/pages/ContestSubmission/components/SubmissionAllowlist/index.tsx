@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
@@ -6,7 +5,6 @@ import { validationFunctions } from "@components/_pages/Create/utils/validation"
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { useEffect } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
 
 type WorkerMessageData = {
@@ -20,20 +18,6 @@ const CreateSubmissionAllowlist = () => {
   );
   const submissionValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowlist.manual)]);
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
     const newAllowList: Record<string, number> = {};

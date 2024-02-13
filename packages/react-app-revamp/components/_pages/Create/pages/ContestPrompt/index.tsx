@@ -134,7 +134,7 @@ const CreateContestPrompt = () => {
             </div>
           </div>
           <div className="mt-4">
-            <CreateNextButton step={step + 1} onClick={onNextStep} enableEnter={false} />
+            <CreateNextButton step={step + 1} onClick={onNextStep} />
           </div>
         </div>
       </div>

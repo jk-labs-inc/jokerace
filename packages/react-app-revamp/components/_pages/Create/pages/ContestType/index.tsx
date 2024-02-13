@@ -1,6 +1,5 @@
-/* eslint-disable react/no-unescaped-entities */
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
@@ -31,20 +30,6 @@ const CreateContestType = () => {
   const [fadeBg, setFadeBg] = useState(false);
   const typeValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => typeValidation?.[0].validation(type)]);
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        onNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
 
   const onOptionChangeHandler = (option: string) => {
     setType(option);

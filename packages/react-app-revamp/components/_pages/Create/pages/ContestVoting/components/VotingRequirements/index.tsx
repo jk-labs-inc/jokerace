@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
@@ -9,7 +8,7 @@ import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDepl
 import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
 import CreateVotingRequirementsTokenSettings from "./components/Token";
 
@@ -54,20 +53,6 @@ const CreateVotingRequirements = () => {
       type: option,
     });
   };
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
 
   const renderLayout = () => {
     switch (votingRequirementsOption.value) {

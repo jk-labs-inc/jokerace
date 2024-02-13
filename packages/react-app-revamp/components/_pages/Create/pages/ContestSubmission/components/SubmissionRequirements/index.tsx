@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
@@ -10,7 +9,7 @@ import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store"
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
 
@@ -63,20 +62,6 @@ const CreateSubmissionRequirements = () => {
     });
     setInputError({});
   };
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
 
   const initializeWorker = () => {
     const worker = new Worker(new URL("/workers/generateRootAndRecipients", import.meta.url));

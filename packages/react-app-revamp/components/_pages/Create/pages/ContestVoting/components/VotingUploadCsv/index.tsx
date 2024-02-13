@@ -1,12 +1,10 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { useEffect } from "react";
 import { VotingFieldObject } from "../VotingAllowlist/components/CSVEditor";
 import VotingCSVFileUploader from "./components";
 
@@ -23,26 +21,12 @@ const CreateVotingCSVUploader = () => {
     setError,
     setVotingAllowlist,
     votingAllowlist,
-    submissionMerkle,
+    submissionTypeOption,
     votingRequirements,
     setVotingRequirements,
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.csv)]);
-
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
 
   const handleAllowListChange = (fields: VotingFieldObject[]) => {
     let newAllowList: Record<string, number> = {};
@@ -87,6 +71,7 @@ const CreateVotingCSVUploader = () => {
 
     terminateWorker(error.target as Worker);
   };
+
   const terminateWorker = (worker: Worker): void => {
     if (worker && worker.terminate) {
       worker.terminate();
@@ -97,6 +82,13 @@ const CreateVotingCSVUploader = () => {
     if (Object.keys(votingAllowlist.csv).length === 0 || votingMerkle.csv) {
       onNextStep();
       return;
+    }
+
+    if (submissionTypeOption.value === SubmissionType.SameAsVoters) {
+      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.csv).reduce((acc, address) => {
+        acc[address] = 10;
+        return acc;
+      }, {} as Record<string, number>);
     }
 
     toastLoading("processing your allowlist...", false);
@@ -128,6 +120,7 @@ const CreateVotingCSVUploader = () => {
       powerType: "token",
     });
   };
+
   return (
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-4">

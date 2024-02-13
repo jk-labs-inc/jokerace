@@ -17,20 +17,6 @@ const CreateContestTiming = () => {
   ]);
 
   useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        onNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
-
-  useEffect(() => {
     const now = new Date();
     const submissionOpenLessThanNow = submissionOpen.getTime() < now.getTime();
     if (submissionOpenLessThanNow) {

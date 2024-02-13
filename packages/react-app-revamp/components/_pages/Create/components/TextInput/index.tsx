@@ -1,5 +1,4 @@
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { FC, useEffect, useRef } from "react";
+import { FC, useRef } from "react";
 
 interface CreateTextInputProps {
   value?: string | number;
@@ -13,7 +12,6 @@ interface CreateTextInputProps {
   readOnly?: boolean;
   className?: string;
   onChange?: (value: string) => void;
-  onNextStep?: () => void;
   onClick?: () => void;
 }
 
@@ -28,29 +26,9 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   readOnly = false,
   className,
   onChange,
-  onNextStep,
   onClick,
 }) => {
-  const { step } = useDeployContestStore(state => state);
   const inputRef = useRef(null);
-
-  useEffect(() => {
-    const handleKeyDown = (e: { key: any }) => {
-      switch (e.key) {
-        case "Enter":
-          onNextStep?.();
-          break;
-        default:
-          break;
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [onNextStep, step, value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
