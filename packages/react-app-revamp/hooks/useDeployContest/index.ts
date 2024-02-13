@@ -76,8 +76,9 @@ export function useDeployContest() {
       );
       const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}`;
       const contestInfo = type + "|" + summary + "|" + combinedPrompt;
-      const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
-      const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
+      const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
+      const submissionMerkle =
+        submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
       const { type: chargeType, percentageToCreator } = charge;
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
       const { merkleRoot: votingMerkleRoot } = votingMerkle || {};
@@ -307,8 +308,8 @@ export function useDeployContest() {
   }
 
   async function checkForSpoofing(address: string) {
-    const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
-    const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
+    const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
+    const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
 
     const exceedsVotingMaxRows = votingMerkle && votingMerkle.voters.length > MAX_ROWS;
     const exceedsSubmissionMaxRows = submissionMerkle && submissionMerkle.submitters.length > MAX_ROWS;
