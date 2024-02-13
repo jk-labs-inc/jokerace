@@ -19,7 +19,7 @@ const CreateContestTitle = () => {
 
   return (
     <div className="mt-12 lg:mt-[78px] animate-swingInLeft">
-      <div className="flex flex-col lg:flex-row items-start  gap-10 text-[20px] md:text-[24px]">
+      <div className="flex flex-col lg:flex-row items-start gap-10 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-12">
           <div className="flex flex-col gap-6">
@@ -37,6 +37,7 @@ const CreateContestTitle = () => {
                 value={title}
                 placeholder="eg. gitcoin bounty for devs"
                 minLength={CONTEST_TITLE_MIN_LENGTH}
+                maxLength={CONTEST_TITLE_MAX_LENGTH}
                 onChange={value => handleTitleChange(value)}
                 onNextStep={onNextStep}
               />

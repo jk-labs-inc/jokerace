@@ -2,6 +2,7 @@ import { DocumentAddIcon } from "@heroicons/react/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useMemo, useRef, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 type FileTypes = "csv" | "docx";
 
@@ -16,10 +17,13 @@ interface FileUploadProps {
 
 const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isSuccess }) => {
   const { errors } = useDeployContestStore(state => state);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const currentStepError = errors.find(error => error.step === step);
   const entriesError = currentStepError?.message === "entries";
+  const fileUploadIconWidth = isMobile ? 58 : 76;
+  const fileUploadIconHeight = isMobile ? 34 : 45;
 
   const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -57,13 +61,15 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
 
   const Icon = useMemo<React.ReactNode>(() => {
     if (type === "csv") {
-      return <Image src="/create-flow/csv_upload.png" width={76} height={45} alt="csv" />;
+      return (
+        <Image src="/create-flow/csv_upload.png" width={fileUploadIconWidth} height={fileUploadIconHeight} alt="csv" />
+      );
     } else if (type === "docx") {
       return <DocumentAddIcon className="w-[50px]" />;
     } else {
       return null;
     }
-  }, [type]);
+  }, [fileUploadIconHeight, fileUploadIconWidth, type]);
 
   // Define the mime types for each file type
   const mimeTypes: Record<FileTypes, string> = {
@@ -85,7 +91,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
-      className={`flex shadow-file-upload flex-col w-[328px] h-40 md:w-[520px] md:h-60 justify-center items-center gap-4 ${
+      className={`flex shadow-file-upload m-auto md:m-0 flex-col w-[328px] h-40 md:w-[520px] md:h-60 justify-center items-center gap-4 ${
         type === "csv" ? "py-7" : "py-3"
       } px-10 border-2 border-dotted rounded-[25px] cursor-pointer transition-all duration-500 ease-in-out ${borderStyles}`}
     >

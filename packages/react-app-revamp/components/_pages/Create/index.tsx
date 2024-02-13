@@ -3,6 +3,7 @@ import Stepper from "./components/Stepper";
 import CreateContestParams from "./pages/ContestParams";
 import ContestPlay from "./pages/ContestPlay";
 import CreateContestPrompt from "./pages/ContestPrompt";
+import CreateContestStart, { useCreateContestStartStore } from "./pages/ContestStart";
 import CreateContestSubmissions from "./pages/ContestSubmission";
 import CreateContestSummary from "./pages/ContestSummary";
 import CreateContestTiming from "./pages/ContestTiming";
@@ -23,10 +24,21 @@ const steps = [
 
 const CreateFlow = () => {
   const pageAction = usePageActionStore(state => state.pageAction);
+  const { startContest, setStartContest } = useCreateContestStartStore(state => state);
+
+  const handleStartCreating = () => {
+    setStartContest(true);
+  };
 
   return (
-    <div className="pl-[30px] pr-[20px] lg:pl-[80px] lg:pr-[60px]">
-      {pageAction === "create" ? <Stepper steps={steps} /> : <ContestPlay />}
+    <div className="pl-[30px] pr-[20px] lg:pl-[120px] lg:pr-[60px]">
+      {pageAction === "create" && !startContest ? (
+        <CreateContestStart onClick={handleStartCreating} />
+      ) : pageAction === "create" && startContest ? (
+        <Stepper steps={steps} />
+      ) : (
+        <ContestPlay />
+      )}
     </div>
   );
 };

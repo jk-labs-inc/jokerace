@@ -26,7 +26,7 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   setPageAction,
 }) => {
   return (
-    <header className="flex flex-row items-center justify-between pl-[80px] pr-[60px] mt-8">
+    <header className="flex flex-row items-center justify-between pl-[120px] pr-[60px] mt-8">
       <Link href="/">
         <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">
           J<span className="text-[30px]">oke</span>R<span className="text-[30px]">ace</span>

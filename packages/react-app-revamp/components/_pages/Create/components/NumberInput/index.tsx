@@ -53,7 +53,7 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
   return (
     <div className="flex flex-col gap-2">
       <div
-        className={`relative flex w-full md:w-[216px] h-10 rounded-[5px] bg-neutral-14 ${
+        className={`relative flex w-full md:w-[216px] h-10 rounded-[10px] bg-neutral-14 ${
           readOnly ? "opacity-50" : ""
         } ${className}`}
       >
