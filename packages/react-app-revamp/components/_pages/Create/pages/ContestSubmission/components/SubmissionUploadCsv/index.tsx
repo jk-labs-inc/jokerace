@@ -2,7 +2,8 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { SubmissionFieldObject } from "../SubmissionAllowlist/components/CSVEditor";
 import SubmissionCSVFileUploader from "./components/CSVUploadSubmission";
@@ -13,16 +14,11 @@ type WorkerMessageData = {
 };
 
 const CreateSubmissionCSVUploader = () => {
-  const {
-    submissionAllowlistFields: fields,
-    submissionAllowlist,
-    setSubmissionMerkle,
-    setSubmissionAllowlist,
-    setError,
-    step,
-  } = useDeployContestStore(state => state);
+  const { submissionAllowlist, setSubmissionMerkle, setSubmissionAllowlist, setError, step } = useDeployContestStore(
+    state => state,
+  );
   const submissionValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowlist.manual)]);
+  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowlist.csv)]);
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
     const newAllowList: Record<string, number> = {};
@@ -39,7 +35,7 @@ const CreateSubmissionCSVUploader = () => {
       newAllowList[field.address] = 10; // numVotes is hardcoded to 10
     }
 
-    setSubmissionAllowlist("manual", hasError ? {} : newAllowList);
+    setSubmissionAllowlist("csv", hasError ? {} : newAllowList);
   };
 
   const initializeWorker = () => {
@@ -51,14 +47,19 @@ const CreateSubmissionCSVUploader = () => {
     return worker;
   };
 
+  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "prefilled"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
+  };
+
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
-    setSubmissionMerkle("manual", { merkleRoot, submitters: recipients });
+    setSubmissionMerkle("csv", { merkleRoot, submitters: recipients });
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
-    setSubmissionMerkle("prefilled", null);
+    setBothSubmissionMerkles(null);
     terminateWorker(event.target as Worker);
   };
 
@@ -76,13 +77,13 @@ const CreateSubmissionCSVUploader = () => {
   };
 
   const handleNextStep = () => {
-    if (Object.keys(submissionAllowlist.manual).length === 0) return;
+    if (Object.keys(submissionAllowlist.csv).length === 0) return;
 
     toastLoading("processing your allowlist...", false);
     const worker = initializeWorker();
     worker.postMessage({
       decimals: 18,
-      allowList: submissionAllowlist.manual,
+      allowList: submissionAllowlist.csv,
     });
   };
 

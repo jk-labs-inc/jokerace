@@ -68,7 +68,7 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
         />
         {unitLabel ? <span className="absolute inset-y-0 right-4 text-neutral-10 font-bold">{unitLabel}</span> : null}
       </div>
-      {errorMessage ? <p className="text-[16px] font-bold text-negative-11">{errorMessage}</p> : null}
+      {errorMessage ? <p className="text-[14px] font-bold text-negative-11">{errorMessage}</p> : null}
     </div>
   );
 };

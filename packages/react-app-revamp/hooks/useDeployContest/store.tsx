@@ -32,6 +32,8 @@ export interface SubmissionTypeOption {
   label: string;
 }
 
+export type MerkleKey = "manual" | "prefilled" | "csv";
+
 export interface DeployContestState {
   deployContestData: {
     chain: string;
@@ -53,20 +55,24 @@ export interface DeployContestState {
   votingRequirementsOption: Option;
   votingAllowlist: {
     manual: Record<string, number>;
+    csv: Record<string, number>;
     prefilled: Record<string, number>;
   };
   votingMerkle: {
     manual: VotingMerkle | null;
+    csv: VotingMerkle | null;
     prefilled: VotingMerkle | null;
   };
   votingAllowlistFields: VotingFieldObject[];
   submissionAllowlist: {
     manual: Record<string, number>;
+    csv: Record<string, number>;
     prefilled: Record<string, number>;
   };
   submissionAllowlistFields: SubmissionFieldObject[];
   submissionMerkle: {
     manual: SubmissionMerkle | null;
+    csv: SubmissionMerkle | null;
     prefilled: SubmissionMerkle | null;
   };
   submissionRequirements: SubmissionRequirements;
@@ -100,11 +106,11 @@ export interface DeployContestState {
   setVotingRequirements: (votingRequirements: VotingRequirements) => void;
   setSubmissionRequirementsOption: (submissionRequirementsOption: Option) => void;
   setVotingRequirementsOption: (votingRequirementsOption: Option) => void;
-  setVotingAllowlist: (type: "manual" | "prefilled", votingAllowlist: Record<string, number>) => void;
-  setVotingMerkle: (type: "manual" | "prefilled", votingMerkle: VotingMerkle | null) => void;
+  setVotingAllowlist: (type: MerkleKey, votingAllowlist: Record<string, number>) => void;
+  setVotingMerkle: (type: MerkleKey, votingMerkle: VotingMerkle | null) => void;
   setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
-  setSubmissionAllowlist: (type: "manual" | "prefilled", submissionAllowlist: Record<string, number>) => void;
-  setSubmissionMerkle: (type: "manual" | "prefilled", submissionMerkle: SubmissionMerkle | null) => void;
+  setSubmissionAllowlist: (type: MerkleKey, submissionAllowlist: Record<string, number>) => void;
+  setSubmissionMerkle: (type: MerkleKey, submissionMerkle: SubmissionMerkle | null) => void;
   setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) => void;
   setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => void;
   setSubmissionTypeOption: (submissionTypeOption: SubmissionTypeOption) => void;
@@ -159,11 +165,13 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     votingAllowlist: {
       manual: {},
+      csv: {},
       prefilled: {},
     },
     votingAllowlistFields: Array(15).fill(EMPTY_FIELDS_VOTING),
     votingMerkle: {
       manual: null,
+      csv: null,
       prefilled: null,
     },
     votingRequirements: {
@@ -177,11 +185,13 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     submissionAllowlist: {
       manual: {},
+      csv: {},
       prefilled: {},
     },
     submissionAllowlistFields: Array(15).fill(EMPTY_FIELDS_SUBMISSION),
     submissionMerkle: {
       manual: null,
+      csv: null,
       prefilled: null,
     },
     submissionRequirements: {

@@ -3,7 +3,8 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useEffect } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
@@ -21,7 +22,6 @@ const CreateVotingAllowlist = () => {
     setError,
     setVotingAllowlist,
     votingAllowlist,
-    submissionMerkle,
     votingRequirements,
     setVotingRequirements,
   } = useDeployContestStore(state => state);
@@ -75,7 +75,7 @@ const CreateVotingAllowlist = () => {
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
-    resetPrefilledAllowlist();
+    resetAllowlists();
     terminateWorker(event.target as Worker);
   };
 
@@ -105,9 +105,19 @@ const CreateVotingAllowlist = () => {
     });
   };
 
-  const resetPrefilledAllowlist = () => {
-    setVotingMerkle("prefilled", null);
-    setVotingAllowlist("prefilled", {});
+  const setBothVotingMerkles = (value: VotingMerkle | null) => {
+    const keys: MerkleKey[] = ["prefilled", "csv"];
+    keys.forEach(key => setVotingMerkle(key, value));
+  };
+
+  const setBothAllowlists = (value: Record<string, number>) => {
+    const keys: MerkleKey[] = ["prefilled", "csv"];
+    keys.forEach(key => setVotingAllowlist(key, value));
+  };
+
+  const resetAllowlists = () => {
+    setBothVotingMerkles(null);
+    setBothAllowlists({});
     setVotingRequirements({
       ...votingRequirements,
       chain: "mainnet",
@@ -118,20 +128,19 @@ const CreateVotingAllowlist = () => {
   };
 
   return (
-    <div className="mt-5 lg:ml-[20px]">
-      <div className="flex flex-col gap-2 mb-5">
-        <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can vote?</p>
-        <p className="text-[16px] text-neutral-11">
-          upload a csv below (up to 100k entries) <i>or</i> copy-paste an allowlist (up to 100 entries)
-        </p>
-        <p className="text-[16px] text-neutral-11">
-          allowlists are necessary to avoid luck-based voting—and cannot be edited afterwards.
-        </p>
+    <div className="flex flex-col gap-16">
+      <div className="flex flex-col gap-4">
+        <p className="text-[20px] text-neutral-11 font-bold">to set allowlist manually:</p>
+        <ul className="flex flex-col  pl-8">
+          <li className="text-[20px] text-neutral-11 list-disc">
+            write or copy up to 100 addresses in the left column
+          </li>
+          <li className="text-[20px] text-neutral-11 list-disc">write or copy number of votes in the right column</li>
+        </ul>
+        <CSVEditorVoting onChange={handleAllowListChange} />
       </div>
-      <CSVEditorVoting onChange={handleAllowListChange} />
-      <div className="mt-8">
-        <CreateNextButton step={step + 1} onClick={handleNextStep} />
-      </div>
+
+      <CreateNextButton step={step + 1} onClick={handleNextStep} />
     </div>
   );
 };

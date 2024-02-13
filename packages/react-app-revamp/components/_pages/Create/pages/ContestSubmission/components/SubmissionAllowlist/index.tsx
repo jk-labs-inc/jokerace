@@ -3,7 +3,8 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useEffect } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
@@ -49,6 +50,7 @@ const CreateSubmissionAllowlist = () => {
       newAllowList[field.address] = 10; // numVotes is hardcoded to 10
     }
 
+    // todo: vratit se odje
     setSubmissionAllowlist("manual", hasError ? {} : newAllowList);
   };
 
@@ -61,6 +63,11 @@ const CreateSubmissionAllowlist = () => {
     return worker;
   };
 
+  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["csv", "prefilled"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
+  };
+
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
@@ -68,7 +75,7 @@ const CreateSubmissionAllowlist = () => {
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
-    setSubmissionMerkle("prefilled", null);
+    setBothSubmissionMerkles(null);
     terminateWorker(event.target as Worker);
   };
 

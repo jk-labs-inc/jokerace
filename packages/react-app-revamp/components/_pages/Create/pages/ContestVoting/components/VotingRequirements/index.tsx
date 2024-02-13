@@ -5,7 +5,8 @@ import CreateDefaultDropdown, { Option } from "@components/_pages/Create/compone
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { tokenAddressRegex } from "@helpers/regex";
-import { SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useEffect, useState } from "react";
@@ -28,6 +29,7 @@ const CreateVotingRequirements = () => {
     step,
     submissionTypeOption,
     setVotingMerkle,
+    submissionMerkle,
     setError,
     setVotingAllowlist,
     setVotingAllowlistFields,
@@ -182,16 +184,26 @@ const CreateVotingRequirements = () => {
     fetchRequirementsMerkleData(votingRequirementsOption.value);
   };
 
+  const setBothVotingMerkles = (value: VotingMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "csv"];
+    keys.forEach(key => setVotingMerkle(key, value));
+  };
+
+  const setBothAllowlists = (value: Record<string, number>) => {
+    const keys: MerkleKey[] = ["manual", "csv"];
+    keys.forEach(key => setVotingAllowlist(key, value));
+  };
+
   const resetManualAllowlist = () => {
-    setVotingMerkle("manual", null);
-    setVotingAllowlist("manual", {});
+    setBothVotingMerkles(null);
+    setBothAllowlists({});
     setVotingAllowlistFields([]);
   };
 
   return (
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-4">
-        <p className="text-[16px] font-bold text-neutral-11 uppercase">who can submit?</p>
+        <p className="text-[16px] font-bold text-neutral-11 uppercase">who can vote?</p>
         <CreateDefaultDropdown
           defaultOption={votingRequirementsOption}
           options={options}

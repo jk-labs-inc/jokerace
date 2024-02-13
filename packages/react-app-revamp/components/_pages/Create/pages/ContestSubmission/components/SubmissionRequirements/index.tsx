@@ -6,7 +6,7 @@ import { Option } from "@components/_pages/Create/components/TagDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { tokenAddressRegex } from "@helpers/regex";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
@@ -110,9 +110,9 @@ const CreateSubmissionRequirements = () => {
     }
   };
 
-  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
-    setSubmissionMerkle("manual", value);
-    setSubmissionMerkle("prefilled", value);
+  const setAllSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "prefilled", "csv"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
   };
 
   const validateInput = () => {
@@ -180,7 +180,7 @@ const CreateSubmissionRequirements = () => {
       fetchRequirementsMerkleData(submissionRequirementsOption);
     } else {
       setSubmissionAllowlistFields([]);
-      setBothSubmissionMerkles(null);
+      setAllSubmissionMerkles(null);
       onNextStep();
     }
   };

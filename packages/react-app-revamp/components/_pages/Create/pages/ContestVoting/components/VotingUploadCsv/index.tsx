@@ -3,7 +3,8 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useEffect } from "react";
 import { VotingFieldObject } from "../VotingAllowlist/components/CSVEditor";
@@ -27,7 +28,7 @@ const CreateVotingCSVUploader = () => {
     setVotingRequirements,
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.manual)]);
+  const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.csv)]);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -57,7 +58,7 @@ const CreateVotingCSVUploader = () => {
       }
     }
 
-    setVotingAllowlist("manual", errorExists ? {} : newAllowList);
+    setVotingAllowlist("csv", errorExists ? {} : newAllowList);
   };
 
   const initializeWorker = () => {
@@ -72,7 +73,7 @@ const CreateVotingCSVUploader = () => {
   const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
-    setVotingMerkle("manual", { merkleRoot, voters: recipients });
+    setVotingMerkle("csv", { merkleRoot, voters: recipients });
     onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlist processed successfully.");
@@ -93,7 +94,7 @@ const CreateVotingCSVUploader = () => {
   };
 
   const handleNextStep = () => {
-    if (Object.keys(votingAllowlist.manual).length === 0 || votingMerkle.manual) {
+    if (Object.keys(votingAllowlist.csv).length === 0 || votingMerkle.csv) {
       onNextStep();
       return;
     }
@@ -102,13 +103,23 @@ const CreateVotingCSVUploader = () => {
     const worker = initializeWorker();
     worker.postMessage({
       decimals: 18,
-      allowList: votingAllowlist.manual,
+      allowList: votingAllowlist.csv,
     });
   };
 
+  const setBothVotingMerkles = (value: VotingMerkle | null) => {
+    const keys: MerkleKey[] = ["prefilled", "manual"];
+    keys.forEach(key => setVotingMerkle(key, value));
+  };
+
+  const setBothAllowlists = (value: Record<string, number>) => {
+    const keys: MerkleKey[] = ["prefilled", "manual"];
+    keys.forEach(key => setVotingAllowlist(key, value));
+  };
+
   const resetPrefilledAllowlist = () => {
-    setVotingMerkle("prefilled", null);
-    setVotingAllowlist("prefilled", {});
+    setBothVotingMerkles(null);
+    setBothAllowlists({});
     setVotingRequirements({
       ...votingRequirements,
       chain: "mainnet",
