@@ -36,7 +36,7 @@ const CreateContestType = () => {
   };
 
   return (
-    <div className="mt-12 lg:mt-[78px] animate-swingInLeft">
+    <div className="mt-12 lg:mt-[70px] animate-swingInLeft">
       <div className="flex flex-col lg:flex-row items-start gap-10 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-12">

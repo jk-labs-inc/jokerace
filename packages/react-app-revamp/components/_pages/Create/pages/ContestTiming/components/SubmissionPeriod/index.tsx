@@ -1,22 +1,29 @@
 import CreateDatePicker from "@components/_pages/Create/components/DatePicker";
-import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
+import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import moment from "moment";
 import { useState } from "react";
-import { TimingPeriod, timingPeriodsOptions, useTimingOptionForSubmissionPeriod } from "../../utils";
+import {
+  TimingPeriod,
+  addTimeBasedOnPeriod,
+  timingPeriodsOptions,
+  useTimingOptionForSubmissionPeriod,
+  useTimingOptionForVotingPeriod,
+} from "../../utils";
 
 const CreateSubmissionPeriod = () => {
-  const { submissionOpen, setSubmissionOpen, votingOpen, setVotingOpen, errors, step } = useDeployContestStore(
-    state => state,
-  );
+  const { submissionOpen, setSubmissionOpen, votingOpen, setVotingOpen, setVotingClose, errors, step } =
+    useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const currentVotesOpenError = currentStepError?.message.startsWith("Voting open") ? currentStepError.message : "";
-  const { timingOption, setTimingOption } = useTimingOptionForSubmissionPeriod(state => state);
+  const { timingOption: submissionPeriodTimingOption, setTimingOption: setSubmissionPeriodTimingOption } =
+    useTimingOptionForSubmissionPeriod(state => state);
+  const { timingOption: votingPeriodTimingOption, setTimingOption: setVotingPeriodTimingOption } =
+    useTimingOptionForVotingPeriod(state => state);
   const [hideDatePickers, setHideDatePickers] = useState<boolean>(false);
 
   const onSubmissionDateChange = (value: Date) => {
     setSubmissionOpen(value);
-    setTimingOption({
+    setSubmissionPeriodTimingOption({
       label: "custom",
       value: "custom",
     });
@@ -24,34 +31,28 @@ const CreateSubmissionPeriod = () => {
 
   const onVotesOpenChange = (value: Date) => {
     setVotingOpen(value);
-    setTimingOption({
+    setSubmissionPeriodTimingOption({
       label: "custom",
       value: "custom",
     });
   };
 
-  //TODO: manipulate voting closes when we change submission period
   const onTimingPeriodChange = (option: string) => {
     const now = new Date();
     setSubmissionOpen(now);
-    setTimingOption({
+    setSubmissionPeriodTimingOption({
       value: option,
       label: timingPeriodsOptions.find(opt => opt.value === option)?.label ?? "",
     });
 
-    switch (option) {
-      case TimingPeriod.OneWeek:
-        setVotingOpen(moment(now).add(1, "weeks").toDate());
-        break;
-      case TimingPeriod.OneHour:
-        setVotingOpen(moment(now).add(1, "hours").toDate());
-        break;
-      case TimingPeriod.OneDay:
-        setVotingOpen(moment(now).add(1, "days").toDate());
-        break;
-      case TimingPeriod.OneMonth:
-        setVotingOpen(moment(now).add(1, "months").toDate());
-        break;
+    const timingOption = option as TimingPeriod;
+
+    const votingOpenDate = addTimeBasedOnPeriod(now, timingOption);
+    setVotingOpen(votingOpenDate);
+
+    if (votingPeriodTimingOption.value !== TimingPeriod.Custom) {
+      const votingCloseDate = addTimeBasedOnPeriod(votingOpenDate, votingPeriodTimingOption.value as TimingPeriod);
+      setVotingClose(votingCloseDate);
     }
   };
 
@@ -61,7 +62,7 @@ const CreateSubmissionPeriod = () => {
         <p className="text-[16px] font-bold text-neutral-11 uppercase">submission period</p>
         <CreateDefaultDropdown
           options={timingPeriodsOptions}
-          defaultOption={timingOption}
+          defaultOption={submissionPeriodTimingOption}
           className="w-[216px]"
           onChange={option => onTimingPeriodChange(option)}
           onMenuStateChange={state => setHideDatePickers(state)}

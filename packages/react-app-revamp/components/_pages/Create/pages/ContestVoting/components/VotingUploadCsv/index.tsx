@@ -3,7 +3,7 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { VotingMerkle } from "@hooks/useDeployContest/types";
+import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { VotingFieldObject } from "../VotingAllowlist/components/CSVEditor";
 import VotingCSVFileUploader from "./components";
@@ -17,9 +17,9 @@ const CreateVotingCSVUploader = () => {
   const {
     step,
     setVotingMerkle,
-    votingMerkle,
     setError,
     setVotingAllowlist,
+    setSubmissionMerkle,
     votingAllowlist,
     submissionTypeOption,
     votingRequirements,
@@ -27,6 +27,7 @@ const CreateVotingCSVUploader = () => {
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.csv)]);
+  const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
 
   const handleAllowListChange = (fields: VotingFieldObject[]) => {
     let newAllowList: Record<string, number> = {};
@@ -45,16 +46,51 @@ const CreateVotingCSVUploader = () => {
     setVotingAllowlist("csv", errorExists ? {} : newAllowList);
   };
 
-  const initializeWorker = () => {
+  const initializeWorkerForVoters = () => {
     const worker = new Worker(new URL("/workers/generateRootAndRecipients", import.meta.url));
 
-    worker.onmessage = handleWorkerMessage;
+    worker.onmessage = handleWorkerMessageForVoters;
     worker.onerror = handleWorkerError;
 
     return worker;
   };
 
-  const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
+  const initializeWorkersForVotersAndSubmitters = () => {
+    const worker = new Worker(new URL("/workers/generateBatchRootsAndRecipients", import.meta.url));
+
+    worker.onmessage = handleWorkerMessageForVotersAndSubmitters;
+    worker.onerror = handleWorkerError;
+
+    return worker;
+  };
+
+  const handleWorkerMessageForVotersAndSubmitters = (event: MessageEvent<WorkerMessageData[]>): void => {
+    const results = event.data;
+    const [votingMerkleData, submissionMerkleData] = results;
+
+    if (votingMerkleData) {
+      setVotingMerkle("csv", {
+        merkleRoot: votingMerkleData.merkleRoot,
+        voters: votingMerkleData.recipients,
+      });
+    }
+
+    if (submissionMerkleData) {
+      setSubmissionMerkle("csv", {
+        merkleRoot: submissionMerkleData.merkleRoot,
+        submitters: submissionMerkleData.recipients,
+      });
+    }
+
+    onNextStep();
+    setError(step + 1, { step: step + 1, message: "" });
+    toastSuccess("allowlists processed successfully.");
+    resetPrefilledAllowlist();
+    setBothSubmissionMerkles(null);
+    terminateWorker(event.target as Worker);
+  };
+
+  const handleWorkerMessageForVoters = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
     setVotingMerkle("csv", { merkleRoot, voters: recipients });
@@ -79,24 +115,38 @@ const CreateVotingCSVUploader = () => {
   };
 
   const handleNextStep = () => {
-    if (Object.keys(votingAllowlist.csv).length === 0 || votingMerkle.csv) {
+    if (Object.keys(votingAllowlist.csv).length === 0) {
       onNextStep();
       return;
     }
 
-    if (submissionTypeOption.value === SubmissionType.SameAsVoters) {
+    toastLoading("Processing your allowlist...", false);
+
+    if (submittersAsVoters) {
       const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.csv).reduce((acc, address) => {
         acc[address] = 10;
         return acc;
       }, {} as Record<string, number>);
-    }
 
-    toastLoading("processing your allowlist...", false);
-    const worker = initializeWorker();
-    worker.postMessage({
-      decimals: 18,
-      allowList: votingAllowlist.csv,
-    });
+      const worker = initializeWorkersForVotersAndSubmitters();
+      worker.postMessage({
+        allowLists: [
+          { decimals: 18, allowList: votingAllowlist.csv },
+          { decimals: 18, allowList: submissionAllowlist },
+        ],
+      });
+    } else {
+      const worker = initializeWorkerForVoters();
+      worker.postMessage({
+        decimals: 18,
+        allowList: votingAllowlist.csv,
+      });
+    }
+  };
+
+  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["prefilled", "manual"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
   };
 
   const setBothVotingMerkles = (value: VotingMerkle | null) => {

@@ -7,7 +7,7 @@ const CreateContestVoting = () => {
   const { step } = useDeployContestStore(state => state);
 
   return (
-    <div className="mt-12 lg:mt-[78px] animate-swingInLeft">
+    <div className="mt-12 lg:mt-[70px] animate-swingInLeft">
       <div className="flex flex-col md:flex-row items-start gap-10 text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col">

@@ -2,8 +2,8 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { VotingMerkle } from "@hooks/useDeployContest/types";
+import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
@@ -16,15 +16,17 @@ const CreateVotingAllowlist = () => {
   const {
     step,
     setVotingMerkle,
-    votingMerkle,
     setError,
+    setSubmissionMerkle,
     setVotingAllowlist,
     votingAllowlist,
     votingRequirements,
     setVotingRequirements,
+    submissionTypeOption,
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.manual)]);
+  const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
 
   const handleAllowListChange = (fields: VotingFieldObject[]) => {
     let newAllowList: Record<string, number> = {};
@@ -43,16 +45,50 @@ const CreateVotingAllowlist = () => {
     setVotingAllowlist("manual", errorExists ? {} : newAllowList);
   };
 
-  const initializeWorker = () => {
+  const initializeWorkerForVoters = () => {
     const worker = new Worker(new URL("/workers/generateRootAndRecipients", import.meta.url));
 
-    worker.onmessage = handleWorkerMessage;
+    worker.onmessage = handleWorkerMessageForVoters;
     worker.onerror = handleWorkerError;
 
     return worker;
   };
 
-  const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
+  const initializeWorkersForVotersAndSubmitters = () => {
+    const worker = new Worker(new URL("/workers/generateBatchRootsAndRecipients", import.meta.url));
+
+    worker.onmessage = handleWorkerMessageForVotersAndSubmitters;
+    worker.onerror = handleWorkerError;
+
+    return worker;
+  };
+
+  const handleWorkerMessageForVotersAndSubmitters = (event: MessageEvent<WorkerMessageData[]>): void => {
+    const results = event.data;
+    const [votingMerkleData, submissionMerkleData] = results;
+
+    if (votingMerkleData) {
+      setVotingMerkle("manual", {
+        merkleRoot: votingMerkleData.merkleRoot,
+        voters: votingMerkleData.recipients,
+      });
+    }
+
+    if (submissionMerkleData) {
+      setSubmissionMerkle("manual", {
+        merkleRoot: submissionMerkleData.merkleRoot,
+        submitters: submissionMerkleData.recipients,
+      });
+    }
+    onNextStep();
+    setError(step + 1, { step: step + 1, message: "" });
+    toastSuccess("allowlists processed successfully.");
+    resetAllowlists();
+    setBothSubmissionMerkles(null);
+    terminateWorker(event.target as Worker);
+  };
+
+  const handleWorkerMessageForVoters = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients } = event.data;
 
     setVotingMerkle("manual", { merkleRoot, voters: recipients });
@@ -76,17 +112,37 @@ const CreateVotingAllowlist = () => {
   };
 
   const handleNextStep = () => {
-    if (Object.keys(votingAllowlist.manual).length === 0 || votingMerkle.manual) {
+    if (Object.keys(votingAllowlist.manual).length === 0) {
       onNextStep();
       return;
     }
 
     toastLoading("processing your allowlist...", false);
-    const worker = initializeWorker();
-    worker.postMessage({
-      decimals: 18,
-      allowList: votingAllowlist.manual,
-    });
+    if (submittersAsVoters) {
+      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.manual).reduce((acc, address) => {
+        acc[address] = 10;
+        return acc;
+      }, {} as Record<string, number>);
+
+      const worker = initializeWorkersForVotersAndSubmitters();
+      worker.postMessage({
+        allowLists: [
+          { decimals: 18, allowList: votingAllowlist.manual },
+          { decimals: 18, allowList: submissionAllowlist },
+        ],
+      });
+    } else {
+      const worker = initializeWorkerForVoters();
+      worker.postMessage({
+        decimals: 18,
+        allowList: votingAllowlist.manual,
+      });
+    }
+  };
+
+  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["prefilled", "csv"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
   };
 
   const setBothVotingMerkles = (value: VotingMerkle | null) => {

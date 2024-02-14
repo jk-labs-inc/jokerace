@@ -85,7 +85,7 @@ const CreateContestPrompt = () => {
   });
 
   return (
-    <div className="create-contest-prompt flex flex-col gap-12 mt-12 lg:mt-[78px] animate-swingInLeft">
+    <div className="create-contest-prompt flex flex-col gap-12 mt-12 lg:mt-[70px] animate-swingInLeft">
       <div className="flex flex-col lg:flex-row items-start gap-10 text-[20px] md:text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col gap-12 w-full">

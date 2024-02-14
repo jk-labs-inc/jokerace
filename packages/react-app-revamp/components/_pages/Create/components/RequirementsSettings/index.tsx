@@ -87,41 +87,45 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
             errorMessage={error?.minTokensRequiredError}
           />
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-4">
           <p className="text-[16px] text-neutral-11 font-bold uppercase">token address</p>
-          <CreateTextInput
-            className="w-full md:w-[600px] text-[16px] md:text-[24px]"
-            value={tokenAddress}
-            placeholder="0x495f947276749ce646f68ac8c248420045cb7b5e"
-            onChange={onTokenAddressChange}
-          />
-          {error?.tokenAddressError ? (
-            <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error.tokenAddressError}</p>
-          ) : (
-            <p className="text-[16px] text-neutral-14 font-bold">
-              when you press “next,” we’ll take a snapshot of all holders to allowlist
-            </p>
-          )}
+          <div className="flex flex-col gap-2">
+            <CreateTextInput
+              className="w-full md:w-[600px] text-[16px] md:text-[24px]"
+              value={tokenAddress}
+              placeholder="0x495f947276749ce646f68ac8c248420045cb7b5e"
+              onChange={onTokenAddressChange}
+            />
+            {error?.tokenAddressError ? (
+              <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error.tokenAddressError}</p>
+            ) : (
+              <p className="text-[16px] text-neutral-14 font-bold">
+                when you press “next,” we’ll take a snapshot of all holders to allowlist
+              </p>
+            )}
+          </div>
         </div>
         {step === "voting" ? (
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-4">
             <p className="text-[16px] text-neutral-11 font-bold uppercase">voting power</p>
-            <div className="flex justify-between md:justify-normal md:gap-3">
-              <CreateNumberInput
-                className="text-[16px] md:text-[24px]"
-                value={powerValue ?? 0}
-                placeholder="100"
-                onChange={onPowerValueChange}
-              />
-              <p className="text-[16px] md:text-[24px]">votes per</p>
-              <CreateDefaultDropdown
-                defaultOption={powerTypeOption(powerType ?? "")}
-                options={votingPowerOptions}
-                className="w-full md:w-44 text-[16px] md:text-[24px] cursor-pointer"
-                onChange={onPowerTypeChange}
-              />
+            <div className="flex flex-col gap-2">
+              <div className="flex justify-between md:justify-normal md:gap-3">
+                <CreateNumberInput
+                  className="text-[16px] md:text-[24px]"
+                  value={powerValue ?? 0}
+                  placeholder="100"
+                  onChange={onPowerValueChange}
+                />
+                <p className="text-[16px] md:text-[24px]">votes per</p>
+                <CreateDefaultDropdown
+                  defaultOption={powerTypeOption(powerType ?? "")}
+                  options={votingPowerOptions}
+                  className="w-full md:w-44 text-[16px] md:text-[24px] cursor-pointer"
+                  onChange={onPowerTypeChange}
+                />
+              </div>
+              <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.powerValueError}</p>
             </div>
-            <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.powerValueError}</p>
           </div>
         ) : null}
       </div>

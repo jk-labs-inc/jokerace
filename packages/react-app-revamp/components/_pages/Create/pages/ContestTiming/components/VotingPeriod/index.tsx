@@ -3,7 +3,7 @@ import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultD
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import moment from "moment";
 import { useState } from "react";
-import { TimingPeriod, timingPeriodsOptions, useTimingOptionForVotingPeriod } from "../../utils";
+import { TimingPeriod, addTimeBasedOnPeriod, timingPeriodsOptions, useTimingOptionForVotingPeriod } from "../../utils";
 
 const CreateVotingPeriod = () => {
   const { votingClose, setVotingClose, errors, step, votingOpen } = useDeployContestStore(state => state);
@@ -22,25 +22,16 @@ const CreateVotingPeriod = () => {
   };
 
   const onTimingPeriodChange = (option: string) => {
+    const now = new Date();
     setTimingOption({
       value: option,
       label: timingPeriodsOptions.find(opt => opt.value === option)?.label ?? "",
     });
 
-    switch (option) {
-      case TimingPeriod.OneWeek:
-        setVotingClose(moment(votingOpen).add(1, "weeks").toDate());
-        break;
-      case TimingPeriod.OneHour:
-        setVotingClose(moment(votingOpen).add(1, "hours").toDate());
-        break;
-      case TimingPeriod.OneDay:
-        setVotingClose(moment(votingOpen).add(1, "days").toDate());
-        break;
-      case TimingPeriod.OneMonth:
-        setVotingClose(moment(votingOpen).add(1, "months").toDate());
-        break;
-    }
+    const timingOption = option as TimingPeriod;
+
+    const votingCloseDate = addTimeBasedOnPeriod(now, timingOption);
+    setVotingClose(votingCloseDate);
   };
 
   return (

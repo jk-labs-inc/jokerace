@@ -76,6 +76,7 @@ const CreateSubmissionRequirements = () => {
     const { merkleRoot, recipients } = event.data;
 
     setSubmissionMerkle("prefilled", { merkleRoot, submitters: recipients });
+    setOtherSubmissionMerkles(null);
     setSubmissionAllowlistFields([]);
     onNextStep();
     toastSuccess("allowlist processed successfully.");
@@ -93,6 +94,11 @@ const CreateSubmissionRequirements = () => {
     if (worker && worker.terminate) {
       worker.terminate();
     }
+  };
+
+  const setOtherSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "csv"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
   };
 
   const setAllSubmissionMerkles = (value: SubmissionMerkle | null) => {

@@ -5,7 +5,7 @@ import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { tokenAddressRegex } from "@helpers/regex";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { VotingMerkle } from "@hooks/useDeployContest/types";
+import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useState } from "react";
@@ -28,7 +28,8 @@ const CreateVotingRequirements = () => {
     step,
     submissionTypeOption,
     setVotingMerkle,
-    submissionMerkle,
+    setSubmissionMerkle,
+    setSubmissionRequirements,
     setError,
     setVotingAllowlist,
     setVotingAllowlistFields,
@@ -65,16 +66,61 @@ const CreateVotingRequirements = () => {
     }
   };
 
-  const initializeWorker = () => {
+  const initializeWorkerForVoters = () => {
     const worker = new Worker(new URL("/workers/generateRootAndRecipients", import.meta.url));
 
-    worker.onmessage = handleWorkerMessage;
+    worker.onmessage = handleWorkerMessageForVoters;
     worker.onerror = handleWorkerError;
 
     return worker;
   };
 
-  const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
+  const initializeWorkersForVotersAndSubmitters = () => {
+    const worker = new Worker(new URL("/workers/generateBatchRootsAndRecipients", import.meta.url));
+
+    worker.onmessage = handleWorkerMessageForVotersAndSubmitters;
+    worker.onerror = handleWorkerError;
+
+    return worker;
+  };
+
+  const handleWorkerMessageForVotersAndSubmitters = (event: MessageEvent<WorkerMessageData[]>): void => {
+    const results = event.data;
+    const [votingMerkleData, submissionMerkleData] = results;
+
+    if (votingMerkleData) {
+      setVotingMerkle("prefilled", {
+        merkleRoot: votingMerkleData.merkleRoot,
+        voters: votingMerkleData.recipients,
+      });
+    }
+
+    if (submissionMerkleData) {
+      setSubmissionMerkle("prefilled", {
+        merkleRoot: submissionMerkleData.merkleRoot,
+        submitters: submissionMerkleData.recipients,
+      });
+    }
+
+    setVotingAllowlist("prefilled", votingMerkleData.allowList);
+    setVotingRequirements({
+      ...votingRequirements,
+      timestamp: Date.now(),
+    });
+    setSubmissionRequirements({
+      ...votingRequirements,
+      timestamp: Date.now(),
+    });
+
+    onNextStep(results[0].allowList);
+    setError(step + 1, { step: step + 1, message: "" });
+    toastSuccess("allowlists processed successfully.");
+    resetManualAllowlist();
+    setBothSubmissionMerkles(null);
+    terminateWorker(event.target as Worker);
+  };
+
+  const handleWorkerMessageForVoters = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients, allowList } = event.data;
 
     setVotingAllowlist("prefilled", allowList);
@@ -123,13 +169,13 @@ const CreateVotingRequirements = () => {
   };
 
   const fetchRequirementsMerkleData = async (type: string) => {
-    let result: Record<string, number> | Error;
+    let votingAllowlist: Record<string, number> | Error;
 
     toastLoading("processing your allowlist...", false);
     try {
       const fetchMerkleData = type === "erc721" ? fetchNftHolders : fetchTokenHolders;
 
-      result = await fetchMerkleData(
+      votingAllowlist = await fetchMerkleData(
         "voting",
         votingRequirements.tokenAddress,
         votingRequirements.chain,
@@ -138,19 +184,34 @@ const CreateVotingRequirements = () => {
         votingRequirements.powerType,
       );
 
-      if (result instanceof Error) {
+      if (votingAllowlist instanceof Error) {
         setInputError({
-          tokenAddressError: result.message,
+          tokenAddressError: votingAllowlist.message,
         });
         toastDismiss();
         return;
       }
 
-      const worker = initializeWorker();
-      worker.postMessage({
-        decimals: 18,
-        allowList: result,
-      });
+      if (submittersAsVoters) {
+        const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist).reduce((acc, address) => {
+          acc[address] = 10;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const worker = initializeWorkersForVotersAndSubmitters();
+        worker.postMessage({
+          allowLists: [
+            { decimals: 18, allowList: votingAllowlist },
+            { decimals: 18, allowList: submissionAllowlist },
+          ],
+        });
+      } else {
+        const worker = initializeWorkerForVoters();
+        worker.postMessage({
+          decimals: 18,
+          allowList: votingAllowlist,
+        });
+      }
     } catch (error: any) {
       setInputError({
         tokenAddressError: error.message,
@@ -167,6 +228,11 @@ const CreateVotingRequirements = () => {
       return;
     }
     fetchRequirementsMerkleData(votingRequirementsOption.value);
+  };
+
+  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "csv"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
   };
 
   const setBothVotingMerkles = (value: VotingMerkle | null) => {

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { Option } from "../../components/DefaultDropdown";
+import moment from "moment";
 
 interface StoreState {
   timingOption: Option;
@@ -46,3 +47,18 @@ export const useTimingOptionForVotingPeriod = create<StoreState>(set => ({
   timingOption: timingPeriodsOptions[0],
   setTimingOption: timingOption => set({ timingOption }),
 }));
+
+export const addTimeBasedOnPeriod = (startDate: Date, period: TimingPeriod): Date => {
+  switch (period) {
+    case TimingPeriod.OneWeek:
+      return moment(startDate).add(1, "weeks").toDate();
+    case TimingPeriod.OneHour:
+      return moment(startDate).add(1, "hours").toDate();
+    case TimingPeriod.OneDay:
+      return moment(startDate).add(1, "days").toDate();
+    case TimingPeriod.OneMonth:
+      return moment(startDate).add(1, "months").toDate();
+    default:
+      return startDate;
+  }
+};

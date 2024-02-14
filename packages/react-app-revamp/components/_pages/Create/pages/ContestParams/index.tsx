@@ -19,6 +19,8 @@ const CreateContestParams = () => {
     allowedSubmissionsPerUser,
     maxSubmissions,
     advancedOptions,
+    votingMerkle,
+    submissionMerkle,
     setAdvancedOptions,
     step,
   } = useDeployContestStore(state => state);
@@ -77,7 +79,7 @@ const CreateContestParams = () => {
   };
 
   return (
-    <div className="flex flex-col gap-12 mt-12 lg:mt-[50px] animate-swingInLeft">
+    <div className="flex flex-col gap-12 mt-12 lg:mt-[70px] animate-swingInLeft">
       <div className="flex flex-col md:flex-row gap-5">
         <StepCircle step={step + 1} />
         <ContestParamsSubmissionsPerPlayer

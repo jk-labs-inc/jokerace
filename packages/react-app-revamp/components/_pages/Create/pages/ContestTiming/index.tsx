@@ -25,7 +25,7 @@ const CreateContestTiming = () => {
   }, []);
 
   return (
-    <div className="mt-12 lg:mt-[78px] flex flex-col lg:flex-row gap-10 animate-swingInLeft opacity-5">
+    <div className="mt-12 lg:mt-[70px] flex flex-col lg:flex-row gap-10 animate-swingInLeft opacity-5">
       <StepCircle step={step + 1} />
       <div className="flex flex-col gap-14">
         <p className="text-[24px] font-bold text-primary-10">how long will the contest run?</p>
