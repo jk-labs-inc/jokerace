@@ -6,6 +6,7 @@ interface CreateNumberInputProps {
   errorMessage?: string;
   readOnly?: boolean;
   className?: string;
+  textClassName?: string;
   onChange?: (value: number | null) => void;
   unitLabel?: string;
 }
@@ -16,6 +17,7 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
   errorMessage,
   readOnly = false,
   className,
+  textClassName,
   unitLabel,
   onChange,
 }) => {
@@ -59,14 +61,16 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
       >
         <input
           type="number"
-          className="w-full h-full outline-none bg-transparent pl-4 text-true-black"
+          className={`text-[20px] w-full h-full outline-none bg-transparent pl-4 text-true-black ${textClassName}`}
           onChange={handleChange}
           value={value}
           placeholder={placeholder}
           readOnly={readOnly}
           min={0}
         />
-        {unitLabel ? <span className="absolute inset-y-0 right-4 text-neutral-10 font-bold">{unitLabel}</span> : null}
+        {unitLabel ? (
+          <span className="text-[20px] absolute inset-y-1 right-4 text-primary-2 font-bold">{unitLabel}</span>
+        ) : null}
       </div>
       {errorMessage ? <p className="text-[14px] font-bold text-negative-11">{errorMessage}</p> : null}
     </div>

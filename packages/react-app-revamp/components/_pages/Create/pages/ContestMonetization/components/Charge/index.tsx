@@ -3,17 +3,17 @@ import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, useState } from "react";
-import ContestParamsChargePercentToCreator from "./PercentToCreator";
-import ContestParamsChargeSubmission from "./Submission";
-import ContestParamsChargeVote from "./Vote";
+import ContestParamsChargeSubmission from "./components/Submission";
+import ContestParamsChargeVote from "./components/Vote";
+import ContestParamsChargePercentToCreator from "./components/PercentToCreator";
 
-interface ContestParamsChargeProps {
+interface CreateContestChargeProps {
   isConnected: boolean;
   chain: string;
   onError?: (value: boolean) => void;
 }
 
-const ContestParamsCharge: FC<ContestParamsChargeProps> = ({ isConnected, chain, onError }) => {
+const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain, onError }) => {
   const chainUnitLabel = chains.find(c => c.name === chain)?.nativeCurrency.symbol;
   const { minCostToPropose, minCostToVote, isError, refetch: refetchChargeDetails } = useChargeDetails(chain);
   const { charge, setCharge } = useDeployContestStore(state => state);
@@ -83,28 +83,29 @@ const ContestParamsCharge: FC<ContestParamsChargeProps> = ({ isConnected, chain,
   };
 
   return (
-    <>
-      <ContestParamsChargeSubmission
-        costToPropose={charge.type.costToPropose}
-        chainUnitLabel={chainUnitLabel ?? ""}
-        costToProposeError={costToProposeError}
-        onCostToProposeChange={handleCostToProposeChange}
-      />
-      <ContestParamsChargeVote
-        costToVote={charge.type.costToVote}
-        chainUnitLabel={chainUnitLabel ?? ""}
-        costToVoteError={costToVoteError}
-        onCostToVoteChange={handleCostToVoteChange}
-      />
-
+    <div className="flex flex-col gap-12">
       <ContestParamsChargePercentToCreator
         percentageToCreator={charge.percentageToCreator}
         minCostToPropose={minCostToPropose}
         minCostToVote={minCostToVote}
         onPercentageToCreatorChange={handlePercentageToCreatorChange}
       />
-    </>
+      <div className="flex flex-col gap-8">
+        <ContestParamsChargeSubmission
+          costToPropose={charge.type.costToPropose}
+          chainUnitLabel={chainUnitLabel ?? ""}
+          costToProposeError={costToProposeError}
+          onCostToProposeChange={handleCostToProposeChange}
+        />
+        <ContestParamsChargeVote
+          costToVote={charge.type.costToVote}
+          chainUnitLabel={chainUnitLabel ?? ""}
+          costToVoteError={costToVoteError}
+          onCostToVoteChange={handleCostToVoteChange}
+        />
+      </div>
+    </div>
   );
 };
 
-export default ContestParamsCharge;
+export default CreateContestCharge;

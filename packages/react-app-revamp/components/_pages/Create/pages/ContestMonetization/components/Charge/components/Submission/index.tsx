@@ -15,16 +15,18 @@ const ContestParamsChargeSubmission: FC<ContestParamsChargeSubmissionProps> = ({
   onCostToProposeChange,
 }) => {
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-        what is the charge for players to submit to the contest?
+    <div className="flex flex-col gap-4">
+      <p className="text-[20px] text-neutral-11">
+        what is the entry charge for players to <b>submit</b> to the contest?
       </p>
       <div className="flex flex-col gap-2">
         <CreateNumberInput
+          className="text-center"
           value={costToPropose}
           onChange={onCostToProposeChange}
           unitLabel={chainUnitLabel}
           errorMessage={costToProposeError}
+          textClassName="font-bold text-center pl-0 pr-4"
         />
       </div>
     </div>

@@ -15,9 +15,9 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
   onCostToVoteChange,
 }) => {
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-        what is the charge for players each time they vote?
+    <div className="flex flex-col gap-4">
+      <p className="text-[20px] text-neutral-11">
+        what is the charge for players each time they <b>vote</b>?
       </p>
       <div className="flex flex-col gap-2">
         <CreateNumberInput
@@ -25,6 +25,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
           onChange={onCostToVoteChange}
           unitLabel={chainUnitLabel}
           errorMessage={costToVoteError}
+          textClassName="font-bold text-center pl-0 pr-4"
         />
       </div>
     </div>

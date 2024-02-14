@@ -1,33 +1,26 @@
 import { MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
-import ContestParamsCharge from "./components/Charge/components";
 import ContestParamsDownvote from "./components/Downvote";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
 import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
 
 const CreateContestParams = () => {
   const { deployContest } = useDeployContest();
-  const { isConnected } = useAccount();
-  const { chain } = useNetwork();
   const {
     setMaxSubmissions,
     setAllowedSubmissionsPerUser,
     allowedSubmissionsPerUser,
     maxSubmissions,
     advancedOptions,
-    votingMerkle,
-    submissionMerkle,
     setAdvancedOptions,
     step,
   } = useDeployContestStore(state => state);
-  const [chargeError, setChargeError] = useState<boolean>(false);
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
-  const disableDeploy = chargeError || Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
+  const disableDeploy = Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
 
   useEffect(() => {
     validateMaxSubmissions(maxSubmissions);
@@ -96,12 +89,6 @@ const CreateContestParams = () => {
         />
 
         <ContestParamsDownvote downvote={advancedOptions.downvote} onChange={handleDownvoteChange} />
-
-        <ContestParamsCharge
-          isConnected={isConnected}
-          chain={chain?.name ?? ""}
-          onError={value => setChargeError(value)}
-        />
 
         <div>
           <p className="text-[24px] text-neutral-11">

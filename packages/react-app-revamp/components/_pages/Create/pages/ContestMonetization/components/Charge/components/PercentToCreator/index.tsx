@@ -14,8 +14,8 @@ const ContestParamsChargePercentToCreator: FC<ContestParamsChargePercentToCreato
   minCostToVote,
 }) => {
   return (
-    <div className="flex gap-6 flex-col">
-      <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
+    <div className="flex flex-col gap-4 ">
+      <p className="text-[20px] md:text-[20px] text-neutral-11">
         by default, we split all charges with you 50/50 so you can monetize
       </p>
       <div className="flex gap-4">
@@ -29,11 +29,11 @@ const ContestParamsChargePercentToCreator: FC<ContestParamsChargePercentToCreato
           <span className="checkmark"></span>
         </label>
         <p
-          className={`text-[16px] md:text-[24px] ${
+          className={`text-[16px] md:text-[20px] ${
             percentageToCreator === 0 ? "text-neutral-11" : "text-neutral-9"
-          } md:-mt-2`}
+          } md:-mt-1`}
         >
-          give my 50% to support <span className="normal-case">JokeRace</span> instead
+          i prefer to take 0% of charges so that i don’t make any money
         </p>
       </div>
     </div>
