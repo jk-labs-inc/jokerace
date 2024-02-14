@@ -18,6 +18,7 @@ import { luksoWallet } from "./custom-wallets/luksoWallet";
 
 import { configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { aevo } from "./custom-chains/aevo";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -132,6 +133,7 @@ const totalChains: Chain[] = [
   palm,
   lyra,
   fraxtal,
+  aevo,
   polygonTestnet,
   sepolia,
   goerli,
