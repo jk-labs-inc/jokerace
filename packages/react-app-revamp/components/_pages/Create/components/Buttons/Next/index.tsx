@@ -8,9 +8,10 @@ import { FC, MouseEventHandler, useEffect, useState } from "react";
 interface CreateNextButtonProps {
   step: number;
   onClick?: MouseEventHandler<HTMLButtonElement>;
+  isDisabled?: boolean;
 }
 
-const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
+const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled }) => {
   const { errors } = useDeployContestStore(state => state);
   const { setStartContest } = useCreateContestStartStore(state => state);
   const [shake, setShake] = useState(false);
@@ -53,6 +54,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick }) => {
           } text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
           size={ButtonSize.LARGE}
           onClick={handleClick}
+          isDisabled={isDisabled}
         >
           next
         </ButtonV3>

@@ -1,3 +1,4 @@
+import { Charge } from "@hooks/useDeployContest/types";
 import moment from "moment";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
@@ -11,7 +12,8 @@ export type StateKey =
   | "submissionOpen"
   | "votingMerkle"
   | "submissionMerkle"
-  | "submissionRequirements";
+  | "submissionRequirements"
+  | "charge";
 
 const titleValidation = (title: string) => {
   if (!title || title.length >= CONTEST_TITLE_MAX_LENGTH) {
@@ -93,6 +95,12 @@ const submissionRequirementsValidation = (submissionRequirements: string) => {
   return "";
 };
 
+const monetizationValidation = (charge: Charge) => {
+  if (!charge) return "Please enter a valid charge";
+
+  return "";
+};
+
 export const validationFunctions = new Map<number, { validation: (...args: any[]) => string; stateKeys: StateKey[] }[]>(
   [
     [0, [{ validation: titleValidation, stateKeys: ["title"] }]],
@@ -120,6 +128,15 @@ export const validationFunctions = new Map<number, { validation: (...args: any[]
         {
           validation: votingRequirementsValidation,
           stateKeys: ["votingMerkle"],
+        },
+      ],
+    ],
+    [
+      7,
+      [
+        {
+          validation: monetizationValidation,
+          stateKeys: ["charge"],
         },
       ],
     ],
