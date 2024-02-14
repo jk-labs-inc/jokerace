@@ -27,9 +27,9 @@ const CreateContestSubmissions = () => {
       <div className="flex flex-col md:flex-row items-start gap-10 text-[24px]">
         <StepCircle step={step + 1} />
         <div className="flex flex-col">
-          <div className="flex flex-col gap-16">
+          <div className="flex flex-col gap-11">
             <p className="text-[24px] text-primary-10 font-bold">Who can submit?</p>
-            <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-8">
               <CreateSubmissionType />
               <CreateSubmissionTabMessage />
             </div>

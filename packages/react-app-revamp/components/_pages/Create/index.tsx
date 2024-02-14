@@ -31,7 +31,7 @@ const CreateFlow = () => {
   };
 
   return (
-    <div className="pl-[30px] pr-[20px] lg:pl-[120px] lg:pr-[60px]">
+    <div className="pl-[24px] pr-[20px] lg:pl-[120px] lg:pr-[60px]">
       {pageAction === "create" && !startContest ? (
         <CreateContestStart onClick={handleStartCreating} />
       ) : pageAction === "create" && startContest ? (

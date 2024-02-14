@@ -42,7 +42,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onClick }) => {
         </div>
       </div>
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-4 w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] hover:border-neutral-11 transition-colors duration-300">
+        <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] hover:border-neutral-11 transition-colors duration-300">
           <p className="text-neutral-11 text-[20px] font-bold">create new contest</p>
           <p className="text-neutral-14 text-[16px]">
             create a brand new contest according <br /> to whatever criteria you want.
@@ -55,7 +55,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onClick }) => {
             create contest
           </ButtonV3>
         </div>
-        <div className="flex flex-col gap-4 w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] opacity-50">
+        <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] opacity-50">
           <p className="text-neutral-11 text-[20px] font-bold">recreate an old contest (coming soon)</p>
           <p className="text-neutral-14 text-[16px]">
             redeploy a preexisting contest by <br /> modifying it as much or as little as you like.

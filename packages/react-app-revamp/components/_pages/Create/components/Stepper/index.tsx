@@ -28,7 +28,6 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
 
   const handleStepClick = (index: number) => {
-    //TODO: check why step click isn't working ( could be due to step reorder )
     // Navigate backwards always allowed
     if (index < currentStep) {
       setCurrentStep(index);

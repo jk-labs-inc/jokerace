@@ -2,10 +2,10 @@ import moment from "moment";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
 export type StateKey =
-  | "tag"
   | "title"
+  | "prompt"
+  | "type"
   | "summary"
-  | "description"
   | "votingOpen"
   | "votingClose"
   | "submissionOpen"
@@ -96,9 +96,9 @@ const submissionRequirementsValidation = (submissionRequirements: string) => {
 export const validationFunctions = new Map<number, { validation: (...args: any[]) => string; stateKeys: StateKey[] }[]>(
   [
     [0, [{ validation: titleValidation, stateKeys: ["title"] }]],
-    [1, [{ validation: promptValidation, stateKeys: ["description"] }]],
+    [1, [{ validation: promptValidation, stateKeys: ["prompt"] }]],
     [2, [{ validation: summaryValidation, stateKeys: ["summary"] }]],
-    [3, [{ validation: typeValidation, stateKeys: ["tag"] }]],
+    [3, [{ validation: typeValidation, stateKeys: ["type"] }]],
     [
       4,
       [

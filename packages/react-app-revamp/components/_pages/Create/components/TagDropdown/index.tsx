@@ -19,15 +19,9 @@ interface CreateTagDropdownProps {
 const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, className, onChange, onMenuStateChange }) => {
   const [query, setQuery] = useState(options.find(option => option.value === value)?.label || value);
   const [showOptions, setShowOptions] = useState(false);
+  const [showAllOptions, setShowAllOptions] = useState(false);
+  const [selectedOptionValue, setSelectedOptionValue] = useState(value);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  let filteredOptions =
-    query === ""
-      ? options
-      : options.filter(
-          option =>
-            option.label.toLowerCase().includes(query.toLowerCase()) ||
-            option.value.toLowerCase().includes(query.toLowerCase()),
-        );
 
   useEffect(() => {
     onMenuStateChange?.(showOptions);
@@ -46,35 +40,41 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
     };
   }, []);
 
+  useEffect(() => {
+    if (showOptions) {
+      setShowAllOptions(true);
+    }
+  }, [showOptions]);
+
   const handleInputChange = (value: string) => {
     setQuery(value);
     onChange?.(value);
-    const matchingOptions = options.filter(option => option.value.toLowerCase().startsWith(value.toLowerCase()));
-    if (value !== "" && matchingOptions.length > 0) {
-      setShowOptions(true);
-    } else {
-      setShowOptions(false);
-    }
+    setShowAllOptions(false);
+    setShowOptions(true);
   };
 
   const handleOptionClick = (optionValue: string) => {
-    filteredOptions = options;
     const selectedOption = options.find(option => option.value === optionValue);
     if (selectedOption) {
       setQuery(selectedOption.label);
+      setSelectedOptionValue(selectedOption.value);
       setShowOptions(false);
+      setShowAllOptions(false);
       onChange?.(selectedOption.value);
     }
   };
 
   const handleDropdownMenu = () => {
-    filteredOptions = options;
-    if (filteredOptions.length > 0) {
-      setShowOptions(!showOptions);
-    } else {
-      setShowOptions(false);
-    }
+    setShowOptions(prevState => !prevState);
   };
+
+  let filteredOptions = showAllOptions
+    ? options
+    : options.filter(
+        option =>
+          option.label.toLowerCase().includes(query.toLowerCase()) ||
+          option.value.toLowerCase().includes(query.toLowerCase()),
+      );
 
   return (
     <div className="flex relative" ref={wrapperRef}>
@@ -87,16 +87,17 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
       <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleDropdownMenu} />
       {showOptions && (
         <ul
-          className={`flex flex-col absolute z-10 mt-14 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
+          className={`flex flex-col absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
         >
           {filteredOptions.map(option => (
             <li
-              className={`pl-4 pt-2 pb-2 text-neutral-11 text-[18px] cursor-pointer 
+              className={`pl-4 pt-2 pb-1 text-neutral-11 text-[18px] cursor-pointer 
               ${
                 option.disabled
                   ? "opacity-50 pointer-events-none"
                   : "hover:bg-neutral-3 transition-colors duration-300 ease-in-out"
-              }`}
+              }
+              ${selectedOptionValue === option.value ? "font-bold" : ""}`}
               key={option.value}
               onClick={() => handleOptionClick(option.value)}
             >
