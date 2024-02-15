@@ -18,6 +18,7 @@ import { luksoWallet } from "./custom-wallets/luksoWallet";
 
 import { configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { aevo } from "./custom-chains/aevo";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -81,6 +82,7 @@ import { roninTestnet } from "./custom-chains/roninTestnet";
 import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
+import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
@@ -132,6 +134,8 @@ const totalChains: Chain[] = [
   palm,
   lyra,
   fraxtal,
+  aevo,
+  sei,
   polygonTestnet,
   sepolia,
   goerli,
