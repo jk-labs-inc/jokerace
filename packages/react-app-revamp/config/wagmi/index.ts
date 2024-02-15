@@ -82,6 +82,7 @@ import { roninTestnet } from "./custom-chains/roninTestnet";
 import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
+import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
@@ -134,6 +135,7 @@ const totalChains: Chain[] = [
   lyra,
   fraxtal,
   aevo,
+  sei,
   polygonTestnet,
   sepolia,
   goerli,
