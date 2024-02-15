@@ -1,5 +1,8 @@
+import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
+import { CustomizationOptions, SubmissionType, SubmissionTypeOption } from "@hooks/useDeployContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import moment from "moment";
+import { Option } from "../components/DefaultDropdown";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
 export type StateKey =
@@ -13,7 +16,16 @@ export type StateKey =
   | "votingMerkle"
   | "submissionMerkle"
   | "submissionRequirements"
-  | "charge";
+  | "charge"
+  | "customization";
+
+interface SpecialStepConditions {
+  submissionMerkle: any;
+  submissionRequirementsOption: Option;
+  submissionTypeOption: SubmissionTypeOption;
+  votingMerkle: any;
+  submissionTab: number;
+}
 
 const titleValidation = (title: string) => {
   if (!title || title.length >= CONTEST_TITLE_MAX_LENGTH) {
@@ -96,7 +108,19 @@ const submissionRequirementsValidation = (submissionRequirements: string) => {
 };
 
 const monetizationValidation = (charge: Charge) => {
-  if (!charge) return "Please enter a valid charge";
+  if (charge.error) return "Please enter a valid charge";
+
+  return "";
+};
+
+const customizationValidation = (customization: CustomizationOptions) => {
+  if (
+    customization.allowedSubmissionsPerUser === 0 ||
+    customization.maxSubmissions === 0 ||
+    customization.maxSubmissions > MAX_SUBMISSIONS_LIMIT
+  ) {
+    return "Please enter a valid number";
+  }
 
   return "";
 };
@@ -140,13 +164,34 @@ export const validationFunctions = new Map<number, { validation: (...args: any[]
         },
       ],
     ],
+    [
+      8,
+      [
+        {
+          validation: customizationValidation,
+          stateKeys: ["customization"],
+        },
+      ],
+    ],
   ],
 );
 
-export const validateStep = (step: number, state: any) => {
+// This function is only used when user clicks on a step in the stepper
+export const validateStep = (step: number, state: any, specialStepConditions: SpecialStepConditions) => {
   const validationConfigs = validationFunctions.get(step);
+  const submissionStep = step === 5;
+  const votingStep = step === 6;
 
   if (!validationConfigs) return;
+
+  if (submissionStep || votingStep) {
+    const canProceed = handleSpecialStepConditions(step, specialStepConditions);
+
+    if (!canProceed) {
+      return "error in step 5 or 6";
+    }
+    return "";
+  }
 
   for (const validationConfig of validationConfigs) {
     const { validation, stateKeys } = validationConfig;
@@ -159,4 +204,31 @@ export const validateStep = (step: number, state: any) => {
   }
 
   return "";
+};
+
+const handleSpecialStepConditions = (
+  currentStep: number,
+  {
+    submissionTypeOption,
+    submissionRequirementsOption,
+    submissionTab,
+    submissionMerkle,
+    votingMerkle,
+  }: SpecialStepConditions,
+) => {
+  if (currentStep === 5) {
+    if (
+      submissionTypeOption.value === SubmissionType.SameAsVoters ||
+      (submissionRequirementsOption.value === "anyone" && submissionTab === 0)
+    ) {
+      return true;
+    }
+    return Object.values(submissionMerkle).some(merkle => merkle !== null);
+  }
+
+  if (currentStep === 6) {
+    return Object.values(votingMerkle).some(merkle => merkle !== null);
+  }
+
+  return true;
 };

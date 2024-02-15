@@ -1,7 +1,8 @@
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { VotingMerkle } from "@hooks/useDeployContest/types";
 import { useEffect, useRef, useState } from "react";
-import CreateVotingRequirements from "../VotingRequirements";
 import CreateVotingAllowlist from "../VotingAllowlist";
+import CreateVotingRequirements from "../VotingRequirements";
 import CreateVotingCSVUploader from "../VotingUploadCsv";
 
 const tabOptions = [
@@ -11,12 +12,18 @@ const tabOptions = [
 ];
 
 const CreateVotingTabContent = () => {
-  const { setVotingTab, votingTab } = useDeployContestStore(state => state);
+  const { setVotingTab, votingTab, setVotingMerkle } = useDeployContestStore(state => state);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const onVotingTabChange = (tabIndex: number) => {
     setVotingTab(tabIndex);
+    setAllVotingMerkles(null);
+  };
+
+  const setAllVotingMerkles = (value: VotingMerkle | null) => {
+    const keys: MerkleKey[] = ["csv", "prefilled", "manual"];
+    keys.forEach(key => setVotingMerkle(key, value));
   };
 
   useEffect(() => {

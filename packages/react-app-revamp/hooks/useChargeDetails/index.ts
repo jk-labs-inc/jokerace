@@ -3,26 +3,37 @@ import { fetchChargeDetails } from "lib/monetization";
 import { useCallback, useEffect, useState } from "react";
 
 const useChargeDetails = (chainName: string) => {
-  const { setCharge } = useDeployContestStore();
+  const { setCharge, charge } = useDeployContestStore();
   const [minCostToPropose, setMinCostToPropose] = useState<number>(0);
   const [minCostToVote, setMinCostToVote] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
 
   const fetchDetails = useCallback(async () => {
+    setIsLoading(true);
+    setIsError(false);
+
     if (!chainName) {
       setIsLoading(false);
       setIsError(false);
       return;
     }
 
-    setIsLoading(true);
-    setIsError(false);
-
     const details = await fetchChargeDetails(chainName);
 
     setIsLoading(false);
     setIsError(details.isError);
+
+    if (details.isError) {
+      setCharge({
+        percentageToCreator: 50,
+        type: {
+          costToPropose: details.minCostToPropose,
+          costToVote: details.minCostToVote,
+        },
+        error: true,
+      });
+    }
 
     if (!details.isError) {
       setMinCostToPropose(details.minCostToPropose);
@@ -34,6 +45,7 @@ const useChargeDetails = (chainName: string) => {
           costToPropose: details.minCostToPropose,
           costToVote: details.minCostToVote,
         },
+        error: false,
       });
     }
   }, [chainName, setCharge]);

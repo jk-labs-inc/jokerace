@@ -3,19 +3,26 @@ import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, useState } from "react";
+import ContestParamsChargePercentToCreator from "./components/PercentToCreator";
 import ContestParamsChargeSubmission from "./components/Submission";
 import ContestParamsChargeVote from "./components/Vote";
-import ContestParamsChargePercentToCreator from "./components/PercentToCreator";
 
 interface CreateContestChargeProps {
   isConnected: boolean;
   chain: string;
   onError?: (value: boolean) => void;
+  onUnsupportedChain?: (value: boolean) => void;
 }
 
-const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain, onError }) => {
+const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain, onError, onUnsupportedChain }) => {
   const chainUnitLabel = chains.find(c => c.name === chain)?.nativeCurrency.symbol;
-  const { minCostToPropose, minCostToVote, isError, refetch: refetchChargeDetails } = useChargeDetails(chain);
+  const {
+    minCostToPropose,
+    minCostToVote,
+    isError,
+    refetch: refetchChargeDetails,
+    isLoading,
+  } = useChargeDetails(chain);
   const { charge, setCharge } = useDeployContestStore(state => state);
   const [costToProposeError, setCostToProposeError] = useState("");
   const [costToVoteError, setCostToVoteError] = useState("");
@@ -23,7 +30,7 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
   if (isError) {
     onError?.(true);
     return (
-      <p className="text-[24px] text-negative-11 font-bold">
+      <p className="text-[20px] text-negative-11 font-bold">
         ruh roh, we couldn't load charge details for this chain!{" "}
         <span className="underline cursor-pointer" onClick={refetchChargeDetails}>
           please try again
@@ -32,12 +39,23 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
     );
   }
 
-  if (!isConnected || minCostToPropose === 0 || minCostToVote === 0) return null;
+  if (isLoading) {
+    return <p className="loadingDots font-sabo text-[20px] text-neutral-9">Loading charge fees</p>;
+  }
+
+  if (!isConnected || minCostToPropose === 0 || minCostToVote === 0) {
+    onUnsupportedChain?.(true);
+    return null;
+  }
 
   const handleCostToProposeChange = (value: number | null) => {
     if (value === null || value < minCostToPropose) {
       setCostToProposeError(`must be at least ${minCostToPropose}`);
       onError?.(true);
+      setCharge({
+        ...charge,
+        error: true,
+      });
 
       return;
     } else {
@@ -51,6 +69,7 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
         ...charge.type,
         costToPropose: value,
       },
+      error: false,
     });
   };
 
@@ -58,6 +77,10 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
     if (value === null || value < minCostToVote) {
       setCostToVoteError(`must be at least ${minCostToVote}`);
       onError?.(true);
+      setCharge({
+        ...charge,
+        error: true,
+      });
       return;
     } else {
       setCostToVoteError("");
@@ -70,6 +93,7 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
         ...charge.type,
         costToVote: value,
       },
+      error: false,
     });
   };
 

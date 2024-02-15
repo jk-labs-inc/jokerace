@@ -1,5 +1,7 @@
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import Stepper from "./components/Stepper";
+import CreateContestConfirm from "./pages/ContestConfirm";
+import CreateContestMonetization from "./pages/ContestMonetization";
 import CreateContestParams from "./pages/ContestParams";
 import ContestPlay from "./pages/ContestPlay";
 import CreateContestPrompt from "./pages/ContestPrompt";
@@ -10,7 +12,6 @@ import CreateContestTiming from "./pages/ContestTiming";
 import CreateContestTitle from "./pages/ContestTitle";
 import CreateContestType from "./pages/ContestType";
 import CreateContestVoting from "./pages/ContestVoting";
-import CreateContestMonetization from "./pages/ContestMonetization";
 
 const steps = [
   { title: "title", content: <CreateContestTitle /> },
@@ -21,7 +22,8 @@ const steps = [
   { title: "submissions", content: <CreateContestSubmissions /> },
   { title: "voting", content: <CreateContestVoting /> },
   { title: "monetization", content: <CreateContestMonetization /> },
-  { title: "parameters", content: <CreateContestParams /> },
+  { title: "customization", content: <CreateContestParams /> },
+  { title: "confirm!", content: <CreateContestConfirm /> },
 ];
 
 const CreateFlow = () => {

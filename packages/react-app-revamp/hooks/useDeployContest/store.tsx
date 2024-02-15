@@ -3,6 +3,7 @@ import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { create } from "zustand";
+
 import { DEFAULT_SUBMISSIONS } from ".";
 import { Charge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
 
@@ -16,10 +17,21 @@ type Prompt = {
   evaluateVoters: string;
 };
 
+export enum ContestVisibility {
+  Public = "public",
+  Unlisted = "unlisted",
+}
+
 export type AdvancedOptions = {
   downvote: boolean;
   sorting: boolean;
   rankLimit: number;
+  contestVisibility: ContestVisibility;
+};
+
+export type CustomizationOptions = {
+  allowedSubmissionsPerUser: number;
+  maxSubmissions: number;
 };
 
 export enum SubmissionType {
@@ -77,8 +89,7 @@ export interface DeployContestState {
   };
   submissionRequirements: SubmissionRequirements;
   submissionTypeOption: SubmissionTypeOption;
-  allowedSubmissionsPerUser: number;
-  maxSubmissions: number;
+  customization: CustomizationOptions;
   advancedOptions: AdvancedOptions;
   isLoading: boolean;
   isSuccess: boolean;
@@ -114,8 +125,7 @@ export interface DeployContestState {
   setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) => void;
   setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => void;
   setSubmissionTypeOption: (submissionTypeOption: SubmissionTypeOption) => void;
-  setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
-  setMaxSubmissions: (maxSubmissions: number) => void;
+  setCustomization: (customization: CustomizationOptions) => void;
   setAdvancedOptions: (advancedOptions: AdvancedOptions) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
@@ -211,13 +221,17 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
         costToPropose: 0,
         costToVote: 0,
       },
+      error: false,
     },
-    allowedSubmissionsPerUser: 3,
-    maxSubmissions: DEFAULT_SUBMISSIONS,
+    customization: {
+      allowedSubmissionsPerUser: 3,
+      maxSubmissions: DEFAULT_SUBMISSIONS,
+    },
     advancedOptions: {
       downvote: false,
       sorting: true,
       rankLimit: 250,
+      contestVisibility: ContestVisibility.Public,
     },
     isLoading: false,
     isSuccess: false,
@@ -286,9 +300,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       set({ submissionAllowlistFields }),
     setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => set({ submissionRequirements }),
     setSubmissionTypeOption: (submissionTypeOption: SubmissionTypeOption) => set({ submissionTypeOption }),
-    setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
+    setCustomization: (customization: CustomizationOptions) => set({ customization }),
     setAdvancedOptions: (advancedOptions: AdvancedOptions) => set({ advancedOptions }),
-    setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
     setError: (step: number, error: ContestDeployError) => {

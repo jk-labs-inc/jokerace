@@ -1,4 +1,5 @@
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { useEffect, useRef, useState } from "react";
 import CreateSubmissionAllowlist from "../SubmissionAllowlist";
 import CreateSubmissionRequirements from "../SubmissionRequirements";
@@ -11,12 +12,18 @@ const tabOptions = [
 ];
 
 const CreateSubmissionTabContent = () => {
-  const { setSubmissionTab, submissionTab } = useDeployContestStore(state => state);
+  const { setSubmissionTab, submissionTab, setSubmissionMerkle } = useDeployContestStore(state => state);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const onSubmissionTabChange = (tabIndex: number) => {
     setSubmissionTab(tabIndex);
+    setAllSubmissionMerkles(null);
+  };
+
+  const setAllSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["csv", "prefilled", "manual"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
   };
 
   useEffect(() => {
