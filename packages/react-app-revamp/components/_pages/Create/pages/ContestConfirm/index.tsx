@@ -1,15 +1,15 @@
+import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
 import CreateContestConfirmAllowlists from "./components/Allowlists";
+import CreateContestConfirmCustomization from "./components/Customization";
 import CreateContestConfirmDescription from "./components/Description";
 import CreateContestConfirmMonetization from "./components/Monetization";
 import CreatContestConfirmSummary from "./components/Summary";
 import CreateContestConfirmTag from "./components/Tag";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
-import CreateContestConfirmCustomization from "./components/Customization";
-import CreateContestButton from "../../components/Buttons/Submit";
-import { useDeployContest } from "@hooks/useDeployContest";
 
 export enum Steps {
   ContestTitle = 0,

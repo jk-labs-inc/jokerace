@@ -92,11 +92,11 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
                 onClick={() => handleStepClick(index)}
                 onMouseEnter={() => setHoveredStep(index)}
                 onMouseLeave={() => setHoveredStep(null)}
-                className="flex flex-col items-center text-[24px] font-bold cursor-pointer relative"
+                className="flex flex-col items-center text-[20px] font-bold cursor-pointer relative"
               >
                 <hr
                   //TODO: fix the width of the line?
-                  className={`w-36 border-2 transition-colors duration-500 ease-in-out ${
+                  className={`w-32 3xl:w-36 border-2 transition-colors duration-500 ease-in-out ${
                     currentStep === index
                       ? "border-neutral-11"
                       : currentStep > index
