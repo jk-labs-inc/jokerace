@@ -45,7 +45,11 @@ const CreateContestConfirmAllowlists: FC<CreateContestConfirmAllowlistsProps> = 
   if (!isSubmissionMerklePrefilled && !isVotingMerklePrefilled) {
     return (
       <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
-        <div className={`flex flex-col gap-4 ${isHovered ? "text-neutral-11" : "text-neutral-14"}`}>
+        <div
+          className={`flex flex-col gap-4 ${
+            isHovered ? "text-neutral-11" : "text-neutral-14"
+          } transition-colors duration-300`}
+        >
           <p className="text-[16px] font-bold">allowlists:</p>
           <ul className="flex flex-col pl-8">
             <li className="text-[16px] list-disc">

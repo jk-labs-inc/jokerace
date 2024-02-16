@@ -49,7 +49,11 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
 
   return (
     <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
-      <div className={`flex flex-col gap-4 ${isHovered ? "text-neutral-11" : "text-neutral-14"}`}>
+      <div
+        className={`flex flex-col gap-4 ${
+          isHovered ? "text-neutral-11" : "text-neutral-14"
+        } transition-colors duration-300`}
+      >
         <p className="text-[16px] font-bold">
           monetization:
           {!chargeEnabled ? <b className="uppercase"> OFF</b> : null}

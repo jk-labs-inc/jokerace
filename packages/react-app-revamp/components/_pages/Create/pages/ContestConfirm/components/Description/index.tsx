@@ -15,7 +15,7 @@ interface CreateContestConfirmDescriptionProps {
 
 const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> = ({ prompt, step, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false); // State to manage the toggle of content and chevron rotation
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const convertSummarizePrompt = () => {
     const cheerio = load(prompt.summarize);
