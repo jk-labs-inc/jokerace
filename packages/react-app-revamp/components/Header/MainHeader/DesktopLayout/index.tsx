@@ -13,7 +13,9 @@ const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected
   return (
     <header className="px-10 flex items-center justify-between mt-2 mb-4">
       <Link href="/">
-        <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">JokeRace</h1>
+        <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">
+          J<span className="text-[30px]">oke</span>R<span className="text-[30px]">ace</span>
+        </h1>
       </Link>
       <div className="flex-1 flex justify-center items-center">
         <div

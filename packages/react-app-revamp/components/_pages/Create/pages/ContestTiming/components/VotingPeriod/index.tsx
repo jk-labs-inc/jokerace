@@ -22,7 +22,6 @@ const CreateVotingPeriod = () => {
   };
 
   const onTimingPeriodChange = (option: string) => {
-    const now = new Date();
     setTimingOption({
       value: option,
       label: timingPeriodsOptions.find(opt => opt.value === option)?.label ?? "",
@@ -30,7 +29,7 @@ const CreateVotingPeriod = () => {
 
     const timingOption = option as TimingPeriod;
 
-    const votingCloseDate = addTimeBasedOnPeriod(now, timingOption);
+    const votingCloseDate = addTimeBasedOnPeriod(votingOpen, timingOption);
     setVotingClose(votingCloseDate);
   };
 
