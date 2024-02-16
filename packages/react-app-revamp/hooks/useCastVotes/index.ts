@@ -106,6 +106,7 @@ export function useCastVotes() {
           vote_amount: amount,
           created_at: Math.floor(Date.now() / 1000),
           amount_sent: charge ? Number(formatEther(BigInt(charge.type.costToVote))) : null,
+          percentage_to_creator: charge ? charge.percentageToCreator : null,
         });
       } catch (error) {
         console.error("Error in addUserActionForAnalytics:", error);
