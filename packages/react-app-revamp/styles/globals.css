@@ -155,7 +155,6 @@ li {
 .react-datepicker__header {
   background-color: black !important;
   color: white !important;
-  font-family: sabo, sans-serif !important;
 }
 
 .react-datepicker__current-month,
