@@ -71,12 +71,11 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
 
       {showOptions && (
         <ul
-          className={`flex flex-col gap-4 pt-4 pl-4 pb-4 absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
+          className={`flex flex-col  absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
         >
           {options.map(option => (
             <li
-              //TODO: check padding here
-              className={`text-neutral-11 text-[18px] cursor-pointer 
+              className={`text-neutral-11 pt-2 pl-4 pb-2 text-[18px] cursor-pointer 
         ${
           option.disabled
             ? "opacity-50 pointer-events-none"

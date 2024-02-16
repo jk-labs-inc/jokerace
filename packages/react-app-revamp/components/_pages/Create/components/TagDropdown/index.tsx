@@ -91,7 +91,7 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
         >
           {filteredOptions.map(option => (
             <li
-              className={`pl-4 pt-2 pb-1 text-neutral-11 text-[20px] cursor-pointer 
+              className={`pt-2 pl-4 pb-2 text-neutral-11 text-[20px] cursor-pointer 
               ${
                 option.disabled
                   ? "opacity-50 pointer-events-none"
