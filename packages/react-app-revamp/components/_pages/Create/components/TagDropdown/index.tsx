@@ -87,11 +87,11 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
       <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleDropdownMenu} />
       {showOptions && (
         <ul
-          className={`flex flex-col absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
+          className={`flex flex-col absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip overflow-y-scroll h-80 md:h-[450px] animate-appear ${className}`}
         >
           {filteredOptions.map(option => (
             <li
-              className={`pl-4 pt-2 pb-1 text-neutral-11 text-[18px] cursor-pointer 
+              className={`pl-4 pt-2 pb-1 text-neutral-11 text-[20px] cursor-pointer 
               ${
                 option.disabled
                   ? "opacity-50 pointer-events-none"
