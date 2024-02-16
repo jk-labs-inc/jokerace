@@ -7,7 +7,7 @@ interface CreateConfirmLayoutProps {
   onClick?: () => void;
 }
 
-const CreateConfirmLayout: FC<CreateConfirmLayoutProps> = ({ children, onClick, onHover }) => {
+const CreateContestConfirmLayout: FC<CreateConfirmLayoutProps> = ({ children, onClick, onHover }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const onMouseEnter = () => {
@@ -21,18 +21,18 @@ const CreateConfirmLayout: FC<CreateConfirmLayoutProps> = ({ children, onClick, 
   };
 
   return (
-    <div className="relative flex items-center" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+    <div className="relative" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
       <div
-        className={`absolute left-[-24px] transition-opacity duration-300 ${
+        className={`absolute top-[4px] left-[-24px] cursor-pointer transition-opacity duration-300 ${
           isHovered ? "opacity-100" : "opacity-0"
-        } cursor-pointer`}
-        onClick={() => onClick?.()}
+        }`}
+        onClick={onClick}
       >
         <Image src="/create-flow/edit.svg" height={16} width={16} alt="edit" />
       </div>
-      {children}
+      <div className="flex items-start">{children}</div>
     </div>
   );
 };
 
-export default CreateConfirmLayout;
+export default CreateContestConfirmLayout;

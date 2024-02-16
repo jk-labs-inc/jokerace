@@ -12,7 +12,7 @@ type ContestDeployError = {
   message: string;
 };
 
-type Prompt = {
+export type Prompt = {
   summarize: string;
   evaluateVoters: string;
 };
@@ -99,6 +99,11 @@ export interface DeployContestState {
   submissionTab: number;
   votingTab: number;
   charge: Charge;
+  minCharge: {
+    minCostToPropose: number;
+    minCostToVote: number;
+  };
+  prevChainRefInCharge: string;
   setDeployContestData: (
     chain: string,
     chainId: number,
@@ -135,6 +140,8 @@ export interface DeployContestState {
   setSubmissionTab: (tab: number) => void;
   setVotingTab: (tab: number) => void;
   setCharge: (charge: Charge) => void;
+  setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => void;
+  setPrevChainRefInCharge: (chain: string) => void;
   reset: () => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
@@ -223,6 +230,11 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       },
       error: false,
     },
+    minCharge: {
+      minCostToPropose: 0,
+      minCostToVote: 0,
+    },
+    prevChainRefInCharge: "",
     customization: {
       allowedSubmissionsPerUser: 3,
       maxSubmissions: DEFAULT_SUBMISSIONS,
@@ -320,6 +332,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setSubmissionTab: (submissionTab: number) => set({ submissionTab }),
     setVotingTab: (votingTab: number) => set({ votingTab }),
     setCharge: (charge: Charge) => set({ charge }),
+    setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => set({ minCharge }),
+    setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
     reset: () => set({ ...initialState }),
   };
 });

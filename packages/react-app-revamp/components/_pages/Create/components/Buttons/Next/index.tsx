@@ -47,7 +47,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
 
   return (
     <div className="flex gap-4 items-start mb-5">
-      <div className={`flex flex-col items-center gap-2`}>
+      <div className={`flex flex-col gap-4 items-center`}>
         <ButtonV3
           colorClass={`text-[20px] bg-gradient-next rounded-[10px] font-bold ${
             shake ? "animate-shakeTop" : ""

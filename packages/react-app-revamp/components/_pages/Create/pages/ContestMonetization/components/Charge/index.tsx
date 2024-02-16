@@ -16,14 +16,9 @@ interface CreateContestChargeProps {
 
 const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain, onError, onUnsupportedChain }) => {
   const chainUnitLabel = chains.find(c => c.name === chain)?.nativeCurrency.symbol;
-  const {
-    minCostToPropose,
-    minCostToVote,
-    isError,
-    refetch: refetchChargeDetails,
-    isLoading,
-  } = useChargeDetails(chain);
-  const { charge, setCharge } = useDeployContestStore(state => state);
+  const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain);
+  const { charge, minCharge, setCharge } = useDeployContestStore(state => state);
+  const { minCostToPropose, minCostToVote } = minCharge;
   const [costToProposeError, setCostToProposeError] = useState("");
   const [costToVoteError, setCostToVoteError] = useState("");
 

@@ -13,7 +13,7 @@ const CreateSubmissionType = () => {
     setSubmissionTypeOption(value);
   };
 
-  //TODO: make they are the exactg same italic
+  //TODO: make they are the exact same italic
   return (
     <div className="flex flex-col gap-2">
       <p className="text-[20px] text-neutral-11">

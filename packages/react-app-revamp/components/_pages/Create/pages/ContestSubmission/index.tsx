@@ -1,24 +1,30 @@
-import { SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
+import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
+import { useNextStep } from "../../hooks/useNextStep";
 import CreateSubmissionTabContent from "./components/SubmissionTabContent";
 import CreateSubmissionTabMessage from "./components/SubmissionTabMessage";
 import CreateSubmissionType from "./components/SubmissionType";
-import CreateNextButton from "../../components/Buttons/Next";
-import { useNextStep } from "../../hooks/useNextStep";
-import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 
 const CreateContestSubmissions = () => {
-  const { step, submissionTypeOption, setSubmissionMerkle } = useDeployContestStore(state => state);
+  const { step, submissionTypeOption, setSubmissionMerkle, setVotingMerkle } = useDeployContestStore(state => state);
   const onNextStep = useNextStep([]);
 
-  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
-    setSubmissionMerkle("manual", value);
-    setSubmissionMerkle("prefilled", value);
+  const setAllSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["csv", "prefilled", "manual"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
+  };
+
+  const setAllVotingMerkles = (value: VotingMerkle | null) => {
+    const keys: MerkleKey[] = ["csv", "prefilled", "manual"];
+    keys.forEach(key => setVotingMerkle(key, value));
   };
 
   // Handle next step for same as voters option
   const handleNextStep = () => {
-    setBothSubmissionMerkles(null);
+    setAllSubmissionMerkles(null);
+    setAllVotingMerkles(null);
     onNextStep();
   };
 

@@ -17,8 +17,7 @@ const CreateSubmissionPeriod = () => {
   const currentVotesOpenError = currentStepError?.message.startsWith("Voting open") ? currentStepError.message : "";
   const { timingOption: submissionPeriodTimingOption, setTimingOption: setSubmissionPeriodTimingOption } =
     useTimingOptionForSubmissionPeriod(state => state);
-  const { timingOption: votingPeriodTimingOption, setTimingOption: setVotingPeriodTimingOption } =
-    useTimingOptionForVotingPeriod(state => state);
+  const { timingOption: votingPeriodTimingOption } = useTimingOptionForVotingPeriod(state => state);
   const [hideDatePickers, setHideDatePickers] = useState<boolean>(false);
 
   const onSubmissionDateChange = (value: Date) => {
