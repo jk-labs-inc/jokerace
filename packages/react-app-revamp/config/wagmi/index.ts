@@ -84,6 +84,7 @@ import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
+import { syndicateFrame } from "./custom-chains/syndicateFrame";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
@@ -136,6 +137,7 @@ const totalChains: Chain[] = [
   fraxtal,
   aevo,
   sei,
+  syndicateFrame,
   polygonTestnet,
   sepolia,
   goerli,
