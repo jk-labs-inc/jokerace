@@ -17,7 +17,7 @@ export async function uploadToImgur(base64Image: string): Promise<string> {
         Authorization: `Client-ID ${IMGUR_CLIENT_ID}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ image: base64Image }),
+      body: JSON.stringify({ image: base64Image, type: "base64" }),
     });
 
     if (!response.ok) {
