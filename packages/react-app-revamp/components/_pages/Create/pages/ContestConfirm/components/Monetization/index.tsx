@@ -5,6 +5,7 @@ import { FC, useState } from "react";
 import { useNetwork } from "wagmi";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -62,11 +63,11 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
           <p className="loadingDots font-sabo text-[14px]  text-neutral-14">loading charge fees</p>
         ) : chargeEnabled ? (
           <ul className="flex flex-col pl-8">
-            <li className="text-[16px] list-disc">
-              {charge.type.costToPropose} {nativeCurrencySymbol} to submit
+            <li className={`text-[16px] list-disc`}>
+              {charge.type.costToPropose} <span className="uppercase">${nativeCurrencySymbol}</span> to submit
             </li>
-            <li className="text-[16px] list-disc">
-              {charge.type.costToVote} {nativeCurrencySymbol} to vote
+            <li className={`text-[16px] list-disc`}>
+              {charge.type.costToVote} <span className="uppercase">${nativeCurrencySymbol}</span> to vote
             </li>
             <li className="text-[16px] list-disc normal-case">{percentageToCreatorMessage()}</li>
           </ul>

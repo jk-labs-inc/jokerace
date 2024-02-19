@@ -34,7 +34,6 @@ const CreateSubmissionAllowlist = () => {
       newAllowList[field.address] = 10; // numVotes is hardcoded to 10
     }
 
-    // todo: vratit se odje
     setSubmissionAllowlist("manual", hasError ? {} : newAllowList);
   };
 
