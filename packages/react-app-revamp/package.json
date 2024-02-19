@@ -14,7 +14,7 @@
     "@heroicons/react": "^1.0.6",
     "@lens-protocol/client": "^2.0.0-alpha.25",
     "@lens-protocol/metadata": "^1.0.0",
-    "@rainbow-me/rainbowkit": "^2.0.0-beta.2",
+    "@rainbow-me/rainbowkit": "2",
     "@supabase/supabase-js": "^2.39.0",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@tanstack/react-query": "^5.17.19",

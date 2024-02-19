@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const proteus: Chain = {
   id: 88002,
   name: "proteus",
-  network: "proteus",
   iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,

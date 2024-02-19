@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const fraxtal: Chain = {
   id: 252,
   name: "fraxtal",
-  network: "fraxtal",
   iconUrl: "/fraxtal.svg",
   nativeCurrency: {
     decimals: 18,

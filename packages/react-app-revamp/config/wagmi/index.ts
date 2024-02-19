@@ -1,4 +1,4 @@
-import { connectorsForWallets } from "@rainbow-me/rainbowkit";
+import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
   bitgetWallet,
@@ -15,6 +15,7 @@ import {
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 
+import { Transport } from "viem";
 import { createConfig, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
@@ -64,6 +65,8 @@ import { nearTestnet } from "./custom-chains/nearTestnet";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
+import { palm } from "./custom-chains/palm";
+import { palmTestnet } from "./custom-chains/palmTestnet";
 import { polygon } from "./custom-chains/polygon";
 import { polygonTestnet } from "./custom-chains/polygonTestnet";
 import { polygonZk } from "./custom-chains/polygonZk";
@@ -100,7 +103,7 @@ declare module "wagmi" {
   }
 }
 
-export const chains: any = [
+export const chains: readonly [Chain, ...Chain[]] = [
   polygon,
   arbitrumOne,
   optimism,
@@ -208,18 +211,20 @@ const connectors = connectorsForWallets(
   },
 );
 
-const transports: Transports = {
-  [mainnet.id]: fallback([http(mainnet.rpcUrls.default.http[0]), http(mainnet.rpcUrls.public.http[0])]),
-  [arbitrumOne.id]: fallback([http(arbitrumOne.rpcUrls.default.http[0]), http(arbitrumOne.rpcUrls.public.http[0])]),
-  [mantleTestnet.id]: fallback([
-    http(mantleTestnet.rpcUrls.default.http[0]),
-    http(mantleTestnet.rpcUrls.public.http[0]),
-  ]),
+const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
+  return chains.reduce<Transports>((acc, chain) => {
+    if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
+      acc[chain.id] = fallback([http(chain.rpcUrls.default.http[0]), http(chain.rpcUrls.public.http[0])]);
+    }
+    return acc;
+  }, {});
 };
+
+const transports = createTransports(chains);
 
 export const config = createConfig({
   connectors,
-  chains: [arbitrumOne, mainnet, mantleTestnet],
+  chains,
   transports,
 });
 

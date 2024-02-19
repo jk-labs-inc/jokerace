@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const fuse: Chain = {
   id: 122,
   name: "fuse",
-  network: "fuse",
   iconUrl: "/fuse.svg",
   nativeCurrency: {
     decimals: 18,

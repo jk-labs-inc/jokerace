@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const mode: Chain = {
   id: 34443,
   name: "mode",
-  network: "mode",
   iconUrl: "/mode.svg",
   nativeCurrency: {
     decimals: 18,

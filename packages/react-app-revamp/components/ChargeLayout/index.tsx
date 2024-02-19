@@ -23,7 +23,7 @@ const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({ charg
   const { address } = useAccount();
   const asPath = router.asPath;
   const { chainName } = extractPathSegments(asPath);
-  const chainUnitLabel = chains.find(c => c.name === chainName)?.nativeCurrency.symbol;
+  const chainUnitLabel = chains.find((c: { name: string }) => c.name === chainName)?.nativeCurrency.symbol;
   const chargeAmount = type === "propose" ? charge.type.costToPropose : charge.type.costToVote;
   const insufficientBalance = accountData.value < chargeAmount;
   const entryChargeFormatted = formatEther(BigInt(chargeAmount));
