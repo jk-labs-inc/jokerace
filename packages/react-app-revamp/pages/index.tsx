@@ -102,8 +102,7 @@ const Page: NextPage = () => {
       <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-4 md:mt-14 lg:mt-6 max-w-[1350px] 3xl:pl-28 2xl:pr-0 ">
         <div className="hidden lg:flex mb-8">
           <p className="text-[18px] md:text-[20px] font-bold">
-            contests for communities to make, <br />
-            execute, and reward decisions
+            contests for communities to run, grow, and monetize
           </p>
         </div>
 

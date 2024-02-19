@@ -7,11 +7,10 @@ const Page: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Page not found - jokerace</title>
+        <title>Page not found - JokeRace</title>
         <meta
           name="description"
-          content="jokerace - contests for communities to make,
-          execute, and reward decisions"
+          content="JokeRace - contests for communities to run, grow, and monetize"
         />
       </Head>
       <div className="container m-auto sm:text-center animate-appear">
