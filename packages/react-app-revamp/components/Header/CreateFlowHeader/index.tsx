@@ -31,7 +31,7 @@ const CreateFlowHeader = () => {
           address={address ?? ""}
           isConnected={isConnected}
           pageAction={pageAction}
-          step={step}
+          step={step + 1}
           setPageAction={setPageAction}
           openConnectModal={openConnectModal}
           openAccountModal={openAccountModal}

@@ -1,5 +1,4 @@
 import CreateRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
-import CreateVotingRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 
@@ -26,10 +25,10 @@ const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSet
     });
   };
 
-  const onMinTokensRequiredChange = (minTokens: string) => {
+  const onMinTokensRequiredChange = (minTokens: number | null) => {
     setVotingRequirements({
       ...votingRequirements,
-      minTokensRequired: parseFloat(minTokens),
+      minTokensRequired: minTokens ?? 0,
     });
   };
 
@@ -40,13 +39,15 @@ const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSet
     });
   };
 
-  const onPowerValueChange = (votingPower: string) => {
-    const decimalPlaces = (votingPower.split(".")[1] || "").length;
-    if (decimalPlaces <= 4) {
-      setVotingRequirements({
-        ...votingRequirements,
-        powerValue: parseFloat(votingPower),
-      });
+  const onPowerValueChange = (votingPower: number | null) => {
+    if (votingPower !== null) {
+      const decimalPlaces = votingPower.toString().split(".")[1]?.length || 0;
+      if (decimalPlaces <= 4) {
+        setVotingRequirements({
+          ...votingRequirements,
+          powerValue: votingPower,
+        });
+      }
     }
   };
 

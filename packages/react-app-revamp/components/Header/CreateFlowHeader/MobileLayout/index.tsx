@@ -2,6 +2,7 @@ import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import BurgerMenu from "@components/UI/BurgerMenu";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import { useCreateContestStartStore } from "@components/_pages/Create/pages/ContestStart";
 import { FOOTER_LINKS } from "@config/links";
 import { ROUTE_VIEW_USER } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
@@ -30,13 +31,22 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   openAccountModal,
   onPreviousStep,
 }) => {
+  const { setStartContest, startContest } = useCreateContestStartStore(state => state);
   const allowedLinks = ["Github", "Mirror", "Twitter", "Telegram", "Report a bug", "Terms"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
+
+  const onBackHandler = () => {
+    if (step === 1) {
+      setStartContest(false);
+    } else {
+      onPreviousStep?.();
+    }
+  };
   return (
     <>
       <header className={`flex flex-row items-center justify-between px-[30px] mt-4`}>
-        {pageAction === "create" && step > 0 && (
-          <div onClick={onPreviousStep}>
+        {pageAction === "create" && step > 0 && startContest && (
+          <div onClick={onBackHandler}>
             <Image src="/create-flow/back_mobile.svg" className="mt-[5px]" width={30} height={30} alt="back" />
           </div>
         )}

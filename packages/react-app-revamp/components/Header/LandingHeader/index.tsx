@@ -23,8 +23,10 @@ const LandingHeader = () => {
     <header className="flex items-center flex-col lg:flex-row gap-5 lg:gap-20 lg:pl-8 lg:pr-8 max-w-[1350px] 3xl:pl-16">
       <Link href="/">
         <div>
-          <h1 className="font-sabo text-primary-10 text-[55px] md:text-[80px]">JOKERACE</h1>
-          <p className="text-primary-10 text-700 text-center lg:text-left lg:pl-9 3xl:pl-12 font-bold mt-[-10px] text-[20px] md:text-[20px]">
+          <h1 className="font-sabo text-neutral-11 normal-case text-[80px]">
+            J<span className="text-[55px]">oke</span>R<span className="text-[55px]">ace</span>
+          </h1>
+          <p className="text-neutral-11 text-700 text-center lg:text-left lg:pl-9 3xl:pl-12 font-bold mt-[-10px] text-[20px] md:text-[20px]">
             noun. US /dʒoʊ·​kreɪs/
           </p>
         </div>

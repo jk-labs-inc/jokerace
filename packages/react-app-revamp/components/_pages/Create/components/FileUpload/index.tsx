@@ -1,7 +1,8 @@
-import { CloudIcon, DocumentAddIcon, DocumentIcon } from "@heroicons/react/outline";
+import { DocumentAddIcon } from "@heroicons/react/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useMemo, useRef, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 type FileTypes = "csv" | "docx";
 
@@ -16,10 +17,13 @@ interface FileUploadProps {
 
 const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isSuccess }) => {
   const { errors } = useDeployContestStore(state => state);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragOver, setIsDragOver] = useState<boolean>(false);
   const currentStepError = errors.find(error => error.step === step);
   const entriesError = currentStepError?.message === "entries";
+  const fileUploadIconWidth = isMobile ? 58 : 76;
+  const fileUploadIconHeight = isMobile ? 34 : 45;
 
   const handleFileInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -34,7 +38,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
 
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setIsDragOver(true); // set drag over state to true
+    setIsDragOver(true);
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
@@ -57,13 +61,15 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
 
   const Icon = useMemo<React.ReactNode>(() => {
     if (type === "csv") {
-      return <Image src="/create-flow/csv_upload.png" width={76} height={45} alt="csv" />;
+      return (
+        <Image src="/create-flow/csv_upload.png" width={fileUploadIconWidth} height={fileUploadIconHeight} alt="csv" />
+      );
     } else if (type === "docx") {
       return <DocumentAddIcon className="w-[50px]" />;
     } else {
       return null;
     }
-  }, [type]);
+  }, [fileUploadIconHeight, fileUploadIconWidth, type]);
 
   // Define the mime types for each file type
   const mimeTypes: Record<FileTypes, string> = {
@@ -76,8 +82,8 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
     : isSuccess
     ? "border-positive-11 hover:border-positive-9"
     : isDragOver
-    ? "border-primary-10"
-    : "hover:border-primary-10";
+    ? "border-neutral-10"
+    : "border-neutral-10 hover:border-neutral-11";
 
   return (
     <div
@@ -85,9 +91,9 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
-      className={`inline-flex items-center gap-6 ${
+      className={`flex shadow-file-upload m-auto md:m-0 flex-col w-[328px] h-40 md:w-[520px] md:h-60 justify-center items-center gap-4 ${
         type === "csv" ? "py-7" : "py-3"
-      } px-10 border-2 border-dotted rounded-[10px] cursor-pointer transition-all duration-500 ease-in-out ${borderStyles}`}
+      } px-10 border-2 border-dotted rounded-[25px] cursor-pointer transition-all duration-500 ease-in-out ${borderStyles}`}
     >
       <input
         ref={fileInputRef}
@@ -99,17 +105,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
       {!entriesError && !isSuccess && Icon}
 
       <div className={`text-[16px] flex flex-col ${isSuccess ? "gap-3" : "gap-0"}`}>
-        {entriesError ? (
-          <>
-            <p className="font-bold text-negative-11 text-center">🚨 ruh-roh!</p>
-            <p className="text-center text-negative-11">
-              items in red above aren’t valid.
-              <br />
-              please edit or delete them—or <br />
-              clear allowlist and re-upload.
-            </p>
-          </>
-        ) : isSuccess ? (
+        {isSuccess ? (
           <>
             <div className="flex gap-4 items-center text-positive-11">
               <Image src="/create-flow/success.png" height={32} width={32} alt="success" />

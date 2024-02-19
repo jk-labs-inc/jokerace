@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { isSupabaseConfigured } from "@helpers/database";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, ReactElement, useState } from "react";
 import CreateContestDeploying from "../../pages/ContestDeploying";
 import { validateStep } from "../../utils/validation";
@@ -23,6 +23,11 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
     errors,
     isLoading,
     isSuccess,
+    submissionMerkle,
+    submissionRequirementsOption,
+    submissionTypeOption,
+    votingMerkle,
+    submissionTab,
     ...state
   } = useDeployContestStore(state => state);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
@@ -36,7 +41,13 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
 
     // Navigate forwards, validate each step from the current up to the clicked step
     for (let stepToValidate = currentStep; stepToValidate <= index; stepToValidate++) {
-      const errorMessage = validateStep(stepToValidate, state);
+      const errorMessage = validateStep(stepToValidate, state, {
+        submissionMerkle,
+        submissionRequirementsOption,
+        submissionTypeOption,
+        votingMerkle,
+        submissionTab,
+      });
 
       // If an error is found, don't proceed and break out of the loop
       if (errorMessage) {
@@ -74,28 +85,28 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
         <CreateContestDeploying />
       ) : (
         <div>
-          <div className="hidden lg:flex gap-2 mt-12">
+          <div className="hidden lg:flex gap-[6px] mt-12">
             {steps.map((step, index) => (
               <div
                 key={index}
                 onClick={() => handleStepClick(index)}
                 onMouseEnter={() => setHoveredStep(index)}
                 onMouseLeave={() => setHoveredStep(null)}
-                className="flex flex-col items-center text-[24px] font-bold cursor-pointer relative"
+                className="flex flex-col items-center text-[16px] 3xl:text-[18px] 4xl:text-[20px] font-bold cursor-pointer relative"
               >
                 <hr
-                  className={`w-32 3xl:w-36 border-2 transition-colors duration-500 ease-in-out ${
+                  className={`w-24 3xl:w-28 4xl:w-36 border-2 transition-colors duration-500 ease-in-out ${
                     currentStep === index
-                      ? "border-primary-10"
+                      ? "border-neutral-11"
                       : currentStep > index
-                      ? "border-primary-7"
+                      ? "border-neutral-10"
                       : "border-neutral-10"
                   }`}
                 />
                 {currentStep === index ? (
-                  <p className="text-primary-10">{step.title}</p>
+                  <p className="text-neutral-11">{step.title}</p>
                 ) : hoveredStep === index ? (
-                  <p className={`${currentStep > index ? "text-primary-7" : "text-neutral-10"}`}>{step.title}</p>
+                  <p className="text-neutral-10">{step.title}</p>
                 ) : null}
               </div>
             ))}

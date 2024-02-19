@@ -36,7 +36,7 @@ const sizeClasses = {
   [ButtonSize.DEFAULT]: "w-[120px] h-8",
   [ButtonSize.DEFAULT_LONG]: "w-40 h-8",
   [ButtonSize.LARGE]: "w-40 h-[40px]",
-  [ButtonSize.EXTRA_LARGE]: "w-[200px] h-12",
+  [ButtonSize.EXTRA_LARGE]: "w-[216px] h-[40px]",
   [ButtonSize.EXTRA_LARGE_LONG]: "w-[240px] h-[40px]",
   [ButtonSize.FULL]: "w-full h-[40px]",
 };

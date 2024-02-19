@@ -1,14 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import FileUpload from "@components/_pages/Create/components/FileUpload";
 import { EMPTY_FIELDS_SUBMISSION } from "@components/_pages/Create/constants/csv";
-import CSVParseError, {
-  ParseError,
-} from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor/CSVParseError";
 import { validateSubmissionFields } from "@components/_pages/Create/utils/csv";
-import { parseSubmissionCsv } from "@helpers/parseSubmissionsCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import { useAccount } from "wagmi";
 import ScrollableTableBody from "./TableBody";
 
@@ -22,7 +17,6 @@ type CSVEditorProps = {
 };
 
 const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
-  const { address } = useAccount();
   const {
     submissionAllowlistFields: fields,
     setSubmissionAllowlistFields: setFields,
@@ -31,9 +25,7 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     setError,
     step,
   } = useDeployContestStore(state => state);
-  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const currentStep = step + 1;
-  const [parseError, setParseError] = useState<ParseError>("");
 
   // If user clean the fields, reset the state
   useEffect(() => {
@@ -90,51 +82,10 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
     addEmptyFields();
     setSubmissionMerkle("manual", null);
     setError(currentStep, { step: currentStep, message: "" });
-    setUploadSuccess(false);
   };
 
   const addEmptyFields = () => {
     updateFields(Array(15).fill(EMPTY_FIELDS_SUBMISSION));
-  };
-
-  const onFileSelectHandler = async (file: File) => {
-    const results = await parseSubmissionCsv(file, address);
-
-    switch (results.error?.kind) {
-      case "unexpectedHeaders":
-      case "missingColumns":
-      case "limitExceeded":
-      case "duplicates":
-        setParseError(results.error?.kind);
-        addEmptyFields();
-        return;
-      default:
-        setParseError("");
-    }
-
-    if (results.invalidEntries?.length) {
-      setError(currentStep, { step: currentStep, message: "entries" });
-    } else {
-      setError(currentStep, { step: currentStep, message: "" });
-      setUploadSuccess(true);
-    }
-    // Get current entries
-    let currentEntries = fields;
-
-    // Filter out the empty fields
-    currentEntries = currentEntries.filter(field => field.address !== "");
-    const validEntries = results.data.map(address => ({
-      address,
-      error: false,
-    }));
-
-    const invalidEntries = results.invalidEntries.map(({ address, error }) => ({
-      address,
-      error,
-    }));
-
-    // Prepend invalid entries to the existing ones and then append valid entries
-    updateFields([...invalidEntries, ...currentEntries, ...validEntries]);
   };
 
   const handleDelete = (index: number) => {
@@ -147,12 +98,14 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
 
   return (
     <div className="flex flex-col gap-2">
-      <table className="table-fixed border-collapse border-b border-dotted border-neutral-9 w-[360px] md:w-[600px] text-left">
+      <table className="table-fixed border-collapse border-b border-dotted border-neutral-9 w-full md:w-[600px] text-left">
         <thead>
           <tr className="text-[16px] font-bold">
             <th className="py-2 uppercase ">
               <div className="flex items-center justify-between">
-                <span className="uppercase">Address</span>
+                <p className="uppercase">
+                  Address <span className="normal-case">(starting with 0x)</span>
+                </p>
                 {fields.some(field => field.address !== "") && (
                   <Image
                     src="/create-flow/trashcan.png"
@@ -174,23 +127,6 @@ const CSVEditorSubmission: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      <CSVParseError type={parseError} step="submission" />
-      {fields.some(field => field.address !== "") ? (
-        <p className="italic text-neutral-11 text-[16px] ">
-          only first 100 entries of allowlist are visible to preview and edit
-        </p>
-      ) : (
-        <div className="flex flex-col text-[16px] mt-5">
-          <p className="text-primary-10 font-bold">prefer to upload a csv?</p>
-          <p className="text-neutral-11">
-            csv should contain addresses in column <span className="uppercase">A</span> (no <br />
-            headers or additional columns).
-          </p>
-        </div>
-      )}
-      <div className="mt-5">
-        <FileUpload onFileSelect={onFileSelectHandler} type="csv" step={currentStep} isSuccess={uploadSuccess} />
-      </div>
     </div>
   );
 };
