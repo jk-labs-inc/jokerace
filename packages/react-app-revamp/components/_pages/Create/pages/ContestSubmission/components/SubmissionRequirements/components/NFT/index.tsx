@@ -23,10 +23,10 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
     });
   };
 
-  const onSubmissionsRequirementMinTokensRequiredChange = (minTokens: string) => {
+  const onSubmissionsRequirementMinTokensRequiredChange = (minTokens: number | null) => {
     setSubmissionRequirements({
       ...submissionRequirements,
-      minTokensRequired: parseFloat(minTokens),
+      minTokensRequired: minTokens ?? 0,
     });
   };
 

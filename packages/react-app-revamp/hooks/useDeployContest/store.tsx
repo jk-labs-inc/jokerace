@@ -1,7 +1,9 @@
+import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { create } from "zustand";
+
 import { DEFAULT_SUBMISSIONS } from ".";
 import { Charge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
 
@@ -10,16 +12,39 @@ type ContestDeployError = {
   message: string;
 };
 
-type Prompt = {
+export type Prompt = {
   summarize: string;
   evaluateVoters: string;
 };
+
+export enum ContestVisibility {
+  Public = "public",
+  Unlisted = "unlisted",
+}
 
 export type AdvancedOptions = {
   downvote: boolean;
   sorting: boolean;
   rankLimit: number;
+  contestVisibility: ContestVisibility;
 };
+
+export type CustomizationOptions = {
+  allowedSubmissionsPerUser: number;
+  maxSubmissions: number;
+};
+
+export enum SubmissionType {
+  DifferentFromVoters = 0,
+  SameAsVoters = 1,
+}
+
+export interface SubmissionTypeOption {
+  value: SubmissionType;
+  label: string;
+}
+
+export type MerkleKey = "manual" | "prefilled" | "csv";
 
 export interface DeployContestState {
   deployContestData: {
@@ -38,28 +63,33 @@ export interface DeployContestState {
   votingOpen: Date;
   votingClose: Date;
   votingRequirements: VotingRequirements;
-  submissionRequirementsOption: string;
+  submissionRequirementsOption: Option;
+  votingRequirementsOption: Option;
   votingAllowlist: {
     manual: Record<string, number>;
+    csv: Record<string, number>;
     prefilled: Record<string, number>;
   };
   votingMerkle: {
     manual: VotingMerkle | null;
+    csv: VotingMerkle | null;
     prefilled: VotingMerkle | null;
   };
   votingAllowlistFields: VotingFieldObject[];
   submissionAllowlist: {
     manual: Record<string, number>;
+    csv: Record<string, number>;
     prefilled: Record<string, number>;
   };
   submissionAllowlistFields: SubmissionFieldObject[];
   submissionMerkle: {
     manual: SubmissionMerkle | null;
+    csv: SubmissionMerkle | null;
     prefilled: SubmissionMerkle | null;
   };
   submissionRequirements: SubmissionRequirements;
-  allowedSubmissionsPerUser: number;
-  maxSubmissions: number;
+  submissionTypeOption: SubmissionTypeOption;
+  customization: CustomizationOptions;
   advancedOptions: AdvancedOptions;
   isLoading: boolean;
   isSuccess: boolean;
@@ -69,6 +99,11 @@ export interface DeployContestState {
   submissionTab: number;
   votingTab: number;
   charge: Charge;
+  minCharge: {
+    minCostToPropose: number;
+    minCostToVote: number;
+  };
+  prevChainRefInCharge: string;
   setDeployContestData: (
     chain: string,
     chainId: number,
@@ -85,16 +120,17 @@ export interface DeployContestState {
   setVotingOpen: (votingOpen: Date) => void;
   setVotingClose: (votingClose: Date) => void;
   setVotingRequirements: (votingRequirements: VotingRequirements) => void;
-  setSubmissionRequirementsOption: (submissionRequirementsOption: string) => void;
-  setVotingAllowlist: (type: "manual" | "prefilled", votingAllowlist: Record<string, number>) => void;
-  setVotingMerkle: (type: "manual" | "prefilled", votingMerkle: VotingMerkle | null) => void;
+  setSubmissionRequirementsOption: (submissionRequirementsOption: Option) => void;
+  setVotingRequirementsOption: (votingRequirementsOption: Option) => void;
+  setVotingAllowlist: (type: MerkleKey, votingAllowlist: Record<string, number>) => void;
+  setVotingMerkle: (type: MerkleKey, votingMerkle: VotingMerkle | null) => void;
   setVotingAllowlistFields: (votingAllowlistFields: VotingFieldObject[]) => void;
-  setSubmissionAllowlist: (type: "manual" | "prefilled", submissionAllowlist: Record<string, number>) => void;
-  setSubmissionMerkle: (type: "manual" | "prefilled", submissionMerkle: SubmissionMerkle | null) => void;
+  setSubmissionAllowlist: (type: MerkleKey, submissionAllowlist: Record<string, number>) => void;
+  setSubmissionMerkle: (type: MerkleKey, submissionMerkle: SubmissionMerkle | null) => void;
   setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) => void;
   setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => void;
-  setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => void;
-  setMaxSubmissions: (maxSubmissions: number) => void;
+  setSubmissionTypeOption: (submissionTypeOption: SubmissionTypeOption) => void;
+  setCustomization: (customization: CustomizationOptions) => void;
   setAdvancedOptions: (advancedOptions: AdvancedOptions) => void;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (isSuccess: boolean) => void;
@@ -104,6 +140,8 @@ export interface DeployContestState {
   setSubmissionTab: (tab: number) => void;
   setVotingTab: (tab: number) => void;
   setCharge: (charge: Charge) => void;
+  setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => void;
+  setPrevChainRefInCharge: (chain: string) => void;
   reset: () => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
@@ -124,7 +162,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       downvote: false,
       sortingEnabled: false,
     },
-    type: "",
+    type: "curation",
     title: "",
     summary: "",
     prompt: {
@@ -134,14 +172,23 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     submissionOpen: initialSubmissionOpen,
     votingOpen: initialVotingOpen,
     votingClose: initialVotingClose,
-    submissionRequirementsOption: "anyone",
+    submissionRequirementsOption: {
+      value: "anyone",
+      label: "anyone",
+    },
+    votingRequirementsOption: {
+      value: "erc20",
+      label: "token holders",
+    },
     votingAllowlist: {
       manual: {},
+      csv: {},
       prefilled: {},
     },
     votingAllowlistFields: Array(15).fill(EMPTY_FIELDS_VOTING),
     votingMerkle: {
       manual: null,
+      csv: null,
       prefilled: null,
     },
     votingRequirements: {
@@ -155,11 +202,13 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     submissionAllowlist: {
       manual: {},
+      csv: {},
       prefilled: {},
     },
     submissionAllowlistFields: Array(15).fill(EMPTY_FIELDS_SUBMISSION),
     submissionMerkle: {
       manual: null,
+      csv: null,
       prefilled: null,
     },
     submissionRequirements: {
@@ -169,19 +218,32 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       minTokensRequired: 0.01,
       timestamp: Date.now(),
     },
+    submissionTypeOption: {
+      value: SubmissionType.DifferentFromVoters,
+      label: "different from voters",
+    },
     charge: {
       percentageToCreator: 50,
       type: {
         costToPropose: 0,
         costToVote: 0,
       },
+      error: false,
     },
-    allowedSubmissionsPerUser: 3,
-    maxSubmissions: DEFAULT_SUBMISSIONS,
+    minCharge: {
+      minCostToPropose: 0,
+      minCostToVote: 0,
+    },
+    prevChainRefInCharge: "",
+    customization: {
+      allowedSubmissionsPerUser: 3,
+      maxSubmissions: DEFAULT_SUBMISSIONS,
+    },
     advancedOptions: {
       downvote: false,
       sorting: true,
       rankLimit: 250,
+      contestVisibility: ContestVisibility.Public,
     },
     isLoading: false,
     isSuccess: false,
@@ -210,7 +272,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setSubmissionOpen: (submissionOpen: Date) => set({ submissionOpen }),
     setVotingOpen: (votingOpen: Date) => set({ votingOpen }),
     setVotingClose: (votingClose: Date) => set({ votingClose }),
-    setSubmissionRequirementsOption: (submissionRequirementsOption: string) => set({ submissionRequirementsOption }),
+    setSubmissionRequirementsOption: (submissionRequirementsOption: Option) => set({ submissionRequirementsOption }),
+    setVotingRequirementsOption: (votingRequirementsOption: Option) => set({ votingRequirementsOption }),
     setVotingAllowlist: (type, votingAllowlist) => {
       set(state => ({
         votingAllowlist: {
@@ -248,9 +311,9 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setSubmissionAllowlistFields: (submissionAllowlistFields: SubmissionFieldObject[]) =>
       set({ submissionAllowlistFields }),
     setSubmissionRequirements: (submissionRequirements: SubmissionRequirements) => set({ submissionRequirements }),
-    setAllowedSubmissionsPerUser: (allowedSubmissionsPerUser: number) => set({ allowedSubmissionsPerUser }),
+    setSubmissionTypeOption: (submissionTypeOption: SubmissionTypeOption) => set({ submissionTypeOption }),
+    setCustomization: (customization: CustomizationOptions) => set({ customization }),
     setAdvancedOptions: (advancedOptions: AdvancedOptions) => set({ advancedOptions }),
-    setMaxSubmissions: (maxSubmissions: number) => set({ maxSubmissions }),
     setIsLoading: (isLoading: boolean) => set({ isLoading }),
     setIsSuccess: (isSuccess: boolean) => set({ isSuccess }),
     setError: (step: number, error: ContestDeployError) => {
@@ -269,6 +332,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setSubmissionTab: (submissionTab: number) => set({ submissionTab }),
     setVotingTab: (votingTab: number) => set({ votingTab }),
     setCharge: (charge: Charge) => set({ charge }),
+    setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => set({ minCharge }),
+    setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
     reset: () => set({ ...initialState }),
   };
 });

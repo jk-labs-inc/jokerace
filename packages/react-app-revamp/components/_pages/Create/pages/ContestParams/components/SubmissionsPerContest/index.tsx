@@ -13,15 +13,14 @@ const ContestParamsSubmissionsPerContest: FC<ContestParamsSubmissionsPerContestP
   onMaxSubmissionsChange,
 }) => {
   return (
-    <div className="flex flex-col gap-6">
-      <p className="text-[20px] md:text-[24px] text-primary-10 font-bold">
-        how many total submissions does your contest accept?
-      </p>
+    <div className="flex flex-col gap-4">
+      <p className="text-[20px] text-neutral-11">how many total submissions does your contest accept?</p>
       <div className="flex flex-col gap-2">
         <CreateNumberInput
           value={maxSubmissions}
           onChange={onMaxSubmissionsChange}
           errorMessage={submissionsPerContestError}
+          textClassName="font-bold text-center pl-0 pr-4"
         />
       </div>
     </div>

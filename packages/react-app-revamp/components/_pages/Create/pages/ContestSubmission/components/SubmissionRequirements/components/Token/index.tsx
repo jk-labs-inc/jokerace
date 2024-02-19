@@ -1,5 +1,4 @@
 import CreateRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
-import CreateVotingRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 
@@ -24,10 +23,10 @@ const CreateSubmissionRequirementsTokenSettings: FC<CreateSubmissionRequirements
     });
   };
 
-  const onSubmissionsRequirementMinTokensRequiredChange = (minTokens: string) => {
+  const onSubmissionsRequirementMinTokensRequiredChange = (minTokens: number | null) => {
     setSubmissionRequirements({
       ...submissionRequirements,
-      minTokensRequired: parseFloat(minTokens),
+      minTokensRequired: minTokens ?? 0,
     });
   };
 

@@ -1,15 +1,14 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
-import CreateDropdown from "@components/_pages/Create/components/Dropdown";
-import { requirementsDropdownOptions } from "@components/_pages/Create/components/RequirementsSettings/config";
+import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { tokenAddressRegex } from "@helpers/regex";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
 import CreateVotingRequirementsTokenSettings from "./components/Token";
 
@@ -19,46 +18,45 @@ type WorkerMessageData = {
   allowList: Record<string, number>;
 };
 
+const options: Option[] = [
+  { value: "erc20", label: "token holders" },
+  { value: "erc721", label: "NFT holders" },
+];
+
 const CreateVotingRequirements = () => {
   const {
     step,
+    submissionTypeOption,
     setVotingMerkle,
+    setSubmissionMerkle,
+    setSubmissionRequirements,
     setError,
     setVotingAllowlist,
     setVotingAllowlistFields,
     votingRequirements,
     setVotingRequirements,
+    setVotingRequirementsOption,
+    votingRequirementsOption,
   } = useDeployContestStore(state => state);
-  const [selectedRequirement, setSelectedRequirement] = useState(votingRequirements.type);
   const votingValidation = validationFunctions.get(step);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
+  const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
 
   const onRequirementChange = (option: string) => {
     setInputError({});
-    setSelectedRequirement(option);
+    setVotingRequirementsOption({
+      value: option,
+      label: options.find(o => o.value === option)?.label ?? "",
+    });
     setVotingRequirements({
       ...votingRequirements,
       type: option,
     });
   };
 
-  useEffect(() => {
-    const handleEnterPress = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
-        handleNextStep();
-      }
-    };
-
-    window.addEventListener("keydown", handleEnterPress);
-
-    return () => {
-      window.removeEventListener("keydown", handleEnterPress);
-    };
-  }, [onNextStep]);
-
   const renderLayout = () => {
-    switch (selectedRequirement) {
+    switch (votingRequirementsOption.value) {
       case "erc721":
         return <CreateVotingRequirementsNftSettings error={inputError} />;
       case "erc20":
@@ -68,16 +66,61 @@ const CreateVotingRequirements = () => {
     }
   };
 
-  const initializeWorker = () => {
+  const initializeWorkerForVoters = () => {
     const worker = new Worker(new URL("/workers/generateRootAndRecipients", import.meta.url));
 
-    worker.onmessage = handleWorkerMessage;
+    worker.onmessage = handleWorkerMessageForVoters;
     worker.onerror = handleWorkerError;
 
     return worker;
   };
 
-  const handleWorkerMessage = (event: MessageEvent<WorkerMessageData>): void => {
+  const initializeWorkersForVotersAndSubmitters = () => {
+    const worker = new Worker(new URL("/workers/generateBatchRootsAndRecipients", import.meta.url));
+
+    worker.onmessage = handleWorkerMessageForVotersAndSubmitters;
+    worker.onerror = handleWorkerError;
+
+    return worker;
+  };
+
+  const handleWorkerMessageForVotersAndSubmitters = (event: MessageEvent<WorkerMessageData[]>): void => {
+    const results = event.data;
+    const [votingMerkleData, submissionMerkleData] = results;
+
+    if (votingMerkleData) {
+      setVotingMerkle("prefilled", {
+        merkleRoot: votingMerkleData.merkleRoot,
+        voters: votingMerkleData.recipients,
+      });
+    }
+
+    if (submissionMerkleData) {
+      setSubmissionMerkle("prefilled", {
+        merkleRoot: submissionMerkleData.merkleRoot,
+        submitters: submissionMerkleData.recipients,
+      });
+    }
+
+    setVotingAllowlist("prefilled", votingMerkleData.allowList);
+    setVotingRequirements({
+      ...votingRequirements,
+      timestamp: Date.now(),
+    });
+    setSubmissionRequirements({
+      ...votingRequirements,
+      timestamp: Date.now(),
+    });
+
+    onNextStep(results[0].allowList);
+    setError(step + 1, { step: step + 1, message: "" });
+    toastSuccess("allowlists processed successfully.");
+    resetManualAllowlist();
+    setBothSubmissionMerkles(null);
+    terminateWorker(event.target as Worker);
+  };
+
+  const handleWorkerMessageForVoters = (event: MessageEvent<WorkerMessageData>): void => {
     const { merkleRoot, recipients, allowList } = event.data;
 
     setVotingAllowlist("prefilled", allowList);
@@ -126,13 +169,13 @@ const CreateVotingRequirements = () => {
   };
 
   const fetchRequirementsMerkleData = async (type: string) => {
-    let result: Record<string, number> | Error;
+    let votingAllowlist: Record<string, number> | Error;
 
     toastLoading("processing your allowlist...", false);
     try {
       const fetchMerkleData = type === "erc721" ? fetchNftHolders : fetchTokenHolders;
 
-      result = await fetchMerkleData(
+      votingAllowlist = await fetchMerkleData(
         "voting",
         votingRequirements.tokenAddress,
         votingRequirements.chain,
@@ -141,19 +184,34 @@ const CreateVotingRequirements = () => {
         votingRequirements.powerType,
       );
 
-      if (result instanceof Error) {
+      if (votingAllowlist instanceof Error) {
         setInputError({
-          tokenAddressError: result.message,
+          tokenAddressError: votingAllowlist.message,
         });
         toastDismiss();
         return;
       }
 
-      const worker = initializeWorker();
-      worker.postMessage({
-        decimals: 18,
-        allowList: result,
-      });
+      if (submittersAsVoters) {
+        const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist).reduce((acc, address) => {
+          acc[address] = 10;
+          return acc;
+        }, {} as Record<string, number>);
+
+        const worker = initializeWorkersForVotersAndSubmitters();
+        worker.postMessage({
+          allowLists: [
+            { decimals: 18, allowList: votingAllowlist },
+            { decimals: 18, allowList: submissionAllowlist },
+          ],
+        });
+      } else {
+        const worker = initializeWorkerForVoters();
+        worker.postMessage({
+          decimals: 18,
+          allowList: votingAllowlist,
+        });
+      }
     } catch (error: any) {
       setInputError({
         tokenAddressError: error.message,
@@ -169,32 +227,43 @@ const CreateVotingRequirements = () => {
     if (!isValid) {
       return;
     }
-    fetchRequirementsMerkleData(selectedRequirement);
+    fetchRequirementsMerkleData(votingRequirementsOption.value);
+  };
+
+  const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "csv"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
+  };
+
+  const setBothVotingMerkles = (value: VotingMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "csv"];
+    keys.forEach(key => setVotingMerkle(key, value));
+  };
+
+  const setBothAllowlists = (value: Record<string, number>) => {
+    const keys: MerkleKey[] = ["manual", "csv"];
+    keys.forEach(key => setVotingAllowlist(key, value));
   };
 
   const resetManualAllowlist = () => {
-    setVotingMerkle("manual", null);
-    setVotingAllowlist("manual", {});
+    setBothVotingMerkles(null);
+    setBothAllowlists({});
     setVotingAllowlistFields([]);
   };
 
   return (
-    <div className="mt-5 md:ml-[20px] flex flex-col gap-5">
-      <p className="text-[20px] md:text-[24px] font-bold text-primary-10">who can vote?</p>
-      <div className="flex flex-col gap-5">
-        <CreateDropdown
-          value={selectedRequirement}
-          options={requirementsDropdownOptions}
-          className="w-full md:w-48 text-[16px] md:text-[24px] cursor-pointer"
-          searchEnabled={false}
+    <div className="flex flex-col gap-16">
+      <div className="flex flex-col gap-4">
+        <p className="text-[16px] font-bold text-neutral-11 uppercase">who can vote?</p>
+        <CreateDefaultDropdown
+          defaultOption={votingRequirementsOption}
+          options={options}
+          className="w-full md:w-[240px]"
           onChange={onRequirementChange}
         />
         {renderLayout()}
       </div>
-
-      <div className="mt-8">
-        <CreateNextButton step={step + 1} onClick={handleNextStep} />
-      </div>
+      <CreateNextButton step={step + 1} onClick={handleNextStep} />
     </div>
   );
 };
