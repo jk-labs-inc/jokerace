@@ -13,14 +13,14 @@ import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-import { parseUnits } from "ethers/lib/utils";
+import { formatEther, parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { canUpdateVotesInRealTime } = useContestStore(state => state);
+  const { canUpdateVotesInRealTime, charge } = useContestStore(state => state);
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -71,6 +71,8 @@ export function useCastVotes() {
             parseUnits(amount.toString()),
             proofs,
           ],
+          //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
+          value: charge ? [charge.type.costToVote] : [],
         });
       } else {
         hash = await writeContract(config, {
@@ -78,6 +80,8 @@ export function useCastVotes() {
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
+          //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
+          value: charge ? [charge.type.costToVote] : [],
         });
       }
 
@@ -94,6 +98,8 @@ export function useCastVotes() {
           proposal_id: pickedProposal !== null ? pickedProposal : undefined,
           vote_amount: amount,
           created_at: Math.floor(Date.now() / 1000),
+          amount_sent: charge ? Number(formatEther(BigInt(charge.type.costToVote))) : null,
+          percentage_to_creator: charge ? charge.percentageToCreator : null,
         });
       } catch (error) {
         console.error("Error in addUserActionForAnalytics:", error);

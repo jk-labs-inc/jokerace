@@ -43,6 +43,8 @@ import RestructureExtensionsAndUtilsRewards from "@contracts/bytecodeAndAbi/modu
 import RmUnnecessaryVirtualsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.7.rmUnnecessaryVirtuals.sol/RewardsModule.json";
 import DeleteInMapAfterForLoopRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.8.deleteInMapAfterForLoop.sol/RewardsModule.json";
 import AddGetPropIdsWithForVotesRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.9.addGetPropIdsWithForVotes.sol/RewardsModule.json";
+import AddCostToVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.23.addCostToVote.sol/RewardsModule.json";
+import RefactorCostDistroRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.24.refactorCostDistro.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -55,7 +57,11 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.22") {
+    if (version === "4.24") {
+      return RefactorCostDistroRewards.abi;
+    } else if (version === "4.23") {
+      return AddCostToVoteRewards.abi;
+    } else if (version === "4.22") {
       return RefactorDistributionFuncRewards.abi;
     } else if (version === "4.21") {
       return AddContentToEventsRewards.abi;

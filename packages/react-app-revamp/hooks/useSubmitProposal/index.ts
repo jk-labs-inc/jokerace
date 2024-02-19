@@ -28,11 +28,12 @@ const safeMetadata = {
 };
 
 export function useSubmitProposal() {
+  const { address: userAddress, chain } = useAccount();
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
-  const { entryCharge } = useContestStore(state => state);
+  const { charge } = useContestStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
@@ -43,7 +44,6 @@ export function useSubmitProposal() {
   )?.[0]?.id;
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
-  const { address: userAddress, chain } = useAccount();
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
     if (showToast) toastLoading("proposal is deploying...");
@@ -83,7 +83,7 @@ export function useSubmitProposal() {
             //@ts-ignore
             args: [proposalCore, proofs],
             //@ts-ignore
-            value: entryCharge ? [entryCharge.costToPropose] : [],
+            value: charge ? [charge.type.costToPropose] : [],
           });
         } else {
           hash = await writeContract(config, {
@@ -92,7 +92,7 @@ export function useSubmitProposal() {
             //@ts-ignore
             args: [proposalCore],
             //@ts-ignore
-            value: entryCharge ? [entryCharge.costToPropose] : [],
+            value: charge ? [charge.type.costToPropose] : [],
           });
         }
 
@@ -110,8 +110,8 @@ export function useSubmitProposal() {
             network_name: chainName,
             proposal_id: proposalId,
             created_at: Math.floor(Date.now() / 1000),
-            amount_sent: entryCharge ? Number(formatEther(BigInt(entryCharge.costToPropose))) : null,
-            percentage_to_creator: entryCharge ? entryCharge.percentageToCreator : null,
+            amount_sent: charge ? Number(formatEther(BigInt(charge.type.costToPropose))) : null,
+            percentage_to_creator: charge ? charge.percentageToCreator : null,
           });
         } catch (error) {
           console.error("Error in addUserActionForAnalytics:", error);

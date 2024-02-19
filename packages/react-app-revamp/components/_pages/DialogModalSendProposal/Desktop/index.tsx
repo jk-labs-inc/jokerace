@@ -1,3 +1,4 @@
+import ChargeLayout from "@components/ChargeLayout";
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import DialogModalV3 from "@components/UI/DialogModalV3";
 import TipTapEditorControls from "@components/UI/TipTapEditorControls";
@@ -6,16 +7,14 @@ import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
 import { useContestStore } from "@hooks/useContest/store";
-import { EntryCharge } from "@hooks/useDeployContest/types";
+import { Charge } from "@hooks/useDeployContest/types";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
 import { type GetBalanceReturnType } from "@wagmi/core";
-
 import { FC, useState } from "react";
-import { useAccount } from "wagmi";
-import DialogModalSendProposalEntryChargeLayout from "../components/EntryCharge";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
+import { useAccount } from "wagmi";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -27,7 +26,7 @@ interface DialogModalSendProposalDesktopLayoutProps {
   isOpen: boolean;
   isCorrectNetwork: boolean;
   isDragging: boolean;
-  entryCharge: EntryCharge | null;
+  charge: Charge | null;
   accountData: GetBalanceReturnType | undefined;
   setIsOpen: (isOpen: boolean) => void;
   handleDrop?: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -46,7 +45,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   formattedDate,
   isOpen,
   isCorrectNetwork,
-  entryCharge,
+  charge,
   accountData,
   isDragging,
   setIsOpen,
@@ -69,10 +68,10 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   const { isLoading, isSuccess } = useSubmitProposal();
   const { proposalId } = useSubmitProposalStore(state => state);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const insufficientBalance = (accountData?.value ?? 0) < (entryCharge?.costToPropose ?? 0);
+  const insufficientBalance = (accountData?.value ?? 0) < (charge?.type.costToPropose ?? 0);
   const tosHref = FOOTER_LINKS.find(link => link.label === "Terms")?.href;
   const onCorrectNetwork = chain?.name.toLowerCase() === chainName.toLowerCase();
-  const showEntryCharge = entryCharge && entryCharge.costToPropose && accountData && onCorrectNetwork;
+  const showEntryCharge = charge && charge.type.costToPropose && accountData && onCorrectNetwork;
 
   const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWantsSubscription(event.target.checked);
@@ -147,9 +146,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
               />
             </div>
             <div className="flex flex-col gap-11 mt-11">
-              {showEntryCharge ? (
-                <DialogModalSendProposalEntryChargeLayout entryCharge={entryCharge} accountData={accountData} />
-              ) : null}
+              {showEntryCharge ? <ChargeLayout charge={charge} accountData={accountData} type="propose" /> : null}
 
               {!insufficientBalance ? (
                 <div className="flex flex-col gap-4">

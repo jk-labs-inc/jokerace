@@ -4,7 +4,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { ChevronUpIcon } from "@heroicons/react/outline";
-import { EntryCharge } from "@hooks/useDeployContest/types";
+import { Charge } from "@hooks/useDeployContest/types";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -13,25 +13,25 @@ import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 
 interface DialogModalSendProposalEntryChargeLayoutProps {
-  entryCharge: EntryCharge;
+  charge: Charge;
   accountData: GetBalanceReturnType;
+  type: "propose" | "vote";
 }
 
-const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({
-  entryCharge,
-  accountData,
-}) => {
+const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({ charge, accountData, type }) => {
   const router = useRouter();
   const { address } = useAccount();
   const asPath = router.asPath;
   const { chainName } = extractPathSegments(asPath);
-  const [isEntryChargeDetailsOpen, setIsEntryChargeDetailsOpen] = useState(false);
-  const chainUnitLabel = chains.find((c: { name: string }) => c.name === chainName)?.nativeCurrency.symbol;
-  const insufficientBalance = accountData.value < entryCharge.costToPropose;
-  const entryChargeFormatted = formatEther(BigInt(entryCharge.costToPropose));
-  const entryChargeHalfFormatted = formatEther(BigInt(entryCharge.costToPropose / 2));
-  const commissionValue = entryCharge.percentageToCreator > 0 ? entryChargeHalfFormatted : entryChargeFormatted;
+  const chainUnitLabel = chains.find(c => c.name === chainName)?.nativeCurrency.symbol;
+  const chargeAmount = type === "propose" ? charge.type.costToPropose : charge.type.costToVote;
+  const insufficientBalance = accountData.value < chargeAmount;
+  const entryChargeFormatted = formatEther(BigInt(chargeAmount));
+  const entryChargeHalfFormatted = formatEther(BigInt(chargeAmount / 2));
+  const commissionValue = charge.percentageToCreator > 0 ? entryChargeHalfFormatted : entryChargeFormatted;
   const accountBalance = formatEther(accountData.value);
+  const [isEntryChargeDetailsOpen, setIsEntryChargeDetailsOpen] = useState(false);
+  const chargeLabel = type === "propose" ? "entry charge" : "vote charge";
 
   return (
     <div className="flex flex-col gap-2 w-full md:w-[344px]">
@@ -61,7 +61,7 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
             className="flex gap-2 cursor-pointer"
             onClick={() => setIsEntryChargeDetailsOpen(!isEntryChargeDetailsOpen)}
           >
-            <p className="text-[16px] text-neutral-9">entry charge</p>
+            <p className="text-[16px] text-neutral-9">{chargeLabel}</p>
             <button
               className={`transition-transform duration-500 ease-in-out transform ${
                 isEntryChargeDetailsOpen ? "" : "rotate-180"
@@ -77,7 +77,7 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
         </div>
         <Collapsible isOpen={isEntryChargeDetailsOpen}>
           <ul className="flex flex-col gap-2 pl-2 mt-2 list-bullet-points">
-            {entryCharge.percentageToCreator > 0 ? (
+            {charge.percentageToCreator > 0 ? (
               <>
                 <div className="flex items-center">
                   <li className="text-[16px] text-neutral-9">creator commission</li>
@@ -107,4 +107,4 @@ const DialogModalSendProposalEntryChargeLayout: FC<DialogModalSendProposalEntryC
   );
 };
 
-export default DialogModalSendProposalEntryChargeLayout;
+export default ChargeLayout;

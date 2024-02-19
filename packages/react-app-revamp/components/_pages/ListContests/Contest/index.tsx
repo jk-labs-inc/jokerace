@@ -80,7 +80,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
   const { tokenSymbol: submissionRequirementToken, isLoading: isSubmissionRequirementTokenLoading } = useTokenDetails(
     submissionRequirement?.type,
     submissionRequirement?.tokenAddress,
-    votingRequirement?.chain,
+    submissionRequirement?.chain,
   );
 
   const getContestUrl = (contest: { network_name: string; address: string }) => {
@@ -233,7 +233,8 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
           <p>
             for{" "}
             <span className="uppercase">
-              {submissionRequirement?.type === "erc20" ? "$" : ""} {submissionRequirementToken}
+              {submissionRequirement?.type === "erc20" ? "$" : ""}
+              {submissionRequirementToken}
             </span>{" "}
             holders
           </p>

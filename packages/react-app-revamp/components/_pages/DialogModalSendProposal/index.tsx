@@ -54,7 +54,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
     setEmailForSubscription,
     setEmailAlreadyExists,
   } = useSubmitProposalStore(state => state);
-  const { votesOpen, entryCharge } = useContestStore(state => state);
+  const { votesOpen, charge } = useContestStore(state => state);
   const { data: accountData } = useBalance({
     address: address as `0x${string}`,
   });
@@ -203,7 +203,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           proposal={proposal}
           editorProposal={editorProposal}
           address={address ?? ""}
-          entryCharge={entryCharge}
+          charge={charge}
           accountData={accountData}
           formattedDate={formattedDate}
           isOpen={isOpen}
@@ -219,7 +219,7 @@ export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOp
           contestId={contestId}
           editorProposal={editorProposal}
           address={address ?? ""}
-          entryCharge={entryCharge}
+          charge={charge}
           accountData={accountData}
           formattedDate={formattedDate}
           isOpen={isOpen}

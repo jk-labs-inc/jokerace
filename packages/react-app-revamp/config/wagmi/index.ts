@@ -14,9 +14,9 @@ import {
   trustWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { unique } from "underscore";
-import { Chain, Transport, fallback } from "viem";
-import { createConfig, http } from "wagmi";
+
+import { createConfig, fallback, http } from "wagmi";
+import { aevo } from "./custom-chains/aevo";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -36,6 +36,8 @@ import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
 import { frameTestnet } from "./custom-chains/frameTestnet";
+import { fraxtal } from "./custom-chains/fraxtal";
+import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
@@ -49,6 +51,7 @@ import { lootChain } from "./custom-chains/lootChain";
 import { lootChainTestnet } from "./custom-chains/lootChainTestnet";
 import { lukso } from "./custom-chains/lukso";
 import { luksoTestnet } from "./custom-chains/luksoTestnet";
+import { lyra } from "./custom-chains/lyra";
 import { mainnet } from "./custom-chains/mainnet";
 import { mantaPacific } from "./custom-chains/mantaPacific";
 import { mantle } from "./custom-chains/mantle";
@@ -61,12 +64,11 @@ import { nearTestnet } from "./custom-chains/nearTestnet";
 import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
+import { polygon } from "./custom-chains/polygon";
 import { polygonTestnet } from "./custom-chains/polygonTestnet";
 import { polygonZk } from "./custom-chains/polygonZk";
 import { polygonZkTestnet } from "./custom-chains/polygonZkTestnet";
 import { proteus } from "./custom-chains/proteus";
-import { publicGoodsNetwork } from "./custom-chains/publicGoodsNetwork";
-import { publicGoodsNetworkTestnet } from "./custom-chains/publicGoodsNetworkTestnet";
 import { qChain } from "./custom-chains/qChain";
 import { qChainTestnet } from "./custom-chains/qChainTestnet";
 import { quartz } from "./custom-chains/quartz";
@@ -76,13 +78,15 @@ import { roninTestnet } from "./custom-chains/roninTestnet";
 import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
+import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
+import { syndicateFrame } from "./custom-chains/syndicateFrame";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
+import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zora } from "./custom-chains/zora";
-import { polygon } from "./custom-chains/polygon";
 
 type ChainImages = {
   [key: string]: string;
@@ -108,7 +112,6 @@ export const chains: any = [
   bnb,
   linea,
   celo,
-  publicGoodsNetwork,
   lootChain,
   near,
   gnosis,
@@ -133,6 +136,12 @@ export const chains: any = [
   astriaDusk2,
   fantom,
   arthera,
+  palm,
+  lyra,
+  fraxtal,
+  aevo,
+  sei,
+  syndicateFrame,
   polygonTestnet,
   sepolia,
   goerli,
@@ -145,7 +154,6 @@ export const chains: any = [
   zetaTestnet,
   celoTestnet,
   optimismTestnet,
-  publicGoodsNetworkTestnet,
   lootChainTestnet,
   nearTestnet,
   gnosisTestnet,
@@ -163,6 +171,8 @@ export const chains: any = [
   fantomTestnet,
   berachainTestnet,
   taikoTestnet,
+  palmTestnet,
+  fraxtalTestnet,
   mainnet,
 ];
 

@@ -4,7 +4,7 @@ import TipTapEditorControls from "@components/UI/TipTapEditorControls";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import { useContestStore } from "@hooks/useContest/store";
-import { EntryCharge } from "@hooks/useDeployContest/types";
+import { Charge } from "@hooks/useDeployContest/types";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
@@ -17,7 +17,7 @@ interface DialogModalSendProposalMobileLayoutProps {
   contestId: string;
   proposal: string;
   editorProposal: Editor | null;
-  entryCharge: EntryCharge | null;
+  charge: Charge | null;
   accountData: GetBalanceReturnType | undefined;
   address: string;
   formattedDate: string | null;
@@ -34,7 +34,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
   proposal,
   editorProposal,
   address,
-  entryCharge,
+  charge,
   accountData,
   formattedDate,
   isOpen,
@@ -121,7 +121,7 @@ const DialogModalSendProposalMobileLayout: FC<DialogModalSendProposalMobileLayou
           chainName={chainName}
           contestId={contestId}
           isOpen={isMobileConfirmModalOpen}
-          entryCharge={entryCharge}
+          charge={charge}
           accountData={accountData}
           onConfirm={() => onSubmitProposal?.()}
           onClose={() => setIsMobileConfirmModalOpen(false)}

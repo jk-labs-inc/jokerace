@@ -1,5 +1,5 @@
 import DialogModalSendProposalSuccessLayout from "@components/_pages/DialogModalSendProposal/components/SuccessLayout";
-import { EntryCharge } from "@hooks/useDeployContest/types";
+import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import Image from "next/image";
@@ -11,7 +11,7 @@ interface DialogModalSendProposalMobileLayoutConfirmProps {
   chainName: string;
   contestId: string;
   isOpen?: boolean;
-  entryCharge: EntryCharge | null;
+  charge: Charge | null;
   accountData: GetBalanceReturnType | undefined;
   onConfirm?: () => void;
   onClose?: () => void;
@@ -21,7 +21,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
   chainName,
   contestId,
   isOpen,
-  entryCharge,
+  charge,
   accountData,
   onConfirm,
   onClose,
@@ -42,11 +42,7 @@ const DialogModalSendProposalMobileLayoutConfirm: FC<DialogModalSendProposalMobi
         <DialogModalSendProposalSuccessLayout proposalId={proposalId} chainName={chainName} contestId={contestId} />
       );
     return (
-      <SendProposalMobileLayoutConfirmInitialContent
-        onConfirm={onConfirm}
-        entryCharge={entryCharge}
-        accountData={accountData}
-      />
+      <SendProposalMobileLayoutConfirmInitialContent onConfirm={onConfirm} charge={charge} accountData={accountData} />
     );
   };
 

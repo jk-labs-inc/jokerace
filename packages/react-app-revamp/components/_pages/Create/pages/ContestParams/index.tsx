@@ -1,15 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { chains } from "@config/wagmi";
 import { MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import useEntryChargeDetails from "@hooks/useEntryChargeDetails";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
+import ContestParamsCharge from "./components/Charge/components";
 import ContestParamsDownvote from "./components/Downvote";
-import ContestParamsEntryCharge from "./components/EntryCharge";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
 import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
 
@@ -26,23 +24,11 @@ const CreateContestParams = () => {
     advancedOptions,
     setAdvancedOptions,
     step,
-    entryCharge,
-    setEntryCharge,
   } = useDeployContestStore(state => state);
-  const minCostToPropose = useEntryChargeDetails(chain?.name ?? "");
-  const chainUnitLabel = chains.find((c: { name: string }) => c.name === chain?.name)?.nativeCurrency.symbol;
-  const [entryChargeError, setEntryChargeError] = useState<string>("");
+  const [chargeError, setChargeError] = useState<boolean>(false);
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
-  const disableDeploy = Boolean(entryChargeError) || Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
-
-  useEffect(() => {
-    setEntryCharge({
-      ...entryCharge,
-      costToPropose: minCostToPropose,
-      percentageToCreator: 50,
-    });
-  }, [minCostToPropose, setEntryCharge]);
+  const disableDeploy = chargeError || Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
 
   useEffect(() => {
     const handleEnterPress = (event: KeyboardEvent) => {
@@ -96,29 +82,6 @@ const CreateContestParams = () => {
     if (value) setMaxSubmissions(value);
   };
 
-  const onEntryChargeValueChange = (value: number | null) => {
-    if (value === null || value < minCostToPropose) {
-      setEntryChargeError(`must be at least ${minCostToPropose}`);
-    } else {
-      setEntryChargeError("");
-    }
-
-    if (value) {
-      setEntryCharge({
-        ...entryCharge,
-        costToPropose: value,
-      });
-    }
-  };
-
-  const onEntryChargePercentageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newPercentage = event.target.checked ? 0 : 50;
-    setEntryCharge({
-      ...entryCharge,
-      percentageToCreator: newPercentage,
-    });
-  };
-
   const validateSubmissionsPerUser = (value: number | null) => {
     if (value === null || value < 1) {
       setSubmissionsPerUserError("must be at least 1");
@@ -162,16 +125,11 @@ const CreateContestParams = () => {
 
         <ContestParamsDownvote downvote={advancedOptions.downvote} onChange={handleDownvoteChange} />
 
-        {isConnected && minCostToPropose > 0 ? (
-          <ContestParamsEntryCharge
-            entryCharge={entryCharge}
-            entryChargeError={entryChargeError}
-            minCostToPropose={minCostToPropose}
-            chainUnitLabel={chainUnitLabel}
-            onEntryChargeValueChange={onEntryChargeValueChange}
-            onEntryChargePercentageChange={onEntryChargePercentageChange}
-          />
-        ) : null}
+        <ContestParamsCharge
+          isConnected={isConnected}
+          chain={chain?.name ?? ""}
+          onError={value => setChargeError(value)}
+        />
 
         <div>
           <p className="text-[24px] text-neutral-11">
