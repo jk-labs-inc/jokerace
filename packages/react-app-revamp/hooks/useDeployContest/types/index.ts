@@ -34,4 +34,5 @@ export type Charge = {
     costToPropose: number;
     costToVote: number;
   };
+  error?: boolean;
 };

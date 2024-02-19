@@ -2,7 +2,6 @@
 import FileUpload from "@components/_pages/Create/components/FileUpload";
 import { EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
-import { parseCsvVoting } from "@helpers/parseVotingCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { cloneDeep } from "lodash";
 import Image from "next/image";
@@ -22,7 +21,6 @@ type CSVEditorProps = {
 };
 
 const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
-  const { address } = useAccount();
   const {
     votingAllowlistFields: fields,
     setVotingAllowlistFields: setFields,
@@ -31,13 +29,8 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     step,
     errors,
   } = useDeployContestStore(state => state);
-  const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const currentStep = step + 1;
-  const [parseError, setParseError] = useState<ParseError>("");
   const [allEntries, setAllEntries] = useState<Array<VotingFieldObject>>([]);
-  const [roundedZeroCount, setRoundedZeroCount] = useState<number | undefined>(0);
-  const currentStepError = errors.find(error => error.step === currentStep);
-  const entriesError = currentStepError?.message === "entries";
 
   useEffect(() => {
     if (fields.length) return;
@@ -119,49 +112,6 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
     addEmptyFields();
     setVotingMerkle("manual", null);
     setError(currentStep, { step: currentStep, message: "" });
-    setUploadSuccess(false);
-  };
-
-  const onFileSelectHandler = async (file: File) => {
-    const results = await parseCsvVoting(file, address);
-
-    switch (results.error?.kind) {
-      case "unexpectedHeaders":
-      case "missingColumns":
-      case "limitExceeded":
-      case "duplicates":
-      case "allZero":
-        setParseError(results.error.kind);
-        addEmptyFields();
-        return;
-      default:
-        setParseError("");
-    }
-
-    if (results.invalidEntries?.length) {
-      setError(currentStep, { step: currentStep, message: "entries" });
-    } else {
-      setError(currentStep, { step: currentStep, message: "" });
-      setUploadSuccess(true);
-    }
-
-    const validEntries = Object.entries(results.data).map(([address, votes]) => ({
-      address,
-      votes: String(votes),
-      error: null,
-    }));
-
-    const invalidEntries = results.invalidEntries.map(({ address, votes, error }) => ({
-      address,
-      votes: String(votes),
-      error,
-    }));
-
-    const allNewEntries = [...invalidEntries, ...validEntries];
-    setAllEntries(allNewEntries);
-    onChange?.(allNewEntries);
-    setFields(allNewEntries.slice(0, 100));
-    setRoundedZeroCount(results.roundedZeroCount);
   };
 
   const handleDelete = (index: number) => {
@@ -187,7 +137,9 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       <table className="table-fixed w-[360px] md:w-[600px] text-left">
         <thead>
           <tr className="text-[16px] font-bold">
-            <th className="w-1/2 md:w-2/3 py-2 uppercase">Address</th>
+            <th className="w-1/2 md:w-2/3 py-2 uppercase">
+              Address <span className="normal-case">(starting with 0x)</span>
+            </th>
             <th className="w-1/2 md:w-1/3 py-2 uppercase">
               <div className="flex items-center justify-between">
                 <span className="uppercase">Number of Votes</span>
@@ -213,45 +165,6 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
           handleDelete={handleDelete}
         />
       </table>
-      <CSVParseError type={parseError} step="voting" />
-      {fields.some(field => field.address !== "" || field.votes !== "") ? (
-        entriesError || fields.some(field => field.error === "exceededLimit") ? (
-          <p className="font-bold text-negative-11 text-[16px]">
-            Your votes input should be less than 1 billion and no more than 4 decimal places.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-4">
-            <p className="italic text-neutral-11 text-[16px]">
-              Only first 100 entries of allowlist are visible to preview and edit <br />
-            </p>
-            <div>
-              {uploadSuccess && (
-                <p className="text-neutral-11 text-[16px]">
-                  please note: we rounded all entries with more than 4 decimals
-                </p>
-              )}
-              {roundedZeroCount && roundedZeroCount > 0 ? (
-                <p className="text-positive-11 text-[16px]">
-                  we removed <span className="font-bold">{roundedZeroCount} </span>
-                  {roundedZeroCount > 1 ? "entries" : "entry"} that had less than 0.0001 votes
-                </p>
-              ) : null}
-            </div>
-          </div>
-        )
-      ) : (
-        <div className="flex flex-col text-[16px] mt-5">
-          <p className="text-primary-10 font-bold">Prefer to upload a CSV?</p>
-          <p className="text-neutral-11">
-            CSV should contain addresses in column <span className="uppercase">A</span> and number of votes in column{" "}
-            <span className="uppercase">B</span> (no headers or additional columns).
-          </p>
-        </div>
-      )}
-
-      <div className="mt-5">
-        <FileUpload onFileSelect={onFileSelectHandler} type="csv" step={currentStep} isSuccess={uploadSuccess} />
-      </div>
     </div>
   );
 };

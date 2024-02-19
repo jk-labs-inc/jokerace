@@ -6,7 +6,7 @@ interface ErrorMessageProps {
 
 const ErrorMessage: FC<ErrorMessageProps> = ({ error }) => {
   return (
-    <div className="mt-2 h-1 animate-fadeIn">
+    <div className="h-1 animate-fadeIn">
       <p className="text-[16px] text-negative-11 font-bold">{error}</p>
     </div>
   );
