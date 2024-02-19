@@ -1,8 +1,11 @@
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
 import Stepper from "./components/Stepper";
+import CreateContestConfirm from "./pages/ContestConfirm";
+import CreateContestMonetization from "./pages/ContestMonetization";
 import CreateContestParams from "./pages/ContestParams";
 import ContestPlay from "./pages/ContestPlay";
 import CreateContestPrompt from "./pages/ContestPrompt";
+import CreateContestStart, { useCreateContestStartStore } from "./pages/ContestStart";
 import CreateContestSubmissions from "./pages/ContestSubmission";
 import CreateContestSummary from "./pages/ContestSummary";
 import CreateContestTiming from "./pages/ContestTiming";
@@ -11,22 +14,35 @@ import CreateContestType from "./pages/ContestType";
 import CreateContestVoting from "./pages/ContestVoting";
 
 const steps = [
-  { title: "contest type", content: <CreateContestType /> },
-  { title: "contest title", content: <CreateContestTitle /> },
+  { title: "title", content: <CreateContestTitle /> },
+  { title: "description", content: <CreateContestPrompt /> },
   { title: "summary", content: <CreateContestSummary /> },
-  { title: "prompt", content: <CreateContestPrompt /> },
+  { title: "tag", content: <CreateContestType /> },
   { title: "timing", content: <CreateContestTiming /> },
-  { title: "voting", content: <CreateContestVoting /> },
   { title: "submissions", content: <CreateContestSubmissions /> },
-  { title: "parameters", content: <CreateContestParams /> },
+  { title: "voting", content: <CreateContestVoting /> },
+  { title: "monetization", content: <CreateContestMonetization /> },
+  { title: "customization", content: <CreateContestParams /> },
+  { title: "confirm!", content: <CreateContestConfirm /> },
 ];
 
 const CreateFlow = () => {
   const pageAction = usePageActionStore(state => state.pageAction);
+  const { startContest, setStartContest } = useCreateContestStartStore(state => state);
+
+  const handleStartCreating = () => {
+    setStartContest(true);
+  };
 
   return (
-    <div className="pl-[30px] pr-[20px] lg:pl-[80px] lg:pr-[60px]">
-      {pageAction === "create" ? <Stepper steps={steps} /> : <ContestPlay />}
+    <div className="pl-[24px] pr-[20px] lg:pl-[120px] lg:pr-[60px]">
+      {pageAction === "create" && !startContest ? (
+        <CreateContestStart onClick={handleStartCreating} />
+      ) : pageAction === "create" && startContest ? (
+        <Stepper steps={steps} />
+      ) : (
+        <ContestPlay />
+      )}
     </div>
   );
 };

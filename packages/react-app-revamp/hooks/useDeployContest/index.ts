@@ -17,7 +17,7 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
-import { useDeployContestStore } from "./store";
+import { ContestVisibility, useDeployContestStore } from "./store";
 import { SubmissionMerkle, VotingMerkle } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
@@ -37,8 +37,7 @@ export function useDeployContest() {
     votingClose,
     votingMerkle: votingMerkleData,
     submissionMerkle: submissionMerkleData,
-    allowedSubmissionsPerUser,
-    maxSubmissions,
+    customization,
     advancedOptions,
     setDeployContestData,
     votingRequirements,
@@ -76,11 +75,13 @@ export function useDeployContest() {
       );
       const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}`;
       const contestInfo = type + "|" + summary + "|" + combinedPrompt;
-      const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
-      const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
+      const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
+      const submissionMerkle =
+        submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
       const { type: chargeType, percentageToCreator } = charge;
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
       const { merkleRoot: votingMerkleRoot } = votingMerkle || {};
+      const { allowedSubmissionsPerUser, maxSubmissions } = customization;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
       const finalAllowedSubmissionsPerUser =
@@ -186,6 +187,7 @@ export function useDeployContest() {
         cost_to_propose: chargeType.costToPropose,
         cost_to_vote: chargeType.costToVote,
         percentage_to_creator: percentageToCreator,
+        hidden: advancedOptions.contestVisibility === ContestVisibility.Public ? false : true,
       };
 
       await saveFilesToBucket(votingMerkle, submissionMerkle);
@@ -307,8 +309,8 @@ export function useDeployContest() {
   }
 
   async function checkForSpoofing(address: string) {
-    const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled;
-    const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled;
+    const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
+    const submissionMerkle = submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
 
     const exceedsVotingMaxRows = votingMerkle && votingMerkle.voters.length > MAX_ROWS;
     const exceedsSubmissionMaxRows = submissionMerkle && submissionMerkle.submitters.length > MAX_ROWS;

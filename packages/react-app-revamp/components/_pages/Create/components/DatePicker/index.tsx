@@ -1,10 +1,9 @@
 import React, { forwardRef, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import ErrorMessage from "../Error";
+import Image from "next/image";
 
 interface CreateDatePicker {
-  title: string;
-  tip?: React.ReactNode;
   error?: string;
   minDate?: Date;
   defaultDate?: Date;
@@ -13,33 +12,18 @@ interface CreateDatePicker {
 
 const CustomInput = forwardRef<HTMLInputElement, { value: string; onClick: () => void }>(({ value, onClick }, ref) => (
   <div
-    className="input-wrapper flex items-center justify-between w-full md:w-[440px] border-b border-neutral-11 bg-transparent outline-none focus:outline-none"
+    className="input-wrapper flex cursor-pointer bg-neutral-14 h-10 px-4 py-2 rounded-[5px] items-center w-full md:w-[380px] outline-none focus:outline-none"
     onClick={onClick}
     ref={ref}
   >
-    <input
-      type="text"
-      value={value}
-      readOnly
-      className="bg-transparent react-datepicker__input-text text-[18px] md:text-[24px]  placeholder-neutral-9 lowercase w-full"
-    />
-    <span
-      className="mb-[10px]"
-      style={{
-        backgroundImage: "url(/create-flow/calendar.png)",
-        backgroundRepeat: "no-repeat",
-        width: "41px",
-        height: "43px",
-        display: "inline-block",
-        alignSelf: "stretch",
-        cursor: "pointer",
-      }}
-    />
+    <p className="text-[20px] text-true-black">{value}</p>
+    <Image width={32} height={32} src="/create-flow/calendar.svg" alt="calendar" className="ml-auto" />
   </div>
 ));
+
 CustomInput.displayName = "CustomInput";
 
-const CreateDatePicker: React.FC<CreateDatePicker> = ({ title, tip, onChange, minDate, error, defaultDate }) => {
+const CreateDatePicker: React.FC<CreateDatePicker> = ({ onChange, minDate, error, defaultDate }) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -54,52 +38,49 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ title, tip, onChange, mi
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <p className="text-[20px] md:text-[24px] font-bold text-primary-10">{title}</p>
-      <div className="flex flex-col gap-2">
-        <DatePicker
-          selected={startDate}
-          onChange={handleDateChange}
-          showPopperArrow={false}
-          showTimeSelect
-          timeFormat="HH:mm"
-          timeIntervals={1}
-          timeCaption="time"
-          dateFormat="MMMM d, yyyy h:mm aa z"
-          minDate={minDate}
-          popperModifiers={[
-            {
-              name: "offset",
-              options: {
-                offset: [5, 10],
-              },
+    <div className="flex flex-col gap-2">
+      <DatePicker
+        selected={startDate}
+        onChange={handleDateChange}
+        showPopperArrow={false}
+        showTimeSelect
+        timeFormat="HH:mm"
+        timeIntervals={1}
+        timeCaption="time"
+        dateFormat="MMMM d, yyyy h:mm aa z"
+        minDate={minDate}
+        popperModifiers={[
+          {
+            name: "offset",
+            options: {
+              offset: [5, 10],
             },
-            {
-              name: "preventOverflow",
-              options: {
-                rootBoundary: "viewport",
-                tether: false,
-                altAxis: true,
-              },
+          },
+          {
+            name: "preventOverflow",
+            options: {
+              rootBoundary: "viewport",
+              tether: false,
+              altAxis: true,
             },
-            {
-              name: "flip",
-              options: {
-                fallbackPlacements: [],
-              },
+          },
+          {
+            name: "flip",
+            options: {
+              fallbackPlacements: [],
             },
-          ]}
-          customInput={
-            <CustomInput
-              value={""}
-              onClick={function (): void {
-                throw new Error("Function not implemented.");
-              }}
-            />
-          }
-        />
-        {error ? <ErrorMessage error={error} /> : <p className="text-[16px] text-neutral-11">{tip}</p>}
-      </div>
+          },
+        ]}
+        customInput={
+          <CustomInput
+            value={""}
+            onClick={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+          />
+        }
+      />
+      {error ? <ErrorMessage error={error} /> : null}
     </div>
   );
 };

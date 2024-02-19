@@ -155,7 +155,6 @@ li {
 .react-datepicker__header {
   background-color: black !important;
   color: white !important;
-  font-family: sabo, sans-serif !important;
 }
 
 .react-datepicker__current-month,
@@ -512,6 +511,12 @@ li {
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     transform: rotate(45deg);
+  }
+}
+
+@layer utilities {
+  .placeholder-bold::placeholder {
+    @apply font-bold;
   }
 }
 

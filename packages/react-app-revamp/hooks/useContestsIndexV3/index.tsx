@@ -34,6 +34,7 @@ export interface ContestValues {
   cost_to_propose: number;
   cost_to_vote: number;
   percentage_to_creator: number;
+  hidden: boolean;
   authorAddress?: string;
   featured?: boolean;
 }
@@ -65,6 +66,7 @@ export function useContestsIndexV3() {
           cost_to_propose: values.cost_to_propose,
           cost_to_vote: values.cost_to_vote,
           percentage_to_creator: values.percentage_to_creator,
+          hidden: values.hidden,
         },
       ]);
       if (error) {

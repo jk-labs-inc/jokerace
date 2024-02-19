@@ -1,32 +1,49 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { fetchChargeDetails } from "lib/monetization";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const useChargeDetails = (chainName: string) => {
-  const { setCharge } = useDeployContestStore();
-  const [minCostToPropose, setMinCostToPropose] = useState<number>(0);
-  const [minCostToVote, setMinCostToVote] = useState<number>(0);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, setMinCharge } = useDeployContestStore();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
 
   const fetchDetails = useCallback(async () => {
+    setIsLoading(true);
+    setIsError(false);
+
     if (!chainName) {
       setIsLoading(false);
       setIsError(false);
       return;
     }
 
-    setIsLoading(true);
-    setIsError(false);
-
     const details = await fetchChargeDetails(chainName);
 
     setIsLoading(false);
     setIsError(details.isError);
 
+    if (details.isError) {
+      setCharge({
+        percentageToCreator: 50,
+        type: {
+          costToPropose: 0,
+          costToVote: 0,
+        },
+        error: true,
+      });
+      setPrevChainRefInCharge(chainName);
+    }
+
     if (!details.isError) {
-      setMinCostToPropose(details.minCostToPropose);
-      setMinCostToVote(details.minCostToVote);
+      if (prevChainRefInCharge === chainName) {
+        setIsLoading(false);
+        setIsError(false);
+        return;
+      }
+      setMinCharge({
+        minCostToPropose: details.minCostToPropose,
+        minCostToVote: details.minCostToVote,
+      });
 
       setCharge({
         percentageToCreator: 50,
@@ -34,15 +51,18 @@ const useChargeDetails = (chainName: string) => {
           costToPropose: details.minCostToPropose,
           costToVote: details.minCostToVote,
         },
+        error: false,
       });
+
+      setPrevChainRefInCharge(chainName);
     }
-  }, [chainName, setCharge]);
+  }, [chainName, prevChainRefInCharge, setCharge, setMinCharge, setPrevChainRefInCharge]);
 
   useEffect(() => {
     fetchDetails();
   }, [fetchDetails]);
 
-  return { minCostToPropose, minCostToVote, isLoading, isError, refetch: fetchDetails };
+  return { isLoading, isError, refetch: fetchDetails };
 };
 
 export default useChargeDetails;
