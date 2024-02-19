@@ -12,8 +12,7 @@ interface ContestInfoProps {
   submissionStatus: string;
   votingStatus: string;
   contest: any;
-  //TODO: check if Chain type from rainbowkit applies here
-  chains: Chain[];
+  chains: readonly [Chain, ...Chain[]];
   address?: string;
   submissionTimeLeft: TimeLeft;
   votingTimeLeft: TimeLeft;
