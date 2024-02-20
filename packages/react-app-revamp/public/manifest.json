@@ -4,9 +4,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Jokerace",
-  "short_name": "jokerace",
-  "description": "contests for communities to make, execute, and reward decisions",
+  "name": "JokeRace",
+  "short_name": "JokeRace",
+  "description": "contests for communities to run, grow, and monetize",
   "icons": [
     {
       "src": "/icon-192x192.png",
