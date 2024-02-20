@@ -1,6 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { transform, useDistributeRewardStore } from "@hooks/useDistributeRewards";
 import { useError } from "@hooks/useError";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
@@ -30,6 +31,7 @@ export const useWithdrawReward = (
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const { chainId } = useAccount();
   const { setIsLoading } = useWithdrawRewardStore(state => state);
+  const { setRefetch: triggerDistributeRewardsRefetch } = useDistributeRewardStore(state => state);
   const { handleError } = useError();
   const queryTokenBalance = useBalance({
     token: tokenType === "erc20" ? (tokenAddress as `0x${string}`) : undefined,
@@ -54,12 +56,17 @@ export const useWithdrawReward = (
       await queryTokenBalance.refetch();
       setIsLoading(false);
       toastSuccess("Funds withdrawn successfully!");
+      triggerDistributeRewardsRefetch(true);
+
+      if (!queryTokenBalance.data) return;
+
+      const amountWithdrawnFormatted = transform(queryTokenBalance.data.value, tokenType, queryTokenBalance.data);
 
       updateRewardAnalytics({
         contest_address: contestAddress,
         rewards_module_address: contractRewardsModuleAddress,
         network_name: chainName,
-        amount: parseFloat(queryTokenBalance.data?.formatted ?? ""),
+        amount: amountWithdrawnFormatted,
         operation: "withdraw",
         token_address: tokenAddress ? tokenAddress : null,
         created_at: Math.floor(Date.now() / 1000),

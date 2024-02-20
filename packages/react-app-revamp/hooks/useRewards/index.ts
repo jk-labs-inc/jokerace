@@ -10,19 +10,45 @@ import { useRouter } from "next/router";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useRewardsStore } from "./store";
+import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
+
+const alchemySupportedChains = [
+  {
+    name: "ethereum",
+    id: 1,
+  },
+  {
+    name: "polygon",
+    id: 137,
+  },
+  {
+    name: "optimism",
+    id: 10,
+  },
+  {
+    name: "arbitrum",
+    id: 42161,
+  },
+  {
+    name: "base",
+    id: 8453,
+  },
+];
 
 export function useRewardsModule() {
   const { asPath } = useRouter();
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath);
   const { chain } = useAccount();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
+  const { setRefetch: refetchDistributeRewardsWithoutAlchemy } = useDistributeRewardStore(state => state);
   const { error, handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
+  const alchemySupported = alchemySupportedChains.filter(chain => chain.id === chainId).length > 0;
 
   const { refetch: refetchBalanceRewardsModule } = useQuery({
-    queryKey: ["balance-rewards-module", rewards?.contractAddress],
+    queryKey: ["balance-rewards-module", rewards?.contractAddress, alchemySupported],
     queryFn: async () => {
       try {
         const contestRewardModuleAddress = rewards?.contractAddress;
@@ -58,8 +84,16 @@ export function useRewardsModule() {
         throw e;
       }
     },
-    enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY ? true : false,
+    enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY && alchemySupported ? true : false,
   });
+
+  const handleRefetchBalanceRewardsModule = () => {
+    if (alchemySupported) {
+      refetchBalanceRewardsModule();
+    } else {
+      refetchDistributeRewardsWithoutAlchemy(true);
+    }
+  };
 
   async function getContestRewardsModule() {
     setIsLoading(true);
@@ -156,7 +190,7 @@ export function useRewardsModule() {
   return {
     getContestRewardsModule,
     getContestRewardsAddress,
-    refetchBalanceRewardsModule,
+    handleRefetchBalanceRewardsModule,
   };
 }
 

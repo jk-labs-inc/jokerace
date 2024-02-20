@@ -54,6 +54,7 @@ export function useSubmitProposal() {
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
       const { abi } = await getContestContractVersion(address, chainId);
+      const costToPropose = charge ? (charge.type.costToPropose as unknown as bigint) : undefined;
 
       try {
         const { proofs, isVerified } = await getProofs(userAddress ?? "", "submission", "10");
@@ -75,15 +76,13 @@ export function useSubmitProposal() {
 
         let hash: `0x${string}`;
 
-        // TODO: investigate why this it is giving lint error on args and value
         if (!isVerified) {
           hash = await writeContract(config, {
             ...contractConfig,
             functionName: "propose",
             //@ts-ignore
             args: [proposalCore, proofs],
-            //@ts-ignore
-            value: charge ? [charge.type.costToPropose] : [],
+            value: costToPropose,
           });
         } else {
           hash = await writeContract(config, {
@@ -91,8 +90,7 @@ export function useSubmitProposal() {
             functionName: "proposeWithoutProof",
             //@ts-ignore
             args: [proposalCore],
-            //@ts-ignore
-            value: charge ? [charge.type.costToPropose] : [],
+            value: costToPropose,
           });
         }
 

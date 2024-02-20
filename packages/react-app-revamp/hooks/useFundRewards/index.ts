@@ -5,10 +5,10 @@ import useRewardsModule from "@hooks/useRewards";
 import {
   estimateGas,
   sendTransaction,
+  simulateContract,
   waitForTransactionReceipt,
   writeContract,
   type WaitForTransactionReceiptReturnType,
-  simulateContract,
 } from "@wagmi/core";
 import { utils } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
@@ -46,7 +46,7 @@ export function useFundRewardsModule() {
     setTransactionData,
   } = useFundRewardsStore(state => state);
   const { error: errorMessage, handleError } = useError();
-  const { refetchBalanceRewardsModule } = useRewardsModule();
+  const { handleRefetchBalanceRewardsModule } = useRewardsModule();
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
     if (rewards.length > 3) {
@@ -108,7 +108,7 @@ export function useFundRewardsModule() {
         hash: hash,
       });
 
-      await refetchBalanceRewardsModule();
+      handleRefetchBalanceRewardsModule();
     } else {
       const amountBigInt = BigInt(amount);
 
@@ -131,6 +131,7 @@ export function useFundRewardsModule() {
     setIsLoading(false);
     setIsSuccess(true);
 
+    handleRefetchBalanceRewardsModule();
     updateRewardAnalytics({
       contest_address: contestAddress,
       rewards_module_address: rewardsContractAddress,

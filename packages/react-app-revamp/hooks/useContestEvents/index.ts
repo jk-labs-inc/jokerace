@@ -40,6 +40,7 @@ export function useContestEvents() {
   async function onVoteCast(args: Array<any>) {
     try {
       const proposalId = args[0].args.proposalId.toString();
+
       const votesRaw = (await readContract(config, {
         address: contestAddress as `0x${string}`,
         abi: DeployedContestContract.abi,
@@ -103,7 +104,6 @@ export function useContestEvents() {
           address: contestAddress as `0x${string}`,
           abi: DeployedContestContract.abi,
           eventName: "VoteCast",
-          //TODO: test logs with live voting
           onLogs: eventLogs => {
             onVoteCast(eventLogs).catch(err => console.log(err));
           },

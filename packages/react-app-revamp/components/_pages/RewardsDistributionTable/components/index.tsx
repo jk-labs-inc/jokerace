@@ -35,7 +35,7 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
     showPreviouslyDistributedTable,
   } = props;
   const { isLoading: isFundingRewardsLoading } = useFundRewardsModule();
-  const { isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
+  const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
   const { isLoading: isWithdrawRewardsLoading } = useWithdrawRewardStore(state => state);
   const {
     data: rawData,

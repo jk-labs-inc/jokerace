@@ -112,8 +112,7 @@ export const DialogCheckBalanceRewardsModule: FC<DialogCheckBalanceRewardsModule
             </div>
           )}
         </div>
-        {/* TODO: check formatted value */}
-        {queryTokenBalance?.formatted && !tokenAlreadyAdded && (
+        {queryTokenBalance?.symbol && !tokenAlreadyAdded && (
           <ul className="flex gap-6 text-[16px] pt-6 font-bold list-explainer animate-appear">
             <li className="flex items-center uppercase">
               {parseFloat(utils.formatUnits(queryTokenBalance.value, queryTokenBalance.decimals))} $

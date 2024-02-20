@@ -1,26 +1,20 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import Loader from "@components/UI/Loader";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
+import { formatUnits } from "ethers/lib/utils";
 import Skeleton from "react-loading-skeleton";
 import { Tooltip } from "react-tooltip";
 
 interface DistributableRewardProps {
   queryTokenBalance: any;
-  rewardsReleasable: number;
-  isReleasableRewardsLoading: boolean;
-  isDistributeRewardsLoading: boolean;
+  queryRankRewardsReleasable: any;
   handleDistributeRewards?: () => Promise<void>;
 }
 
 export const DistributableReward = (props: DistributableRewardProps) => {
   const { contestStatus } = useContestStatusStore(state => state);
-  const {
-    queryTokenBalance,
-    rewardsReleasable,
-    handleDistributeRewards,
-    isDistributeRewardsLoading,
-    isReleasableRewardsLoading,
-  } = props;
+  const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
+  const { queryTokenBalance, handleDistributeRewards, queryRankRewardsReleasable } = props;
 
   if (queryTokenBalance.isLoading)
     return (
@@ -29,7 +23,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
       </li>
     );
 
-  if (!rewardsReleasable || queryTokenBalance.data.value.toString() === "0") {
+  if (!queryRankRewardsReleasable.data || queryTokenBalance.data.value === 0 || queryRankRewardsReleasable.data === 0) {
     return (
       <li>
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds to distribute
@@ -37,27 +31,32 @@ export const DistributableReward = (props: DistributableRewardProps) => {
     );
   }
 
+  if (queryRankRewardsReleasable.isLoading) {
+    return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading distributable rewards</p>;
+  }
+
   return (
     <li className="flex items-center">
       <section className="flex justify-between w-full">
-        {isReleasableRewardsLoading && <Loader scale="component">Loading info...</Loader>}
         <p>
-          {rewardsReleasable} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+          {formatUnits(queryRankRewardsReleasable.data, queryTokenBalance.data?.decimals ?? 18)}{" "}
+          <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
         </p>
 
-        {/* //TODO: check previous code here */}
-        <div data-tooltip-id={`tooltip-${queryTokenBalance?.data?.symbol}`}>
-          {rewardsReleasable > 0 && (
-            <ButtonV3
-              isDisabled={contestStatus !== ContestStatus.VotingClosed || isDistributeRewardsLoading}
-              size={ButtonSize.EXTRA_SMALL}
-              colorClass="bg-gradient-distribute"
-              onClick={handleDistributeRewards}
-            >
-              distribute
-            </ButtonV3>
-          )}
-        </div>
+        {queryRankRewardsReleasable.isSuccess ? (
+          <div data-tooltip-id={`tooltip-${queryTokenBalance?.data?.symbol}`}>
+            {queryRankRewardsReleasable.data > 0 && (
+              <ButtonV3
+                isDisabled={contestStatus !== ContestStatus.VotingClosed || isDistributeRewardsLoading}
+                size={ButtonSize.EXTRA_SMALL}
+                colorClass="bg-gradient-distribute"
+                onClick={handleDistributeRewards}
+              >
+                distribute
+              </ButtonV3>
+            )}
+          </div>
+        ) : null}
         {contestStatus !== ContestStatus.VotingClosed && (
           <Tooltip id={`tooltip-${queryTokenBalance?.data?.symbol}`}>
             <p className="text-[16px]">funds cannot be distributed until voting has ended!</p>

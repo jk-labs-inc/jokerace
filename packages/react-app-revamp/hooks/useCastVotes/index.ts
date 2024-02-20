@@ -16,6 +16,7 @@ import { BigNumber, utils } from "ethers";
 import { formatEther, parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
+import { parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -56,6 +57,7 @@ export function useCastVotes() {
 
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
+      const costToVote = charge ? (charge.type.costToVote as unknown as bigint) : undefined;
 
       let hash: `0x${string}`;
 
@@ -71,8 +73,8 @@ export function useCastVotes() {
             parseUnits(amount.toString()),
             proofs,
           ],
-          //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
-          value: charge ? [charge.type.costToVote] : [],
+
+          value: costToVote,
         });
       } else {
         hash = await writeContract(config, {
@@ -80,8 +82,7 @@ export function useCastVotes() {
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
-          //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
-          value: charge ? [charge.type.costToVote] : [],
+          value: costToVote,
         });
       }
 

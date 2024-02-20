@@ -1,4 +1,4 @@
-import { useDistributeRewardStore, useDistributeRewards } from "@hooks/useDistributeRewards";
+import { useDistributeRewards } from "@hooks/useDistributeRewards";
 import Reward from "../Reward";
 
 interface PayeeERC20RewardProps {
@@ -21,33 +21,24 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
     chainId,
     showPreviouslyDistributed,
   } = props;
-  const { queryTokenBalance, handleDistributeRewards } = useDistributeRewards(
-    Number(payee),
-    Number(share),
-    contractRewardsModuleAddress,
-    abiRewardsModule,
-    chainId,
-    "erc20",
-    tokenAddress,
-  );
-  const {
-    isReleasableRewardsLoading,
-    isDistributeRewardsLoading,
-    isReleasedRewardsLoading,
-    releasableRewards,
-    releasedRewards,
-  } = useDistributeRewardStore(state => state);
+  const { queryTokenBalance, queryRankRewardsReleasable, queryRankRewardsReleased, handleDistributeRewards } =
+    useDistributeRewards(
+      Number(payee),
+      Number(share),
+      contractRewardsModuleAddress,
+      abiRewardsModule,
+      chainId,
+      "erc20",
+      tokenAddress,
+    );
 
   return (
     <Reward
       queryTokenBalance={queryTokenBalance}
-      rewardsReleasable={releasableRewards}
-      rewardsReleased={releasedRewards}
+      queryRankRewardsReleasable={queryRankRewardsReleasable}
+      queryRankRewardsReleased={queryRankRewardsReleased}
       showPreviouslyDistributed={showPreviouslyDistributed}
       handleDistributeRewards={handleDistributeRewards}
-      isReleasableRewardsLoading={isReleasableRewardsLoading}
-      isDistributeRewardsLoading={isDistributeRewardsLoading}
-      isReleasedRewardsLoading={isReleasedRewardsLoading}
     />
   );
 };
