@@ -34,10 +34,10 @@ const isProd = process.env.NODE_ENV === "production";
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const title: string = pageProps.title ? `${pageProps.title}` : "jokerace";
+  const title: string = pageProps.title ? `${pageProps.title}` : "JokeRace";
   const description: string = pageProps.description
     ? pageProps.description
-    : "jokerace - contests for communities to make, execute, and reward decisions.";
+    : "JokeRace - contests for communities to run, grow, and monetize.";
 
   //@ts-ignore
   const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase>{page}</LayoutBase>);

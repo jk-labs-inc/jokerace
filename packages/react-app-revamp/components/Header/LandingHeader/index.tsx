@@ -34,8 +34,7 @@ const LandingHeader = () => {
 
       <div className="flex items-center gap-5 text-[18px]">
         <p className="text-[18px] md:text-[20px] lg:hidden font-bold">
-          contests for communities to make, <br />
-          execute, and reward decisions
+          contests for communities to run, grow, and monetize
         </p>
         <Link href={ROUTE_CREATE_CONTEST}>
           <Button className="hidden lg:flex h-10" intent={`${isConnected ? "primary" : "neutral-outline"}`}>
