@@ -61,7 +61,7 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
       case TimingPeriod.OneMonth:
         return `voting runs one month: ${formattedVoteOpen} to ${formattedVotesClose}`;
       default:
-        return `voting runss ${formattedVoteOpen} to ${formattedVotesClose}`;
+        return `voting runs ${formattedVoteOpen} to ${formattedVotesClose}`;
     }
   }, [formattedVotesClose, formattedVoteOpen, timingOptionForVotingPeriod]);
 
