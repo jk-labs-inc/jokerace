@@ -4,7 +4,7 @@ export const berachainTestnet: Chain = {
   id: 80085,
   name: "berachainTestnet",
   network: "berachainTestnet",
-  iconUrl: "/contest/mona-lisa-moustache.png",
+  iconUrl: "/berachain.svg",
   nativeCurrency: {
     decimals: 18,
     name: "BERA",
