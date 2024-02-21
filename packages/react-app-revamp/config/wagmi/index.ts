@@ -60,6 +60,7 @@ import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
+import { morphTestnet } from "./custom-chains/morphTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
@@ -169,6 +170,7 @@ const totalChains: Chain[] = [
   taikoTestnet,
   palmTestnet,
   fraxtalTestnet,
+  morphTestnet,
   mainnet,
 ];
 
