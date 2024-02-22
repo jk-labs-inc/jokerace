@@ -126,38 +126,43 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
               {settingType === "erc20" ? "token" : "nft"}
             </p>
           </div>
-          <div
-            onClick={onTokenModalHandler}
-            className={`flex rounded-[15px] border border-neutral-10 bg-transparent justify-between w-[216px] h-10 px-4 py-1 ${
-              tokenDetailsExist ? "hover:border-negative-11" : "hover:border-neutral-11 "
-            }  transition-all duration-300 cursor-pointer`}
-          >
-            {tokenDetailsExist ? (
-              <div className="flex gap-3 items-center">
-                <div
-                  className={`flex items-center bg-neutral-5 rounded-full overflow-hidden w-8 border border-primary-2`}
-                >
-                  <img
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                    src={tokenDetails.logo}
-                    alt="avatar"
-                  />
+          <div className="flex flex-col gap-2">
+            <div
+              onClick={onTokenModalHandler}
+              className={`flex  rounded-[15px] border border-neutral-10 bg-transparent justify-between w-[216px] h-10 px-4 py-1 ${
+                tokenDetailsExist ? "hover:border-negative-11" : "hover:border-neutral-11 "
+              }  transition-all duration-300 cursor-pointer`}
+            >
+              {tokenDetailsExist ? (
+                <div className="flex gap-3 items-center">
+                  <div
+                    className={`flex items-center bg-neutral-5 rounded-full overflow-hidden w-8 border border-primary-2`}
+                  >
+                    <img
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                      src={tokenDetails.logo}
+                      alt="avatar"
+                    />
+                  </div>
+                  {/* //TODO: truncate token name */}
+                  <p className="text-[20px] text-neutral-11 uppercase">{tokenDetails.name.substring(0, 5)}</p>
                 </div>
-                {/* //TODO: truncate token name */}
-                <p className="text-[20px] text-neutral-11 uppercase">{tokenDetails.name.substring(0, 5)}</p>
-              </div>
-            ) : (
-              <p className="text-[20px] font-bold text-neutral-10">select...</p>
-            )}
+              ) : (
+                <p className="text-[20px] font-bold text-neutral-10">select...</p>
+              )}
 
-            {tokenDetailsExist ? (
-              <XIcon
-                className="w-6 cursor-pointer text-negative-11 hover:text-negative-10 transition-all duration-300"
-                onClick={onRemoveToken}
-              />
-            ) : (
-              <ChevronDownIcon className="w-6 cursor-pointer text-neutral-11" />
-            )}
+              {tokenDetailsExist ? (
+                <XIcon
+                  className="w-6 cursor-pointer text-negative-11 hover:text-negative-10 transition-all duration-300"
+                  onClick={onRemoveToken}
+                />
+              ) : (
+                <ChevronDownIcon className="w-6 cursor-pointer text-neutral-11" />
+              )}
+            </div>
+            {error?.tokenAddressError ? (
+              <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error.tokenAddressError}</p>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-col gap-4">
