@@ -28,7 +28,7 @@ const CreateContestConfirmSubmitters: FC<CreateContestConfirmSubmittersProps> = 
   }
 
   if (!isSubmissionMerklePrefilled) {
-    return <p className="text-[16px] list-disc">custom allowlist for submitters</p>;
+    return <li className="text-[16px] list-disc">custom allowlist for submitters</li>;
   }
 
   return <CreateContestConfirmAlowlistsSubmittersPrefilled submissionRequirements={submissionRequirements} />;
