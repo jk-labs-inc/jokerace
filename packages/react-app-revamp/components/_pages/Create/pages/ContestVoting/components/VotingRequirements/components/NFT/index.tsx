@@ -1,4 +1,4 @@
-import CreateRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
+import CreateRequirementsSettings, { TokenDetails } from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 
@@ -18,10 +18,13 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
     });
   };
 
-  const onVotingRequirementTokenAddressChange = (address: string) => {
+  const onVotingRequirementTokenChange = (token: TokenDetails) => {
+    const { address, name, logo } = token;
     setVotingRequirements({
       ...votingRequirements,
       tokenAddress: address,
+      name,
+      logo,
     });
   };
 
@@ -57,12 +60,16 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
       settingType={votingRequirements.type}
       chain={votingRequirements.chain}
       error={error}
-      tokenAddress={votingRequirements.tokenAddress}
+      token={{
+        address: votingRequirements.tokenAddress,
+        name: votingRequirements.name,
+        logo: votingRequirements.logo,
+      }}
       minTokensRequired={votingRequirements.minTokensRequired}
       powerType={votingRequirements.powerType}
       powerValue={votingRequirements.powerValue}
       onChainChange={onVotingRequirementChainChange}
-      onTokenAddressChange={onVotingRequirementTokenAddressChange}
+      onTokenChange={onVotingRequirementTokenChange}
       onMinTokensRequiredChange={onMinTokensRequiredChange}
       onPowerTypeChange={onPowerTypeChange}
       onPowerValueChange={onPowerValueChange}

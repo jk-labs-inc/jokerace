@@ -1,47 +1,58 @@
-import CreateTextInput from "@components/_pages/Create/components/TextInput";
+/* eslint-disable @next/next/no-img-element */
+import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
+import { chainsImages } from "@config/wagmi";
+import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
+import { NFTMetadata } from "@hooks/useSearchNfts";
+import { FilteredToken } from "@hooks/useTokenList";
 import Image from "next/image";
-import { FC } from "react";
+import { FC, useState } from "react";
 import CreateDefaultDropdown, { Option } from "../DefaultDropdown";
 import CreateNumberInput from "../NumberInput";
-import { chainDropdownOptions, votingPowerOptions } from "./config";
+import { erc20ChainDropdownOptions, nftChainDropdownOptions, votingPowerOptions } from "./config";
 
 interface CreateRequirementsSettingsProps {
   step: "voting" | "submission";
   settingType: string;
   chain: string;
-  tokenAddress: string;
+  token: TokenDetails;
   minTokensRequired: number;
   powerType?: string;
   powerValue?: number;
   error?: Record<string, string | undefined>;
   onChainChange?: (chain: string) => void;
-  onTokenAddressChange?: (address: string) => void;
+  onTokenChange?: (token: TokenDetails) => void;
   onMinTokensRequiredChange?: (minTokens: number | null) => void;
   onPowerTypeChange?: (votingPowerType: string) => void;
   onPowerValueChange?: (votingPower: number | null) => void;
+}
+
+export interface TokenDetails {
+  address: string;
+  name: string;
+  logo: string;
 }
 
 const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   step,
   settingType,
   chain,
-  tokenAddress,
+  token,
   minTokensRequired,
   error,
   powerType,
   powerValue,
   onChainChange,
-  onTokenAddressChange,
+  onTokenChange,
   onMinTokensRequiredChange,
   onPowerTypeChange,
   onPowerValueChange,
 }) => {
-  const chainOption = (chain: string): Option => {
-    return {
-      value: chain,
-      label: chainDropdownOptions.find(c => c.value === chain)?.label ?? "",
-    };
-  };
+  const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
+  const chainDropdownOptions = settingType === "erc20" ? erc20ChainDropdownOptions : nftChainDropdownOptions;
+  const tokenModalType = settingType === "erc20" ? TokenSearchModalType.ERC20 : TokenSearchModalType.ERC721;
+  const [tokenDetails, setTokenDetails] = useState<TokenDetails>(token);
+  const tokenDetailsExist = tokenDetails.name && tokenDetails.logo;
+  const [chainLogo, setChainLogo] = useState<string>("/mainnet.svg");
 
   const powerTypeOption = (powerType: string): Option => {
     return {
@@ -49,26 +60,105 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
       label: powerType,
     };
   };
+
+  const onTokenSelectHandler = (token: FilteredToken) => {
+    const { name, logoURI, address } = token;
+    setIsTokenModalOpen(false);
+    setTokenDetails({
+      name,
+      address,
+      logo: token.logoURI,
+    });
+    onTokenChange?.({
+      name,
+      address,
+      logo: token.logoURI,
+    });
+  };
+
+  const onNftSelectHandler = (nft: NFTMetadata) => {
+    const { name, imageUrl, address } = nft;
+    setIsTokenModalOpen(false);
+    setTokenDetails({
+      name,
+      address,
+      logo: nft.imageUrl,
+    });
+    onTokenChange?.({
+      name,
+      address,
+      logo: nft.imageUrl,
+    });
+  };
+
+  const onRemoveToken = () => {
+    setTokenDetails({
+      name: "",
+      logo: "",
+      address: "",
+    });
+    onTokenChange?.({
+      name: "",
+      logo: "",
+      address: "",
+    });
+  };
+
+  const onTokenModalHandler = () => {
+    if (tokenDetails.name && tokenDetails.logo) return;
+
+    setIsTokenModalOpen(!isTokenModalOpen);
+  };
+
+  const onChainChangeHandler = (chain: string) => {
+    const chainLogo = chainsImages[chain];
+    setChainLogo(chainLogo);
+    onChainChange?.(chain);
+  };
+
   return (
     <div className="md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
-          <p className="text-[16px] text-neutral-11 font-bold uppercase">
-            chain of {settingType === "erc20" ? "token" : "nft"}
-          </p>
-          {settingType === "erc20" ? (
-            <div className="flex gap-2 items-center">
-              <Image src="/ethereum.svg" alt="ethereum" width={20} height={20} />
-              <p className="text-[16px] text-neutral-11 font-bold uppercase">ethereum</p>
-            </div>
-          ) : (
-            <CreateDefaultDropdown
-              defaultOption={chainOption(chain)}
-              options={chainDropdownOptions}
-              className="w-full md:w-44 text-[16px] md:text-[24px] cursor-pointer"
-              onChange={onChainChange}
-            />
-          )}
+          <div className="flex gap-3 items-center">
+            <Image src={chainLogo} alt="ethereum" width={20} height={20} />
+            <p className="text-[16px] text-neutral-11 font-bold uppercase">
+              {settingType === "erc20" ? "token" : "nft"}
+            </p>
+          </div>
+          <div
+            onClick={onTokenModalHandler}
+            className={`flex rounded-[15px] border border-neutral-10 bg-transparent justify-between w-[216px] h-10 px-4 py-1 ${
+              tokenDetailsExist ? "hover:border-negative-11" : "hover:border-neutral-11 "
+            }  transition-all duration-300 cursor-pointer`}
+          >
+            {tokenDetailsExist ? (
+              <div className="flex gap-3 items-center">
+                <div
+                  className={`flex items-center bg-neutral-5 rounded-full overflow-hidden w-8 border border-primary-2`}
+                >
+                  <img
+                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    src={tokenDetails.logo}
+                    alt="avatar"
+                  />
+                </div>
+                {/* //TODO: truncate token name */}
+                <p className="text-[20px] text-neutral-11 uppercase">{tokenDetails.name.substring(0, 5)}</p>
+              </div>
+            ) : (
+              <p className="text-[20px] font-bold text-neutral-10">select...</p>
+            )}
+
+            {tokenDetailsExist ? (
+              <XIcon
+                className="w-6 cursor-pointer text-negative-11 hover:text-negative-10 transition-all duration-300"
+                onClick={onRemoveToken}
+              />
+            ) : (
+              <ChevronDownIcon className="w-6 cursor-pointer text-neutral-11" />
+            )}
+          </div>
         </div>
         <div className="flex flex-col gap-4">
           {settingType === "erc721" ? (
@@ -87,24 +177,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
             errorMessage={error?.minTokensRequiredError}
           />
         </div>
-        <div className="flex flex-col gap-4">
-          <p className="text-[16px] text-neutral-11 font-bold uppercase">token address</p>
-          <div className="flex flex-col gap-2">
-            <CreateTextInput
-              className="w-full md:w-[600px] text-[16px] md:text-[24px]"
-              value={tokenAddress}
-              placeholder="0x495f947276749ce646f68ac8c248420045cb7b5e"
-              onChange={onTokenAddressChange}
-            />
-            {error?.tokenAddressError ? (
-              <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error.tokenAddressError}</p>
-            ) : (
-              <p className="text-[16px] text-neutral-14 font-bold">
-                when you press “next,” we’ll take a snapshot of all holders to allowlist
-              </p>
-            )}
-          </div>
-        </div>
+
         {step === "voting" ? (
           <div className="flex flex-col gap-4">
             <p className="text-[16px] text-neutral-11 font-bold uppercase">voting power</p>
@@ -128,6 +201,16 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
             </div>
           </div>
         ) : null}
+        <TokenSearchModal
+          type={tokenModalType}
+          chains={chainDropdownOptions}
+          isOpen={isTokenModalOpen}
+          setIsOpen={value => setIsTokenModalOpen(value)}
+          onSelectToken={onTokenSelectHandler}
+          onSelectNft={onNftSelectHandler}
+          onSelectChain={onChainChangeHandler}
+          onClose={() => setChainLogo("/mainnet.svg")}
+        />
       </div>
     </div>
   );

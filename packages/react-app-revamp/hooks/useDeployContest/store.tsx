@@ -199,6 +199,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       powerType: "token",
       powerValue: 100,
       timestamp: Date.now(),
+      name: "",
+      logo: "",
     },
     submissionAllowlist: {
       manual: {},
@@ -217,6 +219,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       tokenAddress: "",
       minTokensRequired: 0.01,
       timestamp: Date.now(),
+      name: "",
+      logo: "",
     },
     submissionTypeOption: {
       value: SubmissionType.DifferentFromVoters,

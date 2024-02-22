@@ -1,4 +1,4 @@
-import CreateRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
+import CreateRequirementsSettings, { TokenDetails } from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 
@@ -16,10 +16,13 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
     });
   };
 
-  const onSubmissionsRequirementTokenAddressChange = (address: string) => {
+  const onSubmissionsRequirementTokenChange = (token: TokenDetails) => {
+    const { address, name, logo } = token;
     setSubmissionRequirements({
       ...submissionRequirements,
       tokenAddress: address,
+      name,
+      logo,
     });
   };
 
@@ -36,10 +39,14 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
       settingType={submissionRequirements.type}
       error={error}
       chain={submissionRequirements.chain}
-      tokenAddress={submissionRequirements.tokenAddress}
+      token={{
+        address: submissionRequirements.tokenAddress,
+        name: submissionRequirements.name,
+        logo: submissionRequirements.logo,
+      }}
       minTokensRequired={submissionRequirements.minTokensRequired}
       onChainChange={onSubmissionsRequirementChainChange}
-      onTokenAddressChange={onSubmissionsRequirementTokenAddressChange}
+      onTokenChange={onSubmissionsRequirementTokenChange}
       onMinTokensRequiredChange={onSubmissionsRequirementMinTokensRequiredChange}
     />
   );

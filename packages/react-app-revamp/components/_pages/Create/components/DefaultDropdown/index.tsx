@@ -1,5 +1,6 @@
+import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/outline";
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, Fragment, useState } from "react";
 
 export interface Option {
   value: string;
@@ -12,7 +13,7 @@ interface CreateDefaultDropdownProps {
   defaultOption: Option;
   className?: string;
   onChange?: (option: string) => void;
-  onMenuStateChange?: (state: boolean) => void;
+  onMenuStateChange?: (isOpen: boolean) => void;
 }
 
 const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
@@ -22,75 +23,63 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
   onChange,
   onMenuStateChange,
 }) => {
-  const [showOptions, setShowOptions] = useState(false);
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
-  const wrapperRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    onMenuStateChange?.(showOptions);
-  }, [showOptions, onMenuStateChange]);
-
-  useEffect(() => {
-    setSelectedOption(defaultOption);
-  }, [defaultOption]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
-        setShowOptions(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleOptionClick = (optionValue: string) => {
-    const selectedOption = options.find(option => option.value === optionValue);
-    if (selectedOption) {
-      setShowOptions(false);
-      setSelectedOption(selectedOption);
-      onChange?.(selectedOption.value);
-    }
-  };
-  const handleDropdownMenu = () => {
-    setShowOptions(true);
+  const handleOptionChange = (option: Option) => {
+    setSelectedOption(option);
+    onChange?.(option.value);
   };
 
   return (
-    <div className="flex relative" ref={wrapperRef}>
-      <div
-        className="flex items-center bg-neutral-14 cursor-pointer w-[216px] h-10 rounded-[5px] px-4 py-2"
-        onClick={handleDropdownMenu}
-      >
-        <p className="text-[20px] text-true-black">{selectedOption.label}</p>
-        <ChevronDownIcon className="w-6 cursor-pointer text-true-black ml-auto" />
-      </div>
+    <Menu as="div" className="relative inline-block">
+      {({ open }) => {
+        onMenuStateChange?.(open);
 
-      {showOptions && (
-        <ul
-          className={`flex flex-col  absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
-        >
-          {options.map(option => (
-            <li
-              className={`text-neutral-11 pt-2 pl-4 pb-2 text-[18px] cursor-pointer 
-        ${
-          option.disabled
-            ? "opacity-50 pointer-events-none"
-            : "hover:bg-neutral-3 transition-colors duration-300 ease-in-out"
-        }
-        ${selectedOption?.value === option.value ? "font-bold" : ""}`}
-              key={option.value}
-              onClick={() => handleOptionClick(option.value)}
+        return (
+          <>
+            <Menu.Button className="flex items-center bg-neutral-14 cursor-pointer w-[216px] h-10 rounded-[5px] px-4 py-2">
+              <p className="text-[20px] text-true-black">{selectedOption.label}</p>
+              <ChevronDownIcon
+                className={`w-6 cursor-pointer text-true-black ml-auto transition-transform duration-200 ${
+                  open ? "rotate-180" : "rotate-0"
+                }`}
+              />
+            </Menu.Button>
+
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-100"
+              enterFrom="transform opacity-0 scale-95"
+              enterTo="transform opacity-100 scale-100"
+              leave="transition ease-in duration-75"
+              leaveFrom="transform opacity-100 scale-100"
+              leaveTo="transform opacity-0 scale-95"
             >
-              {option.label}
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+              <Menu.Items
+                className={`flex flex-col absolute z-10 mt-4 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
+              >
+                {options.map(option => (
+                  <Menu.Item key={option.value}>
+                    {({ active }) => (
+                      <button
+                        className={`text-neutral-11 text-left pt-2 pl-4 pb-2 text-[16px] cursor-pointer
+                        ${option.disabled ? "opacity-50 pointer-events-none" : ""}
+                        ${active ? "bg-neutral-3" : ""}
+                        ${option.value === selectedOption.value ? "font-bold" : ""}`}
+                        disabled={option.disabled}
+                        onClick={() => handleOptionChange(option)}
+                      >
+                        {option.label}
+                      </button>
+                    )}
+                  </Menu.Item>
+                ))}
+              </Menu.Items>
+            </Transition>
+          </>
+        );
+      }}
+    </Menu>
   );
 };
 

@@ -18,6 +18,8 @@ export type VotingRequirements = {
   powerType: string;
   powerValue: number;
   timestamp: number;
+  name: string;
+  logo: string;
 };
 
 export type SubmissionRequirements = {
@@ -26,6 +28,8 @@ export type SubmissionRequirements = {
   tokenAddress: string;
   minTokensRequired: number;
   timestamp: number;
+  name: string;
+  logo: string;
 };
 
 export type Charge = {

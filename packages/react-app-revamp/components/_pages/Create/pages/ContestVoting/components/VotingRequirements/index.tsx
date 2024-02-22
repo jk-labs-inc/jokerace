@@ -52,6 +52,9 @@ const CreateVotingRequirements = () => {
     setVotingRequirements({
       ...votingRequirements,
       type: option,
+      name: "",
+      logo: "",
+      tokenAddress: "",
     });
   };
 

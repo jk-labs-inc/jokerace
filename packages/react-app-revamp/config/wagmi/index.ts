@@ -96,7 +96,7 @@ type ChainImages = {
   [key: string]: string;
 };
 
-const totalChains: Chain[] = [
+export const totalChains: Chain[] = [
   polygon,
   arbitrumOne,
   optimism,
