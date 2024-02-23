@@ -73,7 +73,15 @@ const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDro
           </p>
         </div>
       </div>
-      {token.balance ? <p className="text-[20px] font-bold text-neutral-11">{displayBalance()}</p> : null}
+      {token.balance ? (
+        <p
+          className={`text-[20px] font-bold text-neutral-11 transition-colors duration-300 ${
+            isHovered ? "text-primary-10" : ""
+          }`}
+        >
+          {displayBalance()}
+        </p>
+      ) : null}
     </div>
   );
 };
