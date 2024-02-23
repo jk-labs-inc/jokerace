@@ -11,13 +11,12 @@ interface TokenSearchModalNftProps {
 }
 
 const TokenSearchModalNft: FC<TokenSearchModalNftProps> = ({ chains, onSelectNft, onSelectChain }) => {
-  const [nftSelectedChain, setNftSelectedChain] = useState<string>(chains[0].value);
+  const [selectedChain, setSelectedChain] = useState<string>(chains[0].value);
   const [searchValue, setSearchValue] = useState<string>("");
-  const { data: nftContracts, error, isLoading } = useSearchNfts(nftSelectedChain, searchValue);
   const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
 
   const onNftChainChange = (chain: string) => {
-    setNftSelectedChain(chain);
+    setSelectedChain(chain);
     onSelectChain?.(chain);
   };
 
@@ -37,11 +36,14 @@ const TokenSearchModalNft: FC<TokenSearchModalNftProps> = ({ chains, onSelectNft
         onSearchChange={value => setSearchValue(value)}
         isChainDropdownOpen={isChainDropdownOpen}
       />
-      {!isLoading && !nftContracts ? (
-        <p>loading</p>
-      ) : (
-        <NftsSearchList nfts={nftContracts} isChainDropdownOpen={isChainDropdownOpen} onSelectNft={onSelectNft} />
-      )}
+      {searchValue ? (
+        <NftsSearchList
+          selectedChain={selectedChain}
+          searchValue={searchValue}
+          onSelectNft={onSelectNft}
+          isChainDropdownOpen={isChainDropdownOpen}
+        />
+      ) : null}
     </div>
   );
 };

@@ -1,5 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { tokenAddressRegex } from "@helpers/regex";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 export interface FilteredToken {
   address: string;
@@ -8,80 +8,109 @@ export interface FilteredToken {
   logoURI: string;
 }
 
-interface UseFetchTokenResult {
-  loading: boolean;
-  error: string | null;
-  tokens: FilteredToken[] | null;
-  fetchTokenListPerPage: () => Promise<void>;
+interface PaginationInfo {
   totalLength: number;
   hasMore: boolean;
+  pageParam: number;
 }
 
 const TOKEN_LIST_API_URL = "/api/token/token";
 const pageSize = 20;
+const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
+const ALCHEMY_BASE_URL = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
 
-const useTokenList = (chainId: number, tokenIdentifier: string): UseFetchTokenResult => {
-  const [tokens, setTokens] = useState<FilteredToken[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [page, setPage] = useState<number>(0);
-  const [totalLength, setTotalLength] = useState<number>(0);
-
-  const fetchTokenList = async () => {
-    setLoading(true);
-    setError(null);
-    const apiUrl = `${TOKEN_LIST_API_URL}?chainId=${chainId}&tokenIdentifier=${encodeURIComponent(
+async function fetchTokenListOrMetadata({
+  pageParam = 0,
+  chainId,
+  tokenIdentifier,
+}: {
+  pageParam?: number;
+  chainId: number;
+  tokenIdentifier: string;
+}): Promise<{ tokens: FilteredToken[]; pagination: PaginationInfo }> {
+  const response = await fetch(
+    `${TOKEN_LIST_API_URL}?chainId=${chainId}&tokenIdentifier=${encodeURIComponent(
       tokenIdentifier,
-    )}&page=0&limit=${pageSize}`;
+    )}&page=${pageParam}&limit=${pageSize}`,
+  );
 
-    try {
-      const response = await fetch(apiUrl);
+  if (!response.ok) {
+    throw new Error(`Network response was not ok: ${response.statusText}`);
+  }
+  const data = await response.json();
 
-      if (!response.ok) throw new Error("Failed to fetch token data");
+  if (data.tokens && data.tokens.length > 0) {
+    return {
+      tokens: data.tokens.map((token: any) => ({
+        address: token.address,
+        name: token.name,
+        symbol: token.symbol,
+        logoURI: token.logoURI !== "missing_thumb.png" ? token.logoURI : "/contest/mona-lisa-moustache.png",
+      })),
+      pagination: {
+        totalLength: data.pagination.totalLength,
+        hasMore: data.pagination.hasMore,
+        pageParam: pageParam,
+      },
+    };
+  }
 
-      const data = await response.json();
-      setTokens(data.tokens || []);
-      setTotalLength(data.totalLength || 0);
-      setPage(1);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setLoading(false);
+  if (tokenAddressRegex.test(tokenIdentifier) && (!data.tokens || data.tokens.length === 0)) {
+    const alchemyResponse = await fetch(`${ALCHEMY_BASE_URL}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 0,
+        method: "alchemy_getTokenMetadata",
+        params: [tokenIdentifier],
+      }),
+    });
+
+    if (!alchemyResponse.ok) {
+      throw new Error(`Network response was not ok: ${alchemyResponse.statusText}`);
     }
+
+    const alchemyData = await alchemyResponse.json();
+    const tokenData: FilteredToken = {
+      address: tokenIdentifier,
+      name: alchemyData.result.name,
+      symbol: alchemyData.result.symbol,
+      logoURI: alchemyData.result.logo ? alchemyData.result.logo : "/contest/mona-lisa-moustache.png",
+    };
+    return {
+      tokens: [tokenData],
+      pagination: {
+        totalLength: 1,
+        hasMore: false,
+        pageParam: 0,
+      },
+    };
+  }
+
+  return { tokens: [], pagination: { totalLength: 0, hasMore: false, pageParam: 0 } };
+}
+
+export function useTokenList(chainId: number, tokenIdentifier: string) {
+  const { data, isLoading, isError, error, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    ["searchTokens", chainId, tokenIdentifier],
+    ({ pageParam = 0 }) => fetchTokenListOrMetadata({ pageParam, chainId, tokenIdentifier }),
+    {
+      getNextPageParam: lastPage => {
+        return lastPage.pagination.hasMore ? (lastPage.pagination.pageParam ?? 0) + 1 : undefined;
+      },
+    },
+  );
+
+  const tokens = data?.pages.flatMap(page => page.tokens) || [];
+
+  return {
+    loading: isLoading,
+    error: isError ? error : null,
+    tokens,
+    fetchTokenListPerPage: fetchNextPage,
+    hasMore: hasNextPage,
   };
-
-  const fetchTokenListPerPage = async () => {
-    if (loading || (tokens && totalLength <= tokens.length)) return; // check if all tokens are already fetched
-    setLoading(true);
-
-    const apiUrl = `${TOKEN_LIST_API_URL}?chainId=${chainId}&tokenIdentifier=${encodeURIComponent(
-      tokenIdentifier,
-    )}&page=${page}&limit=${pageSize}`;
-
-    try {
-      const response = await fetch(apiUrl);
-
-      if (!response.ok) throw new Error("Failed to fetch more token data");
-
-      const data = await response.json();
-      if (data.tokens && data.tokens.length > 0) {
-        setTokens(prevTokens => [...prevTokens, ...data.tokens]);
-        setPage(prevPage => prevPage + 1);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const hasMore = tokens ? totalLength > tokens.length : false;
-
-  useEffect(() => {
-    fetchTokenList();
-  }, [chainId, tokenIdentifier]);
-
-  return { loading, error, tokens, fetchTokenListPerPage, totalLength, hasMore };
-};
-
-export default useTokenList;
+}

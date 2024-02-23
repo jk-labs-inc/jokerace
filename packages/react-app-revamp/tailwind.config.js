@@ -106,6 +106,7 @@ module.exports = {
       current: "currentColor",
       "true-white": "#ffffff",
       "true-black": "#000000",
+      blue: "#1E81E2",
       primary: {
         1: "#1c1500",
         2: "#242424",

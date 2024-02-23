@@ -214,7 +214,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
           onSelectToken={onTokenSelectHandler}
           onSelectNft={onNftSelectHandler}
           onSelectChain={onChainChangeHandler}
-          onClose={() => setChainLogo("/mainnet.svg")}
+          onClose={() => onChainChangeHandler("mainnet")}
         />
       </div>
     </div>
