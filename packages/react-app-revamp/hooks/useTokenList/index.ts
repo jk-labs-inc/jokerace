@@ -6,6 +6,7 @@ export interface FilteredToken {
   name: string;
   symbol: string;
   logoURI: string;
+  balance?: number;
 }
 
 interface PaginationInfo {

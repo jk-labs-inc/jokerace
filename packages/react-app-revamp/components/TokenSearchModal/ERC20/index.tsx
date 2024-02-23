@@ -40,7 +40,11 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Ch
           onSelectToken={onSelectToken}
         />
       ) : (
-        <TokenSearchModalUserTokens chainName={erc20SelectedChain} />
+        <TokenSearchModalUserTokens
+          chainName={erc20SelectedChain}
+          onSelectToken={onSelectToken}
+          isChainDropdownOpen={isChainDropdownOpen}
+        />
       )}
     </div>
   );
