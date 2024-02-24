@@ -19,6 +19,8 @@ import { luksoWallet } from "./custom-wallets/luksoWallet";
 import { configureChains, createConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import { aevo } from "./custom-chains/aevo";
+import { ancient8 } from "./custom-chains/ancient8";
+import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -140,6 +142,7 @@ const totalChains: Chain[] = [
   aevo,
   sei,
   syndicateFrame,
+  ancient8,
   polygonTestnet,
   sepolia,
   goerli,
@@ -173,6 +176,7 @@ const totalChains: Chain[] = [
   fraxtalTestnet,
   morphTestnet,
   blastTestnet,
+  ancient8Testnet,
   mainnet,
 ];
 
