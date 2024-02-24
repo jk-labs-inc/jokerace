@@ -27,6 +27,7 @@ import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachainTestnet } from "./custom-chains/berachainTestnet";
+import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
@@ -171,6 +172,7 @@ const totalChains: Chain[] = [
   palmTestnet,
   fraxtalTestnet,
   morphTestnet,
+  blastTestnet,
   mainnet,
 ];
 
