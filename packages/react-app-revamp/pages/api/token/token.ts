@@ -80,7 +80,7 @@ export async function fetchAndFilterToken(
       address: result.item.address,
       name: result.item.name,
       symbol: result.item.symbol,
-      logoURI: result.item.logoURI !== "missing_thumb.png" ? result.item.logoURI : `/contest/mona-lisa-moustache.png`,
+      logoURI: result.item.logoURI,
     }));
 
     return {

@@ -60,15 +60,6 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
             </p>
           </div>
         );
-      case "duplicates":
-        return (
-          <div className="flex flex-col text-[16px] animate-fadeIn">
-            <p className=" text-negative-11">
-              Ruh-roh! CSV file has duplicated addresses.{" "}
-              <span className="font-bold">CSV should have distinct addresses</span>
-            </p>
-          </div>
-        );
       case "allZero":
         return (
           <div className="flex flex-col text-[16px] animate-fadeIn">

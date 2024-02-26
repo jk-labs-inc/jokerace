@@ -7,6 +7,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 import { SubmissionFieldObject } from "../../../SubmissionAllowlist/components/CSVEditor";
+import CSVErrorModalDuplicates from "@components/_pages/Create/components/CSVErrorModal/components/Duplicates";
 
 interface SubmissionCSVFileUploaderProps {
   onChange?: (fields: Array<SubmissionFieldObject>) => void;
@@ -18,6 +19,8 @@ const SubmissionCSVFileUploader: FC<SubmissionCSVFileUploaderProps> = ({ onChang
   const { address } = useAccount();
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [parseError, setParseError] = useState<ParseError>("");
+  const [duplicates, setDuplicates] = useState<string[]>([]);
+  const [isDuplicatesModalOpen, setIsDuplicatesModalOpen] = useState<boolean>(false);
 
   const onFileSelectHandler = async (file: File) => {
     const results = await parseSubmissionCsv(file, address);
@@ -26,17 +29,22 @@ const SubmissionCSVFileUploader: FC<SubmissionCSVFileUploaderProps> = ({ onChang
       case "unexpectedHeaders":
       case "missingColumns":
       case "limitExceeded":
-      case "duplicates":
         setParseError(results.error?.kind);
         return;
       default:
         setParseError("");
     }
 
-    if (results.invalidEntries?.length) {
-      setError(currentStep, { step: currentStep, message: "entries" });
-      setParseError("invalidEntries");
-      return;
+    if (results.invalidEntries.length) {
+      if (results.invalidEntries[0].error === "duplicate") {
+        setDuplicates(results.invalidEntries.map(entry => entry.address));
+        setIsDuplicatesModalOpen(true);
+        setError(currentStep, { step: currentStep, message: "entries" });
+        return;
+      } else {
+        setError(currentStep, { step: currentStep, message: "entries" });
+        return;
+      }
     } else {
       setError(currentStep, { step: currentStep, message: "" });
       setUploadSuccess(true);
@@ -58,6 +66,11 @@ const SubmissionCSVFileUploader: FC<SubmissionCSVFileUploaderProps> = ({ onChang
     <div className="flex flex-col gap-4">
       <FileUpload onFileSelect={onFileSelectHandler} type="csv" isSuccess={uploadSuccess} />
       <CSVParseError type={parseError} step="submission" />
+      <CSVErrorModalDuplicates
+        addresses={duplicates}
+        isOpen={isDuplicatesModalOpen}
+        setIsOpen={value => setIsDuplicatesModalOpen(value)}
+      />
     </div>
   );
 };

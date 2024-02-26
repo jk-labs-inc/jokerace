@@ -6,7 +6,7 @@ export type VotingInvalidEntry = {
 
 export type SubmissionInvalidEntry = {
   address: string;
-  error: boolean;
+  error: string;
 };
 
 export type CommonValidationError =

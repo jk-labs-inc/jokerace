@@ -5,6 +5,7 @@ import { FC, useState } from "react";
 import { useAccount } from "wagmi";
 import { VotingFieldObject } from "../../VotingAllowlist/components/CSVEditor";
 import CSVParseError, { ParseError } from "../../VotingAllowlist/components/CSVEditor/CSVParseError";
+import CSVErrorModalDuplicates from "@components/_pages/Create/components/CSVErrorModal/components/Duplicates";
 
 interface VotingCSVFileUploaderProps {
   onChange?: (fields: Array<VotingFieldObject>) => void;
@@ -18,7 +19,8 @@ const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange }) => 
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [roundedZeroCount, setRoundedZeroCount] = useState<number | undefined>(0);
   const currentStepError = errors.find(error => error.step === currentStep);
-  const entriesError = currentStepError?.message === "entries";
+  const [duplicateAddresses, setDuplicateAddresses] = useState<string[]>([]);
+  const [isDuplicatesModalOpen, setIsDuplicatesModalOpen] = useState<boolean>(false);
 
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvVoting(file, address);
@@ -27,7 +29,6 @@ const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange }) => 
       case "unexpectedHeaders":
       case "missingColumns":
       case "limitExceeded":
-      case "duplicates":
       case "allZero":
         setParseError(results.error.kind);
         return;
@@ -65,6 +66,11 @@ const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange }) => 
     <div className="flex flex-col gap-4">
       <FileUpload onFileSelect={onFileSelectHandler} type="csv" isSuccess={uploadSuccess} />
       <CSVParseError type={parseError} step="voting" />
+      <CSVErrorModalDuplicates
+        addresses={duplicateAddresses}
+        isOpen={isDuplicatesModalOpen}
+        setIsOpen={value => setIsDuplicatesModalOpen(value)}
+      />
       <div className="flex flex-col gap-4">
         <div>
           {uploadSuccess && (

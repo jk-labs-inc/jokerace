@@ -46,7 +46,10 @@ async function fetchTokenListOrMetadata({
         address: token.address,
         name: token.name,
         symbol: token.symbol,
-        logoURI: token.logoURI !== "missing_thumb.png" ? token.logoURI : "/contest/mona-lisa-moustache.png",
+        logoURI:
+          token.logoURI === "" || token.logoURI === "missing_thumb.png"
+            ? "/contest/mona-lisa-moustache.png"
+            : token.logoURI,
       })),
       pagination: {
         totalLength: data.pagination.totalLength,
