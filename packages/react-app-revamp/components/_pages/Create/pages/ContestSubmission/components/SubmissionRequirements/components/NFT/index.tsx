@@ -17,10 +17,11 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
   };
 
   const onSubmissionsRequirementTokenChange = (token: TokenDetails) => {
-    const { address, name, logo } = token;
+    const { address, symbol, name, logo } = token;
     setSubmissionRequirements({
       ...submissionRequirements,
       tokenAddress: address,
+      symbol,
       name,
       logo,
     });
@@ -41,6 +42,7 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
       chain={submissionRequirements.chain}
       token={{
         address: submissionRequirements.tokenAddress,
+        symbol: submissionRequirements.symbol,
         name: submissionRequirements.name,
         logo: submissionRequirements.logo,
       }}

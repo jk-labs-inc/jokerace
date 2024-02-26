@@ -3,7 +3,6 @@ import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FilteredToken } from "@hooks/useTokenList";
 import Image from "next/image";
 import { FC, useCallback } from "react";
-import { useMediaQuery } from "react-responsive";
 import TokenSearchModalERC20 from "./ERC20";
 import TokenSearchModalNft from "./NFT";
 import { Option } from "./components/ChainDropdown";
@@ -36,7 +35,6 @@ const TokenSearchModal: FC<TokenSearchModalProps> = ({
   onSelectChain,
 }) => {
   const tokenSearchModalTitle = type === TokenSearchModalType.ERC20 ? "select a token" : "select an NFT";
-  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const handleClose = useCallback(() => {
     setIsOpen?.(false);
@@ -51,7 +49,7 @@ const TokenSearchModal: FC<TokenSearchModalProps> = ({
           <Dialog.Panel
             className={`text-sm mx-auto min-h-screen max-h-screen w-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] md:h-[658px] md:max-h-[658px] md:w-[552px] bg-primary-2 2xs:rounded-[10px]`}
           >
-            <div className="px-2 md:px-8 py-10">
+            <div className="px-4 md:px-8 py-10">
               <div className="flex flex-col gap-8">
                 <div className="flex flex-col gap-4">
                   <div className="flex justify-between items-center">

@@ -18,6 +18,8 @@ const TokenSearchModalUserTokens: FC<TokenSearchModalUserTokensProps> = ({
   const { address } = useAccount();
   const { isLoading, tokens, error } = useFetchUserTokens(address ?? "", chainName);
 
+  if (!address) return null;
+
   if (error) {
     return (
       <p className="text-[16px] text-negative-11 font-bold">

@@ -1,4 +1,4 @@
-import useSearchNfts, { NFTMetadata } from "@hooks/useSearchNfts";
+import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FC, useState } from "react";
 import TokenSearchModalChainDropdown, { Option } from "../components/ChainDropdown";
 import NftsSearchList from "../components/NftList";

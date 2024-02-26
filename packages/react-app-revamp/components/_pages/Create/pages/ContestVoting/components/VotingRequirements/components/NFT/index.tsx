@@ -19,11 +19,12 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
   };
 
   const onVotingRequirementTokenChange = (token: TokenDetails) => {
-    const { address, name, logo } = token;
+    const { address, name, logo, symbol } = token;
     setVotingRequirements({
       ...votingRequirements,
       tokenAddress: address,
       name,
+      symbol,
       logo,
     });
   };
@@ -62,6 +63,7 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
       error={error}
       token={{
         address: votingRequirements.tokenAddress,
+        symbol: votingRequirements.symbol,
         name: votingRequirements.name,
         logo: votingRequirements.logo,
       }}

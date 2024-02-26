@@ -24,6 +24,7 @@ const getAlchemyBaseUrlForContractMetadata = (chain: string) => {
 export interface NFTMetadata {
   address: string;
   name: string;
+  symbol: string;
   imageUrl: string;
   totalSupply: string | null;
   isVerified: boolean;
@@ -54,6 +55,7 @@ const useSearchNfts = (chain: string, query: string) => {
       contracts = data.contracts.map((contract: any) => ({
         address: contract.address,
         name: contract.openSeaMetadata?.collectionName ? contract.openSeaMetadata.collectionName : contract.name,
+        symbol: contract.symbol,
         totalSupply: contract.totalSupply,
         imageUrl: contract.openSeaMetadata?.imageUrl
           ? contract.openSeaMetadata?.imageUrl
@@ -75,6 +77,7 @@ const useSearchNfts = (chain: string, query: string) => {
           {
             address: contract.address,
             name: contract.openSeaMetadata?.collectionName ? contract.openSeaMetadata.collectionName : contract.name,
+            symbol: contract.symbol,
             totalSupply: contract.totalSupply,
             imageUrl: contract.openSeaMetadata?.imageUrl
               ? contract.openSeaMetadata?.imageUrl

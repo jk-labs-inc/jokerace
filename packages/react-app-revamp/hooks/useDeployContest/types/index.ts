@@ -19,6 +19,7 @@ export type VotingRequirements = {
   powerValue: number;
   timestamp: number;
   name: string;
+  symbol: string;
   logo: string;
 };
 
@@ -29,6 +30,7 @@ export type SubmissionRequirements = {
   minTokensRequired: number;
   timestamp: number;
   name: string;
+  symbol: string;
   logo: string;
 };
 

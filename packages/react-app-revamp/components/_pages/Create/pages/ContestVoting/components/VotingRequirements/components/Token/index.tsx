@@ -19,11 +19,12 @@ const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSet
   };
 
   const onVotingRequirementTokenChange = (token: TokenDetails) => {
-    const { address, name, logo } = token;
+    const { address, name, symbol, logo } = token;
     setVotingRequirements({
       ...votingRequirements,
       tokenAddress: address,
       name,
+      symbol,
       logo,
     });
   };
@@ -62,6 +63,7 @@ const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSet
       error={error}
       token={{
         address: votingRequirements.tokenAddress,
+        symbol: votingRequirements.symbol,
         name: votingRequirements.name,
         logo: votingRequirements.logo,
       }}

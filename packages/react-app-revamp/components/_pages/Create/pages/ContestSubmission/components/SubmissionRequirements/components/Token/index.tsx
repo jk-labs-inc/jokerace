@@ -17,10 +17,11 @@ const CreateSubmissionRequirementsTokenSettings: FC<CreateSubmissionRequirements
   };
 
   const onSubmissionsRequirementTokenChange = (token: TokenDetails) => {
-    const { address, name, logo } = token;
+    const { address, name, logo, symbol } = token;
     setSubmissionRequirements({
       ...submissionRequirements,
       tokenAddress: address,
+      symbol,
       name,
       logo,
     });
@@ -41,6 +42,7 @@ const CreateSubmissionRequirementsTokenSettings: FC<CreateSubmissionRequirements
       chain={submissionRequirements.chain}
       token={{
         address: submissionRequirements.tokenAddress,
+        symbol: submissionRequirements.symbol,
         name: submissionRequirements.name,
         logo: submissionRequirements.logo,
       }}

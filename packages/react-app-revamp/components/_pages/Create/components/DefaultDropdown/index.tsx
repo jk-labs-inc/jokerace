@@ -55,9 +55,8 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              {/* //TODO: check overflow-x-clip */}
               <Menu.Items
-                className={`flex flex-col absolute z-10 mt-4 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip animate-appear ${className}`}
+                className={`flex flex-col absolute z-10 mt-4 bg-true-black border border-neutral-11 rounded-[10px] overflow-clip animate-appear ${className}`}
               >
                 {options.map(option => (
                   <Menu.Item key={option.value}>

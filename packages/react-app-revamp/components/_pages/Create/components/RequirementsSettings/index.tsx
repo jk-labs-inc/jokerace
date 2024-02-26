@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
-import { chainsImages } from "@config/wagmi";
+import { chains, chainsImages } from "@config/wagmi";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FilteredToken } from "@hooks/useTokenList";
 import Image from "next/image";
 import { FC, useState } from "react";
+import { Tooltip } from "react-tooltip";
 import CreateDefaultDropdown, { Option } from "../DefaultDropdown";
 import CreateNumberInput from "../NumberInput";
 import { erc20ChainDropdownOptions, nftChainDropdownOptions, votingPowerOptions } from "./config";
@@ -28,9 +30,17 @@ interface CreateRequirementsSettingsProps {
 
 export interface TokenDetails {
   address: string;
+  symbol: string;
   name: string;
   logo: string;
 }
+
+const defaultTokenDetails = {
+  name: "",
+  symbol: "",
+  logo: "",
+  address: "",
+};
 
 const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   step,
@@ -51,8 +61,10 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   const chainDropdownOptions = settingType === "erc20" ? erc20ChainDropdownOptions : nftChainDropdownOptions;
   const tokenModalType = settingType === "erc20" ? TokenSearchModalType.ERC20 : TokenSearchModalType.ERC721;
   const [tokenDetails, setTokenDetails] = useState<TokenDetails>(token);
-  const tokenDetailsExist = tokenDetails.name && tokenDetails.logo;
-  const [chainLogo, setChainLogo] = useState<string>("/mainnet.svg");
+  const tokenDetailsExist = tokenDetails.name && tokenDetails.logo && tokenDetails.address && tokenDetails.symbol;
+  const [chainLogo, setChainLogo] = useState<string>(chainsImages[chain]);
+  const chainExplorer = chains.find(c => c.name === chain)?.blockExplorers?.default.url;
+  const chainExplorerTokenUrl = chainExplorer ? `${chainExplorer}/token/${token.address}` : "";
 
   const powerTypeOption = (powerType: string): Option => {
     return {
@@ -61,53 +73,43 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
     };
   };
 
-  const onTokenSelectHandler = (token: FilteredToken) => {
-    const { name, logoURI, address } = token;
+  const updateTokenDetails = (details: TokenDetails) => {
+    setTokenDetails(details);
+    onTokenChange?.(details);
     setIsTokenModalOpen(false);
-    setTokenDetails({
+  };
+
+  const onTokenSelectHandler = (token: FilteredToken) => {
+    const { name, logoURI, address, symbol } = token;
+    updateTokenDetails({
       name,
       address,
-      logo: token.logoURI,
-    });
-    onTokenChange?.({
-      name,
-      address,
-      logo: token.logoURI,
+      symbol,
+      logo: logoURI,
     });
   };
 
   const onNftSelectHandler = (nft: NFTMetadata) => {
-    const { name, imageUrl, address } = nft;
-    setIsTokenModalOpen(false);
-    setTokenDetails({
+    const { name, imageUrl, address, symbol } = nft;
+    updateTokenDetails({
       name,
+      symbol,
       address,
-      logo: nft.imageUrl,
-    });
-    onTokenChange?.({
-      name,
-      address,
-      logo: nft.imageUrl,
+      logo: imageUrl,
     });
   };
 
   const onRemoveToken = () => {
-    setTokenDetails({
-      name: "",
-      logo: "",
-      address: "",
-    });
-    onTokenChange?.({
-      name: "",
-      logo: "",
-      address: "",
-    });
+    setTokenDetails(defaultTokenDetails);
+    setChainLogo(chainsImages["mainnet"]);
+    onTokenChange?.(defaultTokenDetails);
+    onChainChange?.("mainnet");
   };
 
   const onTokenModalHandler = () => {
-    if (tokenDetails.name && tokenDetails.logo) return;
-
-    setIsTokenModalOpen(!isTokenModalOpen);
+    if (!tokenDetails.name && !tokenDetails.logo) {
+      setIsTokenModalOpen(!isTokenModalOpen);
+    }
   };
 
   const onChainChangeHandler = (chain: string) => {
@@ -126,15 +128,15 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
               {settingType === "erc20" ? "token" : "nft"}
             </p>
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 ">
             <div
               onClick={onTokenModalHandler}
-              className={`flex  rounded-[15px] border border-neutral-10 bg-transparent justify-between w-[216px] h-10 px-4 py-1 ${
-                tokenDetailsExist ? "hover:border-negative-11" : "hover:border-neutral-11 "
-              }  transition-all duration-300 cursor-pointer`}
+              data-tooltip-id="tooltip-clickable"
+              className={`flex rounded-[15px] border border-neutral-10 bg-transparent justify-between w-[216px] h-10 px-4 py-1 hover:border-neutral-11
+                transition-colors duration-300 cursor-pointer`}
             >
               {tokenDetailsExist ? (
-                <div className="flex gap-3 items-center">
+                <div className="flex gap-3 items-center ">
                   <div
                     className={`flex items-center bg-neutral-5 rounded-full overflow-hidden w-8 border border-primary-2`}
                   >
@@ -144,8 +146,37 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                       alt="avatar"
                     />
                   </div>
-                  {/* //TODO: truncate token name */}
-                  <p className="text-[20px] text-neutral-11 uppercase">{tokenDetails.name.substring(0, 5)}</p>
+                  <p className="text-[20px] text-neutral-11 uppercase">
+                    {tokenDetails.symbol.length > 8 ? `${tokenDetails.symbol.substring(0, 8)}...` : tokenDetails.symbol}
+                  </p>
+
+                  <Tooltip
+                    clickable
+                    id="tooltip-clickable"
+                    arrowColor="#e2e2e2"
+                    classNameArrow="custom-tooltip-arrow"
+                    place="right"
+                    className="animate-fadeIn cursor-default custom-tooltip"
+                  >
+                    <div className="flex flex-col gap-2 text-neutral-11 text-[16px]">
+                      <p className="font-bold">
+                        name: <span className="font-normal">{token.name}</span>
+                      </p>
+                      <p className="font-bold">
+                        symbol: <span className="font-normal normal-case">${token.symbol}</span>
+                      </p>
+                      <p className="font-bold">
+                        address:{" "}
+                        <a
+                          href={chainExplorerTokenUrl}
+                          target="_blank"
+                          className="hover:text-positive-11 transition-colors duration-300 underline cursor-pointer font-normal"
+                        >
+                          {shortenEthereumAddress(token.address)}
+                        </a>
+                      </p>
+                    </div>
+                  </Tooltip>
                 </div>
               ) : (
                 <p className="text-[20px] font-bold text-neutral-10">select...</p>

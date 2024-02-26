@@ -200,6 +200,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       powerValue: 100,
       timestamp: Date.now(),
       name: "",
+      symbol: "",
       logo: "",
     },
     submissionAllowlist: {
@@ -220,6 +221,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       minTokensRequired: 0.01,
       timestamp: Date.now(),
       name: "",
+      symbol: "",
       logo: "",
     },
     submissionTypeOption: {
