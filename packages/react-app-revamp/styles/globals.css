@@ -220,7 +220,6 @@ li {
 
 .custom-tooltip {
   background-color: black !important;
-  border: 1px solid #e2e2e2 !important;
 }
 
 @tailwind base;

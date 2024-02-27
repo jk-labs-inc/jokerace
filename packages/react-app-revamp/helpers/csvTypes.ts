@@ -6,7 +6,7 @@ export type VotingInvalidEntry = {
 
 export type SubmissionInvalidEntry = {
   address: string;
-  error: string;
+  error: boolean;
 };
 
 export type CommonValidationError =
@@ -14,6 +14,7 @@ export type CommonValidationError =
   | { kind: "missingColumns" }
   | { kind: "limitExceeded" }
   | { kind: "duplicates" }
+  | { kind: "invalidEntries" }
   | { kind: "parseError"; error: Error };
 
 export type UniqueVotingError = { kind: "allZero" };

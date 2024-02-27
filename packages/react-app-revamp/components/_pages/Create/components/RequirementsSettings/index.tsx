@@ -149,34 +149,6 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                   <p className="text-[20px] text-neutral-11 uppercase">
                     {tokenDetails.symbol.length > 8 ? `${tokenDetails.symbol.substring(0, 8)}...` : tokenDetails.symbol}
                   </p>
-
-                  <Tooltip
-                    clickable
-                    id="tooltip-clickable"
-                    arrowColor="#e2e2e2"
-                    classNameArrow="custom-tooltip-arrow"
-                    place="right"
-                    className="animate-fadeIn cursor-default custom-tooltip"
-                  >
-                    <div className="flex flex-col gap-2 text-neutral-11 text-[16px]">
-                      <p className="font-bold">
-                        name: <span className="font-normal">{token.name}</span>
-                      </p>
-                      <p className="font-bold">
-                        symbol: <span className="font-normal normal-case">${token.symbol}</span>
-                      </p>
-                      <p className="font-bold">
-                        address:{" "}
-                        <a
-                          href={chainExplorerTokenUrl}
-                          target="_blank"
-                          className="hover:text-positive-11 transition-colors duration-300 underline cursor-pointer font-normal"
-                        >
-                          {shortenEthereumAddress(token.address)}
-                        </a>
-                      </p>
-                    </div>
-                  </Tooltip>
                 </div>
               ) : (
                 <p className="text-[20px] font-bold text-neutral-10">select...</p>
@@ -190,6 +162,33 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
               ) : (
                 <ChevronDownIcon className="w-6 cursor-pointer text-neutral-11" />
               )}
+              <Tooltip
+                clickable
+                hidden={!tokenDetailsExist}
+                id="tooltip-clickable"
+                border="1px solid #e2e2e2"
+                place="right"
+                className="cursor-default custom-tooltip"
+              >
+                <div className="flex flex-col gap-2 text-neutral-11 text-[16px]">
+                  <p className="font-bold">
+                    name: <span className="font-normal">{token.name}</span>
+                  </p>
+                  <p className="font-bold">
+                    symbol: <span className="font-normal normal-case">${token.symbol}</span>
+                  </p>
+                  <p className="font-bold">
+                    address:{" "}
+                    <a
+                      href={chainExplorerTokenUrl}
+                      target="_blank"
+                      className="hover:text-positive-11 transition-colors duration-300 underline cursor-pointer font-normal"
+                    >
+                      {shortenEthereumAddress(token.address)}
+                    </a>
+                  </p>
+                </div>
+              </Tooltip>
             </div>
             {error?.tokenAddressError ? (
               <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error.tokenAddressError}</p>

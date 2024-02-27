@@ -3,7 +3,7 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { tokenAddressRegex } from "@helpers/regex";
+import { addressRegex } from "@helpers/regex";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
@@ -155,7 +155,7 @@ const CreateVotingRequirements = () => {
   const validateInput = () => {
     const errors: Record<string, string | undefined> = {};
 
-    if (votingRequirements.tokenAddress === "" || tokenAddressRegex.test(votingRequirements.tokenAddress) === false) {
+    if (votingRequirements.tokenAddress === "" || addressRegex.test(votingRequirements.tokenAddress) === false) {
       errors.tokenAddressError = "Invalid token address";
     }
 

@@ -18,7 +18,8 @@ const CSVErrorModalDuplicates: FC<CSVErrorModalDuplicatesProps> = ({ addresses, 
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(JSON.stringify(addresses));
+      const addressesText = addresses.join(", ");
+      await navigator.clipboard.writeText(addressesText);
       setCopyText("copied!");
       setTimeout(() => setCopyText("copy all"), 2000);
     } catch (error) {

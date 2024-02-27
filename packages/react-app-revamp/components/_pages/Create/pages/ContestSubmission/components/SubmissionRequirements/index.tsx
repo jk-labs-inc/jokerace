@@ -4,7 +4,7 @@ import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultD
 import { Option } from "@components/_pages/Create/components/TagDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { tokenAddressRegex } from "@helpers/regex";
+import { addressRegex } from "@helpers/regex";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
@@ -125,7 +125,7 @@ const CreateSubmissionRequirements = () => {
 
     if (
       submissionRequirements.tokenAddress === "" ||
-      tokenAddressRegex.test(submissionRequirements.tokenAddress) === false
+      addressRegex.test(submissionRequirements.tokenAddress) === false
     ) {
       errors.tokenAddressError = "Invalid token address";
     }

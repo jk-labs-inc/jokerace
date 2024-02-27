@@ -1,4 +1,4 @@
-import { tokenAddressRegex } from "@helpers/regex";
+import { addressRegex } from "@helpers/regex";
 import { useQuery } from "@tanstack/react-query";
 
 const chainToAlchemySubdomain = {
@@ -31,7 +31,7 @@ export interface NFTMetadata {
 }
 
 const useSearchNfts = (chain: string, query: string) => {
-  const isQueryTokenAddress = tokenAddressRegex.test(query);
+  const isQueryTokenAddress = addressRegex.test(query);
 
   const fetchNftContractMetadata = async (): Promise<NFTMetadata[]> => {
     if (!query) return [];

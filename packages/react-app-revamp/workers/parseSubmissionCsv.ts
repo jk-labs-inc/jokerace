@@ -1,7 +1,7 @@
 import { MAX_ROWS } from "@helpers/csvConstants";
 import { SubmissionInvalidEntry } from "@helpers/csvTypes";
+import { addressRegex } from "@helpers/regex";
 import { canUploadLargeAllowlist } from "lib/vip";
-import { getAddress } from "viem";
 
 self.onmessage = async (event: MessageEvent) => {
   const { data, userAddress } = event.data;
@@ -9,7 +9,7 @@ self.onmessage = async (event: MessageEvent) => {
   const invalidEntries: SubmissionInvalidEntry[] = [];
   const addressCount: Map<string, number> = new Map();
   const unexpectedHeaders = ["address"];
-  let hasDuplicates = false;
+  const duplicates = new Set();
 
   if (data.length > MAX_ROWS) {
     const hasLargeUploadPermission = userAddress ? await canUploadLargeAllowlist(userAddress, data.length) : false;
@@ -40,23 +40,33 @@ self.onmessage = async (event: MessageEvent) => {
     return;
   }
 
-  // first check: identify duplicates
+  // first check: identify duplicates and validate addresses
   for (const row of data) {
-    const address = row[0];
+    const input = row[0];
+
+    if (!addressRegex.test(input)) {
+      continue;
+    }
+
+    let address = input;
     const count = addressCount.get(address) || 0;
     addressCount.set(address, count + 1);
-    // if this address was seen before, mark as duplicate but do handle it later
-    if (count > 0) {
-      hasDuplicates = true;
-      invalidEntries.push({ address, error: "duplicate" });
-    }
   }
 
-  // ff duplicates were found, we stop here.
-  if (hasDuplicates) {
+  addressCount.forEach((count, address) => {
+    if (count > 1) {
+      // ff an address appears more than once, it's a duplicate
+      duplicates.add(address);
+      invalidEntries.push({ address, error: true });
+    }
+  });
+
+  // if duplicates were found, we stop here and report
+  if (duplicates.size > 0) {
     self.postMessage({
       data: [],
       invalidEntries,
+      error: { kind: "duplicates" },
     });
     return;
   }
@@ -64,31 +74,27 @@ self.onmessage = async (event: MessageEvent) => {
   // no duplicates found, proceed to check for invalid addresses
   for (const row of data) {
     const address = row[0];
-    // reuse the previously collected addresses since we know they are unique now
-    if (addressCount.get(address) === 1) {
-      const { error } = processRowData(row);
-      if (error) {
-        invalidEntries.push({ address, error: "invalidAddress" });
-      } else {
-        addressData.push(address);
-      }
+    const { error } = processRowData(row);
+    if (error) {
+      invalidEntries.push({ address, error });
+    } else {
+      addressData.push(address);
     }
   }
 
   self.postMessage({
     data: addressData,
     invalidEntries,
+    error: { kind: invalidEntries.length ? "invalidEntries" : "" },
   });
 };
 
-const processRowData = (row: any[]): { address: string; error: string } => {
+const processRowData = (row: any[]): { address: string; error: boolean } => {
   const address = row[0];
-  let error = "";
+  let error = false;
 
-  try {
-    getAddress(address);
-  } catch (e) {
-    error = "invalidAddress";
+  if (!addressRegex.test(address)) {
+    error = true;
   }
 
   return { address, error };

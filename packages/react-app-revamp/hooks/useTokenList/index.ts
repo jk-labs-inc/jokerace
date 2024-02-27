@@ -1,4 +1,4 @@
-import { tokenAddressRegex } from "@helpers/regex";
+import { addressRegex } from "@helpers/regex";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 export interface FilteredToken {
@@ -59,7 +59,7 @@ async function fetchTokenListOrMetadata({
     };
   }
 
-  if (tokenAddressRegex.test(tokenIdentifier) && (!data.tokens || data.tokens.length === 0)) {
+  if (addressRegex.test(tokenIdentifier) && (!data.tokens || data.tokens.length === 0)) {
     const alchemyResponse = await fetch(`${ALCHEMY_BASE_URL}`, {
       method: "POST",
       headers: {

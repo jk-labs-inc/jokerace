@@ -2,14 +2,7 @@ import { MAX_ROWS } from "@helpers/csvConstants";
 import { formatNumber } from "@helpers/formatNumber";
 import { FC, ReactNode, useMemo } from "react";
 
-export type ParseError =
-  | "unexpectedHeaders"
-  | "missingColumns"
-  | "limitExceeded"
-  | "duplicates"
-  | "allZero"
-  | "invalidEntries"
-  | "";
+export type ParseError = "unexpectedHeaders" | "missingColumns" | "limitExceeded" | "allZero" | "";
 
 interface CSVParseErrorProps {
   step: "voting" | "submission";
@@ -66,15 +59,6 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
             <p className=" text-negative-11">
               Ruh-roh! All votes in the CSV file are 0.{" "}
               <span className="font-bold">CSV should have at least one vote above zero.</span>
-            </p>
-          </div>
-        );
-      case "invalidEntries":
-        return (
-          <div className="flex flex-col text-[16px] animate-fadeIn">
-            <p className=" text-negative-11">
-              Ruh-roh! CSV file has invalid addresses.{" "}
-              <span className="font-bold">CSV should have addresses that start with 0x</span>
             </p>
           </div>
         );
