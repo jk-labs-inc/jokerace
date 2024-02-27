@@ -30,7 +30,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
           jsonrpc: "2.0",
           method: "alchemy_getTokenBalances",
           params: [userAddress, "erc20"],
-          id: 42,
+          id: 1,
         }),
         redirect: "follow",
       });
@@ -45,7 +45,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
         (tb: any) => tb.tokenBalance !== ZERO_BALANCE,
       );
 
-      const metadataPromises = nonZeroBalances.slice(0, 3).map(async (token: any) => {
+      const metadataPromises = nonZeroBalances.slice(0, 4).map(async (token: any) => {
         const metadataResponse = await fetch(alchemyAppUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -63,6 +63,11 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
         }
 
         const metadata = await metadataResponse.json();
+
+        if (!metadata.result.name || !metadata.result.symbol) {
+          return null;
+        }
+
         const formattedTokenBalance = parseFloat(formatUnits(token.tokenBalance, metadata.decimals));
 
         return {

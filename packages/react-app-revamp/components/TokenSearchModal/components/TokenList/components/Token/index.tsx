@@ -12,7 +12,7 @@ interface TokenSearchListTokenProps {
 const TokenSearchListToken: FC<TokenSearchListTokenProps> = ({ token, isChainDropdownOpen, onSelectToken }) => {
   const [isHovered, setIsHovered] = useState(false);
 
-  const truncateTokenName = (name: string, maxLength: number = 30): string => {
+  const truncateTokenName = (name: string, maxLength: number = 20): string => {
     if (name.length > maxLength) {
       return name.substring(0, maxLength) + "...";
     }
