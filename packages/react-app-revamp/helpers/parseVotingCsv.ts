@@ -8,6 +8,9 @@ export type ParseCsvResult = {
   error?: VotingValidationError;
 };
 
+const MODAL_ERROR_DUPLICATES = "duplicates";
+const MODAL_ERROR_INVALID_ENTRIES = "invalidEntries";
+
 export const parseCsvVoting = (file: File, userAddress: string | undefined): Promise<ParseCsvResult> => {
   return new Promise((resolve, reject) => {
     const worker = new Worker(new URL("/workers/parseVotingCsv", import.meta.url));
@@ -15,7 +18,14 @@ export const parseCsvVoting = (file: File, userAddress: string | undefined): Pro
     worker.onmessage = (event: MessageEvent) => {
       const payload: ParseCsvResult = event.data;
 
-      if (payload.error) {
+      if (payload.error?.kind === MODAL_ERROR_DUPLICATES || payload.error?.kind === MODAL_ERROR_INVALID_ENTRIES) {
+        resolve({
+          data: payload.data,
+          invalidEntries: payload.invalidEntries,
+          roundedZeroCount: payload.roundedZeroCount,
+          error: payload.error,
+        });
+      } else if (payload.error) {
         resolve({
           data: {},
           invalidEntries: payload.invalidEntries,

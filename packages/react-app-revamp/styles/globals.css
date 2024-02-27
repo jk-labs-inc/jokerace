@@ -218,6 +218,10 @@ li {
   pointer-events: none !important;
 }
 
+.custom-tooltip {
+  background-color: black !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

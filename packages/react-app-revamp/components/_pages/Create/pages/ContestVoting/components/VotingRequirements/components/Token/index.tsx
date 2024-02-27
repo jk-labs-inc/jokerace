@@ -1,4 +1,4 @@
-import CreateRequirementsSettings from "@components/_pages/Create/components/RequirementsSettings";
+import CreateRequirementsSettings, { TokenDetails } from "@components/_pages/Create/components/RequirementsSettings";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC } from "react";
 
@@ -18,10 +18,14 @@ const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSet
     });
   };
 
-  const onVotingRequirementTokenAddressChange = (address: string) => {
+  const onVotingRequirementTokenChange = (token: TokenDetails) => {
+    const { address, name, symbol, logo } = token;
     setVotingRequirements({
       ...votingRequirements,
       tokenAddress: address,
+      name,
+      symbol,
+      logo,
     });
   };
 
@@ -57,12 +61,17 @@ const CreateVotingRequirementsTokenSettings: FC<CreateVotingRequirementsTokenSet
       settingType={votingRequirements.type}
       chain={votingRequirements.chain}
       error={error}
-      tokenAddress={votingRequirements.tokenAddress}
+      token={{
+        address: votingRequirements.tokenAddress,
+        symbol: votingRequirements.symbol,
+        name: votingRequirements.name,
+        logo: votingRequirements.logo,
+      }}
       minTokensRequired={votingRequirements.minTokensRequired}
       powerType={votingRequirements.powerType}
       powerValue={votingRequirements.powerValue}
       onChainChange={onVotingRequirementChainChange}
-      onTokenAddressChange={onVotingRequirementTokenAddressChange}
+      onTokenChange={onVotingRequirementTokenChange}
       onMinTokensRequiredChange={onMinTokensRequiredChange}
       onPowerTypeChange={onPowerTypeChange}
       onPowerValueChange={onPowerValueChange}

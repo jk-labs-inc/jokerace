@@ -1,4 +1,7 @@
+import CSVErrorModalDuplicates from "@components/_pages/Create/components/CSVErrorModal/components/Duplicates";
+import CSVErrorModalInvalidEntriesVoting from "@components/_pages/Create/components/CSVErrorModal/components/InvalidEntries/components/Voting";
 import FileUpload from "@components/_pages/Create/components/FileUpload";
+import { VotingInvalidEntry } from "@helpers/csvTypes";
 import { parseCsvVoting } from "@helpers/parseVotingCsv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, useState } from "react";
@@ -8,17 +11,41 @@ import CSVParseError, { ParseError } from "../../VotingAllowlist/components/CSVE
 
 interface VotingCSVFileUploaderProps {
   onChange?: (fields: Array<VotingFieldObject>) => void;
+  onNext?: () => void;
 }
 
-const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange }) => {
-  const { setError, errors, step } = useDeployContestStore(state => state);
+const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange, onNext }) => {
+  const { setError, step } = useDeployContestStore(state => state);
   const currentStep = step + 1;
   const { address } = useAccount();
   const [parseError, setParseError] = useState<ParseError>("");
   const [uploadSuccess, setUploadSuccess] = useState<boolean>(false);
   const [roundedZeroCount, setRoundedZeroCount] = useState<number | undefined>(0);
-  const currentStepError = errors.find(error => error.step === currentStep);
-  const entriesError = currentStepError?.message === "entries";
+  const [duplicateAddresses, setDuplicateAddresses] = useState<string[]>([]);
+  const [isDuplicatesModalOpen, setIsDuplicatesModalOpen] = useState<boolean>(false);
+  const [isInvalidEntriesModalOpen, setIsInvalidEntriesModalOpen] = useState<boolean>(false);
+  const [validEntries, setValidEntries] = useState<VotingFieldObject[]>([]);
+  const [invalidEntries, setInvalidEntries] = useState<VotingFieldObject[]>([]);
+
+  const handleDuplicateError = (invalidEntries: VotingInvalidEntry[]) => {
+    const duplicateAddresses = invalidEntries.map(entry => entry.address);
+
+    setDuplicateAddresses(duplicateAddresses);
+    setIsDuplicatesModalOpen(true);
+    setError(currentStep, { step: currentStep, message: "entries" });
+  };
+
+  const handleInvalidEntriesError = (invalidEntries: VotingInvalidEntry[]) => {
+    const invalidEntriesFormatted = invalidEntries.map(({ address, votes, error }) => ({
+      address,
+      votes: String(votes),
+      error,
+    }));
+
+    setInvalidEntries(invalidEntriesFormatted);
+    setIsInvalidEntriesModalOpen(true);
+    setError(currentStep, { step: currentStep, message: "entries" });
+  };
 
   const onFileSelectHandler = async (file: File) => {
     const results = await parseCsvVoting(file, address);
@@ -27,21 +54,11 @@ const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange }) => 
       case "unexpectedHeaders":
       case "missingColumns":
       case "limitExceeded":
-      case "duplicates":
       case "allZero":
         setParseError(results.error.kind);
         return;
       default:
         setParseError("");
-    }
-
-    if (results.invalidEntries?.length) {
-      setError(currentStep, { step: currentStep, message: "entries" });
-      setParseError("invalidEntries");
-      return;
-    } else {
-      setError(currentStep, { step: currentStep, message: "" });
-      setUploadSuccess(true);
     }
 
     const validEntries = Object.entries(results.data).map(([address, votes]) => ({
@@ -50,21 +67,50 @@ const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange }) => 
       error: null,
     }));
 
-    const invalidEntries = results.invalidEntries.map(({ address, votes, error }) => ({
-      address,
-      votes: String(votes),
-      error,
-    }));
+    setValidEntries(validEntries);
 
-    const allNewEntries = [...invalidEntries, ...validEntries];
-    onChange?.(allNewEntries);
+    if (results.error?.kind === "duplicates") {
+      handleDuplicateError(results.invalidEntries);
+      return;
+    }
+
+    if (results.error?.kind === "invalidEntries") {
+      handleInvalidEntriesError(results.invalidEntries);
+      return;
+    }
+
+    setError(currentStep, { step: currentStep, message: "" });
+    setUploadSuccess(true);
+    onChange?.(validEntries);
     setRoundedZeroCount(results.roundedZeroCount);
+  };
+
+  const handleInvalidEntriesChange = (entries: VotingFieldObject[]) => {
+    setInvalidEntries(entries);
+    onChange?.([...entries, ...validEntries]);
+  };
+
+  const handleNext = () => {
+    setIsInvalidEntriesModalOpen(false);
+    onNext?.();
   };
 
   return (
     <div className="flex flex-col gap-4">
       <FileUpload onFileSelect={onFileSelectHandler} type="csv" isSuccess={uploadSuccess} />
       <CSVParseError type={parseError} step="voting" />
+      <CSVErrorModalDuplicates
+        addresses={duplicateAddresses}
+        isOpen={isDuplicatesModalOpen}
+        setIsOpen={value => setIsDuplicatesModalOpen(value)}
+      />
+      <CSVErrorModalInvalidEntriesVoting
+        fields={invalidEntries}
+        isOpen={isInvalidEntriesModalOpen}
+        setIsOpen={value => setIsInvalidEntriesModalOpen(value)}
+        onChange={entries => handleInvalidEntriesChange(entries)}
+        onClick={handleNext}
+      />
       <div className="flex flex-col gap-4">
         <div>
           {uploadSuccess && (
