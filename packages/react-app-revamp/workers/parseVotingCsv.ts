@@ -1,7 +1,7 @@
 import { MAX_ROWS, MAX_VOTES } from "@helpers/csvConstants";
 import { VotingInvalidEntry } from "@helpers/csvTypes";
+import { addressRegex } from "@helpers/regex";
 import { canUploadLargeAllowlist } from "lib/vip";
-import { getAddress } from "viem";
 
 interface ParseVotingCsvPayload {
   data: any[];
@@ -15,9 +15,8 @@ const processRowData = (row: any[]) => {
     typeof row[1] === "number"
       ? parseFloat(row[1].toFixed(4))
       : parseFloat(parseFloat(row[1].toString().replaceAll(",", "")).toFixed(4));
-  try {
-    getAddress(address);
-  } catch (e) {
+
+  if (!addressRegex.test(address)) {
     error = "address";
   }
 
@@ -33,6 +32,9 @@ self.onmessage = async (event: MessageEvent<ParseVotingCsvPayload>) => {
   const votesData: Record<string, number> = {};
   const invalidEntries: VotingInvalidEntry[] = [];
   const addresses: Set<string> = new Set();
+  const addressCount: Map<string, number> = new Map();
+  const duplicates = new Set<string>();
+
   const unexpectedHeaders = ["address", "number of votes", "numVotes"];
   let roundedZeroCount = 0;
 
@@ -65,12 +67,31 @@ self.onmessage = async (event: MessageEvent<ParseVotingCsvPayload>) => {
     return;
   }
 
-  data.forEach(row => {
-    if (addresses.has(row[0])) {
-      self.postMessage({ data: {}, invalidEntries, error: { kind: "duplicates" } });
-      return;
+  // first check: identify duplicates and validate addresses
+  for (const row of data) {
+    const inputAddress = row[0];
+    if (!addressRegex.test(inputAddress)) {
+      continue;
     }
 
+    const count = addressCount.get(inputAddress) || 0;
+    addressCount.set(inputAddress, count + 1);
+    if (count > 0) {
+      duplicates.add(inputAddress);
+    }
+  }
+
+  // if duplicates were found, we stop here and report
+  if (duplicates.size > 0) {
+    for (const duplicateAddress of duplicates) {
+      invalidEntries.push({ address: duplicateAddress, error: "address", votes: 0 });
+    }
+
+    self.postMessage({ data: {}, invalidEntries, error: { kind: "duplicates" } });
+    return;
+  }
+
+  data.forEach(row => {
     const { address, numberOfVotes, error } = processRowData(row);
 
     addresses.add(address);
@@ -88,5 +109,10 @@ self.onmessage = async (event: MessageEvent<ParseVotingCsvPayload>) => {
     return;
   }
 
-  self.postMessage({ data: votesData, invalidEntries, roundedZeroCount });
+  self.postMessage({
+    data: votesData,
+    invalidEntries,
+    roundedZeroCount,
+    error: invalidEntries.length ? { kind: "invalidEntries" } : null,
+  });
 };

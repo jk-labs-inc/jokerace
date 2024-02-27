@@ -4,7 +4,7 @@ export const sepolia: Chain = {
   id: 11155111,
   name: "sepolia",
   network: "sepolia",
-  iconUrl: "/ethereum.svg",
+  iconUrl: "/mainnet.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

@@ -185,7 +185,7 @@ const CreateVotingCSVUploader = () => {
           </li>
         </ul>
       </div>
-      <VotingCSVFileUploader onChange={handleAllowListChange} />
+      <VotingCSVFileUploader onChange={handleAllowListChange} onNext={handleNextStep} />
       <CreateNextButton step={step + 1} onClick={handleNextStep} />
     </div>
   );

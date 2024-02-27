@@ -84,7 +84,12 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
         onClick={handleDropdownMenu}
         onChange={value => handleInputChange(value)}
       />
-      <ChevronDownIcon className="w-5 cursor-pointer -ml-[20px]" onClick={handleDropdownMenu} />
+      <ChevronDownIcon
+        className={`w-5 cursor-pointer -ml-[20px] transition-transform duration-200 ${
+          showOptions ? "rotate-180" : "rotate-0"
+        }`}
+        onClick={handleDropdownMenu}
+      />
       {showOptions && (
         <ul
           className={`flex flex-col absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip overflow-y-scroll h-80 md:h-[450px] animate-appear ${className}`}

@@ -7,6 +7,7 @@ import {
   useTimingOptionForVotingPeriod,
 } from "../../../ContestTiming/utils";
 import CreateContestConfirmLayout from "../Layout";
+import TokenSearchModal from "@components/TokenSearchModal";
 
 interface CreateContestConfirmTimingProps {
   timing: {
