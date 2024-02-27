@@ -63,12 +63,12 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} key="main" />
         <meta property="og:locale" content="en_GB" />
-        <meta property="og:image" content="https://jokerace.io/jokerace.png" />
+        <meta property="og:image" content="https://jokerace.io/jokerace.jpg" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@jokerace_io" />
         <meta name="twitter:description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-        <meta name="twitter:image" content="https://jokerace.io/jokerace.png" />
+        <meta name="twitter:image" content="https://jokerace.io/jokerace.jpg" />
         <link rel="preload" href="/Sabo-Filled.otf" as="font" type="font/otf" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
         <link rel="preload" href="/Lato-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />

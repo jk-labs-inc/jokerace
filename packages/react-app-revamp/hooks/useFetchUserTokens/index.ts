@@ -45,7 +45,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
         (tb: any) => tb.tokenBalance !== ZERO_BALANCE,
       );
 
-      const metadataPromises = nonZeroBalances.slice(0, 4).map(async (token: any) => {
+      const metadataPromises = nonZeroBalances.slice(0, 3).map(async (token: any) => {
         const metadataResponse = await fetch(alchemyAppUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
