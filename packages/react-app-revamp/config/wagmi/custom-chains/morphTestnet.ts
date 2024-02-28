@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const morphTestnet: Chain = {
   id: 2710,
   name: "morphTestnet",
-  network: "morphTestnet",
   iconUrl: "/morph.svg",
   nativeCurrency: {
     decimals: 18,
