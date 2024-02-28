@@ -5,7 +5,7 @@ export const requirementsDropdownOptions: Option[] = [
   { value: "erc721", label: "NFT holders" },
 ];
 
-export const chainDropdownOptions: Option[] = [
+export const nftChainDropdownOptions: Option[] = [
   {
     value: "mainnet",
     label: "ethereum",
@@ -25,6 +25,13 @@ export const chainDropdownOptions: Option[] = [
   {
     value: "base",
     label: "base",
+  },
+];
+
+export const erc20ChainDropdownOptions: Option[] = [
+  {
+    value: "mainnet",
+    label: "ethereum",
   },
 ];
 

@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const berachainTestnet: Chain = {
   id: 80085,
   name: "berachainTestnet",
-  iconUrl: "/contest/mona-lisa-moustache.png",
+  iconUrl: "/berachain.svg",
   nativeCurrency: {
     decimals: 18,
     name: "BERA",

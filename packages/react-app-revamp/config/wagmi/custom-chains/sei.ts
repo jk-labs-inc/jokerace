@@ -6,8 +6,8 @@ export const sei: Chain = {
   iconUrl: "/sei.svg",
   nativeCurrency: {
     decimals: 18,
-    name: "Ether",
-    symbol: "ETH",
+    name: "Sei",
+    symbol: "SEI",
   },
   rpcUrls: {
     public: {

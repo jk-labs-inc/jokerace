@@ -100,7 +100,7 @@ const CreateSubmissionCSVUploader = () => {
           </li>
         </ul>
       </div>
-      <SubmissionCSVFileUploader onChange={onAllowListChange} />
+      <SubmissionCSVFileUploader onChange={onAllowListChange} onNext={handleNextStep} />
       <CreateNextButton step={step + 1} onClick={handleNextStep} />
     </div>
   );

@@ -18,6 +18,8 @@ import {
 import { Transport } from "viem";
 import { createConfig, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
+import { ancient8 } from "./custom-chains/ancient8";
+import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
@@ -26,6 +28,7 @@ import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachainTestnet } from "./custom-chains/berachainTestnet";
+import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
@@ -59,6 +62,7 @@ import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
+import { morphTestnet } from "./custom-chains/morphTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
@@ -145,6 +149,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   aevo,
   sei,
   syndicateFrame,
+  ancient8,
   polygonTestnet,
   sepolia,
   goerli,
@@ -176,6 +181,9 @@ export const chains: readonly [Chain, ...Chain[]] = [
   taikoTestnet,
   palmTestnet,
   fraxtalTestnet,
+  morphTestnet,
+  blastTestnet,
+  ancient8Testnet,
   mainnet,
 ];
 

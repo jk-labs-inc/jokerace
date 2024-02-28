@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const sepolia: Chain = {
   id: 11155111,
   name: "sepolia",
-  iconUrl: "/ethereum.svg",
+  iconUrl: "/mainnet.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

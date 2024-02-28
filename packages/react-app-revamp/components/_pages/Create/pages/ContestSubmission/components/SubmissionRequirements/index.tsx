@@ -4,7 +4,7 @@ import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultD
 import { Option } from "@components/_pages/Create/components/TagDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
-import { tokenAddressRegex } from "@helpers/regex";
+import { addressRegex } from "@helpers/regex";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
@@ -39,13 +39,24 @@ const CreateSubmissionRequirements = () => {
     () => submissionRequirementsValidation?.[1].validation(submissionRequirementsOption, "submissionRequirements"),
   ]);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const renderLayout = () => {
+    //TODO: see why content jumps when dropdown changes
     switch (submissionRequirementsOption.value) {
       case "erc721":
-        return <CreateSubmissionRequirementsNftSettings error={inputError} />;
+        return (
+          <div className={`${isDropdownOpen ? "opacity-50 transition-opacity duration-300 ease-in-out" : ""}`}>
+            <CreateSubmissionRequirementsNftSettings error={inputError} />
+          </div>
+        );
+
       case "erc20":
-        return <CreateSubmissionRequirementsTokenSettings error={inputError} />;
+        return (
+          <div className={`${isDropdownOpen ? "opacity-50 transition-opacity duration-300 ease-in-out" : ""}`}>
+            <CreateSubmissionRequirementsTokenSettings error={inputError} />
+          </div>
+        );
       default:
         return null;
     }
@@ -59,6 +70,9 @@ const CreateSubmissionRequirements = () => {
     setSubmissionRequirements({
       ...submissionRequirements,
       type: value,
+      tokenAddress: "",
+      name: "",
+      logo: "",
     });
     setInputError({});
   };
@@ -111,7 +125,7 @@ const CreateSubmissionRequirements = () => {
 
     if (
       submissionRequirements.tokenAddress === "" ||
-      tokenAddressRegex.test(submissionRequirements.tokenAddress) === false
+      addressRegex.test(submissionRequirements.tokenAddress) === false
     ) {
       errors.tokenAddressError = "Invalid token address";
     }
@@ -185,6 +199,7 @@ const CreateSubmissionRequirements = () => {
           options={options}
           className="w-full md:w-[240px]"
           onChange={onSubmissionRequirementsOptionChange}
+          onMenuStateChange={value => setIsDropdownOpen(value)}
         />
         {renderLayout()}
       </div>
