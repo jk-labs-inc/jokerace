@@ -91,7 +91,9 @@ const useSearchNfts = (chain: string, query: string) => {
     return contracts;
   };
 
-  const { data, error, isLoading } = useQuery(["searchNfts", chain, query], fetchNftContractMetadata, {
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["searchNfts", chain, query],
+    queryFn: fetchNftContractMetadata,
     enabled: !!query,
   });
 
