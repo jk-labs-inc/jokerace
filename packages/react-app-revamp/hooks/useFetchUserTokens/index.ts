@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatUnits } from "ethers/lib/utils";
 
 const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000000";
+const NEAR_ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000001"; // etherscan and rabby show these values as 0, so to not confuse the user, we will exclude them.
 
 export const useFetchUserTokens = (userAddress: string, chainName: string) => {
   const {
@@ -42,10 +43,10 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
       const tokenBalancesData = await tokenBalancesResponse.json();
 
       const nonZeroBalances = tokenBalancesData.result.tokenBalances.filter(
-        (tb: any) => tb.tokenBalance !== ZERO_BALANCE,
+        (tb: any) => tb.tokenBalance !== ZERO_BALANCE && tb.tokenBalance !== NEAR_ZERO_BALANCE,
       );
 
-      const metadataPromises = nonZeroBalances.slice(0, 3).map(async (token: any) => {
+      const metadataPromises = nonZeroBalances.map(async (token: any) => {
         const metadataResponse = await fetch(alchemyAppUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -68,7 +69,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
           return null;
         }
 
-        const formattedTokenBalance = parseFloat(formatUnits(token.tokenBalance, metadata.decimals));
+        const formattedTokenBalance = parseFloat(formatUnits(token.tokenBalance, metadata.result.decimals));
 
         return {
           address: token.contractAddress,
@@ -84,6 +85,7 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
     },
     {
       enabled: !!userAddress && !!chainName && !!process.env.NEXT_PUBLIC_ALCHEMY_KEY,
+      cacheTime: 10,
     },
   );
 
