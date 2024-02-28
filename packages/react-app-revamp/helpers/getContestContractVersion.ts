@@ -49,6 +49,7 @@ import AddContentToEventsContract from "@contracts/bytecodeAndAbi/Contest.4.21.a
 import RefactorDistributionFuncContract from "@contracts/bytecodeAndAbi/Contest.4.22.refactorDistributionFunc.sol/Contest.json";
 import AddCostToVoteContract from "@contracts/bytecodeAndAbi/Contest.4.23.addCostToVote.sol/Contest.json";
 import RefactorCostDistroContract from "@contracts/bytecodeAndAbi/Contest.4.24.refactorCostDistro.sol/Contest.json";
+import PayPerVoteContract from "@contracts/bytecodeAndAbi/Contest.4.25.payPerVote.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -64,7 +65,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.24") {
+    if (version === "4.25") {
+      return { abi: PayPerVoteContract.abi, version};
+    } else if (version === "4.24") {
       return { abi: RefactorCostDistroContract.abi, version};
     } else if (version === "4.23") {
       return { abi: AddCostToVoteContract.abi, version};

@@ -43,6 +43,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 percentageToCreator;
         uint256 costToPropose;
         uint256 costToVote;
+        uint256 payPerVote;
     }
 
     struct TargetMetadata {
@@ -80,7 +81,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
-    string private constant VERSION = "4.24"; // Private as to not clutter the ABI
+    string private constant _VERSION = "4.25"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -94,6 +95,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public percentageToCreator;
     uint256 public costToPropose;
     uint256 public costToVote;
+    uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -156,9 +158,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         percentageToCreator = constructorIntArgs_.percentageToCreator;
         costToPropose = constructorIntArgs_.costToPropose;
         costToVote = constructorIntArgs_.costToVote;
+        payPerVote = constructorIntArgs_.payPerVote;
 
         emit JokeraceCreated(
-            VERSION,
+            _VERSION,
             name_,
             prompt_,
             msg.sender,
@@ -169,7 +172,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     }
 
     function version() public pure returns (string memory) {
-        return VERSION;
+        return _VERSION;
     }
 
     function hashProposal(ProposalCore memory proposal) public pure returns (uint256) {
@@ -308,12 +311,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     /**
      * @dev Determines that the correct amount was sent with the transaction and returns that correct amount.
      */
-    function _determineCorrectAmountSent(Actions currentAction) internal returns (uint256) {
+    function _determineCorrectAmountSent(Actions currentAction, uint256 numVotes) internal returns (uint256) {
         uint256 actionCost;
         if (currentAction == Actions.Submit) {
             actionCost = costToPropose;
         } else if (currentAction == Actions.Vote) {
-            actionCost = costToVote;
+            actionCost = payPerVote == 1 ? costToVote * numVotes : costToVote;
         } else {
             actionCost = 0;
         }
@@ -346,7 +349,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Create a new proposal.
      */
     function propose(ProposalCore calldata proposal, bytes32[] calldata proof) public payable returns (uint256) {
-        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit);
+        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
 
         verifyProposer(msg.sender, proof);
         validateProposalData(proposal);
@@ -361,7 +364,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Create a new proposal without a proof if you have already proposed with a proof.
      */
     function proposeWithoutProof(ProposalCore calldata proposal) public payable returns (uint256) {
-        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit);
+        uint256 actionCost = _determineCorrectAmountSent(Actions.Submit, 0);
 
         if (submissionMerkleRoot != 0) {
             // if the submission root is 0, then anyone can submit; otherwise, this address needs to have been verified
@@ -461,7 +464,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         payable
         returns (uint256)
     {
-        uint256 actionCost = _determineCorrectAmountSent(Actions.Vote);
+        uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
         address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
@@ -480,7 +483,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         payable
         returns (uint256)
     {
-        uint256 actionCost = _determineCorrectAmountSent(Actions.Vote);
+        uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
         address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
