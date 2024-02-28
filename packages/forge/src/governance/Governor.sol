@@ -81,7 +81,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
-    string private constant _VERSION = "4.24"; // Private as to not clutter the ABI
+    string private constant _VERSION = "4.25"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
