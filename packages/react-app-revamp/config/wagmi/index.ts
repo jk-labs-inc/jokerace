@@ -190,11 +190,9 @@ const connectors = connectorsForWallets(
       groupName: "Wallets",
       wallets: [
         metaMaskWallet,
-        walletConnectWallet,
         rainbowWallet,
         okxWallet,
         tahoWallet,
-        coinbaseWallet,
         argentWallet,
         trustWallet,
         imTokenWallet,
