@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const gnosis: Chain = {
   id: 100,
   name: "gnosis",
-  network: "gnosis",
   iconUrl: "/gnosis.png",
   nativeCurrency: {
     decimals: 18,

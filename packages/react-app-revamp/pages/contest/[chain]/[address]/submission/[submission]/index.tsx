@@ -53,7 +53,7 @@ const Page: FC<PageProps> = ({ address, chain, submission, abi, version, chainId
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 const getChainId = (chain: string) => {
-  const chainId = chains.find(c => c.name.toLowerCase().replace(" ", "") === chain)?.id;
+  const chainId = chains.find((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain)?.id;
 
   if (chainId === undefined) {
     throw new Error(`Chain ID not found for chain: ${chain}`);
@@ -70,7 +70,7 @@ export async function getStaticProps({ params }: any) {
 
   if (
     !REGEX_ETHEREUM_ADDRESS.test(address) ||
-    !chains.some(c => c.name.toLowerCase().replace(" ", "") === chain) ||
+    !chains.some((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain) ||
     !submission
   ) {
     return { notFound: true };

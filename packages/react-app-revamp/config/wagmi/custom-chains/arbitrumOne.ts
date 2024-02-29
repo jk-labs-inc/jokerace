@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const arbitrumOne: Chain = {
   id: 42161,
   name: "arbitrumone",
-  network: "arbitrumone",
   iconUrl: "/arbitrum.svg",
   nativeCurrency: {
     decimals: 18,

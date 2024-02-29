@@ -1,14 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
+import { config } from "@config/wagmi";
 import { DisableEnter, ShiftEnterCreateExtension } from "@helpers/editor";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { switchNetwork } from "@wagmi/core";
+import { switchChain } from "@wagmi/core";
 import { useEffect, useRef, useState } from "react";
 import { useMedia } from "react-use";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import CommentFormInputSubmitButton from "./components/SubmitButton";
 
 interface CommentsFormInputProps {
@@ -52,9 +53,8 @@ const commentEditorConfig = ({ content, placeholderText, onUpdate, isMobile }: C
 
 const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestChainId, isAddingSuccess, isAdding }) => {
   const { openConnectModal } = useConnectModal();
-  const { address, isConnected } = useAccount();
-  const { chain } = useNetwork();
-  const isUserOnCorrectNetwork = chain?.id === contestChainId;
+  const { address, isConnected, chainId } = useAccount();
+  const isUserOnCorrectNetwork = chainId === contestChainId;
   const [commentContent, setCommentContent] = useState("");
   const placeholderText = "add a comment...";
   const [allowSend, setAllowSend] = useState(false);
@@ -104,7 +104,7 @@ const CommentsFormInput: React.FC<CommentsFormInputProps> = ({ onSend, contestCh
   };
 
   const onSwitchNetwork = async () => {
-    await switchNetwork({ chainId: contestChainId });
+    await switchChain(config, { chainId: contestChainId });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {

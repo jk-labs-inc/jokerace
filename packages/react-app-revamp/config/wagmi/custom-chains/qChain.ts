@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const qChain: Chain = {
   id: 35441,
   name: "qChain",
-  network: "qChain",
   iconUrl: "/qchain.svg",
   nativeCurrency: {
     decimals: 18,

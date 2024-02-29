@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const bnb: Chain = {
   id: 56,
   name: "bnb",
-  network: "bnb",
   iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,

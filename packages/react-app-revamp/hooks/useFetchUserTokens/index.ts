@@ -12,9 +12,9 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
     error,
     isLoading,
     refetch,
-  } = useQuery<FilteredToken[], Error>(
-    ["user-erc20-balance", chainName, userAddress],
-    async (): Promise<FilteredToken[]> => {
+  } = useQuery<FilteredToken[], Error>({
+    queryKey: ["user-erc20-balance", chainName, userAddress],
+    queryFn: async (): Promise<FilteredToken[]> => {
       if (!userAddress) throw new Error("Wallet address is not available");
 
       const alchemyAppUrl = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.rpcUrls
@@ -83,11 +83,8 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
       const filteredTokens: FilteredToken[] = (await Promise.all(metadataPromises)).filter(Boolean) as FilteredToken[];
       return filteredTokens;
     },
-    {
-      enabled: !!userAddress && !!chainName && !!process.env.NEXT_PUBLIC_ALCHEMY_KEY,
-      cacheTime: 10,
-    },
-  );
+    enabled: !!userAddress && !!chainName && !!process.env.NEXT_PUBLIC_ALCHEMY_KEY,
+  });
 
   return { tokens, error, isLoading, refetchUserBalances: refetch };
 };

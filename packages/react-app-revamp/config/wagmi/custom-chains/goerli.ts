@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const goerli: Chain = {
   id: 5,
   name: "goerli",
-  network: "goerli",
   iconUrl: "/mainnet.svg",
   nativeCurrency: {
     decimals: 18,

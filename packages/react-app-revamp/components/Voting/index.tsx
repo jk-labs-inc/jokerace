@@ -1,17 +1,17 @@
 import ChargeLayout from "@components/ChargeLayout";
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
 import StepSlider from "@components/UI/Slider";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { useUserStore } from "@hooks/useUser/store";
-import { switchNetwork } from "@wagmi/core";
+import { switchChain } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
-import { useAccount, useBalance, useNetwork } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 
 interface VotingWidgetProps {
   amountOfVotes: number;
@@ -28,15 +28,17 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
     address: address as `0x${string}`,
   });
   const { chainName } = extractPathSegments(asPath);
-  const { chain } = useNetwork();
+  const { chainId: accountChainId } = useAccount();
   const { isLoading } = useCastVotesStore(state => state);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
   const [sliderValue, setSliderValue] = useState(0);
   const [isInvalid, setIsInvalid] = useState(false);
   const voteDisabled = isLoading || amount === 0 || isInvalid || isNaN(amount);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const isCorrectNetwork = chainId === chain?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
+  const isCorrectNetwork = chainId === accountChainId;
   const showVoteCharge = charge && charge.type.costToVote && accountData && isCorrectNetwork;
 
   const handleClick = (value: boolean) => {
@@ -90,7 +92,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   };
 
   const onSwitchNetwork = async () => {
-    await switchNetwork({ chainId });
+    await switchChain(config, { chainId });
   };
 
   return (

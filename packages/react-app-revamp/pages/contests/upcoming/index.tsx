@@ -18,17 +18,16 @@ function useContests(sortBy?: string) {
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(["upcomingContests", page, address, sortBy], () =>
-    getUpcomingContests(page, ITEMS_PER_PAGE, address, sortBy),
-  );
+  } = useQuery({
+    queryKey: ["upcomingContests", page, address, sortBy],
+    queryFn: () => getUpcomingContests(page, ITEMS_PER_PAGE, address, sortBy),
+  });
 
-  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
-    ["rewards", contestData],
-    data => getRewards(contestData?.data ?? []),
-    {
-      enabled: !!contestData,
-    },
-  );
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
+    queryKey: ["rewards", contestData],
+    queryFn: () => getRewards(contestData?.data ?? []),
+    enabled: !!contestData,
+  });
 
   return {
     page,

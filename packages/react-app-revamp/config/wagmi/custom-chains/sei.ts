@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const sei: Chain = {
   id: 713715,
   name: "sei",
-  network: "sei",
   iconUrl: "/sei.svg",
   nativeCurrency: {
     decimals: 18,

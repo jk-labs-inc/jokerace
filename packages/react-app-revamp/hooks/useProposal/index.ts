@@ -1,5 +1,5 @@
 import { toastError } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -12,7 +12,7 @@ import { Result } from "ethers/lib/utils";
 import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { useRouter } from "next/router";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
 import {
   formatProposalData,
@@ -52,11 +52,13 @@ export function useProposal() {
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
   const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const { error, handleError } = useError();
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
 
-  async function getContractConfig(): Promise<{ config: ContractConfig; version: string } | null> {
+  async function getContractConfig(): Promise<{ contractConfig: ContractConfig; version: string } | null> {
     const { abi, version } = await getContestContractVersion(address, chainId);
 
     if (abi === null) {
@@ -67,7 +69,7 @@ export function useProposal() {
     }
 
     return {
-      config: {
+      contractConfig: {
         address: address as `0x${string}`,
         abi: abi,
         chainId: chainId,
@@ -99,7 +101,7 @@ export function useProposal() {
 
       if (!contractConfigResult) return;
 
-      const { config, version } = contractConfigResult;
+      const { contractConfig, version } = contractConfigResult;
 
       const commentsAllowed = compareVersions(version, COMMENTS_VERSION) == -1 ? false : true;
 
@@ -108,12 +110,12 @@ export function useProposal() {
       for (const id of slice) {
         contracts.push(
           {
-            ...config,
+            ...contractConfig,
             functionName: "getProposal",
             args: [id],
           },
           {
-            ...config,
+            ...contractConfig,
             functionName: "proposalVotes",
             args: [id],
           },
@@ -121,7 +123,7 @@ export function useProposal() {
 
         if (commentsAllowed) {
           contracts.push({
-            ...config,
+            ...contractConfig,
             functionName: "getProposalComments",
             args: [id],
           });
@@ -130,13 +132,13 @@ export function useProposal() {
 
       if (commentsAllowed) {
         contracts.push({
-          ...config,
+          ...contractConfig,
           functionName: "getAllDeletedCommentIds",
           args: [],
         });
       }
 
-      const results = await readContracts({ contracts });
+      const results = await readContracts(config, { contracts });
 
       structureAndRankProposals(results, slice, pageMappedProposals, sorting);
 
@@ -251,23 +253,23 @@ export function useProposal() {
 
       if (!contractConfigResult) return;
 
-      const { config } = contractConfigResult;
+      const { contractConfig } = contractConfigResult;
 
       const contracts = [
         {
-          ...config,
+          ...contractConfig,
           functionName: "getProposal",
           args: [proposalId],
         },
         {
-          ...config,
+          ...contractConfig,
           functionName: "proposalVotes",
           args: [proposalId],
         },
       ];
 
       //@ts-ignore
-      const results = await readContracts({ contracts });
+      const results = await readContracts(config, { contracts });
 
       structureAndRankProposals(results, [proposalId], initialMappedProposalIds);
     } catch (e) {

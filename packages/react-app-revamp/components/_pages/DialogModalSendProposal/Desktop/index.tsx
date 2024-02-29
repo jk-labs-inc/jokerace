@@ -11,10 +11,10 @@ import { Charge } from "@hooks/useDeployContest/types";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
-import { FetchBalanceResult } from "@wagmi/core";
+import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
-import { useNetwork } from "wagmi";
 import DialogModalSendProposalSuccessLayout from "../components/SuccessLayout";
+import { useAccount } from "wagmi";
 
 interface DialogModalSendProposalDesktopLayoutProps {
   chainName: string;
@@ -27,7 +27,7 @@ interface DialogModalSendProposalDesktopLayoutProps {
   isCorrectNetwork: boolean;
   isDragging: boolean;
   charge: Charge | null;
-  accountData: FetchBalanceResult | undefined;
+  accountData: GetBalanceReturnType | undefined;
   setIsOpen: (isOpen: boolean) => void;
   handleDrop?: (event: React.DragEvent<HTMLDivElement>) => void;
   handleDragOver?: (event: React.DragEvent<HTMLDivElement>) => void;
@@ -56,7 +56,7 @@ const DialogModalSendProposalDesktopLayout: FC<DialogModalSendProposalDesktopLay
   onSubmitProposal,
 }) => {
   const { contestPrompt } = useContestStore(state => state);
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const {
     wantsSubscription,
     setWantsSubscription,

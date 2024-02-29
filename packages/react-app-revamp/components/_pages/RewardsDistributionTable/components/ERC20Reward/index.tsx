@@ -21,30 +21,24 @@ export const PayeeERC20Reward = (props: PayeeERC20RewardProps) => {
     chainId,
     showPreviouslyDistributed,
   } = props;
-  const {
-    queryTokenBalance,
-    queryRankRewardsReleasable,
-    queryRankRewardsReleased,
-    contractWriteReleaseToken,
-    txRelease,
-  } = useDistributeRewards(
-    Number(payee),
-    Number(share),
-    contractRewardsModuleAddress,
-    abiRewardsModule,
-    chainId,
-    "erc20",
-    tokenAddress,
-  );
+  const { queryTokenBalance, queryRankRewardsReleasable, queryRankRewardsReleased, handleDistributeRewards } =
+    useDistributeRewards(
+      Number(payee),
+      Number(share),
+      contractRewardsModuleAddress,
+      abiRewardsModule,
+      chainId,
+      "erc20",
+      tokenAddress,
+    );
 
   return (
     <Reward
       queryTokenBalance={queryTokenBalance}
       queryRankRewardsReleasable={queryRankRewardsReleasable}
       queryRankRewardsReleased={queryRankRewardsReleased}
-      contractWriteRelease={contractWriteReleaseToken}
       showPreviouslyDistributed={showPreviouslyDistributed}
-      txRelease={txRelease}
+      handleDistributeRewards={handleDistributeRewards}
     />
   );
 };

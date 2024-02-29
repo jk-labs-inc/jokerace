@@ -8,7 +8,7 @@ import { Charge } from "@hooks/useDeployContest/types";
 import useSubmitProposal from "@hooks/useSubmitProposal";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import { Editor, EditorContent } from "@tiptap/react";
-import { FetchBalanceResult } from "@wagmi/core";
+import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useEffect } from "react";
 import DialogModalSendProposalMobileLayoutConfirm from "./components/ConfirmDialog";
 
@@ -18,7 +18,7 @@ interface DialogModalSendProposalMobileLayoutProps {
   proposal: string;
   editorProposal: Editor | null;
   charge: Charge | null;
-  accountData: FetchBalanceResult | undefined;
+  accountData: GetBalanceReturnType | undefined;
   address: string;
   formattedDate: string | null;
   isOpen: boolean;

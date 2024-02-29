@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const unique: Chain = {
   id: 8880,
   name: "unique",
-  network: "unique",
   iconUrl: "/unique.svg",
   nativeCurrency: {
     decimals: 18,

@@ -49,7 +49,9 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
 export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses }) => {
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const { accumulatedVotesData, currentPage, totalPages, setCurrentPage, isLoading, fetchVotesPerPage, refreshData } =
     useProposalVotes(address, proposalId, chainId);
   const onLoadMoreCalledRef = useRef(false);

@@ -1,3 +1,4 @@
+import { config } from "@config/wagmi";
 import { getAccount } from "@wagmi/core";
 
 export type VotingRequirementsSchema = {
@@ -42,9 +43,9 @@ export interface ContestValues {
 export function useContestsIndexV3() {
   async function indexContestV3(values: ContestValues) {
     try {
-      const { address } = getAccount();
-      const config = await import("@config/supabase");
-      const supabase = config.supabase;
+      const { address } = getAccount(config);
+      const supabaseConfig = await import("@config/supabase");
+      const supabase = supabaseConfig.supabase;
       const { error, data } = await supabase.from("contests_v3").insert([
         {
           created_at: new Date().toISOString(),

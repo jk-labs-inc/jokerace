@@ -1,14 +1,22 @@
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
-import { prepareSendTransaction, sendTransaction, waitForTransaction, writeContract } from "@wagmi/core";
+import {
+  estimateGas,
+  sendTransaction,
+  simulateContract,
+  waitForTransactionReceipt,
+  writeContract,
+  type WaitForTransactionReceiptReturnType,
+} from "@wagmi/core";
 import { utils } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
-import { erc20ABI, useNetwork } from "wagmi";
+import { erc20Abi } from "viem";
+import { useAccount } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
 export interface RewardData {
@@ -22,8 +30,10 @@ export interface RewardData {
 export function useFundRewardsModule() {
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
-  const { chain } = useNetwork();
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
+  const { chain } = useAccount();
   const {
     isModalOpen,
     isLoading,
@@ -36,7 +46,7 @@ export function useFundRewardsModule() {
     setTransactionData,
   } = useFundRewardsStore(state => state);
   const { error: errorMessage, handleError } = useError();
-  const { refetchBalanceRewardsModule } = useRewardsModule();
+  const { handleRefetchBalanceRewardsModule } = useRewardsModule();
 
   const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
     if (rewards.length > 3) {
@@ -71,40 +81,48 @@ export function useFundRewardsModule() {
     const { tokenAddress, amount, isErc20, rewardsContractAddress, decimals } = args;
     const contractConfig = {
       address: tokenAddress as `0x${string}`,
-      abi: erc20ABI,
+      abi: erc20Abi,
     };
 
     setIsLoading(true);
     setIsSuccess(false);
 
-    let txSendFunds;
-    let receipt;
+    let hash: `0x${string}`;
+    let receipt: WaitForTransactionReceiptReturnType;
+
     if (isErc20) {
       const amountBigInt = BigInt(amount);
 
-      txSendFunds = await writeContract({
+      const { request } = await simulateContract(config, {
         ...contractConfig,
         functionName: "transfer",
         args: [rewardsContractAddress as `0x${string}`, amountBigInt],
       });
 
-      receipt = await waitForTransaction({
-        chainId: chainId,
-        hash: txSendFunds.hash,
+      hash = await writeContract(config, {
+        ...request,
       });
 
-      await refetchBalanceRewardsModule();
+      receipt = await waitForTransactionReceipt(config, {
+        chainId: chainId,
+        hash: hash,
+      });
+
+      handleRefetchBalanceRewardsModule();
     } else {
       const amountBigInt = BigInt(amount);
 
-      const config = prepareSendTransaction({
+      await estimateGas(config, {
         to: rewardsContractAddress as `0x${string}`,
         value: amountBigInt,
       });
 
-      const { hash } = await sendTransaction(await config);
+      const hash = await sendTransaction(config, {
+        to: rewardsContractAddress as `0x${string}`,
+        value: amountBigInt,
+      });
 
-      receipt = await waitForTransaction({
+      receipt = await waitForTransactionReceipt(config, {
         chainId: chainId,
         hash: hash,
       });
@@ -113,6 +131,7 @@ export function useFundRewardsModule() {
     setIsLoading(false);
     setIsSuccess(true);
 
+    handleRefetchBalanceRewardsModule();
     updateRewardAnalytics({
       contest_address: contestAddress,
       rewards_module_address: rewardsContractAddress,
@@ -126,7 +145,7 @@ export function useFundRewardsModule() {
     return {
       hash: receipt.transactionHash,
       chainId: chainId,
-      transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txSendFunds?.hash}`,
+      transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${receipt.transactionHash}`,
     };
   };
 
