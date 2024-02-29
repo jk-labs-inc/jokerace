@@ -1,4 +1,4 @@
-import { useWithdrawReward } from "@hooks/useWithdrawRewards";
+import { useWithdrawReward, useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
 import ButtonWithdraw from "./ButtonWithdraw";
 interface ButtonWithdrawNativeRewardProps {
   contractRewardsModuleAddress: string;
@@ -7,19 +7,14 @@ interface ButtonWithdrawNativeRewardProps {
 
 export const ButtonWithdrawNativeReward = (props: ButtonWithdrawNativeRewardProps) => {
   const { contractRewardsModuleAddress, abiRewardsModule } = props;
-  const { queryTokenBalance, contractWriteWithdrawReward, txWithdraw } = useWithdrawReward(
+  const { queryTokenBalance, handleWithdraw } = useWithdrawReward(
     contractRewardsModuleAddress,
     abiRewardsModule,
     "native",
   );
+  const { isLoading } = useWithdrawRewardStore(state => state);
 
-  return (
-    <ButtonWithdraw
-      contractWriteWithdraw={contractWriteWithdrawReward}
-      queryTokenBalance={queryTokenBalance}
-      txWithdraw={txWithdraw}
-    />
-  );
+  return <ButtonWithdraw queryTokenBalance={queryTokenBalance} handleWithdraw={handleWithdraw} isLoading={isLoading} />;
 };
 
 export default ButtonWithdrawNativeReward;

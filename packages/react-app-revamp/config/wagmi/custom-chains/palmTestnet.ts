@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const palmTestnet: Chain = {
   id: 11297108099,
   name: "palmTestnet",
-  network: "palmTestnet",
   iconUrl: "/palm.png",
   nativeCurrency: {
     decimals: 18,

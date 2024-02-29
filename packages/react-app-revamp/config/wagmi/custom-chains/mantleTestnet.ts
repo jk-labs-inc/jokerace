@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const mantleTestnet: Chain = {
   id: 5001,
   name: "mantleTestnet",
-  network: "mantleTestnet",
   iconUrl: "/mantle.svg",
   nativeCurrency: {
     decimals: 18,

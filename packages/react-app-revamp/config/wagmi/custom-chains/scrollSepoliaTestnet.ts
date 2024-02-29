@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const scrollSepoliaTestnet: Chain = {
   id: 534351,
   name: "scrollSepoliaTestnet",
-  network: "scrollSepoliaTestnet",
   iconUrl: "/scroll.svg",
   nativeCurrency: {
     decimals: 18,

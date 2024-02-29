@@ -1,6 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect, useMemo, useState } from "react";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
@@ -11,8 +11,7 @@ import CreateContestChargeUnsupportedChain from "./components/UnsupportedChain";
 
 const CreateContestMonetization = () => {
   const { step, charge } = useDeployContestStore(state => state);
-  const { isConnected } = useAccount();
-  const { chain } = useNetwork();
+  const { isConnected, chain } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const [unsupportedChain, setUnsupportedChain] = useState(false);
   const monetizationValidation = validationFunctions.get(step);

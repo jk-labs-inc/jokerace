@@ -2,10 +2,9 @@
 import useChargeDetails from "@hooks/useChargeDetails";
 import { Charge } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
-import { useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -14,7 +13,7 @@ interface CreateContestConfirmMonetizationProps {
 }
 
 const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps> = ({ charge, step, onClick }) => {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const { percentageToCreator, type } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
   const [isHovered, setIsHovered] = useState(false);

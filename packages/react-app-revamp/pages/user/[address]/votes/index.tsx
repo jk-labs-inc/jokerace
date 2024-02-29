@@ -16,15 +16,13 @@ function useUserVotes(userAddress: string) {
     data: userVotesData,
     isError: isError,
     isFetching: isLoading,
-  } = useQuery<SubmissionsResult>(
-    ["userVotes", userAddress, page],
-    () => {
+  } = useQuery<SubmissionsResult>({
+    queryKey: ["userVotes", userAddress, page],
+    queryFn: () => {
       return getUserVotes(userAddress, page, ITEMS_PER_PAGE);
     },
-    {
-      enabled: !!userAddress,
-    },
-  );
+    enabled: !!userAddress,
+  });
 
   return {
     page,

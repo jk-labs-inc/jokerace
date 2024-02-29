@@ -1,4 +1,4 @@
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -11,7 +11,7 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser, { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { FetchBalanceResult, readContract, readContracts } from "@wagmi/core";
+import { GetBalanceReturnType, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { utils } from "ethers";
@@ -45,7 +45,7 @@ export function useContest() {
   const [chainName, setChainName] = useState(chainFromUrl);
   const [address, setAddress] = useState(addressFromUrl);
   const [chainId, setChainId] = useState(
-    chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainFromUrl)?.[0]?.id,
+    chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainFromUrl)?.[0]?.id,
   );
 
   const {
@@ -85,7 +85,7 @@ export function useContest() {
   const { contestStatus } = useContestStatusStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const alchemyRpc = chains
-    .filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
+    .filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
     ?.rpcUrls.default.http[0].includes("alchemy");
 
   // Generate config for the contract
@@ -121,7 +121,7 @@ export function useContest() {
 
   async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
     const contracts = getContracts(contractConfig, version);
-    const results = await readContracts({ contracts });
+    const results = await readContracts(config, { contracts });
     setIsV3(true);
 
     const contestName = results[0].result as string;
@@ -236,7 +236,7 @@ export function useContest() {
   async function fetchV1ContestInfo(contractConfig: ContractConfig, version: string) {
     try {
       const contracts = getV1Contracts(contractConfig);
-      const results = await readContracts({ contracts });
+      const results = await readContracts(config, { contracts });
 
       setIsV3(false);
 
@@ -303,7 +303,7 @@ export function useContest() {
     let contestRewardModuleAddress: string | undefined;
 
     if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
-      contestRewardModuleAddress = (await readContract({
+      contestRewardModuleAddress = (await readContract(config, {
         ...contractConfig,
         functionName: "officialRewardsModule",
         args: [],
@@ -397,14 +397,14 @@ export function useContest() {
     if (!abiRewardsModule) {
       setRewards(null);
     } else {
-      const winners = (await readContract({
+      const winners = (await readContract(config, {
         address: contestRewardModuleAddress as `0x${string}`,
         abi: abiRewardsModule,
         chainId: chainId,
         functionName: "getPayees",
       })) as any[];
 
-      let rewardToken: FetchBalanceResult | null = null;
+      let rewardToken: GetBalanceReturnType | null = null;
       let erc20Tokens: any = null;
 
       rewardToken = await fetchNativeBalance(contestRewardModuleAddress, chainId);
@@ -454,7 +454,9 @@ export function useContest() {
     retry: fetchContestInfo,
     onSearch: (addr: string, chainName: string) => {
       setChainName(chainName);
-      setChainId(chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id);
+      setChainId(
+        chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
+      );
       setIsLoading(true);
       setIsListProposalsLoading(true);
       setListProposalsIds([]);

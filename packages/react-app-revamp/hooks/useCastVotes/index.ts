@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -11,13 +11,13 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { prepareWriteContract, readContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-import { parseUnits } from "ethers/lib/utils";
+import { formatEther, parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { formatEther } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { parseEther } from "viem";
+import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
@@ -35,16 +35,16 @@ export function useCastVotes() {
     setError,
     setTransactionData,
   } = useCastVotesStore(state => state);
-  const { address: userAddress } = useAccount();
-  const { chain } = useNetwork();
+  const { address: userAddress, chain } = useAccount();
   const { asPath } = useRouter();
   const { updateCurrentUserVotes } = useUser();
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const { error: errorMessage, handleError } = useError();
   const { address: contestAddress, chainName } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.[0]
-    ?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
+  )?.[0]?.id;
   const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
 
   async function castVotes(amount: number, isPositive: boolean) {
@@ -57,13 +57,13 @@ export function useCastVotes() {
 
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
+      const costToVote = charge ? (charge.type.costToVote as unknown as bigint) : undefined;
 
-      let txRequest;
+      let hash: `0x${string}`;
 
       if (!isVerified) {
-        txRequest = await prepareWriteContract({
+        hash = await writeContract(config, {
           address: contestAddress as `0x${string}`,
-          //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVote",
           args: [
@@ -73,28 +73,22 @@ export function useCastVotes() {
             parseUnits(amount.toString()),
             proofs,
           ],
-          //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
-          value: charge ? [charge.type.costToVote] : [],
+
+          value: costToVote,
         });
       } else {
-        txRequest = await prepareWriteContract({
+        hash = await writeContract(config, {
           address: contestAddress as `0x${string}`,
-          //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
-          //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
-          value: charge ? [charge.type.costToVote] : [],
+          value: costToVote,
         });
       }
 
-      const txResult = await writeContract(txRequest);
-
-      const receipt = await waitForTransaction({
+      const receipt = await waitForTransactionReceipt(config, {
         chainId: chain?.id,
-        hash: txResult.hash,
-        //@ts-ignore
-        transactionHref: `${chain?.blockExplorers?.default?.url}/tx/${txResult?.hash}`,
+        hash: hash,
       });
 
       try {
@@ -118,7 +112,7 @@ export function useCastVotes() {
 
       // We need this to update the votes either if there is more than 2 hours
       if (!canUpdateVotesInRealTime) {
-        const voteResponse = (await readContract({
+        const voteResponse = (await readContract(config, {
           address: contestAddress as `0x${string}`,
           abi: DeployedContestContract.abi,
           functionName: "proposalVotes",

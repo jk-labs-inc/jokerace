@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const lyra: Chain = {
   id: 957,
   name: "lyra",
-  network: "lyra",
   iconUrl: "/lyra.svg",
   nativeCurrency: {
     decimals: 18,

@@ -39,19 +39,13 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
-import { useAccount } from "wagmi";
+import { useAccount, useAccountEffect } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
 
 const LayoutViewContest = (props: any) => {
   const { asPath, pathname, reload } = useRouter();
   const url = useUrl();
-  const account = useAccount({
-    onConnect({ address }) {
-      if (address != undefined && ofacAddresses.includes(address?.toString())) {
-        location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
-      }
-    },
-  });
+  const { address: accountAddress } = useAccount();
   const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
   const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
@@ -72,16 +66,16 @@ const LayoutViewContest = (props: any) => {
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
-  const [previousStatus, setPreviousStatus] = useState(account.status);
-  const didConnect = previousStatus === "disconnected" && account.status === "connected";
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const bugReportLink = populateBugReportLink(url?.href ?? "", account.address ?? "", error);
+  const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error);
 
-  useEffect(() => {
-    if (account.status === "connecting") return;
-
-    setPreviousStatus(account.status);
-  }, [account.status]);
+  useAccountEffect({
+    onConnect(data) {
+      if (ofacAddresses.includes(data.address)) {
+        window.location.href = "https://www.google.com/search?q=what+are+ofac+sanctions";
+      }
+    },
+  });
 
   useEffect(() => {
     const now = moment();
@@ -121,7 +115,9 @@ const LayoutViewContest = (props: any) => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      if (accountChanged || didConnect) {
+      if (accountChanged) {
+        if (accountAddress === accountChanged) return;
+
         await Promise.all([
           checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
           checkIfCurrentUserQualifyToVote(),
@@ -130,7 +126,7 @@ const LayoutViewContest = (props: any) => {
     };
 
     fetchUserData();
-  }, [accountChanged, didConnect]);
+  }, [accountChanged, accountAddress]);
 
   useEffect(() => {
     fetchContestInfo();

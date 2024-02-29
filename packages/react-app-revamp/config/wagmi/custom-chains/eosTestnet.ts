@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const eosTestnet: Chain = {
   id: 15557,
   name: "eosTestnet",
-  network: "eosTestnet",
   iconUrl: "/eos.svg",
   nativeCurrency: {
     decimals: 18,

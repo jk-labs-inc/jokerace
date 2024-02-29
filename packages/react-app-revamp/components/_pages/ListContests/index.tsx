@@ -6,7 +6,7 @@ import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";
 
 interface ListContestsProps {
-  status: "error" | "loading" | "success";
+  status: "error" | "pending" | "success";
   page: number;
   setPage: any;
   isContestDataFetching: boolean;
@@ -47,7 +47,7 @@ export const ListContests: FC<ListContestsProps> = ({
   onSortChange,
 }) => {
   const [fadeBg, setFadeBg] = useState(false);
-  const loading = status === "loading" || isContestDataFetching;
+  const loading = status === "pending" || isContestDataFetching;
   const placeholderCount = compact ? 6 : 7;
   const placeholders = new Array(placeholderCount).fill(null);
 

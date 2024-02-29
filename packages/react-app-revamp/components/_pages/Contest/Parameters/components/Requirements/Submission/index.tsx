@@ -11,8 +11,8 @@ const ContestParametersSubmissionRequirements = () => {
     submissionRequirements?.chain ?? "",
   );
 
-  const chainExplorerUrl = chains.find(chain => chain.name === submissionRequirements?.chain)?.blockExplorers?.default
-    .url;
+  const chainExplorerUrl = chains.find((chain: { name: string }) => chain.name === submissionRequirements?.chain)
+    ?.blockExplorers?.default.url;
 
   if (!submissionRequirements) return null;
 

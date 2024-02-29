@@ -3,16 +3,16 @@ import CheckmarkIcon from "@components/UI/Icons/Checkmark";
 import CrossIcon from "@components/UI/Icons/Cross";
 import { TimeLeft } from "@components/_pages/ListContests/Contest";
 import useTokenDetails from "@hooks/useTokenDetails";
+import { Chain } from "@rainbow-me/rainbowkit";
 import { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
-import { Chain } from "wagmi";
 
 interface ContestInfoProps {
   loading: boolean;
   submissionStatus: string;
   votingStatus: string;
   contest: any;
-  chains: Chain[];
+  chains: readonly [Chain, ...Chain[]];
   address?: string;
   submissionTimeLeft: TimeLeft;
   votingTimeLeft: TimeLeft;

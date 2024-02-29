@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const kroma: Chain = {
   id: 255,
   name: "kroma",
-  network: "kroma",
   iconUrl: "/kroma.svg",
   nativeCurrency: {
     decimals: 18,

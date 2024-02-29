@@ -1,11 +1,12 @@
 import ListContests from "@components/_pages/ListContests";
 import { SearchBar } from "@components/_pages/SearchBar";
+import { config } from "@config/wagmi";
 import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
-import { fetchEnsAddress } from "@wagmi/core";
-import { getRewards, ITEMS_PER_PAGE, searchContests } from "lib/contests";
+import { getEnsAddress } from "@wagmi/core";
+import { ITEMS_PER_PAGE, getRewards, searchContests } from "lib/contests";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -26,9 +27,9 @@ function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(
-    ["searchedContests", searchCriteria.searchString, page, sortBy],
-    () => {
+  } = useQuery({
+    queryKey: ["searchedContests", searchCriteria.searchString, page, sortBy],
+    queryFn: () => {
       return searchContests(
         {
           searchString: searchCriteria.searchString,
@@ -41,18 +42,14 @@ function useContests(searchCriteria: SearchCriteria, sortBy?: string) {
         sortBy,
       );
     },
-    {
-      enabled: searchCriteria.searchString !== "",
-    },
-  );
+    enabled: searchCriteria.searchString !== "",
+  });
 
-  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
-    ["rewards", contestData],
-    data => getRewards(contestData?.data ?? []),
-    {
-      enabled: !!contestData,
-    },
-  );
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
+    queryKey: ["rewards", contestData],
+    queryFn: () => getRewards(contestData?.data ?? []),
+    enabled: !!contestData,
+  });
 
   return {
     page,
@@ -95,7 +92,7 @@ const Page: NextPage = () => {
 
       if (criteria.query.endsWith(".eth")) {
         try {
-          const resolvedAddress = await fetchEnsAddress({ name: criteria.query, chainId: 1 });
+          const resolvedAddress = await getEnsAddress(config, { name: criteria.query, chainId: 1 });
           targetAddress = resolvedAddress || criteria.query;
         } catch (error) {
           return;

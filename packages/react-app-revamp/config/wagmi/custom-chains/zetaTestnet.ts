@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const zetaTestnet: Chain = {
   id: 7001,
   name: "zetaTestnet",
-  network: "zetaTestnet",
   iconUrl: "/zeta.svg",
   nativeCurrency: {
     decimals: 18,

@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const celo: Chain = {
   id: 42220,
   name: "celo",
-  network: "celo",
   iconUrl: "/celo.svg",
   nativeCurrency: {
     decimals: 18,

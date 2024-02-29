@@ -15,27 +15,27 @@ const ContestPlay = () => {
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(["liveContests", page, address, searchValue], () =>
-    searchValue
-      ? searchContests(
-          {
-            searchString: searchValue,
-            pagination: {
-              currentPage: page,
+  } = useQuery({
+    queryKey: ["liveContests", page, address, searchValue],
+    queryFn: () =>
+      searchValue
+        ? searchContests(
+            {
+              searchString: searchValue,
+              pagination: {
+                currentPage: page,
+              },
             },
-          },
-          address,
-        )
-      : getLiveContests(page, 7, address),
-  );
+            address,
+          )
+        : getLiveContests(page, 7, address),
+  });
 
-  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
-    ["rewards", contestData],
-    data => getRewards(contestData?.data ?? []),
-    {
-      enabled: !!contestData,
-    },
-  );
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
+    queryKey: ["rewards", contestData],
+    queryFn: () => getRewards(contestData?.data ?? []),
+    enabled: !!contestData,
+  });
 
   const customTitle = useMemo(() => {
     if (!searchValue) return "Live Contests";

@@ -1,4 +1,4 @@
-import Loader from "@components/UI/Loader";
+import { formatUnits } from "ethers/lib/utils";
 import Skeleton from "react-loading-skeleton";
 
 interface PreviouslyDistributedRewardProps {
@@ -16,7 +16,7 @@ export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardPr
       </li>
     );
 
-  if (!queryRankRewardsReleased.data || queryRankRewardsReleased.data === 0) {
+  if (!queryRankRewardsReleased.data || queryRankRewardsReleased.data.value === 0) {
     return (
       <li className="no-funds-distributed">
         <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds distributed
@@ -24,12 +24,18 @@ export const PreviouslyDistributedReward = (props: PreviouslyDistributedRewardPr
     );
   }
 
+  if (queryRankRewardsReleased.isLoading) {
+    return (
+      <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading previously distributable rewards</p>
+    );
+  }
+
   return (
     <li className="flex items-center text-positive-11 funds-distributed">
       <section className="flex justify-between w-full">
-        {queryRankRewardsReleased.isLoading && <Loader scale="component">Loading info...</Loader>}
         <p>
-          {queryRankRewardsReleased.data} <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
+          {formatUnits(queryRankRewardsReleased.data, queryTokenBalance.data.decimals ?? 18)}{" "}
+          <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
         </p>
       </section>
     </li>

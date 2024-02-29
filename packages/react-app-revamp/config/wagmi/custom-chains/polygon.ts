@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const polygon: Chain = {
   id: 137,
   name: "polygon",
-  network: "polygon",
   iconUrl: "/polygon.svg",
   nativeCurrency: {
     decimals: 18,

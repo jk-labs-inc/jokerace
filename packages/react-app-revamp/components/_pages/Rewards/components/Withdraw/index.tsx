@@ -3,14 +3,14 @@ import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFr
 import { ZERO_BALANCE } from "@components/_pages/RewardsDistributionTable/components";
 import { Tab } from "@headlessui/react";
 import { FC, Fragment } from "react";
-import { useBalance, useNetwork } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 
 interface ContestWithdrawRewardsProps {
   rewardsStore: any;
 }
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore }) => {
-  const { chain } = useNetwork();
+  const { chain } = useAccount();
   const nativeTokenBalance = useBalance({
     address: rewardsStore?.rewards?.contractAddress as `0x${string}`,
     chainId: chain?.id,
