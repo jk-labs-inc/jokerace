@@ -199,7 +199,9 @@ const connectors = connectorsForWallets(
       wallets: [
         metaMaskWallet,
         rainbowWallet,
+        walletConnectWallet,
         okxWallet,
+        coinbaseWallet,
         tahoWallet,
         argentWallet,
         trustWallet,
@@ -232,6 +234,7 @@ export const config = createConfig({
   connectors,
   chains,
   transports,
+  ssr: true,
 });
 
 export const chainsImages: ChainImages = chains.reduce((acc: any, chain: any) => {
