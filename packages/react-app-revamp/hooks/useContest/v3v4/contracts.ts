@@ -32,6 +32,10 @@ export function getContracts(contractConfig: any, version: string) {
     contractFunctionNames = [...contractFunctionNames, "costToVote"];
   }
 
+  if (compareVersions(version, "4.25") >= 0) {
+    contractFunctionNames = [...contractFunctionNames, "payPerVote"];
+  }
+
   const contracts = contractFunctionNames.map(functionName => ({
     ...contractConfig,
     functionName,

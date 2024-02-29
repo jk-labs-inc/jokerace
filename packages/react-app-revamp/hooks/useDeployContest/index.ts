@@ -18,7 +18,7 @@ import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { ContestVisibility, useDeployContestStore } from "./store";
-import { SubmissionMerkle, VotingMerkle } from "./types";
+import { SubmissionMerkle, VoteType, VotingMerkle } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
 export const DEFAULT_SUBMISSIONS = 1000000;
@@ -52,6 +52,7 @@ export function useDeployContest() {
   const signer = useEthersSigner();
 
   async function deployContest() {
+    console.log(charge);
     const isSpoofingDetected = await checkForSpoofing(signer?._address ?? "");
 
     if (isSpoofingDetected) {
@@ -102,6 +103,7 @@ export function useDeployContest() {
         percentageToCreator: percentageToCreator,
         costToPropose: parseEther(chargeType.costToPropose.toString()),
         costToVote: parseEther(chargeType.costToVote.toString()),
+        payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
       };
 
       const contractContest = await factoryCreateContest.deploy(
@@ -121,6 +123,7 @@ export function useDeployContest() {
           contestParametersObject.percentageToCreator,
           contestParametersObject.costToPropose,
           contestParametersObject.costToVote,
+          contestParametersObject.payPerVote,
         ],
       );
 

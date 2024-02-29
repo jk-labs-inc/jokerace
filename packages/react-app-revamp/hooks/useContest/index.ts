@@ -22,6 +22,7 @@ import { useState } from "react";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
+import { VoteType } from "@hooks/useDeployContest/types";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -144,17 +145,24 @@ export function useContest() {
       const percentageToCreator = Number(results[11].result);
       let costToPropose = 0;
       let costToVote = 0;
+      let payPerVote = 0;
 
       if (costToProposeTiming) {
         costToPropose = Number(results[12].result);
       }
 
       if (costToVoteTiming && compareVersions(version, "4.23") >= 0) {
+        if (compareVersions(version, "4.25") >= 0) {
+          payPerVote = Number(results[15].result);
+        }
         costToVote = Number(results[14].result);
       }
 
+      console.log(costToVote);
+
       setCharge({
         percentageToCreator,
+        voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
           costToPropose,
           costToVote,

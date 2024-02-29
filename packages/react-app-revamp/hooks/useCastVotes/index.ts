@@ -4,6 +4,7 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
@@ -16,7 +17,7 @@ import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { formatEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import { useAccount, useNetwork } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -47,13 +48,18 @@ export function useCastVotes() {
     ?.id;
   const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
 
-  async function castVotes(amount: number, isPositive: boolean) {
+  async function castVotes(amountOfVotes: number, isPositive: boolean) {
     toastLoading("votes are deploying...");
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
     setTransactionData(null);
     const { abi } = await getContestContractVersion(contestAddress, chainId);
+    const chargeAmount =
+      charge && charge.voteType === VoteType.PerTransaction
+        ? charge.type.costToVote ?? 0
+        : (charge?.type.costToVote ?? 0) * amountOfVotes;
+    const chargeAmountParsed = parseEther(chargeAmount.toString());
 
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
@@ -70,7 +76,7 @@ export function useCastVotes() {
             pickedProposal,
             isPositive ? 0 : 1,
             parseUnits(currentUserTotalVotesAmount.toString()),
-            parseUnits(amount.toString()),
+            parseUnits(amountOfVotes.toString()),
             proofs,
           ],
           //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
@@ -82,7 +88,7 @@ export function useCastVotes() {
           //@ts-ignore
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
-          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
+          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amountOfVotes}`)],
           //@ts-ignore ignore this error for now, we have this fixed in wagmi v2
           value: charge ? [charge.type.costToVote] : [],
         });
@@ -103,9 +109,9 @@ export function useCastVotes() {
           user_address: userAddress,
           network_name: chainName,
           proposal_id: pickedProposal !== null ? pickedProposal : undefined,
-          vote_amount: amount,
+          vote_amount: amountOfVotes,
           created_at: Math.floor(Date.now() / 1000),
-          amount_sent: charge ? Number(formatEther(BigInt(charge.type.costToVote))) : null,
+          amount_sent: charge ? Number(formatEther(BigInt(chargeAmount))) : null,
           percentage_to_creator: charge ? charge.percentageToCreator : null,
         });
       } catch (error) {
