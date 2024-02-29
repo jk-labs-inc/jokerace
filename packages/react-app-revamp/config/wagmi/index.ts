@@ -232,7 +232,6 @@ export const config = createConfig({
   connectors,
   chains,
   transports,
-  ssr: false,
 });
 
 export const chainsImages: ChainImages = chains.reduce((acc: any, chain: any) => {
