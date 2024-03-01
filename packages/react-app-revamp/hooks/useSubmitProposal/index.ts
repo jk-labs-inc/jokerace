@@ -82,7 +82,7 @@ export function useSubmitProposal() {
             functionName: "propose",
             //@ts-ignore
             args: [proposalCore, proofs],
-            value: costToPropose,
+            value: charge ? [charge.type.costToPropose] : undefined,
           });
         } else {
           hash = await writeContract(config, {
@@ -90,7 +90,7 @@ export function useSubmitProposal() {
             functionName: "proposeWithoutProof",
             //@ts-ignore
             args: [proposalCore],
-            value: costToPropose,
+            value: charge ? [charge.type.costToPropose] : undefined,
           });
         }
 
