@@ -1,9 +1,9 @@
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { isSupabaseConfigured } from "@helpers/database";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { fetchBalance, readContract } from "@wagmi/core";
+import { getBalance, readContract } from "@wagmi/core";
 import { BigNumber, ethers, utils } from "ethers";
 import moment from "moment";
 import { SearchOptions } from "types/search";
@@ -41,7 +41,8 @@ async function getContractConfig(address: string, chainId: number) {
 
 export const fetchTokenBalances = async (chainName: string, contestRewardModuleAddress: string) => {
   try {
-    const alchemyAppUrl = chains.filter(chain => chain.name === chainName.toLowerCase())[0].rpcUrls.default.http[0];
+    const alchemyAppUrl = chains.filter((chain: { name: string }) => chain.name === chainName.toLowerCase())[0].rpcUrls
+      .default.http[0];
 
     const response = await fetch(alchemyAppUrl, {
       method: "POST",
@@ -72,7 +73,7 @@ export const fetchTokenBalances = async (chainName: string, contestRewardModuleA
 
 export const fetchNativeBalance = async (contestRewardModuleAddress: string, chainId: number) => {
   try {
-    const nativeBalance = await fetchBalance({
+    const nativeBalance = await getBalance(config, {
       address: contestRewardModuleAddress.toString() as `0x${string}`,
       chainId: chainId,
     });
@@ -85,7 +86,7 @@ export const fetchNativeBalance = async (contestRewardModuleAddress: string, cha
 
 export const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: number, tokenAddress: string) => {
   try {
-    const firstToken = await fetchBalance({
+    const firstToken = await getBalance(config, {
       address: contestRewardModuleAddress.toString() as `0x${string}`,
       chainId: chainId,
       token: tokenAddress as `0x${string}`,
@@ -136,13 +137,14 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
 
   try {
     const chainId = chains.filter(
-      c => c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
+      (c: { name: string }) =>
+        c.name.replace(/\s+/g, "").toLowerCase() === contestChainName.replace(/\s+/g, "").toLowerCase(),
     )[0].id;
 
     const contractConfig = await getContractConfig(contestAddress, chainId);
 
     if (contractConfig && contractConfig.abi?.some((el: { name: string }) => el.name === "officialRewardsModule")) {
-      const contestRewardModuleAddress = (await readContract({
+      const contestRewardModuleAddress = (await readContract(config, {
         ...contractConfig,
         functionName: "officialRewardsModule",
         args: [],
@@ -152,7 +154,7 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
         const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress.toString(), chainId);
 
         if (abiRewardsModule) {
-          const winners = (await readContract({
+          const winners = (await readContract(config, {
             address: contestRewardModuleAddress.toString() as `0x${string}`,
             abi: abiRewardsModule,
             chainId: chainId,

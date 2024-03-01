@@ -4,6 +4,7 @@ import { fetchDataFromBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { Abi } from "viem";
 import { useTotalVotesOnContestStore } from "./store";
+import { config } from "@config/wagmi";
 
 const useTotalVotesOnContest = (address: string, chainId: number) => {
   const { setTotalVotes, setIsError, setIsLoading, setIsSuccess } = useTotalVotesOnContestStore(state => state);
@@ -25,7 +26,7 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
 
       return {
         address: address as `0x${string}`,
-        abi: abi as unknown as Abi,
+        abi: abi as Abi,
         chainId: chainId,
       };
     } catch (e) {
@@ -39,9 +40,10 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
   async function getVotingMerkleRoot() {
     try {
       const contractConfig = await getContractConfig();
+
       if (!contractConfig) return null;
 
-      const votingMerkleRoot = (await readContract({
+      const votingMerkleRoot = (await readContract(config, {
         ...contractConfig,
         functionName: "votingMerkleRoot",
         args: [],

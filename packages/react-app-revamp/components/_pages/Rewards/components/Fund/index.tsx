@@ -1,12 +1,14 @@
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { toastError } from "@components/UI/Toast";
+import { config } from "@config/wagmi";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import useRewardsModule from "@hooks/useRewards";
-import { fetchToken } from "@wagmi/core";
+import { readContract } from "@wagmi/core";
 import { ethers } from "ethers";
 import { FC, useRef } from "react";
 import { toast } from "react-toastify";
+import { erc20Abi } from "viem";
 import { useAccount } from "wagmi";
 import CreateRewardsFundingPoolSubmit from "./components/Buttons/Submit";
 import CreateRewardsFundPool from "./components/FundPool";
@@ -21,6 +23,20 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
   const { address } = useAccount();
   const { rewards, setCancel } = useFundRewardsStore(state => state);
   const toastIdRef = useRef<string | number | null>(null);
+
+  const getTokenDecimals = async (tokenAddress: string) => {
+    try {
+      const decimals = (await readContract(config, {
+        address: tokenAddress as `0x${string}`,
+        abi: erc20Abi,
+        functionName: "decimals",
+      })) as number;
+
+      return decimals;
+    } catch {
+      return null;
+    }
+  };
 
   const fundPool = async () => {
     if (rewards.length === 0) return;
@@ -37,12 +53,12 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
 
       let decimals = 18;
       if (reward.address.startsWith("0x")) {
-        const tokenData = await fetchToken({ address: reward.address as `0x${string}` });
+        const tokenData = await getTokenDecimals(reward.address);
         if (tokenData === null) {
           toastError("failed to fetch token data");
           return;
         }
-        decimals = tokenData.decimals;
+        decimals = tokenData;
       }
 
       return {

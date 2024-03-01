@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const fantom: Chain = {
   id: 250,
   name: "fantom",
-  network: "fantom",
   iconUrl: "/fantom.svg",
   nativeCurrency: {
     decimals: 18,

@@ -3,21 +3,19 @@ import { PreviouslyDistributedReward } from "./components/PreviouslyDistributedR
 
 export interface RewardProps {
   queryTokenBalance: any;
-  contractWriteRelease: any;
-  txRelease: any;
   queryRankRewardsReleasable: any;
   queryRankRewardsReleased: any;
   showPreviouslyDistributed?: boolean;
+  handleDistributeRewards?: () => Promise<void>;
 }
 
 export const Reward = (props: RewardProps) => {
   const {
     queryTokenBalance,
-    contractWriteRelease,
     queryRankRewardsReleasable,
     queryRankRewardsReleased,
     showPreviouslyDistributed,
-    txRelease,
+    handleDistributeRewards,
   } = props;
 
   if (showPreviouslyDistributed) {
@@ -33,8 +31,7 @@ export const Reward = (props: RewardProps) => {
     <DistributableReward
       queryTokenBalance={queryTokenBalance}
       queryRankRewardsReleasable={queryRankRewardsReleasable}
-      contractWriteRelease={contractWriteRelease}
-      txRelease={txRelease}
+      handleDistributeRewards={handleDistributeRewards}
     />
   );
 };

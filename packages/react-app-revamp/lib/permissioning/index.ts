@@ -29,7 +29,8 @@ export async function fetchNftHolders(
   votesPerUnit: number = 100,
   voteCalculationMethod: string = "token",
 ): Promise<Record<string, number> | Error> {
-  let baseAlchemyAppUrl = chains.filter(chain => chain.name == chainName.toLowerCase())[0].rpcUrls.default.http[0];
+  let baseAlchemyAppUrl = chains.filter((chain: { name: string }) => chain.name == chainName.toLowerCase())[0].rpcUrls
+    .default.http[0];
 
   baseAlchemyAppUrl = baseAlchemyAppUrl.replace(/(v2\/).*/, "$1");
 

@@ -20,15 +20,16 @@ function useContests(sortBy?: string) {
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(["liveContests", page, address, sortBy], () => getLiveContests(page, ITEMS_PER_PAGE, address, sortBy));
+  } = useQuery({
+    queryKey: ["liveContests", page, address, sortBy],
+    queryFn: () => getLiveContests(page, ITEMS_PER_PAGE, address, sortBy),
+  });
 
-  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery(
-    ["rewards", contestData],
-    data => getRewards(contestData?.data ?? []),
-    {
-      enabled: !!contestData,
-    },
-  );
+  const { data: rewardsData, isFetching: isRewardsFetching } = useQuery({
+    queryKey: ["rewards", contestData],
+    queryFn: () => getRewards(contestData?.data ?? []),
+    enabled: !!contestData,
+  });
 
   return {
     page,

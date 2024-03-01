@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+import { config } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
 import { utils } from "ethers";
@@ -36,9 +37,9 @@ export function useProposalVotes(contractAddress: string, proposalId: string, ch
   const fetchAddressesVoted = async () => {
     try {
       const abi = await fetchContractVersion(contractAddress, chainId);
-      const addresses = (await readContract({
+      const addresses = (await readContract(config, {
         address: contractAddress as `0x${string}`,
-        abi: abi as unknown as Abi,
+        abi: abi as Abi,
         chainId,
         functionName: "proposalAddressesHaveVoted",
         args: [proposalId],
@@ -54,9 +55,9 @@ export function useProposalVotes(contractAddress: string, proposalId: string, ch
   const fetchVotesForAddress = async (address: string): Promise<VoteEntry> => {
     try {
       const abi = await fetchContractVersion(contractAddress, chainId);
-      const votes = (await readContract({
+      const votes = (await readContract(config, {
         address: contractAddress as `0x${string}`,
-        abi: abi as unknown as Abi,
+        abi: abi as Abi,
         chainId,
         functionName: "proposalAddressVotes",
         args: [proposalId, address],

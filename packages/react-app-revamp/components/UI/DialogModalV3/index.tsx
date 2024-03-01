@@ -51,7 +51,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
                 <Image src="/modal/modal_close.svg" width={39} height={33} alt="close" />
                 <span className="sr-only">Close modal</span>
               </button>
-              <div className={`${isMobile ? "pt-0" : "pt-3"} pie-3`}>{children}</div>
+              <div className={`${isMobile ? "pt-0" : "pt-3 pb-6"} pie-3`}>{children}</div>
             </div>
           </Dialog.Panel>
         </div>

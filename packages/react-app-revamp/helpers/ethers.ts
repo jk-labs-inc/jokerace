@@ -1,11 +1,9 @@
-import { getPublicClient } from "@wagmi/core";
+import { getConnectorClient, type Config, getClient } from "@wagmi/core";
 import { providers } from "ethers";
-import * as React from "react";
-import { type HttpTransport } from "viem";
-import { useWalletClient, type PublicClient, type WalletClient } from "wagmi";
+import type { Account, Chain, Client, Transport } from "viem";
 
-export function publicClientToProvider(publicClient: PublicClient) {
-  const { chain, transport } = publicClient;
+export function clientToProvider(client: Client<Transport, Chain>) {
+  const { chain, transport } = client;
   const network = {
     chainId: chain.id,
     name: chain.name,
@@ -13,7 +11,7 @@ export function publicClientToProvider(publicClient: PublicClient) {
   };
   if (transport.type === "fallback")
     return new providers.FallbackProvider(
-      (transport.transports as ReturnType<HttpTransport>[]).map(
+      (transport.transports as ReturnType<Transport>[]).map(
         ({ value }) => new providers.JsonRpcProvider(value?.url, network),
       ),
     );
@@ -21,13 +19,19 @@ export function publicClientToProvider(publicClient: PublicClient) {
 }
 
 /** Action to convert a viem Public Client to an ethers.js Provider. */
-export function getEthersProvider({ chainId }: { chainId?: number } = {}) {
-  const publicClient = getPublicClient({ chainId });
-  return publicClientToProvider(publicClient);
+export function getEthersProvider(config: Config, { chainId }: { chainId?: number } = {}) {
+  const client = getClient(config, { chainId });
+
+  if (!client) {
+    console.error({ config, chainId });
+    throw new Error("Unable to get client");
+  }
+
+  return clientToProvider(client);
 }
 
-export function walletClientToSigner(walletClient: WalletClient) {
-  const { account, chain, transport } = walletClient;
+export function clientToSigner(client: Client<Transport, Chain, Account>) {
+  const { account, chain, transport } = client;
   const network = {
     chainId: chain.id,
     name: chain.name,
@@ -38,8 +42,8 @@ export function walletClientToSigner(walletClient: WalletClient) {
   return signer;
 }
 
-/** Hook to convert a viem Wallet Client to an ethers.js Signer. */
-export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
-  const { data: walletClient } = useWalletClient({ chainId });
-  return React.useMemo(() => (walletClient ? walletClientToSigner(walletClient) : undefined), [walletClient]);
+/** Action to convert a Viem Client to an ethers.js Signer. */
+export async function getEthersSigner(config: Config, { chainId }: { chainId?: number } = {}) {
+  const client = await getConnectorClient(config, { chainId });
+  return clientToSigner(client);
 }

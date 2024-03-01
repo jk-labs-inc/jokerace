@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const near: Chain = {
   id: 1313161554,
   name: "near",
-  network: "near",
   iconUrl: "/aurora.svg",
   nativeCurrency: {
     decimals: 18,

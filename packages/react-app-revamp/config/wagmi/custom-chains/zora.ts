@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const zora: Chain = {
   id: 7777777,
   name: "zora",
-  network: "zora",
   iconUrl: "/zora.png",
   nativeCurrency: {
     decimals: 18,

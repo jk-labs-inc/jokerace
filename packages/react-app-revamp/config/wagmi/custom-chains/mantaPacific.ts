@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const mantaPacific: Chain = {
   id: 169,
   name: "mantaPacific",
-  network: "mantaPacific",
   iconUrl: "/mantaPacific.svg",
   nativeCurrency: {
     decimals: 18,

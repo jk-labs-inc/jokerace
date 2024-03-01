@@ -98,15 +98,14 @@ async function fetchTokenListOrMetadata({
 }
 
 export function useTokenList(chainId: number, tokenIdentifier: string) {
-  const { data, isLoading, isError, error, fetchNextPage, hasNextPage } = useInfiniteQuery(
-    ["searchTokens", chainId, tokenIdentifier],
-    ({ pageParam = 0 }) => fetchTokenListOrMetadata({ pageParam, chainId, tokenIdentifier }),
-    {
-      getNextPageParam: lastPage => {
-        return lastPage.pagination.hasMore ? (lastPage.pagination.pageParam ?? 0) + 1 : undefined;
-      },
+  const { data, isLoading, isError, error, fetchNextPage, hasNextPage } = useInfiniteQuery({
+    queryKey: ["searchTokens", chainId, tokenIdentifier],
+    queryFn: ({ pageParam = 0 }) => fetchTokenListOrMetadata({ pageParam, chainId, tokenIdentifier }),
+    getNextPageParam: lastPage => {
+      return lastPage.pagination.hasMore ? (lastPage.pagination.pageParam ?? 0) + 1 : undefined;
     },
-  );
+    initialPageParam: 0,
+  });
 
   const tokens = data?.pages.flatMap(page => page.tokens) || [];
 

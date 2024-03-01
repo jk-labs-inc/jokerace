@@ -1,14 +1,15 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import { MAX_ROWS } from "@helpers/csvConstants";
 import { isSupabaseConfigured } from "@helpers/database";
-import { useEthersSigner } from "@helpers/ethers";
+import { getEthersSigner } from "@helpers/ethers";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { isR2Configured } from "@helpers/r2";
 import useV3ContestsIndex, { ContestValues } from "@hooks/useContestsIndexV3";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
-import { readContract, waitForTransaction } from "@wagmi/core";
+import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
 import { ContractFactory } from "ethers";
 import { formatUnits } from "ethers/lib/utils";
@@ -16,7 +17,7 @@ import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount } from "wagmi";
 import { ContestVisibility, useDeployContestStore } from "./store";
 import { SubmissionMerkle, VoteType, VotingMerkle } from "./types";
 
@@ -47,12 +48,10 @@ export function useDeployContest() {
     setIsSuccess,
   } = useDeployContestStore(state => state);
   const { error, handleError } = useError();
-  const { chain } = useNetwork();
-  const { address } = useAccount();
-  const signer = useEthersSigner();
+  const { address, chain } = useAccount();
 
   async function deployContest() {
-    console.log(charge);
+    const signer = await getEthersSigner(config, { chainId: chain?.id });
     const isSpoofingDetected = await checkForSpoofing(signer?._address ?? "");
 
     if (isSpoofingDetected) {
@@ -132,7 +131,7 @@ export function useDeployContest() {
       // Wait for transaction to be executed
       await transactionPromise;
 
-      const receiptDeployContest = await waitForTransaction({
+      const receiptDeployContest = await waitForTransactionReceipt(config, {
         chainId: chain?.id,
         hash: contractContest.deployTransaction.hash as `0x${string}`,
       });
@@ -349,11 +348,11 @@ export function useDeployContest() {
 
       const contractConfig = {
         address: address as `0x${string}`,
-        abi: abi as unknown as Abi,
+        abi: abi as Abi,
         chainId: chainId,
       };
 
-      const result = (await readContract({
+      const result = (await readContract(config, {
         ...contractConfig,
         functionName: "sortingEnabled",
       })) as number;

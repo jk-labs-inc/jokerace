@@ -16,15 +16,13 @@ function useUserComments(userAddress: string) {
     data: userCommentsData,
     isError: isError,
     isFetching: isLoading,
-  } = useQuery<CommentsResult>(
-    ["userComments", userAddress, page],
-    () => {
+  } = useQuery<CommentsResult>({
+    queryKey: ["userComments", userAddress, page],
+    queryFn: () => {
       return getUserComments(userAddress, page, ITEMS_PER_PAGE);
     },
-    {
-      enabled: !!userAddress,
-    },
-  );
+    enabled: !!userAddress,
+  });
 
   return {
     page,

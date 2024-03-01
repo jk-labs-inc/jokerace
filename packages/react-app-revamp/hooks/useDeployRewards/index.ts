@@ -1,16 +1,19 @@
+import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi//Contest.sol/Contest.json";
 import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
-import { useEthersSigner } from "@helpers/ethers";
+import { getEthersSigner } from "@helpers/ethers";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
-import { prepareWriteContract, waitForTransaction, writeContract } from "@wagmi/core";
+import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
 import { useRouter } from "next/router";
+import { useAccount } from "wagmi";
 import { useDeployRewardsStore } from "./store";
 
 export function useDeployRewardsPool() {
+  const { chainId } = useAccount();
   const { asPath } = useRouter();
   const { address: contestAddress } = extractPathSegments(asPath);
   const stateContestDeployment = useContractFactoryStore(state => state);
@@ -18,7 +21,6 @@ export function useDeployRewardsPool() {
   const { ranks, shares, setDeployRewardsData, setIsLoading, setError, setIsSuccess, setDisplayCreatePool } =
     useDeployRewardsStore(state => state);
   const { error, handleError } = useError();
-  const signer = useEthersSigner();
 
   function deployRewardsPool() {
     setIsLoading(true);
@@ -27,6 +29,8 @@ export function useDeployRewardsPool() {
     let contractRewardsModule: Contract | null = null;
 
     const rewardsModuleDeployment = async () => {
+      const signer = await getEthersSigner(config, { chainId });
+
       const factoryCreateRewardsModule = new ContractFactory(
         RewardsModuleContract.abi,
         RewardsModuleContract.bytecode,
@@ -46,15 +50,17 @@ export function useDeployRewardsPool() {
         abi: DeployedContestContract.abi,
       };
 
-      const config = await prepareWriteContract({
+      const { request } = await simulateContract(config, {
         ...contractConfig,
         functionName: "setOfficialRewardsModule",
         args: [contractRewardsModule!.address],
       });
 
-      const { hash } = await writeContract(config);
+      const hash = await writeContract(config, {
+        ...request,
+      });
 
-      await waitForTransaction({
+      await waitForTransactionReceipt(config, {
         hash,
       });
 

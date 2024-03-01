@@ -54,10 +54,11 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
 import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
+import { config } from "@config/wagmi";
 
 export async function getContestContractVersion(address: string, chainId: number) {
   try {
-    const provider = getEthersProvider({ chainId });
+    const provider = getEthersProvider(config, { chainId });
     const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
 
     // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI
@@ -66,59 +67,59 @@ export async function getContestContractVersion(address: string, chainId: number
     const defaultReturn = { abi: null, version: "unknown" };
 
     if (version === "4.25") {
-      return { abi: PayPerVoteContract.abi, version};
+      return { abi: PayPerVoteContract.abi, version };
     } else if (version === "4.24") {
-      return { abi: RefactorCostDistroContract.abi, version};
+      return { abi: RefactorCostDistroContract.abi, version };
     } else if (version === "4.23") {
-      return { abi: AddCostToVoteContract.abi, version};
+      return { abi: AddCostToVoteContract.abi, version };
     } else if (version === "4.22") {
-      return { abi: RefactorDistributionFuncContract.abi, version};
+      return { abi: RefactorDistributionFuncContract.abi, version };
     } else if (version === "4.21") {
-      return { abi: AddContentToEventsContract.abi, version};
+      return { abi: AddContentToEventsContract.abi, version };
     } else if (version === "4.20") {
-      return { abi: AddGetDeletedAuthorsContract.abi, version};
+      return { abi: AddGetDeletedAuthorsContract.abi, version };
     } else if (version === "4.19") {
-      return { abi: AddMoreAttributionContract.abi, version};
+      return { abi: AddMoreAttributionContract.abi, version };
     } else if (version === "4.18") {
-      return { abi: AddEmergencyFuncsContract.abi, version};
+      return { abi: AddEmergencyFuncsContract.abi, version };
     } else if (version === "4.17") {
-      return { abi: MitToAGPLContract.abi, version};
+      return { abi: MitToAGPLContract.abi, version };
     } else if (version === "4.16") {
-      return { abi: PinAllToSameContract.abi, version};
+      return { abi: PinAllToSameContract.abi, version };
     } else if (version === "4.15") {
-      return { abi: RmUnusedViewFuncContract.abi, version};
+      return { abi: RmUnusedViewFuncContract.abi, version };
     } else if (version === "4.14") {
-      return { abi: RmShadowingPropIdsContract.abi, version};
+      return { abi: RmShadowingPropIdsContract.abi, version };
     } else if (version === "4.13") {
-      return { abi: AddCommentsContract.abi, version};
+      return { abi: AddCommentsContract.abi, version };
     } else if (version === "4.12") {
-      return { abi: AllowCancelCompletedContract.abi, version};
+      return { abi: AllowCancelCompletedContract.abi, version };
     } else if (version === "4.11") {
-      return { abi: GasOptimizeGettersContract.abi, version};
+      return { abi: GasOptimizeGettersContract.abi, version };
     } else if (version === "4.10") {
-      return { abi: RmImmutableKeywordContract.abi, version};
+      return { abi: RmImmutableKeywordContract.abi, version };
     } else if (version === "4.9") {
-      return { abi: AddGetPropIdsWithForVotesContract.abi, version};
+      return { abi: AddGetPropIdsWithForVotesContract.abi, version };
     } else if (version === "4.8") {
-      return { abi: DeleteInMapAfterForLoopContract.abi, version};
+      return { abi: DeleteInMapAfterForLoopContract.abi, version };
     } else if (version === "4.7") {
-      return { abi: RmUnnecessaryVirtualsContract.abi, version};
+      return { abi: RmUnnecessaryVirtualsContract.abi, version };
     } else if (version === "4.6") {
-      return { abi: RestructureExtensionsAndUtilsContract.abi, version};
+      return { abi: RestructureExtensionsAndUtilsContract.abi, version };
     } else if (version === "4.5") {
-      return { abi: CleanUpSortingContract.abi, version};
+      return { abi: CleanUpSortingContract.abi, version };
     } else if (version === "4.4") {
-      return { abi: UseCustomErrorsContract.abi, version};
+      return { abi: UseCustomErrorsContract.abi, version };
     } else if (version === "4.3") {
-      return { abi: NewValueAlreadyInArrayContract.abi, version};
+      return { abi: NewValueAlreadyInArrayContract.abi, version };
     } else if (version === "4.2") {
-      return { abi: UpdateSortingAlgoContract.abi, version};
+      return { abi: UpdateSortingAlgoContract.abi, version };
     } else if (version === "4.1") {
-      return { abi: AddEntryChargeContract.abi, version};
+      return { abi: AddEntryChargeContract.abi, version };
     } else if (version === "3.18") {
-      return { abi: AddJokeraceCreatedEventContract.abi, version};
+      return { abi: AddJokeraceCreatedEventContract.abi, version };
     } else if (version === "3.17") {
-      return { abi: LetJkLabsCancelContract.abi, version};
+      return { abi: LetJkLabsCancelContract.abi, version };
     } else if (version === "3.16") {
       return { abi: MakeVarsPublicContract.abi, version };
     } else if (version === "3.15") {

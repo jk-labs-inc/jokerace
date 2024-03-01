@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const artheraTestnet: Chain = {
   id: 10243,
   name: "artheraTestnet",
-  network: "artheraTestnet",
   iconUrl: "/arthera.svg",
   nativeCurrency: {
     decimals: 18,

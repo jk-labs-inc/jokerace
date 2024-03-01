@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const degenChain: Chain = {
   id: 69420,
   name: "degenChain",
-  network: "degenChain",
   iconUrl: "/degen.png",
   nativeCurrency: {
     decimals: 18,
