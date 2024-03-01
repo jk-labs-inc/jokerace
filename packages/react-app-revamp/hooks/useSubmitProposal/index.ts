@@ -82,6 +82,7 @@ export function useSubmitProposal() {
             functionName: "propose",
             //@ts-ignore
             args: [proposalCore, proofs],
+            //@ts-ignore
             value: charge ? [charge.type.costToPropose] : undefined,
           });
         } else {
@@ -90,6 +91,7 @@ export function useSubmitProposal() {
             functionName: "proposeWithoutProof",
             //@ts-ignore
             args: [proposalCore],
+            //@ts-ignore
             value: charge ? [charge.type.costToPropose] : undefined,
           });
         }
