@@ -73,8 +73,8 @@ export function useCastVotes() {
             parseUnits(amount.toString()),
             proofs,
           ],
-
-          value: costToVote,
+          //@ts-ignore
+          value: charge ? [charge.type.costToVote] : undefined,
         });
       } else {
         hash = await writeContract(config, {
@@ -82,7 +82,8 @@ export function useCastVotes() {
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
-          value: costToVote,
+          //@ts-ignore
+          value: charge ? [charge.type.costToVote] : undefined,
         });
       }
 
