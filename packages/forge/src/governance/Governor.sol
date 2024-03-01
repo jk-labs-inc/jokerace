@@ -127,6 +127,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
+    error CannotVoteLessThanOneVoteInPayPerVote();
 
     error NeedToSubmitWithProofFirst();
     error NeedToVoteWithProofFirst();
@@ -316,7 +317,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         if (currentAction == Actions.Submit) {
             actionCost = costToPropose;
         } else if (currentAction == Actions.Vote) {
-            actionCost = payPerVote == 1 ? costToVote * numVotes : costToVote;
+            if (payPerVote == 1) {
+                if (numVotes < 1 ether) revert CannotVoteLessThanOneVoteInPayPerVote();
+                actionCost = costToVote * (numVotes / 1 ether); // we don't allow <1 vote to be cast in a pay per vote txn bc of this, would underflow
+            } else {
+                actionCost = costToVote;
+            }
         } else {
             actionCost = 0;
         }
