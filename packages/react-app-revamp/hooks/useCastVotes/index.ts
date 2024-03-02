@@ -17,7 +17,7 @@ import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { formatEther, parseEther } from "viem";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
@@ -48,6 +48,22 @@ export function useCastVotes() {
   )?.[0]?.id;
   const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
 
+  const calculateChargeAmount = (amountOfVotes: number) => {
+    if (!charge) return undefined;
+
+    if (charge.voteType === VoteType.PerTransaction) {
+      return charge.type.costToVote;
+    }
+
+    const totalCharge = charge.type.costToVote * amountOfVotes;
+
+    return totalCharge;
+  };
+
+  const formatChargeAmount = (amount: number) => {
+    return Number(formatEther(BigInt(amount)));
+  };
+
   async function castVotes(amountOfVotes: number, isPositive: boolean) {
     toastLoading("votes are deploying...");
     setIsLoading(true);
@@ -55,15 +71,10 @@ export function useCastVotes() {
     setError("");
     setTransactionData(null);
     const { abi } = await getContestContractVersion(contestAddress, chainId);
-    const chargeAmount =
-      charge && charge.voteType === VoteType.PerTransaction
-        ? charge.type.costToVote ?? 0
-        : (charge?.type.costToVote ?? 0) * amountOfVotes;
-    const chargeAmountParsed = parseEther(chargeAmount.toString());
 
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
-      const costToVote = charge ? (charge.type.costToVote as unknown as bigint) : undefined;
+      const costToVote = calculateChargeAmount(amountOfVotes);
 
       let hash: `0x${string}`;
 
@@ -79,7 +90,7 @@ export function useCastVotes() {
             parseUnits(amountOfVotes.toString()),
             proofs,
           ],
-
+          //@ts-ignore
           value: costToVote,
         });
       } else {
@@ -88,6 +99,7 @@ export function useCastVotes() {
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
           args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amountOfVotes}`)],
+          //@ts-ignore
           value: costToVote,
         });
       }
@@ -105,7 +117,7 @@ export function useCastVotes() {
           proposal_id: pickedProposal !== null ? pickedProposal : undefined,
           vote_amount: amountOfVotes,
           created_at: Math.floor(Date.now() / 1000),
-          amount_sent: charge ? Number(formatEther(BigInt(chargeAmount))) : null,
+          amount_sent: costToVote ? formatChargeAmount(costToVote) : null,
           percentage_to_creator: charge ? charge.percentageToCreator : null,
         });
       } catch (error) {

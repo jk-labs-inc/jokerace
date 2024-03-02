@@ -26,6 +26,9 @@ export function useUser() {
     setIsCurrentUserVoteQualificationLoading,
     setIsCurrentUserVoteQualificationSuccess,
     setIsCurrentUserVoteQualificationError,
+    setIsCurrentUserVotesOnProposalLoading,
+    setIsCurrentUserVotesOnProposalSuccess,
+    setIsCurrentUserVotesOnProposalError,
   } = useUserStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -205,7 +208,12 @@ export function useUser() {
     const abi = await getContestContractVersion(address, chainId);
     setIsCurrentUserVoteQualificationLoading(true);
 
-    if (!abi) return;
+    if (!abi) {
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
+      return;
+    }
 
     try {
       const currentUserTotalVotesCastRaw = await readContract(config, {
@@ -230,10 +238,52 @@ export function useUser() {
     }
   }
 
+  /**
+   * Update the amount of votes casted in proposal by the current user
+   */
+  async function updateCurrentUserVotesOnProposal(proposalId: string) {
+    if (!userAddress) return;
+    setIsCurrentUserVotesOnProposalLoading(true);
+
+    const abi = await getContestContractVersion(address, chainId);
+
+    if (!abi) {
+      setIsCurrentUserVotesOnProposalError(true);
+      setIsCurrentUserVotesOnProposalSuccess(false);
+      setIsCurrentUserVotesOnProposalLoading(false);
+      return;
+    }
+
+    try {
+      const currentUserVotesOnProposalRaw = (await readContract(config, {
+        address: address as `0x${string}`,
+        abi: abi.abi as Abi,
+        functionName: "proposalAddressVotes",
+        args: [proposalId, userAddress],
+      })) as [bigint, bigint];
+
+      const currentUserPositiveVotesOnProposal = BigNumber.from(currentUserVotesOnProposalRaw[0]);
+      const currentUserNegativeVotesOnProposal = BigNumber.from(currentUserVotesOnProposalRaw[1]);
+
+      const currentUserVotesOnProposal = currentUserPositiveVotesOnProposal.sub(currentUserNegativeVotesOnProposal);
+
+      //@ts-ignore
+      setCurrentUserVotesOnProposal(currentUserVotesOnProposal / 1e18);
+
+      setIsCurrentUserVotesOnProposalSuccess(true);
+      setIsCurrentUserVotesOnProposalLoading(false);
+    } catch (error) {
+      setIsCurrentUserVotesOnProposalError(true);
+      setIsCurrentUserVotesOnProposalSuccess(false);
+      setIsCurrentUserVotesOnProposalLoading(false);
+    }
+  }
+
   return {
     checkIfCurrentUserQualifyToVote,
     checkIfCurrentUserQualifyToSubmit,
     updateCurrentUserVotes,
+    updateCurrentUserVotesOnProposal,
   };
 }
 

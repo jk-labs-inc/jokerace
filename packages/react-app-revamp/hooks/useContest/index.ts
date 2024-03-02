@@ -158,8 +158,6 @@ export function useContest() {
         costToVote = Number(results[14].result);
       }
 
-      console.log(costToVote);
-
       setCharge({
         percentageToCreator,
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,

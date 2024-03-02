@@ -183,6 +183,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                   {isConnected ? (
                     currentUserAvailableVotesAmount > 0 ? (
                       <VotingWidget
+                        proposalId={proposalId}
                         amountOfVotes={currentUserAvailableVotesAmount}
                         onVote={onVote}
                         downvoteAllowed={downvotingAllowed}

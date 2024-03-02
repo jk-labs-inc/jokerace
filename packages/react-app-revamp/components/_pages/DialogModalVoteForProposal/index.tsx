@@ -25,6 +25,8 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
     increaseCurrentUserTotalVotesCast,
     increaseCurrentUserAvailableVotesAmount,
     decreaseCurrentUserTotalVotesCast,
+    increaseCurrentUserVotesOnProposal,
+    decreaseCurrentUserVotesOnProposal,
   } = useUserStore(state => state);
 
   const { castVotes, isSuccess } = useCastVotes();
@@ -32,10 +34,12 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
   const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
     decreaseCurrentUserAvailableVotesAmount(amount);
     increaseCurrentUserTotalVotesCast(amount);
+    increaseCurrentUserVotesOnProposal(amount);
 
     castVotes(amount, isUpvote).catch(error => {
       increaseCurrentUserAvailableVotesAmount(amount);
       decreaseCurrentUserTotalVotesCast(amount);
+      decreaseCurrentUserVotesOnProposal(amount);
     });
   };
 
@@ -71,6 +75,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
         <div className="flex flex-col gap-7">
           <ContestProposal proposal={proposal} />
           <VotingWidget
+            proposalId={proposal.id}
             amountOfVotes={currentUserAvailableVotesAmount}
             downvoteAllowed={downvotingAllowed}
             onVote={onSubmitCastVotes}

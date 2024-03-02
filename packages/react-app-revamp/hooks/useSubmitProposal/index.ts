@@ -58,6 +58,7 @@ export function useSubmitProposal() {
 
       try {
         const { proofs, isVerified } = await getProofs(userAddress ?? "", "submission", "10");
+
         const contractConfig = {
           address: address as `0x${string}`,
           abi: abi as any,
@@ -129,6 +130,7 @@ export function useSubmitProposal() {
         fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
       } catch (e) {
+        console.log(e);
         handleError(e, `Something went wrong while submitting your proposal.`);
         setError(errorMessage);
         setIsLoading(false);
