@@ -28,11 +28,13 @@ import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachainTestnet } from "./custom-chains/berachainTestnet";
+import { blast } from "./custom-chains/blast";
 import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
 import { degenChain } from "./custom-chains/degenChain";
+import { dymension } from "./custom-chains/dymension";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
@@ -150,6 +152,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   sei,
   syndicateFrame,
   ancient8,
+  blast,
+  dymension,
   polygonTestnet,
   sepolia,
   goerli,
