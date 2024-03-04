@@ -4,7 +4,6 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import useFetchProposalData from "@hooks/useFetchProposalData";
-import useUser from "@hooks/useUser";
 import { getLayout } from "@layouts/LayoutViewContest";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -24,7 +23,6 @@ const Page: FC<PageProps> = ({ address, chain, submission, abi, version, chainId
   const { contestPrompt, contestName } = useContestStore(state => state);
   const { data, loading, error } = useFetchProposalData(abi, version, address, chainId, submission);
   const { setPickedProposal } = useCastVotesStore(state => state);
-  const { updateCurrentUserVotesOnProposal } = useUser();
   const id = router.query.submission as string;
 
   useEffect(() => {
