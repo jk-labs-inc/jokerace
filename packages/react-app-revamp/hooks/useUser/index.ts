@@ -3,8 +3,6 @@ import { supabase } from "@config/supabase";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { useCastVotesStore } from "@hooks/useCastVotes/store";
-import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
@@ -15,8 +13,6 @@ import { useUserStore } from "./store";
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useUser() {
-  const { contestAbi: abi } = useContestStore(state => state);
-  const { pickedProposal: proposalId } = useCastVotesStore(state => state);
   const { address: userAddress } = useAccount();
   const {
     setCurrentUserQualifiedToSubmit,
@@ -47,6 +43,7 @@ export function useUser() {
     setIsCurrentUserSubmitQualificationLoading(true);
 
     const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
+    const abi = await getContestContractVersion(address, chainId);
 
     if (!abi) {
       setIsCurrentUserSubmitQualificationError(true);
@@ -56,7 +53,7 @@ export function useUser() {
 
     const contractConfig = {
       address: address as `0x${string}`,
-      abi: abi,
+      abi: abi.abi as Abi,
       chainId: chainId,
     };
 
@@ -207,7 +204,7 @@ export function useUser() {
    */
   async function updateCurrentUserVotes() {
     setIsCurrentUserVoteQualificationLoading(true);
-
+    const abi = await getContestContractVersion(address, chainId);
     if (!abi) {
       setIsCurrentUserVoteQualificationError(true);
       setIsCurrentUserVoteQualificationSuccess(false);
@@ -218,7 +215,7 @@ export function useUser() {
     try {
       const currentUserTotalVotesCastRaw = await readContract(config, {
         address: address as `0x${string}`,
-        abi: abi,
+        abi: abi.abi as Abi,
         functionName: "contestAddressTotalVotesCast",
         args: [userAddress],
       });
