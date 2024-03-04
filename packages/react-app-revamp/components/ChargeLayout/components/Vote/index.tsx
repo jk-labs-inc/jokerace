@@ -36,8 +36,9 @@ const ChargeLayoutVote: FC<ChargeLayoutVoteProps> = ({
     if (isPerVote) {
       const chargeAmount = parseFloat(entryChargeFormatted);
       const multipliedCharge = chargeAmount * amountOfVotes ?? 1;
-      //TODO: formatting here in case of matic or other tokens
-      setTotalCharge(multipliedCharge.toFixed(6).toString());
+      const charge = +multipliedCharge.toFixed(6);
+
+      setTotalCharge(charge.toString());
     }
   }, [amountOfVotes, entryChargeFormatted, isPerVote]);
 

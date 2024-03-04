@@ -1,7 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { supabase } from "@config/supabase";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useCastVotesStore } from "@hooks/useCastVotes/store";
+import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
@@ -12,6 +15,8 @@ import { useUserStore } from "./store";
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useUser() {
+  const { contestAbi: abi } = useContestStore(state => state);
+  const { pickedProposal: proposalId } = useCastVotesStore(state => state);
   const { address: userAddress } = useAccount();
   const {
     setCurrentUserQualifiedToSubmit,
@@ -26,9 +31,6 @@ export function useUser() {
     setIsCurrentUserVoteQualificationLoading,
     setIsCurrentUserVoteQualificationSuccess,
     setIsCurrentUserVoteQualificationError,
-    setIsCurrentUserVotesOnProposalLoading,
-    setIsCurrentUserVotesOnProposalSuccess,
-    setIsCurrentUserVotesOnProposalError,
   } = useUserStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -44,7 +46,6 @@ export function useUser() {
     if (!userAddress) return;
     setIsCurrentUserSubmitQualificationLoading(true);
 
-    const abi = await getContestContractVersion(address, chainId);
     const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
     if (!abi) {
@@ -55,7 +56,7 @@ export function useUser() {
 
     const contractConfig = {
       address: address as `0x${string}`,
-      abi: abi.abi as any,
+      abi: abi,
       chainId: chainId,
     };
 
@@ -205,7 +206,6 @@ export function useUser() {
    * Update the amount of votes casted in this contest by the current user
    */
   async function updateCurrentUserVotes() {
-    const abi = await getContestContractVersion(address, chainId);
     setIsCurrentUserVoteQualificationLoading(true);
 
     if (!abi) {
@@ -218,7 +218,7 @@ export function useUser() {
     try {
       const currentUserTotalVotesCastRaw = await readContract(config, {
         address: address as `0x${string}`,
-        abi: abi.abi as Abi,
+        abi: abi,
         functionName: "contestAddressTotalVotesCast",
         args: [userAddress],
       });
@@ -238,52 +238,10 @@ export function useUser() {
     }
   }
 
-  /**
-   * Update the amount of votes casted in proposal by the current user
-   */
-  async function updateCurrentUserVotesOnProposal(proposalId: string) {
-    if (!userAddress) return;
-    setIsCurrentUserVotesOnProposalLoading(true);
-
-    const abi = await getContestContractVersion(address, chainId);
-
-    if (!abi) {
-      setIsCurrentUserVotesOnProposalError(true);
-      setIsCurrentUserVotesOnProposalSuccess(false);
-      setIsCurrentUserVotesOnProposalLoading(false);
-      return;
-    }
-
-    try {
-      const currentUserVotesOnProposalRaw = (await readContract(config, {
-        address: address as `0x${string}`,
-        abi: abi.abi as Abi,
-        functionName: "proposalAddressVotes",
-        args: [proposalId, userAddress],
-      })) as [bigint, bigint];
-
-      const currentUserPositiveVotesOnProposal = BigNumber.from(currentUserVotesOnProposalRaw[0]);
-      const currentUserNegativeVotesOnProposal = BigNumber.from(currentUserVotesOnProposalRaw[1]);
-
-      const currentUserVotesOnProposal = currentUserPositiveVotesOnProposal.sub(currentUserNegativeVotesOnProposal);
-
-      //@ts-ignore
-      setCurrentUserVotesOnProposal(currentUserVotesOnProposal / 1e18);
-
-      setIsCurrentUserVotesOnProposalSuccess(true);
-      setIsCurrentUserVotesOnProposalLoading(false);
-    } catch (error) {
-      setIsCurrentUserVotesOnProposalError(true);
-      setIsCurrentUserVotesOnProposalSuccess(false);
-      setIsCurrentUserVotesOnProposalLoading(false);
-    }
-  }
-
   return {
     checkIfCurrentUserQualifyToVote,
     checkIfCurrentUserQualifyToSubmit,
     updateCurrentUserVotes,
-    updateCurrentUserVotesOnProposal,
   };
 }
 

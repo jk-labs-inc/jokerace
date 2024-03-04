@@ -130,7 +130,6 @@ export function useSubmitProposal() {
         fetchSingleProposal(proposalId);
         resolve({ tx: txSendProposal, proposalId });
       } catch (e) {
-        console.log(e);
         handleError(e, `Something went wrong while submitting your proposal.`);
         setError(errorMessage);
         setIsLoading(false);

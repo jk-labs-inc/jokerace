@@ -2,10 +2,10 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
+import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -22,7 +22,7 @@ import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { canUpdateVotesInRealTime, charge } = useContestStore(state => state);
+  const { canUpdateVotesInRealTime, charge, contestAbi: abi } = useContestStore(state => state);
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -47,6 +47,10 @@ export function useCastVotes() {
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
   const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
+  const { refetch: refetchCurrentUserVotesOnProposal } = useFetchUserVotesOnProposal(
+    contestAddress,
+    pickedProposal ?? "",
+  );
 
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
@@ -55,9 +59,7 @@ export function useCastVotes() {
       return charge.type.costToVote;
     }
 
-    const totalCharge = charge.type.costToVote * amountOfVotes;
-
-    return totalCharge;
+    return charge.type.costToVote * amountOfVotes;
   };
 
   const formatChargeAmount = (amount: number) => {
@@ -70,7 +72,6 @@ export function useCastVotes() {
     setIsSuccess(false);
     setError("");
     setTransactionData(null);
-    const { abi } = await getContestContractVersion(contestAddress, chainId);
 
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
@@ -156,6 +157,7 @@ export function useCastVotes() {
 
       await updateCurrentUserVotes();
       fetchTotalVotesCast();
+      refetchCurrentUserVotesOnProposal();
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");

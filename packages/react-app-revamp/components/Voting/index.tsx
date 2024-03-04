@@ -7,31 +7,28 @@ import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
-import useUser from "@hooks/useUser";
-import { useUserStore } from "@hooks/useUser/store";
+import { VoteType } from "@hooks/useDeployContest/types";
+import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import { switchChain } from "@wagmi/core";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useAccount, useBalance } from "wagmi";
 
 interface VotingWidgetProps {
+  proposalId: string;
   amountOfVotes: number;
   downvoteAllowed?: boolean;
-  proposalId: string;
   onVote?: (amount: number, isUpvote: boolean) => void;
 }
 
-const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, proposalId, onVote }) => {
+const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote }) => {
   const { charge } = useContestStore(state => state);
-  const { currentUserTotalVotesAmount, currentUserVotesOnProposal } = useUserStore(state => state);
-  const { updateCurrentUserVotesOnProposal } = useUser();
   const { asPath } = useRouter();
-  const { address } = useAccount();
+  const { address, chainId: accountChainId } = useAccount();
   const { data: accountData } = useBalance({
     address: address as `0x${string}`,
   });
-  const { chainName } = extractPathSegments(asPath);
-  const { chainId: accountChainId } = useAccount();
+  const { address: contestAddress, chainName } = extractPathSegments(asPath);
   const { isLoading } = useCastVotesStore(state => state);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);
@@ -44,14 +41,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, p
   )?.[0]?.id;
   const isCorrectNetwork = chainId === accountChainId;
   const showVoteCharge = charge && charge.type.costToVote && accountData && isCorrectNetwork;
-
-  useEffect(() => {
-    if (!proposalId) return;
-
-    //TOOD: do this cleaner
-    updateCurrentUserVotesOnProposal(proposalId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [proposalId]);
+  const { currentUserVotesOnProposal } = useFetchUserVotesOnProposal(contestAddress, proposalId);
 
   const handleClick = (value: boolean) => {
     setIsUpvote(value);
@@ -59,16 +49,23 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, p
 
   const handleSliderChange = (value: any) => {
     setSliderValue(value);
-    const newAmount = ((value / 100) * amountOfVotes).toFixed(4);
-    setAmount(parseFloat(newAmount));
+    const newAmount = parseFloat(((value / 100) * amountOfVotes).toFixed(4));
+
+    if (newAmount < 1 && charge?.voteType === VoteType.PerVote) {
+      setIsInvalid(true);
+    } else {
+      setIsInvalid(false);
+    }
+
+    setAmount(newAmount);
   };
 
   const handleChange = (value: string) => {
     const numericInput = parseFloat(value);
-
     setAmount(numericInput);
 
-    const isInputInvalid = numericInput === 0 || numericInput > amountOfVotes;
+    const isInputInvalid =
+      numericInput === 0 || numericInput > amountOfVotes || (charge?.voteType === VoteType.PerVote && numericInput < 1);
     setIsInvalid(isInputInvalid);
 
     if (isInputInvalid) {
@@ -109,7 +106,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, p
 
   return (
     <div className="flex flex-col gap-6 md:w-60">
-      <hr className="border border-neutral-9 hover:border-positive-11 transition-colors duration-300" />
+      <hr className="border border-neutral-9" />
       <div className="flex flex-col gap-4">
         {downvoteAllowed ? (
           <div className="flex w-full border border-neutral-10 rounded-[25px] overflow-hidden text-[16px] text-center">
@@ -153,19 +150,19 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, p
           </div>
         </div>
         <StepSlider val={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
-        <div className="flex flex-col gap-1 text-[16px] text-neutral-11 transition-colors duration-300">
-          <div className="flex justify-between hover:text-positive-11 ">
+        <div className="flex flex-col gap-1 text-[16px]">
+          <div className="flex justify-between text-neutral-11 transition-colors duration-300 hover:text-positive-11 ">
             <p>votes on submission</p>
-            <p className="font-bold">{formatNumber(currentUserVotesOnProposal)}</p>
+            <p className="font-bold">{formatNumber(currentUserVotesOnProposal.data ?? 0)}</p>
           </div>
-          <div className="flex justify-between hover:text-positive-11 transition-colors duration-300">
+          <div className="flex justify-between text-neutral-11  hover:text-positive-11 transition-colors duration-300">
             <p>my remaining votes</p>
             <p className="font-bold">{formatNumber(amountOfVotes)}</p>
           </div>
         </div>
       </div>
 
-      <hr className="border border-neutral-9 hover:border-positive-11 transition-colors duration-300" />
+      <hr className="border border-neutral-9" />
 
       {showVoteCharge ? (
         <ChargeLayout accountData={accountData} charge={charge} type="vote" amountOfVotes={amount} />

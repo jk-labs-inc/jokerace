@@ -38,21 +38,17 @@ const SubmissionPage: FC<SubmissionPageProps> = ({
   const {
     decreaseCurrentUserAvailableVotesAmount,
     increaseCurrentUserAvailableVotesAmount,
-    increaseCurrentUserVotesOnProposal,
     increaseCurrentUserTotalVotesCast,
     decreaseCurrentUserTotalVotesCast,
-    decreaseCurrentUserVotesOnProposal,
   } = useUserStore(state => state);
 
   const handleCastVotes = (amount: number, isUpvote: boolean) => {
     decreaseCurrentUserAvailableVotesAmount(amount);
     increaseCurrentUserTotalVotesCast(amount);
-    increaseCurrentUserVotesOnProposal(amount);
 
     castVotes(amount, isUpvote).catch(error => {
       increaseCurrentUserAvailableVotesAmount(amount);
       decreaseCurrentUserTotalVotesCast(amount);
-      decreaseCurrentUserVotesOnProposal(amount);
     });
   };
 
