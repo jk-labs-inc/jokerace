@@ -55,11 +55,15 @@ export function useCastVotes() {
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
 
+    const votesBigNumber = BigNumber.from(amountOfVotes);
+
     if (charge.voteType === VoteType.PerTransaction) {
-      return charge.type.costToVote;
+      return BigNumber.from(charge.type.costToVote);
     }
 
-    return charge.type.costToVote * amountOfVotes;
+    const totalCost = votesBigNumber.mul(charge.type.costToVote);
+
+    return totalCost;
   };
 
   const formatChargeAmount = (amount: number) => {
@@ -118,7 +122,7 @@ export function useCastVotes() {
           proposal_id: pickedProposal !== null ? pickedProposal : undefined,
           vote_amount: amountOfVotes,
           created_at: Math.floor(Date.now() / 1000),
-          amount_sent: costToVote ? formatChargeAmount(costToVote) : null,
+          amount_sent: costToVote ? formatChargeAmount(parseFloat(costToVote.toString())) : null,
           percentage_to_creator: charge ? charge.percentageToCreator : null,
         });
       } catch (error) {
