@@ -46,13 +46,22 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
   };
 
   const handleSliderChange = (value: any) => {
-    setSliderValue(value);
-    const newAmount = ((value / 100) * amountOfVotes).toFixed(4);
-    setAmount(parseFloat(newAmount));
+    const newAmount = Math.round((value / 100) * amountOfVotes);
+
+    // We are only doing this check because of the older contests, where the amount of votes was not rounded, we can remove this check in the future
+    if (newAmount > amountOfVotes) {
+      setAmount(parseFloat(amountOfVotes.toFixed(4)));
+      return;
+    } else {
+      setAmount(newAmount);
+    }
+
+    const sliderPercentage = Math.round((newAmount / amountOfVotes) * 100);
+    setSliderValue(sliderPercentage);
   };
 
   const handleChange = (value: string) => {
-    const numericInput = parseFloat(value);
+    const numericInput = parseInt(value, 10);
 
     setAmount(numericInput);
 
@@ -67,7 +76,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
         setSliderValue(100);
       }
     } else {
-      setSliderValue((numericInput / amountOfVotes) * 100);
+      const sliderValue = Math.round((numericInput / amountOfVotes) * 100);
+      setSliderValue(sliderValue);
     }
   };
 
@@ -77,7 +87,14 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
     }
   };
 
+  const handleInput: React.ChangeEventHandler<HTMLInputElement> = event => {
+    event.target.value = event.target.value.replace(/[^0-9]*/g, "");
+  };
+
   const handleKeyDownInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === ".") {
+      e.preventDefault();
+    }
     if (e.key === "Enter") {
       handleVote();
     }
@@ -109,15 +126,22 @@ const VotingWidget: FC<VotingWidgetProps> = ({ amountOfVotes, downvoteAllowed, o
               type="number"
               value={amount}
               onChange={e => handleChange(e.target.value)}
-              placeholder="0.00 votes"
+              placeholder="0 votes"
               max={amountOfVotes}
               onKeyDown={handleKeyDownInput}
+              onInput={handleInput}
               className="text-right w-24 bg-transparent outline-none mr-1 placeholder-neutral-10"
             />
             {amount > 0 && <span>vote{amount !== 1 ? "s" : ""}</span>}
           </div>
         </div>
-        <StepSlider val={sliderValue} onChange={handleSliderChange} onKeyDown={handleKeyDownSlider} />
+        <StepSlider
+          val={sliderValue}
+          onChange={handleSliderChange}
+          onKeyDown={handleKeyDownSlider}
+          step={amountOfVotes > 100 ? 1 : 10}
+        />
+
         {downvoteAllowed ? (
           <div className="flex w-full border border-neutral-10 rounded-[25px] overflow-hidden text-[16px] text-center">
             <div
