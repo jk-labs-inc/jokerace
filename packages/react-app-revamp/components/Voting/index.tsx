@@ -117,33 +117,6 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
     <div className="flex flex-col gap-6 md:w-60">
       <hr className="border border-neutral-9" />
       <div className="flex flex-col gap-4">
-        <div
-          className={`flex h-8 justify-between items-center pl-6 pr-4 text-[16px] bg-transparent font-bold ${
-            isInvalid ? "text-negative-11" : "text-neutral-11"
-          } border border-neutral-10 rounded-[40px]`}
-        >
-          <span>Amount</span>
-          <div className="flex items-center">
-            <input
-              type="number"
-              value={amount}
-              onChange={e => handleChange(e.target.value)}
-              placeholder="0 votes"
-              max={amountOfVotes}
-              onKeyDown={handleKeyDownInput}
-              onInput={handleInput}
-              className="text-right w-24 bg-transparent outline-none mr-1 placeholder-neutral-10"
-            />
-            {amount > 0 && <span>vote{amount !== 1 ? "s" : ""}</span>}
-          </div>
-        </div>
-        <StepSlider
-          val={sliderValue}
-          onChange={handleSliderChange}
-          onKeyDown={handleKeyDownSlider}
-          step={amountOfVotes > 100 ? 1 : 10}
-        />
-
         {downvoteAllowed ? (
           <div className="flex w-full border border-neutral-10 rounded-[25px] overflow-hidden text-[16px] text-center">
             <div
