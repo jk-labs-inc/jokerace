@@ -18,7 +18,7 @@ const StepSlider: FC<StepSliderProps> = ({
   min = 0,
   max = 100,
   defaultValue = 0,
-  step = 25,
+  step = 1,
   onChange,
   onKeyDown,
 }) => {
@@ -66,6 +66,7 @@ const StepSlider: FC<StepSliderProps> = ({
         max={max}
         value={value}
         dotStyle={dotStyle}
+        step={step}
         trackStyle={trackStyle}
         handleStyle={handleStyle}
         railStyle={railStyle}

@@ -21,6 +21,7 @@ const ContestParamsSubmissionsPerContest: FC<ContestParamsSubmissionsPerContestP
           onChange={onMaxSubmissionsChange}
           errorMessage={submissionsPerContestError}
           textClassName="font-bold text-center pl-0 pr-4"
+          disableDecimals
         />
       </div>
     </div>

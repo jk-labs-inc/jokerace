@@ -7,7 +7,6 @@ import { formatNumber } from "@helpers/formatNumber";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
-import { VoteType } from "@hooks/useDeployContest/types";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import { switchChain } from "@wagmi/core";
 import { useRouter } from "next/router";
@@ -48,24 +47,26 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
   };
 
   const handleSliderChange = (value: any) => {
-    setSliderValue(value);
-    const newAmount = parseFloat(((value / 100) * amountOfVotes).toFixed(4));
+    const newAmount = Math.round((value / 100) * amountOfVotes);
 
-    if (newAmount < 1 && charge?.voteType === VoteType.PerVote) {
-      setIsInvalid(true);
+    // We are only doing this check because of the older contests, where the amount of votes was not rounded, we can remove this check in the future
+    if (newAmount > amountOfVotes) {
+      setAmount(parseFloat(amountOfVotes.toFixed(4)));
+      return;
     } else {
-      setIsInvalid(false);
+      setAmount(newAmount);
     }
 
-    setAmount(newAmount);
+    const sliderPercentage = Math.round((newAmount / amountOfVotes) * 100);
+    setSliderValue(sliderPercentage);
   };
 
   const handleChange = (value: string) => {
-    const numericInput = parseFloat(value);
+    const numericInput = parseInt(value, 10);
+
     setAmount(numericInput);
 
-    const isInputInvalid =
-      numericInput === 0 || numericInput > amountOfVotes || (charge?.voteType === VoteType.PerVote && numericInput < 1);
+    const isInputInvalid = numericInput === 0 || numericInput > amountOfVotes;
     setIsInvalid(isInputInvalid);
 
     if (isInputInvalid) {
@@ -76,7 +77,8 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
         setSliderValue(100);
       }
     } else {
-      setSliderValue((numericInput / amountOfVotes) * 100);
+      const sliderValue = Math.round((numericInput / amountOfVotes) * 100);
+      setSliderValue(sliderValue);
     }
   };
 
@@ -86,7 +88,14 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
     }
   };
 
+  const handleInput: React.ChangeEventHandler<HTMLInputElement> = event => {
+    event.target.value = event.target.value.replace(/[^0-9]*/g, "");
+  };
+
   const handleKeyDownInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === ".") {
+      e.preventDefault();
+    }
     if (e.key === "Enter") {
       handleVote();
     }
@@ -141,9 +150,10 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
               onChange={e => handleChange(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder="0.00 votes"
+              placeholder="0 votes"
               max={amountOfVotes}
               onKeyDown={handleKeyDownInput}
+              onInput={handleInput}
               className="text-right w-24 bg-transparent outline-none mr-1 placeholder-neutral-10"
             />
             {amount > 0 && <span>vote{amount !== 1 ? "s" : ""}</span>}

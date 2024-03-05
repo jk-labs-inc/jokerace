@@ -31,16 +31,15 @@ self.onmessage = (event: MessageEvent<EventData>) => {
     const holderAddress: string = holder.TokenHolderAddress;
     const tokenQuantityInWei = holder.TokenHolderQuantity;
 
-    const tokenQuantityInEther = parseFloat(formatEther(tokenQuantityInWei)).toFixed(4);
-    const formattedTokenQuantity = parseFloat(tokenQuantityInEther);
+    const tokenQuantityInEther = Math.round(parseFloat(formatEther(tokenQuantityInWei)));
 
-    if (formattedTokenQuantity >= minTokensRequired) {
+    if (tokenQuantityInEther >= minTokensRequired) {
       qualifiedHoldersCount++;
       let totalVotes: number = 0;
 
       if (eventType === "voting") {
         if (voteCalculationMethod === "token") {
-          totalVotes = formattedTokenQuantity * votesPerUnit;
+          totalVotes = tokenQuantityInEther * votesPerUnit;
         } else if (voteCalculationMethod === "token holder") {
           totalVotes = votesPerUnit;
         }

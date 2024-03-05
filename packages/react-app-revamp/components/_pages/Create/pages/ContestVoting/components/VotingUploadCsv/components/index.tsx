@@ -113,9 +113,7 @@ const VotingCSVFileUploader: FC<VotingCSVFileUploaderProps> = ({ onChange, onNex
       />
       <div className="flex flex-col gap-4">
         <div>
-          {uploadSuccess && (
-            <p className="text-neutral-11 text-[16px]">please note: we rounded all entries with more than 4 decimals</p>
-          )}
+          {uploadSuccess && <p className="text-neutral-11 text-[16px]">please note: we rounded all entries.</p>}
           {roundedZeroCount && roundedZeroCount > 0 ? (
             <p className="text-positive-11 text-[16px]">
               we removed <span className="font-bold">{roundedZeroCount} </span>
