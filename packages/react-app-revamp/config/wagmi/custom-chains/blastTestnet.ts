@@ -3,8 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const blastTestnet: Chain = {
   id: 168587773,
   name: "blastTestnet",
-  network: "blastTestnet",
-  iconUrl: "/contest/mona-lisa-moustache.png",
+  iconUrl: "/blast.svg",
   nativeCurrency: {
     decimals: 18,
     name: "Ether",

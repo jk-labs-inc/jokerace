@@ -4,7 +4,7 @@ import useFundRewardsModule from "@hooks/useFundRewards";
 import { useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
 import { FC } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { useContractRead } from "wagmi";
+import { useReadContract } from "wagmi";
 import PayeeERC20Reward from "./ERC20Reward";
 import { PayeeNativeReward } from "./NativeReward";
 
@@ -38,16 +38,18 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
   const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
   const { isLoading: isWithdrawRewardsLoading } = useWithdrawRewardStore(state => state);
   const {
-    data,
+    data: rawData,
     isError,
     isLoading: isSharesLoading,
-  } = useContractRead({
+  } = useReadContract({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
     chainId: chainId,
     functionName: "shares",
     args: [Number(payee)],
   });
+
+  const data = Number(rawData);
   const isLoading = isSharesLoading || isFundingRewardsLoading || isWithdrawRewardsLoading;
 
   return (

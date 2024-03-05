@@ -24,22 +24,20 @@ function useContests(profileAddress: string, currentUserAddress: string, sortBy?
     data: contestData,
     error,
     isFetching: isContestDataFetching,
-  } = useQuery(
-    ["userContests", profileAddress, page, currentUserAddress, sortBy],
-    () => {
-      return getUserContests(page, ITEMS_PER_PAGE, profileAddress, currentUserAddress, sortBy);
-    },
-    {
-      enabled: !!profileAddress,
-    },
-  );
+  } = useQuery({
+    queryKey: ["userContests", profileAddress, page, currentUserAddress, sortBy],
+    queryFn: () => getUserContests(page, ITEMS_PER_PAGE, profileAddress, currentUserAddress, sortBy),
+    enabled: !!profileAddress,
+  });
 
   const {
     status: rewardsStatus,
     data: rewardsData,
     error: rewardsError,
     isFetching: isRewardsFetching,
-  } = useQuery(["rewards", contestData], data => getRewards(contestData?.data ?? []), {
+  } = useQuery({
+    queryKey: ["rewards", contestData],
+    queryFn: () => getRewards(contestData?.data ?? []),
     enabled: !!contestData,
   });
 

@@ -1,7 +1,7 @@
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
-  bitKeepWallet,
+  bitgetWallet,
   coinbaseWallet,
   imTokenWallet,
   metaMaskWallet,
@@ -14,10 +14,9 @@ import {
   trustWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-import { luksoWallet } from "./custom-wallets/luksoWallet";
 
-import { configureChains, createConfig } from "wagmi";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import { Transport } from "viem";
+import { createConfig, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
@@ -29,11 +28,13 @@ import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
 import { berachainTestnet } from "./custom-chains/berachainTestnet";
+import { blast } from "./custom-chains/blast";
 import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
 import { degenChain } from "./custom-chains/degenChain";
+import { dymension } from "./custom-chains/dymension";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
@@ -100,7 +101,15 @@ type ChainImages = {
   [key: string]: string;
 };
 
-export const totalChains: Chain[] = [
+type Transports = Record<Chain["id"], Transport>;
+
+declare module "wagmi" {
+  interface Register {
+    config: typeof config;
+  }
+}
+
+export const chains: readonly [Chain, ...Chain[]] = [
   polygon,
   arbitrumOne,
   optimism,
@@ -143,6 +152,8 @@ export const totalChains: Chain[] = [
   sei,
   syndicateFrame,
   ancient8,
+  blast,
+  dymension,
   polygonTestnet,
   sepolia,
   goerli,
@@ -180,61 +191,54 @@ export const totalChains: Chain[] = [
   mainnet,
 ];
 
-const publicClients =
-  process.env.NEXT_PUBLIC_ALCHEMY_KEY !== "" && process.env.NEXT_PUBLIC_ALCHEMY_KEY
-    ? [
-        jsonRpcProvider({
-          rpc: chain => {
-            return {
-              http: `${chain.rpcUrls.default.http[0]}`,
-            };
-          },
-        }),
-      ]
-    : [
-        jsonRpcProvider({
-          rpc: chain => {
-            return {
-              http: `${chain.rpcUrls.public.http[0]}`,
-            };
-          },
-        }),
-      ];
-
-export const { chains, publicClient, webSocketPublicClient } = configureChains(totalChains, publicClients);
-
 const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
 
-const connectors = connectorsForWallets([
+const appName = "jokerace";
+const projectId = WALLETCONECT_PROJECT_ID;
+
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: "Wallets",
+      wallets: [
+        metaMaskWallet,
+        rainbowWallet,
+        okxWallet,
+        tahoWallet,
+        argentWallet,
+        trustWallet,
+        imTokenWallet,
+        omniWallet,
+        bitgetWallet,
+        rabbyWallet,
+        phantomWallet,
+      ],
+    },
+  ],
   {
-    groupName: "Wallets",
-    wallets: [
-      metaMaskWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      walletConnectWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      rainbowWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      okxWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      tahoWallet({ chains }),
-      coinbaseWallet({ chains, appName: "jokerace" }),
-      argentWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      trustWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      imTokenWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      omniWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      bitKeepWallet({ chains, projectId: WALLETCONECT_PROJECT_ID }),
-      rabbyWallet({ chains }),
-      luksoWallet(),
-      phantomWallet({ chains }),
-    ],
+    projectId: projectId,
+    appName: appName,
   },
-]);
+);
+
+const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
+  return chains.reduce<Transports>((acc, chain) => {
+    if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
+      acc[chain.id] = fallback([http(chain.rpcUrls.default.http[0]), http(chain.rpcUrls.public.http[0])]);
+    }
+    return acc;
+  }, {});
+};
+
+const transports = createTransports(chains);
 
 export const config = createConfig({
-  autoConnect: true,
   connectors,
-  publicClient,
-  webSocketPublicClient,
+  chains,
+  transports,
 });
 
-export const chainsImages: ChainImages = totalChains.reduce((acc, chain) => {
+export const chainsImages: ChainImages = chains.reduce((acc: any, chain: any) => {
   if (chain.name && chain.iconUrl) {
     acc[chain.name.toLowerCase()] = chain.iconUrl as string;
   }

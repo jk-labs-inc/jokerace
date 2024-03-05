@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const aevo: Chain = {
   id: 2999,
   name: "aevo",
-  network: "aevo",
   iconUrl: "/aevo.svg",
   nativeCurrency: {
     decimals: 18,

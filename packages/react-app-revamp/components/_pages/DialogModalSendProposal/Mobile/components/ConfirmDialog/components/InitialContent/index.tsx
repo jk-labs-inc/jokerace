@@ -4,12 +4,12 @@ import { FOOTER_LINKS } from "@config/links";
 import { emailRegex } from "@helpers/regex";
 import { Charge } from "@hooks/useDeployContest/types";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import { FetchBalanceResult } from "@wagmi/core";
+import { type GetBalanceReturnType } from "@wagmi/core";
 import { FC, useState } from "react";
 
 interface SendProposalMobileLayoutConfirmInitialContentProps {
   charge: Charge | null;
-  accountData: FetchBalanceResult | undefined;
+  accountData: GetBalanceReturnType | undefined;
   onConfirm?: () => void;
 }
 

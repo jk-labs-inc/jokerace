@@ -1,3 +1,4 @@
+import { config } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
@@ -168,7 +169,7 @@ export function transformProposalData(
  */
 export async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
   if (isLegacy) {
-    return (await readContract({
+    return (await readContract(config, {
       ...contractConfig,
       functionName: "getAllProposalIds",
       args: [],
@@ -187,7 +188,7 @@ export async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) 
       },
     ];
 
-    const results: any[] = await readContracts({ contracts });
+    const results: any[] = await readContracts(config, { contracts });
 
     const allProposals = results[0].result[0];
     const deletedIdsArray = results[1]?.result;

@@ -5,7 +5,7 @@ import { formatBalance } from "@helpers/formatBalance";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { Charge } from "@hooks/useDeployContest/types";
-import { FetchBalanceResult } from "@wagmi/core";
+import { type GetBalanceReturnType } from "@wagmi/core";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC, useState } from "react";
@@ -14,7 +14,7 @@ import { useAccount } from "wagmi";
 
 interface DialogModalSendProposalEntryChargeLayoutProps {
   charge: Charge;
-  accountData: FetchBalanceResult;
+  accountData: GetBalanceReturnType;
   type: "propose" | "vote";
 }
 
@@ -23,7 +23,7 @@ const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({ charg
   const { address } = useAccount();
   const asPath = router.asPath;
   const { chainName } = extractPathSegments(asPath);
-  const chainUnitLabel = chains.find(c => c.name === chainName)?.nativeCurrency.symbol;
+  const chainUnitLabel = chains.find((c: { name: string }) => c.name === chainName)?.nativeCurrency.symbol;
   const chargeAmount = type === "propose" ? charge.type.costToPropose : charge.type.costToVote;
   const insufficientBalance = accountData.value < chargeAmount;
   const entryChargeFormatted = formatEther(BigInt(chargeAmount));

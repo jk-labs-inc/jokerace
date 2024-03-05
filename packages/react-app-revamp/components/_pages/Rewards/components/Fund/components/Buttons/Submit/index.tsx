@@ -79,6 +79,7 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
       <div className="flex gap-2 items-start pb-5 md:pb-0">
         <div className={`flex flex-col items-center gap-2`}>
           <ButtonV3
+            isDisabled={isLoading}
             colorClass={`bg-gradient-create ${shake ? "animate-shakeTop" : ""}`}
             size={ButtonSize.LARGE}
             onClick={handleClick}

@@ -3,7 +3,6 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const lootChain: Chain = {
   id: 5151706,
   name: "lootChain",
-  network: "lootChain",
   iconUrl: "/lootchain.svg",
   nativeCurrency: {
     decimals: 18,

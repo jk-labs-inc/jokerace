@@ -1,12 +1,11 @@
 import { Proposal } from "@components/_pages/ProposalContent";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { config } from "@config/wagmi";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
-import { readContract } from "@wagmi/core";
+import { readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { BigNumber, utils } from "ethers";
-import { readContracts } from "wagmi";
 
 interface RankDictionary {
   [key: string]: number;
@@ -51,21 +50,21 @@ const assignRankAndCheckTies = (mappedProposals: MappedProposalIds[], targetId: 
 const fetchProposalInfo = async (abi: any, address: string, chainId: number, submission: string) => {
   let contracts = [
     {
-      address,
+      address: address as `0x${string}`,
       abi,
       chainId,
       functionName: "getProposal",
       args: [submission],
     },
     {
-      address,
+      address: address as `0x${string}`,
       abi,
       chainId,
       functionName: "proposalVotes",
       args: [submission],
     },
     {
-      address,
+      address: address as `0x${string}`,
       abi,
       chainId,
       functionName: "proposalIsDeleted",
@@ -73,8 +72,7 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
     },
   ];
 
-  //@ts-ignore
-  const results = (await readContracts({ contracts })) as any;
+  const results = (await readContracts(config, { contracts })) as any;
   const data = results[0].result;
   const forVotesBigInt = results[1].result[0] as bigint;
   const againstVotesBigInt = results[1].result[1] as bigint;
@@ -124,14 +122,14 @@ const fetchNumberOfComments = async (
 
   const contracts = [
     {
-      address,
+      address: address as `0x${string}`,
       abi,
       chainId,
       functionName: "getProposalComments",
       args: [submission],
     },
     {
-      address,
+      address: address as `0x${string}`,
       abi,
       chainId,
       functionName: "getAllDeletedCommentIds",
@@ -140,8 +138,7 @@ const fetchNumberOfComments = async (
   ];
 
   try {
-    //@ts-ignore
-    const results = (await readContracts({ contracts })) as any;
+    const results = (await readContracts(config, { contracts })) as any;
     const allCommentsIdsBigInt = results[0]?.result as bigint[];
     const deletedCommentIdsBigInt = results[1]?.result as bigint[];
     const deletedCommentIdsSet = new Set(deletedCommentIdsBigInt);
@@ -159,7 +156,7 @@ const fetchAddressesVoted = async (
   submission: string,
 ): Promise<string[] | null> => {
   try {
-    const addresses = (await readContract({
+    const addresses = (await readContract(config, {
       address: address as `0x${string}`,
       abi: abi,
       chainId,

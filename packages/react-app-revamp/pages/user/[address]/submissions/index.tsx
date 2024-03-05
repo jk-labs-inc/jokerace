@@ -16,15 +16,13 @@ function useUserSubmissions(userAddress: string) {
     data: userSubmissionsData,
     isError: isError,
     isFetching: isLoading,
-  } = useQuery<SubmissionsResult>(
-    ["userSubmissions", userAddress, page],
-    () => {
+  } = useQuery<SubmissionsResult>({
+    queryKey: ["userSubmissions", userAddress, page],
+    queryFn: () => {
       return getUserSubmissions(userAddress, page, ITEMS_PER_PAGE);
     },
-    {
-      enabled: !!userAddress,
-    },
-  );
+    enabled: !!userAddress,
+  });
 
   return {
     page,

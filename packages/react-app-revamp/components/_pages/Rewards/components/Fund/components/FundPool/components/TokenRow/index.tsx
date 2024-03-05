@@ -30,11 +30,15 @@ const formatNativeToken = (nativeToken?: NativeCurrency): TokenConfig | undefine
 const CreateRewardsFundPoolTokenRow = () => {
   const { asPath } = useRouter();
   const { chainName } = extractPathSegments(asPath);
-  const chainId = chains.filter(chain => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id;
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const { setRewards, setValidationError } = useFundRewardsStore(state => state);
   const [rows, setRows] = useState<Reward[]>([{ address: "", amount: "" }]);
   const chainConfig = Object.values(CHAIN_CONFIGS).find(config => config.id === chainId);
-  const nativeToken: NativeCurrency | undefined = chains.find(chain => chain.id === chainId)?.nativeCurrency;
+  const nativeToken: NativeCurrency | undefined = chains.find(
+    (chain: { id: number }) => chain.id === chainId,
+  )?.nativeCurrency;
   const nativeTokenConfig = formatNativeToken(nativeToken);
   const allTokens = (nativeTokenConfig ? [nativeTokenConfig] : []).concat(chainConfig?.tokens || []);
 
