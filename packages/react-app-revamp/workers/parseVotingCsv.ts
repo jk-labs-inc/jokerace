@@ -13,8 +13,8 @@ const processRowData = (row: any[]) => {
   const address = row[0];
   let numberOfVotes =
     typeof row[1] === "number"
-      ? parseFloat(row[1].toFixed(4))
-      : parseFloat(parseFloat(row[1].toString().replaceAll(",", "")).toFixed(4));
+      ? Math.round(row[1])
+      : Math.round(parseFloat(parseFloat(row[1].toString().replaceAll(",", "")).toString()));
 
   if (!addressRegex.test(address)) {
     error = "address";

@@ -223,6 +223,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                   value={powerValue ?? 0}
                   placeholder="100"
                   onChange={onPowerValueChange}
+                  disableDecimals
                 />
                 <p className="text-[16px] md:text-[24px]">votes per</p>
                 <CreateDefaultDropdown

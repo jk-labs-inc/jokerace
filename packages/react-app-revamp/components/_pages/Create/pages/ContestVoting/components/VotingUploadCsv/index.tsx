@@ -123,10 +123,13 @@ const CreateVotingCSVUploader = () => {
     toastLoading("Processing your allowlist...", false);
 
     if (submittersAsVoters) {
-      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.csv).reduce((acc, address) => {
-        acc[address] = 10;
-        return acc;
-      }, {} as Record<string, number>);
+      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.csv).reduce(
+        (acc, address) => {
+          acc[address] = 10;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       const worker = initializeWorkersForVotersAndSubmitters();
       worker.postMessage({
@@ -137,6 +140,7 @@ const CreateVotingCSVUploader = () => {
       });
     } else {
       const worker = initializeWorkerForVoters();
+
       worker.postMessage({
         decimals: 18,
         allowList: votingAllowlist.csv,
