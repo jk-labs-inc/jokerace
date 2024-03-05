@@ -2,6 +2,7 @@ import { ChangeEventHandler, FC, useEffect, useState } from "react";
 
 interface CreateNumberInputProps {
   value?: number;
+  disableDecimals?: boolean;
   placeholder?: string;
   errorMessage?: string;
   readOnly?: boolean;
@@ -13,6 +14,7 @@ interface CreateNumberInputProps {
 
 const CreateNumberInput: FC<CreateNumberInputProps> = ({
   value: propValue,
+  disableDecimals,
   placeholder,
   errorMessage,
   readOnly = false,
@@ -36,11 +38,23 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
       setValue("");
       onChange?.(null);
     } else {
-      const parsedValue = parseFloat(value);
+      const parsedValue = disableDecimals ? parseInt(value, 10) : parseFloat(value);
       if (!isNaN(parsedValue)) {
         setValue(parsedValue);
         onChange?.(parsedValue);
       }
+    }
+  };
+
+  const handleKeyDown: React.KeyboardEventHandler<HTMLInputElement> = event => {
+    if (disableDecimals && event.key === ".") {
+      event.preventDefault();
+    }
+  };
+
+  const handleInput: React.ChangeEventHandler<HTMLInputElement> = event => {
+    if (disableDecimals) {
+      event.target.value = event.target.value.replace(/[^0-9]*/g, "");
     }
   };
 
@@ -54,6 +68,8 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
         <input
           type="number"
           className={`text-[20px] w-full h-full outline-none bg-transparent pl-4 text-true-black ${textClassName}`}
+          onKeyDown={handleKeyDown}
+          onInput={handleInput}
           onChange={handleChange}
           value={value}
           placeholder={placeholder}
