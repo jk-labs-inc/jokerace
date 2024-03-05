@@ -1,10 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { config } from "@config/wagmi";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { utils } from "ethers";
 import { useEffect, useState } from "react";
-import { Abi } from "viem";
 
 export const VOTES_PER_PAGE = 5;
 
@@ -16,6 +15,7 @@ interface VoteEntry {
 type VotesArray = VoteEntry[];
 
 export function useProposalVotes(contractAddress: string, proposalId: string, chainId: number, addressPerPage = 5) {
+  const { contestAbi: abi } = useContestStore(state => state);
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [addressesVoted, setAddressesVoted] = useState<string[]>([]);
@@ -23,23 +23,11 @@ export function useProposalVotes(contractAddress: string, proposalId: string, ch
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchContractVersion = async (address: string, chainId: number) => {
-    try {
-      const { abi } = await getContestContractVersion(address, chainId);
-      if (abi === null) throw new Error("This contract doesn't exist on this chain.");
-      return abi;
-    } catch (error: any) {
-      setError(error.message);
-      throw error;
-    }
-  };
-
   const fetchAddressesVoted = async () => {
     try {
-      const abi = await fetchContractVersion(contractAddress, chainId);
       const addresses = (await readContract(config, {
         address: contractAddress as `0x${string}`,
-        abi: abi as Abi,
+        abi: abi,
         chainId,
         functionName: "proposalAddressesHaveVoted",
         args: [proposalId],
@@ -54,10 +42,9 @@ export function useProposalVotes(contractAddress: string, proposalId: string, ch
 
   const fetchVotesForAddress = async (address: string): Promise<VoteEntry> => {
     try {
-      const abi = await fetchContractVersion(contractAddress, chainId);
       const votes = (await readContract(config, {
         address: contractAddress as `0x${string}`,
-        abi: abi as Abi,
+        abi: abi,
         chainId,
         functionName: "proposalAddressVotes",
         args: [proposalId, address],

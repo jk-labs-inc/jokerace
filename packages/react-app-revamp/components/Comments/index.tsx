@@ -50,7 +50,7 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
 
   return (
     <div className="flex flex-col gap-12" id="comments" ref={commentsRef}>
-      <div className="flex gap-1 md:gap-4 items-center">
+      <div className="flex gap-4 items-center">
         <p className="text-[24px] text-neutral-11 font-bold">comments</p>
         <button
           onClick={() => setIsCommentsOpen(!isCommentsOpen)}

@@ -179,10 +179,10 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             <div className="flex flex-col gap-12">
               {contestStatus === ContestStatus.VotingOpen && (
                 <>
-                  <p className="text-neutral-11 text-[24px] font-bold">vote</p>
                   {isConnected ? (
                     currentUserAvailableVotesAmount > 0 ? (
                       <VotingWidget
+                        proposalId={proposalId}
                         amountOfVotes={currentUserAvailableVotesAmount}
                         onVote={onVote}
                         downvoteAllowed={downvotingAllowed}

@@ -54,7 +54,7 @@ const CommentFormInputSubmitButton: FC<CommentFormInputSubmitButtonProps> = ({
     </ButtonV3>
   ) : (
     <Image
-      className={`ml-auto pr-1 ${allowSend ? "filter-send-commment-icon" : ""} ${
+      className={`ml-auto pr-1 transition-all duration-300 ${allowSend ? "filter-send-commment-icon" : ""} ${
         isAdding ? "filter-send-commment-icon opacity-50 pointer-events-none" : "cursor-pointer"
       }`}
       src="/comments/send.svg"

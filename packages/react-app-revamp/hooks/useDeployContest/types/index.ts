@@ -34,8 +34,14 @@ export type SubmissionRequirements = {
   logo: string;
 };
 
+export enum VoteType {
+  PerTransaction = "PerTransaction",
+  PerVote = "PerVote",
+}
+
 export type Charge = {
   percentageToCreator: number;
+  voteType: VoteType;
   type: {
     costToPropose: number;
     costToVote: number;

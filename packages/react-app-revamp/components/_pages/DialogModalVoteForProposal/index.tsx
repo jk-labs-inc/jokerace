@@ -71,6 +71,7 @@ export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = (
         <div className="flex flex-col gap-7">
           <ContestProposal proposal={proposal} />
           <VotingWidget
+            proposalId={proposal.id}
             amountOfVotes={currentUserAvailableVotesAmount}
             downvoteAllowed={downvotingAllowed}
             onVote={onSubmitCastVotes}

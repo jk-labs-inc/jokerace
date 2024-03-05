@@ -15,9 +15,10 @@ import ContestPrompt from "../components/Prompt";
 import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
 import ContestTimeline from "../components/Timeline";
+import useUser from "@hooks/useUser";
 
 const ContestTab = () => {
-  const { contestPrompt } = useContestStore(state => state);
+  const { contestPrompt, submissionMerkleRoot } = useContestStore(state => state);
   const { isConnected } = useAccount();
   const { openConnectModal } = useConnectModal();
   const { contestStatus } = useContestStatusStore(state => state);
@@ -27,6 +28,7 @@ const ContestTab = () => {
     currentUserProposalCount,
     isCurrentUserSubmitQualificationLoading,
   } = useUserStore(state => state);
+  const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
   const {
