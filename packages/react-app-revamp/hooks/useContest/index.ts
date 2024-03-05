@@ -1,11 +1,13 @@
 import { chains, config } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
+import { Abi } from "viem";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -47,7 +49,6 @@ export function useContest() {
   const [chainId, setChainId] = useState(
     chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainFromUrl)?.[0]?.id,
   );
-
   const {
     setError,
     isLoading,
@@ -71,6 +72,7 @@ export function useContest() {
     setCanUpdateVotesInRealTime,
     setCharge,
     setVotingRequirements,
+    setContestAbi,
     setSubmissionRequirements,
     setIsReadOnly,
     setIsRewardsLoading,
@@ -100,6 +102,7 @@ export function useContest() {
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
         setIsLoading(false);
+        setContestAbi([]);
         return;
       }
 
@@ -109,6 +112,7 @@ export function useContest() {
         chainId: chainId,
       };
 
+      setContestAbi(abi as Abi);
       return { contractConfig, version };
     } catch (e) {
       setError(errorMessage);
@@ -116,6 +120,7 @@ export function useContest() {
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
       setIsLoading(false);
+      setContestAbi([]);
     }
   }
 
@@ -144,17 +149,22 @@ export function useContest() {
       const percentageToCreator = Number(results[11].result);
       let costToPropose = 0;
       let costToVote = 0;
+      let payPerVote = 0;
 
       if (costToProposeTiming) {
         costToPropose = Number(results[12].result);
       }
 
       if (costToVoteTiming && compareVersions(version, "4.23") >= 0) {
+        if (compareVersions(version, "4.25") >= 0) {
+          payPerVote = Number(results[15].result);
+        }
         costToVote = Number(results[14].result);
       }
 
       setCharge({
         percentageToCreator,
+        voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
           costToPropose,
           costToVote,
