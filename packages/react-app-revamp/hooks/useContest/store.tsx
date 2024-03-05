@@ -1,6 +1,7 @@
 import { VotingRequirementsSchema } from "@hooks/useContestsIndexV3";
 import { Charge } from "@hooks/useDeployContest/types";
 import { createContext, useContext, useRef } from "react";
+import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
 
 export type Reward = {
@@ -15,6 +16,7 @@ export type Reward = {
 export interface ContestState {
   contestName: string;
   contestPrompt: string;
+  contestAbi: Abi;
   contestAuthorEthereumAddress: string;
   contestAuthor: string;
   submissionsOpen: Date;
@@ -60,12 +62,14 @@ export interface ContestState {
   setCharge: (charge: Charge | null) => void;
   setIsReadOnly: (value: boolean) => void;
   setIsRewardsLoading: (value: boolean) => void;
+  setContestAbi: (abi: Abi) => void;
 }
 
 export const createContestStore = () =>
   createStore<ContestState>(set => ({
     contestName: "",
     contestPrompt: "",
+    contestAbi: [],
     contestAuthorEthereumAddress: "",
     contestAuthor: "",
     submissionsOpen: new Date(),
@@ -111,6 +115,7 @@ export const createContestStore = () =>
     setIsSuccess: value => set({ isSuccess: value }),
     setIsRewardsLoading: value => set({ isRewardsLoading: value }),
     setCharge: charge => set({ charge: charge }),
+    setContestAbi: abi => set({ contestAbi: abi }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

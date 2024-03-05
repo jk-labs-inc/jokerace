@@ -1,7 +1,7 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { getBlockDetails } from "@helpers/getBlock";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { readContract, readContracts, simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics, saveUpdatedProposalsCommentStatusToAnalyticsV3 } from "lib/analytics/participants";
@@ -18,6 +18,7 @@ export const COMMENTS_PER_PAGE = 12;
  */
 const useComments = (address: string, chainId: number, proposalId: string) => {
   const { address: accountAddress } = useAccount();
+  const { contestAbi: abi } = useContestStore(state => state);
   const {
     setIsLoading,
     setIsSuccess,
@@ -41,11 +42,9 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   const { handleError } = useError();
   const chainName = chains.filter((chain: { id: number }) => chain.id === chainId)?.[0]?.name.toLowerCase() ?? "";
 
-  async function getContractConfig() {
+  function getContractConfig() {
     try {
-      const { abi } = await getContestContractVersion(address, chainId);
-
-      if (abi === null) {
+      if (!abi) {
         const errorMessage = `RPC call failed`;
         handleError(errorMessage, "Error fetching contract config");
         setIsError(true);
@@ -68,7 +67,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   }
 
   async function getCommentId(comment: CommentCore): Promise<string> {
-    const contractConfig = await getContractConfig();
+    const contractConfig = getContractConfig();
 
     if (!contractConfig) return "";
 
@@ -87,7 +86,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
   }
 
   async function getComment(commentId: string): Promise<Comment> {
-    const contractConfig = await getContractConfig();
+    const contractConfig = getContractConfig();
 
     try {
       const contracts = [
@@ -172,7 +171,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setIsLoading(true);
     setComments([]);
     setCurrentPage(1);
-    const contractConfig = await getContractConfig();
+    const contractConfig = getContractConfig();
 
     try {
       const contracts = [
@@ -216,7 +215,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setIsLoading(true);
     setComments([]);
     setCurrentPage(1);
-    const contractConfig = await getContractConfig();
+    const contractConfig = getContractConfig();
 
     try {
       const contracts = [
@@ -264,7 +263,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setIsAddingSuccess(false);
     toastLoading("Adding comment...");
     try {
-      const contractConfig = await getContractConfig();
+      const contractConfig = getContractConfig();
 
       if (!contractConfig) return;
 
@@ -324,7 +323,7 @@ const useComments = (address: string, chainId: number, proposalId: string) => {
     setIsDeletingSuccess(false);
     toastLoading(`Deleting ${commentsIds.length} comment${commentsIds.length > 1 ? "s" : ""}...`);
     try {
-      const contractConfig = await getContractConfig();
+      const contractConfig = getContractConfig();
 
       if (!contractConfig) return;
 

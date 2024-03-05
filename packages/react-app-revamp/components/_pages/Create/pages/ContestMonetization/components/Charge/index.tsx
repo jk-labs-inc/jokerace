@@ -6,6 +6,7 @@ import { FC, useState } from "react";
 import ContestParamsChargePercentToCreator from "./components/PercentToCreator";
 import ContestParamsChargeSubmission from "./components/Submission";
 import ContestParamsChargeVote from "./components/Vote";
+import { VoteType } from "@hooks/useDeployContest/types";
 
 interface CreateContestChargeProps {
   isConnected: boolean;
@@ -101,6 +102,13 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
     });
   };
 
+  const handleVoteTypeChange = (value: VoteType) => {
+    setCharge({
+      ...charge,
+      voteType: value,
+    });
+  };
+
   return (
     <div className="flex flex-col gap-12">
       <ContestParamsChargePercentToCreator
@@ -118,9 +126,11 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
         />
         <ContestParamsChargeVote
           costToVote={charge.type.costToVote}
+          type={charge.voteType}
           chainUnitLabel={chainUnitLabel ?? ""}
           costToVoteError={costToVoteError}
           onCostToVoteChange={handleCostToVoteChange}
+          onVoteTypeChange={handleVoteTypeChange}
         />
       </div>
     </div>

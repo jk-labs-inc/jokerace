@@ -53,6 +53,7 @@ export const createUserStore = () =>
     isCurrentUserVoteQualificationLoading: false,
     isCurrentUserVoteQualificationSuccess: false,
     isCurrentUserVoteQualificationError: false,
+
     setCurrentUserQualifiedToSubmit: value => set({ currentUserQualifiedToSubmit: value }),
     setCurrentUserQualifiedToVote: value => set({ currentUserQualifiedToVote: value }),
     setCurrentuserTotalVotesCast: amount => set({ currentUserTotalVotesCast: amount }),

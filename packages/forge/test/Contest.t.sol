@@ -23,6 +23,7 @@ contract ContestTest is Test {
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
+    uint256 public constant PAY_PER_VOTE_OFF = 0;
 
     // SORTING INT PARAMS
     uint256 public constant SORTING_ENABLED = 1;
@@ -39,7 +40,8 @@ contract ContestTest is Test {
         RANK_LIMIT_250,
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
-        ZERO_COST_TO_VOTE
+        ZERO_COST_TO_VOTE,
+        PAY_PER_VOTE_OFF
     );
 
     Governor.ConstructorIntArgs public oneEthToProposeNumParams = Governor.ConstructorIntArgs(
@@ -53,7 +55,8 @@ contract ContestTest is Test {
         RANK_LIMIT_250,
         FIFTY_PERCENT_TO_CREATOR,
         ONE_ETH_COST_TO_PROPOSE,
-        ZERO_COST_TO_VOTE
+        ZERO_COST_TO_VOTE,
+        PAY_PER_VOTE_OFF
     );
 
     // MERKLE TREE PARAMS

@@ -1,23 +1,22 @@
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { config } from "@config/wagmi";
+import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { fetchDataFromBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { Abi } from "viem";
 import { useTotalVotesOnContestStore } from "./store";
-import { config } from "@config/wagmi";
 
 const useTotalVotesOnContest = (address: string, chainId: number) => {
+  const { contestAbi: abi } = useContestStore(state => state);
   const { setTotalVotes, setIsError, setIsLoading, setIsSuccess } = useTotalVotesOnContestStore(state => state);
 
   const calculateTotalVotes = (data: Recipient[]) => {
     return data.reduce((sum, vote) => sum + Number(vote.numVotes), 0);
   };
 
-  async function getContractConfig() {
+  function getContractConfig() {
     try {
-      const { abi } = await getContestContractVersion(address, chainId);
-
-      if (abi === null) {
+      if (!abi) {
         setIsError(true);
         setIsSuccess(false);
         setIsLoading(false);
@@ -39,7 +38,7 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
 
   async function getVotingMerkleRoot() {
     try {
-      const contractConfig = await getContractConfig();
+      const contractConfig = getContractConfig();
 
       if (!contractConfig) return null;
 
