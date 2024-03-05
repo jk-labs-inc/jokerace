@@ -1,7 +1,6 @@
 import Comments from "@components/Comments";
 import MainHeaderMobileLayout from "@components/Header/MainHeader/MobileLayout";
 import DialogModalV3 from "@components/UI/DialogModalV3";
-import Loader from "@components/UI/Loader";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
@@ -137,10 +136,10 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             <div className="flex flex-col gap-12">
               {contestStatus === ContestStatus.VotingOpen && (
                 <>
-                  <p className="text-neutral-11 text-[24px] font-bold">add votes</p>
                   {isConnected ? (
                     currentUserAvailableVotesAmount > 0 ? (
                       <VotingWidget
+                        proposalId={proposalId}
                         amountOfVotes={currentUserAvailableVotesAmount}
                         onVote={onVote}
                         downvoteAllowed={downvotingAllowed}

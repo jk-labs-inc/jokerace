@@ -1,11 +1,11 @@
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { loadFileFromBucket } from "lib/buckets";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { Abi, Address } from "viem";
+import { Address } from "viem";
 import { useAccount } from "wagmi";
 
 type ProofType = "submission" | "vote";
@@ -22,17 +22,16 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 export function useGenerateProof() {
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const { contestAbi: abi } = useContestStore(state => state);
   const { connector } = useAccount();
   const [chainId, setChainId] = useState(
     chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
   );
 
   async function getContractConfig() {
-    const { abi } = await getContestContractVersion(contestAddress, chainId);
-
     return {
       address: contestAddress as `0x${string}`,
-      abi: abi as Abi,
+      abi: abi,
       chainId: chainId,
     };
   }

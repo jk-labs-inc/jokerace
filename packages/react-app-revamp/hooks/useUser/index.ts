@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { supabase } from "@config/supabase";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -41,8 +42,8 @@ export function useUser() {
     if (!userAddress) return;
     setIsCurrentUserSubmitQualificationLoading(true);
 
-    const abi = await getContestContractVersion(address, chainId);
     const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
+    const abi = await getContestContractVersion(address, chainId);
 
     if (!abi) {
       setIsCurrentUserSubmitQualificationError(true);
@@ -52,7 +53,7 @@ export function useUser() {
 
     const contractConfig = {
       address: address as `0x${string}`,
-      abi: abi.abi as any,
+      abi: abi.abi as Abi,
       chainId: chainId,
     };
 
@@ -202,10 +203,14 @@ export function useUser() {
    * Update the amount of votes casted in this contest by the current user
    */
   async function updateCurrentUserVotes() {
-    const abi = await getContestContractVersion(address, chainId);
     setIsCurrentUserVoteQualificationLoading(true);
-
-    if (!abi) return;
+    const abi = await getContestContractVersion(address, chainId);
+    if (!abi) {
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
+      return;
+    }
 
     try {
       const currentUserTotalVotesCastRaw = await readContract(config, {

@@ -2,9 +2,10 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
+import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import { useGenerateProof } from "@hooks/useGenerateProof";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -13,15 +14,15 @@ import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
-import { formatEther, parseUnits } from "ethers/lib/utils";
+import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
-import { parseEther } from "viem";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { canUpdateVotesInRealTime, charge } = useContestStore(state => state);
+  const { canUpdateVotesInRealTime, charge, contestAbi: abi } = useContestStore(state => state);
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -46,18 +47,39 @@ export function useCastVotes() {
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
   const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
+  const { refetch: refetchCurrentUserVotesOnProposal } = useFetchUserVotesOnProposal(
+    contestAddress,
+    pickedProposal ?? "",
+  );
 
-  async function castVotes(amount: number, isPositive: boolean) {
+  const calculateChargeAmount = (amountOfVotes: number) => {
+    if (!charge) return undefined;
+
+    const votesBigNumber = BigNumber.from(amountOfVotes);
+
+    if (charge.voteType === VoteType.PerTransaction) {
+      return BigNumber.from(charge.type.costToVote);
+    }
+
+    const totalCost = votesBigNumber.mul(charge.type.costToVote);
+
+    return totalCost;
+  };
+
+  const formatChargeAmount = (amount: number) => {
+    return Number(formatEther(BigInt(amount)));
+  };
+
+  async function castVotes(amountOfVotes: number, isPositive: boolean) {
     toastLoading("votes are deploying...");
     setIsLoading(true);
     setIsSuccess(false);
     setError("");
     setTransactionData(null);
-    const { abi } = await getContestContractVersion(contestAddress, chainId);
 
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
-      const costToVote = charge ? (charge.type.costToVote as unknown as bigint) : undefined;
+      const costToVote = calculateChargeAmount(amountOfVotes);
 
       let hash: `0x${string}`;
 
@@ -70,20 +92,20 @@ export function useCastVotes() {
             pickedProposal,
             isPositive ? 0 : 1,
             parseUnits(currentUserTotalVotesAmount.toString()),
-            parseUnits(amount.toString()),
+            parseUnits(amountOfVotes.toString()),
             proofs,
           ],
           //@ts-ignore
-          value: charge ? [charge.type.costToVote] : undefined,
+          value: costToVote,
         });
       } else {
         hash = await writeContract(config, {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVoteWithoutProof",
-          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amount}`)],
+          args: [pickedProposal, isPositive ? 0 : 1, parseUnits(`${amountOfVotes}`)],
           //@ts-ignore
-          value: charge ? [charge.type.costToVote] : undefined,
+          value: costToVote,
         });
       }
 
@@ -98,9 +120,9 @@ export function useCastVotes() {
           user_address: userAddress,
           network_name: chainName,
           proposal_id: pickedProposal !== null ? pickedProposal : undefined,
-          vote_amount: amount,
+          vote_amount: amountOfVotes,
           created_at: Math.floor(Date.now() / 1000),
-          amount_sent: charge ? Number(formatEther(BigInt(charge.type.costToVote))) : null,
+          amount_sent: costToVote ? formatChargeAmount(parseFloat(costToVote.toString())) : null,
           percentage_to_creator: charge ? charge.percentageToCreator : null,
         });
       } catch (error) {
@@ -139,6 +161,7 @@ export function useCastVotes() {
 
       await updateCurrentUserVotes();
       fetchTotalVotesCast();
+      refetchCurrentUserVotesOnProposal();
       setIsLoading(false);
       setIsSuccess(true);
       toastSuccess("your votes have been deployed successfully");

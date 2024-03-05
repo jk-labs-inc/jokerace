@@ -196,10 +196,13 @@ const CreateVotingRequirements = () => {
       }
 
       if (submittersAsVoters) {
-        const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist).reduce((acc, address) => {
-          acc[address] = 10;
-          return acc;
-        }, {} as Record<string, number>);
+        const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist).reduce(
+          (acc, address) => {
+            acc[address] = 10;
+            return acc;
+          },
+          {} as Record<string, number>,
+        );
 
         const worker = initializeWorkersForVotersAndSubmitters();
         worker.postMessage({

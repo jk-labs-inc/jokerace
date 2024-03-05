@@ -5,7 +5,7 @@ import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting
 import { create } from "zustand";
 
 import { DEFAULT_SUBMISSIONS } from ".";
-import { Charge, SubmissionMerkle, SubmissionRequirements, VotingMerkle, VotingRequirements } from "./types";
+import { Charge, SubmissionMerkle, SubmissionRequirements, VoteType, VotingMerkle, VotingRequirements } from "./types";
 
 type ContestDeployError = {
   step: number;
@@ -230,6 +230,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     charge: {
       percentageToCreator: 50,
+      voteType: VoteType.PerTransaction,
       type: {
         costToPropose: 0,
         costToVote: 0,

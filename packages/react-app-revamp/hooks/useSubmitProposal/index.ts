@@ -2,7 +2,6 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
 import { getProposalId } from "@helpers/getProposalId";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
@@ -33,7 +32,7 @@ export function useSubmitProposal() {
   const { chainName, address } = extractPathSegments(asPath);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
-  const { charge } = useContestStore(state => state);
+  const { charge, contestAbi: abi } = useContestStore(state => state);
   const { error: errorMessage, handleError } = useError();
   const { fetchSingleProposal } = useProposal();
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
@@ -53,14 +52,14 @@ export function useSubmitProposal() {
     setTransactionData(null);
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
-      const { abi } = await getContestContractVersion(address, chainId);
       const costToPropose = charge ? (charge.type.costToPropose as unknown as bigint) : undefined;
 
       try {
         const { proofs, isVerified } = await getProofs(userAddress ?? "", "submission", "10");
+
         const contractConfig = {
           address: address as `0x${string}`,
-          abi: abi as any,
+          abi: abi,
           chainId: chain?.id,
         };
 

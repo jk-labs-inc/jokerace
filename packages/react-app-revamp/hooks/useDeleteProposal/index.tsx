@@ -2,7 +2,7 @@ import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { chains, config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
-import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -10,11 +10,12 @@ import { simulateContract, waitForTransactionReceipt, writeContract } from "@wag
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useDeleteProposalStore } from "./store";
-import { Abi } from "viem";
 
 export function useDeleteProposal() {
+  const { contestAbi: abi } = useContestStore(state => state);
   const { address: userAddress, chain } = useAccount();
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
@@ -40,15 +41,9 @@ export function useDeleteProposal() {
     setError("");
     setTransactionData(null);
 
-    const chainId = chains.filter(
-      (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
-    )?.[0]?.id;
-
-    const abi = await getContestContractVersion(address, chainId);
-
     const contractConfig = {
       address: address as `0x${string}`,
-      abi: abi ? (abi.abi as Abi) : (DeployedContestContract.abi as Abi),
+      abi: abi ? abi : (DeployedContestContract.abi as Abi),
     };
 
     if (!contractConfig.abi) return;
