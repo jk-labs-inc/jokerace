@@ -9,6 +9,7 @@ import "./governance/utils/GovernorSorting.sol";
 
 contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
     error SortingAndDownvotingCannotBothBeEnabled();
+    error PayPerVoteMustBeEnabledForAnyoneCanVote();
 
     constructor(
         string memory _name,
@@ -23,6 +24,9 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
     {
         if (_constructorIntArgs.sortingEnabled == 1 && _constructorIntArgs.downvotingAllowed == 1) {
             revert SortingAndDownvotingCannotBothBeEnabled();
+        }
+        if (_votingMerkleRoot == 0 && _constructorIntArgs.payPerVote == 0) {
+            revert PayPerVoteMustBeEnabledForAnyoneCanVote();
         }
     }
 }
