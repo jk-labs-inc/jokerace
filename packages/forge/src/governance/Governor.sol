@@ -466,13 +466,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
-        address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
-        verifyVoter(voter, totalVotes, proof);
+        verifyVoter(msg.sender, totalVotes, proof);
 
         _distributeCost(actionCost);
 
-        return _castVote(proposalId, voter, support, numVotes);
+        return _castVote(proposalId, msg.sender, support, numVotes);
     }
 
     /**
@@ -485,13 +484,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
-        address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
-        if (!addressTotalVotesVerified[voter]) revert NeedToVoteWithProofFirst();
+        if (!addressTotalVotesVerified[msg.sender]) revert NeedToVoteWithProofFirst();
 
         _distributeCost(actionCost);
 
-        return _castVote(proposalId, voter, support, numVotes);
+        return _castVote(proposalId, msg.sender, support, numVotes);
     }
 
     /**
