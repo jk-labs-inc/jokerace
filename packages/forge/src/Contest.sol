@@ -15,7 +15,8 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
         bytes32 _votingMerkleRoot,
         ConstructorIntArgs memory _constructorIntArgs
     )
-        Governor(_name, _prompt, _submissionMerkleRoot, _votingMerkleRoot, _constructorIntArgs)
+        Governor(_name, _prompt, _constructorIntArgs)
         GovernorSorting(_constructorIntArgs.sortingEnabled, _constructorIntArgs.rankLimit)
+        GovernorMerkleVotes(_submissionMerkleRoot, _votingMerkleRoot)
     {}
 }
