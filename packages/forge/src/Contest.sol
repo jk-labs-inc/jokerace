@@ -8,6 +8,8 @@ import "./governance/extensions/GovernorEngagement.sol";
 import "./governance/utils/GovernorSorting.sol";
 
 contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
+    error SortingAndDownvotingCannotBothBeEnabled();
+
     constructor(
         string memory _name,
         string memory _prompt,
@@ -18,5 +20,9 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
         Governor(_name, _prompt, _constructorIntArgs)
         GovernorSorting(_constructorIntArgs.sortingEnabled, _constructorIntArgs.rankLimit)
         GovernorMerkleVotes(_submissionMerkleRoot, _votingMerkleRoot)
-    {}
+    {
+        if (_constructorIntArgs.sortingEnabled == 1 && _constructorIntArgs.downvotingAllowed == 1) {
+            revert SortingAndDownvotingCannotBothBeEnabled();
+        }
+    }
 }
