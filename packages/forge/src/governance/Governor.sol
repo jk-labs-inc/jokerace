@@ -449,7 +449,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
      */
     function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public {
-        if (!addressTotalVotesVerified[account]) {
+        if (votingMerkleRoot != 0 && !addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
             addressTotalVotesVerified[account] = true;
@@ -485,7 +485,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
-        if (!addressTotalVotesVerified[msg.sender]) revert NeedToVoteWithProofFirst();
+        if (votingMerkleRoot != 0 && !addressTotalVotesVerified[msg.sender]) revert NeedToVoteWithProofFirst();
 
         _distributeCost(actionCost);
 
