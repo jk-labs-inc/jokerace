@@ -23,6 +23,8 @@ import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
+import { astarZkevm } from "./custom-chains/astarZkevm";
+import { astarZkevmTestnet } from "./custom-chains/astarZkevmTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
@@ -154,6 +156,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   ancient8,
   blast,
   dymension,
+  astarZkevm,
   polygonTestnet,
   sepolia,
   goerli,
@@ -188,6 +191,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   morphTestnet,
   blastTestnet,
   ancient8Testnet,
+  astarZkevmTestnet,
   mainnet,
 ];
 
