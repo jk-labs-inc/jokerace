@@ -36,7 +36,6 @@ import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
 import { degenChain } from "./custom-chains/degenChain";
-import { dymension } from "./custom-chains/dymension";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
@@ -159,7 +158,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   syndicateFrame,
   ancient8,
   blast,
-  dymension,
   astarZkevm,
   merlin,
   zkFair,
