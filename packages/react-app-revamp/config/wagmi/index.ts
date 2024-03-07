@@ -99,6 +99,8 @@ import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
+import { zkFair } from "./custom-chains/zkFair";
+import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
 
 type ChainImages = {
@@ -160,6 +162,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   dymension,
   astarZkevm,
   merlin,
+  zkFair,
   polygonTestnet,
   sepolia,
   goerli,
@@ -196,6 +199,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   ancient8Testnet,
   astarZkevmTestnet,
   merlinTestnet,
+  zkFairTestnet,
   mainnet,
 ];
 
