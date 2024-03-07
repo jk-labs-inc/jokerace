@@ -23,6 +23,8 @@ import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
+import { astarZkevm } from "./custom-chains/astarZkevm";
+import { astarZkevmTestnet } from "./custom-chains/astarZkevmTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
@@ -62,6 +64,8 @@ import { mainnet } from "./custom-chains/mainnet";
 import { mantaPacific } from "./custom-chains/mantaPacific";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
+import { merlin } from "./custom-chains/merlin";
+import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
@@ -95,6 +99,8 @@ import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
+import { zkFair } from "./custom-chains/zkFair";
+import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
 
 type ChainImages = {
@@ -154,6 +160,9 @@ export const chains: readonly [Chain, ...Chain[]] = [
   ancient8,
   blast,
   dymension,
+  astarZkevm,
+  merlin,
+  zkFair,
   polygonTestnet,
   sepolia,
   goerli,
@@ -188,6 +197,9 @@ export const chains: readonly [Chain, ...Chain[]] = [
   morphTestnet,
   blastTestnet,
   ancient8Testnet,
+  astarZkevmTestnet,
+  merlinTestnet,
+  zkFairTestnet,
   mainnet,
 ];
 
