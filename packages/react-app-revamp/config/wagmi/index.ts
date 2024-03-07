@@ -64,6 +64,8 @@ import { mainnet } from "./custom-chains/mainnet";
 import { mantaPacific } from "./custom-chains/mantaPacific";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
+import { merlin } from "./custom-chains/merlin";
+import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
@@ -157,6 +159,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   blast,
   dymension,
   astarZkevm,
+  merlin,
   polygonTestnet,
   sepolia,
   goerli,
@@ -192,6 +195,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   blastTestnet,
   ancient8Testnet,
   astarZkevmTestnet,
+  merlinTestnet,
   mainnet,
 ];
 
