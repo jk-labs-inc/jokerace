@@ -50,6 +50,8 @@ import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { goerli } from "./custom-chains/goerli";
 import { holesky } from "./custom-chains/holesky";
+import { inEvm } from "./custom-chains/inEvm";
+import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
 import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
@@ -161,6 +163,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   astarZkevm,
   merlin,
   zkFair,
+  inEvm,
   polygonTestnet,
   sepolia,
   goerli,
@@ -198,6 +201,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   astarZkevmTestnet,
   merlinTestnet,
   zkFairTestnet,
+  inEvmTestnet,
   mainnet,
 ];
 
