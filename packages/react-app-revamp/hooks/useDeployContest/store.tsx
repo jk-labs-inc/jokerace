@@ -4,6 +4,7 @@ import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSu
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import { create } from "zustand";
 
+import { StepTitle } from "@components/_pages/Create";
 import { DEFAULT_SUBMISSIONS } from ".";
 import { Charge, SubmissionMerkle, SubmissionRequirements, VoteType, VotingMerkle, VotingRequirements } from "./types";
 
@@ -104,6 +105,7 @@ export interface DeployContestState {
     minCostToVote: number;
   };
   prevChainRefInCharge: string;
+  mobileStepTitle: StepTitle | null;
   setDeployContestData: (
     chain: string,
     chainId: number,
@@ -143,6 +145,8 @@ export interface DeployContestState {
   setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => void;
   setPrevChainRefInCharge: (chain: string) => void;
   reset: () => void;
+  setMobileStepTitle: (title: StepTitle | null) => void;
+  resetMobileStepTitle: () => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
   const initialSubmissionOpen: Date = new Date();
@@ -259,6 +263,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     furthestStep: 0,
     submissionTab: 0,
     votingTab: 0,
+    mobileStepTitle: null,
   };
 
   return {
@@ -342,5 +347,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => set({ minCharge }),
     setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
     reset: () => set({ ...initialState }),
+    setMobileStepTitle: (title: StepTitle | null) => set({ mobileStepTitle: title }),
+    resetMobileStepTitle: () => set({ mobileStepTitle: null }),
   };
 });

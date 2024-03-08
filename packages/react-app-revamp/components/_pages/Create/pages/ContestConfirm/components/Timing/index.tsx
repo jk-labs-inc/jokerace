@@ -1,5 +1,6 @@
 import moment from "moment-timezone";
 import { FC, useMemo, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { Steps } from "../..";
 import {
   TimingPeriod,
@@ -7,7 +8,6 @@ import {
   useTimingOptionForVotingPeriod,
 } from "../../../ContestTiming/utils";
 import CreateContestConfirmLayout from "../Layout";
-import TokenSearchModal from "@components/TokenSearchModal";
 
 interface CreateContestConfirmTimingProps {
   timing: {
@@ -24,6 +24,7 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
   const [isHovered, setIsHovered] = useState(false);
   const timingOptionForSubmissionPeriod = useTimingOptionForSubmissionPeriod(state => state.timingOption);
   const timingOptionForVotingPeriod = useTimingOptionForVotingPeriod(state => state.timingOption);
+  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
   const formattedSubmissionOpen =
     moment(submissionOpen).format("MMMM D, YYYY h:mmA") + " " + moment.tz(moment.tz.guess()).zoneAbbr();
@@ -70,7 +71,7 @@ const CreateContestConfirmTiming: FC<CreateContestConfirmTimingProps> = ({ timin
     <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
       <div
         className={`flex flex-col gap-4 ${
-          isHovered ? "text-neutral-11" : "text-neutral-14"
+          isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"
         } transition-colors duration-300`}
       >
         <p className="text-[16px] font-bold">timing:</p>

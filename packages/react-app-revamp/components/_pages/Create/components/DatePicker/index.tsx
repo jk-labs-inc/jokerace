@@ -16,7 +16,7 @@ const CustomInput = forwardRef<HTMLInputElement, { value: string; onClick: () =>
     onClick={onClick}
     ref={ref}
   >
-    <p className="text-[20px] text-true-black">{value}</p>
+    <p className="text-[18px] md:text-[20px] text-true-black">{value}</p>
     <Image width={32} height={32} src="/create-flow/calendar.svg" alt="calendar" className="ml-auto" />
   </div>
 ));

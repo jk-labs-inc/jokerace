@@ -1,14 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import FileUpload from "@components/_pages/Create/components/FileUpload";
 import { EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { cloneDeep } from "lodash";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
-import { useAccount } from "wagmi";
-import CSVParseError, { ParseError } from "./CSVParseError";
 import ScrollableTableBody from "./TableBody";
+import { useMediaQuery } from "react-responsive";
 
 export type VotingFieldObject = {
   address: string;
@@ -31,6 +29,9 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
   } = useDeployContestStore(state => state);
   const currentStep = step + 1;
   const [allEntries, setAllEntries] = useState<Array<VotingFieldObject>>([]);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const addressRowTitle = isMobile ? "ADDRESS (starting 0x)" : "ADDRESS (starting with 0x)";
+  const votesRowTitle = isMobile ? "VOTES" : "NUMBER OF VOTES";
 
   useEffect(() => {
     if (fields.length) return;
@@ -137,12 +138,10 @@ const CSVEditorVoting: FC<CSVEditorProps> = ({ onChange }) => {
       <table className="table-fixed w-[360px] md:w-[600px] text-left">
         <thead>
           <tr className="text-[16px] font-bold">
-            <th className="w-1/2 md:w-2/3 py-2 uppercase">
-              Address <span className="normal-case">(starting with 0x)</span>
-            </th>
-            <th className="w-1/2 md:w-1/3 py-2 uppercase">
+            <th className="w-2/3 py-2 normal-case">{addressRowTitle}</th>
+            <th className="md:w-1/3 py-2 uppercase">
               <div className="flex items-center justify-between">
-                <span className="uppercase">Number of Votes</span>
+                <span className="normal-case">{votesRowTitle}</span>
                 {fields.some(field => field.address !== "" || field.votes !== "") && (
                   <Image
                     src="/create-flow/trashcan.png"

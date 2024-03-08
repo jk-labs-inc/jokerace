@@ -81,7 +81,7 @@ const CreateSubmissionPeriod = () => {
           <CreateDatePicker
             onChange={onVotesOpenChange}
             defaultDate={votingOpen}
-            minDate={votingOpen}
+            minDate={submissionOpen}
             error={currentVotesOpenError}
           />
         </div>

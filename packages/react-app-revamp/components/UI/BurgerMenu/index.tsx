@@ -6,15 +6,27 @@ import Image from "next/image";
 type BurgerMenuProps = {
   children: React.ReactNode;
   className?: string;
+  onOpen?: () => void;
+  onClose?: () => void;
 };
 
-const BurgerMenu = ({ children, className }: BurgerMenuProps) => {
+const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const initialFocusRef = useRef(null);
 
+  const onMenuOpen = () => {
+    setIsOpen(true);
+    onOpen?.();
+  };
+
+  const onMenuClose = () => {
+    setIsOpen(false);
+    onClose?.();
+  };
+
   return (
     <>
-      <MenuIcon className="h-8 w-8" onClick={() => setIsOpen(true)} aria-label="Open menu" />
+      <MenuIcon className="h-8 w-8" onClick={onMenuOpen} aria-label="Open menu" />
       <Transition.Root show={isOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -40,7 +52,7 @@ const BurgerMenu = ({ children, className }: BurgerMenuProps) => {
                   <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                     <div className="mt-24 relative flex-1">{children}</div>
                     <div className="absolute top-2 right-0 pt-4 pr-6">
-                      <button type="button" onClick={() => setIsOpen(false)}>
+                      <button type="button" onClick={onMenuClose}>
                         <span className="sr-only">Close</span>
                         <Image src="/modal/modal_close.svg" width={32} height={32} alt="close" />
                       </button>

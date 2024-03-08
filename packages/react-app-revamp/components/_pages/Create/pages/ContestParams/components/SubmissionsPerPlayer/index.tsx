@@ -1,5 +1,6 @@
 import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
 import { FC } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsSubmissionsPerPlayerProps {
   allowedSubmissionsPerUser: number;
@@ -12,10 +13,12 @@ const ContestParamsSubmissionsPerPlayer: FC<ContestParamsSubmissionsPerPlayerPro
   submissionsPerUserError,
   onSubmissionsPerUserChange,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const title = isMobile ? "how many times can someone submit?" : "how many submissions can each player enter?";
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[20px] text-neutral-11">how many submissions can each player enter?</p>
-      <div className="flex flex-col gap-2">
+      <p className="text-[20px] text-neutral-11">{title}</p>
+      <div className="flex flex-col gap-20 w-2/3 md:w-full">
         <CreateNumberInput
           value={allowedSubmissionsPerUser}
           onChange={onSubmissionsPerUserChange}
