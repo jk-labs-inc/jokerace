@@ -248,7 +248,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     advancedOptions: {
       downvote: false,
-      sorting: true,
+      sorting: false,
       rankLimit: 250,
       contestVisibility: ContestVisibility.Public,
     },
