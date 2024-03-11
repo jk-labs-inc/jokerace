@@ -76,7 +76,7 @@
     "tailwindcss": "^3.0.24",
     "ts-node": "^10.0.0",
     "underscore": "1.13.6",
-    "viem": "2.x",
+    "viem": "2.8.0",
     "wagmi": "^2.5.7",
     "zod": "^3.17.3",
     "zustand": "4.3.5"
