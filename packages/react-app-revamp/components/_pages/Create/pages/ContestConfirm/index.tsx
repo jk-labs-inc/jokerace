@@ -1,7 +1,9 @@
+import EthereumDeploymentModal from "@components/UI/Deployment/Ethereum";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useAccount } from "wagmi";
 import { steps } from "../..";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
@@ -26,20 +28,32 @@ export enum Steps {
   ContestCustomization = 8,
 }
 
+const ETHEREUM_MAINNET_CHAIN_ID = 1;
+
 const CreateContestConfirm = () => {
+  const { chainId } = useAccount();
   const { ...state } = useDeployContestStore(state => state);
   const { deployContest } = useDeployContest();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const title = isMobile ? "let’s confirm" : "finally, let’s confirm";
+  const [isEthereumDeploymentModalOpen, setIsEthereumDeploymentModalOpen] = useState(false);
+
+  const onDeployHandler = useCallback(() => {
+    if (chainId === ETHEREUM_MAINNET_CHAIN_ID) {
+      setIsEthereumDeploymentModalOpen(true);
+    } else {
+      deployContest();
+    }
+  }, [chainId, deployContest]);
 
   const handleNextStepMobile = useCallback(() => {
     if (!state.mobileStepTitle) return;
 
     if (state.mobileStepTitle === steps[state.step].title) {
-      deployContest();
+      onDeployHandler();
       state.resetMobileStepTitle();
     }
-  }, [deployContest, state]);
+  }, [onDeployHandler, state]);
 
   // Mobile listeners
   useEffect(() => {
@@ -109,9 +123,14 @@ const CreateContestConfirm = () => {
           onClick={step => onNavigateToStep(step)}
         />
         <div className="mt-12">
-          <CreateContestButton step={state.step} onClick={deployContest} />
+          <CreateContestButton step={state.step} onClick={onDeployHandler} />
         </div>
       </div>
+      <EthereumDeploymentModal
+        isOpen={isEthereumDeploymentModalOpen}
+        setIsOpen={value => setIsEthereumDeploymentModalOpen(value)}
+        onDeploy={deployContest}
+      />
     </div>
   );
 };

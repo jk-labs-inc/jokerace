@@ -77,7 +77,7 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
         <MobileStepper currentStep={step - 1} totalSteps={steps.length} />
       ) : null}
       <header
-        className={`flex flex-col fixed mt-4 bottom-0 right-0 left-0 ${isInPwaMode ? "pb-8" : "pb-2"} bg-true-black z-50`}
+        className={`flex flex-col ${isBurgerMenuOpen ? "hidden" : "fixed"} mt-4 bottom-0 right-0 left-0 ${isInPwaMode ? "pb-8" : "pb-2"} bg-true-black z-50`}
       >
         {contestCreationInProgress && !isDeployingContestLoading && !isBurgerMenuOpen ? (
           <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
@@ -121,7 +121,7 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
             {isConnected ? (
               <div className="flex flex-col items-center">
                 <BurgerMenu onOpen={() => setIsBurgerMenuOpen(true)} onClose={() => setIsBurgerMenuOpen(false)}>
-                  <div className="flex flex-col justify-between" style={{ height: "85%" }}>
+                  <div className="flex flex-col h-full justify-between pb-4">
                     <ConnectButtonCustom />
                     <div className="flex justify-end flex-col gap-2">
                       {filteredLinks.map((link, key) => (

@@ -26,7 +26,7 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
 
   return (
     <>
-      <MenuIcon className="h-8 w-8" onClick={onMenuOpen} aria-label="Open menu" />
+      <MenuIcon className="h-[26px] w-[26px]" onClick={onMenuOpen} aria-label="Open menu" />
       <Transition.Root show={isOpen} as={Fragment}>
         <Dialog
           as="div"

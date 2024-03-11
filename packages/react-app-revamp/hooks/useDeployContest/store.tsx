@@ -247,7 +247,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     prevChainRefInCharge: "",
     customization: {
-      allowedSubmissionsPerUser: 3,
+      allowedSubmissionsPerUser: 2,
       maxSubmissions: DEFAULT_SUBMISSIONS,
     },
     advancedOptions: {
