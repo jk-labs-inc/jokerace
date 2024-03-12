@@ -7,16 +7,16 @@ const CreateContestVoting = () => {
   const { step } = useDeployContestStore(state => state);
 
   return (
-    <div className="mt-12 lg:mt-[70px] animate-swingInLeft">
-      <div className="flex flex-col md:flex-row items-start gap-10 text-[24px]">
+    <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
+      <div className="col-span-1">
         <StepCircle step={step + 1} />
-        <div className="flex flex-col">
-          <div className="flex flex-col gap-4">
-            <p className="text-[24px] text-primary-10 font-bold">Who can vote?</p>
-            <CreateVotingTabMessage />
-          </div>
-          <CreateVotingTabContent />
-        </div>
+      </div>
+      <div className="col-span-2 ml-10">
+        <p className="text-[24px] text-primary-10 font-bold">Who can vote?</p>
+      </div>
+      <div className="grid col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
+        <CreateVotingTabMessage />
+        <CreateVotingTabContent />
       </div>
     </div>
   );

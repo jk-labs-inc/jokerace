@@ -1,22 +1,48 @@
-import { MAX_SUBMISSIONS_LIMIT, useDeployContest } from "@hooks/useDeployContest";
+import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
 import { ContestVisibility, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
+import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
+import { validationFunctions } from "../../utils/validation";
 import ContestParamsVisibility from "./components/ContestVisibility";
 import ContestParamsDownvote from "./components/Downvote";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
 import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
 
 const CreateContestParams = () => {
-  const { customization, setCustomization, advancedOptions, setAdvancedOptions, step } = useDeployContestStore(
-    state => state,
-  );
+  const {
+    customization,
+    setCustomization,
+    advancedOptions,
+    setAdvancedOptions,
+    step,
+    mobileStepTitle,
+    resetMobileStepTitle,
+  } = useDeployContestStore(state => state);
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
-  const onNextStep = useNextStep([]);
+  const validationFn = validationFunctions.get(step);
+  const onNextStep = useNextStep([() => validationFn?.[0].validation(customization)]);
   const disableNextStep = Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const customizeTitle = isMobile ? "finally, we customize" : "finally, we do a little customizing";
+
+  const handleNextStepMobile = useCallback(() => {
+    if (!mobileStepTitle) return;
+
+    if (mobileStepTitle === steps[step].title) {
+      onNextStep();
+      resetMobileStepTitle();
+    }
+  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
+
+  // Mobile listeners
+  useEffect(() => {
+    handleNextStepMobile();
+  }, [handleNextStepMobile]);
 
   useEffect(() => {
     validateMaxSubmissions(customization.maxSubmissions);
@@ -71,35 +97,35 @@ const CreateContestParams = () => {
   };
 
   return (
-    <div className="flex flex-col gap-12 mt-12 lg:mt-[70px] animate-swingInLeft">
-      <div className="flex flex-col md:flex-row gap-10">
+    <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
+      <div className="col-span-1">
         <StepCircle step={step + 1} />
-        <div className="flex flex-col gap-12">
-          <p className="text-[24px] text-primary-10 font-bold">finally, we do a little customizing</p>
-          <div className="flex flex-col gap-8">
-            <ContestParamsSubmissionsPerPlayer
-              allowedSubmissionsPerUser={customization.allowedSubmissionsPerUser}
-              submissionsPerUserError={submissionsPerUserError}
-              onSubmissionsPerUserChange={onSubmissionsPerUserChange}
-            />
-            <ContestParamsSubmissionsPerContest
-              maxSubmissions={customization.maxSubmissions}
-              submissionsPerContestError={maxSubmissionsError}
-              onMaxSubmissionsChange={onMaxSubmissionsChange}
-            />
+      </div>
+      <div className="col-span-2 ml-10">
+        <p className="text-[24px] text-primary-10 font-bold">{customizeTitle}</p>
+      </div>
+      <div className="grid gap-16 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-12">
+        <div className="flex flex-col gap-8">
+          <ContestParamsSubmissionsPerPlayer
+            allowedSubmissionsPerUser={customization.allowedSubmissionsPerUser}
+            submissionsPerUserError={submissionsPerUserError}
+            onSubmissionsPerUserChange={onSubmissionsPerUserChange}
+          />
+          <ContestParamsSubmissionsPerContest
+            maxSubmissions={customization.maxSubmissions}
+            submissionsPerContestError={maxSubmissionsError}
+            onMaxSubmissionsChange={onMaxSubmissionsChange}
+          />
 
-            <ContestParamsDownvote downvote={advancedOptions.downvote} onChange={handleDownvoteChange} />
+          <ContestParamsDownvote downvote={advancedOptions.downvote} onChange={handleDownvoteChange} />
 
-            <ContestParamsVisibility
-              contestVisibility={advancedOptions.contestVisibility}
-              onChange={handleContestVisibilityChange}
-            />
-          </div>
-
-          <div className="mt-4">
-            <CreateNextButton step={step} onClick={onNextStep} isDisabled={disableNextStep} />
-          </div>
+          <ContestParamsVisibility
+            contestVisibility={advancedOptions.contestVisibility}
+            onChange={handleContestVisibilityChange}
+          />
         </div>
+
+        <CreateNextButton step={step} onClick={onNextStep} isDisabled={disableNextStep} />
       </div>
     </div>
   );

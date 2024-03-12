@@ -13,17 +13,30 @@ import CreateContestTitle from "./pages/ContestTitle";
 import CreateContestType from "./pages/ContestType";
 import CreateContestVoting from "./pages/ContestVoting";
 
-const steps = [
-  { title: "title", content: <CreateContestTitle /> },
-  { title: "description", content: <CreateContestPrompt /> },
-  { title: "summary", content: <CreateContestSummary /> },
-  { title: "tag", content: <CreateContestType /> },
-  { title: "timing", content: <CreateContestTiming /> },
-  { title: "submissions", content: <CreateContestSubmissions /> },
-  { title: "voting", content: <CreateContestVoting /> },
-  { title: "monetization", content: <CreateContestMonetization /> },
-  { title: "customization", content: <CreateContestParams /> },
-  { title: "confirm!", content: <CreateContestConfirm /> },
+export enum StepTitle {
+  Title = "title",
+  Description = "description",
+  Summary = "summary",
+  Tag = "tag",
+  Timing = "timing",
+  Submissions = "submissions",
+  Voting = "voting",
+  Monetization = "monetization",
+  Customization = "customization",
+  Confirm = "confirm!",
+}
+
+export const steps = [
+  { title: StepTitle.Title, content: <CreateContestTitle /> },
+  { title: StepTitle.Description, content: <CreateContestPrompt /> },
+  { title: StepTitle.Summary, content: <CreateContestSummary /> },
+  { title: StepTitle.Tag, content: <CreateContestType /> },
+  { title: StepTitle.Timing, content: <CreateContestTiming /> },
+  { title: StepTitle.Submissions, content: <CreateContestSubmissions /> },
+  { title: StepTitle.Voting, content: <CreateContestVoting /> },
+  { title: StepTitle.Monetization, content: <CreateContestMonetization /> },
+  { title: StepTitle.Customization, content: <CreateContestParams /> },
+  { title: StepTitle.Confirm, content: <CreateContestConfirm /> },
 ];
 
 const CreateFlow = () => {
@@ -35,7 +48,7 @@ const CreateFlow = () => {
   };
 
   return (
-    <div className="pl-[24px] pr-[20px] lg:pl-[120px] lg:pr-[60px]">
+    <div className="pl-6 pr-6 lg:pl-[120px] lg:pr-[60px]">
       {pageAction === "create" && !startContest ? (
         <CreateContestStart onClick={handleStartCreating} />
       ) : pageAction === "create" && startContest ? (

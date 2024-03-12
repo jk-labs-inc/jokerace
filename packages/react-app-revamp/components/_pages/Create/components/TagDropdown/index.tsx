@@ -92,7 +92,7 @@ const CreateTagDropdown: FC<CreateTagDropdownProps> = ({ value, options, classNa
       />
       {showOptions && (
         <ul
-          className={`flex flex-col absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip overflow-y-scroll h-80 md:h-[450px] animate-appear ${className}`}
+          className={`flex flex-col absolute z-10 mt-16 list-none bg-true-black border border-neutral-11 rounded-[10px] overflow-x-clip overflow-y-scroll h-48 md:h-[450px] animate-appear ${className}`}
         >
           {filteredOptions.map(option => (
             <li

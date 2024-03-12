@@ -1,4 +1,5 @@
 import { FC } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsChargePercentToCreatorProps {
   percentageToCreator: number;
@@ -13,11 +14,16 @@ const ContestParamsChargePercentToCreator: FC<ContestParamsChargePercentToCreato
   minCostToPropose,
   minCostToVote,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const percentageTitle = isMobile
+    ? "we split all charges with you 50/50"
+    : " by default, we split all charges with you 50/50 so you can monetize";
+  const percentageToCreatorTitle = isMobile
+    ? `i prefer 0% so i don’t make money`
+    : `i prefer to take 0% of charges so that i don’t make any money`;
   return (
     <div className="flex flex-col gap-4 ">
-      <p className="text-[20px] md:text-[20px] text-neutral-11">
-        by default, we split all charges with you 50/50 so you can monetize
-      </p>
+      <p className="text-[20px] md:text-[20px] text-neutral-11">{percentageTitle}</p>
       <div className="flex gap-4">
         <label className="checkbox-container">
           <input
@@ -33,7 +39,7 @@ const ContestParamsChargePercentToCreator: FC<ContestParamsChargePercentToCreato
             percentageToCreator === 0 ? "text-neutral-11" : "text-neutral-9"
           } md:-mt-1`}
         >
-          i prefer to take 0% of charges so that i don’t make any money
+          {percentageToCreatorTitle}
         </p>
       </div>
     </div>

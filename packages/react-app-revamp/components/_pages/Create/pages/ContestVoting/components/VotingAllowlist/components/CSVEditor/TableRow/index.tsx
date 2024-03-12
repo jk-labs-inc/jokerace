@@ -29,7 +29,6 @@ const TableRow: FC<TableRowProps> = ({ address, votes, error, index, handlePaste
       >
         <input
           type="text"
-          placeholder={index === 0 ? "0xb19d2F010a53ACbd8D0746aE9412b4e34F350Dc2" : ""}
           className="w-full bg-transparent outline-none border-none p-0 placeholder-neutral-10"
           value={address}
           onPaste={event => handlePaste(index, event)}
@@ -44,7 +43,6 @@ const TableRow: FC<TableRowProps> = ({ address, votes, error, index, handlePaste
         <div className="flex justify-between items-center">
           <input
             type="text"
-            placeholder={index === 0 ? "69" : ""}
             className="w-full bg-transparent outline-none border-none pl-2 placeholder-neutral-10"
             value={votes}
             onChange={event => handleChange(index, "votes", event.target.value)}

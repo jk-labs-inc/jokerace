@@ -8,7 +8,7 @@ import CreateSubmissionCSVUploader from "../SubmissionUploadCsv";
 const tabOptions = [
   { label: "use presets", content: <CreateSubmissionRequirements /> },
   { label: "upload csv", content: <CreateSubmissionCSVUploader /> },
-  { label: "write manually", content: <CreateSubmissionAllowlist /> },
+  { label: "set manually", content: <CreateSubmissionAllowlist /> },
 ];
 
 const CreateSubmissionTabContent = () => {
@@ -43,7 +43,7 @@ const CreateSubmissionTabContent = () => {
             <div
               key={index}
               ref={el => (tabRefs.current[index] = el)}
-              className={`text-[16px] sm:text-[24px] font-bold cursor-pointer text-center transition-colors duration-200
+              className={`text-[20px] sm:text-[24px] font-bold cursor-pointer text-center transition-colors duration-200
                   ${index === tabOptions.length - 1 ? "md:w-[240px]" : "md:w-[224px]"}
                   ${submissionTab === index ? "text-primary-10" : "text-neutral-10"}`}
               onClick={() => onSubmissionTabChange(index)}
