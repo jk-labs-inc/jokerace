@@ -4,6 +4,7 @@ import { load } from "cheerio";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
 
@@ -16,6 +17,7 @@ interface CreateContestConfirmDescriptionProps {
 const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> = ({ prompt, step, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
   const convertSummarizePrompt = () => {
     const cheerio = load(prompt.summarize);
@@ -34,14 +36,14 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
         <div className="flex items-center gap-2">
           <p
             className={`text-[16px] normal-case ${
-              isHovered || isExpanded ? "text-neutral-11 font-bold " : "text-neutral-14"
+              isHovered || isExpanded || isMobileOrTablet ? "text-neutral-11 font-bold " : "text-neutral-14"
             } transition-color duration-300`}
           >
             {convertSummarizePrompt()}
           </p>
           <ChevronDownIcon
             className={`w-6 cursor-pointer transition-transform duration-300 ${
-              isHovered || isExpanded ? "text-neutral-11" : "text-neutral-14"
+              isHovered || isExpanded || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"
             } ${isExpanded ? "rotate-180" : ""}`}
             onClick={toggleContent}
           />

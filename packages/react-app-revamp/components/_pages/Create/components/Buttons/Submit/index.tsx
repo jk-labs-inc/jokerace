@@ -3,6 +3,7 @@ import { usePreviousStep } from "@components/_pages/Create/hooks/usePreviousStep
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 
 interface CreateContestButtonProps {
@@ -16,6 +17,7 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
   const { isConnected } = useAccount();
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
+  const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
 
   useEffect(() => {
     // If there's an error for the current step, shake the button
@@ -36,6 +38,8 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
       onClick(e);
     }
   };
+
+  if (isMobileOrTablet) return null;
 
   return (
     <div className="flex gap-4 items-start pb-5 md:pb-0">
