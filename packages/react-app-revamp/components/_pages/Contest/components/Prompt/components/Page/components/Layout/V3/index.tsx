@@ -1,16 +1,18 @@
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import Image from "next/image";
-import { FC, RefObject } from "react";
+import { FC } from "react";
 
 interface ContestPromptPageV3LayoutProps {
   contestTitle: string;
   contestType: string;
   summaryContent: string;
   evaluateContent: string;
+  contactDetailsContent: string;
   isExpanded: boolean;
   displayReadMore: boolean;
   shouldDisplayEvaluate: boolean;
+  shouldDisplayContactDetails: boolean;
   handleToggle: () => void;
 }
 
@@ -19,9 +21,11 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
   contestType,
   summaryContent,
   evaluateContent,
+  contactDetailsContent,
   isExpanded,
   displayReadMore,
   shouldDisplayEvaluate,
+  shouldDisplayContactDetails,
   handleToggle,
 }) => {
   return (
@@ -38,10 +42,16 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
             <div className="prose prose-invert pl-5 flex flex-col">
               <Interweave content={summaryContent} matchers={[new UrlMatcher("url")]} />
               {shouldDisplayEvaluate ? (
-                <div>
+                <>
                   <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
                   <Interweave content={evaluateContent} matchers={[new UrlMatcher("url")]} />
-                </div>
+                </>
+              ) : null}
+              {shouldDisplayContactDetails ? (
+                <>
+                  <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                  <Interweave content={contactDetailsContent} matchers={[new UrlMatcher("url")]} />
+                </>
               ) : null}
             </div>
           </div>

@@ -15,6 +15,7 @@ type ContestDeployError = {
 export type Prompt = {
   summarize: string;
   evaluateVoters: string;
+  contactDetails?: string;
 };
 
 export enum ContestVisibility {

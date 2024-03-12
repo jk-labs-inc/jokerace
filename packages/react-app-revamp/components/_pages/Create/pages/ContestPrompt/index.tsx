@@ -84,6 +84,24 @@ const CreateContestPrompt = () => {
     onFocus: () => setActiveEditor(editorEvaluateVoters),
   });
 
+  const editorContactDetails = useEditor({
+    ...createEditorConfig({
+      content: prompt.contactDetails ?? "",
+      placeholderText: isMobile
+        ? "i’m on telegram: @me"
+        : "we have a telegram group for everyone to coordinate at tgexample.com",
+      onUpdate: ({ editor }: { editor: Editor }) => {
+        const content = editor.getHTML();
+
+        setPrompt({
+          ...prompt,
+          contactDetails: content,
+        });
+      },
+    }),
+    onFocus: () => setActiveEditor(editorContactDetails),
+  });
+
   return (
     <div className="create-contest-prompt flex flex-col gap-12 mt-12 lg:mt-[70px] animate-swingInLeft">
       <div className="flex flex-col lg:flex-row items-start gap-10">
@@ -131,6 +149,17 @@ const CreateContestPrompt = () => {
                   if you are offering rewards, voting must legally be based on skill or talent—not guessing
                 </p>
               )}
+            </div>
+          </div>
+          <div className="flex flex-col gap-8 ">
+            <p className="text-neutral-11 text-[20px] font-bold">
+              what’s the best way for players to reach you? <span className="font-normal">(optional)</span>
+            </p>
+            <div className="flex flex-col gap-2">
+              <EditorContent
+                editor={editorContactDetails}
+                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+              />
             </div>
           </div>
           <div className="mt-4">
