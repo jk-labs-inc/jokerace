@@ -2,20 +2,23 @@ import Header from "@components/Header";
 import AddToHomeScreenPopup from "@components/UI/AddToHomeScreen";
 import { FOOTER_LINKS } from "@config/links";
 import { MediaQuery } from "@helpers/mediaQuery";
+import { useRouter } from "next/router";
 
 interface LayoutBaseProps {
   children: React.ReactNode;
 }
 
 const LayoutBase = (props: LayoutBaseProps) => {
+  const router = useRouter();
   const { children } = props;
   const allowedLinks = ["Github", "Mirror", "Twitter", "Report a bug", "Terms", "Telegram"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
+  const isCreateFlow = router.pathname.includes("/new");
 
   return (
     <>
       <Header />
-      <main className="flex flex-col grow pb-20 md:pb-0">{children}</main>
+      <main className={`flex flex-col grow ${isCreateFlow ? "pb-60" : "pb-28"} md:pb-0`}>{children}</main>
       <MediaQuery maxWidth={768}>
         <AddToHomeScreenPopup />
       </MediaQuery>

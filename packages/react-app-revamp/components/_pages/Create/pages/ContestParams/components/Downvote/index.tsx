@@ -12,10 +12,16 @@ const ContestParamsDownvote: FC<ContestParamsDownvoteProps> = ({ downvote, onCha
   return (
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11">
-        can players downvote—that is, vote <span className="italic font-bold">against</span> a submission?
+        {isMobile ? (
+          <>can players downvote?</>
+        ) : (
+          <>
+            can players downvote—that is, vote <span className="italic font-bold">against</span> a submission?
+          </>
+        )}
       </p>
       <div className="flex flex-col gap-2">
-        <div className="flex w-full md:w-[432px] border border-neutral-10 rounded-[25px] overflow-hidden text-[20px]">
+        <div className="flex w-2/3 md:w-[432px] border border-neutral-10 rounded-[25px] overflow-hidden text-[20px]">
           <div
             className={`w-full px-4 py-1 cursor-pointer ${
               !downvote ? "bg-neutral-14 text-true-black font-bold" : "bg-true-black text-neutral-11"
