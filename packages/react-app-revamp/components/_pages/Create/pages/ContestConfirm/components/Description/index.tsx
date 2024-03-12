@@ -52,10 +52,14 @@ const CreateContestConfirmDescription: FC<CreateContestConfirmDescriptionProps> 
           <div className="prose prose-invert pl-4 flex flex-col">
             <Interweave content={prompt.summarize} matchers={[new UrlMatcher("url")]} />
 
-            <div>
-              <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
-              <Interweave content={prompt.evaluateVoters} matchers={[new UrlMatcher("url")]} />
-            </div>
+            <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+            <Interweave content={prompt.evaluateVoters} matchers={[new UrlMatcher("url")]} />
+            {prompt.contactDetails ? (
+              <>
+                <div className="bg-gradient-to-r from-neutral-7 w-full h-[1px] my-6"></div>
+                <Interweave content={prompt.contactDetails} matchers={[new UrlMatcher("url")]} />
+              </>
+            ) : null}
           </div>
         ) : null}
       </div>
