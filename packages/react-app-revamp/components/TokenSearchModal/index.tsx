@@ -43,11 +43,11 @@ const TokenSearchModal: FC<TokenSearchModalProps> = ({
 
   return (
     <Dialog open={isOpen} onClose={handleClose} className="relative z-50">
-      <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
+      <div className="fixed inset-0 pointer-events-none bg-true-black bg-opacity-80" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="flex min-h-full w-full items-center justify-center">
           <Dialog.Panel
-            className={`text-sm mx-auto min-h-screen max-h-screen w-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] md:h-[658px] md:max-h-[658px] md:w-[552px] bg-primary-2 2xs:rounded-[10px]`}
+            className={`text-sm shadow-file-upload mx-auto min-h-screen max-h-screen w-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] md:h-[658px] md:max-h-[658px] md:w-[552px] bg-true-black 2xs:rounded-[15px]`}
           >
             <div className="px-4 md:px-8 py-10">
               <div className="flex flex-col gap-8">

@@ -1,5 +1,6 @@
 import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
 import { FC } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsChargeSubmissionProps {
   costToPropose: number;
@@ -14,10 +15,20 @@ const ContestParamsChargeSubmission: FC<ContestParamsChargeSubmissionProps> = ({
   costToProposeError,
   onCostToProposeChange,
 }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+
   return (
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11">
-        what is the entry charge for players to <b>submit</b> to the contest?
+        {isMobile ? (
+          <>
+            what’s the charge to <b>submit</b>?
+          </>
+        ) : (
+          <>
+            what is the entry charge for players to <b>submit</b> to the contest?
+          </>
+        )}
       </p>
       <div className="flex flex-col gap-2">
         <CreateNumberInput

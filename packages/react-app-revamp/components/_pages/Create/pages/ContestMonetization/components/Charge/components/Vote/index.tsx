@@ -2,13 +2,13 @@ import CreateNumberInput from "@components/_pages/Create/components/NumberInput"
 import { RadioGroup } from "@headlessui/react";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsChargeVoteProps {
   costToVote: number;
   type: VoteType;
   chainUnitLabel: string;
   costToVoteError: string;
-  votingRequirementsOption: string;
   isAnyoneCanVote: boolean;
   onCostToVoteChange?: (value: number | null) => void;
   onVoteTypeChange?: (value: VoteType) => void;
@@ -19,12 +19,12 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
   type,
   chainUnitLabel,
   costToVoteError,
-  votingRequirementsOption,
   isAnyoneCanVote,
   onCostToVoteChange,
   onVoteTypeChange,
 }) => {
   const [selected, setSelected] = useState<VoteType>(type);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   const handleVoteTypeChange = (value: VoteType) => {
     setSelected(value);
@@ -34,7 +34,15 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
   return (
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11">
-        what is the charge for players to <b>vote</b> in the contest?
+        {isMobile ? (
+          <>
+            what is the charge to <b>vote</b>?
+          </>
+        ) : (
+          <>
+            what is the charge for players to <b>vote</b> in the contest?
+          </>
+        )}
       </p>
       <RadioGroup value={selected} onChange={handleVoteTypeChange}>
         <div className={`flex ${isAnyoneCanVote ? "flex-col-reverse" : "flex-col"} gap-4`}>
@@ -42,7 +50,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
-                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
+                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-full transition-colors ${
                     checked ? "bg-neutral-11 border-0" : ""
                   } ${isAnyoneCanVote ? "opacity-50" : "opacity-100"}`}
                 ></div>
@@ -73,13 +81,21 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
-                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
+                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-full transition-colors ${
                     checked ? "bg-neutral-11  border-0" : ""
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
                   <p className="text-[20px] text-neutral-9">
-                    a charge per <i>each vote</i> they deploy in contest
+                    {isMobile ? (
+                      <>
+                        a charge per <i>each vote</i>
+                      </>
+                    ) : (
+                      <>
+                        a charge per <i>each vote</i> they deploy in contest
+                      </>
+                    )}
                   </p>
                   {checked ? (
                     <CreateNumberInput

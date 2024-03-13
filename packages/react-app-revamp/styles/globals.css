@@ -118,6 +118,10 @@ li.no-funds-distributed::before {
   filter: drop-shadow(0px 3px 4px rgba(255, 226, 91, 0.6));
 }
 
+.infinite-submissions {
+  text-shadow: 1px 1px 8px rgba(120, 255, 198, 1);
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -155,6 +159,13 @@ li {
   background-color: black !important;
   width: 300px;
 }
+
+@media (max-width: 768px) {
+  .react-datepicker__month-container {
+    width: 240px !important;
+  }
+}
+
 .react-datepicker__header {
   background-color: black !important;
   color: white !important;
@@ -242,7 +253,6 @@ li {
 
   html {
     --brand: theme("colors.primary.10");
-    scrollbar-color: var(--brand) Canvas;
     color-scheme: dark;
     overflow-y: scroll;
   }
@@ -423,6 +433,11 @@ li {
   .rewards-funding-grid {
     @apply grid;
     grid-template-columns: 0.1fr 0.8fr 1.5fr 1fr 0.5fr;
+  }
+
+  .full-width-create-flow-grid {
+    @apply grid;
+    grid-template-columns: auto auto 1fr;
   }
 
   .dropdownBorder {

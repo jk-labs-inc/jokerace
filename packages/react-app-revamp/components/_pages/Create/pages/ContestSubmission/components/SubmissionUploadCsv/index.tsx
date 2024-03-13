@@ -1,10 +1,12 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
+import { useCallback, useEffect } from "react";
 import { SubmissionFieldObject } from "../SubmissionAllowlist/components/CSVEditor";
 import SubmissionCSVFileUploader from "./components/CSVUploadSubmission";
 
@@ -14,11 +16,33 @@ type WorkerMessageData = {
 };
 
 const CreateSubmissionCSVUploader = () => {
-  const { submissionAllowlist, setSubmissionMerkle, setSubmissionAllowlist, setError, step } = useDeployContestStore(
-    state => state,
-  );
+  const {
+    submissionAllowlist,
+    setSubmissionMerkle,
+    setSubmissionAllowlist,
+    setError,
+    step,
+    mobileStepTitle,
+    resetMobileStepTitle,
+    submissionTab,
+  } = useDeployContestStore(state => state);
   const submissionValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowlist.csv)]);
+
+  const handleNextStepMobile = useCallback(() => {
+    if (!mobileStepTitle || submissionTab !== 1) return;
+
+    if (mobileStepTitle === steps[step].title) {
+      handleNextStep();
+      resetMobileStepTitle();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
+
+  // Mobile listeners
+  useEffect(() => {
+    handleNextStepMobile();
+  }, [handleNextStepMobile]);
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
     const newAllowList: Record<string, number> = {};

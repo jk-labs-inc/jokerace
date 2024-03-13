@@ -73,12 +73,12 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
         } px-8 mt-4 bg-true-black z-50`}
       >
         <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
-          <HomeIcon width={30} />
+          <HomeIcon width={26} />
           <p className="text-[12px]">home</p>
         </Link>
 
         <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
-          <SearchIcon width={30} />
+          <SearchIcon width={26} />
           <p className="text-[12px]">search</p>
         </Link>
 
@@ -86,24 +86,24 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
           href={ROUTE_VIEW_LIVE_CONTESTS}
           className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
         >
-          <IconTrophy width={30} height={30} />
+          <IconTrophy width={26} height={26} />
           <p className="text-[12px] text-center">play</p>
         </Link>
 
         <Link href={ROUTE_CREATE_CONTEST} className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}>
-          <PencilAltIcon width={30} />
+          <PencilAltIcon width={26} />
           <p className="text-[12px]">create</p>
         </Link>
 
         <div onClick={isConnected ? openAccountModal : openConnectModal} className="transition-all duration-500">
           {isConnected ? (
             <div className="flex flex-col items-center">
-              <Image width={28} height={28} src="/header/wallet-connected.svg" alt="wallet-connected" />
+              <Image width={26} height={26} src="/header/wallet-connected.svg" alt="wallet-connected" />
               <p className="text-[12px]">wallet</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <Image width={28} height={28} src="/header/wallet.svg" alt="wallet" />
+              <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
               <p className="text-[12px]">wallet</p>
             </div>
           )}

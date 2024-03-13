@@ -103,8 +103,8 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
                     currentStep === index
                       ? "border-neutral-11"
                       : currentStep > index
-                      ? "border-neutral-10"
-                      : "border-neutral-10"
+                        ? "border-neutral-10"
+                        : "border-neutral-10"
                   }`}
                 />
                 {currentStep === index ? (

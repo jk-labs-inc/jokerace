@@ -1,5 +1,6 @@
 import { ContestVisibility } from "@hooks/useDeployContest/store";
 import { FC } from "react";
+import { useMediaQuery } from "react-responsive";
 
 interface ContestParamsVisibilityProps {
   contestVisibility: ContestVisibility;
@@ -7,11 +8,13 @@ interface ContestParamsVisibilityProps {
 }
 
 const ContestParamsVisibility: FC<ContestParamsVisibilityProps> = ({ contestVisibility, onChange }) => {
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
+  const title = isMobile ? "is the contest public?" : "is the contest public or unlisted?";
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[20px] text-neutral-11">is the contest public or unlisted?</p>
+      <p className="text-[20px] text-neutral-11">{title}</p>
       <div className="flex flex-col gap-2">
-        <div className="flex w-full md:w-[432px] border border-neutral-10 rounded-[25px] overflow-hidden text-[20px]">
+        <div className="flex w-2/3 md:w-[432px] border border-neutral-10 rounded-[25px] overflow-hidden text-[20px]">
           <div
             className={`w-full px-4 py-1 text-center cursor-pointer ${
               contestVisibility === ContestVisibility.Public

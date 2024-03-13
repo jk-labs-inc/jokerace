@@ -1,5 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
@@ -25,39 +26,53 @@ const options: Option[] = [
 ];
 
 const CreateContestType = () => {
-  const { type, setType, errors, step } = useDeployContestStore(state => state);
+  const { type, setType, errors, step, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const [fadeBg, setFadeBg] = useState(false);
   const typeValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => typeValidation?.[0].validation(type)]);
+
+  const handleNextStepMobile = useCallback(() => {
+    if (!mobileStepTitle) return;
+
+    if (mobileStepTitle === steps[step].title) {
+      onNextStep();
+      resetMobileStepTitle();
+    }
+  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
+
+  // Mobile listeners
+  useEffect(() => {
+    handleNextStepMobile();
+  }, [handleNextStepMobile]);
 
   const onOptionChangeHandler = (option: string) => {
     setType(option);
   };
 
   return (
-    <div className="mt-12 lg:mt-[70px] animate-swingInLeft">
-      <div className="flex flex-col lg:flex-row items-start gap-10 text-[20px] md:text-[24px]">
+    <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
+      <div className="col-span-1">
         <StepCircle step={step + 1} />
-        <div className="flex flex-col gap-12">
-          <div className="flex flex-col gap-6">
-            <p className="text-[24px] font-bold text-primary-10">let’s give it a lil’ tag</p>
-            <p className="text-[20px] text-neutral-11">how should we tag your contest for players to find it?</p>
+      </div>
+      <div className="col-span-2 ml-10">
+        <p className="text-[24px] font-bold text-primary-10">let’s give it a lil’ tag</p>
+      </div>
+      <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
+        <p className="text-[20px] text-neutral-11">how should we tag your contest for players to find it?</p>
+        <div className="flex flex-col gap-16">
+          <div className="flex flex-col gap-2">
+            <CreateTagDropdown
+              value={type}
+              onChange={onOptionChangeHandler}
+              onMenuStateChange={setFadeBg}
+              options={options}
+              className="w-full md:w-[240px]"
+            />
+            {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
           </div>
-          <div className="flex flex-col gap-16">
-            <div className="flex flex-col gap-2">
-              <CreateTagDropdown
-                value={type}
-                onChange={onOptionChangeHandler}
-                onMenuStateChange={setFadeBg}
-                options={options}
-                className="w-full md:w-[240px]"
-              />
-              {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
-            </div>
-            <div className={`${fadeBg ? "opacity-50" : "opacity-100"}  transition-opacity duration-300 ease-in-out `}>
-              <CreateNextButton step={step + 1} onClick={onNextStep} />
-            </div>
+          <div className={`${fadeBg ? "opacity-50" : "opacity-100"} mt-4 transition-opacity duration-300 ease-in-out `}>
+            <CreateNextButton step={step + 1} onClick={onNextStep} />
           </div>
         </div>
       </div>
