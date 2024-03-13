@@ -8,9 +8,10 @@ import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDepl
 import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
 import CreateVotingRequirementsTokenSettings from "./components/Token";
+import { steps } from "@components/_pages/Create";
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -37,11 +38,29 @@ const CreateVotingRequirements = () => {
     setVotingRequirements,
     setVotingRequirementsOption,
     votingRequirementsOption,
+    mobileStepTitle,
+    resetMobileStepTitle,
+    votingTab,
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
+
+  const handleNextStepMobile = useCallback(() => {
+    if (!mobileStepTitle || votingTab !== 0) return;
+
+    if (mobileStepTitle === steps[step].title) {
+      handleNextStep();
+      resetMobileStepTitle();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
+
+  // Mobile listeners
+  useEffect(() => {
+    handleNextStepMobile();
+  }, [handleNextStepMobile]);
 
   const onRequirementChange = (option: string) => {
     setInputError({});

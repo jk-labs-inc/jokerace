@@ -1,7 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
+import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
-import { Charge } from "@hooks/useDeployContest/types";
-import { FC, useState } from "react";
+import { Charge, VoteType } from "@hooks/useDeployContest/types";
+import { FC, useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
@@ -14,11 +16,22 @@ interface CreateContestConfirmMonetizationProps {
 
 const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps> = ({ charge, step, onClick }) => {
   const { chain } = useAccount();
+  const chainChanged = useChainChange();
   const { percentageToCreator, type } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
   const [isHovered, setIsHovered] = useState(false);
   const nativeCurrencySymbol = chain?.nativeCurrency.symbol;
   const chargeEnabled = type.costToPropose !== 0 || type.costToVote !== 0;
+  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
+  const [highlightChainChange, setHighlightChainChange] = useState(false);
+
+  useEffect(() => {
+    if (chainChanged) {
+      setHighlightChainChange(true);
+      const timer = setTimeout(() => setHighlightChainChange(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [chainChanged]);
 
   const percentageToCreatorMessage = () => {
     if (percentageToCreator === 50) {
@@ -31,7 +44,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   if (isError) {
     return (
       <CreateContestConfirmLayout onClick={() => refetchChargeDetails()} onHover={value => setIsHovered(value)}>
-        <div className={`flex flex-col gap-4 ${isHovered ? "text-neutral-11" : "text-neutral-14"}`}>
+        <div className={`flex flex-col gap-4 ${isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"}`}>
           <p className="text-[16px] font-bold">
             monetization:
             {!chargeEnabled ? <b className="uppercase"> OFF</b> : null}
@@ -50,9 +63,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   return (
     <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
       <div
-        className={`flex flex-col gap-4 ${
-          isHovered ? "text-neutral-11" : "text-neutral-14"
-        } transition-colors duration-300`}
+        className={`flex flex-col gap-4 ${highlightChainChange && !isLoading ? "text-negative-11 animate-pulse" : isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"} transition-all duration-300`}
       >
         <p className="text-[16px] font-bold">
           monetization:
@@ -66,7 +77,8 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               {charge.type.costToPropose} <span className="uppercase">${nativeCurrencySymbol}</span> to submit
             </li>
             <li className={`text-[16px] list-disc`}>
-              {charge.type.costToVote} <span className="uppercase">${nativeCurrencySymbol}</span> to vote
+              {charge.type.costToVote} <span className="uppercase">${nativeCurrencySymbol}</span>{" "}
+              {charge.voteType === VoteType.PerVote ? "per" : "to"} vote
             </li>
             <li className="text-[16px] list-disc normal-case">{percentageToCreatorMessage()}</li>
           </ul>

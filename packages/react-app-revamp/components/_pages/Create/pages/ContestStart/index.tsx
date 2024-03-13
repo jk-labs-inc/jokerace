@@ -1,6 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC } from "react";
-import { create, createStore } from "zustand";
+import { create } from "zustand";
 
 interface CreateContestStartProps {
   onClick?: (value: boolean) => void;

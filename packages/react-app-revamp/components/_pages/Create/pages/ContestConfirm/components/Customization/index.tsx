@@ -3,6 +3,7 @@ import { Steps } from "../..";
 import { FC, useState } from "react";
 import CreateContestConfirmLayout from "../Layout";
 import { formatNumber } from "@helpers/formatNumber";
+import { useMediaQuery } from "react-responsive";
 
 interface CreateContestConfirmCustomizationProps {
   customization: {
@@ -20,10 +21,11 @@ const CreateContestConfirmCustomization: FC<CreateContestConfirmCustomizationPro
 }) => {
   const { customization: customizationOptions, advancedOptions } = customization;
   const [isHovered, setIsHovered] = useState(false);
+  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
   return (
     <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
-      <div className={`flex flex-col gap-4 ${isHovered ? "text-neutral-11" : "text-neutral-14"}`}>
+      <div className={`flex flex-col gap-4 ${isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"}`}>
         <p className="text-[16px] font-bold">parameters:</p>
         <ul className="flex flex-col pl-8">
           <li className="text-[16px] list-disc">
