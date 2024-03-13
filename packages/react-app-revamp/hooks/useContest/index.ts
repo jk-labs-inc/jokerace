@@ -1,6 +1,5 @@
 import { chains, config } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
-import { Abi } from "viem";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -21,6 +20,7 @@ import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/con
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { Abi } from "viem";
 import { useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
@@ -77,6 +77,7 @@ export function useContest() {
     setIsReadOnly,
     setIsRewardsLoading,
     setSortingEnabled,
+    setAnyoneCanVote,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
@@ -140,8 +141,8 @@ export function useContest() {
     const isDownvotingAllowed = Number(results[8].result) === 1;
     const submissionMerkleRoot = results[9].result as string;
     const votingMerkleRoot = results[10].result as string;
-
-    processUserQualifications(submissionMerkleRoot, votingMerkleRoot, contestMaxNumberSubmissionsPerUser);
+    let anyoneCanVote = false;
+    let chargePerVote = 0;
 
     if (compareVersions(version, "4.0") >= 0) {
       const costToProposeTiming = moment().isBefore(votesOpenDate);
@@ -179,6 +180,20 @@ export function useContest() {
 
       setSortingEnabled(sortingEnabled);
     }
+
+    if (compareVersions(version, "4.27") >= 0) {
+      const isVotingMerkleRootEmpty = votingMerkleRoot === EMPTY_ROOT;
+
+      setAnyoneCanVote(isVotingMerkleRootEmpty);
+      anyoneCanVote = isVotingMerkleRootEmpty;
+    }
+
+    processUserQualifications(
+      submissionMerkleRoot,
+      votingMerkleRoot,
+      contestMaxNumberSubmissionsPerUser,
+      anyoneCanVote,
+    );
 
     setContestName(contestName);
     setContestAuthor(contestAuthor, contestAuthor);
@@ -348,6 +363,8 @@ export function useContest() {
     submissionMerkleRoot: string,
     votingMerkleRoot: string,
     contestMaxNumberSubmissionsPerUser: number,
+    anyoneCanVote?: boolean,
+    chargePerVote?: number,
   ) {
     if (contestStatus === ContestStatus.VotingClosed) return;
 
@@ -366,7 +383,7 @@ export function useContest() {
 
     await Promise.all([
       checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
-      checkIfCurrentUserQualifyToVote(),
+      checkIfCurrentUserQualifyToVote(anyoneCanVote),
     ]);
   }
 

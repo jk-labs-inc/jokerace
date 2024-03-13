@@ -3,17 +3,27 @@ import { supabase } from "@config/supabase";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { readContract } from "@wagmi/core";
-import { BigNumber } from "ethers";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { getGasPrice, readContract } from "@wagmi/core";
+import { BigNumber, utils } from "ethers";
+import { fetchUserBalance } from "lib/fetchUserBalance";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
-import { useAccount } from "wagmi";
+import { useAccount, useGasPrice } from "wagmi";
 import { useUserStore } from "./store";
 
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useUser() {
+  const { charge } = useDeployContestStore(state => state);
+  const { asPath } = useRouter();
+  const { chainName, address } = extractPathSegments(asPath);
+  const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,
+  )?.[0]?.id;
   const { address: userAddress } = useAccount();
+
   const {
     setCurrentUserQualifiedToSubmit,
     setCurrentUserAvailableVotesAmount,
@@ -28,12 +38,6 @@ export function useUser() {
     setIsCurrentUserVoteQualificationSuccess,
     setIsCurrentUserVoteQualificationError,
   } = useUserStore(state => state);
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
-  const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,
-  )?.[0]?.id;
 
   const checkIfCurrentUserQualifyToSubmit = async (
     submissionMerkleRoot: string,
@@ -133,10 +137,15 @@ export function useUser() {
   /**
    * Check if the current user qualify to vote for this contest
    */
-  async function checkIfCurrentUserQualifyToVote() {
+  async function checkIfCurrentUserQualifyToVote(anyoneCanVote?: boolean) {
     if (!userAddress) return;
 
     setIsCurrentUserVoteQualificationLoading(true);
+
+    if (anyoneCanVote) {
+      await checkAnyoneCanVoteUserQualification();
+      return;
+    }
 
     try {
       // Perform a lookup in the 'contest_participants_v3' table.
@@ -196,6 +205,38 @@ export function useUser() {
       setIsCurrentUserVoteQualificationError(true);
       setIsCurrentUserVoteQualificationLoading(false);
       setIsCurrentUserVoteQualificationSuccess(false);
+    }
+  }
+
+  async function checkAnyoneCanVoteUserQualification() {
+    if (!userAddress) return;
+    try {
+      const [userBalance, gasPrice] = await Promise.all([
+        fetchUserBalance(userAddress, chainId),
+        getGasPrice(config, { chainId }),
+      ]);
+
+      const costToVoteBigNum = BigNumber.from(69000000000000);
+      const userBalanceBigNum = BigNumber.from(userBalance.value);
+      const currentGasPriceBigNum = BigNumber.from(gasPrice);
+
+      const totalCostBigNum = costToVoteBigNum.add(currentGasPriceBigNum);
+
+      const userVotesRaw = userBalanceBigNum.div(totalCostBigNum);
+
+      const userVotesFormatted = Number(utils.parseEther(userVotesRaw.toString())) / 1e18;
+
+      setCurrentUserTotalVotesAmount(userVotesFormatted);
+      setCurrentUserAvailableVotesAmount(userVotesFormatted);
+
+      setIsCurrentUserVoteQualificationSuccess(true);
+      setIsCurrentUserVoteQualificationLoading(false);
+      setIsCurrentUserVoteQualificationError(false);
+    } catch (error) {
+      console.error("Error in checkAnyoneCanVoteUserQualification:", error);
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
     }
   }
 

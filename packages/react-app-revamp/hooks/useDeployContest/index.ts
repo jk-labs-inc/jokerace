@@ -265,8 +265,6 @@ export function useDeployContest() {
         throw new Error("Supabase is not configured");
       }
 
-      if (!votingMerkle) return null;
-
       const tasks = [];
 
       tasks.push(indexContestV3(contestData));

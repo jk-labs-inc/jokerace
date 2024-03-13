@@ -59,6 +59,7 @@ const LayoutViewContest = (props: any) => {
     isReadOnly,
     isRewardsLoading,
     submissionMerkleRoot,
+    anyoneCanVote,
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
@@ -116,11 +117,9 @@ const LayoutViewContest = (props: any) => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (accountChanged) {
-        if (accountAddress === accountChanged) return;
-
         await Promise.all([
           checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
-          checkIfCurrentUserQualifyToVote(),
+          checkIfCurrentUserQualifyToVote(anyoneCanVote),
         ]);
       }
     };
