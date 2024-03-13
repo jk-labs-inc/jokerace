@@ -3,7 +3,7 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
+import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
@@ -23,6 +23,8 @@ const CreateVotingAllowlist = () => {
     votingRequirements,
     setVotingRequirements,
     submissionTypeOption,
+    charge,
+    setCharge,
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.manual)]);
@@ -118,11 +120,18 @@ const CreateVotingAllowlist = () => {
     }
 
     toastLoading("processing your allowlist...", false);
+    setCharge({
+      ...charge,
+      voteType: VoteType.PerTransaction,
+    });
     if (submittersAsVoters) {
-      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.manual).reduce((acc, address) => {
-        acc[address] = 10;
-        return acc;
-      }, {} as Record<string, number>);
+      const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.manual).reduce(
+        (acc, address) => {
+          acc[address] = 10;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       const worker = initializeWorkersForVotersAndSubmitters();
       worker.postMessage({

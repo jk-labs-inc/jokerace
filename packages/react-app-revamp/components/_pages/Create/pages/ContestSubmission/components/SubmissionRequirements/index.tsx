@@ -46,14 +46,14 @@ const CreateSubmissionRequirements = () => {
     switch (submissionRequirementsOption.value) {
       case "erc721":
         return (
-          <div className={`${isDropdownOpen ? "opacity-50 transition-opacity duration-300 ease-in-out" : ""}`}>
+          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
             <CreateSubmissionRequirementsNftSettings error={inputError} />
           </div>
         );
 
       case "erc20":
         return (
-          <div className={`${isDropdownOpen ? "opacity-50 transition-opacity duration-300 ease-in-out" : ""}`}>
+          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
             <CreateSubmissionRequirementsTokenSettings error={inputError} />
           </div>
         );

@@ -25,8 +25,10 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
     isSuccess,
     submissionMerkle,
     submissionRequirementsOption,
+    votingRequirementsOption,
     submissionTypeOption,
     votingMerkle,
+    votingTab,
     submissionTab,
     ...state
   } = useDeployContestStore(state => state);
@@ -46,6 +48,8 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
         submissionRequirementsOption,
         submissionTypeOption,
         votingMerkle,
+        votingRequirementsOption,
+        votingTab,
         submissionTab,
       });
 

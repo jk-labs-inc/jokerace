@@ -80,7 +80,7 @@ export function useDeployContest() {
         submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
       const { type: chargeType, percentageToCreator } = charge;
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
-      const { merkleRoot: votingMerkleRoot } = votingMerkle || {};
+      const { merkleRoot: votingMerkleRoot = EMPTY_ROOT } = votingMerkle || {};
       const { allowedSubmissionsPerUser, maxSubmissions } = customization;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract

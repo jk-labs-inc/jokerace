@@ -177,8 +177,8 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       label: "anyone",
     },
     votingRequirementsOption: {
-      value: "erc20",
-      label: "token holders",
+      value: "anyone",
+      label: "anyone",
     },
     votingAllowlist: {
       manual: {},
@@ -230,7 +230,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     charge: {
       percentageToCreator: 50,
-      voteType: VoteType.PerTransaction,
+      voteType: VoteType.PerVote,
       type: {
         costToPropose: 0,
         costToVote: 0,

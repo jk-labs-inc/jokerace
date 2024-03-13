@@ -5,7 +5,7 @@ import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { addressRegex } from "@helpers/regex";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
+import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useState } from "react";
@@ -19,6 +19,7 @@ type WorkerMessageData = {
 };
 
 const options: Option[] = [
+  { value: "anyone", label: "anyone" },
   { value: "erc20", label: "token holders" },
   { value: "erc721", label: "NFT holders" },
 ];
@@ -37,11 +38,14 @@ const CreateVotingRequirements = () => {
     setVotingRequirements,
     setVotingRequirementsOption,
     votingRequirementsOption,
+    setCharge,
+    charge,
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const onRequirementChange = (option: string) => {
     setInputError({});
@@ -61,11 +65,26 @@ const CreateVotingRequirements = () => {
   const renderLayout = () => {
     switch (votingRequirementsOption.value) {
       case "erc721":
-        return <CreateVotingRequirementsNftSettings error={inputError} />;
+        return (
+          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
+            <CreateVotingRequirementsNftSettings error={inputError} />
+          </div>
+        );
       case "erc20":
-        return <CreateVotingRequirementsTokenSettings error={inputError} />;
+        return (
+          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
+            <CreateVotingRequirementsTokenSettings error={inputError} />
+          </div>
+        );
       default:
-        return null;
+        return (
+          <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
+            <p className="text-[16px]">
+              <b>note: </b>by letting anyone vote, you’ll need to set a <br />
+              charge-per-vote to prevent bots from voting.
+            </p>
+          </div>
+        );
     }
   };
 
@@ -115,7 +134,7 @@ const CreateVotingRequirements = () => {
       timestamp: Date.now(),
     });
 
-    onNextStep(results[0].allowList);
+    onNextStep({ records: results[0].allowList });
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlists processed successfully.");
     resetManualAllowlist();
@@ -133,7 +152,7 @@ const CreateVotingRequirements = () => {
       timestamp: Date.now(),
     });
     setError(step + 1, { step: step + 1, message: "" });
-    onNextStep(allowList);
+    onNextStep({ records: allowList });
     toastSuccess("allowlist processed successfully.");
     resetManualAllowlist();
     terminateWorker(event.target as Worker);
@@ -155,6 +174,8 @@ const CreateVotingRequirements = () => {
   const validateInput = () => {
     const errors: Record<string, string | undefined> = {};
 
+    if (votingRequirementsOption.value === "anyone") return true;
+
     if (votingRequirements.tokenAddress === "" || addressRegex.test(votingRequirements.tokenAddress) === false) {
       errors.tokenAddressError = "Invalid token address";
     }
@@ -175,6 +196,10 @@ const CreateVotingRequirements = () => {
     let votingAllowlist: Record<string, number> | Error;
 
     toastLoading("processing your allowlist...", false);
+    setCharge({
+      ...charge,
+      voteType: VoteType.PerTransaction,
+    });
     try {
       const fetchMerkleData = type === "erc721" ? fetchNftHolders : fetchTokenHolders;
 
@@ -233,7 +258,37 @@ const CreateVotingRequirements = () => {
     if (!isValid) {
       return;
     }
+
+    if (votingRequirementsOption.value === "anyone") {
+      if (submittersAsVoters) {
+        setAllSubmissionMerkles(null);
+      }
+
+      setCharge({
+        ...charge,
+        voteType: VoteType.PerVote,
+      });
+      setAllVotingMerkles(null);
+      setBothAllowlists({});
+      setVotingAllowlistFields([]);
+      onNextStep({
+        records: {},
+        type: "anyone",
+      });
+
+      return;
+    }
     fetchRequirementsMerkleData(votingRequirementsOption.value);
+  };
+
+  const setAllVotingMerkles = (value: VotingMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "csv", "prefilled"];
+    keys.forEach(key => setVotingMerkle(key, value));
+  };
+
+  const setAllSubmissionMerkles = (value: SubmissionMerkle | null) => {
+    const keys: MerkleKey[] = ["manual", "csv", "prefilled"];
+    keys.forEach(key => setSubmissionMerkle(key, value));
   };
 
   const setBothSubmissionMerkles = (value: SubmissionMerkle | null) => {
@@ -266,6 +321,7 @@ const CreateVotingRequirements = () => {
           options={options}
           className="w-full md:w-[240px]"
           onChange={onRequirementChange}
+          onMenuStateChange={value => setIsDropdownOpen(value)}
         />
         {renderLayout()}
       </div>

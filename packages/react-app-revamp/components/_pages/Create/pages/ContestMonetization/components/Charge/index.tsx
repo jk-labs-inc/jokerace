@@ -2,11 +2,11 @@
 import { chains } from "@config/wagmi";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { VoteType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import ContestParamsChargePercentToCreator from "./components/PercentToCreator";
 import ContestParamsChargeSubmission from "./components/Submission";
 import ContestParamsChargeVote from "./components/Vote";
-import { VoteType } from "@hooks/useDeployContest/types";
 
 interface CreateContestChargeProps {
   isConnected: boolean;
@@ -18,10 +18,13 @@ interface CreateContestChargeProps {
 const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain, onError, onUnsupportedChain }) => {
   const chainUnitLabel = chains.find(c => c.name === chain)?.nativeCurrency.symbol;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain);
-  const { charge, minCharge, setCharge } = useDeployContestStore(state => state);
+  const { charge, minCharge, setCharge, votingRequirementsOption, votingMerkle } = useDeployContestStore(
+    state => state,
+  );
   const { minCostToPropose, minCostToVote } = minCharge;
   const [costToProposeError, setCostToProposeError] = useState("");
   const [costToVoteError, setCostToVoteError] = useState("");
+  const isAnyoneCanVote = Object.values(votingMerkle).every(value => value === null);
 
   if (isError) {
     onError?.(true);
@@ -131,6 +134,8 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
           costToVoteError={costToVoteError}
           onCostToVoteChange={handleCostToVoteChange}
           onVoteTypeChange={handleVoteTypeChange}
+          isAnyoneCanVote={isAnyoneCanVote}
+          votingRequirementsOption={votingRequirementsOption.value}
         />
       </div>
     </div>

@@ -35,8 +35,8 @@ export type SubmissionRequirements = {
 };
 
 export enum VoteType {
-  PerTransaction = "PerTransaction",
   PerVote = "PerVote",
+  PerTransaction = "PerTransaction",
 }
 
 export type Charge = {

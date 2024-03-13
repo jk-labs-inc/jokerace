@@ -3,7 +3,7 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
+import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { VotingFieldObject } from "../VotingAllowlist/components/CSVEditor";
 import VotingCSVFileUploader from "./components";
@@ -24,6 +24,8 @@ const CreateVotingCSVUploader = () => {
     submissionTypeOption,
     votingRequirements,
     setVotingRequirements,
+    setCharge,
+    charge,
   } = useDeployContestStore(state => state);
   const votingValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.csv)]);
@@ -121,7 +123,10 @@ const CreateVotingCSVUploader = () => {
     }
 
     toastLoading("Processing your allowlist...", false);
-
+    setCharge({
+      ...charge,
+      voteType: VoteType.PerTransaction,
+    });
     if (submittersAsVoters) {
       const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.csv).reduce(
         (acc, address) => {
