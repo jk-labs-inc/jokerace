@@ -211,7 +211,9 @@ abstract contract GovernorCountingSimple is Governor {
     {
         ProposalVote storage proposalvote = proposalVotesStructs[proposalId];
 
-        if (numVotes > (totalVotes - addressTotalCastVoteCounts[account])) revert NotEnoughVotesLeft();
+        if ((votingMerkleRoot != 0) && (numVotes > (totalVotes - addressTotalCastVoteCounts[account]))) {
+            revert NotEnoughVotesLeft();
+        }
 
         bool firstTimeVoting = (
             proposalvote.addressVoteCounts[account].forVotes == 0
