@@ -19,24 +19,12 @@ interface DialogModalVoteForProposalProps {
 
 export const DialogModalVoteForProposal: FC<DialogModalVoteForProposalProps> = ({ isOpen, setIsOpen, proposal }) => {
   const { downvotingAllowed, contestPrompt } = useContestStore(state => state);
-  const {
-    currentUserAvailableVotesAmount,
-    decreaseCurrentUserAvailableVotesAmount,
-    increaseCurrentUserTotalVotesCast,
-    increaseCurrentUserAvailableVotesAmount,
-    decreaseCurrentUserTotalVotesCast,
-  } = useUserStore(state => state);
+  const { currentUserAvailableVotesAmount } = useUserStore(state => state);
 
   const { castVotes, isSuccess } = useCastVotes();
 
   const onSubmitCastVotes = (amount: number, isUpvote: boolean) => {
-    decreaseCurrentUserAvailableVotesAmount(amount);
-    increaseCurrentUserTotalVotesCast(amount);
-
-    castVotes(amount, isUpvote).catch(error => {
-      increaseCurrentUserAvailableVotesAmount(amount);
-      decreaseCurrentUserTotalVotesCast(amount);
-    });
+    castVotes(amount, isUpvote);
   };
 
   useEffect(() => {

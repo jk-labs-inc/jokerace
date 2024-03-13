@@ -243,8 +243,14 @@ export function useUser() {
   /**
    * Update the amount of votes casted in this contest by the current user
    */
-  async function updateCurrentUserVotes() {
+  async function updateCurrentUserVotes(anyoneCanVote?: boolean) {
     setIsCurrentUserVoteQualificationLoading(true);
+
+    if (anyoneCanVote) {
+      await checkAnyoneCanVoteUserQualification();
+      return;
+    }
+
     const abi = await getContestContractVersion(address, chainId);
     if (!abi) {
       setIsCurrentUserVoteQualificationError(true);

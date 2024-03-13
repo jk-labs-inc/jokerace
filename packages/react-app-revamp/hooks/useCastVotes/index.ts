@@ -154,7 +154,7 @@ export function useCastVotes() {
         }
       }
 
-      await updateCurrentUserVotes();
+      await updateCurrentUserVotes(anyoneCanVote);
       fetchTotalVotesCast();
       refetchCurrentUserVotesOnProposal();
       setIsLoading(false);
