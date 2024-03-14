@@ -73,6 +73,11 @@ const useSearchNfts = (chain: string, query: string) => {
 
       if (contractResponse.ok) {
         const contract = await contractResponse.json();
+
+        if (contract.tokenType === "NOT_A_CONTRACT") {
+          return [];
+        }
+
         contracts = [
           {
             address: contract.address,

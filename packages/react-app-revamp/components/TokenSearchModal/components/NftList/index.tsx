@@ -24,7 +24,9 @@ const NftsSearchList: FC<NftsSearchListProps> = ({ selectedChain, searchValue, i
     return <p className="loadingDots font-sabo text-[14px] text-neutral-14 normal-case">loading NFT results</p>;
   }
 
-  if (!nfts) return null;
+  if (!nfts?.length) {
+    return <p className="text-[16px] text-neutral-14 font-sabo normal-case">NFT not found</p>;
+  }
 
   return (
     <div className={`flex flex-col gap-6 animate-appear`}>

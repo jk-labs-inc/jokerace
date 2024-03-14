@@ -78,12 +78,21 @@ async function fetchTokenListOrMetadata({
     }
 
     const alchemyData = await alchemyResponse.json();
+
     const tokenData: FilteredToken = {
       address: tokenIdentifier,
       name: alchemyData.result.name,
       symbol: alchemyData.result.symbol,
       logoURI: alchemyData.result.logo ? alchemyData.result.logo : "/contest/mona-lisa-moustache.png",
     };
+
+    if (tokenData.name === "" || tokenData.symbol === "") {
+      return {
+        tokens: [],
+        pagination: { totalLength: 0, hasMore: false, pageParam: 0 },
+      };
+    }
+
     return {
       tokens: [tokenData],
       pagination: {
