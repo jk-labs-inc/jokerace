@@ -3,7 +3,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
-import { useContestStore } from "@hooks/useContest/store";
 import useTotalVotesOnContest from "@hooks/useTotalVotes";
 import { useTotalVotesOnContestStore } from "@hooks/useTotalVotes/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
@@ -19,7 +18,6 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   submissionsCount,
 }) => {
   const asPath = useRouter().asPath;
-  const { anyoneCanVote } = useContestStore(state => state);
   const { address, chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
@@ -29,6 +27,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
     totalVotes,
     isLoading: isTotalVotesLoading,
     isError: isTotalVotesError,
+    isAnyoneCanVote,
   } = useTotalVotesOnContestStore(state => state);
   const { fetchTotalVotesCast, retry: retryTotalVotesCast } = useTotalVotesCastOnContest(address, chainId);
   const {
@@ -61,7 +60,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   };
 
   const renderTotalVotes = () => {
-    if (anyoneCanVote) return "unlimited";
+    if (isAnyoneCanVote) return "unlimited";
     if (isTotalVotesLoading)
       return <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />;
 

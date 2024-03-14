@@ -3,19 +3,21 @@ import { supabase } from "@config/supabase";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { getGasPrice, readContract } from "@wagmi/core";
+import { useContestStore } from "@hooks/useContest/store";
+import { getGasPrice, readContract, readContracts } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
 import { BigNumber, utils } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
-import { useAccount, useGasPrice } from "wagmi";
+import { useAccount } from "wagmi";
 import { useUserStore } from "./store";
 
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
+const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 export function useUser() {
-  const { charge } = useDeployContestStore(state => state);
+  const { setVotingMerkleRoot, setSubmissionsMerkleRoot, setAnyoneCanVote } = useContestStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
@@ -39,15 +41,11 @@ export function useUser() {
     setIsCurrentUserVoteQualificationError,
   } = useUserStore(state => state);
 
-  const checkIfCurrentUserQualifyToSubmit = async (
-    submissionMerkleRoot: string,
-    contestMaxNumberSubmissionsPerUser: number,
-  ) => {
+  const checkIfCurrentUserQualifyToSubmit = async () => {
     if (!userAddress) return;
     setIsCurrentUserSubmitQualificationLoading(true);
 
-    const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
-    const abi = await getContestContractVersion(address, chainId);
+    const { abi } = await getContestContractVersion(address, chainId);
 
     if (!abi) {
       setIsCurrentUserSubmitQualificationError(true);
@@ -57,9 +55,29 @@ export function useUser() {
 
     const contractConfig = {
       address: address as `0x${string}`,
-      abi: abi.abi as Abi,
+      abi: abi as Abi,
       chainId: chainId,
     };
+
+    const results = await readContracts(config, {
+      contracts: [
+        {
+          ...contractConfig,
+          functionName: "submissionMerkleRoot",
+        },
+        {
+          ...contractConfig,
+          functionName: "numAllowedProposalSubmissions",
+        },
+      ],
+    });
+
+    const submissionMerkleRoot = results[0].result as string;
+    const contestMaxNumberSubmissionsPerUser = Number(results[1].result);
+
+    const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
+
+    setSubmissionsMerkleRoot(submissionMerkleRoot);
 
     if (anyoneCanSubmit) {
       try {
@@ -137,14 +155,36 @@ export function useUser() {
   /**
    * Check if the current user qualify to vote for this contest
    */
-  async function checkIfCurrentUserQualifyToVote(anyoneCanVote?: boolean) {
+  async function checkIfCurrentUserQualifyToVote() {
     if (!userAddress) return;
 
     setIsCurrentUserVoteQualificationLoading(true);
 
-    if (anyoneCanVote) {
-      await checkAnyoneCanVoteUserQualification();
+    const { abi, version } = await getContestContractVersion(address, chainId);
+
+    if (!abi) {
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
       return;
+    }
+
+    const votingMerkleRoot = (await readContract(config, {
+      address: address as `0x${string}`,
+      abi: abi as Abi,
+      chainId: chainId,
+      functionName: "votingMerkleRoot",
+    })) as string;
+
+    const anyoneCanVote = votingMerkleRoot === EMPTY_ROOT;
+    setVotingMerkleRoot(votingMerkleRoot);
+    setAnyoneCanVote(anyoneCanVote);
+
+    if (compareVersions(version, ANYONE_CAN_VOTE_VERSION) >= 0) {
+      if (anyoneCanVote) {
+        await checkAnyoneCanVoteUserQualification();
+        return;
+      }
     }
 
     try {
@@ -210,13 +250,29 @@ export function useUser() {
 
   async function checkAnyoneCanVoteUserQualification() {
     if (!userAddress) return;
+
     try {
-      const [userBalance, gasPrice] = await Promise.all([
+      const { abi } = await getContestContractVersion(address, chainId);
+
+      if (!abi) {
+        setIsCurrentUserVoteQualificationError(true);
+        setIsCurrentUserVoteQualificationSuccess(false);
+        setIsCurrentUserVoteQualificationLoading(false);
+        return;
+      }
+
+      const [userBalance, gasPrice, costToVote] = await Promise.all([
         fetchUserBalance(userAddress, chainId),
         getGasPrice(config, { chainId }),
+        readContract(config, {
+          address: address as `0x${string}`,
+          abi: abi,
+          chainId: chainId,
+          functionName: "costToVote",
+        }) as any,
       ]);
 
-      const costToVoteBigNum = BigNumber.from(69000000000000);
+      const costToVoteBigNum = BigNumber.from(Number(costToVote));
       const userBalanceBigNum = BigNumber.from(userBalance.value);
       const currentGasPriceBigNum = BigNumber.from(gasPrice);
 
@@ -246,12 +302,7 @@ export function useUser() {
   async function updateCurrentUserVotes(anyoneCanVote?: boolean) {
     setIsCurrentUserVoteQualificationLoading(true);
 
-    if (anyoneCanVote) {
-      await checkAnyoneCanVoteUserQualification();
-      return;
-    }
-
-    const abi = await getContestContractVersion(address, chainId);
+    const { abi } = await getContestContractVersion(address, chainId);
     if (!abi) {
       setIsCurrentUserVoteQualificationError(true);
       setIsCurrentUserVoteQualificationSuccess(false);
@@ -259,10 +310,15 @@ export function useUser() {
       return;
     }
 
+    if (anyoneCanVote) {
+      await checkAnyoneCanVoteUserQualification();
+      return;
+    }
+
     try {
       const currentUserTotalVotesCastRaw = await readContract(config, {
         address: address as `0x${string}`,
-        abi: abi.abi as Abi,
+        abi: abi as Abi,
         functionName: "contestAddressTotalVotesCast",
         args: [userAddress],
       });

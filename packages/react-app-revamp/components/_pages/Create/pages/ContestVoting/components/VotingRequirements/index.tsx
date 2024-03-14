@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
@@ -12,6 +13,8 @@ import { useCallback, useEffect, useState } from "react";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
 import CreateVotingRequirementsTokenSettings from "./components/Token";
 import { steps } from "@components/_pages/Create";
+import { useAccount } from "wagmi";
+import useChargeDetails from "@hooks/useChargeDetails";
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -26,6 +29,7 @@ const options: Option[] = [
 ];
 
 const CreateVotingRequirements = () => {
+  const [votingDropdownRequirementsOptions, setVotingDropdownRequirementsOptions] = useState<Option[]>(options);
   const {
     step,
     submissionTypeOption,
@@ -41,6 +45,7 @@ const CreateVotingRequirements = () => {
     votingRequirementsOption,
     setCharge,
     charge,
+    minCharge,
     mobileStepTitle,
     resetMobileStepTitle,
     votingTab,
@@ -50,6 +55,13 @@ const CreateVotingRequirements = () => {
   const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { isConnected, chain } = useAccount();
+  const {
+    isError: isChargeDetailsError,
+    refetch: refetchChargeDetails,
+    isLoading: isChargeDetailsLoading,
+  } = useChargeDetails(chain?.name.toLowerCase() ?? "");
+  const { minCostToVote, minCostToPropose } = minCharge;
 
   const handleNextStepMobile = useCallback(() => {
     if (!mobileStepTitle || votingTab !== 0) return;
@@ -66,11 +78,31 @@ const CreateVotingRequirements = () => {
     handleNextStepMobile();
   }, [handleNextStepMobile]);
 
+  useEffect(() => {
+    if (isChargeDetailsLoading) return;
+
+    const updatedOptions = [...options];
+    const anyoneOptionIndex = updatedOptions.findIndex(option => option.value === "anyone");
+    const anyoneOption = updatedOptions[anyoneOptionIndex];
+
+    if (!isConnected || minCostToPropose === 0 || minCostToVote === 0) {
+      const modifiedAnyoneOption = { ...anyoneOption, disabled: true };
+      updatedOptions.splice(anyoneOptionIndex, 1);
+      updatedOptions.push(modifiedAnyoneOption);
+    } else {
+      const modifiedAnyoneOption = { ...anyoneOption, disabled: false };
+      updatedOptions[anyoneOptionIndex] = modifiedAnyoneOption;
+    }
+
+    setVotingDropdownRequirementsOptions(updatedOptions);
+    setVotingRequirementsOption(updatedOptions.find(option => !option.disabled) || updatedOptions[0]);
+  }, [isConnected, minCostToPropose, minCostToVote, isChargeDetailsLoading, setVotingRequirementsOption]);
+
   const onRequirementChange = (option: string) => {
     setInputError({});
     setVotingRequirementsOption({
       value: option,
-      label: options.find(o => o.value === option)?.label ?? "",
+      label: votingDropdownRequirementsOptions.find(o => o.value === option)?.label ?? "",
     });
     setVotingRequirements({
       ...votingRequirements,
@@ -335,14 +367,27 @@ const CreateVotingRequirements = () => {
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-4">
         <p className="text-[16px] font-bold text-neutral-11 uppercase">who can vote?</p>
-        <CreateDefaultDropdown
-          defaultOption={votingRequirementsOption}
-          options={options}
-          className="w-full md:w-[240px]"
-          onChange={onRequirementChange}
-          onMenuStateChange={value => setIsDropdownOpen(value)}
-        />
-        {renderLayout()}
+        {isChargeDetailsError ? (
+          <p className="text-[20px] text-negative-11 font-bold">
+            ruh roh, we couldn't load preset options for this chain!{" "}
+            <span className="underline cursor-pointer" onClick={refetchChargeDetails}>
+              please try again
+            </span>
+          </p>
+        ) : isChargeDetailsLoading ? (
+          <p className="loadingDots font-sabo text-[16px] text-neutral-9">Loading presets</p>
+        ) : (
+          <>
+            <CreateDefaultDropdown
+              defaultOption={votingRequirementsOption}
+              options={votingDropdownRequirementsOptions}
+              className="w-full md:w-[240px]"
+              onChange={onRequirementChange}
+              onMenuStateChange={value => setIsDropdownOpen(value)}
+            />
+            {renderLayout()}
+          </>
+        )}
       </div>
       <CreateNextButton step={step + 1} onClick={handleNextStep} />
     </div>
