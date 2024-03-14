@@ -4,6 +4,7 @@ import { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { BigNumber } from "ethers";
+import { formatEther } from "ethers/lib/utils";
 import moment from "moment";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
@@ -11,6 +12,9 @@ import ContestParamatersCSVSubmitters from "./components/CSV/Submitters";
 import ContestParamatersCSVVoters from "./components/CSV/Voters";
 import ContestParametersSubmissionRequirements from "./components/Requirements/Submission";
 import ContestParametersVotingRequirements from "./components/Requirements/Voting";
+import { extractPathSegments } from "@helpers/extractPath";
+import { useRouter } from "next/router";
+import { chains } from "@config/wagmi";
 
 const UNLIMITED_PROPOSALS_PER_USER = 1000000;
 
@@ -23,7 +27,12 @@ const ContestParameters = () => {
     votingRequirements,
     submissionMerkleRoot,
     votingMerkleRoot,
+    anyoneCanVote,
+    charge,
   } = useContestStore(state => state);
+  const asPath = useRouter().asPath;
+  const { chainName } = extractPathSegments(asPath);
+  const nativeCurrency = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency;
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const {
@@ -52,6 +61,18 @@ const ContestParameters = () => {
   const qualifyToVoteMessage = useMemo<string | JSX.Element>(() => {
     const canVote = currentUserAvailableVotesAmount > 0;
 
+    if (anyoneCanVote) {
+      return (
+        <p>
+          you have{" "}
+          <span className="font-bold">
+            {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"} ( 1
+            vote = {formatEther(charge?.type.costToVote ?? 0)} {nativeCurrency?.symbol})
+          </span>
+        </p>
+      );
+    }
+
     if (canVote) {
       return (
         <p>
@@ -66,7 +87,14 @@ const ContestParameters = () => {
       return "you're out of votes :(";
     }
     return "to vote, you must be on the allowlist";
-  }, [currentUserAvailableVotesAmount, currentUserTotalVotesAmount, votingRequirements]);
+  }, [
+    anyoneCanVote,
+    charge?.type.costToVote,
+    currentUserAvailableVotesAmount,
+    currentUserTotalVotesAmount,
+    nativeCurrency?.symbol,
+    votingRequirements,
+  ]);
 
   const walletNotConnected = (
     <>
@@ -126,8 +154,14 @@ const ContestParameters = () => {
         <p className="text-[24px] font-bold text-neutral-11">voting</p>
         <ul className="pl-4 text-[16px] font-bold">
           <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
-          <ContestParametersVotingRequirements />
-          <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
+          {anyoneCanVote ? (
+            <li className="list-disc">anyone can vote</li>
+          ) : (
+            <>
+              <ContestParametersVotingRequirements />
+              <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
+            </>
+          )}
         </ul>
       </div>
     </div>

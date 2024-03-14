@@ -1,21 +1,24 @@
 import { config } from "@config/wagmi";
-import { useContestStore } from "@hooks/useContest/store";
+import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContract } from "@wagmi/core";
 import { fetchDataFromBucket } from "lib/buckets";
+import { EMPTY_ROOT } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { Abi } from "viem";
 import { useTotalVotesOnContestStore } from "./store";
 
 const useTotalVotesOnContest = (address: string, chainId: number) => {
-  const { contestAbi: abi } = useContestStore(state => state);
-  const { setTotalVotes, setIsError, setIsLoading, setIsSuccess } = useTotalVotesOnContestStore(state => state);
+  const { setTotalVotes, setIsError, setIsLoading, setIsSuccess, setIsAnyoneCanVote } = useTotalVotesOnContestStore(
+    state => state,
+  );
 
   const calculateTotalVotes = (data: Recipient[]) => {
     return data.reduce((sum, vote) => sum + Number(vote.numVotes), 0);
   };
 
-  function getContractConfig() {
+  async function getContractConfig() {
     try {
+      const { abi } = await getContestContractVersion(address, chainId);
       if (!abi) {
         setIsError(true);
         setIsSuccess(false);
@@ -38,14 +41,13 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
 
   async function getVotingMerkleRoot() {
     try {
-      const contractConfig = getContractConfig();
+      const contractConfig = await getContractConfig();
 
       if (!contractConfig) return null;
 
       const votingMerkleRoot = (await readContract(config, {
         ...contractConfig,
         functionName: "votingMerkleRoot",
-        args: [],
       })) as string;
 
       return votingMerkleRoot;
@@ -67,6 +69,11 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
       if (!votingMerkleRoot) {
         setIsError(true);
         setIsLoading(false);
+        return;
+      }
+
+      if (votingMerkleRoot === EMPTY_ROOT) {
+        setIsAnyoneCanVote(true);
         return;
       }
 

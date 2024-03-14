@@ -1,12 +1,14 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { fetchChargeDetails } from "lib/monetization";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 const useChargeDetails = (chainName: string) => {
-  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, setMinCharge } = useDeployContestStore();
+  const { setCharge, setPrevChainRefInCharge, prevChainRefInCharge, setMinCharge, votingMerkle } =
+    useDeployContestStore();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
+  const isAnyoneCanVote = Object.values(votingMerkle).every(value => value === null);
 
   const fetchDetails = useCallback(async () => {
     setIsLoading(true);
@@ -26,7 +28,7 @@ const useChargeDetails = (chainName: string) => {
     if (details.isError) {
       setCharge({
         percentageToCreator: 50,
-        voteType: VoteType.PerTransaction,
+        voteType: isAnyoneCanVote ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
           costToPropose: 0,
           costToVote: 0,
@@ -49,7 +51,7 @@ const useChargeDetails = (chainName: string) => {
 
       setCharge({
         percentageToCreator: 50,
-        voteType: VoteType.PerTransaction,
+        voteType: isAnyoneCanVote ? VoteType.PerVote : VoteType.PerTransaction,
         type: {
           costToPropose: details.minCostToPropose,
           costToVote: details.minCostToVote,
@@ -59,7 +61,7 @@ const useChargeDetails = (chainName: string) => {
 
       setPrevChainRefInCharge(chainName);
     }
-  }, [chainName, prevChainRefInCharge, setCharge, setMinCharge, setPrevChainRefInCharge]);
+  }, [chainName, isAnyoneCanVote, prevChainRefInCharge, setCharge, setMinCharge, setPrevChainRefInCharge]);
 
   useEffect(() => {
     fetchDetails();

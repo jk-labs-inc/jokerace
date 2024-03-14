@@ -3,17 +3,29 @@ import { supabase } from "@config/supabase";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { readContract } from "@wagmi/core";
-import { BigNumber } from "ethers";
+import { useContestStore } from "@hooks/useContest/store";
+import { getGasPrice, readContract, readContracts } from "@wagmi/core";
+import { compareVersions } from "compare-versions";
+import { BigNumber, utils } from "ethers";
+import { fetchUserBalance } from "lib/fetchUserBalance";
 import { useRouter } from "next/router";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useUserStore } from "./store";
 
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
+const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 export function useUser() {
+  const { setVotingMerkleRoot, setSubmissionsMerkleRoot, setAnyoneCanVote } = useContestStore(state => state);
+  const { asPath } = useRouter();
+  const { chainName, address } = extractPathSegments(asPath);
+  const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,
+  )?.[0]?.id;
   const { address: userAddress } = useAccount();
+
   const {
     setCurrentUserQualifiedToSubmit,
     setCurrentUserAvailableVotesAmount,
@@ -28,22 +40,12 @@ export function useUser() {
     setIsCurrentUserVoteQualificationSuccess,
     setIsCurrentUserVoteQualificationError,
   } = useUserStore(state => state);
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
-  const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,
-  )?.[0]?.id;
 
-  const checkIfCurrentUserQualifyToSubmit = async (
-    submissionMerkleRoot: string,
-    contestMaxNumberSubmissionsPerUser: number,
-  ) => {
+  const checkIfCurrentUserQualifyToSubmit = async () => {
     if (!userAddress) return;
     setIsCurrentUserSubmitQualificationLoading(true);
 
-    const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
-    const abi = await getContestContractVersion(address, chainId);
+    const { abi } = await getContestContractVersion(address, chainId);
 
     if (!abi) {
       setIsCurrentUserSubmitQualificationError(true);
@@ -53,9 +55,29 @@ export function useUser() {
 
     const contractConfig = {
       address: address as `0x${string}`,
-      abi: abi.abi as Abi,
+      abi: abi as Abi,
       chainId: chainId,
     };
+
+    const results = await readContracts(config, {
+      contracts: [
+        {
+          ...contractConfig,
+          functionName: "submissionMerkleRoot",
+        },
+        {
+          ...contractConfig,
+          functionName: "numAllowedProposalSubmissions",
+        },
+      ],
+    });
+
+    const submissionMerkleRoot = results[0].result as string;
+    const contestMaxNumberSubmissionsPerUser = Number(results[1].result);
+
+    const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
+
+    setSubmissionsMerkleRoot(submissionMerkleRoot);
 
     if (anyoneCanSubmit) {
       try {
@@ -138,6 +160,33 @@ export function useUser() {
 
     setIsCurrentUserVoteQualificationLoading(true);
 
+    const { abi, version } = await getContestContractVersion(address, chainId);
+
+    if (!abi) {
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
+      return;
+    }
+
+    const votingMerkleRoot = (await readContract(config, {
+      address: address as `0x${string}`,
+      abi: abi as Abi,
+      chainId: chainId,
+      functionName: "votingMerkleRoot",
+    })) as string;
+
+    const anyoneCanVote = votingMerkleRoot === EMPTY_ROOT;
+    setVotingMerkleRoot(votingMerkleRoot);
+    setAnyoneCanVote(anyoneCanVote);
+
+    if (compareVersions(version, ANYONE_CAN_VOTE_VERSION) >= 0) {
+      if (anyoneCanVote) {
+        await checkAnyoneCanVoteUserQualification();
+        return;
+      }
+    }
+
     try {
       // Perform a lookup in the 'contest_participants_v3' table.
       const { data } = await supabase
@@ -199,12 +248,61 @@ export function useUser() {
     }
   }
 
+  async function checkAnyoneCanVoteUserQualification() {
+    if (!userAddress) return;
+
+    try {
+      const { abi } = await getContestContractVersion(address, chainId);
+
+      if (!abi) {
+        setIsCurrentUserVoteQualificationError(true);
+        setIsCurrentUserVoteQualificationSuccess(false);
+        setIsCurrentUserVoteQualificationLoading(false);
+        return;
+      }
+
+      const [userBalance, gasPrice, costToVote] = await Promise.all([
+        fetchUserBalance(userAddress, chainId),
+        getGasPrice(config, { chainId }),
+        readContract(config, {
+          address: address as `0x${string}`,
+          abi: abi,
+          chainId: chainId,
+          functionName: "costToVote",
+        }) as any,
+      ]);
+
+      const costToVoteBigNum = BigNumber.from(Number(costToVote));
+      const userBalanceBigNum = BigNumber.from(userBalance.value);
+      const currentGasPriceBigNum = BigNumber.from(gasPrice);
+
+      const totalCostBigNum = costToVoteBigNum.add(currentGasPriceBigNum);
+
+      const userVotesRaw = userBalanceBigNum.div(totalCostBigNum);
+
+      const userVotesFormatted = Number(utils.parseEther(userVotesRaw.toString())) / 1e18;
+
+      setCurrentUserTotalVotesAmount(userVotesFormatted);
+      setCurrentUserAvailableVotesAmount(userVotesFormatted);
+
+      setIsCurrentUserVoteQualificationSuccess(true);
+      setIsCurrentUserVoteQualificationLoading(false);
+      setIsCurrentUserVoteQualificationError(false);
+    } catch (error) {
+      console.error("Error in checkAnyoneCanVoteUserQualification:", error);
+      setIsCurrentUserVoteQualificationError(true);
+      setIsCurrentUserVoteQualificationSuccess(false);
+      setIsCurrentUserVoteQualificationLoading(false);
+    }
+  }
+
   /**
    * Update the amount of votes casted in this contest by the current user
    */
-  async function updateCurrentUserVotes() {
+  async function updateCurrentUserVotes(anyoneCanVote?: boolean) {
     setIsCurrentUserVoteQualificationLoading(true);
-    const abi = await getContestContractVersion(address, chainId);
+
+    const { abi } = await getContestContractVersion(address, chainId);
     if (!abi) {
       setIsCurrentUserVoteQualificationError(true);
       setIsCurrentUserVoteQualificationSuccess(false);
@@ -212,10 +310,15 @@ export function useUser() {
       return;
     }
 
+    if (anyoneCanVote) {
+      await checkAnyoneCanVoteUserQualification();
+      return;
+    }
+
     try {
       const currentUserTotalVotesCastRaw = await readContract(config, {
         address: address as `0x${string}`,
-        abi: abi.abi as Abi,
+        abi: abi as Abi,
         functionName: "contestAddressTotalVotesCast",
         args: [userAddress],
       });

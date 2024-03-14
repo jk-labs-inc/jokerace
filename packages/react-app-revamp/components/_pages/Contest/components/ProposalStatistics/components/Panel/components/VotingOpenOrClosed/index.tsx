@@ -17,8 +17,7 @@ interface ProposalStatisticsPanelVotingOpenOrClosedProps {
 const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotingOpenOrClosedProps> = ({
   submissionsCount,
 }) => {
-  const router = useRouter();
-  const asPath = router.asPath;
+  const asPath = useRouter().asPath;
   const { address, chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
@@ -28,6 +27,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
     totalVotes,
     isLoading: isTotalVotesLoading,
     isError: isTotalVotesError,
+    isAnyoneCanVote,
   } = useTotalVotesOnContestStore(state => state);
   const { fetchTotalVotesCast, retry: retryTotalVotesCast } = useTotalVotesCastOnContest(address, chainId);
   const {
@@ -60,6 +60,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   };
 
   const renderTotalVotes = () => {
+    if (isAnyoneCanVote) return "unlimited";
     if (isTotalVotesLoading)
       return <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />;
 

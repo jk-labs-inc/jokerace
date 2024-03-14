@@ -58,11 +58,9 @@ const LayoutViewContest = (props: any) => {
     rewards,
     isReadOnly,
     isRewardsLoading,
-    submissionMerkleRoot,
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
-  const { contestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
@@ -116,17 +114,12 @@ const LayoutViewContest = (props: any) => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (accountChanged) {
-        if (accountAddress === accountChanged) return;
-
-        await Promise.all([
-          checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
-          checkIfCurrentUserQualifyToVote(),
-        ]);
+        await Promise.all([checkIfCurrentUserQualifyToSubmit(), checkIfCurrentUserQualifyToVote()]);
       }
     };
 
     fetchUserData();
-  }, [accountChanged, accountAddress]);
+  }, [accountChanged]);
 
   useEffect(() => {
     fetchContestInfo();

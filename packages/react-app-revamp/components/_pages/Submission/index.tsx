@@ -35,21 +35,9 @@ const SubmissionPage: FC<SubmissionPageProps> = ({
   const { openConnectModal } = useConnectModal();
   const { castVotes } = useCastVotes();
   const { listProposalsIds } = useProposalStore(state => state);
-  const {
-    decreaseCurrentUserAvailableVotesAmount,
-    increaseCurrentUserAvailableVotesAmount,
-    increaseCurrentUserTotalVotesCast,
-    decreaseCurrentUserTotalVotesCast,
-  } = useUserStore(state => state);
 
   const handleCastVotes = (amount: number, isUpvote: boolean) => {
-    decreaseCurrentUserAvailableVotesAmount(amount);
-    increaseCurrentUserTotalVotesCast(amount);
-
-    castVotes(amount, isUpvote).catch(error => {
-      increaseCurrentUserAvailableVotesAmount(amount);
-      decreaseCurrentUserTotalVotesCast(amount);
-    });
+    castVotes(amount, isUpvote);
   };
 
   async function requestAccount() {

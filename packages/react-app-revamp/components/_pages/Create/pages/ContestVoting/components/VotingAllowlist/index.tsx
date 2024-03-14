@@ -4,7 +4,7 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
-import { SubmissionMerkle, VotingMerkle } from "@hooks/useDeployContest/types";
+import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { useCallback, useEffect } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
@@ -25,6 +25,8 @@ const CreateVotingAllowlist = () => {
     votingRequirements,
     setVotingRequirements,
     submissionTypeOption,
+    charge,
+    setCharge,
     mobileStepTitle,
     resetMobileStepTitle,
     votingTab,
@@ -138,6 +140,10 @@ const CreateVotingAllowlist = () => {
     }
 
     toastLoading("processing your allowlist...", false);
+    setCharge({
+      ...charge,
+      voteType: VoteType.PerTransaction,
+    });
     if (submittersAsVoters) {
       const submissionAllowlist: Record<string, number> = Object.keys(votingAllowlist.manual).reduce(
         (acc, address) => {
