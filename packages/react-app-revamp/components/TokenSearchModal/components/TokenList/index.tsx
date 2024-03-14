@@ -30,7 +30,9 @@ const TokenSearchList: FC<TokenSearchTokenListProps> = ({
     return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading token results</p>;
   }
 
-  if (!tokens.length) return null;
+  if (!tokens.length) {
+    return <p className="text-[16px] text-neutral-14 font-sabo uppercase">token not found</p>;
+  }
 
   return (
     <div className="flex flex-col gap-6 animate-appear">
