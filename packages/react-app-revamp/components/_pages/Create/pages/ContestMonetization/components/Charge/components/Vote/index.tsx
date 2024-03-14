@@ -56,7 +56,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                 ></div>
                 <div className={`flex flex-col ${isAnyoneCanVote ? "gap-1" : "gap-4"}`}>
                   <p className={`text-[20px] text-neutral-9 ${isAnyoneCanVote ? "opacity-50" : "opacity-100"}`}>
-                    a charge <i>each time</i> they vote (recommended)
+                    a charge <i>each time</i> they vote {isAnyoneCanVote ? "" : "(recommended)"}
                   </p>
                   {checked ? (
                     <CreateNumberInput

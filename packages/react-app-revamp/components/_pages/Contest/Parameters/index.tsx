@@ -62,19 +62,15 @@ const ContestParameters = () => {
     const canVote = currentUserAvailableVotesAmount > 0;
 
     if (anyoneCanVote) {
-      if (currentUserAvailableVotesAmount === 0) {
-        return <p>anyone can vote</p>;
-      } else {
-        return (
-          <p>
-            you have{" "}
-            <span className="font-bold">
-              {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"} ( 1
-              vote = {formatEther(charge?.type.costToVote ?? 0)} {nativeCurrency?.symbol})
-            </span>
-          </p>
-        );
-      }
+      return (
+        <p>
+          you have{" "}
+          <span className="font-bold">
+            {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"} ( 1
+            vote = {formatEther(charge?.type.costToVote ?? 0)} {nativeCurrency?.symbol})
+          </span>
+        </p>
+      );
     }
 
     if (canVote) {
@@ -96,6 +92,7 @@ const ContestParameters = () => {
     charge?.type.costToVote,
     currentUserAvailableVotesAmount,
     currentUserTotalVotesAmount,
+    nativeCurrency?.symbol,
     votingRequirements,
   ]);
 
@@ -157,7 +154,9 @@ const ContestParameters = () => {
         <p className="text-[24px] font-bold text-neutral-11">voting</p>
         <ul className="pl-4 text-[16px] font-bold">
           <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
-          {anyoneCanVote ? null : (
+          {anyoneCanVote ? (
+            <li className="list-disc">anyone can vote</li>
+          ) : (
             <>
               <ContestParametersVotingRequirements />
               <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
