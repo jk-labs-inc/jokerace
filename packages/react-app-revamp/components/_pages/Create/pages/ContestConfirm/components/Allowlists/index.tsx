@@ -10,6 +10,7 @@ import CreateContestConfirmLayout from "../Layout";
 import { SubmissionType, SubmissionTypeOption } from "@hooks/useDeployContest/store";
 import CreateContestConfirmSubmitters from "./components/Submitters";
 import CreateContestConfirmVoters from "./components/Voters";
+import { useMediaQuery } from "react-responsive";
 
 export type SubmissionMerkleAllowlists = {
   manual: SubmissionMerkle | null;
@@ -38,14 +39,14 @@ interface CreateContestConfirmAllowlistsProps {
 const CreateContestConfirmAllowlists: FC<CreateContestConfirmAllowlistsProps> = ({ allowlists, step, onClick }) => {
   const { submissionMerkle, votingMerkle, submissionRequirements, votingRequirements, submissionTypeOption } =
     allowlists;
-
   const [isHovered, setIsHovered] = useState(false);
+  const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
 
   return (
     <CreateContestConfirmLayout onClick={() => onClick?.(step)} onHover={value => setIsHovered(value)}>
       <div
         className={`flex flex-col gap-4 ${
-          isHovered ? "text-neutral-11" : "text-neutral-14"
+          isHovered || isMobileOrTablet ? "text-neutral-11" : "text-neutral-14"
         } transition-colors duration-300`}
       >
         <p className="text-[16px] font-bold">allowlists:</p>

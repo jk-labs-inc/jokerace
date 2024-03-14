@@ -23,6 +23,8 @@ import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
 import { arbitrumOne } from "./custom-chains/arbitrumOne";
 import { arthera } from "./custom-chains/arthera";
 import { artheraTestnet } from "./custom-chains/artheraTestnet";
+import { astarZkevm } from "./custom-chains/astarZkevm";
+import { astarZkevmTestnet } from "./custom-chains/astarZkevmTestnet";
 import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
@@ -34,7 +36,6 @@ import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
 import { degenChain } from "./custom-chains/degenChain";
-import { dymension } from "./custom-chains/dymension";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
@@ -49,6 +50,8 @@ import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { goerli } from "./custom-chains/goerli";
 import { holesky } from "./custom-chains/holesky";
+import { inEvm } from "./custom-chains/inEvm";
+import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
 import { kroma } from "./custom-chains/kroma";
 import { linea } from "./custom-chains/linea";
 import { lineaTestnet } from "./custom-chains/lineaTestnet";
@@ -62,6 +65,8 @@ import { mainnet } from "./custom-chains/mainnet";
 import { mantaPacific } from "./custom-chains/mantaPacific";
 import { mantle } from "./custom-chains/mantle";
 import { mantleTestnet } from "./custom-chains/mantleTestnet";
+import { merlin } from "./custom-chains/merlin";
+import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
@@ -95,6 +100,8 @@ import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
 import { x1Testnet } from "./custom-chains/x1Testnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
+import { zkFair } from "./custom-chains/zkFair";
+import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
 
 type ChainImages = {
@@ -153,7 +160,10 @@ export const chains: readonly [Chain, ...Chain[]] = [
   syndicateFrame,
   ancient8,
   blast,
-  dymension,
+  astarZkevm,
+  merlin,
+  zkFair,
+  inEvm,
   polygonTestnet,
   sepolia,
   goerli,
@@ -188,6 +198,10 @@ export const chains: readonly [Chain, ...Chain[]] = [
   morphTestnet,
   blastTestnet,
   ancient8Testnet,
+  astarZkevmTestnet,
+  merlinTestnet,
+  zkFairTestnet,
+  inEvmTestnet,
   mainnet,
 ];
 

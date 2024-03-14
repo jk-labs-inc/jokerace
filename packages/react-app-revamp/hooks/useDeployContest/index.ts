@@ -73,7 +73,7 @@ export function useDeployContest() {
         DeployedContestContract.bytecode,
         signer,
       );
-      const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}`;
+      const combinedPrompt = `${prompt.summarize}|${prompt.evaluateVoters}|${prompt.contactDetails ?? ""}`;
       const contestInfo = type + "|" + summary + "|" + combinedPrompt;
       const votingMerkle = votingMerkleData.manual || votingMerkleData.prefilled || votingMerkleData.csv;
       const submissionMerkle =
@@ -97,7 +97,7 @@ export function useDeployContest() {
         numAllowedProposalSubmissions: finalAllowedSubmissionsPerUser,
         maxProposalCount: finalMaxSubmissions,
         downvotingAllowed: advancedOptions.downvote ? 1 : 0,
-        sortingEnabled: advancedOptions.sorting ? 1 : 0,
+        sortingEnabled: !advancedOptions.downvote ? 1 : 0,
         rankLimit: advancedOptions.rankLimit,
         percentageToCreator: percentageToCreator,
         costToPropose: parseEther(chargeType.costToPropose.toString()),

@@ -80,10 +80,10 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
   const borderStyles = entriesError
     ? "border-negative-11 hover:border-negative-10"
     : isSuccess
-    ? "border-positive-11 hover:border-positive-9"
-    : isDragOver
-    ? "border-neutral-10"
-    : "border-neutral-10 hover:border-neutral-11";
+      ? "border-positive-11 hover:border-positive-9"
+      : isDragOver
+        ? "border-neutral-10"
+        : "border-neutral-10 hover:border-neutral-11";
 
   return (
     <div
@@ -91,7 +91,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
       onDragOver={handleDragOver}
       onDrop={handleDrop}
       onDragLeave={handleDragLeave}
-      className={`flex shadow-file-upload m-auto md:m-0 flex-col w-[328px] h-40 md:w-[520px] md:h-60 justify-center items-center gap-4 ${
+      className={`flex shadow-file-upload m-auto md:m-0 flex-col w-full h-40 md:w-[520px] md:h-60 justify-center items-center gap-4 ${
         type === "csv" ? "py-7" : "py-3"
       } px-10 border-2 border-dotted rounded-[25px] cursor-pointer transition-all duration-500 ease-in-out ${borderStyles}`}
     >

@@ -13,14 +13,15 @@ const MAX_LENGTH = 200;
 const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
   const { isV3 } = useContestStore(state => state);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [contestType, contestTitle, contestSummary, contestEvaluate] = prompt.split("|");
+  const [contestType, contestTitle, contestSummary, contestEvaluate, contestContactDetails] = prompt.split("|");
 
   const shouldDisplayReadMore = () => {
     if (!isV3) {
       return prompt.length > MAX_LENGTH;
     }
 
-    const combinedContentLength = contestSummary.length + (contestEvaluate?.length || 0);
+    const combinedContentLength =
+      contestSummary.length + (contestEvaluate?.length || 0) + (contestContactDetails?.length || 0);
     return combinedContentLength > MAX_LENGTH;
   };
 
@@ -40,6 +41,16 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
     return !!contestEvaluate && (isExpanded || contestSummary.length <= MAX_LENGTH);
   };
 
+  const getContactDetails = () => {
+    return contestContactDetails || "";
+  };
+
+  const shouldDisplayContactDetails = () => {
+    return (
+      !!contestContactDetails && (isExpanded || contestSummary.length + (contestEvaluate?.length || 0) <= MAX_LENGTH)
+    );
+  };
+
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -52,9 +63,11 @@ const ContestPromptPage: FC<ContestPromptPageProps> = ({ prompt }) => {
           contestType={contestType}
           summaryContent={getSummaryContent()}
           evaluateContent={getEvaluateContent()}
+          contactDetailsContent={getContactDetails()}
           isExpanded={isExpanded}
           displayReadMore={shouldDisplayReadMore()}
           shouldDisplayEvaluate={shouldDisplayEvaluate()}
+          shouldDisplayContactDetails={shouldDisplayContactDetails()}
           handleToggle={toggleExpand}
         />
       ) : (

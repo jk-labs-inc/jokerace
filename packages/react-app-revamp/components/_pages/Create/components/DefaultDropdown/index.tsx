@@ -1,6 +1,6 @@
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/outline";
-import { FC, Fragment, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 
 export interface Option {
   value: string;
@@ -24,6 +24,10 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
   onMenuStateChange,
 }) => {
   const [selectedOption, setSelectedOption] = useState<Option>(defaultOption);
+
+  useEffect(() => {
+    setSelectedOption(defaultOption);
+  }, [defaultOption]);
 
   const handleOptionChange = (option: Option) => {
     setSelectedOption(option);
