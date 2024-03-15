@@ -60,7 +60,6 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   };
 
   const renderTotalVotes = () => {
-    if (isAnyoneCanVote) return "unlimited";
     if (isTotalVotesLoading)
       return <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />;
 
@@ -82,7 +81,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
       </p>
       <span className="hidden md:block">&#8226;</span>
       <div className="flex gap-1 items-center text-[16px] text-neutral-11">
-        {renderTotalVotesCast()} out of {renderTotalVotes()} votes deployed in contest
+        {renderTotalVotesCast()} {isAnyoneCanVote ? "" : `out of ${renderTotalVotes()} `}votes deployed in contest
       </div>
     </div>
   );

@@ -8,9 +8,11 @@ import { BigNumber, ethers, utils } from "ethers";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 import { sortContests } from "./utils/sortContests";
+import { compareVersions } from "compare-versions";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
+const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 interface ContestReward {
   contestAddress: string;
@@ -127,8 +129,9 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
   const updatedContest = {
     ...contest,
     anyoneCanSubmit: anyoneCanSubmit,
+    anyoneCanVote: anyoneCanVote,
     qualifiedToSubmit: !anyoneCanSubmit ? participantData.can_submit : undefined,
-    qualifiedToVote: participantData.num_votes > 0,
+    qualifiedToVote: !anyoneCanVote ? participantData.num_votes > 0 : undefined,
   };
 
   return updatedContest;
