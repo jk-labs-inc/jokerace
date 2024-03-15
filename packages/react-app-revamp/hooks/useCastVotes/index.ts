@@ -59,11 +59,9 @@ export function useCastVotes() {
       return BigInt(charge.type.costToVote);
     }
 
-    const totalCost = amountOfVotes * charge.type.costToVote;
+    const totalCost = BigInt(amountOfVotes) * BigInt(charge.type.costToVote);
 
-    const totalCostBigInt = BigInt(totalCost);
-
-    return totalCostBigInt;
+    return totalCost;
   };
 
   const formatChargeAmount = (amount: number) => {
