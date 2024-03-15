@@ -13,6 +13,12 @@ export type Reward = {
   numberOfTokens: number;
 };
 
+export enum ErrorType {
+  RPC = "RPC",
+  CONTRACT = "CONTRACT",
+  IS_NOT_JOKERACE_CONTRACT = "IS_NOT_JOKERACE_CONTRACT",
+}
+
 export interface ContestState {
   contestName: string;
   contestPrompt: string;
@@ -23,7 +29,7 @@ export interface ContestState {
   votesOpen: Date;
   votesClose: Date;
   isLoading: boolean;
-  error: string;
+  error: ErrorType | null;
   isSuccess: boolean;
   isV3: boolean;
   contestMaxProposalCount: number;
@@ -57,7 +63,7 @@ export interface ContestState {
   setVotingRequirements: (votingRequirements: VotingRequirementsSchema | null) => void;
   setSubmissionRequirements: (submissionRequirements: VotingRequirementsSchema | null) => void;
   setIsLoading: (value: boolean) => void;
-  setError: (value: string) => void;
+  setError: (value: ErrorType | null) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
   setCharge: (charge: Charge | null) => void;
@@ -81,7 +87,7 @@ export const createContestStore = () =>
     votingMerkleRoot: "",
     rewards: null,
     isLoading: true,
-    error: "",
+    error: null,
     charge: null,
     isSuccess: false,
     contestMaxProposalCount: 0,

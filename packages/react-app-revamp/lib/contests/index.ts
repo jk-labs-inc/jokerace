@@ -491,3 +491,25 @@ export async function getUpcomingContests(
   }
   return { data: [], count: 0 };
 }
+
+export async function checkIfContestExists(address: string, networkName: string) {
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    try {
+      const { data, error } = await supabase
+        .from("contests_v3")
+        .select("address")
+        .eq("address", address)
+        .eq("network_name", networkName);
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data.length > 0;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+  return false;
+}

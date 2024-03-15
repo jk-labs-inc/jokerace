@@ -16,12 +16,12 @@ import { GetBalanceReturnType, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { utils } from "ethers";
-import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
+import { checkIfContestExists, fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { Abi } from "viem";
-import { useContestStore } from "./store";
+import { ErrorType, useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
 
@@ -93,8 +93,7 @@ export function useContest() {
       const { abi, version } = await getContestContractVersion(address, chainId);
 
       if (abi === null) {
-        const errorMessage = `RPC call failed`;
-        setError(errorMessage);
+        setError(ErrorType.RPC);
         setIsSuccess(false);
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
@@ -112,7 +111,7 @@ export function useContest() {
       setContestAbi(abi as Abi);
       return { contractConfig, version };
     } catch (e) {
-      setError(errorMessage);
+      setError(ErrorType.CONTRACT);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -204,7 +203,7 @@ export function useContest() {
       setCanUpdateVotesInRealTime(false);
     }
 
-    setError("");
+    setError(null);
     setIsSuccess(true);
     setIsLoading(false);
 
@@ -230,7 +229,7 @@ export function useContest() {
       ]);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
-      setError(errorMessage);
+      setError(ErrorType.CONTRACT);
       setIsLoading(false);
       setIsListProposalsLoading(false);
       setIsRewardsLoading(false);
@@ -269,7 +268,7 @@ export function useContest() {
         setContestPrompt(results[contracts.length - indexToCheck].result as string);
       }
 
-      setError("");
+      setError(null);
       setIsSuccess(true);
       setIsLoading(false);
 
@@ -282,7 +281,7 @@ export function useContest() {
       setIsListProposalsLoading(false);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
-      setError(errorMessage);
+      setError(ErrorType.CONTRACT);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -295,43 +294,56 @@ export function useContest() {
    */
   async function fetchContestInfo() {
     setIsLoading(true);
-    const result = await getContractConfig();
+    try {
+      const [abiResult, isContestFromJokerace] = await Promise.all([
+        getContractConfig(),
+        checkIfContestExists(addressFromUrl, chainFromUrl),
+      ]);
 
-    if (!result) {
-      setIsLoading(false);
-      return;
-    }
+      if (!abiResult) {
+        setIsLoading(false);
+        return;
+      }
 
-    const { contractConfig, version } = result;
+      if (!isContestFromJokerace) {
+        setError(ErrorType.IS_NOT_JOKERACE_CONTRACT);
+        setIsLoading(false);
+        return;
+      }
 
-    let contestRewardModuleAddress: string | undefined;
+      const { contractConfig, version } = abiResult;
 
-    if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
-      contestRewardModuleAddress = (await readContract(config, {
-        ...contractConfig,
-        functionName: "officialRewardsModule",
-        args: [],
-      })) as any;
-      if (contestRewardModuleAddress?.toString() == "0x0000000000000000000000000000000000000000") {
+      let contestRewardModuleAddress: string | undefined;
+
+      if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
+        contestRewardModuleAddress = (await readContract(config, {
+          ...contractConfig,
+          functionName: "officialRewardsModule",
+          args: [],
+        })) as any;
+        if (contestRewardModuleAddress?.toString() == "0x0000000000000000000000000000000000000000") {
+          setSupportsRewardsModule(false);
+          contestRewardModuleAddress = undefined;
+        } else {
+          setSupportsRewardsModule(true);
+          contestRewardModuleAddress = contestRewardModuleAddress?.toString();
+        }
+      } else {
         setSupportsRewardsModule(false);
         contestRewardModuleAddress = undefined;
-      } else {
-        setSupportsRewardsModule(true);
-        contestRewardModuleAddress = contestRewardModuleAddress?.toString();
       }
-    } else {
-      setSupportsRewardsModule(false);
-      contestRewardModuleAddress = undefined;
-    }
 
-    if (contestRewardModuleAddress) {
-      setIsRewardsLoading(true);
-    }
+      if (contestRewardModuleAddress) {
+        setIsRewardsLoading(true);
+      }
 
-    if (compareVersions(version, "3.0") == -1) {
-      await fetchV1ContestInfo(contractConfig, version);
-    } else {
-      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
+      if (compareVersions(version, "3.0") == -1) {
+        await fetchV1ContestInfo(contractConfig, version);
+      } else {
+        await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching data:", error);
     }
   }
 
