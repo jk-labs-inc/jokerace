@@ -1,6 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { Charge } from "@hooks/useDeployContest/types";
+import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { type GetBalanceReturnType } from "@wagmi/core";
 import { useRouter } from "next/router";
 import { FC } from "react";
@@ -29,7 +29,10 @@ const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({
   const chainUnitLabel = chains.find((c: { name: string }) => c.name === chainName)?.nativeCurrency.symbol;
   const chargeAmount = type === "propose" ? charge.type.costToPropose : charge.type.costToVote;
   const insufficientBalance = accountData.value < chargeAmount;
-  const insufficientBalanceForVotes = accountData.value < chargeAmount * (amountOfVotes ?? 1);
+  const insufficientBalanceForVotes =
+    charge.voteType === VoteType.PerVote
+      ? accountData.value < chargeAmount * (amountOfVotes ?? 1)
+      : accountData.value < chargeAmount;
   const entryChargeFormatted = formatEther(BigInt(chargeAmount));
   const entryChargeHalfFormatted = formatEther(BigInt(chargeAmount / 2));
   const commissionValue = charge.percentageToCreator > 0 ? entryChargeHalfFormatted : entryChargeFormatted;
