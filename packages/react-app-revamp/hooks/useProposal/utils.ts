@@ -1,4 +1,5 @@
 import { config } from "@config/wagmi";
+import { isContentTweet } from "@helpers/isContentTweet";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { readContract, readContracts } from "@wagmi/core";
 import { BigNumber, utils } from "ethers";
@@ -150,6 +151,7 @@ export function transformProposalData(
   const netVotesBigNumber = BigNumber.from(voteForBigInt).sub(voteAgainstBigInt);
   const netVotes = Number(utils.formatEther(netVotesBigNumber));
   const isContentImage = isUrlToImage(proposalData.description);
+  const tweet = isContentTweet(proposalData.description);
   const deletedCommentIdsSet = new Set(deletedCommentIds.map(id => id.toString()));
   const allCommentsIds = proposalCommentsIds.map(id => id.toString()).filter(id => !deletedCommentIdsSet.has(id));
 
@@ -157,6 +159,7 @@ export function transformProposalData(
     id: id.toString(),
     ...proposalData,
     isContentImage: isContentImage,
+    tweet: tweet,
     netVotes: netVotes,
     commentsCount: allCommentsIds.length,
   };

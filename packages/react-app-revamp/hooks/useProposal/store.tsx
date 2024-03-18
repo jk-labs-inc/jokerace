@@ -1,3 +1,4 @@
+import { Tweet } from "@helpers/isContentTweet";
 import { createContext, useContext, useRef } from "react";
 import { createStore, useStore } from "zustand";
 
@@ -10,6 +11,7 @@ export interface ProposalCore {
   isTied: boolean;
   netVotes: number;
   isContentImage: boolean;
+  tweet: Tweet;
   commentsCount: number;
 }
 
