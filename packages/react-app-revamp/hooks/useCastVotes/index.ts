@@ -55,13 +55,11 @@ export function useCastVotes() {
   const calculateChargeAmount = (amountOfVotes: number) => {
     if (!charge) return undefined;
 
-    const votesBigNumber = BigNumber.from(amountOfVotes);
-
     if (charge.voteType === VoteType.PerTransaction) {
-      return BigNumber.from(charge.type.costToVote);
+      return BigInt(charge.type.costToVote);
     }
 
-    const totalCost = votesBigNumber.mul(charge.type.costToVote);
+    const totalCost = BigInt(amountOfVotes) * BigInt(charge.type.costToVote);
 
     return totalCost;
   };
