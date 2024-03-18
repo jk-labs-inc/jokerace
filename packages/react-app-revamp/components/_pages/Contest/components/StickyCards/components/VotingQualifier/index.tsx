@@ -1,17 +1,17 @@
 /* eslint-disable react/no-unescaped-entities */
+import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import VotingQualifierMessage from "./components/VotingQualifierMessage";
-import { formatEther } from "ethers/lib/utils";
-import { useRouter } from "next/router";
-import { extractPathSegments } from "@helpers/extractPath";
-import { chains } from "@config/wagmi";
 
 const VotingContestQualifier = () => {
   const { anyoneCanVote, charge } = useContestStore(state => state);
@@ -26,7 +26,7 @@ const VotingContestQualifier = () => {
   const { contestStatus } = useContestStatusStore(state => state);
   const isReadOnly = useContestStore(state => state.isReadOnly);
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const costToVoteFormatted = formatEther(charge?.type.costToVote ?? 0);
+  const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
   const asPath = useRouter().asPath;
   const { chainName } = extractPathSegments(asPath);
   const nativeCurrency = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency;

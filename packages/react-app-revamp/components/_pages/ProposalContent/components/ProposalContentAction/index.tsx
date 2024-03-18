@@ -35,7 +35,7 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
     useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
   const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
-  const costToVoteFormatted = formatEther(charge?.type.costToVote ?? 0);
+  const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
   const nativeCurrency = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency;
   const zeroVotesOnAnyoneCanVote = currentUserTotalVotesAmount === 0 && anyoneCanVote;
 

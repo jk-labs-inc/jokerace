@@ -67,7 +67,7 @@ const ContestParameters = () => {
           you have{" "}
           <span className="font-bold">
             {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"} ( 1
-            vote = {formatEther(charge?.type.costToVote ?? 0)} {nativeCurrency?.symbol})
+            vote = {formatEther(BigInt(charge?.type.costToVote ?? 0))} {nativeCurrency?.symbol})
           </span>
         </p>
       );

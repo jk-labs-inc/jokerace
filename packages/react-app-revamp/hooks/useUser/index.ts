@@ -272,7 +272,7 @@ export function useUser() {
         }) as any,
       ]);
 
-      const costToVoteBigNum = BigNumber.from(Number(costToVote));
+      const costToVoteBigNum = BigNumber.from(costToVote);
       const userBalanceBigNum = BigNumber.from(userBalance.value);
       const currentGasPriceBigNum = BigNumber.from(gasPrice);
 
