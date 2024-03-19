@@ -7,10 +7,10 @@ export const useAccountChange = () => {
 
   useEffect(() => {
     const unwatch = watchAccount(config, {
-      onChange(data) {
-        if (!data.address) return;
+      onChange(account) {
+        if (!account.address) return;
 
-        setAccount(data.address);
+        setAccount(account.address);
       },
     });
 

@@ -1,11 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
 import ButtonV3, { ButtonSize, ButtonType } from "@components/UI/ButtonV3";
+import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import { formatEther } from "ethers/lib/utils";
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,7 +26,7 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
   const { openConnectModal } = useConnectModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { votesOpen } = useContestStore(state => state);
+  const { votesOpen, anyoneCanVote, charge } = useContestStore(state => state);
   const { isConnected } = useAccount();
   const formattedVotingOpen = moment(votesOpen);
   const contestStatus = useContestStatusStore(state => state.contestStatus);
@@ -33,6 +35,9 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
     useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;
   const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
+  const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
+  const nativeCurrency = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency;
+  const zeroVotesOnAnyoneCanVote = currentUserTotalVotesAmount === 0 && anyoneCanVote;
 
   switch (contestStatus) {
     case ContestStatus.ContestOpen:
@@ -85,6 +90,14 @@ const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingMo
             </ButtonV3>
           );
         }
+      }
+
+      if (zeroVotesOnAnyoneCanVote) {
+        return (
+          <p className="text-[16px] text-neutral-10 font-bold">
+            only wallets with at least {costToVoteFormatted} {nativeCurrency?.symbol} can play
+          </p>
+        );
       }
 
       if (outOfVotes) {

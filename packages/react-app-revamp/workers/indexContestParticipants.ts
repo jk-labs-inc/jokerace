@@ -11,24 +11,26 @@ interface EventData {
 self.onmessage = async (event: MessageEvent<EventData>) => {
   try {
     const { contestData, votingMerkle, submissionMerkle } = event.data;
+    const { networkName, contractAddress } = contestData;
 
     const submitters = submissionMerkle ? submissionMerkle.submitters : [];
-    const voterSet = new Set(votingMerkle.voters.map(voter => voter.address));
+    const voters = votingMerkle ? votingMerkle.voters : [];
     const submitterSet = new Set(submitters.map(submitter => submitter.address));
+    const voterSet = new Set(voters.map(voter => voter.address));
 
     // Combine voters and submitters, removing duplicates
     const allParticipants = Array.from(
-      new Set([...votingMerkle.voters.map(voter => voter.address), ...submitters.map(submitter => submitter.address)]),
+      new Set([...voters.map(voter => voter.address), ...submitters.map(submitter => submitter.address)]),
     );
 
     const everyoneCanSubmit = submitters.length === 0;
     await indexContestParticipantsV3(
-      contestData.contractAddress,
+      contractAddress,
       allParticipants,
       voterSet,
       submitterSet,
-      votingMerkle.voters,
-      contestData.networkName,
+      voters,
+      networkName,
       everyoneCanSubmit,
     );
 

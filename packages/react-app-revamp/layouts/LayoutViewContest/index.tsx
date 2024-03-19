@@ -21,7 +21,7 @@ import { RefreshIcon } from "@heroicons/react/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
-import { ContestWrapper, useContestStore } from "@hooks/useContest/store";
+import { ContestWrapper, ErrorType, useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
@@ -41,6 +41,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import { getLayout as getBaseLayout } from "./../LayoutBase";
+import LayoutViewContestError from "./components/Error";
 
 const LayoutViewContest = (props: any) => {
   const { asPath, pathname, reload } = useRouter();
@@ -58,16 +59,14 @@ const LayoutViewContest = (props: any) => {
     rewards,
     isReadOnly,
     isRewardsLoading,
-    submissionMerkleRoot,
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
-  const { contestMaxNumberSubmissionsPerUser } = useUserStore(state => state);
   const { setContestStatus } = useContestStatusStore(state => state);
   const { displayReloadBanner } = useContestEvents();
   const [tab, setTab] = useState<Tab>(Tab.Contest);
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error);
+  const bugReportLink = populateBugReportLink(url?.href ?? "", accountAddress ?? "", error ?? "");
 
   useAccountEffect({
     onConnect(data) {
@@ -116,17 +115,12 @@ const LayoutViewContest = (props: any) => {
   useEffect(() => {
     const fetchUserData = async () => {
       if (accountChanged) {
-        if (accountAddress === accountChanged) return;
-
-        await Promise.all([
-          checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
-          checkIfCurrentUserQualifyToVote(),
-        ]);
+        await Promise.all([checkIfCurrentUserQualifyToSubmit(), checkIfCurrentUserQualifyToVote()]);
       }
     };
 
     fetchUserData();
-  }, [accountChanged, accountAddress]);
+  }, [accountChanged]);
 
   useEffect(() => {
     fetchContestInfo();
@@ -158,34 +152,11 @@ const LayoutViewContest = (props: any) => {
   }, [tab]);
 
   if (error && !isLoading) {
-    if (error.includes("RPC")) {
-      return (
-        <div className="flex flex-col gap-6 m-auto animate-appear">
-          <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10 text-center">ruh-roh!</h1>
-          <p className="text-[16px] font-bold text-neutral-11 text-center">
-            it looks like we can’t connect to the chain to load this contest—please check the link as well as any
-            malware blockers you have installed, or try on another browser or device. <br />
-            if that doesn’t work,{" "}
-            <a href={bugReportLink} target="no_blank" className="text-primary-10">
-              please file a bug report so we can look into this
-            </a>
-          </p>
-        </div>
-      );
-    } else {
-      return (
-        <div className="flex flex-col gap-6 m-auto animate-appear">
-          <h1 className="text-[40px] lg:text-[40px] font-sabo text-negative-10 text-center">ruh-roh!</h1>
-          <p className="text-[16px] font-bold text-neutral-11 text-center">
-            we were unable to fetch this contest — please check url to make sure it's accurate <i>or</i> search for
-            contests{" "}
-            <Link href={ROUTE_VIEW_CONTESTS} className="text-primary-10">
-              here
-            </Link>
-          </p>
-        </div>
-      );
-    }
+    return <LayoutViewContestError error={error} bugReportLink={bugReportLink} />;
+  }
+
+  if (isLoading) {
+    return <Loader>Loading contest info...</Loader>;
   }
 
   return (
@@ -195,14 +166,6 @@ const LayoutViewContest = (props: any) => {
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
         }`}
       >
-        {isLoading && (
-          <div className="animate-appear">
-            <Loader scale="page" classNameText="font-sabo">
-              Loading contest info...
-            </Loader>
-          </div>
-        )}
-
         {isReadOnly && !isLoading && (
           <div className="w-full bg-true-black text-[16px] text-center flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 px-4 items-center shadow-timer-container">
             <div className="flex flex-col text-start">

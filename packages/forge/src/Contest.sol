@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.19;
 
-import "./governance/Governor.sol";
 import "./governance/extensions/GovernorCountingSimple.sol";
 import "./governance/extensions/GovernorModuleRegistry.sol";
 import "./governance/extensions/GovernorEngagement.sol";
-import "./governance/utils/GovernorSorting.sol";
 
 contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
     error SortingAndDownvotingCannotBothBeEnabled();
+    error PayPerVoteMustBeEnabledForAnyoneCanVote();
 
     constructor(
         string memory _name,
@@ -23,6 +22,9 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
     {
         if (_constructorIntArgs.sortingEnabled == 1 && _constructorIntArgs.downvotingAllowed == 1) {
             revert SortingAndDownvotingCannotBothBeEnabled();
+        }
+        if (_votingMerkleRoot == 0 && _constructorIntArgs.payPerVote == 0) {
+            revert PayPerVoteMustBeEnabledForAnyoneCanVote();
         }
     }
 }
