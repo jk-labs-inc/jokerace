@@ -37,7 +37,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
     if (percentageToCreator === 50) {
       return "all fees split 50/50 with JokeRace";
     } else {
-      return `all fees goes to JokeRace`;
+      return `all fees go to JokeRace`;
     }
   };
 
