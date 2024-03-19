@@ -1,7 +1,7 @@
 import CreateFlow from "@components/_pages/Create";
 import { ContractFactoryWrapper } from "@hooks/useContractFactory";
 import { RewardsWrapper } from "@hooks/useRewards/store";
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { NextPage } from "next";
 import Head from "next/head";
 
 const Page: NextPage = () => {
@@ -22,14 +22,3 @@ const Page: NextPage = () => {
 };
 
 export default Page;
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  const cookie = req?.headers.cookie || "";
-
-  return {
-    props: {
-      cookie,
-    },
-  };
-};

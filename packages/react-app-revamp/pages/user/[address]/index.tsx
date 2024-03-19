@@ -5,7 +5,7 @@ import useContestSortOptions from "@hooks/useSortOptions";
 import LayoutUser from "@layouts/LayoutUser";
 import { useQuery } from "@tanstack/react-query";
 import { getRewards, getUserContests, ITEMS_PER_PAGE } from "lib/contests";
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -105,23 +105,22 @@ const Page: NextPage = (props: UserPageProps) => {
   );
 };
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req, params } = ctx;
-  const pathAddress = Array.isArray(params?.address) ? params?.address[0] : params?.address;
-  const cookie = req?.headers.cookie || "";
+export async function getStaticPaths() {
+  return { paths: [], fallback: true };
+}
 
-  const addressProps = await getAddressProps(pathAddress ?? "");
+export async function getStaticProps({ params }: any) {
+  const { address: pathAddress } = params;
+
+  const addressProps = await getAddressProps(pathAddress);
 
   if (addressProps.notFound) {
     return { notFound: true };
   }
 
   return {
-    props: {
-      address: addressProps.address,
-      cookie,
-    },
+    props: addressProps,
   };
-};
+}
 
 export default Page;
