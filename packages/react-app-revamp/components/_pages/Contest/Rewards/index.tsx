@@ -74,10 +74,10 @@ const ContestRewards = () => {
     );
   }
 
-  if (isContractVersionLoading) return <Loader scale="page" />;
+  if (isContractVersionLoading) return <Loader />;
 
   if (!supportsRewardsModule && creator) {
-    if (isRewardsPoolDeploying) return <Loader scale="page">Deploying rewards pool...</Loader>;
+    if (isRewardsPoolDeploying) return <Loader>Deploying rewards pool...</Loader>;
 
     if (version) {
       if (compareVersions(version, "4.1") == -1) {
@@ -137,11 +137,7 @@ const ContestRewards = () => {
     <>
       {!isLoading && isSuccess && (
         <>
-          {rewardsStore.isLoading && (
-            <>
-              <Loader scale="page">Loading rewards...</Loader>
-            </>
-          )}
+          {rewardsStore.isLoading && <Loader>Loading rewards</Loader>}
           {rewardsStore.isSuccess && (
             <div className="flex flex-col gap-16">
               <div className="flex flex-col gap-12">

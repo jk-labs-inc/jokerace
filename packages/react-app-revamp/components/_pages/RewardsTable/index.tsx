@@ -32,7 +32,9 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   return (
     <>
       {isLoading && !data ? (
-        <Loader scale="component">Loading rewards data for rank {`${payee}`}...</Loader>
+        <p className="loadingDots list-disc font-sabo text-[14px] text-neutral-14">
+          Loading rewards data for rank {`${payee}`}
+        </p>
       ) : (
         <>
           {isError && "Something went wrong, please reload the page."}
