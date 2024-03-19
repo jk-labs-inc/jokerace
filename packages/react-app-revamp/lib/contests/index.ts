@@ -8,9 +8,11 @@ import { BigNumber, ethers, utils } from "ethers";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 import { sortContests } from "./utils/sortContests";
+import { compareVersions } from "compare-versions";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
+const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 interface ContestReward {
   contestAddress: string;
@@ -112,9 +114,11 @@ const fetchParticipantData = async (contestAddress: string, userAddress: string,
   return data && data.length > 0 ? data[0] : null;
 };
 
+//TODO: update contests with anyone can vote
 const updateContestWithUserQualifications = async (contest: any, userAddress: string) => {
-  const { submissionMerkleRoot, network_name, address } = contest;
+  const { submissionMerkleRoot, network_name, address, votingMerkleRoot } = contest;
   const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
+  const anyoneCanVote = votingMerkleRoot === EMPTY_ROOT;
 
   let participantData = { can_submit: anyoneCanSubmit, num_votes: 0 };
   if (userAddress) {
@@ -125,8 +129,9 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
   const updatedContest = {
     ...contest,
     anyoneCanSubmit: anyoneCanSubmit,
+    anyoneCanVote: anyoneCanVote,
     qualifiedToSubmit: !anyoneCanSubmit ? participantData.can_submit : undefined,
-    qualifiedToVote: participantData.num_votes > 0,
+    qualifiedToVote: !anyoneCanVote ? participantData.num_votes > 0 : undefined,
   };
 
   return updatedContest;
@@ -488,4 +493,26 @@ export async function getUpcomingContests(
     }
   }
   return { data: [], count: 0 };
+}
+
+export async function checkIfContestExists(address: string, networkName: string) {
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    try {
+      const { data, error } = await supabase
+        .from("contests_v3")
+        .select("address")
+        .eq("address", address)
+        .eq("network_name", networkName);
+      if (error) {
+        throw new Error(error.message);
+      }
+      return data.length > 0;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  }
+  return false;
 }

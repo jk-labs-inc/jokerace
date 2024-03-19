@@ -10,6 +10,11 @@ interface CreateContestConfirmVotersProps {
 
 const CreateContestConfirmVoters: FC<CreateContestConfirmVotersProps> = ({ votingMerkle, votingRequirements }) => {
   const isVotingMerklePrefilled = votingMerkle.prefilled;
+  const anyoneCanVote = votingMerkle.csv === null && votingMerkle.manual === null && votingMerkle.prefilled === null;
+
+  if (anyoneCanVote) {
+    return <li className="text-[16px] list-disc">anyone can vote</li>;
+  }
 
   if (!isVotingMerklePrefilled) {
     return <li className="text-[16px] list-disc">custom allowlist for voters</li>;

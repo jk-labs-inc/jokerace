@@ -73,7 +73,7 @@ const useContestInfo = ({
         return "text-neutral-9";
       }
 
-      if (contest.qualifiedToVote || !address) {
+      if (contest.qualifiedToVote || !address || contest.anyoneCanVote) {
         if (votingStatus === "Voting is open") {
           return "text-positive-11";
         }
@@ -93,6 +93,7 @@ const useContestInfo = ({
     contest.qualifiedToVote,
     address,
     contest.anyoneCanSubmit,
+    contest.anyoneCanVote,
   ]);
 
   useEffect(() => {
@@ -170,6 +171,10 @@ const useContestInfo = ({
         );
       }
 
+      if (contest.anyoneCanVote) {
+        return "for everyone";
+      }
+
       if (!address) {
         if (votingRequirement) {
           if (isVotingRequirementTokenLoading) {
@@ -238,6 +243,7 @@ const useContestInfo = ({
     votingRequirementToken,
     isSubmissionRequirementTokenLoading,
     isVotingRequirementTokenLoading,
+    contest.anyoneCanVote,
   ]);
 
   return { submissionClass, votingClass, submissionMessage, votingMessage };
