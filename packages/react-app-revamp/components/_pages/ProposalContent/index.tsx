@@ -93,7 +93,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
           )}
         </div>
       </Link>
-      <div className={`flex-shrink-0 ${canVote ? "px-7 md:px-14" : "px-14"}`}>
+      <div className={`flex-shrink-0 ${canVote || isProposalTweet ? "px-7 md:px-14" : "px-14"}`}>
         <div className={`flex flex-col md:flex-row items-center ${canVote ? "" : "border-t border-primary-2"}`}>
           <div className="flex items-center py-4 justify-between w-full md:w-1/2 text-[16px] font-bold">
             <ProposalContentAction proposalId={proposal.id} onVotingModalOpen={value => setIsVotingModalOpen(value)} />
