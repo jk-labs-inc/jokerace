@@ -188,6 +188,10 @@ const LayoutViewContest = (props: any) => {
     }
   }
 
+  if (isLoading) {
+    return <Loader>Loading contest info...</Loader>;
+  }
+
   return (
     <div className={`${isLoading ? "pointer-events-none" : ""} w-full px-6 md:px-7 lg:w-[750px] mx-auto`}>
       <div
@@ -195,14 +199,6 @@ const LayoutViewContest = (props: any) => {
           pathname === ROUTE_CONTEST_PROPOSAL ? "md:col-span-12" : "md:col-span-9"
         }`}
       >
-        {isLoading && (
-          <div className="animate-appear">
-            <Loader scale="page" classNameText="font-sabo">
-              Loading contest info...
-            </Loader>
-          </div>
-        )}
-
         {isReadOnly && !isLoading && (
           <div className="w-full bg-true-black text-[16px] text-center flex flex-col gap-1 border border-neutral-11 rounded-[10px] py-2 px-4 items-center shadow-timer-container">
             <div className="flex flex-col text-start">

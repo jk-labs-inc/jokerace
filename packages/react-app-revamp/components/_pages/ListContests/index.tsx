@@ -113,7 +113,6 @@ export const ListContests: FC<ListContestsProps> = ({
                   <span className="text-[20px] font-bold font-sabo">{customTitle}</span>
                 ) : (
                   <span aria-hidden="true">
-                    🃏
                     <span className={`pis-1ex text-[20px]`}>{contestData?.count} contests</span>
                   </span>
                 )}
