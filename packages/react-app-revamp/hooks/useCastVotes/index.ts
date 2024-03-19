@@ -22,7 +22,7 @@ import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
 
 export function useCastVotes() {
-  const { canUpdateVotesInRealTime, charge, contestAbi: abi } = useContestStore(state => state);
+  const { canUpdateVotesInRealTime, charge, contestAbi: abi, anyoneCanVote } = useContestStore(state => state);
   const { updateProposal } = useProposal();
   const { listProposalsData } = useProposalStore(state => state);
   const {
@@ -78,6 +78,7 @@ export function useCastVotes() {
     try {
       const { proofs, isVerified } = await getProofs(userAddress ?? "", "vote", currentUserTotalVotesAmount.toString());
       const costToVote = calculateChargeAmount(amountOfVotes);
+      const totalVoteAmount = anyoneCanVote ? 0 : parseUnits(currentUserTotalVotesAmount.toString());
 
       let hash: `0x${string}`;
 
@@ -86,13 +87,7 @@ export function useCastVotes() {
           address: contestAddress as `0x${string}`,
           abi: abi ? abi : DeployedContestContract.abi,
           functionName: "castVote",
-          args: [
-            pickedProposal,
-            isPositive ? 0 : 1,
-            parseUnits(currentUserTotalVotesAmount.toString()),
-            parseUnits(amountOfVotes.toString()),
-            proofs,
-          ],
+          args: [pickedProposal, isPositive ? 0 : 1, totalVoteAmount, parseUnits(amountOfVotes.toString()), proofs],
           //@ts-ignore
           value: costToVote,
         });
@@ -157,7 +152,7 @@ export function useCastVotes() {
         }
       }
 
-      await updateCurrentUserVotes();
+      await updateCurrentUserVotes(anyoneCanVote);
       fetchTotalVotesCast();
       refetchCurrentUserVotesOnProposal();
       setIsLoading(false);

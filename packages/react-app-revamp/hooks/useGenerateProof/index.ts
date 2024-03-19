@@ -22,7 +22,7 @@ const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000
 export function useGenerateProof() {
   const { asPath } = useRouter();
   const { chainName, address: contestAddress } = extractPathSegments(asPath);
-  const { contestAbi: abi } = useContestStore(state => state);
+  const { contestAbi: abi, anyoneCanVote } = useContestStore(state => state);
   const { connector } = useAccount();
   const [chainId, setChainId] = useState(
     chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]?.id,
@@ -101,7 +101,12 @@ export function useGenerateProof() {
           ...contractConfig,
           functionName: "votingMerkleRoot",
         })) as string;
-        return await generateProofs(address, numVotes, votingMerkleRoot);
+
+        if (votingMerkleRoot === EMPTY_ROOT && anyoneCanVote) {
+          return [];
+        } else {
+          return await generateProofs(address, numVotes, votingMerkleRoot);
+        }
     }
   }
 

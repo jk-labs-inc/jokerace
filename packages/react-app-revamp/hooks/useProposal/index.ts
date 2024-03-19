@@ -51,7 +51,6 @@ export function useProposal() {
   } = useProposalStore(state => state);
   const { asPath } = useRouter();
   const { chainName, address } = extractPathSegments(asPath);
-  const { setIsLoading, setIsSuccess, setError } = useContestStore(state => state);
   const { chain } = useAccount();
   const { error, handleError } = useError();
   const chainId = chains.filter(
@@ -235,11 +234,8 @@ export function useProposal() {
       if (paginationChunks.length) fetchProposalsPage(0, paginationChunks[0], paginationChunks.length, mappedProposals);
     } catch (e) {
       handleError(e, "Something went wrong while getting proposal ids.");
-      setError(error);
-      setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
-      setIsLoading(false);
     }
   }
 

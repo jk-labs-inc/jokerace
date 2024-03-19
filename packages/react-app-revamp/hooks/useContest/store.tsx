@@ -13,6 +13,12 @@ export type Reward = {
   numberOfTokens: number;
 };
 
+export enum ErrorType {
+  RPC = "RPC",
+  CONTRACT = "CONTRACT",
+  IS_NOT_JOKERACE_CONTRACT = "IS_NOT_JOKERACE_CONTRACT",
+}
+
 export interface ContestState {
   contestName: string;
   contestPrompt: string;
@@ -23,7 +29,7 @@ export interface ContestState {
   votesOpen: Date;
   votesClose: Date;
   isLoading: boolean;
-  error: string;
+  error: ErrorType | null;
   isSuccess: boolean;
   isV3: boolean;
   contestMaxProposalCount: number;
@@ -39,6 +45,7 @@ export interface ContestState {
   rewards: Reward | null;
   isReadOnly: boolean;
   isRewardsLoading: boolean;
+  anyoneCanVote: boolean;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -56,13 +63,14 @@ export interface ContestState {
   setVotingRequirements: (votingRequirements: VotingRequirementsSchema | null) => void;
   setSubmissionRequirements: (submissionRequirements: VotingRequirementsSchema | null) => void;
   setIsLoading: (value: boolean) => void;
-  setError: (value: string) => void;
+  setError: (value: ErrorType | null) => void;
   setIsSuccess: (value: boolean) => void;
   setIsV3: (value: boolean) => void;
   setCharge: (charge: Charge | null) => void;
   setIsReadOnly: (value: boolean) => void;
   setIsRewardsLoading: (value: boolean) => void;
   setContestAbi: (abi: Abi) => void;
+  setAnyoneCanVote: (value: boolean) => void;
 }
 
 export const createContestStore = () =>
@@ -79,7 +87,7 @@ export const createContestStore = () =>
     votingMerkleRoot: "",
     rewards: null,
     isLoading: true,
-    error: "",
+    error: null,
     charge: null,
     isSuccess: false,
     contestMaxProposalCount: 0,
@@ -92,6 +100,7 @@ export const createContestStore = () =>
     isReadOnly: false,
     supportsRewardsModule: false,
     isRewardsLoading: false,
+    anyoneCanVote: false,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
@@ -116,6 +125,7 @@ export const createContestStore = () =>
     setIsRewardsLoading: value => set({ isRewardsLoading: value }),
     setCharge: charge => set({ charge: charge }),
     setContestAbi: abi => set({ contestAbi: abi }),
+    setAnyoneCanVote: value => set({ anyoneCanVote: value }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

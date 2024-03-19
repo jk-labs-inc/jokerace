@@ -24,6 +24,8 @@ interface SpecialStepConditions {
   submissionRequirementsOption: Option;
   submissionTypeOption: SubmissionTypeOption;
   votingMerkle: any;
+  votingRequirementsOption: Option;
+  votingTab: number;
   submissionTab: number;
 }
 
@@ -86,8 +88,10 @@ const votingMerkleValidation = (allowList: Record<string, number>) => {
   return "";
 };
 
-const votingRequirementsValidation = (allowList: Record<string, number>) => {
-  if (!allowList || Object.keys(allowList).length === 0) {
+const votingRequirementsValidation = (allowList: { records: Record<string, number>; type?: string }) => {
+  if (allowList.type === "anyone") return "";
+
+  if (!allowList || Object.keys(allowList.records).length === 0) {
     return "Merkle tree is empty";
   }
   return "";
@@ -214,6 +218,8 @@ const handleSpecialStepConditions = (
     submissionTab,
     submissionMerkle,
     votingMerkle,
+    votingRequirementsOption,
+    votingTab,
   }: SpecialStepConditions,
 ) => {
   if (currentStep === 5) {
@@ -227,6 +233,9 @@ const handleSpecialStepConditions = (
   }
 
   if (currentStep === 6) {
+    if (votingRequirementsOption.value === "anyone" && votingTab === 0) {
+      return true;
+    }
     return Object.values(votingMerkle).some(merkle => merkle !== null);
   }
 

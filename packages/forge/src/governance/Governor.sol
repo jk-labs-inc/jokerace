@@ -81,7 +81,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
-    string private constant _VERSION = "4.26"; // Private as to not clutter the ABI
+    string private constant _VERSION = "4.27"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -449,7 +449,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
      */
     function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public {
-        if (!addressTotalVotesVerified[account]) {
+        if (votingMerkleRoot != 0 && !addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
             addressTotalVotesVerified[account] = true;
@@ -466,13 +466,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
-        address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
-        verifyVoter(voter, totalVotes, proof);
+        verifyVoter(msg.sender, totalVotes, proof);
 
         _distributeCost(actionCost);
 
-        return _castVote(proposalId, voter, support, numVotes);
+        return _castVote(proposalId, msg.sender, support, numVotes);
     }
 
     /**
@@ -485,13 +484,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
-        address voter = msg.sender;
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
-        if (!addressTotalVotesVerified[voter]) revert NeedToVoteWithProofFirst();
+        if (votingMerkleRoot != 0 && !addressTotalVotesVerified[msg.sender]) revert NeedToVoteWithProofFirst();
 
         _distributeCost(actionCost);
 
-        return _castVote(proposalId, voter, support, numVotes);
+        return _castVote(proposalId, msg.sender, support, numVotes);
     }
 
     /**

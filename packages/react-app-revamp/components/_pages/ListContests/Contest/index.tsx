@@ -208,7 +208,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
         return "text-negative-10";
       }
     } else if (votingTimeLeft.value) {
-      if (contest.qualifiedToVote) {
+      if (contest.qualifiedToVote || contest.anyoneCanVote) {
         return "text-positive-11";
       } else {
         return "text-negative-10";
@@ -243,7 +243,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
         return "you don't qualify :(";
       }
     } else if (votingTimeLeft.value) {
-      if (contest.qualifiedToVote) {
+      if (contest.qualifiedToVote || contest.anyoneCanVote) {
         return (
           <span className="flex items-center gap-1">
             you qualify! <CheckmarkIcon />
@@ -273,7 +273,7 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
       return "you qualify to submit & vote";
     } else if (contest.qualifiedToSubmit || contest.anyoneCanSubmit) {
       return "you qualify to submit but not vote";
-    } else if (contest.qualifiedToVote) {
+    } else if (contest.qualifiedToVote || contest.anyoneCanVote) {
       return "you don't qualify to submit but you can vote";
     } else {
       return "you don't qualify to submit or vote";

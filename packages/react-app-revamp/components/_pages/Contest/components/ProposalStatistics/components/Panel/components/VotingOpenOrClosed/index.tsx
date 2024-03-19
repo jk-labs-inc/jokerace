@@ -17,8 +17,7 @@ interface ProposalStatisticsPanelVotingOpenOrClosedProps {
 const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotingOpenOrClosedProps> = ({
   submissionsCount,
 }) => {
-  const router = useRouter();
-  const asPath = router.asPath;
+  const asPath = useRouter().asPath;
   const { address, chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
@@ -28,6 +27,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
     totalVotes,
     isLoading: isTotalVotesLoading,
     isError: isTotalVotesError,
+    isAnyoneCanVote,
   } = useTotalVotesOnContestStore(state => state);
   const { fetchTotalVotesCast, retry: retryTotalVotesCast } = useTotalVotesCastOnContest(address, chainId);
   const {
@@ -81,7 +81,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
       </p>
       <span className="hidden md:block">&#8226;</span>
       <div className="flex gap-1 items-center text-[16px] text-neutral-11">
-        {renderTotalVotesCast()} out of {renderTotalVotes()} votes deployed in contest
+        {renderTotalVotesCast()} {isAnyoneCanVote ? "" : `out of ${renderTotalVotes()} `}votes deployed in contest
       </div>
     </div>
   );

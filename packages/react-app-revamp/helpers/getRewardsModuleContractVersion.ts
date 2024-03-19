@@ -47,6 +47,7 @@ import AddCostToVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModul
 import RefactorCostDistroRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.24.refactorCostDistro.sol/RewardsModule.json";
 import PayPerVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.25.payPerVote.sol/RewardsModule.json";
 import CleanUpConstructorsRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.26.cleanUpConstructors.sol/RewardsModule.json";
+import AnyoneCanVoteRewards from "@contracts/bytecodeAndAbi/modules/RewardsModule.4.27.anyoneCanVote.sol/RewardsModule.json";
 import DeployedRewardsContract from "@contracts/bytecodeAndAbi/modules/RewardsModule.sol/RewardsModule.json";
 import { ethers } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -59,7 +60,9 @@ export async function getRewardsModuleContractVersion(address: string, chainId: 
   try {
     const version: string = await executeWithTimeout(MAX_TIME_TO_WAIT_FOR_RPC, contract.version());
 
-    if (version === "4.26") {
+    if (version === "4.27") {
+      return AnyoneCanVoteRewards.abi;
+    } else if (version === "4.26") {
       return CleanUpConstructorsRewards.abi;
     } else if (version === "4.25") {
       return PayPerVoteRewards.abi;

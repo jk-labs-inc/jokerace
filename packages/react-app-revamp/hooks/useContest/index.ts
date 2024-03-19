@@ -1,6 +1,5 @@
 import { chains, config } from "@config/wagmi";
 import { isAlchemyConfigured } from "@helpers/alchemy";
-import { Abi } from "viem";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
@@ -11,17 +10,18 @@ import { VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
-import useUser, { EMPTY_ROOT } from "@hooks/useUser";
+import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { GetBalanceReturnType, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { utils } from "ethers";
-import { fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
+import { checkIfContestExists, fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useContestStore } from "./store";
+import { Abi } from "viem";
+import { ErrorType, useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
 
@@ -63,8 +63,6 @@ export function useContest() {
     setContestAuthor,
     setContestMaxProposalCount,
     setIsV3,
-    setSubmissionsMerkleRoot,
-    setVotingMerkleRoot,
     setVotesClose,
     setVotesOpen,
     setRewards,
@@ -74,7 +72,6 @@ export function useContest() {
     setVotingRequirements,
     setContestAbi,
     setSubmissionRequirements,
-    setIsReadOnly,
     setIsRewardsLoading,
     setSortingEnabled,
   } = useContestStore(state => state);
@@ -96,8 +93,7 @@ export function useContest() {
       const { abi, version } = await getContestContractVersion(address, chainId);
 
       if (abi === null) {
-        const errorMessage = `RPC call failed`;
-        setError(errorMessage);
+        setError(ErrorType.RPC);
         setIsSuccess(false);
         setIsListProposalsSuccess(false);
         setIsListProposalsLoading(false);
@@ -115,7 +111,7 @@ export function useContest() {
       setContestAbi(abi as Abi);
       return { contractConfig, version };
     } catch (e) {
-      setError(errorMessage);
+      setError(ErrorType.CONTRACT);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -138,28 +134,30 @@ export function useContest() {
     const votesOpenDate = new Date(Number(results[6].result) * 1000 + 1000);
     const contestPrompt = results[7].result as string;
     const isDownvotingAllowed = Number(results[8].result) === 1;
-    const submissionMerkleRoot = results[9].result as string;
-    const votingMerkleRoot = results[10].result as string;
-
-    processUserQualifications(submissionMerkleRoot, votingMerkleRoot, contestMaxNumberSubmissionsPerUser);
 
     if (compareVersions(version, "4.0") >= 0) {
       const costToProposeTiming = moment().isBefore(votesOpenDate);
       const costToVoteTiming = moment().isBefore(closingVoteDate);
-      const percentageToCreator = Number(results[11].result);
+      const percentageToCreator = Number(results[9].result);
       let costToPropose = 0;
       let costToVote = 0;
       let payPerVote = 0;
 
       if (costToProposeTiming) {
-        costToPropose = Number(results[12].result);
+        costToPropose = Number(results[10].result);
+      }
+
+      if (compareVersions(version, "4.2") >= 0) {
+        const sortingEnabled = Number(results[11].result) === 1;
+
+        setSortingEnabled(sortingEnabled);
       }
 
       if (costToVoteTiming && compareVersions(version, "4.23") >= 0) {
         if (compareVersions(version, "4.25") >= 0) {
-          payPerVote = Number(results[15].result);
+          payPerVote = Number(results[13].result);
         }
-        costToVote = Number(results[14].result);
+        costToVote = Number(results[12].result);
       }
 
       setCharge({
@@ -172,12 +170,6 @@ export function useContest() {
       });
     } else {
       setCharge(null);
-    }
-
-    if (compareVersions(version, "4.2") >= 0) {
-      const sortingEnabled = Number(results[13].result) === 1;
-
-      setSortingEnabled(sortingEnabled);
     }
 
     setContestName(contestName);
@@ -211,7 +203,7 @@ export function useContest() {
       setCanUpdateVotesInRealTime(false);
     }
 
-    setError("");
+    setError(null);
     setIsSuccess(true);
     setIsLoading(false);
 
@@ -231,12 +223,13 @@ export function useContest() {
 
       await Promise.all([
         fetchContestContractData(contractConfig, version),
+        processUserQualifications(),
         processRewardData(contestRewardModuleAddress),
         processRequirementsData(),
       ]);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
-      setError(errorMessage);
+      setError(ErrorType.CONTRACT);
       setIsLoading(false);
       setIsListProposalsLoading(false);
       setIsRewardsLoading(false);
@@ -275,7 +268,7 @@ export function useContest() {
         setContestPrompt(results[contracts.length - indexToCheck].result as string);
       }
 
-      setError("");
+      setError(null);
       setIsSuccess(true);
       setIsLoading(false);
 
@@ -288,7 +281,7 @@ export function useContest() {
       setIsListProposalsLoading(false);
     } catch (e) {
       handleError(e, "Something went wrong while fetching the contest data.");
-      setError(errorMessage);
+      setError(ErrorType.CONTRACT);
       setIsSuccess(false);
       setIsListProposalsSuccess(false);
       setIsListProposalsLoading(false);
@@ -301,73 +294,66 @@ export function useContest() {
    */
   async function fetchContestInfo() {
     setIsLoading(true);
-    const result = await getContractConfig();
+    try {
+      const [abiResult, isContestFromJokerace] = await Promise.all([
+        getContractConfig(),
+        checkIfContestExists(addressFromUrl, chainFromUrl),
+      ]);
 
-    if (!result) {
-      setIsLoading(false);
-      return;
-    }
+      if (!abiResult) {
+        setIsLoading(false);
+        return;
+      }
 
-    const { contractConfig, version } = result;
+      if (!isContestFromJokerace) {
+        setError(ErrorType.IS_NOT_JOKERACE_CONTRACT);
+        setIsLoading(false);
+        return;
+      }
 
-    let contestRewardModuleAddress: string | undefined;
+      const { contractConfig, version } = abiResult;
 
-    if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
-      contestRewardModuleAddress = (await readContract(config, {
-        ...contractConfig,
-        functionName: "officialRewardsModule",
-        args: [],
-      })) as any;
-      if (contestRewardModuleAddress?.toString() == "0x0000000000000000000000000000000000000000") {
+      let contestRewardModuleAddress: string | undefined;
+
+      if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
+        contestRewardModuleAddress = (await readContract(config, {
+          ...contractConfig,
+          functionName: "officialRewardsModule",
+          args: [],
+        })) as any;
+        if (contestRewardModuleAddress?.toString() == "0x0000000000000000000000000000000000000000") {
+          setSupportsRewardsModule(false);
+          contestRewardModuleAddress = undefined;
+        } else {
+          setSupportsRewardsModule(true);
+          contestRewardModuleAddress = contestRewardModuleAddress?.toString();
+        }
+      } else {
         setSupportsRewardsModule(false);
         contestRewardModuleAddress = undefined;
-      } else {
-        setSupportsRewardsModule(true);
-        contestRewardModuleAddress = contestRewardModuleAddress?.toString();
       }
-    } else {
-      setSupportsRewardsModule(false);
-      contestRewardModuleAddress = undefined;
-    }
 
-    if (contestRewardModuleAddress) {
-      setIsRewardsLoading(true);
-    }
+      if (contestRewardModuleAddress) {
+        setIsRewardsLoading(true);
+      }
 
-    if (compareVersions(version, "3.0") == -1) {
-      await fetchV1ContestInfo(contractConfig, version);
-    } else {
-      await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
+      if (compareVersions(version, "3.0") == -1) {
+        await fetchV1ContestInfo(contractConfig, version);
+      } else {
+        await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
+      }
+    } catch (error) {
+      console.error("An error occurred while fetching data:", error);
     }
   }
 
   /**
    * Fetch merkle tree data from DB and re-create the tree
    */
-  async function processUserQualifications(
-    submissionMerkleRoot: string,
-    votingMerkleRoot: string,
-    contestMaxNumberSubmissionsPerUser: number,
-  ) {
+  async function processUserQualifications() {
     if (contestStatus === ContestStatus.VotingClosed) return;
 
-    setSubmissionsMerkleRoot(submissionMerkleRoot);
-    setVotingMerkleRoot(votingMerkleRoot);
-
-    if (!isSupabaseConfigured) {
-      setIsReadOnly(true);
-      if (submissionMerkleRoot === EMPTY_ROOT) {
-        await checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser);
-        return;
-      } else {
-        return;
-      }
-    }
-
-    await Promise.all([
-      checkIfCurrentUserQualifyToSubmit(submissionMerkleRoot, contestMaxNumberSubmissionsPerUser),
-      checkIfCurrentUserQualifyToVote(),
-    ]);
+    await Promise.all([checkIfCurrentUserQualifyToSubmit(), checkIfCurrentUserQualifyToVote()]);
   }
 
   async function processRequirementsData() {

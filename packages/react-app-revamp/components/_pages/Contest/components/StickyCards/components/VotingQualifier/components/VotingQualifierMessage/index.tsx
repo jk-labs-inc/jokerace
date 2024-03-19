@@ -1,6 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { formatNumber } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
+import { formatEther } from "ethers/lib/utils";
 import { FC } from "react";
 
 interface VotingQualifierMessageProps {
@@ -9,6 +10,8 @@ interface VotingQualifierMessageProps {
   contestStatus: ContestStatus;
   isMobile: boolean;
   isReadOnly: boolean;
+  anyoneCanVote?: boolean;
+  costToVote?: number;
 }
 
 const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
@@ -17,10 +20,13 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
   contestStatus,
   isMobile,
   isReadOnly,
+  anyoneCanVote,
+  costToVote,
 }) => {
   const canVote = currentUserAvailableVotesAmount > 0;
   const votingOpen = contestStatus === ContestStatus.VotingOpen;
   const outOfVotes = currentUserTotalVotesAmount > 0 && !canVote;
+  const zeroVotesOnAnyoneCanVote = currentUserTotalVotesAmount === 0 && anyoneCanVote;
 
   if (isReadOnly) return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">vote is in read mode</p>;
 
@@ -39,6 +45,10 @@ const VotingQualifierMessage: FC<VotingQualifierMessageProps> = ({
         {isMobile ? "to use" : "to deploy"}
       </p>
     );
+  }
+
+  if (zeroVotesOnAnyoneCanVote) {
+    return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you have 0 votes </p>;
   }
 
   if (outOfVotes) return <p className="text-[16px] md:text-[24px] text-neutral-9 font-bold">you're out of votes :(</p>;

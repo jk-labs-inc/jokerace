@@ -80,7 +80,7 @@ export function useDeployContest() {
         submissionMerkleData.manual || submissionMerkleData.prefilled || submissionMerkleData.csv;
       const { type: chargeType, percentageToCreator } = charge;
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
-      const { merkleRoot: votingMerkleRoot } = votingMerkle || {};
+      const { merkleRoot: votingMerkleRoot = EMPTY_ROOT } = votingMerkle || {};
       const { allowedSubmissionsPerUser, maxSubmissions } = customization;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
@@ -265,8 +265,6 @@ export function useDeployContest() {
         throw new Error("Supabase is not configured");
       }
 
-      if (!votingMerkle) return null;
-
       const tasks = [];
 
       tasks.push(indexContestV3(contestData));
@@ -300,11 +298,11 @@ export function useDeployContest() {
       tasks.push(workerTask);
 
       await Promise.all(tasks);
-    } catch (e) {
+    } catch (e: any) {
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(error);
+      stateContestDeployment.setError(e.message);
       setIsLoading(false);
-      toastError(`contest deployment failed to index in db`, error);
+      toastError(`contest deployment failed to index in db`, e.message);
     } finally {
       participantsWorker.terminate();
     }
