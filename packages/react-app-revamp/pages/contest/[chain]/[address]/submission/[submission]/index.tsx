@@ -5,6 +5,7 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import useFetchProposalData from "@hooks/useFetchProposalData";
 import { getLayout } from "@layouts/LayoutViewContest";
+import { GetServerSideProps, GetServerSidePropsContext } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { FC, useEffect } from "react";
@@ -61,14 +62,15 @@ const getChainId = (chain: string) => {
   return chainId;
 };
 
-export async function getStaticPaths() {
-  return { paths: [], fallback: true };
-}
-
-export async function getStaticProps({ params }: any) {
-  const { chain, address, submission } = params;
+export const getServerSideProps: GetServerSideProps = async (context: GetServerSidePropsContext) => {
+  const { params, req } = context;
+  const address = Array.isArray(params?.address) ? params?.address[0] : params?.address;
+  const chain = Array.isArray(params?.chain) ? params?.chain[0] : params?.chain;
+  const submission = Array.isArray(params?.submission) ? params?.submission[0] : params?.submission;
+  const cookie = req?.headers.cookie || "";
 
   if (
+    !address ||
     !REGEX_ETHEREUM_ADDRESS.test(address) ||
     !chains.some((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain) ||
     !submission
@@ -76,7 +78,7 @@ export async function getStaticProps({ params }: any) {
     return { notFound: true };
   }
 
-  const chainId = getChainId(chain);
+  const chainId = getChainId(chain ?? "");
   const { abi, version } = await getContestContractVersion(address, chainId);
 
   return {
@@ -86,10 +88,10 @@ export async function getStaticProps({ params }: any) {
       submission,
       abi,
       version,
-      chainId,
+      cookie,
     },
   };
-}
+};
 
 //@ts-ignore
 Page.getLayout = getLayout;
