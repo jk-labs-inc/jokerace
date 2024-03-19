@@ -11,7 +11,7 @@ import { isSupabaseConfigured } from "@helpers/database";
 import useContestSortOptions from "@hooks/useSortOptions";
 import { useQuery } from "@tanstack/react-query";
 import { ITEMS_PER_PAGE, getFeaturedContests, getLiveContests, getRewards, searchContests } from "lib/contests";
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { NextPage } from "next";
 import Link from "next/link";
 import router from "next/router";
 import { useEffect, useState } from "react";
@@ -102,7 +102,9 @@ const Page: NextPage = () => {
     <>
       <div className="pl-8 pr-8 md:pl-16 md:pr-16 mt-4 md:mt-14 lg:mt-6 max-w-[1350px] 3xl:pl-28 2xl:pr-0 ">
         <div className="hidden lg:flex mb-8">
-          <p className="text-[18px] md:text-[20px] font-bold">contests for communities to run, grow, and monetize</p>
+          <p className="text-[18px] md:text-[20px] font-bold">
+            contests for communities to run, grow, and monetize
+          </p>
         </div>
 
         <div className="flex items-center gap-2 lg:hidden">
@@ -197,17 +199,6 @@ const Page: NextPage = () => {
       <Explainer />
     </>
   );
-};
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  const cookie = req?.headers.cookie || "";
-
-  return {
-    props: {
-      cookie,
-    },
-  };
 };
 
 export default Page;

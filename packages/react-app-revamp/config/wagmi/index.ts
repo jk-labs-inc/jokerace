@@ -16,7 +16,7 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 
 import { Transport } from "viem";
-import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
+import { createConfig, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
@@ -216,8 +216,6 @@ const connectors = connectorsForWallets(
       groupName: "Wallets",
       wallets: [
         metaMaskWallet,
-        walletConnectWallet,
-        coinbaseWallet,
         rainbowWallet,
         okxWallet,
         tahoWallet,
@@ -252,10 +250,6 @@ export const config = createConfig({
   connectors,
   chains,
   transports,
-  ssr: true,
-  storage: createStorage({
-    storage: cookieStorage,
-  }),
 });
 
 export const chainsImages: ChainImages = chains.reduce((acc: any, chain: any) => {

@@ -1,22 +1,34 @@
+import { jokeraceTheme } from "@config/rainbowkit";
 import { config } from "@config/wagmi";
 import { Portal } from "@headlessui/react";
 import LayoutBase from "@layouts/LayoutBase";
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@styles/globals.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { polyfill } from "interweave-ssr";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import Providers from "providers";
 import { useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-loading-skeleton/dist/skeleton.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import "react-tooltip/dist/react-tooltip.css";
-import { cookieToInitialState } from "wagmi";
+import { WagmiProvider } from "wagmi";
 import * as gtag from "../lib/gtag";
 polyfill();
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 0,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -29,7 +41,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   //@ts-ignore
   const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase>{page}</LayoutBase>);
-  const initialState = cookieToInitialState(config, pageProps.cookie);
 
   useEffect(() => {
     const handleRouteChange = (url: URL) => {
@@ -68,23 +79,27 @@ function MyApp({ Component, pageProps }: AppProps) {
         <link rel="preload" href="/gnosis.png" as="image" crossOrigin="anonymous" />
       </Head>
 
-      <Providers initialState={initialState}>
-        {getLayout(<Component {...pageProps} />)}
-        <Portal>
-          <ToastContainer
-            position="bottom-center"
-            autoClose={4000}
-            hideProgressBar
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="colored"
-            bodyClassName={() => "text-[16px] flex items-center"}
-          />
-        </Portal>
-      </Providers>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <RainbowKitProvider theme={jokeraceTheme} modalSize="wide">
+            {getLayout(<Component {...pageProps} />)}
+            <Portal>
+              <ToastContainer
+                position="bottom-center"
+                autoClose={4000}
+                hideProgressBar
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                bodyClassName={() => "text-[16px] flex items-center"}
+              />
+            </Portal>
+          </RainbowKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </>
   );
 }
