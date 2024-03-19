@@ -298,11 +298,11 @@ export function useDeployContest() {
       tasks.push(workerTask);
 
       await Promise.all(tasks);
-    } catch (e) {
+    } catch (e: any) {
       stateContestDeployment.setIsLoading(false);
-      stateContestDeployment.setError(error);
+      stateContestDeployment.setError(e.message);
       setIsLoading(false);
-      toastError(`contest deployment failed to index in db`, error);
+      toastError(`contest deployment failed to index in db`, e.message);
     } finally {
       participantsWorker.terminate();
     }
