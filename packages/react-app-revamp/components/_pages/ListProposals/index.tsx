@@ -114,6 +114,7 @@ export const ListProposals = () => {
                   content: proposal.description,
                   exists: proposal.exists,
                   isContentImage: proposal.isContentImage,
+                  tweet: proposal.tweet,
                   votes: proposal.netVotes,
                   rank: proposal.rank,
                   isTied: proposal.isTied,

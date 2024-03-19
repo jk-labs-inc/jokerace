@@ -1,5 +1,6 @@
 import { Proposal } from "@components/_pages/ProposalContent";
 import { config } from "@config/wagmi";
+import { isContentTweet } from "@helpers/isContentTweet";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
@@ -105,6 +106,7 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
     authorEthereumAddress: data.author,
     content: content,
     isContentImage: isUrlToImage(data.description),
+    tweet: isContentTweet(data.description),
     exists: data.exists,
     votes,
     ...rankInfo,

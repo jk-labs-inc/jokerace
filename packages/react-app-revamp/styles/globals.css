@@ -236,6 +236,27 @@ li {
   background-color: black !important;
 }
 
+/* React tweet custom styles */
+.react-tweet-theme {
+  background-color: black !important;
+  max-width: 100% !important;
+}
+
+[class^="tweet-replies_replies"] {
+  display: none !important;
+}
+[class^="tweet-actions_reply"] {
+  display: none !important;
+}
+
+[class^="tweet-header_authorFollow"] {
+  display: none !important;
+}
+[class^="tweet-header_avatar"] {
+  width: 32px !important;
+  height: 32px !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
