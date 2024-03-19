@@ -156,31 +156,31 @@ contract ContestTest is Test {
 
     // GOVERNOR SETTINGS
 
-    function testContestStart() public {
+    function testContestStart() public view {
         assertEq(contest.contestStart(), CONTEST_START);
     }
 
-    function testVotingDelay() public {
+    function testVotingDelay() public view {
         assertEq(contest.votingDelay(), VOTING_DELAY);
     }
 
-    function testVotingPeriod() public {
+    function testVotingPeriod() public view {
         assertEq(contest.votingPeriod(), VOTING_PERIOD);
     }
 
-    function testNumAllowedProposalSubmissions() public {
+    function testNumAllowedProposalSubmissions() public view {
         assertEq(contest.numAllowedProposalSubmissions(), NUM_ALLOWED_PROPOSAL_SUBMISSIONS);
     }
 
-    function testMaxProposalCount() public {
+    function testMaxProposalCount() public view {
         assertEq(contest.maxProposalCount(), MAX_PROPOSAL_COUNT);
     }
 
-    function testDownvotingAllowed() public {
+    function testDownvotingAllowed() public view {
         assertEq(contest.downvotingAllowed(), DOWNVOTING_ALLOWED);
     }
 
-    function testCreator() public {
+    function testCreator() public view {
         assertEq(contest.creator(), CREATOR_ADDRESS_1);
     }
 
