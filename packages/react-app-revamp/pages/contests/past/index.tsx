@@ -1,9 +1,10 @@
 import ListContests from "@components/_pages/ListContests";
 import { isSupabaseConfigured } from "@helpers/database";
+import getPagination from "@helpers/getPagination";
 import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
 import { getPastContests, getRewards, ITEMS_PER_PAGE } from "lib/contests";
-import type { GetServerSidePropsContext, NextPage } from "next";
+import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import { useAccount } from "wagmi";
@@ -97,16 +98,47 @@ const Page: NextPage = props => {
   );
 };
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  const cookie = req?.headers.cookie || "";
+export async function getStaticProps() {
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+    const { from, to } = getPagination(0, 7);
 
+    const result = await supabase
+      .from("contests_v3")
+      .select(
+        "created_at, start_at, end_at, address, author_address, network_name, vote_start_at, featured, title, type, summary, prompt",
+        { count: "exact" },
+      )
+      // all rows whose votes end date is < to the current date.
+      .lt("end_at", new Date().toISOString())
+      .order("end_at", { ascending: false })
+      .range(from, to);
+
+    const { data, error } = result;
+
+    if (error) {
+      return {
+        props: {},
+        revalidate: 60,
+      };
+    }
+    return {
+      props: {
+        data,
+      },
+      // Next.js will attempt to re-generate the page:
+      // - When a request comes in
+      // - At most once every 60 seconds
+      revalidate: 60, // In seconds
+    };
+  }
   return {
     props: {
-      cookie,
+      data: [],
     },
   };
-};
+}
 
 //@ts-ignore
 Page.getLayout = getLayout;
