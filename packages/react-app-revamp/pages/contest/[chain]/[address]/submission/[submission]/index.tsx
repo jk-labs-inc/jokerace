@@ -26,7 +26,6 @@ const Page: FC<PageProps> = ({ address, chain, submission, abi, version, chainId
   const { setPickedProposal } = useCastVotesStore(state => state);
   const id = router.query.submission as string;
 
-  console.log(submission);
   useEffect(() => {
     setPickedProposal(id);
   }, [id, setPickedProposal]);
