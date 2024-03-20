@@ -85,6 +85,7 @@ export const getServerSideProps: GetServerSideProps = async (context: GetServerS
     props: {
       address,
       chain,
+      chainId,
       submission,
       abi,
       version,
