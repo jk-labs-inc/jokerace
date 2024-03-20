@@ -8,6 +8,7 @@ import { getUserComments } from "lib/user";
 import { CommentsResult } from "lib/user/types";
 import { FC, useState } from "react";
 import { UserPageProps } from "..";
+import { GetServerSidePropsContext } from "next";
 
 function useUserComments(userAddress: string) {
   const [page, setPage] = useState(0);
@@ -66,22 +67,23 @@ const Page: FC<UserPageProps> = ({ address }) => {
   );
 };
 
-export async function getStaticPaths() {
-  return { paths: [], fallback: true };
-}
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { req, params } = ctx;
+  const pathAddress = Array.isArray(params?.address) ? params?.address[0] : params?.address;
+  const cookie = req?.headers.cookie || "";
 
-export async function getStaticProps({ params }: any) {
-  const { address: pathAddress } = params;
-
-  const addressProps = await getAddressProps(pathAddress);
+  const addressProps = await getAddressProps(pathAddress ?? "");
 
   if (addressProps.notFound) {
     return { notFound: true };
   }
 
   return {
-    props: addressProps,
+    props: {
+      address: addressProps.address,
+      cookie,
+    },
   };
-}
+};
 
 export default Page;
