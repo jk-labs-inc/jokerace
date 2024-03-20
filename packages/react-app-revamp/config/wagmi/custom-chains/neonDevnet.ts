@@ -3,7 +3,7 @@ import { Chain } from "@rainbow-me/rainbowkit";
 export const neonDevnet: Chain = {
   id: 245022926,
   name: "neonDevnet",
-  iconUrl: "/contest/mona-lisa-moustache.png",
+  iconUrl: "/neon.png",
   nativeCurrency: {
     decimals: 18,
     name: "NEON",
