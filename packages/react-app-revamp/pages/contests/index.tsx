@@ -7,7 +7,7 @@ import { getLayout } from "@layouts/LayoutContests";
 import { useQuery } from "@tanstack/react-query";
 import { getEnsAddress } from "@wagmi/core";
 import { ITEMS_PER_PAGE, getRewards, searchContests } from "lib/contests";
-import type { NextPage } from "next";
+import type { GetServerSidePropsContext, NextPage } from "next";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -165,6 +165,17 @@ const Page: NextPage = () => {
       </div>
     </>
   );
+};
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const { req } = ctx;
+  const cookie = req?.headers.cookie || "";
+
+  return {
+    props: {
+      cookie,
+    },
+  };
 };
 
 //@ts-ignore
