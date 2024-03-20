@@ -4,15 +4,13 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { getBalance, readContract } from "@wagmi/core";
-import { BigNumber, ethers, utils } from "ethers";
+import { utils } from "ethers";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 import { sortContests } from "./utils/sortContests";
-import { compareVersions } from "compare-versions";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
-const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 interface ContestReward {
   contestAddress: string;
@@ -62,8 +60,8 @@ export const fetchTokenBalances = async (chainName: string, contestRewardModuleA
     const asJson = await response.json();
 
     const balance = asJson.result?.tokenBalances?.filter((token: any) => {
-      const tokenBalance = ethers.BigNumber.from(token["tokenBalance"]);
-      return tokenBalance.gt(0);
+      const tokenBalance = BigInt(token["tokenBalance"]);
+      return tokenBalance > 0;
     });
 
     return balance;
@@ -164,7 +162,7 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
             abi: abiRewardsModule,
             chainId: chainId,
             functionName: "getPayees",
-          })) as BigNumber[];
+          })) as bigint[];
 
           let rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
           let erc20Tokens: any = null;

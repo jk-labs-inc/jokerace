@@ -3,15 +3,14 @@ import { chains, config } from "@config/wagmi";
 import arrayToChunks from "@helpers/arrayToChunks";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { BigNumber, utils } from "ethers";
 import { Result } from "ethers/lib/utils";
 import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { useRouter } from "next/router";
+import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
 import {
@@ -175,11 +174,10 @@ export function useProposal() {
 
       if (!useLegacyGetAllProposalsIdFn) {
         const extractVotes = (index: number) => {
-          const forVotesValue = proposalsIdsRawData[1][index].forVotes;
-          const againstVotesValue = proposalsIdsRawData[1][index].againstVotes;
+          const forVotesValue = BigInt(proposalsIdsRawData[1][index].forVotes);
+          const againstVotesValue = BigInt(proposalsIdsRawData[1][index].againstVotes);
 
-          const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
-          const netVotes = Number(utils.formatEther(netVotesBigNumber));
+          const netVotes = Number(formatEther(forVotesValue - againstVotesValue));
 
           return netVotes;
         };

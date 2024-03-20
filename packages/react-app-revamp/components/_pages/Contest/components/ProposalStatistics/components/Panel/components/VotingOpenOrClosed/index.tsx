@@ -4,11 +4,9 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import useTotalVotesOnContest from "@hooks/useTotalVotes";
-import { useTotalVotesOnContestStore } from "@hooks/useTotalVotes/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
-import { useTotalVotesCastStore } from "@hooks/useTotalVotesCastOnContest/store";
 import { useRouter } from "next/router";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 interface ProposalStatisticsPanelVotingOpenOrClosedProps {
   submissionsCount: number;
@@ -22,56 +20,43 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
-  const { fetchTotalVotes, retry: retryTotalVotes } = useTotalVotesOnContest(address, chainId);
-  const {
-    totalVotes,
-    isLoading: isTotalVotesLoading,
-    isError: isTotalVotesError,
-    isAnyoneCanVote,
-  } = useTotalVotesOnContestStore(state => state);
-  const { fetchTotalVotesCast, retry: retryTotalVotesCast } = useTotalVotesCastOnContest(address, chainId);
-  const {
-    totalVotesCast,
-    isLoading: isTotalVotesCastLoading,
-    isError: isTotalVotesCastError,
-  } = useTotalVotesCastStore(state => state);
-
-  useEffect(() => {
-    const fetchVotes = async () => {
-      await Promise.all([fetchTotalVotes(), fetchTotalVotesCast()]);
-    };
-
-    fetchVotes();
-  }, [address, chainId]);
+  const { totalVotes, refetchTotalVotes, isTotalVotesLoading, isTotalVotesError, isTotalVotesSuccess } =
+    useTotalVotesOnContest(address, chainId);
+  const { totalVotesCast, retry: retryTotalVotesCast } = useTotalVotesCastOnContest(address, chainId);
 
   const renderTotalVotesCast = () => {
-    if (isTotalVotesCastLoading)
+    if (!totalVotesCast) return null;
+
+    if (totalVotesCast.isLoading)
       return <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />;
 
-    if (isTotalVotesCastError) {
+    if (totalVotesCast.isError) {
       return (
-        <span className="text-negative-11 font-bold underline cursor-pointer" onClick={retryTotalVotesCast}>
+        <span className="text-negative-11 font-bold underline cursor-pointer" onClick={() => retryTotalVotesCast()}>
           ruh-roh, try again!
         </span>
       );
     }
 
-    return formatNumber(totalVotesCast);
+    return formatNumber(Number(totalVotesCast.data));
   };
 
   const renderTotalVotes = () => {
-    if (isTotalVotesLoading)
+    if (isTotalVotesLoading) {
       return <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />;
+    }
 
     if (isTotalVotesError) {
       return (
-        <span className="text-negative-11 font-bold underline cursor-pointer" onClick={retryTotalVotes}>
+        <span className="text-negative-11 font-bold underline cursor-pointer" onClick={() => refetchTotalVotes()}>
           ruh-roh, try again!
         </span>
       );
     }
 
-    return formatNumber(totalVotes);
+    if (isTotalVotesSuccess) {
+      return formatNumber(totalVotes ?? 0);
+    }
   };
 
   return (
@@ -81,7 +66,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
       </p>
       <span className="hidden md:block">&#8226;</span>
       <div className="flex gap-1 items-center text-[16px] text-neutral-11">
-        {renderTotalVotesCast()} {isAnyoneCanVote ? "" : `out of ${renderTotalVotes()} `}votes deployed in contest
+        {renderTotalVotesCast()} {totalVotes === 0 ? "" : `out of ${renderTotalVotes()} `}votes deployed in contest
       </div>
     </div>
   );

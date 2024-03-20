@@ -9,9 +9,9 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { readContract, watchContractEvent } from "@wagmi/core";
-import { BigNumber, utils } from "ethers";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+import { formatEther } from "viem";
 
 export function useContestEvents() {
   const { asPath } = useRouter();
@@ -21,7 +21,7 @@ export function useContestEvents() {
   )?.[0]?.id;
   const provider = getEthersProvider(config, { chainId });
   const { canUpdateVotesInRealTime } = useContestStore(state => state);
-  const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
+  const { retry: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(contestAddress, chainId);
   const { contestStatus } = useContestStatusStore(state => state);
   const { updateProposal } = useProposal();
   const { setProposalData, listProposalsData } = useProposalStore(state => state);
@@ -51,8 +51,8 @@ export function useContestEvents() {
       const forVotesBigInt = votesRaw[0];
       const againstVotesBigInt = votesRaw[1];
 
-      const votesBigNumber = BigNumber.from(forVotesBigInt).sub(againstVotesBigInt);
-      const votes = Number(utils.formatEther(votesBigNumber));
+      const finalVotes = forVotesBigInt - againstVotesBigInt;
+      const votes = Number(formatEther(finalVotes));
 
       const proposal = listProposalsDataRef.current.find(p => p.id === proposalId);
 
@@ -84,7 +84,7 @@ export function useContestEvents() {
         setProposalData(proposalData);
       }
 
-      fetchTotalVotesCast();
+      refetchTotalVotesCastOnContest();
     } catch (e) {
       console.error(e);
     }

@@ -1,20 +1,19 @@
+import { chains } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import { useContestStore } from "@hooks/useContest/store";
 import { EMPTY_ROOT } from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { BigNumber } from "ethers";
 import { formatEther } from "ethers/lib/utils";
 import moment from "moment";
+import { useRouter } from "next/router";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import ContestParamatersCSVSubmitters from "./components/CSV/Submitters";
 import ContestParamatersCSVVoters from "./components/CSV/Voters";
 import ContestParametersSubmissionRequirements from "./components/Requirements/Submission";
 import ContestParametersVotingRequirements from "./components/Requirements/Voting";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useRouter } from "next/router";
-import { chains } from "@config/wagmi";
 
 const UNLIMITED_PROPOSALS_PER_USER = 1000000;
 
@@ -44,8 +43,7 @@ const ContestParameters = () => {
   const formattedSubmissionsOpen = moment(submissionsOpen).format("MMMM Do, h:mm a");
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
   const formattedVotesClosing = moment(votesClose).format("MMMM Do, h:mm a");
-  const userMaxProposalCountBN = BigNumber.from(contestMaxNumberSubmissionsPerUser);
-  const maxProposalsPerUserCapped = userMaxProposalCountBN.eq(UNLIMITED_PROPOSALS_PER_USER);
+  const maxProposalsPerUserCapped = contestMaxNumberSubmissionsPerUser == UNLIMITED_PROPOSALS_PER_USER;
   const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
   const qualifyToSubmitMessage = useMemo<string | JSX.Element>(() => {

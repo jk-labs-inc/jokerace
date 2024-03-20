@@ -13,7 +13,6 @@ import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
-import { BigNumber, utils } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
 import { useRouter } from "next/router";
@@ -46,7 +45,7 @@ export function useCastVotes() {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
-  const { fetchTotalVotesCast } = useTotalVotesCastOnContest(contestAddress, chainId);
+  const { retry: refetchTotalVotesCastOnContest } = useTotalVotesCastOnContest(contestAddress, chainId);
   const { refetch: refetchCurrentUserVotesOnProposal } = useFetchUserVotesOnProposal(
     contestAddress,
     pickedProposal ?? "",
@@ -137,8 +136,8 @@ export function useCastVotes() {
 
         const forVotes = voteResponse[0] as bigint;
         const againstVotes = voteResponse[1] as bigint;
-        const votesBigNumber = BigNumber.from(forVotes).sub(againstVotes);
-        const votes = Number(utils.formatEther(votesBigNumber));
+        const finalVotes = forVotes - againstVotes;
+        const votes = Number(formatEther(finalVotes));
         const existingProposal = listProposalsData.find(proposal => proposal.id === pickedProposal);
 
         if (existingProposal) {
@@ -153,7 +152,7 @@ export function useCastVotes() {
       }
 
       await updateCurrentUserVotes(anyoneCanVote);
-      fetchTotalVotesCast();
+      refetchTotalVotesCastOnContest();
       refetchCurrentUserVotesOnProposal();
       setIsLoading(false);
       setIsSuccess(true);

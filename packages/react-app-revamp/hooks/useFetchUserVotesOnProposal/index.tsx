@@ -1,5 +1,4 @@
 import { useContestStore } from "@hooks/useContest/store";
-import { BigNumber } from "ethers";
 import { useAccount, useReadContract } from "wagmi";
 
 export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: string) => {
@@ -13,15 +12,11 @@ export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: 
     args: [proposalId, address],
     query: {
       select: (data: unknown) => {
-        const [positiveVotes, negativeVotes] = data as [BigNumber, BigNumber];
+        const [positiveVotes, negativeVotes] = data as [bigint, bigint];
 
-        const currentUserPositiveVotesOnProposal = BigNumber.from(positiveVotes);
-        const currentUserNegativeVotesOnProposal = BigNumber.from(negativeVotes);
-        const currentUserVotesOnProposal = currentUserPositiveVotesOnProposal.sub(currentUserNegativeVotesOnProposal);
+        const currentUserVotesOnProposal = (positiveVotes - negativeVotes) / BigInt(1e18);
 
-        const currentUserVotesOnProposalFormatted = currentUserVotesOnProposal
-          .div(BigNumber.from(10).pow(18))
-          .toNumber();
+        const currentUserVotesOnProposalFormatted = currentUserVotesOnProposal.toString();
 
         return currentUserVotesOnProposalFormatted;
       },
