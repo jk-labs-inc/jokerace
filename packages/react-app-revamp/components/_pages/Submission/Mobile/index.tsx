@@ -136,6 +136,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             <div className="flex flex-col gap-12">
               {contestStatus === ContestStatus.VotingOpen && (
                 <>
+                  <p className="text-neutral-11 text-[24px] font-bold">add votes</p>
                   {isConnected ? (
                     currentUserAvailableVotesAmount > 0 ? (
                       <VotingWidget
