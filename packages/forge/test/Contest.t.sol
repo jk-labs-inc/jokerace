@@ -18,12 +18,13 @@ contract ContestTest is Test {
     uint64 public constant MAX_PROPOSAL_COUNT = 100;
     uint64 public constant DOWNVOTING_ALLOWED = 0;
 
-    // COST INT PARAMS
+    // COST PARAMS
     uint256 public constant FIFTY_PERCENT_TO_CREATOR = 50;
     uint256 public constant ZERO_COST_TO_PROPOSE = 0;
     uint256 public constant ONE_ETH_COST_TO_PROPOSE = 1 ether;
     uint256 public constant ZERO_COST_TO_VOTE = 0;
     uint256 public constant PAY_PER_VOTE_OFF = 0;
+    address public constant CREATOR_SPLIT_DESTINATION = CREATOR_ADDRESS_1;
 
     // SORTING INT PARAMS
     uint256 public constant SORTING_ENABLED = 1;
@@ -41,7 +42,8 @@ contract ContestTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ZERO_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF
+        PAY_PER_VOTE_OFF,
+        CREATOR_SPLIT_DESTINATION
     );
 
     Governor.ConstructorArgs public oneEthToProposeNumParams = Governor.ConstructorArgs(
@@ -56,7 +58,8 @@ contract ContestTest is Test {
         FIFTY_PERCENT_TO_CREATOR,
         ONE_ETH_COST_TO_PROPOSE,
         ZERO_COST_TO_VOTE,
-        PAY_PER_VOTE_OFF
+        PAY_PER_VOTE_OFF,
+        CREATOR_SPLIT_DESTINATION
     );
 
     // MERKLE TREE PARAMS

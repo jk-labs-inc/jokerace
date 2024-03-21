@@ -156,6 +156,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         costToPropose = constructorArgs_.costToPropose;
         costToVote = constructorArgs_.costToVote;
         payPerVote = constructorArgs_.payPerVote;
+        creatorSplitDestination = constructorArgs_.creatorSplitDestination;
 
         emit JokeraceCreated(
             _VERSION,
