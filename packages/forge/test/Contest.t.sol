@@ -29,7 +29,7 @@ contract ContestTest is Test {
     uint256 public constant SORTING_ENABLED = 1;
     uint256 public constant RANK_LIMIT_250 = 250;
 
-    Governor.ConstructorIntArgs public zeroCostToProposeNumParams = Governor.ConstructorIntArgs(
+    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -44,7 +44,7 @@ contract ContestTest is Test {
         PAY_PER_VOTE_OFF
     );
 
-    Governor.ConstructorIntArgs public oneEthToProposeNumParams = Governor.ConstructorIntArgs(
+    Governor.ConstructorArgs public oneEthToProposeNumParams = Governor.ConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,

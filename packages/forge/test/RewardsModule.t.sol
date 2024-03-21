@@ -31,7 +31,7 @@ contract RewardsModuleTest is Test {
     uint256 public constant RANK_LIMIT_250 = 250;
     uint256 public constant RANK_LIMIT_1 = 1;
 
-    Governor.ConstructorIntArgs public zeroCostToProposeNumParams = Governor.ConstructorIntArgs(
+    Governor.ConstructorArgs public zeroCostToProposeNumParams = Governor.ConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,
@@ -46,7 +46,7 @@ contract RewardsModuleTest is Test {
         PAY_PER_VOTE_OFF
     );
 
-    Governor.ConstructorIntArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorIntArgs(
+    Governor.ConstructorArgs public zeroCostToProposeAndRankLimitOneNumParams = Governor.ConstructorArgs(
         CONTEST_START,
         VOTING_DELAY,
         VOTING_PERIOD,

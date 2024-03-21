@@ -31,7 +31,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         Vote
     }
 
-    struct ConstructorIntArgs {
+    struct ConstructorArgs {
         uint256 contestStart;
         uint256 votingDelay;
         uint256 votingPeriod;
@@ -140,29 +140,29 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     error OnlyJkLabsCanAmend();
 
-    constructor(string memory name_, string memory prompt_, ConstructorIntArgs memory constructorIntArgs_) {
+    constructor(string memory name_, string memory prompt_, ConstructorArgs memory constructorArgs_) {
         name = name_;
         prompt = prompt_;
         creator = msg.sender;
-        contestStart = constructorIntArgs_.contestStart;
-        votingDelay = constructorIntArgs_.votingDelay;
-        votingPeriod = constructorIntArgs_.votingPeriod;
-        numAllowedProposalSubmissions = constructorIntArgs_.numAllowedProposalSubmissions;
-        maxProposalCount = constructorIntArgs_.maxProposalCount;
-        downvotingAllowed = constructorIntArgs_.downvotingAllowed;
-        percentageToCreator = constructorIntArgs_.percentageToCreator;
-        costToPropose = constructorIntArgs_.costToPropose;
-        costToVote = constructorIntArgs_.costToVote;
-        payPerVote = constructorIntArgs_.payPerVote;
+        contestStart = constructorArgs_.contestStart;
+        votingDelay = constructorArgs_.votingDelay;
+        votingPeriod = constructorArgs_.votingPeriod;
+        numAllowedProposalSubmissions = constructorArgs_.numAllowedProposalSubmissions;
+        maxProposalCount = constructorArgs_.maxProposalCount;
+        downvotingAllowed = constructorArgs_.downvotingAllowed;
+        percentageToCreator = constructorArgs_.percentageToCreator;
+        costToPropose = constructorArgs_.costToPropose;
+        costToVote = constructorArgs_.costToVote;
+        payPerVote = constructorArgs_.payPerVote;
 
         emit JokeraceCreated(
             _VERSION,
             name_,
             prompt_,
             msg.sender,
-            constructorIntArgs_.contestStart,
-            constructorIntArgs_.votingDelay,
-            constructorIntArgs_.votingPeriod
+            constructorArgs_.contestStart,
+            constructorArgs_.votingDelay,
+            constructorArgs_.votingPeriod
         ); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
