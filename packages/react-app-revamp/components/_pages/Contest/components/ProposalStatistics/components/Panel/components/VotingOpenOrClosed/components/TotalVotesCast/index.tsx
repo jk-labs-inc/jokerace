@@ -23,7 +23,7 @@ const ProposalStatisticsTotalVotesCast: React.FC<ProposalStatisticsTotalVotesCas
     );
   }
 
-  return formatNumber(Number(totalVotesCast.data));
+  return <span>{formatNumber(Number(totalVotesCast.data))}</span>;
 };
 
 export default ProposalStatisticsTotalVotesCast;

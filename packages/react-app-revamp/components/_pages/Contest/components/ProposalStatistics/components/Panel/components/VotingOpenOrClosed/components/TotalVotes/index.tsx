@@ -27,8 +27,10 @@ const ProposalStatisticsTotalVotes: FC<ProposalStatisticsTotalVotesProps> = ({ a
   if (isTotalVotesSuccess) {
     if (totalVotes === 0) return null;
 
-    return ` out of ${formatNumber(totalVotes ?? 0)}`;
+    return <span>{` out of ${formatNumber(totalVotes ?? 0)}`}</span>;
   }
+
+  return null;
 };
 
 export default ProposalStatisticsTotalVotes;
