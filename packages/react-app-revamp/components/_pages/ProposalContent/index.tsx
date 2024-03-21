@@ -69,7 +69,7 @@ const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
     <div
       className={`flex flex-col w-full animate-appear ${isProposalTweet ? "" : "h-96 md:h-80"} rounded-[10px] border border-neutral-11 hover:bg-neutral-1 cursor-pointer transition-colors duration-500 ease-in-out`}
     >
-      <Link href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`} shallow scroll={false}>
+      <Link href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`} shallow scroll={false} prefetch>
         <ProposalContentInfo
           authorAddress={proposal.authorEthereumAddress}
           rank={proposal.rank}
