@@ -105,23 +105,22 @@ const Page: NextPage = (props: UserPageProps) => {
   );
 };
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req, params } = ctx;
-  const pathAddress = Array.isArray(params?.address) ? params?.address[0] : params?.address;
-  const cookie = req?.headers.cookie || "";
+export async function getStaticPaths() {
+  return { paths: [], fallback: true };
+}
 
-  const addressProps = await getAddressProps(pathAddress ?? "");
+export async function getStaticProps({ params }: any) {
+  const { address: pathAddress } = params;
+
+  const addressProps = await getAddressProps(pathAddress);
 
   if (addressProps.notFound) {
     return { notFound: true };
   }
 
   return {
-    props: {
-      address: addressProps.address,
-      cookie,
-    },
+    props: addressProps,
   };
-};
+}
 
 export default Page;

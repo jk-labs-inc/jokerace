@@ -97,17 +97,6 @@ const Page: NextPage = props => {
   );
 };
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  const cookie = req?.headers.cookie || "";
-
-  return {
-    props: {
-      cookie,
-    },
-  };
-};
-
 //@ts-ignore
 Page.getLayout = getLayout;
 

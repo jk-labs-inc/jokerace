@@ -4,7 +4,7 @@ import LayoutBase from "@layouts/LayoutBase";
 import "@rainbow-me/rainbowkit/styles.css";
 import "@styles/globals.css";
 import { polyfill } from "interweave-ssr";
-import type { AppProps } from "next/app";
+import { AppContext, AppProps } from "next/app";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import Providers from "providers";
@@ -20,7 +20,9 @@ polyfill();
 
 const isProd = process.env.NODE_ENV === "production";
 
-function MyApp({ Component, pageProps }: AppProps) {
+type MyAppProps = AppProps & { cookie: string };
+
+function MyApp({ Component, pageProps, cookie }: MyAppProps) {
   const router = useRouter();
   const title: string = pageProps.title ? `${pageProps.title}` : "JokeRace";
   const description: string = pageProps.description
@@ -29,7 +31,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   //@ts-ignore
   const getLayout = Component.getLayout ?? ((page: any) => <LayoutBase>{page}</LayoutBase>);
-  const initialState = cookieToInitialState(config, pageProps.cookie);
+
+  const initialState = cookieToInitialState(config, cookie);
 
   useEffect(() => {
     const handleRouteChange = (url: URL) => {
@@ -90,3 +93,19 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp;
+
+MyApp.getInitialProps = async (context: AppContext) => {
+  const isServer = !!context.ctx.req;
+  let cookie = "";
+
+  if (isServer && context.ctx.req) {
+    cookie = context.ctx.req.headers.cookie || "";
+  }
+
+  let pageProps = {};
+  if (context.Component.getInitialProps) {
+    pageProps = await context.Component.getInitialProps(context.ctx);
+  }
+
+  return { pageProps, cookie };
+};

@@ -22,14 +22,3 @@ const Page: NextPage = () => {
 };
 
 export default Page;
-
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const { req } = ctx;
-  const cookie = req?.headers.cookie || "";
-
-  return {
-    props: {
-      cookie,
-    },
-  };
-};
