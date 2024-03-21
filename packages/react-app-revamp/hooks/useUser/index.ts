@@ -210,21 +210,18 @@ export function useUser() {
 
         const userVotes = data[0].num_votes;
 
-        const castVotes = currentUserTotalVotesCast;
-        const availableVotes = BigInt(userVotes) - castVotes;
+        const availableVotes = BigInt(userVotes) - currentUserTotalVotesCast / BigInt(1e18);
 
-        console.log(availableVotes);
-
-        if (castVotes > 0) {
+        if (currentUserTotalVotesCast > 0) {
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(Number(availableVotes));
-          setCurrentuserTotalVotesCast(Number(castVotes));
+          setCurrentuserTotalVotesCast(Number(currentUserTotalVotesCast));
           setIsCurrentUserVoteQualificationSuccess(true);
           setIsCurrentUserVoteQualificationLoading(false);
         } else {
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes);
-          setCurrentuserTotalVotesCast(Number(castVotes));
+          setCurrentuserTotalVotesCast(Number(currentUserTotalVotesCast));
           setIsCurrentUserVoteQualificationSuccess(true);
           setIsCurrentUserVoteQualificationLoading(false);
         }
@@ -318,7 +315,7 @@ export function useUser() {
       })) as bigint;
 
       const currentUserAvailableVotesAmountRaw =
-        (BigInt(currentUserTotalVotesAmount) - currentUserTotalVotesCastRaw) / BigInt(1e18);
+        BigInt(currentUserTotalVotesAmount) - currentUserTotalVotesCastRaw / BigInt(1e18);
       const currentUserTotalVotesCastFinalRaw = currentUserTotalVotesCastRaw / BigInt(1e18);
 
       setCurrentUserAvailableVotesAmount(Number(currentUserAvailableVotesAmountRaw));
