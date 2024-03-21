@@ -6,7 +6,7 @@ import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
 import { readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { BigNumber, utils } from "ethers";
+import { formatEther } from "viem";
 
 interface RankDictionary {
   [key: string]: number;
@@ -20,9 +20,8 @@ export interface ProposalData {
 
 export const COMMENTS_VERSION = "4.13";
 
-const extractVotes = (forVotesValue: string, againstVotesValue: string) => {
-  const netVotesBigNumber = BigNumber.from(forVotesValue).sub(againstVotesValue);
-  const netVotes = Number(utils.formatEther(netVotesBigNumber));
+const extractVotes = (forVotesValue: bigint, againstVotesValue: bigint) => {
+  const netVotes = Number(formatEther(forVotesValue - againstVotesValue));
 
   return netVotes;
 };
@@ -77,7 +76,7 @@ const fetchProposalInfo = async (abi: any, address: string, chainId: number, sub
   const data = results[0].result;
   const forVotesBigInt = results[1].result[0] as bigint;
   const againstVotesBigInt = results[1].result[1] as bigint;
-  const votes = extractVotes(forVotesBigInt.toString(), againstVotesBigInt.toString());
+  const votes = extractVotes(forVotesBigInt, againstVotesBigInt);
   const isDeleted = results[2].result;
   const content = isDeleted ? "This proposal has been deleted by the creator" : data.description;
 

@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import { TransactionResponse } from "@ethersproject/abstract-provider";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getProposalId } from "@helpers/getProposalId";
@@ -38,11 +38,14 @@ export function useSubmitProposal() {
   const { setSubmissionsCount, submissionsCount } = useProposalStore(state => state);
   const { increaseCurrentUserProposalCount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.id;
   const { isLoading, isSuccess, error, setIsLoading, setIsSuccess, setError, setTransactionData } =
     useSubmitProposalStore(state => state);
+
+  const calculateChargeAmount = () => {
+    if (!charge) return undefined;
+
+    return BigInt(charge.type.costToPropose);
+  };
 
   async function sendProposal(proposalContent: string): Promise<{ tx: TransactionResponse; proposalId: string }> {
     if (showToast) toastLoading("proposal is deploying...");
@@ -52,7 +55,7 @@ export function useSubmitProposal() {
     setTransactionData(null);
 
     return new Promise<{ tx: TransactionResponse; proposalId: string }>(async (resolve, reject) => {
-      const costToPropose = charge ? (charge.type.costToPropose as unknown as bigint) : undefined;
+      const costToPropose = calculateChargeAmount();
 
       try {
         const { proofs, isVerified } = await getProofs(userAddress ?? "", "submission", "10");
@@ -79,19 +82,15 @@ export function useSubmitProposal() {
           hash = await writeContract(config, {
             ...contractConfig,
             functionName: "propose",
-            //@ts-ignore
             args: [proposalCore, proofs],
-            //@ts-ignore
-            value: charge ? [charge.type.costToPropose] : undefined,
+            value: costToPropose,
           });
         } else {
           hash = await writeContract(config, {
             ...contractConfig,
             functionName: "proposeWithoutProof",
-            //@ts-ignore
             args: [proposalCore],
-            //@ts-ignore
-            value: charge ? [charge.type.costToPropose] : undefined,
+            value: costToPropose,
           });
         }
 

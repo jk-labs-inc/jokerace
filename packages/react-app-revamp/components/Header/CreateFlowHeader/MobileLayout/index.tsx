@@ -41,7 +41,7 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   onPreviousStep,
 }) => {
   const { setMobileStepTitle, isLoading: isDeployingContestLoading } = useDeployContestStore(state => state);
-  const allowedLinks = ["Github", "Mirror", "Twitter", "Telegram", "Report a bug", "Terms"];
+  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const router = useRouter();

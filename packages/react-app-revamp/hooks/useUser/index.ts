@@ -6,10 +6,9 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { getGasPrice, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { BigNumber, utils } from "ethers";
 import { fetchUserBalance } from "lib/fetchUserBalance";
 import { useRouter } from "next/router";
-import { Abi } from "viem";
+import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useUserStore } from "./store";
 
@@ -81,22 +80,20 @@ export function useUser() {
 
     if (anyoneCanSubmit) {
       try {
-        const numOfSubmittedProposalsRaw = await readContract(config, {
+        const numOfSubmittedProposalsRaw = (await readContract(config, {
           ...contractConfig,
           functionName: "numSubmissions",
           args: [userAddress],
-        });
+        })) as bigint;
 
-        const numOfSubmittedProposals = BigNumber.from(numOfSubmittedProposalsRaw);
-
-        if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
-          setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
+        if (numOfSubmittedProposalsRaw > 0 && numOfSubmittedProposalsRaw >= contestMaxNumberSubmissionsPerUser) {
+          setCurrentUserProposalCount(Number(numOfSubmittedProposalsRaw.toString()));
           setIsCurrentUserSubmitQualificationLoading(false);
           setIsCurrentUserSubmitQualificationSuccess(true);
           return;
         }
 
-        setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
+        setCurrentUserProposalCount(Number(numOfSubmittedProposalsRaw.toString()));
         setCurrentUserQualifiedToSubmit(true);
         setIsCurrentUserSubmitQualificationLoading(false);
         setIsCurrentUserSubmitQualificationSuccess(true);
@@ -118,22 +115,21 @@ export function useUser() {
           .eq("network_name", lowerCaseChainName);
 
         if (data && data.length > 0 && data[0].can_submit) {
-          const numOfSubmittedProposalsRaw = await readContract(config, {
+          const numOfSubmittedProposalsRaw = (await readContract(config, {
             ...contractConfig,
             functionName: "numSubmissions",
             args: [userAddress],
-          });
+          })) as bigint;
 
-          const numOfSubmittedProposals = BigNumber.from(numOfSubmittedProposalsRaw);
-
-          if (numOfSubmittedProposals.gt(0) && numOfSubmittedProposals.gte(contestMaxNumberSubmissionsPerUser)) {
-            setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
+          if (numOfSubmittedProposalsRaw > 0 && numOfSubmittedProposalsRaw >= contestMaxNumberSubmissionsPerUser) {
+            setCurrentUserProposalCount(Number(numOfSubmittedProposalsRaw.toString()));
             setIsCurrentUserSubmitQualificationLoading(false);
             setIsCurrentUserSubmitQualificationSuccess(true);
             return;
           }
 
-          setCurrentUserProposalCount(numOfSubmittedProposals.toNumber());
+          setCurrentUserProposalCount(Number(numOfSubmittedProposalsRaw.toString()));
+
           setCurrentUserQualifiedToSubmit(true);
           setIsCurrentUserSubmitQualificationLoading(false);
           setIsCurrentUserSubmitQualificationSuccess(true);
@@ -206,27 +202,26 @@ export function useUser() {
           chainId: chainId,
         };
 
-        const currentUserTotalVotesCast = await readContract(config, {
+        const currentUserTotalVotesCast = (await readContract(config, {
           ...contractConfig,
           functionName: "contestAddressTotalVotesCast",
           args: [userAddress],
-        });
+        })) as bigint;
 
         const userVotes = data[0].num_votes;
 
-        //@ts-ignore
-        const castVotes = BigNumber.from(currentUserTotalVotesCast) / 1e18;
+        const availableVotes = BigInt(userVotes) - currentUserTotalVotesCast / BigInt(1e18);
 
-        if (castVotes > 0) {
+        if (currentUserTotalVotesCast > 0) {
           setCurrentUserTotalVotesAmount(userVotes);
-          setCurrentUserAvailableVotesAmount(userVotes - castVotes);
-          setCurrentuserTotalVotesCast(castVotes);
+          setCurrentUserAvailableVotesAmount(Number(availableVotes));
+          setCurrentuserTotalVotesCast(Number(currentUserTotalVotesCast));
           setIsCurrentUserVoteQualificationSuccess(true);
           setIsCurrentUserVoteQualificationLoading(false);
         } else {
           setCurrentUserTotalVotesAmount(userVotes);
           setCurrentUserAvailableVotesAmount(userVotes);
-          setCurrentuserTotalVotesCast(castVotes);
+          setCurrentuserTotalVotesCast(Number(currentUserTotalVotesCast));
           setIsCurrentUserVoteQualificationSuccess(true);
           setIsCurrentUserVoteQualificationLoading(false);
         }
@@ -269,18 +264,14 @@ export function useUser() {
           abi: abi,
           chainId: chainId,
           functionName: "costToVote",
-        }) as any,
+        }) as unknown as bigint,
       ]);
 
-      const costToVoteBigNum = BigNumber.from(costToVote);
-      const userBalanceBigNum = BigNumber.from(userBalance.value);
-      const currentGasPriceBigNum = BigNumber.from(gasPrice);
+      const totalCost = costToVote + gasPrice;
 
-      const totalCostBigNum = costToVoteBigNum.add(currentGasPriceBigNum);
+      const userVotesRaw = userBalance.value / totalCost;
 
-      const userVotesRaw = userBalanceBigNum.div(totalCostBigNum);
-
-      const userVotesFormatted = Number(utils.parseEther(userVotesRaw.toString())) / 1e18;
+      const userVotesFormatted = Number(parseEther(userVotesRaw.toString())) / 1e18;
 
       setCurrentUserTotalVotesAmount(userVotesFormatted);
       setCurrentUserAvailableVotesAmount(userVotesFormatted);
@@ -316,19 +307,19 @@ export function useUser() {
     }
 
     try {
-      const currentUserTotalVotesCastRaw = await readContract(config, {
+      const currentUserTotalVotesCastRaw = (await readContract(config, {
         address: address as `0x${string}`,
         abi: abi as Abi,
         functionName: "contestAddressTotalVotesCast",
         args: [userAddress],
-      });
+      })) as bigint;
 
-      const currentUserTotalVotesCast = BigNumber.from(currentUserTotalVotesCastRaw);
+      const currentUserAvailableVotesAmountRaw =
+        BigInt(currentUserTotalVotesAmount) - currentUserTotalVotesCastRaw / BigInt(1e18);
+      const currentUserTotalVotesCastFinalRaw = currentUserTotalVotesCastRaw / BigInt(1e18);
 
-      //@ts-ignore
-      setCurrentUserAvailableVotesAmount(currentUserTotalVotesAmount - currentUserTotalVotesCast / 1e18);
-      //@ts-ignore
-      setCurrentuserTotalVotesCast(currentUserTotalVotesCast / 1e18);
+      setCurrentUserAvailableVotesAmount(Number(currentUserAvailableVotesAmountRaw));
+      setCurrentuserTotalVotesCast(Number(currentUserTotalVotesCastFinalRaw));
       setIsCurrentUserVoteQualificationSuccess(true);
       setIsCurrentUserVoteQualificationLoading(false);
     } catch (e) {
