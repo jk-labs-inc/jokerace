@@ -44,6 +44,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 costToPropose;
         uint256 costToVote;
         uint256 payPerVote;
+        address creatorSplitDestination;
     }
 
     struct TargetMetadata {
@@ -96,6 +97,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public costToPropose;
     uint256 public costToVote;
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
+    address public creatorSplitDestination; // Where the creator split of revenue goes.
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -339,7 +341,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
             uint256 sendingToCreator = msg.value - sendingToJkLabs;
             if (sendingToCreator > 0) {
-                Address.sendValue(payable(creator), sendingToCreator); // creator gets the extra wei in the case of rounding
+                Address.sendValue(payable(creatorSplitDestination), sendingToCreator); // creator gets the extra wei in the case of rounding
                 emit PaymentReleased(creator, sendingToCreator);
             }
         }
