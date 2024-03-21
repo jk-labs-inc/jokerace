@@ -16,9 +16,7 @@ export const useFetchUserVotesOnProposal = (contestAddress: string, proposalId: 
 
         const currentUserVotesOnProposal = (positiveVotes - negativeVotes) / BigInt(1e18);
 
-        const currentUserVotesOnProposalFormatted = currentUserVotesOnProposal.toString();
-
-        return currentUserVotesOnProposalFormatted;
+        return Number(currentUserVotesOnProposal.toString());
       },
       enabled: !!contestAbi && !!proposalId && !!address,
     },
