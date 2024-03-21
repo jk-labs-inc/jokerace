@@ -11,7 +11,7 @@ interface LayoutBaseProps {
 const LayoutBase = (props: LayoutBaseProps) => {
   const router = useRouter();
   const { children } = props;
-  const allowedLinks = ["Github", "Mirror", "Twitter", "Report a bug", "Terms", "Telegram"];
+  const allowedLinks = ["Github", "Twitter", "Report a bug", "Terms", "Telegram"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const isCreateFlow = router.pathname.includes("/new");
 
