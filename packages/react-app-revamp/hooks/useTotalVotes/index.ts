@@ -1,17 +1,13 @@
 import { config } from "@config/wagmi";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { useQuery } from "@tanstack/react-query";
 import { readContract } from "@wagmi/core";
 import { fetchDataFromBucket } from "lib/buckets";
 import { EMPTY_ROOT } from "lib/contests";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { Abi } from "viem";
-import { useTotalVotesOnContestStore } from "./store";
 
 const useTotalVotesOnContest = (address: string, chainId: number) => {
-  const { setTotalVotes, setIsError, setIsLoading, setIsSuccess, setIsAnyoneCanVote } = useTotalVotesOnContestStore(
-    state => state,
-  );
-
   const calculateTotalVotes = (data: Recipient[]) => {
     return data.reduce((sum, vote) => sum + Number(vote.numVotes), 0);
   };
@@ -20,9 +16,6 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
     try {
       const { abi } = await getContestContractVersion(address, chainId);
       if (!abi) {
-        setIsError(true);
-        setIsSuccess(false);
-        setIsLoading(false);
         return null;
       }
 
@@ -32,9 +25,6 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
         chainId: chainId,
       };
     } catch (e) {
-      setIsError(true);
-      setIsSuccess(false);
-      setIsLoading(false);
       return null;
     }
   }
@@ -52,54 +42,47 @@ const useTotalVotesOnContest = (address: string, chainId: number) => {
 
       return votingMerkleRoot;
     } catch (e) {
-      setIsError(true);
-      setIsSuccess(false);
-      setIsLoading(false);
       return null;
     }
   }
 
-  async function fetchTotalVotes() {
-    setIsLoading(true);
-    setIsError(false);
+  const fetchTotalVotes = async () => {
+    const contractConfig = await getContractConfig();
 
-    try {
-      const votingMerkleRoot = await getVotingMerkleRoot();
-
-      if (!votingMerkleRoot) {
-        setIsError(true);
-        setIsLoading(false);
-        return;
-      }
-
-      if (votingMerkleRoot === EMPTY_ROOT) {
-        setIsAnyoneCanVote(true);
-        return;
-      }
-
-      const votingMerkleTreeData = await fetchDataFromBucket(votingMerkleRoot);
-
-      if (!votingMerkleTreeData) {
-        setIsError(true);
-        setIsLoading(false);
-        return;
-      }
-
-      const total = calculateTotalVotes(votingMerkleTreeData);
-      setTotalVotes(total);
-      setIsSuccess(true);
-    } catch (error) {
-      setIsError(true);
+    if (!contractConfig) {
+      throw new Error("Contract configuration could not be fetched");
     }
 
-    setIsLoading(false);
-  }
+    const votingMerkleRoot = await getVotingMerkleRoot();
 
-  const retry = () => {
-    fetchTotalVotes();
+    if (!votingMerkleRoot) {
+      throw new Error("Voting merkle root could not be fetched");
+    }
+
+    if (votingMerkleRoot === EMPTY_ROOT) {
+      return 0;
+    }
+
+    const votingMerkleTreeData = await fetchDataFromBucket(votingMerkleRoot);
+    if (!votingMerkleTreeData) {
+      throw new Error("Voting data could not be fetched");
+    }
+
+    return calculateTotalVotes(votingMerkleTreeData);
   };
 
-  return { fetchTotalVotes, retry };
+  const {
+    data: totalVotes,
+    isLoading: isTotalVotesLoading,
+    isError: isTotalVotesError,
+    isSuccess: isTotalVotesSuccess,
+    refetch: refetchTotalVotes,
+  } = useQuery({
+    queryKey: ["totalVotes", address, chainId],
+    queryFn: fetchTotalVotes,
+  });
+
+  return { totalVotes, refetchTotalVotes, isTotalVotesLoading, isTotalVotesError, isTotalVotesSuccess };
 };
 
 export default useTotalVotesOnContest;

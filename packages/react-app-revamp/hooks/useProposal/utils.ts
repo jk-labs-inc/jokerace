@@ -2,8 +2,8 @@ import { config } from "@config/wagmi";
 import { isContentTweet } from "@helpers/isContentTweet";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { readContract, readContracts } from "@wagmi/core";
-import { BigNumber, utils } from "ethers";
 import { shuffle } from "lodash";
+import { formatEther } from "viem";
 import { MappedProposalIds, ProposalCore, SortOptions } from "./store";
 
 interface RankDictionary {
@@ -146,10 +146,9 @@ export function transformProposalData(
   proposalCommentsIds: bigint[] = [],
   deletedCommentIds: bigint[] = [],
 ) {
-  const voteForBigInt = voteData.result[0];
-  const voteAgainstBigInt = voteData.result[1];
-  const netVotesBigNumber = BigNumber.from(voteForBigInt).sub(voteAgainstBigInt);
-  const netVotes = Number(utils.formatEther(netVotesBigNumber));
+  const voteForBigInt = BigInt(voteData.result[0]);
+  const voteAgainstBigInt = BigInt(voteData.result[1]);
+  const netVotes = Number(formatEther(voteForBigInt - voteAgainstBigInt));
   const isContentImage = isUrlToImage(proposalData.description);
   const tweet = isContentTweet(proposalData.description);
   const deletedCommentIdsSet = new Set(deletedCommentIds.map(id => id.toString()));

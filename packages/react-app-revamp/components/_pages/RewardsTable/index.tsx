@@ -1,11 +1,9 @@
-import Loader from "@components/UI/Loader";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { ordinalSuffix } from "@helpers/ordinalSuffix";
-import { BigNumber } from "ethers";
 import { useRouter } from "next/router";
 import { FC } from "react";
-import { useContractRead } from "wagmi";
+import { useReadContract } from "wagmi";
 
 interface RewardsTableShareProps {
   payee: any;
@@ -20,7 +18,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares } = props;
   const { asPath } = useRouter();
   const { chainName } = extractPathSegments(asPath);
-  const { data, isError, isLoading } = useContractRead({
+  const { data, isError, isLoading } = useReadContract({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
     chainId: chains.filter((chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName)?.[0]
@@ -28,6 +26,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
     functionName: "shares",
     args: [Number(payee)],
   }) as any;
+  const shareForPayee = ((BigInt(data) * BigInt(100)) / BigInt(totalShares)).toString();
 
   return (
     <>
@@ -46,7 +45,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
                 } pb-3`}
               >
                 <p>{ordinalSuffix(parseFloat(payee))} place</p>
-                <p>{BigNumber.from(data).mul(100).div(totalShares).toString()}% of rewards</p>
+                <p>{shareForPayee}% of rewards</p>
               </div>
             </div>
           )}

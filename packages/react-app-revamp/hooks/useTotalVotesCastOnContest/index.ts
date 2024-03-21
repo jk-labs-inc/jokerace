@@ -1,58 +1,26 @@
-import { config } from "@config/wagmi";
 import { useContestStore } from "@hooks/useContest/store";
-import { readContract } from "@wagmi/core";
-import { BigNumber, utils } from "ethers";
-import { useTotalVotesCastStore } from "./store";
+import { formatEther } from "viem";
+import { useReadContract } from "wagmi";
 
 const useTotalVotesCastOnContest = (address: string, chainId: number) => {
   const { contestAbi: abi } = useContestStore(state => state);
-  const { setTotalVotesCast, setIsLoading, setIsError, setIsSuccess } = useTotalVotesCastStore(state => state);
 
-  async function fetchTotalVotesCast() {
-    try {
-      setIsLoading(true);
+  const totalVotesCast = useReadContract({
+    address: address as `0x${string}`,
+    abi: abi,
+    chainId: chainId,
+    functionName: "totalVotesCast",
+    query: {
+      select: (data: unknown) => {
+        const totalVotesCast = formatEther(data as bigint);
 
-      if (!abi) {
-        setIsError(true);
-        setIsSuccess(false);
-        setIsLoading(false);
-        return;
-      }
+        return totalVotesCast;
+      },
+      enabled: !!abi || !!address || !!chainId,
+    },
+  });
 
-      const contractConfig = {
-        address: address as `0x${string}`,
-        abi: abi,
-        chainId: chainId,
-      };
-
-      const totalVotesCast = (await readContract(config, {
-        ...contractConfig,
-        functionName: "totalVotesCast",
-        args: [],
-      })) as bigint;
-
-      const totalVotesCastBN = BigNumber.from(totalVotesCast);
-
-      const totalVotesCastFormatted = parseFloat(utils.formatEther(totalVotesCastBN));
-
-      setTotalVotesCast(totalVotesCastFormatted);
-      setIsSuccess(true);
-      setIsLoading(false);
-    } catch {
-      setIsError(true);
-      setIsSuccess(false);
-      setIsLoading(false);
-    }
-  }
-
-  function retry() {
-    fetchTotalVotesCast();
-  }
-
-  return {
-    fetchTotalVotesCast,
-    retry,
-  };
+  return { totalVotesCast, retry: totalVotesCast.refetch };
 };
 
 export default useTotalVotesCastOnContest;
