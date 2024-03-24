@@ -85,8 +85,12 @@ const CreateVotingRequirements = () => {
     const anyoneOptionIndex = updatedOptions.findIndex(option => option.value === "anyone");
     const anyoneOption = updatedOptions[anyoneOptionIndex];
 
-    if (!isConnected || minCostToPropose === 0 || minCostToVote === 0) {
-      const modifiedAnyoneOption = { ...anyoneOption, disabled: true };
+    if (!isConnected) {
+      const modifiedAnyoneOption = { value: "anyone", label: "anyone (must connect wallet)", disabled: true };
+      updatedOptions.splice(anyoneOptionIndex, 1);
+      updatedOptions.push(modifiedAnyoneOption);
+    } else if (minCostToPropose === 0 || minCostToVote === 0) {
+      const modifiedAnyoneOption = { value: "anyone", label: "anyone (not live on this chain)", disabled: true };
       updatedOptions.splice(anyoneOptionIndex, 1);
       updatedOptions.push(modifiedAnyoneOption);
     } else {
