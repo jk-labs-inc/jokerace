@@ -11,15 +11,15 @@ export const optimismTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://optimism-goerli.publicnode.com"],
+      http: ["https://optimism-sepolia.publicnode.com"],
     },
     default: {
-      http: [`https://opt-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
+      http: [`https://opt-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {
-    etherscan: { name: "Optimism Testnet Etherscan", url: "https://goerli-optimism.etherscan.io/" },
-    default: { name: "Optimism Testnet Etherscan", url: "https://goerli-optimism.etherscan.io/" },
+    etherscan: { name: "Optimism Testnet Etherscan", url: "https://sepolia-optimism.etherscan.io/" },
+    default: { name: "Optimism Testnet Etherscan", url: "https://sepolia-optimism.etherscan.io/" },
   },
   testnet: true,
 };

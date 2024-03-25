@@ -11,15 +11,15 @@ export const baseTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://goerli.base.org"],
+      http: ["https://sepolia.base.org"],
     },
     default: {
-      http: ["https://goerli.base.org"],
+      http: ["https://sepolia.base.org"],
     },
   },
   blockExplorers: {
-    etherscan: { name: "Base Testnet Scan", url: "https://goerli.basescan.org/" },
-    default: { name: "Base Testnet Scan", url: "https://goerli.basescan.org/" },
+    etherscan: { name: "Base Testnet Scan", url: "https://sepolia.basescan.org/" },
+    default: { name: "Base Testnet Scan", url: "https://sepolia.basescan.org/" },
   },
   testnet: true,
 };

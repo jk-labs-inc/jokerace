@@ -11,15 +11,15 @@ export const lineaTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://rpc.goerli.linea.build"],
+      http: ["https://rpc.sepolia.linea.build"],
     },
     default: {
-      http: ["https://rpc.goerli.linea.build"],
+      http: ["https://rpc.sepolia.linea.build"],
     },
   },
   blockExplorers: {
-    etherscan: { name: "Linea Testnet Scan", url: "https://goerli.lineascan.build/" },
-    default: { name: "Linea Testnet Scan", url: "https://goerli.lineascan.build/" },
+    etherscan: { name: "Linea Testnet Scan", url: "https://sepolia.lineascan.build/" },
+    default: { name: "Linea Testnet Scan", url: "https://sepolia.lineascan.build/" },
   },
   testnet: true,
 };

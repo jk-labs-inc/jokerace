@@ -11,15 +11,15 @@ export const arbitrumOneTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://endpoints.omniatech.io/v1/arbitrum/goerli/public"],
+      http: ["https://sepolia-rollup.arbitrum.io/rpc"],
     },
     default: {
-      http: [`https://arb-goerli.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
+      http: [`https://arb-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_KEY}`],
     },
   },
   blockExplorers: {
-    etherscan: { name: "Arbitrum Testnet Etherscan", url: "https://goerli-rollup-explorer.arbitrum.io/" },
-    default: { name: "Arbitrum Testnet Etherscan", url: "https://goerli-rollup-explorer.arbitrum.io/" },
+    etherscan: { name: "Arbitrum Testnet Etherscan", url: "https://sepolia-explorer.arbitrum.io/" },
+    default: { name: "Arbitrum Testnet Etherscan", url: "https://sepolia-explorer.arbitrum.io/" },
   },
   testnet: true,
 };

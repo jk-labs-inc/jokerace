@@ -11,15 +11,15 @@ export const scrollTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://alpha-rpc.scroll.io/l2"],
+      http: ["https://scroll-sepolia.blockpi.network/v1/rpc/public"],
     },
     default: {
-      http: ["https://alpha-rpc.scroll.io/l2"],
+      http: ["https://scroll-sepolia.blockpi.network/v1/rpc/public"],
     },
   },
   blockExplorers: {
-    etherscan: { name: "Scroll Goerli Scan", url: "https://blockscout.scroll.io/" },
-    default: { name: "Scroll Goerli Scan", url: "https://blockscout.scroll.io/" },
+    etherscan: { name: "Scroll Testnet Scan", url: "https://sepolia.scrollscan.com/" },
+    default: { name: "Scroll Testnet Scan", url: "https://sepolia.scrollscan.com/" },
   },
   testnet: true,
 };
