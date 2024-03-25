@@ -13,16 +13,18 @@ interface CreateRewardsFundingPoolSubmitProps {
 const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = ({ onClick, onCancel }) => {
   const [shake, setShake] = useState(false);
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
-  const isLoading = useDeployRewardsStore(state => state.isLoading);
-  const { validationError, rewards } = useFundRewardsStore(state => state);
+  const { isLoading: isDeployRewardsLoading } = useDeployRewardsStore(state => state);
+  const { validationError, rewards, isLoading: isFundRewardsLoading } = useFundRewardsStore(state => state);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       setAttemptedSubmit(true);
 
-      if (isLoading) {
+      if (isDeployRewardsLoading) {
         toast.warning("Please wait while your reward deployment is finished.");
       }
+
+      if (isFundRewardsLoading) return;
 
       const hasErrors = validationError.some(error => error.amount || error.tokenAddress);
 
@@ -35,7 +37,7 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
         }
       }
     },
-    [isLoading, validationError, onClick],
+    [isDeployRewardsLoading, isFundRewardsLoading, validationError, onClick],
   );
 
   useEffect(() => {
@@ -67,7 +69,7 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
 
   return (
     <div>
-      {!isLoading &&
+      {!isDeployRewardsLoading &&
         attemptedSubmit &&
         validationError.map((error, index) => (
           <div key={index} className="mb-4 text-negative-11 text-[16px] font-bold">
@@ -79,7 +81,7 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
       <div className="flex gap-2 items-start pb-5 md:pb-0">
         <div className={`flex flex-col items-center gap-2`}>
           <ButtonV3
-            isDisabled={isLoading}
+            isDisabled={isDeployRewardsLoading || isFundRewardsLoading}
             colorClass={`bg-gradient-create ${shake ? "animate-shakeTop" : ""}`}
             size={ButtonSize.LARGE}
             onClick={handleClick}
