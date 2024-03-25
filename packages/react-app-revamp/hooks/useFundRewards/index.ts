@@ -78,14 +78,15 @@ export function useFundRewardsModule() {
     rewardsContractAddress: string;
     decimals: number;
   }) => {
+    setIsLoading(true);
+    setIsSuccess(false);
+
     const { tokenAddress, amount, isErc20, rewardsContractAddress, decimals } = args;
     const contractConfig = {
       address: tokenAddress as `0x${string}`,
+      chainId: chainId,
       abi: erc20Abi,
     };
-
-    setIsLoading(true);
-    setIsSuccess(false);
 
     let hash: `0x${string}`;
     let receipt: WaitForTransactionReceiptReturnType;

@@ -81,17 +81,6 @@ const CHAIN_CONFIGS: ChainConfigs = {
       },
     ],
   },
-  goerli: {
-    name: "Goerli",
-    id: 5,
-    tokens: [
-      {
-        name: "USDC",
-        symbol: "usdc",
-        address: "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
-      },
-    ],
-  },
   sepolia: {
     name: "Sepolia",
     id: 11155111,
@@ -106,17 +95,6 @@ const CHAIN_CONFIGS: ChainConfigs = {
   baseTestNet: {
     name: "Base Testnet",
     id: 84531,
-    tokens: [
-      {
-        name: "USDC",
-        symbol: "usdc",
-        address: "0x07865c6E87B9F70255377e024ace6630C1Eaa37F",
-      },
-    ],
-  },
-  scrollGoerli: {
-    name: "Scroll Goerli",
-    id: 534353,
     tokens: [
       {
         name: "USDC",
