@@ -1,20 +1,20 @@
 /* eslint-disable react/no-unescaped-entities */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
+import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { addressRegex } from "@helpers/regex";
+import useChargeDetails from "@hooks/useChargeDetails";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
 import { useCallback, useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
 import CreateVotingRequirementsTokenSettings from "./components/Token";
-import { steps } from "@components/_pages/Create";
-import { useAccount } from "wagmi";
-import useChargeDetails from "@hooks/useChargeDetails";
 
 type WorkerMessageData = {
   merkleRoot: string;
@@ -83,24 +83,31 @@ const CreateVotingRequirements = () => {
 
     const updatedOptions = [...options];
     const anyoneOptionIndex = updatedOptions.findIndex(option => option.value === "anyone");
-    const anyoneOption = updatedOptions[anyoneOptionIndex];
 
     if (!isConnected) {
-      const modifiedAnyoneOption = { value: "anyone", label: "anyone (must connect wallet)", disabled: true };
-      updatedOptions.splice(anyoneOptionIndex, 1);
-      updatedOptions.push(modifiedAnyoneOption);
+      updatedOptions[anyoneOptionIndex] = { value: "anyone", label: "anyone (must connect wallet)", disabled: true };
     } else if (minCostToPropose === 0 || minCostToVote === 0) {
-      const modifiedAnyoneOption = { value: "anyone", label: "anyone (not live on this chain)", disabled: true };
-      updatedOptions.splice(anyoneOptionIndex, 1);
-      updatedOptions.push(modifiedAnyoneOption);
+      updatedOptions[anyoneOptionIndex] = { value: "anyone", label: "anyone (not live on this chain)", disabled: true };
     } else {
-      const modifiedAnyoneOption = { ...anyoneOption, disabled: false };
-      updatedOptions[anyoneOptionIndex] = modifiedAnyoneOption;
+      updatedOptions[anyoneOptionIndex] = { value: "anyone", label: "anyone", disabled: false };
     }
 
     setVotingDropdownRequirementsOptions(updatedOptions);
-    setVotingRequirementsOption(updatedOptions.find(option => !option.disabled) || updatedOptions[0]);
-  }, [isConnected, minCostToPropose, minCostToVote, isChargeDetailsLoading, setVotingRequirementsOption]);
+
+    if (votingRequirementsOption.value === "anyone" && updatedOptions[anyoneOptionIndex].disabled) {
+      const firstEnabledOption = updatedOptions.find(option => !option.disabled);
+      if (firstEnabledOption) {
+        setVotingRequirementsOption(firstEnabledOption);
+      }
+    }
+  }, [
+    minCostToPropose,
+    minCostToVote,
+    isChargeDetailsLoading,
+    setVotingRequirementsOption,
+    isConnected,
+    votingRequirementsOption,
+  ]);
 
   const onRequirementChange = (option: string) => {
     setInputError({});
@@ -114,6 +121,8 @@ const CreateVotingRequirements = () => {
       name: "",
       logo: "",
       tokenAddress: "",
+      nftTokenId: null,
+      nftType: "",
     });
   };
 
@@ -134,7 +143,7 @@ const CreateVotingRequirements = () => {
       default:
         return (
           <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
-            <p className="text-[16px]">
+            <p className="text-[16px] animate-appear">
               <b>note: </b>by letting anyone vote, you’ll need to set a <br />
               charge-per-vote to prevent bots from voting.
             </p>
@@ -248,24 +257,33 @@ const CreateVotingRequirements = () => {
   };
 
   const fetchRequirementsMerkleData = async (type: string) => {
-    let votingAllowlist: Record<string, number> | Error;
-
     toastLoading("processing your allowlist...", false);
     setCharge({
       ...charge,
       voteType: VoteType.PerTransaction,
     });
     try {
-      const fetchMerkleData = type === "erc721" ? fetchNftHolders : fetchTokenHolders;
-
-      votingAllowlist = await fetchMerkleData(
-        "voting",
-        votingRequirements.tokenAddress,
-        votingRequirements.chain,
-        votingRequirements.minTokensRequired,
-        votingRequirements.powerValue,
-        votingRequirements.powerType,
-      );
+      let votingAllowlist: Record<string, number> | Error;
+      if (type === "erc721") {
+        votingAllowlist = await fetchNftHolders(
+          "voting",
+          votingRequirements.tokenAddress,
+          votingRequirements.chain,
+          votingRequirements.minTokensRequired,
+          votingRequirements.nftTokenId,
+          votingRequirements.powerValue,
+          votingRequirements.powerType,
+        );
+      } else {
+        votingAllowlist = await fetchTokenHolders(
+          "voting",
+          votingRequirements.tokenAddress,
+          votingRequirements.chain,
+          votingRequirements.minTokensRequired,
+          votingRequirements.powerValue,
+          votingRequirements.powerType,
+        );
+      }
 
       if (votingAllowlist instanceof Error) {
         setInputError({
@@ -374,7 +392,7 @@ const CreateVotingRequirements = () => {
         {isChargeDetailsError ? (
           <p className="text-[20px] text-negative-11 font-bold">
             ruh roh, we couldn't load preset options for this chain!{" "}
-            <span className="underline cursor-pointer" onClick={refetchChargeDetails}>
+            <span className="underline cursor-pointer" onClick={() => refetchChargeDetails()}>
               please try again
             </span>
           </p>

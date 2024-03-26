@@ -2,14 +2,14 @@ import { MAX_ROWS } from "@helpers/csvConstants";
 import { formatNumber } from "@helpers/formatNumber";
 import { VoteCalculationMethod } from "lib/permissioning";
 
-interface TokenBalance {
+interface Token {
   tokenId: string;
   balance: number;
 }
 
 interface OwnerData {
   ownerAddress: string;
-  tokenBalances: TokenBalance[];
+  tokenBalances: Token[];
 }
 
 interface OwnersBalancesRecord {
@@ -22,21 +22,25 @@ interface EventData {
   votesPerUnit: number;
   minTokensRequired: number;
   eventType: "voting" | "submission";
+  tokenId: number | null;
 }
 
 const BASE_LIMIT = 100000;
 
 self.onmessage = (event: MessageEvent<EventData>) => {
-  const { ownersData, voteCalculationMethod, votesPerUnit, minTokensRequired, eventType } = event.data;
+  const { ownersData, voteCalculationMethod, votesPerUnit, minTokensRequired, eventType, tokenId } = event.data;
   const ownersBalancesRecord: OwnersBalancesRecord = {};
   let qualifiedOwnersCount = 0;
 
   for (const owner of ownersData) {
     const ownerAddress: string = owner.ownerAddress;
-    const numTokens = owner.tokenBalances.reduce(
-      (sum: number, tokenBalance: TokenBalance) => sum + tokenBalance.balance,
-      0,
-    );
+    let filteredTokenBalances = owner.tokenBalances;
+
+    if (tokenId !== null) {
+      filteredTokenBalances = owner.tokenBalances.filter(tokenBalance => Number(tokenBalance.tokenId) === tokenId);
+    }
+
+    const numTokens = filteredTokenBalances.reduce((sum: number, tokenBalance: Token) => sum + tokenBalance.balance, 0);
 
     if (numTokens >= minTokensRequired) {
       qualifiedOwnersCount++;
@@ -46,13 +50,20 @@ self.onmessage = (event: MessageEvent<EventData>) => {
         if (voteCalculationMethod === "token") {
           totalVotes = numTokens * votesPerUnit;
         } else if (voteCalculationMethod === "token holder") {
-          totalVotes = owner.tokenBalances.length > 0 ? votesPerUnit : 0;
+          totalVotes = filteredTokenBalances.length > 0 ? votesPerUnit : 0;
         }
       } else if (eventType === "submission") {
         totalVotes = 10; // hardcoded to 10 for submission allowlists
       }
 
       ownersBalancesRecord[ownerAddress] = totalVotes;
+    }
+
+    if (qualifiedOwnersCount === 0) {
+      self.postMessage({
+        error: "No qualified owners found based on the provided criteria.",
+      });
+      return;
     }
 
     if (qualifiedOwnersCount >= MAX_ROWS) {
