@@ -103,7 +103,7 @@ const useSearchNfts = (chain: string, query: string) => {
             imageUrl: contract.openSeaMetadata?.imageUrl
               ? contract.openSeaMetadata?.imageUrl
               : "/contest/mona-lisa-moustache.png",
-            isVerified: contract.openSeaMetadata?.safelistRequestStatus === "verified" ? true : false,
+            isVerified: contract.openSeaMetadata?.safelistRequestStatus === "verified",
           },
         ];
       }
