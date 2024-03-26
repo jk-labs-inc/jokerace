@@ -3,7 +3,7 @@ import { config } from "@config/wagmi";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
 import { useEffect, useState } from "react";
 
-const DEFAULT_AVATAR_URL = "/contest/mona-lisa-moustache.png";
+const DEFAULT_AVATAR_URL = "/contest/user.svg";
 
 interface ProfileData {
   profileName: string;
@@ -56,8 +56,10 @@ const useProfileData = (ethereumAddress: string, shortenOnFallback: boolean): Pr
         const lensProfile = await lensClient.profile.fetchDefault({ for: ethereumAddress });
         if (lensProfile?.handle) {
           const avatarFragment = lensProfile.metadata?.picture;
+
           //@ts-ignore
           let lensAvatar = avatarFragment?.raw?.uri?.replace("ipfs://", "https://lens.infura-ipfs.io/ipfs/");
+
           if (lensAvatar) {
             try {
               await checkImageUrl(lensAvatar);
