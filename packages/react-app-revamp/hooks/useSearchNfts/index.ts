@@ -37,6 +37,10 @@ export interface NFTMetadata {
 const useSearchNfts = (chain: string, query: string) => {
   const isQueryTokenAddress = addressRegex.test(query);
 
+  function generateSymbolFromName(name: string): string {
+    return name.substring(0, 4).toUpperCase();
+  }
+
   const fetchNftContractMetadata = async (): Promise<NFTMetadata[]> => {
     if (!query) return [];
 
@@ -63,13 +67,13 @@ const useSearchNfts = (chain: string, query: string) => {
       contracts = filteredContracts.map((contract: any) => ({
         address: contract.address,
         name: contract.openSeaMetadata?.collectionName ? contract.openSeaMetadata.collectionName : contract.name,
-        symbol: contract.symbol,
+        symbol: contract.symbol ? contract.symbol : generateSymbolFromName(contract.name),
         totalSupply: contract.totalSupply,
         tokenType: contract.tokenType,
         imageUrl: contract.openSeaMetadata?.imageUrl
-          ? contract.openSeaMetadata?.imageUrl
+          ? contract.openSeaMetadata.imageUrl
           : "/contest/mona-lisa-moustache.png",
-        isVerified: contract.openSeaMetadata?.safelistRequestStatus === "verified" ? true : false,
+        isVerified: contract.openSeaMetadata?.safelistRequestStatus === "verified",
       }));
     } else if (isQueryTokenAddress) {
       const contractMetadataUrl = getAlchemyBaseUrlForContractMetadata(chain);
@@ -87,11 +91,13 @@ const useSearchNfts = (chain: string, query: string) => {
           return [];
         }
 
+        console.log({ contract });
+
         contracts = [
           {
             address: contract.address,
             name: contract.openSeaMetadata?.collectionName ? contract.openSeaMetadata.collectionName : contract.name,
-            symbol: contract.symbol,
+            symbol: contract.symbol ? contract.symbol : generateSymbolFromName(contract.name),
             totalSupply: contract.totalSupply,
             tokenType: contract.tokenType,
             imageUrl: contract.openSeaMetadata?.imageUrl
