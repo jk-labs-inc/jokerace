@@ -21,6 +21,9 @@ const getAlchemyBaseUrlForContractMetadata = (chain: string) => {
   return `https://${subdomain}.g.alchemy.com/nft/v3/${alchemyApiKey}/getContractMetadata`;
 };
 
+const NOT_SUPPORTED_NFT_STANDARD = "NO_SUPPORTED_NFT_STANDARD";
+const NOT_A_CONTRACT = "NOT_A_CONTRACT";
+
 export interface NFTMetadata {
   address: string;
   name: string;
@@ -28,6 +31,7 @@ export interface NFTMetadata {
   imageUrl: string;
   totalSupply: string | null;
   isVerified: boolean;
+  tokenType: string;
 }
 
 const useSearchNfts = (chain: string, query: string) => {
@@ -52,11 +56,16 @@ const useSearchNfts = (chain: string, query: string) => {
     const data = await response.json();
 
     if (data.contracts && data.contracts.length > 0) {
-      contracts = data.contracts.map((contract: any) => ({
+      const filteredContracts = data.contracts.filter(
+        (contract: { tokenType: string }) => contract.tokenType !== NOT_SUPPORTED_NFT_STANDARD,
+      );
+
+      contracts = filteredContracts.map((contract: any) => ({
         address: contract.address,
         name: contract.openSeaMetadata?.collectionName ? contract.openSeaMetadata.collectionName : contract.name,
         symbol: contract.symbol,
         totalSupply: contract.totalSupply,
+        tokenType: contract.tokenType,
         imageUrl: contract.openSeaMetadata?.imageUrl
           ? contract.openSeaMetadata?.imageUrl
           : "/contest/mona-lisa-moustache.png",
@@ -74,7 +83,7 @@ const useSearchNfts = (chain: string, query: string) => {
       if (contractResponse.ok) {
         const contract = await contractResponse.json();
 
-        if (contract.tokenType === "NOT_A_CONTRACT") {
+        if (contract.tokenType === NOT_A_CONTRACT || contract.tokenType === NOT_SUPPORTED_NFT_STANDARD) {
           return [];
         }
 
@@ -84,6 +93,7 @@ const useSearchNfts = (chain: string, query: string) => {
             name: contract.openSeaMetadata?.collectionName ? contract.openSeaMetadata.collectionName : contract.name,
             symbol: contract.symbol,
             totalSupply: contract.totalSupply,
+            tokenType: contract.tokenType,
             imageUrl: contract.openSeaMetadata?.imageUrl
               ? contract.openSeaMetadata?.imageUrl
               : "/contest/mona-lisa-moustache.png",

@@ -2,17 +2,20 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
+import { usePreviousStep } from "../../hooks/usePreviousStep";
 import { validationFunctions } from "../../utils/validation";
 import CreateContestCharge from "./components/Charge";
 import CreateContestChargeUnconnectedAccount from "./components/UnconnectedAccount";
 import CreateContestChargeUnsupportedChain from "./components/UnsupportedChain";
-import { steps } from "../..";
 
 const CreateContestMonetization = () => {
-  const { step, charge, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(state => state);
+  const { step, charge, mobileStepTitle, resetMobileStepTitle, votingRequirementsOption } = useDeployContestStore(
+    state => state,
+  );
   const { isConnected, chain } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const [unsupportedChain, setUnsupportedChain] = useState(false);
@@ -20,6 +23,7 @@ const CreateContestMonetization = () => {
   const onNextStep = useNextStep([() => monetizationValidation?.[0].validation(charge)]);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const monetizeTitle = isMobile ? `let’s monetize` : `let’s monetize this puppy`;
+  const onPreviousStep = usePreviousStep();
 
   const handleNextStepMobile = useCallback(() => {
     if (!mobileStepTitle) return;
@@ -43,6 +47,9 @@ const CreateContestMonetization = () => {
     if (!isConnected) {
       return <CreateContestChargeUnconnectedAccount />;
     } else if (unsupportedChain) {
+      if (votingRequirementsOption.value === "anyone") {
+        onPreviousStep();
+      }
       return <CreateContestChargeUnsupportedChain />;
     }
 
@@ -54,7 +61,7 @@ const CreateContestMonetization = () => {
         onUnsupportedChain={value => setUnsupportedChain(value)}
       />
     );
-  }, [chain?.name, isConnected, unsupportedChain]);
+  }, [chain?.name, isConnected, onPreviousStep, unsupportedChain, votingRequirementsOption.value]);
 
   return (
     <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
