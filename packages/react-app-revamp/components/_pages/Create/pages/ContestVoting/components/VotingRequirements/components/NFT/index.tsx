@@ -19,13 +19,16 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
   };
 
   const onVotingRequirementTokenChange = (token: TokenDetails) => {
-    const { address, name, logo, symbol } = token;
+    const { address, name, logo, symbol, nftTokenType } = token;
+
     setVotingRequirements({
       ...votingRequirements,
       tokenAddress: address,
       name,
       symbol,
       logo,
+      nftType: nftTokenType ?? "",
+      nftTokenId: null,
     });
   };
 
@@ -55,6 +58,13 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
     }
   };
 
+  const onTokenIdChange = (tokenId: number | null) => {
+    setVotingRequirements({
+      ...votingRequirements,
+      nftTokenId: tokenId,
+    });
+  };
+
   return (
     <CreateRequirementsSettings
       step="voting"
@@ -66,15 +76,18 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
         symbol: votingRequirements.symbol,
         name: votingRequirements.name,
         logo: votingRequirements.logo,
+        nftTokenType: votingRequirements.nftType,
       }}
       minTokensRequired={votingRequirements.minTokensRequired}
       powerType={votingRequirements.powerType}
       powerValue={votingRequirements.powerValue}
+      tokenId={votingRequirements.nftTokenId}
       onChainChange={onVotingRequirementChainChange}
       onTokenChange={onVotingRequirementTokenChange}
       onMinTokensRequiredChange={onMinTokensRequiredChange}
       onPowerTypeChange={onPowerTypeChange}
       onPowerValueChange={onPowerValueChange}
+      onTokenIdChange={onTokenIdChange}
     />
   );
 };

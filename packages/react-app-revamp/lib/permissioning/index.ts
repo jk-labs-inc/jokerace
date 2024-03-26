@@ -26,6 +26,7 @@ export async function fetchNftHolders(
   contractAddress: string,
   chainName: string,
   minTokensRequired: number = 1,
+  tokenId: number | null,
   votesPerUnit: number = 100,
   voteCalculationMethod: string = "token",
 ): Promise<Record<string, number> | Error> {
@@ -107,6 +108,7 @@ export async function fetchNftHolders(
       voteCalculationMethod,
       minTokensRequired,
       eventType: type,
+      tokenId,
     });
   });
 }

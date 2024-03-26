@@ -92,6 +92,7 @@ const CreateSubmissionRequirements = () => {
       tokenAddress: "",
       name: "",
       logo: "",
+      nftTokenId: null,
     });
     setInputError({});
   };
@@ -164,18 +165,26 @@ const CreateSubmissionRequirements = () => {
       return;
     }
 
-    let result: Record<string, number> | Error;
     toastLoading("processing your allowlist...", false);
 
     try {
-      const fetchMerkleData = type.value === "erc721" ? fetchNftHolders : fetchTokenHolders;
-
-      result = await fetchMerkleData(
-        "submission",
-        submissionRequirements.tokenAddress,
-        submissionRequirements.chain,
-        submissionRequirements.minTokensRequired,
-      );
+      let result;
+      if (type.value === "erc721") {
+        result = await fetchNftHolders(
+          "submission",
+          submissionRequirements.tokenAddress,
+          submissionRequirements.chain,
+          submissionRequirements.minTokensRequired,
+          submissionRequirements.nftTokenId,
+        );
+      } else {
+        result = await fetchTokenHolders(
+          "submission",
+          submissionRequirements.tokenAddress,
+          submissionRequirements.chain,
+          submissionRequirements.minTokensRequired,
+        );
+      }
 
       if (result instanceof Error) {
         setInputError({

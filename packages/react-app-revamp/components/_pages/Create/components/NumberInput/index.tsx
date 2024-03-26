@@ -23,7 +23,7 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
   unitLabel,
   onChange,
 }) => {
-  const [value, setValue] = useState<number | "">(propValue ?? 0);
+  const [value, setValue] = useState<number | "">(propValue ?? "");
 
   useEffect(() => {
     if (propValue === undefined) return;
@@ -67,7 +67,7 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
       >
         <input
           type="number"
-          className={`text-[20px] w-full h-full outline-none bg-transparent pl-4 text-true-black ${textClassName}`}
+          className={`text-[20px] w-full h-full outline-none bg-transparent pl-4 text-true-black ${textClassName} placeholder-neutral-10`}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
           onChange={handleChange}
