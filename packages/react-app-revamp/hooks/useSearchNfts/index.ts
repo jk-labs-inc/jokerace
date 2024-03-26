@@ -91,8 +91,6 @@ const useSearchNfts = (chain: string, query: string) => {
           return [];
         }
 
-        console.log({ contract });
-
         contracts = [
           {
             address: contract.address,
