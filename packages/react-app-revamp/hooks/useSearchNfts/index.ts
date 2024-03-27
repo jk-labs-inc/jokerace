@@ -23,6 +23,7 @@ const getAlchemyBaseUrlForContractMetadata = (chain: string) => {
 
 const NOT_SUPPORTED_NFT_STANDARD = "NO_SUPPORTED_NFT_STANDARD";
 const NOT_A_CONTRACT = "NOT_A_CONTRACT";
+const UNKNOWN = "UNKNOWN";
 
 export interface NFTMetadata {
   address: string;
@@ -34,12 +35,12 @@ export interface NFTMetadata {
   tokenType: string;
 }
 
+function generateSymbolFromName(name: string): string {
+  return name.substring(0, 4).toUpperCase();
+}
+
 const useSearchNfts = (chain: string, query: string) => {
   const isQueryTokenAddress = addressRegex.test(query);
-
-  function generateSymbolFromName(name: string): string {
-    return name.substring(0, 4).toUpperCase();
-  }
 
   const fetchNftContractMetadata = async (): Promise<NFTMetadata[]> => {
     if (!query) return [];
@@ -87,7 +88,11 @@ const useSearchNfts = (chain: string, query: string) => {
       if (contractResponse.ok) {
         const contract = await contractResponse.json();
 
-        if (contract.tokenType === NOT_A_CONTRACT || contract.tokenType === NOT_SUPPORTED_NFT_STANDARD) {
+        if (
+          contract.tokenType === NOT_A_CONTRACT ||
+          contract.tokenType === NOT_SUPPORTED_NFT_STANDARD ||
+          contract.tokenType === UNKNOWN
+        ) {
           return [];
         }
 

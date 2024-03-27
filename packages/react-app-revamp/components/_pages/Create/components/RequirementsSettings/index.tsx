@@ -10,6 +10,7 @@ import { FC, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import CreateDefaultDropdown, { Option } from "../DefaultDropdown";
 import CreateNumberInput from "../NumberInput";
+import CreateTextInput from "../TextInput";
 import { erc20ChainDropdownOptions, nftChainDropdownOptions, votingPowerOptions } from "./config";
 
 interface CreateRequirementsSettingsProps {
@@ -21,13 +22,13 @@ interface CreateRequirementsSettingsProps {
   powerType?: string;
   powerValue?: number;
   error?: Record<string, string | undefined>;
-  tokenId?: number | null;
+  tokenId?: string;
   onChainChange?: (chain: string) => void;
   onTokenChange?: (token: TokenDetails) => void;
   onMinTokensRequiredChange?: (minTokens: number | null) => void;
   onPowerTypeChange?: (votingPowerType: string) => void;
   onPowerValueChange?: (votingPower: number | null) => void;
-  onTokenIdChange?: (tokenId: number | null) => void;
+  onTokenIdChange?: (tokenId?: string) => void;
 }
 
 export interface TokenDetails {
@@ -111,7 +112,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
     setTokenDetails(defaultTokenDetails);
     setChainLogo(chainsImages["mainnet"]);
     onTokenChange?.(defaultTokenDetails);
-    onTokenIdChange?.(null);
+    onTokenIdChange?.("");
     onChainChange?.("mainnet");
   };
 
@@ -254,11 +255,11 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
               <span className="text-[12px]">(optional)</span>
             </div>
 
-            <CreateNumberInput
-              value={tokenId !== null ? tokenId : undefined}
-              className="w-full md:w-44 text-[16px] md:text-[24px]"
-              placeholder="1"
+            <CreateTextInput
+              value={tokenId}
               onChange={onTokenIdChange}
+              className="w-full md:w-52 text-[16px] md:text-[20px]"
+              placeholder="0x01 or 1"
             />
           </div>
         ) : null}

@@ -208,7 +208,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       name: "",
       symbol: "",
       logo: "",
-      nftTokenId: null,
+      nftTokenId: "",
     },
     submissionAllowlist: {
       manual: {},
@@ -231,7 +231,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       name: "",
       symbol: "",
       logo: "",
-      nftTokenId: null,
+      nftTokenId: "",
     },
     submissionTypeOption: {
       value: SubmissionType.DifferentFromVoters,
