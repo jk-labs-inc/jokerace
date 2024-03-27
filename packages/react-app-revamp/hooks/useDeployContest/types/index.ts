@@ -22,7 +22,7 @@ export type VotingRequirements = {
   name: string;
   symbol: string;
   logo: string;
-  nftTokenId: number | null;
+  nftTokenId?: string;
 };
 
 export type SubmissionRequirements = {
@@ -35,7 +35,7 @@ export type SubmissionRequirements = {
   name: string;
   symbol: string;
   logo: string;
-  nftTokenId: number | null;
+  nftTokenId?: string;
 };
 
 export enum VoteType {

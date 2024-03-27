@@ -22,10 +22,24 @@ interface EventData {
   votesPerUnit: number;
   minTokensRequired: number;
   eventType: "voting" | "submission";
-  tokenId: number | null;
+  tokenId?: string;
 }
 
 const BASE_LIMIT = 100000;
+
+const ensureHexFormat = (tokenId: string): string => {
+  tokenId = tokenId.trim();
+
+  if (!tokenId.startsWith("0x")) {
+    tokenId = "0x" + BigInt(tokenId).toString(16);
+  }
+
+  return tokenId;
+};
+
+const areHexTokenIdsEqual = (hexTokenId1: string, hexTokenId2: string): boolean => {
+  return BigInt(hexTokenId1) === BigInt(hexTokenId2);
+};
 
 self.onmessage = (event: MessageEvent<EventData>) => {
   const { ownersData, voteCalculationMethod, votesPerUnit, minTokensRequired, eventType, tokenId } = event.data;
@@ -36,8 +50,12 @@ self.onmessage = (event: MessageEvent<EventData>) => {
     const ownerAddress: string = owner.ownerAddress;
     let filteredTokenBalances = owner.tokenBalances;
 
-    if (tokenId !== null) {
-      filteredTokenBalances = owner.tokenBalances.filter(tokenBalance => Number(tokenBalance.tokenId) === tokenId);
+    if (tokenId) {
+      const formattedTokenId = ensureHexFormat(tokenId);
+
+      filteredTokenBalances = owner.tokenBalances.filter(tokenBalance =>
+        areHexTokenIdsEqual(tokenBalance.tokenId.trim(), formattedTokenId),
+      );
     }
 
     const numTokens = filteredTokenBalances.reduce((sum: number, tokenBalance: Token) => sum + tokenBalance.balance, 0);
@@ -59,13 +77,6 @@ self.onmessage = (event: MessageEvent<EventData>) => {
       ownersBalancesRecord[ownerAddress] = totalVotes;
     }
 
-    if (qualifiedOwnersCount === 0) {
-      self.postMessage({
-        error: "No qualified owners found based on the provided criteria.",
-      });
-      return;
-    }
-
     if (qualifiedOwnersCount >= MAX_ROWS) {
       const errorMessage = `cannot support over ${formatNumber(BASE_LIMIT)} ${
         eventType === "voting" ? "voters" : "submitters"
@@ -76,6 +87,13 @@ self.onmessage = (event: MessageEvent<EventData>) => {
       });
       return;
     }
+  }
+
+  if (qualifiedOwnersCount === 0) {
+    self.postMessage({
+      error: "No qualified owners found based on the provided criteria.",
+    });
+    return;
   }
 
   self.postMessage(ownersBalancesRecord);

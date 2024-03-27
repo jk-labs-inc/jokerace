@@ -1,8 +1,7 @@
 import { FC, useRef } from "react";
 
 interface CreateTextInputProps {
-  value?: string | number;
-  type?: "text" | "number";
+  value?: string;
   placeholder?: string;
   errorMessage?: string;
   max?: number;
@@ -17,7 +16,6 @@ interface CreateTextInputProps {
 
 const CreateTextInput: FC<CreateTextInputProps> = ({
   value,
-  type = "text",
   placeholder,
   max,
   min,
@@ -33,18 +31,6 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let newValue = e.target.value;
 
-    if (type === "number" && newValue) {
-      let val = parseFloat(newValue);
-
-      if (min !== undefined && val < min) {
-        val = min;
-      } else if (max !== undefined && val > max) {
-        val = max;
-      }
-
-      newValue = isNaN(val) ? newValue : val.toString();
-    }
-
     onChange?.(newValue);
   };
 
@@ -52,7 +38,7 @@ const CreateTextInput: FC<CreateTextInputProps> = ({
     <input
       ref={inputRef}
       value={value}
-      type={type}
+      type="text"
       onClick={onClick}
       className={`border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-10 placeholder-bold pb-2 ${className}`}
       placeholder={placeholder}
