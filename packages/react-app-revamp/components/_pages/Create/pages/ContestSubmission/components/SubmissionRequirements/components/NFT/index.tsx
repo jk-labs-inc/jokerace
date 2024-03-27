@@ -25,7 +25,7 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
       name,
       logo,
       nftType: nftTokenType ?? "",
-      nftTokenId: null,
+      nftTokenId: "",
     });
   };
 
@@ -36,7 +36,7 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
     });
   };
 
-  const onSubmissionsRequirementTokenIdChange = (tokenId: number | null) => {
+  const onSubmissionsRequirementTokenIdChange = (tokenId?: string) => {
     setSubmissionRequirements({
       ...submissionRequirements,
       nftTokenId: tokenId,

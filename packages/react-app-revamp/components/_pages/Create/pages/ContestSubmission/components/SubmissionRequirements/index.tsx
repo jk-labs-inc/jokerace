@@ -92,7 +92,7 @@ const CreateSubmissionRequirements = () => {
       tokenAddress: "",
       name: "",
       logo: "",
-      nftTokenId: null,
+      nftTokenId: "",
     });
     setInputError({});
   };

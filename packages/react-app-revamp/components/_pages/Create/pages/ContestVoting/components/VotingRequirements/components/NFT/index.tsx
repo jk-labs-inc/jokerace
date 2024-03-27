@@ -28,7 +28,7 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
       symbol,
       logo,
       nftType: nftTokenType ?? "",
-      nftTokenId: null,
+      nftTokenId: "",
     });
   };
 
@@ -58,7 +58,7 @@ const CreateVotingRequirementsNftSettings: FC<CreateVotingRequirementsNftSetting
     }
   };
 
-  const onTokenIdChange = (tokenId: number | null) => {
+  const onTokenIdChange = (tokenId?: string) => {
     setVotingRequirements({
       ...votingRequirements,
       nftTokenId: tokenId,

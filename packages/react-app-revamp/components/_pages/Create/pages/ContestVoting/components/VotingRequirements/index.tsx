@@ -121,7 +121,7 @@ const CreateVotingRequirements = () => {
       name: "",
       logo: "",
       tokenAddress: "",
-      nftTokenId: null,
+      nftTokenId: "",
       nftType: "",
     });
   };
