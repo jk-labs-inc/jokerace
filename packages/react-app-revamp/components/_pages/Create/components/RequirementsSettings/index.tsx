@@ -259,7 +259,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
               value={tokenId}
               onChange={onTokenIdChange}
               className="w-full md:w-52 text-[16px] md:text-[20px]"
-              placeholder="0x01 or 1"
+              placeholder={`"0x01" or "1"`}
             />
           </div>
         ) : null}
