@@ -242,6 +242,12 @@ li {
   max-width: 100% !important;
 }
 
+@media (max-width: 768px) {
+  .react-tweet-theme {
+    max-width: 300px !important;
+  }
+}
+
 [class^="tweet-replies_replies"] {
   display: none !important;
 }
