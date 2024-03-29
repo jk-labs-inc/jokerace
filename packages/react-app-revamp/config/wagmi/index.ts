@@ -35,7 +35,7 @@ import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
-import { degenChain } from "./custom-chains/degenChain";
+import { degen } from "./custom-chains/degen";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
@@ -138,7 +138,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   proteus,
   nautilusChain,
   ronin,
-  degenChain,
   fuse,
   kroma,
   scroll,
@@ -165,6 +164,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zkFair,
   inEvm,
   neon,
+  degen,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
