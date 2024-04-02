@@ -1,8 +1,8 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const camp: Chain = {
+export const campTestnet: Chain = {
   id: 90354,
-  name: "camp",
+  name: "campTestnet",
   iconUrl: "/camp.png",
   nativeCurrency: {
     decimals: 18,
