@@ -2,7 +2,7 @@
 /* eslint-disable react/no-unescaped-entities */
 import { toastDismiss } from "@components/UI/Toast";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { create } from "zustand";
 

@@ -1,10 +1,9 @@
 import { goToProposalPage } from "@helpers/routing";
 import useCastVotes from "@hooks/useCastVotes";
 import { useProposalStore } from "@hooks/useProposal/store";
-import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { ProposalData } from "lib/proposal";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 import SubmissionPageDesktopLayout from "./Desktop";
@@ -58,7 +57,7 @@ const SubmissionPage: FC<SubmissionPageProps> = ({
   };
 
   const onClose = () => {
-    router.push(`/contest/${contestInfo.chain}/${contestInfo.address}`, undefined, { shallow: true, scroll: false });
+    router.push(`/contest/${contestInfo.chain}/${contestInfo.address}`, { scroll: false });
   };
 
   const handleOnNextEntryChange = () => {

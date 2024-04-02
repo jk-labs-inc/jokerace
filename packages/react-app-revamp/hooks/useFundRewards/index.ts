@@ -12,7 +12,7 @@ import {
 } from "@wagmi/core";
 import { utils } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { erc20Abi } from "viem";
@@ -28,8 +28,8 @@ export interface RewardData {
 }
 
 export function useFundRewardsModule() {
-  const { asPath } = useRouter();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;

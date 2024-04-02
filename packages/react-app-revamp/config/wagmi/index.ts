@@ -1,22 +1,8 @@
-import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
-import {
-  argentWallet,
-  bitgetWallet,
-  coinbaseWallet,
-  imTokenWallet,
-  metaMaskWallet,
-  okxWallet,
-  omniWallet,
-  phantomWallet,
-  rabbyWallet,
-  rainbowWallet,
-  tahoWallet,
-  trustWallet,
-  walletConnectWallet,
-} from "@rainbow-me/rainbowkit/wallets";
+import { Chain } from "@rainbow-me/rainbowkit";
 
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
+import { injected } from "wagmi/connectors";
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
@@ -72,8 +58,8 @@ import { morphTestnet } from "./custom-chains/morphTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
-import { neonDevnet } from "./custom-chains/neonDevnet";
 import { neon } from "./custom-chains/neon";
+import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
 import { palm } from "./custom-chains/palm";
@@ -210,33 +196,6 @@ const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 const appName = "jokerace";
 const projectId = WALLETCONECT_PROJECT_ID;
 
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: "Wallets",
-      wallets: [
-        metaMaskWallet,
-        walletConnectWallet,
-        coinbaseWallet,
-        rainbowWallet,
-        okxWallet,
-        tahoWallet,
-        argentWallet,
-        trustWallet,
-        imTokenWallet,
-        omniWallet,
-        bitgetWallet,
-        rabbyWallet,
-        phantomWallet,
-      ],
-    },
-  ],
-  {
-    projectId: projectId,
-    appName: appName,
-  },
-);
-
 const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
   return chains.reduce<Transports>((acc, chain) => {
     if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
@@ -249,7 +208,7 @@ const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
 const transports = createTransports(chains);
 
 export const config = createConfig({
-  connectors,
+  connectors: [injected()],
   chains,
   transports,
   ssr: true,

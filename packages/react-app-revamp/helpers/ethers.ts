@@ -1,4 +1,4 @@
-import { getConnectorClient, type Config, getClient } from "@wagmi/core";
+import { getClient, getConnectorClient, type Config } from "@wagmi/core";
 import { providers } from "ethers";
 import type { Account, Chain, Client, Transport } from "viem";
 

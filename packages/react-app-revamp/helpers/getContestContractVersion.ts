@@ -1,3 +1,4 @@
+import { config } from "@config/wagmi";
 import LegacyDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.1.pre-prompt.sol/Contest.json";
 import BetterRewardsNotesContract from "@contracts/bytecodeAndAbi/Contest.2.10.betterRewardsNotes.sol/Contest.json";
 import PromptDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.2.prompt.sol/Contest.json";
@@ -26,14 +27,6 @@ import ArrayOfDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.7.mak
 import DeletedIdAccessorContract from "@contracts/bytecodeAndAbi/Contest.3.8.makeDeletedIdAccessor.sol/Contest.json";
 import PrivateDeletedIdsContract from "@contracts/bytecodeAndAbi/Contest.3.9.privateDeletedIds.sol/Contest.json";
 import AddEntryChargeContract from "@contracts/bytecodeAndAbi/Contest.4.1.addEntryCharge.sol/Contest.json";
-import UpdateSortingAlgoContract from "@contracts/bytecodeAndAbi/Contest.4.2.updateSortingAlgo.sol/Contest.json";
-import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
-import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
-import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";
-import RestructureExtensionsAndUtilsContract from "@contracts/bytecodeAndAbi/Contest.4.6.restructureExtensionsAndUtils.sol/Contest.json";
-import RmUnnecessaryVirtualsContract from "@contracts/bytecodeAndAbi/Contest.4.7.rmUnnecessaryVirtuals.sol/Contest.json";
-import DeleteInMapAfterForLoopContract from "@contracts/bytecodeAndAbi/Contest.4.8.deleteInMapAfterForLoop.sol/Contest.json";
-import AddGetPropIdsWithForVotesContract from "@contracts/bytecodeAndAbi/Contest.4.9.addGetPropIdsWithForVotes.sol/Contest.json";
 import RmImmutableKeywordContract from "@contracts/bytecodeAndAbi/Contest.4.10.rmImmutableKeyword.sol/Contest.json";
 import GasOptimizeGettersContract from "@contracts/bytecodeAndAbi/Contest.4.11.gasOptimizeGetters.sol/Contest.json";
 import AllowCancelCompletedContract from "@contracts/bytecodeAndAbi/Contest.4.12.allowCancelCompleted.sol/Contest.json";
@@ -44,6 +37,7 @@ import PinAllToSameContract from "@contracts/bytecodeAndAbi/Contest.4.16.pinAllT
 import MitToAGPLContract from "@contracts/bytecodeAndAbi/Contest.4.17.mitToAGPL.sol/Contest.json";
 import AddEmergencyFuncsContract from "@contracts/bytecodeAndAbi/Contest.4.18.addEmergencyFuncs.sol/Contest.json";
 import AddMoreAttributionContract from "@contracts/bytecodeAndAbi/Contest.4.19.addMoreAttribution.sol/Contest.json";
+import UpdateSortingAlgoContract from "@contracts/bytecodeAndAbi/Contest.4.2.updateSortingAlgo.sol/Contest.json";
 import AddGetDeletedAuthorsContract from "@contracts/bytecodeAndAbi/Contest.4.20.addGetDeletedAuthors.sol/Contest.json";
 import AddContentToEventsContract from "@contracts/bytecodeAndAbi/Contest.4.21.addContentToEvents.sol/Contest.json";
 import RefactorDistributionFuncContract from "@contracts/bytecodeAndAbi/Contest.4.22.refactorDistributionFunc.sol/Contest.json";
@@ -53,11 +47,17 @@ import PayPerVoteContract from "@contracts/bytecodeAndAbi/Contest.4.25.payPerVot
 import CleanUpConstructorsContract from "@contracts/bytecodeAndAbi/Contest.4.26.cleanUpConstructors.sol/Contest.json";
 import AnyoneCanVoteContract from "@contracts/bytecodeAndAbi/Contest.4.27.anyoneCanVote.sol/Contest.json";
 import UpdateForgeLibsContract from "@contracts/bytecodeAndAbi/Contest.4.28.updateForgeLibs.sol/Contest.json";
+import NewValueAlreadyInArrayContract from "@contracts/bytecodeAndAbi/Contest.4.3.newValueAlreadyInArray.sol/Contest.json";
+import UseCustomErrorsContract from "@contracts/bytecodeAndAbi/Contest.4.4.useCustomErrors.sol/Contest.json";
+import CleanUpSortingContract from "@contracts/bytecodeAndAbi/Contest.4.5.cleanUpSorting.sol/Contest.json";
+import RestructureExtensionsAndUtilsContract from "@contracts/bytecodeAndAbi/Contest.4.6.restructureExtensionsAndUtils.sol/Contest.json";
+import RmUnnecessaryVirtualsContract from "@contracts/bytecodeAndAbi/Contest.4.7.rmUnnecessaryVirtuals.sol/Contest.json";
+import DeleteInMapAfterForLoopContract from "@contracts/bytecodeAndAbi/Contest.4.8.deleteInMapAfterForLoop.sol/Contest.json";
+import AddGetPropIdsWithForVotesContract from "@contracts/bytecodeAndAbi/Contest.4.9.addGetPropIdsWithForVotes.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
-import { executeWithTimeout, MAX_TIME_TO_WAIT_FOR_RPC } from "./timeout";
-import { config } from "@config/wagmi";
+import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
 
 export async function getContestContractVersion(address: string, chainId: number) {
   try {

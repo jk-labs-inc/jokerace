@@ -5,7 +5,7 @@ import { transform, useDistributeRewardStore } from "@hooks/useDistributeRewards
 import { useError } from "@hooks/useError";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useAccount, useBalance } from "wagmi";
 import { create } from "zustand";
 
@@ -27,8 +27,8 @@ export const useWithdrawReward = (
   tokenType: TokenType,
   tokenAddress?: string,
 ) => {
-  const { asPath } = useRouter();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { chainId } = useAccount();
   const { setIsLoading } = useWithdrawRewardStore(state => state);
   const { setRefetch: triggerDistributeRewardsRefetch } = useDistributeRewardStore(state => state);

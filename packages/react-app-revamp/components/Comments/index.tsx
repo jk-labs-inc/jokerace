@@ -3,7 +3,7 @@ import Collapsible from "@components/UI/Collapsible";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import useComments from "@hooks/useComments";
 import { useCommentsStore } from "@hooks/useComments/store";
-import { useRouter } from "next/router";
+import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 import CommentsForm from "./components/Form";
 import CommentsList from "./components/List";
@@ -16,7 +16,7 @@ interface CommentsProps {
 }
 
 const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalId, numberOfComments }) => {
-  const { query } = useRouter();
+  const query = useSearchParams();
   const { getAllCommentsIdsPerProposal, getCommentsWithSpecificFirst, addComment, deleteComments, getCommentsPerPage } =
     useComments(contestAddress, contestChainId, proposalId);
   const [isCommentsOpen, setIsCommentsOpen] = useState(true);
@@ -34,8 +34,8 @@ const Comments: FC<CommentsProps> = ({ contestAddress, contestChainId, proposalI
   const commentsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (query.commentId) {
-      getCommentsWithSpecificFirst(query.commentId as string);
+    if (query?.has("commentId")) {
+      getCommentsWithSpecificFirst(query.get("commentId") ?? "");
       setTimeout(() => commentsRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
       return;
     }

@@ -8,14 +8,14 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useAccount } from "wagmi";
 import { useDeployRewardsStore } from "./store";
 
 export function useDeployRewardsPool() {
   const { chainId } = useAccount();
-  const { asPath } = useRouter();
-  const { address: contestAddress } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const stateContestDeployment = useContractFactoryStore(state => state);
   const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
   const { ranks, shares, setDeployRewardsData, setIsLoading, setError, setIsSuccess, setDisplayCreatePool } =

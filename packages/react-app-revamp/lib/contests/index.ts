@@ -112,7 +112,6 @@ const fetchParticipantData = async (contestAddress: string, userAddress: string,
   return data && data.length > 0 ? data[0] : null;
 };
 
-//TODO: update contests with anyone can vote
 const updateContestWithUserQualifications = async (contest: any, userAddress: string) => {
   const { submissionMerkleRoot, network_name, address, votingMerkleRoot } = contest;
   const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;

@@ -10,7 +10,7 @@ import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { formatEther } from "ethers/lib/utils";
 import moment from "moment";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC } from "react";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
@@ -22,8 +22,8 @@ interface ProposalActionProps {
 }
 
 const ProposalContentAction: FC<ProposalActionProps> = ({ proposalId, onVotingModalOpen }) => {
-  const { asPath } = useRouter();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { openConnectModal } = useConnectModal();
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { votesOpen, anyoneCanVote, charge } = useContestStore(state => state);

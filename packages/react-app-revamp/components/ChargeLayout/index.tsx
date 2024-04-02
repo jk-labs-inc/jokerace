@@ -2,7 +2,7 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { Charge, VoteType } from "@hooks/useDeployContest/types";
 import { type GetBalanceReturnType } from "@wagmi/core";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
@@ -22,10 +22,9 @@ const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({
   type,
   amountOfVotes,
 }) => {
-  const router = useRouter();
   const { address } = useAccount();
-  const asPath = router.asPath;
-  const { chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
   const chainUnitLabel = chains.find((c: { name: string }) => c.name === chainName)?.nativeCurrency.symbol;
   const chargeAmount = type === "propose" ? charge.type.costToPropose : charge.type.costToVote;
   const insufficientBalance = accountData.value < chargeAmount;

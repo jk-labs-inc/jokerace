@@ -7,7 +7,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { formatEther } from "ethers/lib/utils";
 import moment from "moment";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import ContestParamatersCSVSubmitters from "./components/CSV/Submitters";
@@ -29,8 +29,8 @@ const ContestParameters = () => {
     anyoneCanVote,
     charge,
   } = useContestStore(state => state);
-  const asPath = useRouter().asPath;
-  const { chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
   const nativeCurrency = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency;
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();

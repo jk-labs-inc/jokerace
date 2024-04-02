@@ -1,5 +1,5 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
+import { config } from "@config/wagmi";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
@@ -8,7 +8,7 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { saveUpdatedProposalsStatusToAnalyticsV3 } from "lib/analytics/participants";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
@@ -17,8 +17,8 @@ import { useDeleteProposalStore } from "./store";
 export function useDeleteProposal() {
   const { contestAbi: abi } = useContestStore(state => state);
   const { address: userAddress, chain } = useAccount();
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
   const { removeProposal } = useProposal();
   const { submissionsCount, setSubmissionsCount } = useProposalStore(state => state);
   const {
