@@ -11,7 +11,6 @@ const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 
 type Props = {
   params: { chain: string; address: string };
-  children: React.ReactNode;
 };
 
 async function getContestDetails(address: string, chainName: string) {
@@ -67,7 +66,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-const Page = ({ params, children }: Props) => {
+const Page = ({ params }: Props) => {
   const { chain, address } = params;
 
   if (
