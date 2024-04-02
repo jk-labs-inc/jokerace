@@ -33,6 +33,7 @@ import { berachainTestnet } from "./custom-chains/berachainTestnet";
 import { blast } from "./custom-chains/blast";
 import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
+import { camp } from "./custom-chains/camp";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
 import { degen } from "./custom-chains/degen";
@@ -127,6 +128,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zora,
   bnb,
   linea,
+  camp,
   celo,
   lootChain,
   near,
