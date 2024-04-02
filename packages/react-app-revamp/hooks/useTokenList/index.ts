@@ -15,7 +15,7 @@ interface PaginationInfo {
   pageParam: number;
 }
 
-const TOKEN_LIST_API_URL = "/api/token/token";
+const TOKEN_LIST_API_URL = "/api/token";
 const pageSize = 20;
 const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
 const ALCHEMY_BASE_URL = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
@@ -38,9 +38,13 @@ async function fetchTokenListOrMetadata({
   if (!response.ok) {
     throw new Error(`Network response was not ok: ${response.statusText}`);
   }
+
   const data = await response.json();
 
+  console.log({ data });
+
   if (data.tokens && data.tokens.length > 0) {
+    console.log("??");
     return {
       tokens: data.tokens.map((token: any) => ({
         address: token.address,

@@ -1,5 +1,5 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import Fuse from "fuse.js";
+import { NextResponse, type NextRequest } from "next/server";
 
 interface Token {
   address: string;
@@ -97,32 +97,27 @@ export async function fetchAndFilterToken(
   }
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<TokenResult | { error: string }>) {
-  const { chainId, tokenIdentifier, page, limit } = req.query;
+export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
 
-  const parsedChainId = parseInt(chainId as string, 10);
-  const parsedPage = parseInt(page as string, 10) || 0;
-  const parsedLimit = parseInt(limit as string, 10) || 10;
+  const chainId = searchParams.get("chainId");
+  const tokenIdentifier = searchParams.get("tokenIdentifier") ?? "";
+  const page = searchParams.get("page") ?? "0";
+  const limit = searchParams.get("limit") ?? "10";
 
-  if (isNaN(parsedChainId)) {
-    res.status(400).json({ error: "Invalid chainId" });
-    return;
-  }
-  if (isNaN(parsedPage) || isNaN(parsedLimit)) {
-    res.status(400).json({ error: "Invalid pagination parameters" });
-    return;
+  const parsedChainId = parseInt(chainId ?? "", 10);
+  const parsedPage = parseInt(page, 10);
+  const parsedLimit = parseInt(limit, 10);
+
+  if (isNaN(parsedChainId) || isNaN(parsedPage) || isNaN(parsedLimit)) {
+    return NextResponse.json({ error: "Invalid parameters." }, { status: 400 });
   }
 
   try {
-    const result = await fetchAndFilterToken(parsedChainId, tokenIdentifier as string, parsedPage, parsedLimit);
-    if (result) {
-      res.setHeader("Content-Type", "application/json");
-      res.status(200).json(result);
-    } else {
-      res.status(200).json({ tokens: [], pagination: { totalLength: 0, hasMore: false, pageParam: 0 } });
-    }
-  } catch (error) {
-    console.error("Error in API handler:", error);
-    res.status(500).json({ error: "Internal server error" });
+    const response = await fetchAndFilterToken(parsedChainId, tokenIdentifier, parsedPage, parsedLimit);
+    return NextResponse.json(response ?? null, { status: response ? 200 : 404 });
+  } catch (error: any) {
+    console.error(error);
+    return NextResponse.json({ error: error.message ?? "Internal server error." }, { status: 500 });
   }
 }

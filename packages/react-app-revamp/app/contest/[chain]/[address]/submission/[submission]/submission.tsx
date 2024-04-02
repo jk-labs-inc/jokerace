@@ -15,6 +15,7 @@ interface SubmissionProps {
 const Submission: FC<SubmissionProps> = ({ address, chain, submission, abi, version, chainId }) => {
   const { data, loading, error } = useFetchProposalData(abi, version, address, chainId, submission);
 
+  //TODO:
   return (
     <SubmissionPage
       contestInfo={{
