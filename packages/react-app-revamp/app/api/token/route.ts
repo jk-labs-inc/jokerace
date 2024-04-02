@@ -52,7 +52,7 @@ const fetchTokenList = async (): Promise<TokenList | null> => {
   return data;
 };
 
-export async function fetchAndFilterToken(
+async function fetchAndFilterToken(
   chainId: number,
   tokenIdentifier: string,
   page: number = 0,
