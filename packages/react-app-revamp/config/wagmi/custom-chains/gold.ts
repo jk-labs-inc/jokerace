@@ -18,7 +18,7 @@ export const gold: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Gold Mainnet Etherscan", url: "https://gold.dev" },
-    default: { name: "Gold Mainnet Etherscan", url: "https://gold.dev" },
+    etherscan: { name: "Gold Mainnet Etherscan", url: "https://explorer.gold.dev/" },
+    default: { name: "Gold Mainnet Etherscan", url: "https://explorer.gold.dev/" },
   },
 };
