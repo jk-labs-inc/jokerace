@@ -1,8 +1,12 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import Collapsible from "@components/UI/Collapsible";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import useComments from "@hooks/useComments";
 import { useCommentsStore } from "@hooks/useComments/store";
+import useContractVersion from "@hooks/useContractVersion";
+import { compareVersions } from "compare-versions";
+import { COMMENTS_VERSION } from "lib/proposal";
 import { useSearchParams } from "next/navigation";
 import { FC, useEffect, useRef, useState } from "react";
 import CommentsForm from "./components/Form";

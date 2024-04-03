@@ -4,7 +4,6 @@ import { readContracts } from "@wagmi/core";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { parse } from "node-html-parser";
-import React from "react";
 import { Abi } from "viem";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;

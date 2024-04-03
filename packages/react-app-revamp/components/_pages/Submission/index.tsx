@@ -1,34 +1,33 @@
-import { goToProposalPage } from "@helpers/routing";
+import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import useCastVotes from "@hooks/useCastVotes";
+import { useContestStore } from "@hooks/useContest/store";
+import useFetchProposalData from "@hooks/useFetchProposalData";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { ProposalData } from "lib/proposal";
 import { useRouter } from "next/navigation";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
+import { Abi } from "viem";
 import SubmissionPageDesktopLayout from "./Desktop";
 import SubmissionPageMobileLayout from "./Mobile";
 interface SubmissionPageProps {
   contestInfo: {
     address: string;
     chain: string;
+    chainId: number;
     version: string;
+    abi: Abi;
   };
-  isProposalLoading: boolean;
-  isProposalError: boolean;
-  proposalData: ProposalData | null;
   proposalId: string;
-  prompt: string;
 }
 
-const SubmissionPage: FC<SubmissionPageProps> = ({
-  contestInfo,
-  prompt,
-  proposalData,
-  proposalId,
-  isProposalLoading,
-  isProposalError,
-}) => {
+const SubmissionPage: FC<SubmissionPageProps> = ({ contestInfo, proposalId }) => {
+  const {
+    data: proposalData,
+    loading: isProposalLoading,
+    error: isProposalError,
+  } = useFetchProposalData(contestInfo.abi, contestInfo.version, contestInfo.address, contestInfo.chainId, proposalId);
+  const { contestPrompt: prompt } = useContestStore(state => state);
   const router = useRouter();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { openConnectModal } = useConnectModal();
@@ -58,6 +57,14 @@ const SubmissionPage: FC<SubmissionPageProps> = ({
 
   const onClose = () => {
     router.push(`/contest/${contestInfo.chain}/${contestInfo.address}`, { scroll: false });
+  };
+
+  const goToProposalPage = (chain: string, address: string, submission: string) => {
+    const path = ROUTE_CONTEST_PROPOSAL.replace("[chain]", chain)
+      .replace("[address]", address)
+      .replace("[submission]", submission);
+
+    router.push(path);
   };
 
   const handleOnNextEntryChange = () => {

@@ -41,10 +41,7 @@ async function fetchTokenListOrMetadata({
 
   const data = await response.json();
 
-  console.log({ data });
-
   if (data.tokens && data.tokens.length > 0) {
-    console.log("??");
     return {
       tokens: data.tokens.map((token: any) => ({
         address: token.address,

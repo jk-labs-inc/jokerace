@@ -6,7 +6,6 @@ import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
 import ListProposalVotes from "@components/_pages/ListProposalVotes";
-import { chains } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import { generateUrlSubmissions } from "@helpers/share";
@@ -26,6 +25,7 @@ interface SubmissionPageMobileLayoutProps {
   contestInfo: {
     address: string;
     chain: string;
+    chainId: number;
     version: string;
   };
   proposalId: string;
@@ -66,9 +66,6 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain,
-  )?.[0]?.id;
 
   if (isProposalError) {
     return (
@@ -176,7 +173,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
             {commentsAllowed && proposalData ? (
               <Comments
                 contestAddress={contestInfo.address}
-                contestChainId={chainId}
+                contestChainId={contestInfo.chainId}
                 proposalId={proposalId}
                 numberOfComments={proposalData?.numberOfComments}
               />

@@ -14,6 +14,7 @@ const nextConfig = {
     return config;
   },
   images: {
+    //TODO: deprecated
     domains: ["lens.infura-ipfs.io", "ik.imagekit.io"],
   },
   transpilePackages: ["react-tweet"],
