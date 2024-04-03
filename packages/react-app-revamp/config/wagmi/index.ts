@@ -13,6 +13,7 @@ import {
   tahoWallet,
   trustWallet,
   walletConnectWallet,
+  safeWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 
 import { Transport } from "viem";
@@ -232,6 +233,7 @@ const connectors = connectorsForWallets(
         bitgetWallet,
         rabbyWallet,
         phantomWallet,
+        safeWallet,
       ],
     },
   ],
