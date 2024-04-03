@@ -39,7 +39,7 @@ const ContestRewards = () => {
   const {
     version,
     isLoading: isContractVersionLoading,
-    error: isContractVersionError,
+    isError: isContractVersionError,
   } = useContractVersion(address, chainId);
   const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
   const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);
