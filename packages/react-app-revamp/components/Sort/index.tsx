@@ -39,9 +39,9 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
     setLabel(label);
     onSortChange?.(property);
 
-    if (sortByFromQuery) {
-      removeQueryParam("sortBy");
-    }
+    // if (sortByFromQuery) {
+    //   removeQueryParam("sortBy");
+    // }
   };
 
   const handleResetSort = (event: React.MouseEvent, close: () => void) => {
@@ -51,25 +51,25 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
     onSortChange?.("");
     close();
 
-    if (sortByFromQuery) {
-      removeQueryParam("sortBy");
-    }
+    // if (sortByFromQuery) {
+    //   removeQueryParam("sortBy");
+    // }
   };
 
   //TODO: check query params
-  const removeQueryParam = (param: string) => {
-    const params = new URLSearchParams();
-    Object.entries(query).forEach(([key, value]) => {
-      if (Array.isArray(value)) {
-        value.forEach(v => params.append(key, v));
-      } else {
-        params.set(key, value || "");
-      }
-    });
+  // const removeQueryParam = (param: string) => {
+  //   const params = new URLSearchParams();
+  //   Object.entries(query).forEach(([key, value]) => {
+  //     if (Array.isArray(value)) {
+  //       value.forEach(v => params.append(key, v));
+  //     } else {
+  //       params.set(key, value || "");
+  //     }
+  //   });
 
-    params.delete(param);
-    router.replace({ pathname, query: params.toString() });
-  };
+  //   params.delete(param);
+  //   router.replace({ pathname, query: params.toString() });
+  // };
 
   if (pathname?.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
 
