@@ -49,6 +49,7 @@ import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
+import { gold } from "./custom-chains/gold";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
@@ -166,6 +167,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   inEvm,
   neon,
   degen,
+  gold,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
