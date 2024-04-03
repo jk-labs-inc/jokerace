@@ -18,8 +18,8 @@ export const campTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Camp Block Explorer", url: "https://explorerl2new-camp-network-4xje7wy105.t.conduit.xyz/" },
-    default: { name: "Camp Block Explorer", url: "https://explorerl2new-camp-network-4xje7wy105.t.conduit.xyz/" },
+    etherscan: { name: "Camp Testnet Block Explorer", url: "https://explorerl2new-camp-network-4xje7wy105.t.conduit.xyz/" },
+    default: { name: "Camp Testnet Block Explorer", url: "https://explorerl2new-camp-network-4xje7wy105.t.conduit.xyz/" },
   },
   testnet: true,
 };
