@@ -58,7 +58,13 @@ const remToPx = rem => {
 };
 
 module.exports = {
-  content: ["./components/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{js,jsx,ts,tsx}", "./layouts/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./layouts/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
   theme: {
     screens: {
       min: remToPx(screensRem.min),
@@ -73,8 +79,8 @@ module.exports = {
       "4xl": remToPx(screensRem["4xl"]),
     },
     fontFamily: {
-      sabo: ['"Sabo", sans-serif'],
-      sans: ['"Lato", sans-serif'],
+      sabo: ["var(--font-sabo)"],
+      sans: ["var(--font-lato)"],
       mono: ["monospace"],
     },
     fontSize: {

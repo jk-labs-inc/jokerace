@@ -26,7 +26,7 @@ import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { switchChain } from "@wagmi/core";
 import moment from "moment";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useBalance } from "wagmi";
@@ -40,10 +40,10 @@ interface DialogModalSendProposalProps {
 
 export const DialogModalSendProposal: FC<DialogModalSendProposalProps> = ({ isOpen, setIsOpen }) => {
   const { address, chain } = useAccount();
-  const { asPath } = useRouter();
+  const asPath = usePathname();
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const { subscribeUser, checkIfEmailExists } = useEmailSignup();
-  const { chainName, address: contestId } = extractPathSegments(asPath);
+  const { chainName, address: contestId } = extractPathSegments(asPath ?? "");
   const { sendProposal } = useSubmitProposal();
   const {
     setProposalId,

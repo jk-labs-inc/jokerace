@@ -9,7 +9,7 @@ import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { useFetchUserVotesOnProposal } from "@hooks/useFetchUserVotesOnProposal";
 import { switchChain } from "@wagmi/core";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 import { useAccount, useBalance } from "wagmi";
 
@@ -22,12 +22,12 @@ interface VotingWidgetProps {
 
 const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvoteAllowed, onVote }) => {
   const { charge } = useContestStore(state => state);
-  const { asPath } = useRouter();
+  const asPath = usePathname();
   const { address, chainId: accountChainId } = useAccount();
   const { data: accountData } = useBalance({
     address: address as `0x${string}`,
   });
-  const { address: contestAddress, chainName } = extractPathSegments(asPath);
+  const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const { isLoading } = useCastVotesStore(state => state);
   const [isUpvote, setIsUpvote] = useState(true);
   const [amount, setAmount] = useState(0);

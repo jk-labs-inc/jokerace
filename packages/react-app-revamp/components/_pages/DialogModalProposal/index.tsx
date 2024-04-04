@@ -5,7 +5,6 @@ import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import VotingWidget from "@components/Voting";
 import ContestPrompt from "@components/_pages/Contest/components/Prompt";
 import ContestProposal from "@components/_pages/Contest/components/Prompt/Proposal";
-import { chains } from "@config/wagmi";
 import { formatNumber } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import useCastVotes from "@hooks/useCastVotes";
@@ -24,6 +23,7 @@ interface DialogModalProposalProps {
   contestInfo: {
     address: string;
     chain: string;
+    chainId: number;
     version: string;
   };
   isOpen: boolean;
@@ -65,9 +65,6 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
   const { downvotingAllowed } = useContestStore(state => state);
   const { currentUserAvailableVotesAmount, currentUserTotalVotesAmount } = useUserStore(state => state);
   const outOfVotes = currentUserAvailableVotesAmount === 0 && currentUserTotalVotesAmount > 0;
-  const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestInfo.chain,
-  )?.[0]?.id;
   const commentsAllowed = compareVersions(contestInfo.version, COMMENTS_VERSION) == -1 ? false : true;
 
   useEffect(() => {
@@ -171,11 +168,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
                 proposalId={proposalId}
                 displaySocials
               />
-            ) : (
-              <p className="text-[16px] text-negative-11 font-bold">
-                ruh-roh! An error occurred when retrieving this proposal; try refreshing the page.
-              </p>
-            )}
+            ) : null}
             <div className="flex flex-col gap-12">
               {contestStatus === ContestStatus.VotingOpen && (
                 <>
@@ -219,7 +212,7 @@ const DialogModalProposal: FC<DialogModalProposalProps> = ({
             {commentsAllowed && proposalData ? (
               <Comments
                 contestAddress={contestInfo.address}
-                contestChainId={chainId}
+                contestChainId={contestInfo.chainId}
                 proposalId={proposalId}
                 numberOfComments={proposalData?.numberOfComments}
               />

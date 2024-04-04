@@ -9,13 +9,13 @@ import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useTotalVotesCastOnContest from "@hooks/useTotalVotesCastOnContest";
 import { readContract, watchContractEvent } from "@wagmi/core";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { formatEther } from "viem";
 
 export function useContestEvents() {
-  const { asPath } = useRouter();
-  const { address: contestAddress, chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;

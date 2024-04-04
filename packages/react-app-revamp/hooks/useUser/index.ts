@@ -7,7 +7,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { getGasPrice, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { fetchUserBalance } from "lib/fetchUserBalance";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useUserStore } from "./store";
@@ -17,8 +17,8 @@ const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 export function useUser() {
   const { setVotingMerkleRoot, setSubmissionsMerkleRoot, setAnyoneCanVote } = useContestStore(state => state);
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,

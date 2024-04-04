@@ -6,7 +6,7 @@ import { useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import Skeleton from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
@@ -27,8 +27,8 @@ const VotingContestQualifier = () => {
   const isReadOnly = useContestStore(state => state.isReadOnly);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
-  const asPath = useRouter().asPath;
-  const { chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
   const nativeCurrency = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency;
 
   return (

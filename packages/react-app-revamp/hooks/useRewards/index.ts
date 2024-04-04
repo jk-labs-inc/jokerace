@@ -3,14 +3,14 @@ import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
+import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
 import { useError } from "@hooks/useError";
 import { useQuery } from "@tanstack/react-query";
 import { readContract, readContracts } from "@wagmi/core";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useRewardsStore } from "./store";
-import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
 
 const alchemySupportedChains = [
   {
@@ -36,8 +36,8 @@ const alchemySupportedChains = [
 ];
 
 export function useRewardsModule() {
-  const { asPath } = useRouter();
-  const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { chain } = useAccount();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { setRefetch: refetchDistributeRewardsWithoutAlchemy } = useDistributeRewardStore(state => state);

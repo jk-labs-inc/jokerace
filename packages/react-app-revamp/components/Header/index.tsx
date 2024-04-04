@@ -1,22 +1,21 @@
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import React from "react";
 import CreateFlowHeader from "./CreateFlowHeader";
 import LandingHeader from "./LandingHeader";
 import MainHeader from "./MainHeader";
 
 const Header: React.FC = () => {
-  const router = useRouter();
-  const pathname = router.pathname;
+  const pathname = usePathname();
 
   if (pathname === "/") {
     return <LandingHeader />;
   }
 
-  if (pathname.includes("/new")) {
+  if (pathname?.includes("/new")) {
     return <CreateFlowHeader />;
   }
 
-  return <MainHeader showProfile={!pathname.includes("submission")} />;
+  return <MainHeader showProfile={!pathname?.includes("submission")} />;
 };
 
 export default Header;

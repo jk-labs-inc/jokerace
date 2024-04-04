@@ -1,7 +1,7 @@
 import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
-import { useRouter } from "next/router";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC, Fragment, useEffect, useState } from "react";
 
 function classNames(...classes: string[]) {
@@ -22,8 +22,10 @@ export interface SortProps {
 const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) => {
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [label, setLabel] = useState<string | null>(null);
+  const query = useSearchParams();
+  const pathname = usePathname();
   const router = useRouter();
-  const sortByFromQuery = router.query.sortBy as string;
+  const sortByFromQuery = query?.get("sortBy");
 
   useEffect(() => {
     if (sortByFromQuery) {
@@ -55,8 +57,6 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
   };
 
   const removeQueryParam = (param: string) => {
-    const { pathname, query } = router;
-
     const params = new URLSearchParams();
     Object.entries(query).forEach(([key, value]) => {
       if (Array.isArray(value)) {
@@ -67,10 +67,14 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
     });
 
     params.delete(param);
-    router.replace({ pathname, query: params.toString() }, undefined, { shallow: true });
+
+    const queryString = params.toString();
+    const url = `${pathname}?${queryString}`;
+
+    router.replace(url);
   };
 
-  if (router.pathname.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
+  if (pathname?.includes(ROUTE_VIEW_PAST_CONTESTS)) return null;
 
   return (
     <Menu as="div" className="relative inline-block text-left w-full md:w-[220px] text-[16px]">

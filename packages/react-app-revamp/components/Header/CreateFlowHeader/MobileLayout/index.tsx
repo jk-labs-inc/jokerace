@@ -18,7 +18,7 @@ import { PageAction } from "@hooks/useCreateFlowAction/store";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC, useState } from "react";
 
 interface CreateFlowHeaderMobileLayoutProps {
@@ -44,13 +44,13 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
-  const router = useRouter();
+  const pathname = usePathname();
   const { setStartContest, startContest } = useCreateContestStartStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const contestCreationInProgress = pageAction === "create" && step > 0 && startContest;
-  const isActive = (route: string) => (router.pathname === route ? "text-primary-10 transition-colors font-bold" : "");
+  const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
-    routes.includes(router.pathname) ? "text-primary-10 transition-colors font-bold" : "";
+    routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
   const isLastStep = step === steps.length;
 
   const onBackHandler = () => {

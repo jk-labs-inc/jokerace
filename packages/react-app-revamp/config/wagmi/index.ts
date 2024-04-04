@@ -1,7 +1,6 @@
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
-  bitgetWallet,
   coinbaseWallet,
   imTokenWallet,
   metaMaskWallet,
@@ -15,7 +14,6 @@ import {
   walletConnectWallet,
   safeWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
@@ -75,8 +73,8 @@ import { morphTestnet } from "./custom-chains/morphTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
-import { neonDevnet } from "./custom-chains/neonDevnet";
 import { neon } from "./custom-chains/neon";
+import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
 import { palm } from "./custom-chains/palm";
@@ -230,7 +228,6 @@ const connectors = connectorsForWallets(
         trustWallet,
         imTokenWallet,
         omniWallet,
-        bitgetWallet,
         rabbyWallet,
         phantomWallet,
         safeWallet,

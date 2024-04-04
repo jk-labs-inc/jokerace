@@ -11,7 +11,7 @@ import useTokenDetails from "@hooks/useTokenDetails";
 import { toggleContestVisibility } from "lib/creator";
 import moment from "moment";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import Countdown, { CountdownRenderProps } from "react-countdown";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -33,9 +33,9 @@ export type TimeLeft = {
 
 const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowToHide, rewardsLoading }) => {
   const { address } = useAccount();
-  const router = useRouter();
+  const pathname = usePathname();
   const [contestReward, setContestReward] = useState<any>(null);
-  const isUpcomingContest = router.pathname === ROUTE_VIEW_UPCOMING_CONTESTS;
+  const isUpcomingContest = pathname === ROUTE_VIEW_UPCOMING_CONTESTS;
   const [submissionStatus, setSubmissionStatus] = useState("");
   const [votingStatus, setVotingStatus] = useState("");
   const { handleError } = useError();

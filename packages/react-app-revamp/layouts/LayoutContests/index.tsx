@@ -6,10 +6,9 @@ import {
   ROUTE_VIEW_UPCOMING_CONTESTS,
 } from "@config/routes";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { getLayout as getBaseLayout } from "./../LayoutBase";
 
 interface LayoutContestsProps {
   children: React.ReactNode;
@@ -36,7 +35,7 @@ const navLinks = [
 
 const LayoutContests = (props: LayoutContestsProps) => {
   const { children } = props;
-  const { pathname } = useRouter();
+  const pathname = usePathname();
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -99,10 +98,6 @@ const LayoutContests = (props: LayoutContestsProps) => {
       </ErrorBoundary>
     </>
   );
-};
-
-export const getLayout = (page: any) => {
-  return getBaseLayout(<LayoutContests>{page}</LayoutContests>);
 };
 
 export default LayoutContests;

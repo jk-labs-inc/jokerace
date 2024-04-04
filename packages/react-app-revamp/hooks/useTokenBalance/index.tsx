@@ -2,14 +2,14 @@ import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { getBalance, type GetBalanceReturnType } from "@wagmi/core";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { handleError } from "utils/error";
 
 export const useTokenBalance = (inputToken: string) => {
   const rewardsStore = useRewardsStore(state => state);
-  const { asPath } = useRouter();
-  const { chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
   const [queryTokenBalance, setQueryTokenBalance] = useState<GetBalanceReturnType>();
   const [error, setError] = useState("");
 

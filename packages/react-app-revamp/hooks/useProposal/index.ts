@@ -9,7 +9,7 @@ import { compareVersions } from "compare-versions";
 import { Result } from "ethers/lib/utils";
 import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { MappedProposalIds, ProposalCore, SortOptions, useProposalStore } from "./store";
@@ -48,8 +48,8 @@ export function useProposal() {
     initialMappedProposalIds,
     setSortBy,
   } = useProposalStore(state => state);
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
   const { chain } = useAccount();
   const { error, handleError } = useError();
   const chainId = chains.filter(
