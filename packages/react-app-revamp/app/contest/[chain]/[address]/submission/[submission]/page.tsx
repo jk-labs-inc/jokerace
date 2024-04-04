@@ -20,6 +20,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `Submission ${submission} - jokerace`,
+    description: `Submission ${submission} for contest on jokerace`,
+    openGraph: {
+      title: `Submission ${submission} - jokerace`,
+      description: `Submission ${submission} for contest on jokerace`,
+    },
+    twitter: {
+      title: `Submission ${submission} - jokerace`,
+      description: `Submission ${submission} for contest on jokerace`,
+    },
   };
 }
 

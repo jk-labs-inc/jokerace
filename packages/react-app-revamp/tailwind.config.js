@@ -79,8 +79,8 @@ module.exports = {
       "4xl": remToPx(screensRem["4xl"]),
     },
     fontFamily: {
-      sabo: ['"Sabo", sans-serif'],
-      sans: ['"Lato", sans-serif'],
+      sabo: ["var(--font-sabo)"],
+      sans: ["var(--font-lato)"],
       mono: ["monospace"],
     },
     fontSize: {
