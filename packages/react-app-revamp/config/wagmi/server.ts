@@ -19,7 +19,7 @@ import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
-import { degenChain } from "./custom-chains/degenChain";
+import { degen } from "./custom-chains/degen";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
@@ -87,6 +87,8 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
+import { gold } from "./custom-chains/gold";
+import { campTestnet } from "./custom-chains/campTestnet";
 
 type Transports = Record<Chain["id"], Transport>;
 
@@ -112,7 +114,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   proteus,
   nautilusChain,
   ronin,
-  degenChain,
+  degen,
+  gold,
   fuse,
   kroma,
   scroll,
@@ -176,6 +179,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   merlinTestnet,
   zkFairTestnet,
   inEvmTestnet,
+  campTestnet,
   mainnet,
 ];
 
