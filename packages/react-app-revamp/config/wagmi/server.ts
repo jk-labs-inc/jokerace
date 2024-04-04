@@ -193,4 +193,8 @@ const transports = createTransports(chains);
 export const serverConfig = createConfig({
   chains,
   transports,
+  ssr: true,
+  storage: createStorage({
+    storage: cookieStorage,
+  }),
 });
