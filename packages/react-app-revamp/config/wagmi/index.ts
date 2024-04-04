@@ -1,8 +1,7 @@
 import { Chain } from "@rainbow-me/rainbowkit";
-
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { coinbaseWallet, injected, safe, walletConnect } from "wagmi/connectors";
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
@@ -208,7 +207,7 @@ const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
 const transports = createTransports(chains);
 
 export const config = createConfig({
-  connectors: [injected()],
+  connectors: [injected(), walletConnect({ projectId }), coinbaseWallet({ appName }), safe()],
   chains,
   transports,
   ssr: true,
