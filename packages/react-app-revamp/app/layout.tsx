@@ -76,11 +76,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${lato.variable} ${sabo.variable}`}>
       <body>
-        <Providers cookie={cookie}>
-          <LayoutBase>{children}</LayoutBase>
-          <Portal />
-          <GoogleAnalytics gaId={GA_TRACKING_ID} />
-        </Providers>
+        <div id="__next">
+          <Providers cookie={cookie}>
+            <LayoutBase>{children}</LayoutBase>
+            <Portal />
+            <GoogleAnalytics gaId={GA_TRACKING_ID} />
+          </Providers>
+        </div>
       </body>
     </html>
   );
