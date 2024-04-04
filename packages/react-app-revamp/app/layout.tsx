@@ -17,6 +17,7 @@ import Providers from "./providers";
 polyfill();
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://jokerace.io"),
   title: "JokeRace",
   description: "JokeRace - contests for communities to run, grow, and monetize.",
   openGraph: {
