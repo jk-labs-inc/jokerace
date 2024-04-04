@@ -17,13 +17,13 @@ import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import { compareVersions } from "compare-versions";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount, useAccountEffect } from "wagmi";
 
 const ContestRewards = () => {
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
@@ -39,7 +39,7 @@ const ContestRewards = () => {
   const {
     version,
     isLoading: isContractVersionLoading,
-    error: isContractVersionError,
+    isError: isContractVersionError,
   } = useContractVersion(address, chainId);
   const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
   const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);

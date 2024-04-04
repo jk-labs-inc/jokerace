@@ -14,7 +14,7 @@ import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import moment from "moment";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC, ReactNode } from "react";
 import { Tweet } from "react-tweet";
 
@@ -68,9 +68,8 @@ const transform = (node: HTMLElement): ReactNode => {
 };
 
 const ContestProposal: FC<ContestProposalProps> = ({ proposal, proposalId, contestStatus, displaySocials }) => {
-  const router = useRouter();
-  const asPath = router.asPath;
-  const { chainName, address } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
   const votesOpen = useContestStore(state => state.votesOpen);
   const formattedVotesOpen = moment(votesOpen).format("MMMM Do, h:mm a");
 

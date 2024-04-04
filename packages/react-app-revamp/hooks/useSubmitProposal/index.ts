@@ -11,7 +11,7 @@ import { useProposalStore } from "@hooks/useProposal/store";
 import { useUserStore } from "@hooks/useUser/store";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useMediaQuery } from "react-responsive";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
@@ -28,8 +28,8 @@ const safeMetadata = {
 
 export function useSubmitProposal() {
   const { address: userAddress, chain } = useAccount();
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
   const isMobile = useMediaQuery({ maxWidth: "768px" });
   const showToast = !isMobile;
   const { charge, contestAbi: abi } = useContestStore(state => state);

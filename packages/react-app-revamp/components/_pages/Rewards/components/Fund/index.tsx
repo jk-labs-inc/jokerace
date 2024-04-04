@@ -7,7 +7,7 @@ import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { readContract } from "@wagmi/core";
 import { ethers } from "ethers";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC, useRef } from "react";
 import { toast } from "react-toastify";
 import { erc20Abi } from "viem";
@@ -20,9 +20,8 @@ interface CreateRewardsFundingProps {
 }
 
 const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFirstTime = true }) => {
-  const router = useRouter();
-  const asPath = router.asPath;
-  const { chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;

@@ -18,7 +18,7 @@ import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilli
 import { utils } from "ethers";
 import { checkIfContestExists, fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import moment from "moment";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
 import { ErrorType, useContestStore } from "./store";
@@ -41,9 +41,8 @@ interface ContractConfig {
 }
 
 export function useContest() {
-  const router = useRouter();
-  const { asPath } = router;
-  const { chainName: chainFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName: chainFromUrl, address: addressFromUrl } = extractPathSegments(asPath ?? "");
   const [chainName, setChainName] = useState(chainFromUrl);
   const [address, setAddress] = useState(addressFromUrl);
   const [chainId, setChainId] = useState(

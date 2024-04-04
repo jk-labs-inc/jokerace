@@ -6,7 +6,7 @@ import { MediaQuery } from "@helpers/mediaQuery";
 import CHAIN_CONFIGS, { TokenConfig } from "@helpers/tokens";
 import { Reward, useFundRewardsStore } from "@hooks/useFundRewards/store";
 import { getAddress } from "ethers/lib/utils";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import CreateRewardsFundPoolDesktopLayout from "./DesktopLayout";
 import CreateRewardsFundPoolMobileLayout from "./MobileLayout";
@@ -28,8 +28,8 @@ const formatNativeToken = (nativeToken?: NativeCurrency): TokenConfig | undefine
 };
 
 const CreateRewardsFundPoolTokenRow = () => {
-  const { asPath } = useRouter();
-  const { chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
