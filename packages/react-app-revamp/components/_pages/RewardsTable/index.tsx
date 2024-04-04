@@ -17,7 +17,7 @@ interface RewardsTableShareProps {
 export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares } = props;
   const pathname = usePathname();
-  const { chainName } = extractPathSegments(asPath ?? "");
+  const { chainName } = extractPathSegments(pathname ?? "");
   const { data, isError, isLoading } = useReadContract({
     address: contractRewardsModuleAddress as `0x${string}`,
     abi: abiRewardsModule,
