@@ -7,6 +7,7 @@ interface SubmissionPageDesktopLayoutProps {
     address: string;
     chain: string;
     chainId: number;
+    version: string;
   };
   proposalId: string;
   prompt: string;
