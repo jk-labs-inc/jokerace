@@ -1,4 +1,3 @@
-import { config } from "@config/wagmi";
 import LegacyDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.1.pre-prompt.sol/Contest.json";
 import BetterRewardsNotesContract from "@contracts/bytecodeAndAbi/Contest.2.10.betterRewardsNotes.sol/Contest.json";
 import PromptDeployedContestContract from "@contracts/bytecodeAndAbi/Contest.2.2.prompt.sol/Contest.json";
@@ -58,10 +57,11 @@ import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Conte
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
 import { MAX_TIME_TO_WAIT_FOR_RPC, executeWithTimeout } from "./timeout";
+import { serverConfig } from "@config/wagmi/server";
 
 export async function getContestContractVersion(address: string, chainId: number) {
   try {
-    const provider = getEthersProvider(config, { chainId });
+    const provider = getEthersProvider(serverConfig, { chainId });
     const contract = new ethers.Contract(address, NumberedVersioningContract.abi, provider);
 
     // Here we check if all RPC calls are successful, otherwise we throw an error and return empty ABI

@@ -14,8 +14,18 @@ const nextConfig = {
     return config;
   },
   images: {
-    //TODO: deprecated
-    domains: ["lens.infura-ipfs.io", "ik.imagekit.io"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lens.infura-ipfs.io",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ik.imagekit.io",
+        pathname: "/**",
+      },
+    ],
   },
   transpilePackages: ["react-tweet"],
 };

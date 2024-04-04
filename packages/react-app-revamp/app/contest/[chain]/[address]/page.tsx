@@ -1,4 +1,4 @@
-import { chains, config } from "@config/wagmi";
+import { chains, serverConfig } from "@config/wagmi/server";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { readContracts } from "@wagmi/core";
 import type { Metadata } from "next";
@@ -36,7 +36,7 @@ async function getContestDetails(address: string, chainName: string) {
     },
   ];
 
-  const results = (await readContracts(config, { contracts })) as any;
+  const results = (await readContracts(serverConfig, { contracts })) as any;
 
   return results;
 }

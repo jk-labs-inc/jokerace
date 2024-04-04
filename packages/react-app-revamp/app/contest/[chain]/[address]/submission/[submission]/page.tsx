@@ -1,9 +1,9 @@
-import { chains } from "@config/wagmi";
+import { chains } from "@config/wagmi/server";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Submission from "./submission";
 import { Abi } from "viem";
+import Submission from "./submission";
 
 const REGEX_ETHEREUM_ADDRESS = /^0x[a-fA-F0-9]{40}$/;
 

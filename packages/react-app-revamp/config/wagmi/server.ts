@@ -1,18 +1,4 @@
-import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
-import {
-  argentWallet,
-  coinbaseWallet,
-  imTokenWallet,
-  metaMaskWallet,
-  okxWallet,
-  omniWallet,
-  phantomWallet,
-  rabbyWallet,
-  rainbowWallet,
-  tahoWallet,
-  trustWallet,
-  walletConnectWallet,
-} from "@rainbow-me/rainbowkit/wallets";
+import { Chain } from "@rainbow-me/rainbowkit";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
@@ -108,12 +94,6 @@ type ChainImages = {
 
 type Transports = Record<Chain["id"], Transport>;
 
-declare module "wagmi" {
-  interface Register {
-    config: typeof config;
-  }
-}
-
 export const chains: readonly [Chain, ...Chain[]] = [
   polygon,
   arbitrumOne,
@@ -203,37 +183,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   mainnet,
 ];
 
-const WALLETCONECT_PROJECT_ID = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID as string;
-
-const appName = "jokerace";
-const projectId = WALLETCONECT_PROJECT_ID;
-
-const connectors = connectorsForWallets(
-  [
-    {
-      groupName: "Wallets",
-      wallets: [
-        metaMaskWallet,
-        walletConnectWallet,
-        coinbaseWallet,
-        rainbowWallet,
-        okxWallet,
-        tahoWallet,
-        argentWallet,
-        trustWallet,
-        imTokenWallet,
-        omniWallet,
-        rabbyWallet,
-        phantomWallet,
-      ],
-    },
-  ],
-  {
-    projectId: projectId,
-    appName: appName,
-  },
-);
-
 const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
   return chains.reduce<Transports>((acc, chain) => {
     if (chain.rpcUrls?.default?.http?.[0] && chain.rpcUrls?.public?.http?.[0]) {
@@ -245,8 +194,7 @@ const createTransports = (chains: readonly [Chain, ...Chain[]]): Transports => {
 
 const transports = createTransports(chains);
 
-export const config = createConfig({
-  connectors,
+export const serverConfig = createConfig({
   chains,
   transports,
   ssr: true,
