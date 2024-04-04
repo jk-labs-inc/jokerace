@@ -88,10 +88,6 @@ import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
 
-type ChainImages = {
-  [key: string]: string;
-};
-
 type Transports = Record<Chain["id"], Transport>;
 
 export const chains: readonly [Chain, ...Chain[]] = [
@@ -197,15 +193,4 @@ const transports = createTransports(chains);
 export const serverConfig = createConfig({
   chains,
   transports,
-  ssr: true,
-  storage: createStorage({
-    storage: cookieStorage,
-  }),
 });
-
-export const chainsImages: ChainImages = chains.reduce((acc: any, chain: any) => {
-  if (chain.name && chain.iconUrl) {
-    acc[chain.name.toLowerCase()] = chain.iconUrl as string;
-  }
-  return acc;
-}, {} as ChainImages);
