@@ -10,7 +10,9 @@ import "../../modules/CommitRevealModule.sol";
  */
 abstract contract GovernorModuleRegistry is Governor {
     event OfficialRewardsModuleSet(RewardsModule oldOfficialRewardsModule, RewardsModule newOfficialRewardsModule);
-    event OfficialCommitRevealModuleSet(CommitRevealModule oldOfficialCommitRevealModule, CommitRevealModule newOfficialCommitRevealModule);
+    event OfficialCommitRevealModuleSet(
+        CommitRevealModule oldOfficialCommitRevealModule, CommitRevealModule newOfficialCommitRevealModule
+    );
 
     RewardsModule public officialRewardsModule;
     CommitRevealModule public officialCommitRevealModule;
@@ -40,7 +42,7 @@ abstract contract GovernorModuleRegistry is Governor {
     /**
      * @dev Function to return the official Commit Reveal Module for the contest.
      */
-    function _officialCommitRevealModuleAddress() internal override view returns (address) {
+    function _officialCommitRevealModuleAddress() internal view override returns (address) {
         return address(officialCommitRevealModule);
     }
 }

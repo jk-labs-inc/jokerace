@@ -264,11 +264,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
      */
     function _multiRmProposalIdFromForVotesMap(uint256[] calldata proposalIds) internal virtual;
-    
+
     /**
      * @dev Function to return the official Commit Reveal Module for the contest.
      */
-    function _officialCommitRevealModuleAddress() internal virtual view returns (address);
+    function _officialCommitRevealModuleAddress() internal view virtual returns (address);
 
     /**
      * @dev Register a vote with a given support and voting weight.
