@@ -1,7 +1,7 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
 export const baseTestnet: Chain = {
-  id: 84531,
+  id: 84532,
   name: "baseTestnet",
   iconUrl: "/base.svg",
   nativeCurrency: {
