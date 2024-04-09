@@ -44,6 +44,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 costToPropose;
         uint256 costToVote;
         uint256 payPerVote;
+        uint256 isCommitReveal;
     }
 
     struct TargetMetadata {
@@ -96,6 +97,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public costToPropose;
     uint256 public costToVote;
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
+    uint256 public isCommitReveal; // If this contest can only be voted on by a commit-reveal module.
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -128,6 +130,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error CannotVoteOnDeletedProposal();
     error NeedAtLeastOneVoteToVote();
     error CannotVoteLessThanOneVoteInPayPerVote();
+    error VoterMustBeOfficialCommitRevealModule();
 
     error NeedToSubmitWithProofFirst();
     error NeedToVoteWithProofFirst();
@@ -154,6 +157,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         costToPropose = constructorIntArgs_.costToPropose;
         costToVote = constructorIntArgs_.costToVote;
         payPerVote = constructorIntArgs_.payPerVote;
+        isCommitReveal = constructorIntArgs_.isCommitReveal;
 
         emit JokeraceCreated(
             _VERSION,
@@ -260,6 +264,11 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Remove deleted proposalIds from forVotesToProposalIds and decrement copy counts of the forVotes of proposalIds.
      */
     function _multiRmProposalIdFromForVotesMap(uint256[] calldata proposalIds) internal virtual;
+    
+    /**
+     * @dev Function to return the official Commit Reveal Module for the contest.
+     */
+    function _officialCommitRevealModuleAddress() internal virtual view returns (address);
 
     /**
      * @dev Register a vote with a given support and voting weight.
@@ -449,6 +458,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
      */
     function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public {
+        if ((isCommitReveal == 1) && (msg.sender != _officialCommitRevealModuleAddress())) revert VoterMustBeOfficialCommitRevealModule();
         if (votingMerkleRoot != 0 && !addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
