@@ -6,7 +6,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
-import { handle } from "frog/next";
+import { handle } from "frog/vercel";
 import { serveStatic } from "frog/serve-static";
 import {
   fetchContestDataForSubmitProposal,
