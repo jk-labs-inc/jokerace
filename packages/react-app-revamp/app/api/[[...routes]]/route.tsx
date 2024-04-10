@@ -20,16 +20,17 @@ import { fetchCostToVote, fetchProposalInfo } from "lib/frames/voting";
 import moment from "moment";
 import { Abi } from "viem";
 
+const URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://jokerace.io";
+
 const app = new Frog({
   basePath: "/api",
-  verify: false,
+  browserLocation: "/:path",
   ui: { vars },
   imageOptions: {
     format: "png",
   },
+  origin: "https://",
 });
-
-const URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://jokerace.io";
 
 // Submit proposal
 app.frame("/contest/:chain/:address", async c => {
@@ -165,7 +166,6 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
 
 app.transaction("/vote/:chain/:address/:submission", async c => {
   const { inputText: amountOfVotesToCast } = c;
-  const userAddress = c.address;
   const { chain, address, submission } = c.req.param();
 
   const chainId = getChainId(chain);
