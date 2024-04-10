@@ -3,7 +3,6 @@
 /** @jsxImportSource frog/jsx */
 
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
@@ -15,7 +14,7 @@ import {
   safeMetadata,
   targetMetadata,
 } from "lib/frames/submission";
-import { Box, HStack, Heading, Text, vars } from "lib/frames/ui";
+import { Box, Heading, vars } from "lib/frames/ui";
 import { SupportedChainId, getChainId, isSupportedChainId } from "lib/frames/utils";
 import { fetchCostToVote, fetchProposalInfo } from "lib/frames/voting";
 import moment from "moment";
@@ -25,6 +24,9 @@ const app = new Frog({
   basePath: "/api",
   verify: false,
   ui: { vars },
+  imageOptions: {
+    format: "png",
+  },
 });
 
 const URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://jokerace.io";
@@ -87,26 +89,13 @@ app.frame("/contest/:chain/:address", async c => {
 
   return c.res({
     image: (
-      <Box grow backgroundColor="black" padding="16">
-        <Heading color="white">JokeRace</Heading>
-        <HStack gap={2} padding={16}>
-          <Box>
-            <Text color="neutral" size="large" transform="uppercase" weight="700">
-              {name}
-            </Text>
-          </Box>
-          <Box>
-            <Text color="neutral">by {shortenEthereumAddress(creator)}</Text>
-          </Box>
-        </HStack>
-      </Box>
+      <div tw="flex flex-col h-full bg-slate-500">
+        <div tw="text-primary-11 text-6xl">{name}</div>
+      </div>
     ),
     intents: [
       <TextInput placeholder="your submission goes here..." />,
-      <Button.Transaction
-        action={`/submit-proposal/${chain}/${address}`}
-        target={`/submit-proposal/${chain}/${address}`}
-      >
+      <Button.Transaction action={`/submit-proposal`} target={`/submit-proposal/${chain}/${address}`}>
         submit
       </Button.Transaction>,
       <Button.Redirect location={`${URL}/contest/${chain}/${address}`}>visit contest</Button.Redirect>,
@@ -114,14 +103,9 @@ app.frame("/contest/:chain/:address", async c => {
   });
 });
 
-app.frame("/submit-proposal/:chain/:address", c => {
-  const { chain, address } = c.req.param();
+app.frame("/submit-proposal", c => {
   return c.res({
-    image: (
-      <div style={{ color: "black", display: "flex", fontSize: 20 }}>
-        Tx Details: {chain} {address}
-      </div>
-    ),
+    image: <div style={{ color: "black", display: "flex", fontSize: 20 }}>Tx Details</div>,
   });
 });
 
@@ -167,22 +151,12 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
 
   return c.res({
     image: (
-      <Box grow backgroundColor="black" padding="16">
-        <Heading color="white">JokeRace</Heading>
-        <HStack gap={2} padding={16}>
-          <Box>
-            <Text color="neutral" size="large" transform="uppercase" weight="700">
-              Proposal: {content}
-            </Text>
-          </Box>
-          <Box>
-            <Text color="neutral">by {shortenEthereumAddress(authorEthereumAddress)}</Text>
-          </Box>
-        </HStack>
-      </Box>
+      <div tw="flex flex-col h-full bg-slate-500">
+        <div tw="text-primary-11 text-6xl">Proposal: {content}</div>
+      </div>
     ),
     intents: [
-      <TextInput placeholder="your vote goes here..." />,
+      <TextInput placeholder="0 votes" />,
       <Button.Transaction target={`/vote/${chain}/${address}/${submission}`}>vote</Button.Transaction>,
       <Button.Redirect location={`${URL}/contest/${chain}/${address}`}>visit submission</Button.Redirect>,
     ],
@@ -198,8 +172,6 @@ app.transaction("/vote/:chain/:address/:submission", async c => {
   const { abi } = await getContestContractVersion(address, chainId);
 
   const costToVote = await fetchCostToVote(abi as Abi, chainId, address, Number(amountOfVotesToCast));
-
-  console.log({ costToVote });
 
   return c.contract({
     abi: abi as unknown as Abi,

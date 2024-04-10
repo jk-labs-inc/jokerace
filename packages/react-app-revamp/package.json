@@ -41,7 +41,7 @@
     "ethers": "5.6.8",
     "frog": "^0.8.1",
     "fuse.js": "^7.0.0",
-    "hono": "^4.2.1",
+    "hono": "^4.2.3",
     "i18next": "23.2.3",
     "interweave": "^13.0.0",
     "interweave-autolink": "^5.0.0",
