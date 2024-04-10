@@ -10,7 +10,9 @@ export function isSupportedChainId(chainId: any): chainId is SupportedChainId {
 }
 
 export const getChainId = (chain: string): number => {
-  const chainId = chains.find((c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain)?.id;
+  const chainId = chains.find(
+    (c: { name: string }) => c.name.toLowerCase().replace(" ", "") === chain.toLowerCase(),
+  )?.id;
 
   return chainId ?? 1;
 };

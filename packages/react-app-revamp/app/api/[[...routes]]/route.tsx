@@ -1,35 +1,49 @@
 /* eslint-disable react/no-unescaped-entities */
-/* eslint-disable react/jsx-key */
 /** @jsxImportSource frog/jsx */
 
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
-import { handle } from "frog/vercel";
 import { serveStatic } from "frog/serve-static";
+import { handle } from "frog/vercel";
 import {
   fetchContestDataForSubmitProposal,
   fetchCostToPropose,
   safeMetadata,
   targetMetadata,
 } from "lib/frames/submission";
-import { Box, Heading, vars } from "lib/frames/ui";
 import { SupportedChainId, getChainId, isSupportedChainId } from "lib/frames/utils";
 import { fetchCostToVote, fetchProposalInfo } from "lib/frames/voting";
 import moment from "moment";
 import { Abi } from "viem";
 
-const URL = process.env.NODE_ENV === "development" ? "http://localhost:3000" : "https://jokerace.io";
+const isDev = process.env.NODE_ENV === "development";
+
+const URL = isDev ? "http://localhost:3000" : "https://jokerace.io";
 
 const app = new Frog({
   basePath: "/api",
-  browserLocation: "/:path",
-  ui: { vars },
   imageOptions: {
     format: "png",
+    fonts: [
+      {
+        name: "Lato",
+        source: "google",
+        weight: 400,
+      },
+      {
+        name: "Lato",
+        source: "google",
+        weight: 700,
+      },
+      {
+        name: "Lato",
+        source: "google",
+        weight: 900,
+      },
+    ],
   },
-  origin: "https://",
 });
 
 // Submit proposal
@@ -51,18 +65,26 @@ app.frame("/contest/:chain/:address", async c => {
           <div tw="text-primary-11 text-6xl">{creator}</div>
         </div>
       ),
-      intents: [<Button.Redirect location={`${URL}/contest/${chain}/${address}`}>visit contest</Button.Redirect>],
+      intents: [
+        <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="allowlisted-contest">
+          visit contest
+        </Button.Redirect>,
+      ],
     });
   }
 
   if (!isSupportedChainId(chainId)) {
     return c.res({
       image: (
-        <Box grow backgroundColor="black" padding="16">
-          <Heading color="white">JokeRace</Heading>
-        </Box>
+        <div tw="text-primary-11 text-6xl" style={{ fontFamily: "Lato" }}>
+          Unsupported chain.
+        </div>
       ),
-      intents: [<Button.Redirect location={`${URL}/contest/${chain}/${address}`}>visit contest</Button.Redirect>],
+      intents: [
+        <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="not-supported-chain-contest">
+          visit contest
+        </Button.Redirect>,
+      ],
     });
   }
 
@@ -74,7 +96,11 @@ app.frame("/contest/:chain/:address", async c => {
           <div tw="text-primary-11 text-6xl">{`Opens on: ${submissionsOpen.format("MMMM Do YYYY, h:mm:ss a")}`}</div>
         </div>
       ),
-      intents: [<Button.Redirect location={`${URL}/contest/${chain}/${address}`}>visit contest</Button.Redirect>],
+      intents: [
+        <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="submission-not-open-contest">
+          visit contest
+        </Button.Redirect>,
+      ],
     });
   } else if (now.isAfter(submissionsClose)) {
     return c.res({
@@ -84,29 +110,29 @@ app.frame("/contest/:chain/:address", async c => {
           <div tw="text-primary-11 text-6xl">{`Closed on: ${submissionsClose.format("MMMM Do YYYY, h:mm:ss a")}`}</div>
         </div>
       ),
-      intents: [<Button.Redirect location={`${URL}/contest/${chain}/${address}`}>visit contest</Button.Redirect>],
+      intents: [
+        <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="submissions-closed-contest">
+          visit contest
+        </Button.Redirect>,
+      ],
     });
   }
 
   return c.res({
     image: (
-      <div tw="flex flex-col h-full bg-slate-500">
-        <div tw="text-primary-11 text-6xl">{name}</div>
+      <div tw="flex flex-col h-full bg-black p-4">
+        <div tw="text-neutral-300 text-4xl uppercase">{name}</div>
       </div>
     ),
     intents: [
-      <TextInput placeholder="your submission goes here..." />,
-      <Button.Transaction action={`/submit-proposal`} target={`/submit-proposal/${chain}/${address}`}>
+      <TextInput placeholder="your submission goes here..." key={name} />,
+      <Button.Transaction target={`/submit-proposal/${chain}/${address}`} key={`submit-${name}`}>
         submit
       </Button.Transaction>,
-      <Button.Redirect location={`${URL}/contest/${chain}/${address}`}>visit contest</Button.Redirect>,
+      <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="visit-contest">
+        visit contest
+      </Button.Redirect>,
     ],
-  });
-});
-
-app.frame("/submit-proposal", c => {
-  return c.res({
-    image: <div style={{ color: "black", display: "flex", fontSize: 20 }}>Tx Details</div>,
   });
 });
 
@@ -118,6 +144,8 @@ app.transaction("/submit-proposal/:chain/:address", async c => {
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
   const costToPropose = await fetchCostToPropose(abi as Abi, chainId, address);
+
+  console.log(costToPropose, userAddress, proposalContent, chainId, address, abi);
 
   let proposalCore = {
     author: userAddress,
@@ -157,9 +185,13 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
       </div>
     ),
     intents: [
-      <TextInput placeholder="0 votes" />,
-      <Button.Transaction target={`/vote/${chain}/${address}/${submission}`}>vote</Button.Transaction>,
-      <Button.Redirect location={`${URL}/contest/${chain}/${address}`}>visit submission</Button.Redirect>,
+      <TextInput placeholder="0 votes" key={`${id}`} />,
+      <Button.Transaction target={`/vote/${chain}/${address}/${submission}`} key={`vote-${id}`}>
+        vote
+      </Button.Transaction>,
+      <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="visit-submission">
+        visit submission
+      </Button.Redirect>,
     ],
   });
 });
