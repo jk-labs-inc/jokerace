@@ -106,7 +106,7 @@ const ContestParameters = () => {
   return (
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-12">
-        <p className="text-[24px] font-bold text-neutral-11">timeline</p>
+        <p className="text-[20px] font-bold text-neutral-11">timeline</p>
         <div className="flex flex-col gap-4 md:w-96">
           <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
             <p>submissions open:</p>
@@ -127,7 +127,7 @@ const ContestParameters = () => {
         </div>
       </div>
       <div className="flex flex-col gap-12">
-        <p className="text-[24px] font-bold text-neutral-11">submissions</p>
+        <p className="text-[20px] font-bold text-neutral-11">submissions</p>
         <ul className="pl-4 text-[16px] font-bold">
           <li className="list-disc">
             qualified wallets can enter{" "}
@@ -149,7 +149,7 @@ const ContestParameters = () => {
         </ul>
       </div>
       <div className="flex flex-col gap-12">
-        <p className="text-[24px] font-bold text-neutral-11">voting</p>
+        <p className="text-[20px] font-bold text-neutral-11">voting</p>
         <ul className="pl-4 text-[16px] font-bold">
           <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
           {anyoneCanVote ? (

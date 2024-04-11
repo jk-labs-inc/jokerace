@@ -33,6 +33,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
+import ContestExtensions from "@components/_pages/Contest/Extensions";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const { refresh } = useRouter();
@@ -136,6 +137,12 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
         return (
           <div className="mt-8 animate-appear">
             <ContestParameters />
+          </div>
+        );
+      case Tab.Extensions:
+        return (
+          <div className="mt-8 animate-appear">
+            <ContestExtensions />
           </div>
         );
       default:
