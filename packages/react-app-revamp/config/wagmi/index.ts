@@ -9,10 +9,10 @@ import {
   phantomWallet,
   rabbyWallet,
   rainbowWallet,
+  safeWallet,
   tahoWallet,
   trustWallet,
   walletConnectWallet,
-  safeWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
@@ -42,6 +42,7 @@ import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
+import { fhenixTestnet } from "./custom-chains/fhenix";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fraxtal } from "./custom-chains/fraxtal";
 import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
@@ -205,6 +206,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zkFairTestnet,
   inEvmTestnet,
   campTestnet,
+  fhenixTestnet,
   mainnet,
 ];
 
