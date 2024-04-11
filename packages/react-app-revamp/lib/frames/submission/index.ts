@@ -13,7 +13,6 @@ export const safeMetadata = {
 };
 
 export const fetchContestDataForSubmitProposal = async (abi: Abi, chainId: number, address: string) => {
-  //TODO: add prompt and tag ?
   const contracts = [
     {
       address: address as `0x${string}`,
@@ -21,6 +20,13 @@ export const fetchContestDataForSubmitProposal = async (abi: Abi, chainId: numbe
       chainId,
       functionName: "name",
     },
+    {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId,
+      functionName: "prompt",
+    },
+
     {
       address: address as `0x${string}`,
       abi: abi,
@@ -49,10 +55,11 @@ export const fetchContestDataForSubmitProposal = async (abi: Abi, chainId: numbe
 
   const results = (await readContracts(serverConfig, { contracts })) as any;
   const name = results[0].result as string;
-  const creator = results[1].result as string;
-  const submissionMerkleRoot = results[2].result as string;
-  const submissionsOpenDate = new Date(Number(results[3].result) * 1000 + 1000);
-  const submissionsClosedDate = new Date(Number(results[4].result) * 1000 + 1000);
+  const prompt = results[1].result as string;
+  const creator = results[2].result as string;
+  const submissionMerkleRoot = results[3].result as string;
+  const submissionsOpenDate = new Date(Number(results[4].result) * 1000 + 1000);
+  const submissionsClosedDate = new Date(Number(results[5].result) * 1000 + 1000);
   let anyoneCanSubmit = false;
 
   if (submissionMerkleRoot === EMPTY_ROOT) {
@@ -61,6 +68,7 @@ export const fetchContestDataForSubmitProposal = async (abi: Abi, chainId: numbe
 
   return {
     name,
+    prompt,
     creator,
     anyoneCanSubmit,
     submissionsOpenDate,

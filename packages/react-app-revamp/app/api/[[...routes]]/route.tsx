@@ -24,6 +24,7 @@ const URL = isDev ? "http://localhost:3000" : "https://jokerace.io";
 
 const app = new Frog({
   basePath: "/api",
+
   imageOptions: {
     format: "png",
     fonts: [
@@ -48,14 +49,16 @@ const app = new Frog({
 
 // Submit proposal
 app.frame("/contest/:chain/:address", async c => {
+  const { deriveState } = c;
   const { chain, address } = c.req.param();
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
-  const { name, creator, anyoneCanSubmit, submissionsOpenDate, submissionsClosedDate } =
+  const { name, prompt, creator, anyoneCanSubmit, submissionsOpenDate, submissionsClosedDate } =
     await fetchContestDataForSubmitProposal(abi as Abi, chainId, address);
   const now = moment();
   const submissionsOpen = moment(submissionsOpenDate);
   const submissionsClose = moment(submissionsClosedDate);
+  const [contestType, contestTitle] = prompt ? prompt.split("|") : "";
 
   if (!anyoneCanSubmit) {
     return c.res({
@@ -120,8 +123,15 @@ app.frame("/contest/:chain/:address", async c => {
 
   return c.res({
     image: (
-      <div tw="flex flex-col h-full bg-black p-4">
-        <div tw="text-neutral-300 text-4xl uppercase">{name}</div>
+      <div tw="flex flex-col h-full bg-black p-8">
+        <div tw="text-neutral-300 text-4xl uppercase font-bold">{name}</div>
+        <div tw="flex">
+          <div tw="text-neutral-300 text-4xl">{contestTitle}</div>
+          <div tw="text-neutral-300 text-4xl border border-neutral-300 rounded-xl">{contestType}</div>
+          <div tw="text-neutral-300 text-4xl border border-neutral-300 rounded-xl">
+            {state.address} {state.chain}
+          </div>
+        </div>
       </div>
     ),
     intents: [
@@ -140,12 +150,9 @@ app.transaction("/submit-proposal/:chain/:address", async c => {
   const { inputText: proposalContent } = c;
   const userAddress = c.address;
   const { chain, address } = c.req.param();
-
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
   const costToPropose = await fetchCostToPropose(abi as Abi, chainId, address);
-
-  console.log(costToPropose, userAddress, proposalContent, chainId, address, abi);
 
   let proposalCore = {
     author: userAddress,
