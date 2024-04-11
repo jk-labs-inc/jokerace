@@ -1,3 +1,6 @@
+import { extractPathSegments } from "@helpers/extractPath";
+import { useBelloRedirectUrl } from "@hooks/useBello";
+import { usePathname } from "next/navigation";
 import { Extension } from "../../../types";
 import ExtensionCard from "../../Card";
 
@@ -12,10 +15,21 @@ const BELLO_EXTENSION: Extension = {
 };
 
 const BelloExtension = () => {
-  //TODO: supply bello extension url
-  const onBelloExtensionClick = () => {};
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
+  const { redirectUrl, isLoading, isError } = useBelloRedirectUrl(address, chainName);
 
-  return <ExtensionCard metadata={BELLO_EXTENSION.metadata} onClick={onBelloExtensionClick} />;
+  const onBelloExtensionClick = () => {
+    window.open(redirectUrl, "_blank");
+  };
+
+  return (
+    <ExtensionCard
+      metadata={BELLO_EXTENSION.metadata}
+      onClick={onBelloExtensionClick}
+      disabled={isLoading || isError}
+    />
+  );
 };
 
 export default BelloExtension;
