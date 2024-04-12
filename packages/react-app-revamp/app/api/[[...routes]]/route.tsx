@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 /* eslint-disable react/no-unescaped-entities */
 /** @jsxImportSource frog/jsx */
 
@@ -20,7 +21,7 @@ import { Abi } from "viem";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const URL = isDev ? "http://localhost:3000" : "https://jokerace.io";
+const URLLink = isDev ? "http://localhost:3000" : "https://jokerace.io";
 
 const app = new Frog({
   basePath: "/api",
@@ -48,6 +49,7 @@ const app = new Frog({
 
 // Submit proposal
 app.frame("/contest/:chain/:address", async c => {
+  const { deriveState } = c;
   const { chain, address } = c.req.param();
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
@@ -66,7 +68,7 @@ app.frame("/contest/:chain/:address", async c => {
         </div>
       ),
       intents: [
-        <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="allowlisted-contest">
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}`} key="allowlisted-contest">
           visit contest
         </Button.Redirect>,
       ],
@@ -81,7 +83,7 @@ app.frame("/contest/:chain/:address", async c => {
         </div>
       ),
       intents: [
-        <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="not-supported-chain-contest">
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}`} key="not-supported-chain-contest">
           visit contest
         </Button.Redirect>,
       ],
@@ -97,7 +99,7 @@ app.frame("/contest/:chain/:address", async c => {
         </div>
       ),
       intents: [
-        <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="submission-not-open-contest">
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}`} key="submission-not-open-contest">
           visit contest
         </Button.Redirect>,
       ],
@@ -111,7 +113,7 @@ app.frame("/contest/:chain/:address", async c => {
         </div>
       ),
       intents: [
-        <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="submissions-closed-contest">
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}`} key="submissions-closed-contest">
           visit contest
         </Button.Redirect>,
       ],
@@ -119,33 +121,43 @@ app.frame("/contest/:chain/:address", async c => {
   }
 
   return c.res({
+    action: "/contest-details",
     image: (
       <div tw="flex flex-col h-full bg-black p-4">
         <div tw="text-neutral-300 text-4xl uppercase">{name}</div>
       </div>
     ),
+    intents: [<Button>Let's get started</Button>],
+  });
+});
+
+app.frame("/contest-details", c => {
+  return c.res({
+    image: (
+      <div style={{ color: "black", display: "flex", fontSize: 60 }}>
+        <p style={{ color: "white" }}>submit a proposal</p>
+      </div>
+    ),
     intents: [
-      <TextInput placeholder="your submission goes here..." key={name} />,
-      <Button.Transaction target={`/submit-proposal/${chain}/${address}`} key={`submit-${name}`}>
-        submit
+      <TextInput placeholder="Enter your proposal" key="inputText" />,
+      <Button.Transaction target="/submit" key="submit-proposal">
+        Submit Proposal
       </Button.Transaction>,
-      <Button.Redirect location={`${URL}/contest/${chain}/${address}`} key="visit-contest">
-        visit contest
-      </Button.Redirect>,
     ],
   });
 });
 
-app.transaction("/submit-proposal/:chain/:address", async c => {
+app.transaction("/submit", async c => {
   const { inputText: proposalContent } = c;
+  const pathSegments = c.initialPath.split("/");
+  const chain = pathSegments[3];
+  const address = pathSegments[4];
+
   const userAddress = c.address;
-  const { chain, address } = c.req.param();
 
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
   const costToPropose = await fetchCostToPropose(abi as Abi, chainId, address);
-
-  console.log(costToPropose, userAddress, proposalContent, chainId, address, abi);
 
   let proposalCore = {
     author: userAddress,
