@@ -49,7 +49,6 @@ export const fetchCostToVote = async (abi: Abi, chainId: number, address: string
 };
 
 export const fetchProposalInfo = async (abi: Abi, address: string, chainId: number, submission: string) => {
-  console.log({ chainId });
   let contracts = [
     {
       address: address as `0x${string}`,
