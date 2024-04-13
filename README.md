@@ -1,5 +1,7 @@
 # Such.lol 
 
+[Such.lol](https://such.lol) will be the home for Farcaster-centric jokeraces on degen L3
+
 Jokerace for Degen L3. 
 
 ## Features to build for Such.lol
