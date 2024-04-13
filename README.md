@@ -1,3 +1,22 @@
+# Such.lol 
+
+Jokerace for Degen L3. 
+
+## Features to build for Such.lol
+
+- Farcaster integration
+- Specific contest formats (specific form types)
+- Expanded rewards (nfts, degen, multiple winners/rewards, etc)
+- Contest Frame
+  ..* submit to contest
+  ..* view submissions
+  ..* vote for submission
+- Submission Frame
+  ..* vote for submission
+  ..* vote against submission
+  ..* visit submission
+---
+
 # jokerace • [![Forge Tests](https://github.com/jk-labs-inc/jokerace/actions/workflows/forge_tests.yml/badge.svg)](https://github.com/JokeDAO/JokeDaoV2Dev/actions/workflows/forge_tests.yml)
 
 Check out the live site at [jokerace.io](https://jokerace.io/)!
