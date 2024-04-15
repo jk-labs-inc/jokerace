@@ -1,8 +1,6 @@
 import { createSystem } from "frog/ui";
 import { readFile } from "fs/promises";
 
-const saboLocal = await readFile("./public/Sabo-Filled.otf");
-
 export const { Box, Columns, Column, Heading, HStack, Rows, Row, Spacer, Text, VStack, Image, vars } = createSystem({
   colors: {
     yellow: "#FFE25B",
@@ -30,13 +28,6 @@ export const { Box, Columns, Column, Heading, HStack, Rows, Row, Spacer, Text, V
         name: "Lato",
         source: "google",
         weight: 900,
-      },
-    ],
-    sabo: [
-      {
-        name: "Sabo",
-        source: "buffer",
-        data: saboLocal,
       },
     ],
   },

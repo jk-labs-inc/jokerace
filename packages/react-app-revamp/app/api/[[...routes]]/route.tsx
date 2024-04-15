@@ -49,12 +49,12 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="sabo" color="neutral" size="32" align="start">
+          <Text color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text font="sabo" color="neutral" size="24">
+              <Text color="neutral" size="24">
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -76,12 +76,12 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="sabo" color="neutral" size="32" align="start">
+          <Text color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text font="sabo" color="neutral" size="24">
+              <Text color="neutral" size="24">
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -103,12 +103,12 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="sabo" color="neutral" size="32" align="start">
+          <Text color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text font="sabo" color="neutral" size="24">
+              <Text color="neutral" size="24">
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -131,12 +131,12 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="sabo" color="neutral" size="32" align="start">
+          <Text color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text font="sabo" color="neutral" size="24">
+              <Text color="neutral" size="24">
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -161,7 +161,7 @@ app.frame("/contest/:chain/:address", async c => {
     action: "/contest-submission-details",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="sabo" color="neutral" size="32" align="start">
+        <Text color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box
@@ -172,7 +172,7 @@ app.frame("/contest/:chain/:address", async c => {
           gap="8"
           justifyContent="center"
         >
-          <Text font="sabo" color="neutral" size="24">
+          <Text color="neutral" size="24">
             {name}
           </Text>
           <Text font="lato" color="neutral" size="16">
@@ -201,7 +201,7 @@ app.frame("/contest-submission-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="sabo" color="neutral" size="32" align="start">
+        <Text color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box
@@ -219,7 +219,7 @@ app.frame("/contest-submission-details", async c => {
               </Text>
             </Box>
 
-            <Text font="sabo" color="neutral" size="24">
+            <Text color="neutral" size="24">
               {name}
             </Text>
             <Text font="lato" color="neutral" size="16">
@@ -260,7 +260,7 @@ app.frame("/submit-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="sabo" color="neutral" size="32" align="start">
+        <Text color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box
@@ -270,7 +270,7 @@ app.frame("/submit-details", async c => {
           flexDirection="column"
           justifyContent="center"
         >
-          <Text color="green" font="sabo" size="24">
+          <Text color="green" size="24">
             you submitted a proposal!
           </Text>
         </Box>
