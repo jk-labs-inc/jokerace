@@ -4,10 +4,7 @@
   "license": "AGPL-3.0-only",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "deploy": "vercel",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "next build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.398.0",
