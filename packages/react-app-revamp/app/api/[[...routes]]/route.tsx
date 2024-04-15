@@ -61,10 +61,6 @@ app.frame("/contest/:chain/:address", async c => {
                 by {shortenEthereumAddress(creator)}
               </Text>
             </Box>
-            <Text font="lato" color="red" weight="700" size="16" align="center">
-              ruh-roh! it looks like this contest is allowlisted. <br />
-              visit jokerace to play!
-            </Text>
           </Box>
         </Box>
       ),
@@ -92,9 +88,6 @@ app.frame("/contest/:chain/:address", async c => {
                 by {shortenEthereumAddress(creator)}
               </Text>
             </Box>
-            <Text font="lato" color="red" weight="700" size="16">
-              ruh-roh! it looks like this contest is deployed <br /> on a chain that farcaster does not support! 😢
-            </Text>
           </Box>
         </Box>
       ),
