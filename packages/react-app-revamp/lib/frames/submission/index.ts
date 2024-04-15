@@ -12,8 +12,7 @@ export const safeMetadata = {
   threshold: 1,
 };
 
-export const fetchContestDataForSubmitProposal = async (abi: Abi, chainId: number, address: string) => {
-  //TODO: add prompt and tag ?
+export const fetchContestInitialData = async (abi: Abi, chainId: number, address: string) => {
   const contracts = [
     {
       address: address as `0x${string}`,
@@ -65,6 +64,56 @@ export const fetchContestDataForSubmitProposal = async (abi: Abi, chainId: numbe
     anyoneCanSubmit,
     submissionsOpenDate,
     submissionsClosedDate,
+  };
+};
+
+export const fetchContestSecondaryData = async (abi: Abi, chainId: number, address: string) => {
+  const contracts = [
+    {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId,
+      functionName: "name",
+    },
+    {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId,
+      functionName: "creator",
+    },
+    {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId,
+      functionName: "prompt",
+    },
+    {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId,
+      functionName: "costToPropose",
+    },
+    {
+      address: address as `0x${string}`,
+      abi: abi,
+      chainId,
+      functionName: "voteStart",
+    },
+  ];
+
+  const results = (await readContracts(serverConfig, { contracts })) as any;
+  const name = results[0].result as string;
+  const creator = results[1].result as string;
+  const prompt = results[2].result as string;
+  const costToPropose = Number(results[3].result);
+  const voteStartDate = new Date(Number(results[4].result) * 1000 + 1000);
+
+  return {
+    name,
+    creator,
+    prompt,
+    costToPropose,
+    voteStartDate,
   };
 };
 

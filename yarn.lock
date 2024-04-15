@@ -9978,10 +9978,10 @@ fresh@0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==
 
-frog@^0.8.1:
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/frog/-/frog-0.8.1.tgz#c86231a6121d8efd97a60bcd0147af3197a62b3b"
-  integrity sha512-BnuTEiL7qJ0HdDOR+akP5rjONY+sjHSznwmeW7G9vhPIkK4nIvvxuo4ageDm/LUxpPJFk0Szgq1IGAotI5H+Ug==
+frog@^0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/frog/-/frog-0.8.3.tgz#a9dd49cd706b0d4d9fe7eb7967d92d5fe3e23b86"
+  integrity sha512-IfMzLHI8g1PZMPbit1McalyPz2Oe+9dxvg1JVsjfpp7ZbLJ3UN8uCCijqq1QPiBCrcSb7qm/nqoi590Owb4RQQ==
   dependencies:
     "@bufbuild/protobuf" "^1.7.2"
     "@hono/node-server" "^1.8.2"
@@ -9994,7 +9994,7 @@ frog@^0.8.1:
     dom-parser "^1.1.5"
     fast-glob "3.3.2"
     fs-extra "^11.2.0"
-    hono-og "0.0.26"
+    hono-og "0.0.27"
     jose "^5.2.2"
     lz-string "^1.5.0"
     path-browserify "^1.0.1"
@@ -10424,10 +10424,10 @@ hoist-non-react-statics@^3.3.1:
   dependencies:
     react-is "^16.7.0"
 
-hono-og@0.0.26:
-  version "0.0.26"
-  resolved "https://registry.yarnpkg.com/hono-og/-/hono-og-0.0.26.tgz#bcef75c5f153c97b76f780f8b895ad6e848290e2"
-  integrity sha512-YUaLj+T06fWpykgPoeMbxnRMuEA+L83p5+PcBzlM2P/Rj889wnapvVDtT//81iJhRVLCkdjEkAHfcZaJ67cI8w==
+hono-og@0.0.27:
+  version "0.0.27"
+  resolved "https://registry.yarnpkg.com/hono-og/-/hono-og-0.0.27.tgz#a136f527f0911a44ef2bde29d0597b61926ef55f"
+  integrity sha512-FtsUmDCG7xKXD8InxzHcdzX5IIe9MrDPFHih0CUd6Hog0NcDV6tksc1cZ1sAAuftSTedmC4LV6Oi1uK6VXvZgQ==
   dependencies:
     "@vercel/og" "~0.6.2"
     workers-og "~0.0.23"

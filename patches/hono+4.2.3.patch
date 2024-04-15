@@ -1,0 +1,13 @@
+diff --git a/node_modules/hono/dist/types/jsx/base.d.ts b/node_modules/hono/dist/types/jsx/base.d.ts
+index 53a6278..55594e5 100644
+--- a/node_modules/hono/dist/types/jsx/base.d.ts
++++ b/node_modules/hono/dist/types/jsx/base.d.ts
+@@ -15,7 +15,7 @@ declare global {
+     }
+ }
+ type LocalContexts = [Context<unknown>, unknown][];
+-export type Child = string | Promise<string> | number | JSXNode | null | undefined | boolean | Child[];
++export type Child = string | Promise<string> | number | JSXNode | null | undefined | boolean | Child[] | React.ReactNode;
+ export declare class JSXNode implements HtmlEscaped {
+     tag: string | Function;
+     props: Props;

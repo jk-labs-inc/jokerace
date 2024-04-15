@@ -4,13 +4,14 @@
 
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { parseUnits } from "ethers/lib/utils";
+import { formatEther, parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
 import { serveStatic } from "frog/serve-static";
 import { handle } from "frog/vercel";
 import {
-  fetchContestDataForSubmitProposal,
+  fetchContestInitialData,
+  fetchContestSecondaryData,
   fetchCostToPropose,
   safeMetadata,
   targetMetadata,
@@ -35,8 +36,11 @@ app.frame("/contest/:chain/:address", async c => {
   const { chain, address } = c.req.param();
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
-  const { name, creator, anyoneCanSubmit, submissionsOpenDate, submissionsClosedDate } =
-    await fetchContestDataForSubmitProposal(abi as Abi, chainId, address);
+  const { name, creator, anyoneCanSubmit, submissionsOpenDate, submissionsClosedDate } = await fetchContestInitialData(
+    abi as Abi,
+    chainId,
+    address,
+  );
   const now = moment();
   const submissionsOpen = moment(submissionsOpenDate);
   const submissionsClose = moment(submissionsClosedDate);
@@ -44,25 +48,25 @@ app.frame("/contest/:chain/:address", async c => {
   if (!anyoneCanSubmit) {
     return c.res({
       image: (
-        <div tw="flex flex-col bg-black p-4 justify-between grow">
-          <p style={{ fontFamily: "sabo" }} tw="text-neutral-300 text-[64px] self-start">
+        <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
-          </p>
-          <div tw="grow flex justify-center items-center" style={{ gap: "32px" }}>
-            <div tw="flex flex-col items-center justify-center" style={{ gap: "16px" }}>
-              <p style={{ fontFamily: "sabo" }} tw="text-neutral-300 text-[32px]">
+          </Text>
+          <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
+            <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
+              <Text font="sabo" color="neutral" size="24">
                 {name}
-              </p>
-              <p style={{ fontFamily: "lato" }} tw="text-neutral-300 text-base">
+              </Text>
+              <Text font="lato" color="neutral" size="16">
                 by {shortenEthereumAddress(creator)}
-              </p>
-            </div>
-            <p style={{ fontFamily: "lato" }} tw="text-red-400 font-bold text-base">
+              </Text>
+            </Box>
+            <Text font="lato" color="red" weight="700" size="16" align="center">
               ruh-roh! it looks like this contest is allowlisted. <br />
               visit jokerace to play!
-            </p>
-          </div>
-        </div>
+            </Text>
+          </Box>
+        </Box>
       ),
       intents: [
         <Button.Link href={`${URLLink}/contest/${chain}/${address}`} key="not-supported-chain-contest">
@@ -76,7 +80,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="sabo" color="neutral" size="32" alignSelf="flex-start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -105,10 +109,24 @@ app.frame("/contest/:chain/:address", async c => {
   if (now.isBefore(submissionsOpen)) {
     return c.res({
       image: (
-        <div tw="flex flex-col h-full bg-slate-500">
-          <div tw="text-primary-11 text-6xl">Submissions aren't open yet.</div>
-          <div tw="text-primary-11 text-6xl">{`Opens on: ${submissionsOpen.format("MMMM Do YYYY, h:mm:ss a")}`}</div>
-        </div>
+        <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+          <Text font="sabo" color="neutral" size="32" align="start">
+            Jokerace
+          </Text>
+          <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
+            <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
+              <Text font="sabo" color="neutral" size="24">
+                {name}
+              </Text>
+              <Text font="lato" color="neutral" size="16">
+                by {shortenEthereumAddress(creator)}
+              </Text>
+            </Box>
+            <Text font="lato" color="neutral" weight="700" size="16" transform="uppercase">
+              submissions not open yet!
+            </Text>
+          </Box>
+        </Box>
       ),
       intents: [
         <Button.Link href={`${URLLink}/contest/${chain}/${address}`} key="submission-not-open-contest">
@@ -120,7 +138,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="sabo" color="neutral" size="32" alignSelf="flex-start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -150,7 +168,7 @@ app.frame("/contest/:chain/:address", async c => {
     action: "/contest-submission-details",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="sabo" color="neutral" size="32" alignSelf="flex-start">
+        <Text font="sabo" color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box
@@ -170,36 +188,102 @@ app.frame("/contest/:chain/:address", async c => {
         </Box>
       </Box>
     ),
-    intents: [<Button>Let’s submit!</Button>],
+    intents: [<Button>submit an entry</Button>],
   });
 });
 
-app.frame("/contest-submission-details", c => {
+app.frame("/contest-submission-details", async c => {
+  const pathSegments = c.initialPath.split("/");
+  const chain = pathSegments[3];
+  const address = pathSegments[4];
+  const chainId = getChainId(chain);
+  const { abi } = await getContestContractVersion(address, chainId);
+  const { name, creator, prompt, costToPropose, voteStartDate } = await fetchContestSecondaryData(
+    abi as Abi,
+    chainId,
+    address,
+  );
+  const [contestType, contestTitle] = prompt.split("|");
+
   return c.res({
     image: (
-      <div style={{ color: "black", display: "flex", fontSize: 60 }}>
-        <p style={{ color: "white" }}>submit a proposal</p>
-      </div>
+      <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+        <Text font="sabo" color="neutral" size="32" align="start">
+          Jokerace
+        </Text>
+        <Box
+          flexGrow="1"
+          alignHorizontal="center"
+          alignVertical="center"
+          flexDirection="column"
+          gap="32"
+          justifyContent="center"
+        >
+          <Box gap="8" justifyContent="center" alignHorizontal="center" alignVertical="center">
+            <Box backgroundColor="darkGrey" border="solid" borderRadius="10" padding="8">
+              <Text font="lato" color="black" size="14">
+                {contestType}
+              </Text>
+            </Box>
+
+            <Text font="sabo" color="neutral" size="24">
+              {name}
+            </Text>
+            <Text font="lato" color="neutral" size="16">
+              by {shortenEthereumAddress(creator)}
+            </Text>
+          </Box>
+
+          <Box gap="8" justifyContent="center" alignHorizontal="center" alignVertical="center">
+            <Text font="lato" color="neutral" size="16">
+              {contestTitle}
+            </Text>
+            <Text font="lato" color="neutral" size="16">
+              {formatEther(BigInt(costToPropose))} ETH to submit
+            </Text>
+            <Text font="lato" color="neutral" size="16">
+              submit by {moment(voteStartDate).format("MMMM Do, YYYY, h:mm a")}
+            </Text>
+          </Box>
+        </Box>
+      </Box>
     ),
     intents: [
-      <TextInput placeholder="Enter your entry" key="inputText" />,
+      <TextInput placeholder="describe your submission..." key="inputText" />,
       <Button.Transaction action="/submit-details" target="/submit" key="submit-proposal">
-        Submit
+        submit
       </Button.Transaction>,
+      <Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>,
     ],
   });
 });
 
-app.frame("/submit-details", c => {
-  const { transactionId, initialPath } = c;
+app.frame("/submit-details", async c => {
+  const { initialPath } = c;
+  const pathSegments = initialPath.split("/");
+  const chain = pathSegments[3];
+  const address = pathSegments[4];
 
   return c.res({
     image: (
-      <div tw="flex flex-col h-full bg-slate-500">
-        <div tw="text-white text-6xl">tx: {transactionId}</div>
-        <div tw="text-white text-6xl">{initialPath}</div>
-      </div>
+      <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+        <Text font="sabo" color="neutral" size="32" align="start">
+          Jokerace
+        </Text>
+        <Box
+          flexGrow="1"
+          alignHorizontal="center"
+          alignVertical="center"
+          flexDirection="column"
+          justifyContent="center"
+        >
+          <Text color="green" font="sabo" size="24">
+            you submitted a proposal!
+          </Text>
+        </Box>
+      </Box>
     ),
+    intents: [<Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>],
   });
 });
 
@@ -208,9 +292,7 @@ app.transaction("/submit", async c => {
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
   const address = pathSegments[4];
-
   const userAddress = c.address;
-
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
   const costToPropose = await fetchCostToPropose(abi as Abi, chainId, address);
