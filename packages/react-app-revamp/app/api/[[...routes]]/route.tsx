@@ -329,7 +329,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
   );
 
   return c.res({
-    action: "/contest-vote-details",
+    action: "/vote",
     image: (
       <div tw="flex flex-col h-full bg-black p-4">
         <div tw="text-neutral-300 text-4xl uppercase">{submission}</div>
@@ -337,26 +337,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     ),
     intents: [<Button>Let's vote!</Button>],
   });
-
-  // return c.res({
-  //   image: (
-  //     <div tw="flex flex-col h-full bg-slate-500">
-  //       <div tw="text-primary-11 text-6xl">Proposal: {content}</div>
-  //     </div>
-  //   ),
-  //   intents: [
-  //     <TextInput placeholder="0 votes" key={`${id}`} />,
-  //     <Button.Transaction target={`/vote/${chain}/${address}/${submission}`} key={`vote-${id}`}>
-  //       vote
-  //     </Button.Transaction>,
-  //     <Button.Link href={`${URL}/contest/${chain}/${address}`} key="visit-submission">
-  //       visit submission
-  //     </Button.Link>,
-  //   ],
-  // });
 });
 
-app.frame("/contest-vote-details", c => {
+app.frame("/vote", c => {
   return c.res({
     image: (
       <div style={{ color: "black", display: "flex", fontSize: 60 }}>

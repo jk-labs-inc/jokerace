@@ -110,3 +110,5 @@ export const fetchProposalInfo = async (abi: Abi, address: string, chainId: numb
     ...rankInfo,
   };
 };
+
+export const fetchContestInfo = async (abi: Abi, address: string, chainId: number) => {};
