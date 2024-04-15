@@ -1,4 +1,4 @@
-import { config } from "@config/wagmi";
+import { serverConfig } from "@config/wagmi/server";
 import { isContentTweet } from "@helpers/isContentTweet";
 import isUrlToImage from "@helpers/isUrlToImage";
 import { readContract, readContracts } from "@wagmi/core";
@@ -171,7 +171,7 @@ export function transformProposalData(
  */
 export async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) {
   if (isLegacy) {
-    return (await readContract(config, {
+    return (await readContract(serverConfig, {
       ...contractConfig,
       functionName: "getAllProposalIds",
       args: [],
@@ -190,7 +190,7 @@ export async function getProposalIdsRaw(contractConfig: any, isLegacy: boolean) 
       },
     ];
 
-    const results: any[] = await readContracts(config, { contracts });
+    const results: any[] = await readContracts(serverConfig, { contracts });
 
     const allProposals = results[0].result[0];
     const deletedIdsArray = results[1]?.result;
