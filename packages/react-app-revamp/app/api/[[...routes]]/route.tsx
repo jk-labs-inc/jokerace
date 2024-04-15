@@ -44,25 +44,25 @@ app.frame("/contest/:chain/:address", async c => {
   if (!anyoneCanSubmit) {
     return c.res({
       image: (
-        <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="sabo" color="neutral" size="32" alignSelf="flex-start">
+        <div tw="flex flex-col bg-black p-4 justify-between grow">
+          <p style={{ fontFamily: "sabo" }} tw="text-neutral-300 text-[64px] self-start">
             Jokerace
-          </Text>
-          <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
-            <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text font="sabo" color="neutral" size="24">
+          </p>
+          <div tw="grow flex justify-center items-center" style={{ gap: "32px" }}>
+            <div tw="flex flex-col items-center justify-center" style={{ gap: "16px" }}>
+              <p style={{ fontFamily: "sabo" }} tw="text-neutral-300 text-[32px]">
                 {name}
-              </Text>
-              <Text font="lato" color="neutral" size="16">
+              </p>
+              <p style={{ fontFamily: "lato" }} tw="text-neutral-300 text-base">
                 by {shortenEthereumAddress(creator)}
-              </Text>
-            </Box>
-            <Text font="lato" color="red" weight="700" size="16">
+              </p>
+            </div>
+            <p style={{ fontFamily: "lato" }} tw="text-red-400 font-bold text-base">
               ruh-roh! it looks like this contest is allowlisted. <br />
               visit jokerace to play!
-            </Text>
-          </Box>
-        </Box>
+            </p>
+          </div>
+        </div>
       ),
       intents: [
         <Button.Link href={`${URLLink}/contest/${chain}/${address}`} key="not-supported-chain-contest">
