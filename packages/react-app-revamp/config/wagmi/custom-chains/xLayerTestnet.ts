@@ -1,8 +1,8 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const x1Testnet: Chain = {
+export const xLayerTestnet: Chain = {
   id: 195,
-  name: "x1Testnet",
+  name: "xLayerTestnet",
   iconUrl: "/contest/mona-lisa-moustache.png",
   nativeCurrency: {
     decimals: 18,
@@ -18,8 +18,8 @@ export const x1Testnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "x1 Testnet Scan", url: "https://www.oklink.com/x1-test" },
-    default: { name: "x1 Testnet Scan", url: "https://www.oklink.com/x1-test" },
+    etherscan: { name: "xLayer Testnet Scan", url: "https://www.oklink.com/x1-test" },
+    default: { name: "xLayer Testnet Scan", url: "https://www.oklink.com/x1-test" },
   },
   testnet: true,
 };

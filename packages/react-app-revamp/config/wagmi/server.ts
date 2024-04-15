@@ -17,6 +17,7 @@ import { berachainTestnet } from "./custom-chains/berachainTestnet";
 import { blast } from "./custom-chains/blast";
 import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
+import { campTestnet } from "./custom-chains/campTestnet";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
 import { degen } from "./custom-chains/degen";
@@ -26,12 +27,14 @@ import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
+import { fhenixTestnet } from "./custom-chains/fhenix";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fraxtal } from "./custom-chains/fraxtal";
 import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
+import { gold } from "./custom-chains/gold";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
@@ -82,13 +85,12 @@ import { syndicateFrame } from "./custom-chains/syndicateFrame";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
-import { x1Testnet } from "./custom-chains/x1Testnet";
+import { xLayer } from "./custom-chains/xLayer";
+import { xLayerTestnet } from "./custom-chains/xLayerTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
-import { gold } from "./custom-chains/gold";
-import { campTestnet } from "./custom-chains/campTestnet";
 
 type Transports = Record<Chain["id"], Transport>;
 
@@ -164,7 +166,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   roninTestnet,
   scrollSepoliaTestnet,
   artheraTestnet,
-  x1Testnet,
+  xLayer,
+  xLayerTestnet,
   neonDevnet,
   frameTestnet,
   fantomTestnet,
@@ -180,6 +183,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zkFairTestnet,
   inEvmTestnet,
   campTestnet,
+  fhenixTestnet,
   mainnet,
 ];
 

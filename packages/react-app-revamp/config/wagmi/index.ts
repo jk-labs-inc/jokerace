@@ -9,10 +9,10 @@ import {
   phantomWallet,
   rabbyWallet,
   rainbowWallet,
+  safeWallet,
   tahoWallet,
   trustWallet,
   walletConnectWallet,
-  safeWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
@@ -42,6 +42,7 @@ import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
+import { fhenixTestnet } from "./custom-chains/fhenix";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fraxtal } from "./custom-chains/fraxtal";
 import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
@@ -99,7 +100,8 @@ import { syndicateFrame } from "./custom-chains/syndicateFrame";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
-import { x1Testnet } from "./custom-chains/x1Testnet";
+import { xLayer } from "./custom-chains/xLayer";
+import { xLayerTestnet } from "./custom-chains/xLayerTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
@@ -189,7 +191,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   roninTestnet,
   scrollSepoliaTestnet,
   artheraTestnet,
-  x1Testnet,
+  xLayer,
+  xLayerTestnet,
   neonDevnet,
   frameTestnet,
   fantomTestnet,
@@ -205,6 +208,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zkFairTestnet,
   inEvmTestnet,
   campTestnet,
+  fhenixTestnet,
   mainnet,
 ];
 
