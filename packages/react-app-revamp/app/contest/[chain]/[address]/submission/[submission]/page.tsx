@@ -24,6 +24,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = isDev ? "http://localhost:3000" : "https://jokerace.io";
 
   const frameMetadata = await getFrameMetadata(`${url}/api/contest/${chain}/${address}/submission/${submission}`);
+  delete frameMetadata["og:title"];
+  delete frameMetadata["og:image"];
 
   return {
     title: `Submission ${submission} - jokerace`,

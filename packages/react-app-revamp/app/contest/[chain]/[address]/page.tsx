@@ -61,6 +61,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const contestDescriptionRaw = prompt.split("|")[2];
 
     frameMetadata = frameMetadataResult;
+    delete frameMetadata["og:title"];
+    delete frameMetadata["og:image"];
+
     contestTitle = contestDetails[0].result as string;
     contestDescription = parse(contestDescriptionRaw).textContent;
   } catch (error) {
