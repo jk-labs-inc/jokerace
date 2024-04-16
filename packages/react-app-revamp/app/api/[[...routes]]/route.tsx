@@ -32,6 +32,7 @@ const URLLink = isDev ? "http://localhost:3000" : "https://jokerace.io";
 const app = new Frog({
   basePath: "/api",
   ui: { vars },
+  verify: false,
   imageOptions: {
     format: "png",
   },
@@ -357,7 +358,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
       ),
       intents: [
         <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
-          visit submission
+          see submission
         </Button.Link>,
       ],
     });
@@ -392,7 +393,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
       ),
       intents: [
         <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
-          visit submission
+          see submission
         </Button.Link>,
       ],
     });
@@ -422,7 +423,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
       ),
       intents: [
         <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
-          visit submission
+          see submission
         </Button.Link>,
       ],
     });
@@ -452,7 +453,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
       ),
       intents: [
         <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
-          visit submission
+          see submission
         </Button.Link>,
       ],
     });
@@ -482,7 +483,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
       ),
       intents: [
         <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
-          visit submission
+          see submission
         </Button.Link>,
       ],
     });
@@ -572,6 +573,10 @@ app.frame("/vote-page", async c => {
               vote by {moment(contestDeadline).format("MMMM Do, YYYY, h:mm a")}
             </Text>
           </Box>
+
+          <Text font="lato" color="neutral" size="14">
+            note: use whole numbers only, no decimals.
+          </Text>
         </Box>
       </Box>
     ),
@@ -581,7 +586,7 @@ app.frame("/vote-page", async c => {
         vote
       </Button.Transaction>,
       <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
-        visit submission
+        see submission
       </Button.Link>,
     ],
   });
@@ -615,7 +620,7 @@ app.frame("/vote-details", async c => {
     ),
     intents: [
       <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
-        visit submission
+        see submission
       </Button.Link>,
     ],
   });
