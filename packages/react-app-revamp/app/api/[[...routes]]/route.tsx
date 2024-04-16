@@ -27,7 +27,7 @@ import { Abi } from "viem";
 
 const isDev = process.env.NODE_ENV === "development";
 
-const URLLink = isDev ? "http://localhost:3000" : "https://jokerace.io";
+const URLLink = isDev ? "http://localhost:3000" : "https://JokeRace.io";
 
 const app = new Frog({
   basePath: "/api",
@@ -56,8 +56,8 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -73,7 +73,7 @@ app.frame("/contest/:chain/:address", async c => {
                 ruh-roh! it looks like this contest is allowlisted.
               </Text>
               <Text font="lato" color="red" weight="700" size="16">
-                visit jokerace to play!
+                visit JokeRace to play!
               </Text>
             </Box>
           </Box>
@@ -87,8 +87,8 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -104,7 +104,7 @@ app.frame("/contest/:chain/:address", async c => {
                 ruh-roh! it looks like farcaster does not support this chain.
               </Text>
               <Text font="lato" color="red" weight="700" size="16">
-                visit jokerace to play!
+                visit JokeRace to play!
               </Text>
             </Box>
           </Box>
@@ -118,8 +118,8 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -142,8 +142,8 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -168,8 +168,8 @@ app.frame("/contest/:chain/:address", async c => {
     action: "/submission-details",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-          Jokerace
+        <Text font="orbitron" color="neutral" size="32" align="start">
+          JokeRace
         </Text>
         <Box
           flexGrow="1"
@@ -209,8 +209,8 @@ app.frame("/submission-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-          Jokerace
+        <Text font="orbitron" color="neutral" size="32" align="start">
+          JokeRace
         </Text>
         <Box
           flexGrow="1"
@@ -268,8 +268,8 @@ app.frame("/submit-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-          Jokerace
+        <Text font="orbitron" color="neutral" size="32" align="start">
+          JokeRace
         </Text>
         <Box
           flexGrow="1"
@@ -333,8 +333,8 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -350,7 +350,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
                 ruh-roh! it looks like voting for this contest is allowlisted.
               </Text>
               <Text font="lato" color="red" weight="700" size="16">
-                visit jokerace to play!
+                visit JokeRace to play!
               </Text>
             </Box>
           </Box>
@@ -368,8 +368,8 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -385,7 +385,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
                 ruh-roh! it looks like farcaster does not support this chain.
               </Text>
               <Text font="lato" color="red" weight="700" size="16">
-                visit jokerace to play!
+                visit JokeRace to play!
               </Text>
             </Box>
           </Box>
@@ -403,8 +403,8 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -433,8 +433,8 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -463,8 +463,8 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-            Jokerace
+          <Text font="orbitron" color="neutral" size="32" align="start">
+            JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -493,8 +493,8 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     action: "/vote-page",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-          Jokerace
+        <Text font="orbitron" color="neutral" size="32" align="start">
+          JokeRace
         </Text>
         <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
           <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
@@ -528,8 +528,8 @@ app.frame("/vote-page", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-          Jokerace
+        <Text font="orbitron" color="neutral" size="32" align="start">
+          JokeRace
         </Text>
         <Box
           flexGrow="1"
@@ -602,8 +602,8 @@ app.frame("/vote-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" transform="uppercase" color="neutral" size="32" align="start">
-          Jokerace
+        <Text font="orbitron" color="neutral" size="32" align="start">
+          JokeRace
         </Text>
         <Box
           flexGrow="1"
