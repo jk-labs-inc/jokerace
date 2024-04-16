@@ -1,5 +1,6 @@
 import { chains } from "@config/wagmi/server";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import { getFrameMetadata } from "frog/next";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Abi } from "viem";
@@ -15,8 +16,14 @@ type Props = {
   };
 };
 
+const isDev = process.env.NODE_ENV === "development";
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { submission } = params;
+  const { chain, address, submission } = params;
+
+  const url = isDev ? "http://localhost:3000" : "https://jokerace.io";
+
+  const frameMetadata = await getFrameMetadata(`${url}/api/contest/${chain}/${address}/submission/${submission}`);
 
   return {
     title: `Submission ${submission} - jokerace`,
@@ -29,6 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: `Submission ${submission} - jokerace`,
       description: `Submission ${submission} for contest on jokerace`,
     },
+    other: frameMetadata,
   };
 }
 
