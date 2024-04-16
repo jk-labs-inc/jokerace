@@ -29,11 +29,6 @@ const isDev = process.env.NODE_ENV === "development";
 
 const URLLink = isDev ? "http://localhost:3000" : "https://jokerace.io";
 
-type State = {
-  address: string;
-  chain: string;
-};
-
 const app = new Frog({
   basePath: "/api",
   ui: { vars },
@@ -322,7 +317,6 @@ app.transaction("/submit", async c => {
 
 // Vote on a proposal
 app.frame("/contest/:chain/:address/submission/:submission", async c => {
-  const { deriveState } = c;
   const { chain, address, submission } = c.req.param();
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
@@ -333,8 +327,6 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     chainId,
     submission,
   );
-
-  deriveState(previousState => {});
 
   if (!anyoneCanVote) {
     return c.res({
