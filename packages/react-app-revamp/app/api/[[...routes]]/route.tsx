@@ -539,15 +539,19 @@ app.frame("/vote-page", async c => {
           justifyContent="center"
         >
           <Box gap="8" justifyContent="center" alignHorizontal="center" alignVertical="center">
-            <Box flexDirection="row" gap="4">
-              <Text font="lato" color="neutral" size="16" weight="700">
-                {ordinalize(rank).label} place {isTied ? "(tied)" : ""}
-              </Text>
-              <Text color="neutral">&#8226;</Text>
-              <Text font="lato" color="neutral" size="16" weight="700">
-                {formatNumber(votes)} vote{votes > 1 ? "s" : ""}
-              </Text>
-            </Box>
+            {votes > 0 ? (
+              <Box flexDirection="row" gap="4">
+                <Text font="lato" color="neutral" size="16" weight="700">
+                  {ordinalize(rank).label} place {isTied ? "(tied)" : ""}
+                </Text>
+                <Text color="neutral">&#8226;</Text>
+                <Text font="lato" color="neutral" size="16" weight="700">
+                  {formatNumber(votes)} vote{votes > 1 ? "s" : ""}
+                </Text>
+              </Box>
+            ) : (
+              <Box />
+            )}
 
             <Text font="sabo" color="neutral" size="24">
               submission {shortenProposalId(submission)}
@@ -573,7 +577,43 @@ app.frame("/vote-page", async c => {
     ),
     intents: [
       <TextInput placeholder="add votes..." />,
-      <Button.Transaction target="/vote">vote</Button.Transaction>,
+      <Button.Transaction action="/vote-details" target="/vote">
+        vote
+      </Button.Transaction>,
+      <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        visit submission
+      </Button.Link>,
+    ],
+  });
+});
+
+app.frame("/vote-details", async c => {
+  const { initialPath } = c;
+  const pathSegments = initialPath.split("/");
+  const chain = pathSegments[3];
+  const address = pathSegments[4];
+  const submission = pathSegments[6];
+
+  return c.res({
+    image: (
+      <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+        <Text font="sabo" color="neutral" size="32" align="start">
+          Jokerace
+        </Text>
+        <Box
+          flexGrow="1"
+          alignHorizontal="center"
+          alignVertical="center"
+          flexDirection="column"
+          justifyContent="center"
+        >
+          <Text font="sabo" color="green" size="24">
+            you voted on a proposal!
+          </Text>
+        </Box>
+      </Box>
+    ),
+    intents: [
       <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
         visit submission
       </Button.Link>,
