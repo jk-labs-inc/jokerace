@@ -32,6 +32,9 @@ const app = new Frog({
   ui: { vars },
   verify: false,
   origin: "https://",
+  imageOptions: {
+    format: "png",
+  },
 });
 
 // Submit proposal
