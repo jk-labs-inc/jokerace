@@ -356,9 +356,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Link>,
+        </Button.Redirect>,
       ],
     });
   }
@@ -391,9 +391,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Link>,
+        </Button.Redirect>,
       ],
     });
   }
@@ -421,9 +421,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Link>,
+        </Button.Redirect>,
       ],
     });
   }
@@ -451,9 +451,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Link>,
+        </Button.Redirect>,
       ],
     });
   }
@@ -481,9 +481,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Link>,
+        </Button.Redirect>,
       ],
     });
   }
@@ -574,9 +574,9 @@ app.frame("/vote", async c => {
     intents: [
       <TextInput placeholder="add votes..." />,
       <Button.Transaction target="/vote">vote</Button.Transaction>,
-      <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+      <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
         visit submission
-      </Button.Link>,
+      </Button.Redirect>,
     ],
   });
 });
