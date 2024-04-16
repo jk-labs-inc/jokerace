@@ -73,6 +73,7 @@ export function useContest() {
     setSubmissionRequirements,
     setIsRewardsLoading,
     setSortingEnabled,
+    setVersion,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
@@ -108,6 +109,7 @@ export function useContest() {
       };
 
       setContestAbi(abi as Abi);
+      setVersion(version);
       return { contractConfig, version };
     } catch (e) {
       setError(ErrorType.CONTRACT);

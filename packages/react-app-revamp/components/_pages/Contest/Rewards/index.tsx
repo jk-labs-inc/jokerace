@@ -68,7 +68,7 @@ const ContestRewards = () => {
 
   if (!supportsRewardsModule && !creator) {
     return (
-      <p className="text-[16px]">
+      <p className="text-[16px] md:text-[20px]">
         For this contest, there is no rewards module; the contest creator is the only one who may configure one.
       </p>
     );
