@@ -29,6 +29,11 @@ const isDev = process.env.NODE_ENV === "development";
 
 const URLLink = isDev ? "http://localhost:3000" : "https://jokerace.io";
 
+type State = {
+  address: string;
+  chain: string;
+};
+
 const app = new Frog({
   basePath: "/api",
   ui: { vars },
@@ -55,12 +60,12 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -86,12 +91,12 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -117,12 +122,12 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -141,12 +146,12 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -164,10 +169,10 @@ app.frame("/contest/:chain/:address", async c => {
   }
 
   return c.res({
-    action: "/contest-submission-details",
+    action: "/submission-details",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text color="neutral" size="32" align="start">
+        <Text font="sabo" color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box
@@ -178,7 +183,7 @@ app.frame("/contest/:chain/:address", async c => {
           gap="8"
           justifyContent="center"
         >
-          <Text color="neutral" size="24">
+          <Text font="sabo" color="neutral" size="24">
             {name}
           </Text>
           <Text font="lato" color="neutral" size="16">
@@ -191,7 +196,7 @@ app.frame("/contest/:chain/:address", async c => {
   });
 });
 
-app.frame("/contest-submission-details", async c => {
+app.frame("/submission-details", async c => {
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
   const address = pathSegments[4];
@@ -208,7 +213,7 @@ app.frame("/contest-submission-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text color="neutral" size="32" align="start">
+        <Text font="sabo" color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box
@@ -226,7 +231,7 @@ app.frame("/contest-submission-details", async c => {
               </Text>
             </Box>
 
-            <Text color="neutral" size="24">
+            <Text font="sabo" color="neutral" size="24">
               {name}
             </Text>
             <Text font="lato" color="neutral" size="16">
@@ -267,7 +272,7 @@ app.frame("/submit-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text color="neutral" size="32" align="start">
+        <Text font="sabo" color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box
@@ -277,7 +282,7 @@ app.frame("/submit-details", async c => {
           flexDirection="column"
           justifyContent="center"
         >
-          <Text color="green" size="24">
+          <Text font="sabo" color="green" size="24">
             you submitted a proposal!
           </Text>
         </Box>
@@ -317,6 +322,7 @@ app.transaction("/submit", async c => {
 
 // Vote on a proposal
 app.frame("/contest/:chain/:address/submission/:submission", async c => {
+  const { deriveState } = c;
   const { chain, address, submission } = c.req.param();
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
@@ -328,16 +334,18 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     submission,
   );
 
+  deriveState(previousState => {});
+
   if (!anyoneCanVote) {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -356,9 +364,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Redirect>,
+        </Button.Link>,
       ],
     });
   }
@@ -367,12 +375,12 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -391,9 +399,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Redirect>,
+        </Button.Link>,
       ],
     });
   }
@@ -402,12 +410,12 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -421,9 +429,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Redirect>,
+        </Button.Link>,
       ],
     });
   }
@@ -432,12 +440,12 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -451,9 +459,9 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Redirect>,
+        </Button.Link>,
       ],
     });
   }
@@ -462,12 +470,12 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text color="neutral" size="32" align="start">
+          <Text font="sabo" color="neutral" size="32" align="start">
             Jokerace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
             <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-              <Text color="neutral" size="24">
+              <Text font="sabo" color="neutral" size="24">
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
@@ -481,23 +489,23 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
         </Box>
       ),
       intents: [
-        <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
           visit submission
-        </Button.Redirect>,
+        </Button.Link>,
       ],
     });
   }
 
   return c.res({
-    action: "/vote",
+    action: "/vote-page",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text color="neutral" size="32" align="start">
+        <Text font="sabo" color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
           <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
-            <Text color="neutral" size="24">
+            <Text font="sabo" color="neutral" size="24">
               submission {shortenProposalId(submission)}
             </Text>
             <Text font="lato" color="neutral" size="16">
@@ -511,7 +519,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
   });
 });
 
-app.frame("/vote", async c => {
+app.frame("/vote-page", async c => {
   const { initialPath } = c;
   const pathSegments = initialPath.split("/");
   const chain = pathSegments[3];
@@ -527,7 +535,7 @@ app.frame("/vote", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text color="neutral" size="32" align="start">
+        <Text font="sabo" color="neutral" size="32" align="start">
           Jokerace
         </Text>
         <Box
@@ -549,7 +557,7 @@ app.frame("/vote", async c => {
               </Text>
             </Box>
 
-            <Text color="neutral" size="24">
+            <Text font="sabo" color="neutral" size="24">
               submission {shortenProposalId(submission)}
             </Text>
             <Text font="lato" color="neutral" size="16">
@@ -574,9 +582,9 @@ app.frame("/vote", async c => {
     intents: [
       <TextInput placeholder="add votes..." />,
       <Button.Transaction target="/vote">vote</Button.Transaction>,
-      <Button.Redirect location={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+      <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
         visit submission
-      </Button.Redirect>,
+      </Button.Link>,
     ],
   });
 });
