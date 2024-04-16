@@ -46,6 +46,7 @@ export interface ContestState {
   isReadOnly: boolean;
   isRewardsLoading: boolean;
   anyoneCanVote: boolean;
+  version: string;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -71,6 +72,7 @@ export interface ContestState {
   setIsRewardsLoading: (value: boolean) => void;
   setContestAbi: (abi: Abi) => void;
   setAnyoneCanVote: (value: boolean) => void;
+  setVersion: (version: string) => void;
 }
 
 export const createContestStore = () =>
@@ -101,6 +103,7 @@ export const createContestStore = () =>
     supportsRewardsModule: false,
     isRewardsLoading: false,
     anyoneCanVote: false,
+    version: "",
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
@@ -126,6 +129,7 @@ export const createContestStore = () =>
     setCharge: charge => set({ charge: charge }),
     setContestAbi: abi => set({ contestAbi: abi }),
     setAnyoneCanVote: value => set({ anyoneCanVote: value }),
+    setVersion: version => set({ version: version }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

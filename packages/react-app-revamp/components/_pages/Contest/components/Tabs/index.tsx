@@ -1,9 +1,10 @@
-import { FC, useState, useEffect, useRef } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
 export enum Tab {
   Contest = "Contest",
   Parameters = "Parameters",
   Rewards = "Rewards",
+  Extensions = "Extensions",
 }
 
 interface ContestTabsProps {
