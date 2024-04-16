@@ -1,9 +1,10 @@
 /* eslint-disable react/jsx-key */
 /* eslint-disable react/no-unescaped-entities */
 /** @jsxImportSource frog/jsx */
-
+import { chains } from "@config/wagmi/server";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
+import { shortenProposalId } from "@helpers/shortenProposalId";
 import { formatEther, parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
 import { devtools } from "frog/dev";
@@ -18,7 +19,7 @@ import {
 } from "lib/frames/submission";
 import { Box, Text, vars } from "lib/frames/ui";
 import { SupportedChainId, getChainId, isSupportedChainId } from "lib/frames/utils";
-import { fetchCostToVote, fetchProposalInfo } from "lib/frames/voting";
+import { fetchContestInfo, fetchCostToVote, fetchProposalInfo } from "lib/frames/voting";
 import moment from "moment";
 import { Abi } from "viem";
 
@@ -29,6 +30,7 @@ const URLLink = isDev ? "http://localhost:3000" : "https://jokerace.io";
 const app = new Frog({
   basePath: "/api",
   ui: { vars },
+  verify: false,
 });
 
 // Submit proposal
@@ -61,14 +63,18 @@ app.frame("/contest/:chain/:address", async c => {
                 by {shortenEthereumAddress(creator)}
               </Text>
             </Box>
+            <Box flexDirection="column" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="4">
+              <Text font="lato" color="red" weight="700" size="16">
+                ruh-roh! it looks like this contest is allowlisted.
+              </Text>
+              <Text font="lato" color="red" weight="700" size="16">
+                visit jokerace to play!
+              </Text>
+            </Box>
           </Box>
         </Box>
       ),
-      intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}`} key="not-supported-chain-contest">
-          visit contest
-        </Button.Link>,
-      ],
+      intents: [<Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>],
     });
   }
 
@@ -88,14 +94,18 @@ app.frame("/contest/:chain/:address", async c => {
                 by {shortenEthereumAddress(creator)}
               </Text>
             </Box>
+            <Box flexDirection="column" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="4">
+              <Text font="lato" color="red" weight="700" size="16">
+                ruh-roh! it looks like farcaster does not support this chain.
+              </Text>
+              <Text font="lato" color="red" weight="700" size="16">
+                visit jokerace to play!
+              </Text>
+            </Box>
           </Box>
         </Box>
       ),
-      intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}`} key="not-supported-chain-contest">
-          visit contest
-        </Button.Link>,
-      ],
+      intents: [<Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>],
     });
   }
 
@@ -121,11 +131,7 @@ app.frame("/contest/:chain/:address", async c => {
           </Box>
         </Box>
       ),
-      intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}`} key="submission-not-open-contest">
-          visit contest
-        </Button.Link>,
-      ],
+      intents: [<Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>],
     });
   } else if (now.isAfter(submissionsClose)) {
     return c.res({
@@ -149,11 +155,7 @@ app.frame("/contest/:chain/:address", async c => {
           </Box>
         </Box>
       ),
-      intents: [
-        <Button.Link href={`${URLLink}/contest/${chain}/${address}`} key="not-supported-chain-contest">
-          visit contest
-        </Button.Link>,
-      ],
+      intents: [<Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>],
     });
   }
 
@@ -196,6 +198,7 @@ app.frame("/contest-submission-details", async c => {
     chainId,
     address,
   );
+  const nativeCurrency = chains.find(c => c.id === chainId)?.nativeCurrency;
   const [contestType, contestTitle] = prompt.split("|");
 
   return c.res({
@@ -232,7 +235,7 @@ app.frame("/contest-submission-details", async c => {
               {contestTitle}
             </Text>
             <Text font="lato" color="neutral" size="16">
-              {formatEther(BigInt(costToPropose))} ETH to submit
+              {formatEther(BigInt(costToPropose))} {nativeCurrency?.symbol} to submit
             </Text>
             <Text font="lato" color="neutral" size="16">
               submit by {moment(voteStartDate).format("MMMM Do, YYYY, h:mm a")}
@@ -242,8 +245,8 @@ app.frame("/contest-submission-details", async c => {
       </Box>
     ),
     intents: [
-      <TextInput placeholder="describe your submission..." key="inputText" />,
-      <Button.Transaction action="/submit-details" target="/submit" key="submit-proposal">
+      <TextInput placeholder="describe your submission..." />,
+      <Button.Transaction action="/submit-details" target="/submit">
         submit
       </Button.Transaction>,
       <Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>,
@@ -314,48 +317,271 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
 
-  const { id, rank, votes, isTied, authorEthereumAddress, content, exists } = await fetchProposalInfo(
+  const { anyoneCanVote, contestDeadline, isDeleted, voteStartDate, proposalAuthor } = await fetchContestInfo(
     abi as Abi,
     address,
     chainId,
     submission,
   );
 
+  if (!anyoneCanVote) {
+    return c.res({
+      image: (
+        <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+          <Text font="sabo" color="neutral" size="32" align="start">
+            Jokerace
+          </Text>
+          <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
+            <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
+              <Text font="sabo" color="neutral" size="24">
+                submission {shortenProposalId(submission)}
+              </Text>
+              <Text font="lato" color="neutral" size="16">
+                by {shortenEthereumAddress(proposalAuthor)}
+              </Text>
+            </Box>
+            <Box flexDirection="column" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="4">
+              <Text font="lato" color="red" weight="700" size="16">
+                ruh-roh! it looks like voting for this contest is allowlisted.
+              </Text>
+              <Text font="lato" color="red" weight="700" size="16">
+                visit jokerace to play!
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+      ),
+      intents: [
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+          visit submission
+        </Button.Link>,
+      ],
+    });
+  }
+
+  if (!isSupportedChainId(chainId)) {
+    return c.res({
+      image: (
+        <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+          <Text font="sabo" color="neutral" size="32" align="start">
+            Jokerace
+          </Text>
+          <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
+            <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
+              <Text font="sabo" color="neutral" size="24">
+                submission {shortenProposalId(submission)}
+              </Text>
+              <Text font="lato" color="neutral" size="16">
+                by {shortenEthereumAddress(proposalAuthor)}
+              </Text>
+            </Box>
+            <Box flexDirection="column" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="4">
+              <Text font="lato" color="red" weight="700" size="16">
+                ruh-roh! it looks like farcaster does not support this chain.
+              </Text>
+              <Text font="lato" color="red" weight="700" size="16">
+                visit jokerace to play!
+              </Text>
+            </Box>
+          </Box>
+        </Box>
+      ),
+      intents: [
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+          visit submission
+        </Button.Link>,
+      ],
+    });
+  }
+
+  if (isDeleted) {
+    return c.res({
+      image: (
+        <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+          <Text font="sabo" color="neutral" size="32" align="start">
+            Jokerace
+          </Text>
+          <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
+            <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
+              <Text font="sabo" color="neutral" size="24">
+                submission {shortenProposalId(submission)}
+              </Text>
+              <Text font="lato" color="neutral" size="16">
+                by {shortenEthereumAddress(proposalAuthor)}
+              </Text>
+            </Box>
+            <Text font="lato" color="red" weight="700" size="16" transform="uppercase">
+              submission deleted!
+            </Text>
+          </Box>
+        </Box>
+      ),
+      intents: [
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+          visit submission
+        </Button.Link>,
+      ],
+    });
+  }
+
+  if (moment().isAfter(contestDeadline)) {
+    return c.res({
+      image: (
+        <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+          <Text font="sabo" color="neutral" size="32" align="start">
+            Jokerace
+          </Text>
+          <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
+            <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
+              <Text font="sabo" color="neutral" size="24">
+                submission {shortenProposalId(submission)}
+              </Text>
+              <Text font="lato" color="neutral" size="16">
+                by {shortenEthereumAddress(proposalAuthor)}
+              </Text>
+            </Box>
+            <Text font="lato" color="red" weight="700" size="16" transform="uppercase">
+              contest closed!
+            </Text>
+          </Box>
+        </Box>
+      ),
+      intents: [
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+          visit submission
+        </Button.Link>,
+      ],
+    });
+  }
+
+  if (moment().isBefore(voteStartDate)) {
+    return c.res({
+      image: (
+        <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+          <Text font="sabo" color="neutral" size="32" align="start">
+            Jokerace
+          </Text>
+          <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
+            <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
+              <Text font="sabo" color="neutral" size="24">
+                submission {shortenProposalId(submission)}
+              </Text>
+              <Text font="lato" color="neutral" size="16">
+                by {shortenEthereumAddress(proposalAuthor)}
+              </Text>
+            </Box>
+            <Text font="lato" color="neutral" weight="700" size="16" transform="uppercase">
+              voting not open yet!
+            </Text>
+          </Box>
+        </Box>
+      ),
+      intents: [
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+          visit submission
+        </Button.Link>,
+      ],
+    });
+  }
+
   return c.res({
     action: "/vote",
     image: (
-      <div tw="flex flex-col h-full bg-black p-4">
-        <div tw="text-neutral-300 text-4xl uppercase">{submission}</div>
-      </div>
+      <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+        <Text font="sabo" color="neutral" size="32" align="start">
+          Jokerace
+        </Text>
+        <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
+          <Box flexDirection="column" gap="8" alignHorizontal="center" alignVertical="center" justifyContent="center">
+            <Text font="sabo" color="neutral" size="24">
+              submission {shortenProposalId(submission)}
+            </Text>
+            <Text font="lato" color="neutral" size="16">
+              by {shortenEthereumAddress(proposalAuthor)}
+            </Text>
+          </Box>
+        </Box>
+      </Box>
     ),
-    intents: [<Button>Let's vote!</Button>],
+    intents: [<Button>let’s vote!</Button>],
   });
 });
 
-app.frame("/vote", c => {
+app.frame("/vote", async c => {
+  const { initialPath } = c;
+  const pathSegments = initialPath.split("/");
+  const chain = pathSegments[3];
+  const address = pathSegments[4];
+  const submission = pathSegments[6];
+  const chainId = getChainId(chain);
+  const nativeCurrency = chains.find(c => c.id === chainId)?.nativeCurrency;
+  const { abi } = await getContestContractVersion(address, chainId);
+
+  const { name, authorEthereumAddress, content, isTied, rank, votes, costToVote, contestDeadline } =
+    await fetchProposalInfo(abi as Abi, address, chainId, submission);
+
   return c.res({
     image: (
-      <div style={{ color: "black", display: "flex", fontSize: 60 }}>
-        <p style={{ color: "white" }}>submit a proposal</p>
-      </div>
+      <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
+        <Text font="sabo" color="neutral" size="32" align="start">
+          Jokerace
+        </Text>
+        <Box
+          flexGrow="1"
+          alignHorizontal="center"
+          alignVertical="center"
+          flexDirection="column"
+          gap="32"
+          justifyContent="center"
+        >
+          <Box gap="8" justifyContent="center" alignHorizontal="center" alignVertical="center">
+            <Box backgroundColor="darkGrey" border="solid" borderRadius="10" padding="8">
+              <Text font="lato" color="black" size="14">
+                {votes}
+              </Text>
+            </Box>
+
+            <Text font="sabo" color="neutral" size="24">
+              submission {shortenProposalId(submission)}
+            </Text>
+            <Text font="lato" color="neutral" size="16">
+              by {shortenEthereumAddress(authorEthereumAddress)}
+            </Text>
+          </Box>
+
+          <Box gap="8" justifyContent="center" alignHorizontal="center" alignVertical="center">
+            <Text font="lato" color="neutral" size="16">
+              {name} contest
+            </Text>
+            <Text font="lato" color="neutral" size="16">
+              1 vote = {formatEther(BigInt(costToVote))} {nativeCurrency?.symbol}
+            </Text>
+            <Text font="lato" color="neutral" size="16">
+              vote by {moment(contestDeadline).format("MMMM Do, YYYY, h:mm a")}
+            </Text>
+          </Box>
+        </Box>
+      </Box>
     ),
     intents: [
-      <TextInput placeholder="Enter your proposal" key="inputText" />,
-      <Button.Transaction target="/vote" key="submit-proposal">
-        Submit Proposal
-      </Button.Transaction>,
+      <TextInput placeholder="add votes..." />,
+      <Button.Transaction target="/vote">vote</Button.Transaction>,
+      <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+        visit submission
+      </Button.Link>,
     ],
   });
 });
 
 app.transaction("/vote", async c => {
+  console.log(c.inputText);
   const { inputText: amountOfVotesToCast } = c;
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
   const address = pathSegments[4];
   const submission = pathSegments[6];
-
   const chainId = getChainId(chain);
+
   const { abi } = await getContestContractVersion(address, chainId);
 
   const costToVote = await fetchCostToVote(abi as Abi, chainId, address, Number(amountOfVotesToCast));
