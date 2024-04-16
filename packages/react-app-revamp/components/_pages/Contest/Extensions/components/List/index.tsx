@@ -2,6 +2,7 @@ import { useExtensions } from "@hooks/useExtensions";
 import BelloExtension from "./Bello";
 import HatsProtocolExtension from "./HatsProtocol";
 import NanceExtension from "./Nance";
+import CoinviseExtension from "./Coinvise";
 
 type ExtensionComponentMap = {
   [key: string]: React.ComponentType<any>;
@@ -11,6 +12,7 @@ const EXTENSION_COMPONENTS: ExtensionComponentMap = {
   "hats-protocol": HatsProtocolExtension,
   bello: BelloExtension,
   nance: NanceExtension,
+  coinvise: CoinviseExtension,
 };
 
 const ExtensionsList = () => {

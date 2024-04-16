@@ -6,14 +6,17 @@ const NANCE_EXTENSION: Extension = {
   metadata: {
     title: "crowdfund your contest",
     creator: "by nance",
-    description: "let your community choose whether to collectively fund rewards—and then do so.",
+    description: "let your community decide whether to crowdfund rewards for the contest",
     buttonLabel: "crowdfund away",
   },
 };
 
+const NANCE_EXTENSION_LINK = "https://nance.app/";
+
 const NanceExtension = () => {
-  //TODO: supply nance extension url
-  const onNanceExtensionClick = () => {};
+  const onNanceExtensionClick = () => {
+    window.open(NANCE_EXTENSION_LINK, "_blank");
+  };
 
   return <ExtensionCard metadata={NANCE_EXTENSION.metadata} onClick={onNanceExtensionClick} />;
 };

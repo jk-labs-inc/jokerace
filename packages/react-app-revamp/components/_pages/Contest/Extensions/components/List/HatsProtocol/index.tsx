@@ -4,10 +4,10 @@ import ExtensionCard from "../../Card";
 const HATS_PROTOCOL_EXTENSION: Extension = {
   name: "hats-protocol",
   metadata: {
-    title: "give winners role-based NFTs",
+    title: "give winners roles and powers",
     creator: "by hats protocol",
-    description: "enable winners to earn role-based NFTs that give them rights and roles in your community",
-    buttonLabel: "give winners NFTs",
+    description: "enable winners to claim NFTs (hats) that give them rights and roles in your community",
+    buttonLabel: "give winners a hat",
   },
 };
 
