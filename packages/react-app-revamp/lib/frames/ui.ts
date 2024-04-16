@@ -1,11 +1,7 @@
 import { createSystem } from "frog/ui";
 import { readFile } from "fs/promises";
 
-const isDev = process.env.NODE_ENV === "development";
-
-const fontUrl = isDev ? "./public/Sabo-Filled.otf" : "/Sabo-Filled.otf";
-
-const saboLocal = await readFile(fontUrl);
+const saboLocal = await readFile("./app/Sabo-Filled.otf");
 
 export const { Box, Columns, Column, Heading, HStack, Rows, Row, Spacer, Text, VStack, Image, vars } = createSystem({
   colors: {
