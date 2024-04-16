@@ -1,6 +1,6 @@
 import { isSupabaseConfigured } from "@helpers/database";
 
-interface Extension {
+export interface ExtensionSupabase {
   name: string;
 }
 
@@ -10,7 +10,7 @@ interface BelloResponse {
 
 const BELLO_API_URL = "https://api.bello.lol/v2/jokerace/redirectUrl";
 
-export const fetchExtensions = async (): Promise<Extension[]> => {
+export const fetchExtensions = async (): Promise<ExtensionSupabase[]> => {
   if (!isSupabaseConfigured) {
     throw new Error("Supabase is not configured");
   }
