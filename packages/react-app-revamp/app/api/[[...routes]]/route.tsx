@@ -9,8 +9,6 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { shortenProposalId } from "@helpers/shortenProposalId";
 import { formatEther, parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
-import { devtools } from "frog/dev";
-import { serveStatic } from "frog/serve-static";
 import { handle } from "frog/vercel";
 import {
   fetchContestInitialData,
