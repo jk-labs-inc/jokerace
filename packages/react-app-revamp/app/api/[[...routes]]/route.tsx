@@ -31,6 +31,7 @@ const app = new Frog({
   basePath: "/api",
   ui: { vars },
   verify: false,
+  origin: "https://",
 });
 
 // Submit proposal
