@@ -2,7 +2,9 @@
 /* eslint-disable react/no-unescaped-entities */
 /** @jsxImportSource frog/jsx */
 import { chains } from "@config/wagmi/server";
+import { formatNumber } from "@helpers/formatNumber";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import ordinalize from "@helpers/ordinalize";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { shortenProposalId } from "@helpers/shortenProposalId";
 import { formatEther, parseUnits } from "ethers/lib/utils";
@@ -28,6 +30,7 @@ const isDev = process.env.NODE_ENV === "development";
 const URLLink = isDev ? "http://localhost:3000" : "https://jokerace.io";
 
 const app = new Frog({
+  assetsPath: "/",
   basePath: "/api",
   ui: { vars },
   verify: false,
@@ -538,9 +541,13 @@ app.frame("/vote", async c => {
           justifyContent="center"
         >
           <Box gap="8" justifyContent="center" alignHorizontal="center" alignVertical="center">
-            <Box backgroundColor="darkGrey" border="solid" borderRadius="10" padding="8">
-              <Text font="lato" color="black" size="14">
-                {votes}
+            <Box flexDirection="row" gap="4">
+              <Text font="lato" color="neutral" size="16" weight="700">
+                {ordinalize(rank).label} place {isTied ? "(tied)" : ""}
+              </Text>
+              <Text color="neutral">&#8226;</Text>
+              <Text font="lato" color="neutral" size="16" weight="700">
+                {formatNumber(votes)} vote{votes > 1 ? "s" : ""}
               </Text>
             </Box>
 
