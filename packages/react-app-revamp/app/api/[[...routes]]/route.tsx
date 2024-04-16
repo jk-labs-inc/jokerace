@@ -31,7 +31,6 @@ const app = new Frog({
   basePath: "/api",
   ui: { vars },
   verify: false,
-  origin: "https://",
   imageOptions: {
     format: "png",
   },
@@ -578,7 +577,6 @@ app.frame("/vote", async c => {
 });
 
 app.transaction("/vote", async c => {
-  console.log(c.inputText);
   const { inputText: amountOfVotesToCast } = c;
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
