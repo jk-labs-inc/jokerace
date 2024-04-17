@@ -1,5 +1,5 @@
 import { serverConfig } from "@config/wagmi/server";
-import { readContract, readContracts } from "@wagmi/core";
+import { getEnsName, readContract, readContracts } from "@wagmi/core";
 import { Abi } from "viem";
 import { EMPTY_ROOT } from "../utils";
 
@@ -53,14 +53,22 @@ export const fetchContestInitialData = async (abi: Abi, chainId: number, address
   const submissionsOpenDate = new Date(Number(results[3].result) * 1000 + 1000);
   const submissionsClosedDate = new Date(Number(results[4].result) * 1000 + 1000);
   let anyoneCanSubmit = false;
+  let ensName: string | null = null;
 
   if (submissionMerkleRoot === EMPTY_ROOT) {
     anyoneCanSubmit = true;
   }
 
+  try {
+    ensName = await getEnsName(serverConfig, { address: creator as `0x${string}`, chainId: 1 });
+  } catch (error) {
+    ensName = null;
+  }
+
   return {
     name,
     creator,
+    ensName,
     anyoneCanSubmit,
     submissionsOpenDate,
     submissionsClosedDate,
@@ -107,10 +115,18 @@ export const fetchContestSecondaryData = async (abi: Abi, chainId: number, addre
   const prompt = results[2].result as string;
   const costToPropose = Number(results[3].result);
   const voteStartDate = new Date(Number(results[4].result) * 1000 + 1000);
+  let ensName: string | null = null;
+
+  try {
+    ensName = await getEnsName(serverConfig, { address: creator as `0x${string}`, chainId: 1 });
+  } catch (error) {
+    ensName = null;
+  }
 
   return {
     name,
     creator,
+    ensName,
     prompt,
     costToPropose,
     voteStartDate,
