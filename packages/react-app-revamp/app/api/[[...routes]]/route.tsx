@@ -9,8 +9,6 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { shortenProposalId } from "@helpers/shortenProposalId";
 import { formatEther, parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
-import { devtools } from "frog/dev";
-import { serveStatic } from "frog/serve-static";
 import { handle } from "frog/vercel";
 import {
   fetchContestInitialData,
@@ -48,8 +46,6 @@ app.frame("/contest/:chain/:address", async c => {
   const now = moment();
   const submissionsOpen = moment(submissionsOpenDate);
   const submissionsClose = moment(submissionsClosedDate);
-
-  console.log({ ensName });
 
   if (!anyoneCanSubmit) {
     return c.res({
@@ -646,8 +642,6 @@ app.transaction("/vote", async c => {
     value: costToVote,
   });
 });
-
-devtools(app, { serveStatic });
 
 export const GET = handle(app);
 export const POST = handle(app);
