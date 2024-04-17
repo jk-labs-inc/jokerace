@@ -1,7 +1,7 @@
 import { serverConfig } from "@config/wagmi/server";
 import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
-import { readContract, readContracts } from "@wagmi/core";
+import { getEnsName, readContract, readContracts } from "@wagmi/core";
 import { Abi, formatEther } from "viem";
 import { EMPTY_ROOT } from "../utils";
 
@@ -102,8 +102,14 @@ export const fetchProposalInfo = async (abi: Abi, address: string, chainId: numb
   const name = results[3].result as string;
   const costToVote = Number(results[4].result);
   const contestDeadline = new Date(Number(results[5].result) * 1000 + 1000);
-
   let rankInfo = { rank: 0, isTied: false };
+  let ensName: string | null = null;
+
+  try {
+    ensName = await getEnsName(serverConfig, { address: data.author as `0x${string}`, chainId: 1 });
+  } catch (error) {
+    ensName = null;
+  }
 
   if (votes !== 0) {
     const proposalsIdsRawData = await getProposalIdsRaw(
@@ -126,8 +132,7 @@ export const fetchProposalInfo = async (abi: Abi, address: string, chainId: numb
   return {
     id: submission,
     authorEthereumAddress: data.author,
-    content: content,
-    exists: data.exists,
+    ensName,
     votes,
     name,
     costToVote,
@@ -179,6 +184,13 @@ export const fetchContestInfo = async (abi: Abi, address: string, chainId: numbe
   const isDeleted = results[3].result;
   const proposalAuthor = results[4].result.author;
   let anyoneCanVote = false;
+  let ensName: string | null = null;
+
+  try {
+    ensName = await getEnsName(serverConfig, { address: proposalAuthor as `0x${string}`, chainId: 1 });
+  } catch (error) {
+    ensName = null;
+  }
 
   if (votingMerkleRoot === EMPTY_ROOT) {
     anyoneCanVote = true;
@@ -190,5 +202,6 @@ export const fetchContestInfo = async (abi: Abi, address: string, chainId: numbe
     contestDeadline,
     isDeleted,
     proposalAuthor,
+    ensName,
   };
 };
