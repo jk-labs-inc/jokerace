@@ -9,6 +9,8 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { shortenProposalId } from "@helpers/shortenProposalId";
 import { formatEther, parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
+import { devtools } from "frog/dev";
+import { serveStatic } from "frog/serve-static";
 import { handle } from "frog/vercel";
 import {
   fetchContestInitialData,
@@ -41,11 +43,8 @@ app.frame("/contest/:chain/:address", async c => {
   const { chain, address } = c.req.param();
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
-  const { name, creator, anyoneCanSubmit, submissionsOpenDate, submissionsClosedDate } = await fetchContestInitialData(
-    abi as Abi,
-    chainId,
-    address,
-  );
+  const { name, creator, ensName, anyoneCanSubmit, submissionsOpenDate, submissionsClosedDate } =
+    await fetchContestInitialData(abi as Abi, chainId, address);
   const now = moment();
   const submissionsOpen = moment(submissionsOpenDate);
   const submissionsClose = moment(submissionsClosedDate);
@@ -54,7 +53,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -63,7 +62,7 @@ app.frame("/contest/:chain/:address", async c => {
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(creator)}
+                by {ensName ? ensName : shortenEthereumAddress(creator)}
               </Text>
             </Box>
             <Box flexDirection="column" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="4">
@@ -85,7 +84,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -94,7 +93,7 @@ app.frame("/contest/:chain/:address", async c => {
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(creator)}
+                by {ensName ? ensName : shortenEthereumAddress(creator)}
               </Text>
             </Box>
             <Box flexDirection="column" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="4">
@@ -116,7 +115,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -125,7 +124,7 @@ app.frame("/contest/:chain/:address", async c => {
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(creator)}
+                by {ensName ? ensName : shortenEthereumAddress(creator)}
               </Text>
             </Box>
             <Text font="lato" color="neutral" weight="700" size="16" transform="uppercase">
@@ -140,7 +139,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -149,7 +148,7 @@ app.frame("/contest/:chain/:address", async c => {
                 {name}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(creator)}
+                by {ensName ? ensName : shortenEthereumAddress(creator)}
               </Text>
             </Box>
             <Text font="lato" color="red" weight="700" size="16" transform="uppercase">
@@ -163,10 +162,10 @@ app.frame("/contest/:chain/:address", async c => {
   }
 
   return c.res({
-    action: "/submission-details",
+    action: "/submit",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -181,7 +180,7 @@ app.frame("/contest/:chain/:address", async c => {
             {name}
           </Text>
           <Text font="lato" color="neutral" size="16">
-            by {shortenEthereumAddress(creator)}
+            by {ensName ? ensName : shortenEthereumAddress(creator)}
           </Text>
         </Box>
       </Box>
@@ -190,13 +189,13 @@ app.frame("/contest/:chain/:address", async c => {
   });
 });
 
-app.frame("/submission-details", async c => {
+app.frame("/submit", async c => {
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
   const address = pathSegments[4];
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
-  const { name, creator, prompt, costToPropose, voteStartDate } = await fetchContestSecondaryData(
+  const { name, creator, ensName, prompt, costToPropose, voteStartDate } = await fetchContestSecondaryData(
     abi as Abi,
     chainId,
     address,
@@ -207,7 +206,7 @@ app.frame("/submission-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -229,7 +228,7 @@ app.frame("/submission-details", async c => {
               {name}
             </Text>
             <Text font="lato" color="neutral" size="16">
-              by {shortenEthereumAddress(creator)}
+              by {ensName ? ensName : shortenEthereumAddress(creator)}
             </Text>
           </Box>
 
@@ -249,7 +248,7 @@ app.frame("/submission-details", async c => {
     ),
     intents: [
       <TextInput placeholder="describe your submission..." />,
-      <Button.Transaction action="/submit-details" target="/submit">
+      <Button.Transaction action="/submit-details" target="/submit-tx">
         submit
       </Button.Transaction>,
       <Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>,
@@ -266,7 +265,7 @@ app.frame("/submit-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -286,7 +285,7 @@ app.frame("/submit-details", async c => {
   });
 });
 
-app.transaction("/submit", async c => {
+app.transaction("/submit-tx", async c => {
   const { inputText: proposalContent } = c;
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
@@ -320,7 +319,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
   const chainId = getChainId(chain);
   const { abi } = await getContestContractVersion(address, chainId);
 
-  const { anyoneCanVote, contestDeadline, isDeleted, voteStartDate, proposalAuthor } = await fetchContestInfo(
+  const { anyoneCanVote, contestDeadline, isDeleted, voteStartDate, proposalAuthor, ensName } = await fetchContestInfo(
     abi as Abi,
     address,
     chainId,
@@ -331,7 +330,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -340,7 +339,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(proposalAuthor)}
+                by {ensName ? ensName : shortenEthereumAddress(proposalAuthor)}
               </Text>
             </Box>
             <Box flexDirection="column" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="4">
@@ -366,7 +365,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -375,7 +374,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(proposalAuthor)}
+                by {ensName ? ensName : shortenEthereumAddress(proposalAuthor)}
               </Text>
             </Box>
             <Box flexDirection="column" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="4">
@@ -401,7 +400,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -410,7 +409,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(proposalAuthor)}
+                by {ensName ? ensName : shortenEthereumAddress(proposalAuthor)}
               </Text>
             </Box>
             <Text font="lato" color="red" weight="700" size="16" transform="uppercase">
@@ -431,7 +430,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -440,7 +439,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(proposalAuthor)}
+                by {ensName ? ensName : shortenEthereumAddress(proposalAuthor)}
               </Text>
             </Box>
             <Text font="lato" color="red" weight="700" size="16" transform="uppercase">
@@ -461,7 +460,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -470,7 +469,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
                 submission {shortenProposalId(submission)}
               </Text>
               <Text font="lato" color="neutral" size="16">
-                by {shortenEthereumAddress(proposalAuthor)}
+                by {ensName ? ensName : shortenEthereumAddress(proposalAuthor)}
               </Text>
             </Box>
             <Text font="lato" color="neutral" weight="700" size="16" transform="uppercase">
@@ -488,10 +487,10 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
   }
 
   return c.res({
-    action: "/vote-page",
+    action: "/vote",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -500,7 +499,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
               submission {shortenProposalId(submission)}
             </Text>
             <Text font="lato" color="neutral" size="16">
-              by {shortenEthereumAddress(proposalAuthor)}
+              by {ensName ? ensName : shortenEthereumAddress(proposalAuthor)}
             </Text>
           </Box>
         </Box>
@@ -510,7 +509,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
   });
 });
 
-app.frame("/vote-page", async c => {
+app.frame("/vote", async c => {
   const { initialPath } = c;
   const pathSegments = initialPath.split("/");
   const chain = pathSegments[3];
@@ -520,13 +519,13 @@ app.frame("/vote-page", async c => {
   const nativeCurrency = chains.find(c => c.id === chainId)?.nativeCurrency;
   const { abi } = await getContestContractVersion(address, chainId);
 
-  const { name, authorEthereumAddress, content, isTied, rank, votes, costToVote, contestDeadline } =
+  const { name, authorEthereumAddress, ensName, isTied, rank, votes, costToVote, contestDeadline } =
     await fetchProposalInfo(abi as Abi, address, chainId, submission);
 
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -556,7 +555,7 @@ app.frame("/vote-page", async c => {
               submission {shortenProposalId(submission)}
             </Text>
             <Text font="lato" color="neutral" size="16">
-              by {shortenEthereumAddress(authorEthereumAddress)}
+              by {ensName ? ensName : shortenEthereumAddress(authorEthereumAddress)}
             </Text>
           </Box>
 
@@ -580,7 +579,7 @@ app.frame("/vote-page", async c => {
     ),
     intents: [
       <TextInput placeholder="add votes..." />,
-      <Button.Transaction action="/vote-details" target="/vote">
+      <Button.Transaction action="/vote-details" target="/vote-tx">
         vote
       </Button.Transaction>,
       <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
@@ -600,7 +599,7 @@ app.frame("/vote-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -624,7 +623,7 @@ app.frame("/vote-details", async c => {
   });
 });
 
-app.transaction("/vote", async c => {
+app.transaction("/vote-tx", async c => {
   const { inputText: amountOfVotesToCast } = c;
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
