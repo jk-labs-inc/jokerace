@@ -9,6 +9,8 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { shortenProposalId } from "@helpers/shortenProposalId";
 import { formatEther, parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
+import { devtools } from "frog/dev";
+import { serveStatic } from "frog/serve-static";
 import { handle } from "frog/vercel";
 import {
   fetchContestInitialData,
@@ -54,7 +56,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -85,7 +87,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -116,7 +118,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -140,7 +142,7 @@ app.frame("/contest/:chain/:address", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -163,10 +165,10 @@ app.frame("/contest/:chain/:address", async c => {
   }
 
   return c.res({
-    action: "/submission-details",
+    action: "/submit",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -190,7 +192,7 @@ app.frame("/contest/:chain/:address", async c => {
   });
 });
 
-app.frame("/submission-details", async c => {
+app.frame("/submit", async c => {
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
   const address = pathSegments[4];
@@ -207,7 +209,7 @@ app.frame("/submission-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -249,7 +251,7 @@ app.frame("/submission-details", async c => {
     ),
     intents: [
       <TextInput placeholder="describe your submission..." />,
-      <Button.Transaction action="/submit-details" target="/submit">
+      <Button.Transaction action="/submit-details" target="/submit-tx">
         submit
       </Button.Transaction>,
       <Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>,
@@ -266,7 +268,7 @@ app.frame("/submit-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -286,7 +288,7 @@ app.frame("/submit-details", async c => {
   });
 });
 
-app.transaction("/submit", async c => {
+app.transaction("/submit-tx", async c => {
   const { inputText: proposalContent } = c;
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
@@ -331,7 +333,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -366,7 +368,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -401,7 +403,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -431,7 +433,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -461,7 +463,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
     return c.res({
       image: (
         <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-          <Text font="orbitron" color="neutral" size="32" align="start">
+          <Text font="orbitron" color="neutral" size="24" align="start">
             JokeRace
           </Text>
           <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -488,10 +490,10 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
   }
 
   return c.res({
-    action: "/vote-page",
+    action: "/vote",
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box flexGrow="1" alignHorizontal="center" alignVertical="center" justifyContent="center" gap="32">
@@ -510,7 +512,7 @@ app.frame("/contest/:chain/:address/submission/:submission", async c => {
   });
 });
 
-app.frame("/vote-page", async c => {
+app.frame("/vote", async c => {
   const { initialPath } = c;
   const pathSegments = initialPath.split("/");
   const chain = pathSegments[3];
@@ -526,7 +528,7 @@ app.frame("/vote-page", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -580,7 +582,7 @@ app.frame("/vote-page", async c => {
     ),
     intents: [
       <TextInput placeholder="add votes..." />,
-      <Button.Transaction action="/vote-details" target="/vote">
+      <Button.Transaction action="/vote-details" target="/vote-tx">
         vote
       </Button.Transaction>,
       <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
@@ -600,7 +602,7 @@ app.frame("/vote-details", async c => {
   return c.res({
     image: (
       <Box flexDirection="column" grow backgroundColor="black" padding="16" justifyContent="space-between">
-        <Text font="orbitron" color="neutral" size="32" align="start">
+        <Text font="orbitron" color="neutral" size="24" align="start">
           JokeRace
         </Text>
         <Box
@@ -624,7 +626,7 @@ app.frame("/vote-details", async c => {
   });
 });
 
-app.transaction("/vote", async c => {
+app.transaction("/vote-tx", async c => {
   const { inputText: amountOfVotesToCast } = c;
   const pathSegments = c.initialPath.split("/");
   const chain = pathSegments[3];
@@ -645,6 +647,8 @@ app.transaction("/vote", async c => {
     value: costToVote,
   });
 });
+
+devtools(app, { serveStatic });
 
 export const GET = handle(app);
 export const POST = handle(app);
