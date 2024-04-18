@@ -20,9 +20,6 @@ const LayoutBase = (props: LayoutBaseProps) => {
     <>
       <Header />
       <main className={`flex flex-col grow ${isCreateFlow ? "pb-60" : "pb-28"} md:pb-0`}>{children}</main>
-      <MediaQuery maxWidth={768}>
-        <AddToHomeScreenPopup />
-      </MediaQuery>
       <MediaQuery minWidth={768}>
         <footer className="mt-auto top-0 xs:pt-32">
           <div className="text-neutral-11 container justify-center items-start text-[16px] flex flex-col pl-8 pr-8 md:pl-16 md:pr-16 space-y-1 xs:space-y-0 xs:space-i-4 xs:flex-row xs:flex-wrap mx-auto">
