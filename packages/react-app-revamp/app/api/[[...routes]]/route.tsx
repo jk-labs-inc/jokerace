@@ -52,8 +52,6 @@ app.frame("/contest/:chain/:address", async c => {
   const { name, creator, ensName, anyoneCanSubmit, submissionsOpenDate, submissionsClosedDate } =
     await fetchContestInitialData(abi as Abi, chainId, address);
   const now = moment();
-  const submissionsOpen = moment(submissionsOpenDate);
-  const submissionsClose = moment(submissionsClosedDate);
 
   if (!anyoneCanSubmit) {
     return c.res({
@@ -71,7 +69,7 @@ app.frame("/contest/:chain/:address", async c => {
     });
   }
 
-  if (now.isBefore(submissionsOpen)) {
+  if (now.isBefore(submissionsOpenDate)) {
     return c.res({
       image: (
         <SubmissionsFrameTiming
@@ -83,7 +81,7 @@ app.frame("/contest/:chain/:address", async c => {
       ),
       intents: [<Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>],
     });
-  } else if (now.isAfter(submissionsClose)) {
+  } else if (now.isAfter(submissionsClosedDate)) {
     return c.res({
       image: (
         <SubmissionsFrameTiming
@@ -117,6 +115,21 @@ app.frame("/submit", async c => {
   );
   const nativeCurrency = chains.find(c => c.id === chainId)?.nativeCurrency;
   const [contestType, contestTitle] = prompt.split("|");
+  const now = moment();
+
+  if (now.isAfter(voteStartDate)) {
+    return c.res({
+      image: (
+        <SubmissionsFrameTiming
+          contestName={name}
+          contestCreator={creator}
+          contestCreatorEns={ensName}
+          timingStatus={SubmissionFrameTiming.CLOSED}
+        />
+      ),
+      intents: [<Button.Link href={`${URLLink}/contest/${chain}/${address}`}>visit contest</Button.Link>],
+    });
+  }
 
   return c.res({
     image: (
@@ -293,9 +306,27 @@ app.frame("/vote", async c => {
   const chainId = getChainId(chain);
   const nativeCurrency = chains.find(c => c.id === chainId)?.nativeCurrency;
   const { abi } = await getContestContractVersion(address, chainId);
-
+  const now = moment();
   const { name, authorEthereumAddress, ensName, isTied, rank, votes, costToVote, contestDeadline } =
     await fetchProposalInfo(abi as Abi, address, chainId, submission);
+
+  if (now.isAfter(contestDeadline)) {
+    return c.res({
+      image: (
+        <VoteFrameTiming
+          submission={submission}
+          proposalAuthor={authorEthereumAddress}
+          proposalAuthorEns={ensName}
+          timingStatus={VoteFrameTimingOptions.CLOSED}
+        />
+      ),
+      intents: [
+        <Button.Link href={`${URLLink}/contest/${chain}/${address}/submission/${submission}`}>
+          see submission
+        </Button.Link>,
+      ],
+    });
+  }
 
   return c.res({
     image: (
