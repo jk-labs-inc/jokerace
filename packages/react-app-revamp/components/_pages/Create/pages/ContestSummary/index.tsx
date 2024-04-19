@@ -11,7 +11,7 @@ import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
 
 // Define your mobile and desktop placeholders.
-const MOBILE_PLACEHOLDER = "eg. “submit a project” “propose a delegate”";
+const MOBILE_PLACEHOLDER = "eg. “submit a project”";
 const DESKTOP_PLACEHOLDER = "eg. “submit a project” “propose a delegate” “predict the market”";
 
 const CreateContestSummary = () => {
@@ -22,6 +22,7 @@ const CreateContestSummary = () => {
   const summaryValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => summaryValidation?.[0].validation(summary)]);
   const isMobile = useMedia("(max-width: 768px)");
+  const stepTitle = isMobile ? "summary" : "what’s the summary?";
 
   const handleNextStepMobile = useCallback(() => {
     if (!mobileStepTitle) return;
@@ -49,13 +50,21 @@ const CreateContestSummary = () => {
         <StepCircle step={step + 1} />
       </div>
       <div className="col-span-2 ml-10">
-        <p className="text-[24px] text-primary-10 font-bold">what’s the summary?</p>
+        <p className="text-[24px] text-primary-10 font-bold">{stepTitle}</p>
       </div>
-      <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
-        <p className="text-[20px] text-neutral-11">
-          we’ll use the summary as a teaser text to draw players to your contest. a <br />
-          good summary is usually 3-5 words long and tells players what to do.
-        </p>
+      <div className="grid gap-12 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
+        {isMobile ? (
+          <p className="text-[20px] text-neutral-11">
+            the summary will be used as a teaser to draw players to your contest. aim for 3-5 words saying how to
+            submit.
+          </p>
+        ) : (
+          <p className="text-[20px] text-neutral-11">
+            we’ll use the summary as a teaser text to draw players to your contest. a <br />
+            good summary is usually 3-5 words long and tells players what to do.
+          </p>
+        )}
+
         <div className="flex flex-col gap-2">
           <CreateTextInput
             className="w-full md:w-[740px]"

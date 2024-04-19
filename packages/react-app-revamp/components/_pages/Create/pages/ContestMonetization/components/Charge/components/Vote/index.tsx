@@ -89,11 +89,11 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   <p className="text-[20px] text-neutral-9">
                     {isMobile ? (
                       <>
-                        a charge per <i>each vote</i>
+                        a charge for <i>each vote</i>
                       </>
                     ) : (
                       <>
-                        a charge per <i>each vote</i> they deploy in contest
+                        a charge for <i>each vote</i> they deploy in contest
                       </>
                     )}
                   </p>

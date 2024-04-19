@@ -1,8 +1,10 @@
 import { SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useMemo } from "react";
+import { useMediaQuery } from "react-responsive";
 
 const CreateSubmissionTabMessage = () => {
   const { submissionTab, submissionTypeOption } = useDeployContestStore(state => state);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const dynamicTabMessage = useMemo<JSX.Element | null>(() => {
     if (submissionTypeOption.value === SubmissionType.SameAsVoters) return null;
@@ -13,7 +15,7 @@ const CreateSubmissionTabMessage = () => {
           <p className="text-[20px] text-neutral-11">
             use presets to save time, but remember:{" "}
             <b>
-              you can always upload a csv to <br />
+              you can always upload a csv to {isMobile ? " " : <br />}
               allowlist any addresses you like.
             </b>
           </p>
@@ -22,7 +24,7 @@ const CreateSubmissionTabMessage = () => {
       default:
         return null;
     }
-  }, [submissionTab, submissionTypeOption]);
+  }, [isMobile, submissionTab, submissionTypeOption.value]);
 
   if (submissionTypeOption.value === SubmissionType.SameAsVoters) {
     return (
@@ -35,7 +37,7 @@ const CreateSubmissionTabMessage = () => {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-[20px] text-neutral-11">
-        if your list of submitters is different from your list of voters, then we can <br />
+        if your list of submitters is different from your list of voters, then we can {isMobile ? " " : <br />}
         define your submitters here.
       </p>
       {dynamicTabMessage}

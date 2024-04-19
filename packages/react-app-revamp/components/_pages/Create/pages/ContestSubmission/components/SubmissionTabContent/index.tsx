@@ -4,17 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import CreateSubmissionAllowlist from "../SubmissionAllowlist";
 import CreateSubmissionRequirements from "../SubmissionRequirements";
 import CreateSubmissionCSVUploader from "../SubmissionUploadCsv";
+import { useMediaQuery } from "react-responsive";
 
 const tabOptions = [
-  { label: "use presets", content: <CreateSubmissionRequirements /> },
-  { label: "upload csv", content: <CreateSubmissionCSVUploader /> },
-  { label: "set manually", content: <CreateSubmissionAllowlist /> },
+  { label: "use presets", mobileLabel: "use presets", content: <CreateSubmissionRequirements /> },
+  { label: "upload csv", mobileLabel: "use csv", content: <CreateSubmissionCSVUploader /> },
+  { label: "set manually", mobileLabel: "set manually", content: <CreateSubmissionAllowlist /> },
 ];
 
 const CreateSubmissionTabContent = () => {
   const { setSubmissionTab, submissionTab, setSubmissionMerkle } = useDeployContestStore(state => state);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const onSubmissionTabChange = (tabIndex: number) => {
     setSubmissionTab(tabIndex);
@@ -35,6 +37,7 @@ const CreateSubmissionTabContent = () => {
       });
     }
   }, [submissionTab]);
+
   return (
     <>
       <div className="relative flex-col mt-16">
@@ -44,11 +47,11 @@ const CreateSubmissionTabContent = () => {
               key={index}
               ref={el => (tabRefs.current[index] = el)}
               className={`text-[20px] sm:text-[24px] font-bold cursor-pointer text-center transition-colors duration-200
-                  ${index === tabOptions.length - 1 ? "md:w-[240px]" : "md:w-[224px]"}
+                  ${index === tabOptions.length - 1 ? "w-[120px] md:w-[240px]" : "w-[120px] md:w-[224px]"}
                   ${submissionTab === index ? "text-primary-10" : "text-neutral-10"}`}
               onClick={() => onSubmissionTabChange(index)}
             >
-              {link.label}
+              {isMobile ? link.mobileLabel : link.label}
             </div>
           ))}
           <div className="absolute left-0 w-full md:w-[750px] h-1 bottom-0 bg-neutral-0"></div>

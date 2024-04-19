@@ -1,5 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback, useEffect } from "react";
+import { useMediaQuery } from "react-responsive";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
@@ -10,12 +11,14 @@ import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
 
 const CreateContestTitle = () => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const { title, setTitle, step, errors, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(
     state => state,
   );
   const currentStepError = errors.find(error => error.step === step);
   const titleValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => titleValidation?.[0].validation(title)]);
+  const stepTitle = isMobile ? "contest title" : "what’s the title?";
 
   const handleNextStepMobile = useCallback(() => {
     if (!mobileStepTitle) return;
@@ -41,14 +44,21 @@ const CreateContestTitle = () => {
         <StepCircle step={step + 1} />
       </div>
       <div className="col-span-2 ml-10">
-        <p className="text-[24px] text-primary-10 font-bold">what’s the title?</p>
+        <p className="text-[24px] text-primary-10 font-bold">{stepTitle}</p>
       </div>
 
-      <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
-        <p className="text-[20px] text-neutral-11">
-          a good contest title is usually 2-4 words long and includes the name of your <br />
-          community for higher engagement.
-        </p>
+      <div className="grid gap-12 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
+        {isMobile ? (
+          <p className="text-[20px] text-neutral-11">
+            a good title is usually 2-4 words long and includes the name of your community for higher engagement.
+          </p>
+        ) : (
+          <p className="text-[20px] text-neutral-11">
+            a good contest title is usually 2-4 words long and includes the name of your <br />
+            community for higher engagement.
+          </p>
+        )}
+        <p className="text-[20px] text-neutral-11"></p>
         <div className="flex flex-col gap-2">
           <CreateTextInput
             className="w-full md:w-[600px]"

@@ -54,7 +54,7 @@ const CreateContestSubmissions = () => {
       <div className="col-span-2 ml-10">
         <p className="text-[24px] text-primary-10 font-bold">Who can submit?</p>
       </div>
-      <div className="grid gap-10 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
+      <div className="grid gap-10 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
         <div className="flex flex-col">
           <div className="flex flex-col gap-11">
             <div className="flex flex-col gap-8">

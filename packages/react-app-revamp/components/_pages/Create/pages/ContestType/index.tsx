@@ -7,6 +7,7 @@ import StepCircle from "../../components/StepCircle";
 import CreateTagDropdown, { Option } from "../../components/TagDropdown";
 import { useNextStep } from "../../hooks/useNextStep";
 import { validationFunctions } from "../../utils/validation";
+import { useMediaQuery } from "react-responsive";
 
 const options: Option[] = [
   { value: "amend a proposal", label: "amend a proposal" },
@@ -26,11 +27,13 @@ const options: Option[] = [
 ];
 
 const CreateContestType = () => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const { type, setType, errors, step, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const [fadeBg, setFadeBg] = useState(false);
   const typeValidation = validationFunctions.get(step);
   const onNextStep = useNextStep([() => typeValidation?.[0].validation(type)]);
+  const stepTitle = isMobile ? "tag" : "let’s give it a lil’ tag";
 
   const handleNextStepMobile = useCallback(() => {
     if (!mobileStepTitle) return;
@@ -56,9 +59,9 @@ const CreateContestType = () => {
         <StepCircle step={step + 1} />
       </div>
       <div className="col-span-2 ml-10">
-        <p className="text-[24px] font-bold text-primary-10">let’s give it a lil’ tag</p>
+        <p className="text-[24px] font-bold text-primary-10">{stepTitle}</p>
       </div>
-      <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
+      <div className="grid gap-12 col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
         <p className="text-[20px] text-neutral-11">how should we tag your contest for players to find it?</p>
         <div className="flex flex-col gap-16">
           <div className="flex flex-col gap-2">
