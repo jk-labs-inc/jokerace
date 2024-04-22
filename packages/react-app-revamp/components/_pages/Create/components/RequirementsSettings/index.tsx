@@ -229,7 +229,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between md:justify-normal md:gap-3">
                 <CreateNumberInput
-                  className="text-[16px] md:text-[24px]"
+                  className="w-8 text-[16px] md:text-[24px]"
                   value={powerValue ?? 0}
                   placeholder="100"
                   onChange={onPowerValueChange}
@@ -239,7 +239,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                 <CreateDefaultDropdown
                   defaultOption={powerTypeOption(powerType ?? "")}
                   options={votingPowerOptions}
-                  className="w-full md:w-44 text-[16px] md:text-[20px] cursor-pointer"
+                  className="w-48 text-[16px] md:text-[20px] cursor-pointer"
                   onChange={onPowerTypeChange}
                 />
               </div>

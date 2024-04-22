@@ -70,7 +70,7 @@ const CreateContestType = () => {
               onChange={onOptionChangeHandler}
               onMenuStateChange={setFadeBg}
               options={options}
-              className="w-full md:w-[240px]"
+              className="w-full md:w-[240px] text-[20px]"
             />
             {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
           </div>

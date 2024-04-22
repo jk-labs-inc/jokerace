@@ -40,7 +40,7 @@ const CreateVotingPeriod = () => {
         <CreateDefaultDropdown
           options={timingPeriodsOptions}
           defaultOption={timingOption}
-          className="w-[216px]"
+          className="w-48 md:w-[216px]"
           onMenuStateChange={state => setHideDatePickers(state)}
           onChange={option => onTimingPeriodChange(option)}
         />

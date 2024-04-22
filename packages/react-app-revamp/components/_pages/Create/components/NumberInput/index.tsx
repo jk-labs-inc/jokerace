@@ -67,7 +67,7 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
       >
         <input
           type="number"
-          className={`${textClassName} text-[20px] w-full h-full outline-none bg-transparent pl-4 text-true-black  placeholder-neutral-10`}
+          className={`${className} ${textClassName} text-[20px] w-full h-full outline-none bg-transparent pl-4 text-true-black  placeholder-neutral-10`}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
           onChange={handleChange}

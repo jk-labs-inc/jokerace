@@ -58,10 +58,9 @@ const CreateContestTitle = () => {
             community for higher engagement.
           </p>
         )}
-        <p className="text-[20px] text-neutral-11"></p>
         <div className="flex flex-col gap-2">
           <CreateTextInput
-            className="w-full md:w-[600px]"
+            className="w-full md:w-[600px] text-[20px]"
             value={title}
             placeholder="eg. gitcoin bounty for devs"
             minLength={CONTEST_TITLE_MIN_LENGTH}

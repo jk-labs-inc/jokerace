@@ -47,7 +47,7 @@ const CreateSubmissionTabContent = () => {
               key={index}
               ref={el => (tabRefs.current[index] = el)}
               className={`text-[20px] sm:text-[24px] font-bold cursor-pointer text-center transition-colors duration-200
-                  ${index === tabOptions.length - 1 ? "w-[120px] md:w-[240px]" : "w-[120px] md:w-[224px]"}
+                  ${index === tabOptions.length - 1 ? "w-[116px] md:w-[240px]" : "w-[116px] md:w-[224px]"}
                   ${submissionTab === index ? "text-primary-10" : "text-neutral-10"}`}
               onClick={() => onSubmissionTabChange(index)}
             >

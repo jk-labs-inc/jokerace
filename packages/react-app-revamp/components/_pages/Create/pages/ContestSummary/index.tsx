@@ -67,7 +67,7 @@ const CreateContestSummary = () => {
 
         <div className="flex flex-col gap-2">
           <CreateTextInput
-            className="w-full md:w-[740px]"
+            className="w-full md:w-[740px] text-[20px]"
             value={summary}
             placeholder={placeholderText}
             minLength={CONTEST_TITLE_MIN_LENGTH}
