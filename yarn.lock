@@ -3088,25 +3088,24 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lens-protocol/blockchain-bindings@0.10.0-alpha.25":
-  version "0.10.0-alpha.25"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/blockchain-bindings/-/blockchain-bindings-0.10.0-alpha.25.tgz#295c7288206c684b79a6f8d84b2d161d1d853baa"
-  integrity sha512-GdCQsk+O1D62X1STyrIGLSx7oD+4HfFkJvmcY9aZTsPOmybkRX+LzdhhhnaoCJA8cYp4KrMYpnbSF63trUOpig==
+"@lens-protocol/blockchain-bindings@0.10.1":
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/blockchain-bindings/-/blockchain-bindings-0.10.1.tgz#cc7b6caf03f2d73210da5c57f92501ad051811cc"
+  integrity sha512-D7DH2Rp05CbYW5jlyZfKuqchmtir5Id45rdXB9FcYTm+f3aYTH3GDSQoQ7VkdYlP072Ii2yz/HceX5qXi1h/hA==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
-    "@ethersproject/abstract-signer" "^5.7.0"
     "@ethersproject/contracts" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
     "@ethersproject/units" "^5.7.0"
-    "@lens-protocol/domain" "0.11.0-alpha.24"
-    "@lens-protocol/shared-kernel" "0.11.0-alpha.11"
+    "@lens-protocol/domain" "0.11.1"
+    "@lens-protocol/shared-kernel" "0.12.0"
     ethers "^5.7.2"
     tslib "^2.6.2"
 
-"@lens-protocol/client@^2.0.0-alpha.25":
-  version "2.0.0-alpha.35"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-2.0.0-alpha.35.tgz#b80272485774da38575eea3c95234a9969e4f433"
-  integrity sha512-1OTe0La3wPW0+CcoAd0OHXnu6itb3ustIHWOdxF7bRs8ZXhNGI2wDNdSWsbOeWhWUl5jqbSdoVfrncpcd5SiHA==
+"@lens-protocol/client@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-2.1.1.tgz#81532efa0d62c4a5da6bf83c15e5278d0b764dea"
+  integrity sha512-mUsssdHuP83jWsXeo6acGX0n0AcI3JIo6cms9WtdFMvodzBHoX69nYccmbdYEPGTK8y5AQtlxR1MiyVd1cVwmg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-signer" "^5.7.0"
@@ -3116,10 +3115,10 @@
     "@ethersproject/hash" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
     "@ethersproject/wallet" "^5.7.0"
-    "@lens-protocol/blockchain-bindings" "0.10.0-alpha.25"
-    "@lens-protocol/gated-content" "0.4.0-alpha.22"
-    "@lens-protocol/shared-kernel" "0.11.0-alpha.11"
-    "@lens-protocol/storage" "0.8.0-alpha.10"
+    "@lens-protocol/blockchain-bindings" "0.10.1"
+    "@lens-protocol/gated-content" "0.5.1"
+    "@lens-protocol/shared-kernel" "0.12.0"
+    "@lens-protocol/storage" "0.8.1"
     graphql "^16.8.1"
     graphql-request "^6.1.0"
     graphql-tag "^2.12.6"
@@ -3127,53 +3126,53 @@
     tslib "^2.6.2"
     zod "^3.22.4"
 
-"@lens-protocol/domain@0.11.0-alpha.24":
-  version "0.11.0-alpha.24"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/domain/-/domain-0.11.0-alpha.24.tgz#f26df5680ce83538b7b6578f84a8816cbca5d673"
-  integrity sha512-NoqReDF46zxqqR2vL+kEThuJLSby0i4+EWpSe5ZgVBQUldxys310tAmlXFi5M7kAaKqiF1NXJIUZ6nbTw9xDcA==
+"@lens-protocol/domain@0.11.1":
+  version "0.11.1"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/domain/-/domain-0.11.1.tgz#a7e86adcb85e6e05c69a0da6ed8a091c8834de6c"
+  integrity sha512-a4+GdYVoMKyJ+zIomIPRTwmrlMIFF+iQi4seZoQHgBN72q/OgwnC7FeRu62Z9zF3mANkBdhPAyzu+eJPQuIqfg==
   dependencies:
-    "@lens-protocol/shared-kernel" "0.11.0-alpha.11"
+    "@lens-protocol/shared-kernel" "0.12.0"
     tslib "^2.6.2"
 
-"@lens-protocol/gated-content@0.4.0-alpha.22":
-  version "0.4.0-alpha.22"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/gated-content/-/gated-content-0.4.0-alpha.22.tgz#4e50fed9a221e9a9bca4fc0fbb3d0351a63d2951"
-  integrity sha512-+co2r5TEy85EUOhI7vQu+UaL5GIcpxn4VTkvxZkfuFWUBKTpULl210NrIg2zN2UiXaU387tQZA03MyBicW6SsA==
+"@lens-protocol/gated-content@0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/gated-content/-/gated-content-0.5.1.tgz#4a918d8d36ad396da3614ebde7f6e1ea5ce64b35"
+  integrity sha512-rXD0/lkdFIGrwi7+LLgxYwb1Bbsnbi3XouUxfXbqBD32YwKkpYRNb0EfYcB3HZOQv9vmeTTlyrozNKxWoCBJ3A==
   dependencies:
-    "@lens-protocol/shared-kernel" "0.11.0-alpha.11"
-    "@lens-protocol/storage" "0.8.0-alpha.10"
+    "@lens-protocol/shared-kernel" "0.12.0"
+    "@lens-protocol/storage" "0.8.1"
     "@lit-protocol/constants" "2.1.62"
     "@lit-protocol/crypto" "2.1.62"
     "@lit-protocol/encryption" "2.1.62"
     "@lit-protocol/node-client" "^2.1.62"
     "@lit-protocol/types" "2.1.62"
     siwe "^2.1.4"
-    traverse "^0.6.7"
     tslib "^2.6.2"
 
-"@lens-protocol/metadata@^1.0.0":
+"@lens-protocol/metadata@^1.1.6":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@lens-protocol/metadata/-/metadata-1.1.6.tgz#407c3eaecabe70fd5bbc4c40eca1bb00079ae706"
   integrity sha512-GswaavJLD6iBW/i3ShcBTeV3oiYTaHa4qIGSVZWxNfAChOxonJC9FHw7UH2bVlj4GzURhuwzL0mSGthecGLibQ==
   dependencies:
     uuid "^9.0.1"
 
-"@lens-protocol/shared-kernel@0.11.0-alpha.11":
-  version "0.11.0-alpha.11"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/shared-kernel/-/shared-kernel-0.11.0-alpha.11.tgz#75d3914b522904d14c7c5b12ae68e67c8809a92d"
-  integrity sha512-uw2ZyfJGaOzgjieKo3yU37P0Bbz+J2odMtFu+7YVXEExeijI5LekL1TzkQDf9rbsqsh7yX8hIzK34bDmatYwYA==
+"@lens-protocol/shared-kernel@0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/shared-kernel/-/shared-kernel-0.12.0.tgz#ea8d14ef53df3e34c7dcc8ed5e6b9002909dd65a"
+  integrity sha512-+trBZPjGDSRMVafZF6jXcfKc8UVHr1bVRjxeAVO1ZpR7zWfampJhxMO+7jbmmhvmYmf5Losp7Ffq4//szKloaA==
   dependencies:
     "@ethersproject/address" "^5.7.0"
     decimal.js "^10.4.3"
     lodash "^4.17.21"
+    traverse "^0.6.7"
     tslib "^2.6.2"
 
-"@lens-protocol/storage@0.8.0-alpha.10":
-  version "0.8.0-alpha.10"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/storage/-/storage-0.8.0-alpha.10.tgz#891ee88613264d9a70ddda1a6faf4b5968ee7724"
-  integrity sha512-hc7LP8RTD2jcU4y//34i8hZOsjyCJneJrpLLuXsjSEvw+/Y3geKI5glyBk6p7VlyvZkWZMys2o+ISF90LcdRRQ==
+"@lens-protocol/storage@0.8.1":
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/storage/-/storage-0.8.1.tgz#c624fb46862cb0e4a1ee8e7dfd453d48463bbd97"
+  integrity sha512-9nOf8wnDEYAd6Jjoqw5kM7YvZ+g1Y9LfhLfP0ZcAl/nx3uPWBO0cT7GSZWBXAwQ7ayW6Kno5P+vFoBFEaNVVLQ==
   dependencies:
-    "@lens-protocol/shared-kernel" "0.11.0-alpha.11"
+    "@lens-protocol/shared-kernel" "0.12.0"
     tslib "^2.6.2"
     zod "^3.22.4"
 
