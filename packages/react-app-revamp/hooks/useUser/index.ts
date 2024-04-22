@@ -245,6 +245,8 @@ export function useUser() {
   }
 
   async function checkAnyoneCanVoteUserQualification() {
+    if (!userAddress) return;
+
     try {
       const { abi } = await getContestContractVersion(address, chainId);
 
