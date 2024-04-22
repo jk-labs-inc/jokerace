@@ -11,7 +11,7 @@ const HATS_PROTOCOL_EXTENSION: Extension = {
   },
 };
 
-const HATS_PROTOCOL_EXTENSION_LINK = "https://github.com/Hats-Protocol/jokerace-eligibility";
+const HATS_PROTOCOL_EXTENSION_LINK = "https://docs.hatsprotocol.xyz/hats-integrations/eligibility-modules/jokerace-eligibility";
 
 const HatsProtocolExtension = () => {
   const onHatsProtocolExtensionClick = () => {
