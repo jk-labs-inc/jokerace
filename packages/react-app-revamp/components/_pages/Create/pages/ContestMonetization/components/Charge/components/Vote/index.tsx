@@ -64,7 +64,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                       onChange={onCostToVoteChange}
                       unitLabel={chainUnitLabel}
                       errorMessage={costToVoteError}
-                      textClassName="font-bold text-center pl-0 pr-4"
+                      textClassName="font-bold text-center pl-0 pr-4 -ml-4"
                     />
                   ) : null}
                   {isAnyoneCanVote ? (
@@ -103,7 +103,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                       onChange={onCostToVoteChange}
                       unitLabel={chainUnitLabel}
                       errorMessage={costToVoteError}
-                      textClassName="font-bold text-center pl-0 pr-4"
+                      textClassName="font-bold text-center pl-0 pr-4 -ml-4"
                     />
                   ) : null}
                 </div>

@@ -37,7 +37,7 @@ const ContestParamsChargeSubmission: FC<ContestParamsChargeSubmissionProps> = ({
           onChange={onCostToProposeChange}
           unitLabel={chainUnitLabel}
           errorMessage={costToProposeError}
-          textClassName="font-bold text-center pl-0 pr-4"
+          textClassName="font-bold text-center pl-0 pr-4 -ml-4"
         />
       </div>
     </div>
