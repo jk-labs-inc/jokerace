@@ -216,7 +216,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
 
           <CreateNumberInput
             value={minTokensRequired}
-            className="w-full md:w-44 text-[16px] md:text-[24px]"
+            className="md:w-44 text-[16px] md:text-[24px]"
             placeholder={settingType === "erc20" ? "0.01" : "1"}
             onChange={onMinTokensRequiredChange}
             errorMessage={error?.minTokensRequiredError}
@@ -229,11 +229,12 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between md:justify-normal md:gap-3">
                 <CreateNumberInput
-                  className="w-8 text-[16px] md:text-[24px]"
+                  className="text-[16px] md:text-[24px]"
                   value={powerValue ?? 0}
                   placeholder="100"
                   onChange={onPowerValueChange}
                   disableDecimals
+                  style={{ width: "100px" }}
                 />
                 <p className="text-[16px] md:text-[20px]">votes per</p>
                 <CreateDefaultDropdown
