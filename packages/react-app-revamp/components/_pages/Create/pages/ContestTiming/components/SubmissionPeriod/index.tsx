@@ -62,7 +62,7 @@ const CreateSubmissionPeriod = () => {
         <CreateDefaultDropdown
           options={timingPeriodsOptions}
           defaultOption={submissionPeriodTimingOption}
-          className="w-[216px]"
+          className="w-48 md:w-[216px]"
           onChange={option => onTimingPeriodChange(option)}
           onMenuStateChange={state => setHideDatePickers(state)}
         />

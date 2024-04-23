@@ -1,5 +1,6 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { FC } from "react";
+import { useMediaQuery } from "react-responsive";
 import { create } from "zustand";
 
 interface CreateContestStartProps {
@@ -17,22 +18,27 @@ export const useCreateContestStartStore = create<CreateContestStartState>(set =>
 }));
 
 const CreateContestStart: FC<CreateContestStartProps> = ({ onClick }) => {
+  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const stepTitle = isMobile ? "create a contest" : "let’s create a contest";
+  const descriptionText = isMobile ? "how the contest works" : "about how the contest works";
+  const timingText = isMobile ? "of submission/voting periods" : "of the submission and voting periods";
+
   const onCreateContestHandler = () => {
     onClick?.(true);
   };
 
   return (
-    <div className="flex flex-col gap-10 lg:ml-[300px] mt-24 animate-fadeIn">
+    <div className="flex flex-col gap-10 lg:ml-[300px] mt-6 md:mt-24 animate-fadeIn">
       <div className="flex flex-col gap-2">
-        <p className="text-true-white text-[24px] font-bold">let’s create a contest</p>
+        <p className="text-true-white text-[24px] font-bold">{stepTitle}</p>
         <div className="flex flex-col gap-4">
           <p className="text-neutral-11 text-[20px]">creating a contest takes about 3-5 minutes. you’ll just need:</p>
           <ul className="flex flex-col pl-8">
             <li className="text-[20px] text-neutral-11 list-disc">
-              <b>descriptions</b> about how the contest works
+              <b>descriptions</b> {descriptionText}
             </li>
             <li className="text-[20px] text-neutral-11 list-disc">
-              <b>timing</b> of the submission and voting periods
+              <b>timing</b> {timingText}
             </li>
             <li className="text-[20px] text-neutral-11 list-disc">
               <b>allowlists</b> of who can vote and (optional) who can submit

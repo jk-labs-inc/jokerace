@@ -4,17 +4,19 @@ import { useEffect, useRef, useState } from "react";
 import CreateVotingAllowlist from "../VotingAllowlist";
 import CreateVotingRequirements from "../VotingRequirements";
 import CreateVotingCSVUploader from "../VotingUploadCsv";
+import { useMediaQuery } from "react-responsive";
 
 const tabOptions = [
-  { label: "use presets", content: <CreateVotingRequirements /> },
-  { label: "upload csv", content: <CreateVotingCSVUploader /> },
-  { label: "set manually", content: <CreateVotingAllowlist /> },
+  { label: "use presets", mobileLabel: "use presets", content: <CreateVotingRequirements /> },
+  { label: "upload csv", mobileLabel: "use csv", content: <CreateVotingCSVUploader /> },
+  { label: "set manually", mobileLabel: "set manually", content: <CreateVotingAllowlist /> },
 ];
 
 const CreateVotingTabContent = () => {
   const { setVotingTab, votingTab, setVotingMerkle } = useDeployContestStore(state => state);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const onVotingTabChange = (tabIndex: number) => {
     setVotingTab(tabIndex);
@@ -45,11 +47,11 @@ const CreateVotingTabContent = () => {
               key={index}
               ref={el => (tabRefs.current[index] = el)}
               className={`text-[20px] sm:text-[24px] font-bold cursor-pointer text-center transition-colors duration-200
-                  ${index === tabOptions.length - 1 ? "md:w-[240px]" : "md:w-[224px]"}
+                  ${index === tabOptions.length - 1 ? "w-[116px] md:w-[240px]" : "w-[116px] md:w-[224px]"}
                   ${votingTab === index ? "text-primary-10" : "text-neutral-10"}`}
               onClick={() => onVotingTabChange(index)}
             >
-              {link.label}
+              {isMobile ? link.mobileLabel : link.label}
             </div>
           ))}
           <div className="absolute left-0 w-full md:w-[750px] h-1 bottom-0 bg-neutral-0"></div>

@@ -403,7 +403,7 @@ const CreateVotingRequirements = () => {
             <CreateDefaultDropdown
               defaultOption={votingRequirementsOption}
               options={votingDropdownRequirementsOptions}
-              className="w-full md:w-[240px]"
+              className="w-60 md:w-[240px]"
               onChange={onRequirementChange}
               onMenuStateChange={value => setIsDropdownOpen(value)}
             />

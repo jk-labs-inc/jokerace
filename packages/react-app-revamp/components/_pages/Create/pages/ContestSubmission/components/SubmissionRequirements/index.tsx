@@ -225,7 +225,7 @@ const CreateSubmissionRequirements = () => {
         <CreateDefaultDropdown
           defaultOption={submissionRequirementsOption}
           options={options}
-          className="w-full md:w-[240px]"
+          className="w-48 md:w-[240px]"
           onChange={onSubmissionRequirementsOptionChange}
           onMenuStateChange={value => setIsDropdownOpen(value)}
         />

@@ -14,7 +14,7 @@ const CreateContestVoting = () => {
       <div className="col-span-2 ml-10">
         <p className="text-[24px] text-primary-10 font-bold">Who can vote?</p>
       </div>
-      <div className="grid col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-6">
+      <div className="grid col-start-1 md:col-start-2 col-span-3 md:col-span-2 md:ml-10 mt-8 md:mt-6">
         <CreateVotingTabMessage />
         <CreateVotingTabContent />
       </div>
