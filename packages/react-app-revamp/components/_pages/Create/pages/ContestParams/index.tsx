@@ -1,7 +1,10 @@
+import { toastError } from "@components/UI/Toast";
 import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
 import { ContestVisibility, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { fetchChargeDetails } from "lib/monetization";
 import { useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { useAccount } from "wagmi";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
@@ -12,7 +15,10 @@ import ContestParamsDownvote from "./components/Downvote";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
 import ContestParamsSubmissionsPerPlayer from "./components/SubmissionsPerPlayer";
 
+export const VOTING_STEP = 6;
+
 const CreateContestParams = () => {
+  const { chain } = useAccount();
   const {
     customization,
     setCustomization,
@@ -21,6 +27,7 @@ const CreateContestParams = () => {
     step,
     mobileStepTitle,
     resetMobileStepTitle,
+    setStep,
   } = useDeployContestStore(state => state);
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
@@ -38,6 +45,26 @@ const CreateContestParams = () => {
       resetMobileStepTitle();
     }
   }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
+
+  useEffect(() => {
+    if (!chain) return;
+
+    const fetchDetails = async () => {
+      try {
+        const { isError, minCostToPropose, minCostToVote } = await fetchChargeDetails(chain.name.toLowerCase());
+
+        if (isError || !minCostToPropose || !minCostToVote) {
+          toastError(`${chain.name} chain is not supported for anyone to vote.`);
+          setStep(VOTING_STEP);
+        }
+      } catch (error) {
+        toastError(`${chain.name} chain is not supported for anyone to vote.`);
+        setStep(VOTING_STEP);
+      }
+    };
+
+    fetchDetails();
+  }, [chain, setStep]);
 
   // Mobile listeners
   useEffect(() => {
