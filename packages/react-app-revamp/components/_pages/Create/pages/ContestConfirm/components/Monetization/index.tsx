@@ -78,7 +78,7 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
             </li>
             <li className={`text-[16px] list-disc`}>
               {charge.type.costToVote} <span className="uppercase">${nativeCurrencySymbol}</span>{" "}
-              {charge.voteType === VoteType.PerVote ? "per" : "to"} vote
+              {charge.voteType === VoteType.PerVote ? "for each" : "to"} vote
             </li>
             <li className="text-[16px] list-disc normal-case">{percentageToCreatorMessage()}</li>
           </ul>

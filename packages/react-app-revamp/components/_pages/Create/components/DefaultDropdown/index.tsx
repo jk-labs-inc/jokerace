@@ -41,7 +41,7 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
 
         return (
           <>
-            <Menu.Button className="flex items-center bg-neutral-14 cursor-pointer w-[216px] h-10 rounded-[5px] px-4 py-2">
+            <Menu.Button className="flex items-center bg-neutral-14 cursor-pointer w-48 md:w-[216px] h-10 rounded-[5px] px-4 py-2">
               <p className="text-[20px] text-true-black">{selectedOption.label}</p>
               <ChevronDownIcon
                 className={`w-6 cursor-pointer text-true-black ml-auto transition-transform duration-200 ${
@@ -60,7 +60,7 @@ const CreateDefaultDropdown: FC<CreateDefaultDropdownProps> = ({
               leaveTo="transform opacity-0 scale-95"
             >
               <Menu.Items
-                className={`flex flex-col absolute z-10 mt-4 bg-true-black border border-neutral-11 rounded-[10px] overflow-clip animate-appear ${className}`}
+                className={`${className} flex flex-col absolute z-10 mt-4 bg-true-black border border-neutral-11 rounded-[10px] overflow-clip animate-appear`}
               >
                 {options.map(option => (
                   <Menu.Item key={option.value}>

@@ -216,7 +216,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
 
           <CreateNumberInput
             value={minTokensRequired}
-            className="w-full md:w-44 text-[16px] md:text-[24px]"
+            className="md:w-44 text-[16px] md:text-[24px]"
             placeholder={settingType === "erc20" ? "0.01" : "1"}
             onChange={onMinTokensRequiredChange}
             errorMessage={error?.minTokensRequiredError}
@@ -234,12 +234,13 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                   placeholder="100"
                   onChange={onPowerValueChange}
                   disableDecimals
+                  style={{ width: "100px" }}
                 />
                 <p className="text-[16px] md:text-[20px]">votes per</p>
                 <CreateDefaultDropdown
                   defaultOption={powerTypeOption(powerType ?? "")}
                   options={votingPowerOptions}
-                  className="w-full md:w-44 text-[16px] md:text-[20px] cursor-pointer"
+                  className="w-48 text-[16px] md:text-[20px] cursor-pointer"
                   onChange={onPowerTypeChange}
                 />
               </div>
