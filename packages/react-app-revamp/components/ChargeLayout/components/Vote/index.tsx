@@ -23,7 +23,7 @@ const ChargeLayoutVote: FC<ChargeLayoutVoteProps> = ({
   insufficientBalance,
   amountOfVotes,
 }) => {
-  const chargeLabel = chargeType === VoteType.PerVote ? "charge for vote" : "vote charge";
+  const chargeLabel = chargeType === VoteType.PerVote ? "charge for each vote" : "vote charge";
   const isPerVote = chargeType === VoteType.PerVote;
   const [totalCharge, setTotalCharge] = useState("0");
 
