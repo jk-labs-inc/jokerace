@@ -146,7 +146,7 @@ const VotingWidget: FC<VotingWidgetProps> = ({ proposalId, amountOfVotes, downvo
           <div className="flex items-center">
             <input
               type="number"
-              value={amount}
+              value={amount || ""}
               onChange={e => handleChange(e.target.value)}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
