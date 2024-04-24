@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import { ROUTE_VIEW_USER } from "@config/routes";
-import { mainnet } from "@config/wagmi/custom-chains/mainnet";
 import useProfileData from "@hooks/useProfileData";
 import Link from "next/link";
 import { FC } from "react";
@@ -56,9 +55,12 @@ const UserProfileDisplay = ({
   shortenOnFallback,
   size = "small",
 }: UserProfileDisplayProps) => {
-  const { profileName, profileAvatar, isLoading, isLens } = useProfileData(ethereumAddress, shortenOnFallback);
+  const { profileName, profileAvatar, socials, isLoading } = useProfileData(
+    ethereumAddress,
+    shortenOnFallback,
+    includeSocials,
+  );
   const { avatarSizeClass, textSizeClass } = SIZES[size];
-  const etherscan = mainnet.blockExplorers?.etherscan?.url;
 
   if (textualVersion) {
     return (
@@ -94,7 +96,7 @@ const UserProfileDisplay = ({
         <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={profileAvatar} alt="avatar" />
       </div>
       {isLoading ? (
-        <>Loading profile data...</>
+        <p className={`${textSizeClass} loadingDots`}>Loading profile data</p>
       ) : (
         <div className="flex flex-col gap-1">
           <a
@@ -108,14 +110,14 @@ const UserProfileDisplay = ({
 
           {includeSocials ? (
             <div className="flex gap-1 items-center">
-              <a href={`${etherscan}/address/${ethereumAddress}`} target="_blank">
+              <a href={socials?.etherscan} target="_blank">
                 <div className="w-6 h-6 flex justify-center items-center overflow-hidden rounded-full">
                   <img className="object-cover" src="/etherscan.svg" alt="Etherscan" />
                 </div>
               </a>
 
-              {isLens ? (
-                <a href={`https://lensfrens.xyz/${profileName.replace(".lens", "")}`} target="_blank">
+              {socials?.lens ? (
+                <a href={socials.lens} target="_blank">
                   <div className="w-12 h-12 flex justify-center items-center overflow-hidden rounded-full">
                     <img className="object-cover" src="/socials/lens.svg" alt="Lens" />
                   </div>

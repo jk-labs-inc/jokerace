@@ -1,7 +1,7 @@
 import { serverConfig } from "@config/wagmi/server";
 import { getEnsName, readContract, readContracts } from "@wagmi/core";
 import { Abi } from "viem";
-import { EMPTY_ROOT } from "../utils";
+import { EMPTY_ROOT, fetchProfileName } from "../utils";
 
 export const targetMetadata = {
   targetAddress: "0x0000000000000000000000000000000000000000",
@@ -52,17 +52,12 @@ export const fetchContestInitialData = async (abi: Abi, chainId: number, address
   const submissionMerkleRoot = results[2].result as string;
   const submissionsOpenDate = new Date(Number(results[3].result) * 1000 + 1000);
   const submissionsClosedDate = new Date(Number(results[4].result) * 1000 + 1000);
+  const ensName = await fetchProfileName(creator);
+
   let anyoneCanSubmit = false;
-  let ensName: string | null = null;
 
   if (submissionMerkleRoot === EMPTY_ROOT) {
     anyoneCanSubmit = true;
-  }
-
-  try {
-    ensName = await getEnsName(serverConfig, { address: creator as `0x${string}`, chainId: 1 });
-  } catch (error) {
-    ensName = null;
   }
 
   return {
