@@ -17,6 +17,8 @@ import { chains } from "@config/wagmi/server";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import { parseUnits } from "ethers/lib/utils";
 import { Button, Frog, TextInput } from "frog";
+import { devtools } from 'frog/dev';
+import { serveStatic } from 'frog/serve-static';
 import { handle } from "frog/vercel";
 import {
   fetchContestInitialData,
@@ -393,6 +395,9 @@ app.transaction("/vote-tx", async c => {
     value: costToVote,
   });
 });
+
+devtools(app, { serveStatic })
+
 
 export const GET = handle(app);
 export const POST = handle(app);

@@ -3,7 +3,7 @@ import { MappedProposalIds } from "@hooks/useProposal/store";
 import { getProposalIdsRaw } from "@hooks/useProposal/utils";
 import { getEnsName, readContract, readContracts } from "@wagmi/core";
 import { Abi, formatEther } from "viem";
-import { EMPTY_ROOT } from "../utils";
+import { EMPTY_ROOT, fetchProfileName } from "../utils";
 
 interface RankDictionary {
   [key: string]: number;
@@ -183,14 +183,8 @@ export const fetchContestInfo = async (abi: Abi, address: string, chainId: numbe
   const contestDeadline = new Date(Number(results[2].result) * 1000 + 1000);
   const isDeleted = results[3].result;
   const proposalAuthor = results[4].result.author;
+  const ensName = await fetchProfileName(proposalAuthor);
   let anyoneCanVote = false;
-  let ensName: string | null = null;
-
-  try {
-    ensName = await getEnsName(serverConfig, { address: proposalAuthor as `0x${string}`, chainId: 1 });
-  } catch (error) {
-    ensName = null;
-  }
 
   if (votingMerkleRoot === EMPTY_ROOT) {
     anyoneCanVote = true;
