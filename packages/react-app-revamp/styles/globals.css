@@ -203,6 +203,7 @@ li {
 /* React tweet custom styles */
 .react-tweet-theme {
   background-color: black !important;
+  min-width: 580px !important;
   max-width: 100% !important;
 }
 
