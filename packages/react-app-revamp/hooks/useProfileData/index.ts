@@ -1,9 +1,11 @@
 import { lensClient } from "@config/lens";
 import { config } from "@config/wagmi";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
 import { normalize } from "viem/ens";
+import { type GetEnsAvatarReturnType } from "@wagmi/core";
 
 const DEFAULT_AVATAR_URL = "/contest/user.svg";
 
@@ -40,9 +42,7 @@ const checkImageUrl = async (url: string): Promise<string> => {
 
 const fetchProfileData = async ({ queryKey }: QueryFunctionContext): Promise<ProfileData> => {
   const [ethereumAddress, shortenOnFallback, includeSocials] = queryKey as [string, boolean, boolean];
-  let profileName = shortenOnFallback
-    ? `${ethereumAddress.substring(0, 6)}...${ethereumAddress.slice(-3)}`
-    : ethereumAddress;
+  let profileName = shortenOnFallback ? shortenEthereumAddress(ethereumAddress) : ethereumAddress;
   let profileAvatar = DEFAULT_AVATAR_URL;
   let socials = {
     etherscan: "",
@@ -51,17 +51,32 @@ const fetchProfileData = async ({ queryKey }: QueryFunctionContext): Promise<Pro
 
   try {
     const ensName = await getEnsName(config, { chainId: 1, address: ethereumAddress as `0x${string}` });
+
     if (ensName) {
-      const ensAvatar = await getEnsAvatar(config, { name: normalize(ensName), chainId: 1 });
+      const timeout = new Promise<string>((resolve, reject) => {
+        setTimeout(() => reject(new Error("timeout: ENS avatar request took too long")), 10000);
+      });
+
+      const ensAvatarPromise = getEnsAvatar(config, {
+        name: normalize(ensName),
+        chainId: 1,
+      });
+
       try {
-        await checkImageUrl(ensAvatar ?? DEFAULT_AVATAR_URL);
-        profileAvatar = ensAvatar ?? DEFAULT_AVATAR_URL;
+        let ensAvatar = await Promise.race([ensAvatarPromise, timeout]);
+
+        ensAvatar = typeof ensAvatar === "string" ? ensAvatar : DEFAULT_AVATAR_URL;
+
+        await checkImageUrl(ensAvatar);
+        profileAvatar = ensAvatar;
         profileName = ensName;
-      } catch {
+      } catch (error) {
+        profileName = ensName;
         profileAvatar = DEFAULT_AVATAR_URL;
       }
     } else {
       const lensProfile = await lensClient.profile.fetchDefault({ for: ethereumAddress });
+
       if (lensProfile?.handle) {
         const avatarFragment = lensProfile.metadata?.picture;
         //@ts-ignore
