@@ -209,7 +209,9 @@ li {
 
 @media (max-width: 768px) {
   .react-tweet-theme {
-    max-width: 300px !important;
+    min-width: 250px !important;
+    width: 330px !important;
+    max-width: 350px !important;
   }
 }
 
