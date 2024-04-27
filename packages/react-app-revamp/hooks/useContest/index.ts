@@ -137,16 +137,10 @@ export function useContest() {
     const isDownvotingAllowed = Number(results[8].result) === 1;
 
     if (compareVersions(version, "4.0") >= 0) {
-      const costToProposeTiming = moment().isBefore(votesOpenDate);
-      const costToVoteTiming = moment().isBefore(closingVoteDate);
       const percentageToCreator = Number(results[9].result);
-      let costToPropose = 0;
+      const costToPropose = Number(results[10].result);
       let costToVote = 0;
       let payPerVote = 0;
-
-      if (costToProposeTiming) {
-        costToPropose = Number(results[10].result);
-      }
 
       if (compareVersions(version, "4.2") >= 0) {
         const sortingEnabled = Number(results[11].result) === 1;
@@ -154,7 +148,7 @@ export function useContest() {
         setSortingEnabled(sortingEnabled);
       }
 
-      if (costToVoteTiming && compareVersions(version, "4.23") >= 0) {
+      if (compareVersions(version, "4.23") >= 0) {
         if (compareVersions(version, "4.25") >= 0) {
           payPerVote = Number(results[13].result);
         }
