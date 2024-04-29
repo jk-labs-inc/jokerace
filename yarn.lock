@@ -9970,10 +9970,10 @@ fresh@0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==
 
-frog@^0.8.4:
-  version "0.8.4"
-  resolved "https://registry.yarnpkg.com/frog/-/frog-0.8.4.tgz#d2a7ca0efc60444b2e58100a1945ee51010c2dcf"
-  integrity sha512-FOwj4UicBfRARi0PxzpMi9DFy3eW7i/M6ZNwGGJ0/dfG/4SWaIXhpYJ+12UKG9vIA0g5/Pf84CRyZ80NKoUpKw==
+frog@^0.8.7:
+  version "0.8.7"
+  resolved "https://registry.yarnpkg.com/frog/-/frog-0.8.7.tgz#6d6852ffb473ea43bcc7bb6b8239111e6e42f671"
+  integrity sha512-dKJ5XC+R4fn+Nk5mNverwYmNC28rfVbBVYd+B2RlBCVngoyaaRZgZ2YHhwAbpTjNdXnyyrrXxadPkGx0w5qL6Q==
   dependencies:
     "@bufbuild/protobuf" "^1.7.2"
     "@hono/node-server" "^1.8.2"
