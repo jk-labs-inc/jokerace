@@ -4,10 +4,10 @@ import { formatNumber } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { shortenProposalId } from "@helpers/shortenProposalId";
-import { formatEther } from "ethers/lib/utils";
 import { Box, Text } from "lib/frames/ui";
 import moment from "moment";
 import { FC } from "react";
+import { formatEther } from "viem";
 
 interface VoteFinalFrameProps {
   submission: string;
@@ -75,7 +75,7 @@ const VoteFinalFrame: FC<VoteFinalFrameProps> = ({
             {contestName} contest
           </Text>
           <Text font="lato" color="neutral" size="16">
-            1 vote = {formatEther(BigInt(costToVote))} {nativeCurrency}
+            1 vote = {formatEther(BigInt(costToVote))} ${nativeCurrency}
           </Text>
           <Text font="lato" color="neutral" size="16">
             vote by {moment(contestDeadline).format("MMMM Do, YYYY, h:mm a")}

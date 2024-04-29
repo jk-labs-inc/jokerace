@@ -1,10 +1,10 @@
 /** @jsxImportSource frog/jsx */
 
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { formatEther } from "ethers/lib/utils";
 import { Box, Text } from "lib/frames/ui";
 import moment from "moment";
 import { FC } from "react";
+import { formatEther } from "viem";
 
 interface SubmissionsFinalFrameProps {
   contestName: string;
@@ -60,7 +60,7 @@ const SubmissionsFinalFrame: FC<SubmissionsFinalFrameProps> = ({
             {contestTitle}
           </Text>
           <Text font="lato" color="neutral" size="16">
-            {formatEther(BigInt(costToPropose))} {nativeCurrency} to submit
+            {formatEther(BigInt(costToPropose))} ${nativeCurrency} to submit
           </Text>
           <Text font="lato" color="neutral" size="16">
             submit by {moment(voteStartDate).format("MMMM Do, YYYY, h:mm a")}
