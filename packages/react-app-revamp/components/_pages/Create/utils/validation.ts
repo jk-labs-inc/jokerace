@@ -30,21 +30,21 @@ interface SpecialStepConditions {
 }
 
 const titleValidation = (title: string) => {
-  if (!title || title.length >= CONTEST_TITLE_MAX_LENGTH) {
+  if (!title || title.length > CONTEST_TITLE_MAX_LENGTH) {
     return "Contest title should be no more than 30 characters";
   }
   return "";
 };
 
 const summaryValidation = (summary: string) => {
-  if (!summary || summary.length >= CONTEST_TITLE_MAX_LENGTH) {
+  if (!summary || summary.length > CONTEST_TITLE_MAX_LENGTH) {
     return "Contest summary should be no more than 30 characters";
   }
   return "";
 };
 
 const typeValidation = (type: string) => {
-  if (!type || type.length >= CONTEST_TYPE_MAX_LENGTH) {
+  if (!type || type.length > CONTEST_TYPE_MAX_LENGTH) {
     return "tag should be no more than 20 characters";
   }
   return "";
