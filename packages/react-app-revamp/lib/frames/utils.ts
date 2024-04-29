@@ -4,8 +4,8 @@ import { getEnsName } from "@wagmi/core";
 
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
-export type SupportedChainId = 1 | 10 | 8453 | 84532 | 7777777;
-export const SUPPORTED_CHAIN_IDS: SupportedChainId[] = [1, 10, 8453, 84532, 7777777];
+export type SupportedChainId = 1 | 10 | 8453 | 84532 | 7777777 | 666666666;
+export const SUPPORTED_CHAIN_IDS: SupportedChainId[] = [1, 10, 8453, 84532, 7777777, 666666666];
 
 export function isSupportedChainId(chainId: any): chainId is SupportedChainId {
   return SUPPORTED_CHAIN_IDS.includes(chainId);
