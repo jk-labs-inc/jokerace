@@ -90,7 +90,7 @@ export const saveImageToBucket = async ({ fileId, type, content }: SaveImageOpti
     return `https://images.jokerace.io/${fileId}`;
   } catch (error: any) {
     console.error(`Error uploading image to bucket: ${error.message}`);
-    throw new Error(`Failed to upload image with ID ${fileId} to bucket jokerace-images`);
+    throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }
 };
 
