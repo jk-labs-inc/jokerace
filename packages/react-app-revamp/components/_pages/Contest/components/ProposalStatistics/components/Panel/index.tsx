@@ -1,6 +1,4 @@
-import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { useProposalStore } from "@hooks/useProposal/store";
 import { FC } from "react";
 import ProposalStatisticsPanelSubmissionOpen from "./components/SubmissionsOpen";
 import ProposalStatisticsPanelVotingOpenOrClosed from "./components/VotingOpenOrClosed";
