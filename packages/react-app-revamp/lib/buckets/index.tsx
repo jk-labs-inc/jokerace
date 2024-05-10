@@ -5,7 +5,8 @@ import { Recipient } from "lib/merkletree/generateMerkleTree";
 
 const MERKLE_TREES_BUCKET = process.env.NEXT_PUBLIC_MERKLE_TREES_BUCKET as string;
 const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;
-const TEST_BUCKET = "test-bucket";
+
+const IMAGE_PUBLIC_URL = "https://images.jokerace.io";
 
 interface LoadFileOptions {
   fileId: string;
@@ -19,7 +20,7 @@ interface SaveFileOptions {
 interface SaveImageOptions {
   fileId: string;
   type: string;
-  content: string;
+  content: File;
 }
 
 /**
@@ -79,23 +80,20 @@ export const saveImageToBucket = async ({ fileId, type, content }: SaveImageOpti
   toastLoading("Uploading image...", false);
   try {
     const input = {
-      Bucket: TEST_BUCKET,
+      Bucket: IMAGE_UPLOAD_BUCKET,
       Key: fileId,
-      Body: JSON.stringify("test"),
-      ContentType: "application/json",
+      Body: content,
+      ContentType: type,
     };
-
-    console.log(input);
 
     const command = new PutObjectCommand(input);
     await s3.send(command);
     toastSuccess("Image uploaded successfully!");
 
-    return ``;
+    return `${IMAGE_PUBLIC_URL}/${fileId}`;
   } catch (error: any) {
     toastError("Failed to upload an image, please try again.");
-    console.error(`Error uploading image to bucket: ${error}`);
-    throw new Error(`Failed to upload image with ID ${fileId} to bucket ${TEST_BUCKET}`);
+    throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
   }
 };
 
