@@ -1,10 +1,11 @@
 import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
-import { toastSuccess } from "@components/UI/Toast";
+import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { s3 } from "@config/s3";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 
 const MERKLE_TREES_BUCKET = process.env.NEXT_PUBLIC_MERKLE_TREES_BUCKET as string;
 const IMAGE_UPLOAD_BUCKET = process.env.NEXT_PUBLIC_IMAGE_UPLOAD_BUCKET as string;
+const TEST_BUCKET = "test-bucket";
 
 interface LoadFileOptions {
   fileId: string;
@@ -18,7 +19,7 @@ interface SaveFileOptions {
 interface SaveImageOptions {
   fileId: string;
   type: string;
-  content: File;
+  content: string;
 }
 
 /**
@@ -75,22 +76,26 @@ export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Pr
  * @param options - Contains fileId, type and content as a Buffer,
  */
 export const saveImageToBucket = async ({ fileId, type, content }: SaveImageOptions): Promise<string> => {
+  toastLoading("Uploading image...", false);
   try {
     const input = {
-      Bucket: IMAGE_UPLOAD_BUCKET,
+      Bucket: TEST_BUCKET,
       Key: fileId,
-      Body: content,
-      ContentType: type,
+      Body: JSON.stringify("test"),
+      ContentType: "application/json",
     };
+
+    console.log(input);
 
     const command = new PutObjectCommand(input);
     await s3.send(command);
     toastSuccess("Image uploaded successfully!");
 
-    return `https://images.jokerace.io/${fileId}`;
+    return ``;
   } catch (error: any) {
-    console.error(`Error uploading image to bucket: ${error.message}`);
-    throw new Error(`Failed to upload image with ID ${fileId} to bucket ${IMAGE_UPLOAD_BUCKET}`);
+    toastError("Failed to upload an image, please try again.");
+    console.error(`Error uploading image to bucket: ${error}`);
+    throw new Error(`Failed to upload image with ID ${fileId} to bucket ${TEST_BUCKET}`);
   }
 };
 
