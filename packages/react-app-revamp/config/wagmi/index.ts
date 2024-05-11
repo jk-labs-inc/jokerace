@@ -35,6 +35,7 @@ import { bnb } from "./custom-chains/bnb";
 import { campTestnet } from "./custom-chains/campTestnet";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
+import { cyber } from "./custom-chains/cyber";
 import { degen } from "./custom-chains/degen";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
@@ -50,6 +51,7 @@ import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { gold } from "./custom-chains/gold";
+import { hedera } from "./custom-chains/hedera";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
@@ -170,6 +172,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   degen,
   gold,
   xLayer,
+  cyber,
+  hedera,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
