@@ -108,12 +108,13 @@ const ContestParameters = () => {
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-12">
         <p className="text-[20px] font-bold text-neutral-11">timeline</p>
-        <div className="flex flex-col gap-4 md:w-96">
+        <ContestTimeline />
+        <div className="flex flex-col lg:hidden gap-4">
           <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
             <p>submissions open:</p>
             <p>{formattedSubmissionsOpen}</p>
           </div>
-          <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
+          <div className="flex justify-between items-end text-[16px] font-bold  border-b border-neutral-10 pb-3">
             <p>
               submissions close/
               <br />
@@ -121,7 +122,7 @@ const ContestParameters = () => {
             </p>
             <p>{formattedVotesOpen}</p>
           </div>
-          <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
+          <div className="flex justify-between items-end text-[16px] font-bold  border-b border-neutral-10 pb-3">
             <p>voting closes:</p>
             <p>{formattedVotesClosing}</p>
           </div>
