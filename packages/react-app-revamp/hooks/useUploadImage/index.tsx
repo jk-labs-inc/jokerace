@@ -22,7 +22,7 @@ export const useUploadImageStore = create<UploadImageStore>((set, get) => ({
 
     switch (currentService) {
       case "s3":
-        return saveImageToBucket({ fileId, type: file.type, content: file });
+        return saveImageToBucket({ fileId, type: file.type, file: file });
       case "arweave":
         // logic for arweave ( when implemented )
         return null;

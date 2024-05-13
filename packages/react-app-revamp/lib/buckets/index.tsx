@@ -20,7 +20,7 @@ interface SaveFileOptions {
 interface SaveImageOptions {
   fileId: string;
   type: string;
-  content: File;
+  file: File;
 }
 
 /**
@@ -74,15 +74,15 @@ export const saveFileToBucket = async ({ fileId, content }: SaveFileOptions): Pr
 /**
  * Uploads an image file to the specified S3 bucket.
  *
- * @param options - Contains fileId, type and content as a Buffer,
+ * @param options - Contains fileId, type and content as a File,
  */
-export const saveImageToBucket = async ({ fileId, type, content }: SaveImageOptions): Promise<string> => {
+export const saveImageToBucket = async ({ fileId, type, file }: SaveImageOptions): Promise<string> => {
   toastLoading("Uploading image...", false);
   try {
     const input = {
       Bucket: IMAGE_UPLOAD_BUCKET,
       Key: fileId,
-      Body: content,
+      Body: file,
       ContentType: type,
     };
 
