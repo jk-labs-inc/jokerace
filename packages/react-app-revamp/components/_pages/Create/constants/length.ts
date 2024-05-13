@@ -1,3 +1,3 @@
-export const CONTEST_TYPE_MAX_LENGTH = 21;
+export const CONTEST_TYPE_MAX_LENGTH = 20;
 export const CONTEST_TITLE_MIN_LENGTH = 10;
-export const CONTEST_TITLE_MAX_LENGTH = 31;
+export const CONTEST_TITLE_MAX_LENGTH = 30;

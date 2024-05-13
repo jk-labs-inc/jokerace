@@ -73,10 +73,6 @@ const ContestTab = () => {
   return (
     <div>
       <div className="mt-8">
-        <ContestTimeline />
-      </div>
-
-      <div className="mt-8">
         <ContestPrompt prompt={contestPrompt} type="page" />
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && <div className="mt-8">{renderSubmitButton()}</div>}
