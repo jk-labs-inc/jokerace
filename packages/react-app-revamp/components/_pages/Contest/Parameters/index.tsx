@@ -14,6 +14,7 @@ import ContestParamatersCSVSubmitters from "./components/CSV/Submitters";
 import ContestParamatersCSVVoters from "./components/CSV/Voters";
 import ContestParametersSubmissionRequirements from "./components/Requirements/Submission";
 import ContestParametersVotingRequirements from "./components/Requirements/Voting";
+import ContestTimeline from "../components/Timeline";
 
 const UNLIMITED_PROPOSALS_PER_USER = 1000000;
 
@@ -112,7 +113,7 @@ const ContestParameters = () => {
             <p>submissions open:</p>
             <p>{formattedSubmissionsOpen}</p>
           </div>
-          <div className="flex justify-between items-end text-[16px] font-bold  border-b border-neutral-10 pb-3">
+          <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
             <p>
               submissions close/
               <br />
@@ -120,7 +121,7 @@ const ContestParameters = () => {
             </p>
             <p>{formattedVotesOpen}</p>
           </div>
-          <div className="flex justify-between items-end text-[16px] font-bold  border-b border-neutral-10 pb-3">
+          <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
             <p>voting closes:</p>
             <p>{formattedVotesClosing}</p>
           </div>
