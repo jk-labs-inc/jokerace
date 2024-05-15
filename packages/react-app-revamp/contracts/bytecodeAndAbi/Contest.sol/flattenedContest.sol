@@ -2247,7 +2247,10 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyJkLabsOrCreatorCanCancel();
     error ContestAlreadyCancelled();
 
+    error CannotUpdateAfterCompleted();
+
     error OnlyJkLabsCanAmend();
+    error OnlyCreatorCanAmend();
 
     constructor(string memory name_, string memory prompt_, ConstructorArgs memory constructorArgs_) {
         name = name_;
@@ -2626,12 +2629,20 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     function setSubmissionMerkleRoot(bytes32 newSubmissionMerkleRoot) public {
         if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        if (state() == ContestState.Completed) revert CannotUpdateAfterCompleted();
         submissionMerkleRoot = newSubmissionMerkleRoot;
     }
 
     function setVotingMerkleRoot(bytes32 newVotingMerkleRoot) public {
         if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        if (state() == ContestState.Completed) revert CannotUpdateAfterCompleted();
         votingMerkleRoot = newVotingMerkleRoot;
+    }
+
+    function setCreatorSplitDestination(address newCreatorSplitDestination) public {
+        if (msg.sender != creator) revert OnlyCreatorCanAmend();
+        if (state() == ContestState.Completed) revert CannotUpdateAfterCompleted();
+        creatorSplitDestination = newCreatorSplitDestination;
     }
 }
 
