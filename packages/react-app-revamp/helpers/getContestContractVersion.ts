@@ -53,6 +53,7 @@ import PayPerVoteContract from "@contracts/bytecodeAndAbi/Contest.4.25.payPerVot
 import CleanUpConstructorsContract from "@contracts/bytecodeAndAbi/Contest.4.26.cleanUpConstructors.sol/Contest.json";
 import AnyoneCanVoteContract from "@contracts/bytecodeAndAbi/Contest.4.27.anyoneCanVote.sol/Contest.json";
 import UpdateForgeLibsContract from "@contracts/bytecodeAndAbi/Contest.4.28.updateForgeLibs.sol/Contest.json";
+import SetSplitDestinationContract from "@contracts/bytecodeAndAbi/Contest.4.29.setSplitDestination.sol/Contest.json";
 import DeployedContestContract from "@contracts/bytecodeAndAbi/Contest.sol/Contest.json";
 import { ethers, utils } from "ethers";
 import { getEthersProvider } from "./ethers";
@@ -69,7 +70,9 @@ export async function getContestContractVersion(address: string, chainId: number
 
     const defaultReturn = { abi: null, version: "unknown" };
 
-    if (version === "4.28") {
+    if (version === "4.29") {
+      return { abi: SetSplitDestinationContract.abi, version };
+    } else if (version === "4.28") {
       return { abi: UpdateForgeLibsContract.abi, version };
     } else if (version === "4.27") {
       return { abi: AnyoneCanVoteContract.abi, version };
