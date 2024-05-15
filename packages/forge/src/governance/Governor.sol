@@ -458,10 +458,6 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
      * @dev Verifies that `account` is permissioned to vote with `totalVotes` via merkle proof.
      */
     function verifyVoter(address account, uint256 totalVotes, bytes32[] calldata proof) public {
-        if (isCommitReveal == 1) {
-            if (msg.sender != _officialCommitRevealModuleAddress()) revert VoterMustBeOfficialCommitRevealModule();
-            return; // all clear to vote if this is a commit-reveal contest and msg.sender is the official commit-reveal module
-        }
         if (votingMerkleRoot != 0 && !addressTotalVotesVerified[account]) {
             checkProof(account, totalVotes, proof, true); // will revert with NotInMerkle if not valid
             addressTotalVotes[account] = totalVotes;
@@ -498,7 +494,12 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 actionCost = _determineCorrectAmountSent(Actions.Vote, numVotes);
 
         if (proposalIsDeleted[proposalId]) revert CannotVoteOnDeletedProposal();
-        if (votingMerkleRoot != 0 && !addressTotalVotesVerified[msg.sender]) revert NeedToVoteWithProofFirst();
+        if (isCommitReveal == 1) {
+             // all clear to vote if this is a commit-reveal contest and msg.sender is the official commit-reveal module
+            if (msg.sender != _officialCommitRevealModuleAddress()) revert VoterMustBeOfficialCommitRevealModule();
+        } else {
+            if (votingMerkleRoot != 0 && !addressTotalVotesVerified[msg.sender]) revert NeedToVoteWithProofFirst();
+        }
 
         _distributeCost(actionCost);
 

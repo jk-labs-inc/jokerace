@@ -8,6 +8,7 @@ import "./governance/extensions/GovernorEngagement.sol";
 contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEngagement {
     error SortingAndDownvotingCannotBothBeEnabled();
     error PayPerVoteMustBeEnabledForAnyoneCanVote();
+    error VotingMerkleRootMustBeEmptyForCommitRevealContests();
 
     constructor(
         string memory _name,
@@ -25,6 +26,9 @@ contract Contest is GovernorCountingSimple, GovernorModuleRegistry, GovernorEnga
         }
         if (_votingMerkleRoot == 0 && _constructorIntArgs.payPerVote == 0) {
             revert PayPerVoteMustBeEnabledForAnyoneCanVote();
+        }
+        if (_constructorIntArgs.isCommitReveal == 1 && _votingMerkleRoot != 0) {
+            revert VotingMerkleRootMustBeEmptyForCommitRevealContests();
         }
     }
 }
