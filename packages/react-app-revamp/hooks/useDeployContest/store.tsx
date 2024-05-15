@@ -198,6 +198,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     votingRequirements: {
       type: "erc20",
+      nftType: "erc721",
       chain: "mainnet",
       tokenAddress: "",
       minTokensRequired: 0.01,
@@ -207,6 +208,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       name: "",
       symbol: "",
       logo: "",
+      nftTokenId: "",
     },
     submissionAllowlist: {
       manual: {},
@@ -221,6 +223,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     submissionRequirements: {
       type: "erc20",
+      nftType: "erc721",
       chain: "mainnet",
       tokenAddress: "",
       minTokensRequired: 0.01,
@@ -228,6 +231,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       name: "",
       symbol: "",
       logo: "",
+      nftTokenId: "",
     },
     submissionTypeOption: {
       value: SubmissionType.DifferentFromVoters,

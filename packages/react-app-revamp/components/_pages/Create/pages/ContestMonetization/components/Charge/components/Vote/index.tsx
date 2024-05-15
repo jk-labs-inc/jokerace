@@ -64,7 +64,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                       onChange={onCostToVoteChange}
                       unitLabel={chainUnitLabel}
                       errorMessage={costToVoteError}
-                      textClassName="font-bold text-center pl-0 pr-4"
+                      textClassName="font-bold text-center pl-0 pr-4 -ml-4"
                     />
                   ) : null}
                   {isAnyoneCanVote ? (
@@ -89,11 +89,11 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                   <p className="text-[20px] text-neutral-9">
                     {isMobile ? (
                       <>
-                        a charge per <i>each vote</i>
+                        a charge for <i>each vote</i>
                       </>
                     ) : (
                       <>
-                        a charge per <i>each vote</i> they deploy in contest
+                        a charge for <i>each vote</i> they deploy in contest
                       </>
                     )}
                   </p>
@@ -103,7 +103,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                       onChange={onCostToVoteChange}
                       unitLabel={chainUnitLabel}
                       errorMessage={costToVoteError}
-                      textClassName="font-bold text-center pl-0 pr-4"
+                      textClassName="font-bold text-center pl-0 pr-4 -ml-4"
                     />
                   ) : null}
                 </div>

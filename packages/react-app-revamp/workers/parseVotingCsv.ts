@@ -20,7 +20,7 @@ const processRowData = (row: any[]) => {
     error = "address";
   }
 
-  if (typeof numberOfVotes !== "number" || numberOfVotes >= MAX_VOTES || isNaN(numberOfVotes)) {
+  if (typeof numberOfVotes !== "number" || numberOfVotes >= MAX_VOTES || numberOfVotes <= 0 || isNaN(numberOfVotes)) {
     error = error ? "both" : "votes";
   }
 

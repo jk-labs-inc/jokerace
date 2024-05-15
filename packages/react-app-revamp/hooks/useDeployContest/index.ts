@@ -303,6 +303,7 @@ export function useDeployContest() {
       stateContestDeployment.setError(e.message);
       setIsLoading(false);
       toastError(`contest deployment failed to index in db`, e.message);
+      throw e;
     } finally {
       participantsWorker.terminate();
     }

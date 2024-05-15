@@ -17,13 +17,15 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
   };
 
   const onSubmissionsRequirementTokenChange = (token: TokenDetails) => {
-    const { address, symbol, name, logo } = token;
+    const { address, symbol, name, logo, nftTokenType } = token;
     setSubmissionRequirements({
       ...submissionRequirements,
       tokenAddress: address,
       symbol,
       name,
       logo,
+      nftType: nftTokenType ?? "",
+      nftTokenId: "",
     });
   };
 
@@ -31,6 +33,13 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
     setSubmissionRequirements({
       ...submissionRequirements,
       minTokensRequired: minTokens ?? 0,
+    });
+  };
+
+  const onSubmissionsRequirementTokenIdChange = (tokenId?: string) => {
+    setSubmissionRequirements({
+      ...submissionRequirements,
+      nftTokenId: tokenId,
     });
   };
 
@@ -45,11 +54,14 @@ const CreateSubmissionRequirementsNftSettings: FC<CreateSubmissionRequirementsNf
         symbol: submissionRequirements.symbol,
         name: submissionRequirements.name,
         logo: submissionRequirements.logo,
+        nftTokenType: submissionRequirements.nftType,
       }}
       minTokensRequired={submissionRequirements.minTokensRequired}
+      tokenId={submissionRequirements.nftTokenId}
       onChainChange={onSubmissionsRequirementChainChange}
       onTokenChange={onSubmissionsRequirementTokenChange}
       onMinTokensRequiredChange={onSubmissionsRequirementMinTokensRequiredChange}
+      onTokenIdChange={onSubmissionsRequirementTokenIdChange}
     />
   );
 };

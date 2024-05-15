@@ -7,13 +7,14 @@ import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { formatEther } from "ethers/lib/utils";
 import moment from "moment";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import ContestParamatersCSVSubmitters from "./components/CSV/Submitters";
 import ContestParamatersCSVVoters from "./components/CSV/Voters";
 import ContestParametersSubmissionRequirements from "./components/Requirements/Submission";
 import ContestParametersVotingRequirements from "./components/Requirements/Voting";
+import ContestTimeline from "../components/Timeline";
 
 const UNLIMITED_PROPOSALS_PER_USER = 1000000;
 
@@ -29,8 +30,8 @@ const ContestParameters = () => {
     anyoneCanVote,
     charge,
   } = useContestStore(state => state);
-  const asPath = useRouter().asPath;
-  const { chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
   const nativeCurrency = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency;
   const { address } = useAccount();
   const { openConnectModal } = useConnectModal();
@@ -106,8 +107,9 @@ const ContestParameters = () => {
   return (
     <div className="flex flex-col gap-16">
       <div className="flex flex-col gap-12">
-        <p className="text-[24px] font-bold text-neutral-11">timeline</p>
-        <div className="flex flex-col gap-4 md:w-96">
+        <p className="text-[20px] font-bold text-neutral-11">timeline</p>
+        <ContestTimeline />
+        <div className="flex flex-col lg:hidden gap-4">
           <div className="flex justify-between items-end text-[16px] font-bold border-b border-neutral-10 pb-3">
             <p>submissions open:</p>
             <p>{formattedSubmissionsOpen}</p>
@@ -127,7 +129,7 @@ const ContestParameters = () => {
         </div>
       </div>
       <div className="flex flex-col gap-12">
-        <p className="text-[24px] font-bold text-neutral-11">submissions</p>
+        <p className="text-[20px] font-bold text-neutral-11">submissions</p>
         <ul className="pl-4 text-[16px] font-bold">
           <li className="list-disc">
             qualified wallets can enter{" "}
@@ -149,7 +151,7 @@ const ContestParameters = () => {
         </ul>
       </div>
       <div className="flex flex-col gap-12">
-        <p className="text-[24px] font-bold text-neutral-11">voting</p>
+        <p className="text-[20px] font-bold text-neutral-11">voting</p>
         <ul className="pl-4 text-[16px] font-bold">
           <li className="list-disc">{address ? qualifyToVoteMessage : walletNotConnected}</li>
           {anyoneCanVote ? (

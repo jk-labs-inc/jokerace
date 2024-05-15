@@ -1,12 +1,14 @@
 import EthereumDeploymentModal from "@components/UI/Deployment/Ethereum";
 import { useDeployContest } from "@hooks/useDeployContest";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { fetchChargeDetails } from "lib/monetization";
 import { useCallback, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { steps } from "../..";
 import CreateContestButton from "../../components/Buttons/Submit";
 import StepCircle from "../../components/StepCircle";
+import { VOTING_STEP } from "../ContestParams";
 import CreateContestConfirmAllowlists from "./components/Allowlists";
 import CreateContestConfirmCustomization from "./components/Customization";
 import CreateContestConfirmDescription from "./components/Description";
@@ -15,6 +17,7 @@ import CreatContestConfirmSummary from "./components/Summary";
 import CreateContestConfirmTag from "./components/Tag";
 import CreateContestConfirmTiming from "./components/Timing";
 import CreateContestConfirmTitle from "./components/Title";
+import { toastError } from "@components/UI/Toast";
 
 export enum Steps {
   ContestTitle = 0,
@@ -31,7 +34,7 @@ export enum Steps {
 const ETHEREUM_MAINNET_CHAIN_ID = 1;
 
 const CreateContestConfirm = () => {
-  const { chainId } = useAccount();
+  const { chainId, chain } = useAccount();
   const { ...state } = useDeployContestStore(state => state);
   const { deployContest } = useDeployContest();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
@@ -54,6 +57,25 @@ const CreateContestConfirm = () => {
       state.resetMobileStepTitle();
     }
   }, [onDeployHandler, state]);
+
+  useEffect(() => {
+    if (!chain) return;
+
+    const fetchDetails = async () => {
+      try {
+        const { isError, minCostToPropose, minCostToVote } = await fetchChargeDetails(chain.name.toLowerCase());
+
+        if (isError || !minCostToPropose || !minCostToVote) {
+          toastError(`${chain.name} chain is not supported for anyone to vote.`);
+          state.setStep(VOTING_STEP);
+        }
+      } catch (error) {
+        state.setStep(VOTING_STEP);
+      }
+    };
+
+    fetchDetails();
+  }, [chain, state]);
 
   // Mobile listeners
   useEffect(() => {

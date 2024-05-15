@@ -5,7 +5,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useError } from "@hooks/useError";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { formatEther, formatUnits } from "viem";
 import { useBalance, useReadContract, useToken } from "wagmi";
@@ -42,8 +42,8 @@ export const useDistributeRewards = (
   tokenType: TokenType,
   tokenAddress?: string,
 ) => {
-  const { asPath } = useRouter();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { setIsLoading, refetch, setRefetch } = useDistributeRewardStore(state => state);
   const tokenDataRes = useToken({ address: tokenAddress as `0x${string}`, chainId });
   const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;

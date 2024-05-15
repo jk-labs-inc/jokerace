@@ -1,5 +1,4 @@
 import DialogModalProposal from "@components/_pages/DialogModalProposal";
-import { Proposal } from "@components/_pages/ProposalContent";
 import { ProposalData } from "lib/proposal";
 import { FC } from "react";
 
@@ -7,6 +6,7 @@ interface SubmissionPageDesktopLayoutProps {
   contestInfo: {
     address: string;
     chain: string;
+    chainId: number;
     version: string;
   };
   proposalId: string;

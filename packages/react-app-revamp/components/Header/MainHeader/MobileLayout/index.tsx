@@ -12,7 +12,7 @@ import {
 import { HomeIcon, PencilAltIcon, SearchIcon } from "@heroicons/react/outline";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC } from "react";
 
 interface MainHeaderMobileLayoutProps {
@@ -30,12 +30,12 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
   openConnectModal,
   openAccountModal,
 }) => {
-  const router = useRouter();
+  const pathname = usePathname();
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const displayProfile = showProfile && !router.pathname.includes("user");
-  const isActive = (route: string) => (router.pathname === route ? "text-primary-10 transition-colors font-bold" : "");
+  const displayProfile = showProfile && !pathname?.includes("user");
+  const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
-    routes.includes(router.pathname) ? "text-primary-10 transition-colors font-bold" : "";
+    routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
   const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 

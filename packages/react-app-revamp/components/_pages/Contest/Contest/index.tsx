@@ -6,7 +6,6 @@ import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
-import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useState } from "react";
@@ -28,7 +27,6 @@ const ContestTab = () => {
     currentUserProposalCount,
     isCurrentUserSubmitQualificationLoading,
   } = useUserStore(state => state);
-  const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
   const { isListProposalsLoading, isListProposalsSuccess } = useProposalStore(state => state);
   const { isLoading: isContestLoading, isSuccess: isContestSuccess } = useContest();
   const {
@@ -74,10 +72,6 @@ const ContestTab = () => {
 
   return (
     <div>
-      <div className="mt-8">
-        <ContestTimeline />
-      </div>
-
       <div className="mt-8">
         <ContestPrompt prompt={contestPrompt} type="page" />
       </div>

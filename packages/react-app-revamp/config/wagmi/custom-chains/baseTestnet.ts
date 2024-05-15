@@ -1,7 +1,7 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
 export const baseTestnet: Chain = {
-  id: 84531,
+  id: 84532,
   name: "baseTestnet",
   iconUrl: "/base.svg",
   nativeCurrency: {
@@ -11,15 +11,15 @@ export const baseTestnet: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://goerli.base.org"],
+      http: ["https://sepolia.base.org"],
     },
     default: {
-      http: ["https://goerli.base.org"],
+      http: ["https://sepolia.base.org"],
     },
   },
   blockExplorers: {
-    etherscan: { name: "Base Testnet Scan", url: "https://goerli.basescan.org/" },
-    default: { name: "Base Testnet Scan", url: "https://goerli.basescan.org/" },
+    etherscan: { name: "Base Testnet Scan", url: "https://sepolia.basescan.org/" },
+    default: { name: "Base Testnet Scan", url: "https://sepolia.basescan.org/" },
   },
   testnet: true,
 };

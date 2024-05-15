@@ -5,7 +5,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
 import { ChevronUpIcon, RefreshIcon } from "@heroicons/react/outline";
 import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVotes";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 
@@ -47,8 +47,8 @@ const LoadingSkeleton: FC<{ count: number }> = ({ count }) => (
 );
 
 export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, votedAddresses }) => {
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;

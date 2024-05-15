@@ -3,7 +3,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import { readContract } from "@wagmi/core";
 import { loadFileFromBucket } from "lib/buckets";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Address } from "viem";
 import { useAccount } from "wagmi";
@@ -20,8 +20,8 @@ type GenerateProofResult = any[];
 const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
 export function useGenerateProof() {
-  const { asPath } = useRouter();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { contestAbi: abi, anyoneCanVote } = useContestStore(state => state);
   const { connector } = useAccount();
   const [chainId, setChainId] = useState(

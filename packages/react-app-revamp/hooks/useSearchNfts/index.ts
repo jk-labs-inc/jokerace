@@ -21,6 +21,10 @@ const getAlchemyBaseUrlForContractMetadata = (chain: string) => {
   return `https://${subdomain}.g.alchemy.com/nft/v3/${alchemyApiKey}/getContractMetadata`;
 };
 
+const NOT_SUPPORTED_NFT_STANDARD = "NO_SUPPORTED_NFT_STANDARD";
+const NOT_A_CONTRACT = "NOT_A_CONTRACT";
+const UNKNOWN = "UNKNOWN";
+
 export interface NFTMetadata {
   address: string;
   name: string;
@@ -28,6 +32,11 @@ export interface NFTMetadata {
   imageUrl: string;
   totalSupply: string | null;
   isVerified: boolean;
+  tokenType: string;
+}
+
+function generateSymbolFromName(name: string): string {
+  return name.substring(0, 4).toUpperCase();
 }
 
 const useSearchNfts = (chain: string, query: string) => {
@@ -52,15 +61,20 @@ const useSearchNfts = (chain: string, query: string) => {
     const data = await response.json();
 
     if (data.contracts && data.contracts.length > 0) {
-      contracts = data.contracts.map((contract: any) => ({
+      const filteredContracts = data.contracts.filter(
+        (contract: { tokenType: string }) => contract.tokenType !== NOT_SUPPORTED_NFT_STANDARD,
+      );
+
+      contracts = filteredContracts.map((contract: any) => ({
         address: contract.address,
         name: contract.openSeaMetadata?.collectionName ? contract.openSeaMetadata.collectionName : contract.name,
-        symbol: contract.symbol,
+        symbol: contract.symbol ? contract.symbol : generateSymbolFromName(contract.name),
         totalSupply: contract.totalSupply,
+        tokenType: contract.tokenType,
         imageUrl: contract.openSeaMetadata?.imageUrl
-          ? contract.openSeaMetadata?.imageUrl
+          ? contract.openSeaMetadata.imageUrl
           : "/contest/mona-lisa-moustache.png",
-        isVerified: contract.openSeaMetadata?.safelistRequestStatus === "verified" ? true : false,
+        isVerified: contract.openSeaMetadata?.safelistRequestStatus === "verified",
       }));
     } else if (isQueryTokenAddress) {
       const contractMetadataUrl = getAlchemyBaseUrlForContractMetadata(chain);
@@ -74,7 +88,11 @@ const useSearchNfts = (chain: string, query: string) => {
       if (contractResponse.ok) {
         const contract = await contractResponse.json();
 
-        if (contract.tokenType === "NOT_A_CONTRACT") {
+        if (
+          contract.tokenType === NOT_A_CONTRACT ||
+          contract.tokenType === NOT_SUPPORTED_NFT_STANDARD ||
+          contract.tokenType === UNKNOWN
+        ) {
           return [];
         }
 
@@ -82,12 +100,13 @@ const useSearchNfts = (chain: string, query: string) => {
           {
             address: contract.address,
             name: contract.openSeaMetadata?.collectionName ? contract.openSeaMetadata.collectionName : contract.name,
-            symbol: contract.symbol,
+            symbol: contract.symbol ? contract.symbol : generateSymbolFromName(contract.name),
             totalSupply: contract.totalSupply,
+            tokenType: contract.tokenType,
             imageUrl: contract.openSeaMetadata?.imageUrl
               ? contract.openSeaMetadata?.imageUrl
               : "/contest/mona-lisa-moustache.png",
-            isVerified: contract.openSeaMetadata?.safelistRequestStatus === "verified" ? true : false,
+            isVerified: contract.openSeaMetadata?.safelistRequestStatus === "verified",
           },
         ];
       }

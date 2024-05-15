@@ -1,6 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC } from "react";
 import ProposalStatisticsTotalVotes from "./components/TotalVotes";
 import ProposalStatisticsTotalVotesCast from "./components/TotalVotesCast";
@@ -11,8 +11,8 @@ interface ProposalStatisticsPanelVotingOpenOrClosedProps {
 const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotingOpenOrClosedProps> = ({
   submissionsCount,
 }) => {
-  const asPath = useRouter().asPath;
-  const { address, chainName } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { address, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
@@ -25,7 +25,7 @@ const ProposalStatisticsPanelVotingOpenOrClosed: FC<ProposalStatisticsPanelVotin
       <span className="hidden md:block">&#8226;</span>
       <div className="flex gap-1 items-center text-[16px] text-neutral-11">
         <ProposalStatisticsTotalVotesCast address={address} chainId={chainId} />
-        <ProposalStatisticsTotalVotes address={address} chainId={chainId} /> votes deployed in contest
+        <ProposalStatisticsTotalVotes address={address} chainId={chainId} /> votes cast in contest
       </div>
     </div>
   );

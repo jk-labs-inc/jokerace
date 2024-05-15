@@ -1,3 +1,4 @@
+"use client";
 import Button from "@components/UI/Button";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import {
@@ -7,7 +8,7 @@ import {
   ROUTE_VIEW_USER_VOTING,
 } from "@config/routes";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { ReactNode, useEffect, useRef, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
@@ -37,15 +38,22 @@ const navLinks = [
   },
 ];
 
+function isActiveLink(pathname: string, hrefTemplate: string, address: string) {
+  const actualHref = hrefTemplate.replace("[address]", address);
+
+  return pathname === actualHref;
+}
+
 const LayoutUser = (props: LayoutUserProps) => {
   const { children, address } = props;
-  const { pathname } = useRouter();
+  const pathname = usePathname();
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isMobile = useMediaQuery({ maxWidth: "768px" });
 
   useEffect(() => {
-    const activeTabIndex = navLinks.findIndex(link => link.href === pathname);
+    const activeTabIndex = navLinks.findIndex(link => isActiveLink(pathname ?? "", link.href, address));
+
     const activeTabRef = tabRefs.current[activeTabIndex];
 
     if (activeTabRef) {
@@ -54,7 +62,7 @@ const LayoutUser = (props: LayoutUserProps) => {
         width: `${activeTabRef.offsetWidth}px`,
       });
     }
-  }, [pathname]);
+  }, [address, pathname]);
 
   return (
     <>
@@ -81,13 +89,14 @@ const LayoutUser = (props: LayoutUserProps) => {
                   <div
                     ref={el => (tabRefs.current[index] = el)}
                     className={`font-sabo py-2 text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
-                      pathname === link.href ? "text-primary-10" : "text-neutral-11"
+                      isActiveLink(pathname ?? "", link.href, address) ? "text-primary-10" : "text-neutral-11"
                     }`}
                   >
                     {link.label}
                   </div>
                 </Link>
               ))}
+
               <div className="absolute left-0 w-full h-1 bottom-0 bg-neutral-0"></div>
               <div
                 style={indicatorStyle}

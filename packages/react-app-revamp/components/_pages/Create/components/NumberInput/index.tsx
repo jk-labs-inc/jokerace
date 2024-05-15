@@ -1,4 +1,4 @@
-import { ChangeEventHandler, FC, useEffect, useState } from "react";
+import { CSSProperties, ChangeEventHandler, FC, useEffect, useState } from "react";
 
 interface CreateNumberInputProps {
   value?: number;
@@ -10,6 +10,7 @@ interface CreateNumberInputProps {
   textClassName?: string;
   onChange?: (value: number | null) => void;
   unitLabel?: string;
+  style?: CSSProperties;
 }
 
 const CreateNumberInput: FC<CreateNumberInputProps> = ({
@@ -22,8 +23,9 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
   textClassName,
   unitLabel,
   onChange,
+  style,
 }) => {
-  const [value, setValue] = useState<number | "">(propValue ?? 0);
+  const [value, setValue] = useState<number | "">(propValue ?? "");
 
   useEffect(() => {
     if (propValue === undefined) return;
@@ -66,8 +68,9 @@ const CreateNumberInput: FC<CreateNumberInputProps> = ({
         } ${className}`}
       >
         <input
+          style={style}
           type="number"
-          className={`text-[20px] w-full h-full outline-none bg-transparent pl-4 text-true-black ${textClassName}`}
+          className={`text-[20px] w-full h-full outline-none bg-transparent pl-4 text-true-black  placeholder-neutral-10 ${className} ${textClassName} `}
           onKeyDown={handleKeyDown}
           onInput={handleInput}
           onChange={handleChange}

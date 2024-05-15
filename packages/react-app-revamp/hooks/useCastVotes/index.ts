@@ -15,7 +15,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { readContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { parseUnits } from "ethers/lib/utils";
 import { addUserActionForAnalytics } from "lib/analytics/participants";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { formatEther } from "viem";
 import { useAccount } from "wagmi";
 import { useCastVotesStore } from "./store";
@@ -36,12 +36,12 @@ export function useCastVotes() {
     setTransactionData,
   } = useCastVotesStore(state => state);
   const { address: userAddress, chain } = useAccount();
-  const { asPath } = useRouter();
+  const asPath = usePathname();
   const { updateCurrentUserVotes } = useUser();
   const { currentUserTotalVotesAmount } = useUserStore(state => state);
   const { getProofs } = useGenerateProof();
   const { error: errorMessage, handleError } = useError();
-  const { address: contestAddress, chainName } = extractPathSegments(asPath);
+  const { address: contestAddress, chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;

@@ -1,7 +1,6 @@
 import { Chain, connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   argentWallet,
-  bitgetWallet,
   coinbaseWallet,
   imTokenWallet,
   metaMaskWallet,
@@ -10,11 +9,11 @@ import {
   phantomWallet,
   rabbyWallet,
   rainbowWallet,
+  safeWallet,
   tahoWallet,
   trustWallet,
   walletConnectWallet,
 } from "@rainbow-me/rainbowkit/wallets";
-
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
 import { aevo } from "./custom-chains/aevo";
@@ -33,22 +32,26 @@ import { berachainTestnet } from "./custom-chains/berachainTestnet";
 import { blast } from "./custom-chains/blast";
 import { blastTestnet } from "./custom-chains/blastTestnet";
 import { bnb } from "./custom-chains/bnb";
+import { campTestnet } from "./custom-chains/campTestnet";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
-import { degenChain } from "./custom-chains/degenChain";
+import { cyber } from "./custom-chains/cyber";
+import { degen } from "./custom-chains/degen";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
 import { evmos } from "./custom-chains/evmos";
 import { evmosTestnet } from "./custom-chains/evmosTestnet";
 import { fantom } from "./custom-chains/fantom";
 import { fantomTestnet } from "./custom-chains/fantomTestnet";
+import { fhenixTestnet } from "./custom-chains/fhenix";
 import { frameTestnet } from "./custom-chains/frameTestnet";
 import { fraxtal } from "./custom-chains/fraxtal";
 import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
-import { goerli } from "./custom-chains/goerli";
+import { gold } from "./custom-chains/gold";
+import { hedera } from "./custom-chains/hedera";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
@@ -73,8 +76,8 @@ import { morphTestnet } from "./custom-chains/morphTestnet";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
-import { neonDevnet } from "./custom-chains/neonDevnet";
 import { neon } from "./custom-chains/neon";
+import { neonDevnet } from "./custom-chains/neonDevnet";
 import { optimism } from "./custom-chains/optimism";
 import { optimismTestnet } from "./custom-chains/optimismTestnet";
 import { palm } from "./custom-chains/palm";
@@ -99,7 +102,8 @@ import { syndicateFrame } from "./custom-chains/syndicateFrame";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
-import { x1Testnet } from "./custom-chains/x1Testnet";
+import { xLayer } from "./custom-chains/xLayer";
+import { xLayerTestnet } from "./custom-chains/xLayerTestnet";
 import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
@@ -139,7 +143,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   proteus,
   nautilusChain,
   ronin,
-  degenChain,
   fuse,
   kroma,
   scroll,
@@ -166,9 +169,13 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zkFair,
   inEvm,
   neon,
+  degen,
+  gold,
+  xLayer,
+  cyber,
+  hedera,
   polygonTestnet,
   sepolia,
-  goerli,
   polygonZkTestnet,
   baseTestnet,
   scrollTestnet,
@@ -189,7 +196,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   roninTestnet,
   scrollSepoliaTestnet,
   artheraTestnet,
-  x1Testnet,
+  xLayerTestnet,
   neonDevnet,
   frameTestnet,
   fantomTestnet,
@@ -204,6 +211,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   merlinTestnet,
   zkFairTestnet,
   inEvmTestnet,
+  campTestnet,
+  fhenixTestnet,
   mainnet,
 ];
 
@@ -227,9 +236,9 @@ const connectors = connectorsForWallets(
         trustWallet,
         imTokenWallet,
         omniWallet,
-        bitgetWallet,
         rabbyWallet,
         phantomWallet,
+        safeWallet,
       ],
     },
   ],

@@ -5,7 +5,7 @@ import { useUserStore } from "@hooks/useUser/store";
 import { load } from "cheerio";
 import { Interweave, Node } from "interweave";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { FC, ReactNode, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Tweet } from "react-tweet";
@@ -42,8 +42,8 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
 
 const ProposalContent: FC<ProposalContentProps> = ({ proposal }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { asPath } = useRouter();
-  const { chainName, address: contestAddress } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const [isVotingModalOpen, setIsVotingModalOpen] = useState(false);
   const { currentUserAvailableVotesAmount } = useUserStore(state => state);
   const canVote = currentUserAvailableVotesAmount > 0;

@@ -1,7 +1,8 @@
 import { ProposalData, fetchProposalData } from "lib/proposal";
 import { useCallback, useEffect, useState } from "react";
+import { Abi } from "viem";
 
-const useFetchProposalData = (abi: any, version: string, address: string, chainId: number, submission: string) => {
+const useFetchProposalData = (abi: Abi, version: string, address: string, chainId: number, submission: string) => {
   const [data, setData] = useState<ProposalData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);

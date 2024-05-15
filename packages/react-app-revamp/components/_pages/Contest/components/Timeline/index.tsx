@@ -46,22 +46,16 @@ const ContestTimeline = () => {
     <div className="hidden lg:grid grid-cols-3 lg:gap-0">
       {stages.map((stage, index) => (
         <div key={index} className={`opacity-${currentStageIndex === index ? "100" : "50"} text-neutral-11`}>
-          <div className="text-[16px] font-bold mb-1">
-            {index === currentStageIndex
-              ? "Now"
-              : currentStageIndex > index && currentStageIndex !== stages.length - 1
-              ? "Previous"
-              : moment(stage.date).format("MMMM D, h:mm a")}
-          </div>
+          <div className="text-[16px] font-bold mb-1">{moment(stage.date).format("MMMM D, h:mm a")}</div>
           <div className="h-[1px] bg-neutral-11"></div>
           <div className="text-[16px] font-bold mt-1">
             {index === currentStageIndex
               ? stage.action
               : currentStageIndex === stages.length - 1 && index < currentStageIndex
-              ? index === 0
-                ? "Submissions period"
-                : "Voting period"
-              : stage.name}
+                ? index === 0
+                  ? "Submissions period"
+                  : "Voting period"
+                : stage.name}
           </div>
         </div>
       ))}

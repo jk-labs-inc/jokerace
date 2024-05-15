@@ -10,10 +10,22 @@ const nextConfig = {
   },
   webpack: config => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
+    config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
   images: {
-    domains: ["lens.infura-ipfs.io", "ik.imagekit.io"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lens.infura-ipfs.io",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "ik.imagekit.io",
+        pathname: "/**",
+      },
+    ],
   },
   transpilePackages: ["react-tweet"],
 };

@@ -1,7 +1,7 @@
+"use client";
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import ShareDropdown from "@components/Share";
-import Button from "@components/UI/Button";
 import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
@@ -12,42 +12,35 @@ import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
 import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
-import { ROUTE_CONTEST_PROPOSAL, ROUTE_VIEW_CONTESTS } from "@config/routes";
+import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { generateUrlContest } from "@helpers/share";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { RefreshIcon } from "@heroicons/react/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
-import { CastVotesWrapper } from "@hooks/useCastVotes/store";
 import { useContest } from "@hooks/useContest";
-import { ContestWrapper, ErrorType, useContestStore } from "@hooks/useContest/store";
+import { useContestStore } from "@hooks/useContest/store";
 import useContestEvents from "@hooks/useContestEvents";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { ContractFactoryWrapper } from "@hooks/useContractFactory";
-import { DeleteProposalWrapper } from "@hooks/useDeleteProposal/store";
-import { ProposalWrapper } from "@hooks/useProposal/store";
-import { RewardsWrapper } from "@hooks/useRewards/store";
 import useUser from "@hooks/useUser";
-import { UserWrapper, useUserStore } from "@hooks/useUser/store";
 import moment from "moment";
 import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
-import { getLayout as getBaseLayout } from "./../LayoutBase";
 import LayoutViewContestError from "./components/Error";
+import ContestExtensions from "@components/_pages/Contest/Extensions";
 
-const LayoutViewContest = (props: any) => {
-  const { asPath, pathname, reload } = useRouter();
+const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
+  const { refresh } = useRouter();
+  const pathname = usePathname();
   const url = useUrl();
   const { address: accountAddress } = useAccount();
-  const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
+  const { chainName: chainNameFromUrl, address: addressFromUrl } = extractPathSegments(pathname ?? "");
   const showRewards = useShowRewardsStore(state => state.showRewards);
   const { isLoading, address, fetchContestInfo, isSuccess, error, chainName } = useContest();
   const {
@@ -146,6 +139,12 @@ const LayoutViewContest = (props: any) => {
             <ContestParameters />
           </div>
         );
+      case Tab.Extensions:
+        return (
+          <div className="mt-8 animate-appear">
+            <ContestExtensions />
+          </div>
+        );
       default:
         break;
     }
@@ -192,7 +191,7 @@ const LayoutViewContest = (props: any) => {
                       <span>Let&apos;s refresh!</span>
                       <p className="font-normal">Looks like live updates were frozen.</p>
                     </div>
-                    <ButtonV3 colorClass="bg-gradient-create" onClick={() => reload()}>
+                    <ButtonV3 colorClass="bg-gradient-create" onClick={() => refresh()}>
                       Refresh
                     </ButtonV3>
                   </div>
@@ -262,7 +261,7 @@ const LayoutViewContest = (props: any) => {
                   </div>
                   {renderTabs}
 
-                  {props.children}
+                  {children}
 
                   {showRewards && <CreateContestRewards />}
                 </div>
@@ -275,32 +274,4 @@ const LayoutViewContest = (props: any) => {
   );
 };
 
-export const getLayout = (page: any) => {
-  return getBaseLayout(
-    <ErrorBoundary
-      fallbackRender={({ error, resetErrorBoundary }) => (
-        <div role="alert" className="container m-auto sm:text-center">
-          <p className="text-2xl font-black mb-3 text-primary-10">Something went wrong</p>
-          <p className="text-neutral-12 mb-6">{error?.message ?? error}</p>
-          <Button onClick={resetErrorBoundary}>Try again</Button>
-        </div>
-      )}
-    >
-      <ContestWrapper>
-        <ProposalWrapper>
-          <DeleteProposalWrapper>
-            <UserWrapper>
-              <CastVotesWrapper>
-                <ContractFactoryWrapper>
-                  <RewardsWrapper>
-                    <LayoutViewContest>{page}</LayoutViewContest>
-                  </RewardsWrapper>
-                </ContractFactoryWrapper>
-              </CastVotesWrapper>
-            </UserWrapper>
-          </DeleteProposalWrapper>
-        </ProposalWrapper>
-      </ContestWrapper>
-    </ErrorBoundary>,
-  );
-};
+export default LayoutViewContest;

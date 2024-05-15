@@ -7,7 +7,7 @@ import { useContestStore } from "@hooks/useContest/store";
 import { getGasPrice, readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { fetchUserBalance } from "lib/fetchUserBalance";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { useUserStore } from "./store";
@@ -17,8 +17,8 @@ const ANYONE_CAN_VOTE_VERSION = "4.27";
 
 export function useUser() {
   const { setVotingMerkleRoot, setSubmissionsMerkleRoot, setAnyoneCanVote } = useContestStore(state => state);
-  const { asPath } = useRouter();
-  const { chainName, address } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName, address } = extractPathSegments(asPath ?? "");
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,
@@ -41,7 +41,6 @@ export function useUser() {
   } = useUserStore(state => state);
 
   const checkIfCurrentUserQualifyToSubmit = async () => {
-    if (!userAddress) return;
     setIsCurrentUserSubmitQualificationLoading(true);
 
     const { abi } = await getContestContractVersion(address, chainId);
@@ -77,6 +76,8 @@ export function useUser() {
     const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
     setSubmissionsMerkleRoot(submissionMerkleRoot);
+
+    if (!userAddress) return;
 
     if (anyoneCanSubmit) {
       try {
@@ -152,8 +153,6 @@ export function useUser() {
    * Check if the current user qualify to vote for this contest
    */
   async function checkIfCurrentUserQualifyToVote() {
-    if (!userAddress) return;
-
     setIsCurrentUserVoteQualificationLoading(true);
 
     const { abi, version } = await getContestContractVersion(address, chainId);
@@ -175,6 +174,8 @@ export function useUser() {
     const anyoneCanVote = votingMerkleRoot === EMPTY_ROOT;
     setVotingMerkleRoot(votingMerkleRoot);
     setAnyoneCanVote(anyoneCanVote);
+
+    if (!userAddress) return;
 
     if (compareVersions(version, ANYONE_CAN_VOTE_VERSION) >= 0) {
       if (anyoneCanVote) {

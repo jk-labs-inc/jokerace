@@ -1,11 +1,13 @@
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { toastError } from "@components/UI/Toast";
-import { config } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { readContract } from "@wagmi/core";
 import { ethers } from "ethers";
+import { usePathname } from "next/navigation";
 import { FC, useRef } from "react";
 import { toast } from "react-toastify";
 import { erc20Abi } from "viem";
@@ -18,6 +20,11 @@ interface CreateRewardsFundingProps {
 }
 
 const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFirstTime = true }) => {
+  const asPath = usePathname();
+  const { chainName } = extractPathSegments(asPath ?? "");
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+  )?.[0]?.id;
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
   const { getContestRewardsAddress } = useRewardsModule();
   const { address } = useAccount();
@@ -29,6 +36,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
       const decimals = (await readContract(config, {
         address: tokenAddress as `0x${string}`,
         abi: erc20Abi,
+        chainId: chainId,
         functionName: "decimals",
       })) as number;
 

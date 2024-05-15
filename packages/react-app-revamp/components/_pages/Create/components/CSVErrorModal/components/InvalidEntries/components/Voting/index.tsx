@@ -4,7 +4,7 @@ import ScrollableTableBody from "@components/_pages/Create/pages/ContestVoting/c
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
 import { Dialog } from "@headlessui/react";
 import Image from "next/image";
-import { FC, useState } from "react";
+import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
 
 interface CSVErrorModalInvalidEntriesVotingProps {
@@ -22,7 +22,6 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
   onChange,
   onClick,
 }) => {
-  const [allEntries, setAllEntries] = useState<Array<VotingFieldObject>>([]);
   const allFieldsWithoutErrors = fields.every(field => !field.error);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const addressRowTitle = isMobile ? "ADDRESS (starting 0x)" : "ADDRESS (starting with 0x)";
@@ -42,7 +41,6 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
     }
 
     let newFields = [...fields.slice(0)];
-    let newAllEntries = [...allEntries.slice(0)];
 
     lines.forEach((line, lineIndex) => {
       const [address = "", votes = ""] = line.split("\t").map(str => str.trim());
@@ -50,15 +48,12 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
 
       if (index + lineIndex < newFields.length) {
         newFields[index + lineIndex] = { address, votes, error };
-        newAllEntries[index + lineIndex] = { address, votes, error };
       } else {
         newFields.push({ address, votes, error });
-        newAllEntries.push({ address, votes, error });
       }
     });
 
-    setAllEntries(newAllEntries);
-    onChange?.(newAllEntries);
+    onChange?.(newFields);
   };
 
   const handleChange = (index: number, field: string, value: string) => {
@@ -69,25 +64,14 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
 
     updatedField.error = error;
 
-    let updatedAllEntries = [...allEntries.slice(0)];
+    let updatedAllEntries = [...fields.slice(0)];
     updatedAllEntries[index] = updatedField;
-
-    setAllEntries(updatedAllEntries);
 
     onChange?.(updatedAllEntries);
   };
 
   const handleDelete = (index: number) => {
-    let newFields = [...fields.slice(0)];
-    let newAllEntries = [...allEntries.slice(0)];
-
-    if (index < newAllEntries.length) {
-      newAllEntries.splice(index, 1);
-    }
-
-    newFields.splice(index, 1);
-
-    setAllEntries(newAllEntries);
+    let newAllEntries = fields.filter((_, i) => i !== index);
     onChange?.(newAllEntries);
   };
 

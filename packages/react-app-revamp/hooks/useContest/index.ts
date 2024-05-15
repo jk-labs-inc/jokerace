@@ -18,7 +18,7 @@ import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilli
 import { utils } from "ethers";
 import { checkIfContestExists, fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
 import moment from "moment";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
 import { ErrorType, useContestStore } from "./store";
@@ -41,9 +41,8 @@ interface ContractConfig {
 }
 
 export function useContest() {
-  const router = useRouter();
-  const { asPath } = router;
-  const { chainName: chainFromUrl, address: addressFromUrl } = extractPathSegments(asPath);
+  const asPath = usePathname();
+  const { chainName: chainFromUrl, address: addressFromUrl } = extractPathSegments(asPath ?? "");
   const [chainName, setChainName] = useState(chainFromUrl);
   const [address, setAddress] = useState(addressFromUrl);
   const [chainId, setChainId] = useState(
@@ -74,6 +73,7 @@ export function useContest() {
     setSubmissionRequirements,
     setIsRewardsLoading,
     setSortingEnabled,
+    setVersion,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
@@ -109,6 +109,7 @@ export function useContest() {
       };
 
       setContestAbi(abi as Abi);
+      setVersion(version);
       return { contractConfig, version };
     } catch (e) {
       setError(ErrorType.CONTRACT);
@@ -136,16 +137,10 @@ export function useContest() {
     const isDownvotingAllowed = Number(results[8].result) === 1;
 
     if (compareVersions(version, "4.0") >= 0) {
-      const costToProposeTiming = moment().isBefore(votesOpenDate);
-      const costToVoteTiming = moment().isBefore(closingVoteDate);
       const percentageToCreator = Number(results[9].result);
-      let costToPropose = 0;
+      const costToPropose = Number(results[10].result);
       let costToVote = 0;
       let payPerVote = 0;
-
-      if (costToProposeTiming) {
-        costToPropose = Number(results[10].result);
-      }
 
       if (compareVersions(version, "4.2") >= 0) {
         const sortingEnabled = Number(results[11].result) === 1;
@@ -153,7 +148,7 @@ export function useContest() {
         setSortingEnabled(sortingEnabled);
       }
 
-      if (costToVoteTiming && compareVersions(version, "4.23") >= 0) {
+      if (compareVersions(version, "4.23") >= 0) {
         if (compareVersions(version, "4.25") >= 0) {
           payPerVote = Number(results[13].result);
         }

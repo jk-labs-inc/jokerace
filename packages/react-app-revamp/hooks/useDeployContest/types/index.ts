@@ -12,6 +12,7 @@ export type SubmissionMerkle = {
 
 export type VotingRequirements = {
   type: string;
+  nftType: string;
   chain: string;
   tokenAddress: string;
   minTokensRequired: number;
@@ -21,10 +22,12 @@ export type VotingRequirements = {
   name: string;
   symbol: string;
   logo: string;
+  nftTokenId?: string;
 };
 
 export type SubmissionRequirements = {
   type: string;
+  nftType: string;
   chain: string;
   tokenAddress: string;
   minTokensRequired: number;
@@ -32,6 +35,7 @@ export type SubmissionRequirements = {
   name: string;
   symbol: string;
   logo: string;
+  nftTokenId?: string;
 };
 
 export enum VoteType {

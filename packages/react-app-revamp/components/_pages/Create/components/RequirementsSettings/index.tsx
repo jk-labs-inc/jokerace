@@ -10,6 +10,7 @@ import { FC, useState } from "react";
 import { Tooltip } from "react-tooltip";
 import CreateDefaultDropdown, { Option } from "../DefaultDropdown";
 import CreateNumberInput from "../NumberInput";
+import CreateTextInput from "../TextInput";
 import { erc20ChainDropdownOptions, nftChainDropdownOptions, votingPowerOptions } from "./config";
 
 interface CreateRequirementsSettingsProps {
@@ -21,11 +22,13 @@ interface CreateRequirementsSettingsProps {
   powerType?: string;
   powerValue?: number;
   error?: Record<string, string | undefined>;
+  tokenId?: string;
   onChainChange?: (chain: string) => void;
   onTokenChange?: (token: TokenDetails) => void;
   onMinTokensRequiredChange?: (minTokens: number | null) => void;
   onPowerTypeChange?: (votingPowerType: string) => void;
   onPowerValueChange?: (votingPower: number | null) => void;
+  onTokenIdChange?: (tokenId?: string) => void;
 }
 
 export interface TokenDetails {
@@ -33,6 +36,7 @@ export interface TokenDetails {
   symbol: string;
   name: string;
   logo: string;
+  nftTokenType?: string;
 }
 
 const defaultTokenDetails = {
@@ -40,6 +44,7 @@ const defaultTokenDetails = {
   symbol: "",
   logo: "",
   address: "",
+  nftTokenType: "",
 };
 
 const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
@@ -48,6 +53,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   chain,
   token,
   minTokensRequired,
+  tokenId,
   error,
   powerType,
   powerValue,
@@ -56,6 +62,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   onMinTokensRequiredChange,
   onPowerTypeChange,
   onPowerValueChange,
+  onTokenIdChange,
 }) => {
   const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
   const chainDropdownOptions = settingType === "erc20" ? erc20ChainDropdownOptions : nftChainDropdownOptions;
@@ -90,11 +97,13 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   };
 
   const onNftSelectHandler = (nft: NFTMetadata) => {
-    const { name, imageUrl, address, symbol } = nft;
+    const { name, imageUrl, address, symbol, tokenType } = nft;
+
     updateTokenDetails({
       name,
       symbol,
       address,
+      nftTokenType: tokenType,
       logo: imageUrl,
     });
   };
@@ -103,6 +112,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
     setTokenDetails(defaultTokenDetails);
     setChainLogo(chainsImages["mainnet"]);
     onTokenChange?.(defaultTokenDetails);
+    onTokenIdChange?.("");
     onChainChange?.("mainnet");
   };
 
@@ -119,7 +129,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   };
 
   return (
-    <div className="md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
+    <div className="animate-appear md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
           <div className="flex gap-3 items-center">
@@ -168,7 +178,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                 id="tooltip-clickable"
                 border="1px solid #e2e2e2"
                 place="right"
-                className="cursor-default custom-tooltip"
+                className="cursor-default custom-tooltip z-50"
               >
                 <div className="flex flex-col gap-2 text-neutral-11 text-[16px]">
                   <p className="font-bold">
@@ -206,7 +216,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
 
           <CreateNumberInput
             value={minTokensRequired}
-            className="w-full md:w-44 text-[16px] md:text-[24px]"
+            className="md:w-44 text-[16px] md:text-[24px]"
             placeholder={settingType === "erc20" ? "0.01" : "1"}
             onChange={onMinTokensRequiredChange}
             errorMessage={error?.minTokensRequiredError}
@@ -224,17 +234,34 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                   placeholder="100"
                   onChange={onPowerValueChange}
                   disableDecimals
+                  style={{ width: "100px" }}
                 />
                 <p className="text-[16px] md:text-[20px]">votes per</p>
                 <CreateDefaultDropdown
                   defaultOption={powerTypeOption(powerType ?? "")}
                   options={votingPowerOptions}
-                  className="w-full md:w-44 text-[16px] md:text-[20px] cursor-pointer"
+                  className="w-48 text-[16px] md:text-[20px] cursor-pointer"
                   onChange={onPowerTypeChange}
                 />
               </div>
               <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.powerValueError}</p>
             </div>
+          </div>
+        ) : null}
+
+        {settingType === "erc721" && tokenDetails.nftTokenType === "ERC1155" ? (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <p className="text-[16px] text-neutral-11 font-bold uppercase">token id</p>
+              <span className="text-[12px]">(optional)</span>
+            </div>
+
+            <CreateTextInput
+              value={tokenId}
+              onChange={onTokenIdChange}
+              className="w-full md:w-52 text-[16px] md:text-[20px]"
+              placeholder={`"0x01" or "1"`}
+            />
           </div>
         ) : null}
         <TokenSearchModal
