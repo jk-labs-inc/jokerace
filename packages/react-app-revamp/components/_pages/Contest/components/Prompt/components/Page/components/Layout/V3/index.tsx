@@ -34,7 +34,7 @@ const ContestPromptPageV3Layout: FC<ContestPromptPageV3LayoutProps> = ({
   const { contestStatus } = useContestStatusStore(state => state);
 
   useEffect(() => {
-    if (contestStatus === ContestStatus.VotingOpen) {
+    if (contestStatus === ContestStatus.VotingOpen || contestStatus === ContestStatus.VotingClosed) {
       setIsDescriptionOpen(false);
     }
   }, [contestStatus]);
