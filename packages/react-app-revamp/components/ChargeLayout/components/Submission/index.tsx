@@ -2,18 +2,21 @@ import Collapsible from "@components/UI/Collapsible";
 import { formatBalance } from "@helpers/formatBalance";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { ChevronUpIcon } from "@heroicons/react/outline";
+import { SplitFeeDestination } from "@hooks/useDeployContest/types";
 import Image from "next/image";
 import { FC, useState } from "react";
+import ChargeLayoutCommisionDetails from "../CommisionDetails";
 
 interface ChargeLayoutSubmissionProps {
   userAddress: string;
   balance: string;
   entryChargeFormatted: string;
-  percentageToCreator: number;
+  splitFeeDestination: SplitFeeDestination;
   commisionValue: string;
   nativeCurrencySymbol: string;
   nativeCurrencyLabel: string;
   insufficientBalance: boolean;
+  blockExplorerUrl?: string;
 }
 
 const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({
@@ -23,8 +26,9 @@ const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({
   nativeCurrencyLabel,
   entryChargeFormatted,
   commisionValue,
-  percentageToCreator,
+  splitFeeDestination,
   insufficientBalance,
+  blockExplorerUrl,
 }) => {
   const [isEntryChargeDetailsOpen, setIsEntryChargeDetailsOpen] = useState(false);
 
@@ -71,31 +75,12 @@ const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({
           </p>
         </div>
         <Collapsible isOpen={isEntryChargeDetailsOpen}>
-          <ul className="flex flex-col gap-2 pl-2 mt-2 list-bullet-points">
-            {percentageToCreator > 0 ? (
-              <>
-                <div className="flex items-center">
-                  <li className="text-[16px] text-neutral-9">creator commission</li>
-                  <p className="text-[16px] text-neutral-9 ml-auto">
-                    {commisionValue} {nativeCurrencyLabel}
-                  </p>
-                </div>
-                <div className="flex gap-10 items-center">
-                  <li className="text-[16px] text-neutral-9">jokerace commission</li>
-                  <p className="text-[16px] text-neutral-9 ml-auto">
-                    {commisionValue} {nativeCurrencyLabel}
-                  </p>
-                </div>
-              </>
-            ) : (
-              <div className="flex items-center">
-                <li className="text-[16px] text-neutral-9">jokerace commission</li>
-                <p className="text-[16px] text-neutral-9 ml-auto">
-                  {commisionValue} {nativeCurrencyLabel}
-                </p>
-              </div>
-            )}
-          </ul>
+          <ChargeLayoutCommisionDetails
+            splitFeeDestination={splitFeeDestination}
+            commisionValue={commisionValue}
+            nativeCurrencyLabel={nativeCurrencyLabel}
+            blockExplorerUrl={blockExplorerUrl}
+          />
         </Collapsible>
       </div>
     </div>

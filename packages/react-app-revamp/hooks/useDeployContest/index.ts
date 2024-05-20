@@ -19,7 +19,7 @@ import { canUploadLargeAllowlist } from "lib/vip";
 import { Abi, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { ContestVisibility, useDeployContestStore } from "./store";
-import { SubmissionMerkle, VoteType, VotingMerkle } from "./types";
+import { SplitFeeDestinationType, SubmissionMerkle, VoteType, VotingMerkle } from "./types";
 
 export const MAX_SUBMISSIONS_LIMIT = 1000000;
 export const DEFAULT_SUBMISSIONS = 1000000;
@@ -52,7 +52,7 @@ export function useDeployContest() {
 
   async function deployContest() {
     const signer = await getEthersSigner(config, { chainId: chain?.id });
-    const isSpoofingDetected = await checkForSpoofing(signer?._address ?? "");
+    const isSpoofingDetected = await checkForSpoofing(signer?._address);
 
     if (isSpoofingDetected) {
       stateContestDeployment.setIsLoading(false);
@@ -82,6 +82,11 @@ export function useDeployContest() {
       const { merkleRoot: submissionMerkleRoot = EMPTY_ROOT } = submissionMerkle || {};
       const { merkleRoot: votingMerkleRoot = EMPTY_ROOT } = votingMerkle || {};
       const { allowedSubmissionsPerUser, maxSubmissions } = customization;
+      const creatorSplitDestination =
+        charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
+        charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
+          ? signer._address
+          : charge.splitFeeDestination.address;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
       const finalAllowedSubmissionsPerUser =
@@ -103,6 +108,7 @@ export function useDeployContest() {
         costToPropose: parseEther(chargeType.costToPropose.toString()),
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
+        creatorSplitDestination: creatorSplitDestination,
       };
 
       const contractContest = await factoryCreateContest.deploy(
@@ -123,6 +129,7 @@ export function useDeployContest() {
           contestParametersObject.costToPropose,
           contestParametersObject.costToVote,
           contestParametersObject.payPerVote,
+          contestParametersObject.creatorSplitDestination,
         ],
       );
 
