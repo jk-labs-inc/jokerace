@@ -87,7 +87,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
-                  <p className="text-[20px] text-neutral-9">i prefer to take 0% of charges</p>
+                  <p className="text-[20px] text-neutral-9">i prefer to take 0% of earnings</p>
                 </div>
               </div>
             )}
