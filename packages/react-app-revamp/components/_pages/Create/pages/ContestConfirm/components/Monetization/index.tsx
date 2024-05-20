@@ -1,12 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
 import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
+import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -24,6 +25,10 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   const chargeEnabled = type.costToPropose !== 0 || type.costToVote !== 0;
   const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const [highlightChainChange, setHighlightChainChange] = useState(false);
+  const blockExplorerUrl = chain?.blockExplorers?.default.url;
+  const blockExplorerAddressUrl = blockExplorerUrl
+    ? `${blockExplorerUrl}/address/${charge.splitFeeDestination.address}`
+    : "";
 
   useEffect(() => {
     if (chainChanged) {
@@ -81,6 +86,14 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               {charge.voteType === VoteType.PerVote ? "for each" : "to"} vote
             </li>
             <li className="text-[16px] list-disc normal-case">{percentageToCreatorMessage()}</li>
+            {charge.splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet ? (
+              <li className="text-[16px] list-disc">
+                creator earnings go to{" "}
+                <a className="underline cursor-pointer" target="_blank" href={blockExplorerAddressUrl}>
+                  {shortenEthereumAddress(charge.splitFeeDestination.address ?? "")}
+                </a>
+              </li>
+            ) : null}
           </ul>
         ) : null}
       </div>
