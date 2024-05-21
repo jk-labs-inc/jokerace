@@ -109,7 +109,7 @@ export function useDeployContest() {
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
         creatorSplitDestination: creatorSplitDestination,
-      };
+      }; 
 
       const contractContest = await factoryCreateContest.deploy(
         title,
