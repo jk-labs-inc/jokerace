@@ -35,7 +35,7 @@ export function getContracts(contractConfig: any, version: string) {
   }
 
   if (compareVersions(version, "4.29") >= 0) {
-    contractFunctionNames = [...contractFunctionNames, " creatorSplitDestination"];
+    contractFunctionNames = [...contractFunctionNames, "creatorSplitDestination"];
   }
 
   const contracts = contractFunctionNames.map(functionName => ({
