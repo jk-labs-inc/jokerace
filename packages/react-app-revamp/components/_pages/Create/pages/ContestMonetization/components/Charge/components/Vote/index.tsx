@@ -50,8 +50,8 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
-                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-full transition-colors ${
-                    checked ? "bg-neutral-11 border-0" : ""
+                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
+                    checked ? "bg-primary-10 border-0" : ""
                   } ${isAnyoneCanVote ? "opacity-50" : "opacity-100"}`}
                 ></div>
                 <div className={`flex flex-col ${isAnyoneCanVote ? "gap-1" : "gap-4"}`}>
@@ -81,8 +81,8 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
-                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-full transition-colors ${
-                    checked ? "bg-neutral-11  border-0" : ""
+                  className={`flex items-center mt-1 justify-center w-6 h-6 border border-neutral-9 rounded-[10px] transition-colors ${
+                    checked ? "bg-primary-10  border-0" : ""
                   }`}
                 ></div>
                 <div className="flex flex-col gap-4">
