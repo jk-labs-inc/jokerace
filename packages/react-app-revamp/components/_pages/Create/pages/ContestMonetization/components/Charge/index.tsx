@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
 import { chains } from "@config/wagmi";
+import { addressRegex } from "@helpers/regex";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { VoteType } from "@hooks/useDeployContest/types";
+import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
-import ContestParamsChargePercentToCreator from "./components/PercentToCreator";
+import ContestParamsSplitFeeDestination from "./components/SplitFeeDestination";
 import ContestParamsChargeSubmission from "./components/Submission";
 import ContestParamsChargeVote from "./components/Vote";
 
@@ -16,12 +17,13 @@ interface CreateContestChargeProps {
 }
 
 const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain, onError, onUnsupportedChain }) => {
-  const chainUnitLabel = chains.find(c => c.name === chain)?.nativeCurrency.symbol;
+  const chainUnitLabel = chains.find(c => c.name.toLowerCase() === chain.toLowerCase())?.nativeCurrency.symbol;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain);
   const { charge, minCharge, setCharge, votingMerkle } = useDeployContestStore(state => state);
   const { minCostToPropose, minCostToVote } = minCharge;
   const [costToProposeError, setCostToProposeError] = useState("");
   const [costToVoteError, setCostToVoteError] = useState("");
+  const [splitFeeDestinationError, setSplitFeeDestinationError] = useState("");
   const isAnyoneCanVote = Object.values(votingMerkle).every(value => value === null);
 
   if (isError) {
@@ -94,12 +96,37 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
     });
   };
 
-  const handlePercentageToCreatorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newPercentage = event.target.checked ? 0 : 50;
+  const handleSplitFeeDestinationTypeChange = (type: SplitFeeDestinationType) => {
+    const isCreatorWalletOrNoSplit =
+      type === SplitFeeDestinationType.CreatorWallet || type === SplitFeeDestinationType.NoSplit;
+    const newPercentageToCreator = type === SplitFeeDestinationType.NoSplit ? 0 : 50;
+    const newSplitFeeDestination = { ...charge.splitFeeDestination, type };
+
+    const isValidAddress = addressRegex.test(charge.splitFeeDestination.address ?? "");
+    const error = !isCreatorWalletOrNoSplit && !isValidAddress;
+
+    setSplitFeeDestinationError(isCreatorWalletOrNoSplit ? "" : error ? "invalid address" : "");
+    onError?.(error);
 
     setCharge({
       ...charge,
-      percentageToCreator: newPercentage,
+      percentageToCreator: newPercentageToCreator,
+      splitFeeDestination: newSplitFeeDestination,
+      error,
+    });
+  };
+
+  const handleSplitFeeDestinationAddressChange = (address: string) => {
+    const isValidAddress = addressRegex.test(address);
+    const newSplitFeeDestination = { ...charge.splitFeeDestination, address };
+
+    setSplitFeeDestinationError(isValidAddress ? "" : "invalid address");
+    onError?.(!isValidAddress);
+
+    setCharge({
+      ...charge,
+      splitFeeDestination: newSplitFeeDestination,
+      error: !isValidAddress,
     });
   };
 
@@ -112,11 +139,11 @@ const CreateContestCharge: FC<CreateContestChargeProps> = ({ isConnected, chain,
 
   return (
     <div className="flex flex-col gap-12">
-      <ContestParamsChargePercentToCreator
-        percentageToCreator={charge.percentageToCreator}
-        minCostToPropose={minCostToPropose}
-        minCostToVote={minCostToVote}
-        onPercentageToCreatorChange={handlePercentageToCreatorChange}
+      <ContestParamsSplitFeeDestination
+        splitFeeDestination={charge.splitFeeDestination}
+        splitFeeDestinationError={splitFeeDestinationError}
+        onSplitFeeDestinationTypeChange={handleSplitFeeDestinationTypeChange}
+        onSplitFeeDestinationAddressChange={handleSplitFeeDestinationAddressChange}
       />
       <div className="flex flex-col gap-8">
         <ContestParamsChargeSubmission

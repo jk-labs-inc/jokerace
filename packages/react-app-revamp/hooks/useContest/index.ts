@@ -6,7 +6,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { VoteType } from "@hooks/useDeployContest/types";
+import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
@@ -17,7 +17,6 @@ import { compareVersions } from "compare-versions";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
 import { utils } from "ethers";
 import { checkIfContestExists, fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
-import moment from "moment";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
@@ -121,6 +120,22 @@ export function useContest() {
     }
   }
 
+  function determineSplitFeeDestination(
+    splitFeeDestination: string,
+    creatorWalletAddress: string,
+    percentageToCreator: number,
+  ): SplitFeeDestinationType {
+    if (percentageToCreator === 0) {
+      return SplitFeeDestinationType.NoSplit;
+    }
+
+    if (!splitFeeDestination || splitFeeDestination === creatorWalletAddress) {
+      return SplitFeeDestinationType.CreatorWallet;
+    }
+
+    return SplitFeeDestinationType.AnotherWallet;
+  }
+
   async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
     const contracts = getContracts(contractConfig, version);
     const results = await readContracts(config, { contracts });
@@ -141,6 +156,7 @@ export function useContest() {
       const costToPropose = Number(results[10].result);
       let costToVote = 0;
       let payPerVote = 0;
+      let creatorSplitDestination = "";
 
       if (compareVersions(version, "4.2") >= 0) {
         const sortingEnabled = Number(results[11].result) === 1;
@@ -155,9 +171,17 @@ export function useContest() {
         costToVote = Number(results[12].result);
       }
 
+      if (compareVersions(version, "4.29") >= 0) {
+        creatorSplitDestination = results[14].result as string;
+      }
+
       setCharge({
         percentageToCreator,
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
+        splitFeeDestination: {
+          type: determineSplitFeeDestination(creatorSplitDestination, contestAuthor, percentageToCreator),
+          address: creatorSplitDestination,
+        },
         type: {
           costToPropose,
           costToVote,

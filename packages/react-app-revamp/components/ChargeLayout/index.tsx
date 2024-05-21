@@ -25,7 +25,8 @@ const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({
   const { address } = useAccount();
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath ?? "");
-  const chainUnitLabel = chains.find((c: { name: string }) => c.name === chainName)?.nativeCurrency.symbol;
+  const chainUnitLabel = chains.find((c: { name: string }) => c.name.toLowerCase() === chainName.toLowerCase())
+    ?.nativeCurrency.symbol;
   const chargeAmount = type === "propose" ? charge.type.costToPropose : charge.type.costToVote;
   const insufficientBalance = accountData.value < chargeAmount;
   const insufficientBalanceForVotes =
@@ -46,7 +47,7 @@ const ChargeLayout: FC<DialogModalSendProposalEntryChargeLayoutProps> = ({
         insufficientBalance={insufficientBalance}
         nativeCurrencyLabel={chainUnitLabel ?? ""}
         nativeCurrencySymbol={accountData.symbol}
-        percentageToCreator={charge.percentageToCreator}
+        splitFeeDestination={charge.splitFeeDestination}
         userAddress={address ?? ""}
       />
     );
