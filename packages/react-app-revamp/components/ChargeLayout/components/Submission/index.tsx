@@ -16,7 +16,6 @@ interface ChargeLayoutSubmissionProps {
   nativeCurrencySymbol: string;
   nativeCurrencyLabel: string;
   insufficientBalance: boolean;
-  blockExplorerUrl?: string;
 }
 
 const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({
@@ -28,7 +27,6 @@ const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({
   commisionValue,
   splitFeeDestination,
   insufficientBalance,
-  blockExplorerUrl,
 }) => {
   const [isEntryChargeDetailsOpen, setIsEntryChargeDetailsOpen] = useState(false);
 
@@ -79,7 +77,6 @@ const ChargeLayoutSubmission: FC<ChargeLayoutSubmissionProps> = ({
             splitFeeDestination={splitFeeDestination}
             commisionValue={commisionValue}
             nativeCurrencyLabel={nativeCurrencyLabel}
-            blockExplorerUrl={blockExplorerUrl}
           />
         </Collapsible>
       </div>

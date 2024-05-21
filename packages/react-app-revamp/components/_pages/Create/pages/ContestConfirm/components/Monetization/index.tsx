@@ -16,7 +16,7 @@ interface CreateContestConfirmMonetizationProps {
 }
 
 const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps> = ({ charge, step, onClick }) => {
-  const { chain } = useAccount();
+  const { chain, address } = useAccount();
   const chainChanged = useChainChange();
   const { percentageToCreator, type } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
@@ -26,9 +26,12 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const [highlightChainChange, setHighlightChainChange] = useState(false);
   const blockExplorerUrl = chain?.blockExplorers?.default.url;
-  const blockExplorerAddressUrl = blockExplorerUrl
-    ? `${blockExplorerUrl}/address/${charge.splitFeeDestination.address}`
-    : "";
+  const creatorSplitDestination =
+    charge.splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet
+      ? charge.splitFeeDestination.address
+      : address;
+  const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
+  const creatorHasSplit = percentageToCreator > 0;
 
   useEffect(() => {
     if (chainChanged) {
@@ -40,9 +43,9 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
 
   const percentageToCreatorMessage = () => {
     if (percentageToCreator === 50) {
-      return "all fees split 50/50 with JokeRace";
+      return "all earnings split 50/50 with JokeRace";
     } else {
-      return `all fees go to JokeRace`;
+      return `all earnings go to JokeRace`;
     }
   };
 
@@ -86,11 +89,11 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               {charge.voteType === VoteType.PerVote ? "for each" : "to"} vote
             </li>
             <li className="text-[16px] list-disc normal-case">{percentageToCreatorMessage()}</li>
-            {charge.splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet ? (
+            {creatorHasSplit ? (
               <li className="text-[16px] list-disc">
                 creator earnings go to{" "}
                 <a className="underline cursor-pointer" target="_blank" href={blockExplorerAddressUrl}>
-                  {shortenEthereumAddress(charge.splitFeeDestination.address ?? "")}
+                  {shortenEthereumAddress(creatorSplitDestination ?? "")}
                 </a>
               </li>
             ) : null}
