@@ -1,19 +1,13 @@
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { Charge } from "@hooks/useDeployContest/types";
 import { FC } from "react";
-import { formatEther } from "viem";
 
 interface ContestParametersEarningsProps {
   charge: Charge;
   blockExplorerUrl?: string;
-  nativeCurrencySymbol?: string;
 }
 
-const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
-  charge,
-  blockExplorerUrl,
-  nativeCurrencySymbol,
-}) => {
+const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge, blockExplorerUrl }) => {
   const isCreatorSplitEnabled = charge.percentageToCreator > 0;
   const creatorSplitDestination = charge.splitFeeDestination.address;
   const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
@@ -42,14 +36,6 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({
             </a>
           </li>
         ) : null}
-        <li className="list-disc">
-          {formatEther(BigInt(charge.type.costToPropose))} <span className="uppercase">${nativeCurrencySymbol}</span> to
-          submit a proposal
-        </li>
-        <li className="list-disc">
-          {formatEther(BigInt(charge.type.costToVote))} <span className="uppercase">${nativeCurrencySymbol}</span> to
-          cast a vote
-        </li>
       </ul>
     </div>
   );

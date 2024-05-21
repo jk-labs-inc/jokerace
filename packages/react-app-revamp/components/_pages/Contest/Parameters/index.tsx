@@ -60,6 +60,8 @@ const ContestParameters = () => {
         maxProposalsPerUserCapped={maxProposalsPerUserCapped}
         submissionMerkleRoot={submissionMerkleRoot}
         address={address ?? ""}
+        costToPropose={charge?.type.costToPropose}
+        nativeCurrencySymbol={nativeCurrency?.symbol}
         openConnectModal={openConnectModal}
       />
       <ContestParametersVoting
@@ -73,13 +75,7 @@ const ContestParameters = () => {
         votingRequirementsDescription={votingRequirements?.description}
         openConnectModal={openConnectModal}
       />
-      {charge ? (
-        <ContestParametersEarnings
-          charge={charge}
-          blockExplorerUrl={blockExplorerUrl}
-          nativeCurrencySymbol={nativeCurrency?.symbol}
-        />
-      ) : null}
+      {charge ? <ContestParametersEarnings charge={charge} blockExplorerUrl={blockExplorerUrl} /> : null}
     </div>
   );
 };

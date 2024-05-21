@@ -87,6 +87,11 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
             <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
           </>
         )}
+        {costToVote ? (
+          <li className="list-disc">
+            {formatEther(BigInt(costToVote))} {nativeCurrencySymbol}/vote
+          </li>
+        ) : null}
       </ul>
     </div>
   );

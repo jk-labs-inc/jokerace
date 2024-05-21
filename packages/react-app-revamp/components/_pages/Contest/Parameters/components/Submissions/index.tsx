@@ -1,6 +1,7 @@
 import { FC, useMemo } from "react";
 import ContestParamatersCSVSubmitters from "../CSV/Submitters";
 import ContestParametersSubmissionRequirements from "../Requirements/Submission";
+import { formatEther } from "viem";
 
 interface ContestParametersSubmissionsProps {
   anyoneCanSubmit: boolean;
@@ -10,6 +11,8 @@ interface ContestParametersSubmissionsProps {
   maxProposalsPerUserCapped: boolean;
   submissionMerkleRoot: string;
   address: string;
+  nativeCurrencySymbol?: string;
+  costToPropose?: number;
   openConnectModal?: () => void;
 }
 
@@ -21,6 +24,8 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
   maxProposalsPerUserCapped,
   submissionMerkleRoot,
   address,
+  nativeCurrencySymbol,
+  costToPropose,
   openConnectModal,
 }) => {
   const qualifyToSubmitMessage = useMemo<string | JSX.Element>(() => {
@@ -62,6 +67,11 @@ const ContestParametersSubmissions: FC<ContestParametersSubmissionsProps> = ({
         <li className="list-disc">{address || anyoneCanSubmit ? qualifyToSubmitMessage : walletNotConnected}</li>
         <ContestParametersSubmissionRequirements />
         {!anyoneCanSubmit ? <ContestParamatersCSVSubmitters submissionMerkleRoot={submissionMerkleRoot} /> : null}
+        {costToPropose ? (
+          <li className="list-disc">
+            {formatEther(BigInt(costToPropose))} {nativeCurrencySymbol}/submission
+          </li>
+        ) : null}
       </ul>
     </div>
   );
