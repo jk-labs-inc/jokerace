@@ -10,8 +10,8 @@ const CreateContestChargeUnsupportedChain = () => {
       <p className="text-[20px] md:text-[20px] text-neutral-11">
         unfortunately monetization isn’t currently available for this chain.
         <br />
-        normally we split all fees with you so you can make money from running contests. but we don't have a way to
-        collect fees on this chain.
+        normally we split all earnings with you so you can make money from running contests. but we don't have a way to
+        collect earnings on this chain.
       </p>
       <p className="text-[20px] md:text-[20px] text-neutral-11">
         we recommend{" "}
