@@ -18,8 +18,8 @@ export const sepolia: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan/" },
-    default: { name: "Sepolia Otterscan", url: "https://sepolia.otterscan/" },
+    etherscan: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan.io/" },
+    default: { name: "Sepolia Etherscan", url: "https://sepolia.etherscan.io/" },
   },
   testnet: true,
 };
