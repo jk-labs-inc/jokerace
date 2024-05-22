@@ -70,6 +70,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   });
 
   useEffect(() => {
+    if (isLoading) return;
+
     const now = moment();
     const formattedSubmissionOpen = moment(submissionsOpen);
     const formattedVotingOpen = moment(votesOpen);
@@ -90,6 +92,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
       }
     };
 
+    console.log(formattedSubmissionOpen, formattedVotingOpen);
+
     if (now.isBefore(formattedSubmissionOpen)) {
       setAndScheduleStatus(ContestStatus.ContestOpen, ContestStatus.SubmissionOpen, formattedSubmissionOpen);
     } else if (now.isBefore(formattedVotingOpen)) {
@@ -97,13 +101,14 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     } else if (now.isBefore(formattedVotingClose)) {
       setAndScheduleStatus(ContestStatus.VotingOpen, ContestStatus.VotingClosed, formattedVotingClose);
     } else {
+      console.log("else?");
       setContestStatus(ContestStatus.VotingClosed);
     }
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [submissionsOpen, votesOpen, votesClose, setContestStatus]);
+  }, [submissionsOpen, votesOpen, votesClose, setContestStatus, isLoading]);
 
   useEffect(() => {
     const fetchUserData = async () => {
