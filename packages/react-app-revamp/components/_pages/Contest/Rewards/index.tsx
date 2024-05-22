@@ -16,6 +16,8 @@ import useContractVersion from "@hooks/useContractVersion";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
+import usePaidRewardTokens from "@hooks/useRewardsTokens/usePaidRewardsTokens";
+import { useUnpaidRewardTokens } from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -49,6 +51,8 @@ const ContestRewards = () => {
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const { address: accountAddress } = useAccount();
+  const { unpaidTokens } = useUnpaidRewardTokens();
+  const { paidTokens } = usePaidRewardTokens();
   const creator = contestAuthorEthereumAddress === accountAddress;
 
   useAccountEffect({
@@ -228,7 +232,7 @@ const ContestRewards = () => {
                     key={index}
                     chainId={chainId}
                     payee={payee}
-                    erc20Tokens={rewardsStore.rewards.balance}
+                    erc20Tokens={unpaidTokens ?? []}
                     contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                     abiRewardsModule={rewardsStore.rewards.abi}
                   />
@@ -244,7 +248,7 @@ const ContestRewards = () => {
                     key={index}
                     chainId={chainId}
                     payee={payee}
-                    erc20Tokens={rewardsStore.rewards.balance}
+                    erc20Tokens={paidTokens ?? []}
                     contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                     abiRewardsModule={rewardsStore.rewards.abi}
                     showPreviouslyDistributedTable

@@ -81,7 +81,10 @@ export const useDistributeRewards = (
   const handleDistributeRewards = async () => {
     setIsLoading(true);
     toastLoading(`Distributing funds...`);
+
     try {
+      const amountReleasable = await queryRankRewardsReleasable.refetch();
+      const amountReleasableFormatted = transform(amountReleasable.data as bigint, tokenType, tokenData);
       const hash = await writeContract(config, {
         address: contractRewardsModuleAddress as `0x${string}`,
         abi: abiRewardsModule,
@@ -94,8 +97,6 @@ export const useDistributeRewards = (
 
       await queryTokenBalance.refetch();
       await queryRankRewardsReleasable.refetch();
-      const amountReleased = await queryRankRewardsReleased.refetch();
-      const amountReleasedFormatted = transform(amountReleased.data as bigint, tokenType, tokenData);
 
       setIsLoading(false);
       toastSuccess("Funds distributed successfully!");
@@ -104,7 +105,7 @@ export const useDistributeRewards = (
         contest_address: contestAddress,
         rewards_module_address: contractRewardsModuleAddress,
         network_name: chainName,
-        amount: amountReleasedFormatted,
+        amount: amountReleasableFormatted,
         operation: "distribute",
         token_address: tokenAddress ? tokenAddress : null,
         created_at: Math.floor(Date.now() / 1000),

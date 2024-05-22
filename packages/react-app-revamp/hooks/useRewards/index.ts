@@ -3,96 +3,27 @@ import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
-import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
 import { useError } from "@hooks/useError";
-import { useQuery } from "@tanstack/react-query";
+import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { readContract, readContracts } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useRewardsStore } from "./store";
 
-const alchemySupportedChains = [
-  {
-    name: "ethereum",
-    id: 1,
-  },
-  {
-    name: "polygon",
-    id: 137,
-  },
-  {
-    name: "optimism",
-    id: 10,
-  },
-  {
-    name: "arbitrum",
-    id: 42161,
-  },
-  {
-    name: "base",
-    id: 8453,
-  },
-];
-
 export function useRewardsModule() {
   const asPath = usePathname();
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { chain } = useAccount();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
-  const { setRefetch: refetchDistributeRewardsWithoutAlchemy } = useDistributeRewardStore(state => state);
   const { error, handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
-  const alchemySupported = alchemySupportedChains.filter(chain => chain.id === chainId).length > 0;
-
-  const { refetch: refetchBalanceRewardsModule } = useQuery({
-    queryKey: ["balance-rewards-module", rewards?.contractAddress, alchemySupported],
-    queryFn: async () => {
-      try {
-        const contestRewardModuleAddress = rewards?.contractAddress;
-        const alchemyAppUrl = chains.filter(
-          (chain: { name: string }) => chain.name === contestChainName.toLowerCase(),
-        )[0].rpcUrls.default.http[0];
-
-        const response = await fetch(alchemyAppUrl, {
-          method: "POST",
-          body: JSON.stringify({
-            jsonrpc: "2.0",
-            method: "alchemy_getTokenBalances",
-            params: [`${contestRewardModuleAddress}`, "erc20"],
-            id: 42,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          redirect: "follow",
-        });
-
-        const asJson = await response.json();
-        const balances = asJson.result?.tokenBalances;
-
-        setRewards({
-          ...rewards,
-          balance: balances,
-        });
-
-        return balances;
-      } catch (e) {
-        setIsLoading(false);
-        throw e;
-      }
-    },
-    enabled: rewards?.contractAddress && process.env.NEXT_PUBLIC_ALCHEMY_KEY && alchemySupported ? true : false,
-  });
+  const { refetchUnpaidTokens } = useUnpaidRewardTokens();
 
   const handleRefetchBalanceRewardsModule = () => {
-    if (alchemySupported) {
-      refetchBalanceRewardsModule();
-    } else {
-      refetchDistributeRewardsWithoutAlchemy(true);
-    }
+    refetchUnpaidTokens();
   };
 
   async function getContestRewardsModule() {

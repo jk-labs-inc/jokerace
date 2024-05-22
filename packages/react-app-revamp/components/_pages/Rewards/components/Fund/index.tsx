@@ -1,16 +1,15 @@
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { toastError } from "@components/UI/Toast";
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { getTokenDecimals } from "@helpers/getTokenDecimals";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import useRewardsModule from "@hooks/useRewards";
-import { readContract } from "@wagmi/core";
 import { ethers } from "ethers";
 import { usePathname } from "next/navigation";
 import { FC, useRef } from "react";
 import { toast } from "react-toastify";
-import { erc20Abi } from "viem";
 import { useAccount } from "wagmi";
 import CreateRewardsFundingPoolSubmit from "./components/Buttons/Submit";
 import CreateRewardsFundPool from "./components/FundPool";
@@ -23,28 +22,13 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
   const { getContestRewardsAddress } = useRewardsModule();
   const { address } = useAccount();
   const { rewards, setCancel } = useFundRewardsStore(state => state);
   const toastIdRef = useRef<string | number | null>(null);
-
-  const getTokenDecimals = async (tokenAddress: string) => {
-    try {
-      const decimals = (await readContract(config, {
-        address: tokenAddress as `0x${string}`,
-        abi: erc20Abi,
-        chainId: chainId,
-        functionName: "decimals",
-      })) as number;
-
-      return decimals;
-    } catch {
-      return null;
-    }
-  };
 
   const fundPool = async () => {
     if (rewards.length === 0) return;
@@ -61,7 +45,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
 
       let decimals = 18;
       if (reward.address.startsWith("0x")) {
-        const tokenData = await getTokenDecimals(reward.address);
+        const tokenData = await getTokenDecimals(reward.address, chainId);
         if (tokenData === null) {
           toastError("failed to fetch token data");
           return;
