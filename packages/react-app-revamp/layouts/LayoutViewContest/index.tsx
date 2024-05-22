@@ -70,6 +70,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   });
 
   useEffect(() => {
+    if (isLoading) return;
+
     const now = moment();
     const formattedSubmissionOpen = moment(submissionsOpen);
     const formattedVotingOpen = moment(votesOpen);
@@ -103,7 +105,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [submissionsOpen, votesOpen, votesClose, setContestStatus]);
+  }, [submissionsOpen, votesOpen, votesClose, setContestStatus, isLoading]);
 
   useEffect(() => {
     const fetchUserData = async () => {
