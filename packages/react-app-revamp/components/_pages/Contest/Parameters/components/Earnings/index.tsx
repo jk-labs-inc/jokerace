@@ -4,12 +4,15 @@ import { FC } from "react";
 
 interface ContestParametersEarningsProps {
   charge: Charge;
+  contestAuthor: string;
   blockExplorerUrl?: string;
 }
 
-const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge, blockExplorerUrl }) => {
+const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge, blockExplorerUrl, contestAuthor }) => {
   const isCreatorSplitEnabled = charge.percentageToCreator > 0;
-  const creatorSplitDestination = charge.splitFeeDestination.address;
+  const creatorSplitDestination = charge.splitFeeDestination.address
+    ? charge.splitFeeDestination.address
+    : contestAuthor;
   const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
 
   const percentageToCreatorMessage = () => {
@@ -32,7 +35,7 @@ const ContestParametersEarnings: FC<ContestParametersEarningsProps> = ({ charge,
               target="_blank"
               href={blockExplorerAddressUrl}
             >
-              {shortenEthereumAddress(creatorSplitDestination ?? "")}
+              {shortenEthereumAddress(creatorSplitDestination)}
             </a>
           </li>
         ) : null}
