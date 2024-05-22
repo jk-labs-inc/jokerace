@@ -22,6 +22,7 @@ const ContestParameters = () => {
     contestMaxProposalCount,
     votingRequirements,
     submissionMerkleRoot,
+    contestAuthor,
     votingMerkleRoot,
     anyoneCanVote,
     charge,
@@ -75,7 +76,9 @@ const ContestParameters = () => {
         votingRequirementsDescription={votingRequirements?.description}
         openConnectModal={openConnectModal}
       />
-      {charge ? <ContestParametersEarnings charge={charge} blockExplorerUrl={blockExplorerUrl} /> : null}
+      {charge ? (
+        <ContestParametersEarnings charge={charge} contestAuthor={contestAuthor} blockExplorerUrl={blockExplorerUrl} />
+      ) : null}
     </div>
   );
 };
