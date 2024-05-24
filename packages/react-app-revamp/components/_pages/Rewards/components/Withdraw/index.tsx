@@ -11,7 +11,7 @@ interface ContestWithdrawRewardsProps {
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore }) => {
   const { chain } = useAccount();
-  const { unpaidTokens } = useUnpaidRewardTokens();
+  const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsStore.rewards.contractAddress);
   const nativeTokenBalance = useBalance({
     address: rewardsStore?.rewards?.contractAddress as `0x${string}`,
     chainId: chain?.id,
