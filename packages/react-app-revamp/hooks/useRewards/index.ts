@@ -20,7 +20,7 @@ export function useRewardsModule() {
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
-  const { refetchUnpaidTokens } = useUnpaidRewardTokens();
+  const { refetchUnpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewards?.contractAddress);
 
   const handleRefetchBalanceRewardsModule = () => {
     refetchUnpaidTokens();
