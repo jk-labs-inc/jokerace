@@ -4,6 +4,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { getBalance, readContract } from "@wagmi/core";
+import { getNetBalances, getPaidBalances } from "lib/rewards";
 import moment from "moment";
 import { SearchOptions } from "types/search";
 import { formatUnits } from "viem";
@@ -18,9 +19,10 @@ interface ContestReward {
   token: {
     symbol: string;
     value: number;
-  };
+  } | null;
   winners: number;
   numberOfTokens: number;
+  rewardsPaidOut: boolean;
 }
 
 async function getContractConfig(address: string, chainId: number) {
@@ -39,42 +41,10 @@ async function getContractConfig(address: string, chainId: number) {
   return contractConfig;
 }
 
-export const fetchTokenBalances = async (chainName: string, contestRewardModuleAddress: string) => {
-  try {
-    const alchemyAppUrl = chains.filter((chain: { name: string }) => chain.name === chainName.toLowerCase())[0].rpcUrls
-      .default.http[0];
-
-    const response = await fetch(alchemyAppUrl, {
-      method: "POST",
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        method: "alchemy_getTokenBalances",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        params: [`${contestRewardModuleAddress}`, "erc20"],
-        id: 42,
-      }),
-      redirect: "follow",
-    });
-    const asJson = await response.json();
-
-    const balance = asJson.result?.tokenBalances?.filter((token: any) => {
-      const tokenBalance = BigInt(token["tokenBalance"]);
-      return tokenBalance > 0;
-    });
-
-    return balance;
-  } catch (error) {
-    console.error("Error fetching token balances:", error);
-    return null;
-  }
-};
-
 export const fetchNativeBalance = async (contestRewardModuleAddress: string, chainId: number) => {
   try {
     const nativeBalance = await getBalance(config, {
-      address: contestRewardModuleAddress.toString() as `0x${string}`,
+      address: contestRewardModuleAddress as `0x${string}`,
       chainId: chainId,
     });
     return nativeBalance;
@@ -87,7 +57,7 @@ export const fetchNativeBalance = async (contestRewardModuleAddress: string, cha
 export const fetchFirstToken = async (contestRewardModuleAddress: string, chainId: number, tokenAddress: string) => {
   try {
     const firstToken = await getBalance(config, {
-      address: contestRewardModuleAddress.toString() as `0x${string}`,
+      address: contestRewardModuleAddress as `0x${string}`,
       chainId: chainId,
       token: tokenAddress as `0x${string}`,
     });
@@ -134,7 +104,10 @@ const updateContestWithUserQualifications = async (contest: any, userAddress: st
   return updatedContest;
 };
 
-const processContestRewardsData = async (contestAddress: string, contestChainName: string) => {
+const processContestRewardsData = async (
+  contestAddress: string,
+  contestChainName: string,
+): Promise<ContestReward | null> => {
   let reward: ContestReward | null = null;
 
   try {
@@ -150,34 +123,32 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
         ...contractConfig,
         functionName: "officialRewardsModule",
         args: [],
-      })) as any;
+      })) as string;
 
-      if (contestRewardModuleAddress.toString() !== "0x0000000000000000000000000000000000000000") {
-        const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress.toString(), chainId);
+      if (contestRewardModuleAddress !== "0x0000000000000000000000000000000000000000") {
+        const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
 
         if (abiRewardsModule) {
           const winners = (await readContract(config, {
-            address: contestRewardModuleAddress.toString() as `0x${string}`,
+            address: contestRewardModuleAddress as `0x${string}`,
             abi: abiRewardsModule,
             chainId: chainId,
             functionName: "getPayees",
           })) as bigint[];
 
-          let rewardToken = await fetchNativeBalance(contestRewardModuleAddress.toString(), chainId);
+          let rewardToken = await fetchNativeBalance(contestRewardModuleAddress, chainId);
           let erc20Tokens: any = null;
+          let rewardsPaidOut = false;
 
           if (!rewardToken || Number(rewardToken.value) === 0) {
-            erc20Tokens = await fetchTokenBalances(contestChainName, contestRewardModuleAddress.toString());
+            erc20Tokens = await getNetBalances(contestRewardModuleAddress);
+
             if (erc20Tokens && erc20Tokens.length > 0) {
-              rewardToken = await fetchFirstToken(
-                contestRewardModuleAddress.toString(),
-                chainId,
-                erc20Tokens[0].contractAddress,
-              );
+              rewardToken = await fetchFirstToken(contestRewardModuleAddress, chainId, erc20Tokens[0].tokenAddress);
             }
           }
 
-          if (rewardToken) {
+          if (rewardToken && Number(rewardToken.value) > 0) {
             reward = {
               contestAddress,
               chain: contestChainName,
@@ -187,6 +158,19 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
               },
               winners: winners.length,
               numberOfTokens: erc20Tokens?.length ?? 1,
+              rewardsPaidOut: rewardsPaidOut,
+            };
+          } else {
+            const paidBalances = await getPaidBalances(contestRewardModuleAddress, true);
+            rewardsPaidOut = paidBalances && paidBalances.length > 0;
+
+            reward = {
+              contestAddress,
+              chain: contestChainName,
+              token: null,
+              winners: winners.length,
+              numberOfTokens: erc20Tokens?.length ?? 0,
+              rewardsPaidOut: rewardsPaidOut,
             };
           }
         }
