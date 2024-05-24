@@ -4,9 +4,9 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getPagination from "@helpers/getPagination";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { getBalance, readContract } from "@wagmi/core";
-import { utils } from "ethers";
 import moment from "moment";
 import { SearchOptions } from "types/search";
+import { formatUnits } from "viem";
 import { sortContests } from "./utils/sortContests";
 
 export const ITEMS_PER_PAGE = 7;
@@ -183,7 +183,7 @@ const processContestRewardsData = async (contestAddress: string, contestChainNam
               chain: contestChainName,
               token: {
                 symbol: rewardToken.symbol,
-                value: parseFloat(utils.formatUnits(rewardToken.value, rewardToken.decimals)),
+                value: parseFloat(formatUnits(rewardToken.value, rewardToken.decimals)),
               },
               winners: winners.length,
               numberOfTokens: erc20Tokens?.length ?? 1,

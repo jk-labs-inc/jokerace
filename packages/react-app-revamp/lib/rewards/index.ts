@@ -5,7 +5,10 @@ export interface RewardToken {
   balance: number;
 }
 
-export const getNetBalances = async (rewardsModuleAddress: string): Promise<RewardToken[]> => {
+export const getNetBalances = async (
+  rewardsModuleAddress: string,
+  includeNative: boolean = false,
+): Promise<RewardToken[]> => {
   if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
@@ -21,7 +24,7 @@ export const getNetBalances = async (rewardsModuleAddress: string): Promise<Rewa
 
     const balances = fundings.reduce(
       (acc, transaction) => {
-        const tokenAddress = transaction.token_address;
+        const tokenAddress = transaction.token_address || (includeNative ? "native" : null);
         if (tokenAddress) {
           if (!acc[tokenAddress]) {
             acc[tokenAddress] = { tokenAddress, balance: 0 };
@@ -44,7 +47,10 @@ export const getNetBalances = async (rewardsModuleAddress: string): Promise<Rewa
   return [];
 };
 
-export const getPaidBalances = async (rewardsModuleAddress: string): Promise<RewardToken[]> => {
+export const getPaidBalances = async (
+  rewardsModuleAddress: string,
+  includeNative: boolean = false,
+): Promise<RewardToken[]> => {
   if (isSupabaseConfigured) {
     const config = await import("@config/supabase");
     const supabase = config.supabase;
@@ -60,7 +66,7 @@ export const getPaidBalances = async (rewardsModuleAddress: string): Promise<Rew
 
     const balances = transactions.reduce(
       (acc, transaction) => {
-        const tokenAddress = transaction.token_address;
+        const tokenAddress = transaction.token_address || (includeNative ? "native" : null);
         if (tokenAddress) {
           if (!acc[tokenAddress]) {
             acc[tokenAddress] = { tokenAddress, balance: 0 };

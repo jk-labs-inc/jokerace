@@ -3,25 +3,22 @@ import { chains } from "@config/wagmi";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getTokenDecimalsBatch } from "@helpers/getTokenDecimals";
-import { useRewardsStore } from "@hooks/useRewards/store";
 import { useQuery } from "@tanstack/react-query";
 import { getPaidBalances } from "lib/rewards";
 import { usePathname } from "next/navigation";
 
-export const usePaidRewardTokens = () => {
+export const usePaidRewardTokens = (queryKey: string, rewardsModuleAddress: string, includeNative?: boolean) => {
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
-  const { rewards } = useRewardsStore(state => state);
-  const rewardsModuleAddress = rewards?.contractAddress;
 
-  const { refetch, data } = useQuery({
-    queryKey: ["paid-reward-tokens", rewardsModuleAddress],
+  const { refetch, data, isLoading, isError } = useQuery({
+    queryKey: [queryKey, rewardsModuleAddress],
     queryFn: async () => {
       if (rewardsModuleAddress) {
-        const paidBalances = await getPaidBalances(rewardsModuleAddress);
+        const paidBalances = await getPaidBalances(rewardsModuleAddress, includeNative);
 
         const tokenAddresses = [...new Set(paidBalances.map(token => token.tokenAddress))];
         const tokenDecimals = await getTokenDecimalsBatch(tokenAddresses, chainId);
@@ -44,6 +41,8 @@ export const usePaidRewardTokens = () => {
   return {
     refetchPaidTokens: refetch,
     paidTokens: data,
+    isLoading,
+    isError,
   };
 };
 

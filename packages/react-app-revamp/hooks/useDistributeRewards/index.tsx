@@ -45,7 +45,7 @@ export const useDistributeRewards = (
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { setIsLoading, refetch, setRefetch } = useDistributeRewardStore(state => state);
-  const tokenDataRes = useToken({ address: tokenAddress as `0x${string}`, chainId });
+  const tokenDataRes = useBalance({ address: tokenAddress as `0x${string}`, chainId });
   const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;
   const { handleError } = useError();
 

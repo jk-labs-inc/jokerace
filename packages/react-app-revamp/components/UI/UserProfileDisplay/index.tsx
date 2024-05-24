@@ -96,7 +96,7 @@ const UserProfileDisplay = ({
         <img style={{ width: "100%", height: "100%", objectFit: "cover" }} src={profileAvatar} alt="avatar" />
       </div>
       {isLoading ? (
-        <p className={`${textSizeClass} loadingDots`}>Loading profile data</p>
+        <p className={`${textSizeClass} animate-flicker-infinite`}>Loading profile data</p>
       ) : (
         <div className="flex flex-col gap-1">
           <a

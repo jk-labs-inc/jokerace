@@ -1,11 +1,12 @@
 import MultiStepToast, { ToastMessage } from "@components/UI/MultiStepToast";
 import { toastError } from "@components/UI/Toast";
-import { chains } from "@config/wagmi";
+import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { getTokenDecimals } from "@helpers/getTokenDecimals";
 import useFundRewardsModule from "@hooks/useFundRewards";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import useRewardsModule from "@hooks/useRewards";
+import { switchChain } from "@wagmi/core";
 import { ethers } from "ethers";
 import { usePathname } from "next/navigation";
 import { FC, useRef } from "react";
@@ -20,10 +21,12 @@ interface CreateRewardsFundingProps {
 
 const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFirstTime = true }) => {
   const asPath = usePathname();
+  const { chainId: userChainId } = useAccount();
   const { chainName } = extractPathSegments(asPath ?? "");
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
+  const isConnectedOnCorrectChain = chainId === userChainId;
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
   const { getContestRewardsAddress } = useRewardsModule();
   const { address } = useAccount();
@@ -31,8 +34,6 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
   const toastIdRef = useRef<string | number | null>(null);
 
   const fundPool = async () => {
-    if (rewards.length === 0) return;
-
     const populatedRewardsPromises = rewards.map(async reward => {
       if (reward.amount === "") return null;
 
@@ -94,6 +95,16 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
     );
   };
 
+  const onFundPool = () => {
+    if (rewards.length === 0) return;
+
+    if (!isConnectedOnCorrectChain) {
+      switchChain(config, { chainId });
+    }
+
+    fundPool();
+  };
+
   const onCancelFundingPool = () => {
     setCancel(true);
   };
@@ -123,7 +134,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
         <CreateRewardsFundPool />
       </div>
       <div className="mt-10">
-        <CreateRewardsFundingPoolSubmit onClick={fundPool} onCancel={onCancelFundingPool} />
+        <CreateRewardsFundingPoolSubmit onClick={onFundPool} onCancel={onCancelFundingPool} />
       </div>
     </div>
   );

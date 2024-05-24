@@ -322,6 +322,7 @@ module.exports = {
         shakeTop: "shakeTop 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both",
         swingInLeft: "swingInLeft 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both",
         flicker: "flicker 1s linear",
+        "flicker-infinite": "flicker 1s linear infinite",
       },
 
       height: {

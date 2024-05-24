@@ -37,6 +37,7 @@ const ContestRewards = () => {
     sortingEnabled,
     contestMaxProposalCount,
     downvotingAllowed,
+    rewardsModuleAddress,
   } = useContestStore(state => state);
   const {
     version,
@@ -51,8 +52,8 @@ const ContestRewards = () => {
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const { address: accountAddress } = useAccount();
-  const { unpaidTokens } = useUnpaidRewardTokens();
-  const { paidTokens } = usePaidRewardTokens();
+  const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress);
+  const { paidTokens } = usePaidRewardTokens("rewards-module-paid-tokens", rewardsModuleAddress);
   const creator = contestAuthorEthereumAddress === accountAddress;
 
   useAccountEffect({
