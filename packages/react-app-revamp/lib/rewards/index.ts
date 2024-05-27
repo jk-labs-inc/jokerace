@@ -63,7 +63,7 @@ export const getPaidBalances = async (
 
     const { data: transactions, error: transactionError } = await supabase
       .from("analytics_rewards_v3")
-      .select("token_address, amount_paid_out, amount_withdrawn")
+      .select("token_address, amount_paid_out")
       .eq("rewards_module_address", rewardsModuleAddress)
       .eq("network_name", networkName);
 
@@ -82,9 +82,6 @@ export const getPaidBalances = async (
           if (transaction.amount_paid_out) {
             acc[tokenAddress].balance += transaction.amount_paid_out;
           }
-          if (transaction.amount_withdrawn) {
-            acc[tokenAddress].balance = 0;
-          }
         }
 
         return acc;
@@ -92,7 +89,6 @@ export const getPaidBalances = async (
       {} as { [key: string]: RewardToken },
     );
 
-    // Return tokens with positive balance
     return Object.values(balances).filter(token => token.balance > 0);
   }
 

@@ -102,15 +102,19 @@ export const useDistributeRewards = (
       setIsLoading(false);
       toastSuccess("Funds distributed successfully!");
 
-      updateRewardAnalytics({
-        contest_address: contestAddress,
-        rewards_module_address: contractRewardsModuleAddress,
-        network_name: chainName,
-        amount: amountReleasableFormatted,
-        operation: "distribute",
-        token_address: tokenAddress ? tokenAddress : null,
-        created_at: Math.floor(Date.now() / 1000),
-      });
+      try {
+        await updateRewardAnalytics({
+          contest_address: contestAddress,
+          rewards_module_address: contractRewardsModuleAddress,
+          network_name: chainName,
+          amount: amountReleasableFormatted,
+          operation: "distribute",
+          token_address: tokenAddress ? tokenAddress : null,
+          created_at: Math.floor(Date.now() / 1000),
+        });
+      } catch (error) {
+        console.error("Error while updating reward analytics", error);
+      }
     } catch (error) {
       handleError(error, "Error while releasing token");
       setIsLoading(false);

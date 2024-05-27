@@ -108,8 +108,6 @@ export function useFundRewardsModule() {
         chainId: chainId,
         hash: hash,
       });
-
-      handleRefetchBalanceRewardsModule();
     } else {
       const amountBigInt = BigInt(amount);
 
@@ -129,19 +127,24 @@ export function useFundRewardsModule() {
       });
     }
 
-    setIsLoading(false);
-    setIsSuccess(true);
+    try {
+      await updateRewardAnalytics({
+        contest_address: contestAddress,
+        rewards_module_address: rewardsContractAddress,
+        network_name: chainName,
+        amount: parseFloat(utils.formatUnits(amount, decimals)),
+        operation: "deposit",
+        token_address: tokenAddress?.startsWith("$") ? null : tokenAddress,
+        created_at: Math.floor(Date.now() / 1000),
+      });
+    } catch (error) {
+      console.error("Error while updating reward analytics", error);
+    }
 
     handleRefetchBalanceRewardsModule();
-    updateRewardAnalytics({
-      contest_address: contestAddress,
-      rewards_module_address: rewardsContractAddress,
-      network_name: chainName,
-      amount: parseFloat(utils.formatUnits(amount, decimals)),
-      operation: "deposit",
-      token_address: tokenAddress?.startsWith("$") ? null : tokenAddress,
-      created_at: Math.floor(Date.now() / 1000),
-    });
+
+    setIsLoading(false);
+    setIsSuccess(true);
 
     return {
       hash: receipt.transactionHash,
