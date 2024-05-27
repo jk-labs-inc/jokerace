@@ -196,33 +196,32 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                 )}
                 <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
-                    <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
+                    <div className="flex gap-4 items-center">
+                      <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
+                      <div
+                        className="w-8 h-8 flex md:hidden items-center rounded-[10px] border border-neutral-11"
+                        onClick={() =>
+                          navigator.share({
+                            url: generateUrlContest(address, chainName),
+                          })
+                        }
+                      >
+                        <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
+                      </div>
+                    </div>
+
                     <div className="flex flex-row gap-3 md:gap-4 items-center">
                       <UserProfileDisplay
                         ethereumAddress={contestAuthorEthereumAddress}
                         shortenOnFallback
                         textualVersion={isMobile}
                       />
-
                       {rewardsModuleAddress && rewardsAbi ? (
                         <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
                       ) : null}
-
-                      {isMobile ? (
-                        <div
-                          className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
-                          onClick={() =>
-                            navigator.share({
-                              url: generateUrlContest(address, chainName),
-                            })
-                          }
-                        >
-                          <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
-                        </div>
-                      ) : (
-                        //TODO: pass rewards to share?
+                      <div className="hidden md:flex">
                         <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
-                      )}
+                      </div>
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
                         onClick={() => window.location.reload()}
