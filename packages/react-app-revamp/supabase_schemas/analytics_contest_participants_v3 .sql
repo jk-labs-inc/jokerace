@@ -6,11 +6,11 @@ create table
     network_name character varying not null,
     proposal_id character varying null,
     vote_amount numeric null,
-    created_at int4 null,
+    created_at integer null,
     deleted boolean null default false,
+    percentage_to_creator numeric null,
     amount_sent numeric null,
-    percentage_to_creator numeric null 
-    comment_id character varying null
+    comment_id character varying null,
     constraint analytics_contest_participants_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 
