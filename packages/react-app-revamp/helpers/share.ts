@@ -1,4 +1,3 @@
-import { Reward } from "@hooks/useContest/store";
 import { copyToClipboard } from "./copyToClipboard";
 
 interface UrlParams {
@@ -18,36 +17,21 @@ const buildUrl = (baseUrl: string, params: UrlParams): string => {
   return `${baseUrl}${query}`;
 };
 
-const contestShareText = (contestName: string, rewards?: Reward | null) => {
-  let rewardsText =
-    rewards && rewards.token && rewards.token.value && rewards.token.symbol
-      ? ` to win ${rewards.token.value}$${rewards.token.symbol}`
-      : "";
-
-  return `Come play ${contestName} on @jokerace_io with me${rewardsText}!\n`;
+const contestShareText = (contestName: string) => {
+  return `Come play ${contestName} on @jokerace_io with me!\n`;
 };
 
-export const generateLensShareUrlForContest = (
-  contestName: string,
-  contestAddress: string,
-  chain: string,
-  rewards?: Reward | null,
-) => {
+export const generateLensShareUrlForContest = (contestName: string, contestAddress: string, chain: string) => {
   const params = {
-    text: contestShareText(contestName, rewards),
+    text: contestShareText(contestName),
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
   };
   return buildUrl(BASE_LENSTER_URL, params);
 };
 
-export const generateTwitterShareUrlForContest = (
-  contestName: string,
-  contestAddress: string,
-  chain: string,
-  rewards?: Reward | null,
-) => {
+export const generateTwitterShareUrlForContest = (contestName: string, contestAddress: string, chain: string) => {
   const params = {
-    text: contestShareText(contestName, rewards),
+    text: contestShareText(contestName),
     url: `${BASE_JOKERACE_URL}${chain}/${contestAddress}`,
   };
   return buildUrl(BASE_TWITTER_URL, params);

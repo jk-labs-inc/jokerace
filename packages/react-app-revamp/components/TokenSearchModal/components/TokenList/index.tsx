@@ -35,7 +35,7 @@ const TokenSearchList: FC<TokenSearchTokenListProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-6 animate-appear">
+    <div className="flex flex-col gap-6 animate-reveal">
       {tokens.map(token => (
         <TokenSearchListToken
           key={token.address}

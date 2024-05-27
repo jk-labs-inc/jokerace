@@ -16,6 +16,8 @@ import useContractVersion from "@hooks/useContractVersion";
 import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
+import usePaidRewardTokens from "@hooks/useRewardsTokens/usePaidRewardsTokens";
+import { useUnpaidRewardTokens } from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -35,6 +37,7 @@ const ContestRewards = () => {
     sortingEnabled,
     contestMaxProposalCount,
     downvotingAllowed,
+    rewardsModuleAddress,
   } = useContestStore(state => state);
   const {
     version,
@@ -49,6 +52,8 @@ const ContestRewards = () => {
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const { address: accountAddress } = useAccount();
+  const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress);
+  const { paidTokens } = usePaidRewardTokens("rewards-module-paid-tokens", rewardsModuleAddress);
   const creator = contestAuthorEthereumAddress === accountAddress;
 
   useAccountEffect({
@@ -134,7 +139,7 @@ const ContestRewards = () => {
   }
 
   return (
-    <>
+    <div className="animate-reveal">
       {!isLoading && isSuccess && (
         <>
           {rewardsStore.isLoading && <Loader>Loading rewards</Loader>}
@@ -148,6 +153,7 @@ const ContestRewards = () => {
                     <a
                       className="text-positive-11 text-[16px] font-bold underline break-all"
                       href={`${rewardsStore?.rewards?.blockExplorers?.url}address/${rewardsStore?.rewards?.contractAddress}`}
+                      target="_blank"
                     >
                       {rewardsStore?.rewards?.contractAddress}
                     </a>
@@ -228,7 +234,7 @@ const ContestRewards = () => {
                     key={index}
                     chainId={chainId}
                     payee={payee}
-                    erc20Tokens={rewardsStore.rewards.balance}
+                    erc20Tokens={unpaidTokens ?? []}
                     contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                     abiRewardsModule={rewardsStore.rewards.abi}
                   />
@@ -244,7 +250,7 @@ const ContestRewards = () => {
                     key={index}
                     chainId={chainId}
                     payee={payee}
-                    erc20Tokens={rewardsStore.rewards.balance}
+                    erc20Tokens={paidTokens ?? []}
                     contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                     abiRewardsModule={rewardsStore.rewards.abi}
                     showPreviouslyDistributedTable
@@ -262,7 +268,7 @@ const ContestRewards = () => {
           />
         </>
       )}
-    </>
+    </div>
   );
 };
 

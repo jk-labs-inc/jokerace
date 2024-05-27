@@ -4,15 +4,6 @@ import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
 
-export type Reward = {
-  token: {
-    symbol: string;
-    value: number;
-  };
-  winners: number;
-  numberOfTokens: number;
-};
-
 export enum ErrorType {
   RPC = "RPC",
   CONTRACT = "CONTRACT",
@@ -42,11 +33,11 @@ export interface ContestState {
   charge: Charge | null;
   votingRequirements: VotingRequirementsSchema | null;
   submissionRequirements: VotingRequirementsSchema | null;
-  rewards: Reward | null;
   isReadOnly: boolean;
-  isRewardsLoading: boolean;
   anyoneCanVote: boolean;
   version: string;
+  rewardsModuleAddress: string;
+  rewardsAbi: Abi | null;
   setSupportsRewardsModule: (value: boolean) => void;
   setCanUpdateVotesInRealTime: (value: boolean) => void;
   setDownvotingAllowed: (isAllowed: boolean) => void;
@@ -58,7 +49,6 @@ export interface ContestState {
   setSubmissionsOpen: (datetime: Date) => void;
   setVotesOpen: (datetime: Date) => void;
   setVotesClose: (datetime: Date) => void;
-  setRewards: (rewards: Reward | null) => void;
   setSubmissionsMerkleRoot: (merkleRoot: string) => void;
   setVotingMerkleRoot: (merkleRoot: string) => void;
   setVotingRequirements: (votingRequirements: VotingRequirementsSchema | null) => void;
@@ -69,10 +59,11 @@ export interface ContestState {
   setIsV3: (value: boolean) => void;
   setCharge: (charge: Charge | null) => void;
   setIsReadOnly: (value: boolean) => void;
-  setIsRewardsLoading: (value: boolean) => void;
   setContestAbi: (abi: Abi) => void;
   setAnyoneCanVote: (value: boolean) => void;
   setVersion: (version: string) => void;
+  setRewardsModuleAddress: (address: string) => void;
+  setRewardsAbi: (abi: Abi | null) => void;
 }
 
 export const createContestStore = () =>
@@ -87,7 +78,6 @@ export const createContestStore = () =>
     votesClose: new Date(),
     submissionMerkleRoot: "",
     votingMerkleRoot: "",
-    rewards: null,
     isLoading: true,
     error: null,
     charge: null,
@@ -101,9 +91,10 @@ export const createContestStore = () =>
     isV3: false,
     isReadOnly: false,
     supportsRewardsModule: false,
-    isRewardsLoading: false,
     anyoneCanVote: false,
     version: "",
+    rewardsModuleAddress: "",
+    rewardsAbi: null,
     setSupportsRewardsModule: value => set({ supportsRewardsModule: value }),
     setCanUpdateVotesInRealTime: value => set({ canUpdateVotesInRealTime: value }),
     setDownvotingAllowed: isAllowed => set({ downvotingAllowed: isAllowed }),
@@ -119,17 +110,17 @@ export const createContestStore = () =>
     setVotesClose: datetime => set({ votesClose: datetime }),
     setSubmissionsMerkleRoot: merkleRoot => set({ submissionMerkleRoot: merkleRoot }),
     setVotingMerkleRoot: merkleRoot => set({ votingMerkleRoot: merkleRoot }),
-    setRewards: rewards => set({ rewards: rewards }),
     setVotingRequirements: votingRequirements => set({ votingRequirements: votingRequirements }),
     setSubmissionRequirements: submissionRequirements => set({ submissionRequirements: submissionRequirements }),
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),
-    setIsRewardsLoading: value => set({ isRewardsLoading: value }),
     setCharge: charge => set({ charge: charge }),
     setContestAbi: abi => set({ contestAbi: abi }),
     setAnyoneCanVote: value => set({ anyoneCanVote: value }),
     setVersion: version => set({ version: version }),
+    setRewardsModuleAddress: address => set({ rewardsModuleAddress: address }),
+    setRewardsAbi: abi => set({ rewardsAbi: abi }),
   }));
 
 export const ContestContext = createContext<ReturnType<typeof createContestStore> | null>(null);

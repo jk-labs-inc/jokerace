@@ -1,9 +1,15 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { chains, config } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
-import { formatUnits } from "ethers/lib/utils";
+import { useAccountModal } from "@rainbow-me/rainbowkit";
+import { switchChain } from "@wagmi/core";
+import { usePathname } from "next/navigation";
 import Skeleton from "react-loading-skeleton";
 import { Tooltip } from "react-tooltip";
+import { formatUnits } from "viem";
+import { useAccount } from "wagmi";
 
 interface DistributableRewardProps {
   queryTokenBalance: any;
@@ -12,6 +18,13 @@ interface DistributableRewardProps {
 }
 
 export const DistributableReward = (props: DistributableRewardProps) => {
+  const pathname = usePathname();
+  const { chainName } = extractPathSegments(pathname);
+  const chainId = chains.filter(
+    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
+  )?.[0]?.id;
+  const { chainId: userChainId } = useAccount();
+  const isConnectedOnCorrectChain = chainId === userChainId;
   const { contestStatus } = useContestStatusStore(state => state);
   const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
   const { queryTokenBalance, handleDistributeRewards, queryRankRewardsReleasable } = props;
@@ -35,6 +48,14 @@ export const DistributableReward = (props: DistributableRewardProps) => {
     return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading distributable rewards</p>;
   }
 
+  const onDistributeRewards = async () => {
+    if (!isConnectedOnCorrectChain) {
+      switchChain(config, { chainId });
+    }
+
+    handleDistributeRewards?.();
+  };
+
   return (
     <li className="flex items-center">
       <section className="flex justify-between w-full">
@@ -50,7 +71,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
                 isDisabled={contestStatus !== ContestStatus.VotingClosed || isDistributeRewardsLoading}
                 size={ButtonSize.EXTRA_SMALL}
                 colorClass="bg-gradient-distribute"
-                onClick={handleDistributeRewards}
+                onClick={onDistributeRewards}
               >
                 distribute
               </ButtonV3>

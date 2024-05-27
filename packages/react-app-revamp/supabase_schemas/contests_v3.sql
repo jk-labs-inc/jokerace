@@ -13,14 +13,14 @@ create table
     summary character varying null,
     prompt character varying null,
     uuid uuid not null default gen_random_uuid (),
-    votingMerkleRoot character varying null,
-    submissionMerkleRoot character varying null,
+    "votingMerkleRoot" character varying null,
+    "submissionMerkleRoot" character varying null,
     hidden boolean null default false,
-    voting_requirements json null default null,
-    submission_requirements json null default null,
+    voting_requirements json null,
+    submission_requirements json null,
     cost_to_propose numeric null,
     percentage_to_creator numeric null,
-    cost_to_vote numeric null
+    cost_to_vote numeric null,
     constraint contests_v3_pkey primary key (uuid)
   ) tablespace pg_default;
 

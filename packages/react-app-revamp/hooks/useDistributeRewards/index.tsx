@@ -46,6 +46,7 @@ export const useDistributeRewards = (
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { setIsLoading, refetch, setRefetch } = useDistributeRewardStore(state => state);
   const tokenDataRes = useToken({ address: tokenAddress as `0x${string}`, chainId });
+
   const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;
   const { handleError } = useError();
 
@@ -81,6 +82,9 @@ export const useDistributeRewards = (
   const handleDistributeRewards = async () => {
     setIsLoading(true);
     toastLoading(`Distributing funds...`);
+    const amountReleasable = await queryRankRewardsReleasable.refetch();
+    const amountReleasableFormatted = transform(amountReleasable.data as bigint, tokenType, tokenData);
+
     try {
       const hash = await writeContract(config, {
         address: contractRewardsModuleAddress as `0x${string}`,
@@ -94,21 +98,23 @@ export const useDistributeRewards = (
 
       await queryTokenBalance.refetch();
       await queryRankRewardsReleasable.refetch();
-      const amountReleased = await queryRankRewardsReleased.refetch();
-      const amountReleasedFormatted = transform(amountReleased.data as bigint, tokenType, tokenData);
 
       setIsLoading(false);
       toastSuccess("Funds distributed successfully!");
 
-      updateRewardAnalytics({
-        contest_address: contestAddress,
-        rewards_module_address: contractRewardsModuleAddress,
-        network_name: chainName,
-        amount: amountReleasedFormatted,
-        operation: "distribute",
-        token_address: tokenAddress ? tokenAddress : null,
-        created_at: Math.floor(Date.now() / 1000),
-      });
+      try {
+        await updateRewardAnalytics({
+          contest_address: contestAddress,
+          rewards_module_address: contractRewardsModuleAddress,
+          network_name: chainName,
+          amount: amountReleasableFormatted,
+          operation: "distribute",
+          token_address: tokenAddress ? tokenAddress : null,
+          created_at: Math.floor(Date.now() / 1000),
+        });
+      } catch (error) {
+        console.error("Error while updating reward analytics", error);
+      }
     } catch (error) {
       handleError(error, "Error while releasing token");
       setIsLoading(false);

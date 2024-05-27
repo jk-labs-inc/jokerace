@@ -15,7 +15,7 @@ const ChargeLayoutCommisionDetails: FC<ChargeLayoutCommisionDetailsProps> = ({
 }) => {
   if (splitFeeDestination.type === SplitFeeDestinationType.NoSplit) {
     return (
-      <ul className="flex flex-col gap-2 pl-2 mt-2 list-bullet-points animate-appear">
+      <ul className="flex flex-col gap-2 pl-2 mt-2 list-bullet-points animate-reveal">
         <div className="flex items-center">
           <li className="text-[16px] text-neutral-9">jokerace commission</li>
           <p className="text-[16px] text-neutral-9 ml-auto">
@@ -27,7 +27,7 @@ const ChargeLayoutCommisionDetails: FC<ChargeLayoutCommisionDetailsProps> = ({
   }
 
   return (
-    <ul className="flex flex-col gap-2 pl-2 mt-2 list-bullet-points animate-appear">
+    <ul className="flex flex-col gap-2 pl-2 mt-2 list-bullet-points animate-reveal">
       <>
         <div className="flex items-center">
           <li className="text-[16px] text-neutral-9">creator commission</li>

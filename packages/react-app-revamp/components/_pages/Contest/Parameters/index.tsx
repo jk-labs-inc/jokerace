@@ -47,7 +47,7 @@ const ContestParameters = () => {
   const anyoneCanSubmit = submissionMerkleRoot === EMPTY_ROOT;
 
   return (
-    <div className="flex flex-col gap-16">
+    <div className="flex flex-col gap-16 animate-reveal">
       <ContestParametersTimeline
         submissionsOpen={formattedSubmissionsOpen}
         votesOpen={formattedVotesOpen}

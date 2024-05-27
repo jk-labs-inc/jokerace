@@ -1,7 +1,7 @@
 import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward";
 import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward";
-import { ZERO_BALANCE } from "@components/_pages/RewardsDistributionTable/components";
 import { Tab } from "@headlessui/react";
+import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { FC, Fragment } from "react";
 import { useAccount, useBalance } from "wagmi";
 
@@ -11,6 +11,10 @@ interface ContestWithdrawRewardsProps {
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore }) => {
   const { chain } = useAccount();
+  const { unpaidTokens } = useUnpaidRewardTokens(
+    "rewards-module-unpaid-tokens",
+    rewardsStore?.rewards?.contractAddress,
+  );
   const nativeTokenBalance = useBalance({
     address: rewardsStore?.rewards?.contractAddress as `0x${string}`,
     chainId: chain?.id,
@@ -35,26 +39,19 @@ const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore 
         </Tab.List>
         <Tab.Panels>
           <Tab.Panel>
-            {rewardsStore.rewards.balance &&
-            rewardsStore.rewards.balance?.some(
-              (token: { tokenBalance: string }) => token.tokenBalance !== ZERO_BALANCE,
-            ) ? (
+            {unpaidTokens && unpaidTokens.length > 0 ? (
               <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-                {rewardsStore?.rewards.balance
-                  ?.filter((token: { tokenBalance: string }) => token.tokenBalance !== ZERO_BALANCE)
-                  .map((token: { contractAddress: string }, index: number) => (
-                    <ButtonWithdrawERC20Reward
-                      key={index}
-                      contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                      abiRewardsModule={rewardsStore.rewards.abi}
-                      tokenAddress={token.contractAddress}
-                    />
-                  ))}
+                {unpaidTokens.map((token, index) => (
+                  <ButtonWithdrawERC20Reward
+                    key={index}
+                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                    abiRewardsModule={rewardsStore.rewards.abi}
+                    tokenAddress={token.contractAddress}
+                  />
+                ))}
               </ul>
             ) : (
-              <>
-                <p className="italic text-[16px]  text-neutral-11">No balance found for ERC20 tokens.</p>
-              </>
+              <p className="italic text-[16px] text-neutral-11">No balance found for ERC20 tokens.</p>
             )}
           </Tab.Panel>
           <Tab.Panel>
