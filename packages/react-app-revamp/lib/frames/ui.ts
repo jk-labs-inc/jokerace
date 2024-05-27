@@ -1,5 +1,5 @@
 import { createSystem } from "frog/ui";
-import { heroicons } from "frog/ui/icons/";
+import { heroicons } from "frog/ui/icons";
 
 export const { Box, Columns, Column, Heading, HStack, Rows, Row, Spacer, Text, VStack, Image, vars } = createSystem({
   colors: {
