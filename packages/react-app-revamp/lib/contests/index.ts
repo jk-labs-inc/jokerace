@@ -141,7 +141,7 @@ const processContestRewardsData = async (
           let rewardsPaidOut = false;
 
           if (!rewardToken || Number(rewardToken.value) === 0) {
-            erc20Tokens = await getNetBalances(contestRewardModuleAddress);
+            erc20Tokens = await getNetBalances(contestRewardModuleAddress, contestChainName.toLowerCase());
 
             if (erc20Tokens && erc20Tokens.length > 0) {
               rewardToken = await fetchFirstToken(contestRewardModuleAddress, chainId, erc20Tokens[0].tokenAddress);
@@ -161,7 +161,11 @@ const processContestRewardsData = async (
               rewardsPaidOut: rewardsPaidOut,
             };
           } else {
-            const paidBalances = await getPaidBalances(contestRewardModuleAddress, true);
+            const paidBalances = await getPaidBalances(
+              contestRewardModuleAddress,
+              contestChainName.toLowerCase(),
+              true,
+            );
             rewardsPaidOut = paidBalances && paidBalances.length > 0;
 
             reward = {

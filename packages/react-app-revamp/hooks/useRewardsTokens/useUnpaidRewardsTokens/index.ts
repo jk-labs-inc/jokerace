@@ -18,7 +18,7 @@ export const useUnpaidRewardTokens = (queryKey: string, rewardsModuleAddress: st
     queryKey: [queryKey, rewardsModuleAddress],
     queryFn: async () => {
       if (rewardsModuleAddress) {
-        const netBalances = await getNetBalances(rewardsModuleAddress, includeNative);
+        const netBalances = await getNetBalances(rewardsModuleAddress, chainName.toLowerCase(), includeNative);
 
         const tokenAddresses = [...new Set(netBalances.map(token => token.tokenAddress))];
         const tokenDecimals = await getTokenDecimalsBatch(tokenAddresses, chainId);

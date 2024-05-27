@@ -7,6 +7,7 @@ export interface RewardToken {
 
 export const getNetBalances = async (
   rewardsModuleAddress: string,
+  networkName: string,
   includeNative: boolean = false,
 ): Promise<RewardToken[]> => {
   if (isSupabaseConfigured) {
@@ -16,7 +17,8 @@ export const getNetBalances = async (
     const { data: fundings, error: fundingError } = await supabase
       .from("analytics_rewards_v3")
       .select("token_address, amount_paid_in, amount_paid_out, amount_withdrawn")
-      .eq("rewards_module_address", rewardsModuleAddress);
+      .eq("rewards_module_address", rewardsModuleAddress)
+      .eq("network_name", networkName);
 
     if (fundingError) {
       throw new Error(fundingError.message);
@@ -52,6 +54,7 @@ export const getNetBalances = async (
 
 export const getPaidBalances = async (
   rewardsModuleAddress: string,
+  networkName: string,
   includeNative: boolean = false,
 ): Promise<RewardToken[]> => {
   if (isSupabaseConfigured) {
@@ -61,7 +64,8 @@ export const getPaidBalances = async (
     const { data: transactions, error: transactionError } = await supabase
       .from("analytics_rewards_v3")
       .select("token_address, amount_paid_out, amount_withdrawn")
-      .eq("rewards_module_address", rewardsModuleAddress);
+      .eq("rewards_module_address", rewardsModuleAddress)
+      .eq("network_name", networkName);
 
     if (transactionError) {
       throw new Error(transactionError.message);
