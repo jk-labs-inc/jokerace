@@ -10,7 +10,7 @@ import { PayeeNativeReward } from "./NativeReward";
 
 export const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
-type ERC20Token = {
+export type ERC20Token = {
   contractAddress: string;
   tokenBalance: string;
   decimals: number;

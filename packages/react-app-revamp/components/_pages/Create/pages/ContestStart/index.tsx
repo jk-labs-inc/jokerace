@@ -28,7 +28,7 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onClick }) => {
   };
 
   return (
-    <div className="flex flex-col gap-10 lg:ml-[300px] mt-6 md:mt-24 animate-fadeIn">
+    <div className="flex flex-col gap-10 lg:ml-[300px] mt-6 md:mt-24 animate-reveal">
       <div className="flex flex-col gap-2">
         <p className="text-true-white text-[24px] font-bold">{stepTitle}</p>
         <div className="flex flex-col gap-4">

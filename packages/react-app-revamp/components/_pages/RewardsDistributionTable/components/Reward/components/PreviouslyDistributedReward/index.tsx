@@ -1,5 +1,5 @@
-import { formatUnits } from "ethers/lib/utils";
 import Skeleton from "react-loading-skeleton";
+import { formatUnits } from "viem";
 
 interface PreviouslyDistributedRewardProps {
   queryTokenBalance: any;

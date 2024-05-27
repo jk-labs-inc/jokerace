@@ -1,4 +1,5 @@
 import { createSystem } from "frog/ui";
+import { heroicons } from "frog/ui/icons";
 
 export const { Box, Columns, Column, Heading, HStack, Rows, Row, Spacer, Text, VStack, Image, vars } = createSystem({
   colors: {
@@ -10,7 +11,7 @@ export const { Box, Columns, Column, Heading, HStack, Rows, Row, Spacer, Text, V
     green: "#78FFC6",
     red: "#FF78A9",
   },
-  icons: "heroicons",
+  icons: heroicons,
   fonts: {
     lato: [
       {
