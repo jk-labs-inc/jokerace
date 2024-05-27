@@ -35,7 +35,7 @@ const ContestTabs: FC<ContestTabsProps> = ({ onChange }) => {
 
   return (
     <div className="relative flex flex-col gap-2">
-      <div className="flex gap-8 mb-4">
+      <div className="flex gap-6 md:gap-8 mb-4">
         {Object.keys(Tab).map((tabKey, index) => (
           <div
             ref={el => (tabRefs.current[index] = el)}
