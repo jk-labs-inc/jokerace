@@ -143,7 +143,7 @@ const CreateVotingRequirements = () => {
       default:
         return (
           <div className={`${isDropdownOpen ? "opacity-20 transition-opacity duration-300 ease-in-out" : ""}`}>
-            <p className="text-[16px] animate-reveal">
+            <p className="text-[16px] animate-appear">
               <b>note: </b>by letting anyone vote, you’ll need to set a <br />
               charge-per-vote to prevent bots from voting.
             </p>
