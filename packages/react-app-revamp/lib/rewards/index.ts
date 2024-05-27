@@ -15,7 +15,7 @@ export const getNetBalances = async (
 
     const { data: fundings, error: fundingError } = await supabase
       .from("analytics_rewards_v3")
-      .select("token_address, amount_paid_in, amount_paid_out")
+      .select("token_address, amount_paid_in, amount_paid_out, amount_withdrawn")
       .eq("rewards_module_address", rewardsModuleAddress);
 
     if (fundingError) {
@@ -34,6 +34,9 @@ export const getNetBalances = async (
           }
           if (transaction.amount_paid_out) {
             acc[tokenAddress].balance -= transaction.amount_paid_out;
+          }
+          if (transaction.amount_withdrawn) {
+            acc[tokenAddress].balance -= transaction.amount_withdrawn;
           }
         }
         return acc;
@@ -57,7 +60,7 @@ export const getPaidBalances = async (
 
     const { data: transactions, error: transactionError } = await supabase
       .from("analytics_rewards_v3")
-      .select("token_address, amount_paid_in, amount_paid_out")
+      .select("token_address, amount_paid_out, amount_withdrawn")
       .eq("rewards_module_address", rewardsModuleAddress);
 
     if (transactionError) {
@@ -67,6 +70,7 @@ export const getPaidBalances = async (
     const balances = transactions.reduce(
       (acc, transaction) => {
         const tokenAddress = transaction.token_address || (includeNative ? "native" : null);
+
         if (tokenAddress) {
           if (!acc[tokenAddress]) {
             acc[tokenAddress] = { tokenAddress, balance: 0 };
@@ -74,12 +78,17 @@ export const getPaidBalances = async (
           if (transaction.amount_paid_out) {
             acc[tokenAddress].balance += transaction.amount_paid_out;
           }
+          if (transaction.amount_withdrawn) {
+            acc[tokenAddress].balance = 0;
+          }
         }
+
         return acc;
       },
       {} as { [key: string]: RewardToken },
     );
 
+    // Return tokens with positive balance
     return Object.values(balances).filter(token => token.balance > 0);
   }
 

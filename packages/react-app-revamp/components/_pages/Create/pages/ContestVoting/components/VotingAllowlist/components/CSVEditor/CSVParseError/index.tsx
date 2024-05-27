@@ -17,7 +17,7 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
       case "missingColumns":
       case "unexpectedHeaders":
         return (
-          <div className="flex flex-col text-[16px] animate-fadeIn">
+          <div className="flex flex-col text-[16px] animate-reveal">
             {step === "voting" ? (
               <p className=" text-negative-11">
                 Ruh-roh! CSV couldn’t be imported.{" "}
@@ -46,7 +46,7 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
         );
       case "limitExceeded":
         return (
-          <div className="flex flex-col text-[16px] animate-fadeIn">
+          <div className="flex flex-col text-[16px] animate-reveal">
             <p className=" text-negative-11">
               Ruh-roh! CSV file has too many rows.{" "}
               <span className="font-bold">The maximum number of rows allowed is {formatNumber(MAX_ROWS)}</span>
@@ -55,7 +55,7 @@ const CSVParseError: FC<CSVParseErrorProps> = ({ type, step }) => {
         );
       case "allZero":
         return (
-          <div className="flex flex-col text-[16px] animate-fadeIn">
+          <div className="flex flex-col text-[16px] animate-reveal">
             <p className=" text-negative-11">
               Ruh-roh! All votes in the CSV file are 0.{" "}
               <span className="font-bold">CSV should have at least one vote above zero.</span>

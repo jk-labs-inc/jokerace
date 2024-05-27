@@ -45,7 +45,8 @@ export const useDistributeRewards = (
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { setIsLoading, refetch, setRefetch } = useDistributeRewardStore(state => state);
-  const tokenDataRes = useBalance({ address: tokenAddress as `0x${string}`, chainId });
+  const tokenDataRes = useToken({ address: tokenAddress as `0x${string}`, chainId });
+
   const tokenData = tokenType === "erc20" ? tokenDataRes.data : null;
   const { handleError } = useError();
 
@@ -81,10 +82,10 @@ export const useDistributeRewards = (
   const handleDistributeRewards = async () => {
     setIsLoading(true);
     toastLoading(`Distributing funds...`);
+    const amountReleasable = await queryRankRewardsReleasable.refetch();
+    const amountReleasableFormatted = transform(amountReleasable.data as bigint, tokenType, tokenData);
 
     try {
-      const amountReleasable = await queryRankRewardsReleasable.refetch();
-      const amountReleasableFormatted = transform(amountReleasable.data as bigint, tokenType, tokenData);
       const hash = await writeContract(config, {
         address: contractRewardsModuleAddress as `0x${string}`,
         abi: abiRewardsModule,

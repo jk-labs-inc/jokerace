@@ -122,26 +122,22 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
       case Tab.Contest:
-        return (
-          <div className="animate-apppear">
-            <ContestTab />
-          </div>
-        );
+        return <ContestTab />;
       case Tab.Rewards:
         return (
-          <div className="mt-8 animate-appear">
+          <div className="mt-8">
             <ContestRewards />
           </div>
         );
       case Tab.Parameters:
         return (
-          <div className="mt-8 animate-appear">
+          <div className="mt-8">
             <ContestParameters />
           </div>
         );
       case Tab.Extensions:
         return (
-          <div className="mt-8 animate-appear">
+          <div className="mt-8">
             <ContestExtensions />
           </div>
         );
@@ -196,7 +192,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                     </ButtonV3>
                   </div>
                 )}
-                <div className="animate-appear pt-3 md:pt-0">
+                <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
                     <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
                     <div className="flex flex-row gap-3 md:gap-4 items-center">

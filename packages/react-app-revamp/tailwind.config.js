@@ -302,6 +302,16 @@ module.exports = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
+        reveal: {
+          "0%": {
+            mask: "linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 150% 0 / 400% no-repeat",
+            opacity: ".2",
+          },
+          "100%": {
+            mask: "linear-gradient(90deg, #000 25%, #000000e6 50%, #00000000) 0 / 400% no-repeat",
+            opacity: "1",
+          },
+        },
       },
       scale: {
         120: "1.1",
@@ -323,6 +333,7 @@ module.exports = {
         swingInLeft: "swingInLeft 0.5s cubic-bezier(0.175, 0.885, 0.320, 1.275) both",
         flicker: "flicker 1s linear",
         "flicker-infinite": "flicker 1s linear infinite",
+        reveal: "reveal 1s ease-in-out",
       },
 
       height: {

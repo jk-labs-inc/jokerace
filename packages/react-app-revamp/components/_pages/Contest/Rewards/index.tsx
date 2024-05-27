@@ -139,7 +139,7 @@ const ContestRewards = () => {
   }
 
   return (
-    <>
+    <div className="animate-reveal">
       {!isLoading && isSuccess && (
         <>
           {rewardsStore.isLoading && <Loader>Loading rewards</Loader>}
@@ -153,6 +153,7 @@ const ContestRewards = () => {
                     <a
                       className="text-positive-11 text-[16px] font-bold underline break-all"
                       href={`${rewardsStore?.rewards?.blockExplorers?.url}address/${rewardsStore?.rewards?.contractAddress}`}
+                      target="_blank"
                     >
                       {rewardsStore?.rewards?.contractAddress}
                     </a>
@@ -267,7 +268,7 @@ const ContestRewards = () => {
           />
         </>
       )}
-    </>
+    </div>
   );
 };
 

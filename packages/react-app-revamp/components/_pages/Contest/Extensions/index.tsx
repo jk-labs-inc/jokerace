@@ -19,7 +19,7 @@ const ContestExtensions = () => {
     return <div className="text-neutral-11 text-[20px] normal-case">hmm what’s this page doing here? 👀</div>;
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 animate-reveal">
       {isMobile ? (
         <p className="text-neutral-11 text-[16px] normal-case">
           extensions are integrations with other services <br />

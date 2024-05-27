@@ -129,7 +129,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
   };
 
   return (
-    <div className="animate-appear md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
+    <div className="animate-reveal md:ml-4 md:pl-4 md:border-l border-true-white mt-4">
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-4">
           <div className="flex gap-3 items-center">
@@ -201,7 +201,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
               </Tooltip>
             </div>
             {error?.tokenAddressError ? (
-              <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error.tokenAddressError}</p>
+              <p className="text-negative-11 text-[14px] font-bold animate-reveal">{error.tokenAddressError}</p>
             ) : null}
           </div>
         </div>
@@ -244,7 +244,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
                   onChange={onPowerTypeChange}
                 />
               </div>
-              <p className="text-negative-11 text-[14px] font-bold animate-fadeIn">{error?.powerValueError}</p>
+              <p className="text-negative-11 text-[14px] font-bold animate-reveal">{error?.powerValueError}</p>
             </div>
           </div>
         ) : null}

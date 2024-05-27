@@ -25,12 +25,14 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.nativeCurrency.symbol;
   const isMobile = useMediaQuery({ maxWidth: 768 });
+
   const {
     unpaidTokens,
     isLoading: isUnpaidTokensLoading,
     isError: isUnpaidTokensError,
     refetchUnpaidTokens,
   } = useUnpaidRewardTokens("rewards-info-unpaid-tokens", rewardsModuleAddress, true);
+
   const {
     paidTokens,
     isLoading: isPaidTokensLoading,
@@ -51,22 +53,30 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
   }) as { data: bigint[]; isLoading: boolean; isError: boolean; refetch: () => void };
 
   const [tokenSymbols, setTokenSymbols] = useState<string[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const currentToken = unpaidTokens ? unpaidTokens[currentIndex] : null;
-  const currentSymbol = tokenSymbols[currentIndex];
+  const [currentUnpaidIndex, setCurrentUnpaidIndex] = useState(0);
+  const [currentPaidIndex, setCurrentPaidIndex] = useState(0);
+  const [animateUnpaid, setAnimateUnpaid] = useState(false);
+  const [animatePaid, setAnimatePaid] = useState(false);
+
+  const currentUnpaidToken = unpaidTokens ? unpaidTokens[currentUnpaidIndex] : null;
+  const currentPaidToken = paidTokens ? paidTokens[currentPaidIndex] : null;
+
+  const currentUnpaidSymbol = tokenSymbols[currentUnpaidIndex];
+  const currentPaidSymbol = tokenSymbols[currentPaidIndex + (unpaidTokens?.length || 0)];
+
   const isLoading = isUnpaidTokensLoading || isPaidTokensLoading || isPayeesDataLoading;
   const isError = isUnpaidTokensError || isPaidTokensError || isPayeesDataError;
 
   useEffect(() => {
     const fetchTokenSymbols = async () => {
-      if (!unpaidTokens || isUnpaidTokensLoading) return;
+      if (!unpaidTokens && !paidTokens) return;
 
       const symbols = await Promise.all(
-        unpaidTokens.map(async token => {
+        [...(unpaidTokens || []), ...(paidTokens || [])].map(async token => {
           if (token.contractAddress === "native") {
             return nativeCurrency;
           } else {
-            const symbol = readContract(config, {
+            const symbol = await readContract(config, {
               address: token.contractAddress as `0x${string}`,
               chainId: chainId,
               abi: erc20Abi,
@@ -80,17 +90,41 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     };
 
     fetchTokenSymbols();
-  }, [unpaidTokens, isUnpaidTokensLoading, nativeCurrency, chainId]);
+  }, [unpaidTokens, paidTokens, isUnpaidTokensLoading, nativeCurrency, chainId]);
 
   useEffect(() => {
-    if (unpaidTokens && unpaidTokens.length > 0) {
+    if (unpaidTokens && unpaidTokens.length > 1) {
       const interval = setInterval(() => {
-        setCurrentIndex(prevIndex => (prevIndex + 1) % unpaidTokens.length);
+        setCurrentUnpaidIndex(prevIndex => {
+          const nextIndex = (prevIndex + 1) % unpaidTokens.length;
+          setAnimateUnpaid(true);
+          setTimeout(() => setAnimateUnpaid(false), 1000);
+          return nextIndex;
+        });
       }, 3000);
 
       return () => clearInterval(interval);
+    } else if (unpaidTokens && unpaidTokens.length === 1) {
+      setCurrentUnpaidIndex(0);
     }
   }, [unpaidTokens]);
+
+  useEffect(() => {
+    if (paidTokens && paidTokens.length > 1) {
+      const interval = setInterval(() => {
+        setCurrentPaidIndex(prevIndex => {
+          const nextIndex = (prevIndex + 1) % paidTokens.length;
+          setAnimatePaid(true);
+          setTimeout(() => setAnimatePaid(false), 1000);
+          return nextIndex;
+        });
+      }, 3000);
+
+      return () => clearInterval(interval);
+    } else if (paidTokens && paidTokens.length === 1) {
+      setCurrentPaidIndex(0);
+    }
+  }, [paidTokens]);
 
   const determineErrorFunction = () => {
     if (isUnpaidTokensError) {
@@ -129,26 +163,33 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     );
   }
 
-  if (unpaidTokens?.length === 0 && paidTokens && paidTokens?.length > 0) {
-    return (
-      <div className="flex shrink-0 h-8 p-4 items-center bg-neutral-0 border border-positive-11 rounded-[10px] text-[16px] font-bold text-positive-11">
-        rewards paid out!
-      </div>
-    );
-  }
+  if (!currentUnpaidToken && !currentPaidToken) return null;
 
   return (
     <>
-      {currentToken ? (
+      {currentUnpaidToken ? (
         <div className="flex shrink-0 h-8 w-52 max-w-56 p-4 justify-center items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11 overflow-hidden">
           <span className="truncate flex items-center">
-            {currentToken.tokenBalance} $
-            <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentSymbol}</span>
+            <div className={`flex items-center ${animateUnpaid ? "animate-reveal" : ""}`}>
+              {currentUnpaidToken.tokenBalance} $
+              <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentUnpaidSymbol}</span>
+            </div>
+
             {!isMobile ? (
               <>
                 to {payees.length} {payees.length > 1 ? "winners" : "winner"}
               </>
             ) : null}
+          </span>
+        </div>
+      ) : currentPaidToken ? (
+        <div className="flex shrink-0 h-8 w-52 max-w-56 p-4 justify-center items-center bg-neutral-0 border border-positive-11 rounded-[10px] text-[16px] font-bold text-positive-11 overflow-hidden">
+          <span className="truncate flex items-center">
+            <div className={`flex items-center ${animatePaid ? "animate-reveal" : ""}`}>
+              {currentPaidToken.tokenBalance} $
+              <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentPaidSymbol}</span>
+            </div>
+            paid out!
           </span>
         </div>
       ) : null}
