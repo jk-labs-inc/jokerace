@@ -10,9 +10,11 @@ import { usePathname } from "next/navigation";
 import { Abi } from "viem";
 import { useAccount } from "wagmi";
 import { useRewardsStore } from "./store";
+import { useContestStore } from "@hooks/useContest/store";
 
 export function useRewardsModule() {
   const asPath = usePathname();
+  const { rewardsModuleAddress, rewardsAbi } = useContestStore(state => state);
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { chain } = useAccount();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
@@ -31,27 +33,17 @@ export function useRewardsModule() {
     setError("");
     setIsSuccess(false);
 
+    if (rewardsAbi === null) {
+      setIsLoading(false);
+      setIsSuccess(false);
+      toastError(`This contract doesn't exist on ${contestChainName}.`);
+      return;
+    }
+
     try {
-      const contestRewardModuleAddress = await getContestRewardsAddress();
-
-      if (!contestRewardModuleAddress || contestRewardModuleAddress === "0x0000000000000000000000000000000000000000") {
-        toastError("there is no rewards module for this contest!");
-        return;
-      }
-
-      const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
-      if (abiRewardsModule === null) {
-        if (contestRewardModuleAddress == "0x0000000000000000000000000000000000000000") {
-          toastError("There is no rewards module for this contest.");
-        } else {
-          toastError(`The rewards pool contract address doesn't exist on ${chain?.name ?? "this chain"}.`);
-        }
-        return;
-      }
-
       const configRewardsModuleContract = {
-        address: contestRewardModuleAddress as `0x${string}`,
-        abi: abiRewardsModule as Abi,
+        address: rewardsModuleAddress as `0x${string}`,
+        abi: rewardsAbi as Abi,
         chainId,
       };
       const contractsRewardsModule = [
@@ -74,8 +66,8 @@ export function useRewardsModule() {
       });
 
       setRewards({
-        abi: abiRewardsModule,
-        contractAddress: contestRewardModuleAddress,
+        abi: rewardsAbi,
+        contractAddress: rewardsModuleAddress,
         creator: rewardsModule[0],
         payees: rewardsModule[1].result,
         totalShares: rewardsModule[2].result,

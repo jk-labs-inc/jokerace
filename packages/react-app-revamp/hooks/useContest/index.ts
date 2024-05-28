@@ -395,61 +395,6 @@ export function useContest() {
     }
   }
 
-  // /**
-  //  * Fetch reward data from the rewards module contract
-  //  * @param contestRewardModuleAddress
-  //  * @returns
-  //  */
-  // async function processRewardData(contestRewardModuleAddress: string) {
-  //   if (!contestRewardModuleAddress) return;
-
-  //   const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
-
-  //   if (!abiRewardsModule) {
-  //     setRewards(null);
-  //   } else {
-  //     const winners = (await readContract(config, {
-  //       address: contestRewardModuleAddress as `0x${string}`,
-  //       abi: abiRewardsModule,
-  //       chainId: chainId,
-  //       functionName: "getPayees",
-  //     })) as any[];
-
-  //     let rewardToken: GetBalanceReturnType | null = null;
-  //     let erc20Tokens: any = null;
-
-  //     rewardToken = await fetchNativeBalance(contestRewardModuleAddress, chainId);
-
-  //     if (!rewardToken || rewardToken.value.toString() == "0") {
-  //       try {
-  //         erc20Tokens = await fetchTokenBalances(chainName, contestRewardModuleAddress);
-
-  //         if (erc20Tokens && erc20Tokens.length > 0) {
-  //           rewardToken = await fetchFirstToken(contestRewardModuleAddress, chainId, erc20Tokens[0].contractAddress);
-  //         }
-  //       } catch (e) {
-  //         console.error("Error fetching token balances:", e);
-  //         return;
-  //       }
-  //     }
-
-  //     if (rewardToken) {
-  //       setRewards({
-  //         token: {
-  //           symbol: rewardToken.symbol,
-  //           value: parseFloat(formatUnits(rewardToken.value, rewardToken.decimals)),
-  //         },
-  //         winners: winners.length,
-  //         numberOfTokens: erc20Tokens?.length ?? 1,
-  //       });
-  //     } else {
-  //       setRewards(null);
-  //     }
-
-  //     setIsRewardsLoading(false);
-  //   }
-  // }
-
   return {
     getContractConfig,
     address,

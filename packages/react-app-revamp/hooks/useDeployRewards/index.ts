@@ -4,7 +4,6 @@ import RewardsModuleContract from "@contracts/bytecodeAndAbi/modules/RewardsModu
 import { getEthersSigner } from "@helpers/ethers";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
-import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
 import { simulateContract, waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { Contract, ContractFactory } from "ethers";
@@ -16,7 +15,6 @@ export function useDeployRewardsPool() {
   const { chainId } = useAccount();
   const asPath = usePathname();
   const { address: contestAddress } = extractPathSegments(asPath ?? "");
-  const stateContestDeployment = useContractFactoryStore(state => state);
   const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
   const { ranks, shares, setDeployRewardsData, setIsLoading, setError, setIsSuccess, setDisplayCreatePool } =
     useDeployRewardsStore(state => state);
@@ -87,9 +85,6 @@ export function useDeployRewardsPool() {
           return await rewardsModuleAttachment();
         } catch (e) {
           handleError(e, "Something went wrong and the rewards module couldn't be attached.");
-          stateContestDeployment.setIsLoading(false);
-          stateContestDeployment.setIsSuccess(false);
-          stateContestDeployment.setError(error);
           setError(error);
           setIsLoading(false);
           setIsSuccess(false);

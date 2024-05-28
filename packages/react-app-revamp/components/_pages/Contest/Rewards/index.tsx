@@ -73,7 +73,7 @@ const ContestRewards = () => {
 
   if (!supportsRewardsModule && !creator) {
     return (
-      <p className="text-[16px] md:text-[20px]">
+      <p className="text-[16px] md:text-[20px] animate-reveal">
         For this contest, there is no rewards module; the contest creator is the only one who may configure one.
       </p>
     );
@@ -107,7 +107,7 @@ const ContestRewards = () => {
     }
 
     return (
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-12 animate-reveal">
         <div className="flex flex-col gap-4">
           <p className="text-[24px] font-bold text-true-white">let’s add rewards 💸💸💸</p>
           <p className="text-[16px] text-neutral-11">what’s a good contest without rewards?</p>
