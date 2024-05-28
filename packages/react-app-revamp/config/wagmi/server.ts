@@ -20,6 +20,7 @@ import { bnb } from "./custom-chains/bnb";
 import { campTestnet } from "./custom-chains/campTestnet";
 import { celo } from "./custom-chains/celo";
 import { celoTestnet } from "./custom-chains/celoTestnet";
+import { cyber } from "./custom-chains/cyber";
 import { degen } from "./custom-chains/degen";
 import { eos } from "./custom-chains/eos";
 import { eosTestnet } from "./custom-chains/eosTestnet";
@@ -35,6 +36,7 @@ import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { gold } from "./custom-chains/gold";
+import { hedera } from "./custom-chains/hedera";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
 import { inEvmTestnet } from "./custom-chains/inEvmTestnet";
@@ -82,6 +84,7 @@ import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { syndicateFrame } from "./custom-chains/syndicateFrame";
+import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
@@ -116,8 +119,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   proteus,
   nautilusChain,
   ronin,
-  degen,
-  gold,
   fuse,
   kroma,
   scroll,
@@ -144,6 +145,12 @@ export const chains: readonly [Chain, ...Chain[]] = [
   zkFair,
   inEvm,
   neon,
+  degen,
+  gold,
+  xLayer,
+  cyber,
+  hedera,
+  taiko,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
@@ -166,7 +173,6 @@ export const chains: readonly [Chain, ...Chain[]] = [
   roninTestnet,
   scrollSepoliaTestnet,
   artheraTestnet,
-  xLayer,
   xLayerTestnet,
   neonDevnet,
   frameTestnet,
