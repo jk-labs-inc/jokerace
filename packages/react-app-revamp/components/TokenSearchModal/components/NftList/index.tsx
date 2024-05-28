@@ -29,7 +29,7 @@ const NftsSearchList: FC<NftsSearchListProps> = ({ selectedChain, searchValue, i
   }
 
   return (
-    <div className={`flex flex-col gap-6 animate-appear`}>
+    <div className={`flex flex-col gap-6 animate-reveal`}>
       {nfts.map(nft => (
         <TokenSearchListNft
           key={nft.address}

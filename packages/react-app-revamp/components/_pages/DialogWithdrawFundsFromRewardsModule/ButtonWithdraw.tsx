@@ -1,5 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { utils } from "ethers";
+import { formatUnits } from "viem";
 
 interface ButtonWithdrawErc20RewardProps {
   queryTokenBalance: any;
@@ -16,9 +16,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     <li className="flex items-center">
       <section className="flex justify-between w-full md:w-[650px]">
         <p>
-          {queryTokenBalance?.decimals <= 18
-            ? parseFloat(utils.formatEther(queryTokenBalance.data.value))
-            : parseFloat(utils.formatUnits(queryTokenBalance.data.value, queryTokenBalance.data.decimals))}{" "}
+          {parseFloat(formatUnits(queryTokenBalance.data.value, queryTokenBalance.data.decimals))}{" "}
           <span className="uppercase">${queryTokenBalance.data.symbol}</span>
         </p>
         <ButtonV3

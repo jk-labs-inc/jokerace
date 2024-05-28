@@ -6,6 +6,7 @@ import ButtonV3 from "@components/UI/ButtonV3";
 import Loader from "@components/UI/Loader";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ContestTab from "@components/_pages/Contest/Contest";
+import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
@@ -29,11 +30,10 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useUrl } from "nextjs-current-url";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
-import ContestExtensions from "@components/_pages/Contest/Extensions";
+import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const { refresh } = useRouter();
@@ -49,9 +49,9 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     votesOpen,
     contestAuthorEthereumAddress,
     contestName,
-    rewards,
     isReadOnly,
-    isRewardsLoading,
+    rewardsModuleAddress,
+    rewardsAbi,
   } = useContestStore(state => state);
   const accountChanged = useAccountChange();
   const { checkIfCurrentUserQualifyToVote, checkIfCurrentUserQualifyToSubmit } = useUser();
@@ -70,6 +70,8 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   });
 
   useEffect(() => {
+    if (isLoading) return;
+
     const now = moment();
     const formattedSubmissionOpen = moment(submissionsOpen);
     const formattedVotingOpen = moment(votesOpen);
@@ -103,7 +105,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [submissionsOpen, votesOpen, votesClose, setContestStatus]);
+  }, [submissionsOpen, votesOpen, votesClose, setContestStatus, isLoading]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -122,26 +124,22 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
       case Tab.Contest:
-        return (
-          <div className="animate-apppear">
-            <ContestTab />
-          </div>
-        );
+        return <ContestTab />;
       case Tab.Rewards:
         return (
-          <div className="mt-8 animate-appear">
+          <div className="mt-8">
             <ContestRewards />
           </div>
         );
       case Tab.Parameters:
         return (
-          <div className="mt-8 animate-appear">
+          <div className="mt-8">
             <ContestParameters />
           </div>
         );
       case Tab.Extensions:
         return (
-          <div className="mt-8 animate-appear">
+          <div className="mt-8">
             <ContestExtensions />
           </div>
         );
@@ -196,58 +194,34 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                     </ButtonV3>
                   </div>
                 )}
-                <div className="animate-appear pt-3 md:pt-0">
+                <div className="animate-reveal pt-3 md:pt-0">
                   <div className="flex flex-col mt-6 md:mt-10 gap-4">
-                    <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
+                    <div className="flex gap-4 items-center">
+                      <p className="text-[16px] md:text-[31px] text-primary-10 font-sabo break-all">{contestName}</p>
+                      <div
+                        className="w-8 h-8 flex md:hidden items-center rounded-[10px] border border-neutral-11"
+                        onClick={() =>
+                          navigator.share({
+                            url: generateUrlContest(address, chainName),
+                          })
+                        }
+                      >
+                        <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
+                      </div>
+                    </div>
+
                     <div className="flex flex-row gap-3 md:gap-4 items-center">
                       <UserProfileDisplay
                         ethereumAddress={contestAuthorEthereumAddress}
                         shortenOnFallback
                         textualVersion={isMobile}
                       />
-
-                      {isRewardsLoading && (
-                        <SkeletonTheme baseColor="#000000" highlightColor="#212121" duration={1}>
-                          <Skeleton
-                            borderRadius={10}
-                            className="h-8 shrink-0 p-2 border border-neutral-11"
-                            width={isMobile ? 100 : 200}
-                          />
-                        </SkeletonTheme>
-                      )}
-
-                      {rewards && !isRewardsLoading && (
-                        <div className="flex shrink-0 h-8 p-4 items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11">
-                          {rewards?.token.value} $
-                          <span className="uppercase mr-1 truncate inline-block overflow-hidden max-w-[50px] md:max-w-[100px]">
-                            {rewards?.token.symbol}
-                          </span>
-                          {!isMobile ? (
-                            <>
-                              to {rewards.winners} {rewards.winners > 1 ? "winners" : "winner"}
-                            </>
-                          ) : null}
-                        </div>
-                      )}
-                      {isMobile ? (
-                        <div
-                          className="w-8 h-8 flex items-center rounded-[10px] border border-neutral-11"
-                          onClick={() =>
-                            navigator.share({
-                              url: generateUrlContest(address, chainName),
-                            })
-                          }
-                        >
-                          <Image src="/forward.svg" alt="share" className="m-auto" width={15} height={13} />
-                        </div>
-                      ) : (
-                        <ShareDropdown
-                          contestAddress={address}
-                          chain={chainName}
-                          contestName={contestName}
-                          rewards={rewards}
-                        />
-                      )}
+                      {rewardsModuleAddress && rewardsAbi ? (
+                        <ContestRewardsInfo rewardsModuleAddress={rewardsModuleAddress} rewardsAbi={rewardsAbi} />
+                      ) : null}
+                      <div className="hidden md:flex">
+                        <ShareDropdown contestAddress={address} chain={chainName} contestName={contestName} />
+                      </div>
                       <div
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
                         onClick={() => window.location.reload()}

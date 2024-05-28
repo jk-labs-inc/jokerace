@@ -6,7 +6,15 @@ import { create } from "zustand";
 
 import { StepTitle } from "@components/_pages/Create";
 import { DEFAULT_SUBMISSIONS } from ".";
-import { Charge, SubmissionMerkle, SubmissionRequirements, VoteType, VotingMerkle, VotingRequirements } from "./types";
+import {
+  Charge,
+  SplitFeeDestinationType,
+  SubmissionMerkle,
+  SubmissionRequirements,
+  VoteType,
+  VotingMerkle,
+  VotingRequirements,
+} from "./types";
 
 type ContestDeployError = {
   step: number;
@@ -239,6 +247,7 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     },
     charge: {
       percentageToCreator: 50,
+      splitFeeDestination: { type: SplitFeeDestinationType.CreatorWallet },
       voteType: VoteType.PerVote,
       type: {
         costToPropose: 0,

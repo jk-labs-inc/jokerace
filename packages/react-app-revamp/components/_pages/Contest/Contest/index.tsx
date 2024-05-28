@@ -14,7 +14,6 @@ import { useAccount } from "wagmi";
 import ContestPrompt from "../components/Prompt";
 import ProposalStatistics from "../components/ProposalStatistics";
 import ContestStickyCards from "../components/StickyCards";
-import ContestTimeline from "../components/Timeline";
 
 const ContestTab = () => {
   const { contestPrompt } = useContestStore(state => state);
@@ -71,7 +70,7 @@ const ContestTab = () => {
   };
 
   return (
-    <div>
+    <div className="animate-reveal">
       <div className="mt-8">
         <ContestPrompt prompt={contestPrompt} type="page" />
       </div>
@@ -89,7 +88,7 @@ const ContestTab = () => {
 
           {!isContestLoading && !isListProposalsLoading && isContestSuccess && isListProposalsSuccess && (
             <div
-              className={`animate-appear ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"} ${
+              className={`animate-reveal ${contestStatus !== ContestStatus.SubmissionOpen ? "mt-4" : "mt-0"} ${
                 blurProposals ? "blurProposals" : ""
               }`}
             >

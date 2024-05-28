@@ -1,7 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { formatNumber } from "@helpers/formatNumber";
 import { ContestStatus } from "@hooks/useContestStatus/store";
-import { formatEther } from "ethers/lib/utils";
 import { FC } from "react";
 
 interface VotingQualifierMessageProps {

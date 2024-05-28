@@ -62,15 +62,19 @@ export const useWithdrawReward = (
 
       const amountWithdrawnFormatted = transform(queryTokenBalance.data.value, tokenType, queryTokenBalance.data);
 
-      updateRewardAnalytics({
-        contest_address: contestAddress,
-        rewards_module_address: contractRewardsModuleAddress,
-        network_name: chainName,
-        amount: amountWithdrawnFormatted,
-        operation: "withdraw",
-        token_address: tokenAddress ? tokenAddress : null,
-        created_at: Math.floor(Date.now() / 1000),
-      });
+      try {
+        await updateRewardAnalytics({
+          contest_address: contestAddress,
+          rewards_module_address: contractRewardsModuleAddress,
+          network_name: chainName,
+          amount: amountWithdrawnFormatted,
+          operation: "withdraw",
+          token_address: tokenAddress ? tokenAddress : null,
+          created_at: Math.floor(Date.now() / 1000),
+        });
+      } catch (error) {
+        console.error("error updating reward analytics", error);
+      }
     } catch (error: any) {
       handleError(error, `something went wrong and the funds couldn't be withdrawn`);
       setIsLoading(false);

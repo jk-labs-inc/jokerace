@@ -431,18 +431,25 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
             )}
           </div>
           <div className="flex flex-col">
-            <p className={`font-bold w-full ${contestReward ? "text-neutral-11" : "text-neutral-9"} `}>
-              {rewardsLoading || loading ? (
-                <Skeleton />
-              ) : contestReward ? (
-                <>
-                  {contestReward.token.value} <span className="uppercase">${contestReward.token.symbol}</span>
-                </>
-              ) : (
-                "No rewards"
-              )}
-            </p>
-            {contestReward && (
+            {rewardsLoading || loading ? (
+              <Skeleton />
+            ) : (
+              <>
+                {contestReward && contestReward.token ? (
+                  <p className="font-bold w-full text-neutral-11">
+                    {contestReward.token.value} <span className="uppercase">${contestReward.token.symbol}</span>
+                  </p>
+                ) : contestReward && contestReward.rewardsPaidOut ? (
+                  <p className="font-bold w-full text-positive-11">
+                    rewards <br /> paid out!
+                  </p>
+                ) : (
+                  <p className="font-bold w-full text-neutral-9">no rewards</p>
+                )}
+              </>
+            )}
+
+            {contestReward && contestReward.token && (
               <p>
                 {rewardsLoading || loading ? (
                   <Skeleton />
@@ -517,12 +524,14 @@ const Contest: FC<ContestProps> = ({ contest, compact, loading, rewards, allowTo
                     <li>
                       <Skeleton width={100} />
                     </li>
-                  ) : contestReward ? (
+                  ) : contestReward && contestReward.token ? (
                     <li>
                       {contestReward.token.value}
                       <span className="uppercase"> ${contestReward.token.symbol} </span>
                       to {contestReward.winners} {contestReward.winners > 1 ? "winners" : "winner"}
                     </li>
+                  ) : contestReward && contestReward.rewardsPaidOut ? (
+                    <li>rewards paid out! </li>
                   ) : null}
                 </>
               )}

@@ -99,7 +99,7 @@ const SubmissionPageMobileLayout: FC<SubmissionPageMobileLayoutProps> = ({
         {isProposalLoading ? (
           <p className="loadingDots font-sabo text-[18px] mt-12 text-neutral-9">loading submission info</p>
         ) : (
-          <div className="animate-fadeIn flex flex-col gap-8">
+          <div className="animate-reveal flex flex-col gap-8">
             <div className="flex flex-col gap-4">
               {proposalData?.proposal ? (
                 <div className="flex flex-col gap-4">

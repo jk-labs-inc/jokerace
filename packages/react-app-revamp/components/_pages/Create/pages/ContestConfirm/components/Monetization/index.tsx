@@ -1,12 +1,13 @@
 /* eslint-disable react/no-unescaped-entities */
 import { useChainChange } from "@hooks/useChainChange";
 import useChargeDetails from "@hooks/useChargeDetails";
-import { Charge, VoteType } from "@hooks/useDeployContest/types";
+import { Charge, SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { FC, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
 import { Steps } from "../..";
 import CreateContestConfirmLayout from "../Layout";
+import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 
 interface CreateContestConfirmMonetizationProps {
   charge: Charge;
@@ -15,7 +16,7 @@ interface CreateContestConfirmMonetizationProps {
 }
 
 const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps> = ({ charge, step, onClick }) => {
-  const { chain } = useAccount();
+  const { chain, address } = useAccount();
   const chainChanged = useChainChange();
   const { percentageToCreator, type } = charge;
   const { isError, refetch: refetchChargeDetails, isLoading } = useChargeDetails(chain?.name.toLowerCase() ?? "");
@@ -24,6 +25,13 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
   const chargeEnabled = type.costToPropose !== 0 || type.costToVote !== 0;
   const isMobileOrTablet = useMediaQuery({ query: "(max-width: 1024px)" });
   const [highlightChainChange, setHighlightChainChange] = useState(false);
+  const blockExplorerUrl = chain?.blockExplorers?.default.url;
+  const creatorSplitDestination =
+    charge.splitFeeDestination.type === SplitFeeDestinationType.AnotherWallet
+      ? charge.splitFeeDestination.address
+      : address;
+  const blockExplorerAddressUrl = blockExplorerUrl ? `${blockExplorerUrl}/address/${creatorSplitDestination}` : "";
+  const creatorHasSplit = percentageToCreator > 0;
 
   useEffect(() => {
     if (chainChanged) {
@@ -35,9 +43,9 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
 
   const percentageToCreatorMessage = () => {
     if (percentageToCreator === 50) {
-      return "all fees split 50/50 with JokeRace";
+      return "all earnings split 50/50 with JokeRace";
     } else {
-      return `all fees go to JokeRace`;
+      return `all earnings go to JokeRace`;
     }
   };
 
@@ -81,6 +89,14 @@ const CreateContestConfirmMonetization: FC<CreateContestConfirmMonetizationProps
               {charge.voteType === VoteType.PerVote ? "for each" : "to"} vote
             </li>
             <li className="text-[16px] list-disc normal-case">{percentageToCreatorMessage()}</li>
+            {creatorHasSplit ? (
+              <li className="text-[16px] list-disc">
+                creator earnings go to{" "}
+                <a className="underline cursor-pointer" target="_blank" href={blockExplorerAddressUrl}>
+                  {shortenEthereumAddress(creatorSplitDestination ?? "")}
+                </a>
+              </li>
+            ) : null}
           </ul>
         ) : null}
       </div>

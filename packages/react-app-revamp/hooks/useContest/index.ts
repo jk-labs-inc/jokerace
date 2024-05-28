@@ -3,27 +3,25 @@ import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
-import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
-import { VoteType } from "@hooks/useDeployContest/types";
+import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
 import { useError } from "@hooks/useError";
 import useProposal from "@hooks/useProposal";
 import { useProposalStore } from "@hooks/useProposal/store";
 import useUser from "@hooks/useUser";
 import { useUserStore } from "@hooks/useUser/store";
-import { GetBalanceReturnType, readContract, readContracts } from "@wagmi/core";
+import { readContract, readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
 import { differenceInMilliseconds, differenceInMinutes, isBefore, minutesToMilliseconds } from "date-fns";
-import { utils } from "ethers";
-import { checkIfContestExists, fetchFirstToken, fetchNativeBalance, fetchTokenBalances } from "lib/contests";
-import moment from "moment";
+import { checkIfContestExists } from "lib/contests";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Abi } from "viem";
 import { ErrorType, useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
+import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -64,16 +62,16 @@ export function useContest() {
     setIsV3,
     setVotesClose,
     setVotesOpen,
-    setRewards,
     setSubmissionsOpen,
     setCanUpdateVotesInRealTime,
     setCharge,
     setVotingRequirements,
     setContestAbi,
     setSubmissionRequirements,
-    setIsRewardsLoading,
     setSortingEnabled,
     setVersion,
+    setRewardsModuleAddress,
+    setRewardsAbi,
   } = useContestStore(state => state);
   const { setIsListProposalsSuccess, setIsListProposalsLoading, setListProposalsIds } = useProposalStore(
     state => state,
@@ -121,6 +119,22 @@ export function useContest() {
     }
   }
 
+  function determineSplitFeeDestination(
+    splitFeeDestination: string,
+    creatorWalletAddress: string,
+    percentageToCreator: number,
+  ): SplitFeeDestinationType {
+    if (percentageToCreator === 0) {
+      return SplitFeeDestinationType.NoSplit;
+    }
+
+    if (!splitFeeDestination || splitFeeDestination === creatorWalletAddress) {
+      return SplitFeeDestinationType.CreatorWallet;
+    }
+
+    return SplitFeeDestinationType.AnotherWallet;
+  }
+
   async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
     const contracts = getContracts(contractConfig, version);
     const results = await readContracts(config, { contracts });
@@ -141,6 +155,7 @@ export function useContest() {
       const costToPropose = Number(results[10].result);
       let costToVote = 0;
       let payPerVote = 0;
+      let creatorSplitDestination = "";
 
       if (compareVersions(version, "4.2") >= 0) {
         const sortingEnabled = Number(results[11].result) === 1;
@@ -155,9 +170,17 @@ export function useContest() {
         costToVote = Number(results[12].result);
       }
 
+      if (compareVersions(version, "4.29") >= 0) {
+        creatorSplitDestination = results[14].result as string;
+      }
+
       setCharge({
         percentageToCreator,
         voteType: payPerVote > 0 ? VoteType.PerVote : VoteType.PerTransaction,
+        splitFeeDestination: {
+          type: determineSplitFeeDestination(creatorSplitDestination, contestAuthor, percentageToCreator),
+          address: creatorSplitDestination,
+        },
         type: {
           costToPropose,
           costToVote,
@@ -208,18 +231,13 @@ export function useContest() {
     });
   }
 
-  async function fetchV3ContestInfo(
-    contractConfig: ContractConfig,
-    contestRewardModuleAddress: string | undefined,
-    version: string,
-  ) {
+  async function fetchV3ContestInfo(contractConfig: ContractConfig, version: string) {
     try {
       setIsListProposalsLoading(false);
 
       await Promise.all([
         fetchContestContractData(contractConfig, version),
         processUserQualifications(),
-        processRewardData(contestRewardModuleAddress),
         processRequirementsData(),
       ]);
     } catch (e) {
@@ -227,7 +245,6 @@ export function useContest() {
       setError(ErrorType.CONTRACT);
       setIsLoading(false);
       setIsListProposalsLoading(false);
-      setIsRewardsLoading(false);
     }
   }
 
@@ -308,34 +325,37 @@ export function useContest() {
 
       const { contractConfig, version } = abiResult;
 
-      let contestRewardModuleAddress: string | undefined;
+      let contestRewardModuleAddress = "";
 
       if (contractConfig.abi?.filter((el: { name: string }) => el.name === "officialRewardsModule").length > 0) {
         contestRewardModuleAddress = (await readContract(config, {
           ...contractConfig,
           functionName: "officialRewardsModule",
           args: [],
-        })) as any;
-        if (contestRewardModuleAddress?.toString() == "0x0000000000000000000000000000000000000000") {
+        })) as string;
+        if (contestRewardModuleAddress === "0x0000000000000000000000000000000000000000") {
           setSupportsRewardsModule(false);
-          contestRewardModuleAddress = undefined;
+          contestRewardModuleAddress = "";
         } else {
           setSupportsRewardsModule(true);
-          contestRewardModuleAddress = contestRewardModuleAddress?.toString();
         }
       } else {
         setSupportsRewardsModule(false);
-        contestRewardModuleAddress = undefined;
+        contestRewardModuleAddress = "";
       }
 
+      setRewardsModuleAddress(contestRewardModuleAddress);
+
       if (contestRewardModuleAddress) {
-        setIsRewardsLoading(true);
+        const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
+        //@ts-ignore
+        setRewardsAbi(abiRewardsModule);
       }
 
       if (compareVersions(version, "3.0") == -1) {
         await fetchV1ContestInfo(contractConfig, version);
       } else {
-        await fetchV3ContestInfo(contractConfig, contestRewardModuleAddress, version);
+        await fetchV3ContestInfo(contractConfig, version);
       }
     } catch (error) {
       console.error("An error occurred while fetching data:", error);
@@ -375,60 +395,60 @@ export function useContest() {
     }
   }
 
-  /**
-   * Fetch reward data from the rewards module contract
-   * @param contestRewardModuleAddress
-   * @returns
-   */
-  async function processRewardData(contestRewardModuleAddress: string | undefined) {
-    if (!contestRewardModuleAddress) return;
+  // /**
+  //  * Fetch reward data from the rewards module contract
+  //  * @param contestRewardModuleAddress
+  //  * @returns
+  //  */
+  // async function processRewardData(contestRewardModuleAddress: string) {
+  //   if (!contestRewardModuleAddress) return;
 
-    const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
+  //   const abiRewardsModule = await getRewardsModuleContractVersion(contestRewardModuleAddress, chainId);
 
-    if (!abiRewardsModule) {
-      setRewards(null);
-    } else {
-      const winners = (await readContract(config, {
-        address: contestRewardModuleAddress as `0x${string}`,
-        abi: abiRewardsModule,
-        chainId: chainId,
-        functionName: "getPayees",
-      })) as any[];
+  //   if (!abiRewardsModule) {
+  //     setRewards(null);
+  //   } else {
+  //     const winners = (await readContract(config, {
+  //       address: contestRewardModuleAddress as `0x${string}`,
+  //       abi: abiRewardsModule,
+  //       chainId: chainId,
+  //       functionName: "getPayees",
+  //     })) as any[];
 
-      let rewardToken: GetBalanceReturnType | null = null;
-      let erc20Tokens: any = null;
+  //     let rewardToken: GetBalanceReturnType | null = null;
+  //     let erc20Tokens: any = null;
 
-      rewardToken = await fetchNativeBalance(contestRewardModuleAddress, chainId);
+  //     rewardToken = await fetchNativeBalance(contestRewardModuleAddress, chainId);
 
-      if (!rewardToken || rewardToken.value.toString() == "0") {
-        try {
-          erc20Tokens = await fetchTokenBalances(chainName, contestRewardModuleAddress);
+  //     if (!rewardToken || rewardToken.value.toString() == "0") {
+  //       try {
+  //         erc20Tokens = await fetchTokenBalances(chainName, contestRewardModuleAddress);
 
-          if (erc20Tokens && erc20Tokens.length > 0) {
-            rewardToken = await fetchFirstToken(contestRewardModuleAddress, chainId, erc20Tokens[0].contractAddress);
-          }
-        } catch (e) {
-          console.error("Error fetching token balances:", e);
-          return;
-        }
-      }
+  //         if (erc20Tokens && erc20Tokens.length > 0) {
+  //           rewardToken = await fetchFirstToken(contestRewardModuleAddress, chainId, erc20Tokens[0].contractAddress);
+  //         }
+  //       } catch (e) {
+  //         console.error("Error fetching token balances:", e);
+  //         return;
+  //       }
+  //     }
 
-      if (rewardToken) {
-        setRewards({
-          token: {
-            symbol: rewardToken.symbol,
-            value: parseFloat(utils.formatUnits(rewardToken.value, rewardToken.decimals)),
-          },
-          winners: winners.length,
-          numberOfTokens: erc20Tokens?.length ?? 1,
-        });
-      } else {
-        setRewards(null);
-      }
+  //     if (rewardToken) {
+  //       setRewards({
+  //         token: {
+  //           symbol: rewardToken.symbol,
+  //           value: parseFloat(formatUnits(rewardToken.value, rewardToken.decimals)),
+  //         },
+  //         winners: winners.length,
+  //         numberOfTokens: erc20Tokens?.length ?? 1,
+  //       });
+  //     } else {
+  //       setRewards(null);
+  //     }
 
-      setIsRewardsLoading(false);
-    }
-  }
+  //     setIsRewardsLoading(false);
+  //   }
+  // }
 
   return {
     getContractConfig,

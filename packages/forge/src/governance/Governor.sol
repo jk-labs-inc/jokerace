@@ -31,7 +31,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         Vote
     }
 
-    struct ConstructorIntArgs {
+    struct ConstructorArgs {
         uint256 contestStart;
         uint256 votingDelay;
         uint256 votingPeriod;
@@ -44,6 +44,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
         uint256 costToPropose;
         uint256 costToVote;
         uint256 payPerVote;
+        address creatorSplitDestination;
     }
 
     struct TargetMetadata {
@@ -81,7 +82,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public constant METADATAS_COUNT = uint256(type(Metadatas).max) + 1;
     uint256 public constant AMOUNT_FOR_SUMBITTER_PROOF = 10000000000000000000;
     address public constant JK_LABS_ADDRESS = 0xDc652C746A8F85e18Ce632d97c6118e8a52fa738;
-    string private constant _VERSION = "4.28"; // Private as to not clutter the ABI
+    string private constant _VERSION = "4.29"; // Private as to not clutter the ABI
 
     string public name; // The title of the contest
     string public prompt;
@@ -96,6 +97,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     uint256 public costToPropose;
     uint256 public costToVote;
     uint256 public payPerVote; // If this contest is pay per vote (as opposed to pay per vote transaction).
+    address public creatorSplitDestination; // Where the creator split of revenue goes.
 
     uint256[] public proposalIds;
     uint256[] public deletedProposalIds;
@@ -138,31 +140,35 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
     error OnlyJkLabsOrCreatorCanCancel();
     error ContestAlreadyCancelled();
 
-    error OnlyJkLabsCanAmend();
+    error CannotUpdateAfterCompleted();
 
-    constructor(string memory name_, string memory prompt_, ConstructorIntArgs memory constructorIntArgs_) {
+    error OnlyJkLabsCanAmend();
+    error OnlyCreatorCanAmend();
+
+    constructor(string memory name_, string memory prompt_, ConstructorArgs memory constructorArgs_) {
         name = name_;
         prompt = prompt_;
         creator = msg.sender;
-        contestStart = constructorIntArgs_.contestStart;
-        votingDelay = constructorIntArgs_.votingDelay;
-        votingPeriod = constructorIntArgs_.votingPeriod;
-        numAllowedProposalSubmissions = constructorIntArgs_.numAllowedProposalSubmissions;
-        maxProposalCount = constructorIntArgs_.maxProposalCount;
-        downvotingAllowed = constructorIntArgs_.downvotingAllowed;
-        percentageToCreator = constructorIntArgs_.percentageToCreator;
-        costToPropose = constructorIntArgs_.costToPropose;
-        costToVote = constructorIntArgs_.costToVote;
-        payPerVote = constructorIntArgs_.payPerVote;
+        contestStart = constructorArgs_.contestStart;
+        votingDelay = constructorArgs_.votingDelay;
+        votingPeriod = constructorArgs_.votingPeriod;
+        numAllowedProposalSubmissions = constructorArgs_.numAllowedProposalSubmissions;
+        maxProposalCount = constructorArgs_.maxProposalCount;
+        downvotingAllowed = constructorArgs_.downvotingAllowed;
+        percentageToCreator = constructorArgs_.percentageToCreator;
+        costToPropose = constructorArgs_.costToPropose;
+        costToVote = constructorArgs_.costToVote;
+        payPerVote = constructorArgs_.payPerVote;
+        creatorSplitDestination = constructorArgs_.creatorSplitDestination;
 
         emit JokeraceCreated(
             _VERSION,
             name_,
             prompt_,
             msg.sender,
-            constructorIntArgs_.contestStart,
-            constructorIntArgs_.votingDelay,
-            constructorIntArgs_.votingPeriod
+            constructorArgs_.contestStart,
+            constructorArgs_.votingDelay,
+            constructorArgs_.votingPeriod
         ); // emit upon creation to be able to easily find jokeraces on a chain
     }
 
@@ -339,7 +345,7 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
             uint256 sendingToCreator = msg.value - sendingToJkLabs;
             if (sendingToCreator > 0) {
-                Address.sendValue(payable(creator), sendingToCreator); // creator gets the extra wei in the case of rounding
+                Address.sendValue(payable(creatorSplitDestination), sendingToCreator); // creator gets the extra wei in the case of rounding
                 emit PaymentReleased(creator, sendingToCreator);
             }
         }
@@ -516,11 +522,19 @@ abstract contract Governor is GovernorSorting, GovernorMerkleVotes {
 
     function setSubmissionMerkleRoot(bytes32 newSubmissionMerkleRoot) public {
         if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        if (state() == ContestState.Completed) revert CannotUpdateAfterCompleted();
         submissionMerkleRoot = newSubmissionMerkleRoot;
     }
 
     function setVotingMerkleRoot(bytes32 newVotingMerkleRoot) public {
         if (msg.sender != JK_LABS_ADDRESS) revert OnlyJkLabsCanAmend();
+        if (state() == ContestState.Completed) revert CannotUpdateAfterCompleted();
         votingMerkleRoot = newVotingMerkleRoot;
+    }
+
+    function setCreatorSplitDestination(address newCreatorSplitDestination) public {
+        if (msg.sender != creator) revert OnlyCreatorCanAmend();
+        if (state() == ContestState.Completed) revert CannotUpdateAfterCompleted();
+        creatorSplitDestination = newCreatorSplitDestination;
     }
 }
