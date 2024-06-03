@@ -3,7 +3,6 @@ import DialogModalV3 from "@components/UI/DialogModalV3";
 import Loader from "@components/UI/Loader";
 import DialogCheckBalanceRewardsModule from "@components/_pages/DialogCheckBalanceRewardsModule";
 import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule";
-import CreateRewardsPool from "@components/_pages/Rewards/components/Create";
 import CreateRewardsFunding from "@components/_pages/Rewards/components/Fund";
 import ContestWithdrawRewards from "@components/_pages/Rewards/components/Withdraw";
 import RewardsDistributionTable from "@components/_pages/RewardsDistributionTable/components";
@@ -12,8 +11,6 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
-import useContractVersion from "@hooks/useContractVersion";
-import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
 import usePaidRewardTokens from "@hooks/useRewardsTokens/usePaidRewardsTokens";
@@ -22,6 +19,7 @@ import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount, useAccountEffect } from "wagmi";
+import CreateRewards from "./components/Create";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -36,16 +34,10 @@ const ContestRewards = () => {
     contestAuthorEthereumAddress,
     sortingEnabled,
     contestMaxProposalCount,
+    version,
     downvotingAllowed,
     rewardsModuleAddress,
   } = useContestStore(state => state);
-  const {
-    version,
-    isLoading: isContractVersionLoading,
-    isError: isContractVersionError,
-  } = useContractVersion(address, chainId);
-  const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
-  const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
   const [isWithdrawRewardsOpen, setIsWithdrawRewardsOpen] = useState(false);
   const [isCheckBalanceRewardsOpen, setIsCheckBalanceRewardsOpen] = useState(false);
@@ -79,11 +71,7 @@ const ContestRewards = () => {
     );
   }
 
-  if (isContractVersionLoading) return <Loader />;
-
   if (!supportsRewardsModule && creator) {
-    if (isRewardsPoolDeploying) return <Loader>Deploying rewards pool...</Loader>;
-
     if (version) {
       if (compareVersions(version, "4.1") == -1) {
         if (contestMaxProposalCount > 100) {
@@ -106,45 +94,7 @@ const ContestRewards = () => {
       }
     }
 
-    return (
-      <div className="flex flex-col gap-12 animate-reveal">
-        <div className="flex flex-col gap-4">
-          <p className="text-[24px] font-bold text-true-white">let’s add rewards 💸💸💸</p>
-          <p className="text-[16px] text-neutral-11">what’s a good contest without rewards?</p>
-          <p className="text-[16px] text-neutral-11">
-            add rewards to get more players, up the stakes, and give a better <br />
-            time for all.
-          </p>
-          <p className="text-[16px] text-neutral-11">for each option, we’ll create a rewards pool and then fund it.</p>
-        </div>
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] hover:border-neutral-11 transition-colors duration-300">
-            <p className="text-neutral-11 text-[20px] font-bold">reward winners</p>
-            <p className="text-neutral-14 text-[16px]">
-              create and fund a pool to distribute <br /> tokens proportionately to winners
-            </p>
-            <ButtonV3
-              colorClass={`bg-gradient-vote text-[16px] rounded-[30px] font-bold text-true-black pb-2 pt-1`}
-              size={ButtonSize.EXTRA_LARGE}
-              onClick={() => setIsDeployRewardsOpen(true)}
-            >
-              create rewards pool
-            </ButtonV3>
-          </div>
-        </div>
-
-        <DialogModalV3
-          isOpen={isDeployRewardsOpen}
-          setIsOpen={value => setIsDeployRewardsOpen(value)}
-          title="rewards"
-          className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
-        >
-          <div className="md:pl-[50px] lg:pl-[100px]">
-            <div className="pt-[50px]">{displayCreatePool ? <CreateRewardsPool /> : <CreateRewardsFunding />}</div>
-          </div>
-        </DialogModalV3>
-      </div>
-    );
+    return <CreateRewards />;
   }
 
   return (

@@ -1,9 +1,7 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 import Image from "next/image";
 import { FC, useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 interface CreateRewardsFundingPoolSubmitProps {
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
@@ -13,16 +11,11 @@ interface CreateRewardsFundingPoolSubmitProps {
 const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = ({ onClick, onCancel }) => {
   const [shake, setShake] = useState(false);
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
-  const { isLoading: isDeployRewardsLoading } = useDeployRewardsStore(state => state);
   const { validationError, rewards, isLoading: isFundRewardsLoading } = useFundRewardsStore(state => state);
 
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
       setAttemptedSubmit(true);
-
-      if (isDeployRewardsLoading) {
-        toast.warning("Please wait while your reward deployment is finished.");
-      }
 
       if (isFundRewardsLoading) return;
 
@@ -37,7 +30,7 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
         }
       }
     },
-    [isDeployRewardsLoading, isFundRewardsLoading, validationError, onClick],
+    [isFundRewardsLoading, validationError, onClick],
   );
 
   useEffect(() => {
@@ -69,8 +62,7 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
 
   return (
     <div>
-      {!isDeployRewardsLoading &&
-        attemptedSubmit &&
+      {attemptedSubmit &&
         validationError.map((error, index) => (
           <div key={index} className="mb-4 text-negative-11 text-[16px] font-bold">
             {error.tokenAddress && <p>{error.tokenAddress}</p>}
@@ -81,7 +73,7 @@ const CreateRewardsFundingPoolSubmit: FC<CreateRewardsFundingPoolSubmitProps> = 
       <div className="flex gap-2 items-start pb-5 md:pb-0">
         <div className={`flex flex-col items-center gap-2`}>
           <ButtonV3
-            isDisabled={isDeployRewardsLoading || isFundRewardsLoading}
+            isDisabled={isFundRewardsLoading}
             colorClass={`bg-gradient-create ${shake ? "animate-shakeTop" : ""}`}
             size={ButtonSize.LARGE}
             onClick={handleClick}

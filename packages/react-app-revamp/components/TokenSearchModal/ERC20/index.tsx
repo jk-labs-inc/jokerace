@@ -8,9 +8,10 @@ import { FilteredToken } from "@hooks/useTokenList";
 
 interface TokenSearchModalERC20Props {
   chains: Option[];
+  hideChains?: boolean;
   onSelectToken?: (token: FilteredToken) => void;
 }
-const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Chains, onSelectToken }) => {
+const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Chains, hideChains, onSelectToken }) => {
   const [erc20SelectedChain, setErc20SelectedChain] = useState<string>(erc20Chains[0].value);
   const [searchValue, setSearchValue] = useState<string>("");
   const chainId = chains.find(chain => chain.name === erc20SelectedChain)?.id || 1;
@@ -18,16 +19,18 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Ch
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-4">
-        <p className="text-[24px] font-bold text-true-white">chain:</p>
-        <TokenSearchModalChainDropdown
-          defaultOption={erc20Chains[0]}
-          options={erc20Chains}
-          onChange={option => setErc20SelectedChain(option)}
-          onMenuStateChange={isOpen => setIsChainDropdownOpen(isOpen)}
-        />
-      </div>
-      <div className="bg-primary-5 h-[2px]" />
+      {!hideChains ? (
+        <div className="flex flex-col gap-4">
+          <p className="text-[24px] font-bold text-true-white">chain:</p>
+          <TokenSearchModalChainDropdown
+            defaultOption={erc20Chains[0]}
+            options={erc20Chains}
+            onChange={option => setErc20SelectedChain(option)}
+            onMenuStateChange={isOpen => setIsChainDropdownOpen(isOpen)}
+          />
+        </div>
+      ) : null}
+      {!hideChains ? <div className="bg-primary-5 h-[2px]" /> : null}
       <TokenSearchModalSearchInput
         onSearchChange={value => setSearchValue(value)}
         isChainDropdownOpen={isChainDropdownOpen}

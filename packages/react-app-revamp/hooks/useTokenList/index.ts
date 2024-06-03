@@ -1,5 +1,7 @@
+import { config } from "@config/wagmi";
 import { addressRegex } from "@helpers/regex";
 import { useInfiniteQuery } from "@tanstack/react-query";
+import { getToken } from "@wagmi/core";
 
 export interface FilteredToken {
   address: string;
@@ -17,8 +19,6 @@ interface PaginationInfo {
 
 const TOKEN_LIST_API_URL = "/api/token";
 const pageSize = 20;
-const ALCHEMY_API_KEY = process.env.NEXT_PUBLIC_ALCHEMY_KEY;
-const ALCHEMY_BASE_URL = `https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_API_KEY}`;
 
 async function fetchTokenListOrMetadata({
   pageParam = 0,
@@ -61,30 +61,16 @@ async function fetchTokenListOrMetadata({
   }
 
   if (addressRegex.test(tokenIdentifier) && (!data.tokens || data.tokens.length === 0)) {
-    const alchemyResponse = await fetch(`${ALCHEMY_BASE_URL}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        jsonrpc: "2.0",
-        id: 0,
-        method: "alchemy_getTokenMetadata",
-        params: [tokenIdentifier],
-      }),
+    const token = await getToken(config, {
+      address: tokenIdentifier as `0x${string}`,
+      chainId,
     });
-
-    if (!alchemyResponse.ok) {
-      throw new Error(`Network response was not ok: ${alchemyResponse.statusText}`);
-    }
-
-    const alchemyData = await alchemyResponse.json();
 
     const tokenData: FilteredToken = {
       address: tokenIdentifier,
-      name: alchemyData.result.name,
-      symbol: alchemyData.result.symbol,
-      logoURI: alchemyData.result.logo ? alchemyData.result.logo : "/contest/mona-lisa-moustache.png",
+      name: token.name ?? "",
+      symbol: token.symbol ?? "",
+      logoURI: "/contest/mona-lisa-moustache.png",
     };
 
     if (tokenData.name === "" || tokenData.symbol === "") {

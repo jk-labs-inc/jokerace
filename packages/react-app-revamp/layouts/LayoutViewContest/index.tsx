@@ -9,9 +9,9 @@ import ContestTab from "@components/_pages/Contest/Contest";
 import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
+import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
-import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -33,7 +33,6 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
-import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const { refresh } = useRouter();
@@ -236,8 +235,6 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                   {renderTabs}
 
                   {children}
-
-                  {showRewards && <CreateContestRewards />}
                 </div>
               </>
             )}
