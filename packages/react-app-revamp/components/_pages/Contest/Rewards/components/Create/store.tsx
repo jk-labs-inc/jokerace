@@ -45,8 +45,8 @@ interface CreateRewardsState {
 export const useCreateRewardsStore = create<CreateRewardsState>(set => ({
   currentStep: CreationStep.Initial,
   rewardPoolData: {
-    rankings: [],
-    shareAllocations: [],
+    rankings: [1],
+    shareAllocations: [100],
     recipients: [{ id: 0, place: 1, proportion: 100 }],
     validationError: {
       uniqueRanks: undefined,

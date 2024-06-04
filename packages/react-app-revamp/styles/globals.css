@@ -434,6 +434,11 @@ li {
     grid-template-columns: auto auto 1fr;
   }
 
+  .rewards-review-table-grid {
+    @apply grid;
+    grid-template-columns: 0.2fr 0.3fr 1fr;
+  }
+
   .dropdownBorder {
     @apply border-2 border-primary-10;
   }
