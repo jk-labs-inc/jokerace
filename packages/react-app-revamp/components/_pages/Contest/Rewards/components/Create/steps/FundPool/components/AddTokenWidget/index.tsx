@@ -39,6 +39,7 @@ const getTokenSymbol = (
     : chainNativeCurrencySymbol;
 };
 
+//TODO: add logic for unsupported chains
 const AddTokenWidget: FC<AddTokenWidgetProps> = ({
   selectedToken,
   selectedChain,
@@ -53,20 +54,16 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
   const chainId = selectedChain?.id;
   const { tokens, setTokens } = useFundPoolStore(state => state);
   const [selectedTokenAmount, setSelectedTokenAmount] = useState<string>("");
+  const [isMaxPressed, setIsMaxPressed] = useState<boolean>(false);
   const { selectedTokenBalance, setSelectedTokenBalance } = useSelectedTokenBalanceStore(state => state);
   const isEtherChainNativeCurrency = chainNativeCurrencySymbol === "ETH";
-  const {
-    data,
-    refetch: refetchBalance,
-    isSuccess,
-  } = useBalance({
+  const { data, refetch: refetchBalance } = useBalance({
     address: userAddress as `0x${string}`,
     token: selectedToken?.address as `0x${string}`,
     chainId: chainId,
     query: {
       select(data) {
         const formatted = formatUnits(data.value, data.decimals);
-
         return {
           value: formatted,
           decimals: data.decimals,
@@ -130,10 +127,12 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
 
     setSelectedTokenBalance(newAvailableBalance);
     setSelectedTokenAmount("");
+    setIsMaxPressed(false);
   };
 
   const onAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedTokenAmount(e.target.value);
+    setIsMaxPressed(false);
   };
 
   const isTokenAmountValid = (amount: string): boolean => {
@@ -168,6 +167,7 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
 
   const handleMaxBalance = () => {
     setSelectedTokenAmount(selectedTokenBalance);
+    setIsMaxPressed(true);
   };
 
   return (
@@ -201,7 +201,7 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
                     className="text-[32px] w-2/3 text-neutral-11 placeholder-neutral-14 placeholder-bold bg-transparent border-none focus:outline-none"
                     placeholder="0"
                     onChange={onAmountChange}
-                    value={selectedTokenAmount}
+                    value={isMaxPressed ? formatBalance(selectedTokenBalance) : selectedTokenAmount}
                   />
                   <div
                     className="flex items-center gap-1 p-1 bg-primary-5 border border-neutral-10 rounded-[10px] cursor-pointer"

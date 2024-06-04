@@ -11,7 +11,7 @@ const CreateRewardsPool = () => {
   const isError = hasValidationErrors(rewardPoolData.validationError);
 
   return (
-    <div className="flex flex-col gap-12 animate-reveal">
+    <div className="flex flex-col gap-12 animate-swingInLeft">
       <div className="flex flex-col gap-4">
         <p className="text-[24px] font-bold text-true-white">rewards for winners 🤑</p>
 

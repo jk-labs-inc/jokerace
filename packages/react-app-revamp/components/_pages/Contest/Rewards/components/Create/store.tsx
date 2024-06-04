@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export enum CreationStep {
-  Initial = 1,
+  Initial = 0,
   CreatePool,
   FundPool,
   Review,

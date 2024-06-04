@@ -1,6 +1,7 @@
 import CreateRewardsPool from "./steps/CreatePool";
 import CreateRewardsFundPool from "./steps/FundPool";
 import CreateRewardsPoolInitialStep from "./steps/Initial";
+import CreateRewardsReviewPool from "./steps/ReviewPool";
 import { CreationStep, useCreateRewardsStore } from "./store";
 
 export const createRewardsSteps = [
@@ -16,10 +17,10 @@ export const createRewardsSteps = [
     step: CreationStep.FundPool,
     component: CreateRewardsFundPool,
   },
-  // {
-  //   step: CreationStep.Review,
-  //   component: ReviewComponent,
-  // },
+  {
+    step: CreationStep.Review,
+    component: CreateRewardsReviewPool,
+  },
 ];
 
 const CreateRewards = () => {

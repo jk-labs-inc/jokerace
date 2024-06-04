@@ -30,7 +30,7 @@ const CreateRewardsFundPool = () => {
   };
 
   return (
-    <div className="flex flex-col gap-16 animate-reveal">
+    <div className="flex flex-col gap-16 animate-swingInLeft">
       <div className="flex flex-col gap-4">
         <p className="text-[24px] font-bold text-true-white">time to have fun(ds)</p>
         <p className="text-[16px] text-neutral-11">now let’s fund your rewards pool.</p>

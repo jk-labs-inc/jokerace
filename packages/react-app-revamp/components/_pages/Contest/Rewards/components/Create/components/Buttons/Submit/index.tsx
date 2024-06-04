@@ -3,17 +3,13 @@ import Image from "next/image";
 import { FC } from "react";
 import { useCreateRewardsStore } from "../../../store";
 
-interface CreateRewardsNavigationProps {
+interface CreateRewardsSubmitButtonProps {
   step: number;
-  isDisabled?: boolean;
+  onSubmit?: () => void;
 }
 
-const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDisabled }) => {
+const CreateRewardsSubmitButton: FC<CreateRewardsSubmitButtonProps> = ({ step, onSubmit }) => {
   const { setStep } = useCreateRewardsStore(state => state);
-
-  const onNextHandler = () => {
-    setStep(step + 1);
-  };
 
   const onBackHandler = (step: number) => {
     setStep(step - 1);
@@ -23,12 +19,11 @@ const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDis
     <div className="flex gap-4 items-start">
       <div className="flex flex-col gap-2 items-center">
         <ButtonV3
-          colorClass="text-[20px] bg-gradient-next rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+          colorClass="text-[20px] bg-gradient-create-pool rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           size={ButtonSize.EXTRA_LARGE_LONG}
-          onClick={onNextHandler}
-          isDisabled={isDisabled}
+          onClick={onSubmit}
         >
-          next
+          create pool
         </ButtonV3>
         <div
           className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
@@ -44,4 +39,4 @@ const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDis
   );
 };
 
-export default CreateRewardsNavigation;
+export default CreateRewardsSubmitButton;
