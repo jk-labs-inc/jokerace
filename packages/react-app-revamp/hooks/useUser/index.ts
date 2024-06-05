@@ -20,6 +20,7 @@ export function useUser() {
   const asPath = usePathname();
   const { chainName, address } = extractPathSegments(asPath ?? "");
   const lowerCaseChainName = chainName.replace(/\s+/g, "").toLowerCase();
+  const contestAddressLowerCase = address.toLowerCase();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === lowerCaseChainName,
   )?.[0]?.id;
@@ -112,7 +113,7 @@ export function useUser() {
           .from("contest_participants_v3")
           .select("can_submit")
           .eq("user_address", userAddress)
-          .eq("contest_address", address)
+          .eq("contest_address", contestAddressLowerCase)
           .eq("network_name", lowerCaseChainName);
 
         if (data && data.length > 0 && data[0].can_submit) {
@@ -190,7 +191,7 @@ export function useUser() {
         .from("contest_participants_v3")
         .select("num_votes")
         .eq("user_address", userAddress)
-        .eq("contest_address", address)
+        .eq("contest_address", contestAddressLowerCase)
         .eq("network_name", lowerCaseChainName);
 
       if (data && data.length > 0 && data[0].num_votes > 0) {
