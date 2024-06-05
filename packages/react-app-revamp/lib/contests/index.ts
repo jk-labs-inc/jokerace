@@ -488,7 +488,7 @@ export async function checkIfContestExists(address: string, networkName: string)
       const { data, error } = await supabase
         .from("contests_v3")
         .select("address")
-        .eq("address", address)
+        .eq("address", address.toLowerCase())
         .eq("network_name", networkName);
       if (error) {
         throw new Error(error.message);

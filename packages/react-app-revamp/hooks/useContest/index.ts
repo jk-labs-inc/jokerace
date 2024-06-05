@@ -3,6 +3,7 @@ import { isAlchemyConfigured } from "@helpers/alchemy";
 import { isSupabaseConfigured } from "@helpers/database";
 import { extractPathSegments } from "@helpers/extractPath";
 import getContestContractVersion from "@helpers/getContestContractVersion";
+import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { SplitFeeDestinationType, VoteType } from "@hooks/useDeployContest/types";
@@ -21,7 +22,6 @@ import { Abi } from "viem";
 import { ErrorType, useContestStore } from "./store";
 import { getV1Contracts } from "./v1/contracts";
 import { getContracts } from "./v3v4/contracts";
-import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 
 interface ContractConfigResult {
   contractConfig: {
@@ -138,6 +138,7 @@ export function useContest() {
   async function fetchContestContractData(contractConfig: ContractConfig, version: string) {
     const contracts = getContracts(contractConfig, version);
     const results = await readContracts(config, { contracts });
+
     setIsV3(true);
 
     const contestName = results[0].result as string;
@@ -381,7 +382,7 @@ export function useContest() {
       const result = await supabase
         .from("contests_v3")
         .select("voting_requirements, submission_requirements")
-        .eq("address", address)
+        .eq("address", address.toLowerCase())
         .eq("network_name", chainName);
 
       if (result.data) {
