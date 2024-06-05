@@ -36,6 +36,7 @@ import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { gold } from "./custom-chains/gold";
+import { ham } from "./custom-chains/ham";
 import { hedera } from "./custom-chains/hedera";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
@@ -151,6 +152,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   cyber,
   hedera,
   taiko,
+  ham,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
