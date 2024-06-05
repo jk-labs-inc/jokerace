@@ -485,15 +485,31 @@ export async function checkIfContestExists(address: string, networkName: string)
     const config = await import("@config/supabase");
     const supabase = config.supabase;
     try {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from("contests_v3")
         .select("address")
         .eq("address", address.toLowerCase())
         .eq("network_name", networkName);
+
       if (error) {
         throw new Error(error.message);
       }
-      return data.length > 0;
+
+      if (data && data.length > 0) {
+        return true;
+      }
+
+      ({ data, error } = await supabase
+        .from("contests_v3")
+        .select("address")
+        .eq("address", address)
+        .eq("network_name", networkName));
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      return data ? data.length > 0 : false;
     } catch (e) {
       console.error(e);
       return false;

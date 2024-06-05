@@ -379,16 +379,32 @@ export function useContest() {
     const supabase = config.supabase;
 
     try {
-      const result = await supabase
+      let result = await supabase
         .from("contests_v3")
         .select("voting_requirements, submission_requirements")
         .eq("address", address.toLowerCase())
         .eq("network_name", chainName);
 
-      if (result.data) {
+      if (result.data && result.data.length > 0) {
         const { voting_requirements, submission_requirements } = result.data[0];
         setVotingRequirements(voting_requirements || null);
         setSubmissionRequirements(submission_requirements || null);
+        return;
+      }
+
+      result = await supabase
+        .from("contests_v3")
+        .select("voting_requirements, submission_requirements")
+        .eq("address", address)
+        .eq("network_name", chainName);
+
+      if (result.data && result.data.length > 0) {
+        const { voting_requirements, submission_requirements } = result.data[0];
+        setVotingRequirements(voting_requirements || null);
+        setSubmissionRequirements(submission_requirements || null);
+      } else {
+        setVotingRequirements(null);
+        setSubmissionRequirements(null);
       }
     } catch (error) {
       setVotingRequirements(null);
