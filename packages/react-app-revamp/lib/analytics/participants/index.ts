@@ -48,7 +48,7 @@ export const saveUpdatedProposalsStatusToAnalyticsV3 = async (
         const { error } = await supabase.from("analytics_contest_participants_v3").insert([
           {
             user_address: userAddress,
-            contest_address: contestAddress,
+            contest_address: contestAddress.toLowerCase(),
             network_name: chainName,
             proposal_id: proposal_id,
             deleted: true,
@@ -81,7 +81,7 @@ export const saveUpdatedProposalsCommentStatusToAnalyticsV3 = async (
         const { error } = await supabase.from("analytics_contest_participants_v3").insert([
           {
             user_address: userAddress,
-            contest_address: contestAddress,
+            contest_address: contestAddress.toLowerCase(),
             network_name: chainName,
             proposal_id: proposal_id,
             comment_id: comment_id,
