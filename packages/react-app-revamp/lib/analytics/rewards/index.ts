@@ -21,7 +21,7 @@ export const updateRewardAnalytics = async (options: RewardAnalyticsUpdateOption
     const supabase = config.supabase;
 
     const insertPayload = {
-      contest_address,
+      contest_address: contest_address.toLowerCase(),
       rewards_module_address,
       network_name,
       token_address: token_address ? token_address.toLowerCase() : null,
