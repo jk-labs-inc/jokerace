@@ -51,6 +51,7 @@ import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
 import { gold } from "./custom-chains/gold";
+import { ham } from "./custom-chains/ham";
 import { hedera } from "./custom-chains/hedera";
 import { holesky } from "./custom-chains/holesky";
 import { inEvm } from "./custom-chains/inEvm";
@@ -99,6 +100,7 @@ import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sei } from "./custom-chains/sei";
 import { sepolia } from "./custom-chains/sepolia";
 import { syndicateFrame } from "./custom-chains/syndicateFrame";
+import { taiko } from "./custom-chains/taiko";
 import { taikoTestnet } from "./custom-chains/taikoTestnet";
 import { unique } from "./custom-chains/unique";
 import { vitruveo } from "./custom-chains/vitruveo";
@@ -174,6 +176,8 @@ export const chains: readonly [Chain, ...Chain[]] = [
   xLayer,
   cyber,
   hedera,
+  taiko,
+  ham,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
