@@ -28,7 +28,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
   )?.[0]?.id;
   const isConnectedOnCorrectChain = chainId === userChainId;
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
-  const { getContestRewardsAddress } = useRewardsModule();
+  const { fetchRewardsModuleAddress } = useRewardsModule();
   const { address } = useAccount();
   const { rewards, setCancel } = useFundRewardsStore(state => state);
   const toastIdRef = useRef<string | number | null>(null);
@@ -37,7 +37,7 @@ const CreateRewardsFunding: FC<CreateRewardsFundingProps> = ({ isFundingForTheFi
     const populatedRewardsPromises = rewards.map(async reward => {
       if (reward.amount === "") return null;
 
-      const rewardsContractAddress = await getContestRewardsAddress();
+      const rewardsContractAddress = await fetchRewardsModuleAddress();
 
       if (!rewardsContractAddress || rewardsContractAddress === "0x0000000000000000000000000000000000000000") {
         toastError("there is no rewards module for this contest!");
