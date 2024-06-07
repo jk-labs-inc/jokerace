@@ -1,14 +1,15 @@
+import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { toastError } from "@components/UI/Toast";
+import { chains, config } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { useDeployRewardsPool } from "@hooks/useDeployRewards";
+import { switchChain } from "@wagmi/core";
+import { usePathname } from "next/navigation";
+import { useAccount } from "wagmi";
 import CreateRewardsSubmitButton from "../../components/Buttons/Submit";
 import { useCreateRewardsStore } from "../../store";
 import { useFundPoolStore } from "../FundPool/store";
 import CreateRewardsReviewTable from "./components/Table";
-import { chains, config } from "@config/wagmi";
-import { usePathname } from "next/navigation";
-import { extractPathSegments } from "@helpers/extractPath";
-import { useAccount } from "wagmi";
-import { switchChain, switchNetwork } from "@wagmi/core";
-import { toastError } from "@components/UI/Toast";
 
 const CreateRewardsReviewPool = () => {
   const pathname = usePathname();
@@ -20,6 +21,17 @@ const CreateRewardsReviewPool = () => {
   const { deployRewardsPool } = useDeployRewardsPool();
   const { rewardPoolData, currentStep, setStep } = useCreateRewardsStore(state => state);
   const { tokens } = useFundPoolStore(state => state);
+  const isUserOnCorrectChain = contestChainId === userChainId;
+
+  const handleSwitchNetwork = async () => {
+    if (!contestChainId) return;
+
+    try {
+      await switchChain(config, { chainId: contestChainId });
+    } catch (error) {
+      toastError("failed to switch network");
+    }
+  };
 
   const handleCreateRewards = async () => {
     if (!contestChainId) return;
@@ -48,7 +60,17 @@ const CreateRewardsReviewPool = () => {
         />
       </div>
       <div className="flex flex-col gap-10">
-        <CreateRewardsSubmitButton step={currentStep} onSubmit={handleCreateRewards} />
+        {isUserOnCorrectChain ? (
+          <CreateRewardsSubmitButton step={currentStep} onSubmit={handleCreateRewards} />
+        ) : (
+          <ButtonV3
+            colorClass="text-[20px] bg-gradient-create-pool rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+            size={ButtonSize.EXTRA_LARGE_LONG}
+            onClick={handleSwitchNetwork}
+          >
+            switch network
+          </ButtonV3>
+        )}
         <p className="text-[16px] text-neutral-14">
           you cannot edit these rewards after confirming. <br /> you can always come back to fund more.
         </p>
