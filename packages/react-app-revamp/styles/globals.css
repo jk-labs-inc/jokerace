@@ -439,6 +439,13 @@ li {
     grid-template-columns: 0.2fr 0.3fr 1fr;
   }
 
+  @media (max-width: 768px) {
+    .rewards-review-table-grid {
+      /* //TODO: check this for mobile */
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
   .dropdownBorder {
     @apply border-2 border-primary-10;
   }

@@ -31,7 +31,7 @@ const getTokenSymbol = (
   chainNativeCurrencySymbol: string,
   length: "short" | "long",
 ) => {
-  const textLength = length === "short" ? 6 : 20;
+  const textLength = length === "short" ? 5 : 20;
   return selectedToken
     ? selectedToken.symbol.length > textLength
       ? `${selectedToken.symbol.substring(0, textLength)}...`

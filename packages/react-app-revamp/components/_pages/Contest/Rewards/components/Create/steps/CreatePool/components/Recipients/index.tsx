@@ -33,13 +33,13 @@ const CreateRewardsPoolRecipients: React.FC = () => {
       error.zeroProportion = "Recipients with 0% proportion are not allowed";
     }
 
-    setRewardPoolData({
-      ...rewardPoolData,
+    setRewardPoolData(prevData => ({
+      ...prevData,
       recipients,
       rankings: recipients.map(recipient => recipient.place),
       shareAllocations: recipients.map(recipient => recipient.proportion),
       validationError: error,
-    });
+    }));
   };
 
   const handleAddRecipient = () => {

@@ -20,17 +20,21 @@ const CreateRewardsReviewTable: FC<CreateRewardsReviewTableProps> = ({ rankings,
       <p className="text-[20px] text-neutral-11 font-bold">Rewards Pool for Winners</p>
       <div className="grid gap-4">
         {rankings.map((ranking, rankingIndex) => (
-          <div key={ranking} className="grid rewards-review-table-grid gap-4 items-center">
-            <p className="text-[16px] text-neutral-14">
+          <div
+            key={ranking}
+            className="grid rewards-review-table-grid gap-4 items-center text-neutral-14 hover:text-positive-11 transition-colors duration-300"
+          >
+            <p className="text-[16px]">
               {ranking}
               <sup>{returnOnlySuffix(ranking)}</sup> <span className="ml-1">place</span>
             </p>
-            <p className="text-[16px] text-neutral-14">{shareAllocations[rankingIndex]}% of rewards</p>
+            <p className="text-[16px]">{shareAllocations[rankingIndex]}% of rewards</p>
             <div className="flex gap-1 items-center">
-              {tokens.map((token, index) => (
-                <p className="text-[16px] text-neutral-14" key={index}>
+              {tokens.map((token, tokenIndex) => (
+                <p className="text-[16px]" key={tokenIndex}>
                   {handleAmountPerShareAllocation(parseFloat(token.amount), shareAllocations[rankingIndex])}{" "}
-                  <span className="uppercase">{token.symbol}</span> {index + 1 < tokens.length ? <span>,</span> : null}
+                  <span className="uppercase">{token.symbol}</span>{" "}
+                  {tokenIndex + 1 < tokens.length ? <span>,</span> : null}
                 </p>
               ))}
             </div>
