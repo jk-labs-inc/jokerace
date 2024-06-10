@@ -2,26 +2,25 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
-import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
 import { useReadContract } from "wagmi";
+import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
+import { ERC20Token } from "../RewardsDistributionTable/components";
 
 interface RewardsTableShareProps {
   payee: number;
   contractRewardsModuleAddress: string;
+  tokens: ERC20Token[] | undefined;
+  isRewardsTokensLoading: boolean;
   abiRewardsModule: any;
   chainId: number;
   totalShares: number;
 }
 
 export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
-  const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares } = props;
+  const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares, tokens, isRewardsTokensLoading } = props;
   const pathname = usePathname();
-  const { allBalances: tokens, isLoading: isRewardsTokensLoading } = useAllRewardsTokens(
-    "allRewardsTokens",
-    contractRewardsModuleAddress,
-  );
   const { chainName } = extractPathSegments(pathname ?? "");
   const { data, isError, isLoading } = useReadContract({
     address: contractRewardsModuleAddress as `0x${string}`,
@@ -60,16 +59,22 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
         <sup>{returnOnlySuffix(payee)}</sup> <span className="ml-1">place</span>
       </p>
       <p className="text-[16px]">{shareForPayee}% of rewards</p>
-      {/* // add loading state and error catch <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />; */}
       <div className="flex gap-1 items-center">
-        {tokens &&
+        {isRewardsTokensLoading ? (
+          <SkeletonTheme baseColor="#242424" highlightColor="#78FFC6" duration={1}>
+            <Skeleton width={100} height={16} />
+          </SkeletonTheme>
+        ) : tokens && tokens.length > 0 ? (
           tokens.map((token, tokenIndex) => (
             <p className="text-[16px]" key={tokenIndex}>
               {handleAmountPerShareAllocation(parseFloat(token.tokenBalance), parseFloat(shareForPayee))}{" "}
               <span className="uppercase">{token.tokenSymbol}</span>{" "}
               {tokenIndex + 1 < tokens.length ? <span>,</span> : null}
             </p>
-          ))}
+          ))
+        ) : (
+          <p className="text-[16px]">No reward tokens yet</p>
+        )}
       </div>
     </div>
   );

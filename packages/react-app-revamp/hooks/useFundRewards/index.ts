@@ -1,5 +1,7 @@
+import { FundPoolToken } from "@components/_pages/Contest/Rewards/components/Create/steps/FundPool/store";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
 import useRewardsModule from "@hooks/useRewards";
 import {
@@ -14,8 +16,7 @@ import { utils } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
-import { erc20Abi } from "viem";
+import { erc20Abi, parseUnits } from "viem";
 import { useAccount } from "wagmi";
 import { useFundRewardsStore } from "./store";
 
@@ -30,6 +31,7 @@ export interface RewardData {
 export function useFundRewardsModule() {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
+  const { rewardsModuleAddress } = useContestStore(state => state);
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName,
   )?.[0]?.id;
@@ -48,12 +50,8 @@ export function useFundRewardsModule() {
   const { error: errorMessage, handleError } = useError();
   const { handleRefetchBalanceRewardsModule } = useRewardsModule();
 
-  const sendFundsToRewardsModuleV3 = ({ rewards }: any) => {
-    if (rewards.length > 3) {
-      toast.warning("number of rewards cannot be more than 3 in one take.");
-      return;
-    }
-    const promises = rewards.map((reward: any) => {
+  const sendFundsToRewardsModuleV3 = (rewards: FundPoolToken[]) => {
+    const promises = rewards.map((reward: FundPoolToken) => {
       return () =>
         sendFundsToSingleReward(reward)
           .then(async result => {
@@ -70,18 +68,11 @@ export function useFundRewardsModule() {
     return promises;
   };
 
-  const sendFundsToSingleReward = async (args: {
-    currentUserAddress: string;
-    tokenAddress: string | null;
-    isErc20: boolean;
-    amount: string;
-    rewardsContractAddress: string;
-    decimals: number;
-  }) => {
+  const sendFundsToSingleReward = async (args: FundPoolToken) => {
     setIsLoading(true);
     setIsSuccess(false);
 
-    const { tokenAddress, amount, isErc20, rewardsContractAddress, decimals } = args;
+    const { address: tokenAddress, amount: tokenAmount, decimals: tokenDecimals } = args;
     const contractConfig = {
       address: tokenAddress as `0x${string}`,
       chainId: chainId,
@@ -91,17 +82,19 @@ export function useFundRewardsModule() {
     let hash: `0x${string}`;
     let receipt: WaitForTransactionReceiptReturnType;
 
-    if (isErc20) {
-      const amountBigInt = BigInt(amount);
+    if (tokenAddress === "native") {
+      const amountBigInt = parseUnits(tokenAmount, tokenDecimals);
 
-      const { request } = await simulateContract(config, {
-        ...contractConfig,
-        functionName: "transfer",
-        args: [rewardsContractAddress as `0x${string}`, amountBigInt],
+      await estimateGas(config, {
+        to: rewardsModuleAddress as `0x${string}`,
+        chainId: chainId,
+        value: amountBigInt,
       });
 
-      hash = await writeContract(config, {
-        ...request,
+      const hash = await sendTransaction(config, {
+        to: rewardsModuleAddress as `0x${string}`,
+        chainId: chainId,
+        value: amountBigInt,
       });
 
       receipt = await waitForTransactionReceipt(config, {
@@ -109,16 +102,17 @@ export function useFundRewardsModule() {
         hash: hash,
       });
     } else {
-      const amountBigInt = BigInt(amount);
+      const amountBigInt = parseUnits(tokenAmount, tokenDecimals);
 
-      await estimateGas(config, {
-        to: rewardsContractAddress as `0x${string}`,
-        value: amountBigInt,
+      const { request } = await simulateContract(config, {
+        ...contractConfig,
+        functionName: "transfer",
+        chainId: chainId,
+        args: [rewardsModuleAddress as `0x${string}`, amountBigInt],
       });
 
-      const hash = await sendTransaction(config, {
-        to: rewardsContractAddress as `0x${string}`,
-        value: amountBigInt,
+      hash = await writeContract(config, {
+        ...request,
       });
 
       receipt = await waitForTransactionReceipt(config, {
@@ -130,11 +124,11 @@ export function useFundRewardsModule() {
     try {
       await updateRewardAnalytics({
         contest_address: contestAddress,
-        rewards_module_address: rewardsContractAddress,
+        rewards_module_address: rewardsModuleAddress,
         network_name: chainName,
-        amount: parseFloat(utils.formatUnits(amount, decimals)),
+        amount: parseFloat(tokenAmount),
         operation: "deposit",
-        token_address: tokenAddress?.startsWith("$") ? null : tokenAddress,
+        token_address: tokenAddress === "native" ? null : tokenAddress,
         created_at: Math.floor(Date.now() / 1000),
       });
     } catch (error) {

@@ -5,27 +5,28 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import getRewardsModuleContractVersion from "@helpers/getRewardsModuleContractVersion";
 import { useContestStore } from "@hooks/useContest/store";
 import { useError } from "@hooks/useError";
+import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
 import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { readContract, readContracts } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { Abi } from "viem";
-import { useAccount } from "wagmi";
 import { useRewardsStore } from "./store";
 
 export function useRewardsModule() {
   const asPath = usePathname();
   const { rewardsModuleAddress, rewardsAbi, setRewardsModuleAddress, setRewardsAbi } = useContestStore(state => state);
   const { chainName: contestChainName, address: contestAddress } = extractPathSegments(asPath ?? "");
-  const { chain } = useAccount();
   const { rewards, setRewards, setIsLoading, setError, setIsSuccess } = useRewardsStore(state => state);
   const { error, handleError } = useError();
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName.toLowerCase(),
   )?.[0]?.id;
-  const { refetchUnpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewards?.contractAddress);
+  const { refetchUnpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewards?.contractAddress, true);
+  const { refetchAllBalances } = useAllRewardsTokens("allRewardsTokens", rewards?.contractAddress);
 
   const handleRefetchBalanceRewardsModule = () => {
     refetchUnpaidTokens();
+    refetchAllBalances();
   };
 
   const fetchRewardsModuleAbi = async (address: string) => {

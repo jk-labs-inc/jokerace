@@ -1,4 +1,5 @@
 import Loader from "@components/UI/Loader";
+import DialogAddFundsToRewardsModule from "@components/_pages/DialogAddFundsToRewardsModule";
 import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule";
 import ContestWithdrawRewards from "@components/_pages/Rewards/components/Withdraw";
 import RewardsDistributionTable from "@components/_pages/RewardsDistributionTable/components";
@@ -9,6 +10,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
+import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
 import { useUnpaidRewardTokens } from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
@@ -40,6 +42,10 @@ const ContestRewards = () => {
   const { address: accountAddress } = useAccount();
   const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress, true);
   const creator = contestAuthorEthereumAddress === accountAddress;
+  const { allBalances: allRewardsTokens, isLoading: isRewardsTokensLoading } = useAllRewardsTokens(
+    "allRewardsTokens",
+    rewardsModuleAddress,
+  );
 
   useAccountEffect({
     onConnect(data) {
@@ -104,6 +110,8 @@ const ContestRewards = () => {
                   {rewardsStore?.rewards?.payees?.map((payee: number) => (
                     <RewardsTableShare
                       key={`rank-${`${payee}`}`}
+                      tokens={allRewardsTokens}
+                      isRewardsTokensLoading={isRewardsTokensLoading}
                       chainId={chainId}
                       payee={payee}
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
@@ -113,7 +121,10 @@ const ContestRewards = () => {
                   ))}
                   {creator ? (
                     <div className="flex gap-8 items-center">
-                      <button className="bg-transparent text-positive-11 text-[16px] hover:text-positive-9 transition-colors duration-300">
+                      <button
+                        className="bg-transparent text-positive-11 text-[16px] hover:text-positive-9 transition-colors duration-300"
+                        onClick={() => setIsFundRewardsOpen(true)}
+                      >
                         add funds
                       </button>
                       {unpaidTokens && unpaidTokens.length > 0 ? (
@@ -154,6 +165,7 @@ const ContestRewards = () => {
             </div>
           )}
 
+          <DialogAddFundsToRewardsModule isOpen={isFundRewardsOpen} setIsOpen={setIsFundRewardsOpen} />
           <DialogWithdrawFundsFromRewardsModule isOpen={isWithdrawRewardsOpen} setIsOpen={setIsWithdrawRewardsOpen}>
             <ContestWithdrawRewards rewardsStore={rewardsStore.rewards} />
           </DialogWithdrawFundsFromRewardsModule>

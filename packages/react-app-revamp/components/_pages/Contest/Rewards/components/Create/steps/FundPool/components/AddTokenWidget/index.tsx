@@ -16,6 +16,7 @@ interface AddTokenWidgetProps {
   selectedToken: FilteredToken | null;
   selectedChain: RainbowKitChain | undefined;
   isTokenSearchModalOpen: boolean;
+  addTokenButtonPlacement?: "left" | "right";
   onOpenTokenSearchModal?: (isOpen: boolean) => void;
 }
 
@@ -45,6 +46,7 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
   selectedChain,
   isTokenSearchModalOpen,
   onOpenTokenSearchModal,
+  addTokenButtonPlacement = "right",
 }) => {
   const { address: userAddress } = useAccount();
   const chainLogo = selectedChain?.iconUrl;
@@ -174,7 +176,7 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
     <div className="flex flex-col gap-4 md:w-[400px]">
       <ButtonV3
         textColorClass="text-neutral-11 text-[16px] font-normal"
-        colorClass="ml-auto rounded-[40px] bg-primary-2"
+        colorClass={`${addTokenButtonPlacement == "right" ? "ml-auto" : "mr-auto"} rounded-[40px] bg-primary-2`}
         isDisabled={!isTokenAmountValid(selectedTokenAmount)}
         onClick={handleAddToken}
         size={ButtonSize.DEFAULT_LARGE}
