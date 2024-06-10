@@ -124,15 +124,22 @@ export function useRewardsModule() {
         contracts: contractsRewardsModule,
       });
 
+      const creator = rewardsModule[0].result as string;
+      const payees = rewardsModule[1].result as bigint[];
+      const totalShares = rewardsModule[2].result as bigint;
+
+      const formattedPayees = payees.map(payee => Number(payee));
+      const totalSharesFormatted = Number(totalShares);
+
       setRewards({
         abi: rewardsAbiLocal,
         contractAddress: rewardsModuleAddressLocal,
-        creator: rewardsModule[0],
-        payees: rewardsModule[1].result,
-        totalShares: rewardsModule[2].result,
+        creator: creator,
+        payees: formattedPayees,
+        totalShares: totalSharesFormatted,
         blockExplorers: chains.filter(
           (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === contestChainName,
-        )?.[0]?.blockExplorers?.default,
+        )?.[0]?.blockExplorers?.default.url,
       });
       setIsLoading(false);
       setIsSuccess(true);

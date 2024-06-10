@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import ShareDropdown from "@components/Share";
 import ButtonV3 from "@components/UI/ButtonV3";
@@ -120,6 +119,12 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     fetchContestInfo();
   }, [chainNameFromUrl, addressFromUrl]);
 
+  useEffect(() => {
+    if (showRewards) {
+      setTab(Tab.Rewards);
+    }
+  }, [showRewards]);
+
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
       case Tab.Contest:
@@ -230,7 +235,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                     </div>
                   </div>
                   <div className="mt-8 mb-8 gap-3 flex flex-col">
-                    <ContestTabs onChange={tab => setTab(tab)} />
+                    <ContestTabs tab={tab} onChange={tab => setTab(tab)} />
                   </div>
                   {renderTabs}
 

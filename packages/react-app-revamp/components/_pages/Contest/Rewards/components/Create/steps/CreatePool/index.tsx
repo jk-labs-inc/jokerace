@@ -24,10 +24,9 @@ const CreateRewardsPool = () => {
           <br /> and retain a community if you do.
         </p>
       </div>
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-8">
         <p className="text-[20px] font-bold text-neutral-11">how should we divide winners’ rewards?</p>
         <CreateRewardsPoolRecipients />
-        <p className="text-neutral-14 text-[16px]">note: any submissions you delete will not receive rewards.</p>
       </div>
 
       <CreateRewardsNavigation step={currentStep} isDisabled={isError} />

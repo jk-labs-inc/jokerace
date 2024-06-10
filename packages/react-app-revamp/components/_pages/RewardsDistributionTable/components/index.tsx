@@ -22,18 +22,10 @@ interface RewardsDistributionTableProps {
   contractRewardsModuleAddress: string;
   abiRewardsModule: any;
   chainId: number;
-  showPreviouslyDistributedTable?: boolean;
 }
 
 const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props }) => {
-  const {
-    payee,
-    erc20Tokens,
-    contractRewardsModuleAddress,
-    abiRewardsModule,
-    chainId,
-    showPreviouslyDistributedTable,
-  } = props;
+  const { payee, erc20Tokens, contractRewardsModuleAddress, abiRewardsModule, chainId } = props;
   const { isLoading: isFundingRewardsLoading } = useFundRewardsModule();
   const { isLoading: isDistributeRewardsLoading } = useDistributeRewardStore(state => state);
   const { isLoading: isWithdrawRewardsLoading } = useWithdrawRewardStore(state => state);
@@ -55,50 +47,8 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
   return (
     <SkeletonTheme baseColor="#706f78" highlightColor="#FFE25B" duration={1}>
       {isError && "Something went wrong, please reload the page."}
-      {data && !showPreviouslyDistributedTable && (
-        <div className="flex flex-col gap-12 max-w-[500px]">
-          <div className="flex flex-col gap-3">
-            <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
-            <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-              {isLoading ? (
-                <li>
-                  <Skeleton width={200} height={16} />
-                </li>
-              ) : (
-                <PayeeNativeReward
-                  share={data}
-                  payee={payee}
-                  chainId={chainId}
-                  contractRewardsModuleAddress={contractRewardsModuleAddress}
-                  abiRewardsModule={abiRewardsModule}
-                />
-              )}
 
-              {erc20Tokens?.length > 0 &&
-                erc20Tokens.map((token: any, index: number) => (
-                  <div key={index}>
-                    {isLoading ? (
-                      <li>
-                        <Skeleton width={200} height={16} />
-                      </li>
-                    ) : (
-                      <PayeeERC20Reward
-                        share={data}
-                        payee={payee}
-                        chainId={chainId}
-                        tokenAddress={token.contractAddress}
-                        contractRewardsModuleAddress={contractRewardsModuleAddress}
-                        abiRewardsModule={abiRewardsModule}
-                      />
-                    )}
-                  </div>
-                ))}
-            </ul>
-          </div>
-        </div>
-      )}
-
-      {data && showPreviouslyDistributedTable && (
+      {data && (
         <div className="flex flex-col gap-12 max-w-[500px]">
           <div className="flex flex-col gap-3">
             <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
@@ -114,7 +64,6 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
                   chainId={chainId}
                   contractRewardsModuleAddress={contractRewardsModuleAddress}
                   abiRewardsModule={abiRewardsModule}
-                  showPreviouslyDistributed
                 />
               )}
 
@@ -133,7 +82,6 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
                         tokenAddress={token.contractAddress}
                         contractRewardsModuleAddress={contractRewardsModuleAddress}
                         abiRewardsModule={abiRewardsModule}
-                        showPreviouslyDistributed={showPreviouslyDistributedTable}
                       />
                     )}
                   </div>
