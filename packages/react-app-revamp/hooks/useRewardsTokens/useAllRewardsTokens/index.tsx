@@ -7,10 +7,6 @@ import { useQuery } from "@tanstack/react-query";
 import { getAllBalances } from "lib/rewards";
 import { usePathname } from "next/navigation";
 
-interface ERC20TokenExtended extends ERC20Token {
-  tokenSymbol: string;
-}
-
 export const useAllRewardsTokens = (queryKey: string, rewardsModuleAddress: string) => {
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath);
@@ -28,11 +24,13 @@ export const useAllRewardsTokens = (queryKey: string, rewardsModuleAddress: stri
         const allBalances = await getAllBalances(rewardsModuleAddress, chainName.toLowerCase());
 
         const tokenAddresses = [...new Set(allBalances.map(token => token.tokenAddress))];
-        const tokenDecimals = await getTokenDecimalsBatch(tokenAddresses, chainId);
-        const tokenSymbols = await getTokenSymbolBatch(tokenAddresses, chainId);
+        const [tokenDecimals, tokenSymbols] = await Promise.all([
+          getTokenDecimalsBatch(tokenAddresses, chainId),
+          getTokenSymbolBatch(tokenAddresses, chainId),
+        ]);
 
         const formattedBalances = allBalances.map(
-          (token): ERC20TokenExtended => ({
+          (token): ERC20Token => ({
             contractAddress: token.tokenAddress,
             tokenBalance: token.balance.toString(),
             tokenSymbol: token.tokenAddress === "native" ? chainNativeCurrency : tokenSymbols[token.tokenAddress],
@@ -48,7 +46,7 @@ export const useAllRewardsTokens = (queryKey: string, rewardsModuleAddress: stri
   });
 
   return {
-    refetchPaidTokens: refetch,
+    refetchAllBalances: refetch,
     allBalances: data,
     isLoading,
     isError,

@@ -2,14 +2,15 @@ import { createContext, useContext, useRef } from "react";
 import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
 
-interface RewardModuleInfo {
-  abi: Abi | null;
+export interface RewardModuleInfo {
+  abi: Abi;
   contractAddress: string;
   creator: string;
   payees: number[];
   totalShares: number;
   blockExplorers?: string;
 }
+
 interface RewardsState {
   isLoading: boolean;
   isSuccess: boolean;
@@ -27,7 +28,7 @@ export const createRewardsStore = () =>
     isSuccess: false,
     error: "",
     rewards: {
-      abi: null,
+      abi: [],
       contractAddress: "",
       creator: "",
       payees: [],

@@ -1,22 +1,28 @@
 import { useWithdrawReward, useWithdrawRewardStore } from "@hooks/useWithdrawRewards";
+import { Abi } from "viem";
 import ButtonWithdraw from "./ButtonWithdraw";
 interface ButtonWithdrawErc20RewardProps {
   contractRewardsModuleAddress: string;
-  abiRewardsModule: any;
-  tokenAddress: string;
+  abiRewardsModule: Abi;
+  token: {
+    address: string;
+    balance: string;
+    symbol: string;
+  };
 }
 
 export const ButtonWithdrawERC20Reward = (props: ButtonWithdrawErc20RewardProps) => {
-  const { contractRewardsModuleAddress, tokenAddress, abiRewardsModule } = props;
-  const { queryTokenBalance, handleWithdraw } = useWithdrawReward(
+  const { contractRewardsModuleAddress, abiRewardsModule, token } = props;
+  const { handleWithdraw } = useWithdrawReward(
     contractRewardsModuleAddress,
     abiRewardsModule,
     "erc20",
-    tokenAddress,
+    token.balance,
+    token.address,
   );
   const { isLoading } = useWithdrawRewardStore(state => state);
 
-  return <ButtonWithdraw queryTokenBalance={queryTokenBalance} handleWithdraw={handleWithdraw} isLoading={isLoading} />;
+  return <ButtonWithdraw token={token} handleWithdraw={handleWithdraw} isLoading={isLoading} />;
 };
 
 export default ButtonWithdrawERC20Reward;

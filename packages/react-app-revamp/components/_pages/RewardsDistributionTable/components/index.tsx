@@ -13,6 +13,7 @@ export const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000
 export type ERC20Token = {
   contractAddress: string;
   tokenBalance: string;
+  tokenSymbol: string;
   decimals: number;
 };
 

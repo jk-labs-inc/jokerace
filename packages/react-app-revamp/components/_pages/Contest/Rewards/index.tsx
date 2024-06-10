@@ -15,8 +15,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount, useAccountEffect } from "wagmi";
 import CreateRewards from "./components/Create";
-import DialogAddFundsToRewardsModule from "../../DialogAddFundsToRewardsModule";
-import AddTokenWidget from "./components/Create/steps/FundPool/components/AddTokenWidget";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -40,7 +38,7 @@ const ContestRewards = () => {
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const { address: accountAddress } = useAccount();
-  const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress);
+  const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress, true);
   const creator = contestAuthorEthereumAddress === accountAddress;
 
   useAccountEffect({
@@ -118,42 +116,46 @@ const ContestRewards = () => {
                       <button className="bg-transparent text-positive-11 text-[16px] hover:text-positive-9 transition-colors duration-300">
                         add funds
                       </button>
-                      <button
-                        className="bg-transparent text-negative-11 text-[16px] hover:text-negative-10 transition-colors duration-300"
-                        onClick={() => setIsWithdrawRewardsOpen(true)}
-                      >
-                        remove funds
-                      </button>
+                      {unpaidTokens && unpaidTokens.length > 0 ? (
+                        <button
+                          className="bg-transparent text-negative-11 text-[16px] hover:text-negative-10 transition-colors duration-300"
+                          onClick={() => setIsWithdrawRewardsOpen(true)}
+                        >
+                          remove funds
+                        </button>
+                      ) : null}
                     </div>
                   ) : null}
                 </div>
               </div>
-              <div className="flex flex-col gap-12">
-                <div className="flex flex-col gap-1">
-                  <p className="text-[24px] text-neutral-11 font-bold">rewards to distribute</p>
-                  <p className="text-neutral-11 text-[12px]">
-                    <b>in case of ties, funds will be reverted to you to distribute manually.</b> please be aware of any
-                    obligations you might
-                    <br /> face for receiving funds.
-                  </p>
-                </div>
+              {unpaidTokens && unpaidTokens.length > 0 ? (
+                <div className="flex flex-col gap-12">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[24px] text-neutral-11 font-bold">rewards to distribute</p>
+                    <p className="text-neutral-11 text-[12px]">
+                      <b>in case of ties, funds will be reverted to you to distribute manually.</b> please be aware of
+                      any obligations you might
+                      <br /> face for receiving funds.
+                    </p>
+                  </div>
 
-                {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
-                  <RewardsDistributionTable
-                    key={index}
-                    chainId={chainId}
-                    payee={payee}
-                    erc20Tokens={unpaidTokens ?? []}
-                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                    abiRewardsModule={rewardsStore.rewards.abi}
-                  />
-                ))}
-              </div>
+                  {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
+                    <RewardsDistributionTable
+                      key={index}
+                      chainId={chainId}
+                      payee={payee}
+                      erc20Tokens={unpaidTokens?.filter(token => token.contractAddress !== "native") ?? []}
+                      contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                      abiRewardsModule={rewardsStore.rewards.abi}
+                    />
+                  ))}
+                </div>
+              ) : null}
             </div>
           )}
 
           <DialogWithdrawFundsFromRewardsModule isOpen={isWithdrawRewardsOpen} setIsOpen={setIsWithdrawRewardsOpen}>
-            <ContestWithdrawRewards rewardsStore={rewardsStore} />
+            <ContestWithdrawRewards rewardsStore={rewardsStore.rewards} />
           </DialogWithdrawFundsFromRewardsModule>
         </>
       )}

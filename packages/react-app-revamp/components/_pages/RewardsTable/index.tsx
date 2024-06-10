@@ -20,7 +20,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   const pathname = usePathname();
   const { allBalances: tokens, isLoading: isRewardsTokensLoading } = useAllRewardsTokens(
     "allRewardsTokens",
-    contractRewardsModuleAddress as `0x${string}`,
+    contractRewardsModuleAddress,
   );
   const { chainName } = extractPathSegments(pathname ?? "");
   const { data, isError, isLoading } = useReadContract({
@@ -54,26 +54,22 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid gap-4">
-        <div className="grid rewards-review-table-grid gap-4 items-center text-neutral-14 hover:text-positive-11 transition-colors duration-300">
-          <p className="text-[16px]">
-            {payee}
-            <sup>{returnOnlySuffix(payee)}</sup> <span className="ml-1">place</span>
-          </p>
-          <p className="text-[16px]">{shareForPayee}% of rewards</p>
-          {/* // add loading state and error catch <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />; */}
-          <div className="flex gap-1 items-center">
-            {tokens &&
-              tokens.map((token, tokenIndex) => (
-                <p className="text-[16px]" key={tokenIndex}>
-                  {handleAmountPerShareAllocation(parseFloat(token.tokenBalance), parseFloat(shareForPayee))}{" "}
-                  <span className="uppercase">{token.tokenSymbol}</span>{" "}
-                  {tokenIndex + 1 < tokens.length ? <span>,</span> : null}
-                </p>
-              ))}
-          </div>
-        </div>
+    <div className="grid rewards-review-table-grid gap-4 items-center text-neutral-14 hover:text-positive-11 transition-colors duration-300">
+      <p className="text-[16px]">
+        {payee}
+        <sup>{returnOnlySuffix(payee)}</sup> <span className="ml-1">place</span>
+      </p>
+      <p className="text-[16px]">{shareForPayee}% of rewards</p>
+      {/* // add loading state and error catch <Skeleton width={50} height={16} baseColor="#706f78" highlightColor="#78FFC6" duration={1} />; */}
+      <div className="flex gap-1 items-center">
+        {tokens &&
+          tokens.map((token, tokenIndex) => (
+            <p className="text-[16px]" key={tokenIndex}>
+              {handleAmountPerShareAllocation(parseFloat(token.tokenBalance), parseFloat(shareForPayee))}{" "}
+              <span className="uppercase">{token.tokenSymbol}</span>{" "}
+              {tokenIndex + 1 < tokens.length ? <span>,</span> : null}
+            </p>
+          ))}
       </div>
     </div>
   );

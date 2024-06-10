@@ -2,22 +2,22 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { formatUnits } from "viem";
 
 interface ButtonWithdrawErc20RewardProps {
-  queryTokenBalance: any;
+  token: {
+    balance: string;
+    symbol: string;
+  };
   handleWithdraw: () => Promise<void>;
   isLoading: boolean;
 }
 
 export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
-  const { queryTokenBalance, handleWithdraw, isLoading } = props;
-
-  if (queryTokenBalance.data.value.toString() === "") return null;
+  const { token, handleWithdraw, isLoading } = props;
 
   return (
     <li className="flex items-center">
-      <section className="flex justify-between w-full md:w-[650px]">
+      <section className="flex justify-between w-full">
         <p>
-          {parseFloat(formatUnits(queryTokenBalance.data.value, queryTokenBalance.data.decimals))}{" "}
-          <span className="uppercase">${queryTokenBalance.data.symbol}</span>
+          {token.balance} <span className="uppercase">${token.symbol}</span>
         </p>
         <ButtonV3
           isDisabled={isLoading}
