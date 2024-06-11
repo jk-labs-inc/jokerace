@@ -28,7 +28,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     isLoading: isUnpaidTokensLoading,
     isError: isUnpaidTokensError,
     refetchUnpaidTokens,
-  } = useUnpaidRewardTokens("rewards-info-unpaid-tokens", rewardsModuleAddress, true);
+  } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress, true);
 
   const {
     paidTokens,
