@@ -69,12 +69,12 @@ export const useWithdrawReward = (
           token_address: tokenAddress ? tokenAddress : null,
           created_at: Math.floor(Date.now() / 1000),
         });
+
+        refetchUnpaidTokens();
+        refetchAllBalances();
       } catch (error) {
         console.error("error updating reward analytics", error);
       }
-
-      refetchUnpaidTokens();
-      refetchAllBalances();
     } catch (error: any) {
       handleError(error, `something went wrong and the funds couldn't be withdrawn`);
       setIsLoading(false);

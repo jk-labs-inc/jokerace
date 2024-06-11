@@ -1,6 +1,11 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { chains, config } from "@config/wagmi";
+import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
+import { switchChain } from "@wagmi/core";
+import { usePathname } from "next/navigation";
 import { formatUnits } from "viem";
+import { useAccount } from "wagmi";
 
 interface ButtonWithdrawErc20RewardProps {
   token: {
@@ -12,7 +17,22 @@ interface ButtonWithdrawErc20RewardProps {
 }
 
 export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
+  const pathname = usePathname();
+  const { chainId: userChainId } = useAccount();
+  const { chainName } = extractPathSegments(pathname);
+  const chainId = chains.find(chain => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase())?.id;
   const { token, handleWithdraw, isLoading } = props;
+  const isConnectedOnCorrectChain = chainId === userChainId;
+
+  const onHandleWithdraw = () => {
+    if (!chainId) return;
+
+    if (!isConnectedOnCorrectChain) {
+      switchChain(config, { chainId });
+    }
+
+    handleWithdraw();
+  };
 
   return (
     <li className="flex items-center">
@@ -24,7 +44,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
           isDisabled={isLoading}
           size={ButtonSize.EXTRA_SMALL}
           colorClass="bg-gradient-withdraw"
-          onClick={handleWithdraw}
+          onClick={onHandleWithdraw}
         >
           Withdraw
         </ButtonV3>

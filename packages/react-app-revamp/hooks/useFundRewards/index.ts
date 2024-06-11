@@ -130,11 +130,11 @@ export function useFundRewardsModule() {
         token_address: tokenAddress === "native" ? null : tokenAddress,
         created_at: Math.floor(Date.now() / 1000),
       });
+
+      handleRefetchBalanceRewardsModule();
     } catch (error) {
       console.error("Error while updating reward analytics", error);
     }
-
-    handleRefetchBalanceRewardsModule();
 
     setIsLoading(false);
     setIsSuccess(true);
