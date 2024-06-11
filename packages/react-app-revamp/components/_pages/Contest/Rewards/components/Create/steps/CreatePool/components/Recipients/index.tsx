@@ -108,7 +108,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
           + Add winner
         </ButtonV3>
       </div>
-      <div className="mt-5 text-[16px]">
+      <div className="mt-4 text-[16px]">
         <div className="grid grid-cols-2 justify-between mb-3 text-neutral-10 font-bold">
           <span className="uppercase">winner</span>
           <span className="uppercase text-right">Proportion</span>
@@ -120,7 +120,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
               <div className="grid grid-cols-2 justify-between items-center border-t border-primary-2 py-3">
                 <div className="flex gap-4">
                   <select
-                    className="w-20 h-8 pb-1 bg-neutral-11 opacity-70 text-true-black font-bold rounded-[8px]"
+                    className="w-20 h-8 pb-1 bg-neutral-9  text-true-black font-bold rounded-[8px]"
                     value={recipient.place}
                     onChange={event => handlePlaceChange(event, recipient.id)}
                   >
@@ -136,7 +136,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center relative">
                       <input
-                        className="w-[120px] h-8 bg-neutral-11 opacity-70 text-true-black rounded-[8px] font-bold text-center appearance-none"
+                        className="w-[120px] h-8 bg-neutral-9  text-true-black rounded-[8px] font-bold text-center appearance-none"
                         type="number"
                         min="1"
                         max="100"

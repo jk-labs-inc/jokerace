@@ -131,19 +131,19 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
         return <ContestTab />;
       case Tab.Rewards:
         return (
-          <div className="mt-8">
+          <div className="mt-12">
             <ContestRewards />
           </div>
         );
       case Tab.Parameters:
         return (
-          <div className="mt-8">
+          <div className="mt-12">
             <ContestParameters />
           </div>
         );
       case Tab.Extensions:
         return (
-          <div className="mt-8">
+          <div className="mt-12">
             <ContestExtensions />
           </div>
         );
