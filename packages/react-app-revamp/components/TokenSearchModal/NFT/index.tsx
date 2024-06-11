@@ -1,3 +1,4 @@
+import { chains as wagmiChains } from "@config/wagmi";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FC, useState } from "react";
 import TokenSearchModalChainDropdown, { Option } from "../components/ChainDropdown";
@@ -14,6 +15,7 @@ const TokenSearchModalNft: FC<TokenSearchModalNftProps> = ({ chains, onSelectNft
   const [selectedChain, setSelectedChain] = useState<string>(chains[0].value);
   const [searchValue, setSearchValue] = useState<string>("");
   const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
+  const chainId = wagmiChains.find(chain => chain.name.toLowerCase() === selectedChain.toLowerCase())?.id || 1;
 
   const onNftChainChange = (chain: string) => {
     setSelectedChain(chain);
@@ -35,6 +37,7 @@ const TokenSearchModalNft: FC<TokenSearchModalNftProps> = ({ chains, onSelectNft
       <TokenSearchModalSearchInput
         onSearchChange={value => setSearchValue(value)}
         isChainDropdownOpen={isChainDropdownOpen}
+        chainId={chainId}
       />
       {searchValue ? (
         <NftsSearchList
