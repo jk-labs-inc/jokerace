@@ -48,22 +48,7 @@ const CreateRewardsDeploymentStatus: React.FC = () => {
 
   return (
     <div className="flex flex-col gap-11">
-      <div className="flex flex-col gap-4">
-        <p className="text-[24px] text-true-white font-bold">Let’s Deploy</p>
-        <div className="flex flex-col gap-2 ml-2">
-          <p className={`text-[16px] text-neutral-11 ${getTransactionClass(0)}`}>
-            1. We deploy a rewards module contract that will hold the rewards for the contest.
-          </p>
-          <p className={`text-[16px] text-neutral-11 ${getTransactionClass(1)}`}>
-            2. We attach the rewards module to the contest contract.
-          </p>
-          {tokens.length > 0 && (
-            <p className={`text-[16px] text-neutral-11 ${getTransactionClass(2)}`}>
-              3. If you’ve added funds to the pool, each token added to the pool is a separate transaction.
-            </p>
-          )}
-        </div>
-      </div>
+      <p className="text-[24px] text-true-white font-bold">Let’s Deploy</p>
       <div className="flex flex-col gap-4 w-full md:w-2/3">
         {transactions.map((transaction, index) => (
           <div
@@ -77,6 +62,7 @@ const CreateRewardsDeploymentStatus: React.FC = () => {
           </div>
         ))}
       </div>
+      <p className="text-[16px] text-neutral-14">note: please do not refresh the page during the deployment process.</p>
     </div>
   );
 };

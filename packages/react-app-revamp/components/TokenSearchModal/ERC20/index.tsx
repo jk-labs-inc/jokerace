@@ -1,10 +1,11 @@
 import { chains } from "@config/wagmi";
+import { InformationCircleIcon } from "@heroicons/react/outline";
+import { FilteredToken, TOKENLISTOOOR_SUPPORTED_CHAIN_IDS } from "@hooks/useTokenList";
 import { FC, useState } from "react";
 import TokenSearchModalChainDropdown, { Option } from "../components/ChainDropdown";
 import TokenSearchModalSearchInput from "../components/SearchInput";
 import TokenSearchList from "../components/TokenList";
 import TokenSearchModalUserTokens from "../components/UserTokens";
-import { FilteredToken } from "@hooks/useTokenList";
 
 interface TokenSearchModalERC20Props {
   chains: Option[];
@@ -15,6 +16,7 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Ch
   const [erc20SelectedChain, setErc20SelectedChain] = useState<string>(erc20Chains[0].value);
   const [searchValue, setSearchValue] = useState<string>("");
   const chainId = chains.find(chain => chain.name === erc20SelectedChain)?.id || 1;
+  const isChainSupportedBySearch = TOKENLISTOOOR_SUPPORTED_CHAIN_IDS.includes(chainId);
   const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
 
   return (
@@ -34,6 +36,7 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Ch
       <TokenSearchModalSearchInput
         onSearchChange={value => setSearchValue(value)}
         isChainDropdownOpen={isChainDropdownOpen}
+        chainId={chainId}
       />
       {searchValue ? (
         <TokenSearchList
@@ -42,12 +45,20 @@ const TokenSearchModalERC20: FC<TokenSearchModalERC20Props> = ({ chains: erc20Ch
           isChainDropdownOpen={isChainDropdownOpen}
           onSelectToken={onSelectToken}
         />
-      ) : (
+      ) : isChainSupportedBySearch ? (
         <TokenSearchModalUserTokens
           chainName={erc20SelectedChain}
           onSelectToken={onSelectToken}
           isChainDropdownOpen={isChainDropdownOpen}
         />
+      ) : (
+        <div className="flex gap-2">
+          <InformationCircleIcon className="w-12 text-neutral-11" />
+          <p className="text-[14px] text-neutral-11">
+            we do not support searching by token name or retrieving tokens from your wallet on{" "}
+            <span className="normal-case">{erc20SelectedChain}</span> chain. Please paste the token address to search.
+          </p>
+        </div>
       )}
     </div>
   );

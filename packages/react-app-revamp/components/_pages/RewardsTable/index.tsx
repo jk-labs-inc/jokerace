@@ -59,7 +59,7 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
         <sup>{returnOnlySuffix(payee)}</sup> <span className="ml-1">place</span>
       </p>
       <p className="text-[16px]">{shareForPayee}% of rewards</p>
-      <div className="flex gap-1 items-center">
+      <div className="flex flex-col md:flex-row gap-1 items-center">
         {isRewardsTokensLoading ? (
           <SkeletonTheme baseColor="#242424" highlightColor="#78FFC6" duration={1}>
             <Skeleton width={100} height={16} />

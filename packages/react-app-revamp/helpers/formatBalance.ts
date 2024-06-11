@@ -18,6 +18,11 @@ export function formatBalance(balance: string): string {
     return num.toFixed(position);
   }
 
-  // Otherwise, truncate to at most 2 decimal places without rounding.
-  return (Math.floor(num * 100) / 100).toFixed(2);
+  // Check if the number has decimal places
+  if (Number.isInteger(num)) {
+    return num.toString();
+  }
+
+  // Otherwise, truncate to at most 2 decimal places without rounding
+  return (Math.floor(num * 100) / 100).toFixed(2).replace(/\.00$/, "");
 }

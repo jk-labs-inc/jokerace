@@ -1,5 +1,6 @@
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { formatBalance } from "@helpers/formatBalance";
 import usePaidRewardTokens from "@hooks/useRewardsTokens/usePaidRewardsTokens";
 import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { usePathname } from "next/navigation";
@@ -135,10 +136,10 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
   return (
     <>
       {currentUnpaidToken ? (
-        <div className="flex shrink-0 h-8 w-52 max-w-56 p-4 justify-center items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11 overflow-hidden">
+        <div className="flex shrink-0 h-8 min-w-52 p-4 justify-center items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11 overflow-hidden">
           <span className="truncate flex items-center">
             <div className={`flex items-center ${animateUnpaid ? "animate-reveal" : ""}`}>
-              {currentUnpaidToken.tokenBalance} $
+              {formatBalance(currentUnpaidToken.tokenBalance)} $
               <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentUnpaidSymbol}</span>
             </div>
 
@@ -150,10 +151,10 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
           </span>
         </div>
       ) : currentPaidToken ? (
-        <div className="flex shrink-0 h-8 w-52 max-w-56 p-4 justify-center items-center bg-neutral-0 border border-positive-11 rounded-[10px] text-[16px] font-bold text-positive-11 overflow-hidden">
+        <div className="flex shrink-0 h-8 min-w-52 p-4 justify-center items-center bg-neutral-0 border border-positive-11 rounded-[10px] text-[16px] font-bold text-positive-11 overflow-hidden">
           <span className="truncate flex items-center">
             <div className={`flex items-center ${animatePaid ? "animate-reveal" : ""}`}>
-              {currentPaidToken.tokenBalance} $
+              {formatBalance(currentPaidToken.tokenBalance)} $
               <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentPaidSymbol}</span>
             </div>
             paid out!

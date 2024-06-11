@@ -93,6 +93,10 @@ const CreateRewardsPoolRecipients: React.FC = () => {
   );
   const proportionError = totalProportion > 100 ? "over" : totalProportion < 100 ? "under" : null;
 
+  const formatProportion = (proportion: number) => {
+    return Number.isInteger(proportion) ? proportion : proportion.toFixed(2);
+  };
+
   return (
     <div className="md:w-[370px]">
       <div className="flex justify-start">
@@ -159,16 +163,15 @@ const CreateRewardsPoolRecipients: React.FC = () => {
 
         <div className="grid grid-cols-2 justify-between border-t border-neutral-10 py-3 font-bold">
           <div className="text-neutral-14">Total</div>
-          {/* //TODO: add gradient to 100% */}
           <div
             className={`justify-self-center ml-[68px] text-center ${proportionError ? "text-negative-11" : ""} ${
-              totalProportion === 100 ? "bg-gradient-to-r from-indigo-500" : ""
+              totalProportion === 100 ? "bg-gradient-reward-recipients text-transparent bg-clip-text" : ""
             }`}
           >
-            {totalProportion.toFixed(2)}% <br />
+            {formatProportion(totalProportion)}% <br />
             {proportionError && (
               <span>
-                {Math.abs(totalProportion - 100).toFixed(2)}% {proportionError}
+                {formatProportion(Math.abs(totalProportion - 100))}% {proportionError}
               </span>
             )}
           </div>

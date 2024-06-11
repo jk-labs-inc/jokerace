@@ -20,7 +20,7 @@ export function useDeployRewardsPool() {
   const { address: contestAddress } = extractPathSegments(asPath ?? "");
   const setSupportsRewardsModule = useContestStore(state => state.setSupportsRewardsModule);
   const { rewardPoolData, setRewardPoolData, setStep } = useCreateRewardsStore(state => state);
-  const { tokens } = useFundPoolStore(state => state);
+  const { tokens, setTokens } = useFundPoolStore(state => state);
 
   async function deployRewardsPool() {
     let contractRewardsModuleAddress: string;
@@ -171,7 +171,6 @@ export function useDeployRewardsPool() {
             contest_address: contestAddress,
             rewards_module_address: contractRewardsModuleAddress,
             network_name: chain?.name.toLowerCase() ?? "",
-            //TODO: check this for tokens with lot of decimals
             amount: parseFloat(token.amount),
             operation: "deposit",
             token_address: token.address === "native" ? null : token.address,
@@ -180,6 +179,8 @@ export function useDeployRewardsPool() {
         } catch (error) {
           console.error("Error while updating reward analytics", error);
         }
+
+        setTokens([]);
       } catch (tokenError) {
         setRewardPoolData(prevData => ({
           ...prevData,

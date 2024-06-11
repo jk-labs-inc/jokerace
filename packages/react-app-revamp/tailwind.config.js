@@ -347,6 +347,7 @@ module.exports = {
         "gradient-vote": "linear-gradient(93.06deg, #78FFC6 0%, #BB65FF 100%)",
         "gradient-distribute": "linear-gradient(180deg, #B0FED4 0%, #78FFC6 50%, #4A9575 100%)",
         "gradient-withdraw": "linear-gradient(180deg, #FF78A9 0%, #f04f88 50%, #e93d82 100%)",
+        "gradient-reward-recipients": "linear-gradient(90deg, #78FFC6 0%,#FFE25B 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",

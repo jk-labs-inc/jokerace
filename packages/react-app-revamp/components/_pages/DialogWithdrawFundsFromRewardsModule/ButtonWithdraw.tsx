@@ -1,4 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
+import { formatBalance } from "@helpers/formatBalance";
 import { formatUnits } from "viem";
 
 interface ButtonWithdrawErc20RewardProps {
@@ -17,7 +18,7 @@ export const ButtonWithdraw = (props: ButtonWithdrawErc20RewardProps) => {
     <li className="flex items-center">
       <section className="flex justify-between w-full">
         <p>
-          {token.balance} <span className="uppercase">${token.symbol}</span>
+          {formatBalance(token.balance)} <span className="uppercase">${token.symbol}</span>
         </p>
         <ButtonV3
           isDisabled={isLoading}

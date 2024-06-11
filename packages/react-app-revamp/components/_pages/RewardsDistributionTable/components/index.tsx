@@ -7,6 +7,7 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useReadContract } from "wagmi";
 import PayeeERC20Reward from "./ERC20Reward";
 import { PayeeNativeReward } from "./NativeReward";
+import { Abi } from "viem";
 
 export const ZERO_BALANCE = "0x0000000000000000000000000000000000000000000000000000000000000000";
 
@@ -18,10 +19,10 @@ export type ERC20Token = {
 };
 
 interface RewardsDistributionTableProps {
-  payee: any;
+  payee: number;
   erc20Tokens: Array<ERC20Token>;
   contractRewardsModuleAddress: string;
-  abiRewardsModule: any;
+  abiRewardsModule: Abi;
   chainId: number;
 }
 
@@ -52,7 +53,7 @@ const RewardsDistributionTable: FC<RewardsDistributionTableProps> = ({ ...props 
       {data && (
         <div className="flex flex-col gap-12 max-w-[500px]">
           <div className="flex flex-col gap-3">
-            <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(parseFloat(payee))} place:</p>
+            <p className="text-[16px] font-bold text-neutral-11">{ordinalSuffix(payee)} place:</p>
             <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
               {isLoading || isDistributeRewardsLoading ? (
                 <li>

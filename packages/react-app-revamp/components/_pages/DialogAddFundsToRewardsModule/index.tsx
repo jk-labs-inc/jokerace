@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { useAccount } from "wagmi";
 import AddTokenWidget from "../Contest/Rewards/components/Create/steps/FundPool/components/AddTokenWidget";
 import { useFundPoolStore } from "../Contest/Rewards/components/Create/steps/FundPool/store";
+import { useFundRewardsStore } from "@hooks/useFundRewards/store";
 
 interface DialogAddFundsToRewardsModuleProps {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
   const [selectedToken, setSelectedToken] = useState<FilteredToken | null>(null);
   const { tokens, setTokens } = useFundPoolStore(state => state);
   const { sendFundsToRewardsModuleV3 } = useFundRewardsModule();
+  const { isLoading: isFundRewardsLoading } = useFundRewardsStore(state => state);
   const toastIdRef = useRef<string | number | null>(null);
 
   const handleSelectedToken = (token: FilteredToken) => {
@@ -119,7 +121,7 @@ export const DialogAddFundsToRewardsModule = (props: DialogAddFundsToRewardsModu
         <ButtonV3
           colorClass="text-[20px] bg-gradient-distribute rounded-[40px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
           size={ButtonSize.EXTRA_LARGE}
-          isDisabled={!tokens.length}
+          isDisabled={!tokens.length || isFundRewardsLoading}
           onClick={onFundPool}
         >
           submit funds

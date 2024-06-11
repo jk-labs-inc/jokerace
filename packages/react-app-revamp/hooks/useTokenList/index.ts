@@ -20,6 +20,10 @@ interface PaginationInfo {
 const TOKEN_LIST_API_URL = "/api/token";
 const pageSize = 20;
 
+export const TOKENLISTOOOR_SUPPORTED_CHAIN_IDS = [
+  1, 10, 100, 1088, 1101, 137, 250, 314, 324, 42161, 42220, 43114, 5, 5000, 534352, 56, 59144, 7777777, 81457, 8453,
+];
+
 async function fetchTokenListOrMetadata({
   pageParam = 0,
   chainId,
@@ -29,6 +33,10 @@ async function fetchTokenListOrMetadata({
   chainId: number;
   tokenIdentifier: string;
 }): Promise<{ tokens: FilteredToken[]; pagination: PaginationInfo }> {
+  if (!TOKENLISTOOOR_SUPPORTED_CHAIN_IDS.includes(chainId)) {
+    return fetchTokenByAddress({ chainId, tokenIdentifier });
+  }
+
   const response = await fetch(
     `${TOKEN_LIST_API_URL}?chainId=${chainId}&tokenIdentifier=${encodeURIComponent(
       tokenIdentifier,
@@ -60,7 +68,17 @@ async function fetchTokenListOrMetadata({
     };
   }
 
-  if (addressRegex.test(tokenIdentifier) && (!data.tokens || data.tokens.length === 0)) {
+  return fetchTokenByAddress({ chainId, tokenIdentifier });
+}
+
+async function fetchTokenByAddress({
+  chainId,
+  tokenIdentifier,
+}: {
+  chainId: number;
+  tokenIdentifier: string;
+}): Promise<{ tokens: FilteredToken[]; pagination: PaginationInfo }> {
+  if (addressRegex.test(tokenIdentifier)) {
     const token = await getToken(config, {
       address: tokenIdentifier as `0x${string}`,
       chainId,

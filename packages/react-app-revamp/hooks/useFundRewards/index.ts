@@ -12,7 +12,6 @@ import {
   writeContract,
   type WaitForTransactionReceiptReturnType,
 } from "@wagmi/core";
-import { utils } from "ethers";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";

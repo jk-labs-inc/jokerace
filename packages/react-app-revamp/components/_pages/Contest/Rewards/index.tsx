@@ -150,7 +150,7 @@ const ContestRewards = () => {
                     </p>
                   </div>
 
-                  {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
+                  {rewardsStore?.rewards?.payees?.map((payee: number, index: number) => (
                     <RewardsDistributionTable
                       key={index}
                       chainId={chainId}

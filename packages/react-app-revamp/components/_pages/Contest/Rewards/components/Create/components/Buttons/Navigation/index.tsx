@@ -31,7 +31,7 @@ const CreateRewardsNavigation: FC<CreateRewardsNavigationProps> = ({ step, isDis
           next
         </ButtonV3>
         <div
-          className="hidden lg:flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
+          className="flex items-center gap-[5px] -ml-[15px] cursor-pointer group"
           onClick={() => onBackHandler(step)}
         >
           <div className="transition-transform duration-200 group-hover:-translate-x-1">

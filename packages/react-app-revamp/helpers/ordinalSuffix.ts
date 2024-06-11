@@ -13,7 +13,6 @@ export const ordinalSuffix = (i: number) => {
   return i + "th";
 };
 
-//TODO: change naming
 export const returnOnlySuffix = (i: number) => {
   const j = i % 10,
     k = i % 100;

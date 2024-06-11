@@ -29,7 +29,7 @@ const CreateRewardsReviewTable: FC<CreateRewardsReviewTableProps> = ({ rankings,
               <sup>{returnOnlySuffix(ranking)}</sup> <span className="ml-1">place</span>
             </p>
             <p className="text-[16px]">{shareAllocations[rankingIndex]}% of rewards</p>
-            <div className="flex gap-1 items-center">
+            <div className="flex flex-col md:flex-row gap-1 items-center">
               {tokens.map((token, tokenIndex) => (
                 <p className="text-[16px]" key={tokenIndex}>
                   {handleAmountPerShareAllocation(parseFloat(token.amount), shareAllocations[rankingIndex])}{" "}
