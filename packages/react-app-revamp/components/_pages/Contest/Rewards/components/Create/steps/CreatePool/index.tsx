@@ -1,6 +1,7 @@
 import CreateRewardsNavigation from "@components/_pages/Contest/Rewards/components/Create/components/Buttons/Navigation";
 import { ValidationError, useCreateRewardsStore } from "@components/_pages/Contest/Rewards/components/Create/store";
 import CreateRewardsPoolRecipients from "./components/Recipients";
+import { useMediaQuery } from "react-responsive";
 
 const hasValidationErrors = (errors: ValidationError): boolean => {
   return Object.values(errors).some(error => error !== undefined);
@@ -9,6 +10,7 @@ const hasValidationErrors = (errors: ValidationError): boolean => {
 const CreateRewardsPool = () => {
   const { currentStep, rewardPoolData } = useCreateRewardsStore(state => state);
   const isError = hasValidationErrors(rewardPoolData.validationError);
+  const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
 
   return (
     <div className="flex flex-col gap-12 animate-swingInLeft">
@@ -16,12 +18,14 @@ const CreateRewardsPool = () => {
         <p className="text-[24px] font-bold text-true-white">rewards for winners 🤑</p>
 
         <p className="text-[16px] text-neutral-11">
-          a rewards pool incentivizes submissions, compensates winners, and <br />
+          a rewards pool incentivizes submissions, compensates winners, and
+          {isMobile ? " " : <br />}
           helps showcase you to players. you can fund it with tokens in a sec.
         </p>
         <p className="text-[16px] text-neutral-11">
           it’s up to you whether you want to add one—but it’s easier to attract
-          <br /> and retain a community if you do.
+          {isMobile ? " " : <br />}
+          and retain a community if you do.
         </p>
       </div>
       <div className="flex flex-col gap-8">

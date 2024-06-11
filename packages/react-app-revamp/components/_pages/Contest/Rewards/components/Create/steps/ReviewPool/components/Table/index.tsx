@@ -22,7 +22,7 @@ const CreateRewardsReviewTable: FC<CreateRewardsReviewTableProps> = ({ rankings,
         {rankings.map((ranking, rankingIndex) => (
           <div
             key={ranking}
-            className="grid rewards-review-table-grid gap-4 items-center text-neutral-14 hover:text-positive-11 transition-colors duration-300"
+            className={`${tokens.length > 0 ? "rewards-review-table-grid" : "rewards-review-table-grid-without-tokens"} gap-4 items-center text-neutral-14 hover:text-positive-11 transition-colors duration-300`}
           >
             <p className="text-[16px]">
               {ranking}
