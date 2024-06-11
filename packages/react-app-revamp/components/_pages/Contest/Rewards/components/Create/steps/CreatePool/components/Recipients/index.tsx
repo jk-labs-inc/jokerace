@@ -136,7 +136,7 @@ const CreateRewardsPoolRecipients: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <div className="flex items-center relative">
                       <input
-                        className="w-[120px] h-8 bg-neutral-9  text-true-black rounded-[8px] font-bold text-center appearance-none"
+                        className="w-[120px] h-8 bg-neutral-9  text-true-black rounded-[8px] font-bold text-center appearance-none focus:outline-none"
                         type="number"
                         min="1"
                         max="100"
