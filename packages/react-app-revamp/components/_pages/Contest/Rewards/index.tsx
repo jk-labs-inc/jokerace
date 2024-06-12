@@ -1,10 +1,6 @@
-import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import DialogModalV3 from "@components/UI/DialogModalV3";
 import Loader from "@components/UI/Loader";
-import DialogCheckBalanceRewardsModule from "@components/_pages/DialogCheckBalanceRewardsModule";
+import DialogAddFundsToRewardsModule from "@components/_pages/DialogAddFundsToRewardsModule";
 import DialogWithdrawFundsFromRewardsModule from "@components/_pages/DialogWithdrawFundsFromRewardsModule";
-import CreateRewardsPool from "@components/_pages/Rewards/components/Create";
-import CreateRewardsFunding from "@components/_pages/Rewards/components/Fund";
 import ContestWithdrawRewards from "@components/_pages/Rewards/components/Withdraw";
 import RewardsDistributionTable from "@components/_pages/RewardsDistributionTable/components";
 import { RewardsTableShare } from "@components/_pages/RewardsTable";
@@ -12,16 +8,15 @@ import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
-import useContractVersion from "@hooks/useContractVersion";
-import { useDeployRewardsStore } from "@hooks/useDeployRewards/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
-import usePaidRewardTokens from "@hooks/useRewardsTokens/usePaidRewardsTokens";
+import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
 import { useUnpaidRewardTokens } from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAccount, useAccountEffect } from "wagmi";
+import CreateRewards from "./components/Create";
 
 const ContestRewards = () => {
   const asPath = usePathname();
@@ -36,25 +31,21 @@ const ContestRewards = () => {
     contestAuthorEthereumAddress,
     sortingEnabled,
     contestMaxProposalCount,
+    version,
     downvotingAllowed,
     rewardsModuleAddress,
   } = useContestStore(state => state);
-  const {
-    version,
-    isLoading: isContractVersionLoading,
-    isError: isContractVersionError,
-  } = useContractVersion(address, chainId);
-  const { displayCreatePool, isLoading: isRewardsPoolDeploying } = useDeployRewardsStore(state => state);
-  const [isDeployRewardsOpen, setIsDeployRewardsOpen] = useState(false);
   const [isFundRewardsOpen, setIsFundRewardsOpen] = useState(false);
   const [isWithdrawRewardsOpen, setIsWithdrawRewardsOpen] = useState(false);
-  const [isCheckBalanceRewardsOpen, setIsCheckBalanceRewardsOpen] = useState(false);
   const rewardsStore = useRewardsStore(state => state);
   const { getContestRewardsModule } = useRewardsModule();
   const { address: accountAddress } = useAccount();
-  const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress);
-  const { paidTokens } = usePaidRewardTokens("rewards-module-paid-tokens", rewardsModuleAddress);
+  const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress, true);
   const creator = contestAuthorEthereumAddress === accountAddress;
+  const { allBalances: allRewardsTokens, isLoading: isRewardsTokensLoading } = useAllRewardsTokens(
+    "allRewardsTokens",
+    rewardsModuleAddress,
+  );
 
   useAccountEffect({
     onConnect(data) {
@@ -73,17 +64,13 @@ const ContestRewards = () => {
 
   if (!supportsRewardsModule && !creator) {
     return (
-      <p className="text-[16px] md:text-[20px]">
+      <p className="text-[16px] md:text-[20px] animate-reveal">
         For this contest, there is no rewards module; the contest creator is the only one who may configure one.
       </p>
     );
   }
 
-  if (isContractVersionLoading) return <Loader />;
-
   if (!supportsRewardsModule && creator) {
-    if (isRewardsPoolDeploying) return <Loader>Deploying rewards pool...</Loader>;
-
     if (version) {
       if (compareVersions(version, "4.1") == -1) {
         if (contestMaxProposalCount > 100) {
@@ -106,36 +93,7 @@ const ContestRewards = () => {
       }
     }
 
-    return (
-      <div className="flex flex-col gap-12">
-        <p className="text-[24px] font-bold text-neutral-11">create a rewards pool</p>
-        <div className="flex flex-col gap-4 text-[16px] text-neutral-11">
-          <p>a rewards pool incentivizes players, compensates winners, and helps showcase you to players.</p>
-          <p>
-            when you create a rewards pool, you’ll set what percent of rewards <br />
-            each winner receives—and then you’ll have the option to fund it
-            <br /> with whatever tokens you like.
-          </p>
-          <ButtonV3
-            colorClass={`bg-gradient-create rounded-[40px] mt-3`}
-            size={ButtonSize.LARGE}
-            onClick={() => setIsDeployRewardsOpen(true)}
-          >
-            create rewards pool
-          </ButtonV3>
-        </div>
-        <DialogModalV3
-          isOpen={isDeployRewardsOpen}
-          setIsOpen={value => setIsDeployRewardsOpen(value)}
-          title="rewards"
-          className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
-        >
-          <div className="md:pl-[50px] lg:pl-[100px]">
-            <div className="pt-[50px]">{displayCreatePool ? <CreateRewardsPool /> : <CreateRewardsFunding />}</div>
-          </div>
-        </DialogModalV3>
-      </div>
-    );
+    return <CreateRewards />;
   }
 
   return (
@@ -145,127 +103,72 @@ const ContestRewards = () => {
           {rewardsStore.isLoading && <Loader>Loading rewards</Loader>}
           {rewardsStore.isSuccess && (
             <div className="flex flex-col gap-16">
-              <div className="flex flex-col gap-12">
-                <p className="text-[24px] text-neutral-11 font-bold">rewards pool parameters</p>
-                <div className="flex flex-col gap-5">
-                  <div className="flex flex-col gap-3">
-                    <p className="text-[16px] text-neutral-11 font-bold">rewards pool address:</p>
-                    <a
-                      className="text-positive-11 text-[16px] font-bold underline break-all"
-                      href={`${rewardsStore?.rewards?.blockExplorers?.url}address/${rewardsStore?.rewards?.contractAddress}`}
-                      target="_blank"
-                    >
-                      {rewardsStore?.rewards?.contractAddress}
-                    </a>
-                    <p className="text-[12px] font-bold text-neutral-11">
-                      {creator ? (
-                        <>
-                          you can withdraw funds at any time{" "}
-                          <span
-                            className="text-positive-11 cursor-pointer"
-                            onClick={() => setIsWithdrawRewardsOpen(true)}
-                          >
-                            here
-                          </span>
-                          .
-                        </>
-                      ) : (
-                        <>the contest creator can withdraw funds at any time.</>
-                      )}
-                    </p>
-                  </div>
-                  <p className="text-[16px] text-neutral-11 font-bold">distribution of rewards in pool:</p>
-                  {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
+              <div className="flex flex-col gap-8">
+                <p className="text-[24px] text-true-white font-bold">live rewards pools</p>
+                <div className="flex flex-col gap-6">
+                  <p className="text-[20px] text-neutral-11 font-bold">for winners</p>
+                  {rewardsStore?.rewards?.payees?.map((payee: number) => (
                     <RewardsTableShare
                       key={`rank-${`${payee}`}`}
+                      tokens={allRewardsTokens}
+                      isRewardsTokensLoading={isRewardsTokensLoading}
                       chainId={chainId}
                       payee={payee}
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                       abiRewardsModule={rewardsStore.rewards.abi}
                       totalShares={rewardsStore.rewards.totalShares}
-                      isLast={index === rewardsStore.rewards.payees.length - 1}
                     />
                   ))}
-                  {creator && (
-                    <>
-                      <ButtonV3
-                        colorClass={`bg-gradient-create rounded-[40px] mt-3`}
-                        size={ButtonSize.LARGE}
+                  {creator ? (
+                    <div className="flex gap-8 items-center">
+                      <button
+                        className="bg-transparent text-positive-11 text-[16px] hover:text-positive-9 transition-colors duration-300"
                         onClick={() => setIsFundRewardsOpen(true)}
                       >
-                        fund pool
-                      </ButtonV3>
-                      <DialogModalV3
-                        isOpen={isFundRewardsOpen}
-                        setIsOpen={value => setIsFundRewardsOpen(value)}
-                        title="rewards"
-                        className="xl:w-[1110px] 3xl:w-[1300px] h-[850px]"
-                      >
-                        <div className="md:pl-[50px] lg:pl-[100px]">
-                          <div className="pt-[50px]">{<CreateRewardsFunding isFundingForTheFirstTime={false} />}</div>
-                        </div>
-                      </DialogModalV3>
-                    </>
-                  )}
+                        add funds
+                      </button>
+                      {unpaidTokens && unpaidTokens.length > 0 ? (
+                        <button
+                          className="bg-transparent text-negative-11 text-[16px] hover:text-negative-10 transition-colors duration-300"
+                          onClick={() => setIsWithdrawRewardsOpen(true)}
+                        >
+                          remove funds
+                        </button>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
               </div>
-              <div className="flex flex-col gap-12">
-                <div className="flex flex-col gap-1">
-                  <p className="text-[24px] text-neutral-11 font-bold">rewards to distribute</p>
-                  <p className="text-[12px]">
-                    If you want to determine for yourself if a custom token is included in the rewards, you can do it{" "}
-                    <span
-                      className="text-positive-11 cursor-pointer font-bold"
-                      onClick={() => setIsCheckBalanceRewardsOpen(true)}
-                    >
-                      here
-                    </span>
-                    .
-                  </p>
-                  <p className="text-neutral-11 text-[12px]">
-                    <b>in case of ties, funds will be reverted to you to distribute manually.</b> please be aware of any
-                    obligations you might
-                    <br /> face for receiving funds.
-                  </p>
-                </div>
+              {unpaidTokens && unpaidTokens.length > 0 ? (
+                <div className="flex flex-col gap-12">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-[24px] text-neutral-11 font-bold">rewards to distribute</p>
+                    <p className="text-neutral-11 text-[12px]">
+                      <b>in case of ties, funds will be reverted to you to distribute manually.</b> please be aware of
+                      any obligations you might
+                      <br /> face for receiving funds.
+                    </p>
+                  </div>
 
-                {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
-                  <RewardsDistributionTable
-                    key={index}
-                    chainId={chainId}
-                    payee={payee}
-                    erc20Tokens={unpaidTokens ?? []}
-                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                    abiRewardsModule={rewardsStore.rewards.abi}
-                  />
-                ))}
-              </div>
-              <div className="flex flex-col gap-12">
-                <div className="flex flex-col gap-1">
-                  <p className="text-[24px] text-neutral-11 font-bold">previously distributed rewards</p>
+                  {rewardsStore?.rewards?.payees?.map((payee: number, index: number) => (
+                    <RewardsDistributionTable
+                      key={index}
+                      chainId={chainId}
+                      payee={payee}
+                      erc20Tokens={unpaidTokens?.filter(token => token.contractAddress !== "native") ?? []}
+                      contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
+                      abiRewardsModule={rewardsStore.rewards.abi}
+                    />
+                  ))}
                 </div>
-
-                {rewardsStore?.rewards?.payees?.map((payee: any, index: number) => (
-                  <RewardsDistributionTable
-                    key={index}
-                    chainId={chainId}
-                    payee={payee}
-                    erc20Tokens={paidTokens ?? []}
-                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                    abiRewardsModule={rewardsStore.rewards.abi}
-                    showPreviouslyDistributedTable
-                  />
-                ))}
-              </div>
+              ) : null}
             </div>
           )}
+
+          <DialogAddFundsToRewardsModule isOpen={isFundRewardsOpen} setIsOpen={setIsFundRewardsOpen} />
           <DialogWithdrawFundsFromRewardsModule isOpen={isWithdrawRewardsOpen} setIsOpen={setIsWithdrawRewardsOpen}>
-            <ContestWithdrawRewards rewardsStore={rewardsStore} />
+            <ContestWithdrawRewards rewardsStore={rewardsStore.rewards} />
           </DialogWithdrawFundsFromRewardsModule>
-          <DialogCheckBalanceRewardsModule
-            isOpen={isCheckBalanceRewardsOpen}
-            setIsOpen={setIsCheckBalanceRewardsOpen}
-          />
         </>
       )}
     </div>

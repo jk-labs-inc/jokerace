@@ -343,9 +343,11 @@ module.exports = {
         "gradient-next": "linear-gradient(90deg, #FFDD3E 0%, #78FFC6 96.62%)",
         "gradient-create": "linear-gradient(93.06deg, #BB65FF 0%, #78FFC6 100%)",
         "gradient-share-submission": "linear-gradient(90deg, #FFE25B 0%, #BB65FF 96.62%)",
+        "gradient-create-pool": "linear-gradient(90deg, #BB65FF 0%, #FFE25B 100%)",
         "gradient-vote": "linear-gradient(93.06deg, #78FFC6 0%, #BB65FF 100%)",
         "gradient-distribute": "linear-gradient(180deg, #B0FED4 0%, #78FFC6 50%, #4A9575 100%)",
         "gradient-withdraw": "linear-gradient(180deg, #FF78A9 0%, #f04f88 50%, #e93d82 100%)",
+        "gradient-reward-recipients": "linear-gradient(90deg, #78FFC6 0%,#FFE25B 100%)",
       },
       boxShadow: {
         "create-header": "0 3px 4px 0 rgba(106, 106, 106, 1)",

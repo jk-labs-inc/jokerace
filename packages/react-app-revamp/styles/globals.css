@@ -434,6 +434,28 @@ li {
     grid-template-columns: auto auto 1fr;
   }
 
+  .rewards-review-table-grid-without-tokens {
+    @apply grid;
+    grid-template-columns: 0.2fr 0.3fr 1fr;
+  }
+
+  .rewards-review-table-grid {
+    @apply grid;
+    grid-template-columns: 0.2fr 0.3fr 1fr;
+  }
+
+  @media (max-width: 768px) {
+    .rewards-review-table-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .rewards-review-table-grid-without-tokens {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
   .dropdownBorder {
     @apply border-2 border-primary-10;
   }

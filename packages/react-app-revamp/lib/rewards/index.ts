@@ -5,6 +5,46 @@ export interface RewardToken {
   balance: number;
 }
 
+export const getAllBalances = async (rewardsModuleAddress: string, networkName: string): Promise<RewardToken[]> => {
+  if (isSupabaseConfigured) {
+    const config = await import("@config/supabase");
+    const supabase = config.supabase;
+
+    const { data: fundings, error: fundingError } = await supabase
+      .from("analytics_rewards_v3")
+      .select("token_address, amount_paid_in, amount_withdrawn")
+      .eq("rewards_module_address", rewardsModuleAddress)
+      .eq("network_name", networkName);
+
+    if (fundingError) {
+      throw new Error(fundingError.message);
+    }
+
+    const balances = fundings.reduce(
+      (acc, transaction) => {
+        const tokenAddress = transaction.token_address ? transaction.token_address : "native";
+        if (tokenAddress) {
+          if (!acc[tokenAddress]) {
+            acc[tokenAddress] = { tokenAddress, balance: 0 };
+          }
+          if (transaction.amount_paid_in) {
+            acc[tokenAddress].balance += transaction.amount_paid_in;
+          }
+          if (transaction.amount_withdrawn) {
+            acc[tokenAddress].balance -= transaction.amount_withdrawn;
+          }
+        }
+        return acc;
+      },
+      {} as { [key: string]: RewardToken },
+    );
+
+    return Object.values(balances).filter(token => token.balance > 0);
+  }
+
+  return [];
+};
+
 export const getNetBalances = async (
   rewardsModuleAddress: string,
   networkName: string,

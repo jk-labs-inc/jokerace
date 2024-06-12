@@ -1,6 +1,7 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { chains, config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { formatBalance } from "@helpers/formatBalance";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
 import { useAccountModal } from "@rainbow-me/rainbowkit";
@@ -36,13 +37,8 @@ export const DistributableReward = (props: DistributableRewardProps) => {
       </li>
     );
 
-  if (!queryRankRewardsReleasable.data || queryTokenBalance.data.value === 0 || queryRankRewardsReleasable.data === 0) {
-    return (
-      <li>
-        <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds to distribute
-      </li>
-    );
-  }
+  if (!queryRankRewardsReleasable.data || queryTokenBalance.data.value === 0 || queryRankRewardsReleasable.data === 0)
+    return null;
 
   if (queryRankRewardsReleasable.isLoading) {
     return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading distributable rewards</p>;
@@ -60,7 +56,7 @@ export const DistributableReward = (props: DistributableRewardProps) => {
     <li className="flex items-center">
       <section className="flex justify-between w-full">
         <p>
-          {formatUnits(queryRankRewardsReleasable.data, queryTokenBalance.data?.decimals ?? 18)}{" "}
+          {formatBalance(formatUnits(queryRankRewardsReleasable.data, queryTokenBalance.data?.decimals ?? 18))}{" "}
           <span className="uppercase">${queryTokenBalance?.data?.symbol}</span>
         </p>
 

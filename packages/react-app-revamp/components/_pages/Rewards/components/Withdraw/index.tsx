@@ -1,75 +1,54 @@
 import ButtonWithdrawERC20Reward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawERC20Reward";
 import ButtonWithdrawNativeReward from "@components/_pages/DialogWithdrawFundsFromRewardsModule/ButtonWithdrawNativeReward";
-import { Tab } from "@headlessui/react";
+import { RewardModuleInfo } from "@hooks/useRewards/store";
 import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
-import { FC, Fragment } from "react";
-import { useAccount, useBalance } from "wagmi";
+import { FC } from "react";
 
 interface ContestWithdrawRewardsProps {
-  rewardsStore: any;
+  rewardsStore: RewardModuleInfo;
 }
 
 const ContestWithdrawRewards: FC<ContestWithdrawRewardsProps> = ({ rewardsStore }) => {
-  const { chain } = useAccount();
-  const { unpaidTokens } = useUnpaidRewardTokens(
+  const { unpaidTokens, isLoading } = useUnpaidRewardTokens(
     "rewards-module-unpaid-tokens",
-    rewardsStore?.rewards?.contractAddress,
+    rewardsStore.contractAddress,
+    true,
   );
-  const nativeTokenBalance = useBalance({
-    address: rewardsStore?.rewards?.contractAddress as `0x${string}`,
-    chainId: chain?.id,
-  });
 
   return (
-    <div className="w-full">
-      <Tab.Group>
-        <Tab.List className="animate-appear max-w-[700px] overflow-hidden text-[16px] font-medium mb-6 divide-neutral-4 flex rounded-full border-solid border border-neutral-4">
-          {["ERC20", chain?.nativeCurrency?.symbol].map(tab => (
-            <Tab key={tab} as={Fragment}>
-              {({ selected }) => (
-                <button
-                  className={`normal-case p-1 w-1/2 text-center
-      ${selected ? "bg-true-white text-positive-1 font-bold" : ""}`}
-                >
-                  {tab}
-                </button>
-              )}
-            </Tab>
-          ))}
-        </Tab.List>
-        <Tab.Panels>
-          <Tab.Panel>
-            {unpaidTokens && unpaidTokens.length > 0 ? (
-              <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-                {unpaidTokens.map((token, index) => (
-                  <ButtonWithdrawERC20Reward
-                    key={index}
-                    contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                    abiRewardsModule={rewardsStore.rewards.abi}
-                    tokenAddress={token.contractAddress}
-                  />
-                ))}
-              </ul>
+    <div className="w-full md:w-[600px] mt-14">
+      {isLoading ? (
+        <p className="loadingDots font-sabo text-[14px] text-neutral-14">Loading rewards</p>
+      ) : unpaidTokens && unpaidTokens.length > 0 ? (
+        <ul className="flex flex-col gap-3 text-[16px] font-bold list-explainer">
+          {unpaidTokens.map((token, index) =>
+            token.contractAddress === "native" ? (
+              <ButtonWithdrawNativeReward
+                key={index}
+                contractRewardsModuleAddress={rewardsStore.contractAddress}
+                abiRewardsModule={rewardsStore.abi}
+                token={{
+                  balance: token.tokenBalance,
+                  symbol: token.tokenSymbol,
+                }}
+              />
             ) : (
-              <p className="italic text-[16px] text-neutral-11">No balance found for ERC20 tokens.</p>
-            )}
-          </Tab.Panel>
-          <Tab.Panel>
-            {nativeTokenBalance.data && nativeTokenBalance.data?.value > 0 ? (
-              <ul className="flex flex-col gap-3 pl-4 text-[16px] font-bold list-explainer">
-                <ButtonWithdrawNativeReward
-                  contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
-                  abiRewardsModule={rewardsStore.rewards.abi}
-                />
-              </ul>
-            ) : (
-              <p className="italic text-[16px] text-neutral-11">
-                No balance found for $<span className="uppercase">{nativeTokenBalance.data?.symbol}</span>.
-              </p>
-            )}
-          </Tab.Panel>
-        </Tab.Panels>
-      </Tab.Group>
+              <ButtonWithdrawERC20Reward
+                key={index}
+                contractRewardsModuleAddress={rewardsStore.contractAddress}
+                abiRewardsModule={rewardsStore.abi}
+                token={{
+                  address: token.contractAddress,
+                  balance: token.tokenBalance,
+                  symbol: token.tokenSymbol,
+                }}
+              />
+            ),
+          )}
+        </ul>
+      ) : (
+        <p className="italic text-[16px] text-neutral-11">No balance found for rewards.</p>
+      )}
     </div>
   );
 };

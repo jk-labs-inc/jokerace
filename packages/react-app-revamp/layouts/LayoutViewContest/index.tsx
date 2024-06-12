@@ -1,5 +1,4 @@
 "use client";
-/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable react-hooks/exhaustive-deps */
 import ShareDropdown from "@components/Share";
 import ButtonV3 from "@components/UI/ButtonV3";
@@ -9,9 +8,9 @@ import ContestTab from "@components/_pages/Contest/Contest";
 import ContestExtensions from "@components/_pages/Contest/Extensions";
 import ContestParameters from "@components/_pages/Contest/Parameters";
 import ContestRewards from "@components/_pages/Contest/Rewards";
+import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 import ContestTabs, { Tab } from "@components/_pages/Contest/components/Tabs";
 import { useShowRewardsStore } from "@components/_pages/Create/pages/ContestDeploying";
-import CreateContestRewards from "@components/_pages/Create/pages/ContestRewards";
 import { ofacAddresses } from "@config/ofac-addresses/ofac-addresses";
 import { ROUTE_CONTEST_PROPOSAL } from "@config/routes";
 import { extractPathSegments } from "@helpers/extractPath";
@@ -33,7 +32,6 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount, useAccountEffect } from "wagmi";
 import LayoutViewContestError from "./components/Error";
-import ContestRewardsInfo from "@components/_pages/Contest/components/RewardsInfo";
 
 const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
   const { refresh } = useRouter();
@@ -121,25 +119,31 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
     fetchContestInfo();
   }, [chainNameFromUrl, addressFromUrl]);
 
+  useEffect(() => {
+    if (showRewards) {
+      setTab(Tab.Rewards);
+    }
+  }, [showRewards]);
+
   const renderTabs = useMemo<ReactNode>(() => {
     switch (tab) {
       case Tab.Contest:
         return <ContestTab />;
       case Tab.Rewards:
         return (
-          <div className="mt-8">
+          <div className="mt-12">
             <ContestRewards />
           </div>
         );
       case Tab.Parameters:
         return (
-          <div className="mt-8">
+          <div className="mt-12">
             <ContestParameters />
           </div>
         );
       case Tab.Extensions:
         return (
-          <div className="mt-8">
+          <div className="mt-12">
             <ContestExtensions />
           </div>
         );
@@ -231,13 +235,11 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                     </div>
                   </div>
                   <div className="mt-8 mb-8 gap-3 flex flex-col">
-                    <ContestTabs onChange={tab => setTab(tab)} />
+                    <ContestTabs tab={tab} onChange={tab => setTab(tab)} />
                   </div>
                   {renderTabs}
 
                   {children}
-
-                  {showRewards && <CreateContestRewards />}
                 </div>
               </>
             )}
