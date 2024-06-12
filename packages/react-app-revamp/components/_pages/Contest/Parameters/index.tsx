@@ -71,7 +71,7 @@ const ContestParameters = () => {
         address={address ?? ""}
         currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
         currentUserTotalVotesAmount={currentUserTotalVotesAmount}
-        costToVote={charge?.type.costToVote}
+        voteCharge={charge && { type: charge.voteType, cost: charge.type.costToVote }}
         nativeCurrencySymbol={nativeCurrency?.symbol}
         votingRequirementsDescription={votingRequirements?.description}
         openConnectModal={openConnectModal}
