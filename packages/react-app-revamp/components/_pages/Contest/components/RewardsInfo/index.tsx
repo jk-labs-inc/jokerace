@@ -1,13 +1,13 @@
-import { chains, config } from "@config/wagmi";
+import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
+import { formatBalance } from "@helpers/formatBalance";
 import usePaidRewardTokens from "@hooks/useRewardsTokens/usePaidRewardsTokens";
 import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
-import { readContract } from "@wagmi/core";
 import { usePathname } from "next/navigation";
 import { FC, useEffect, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useMediaQuery } from "react-responsive";
-import { Abi, erc20Abi } from "viem";
+import { Abi } from "viem";
 import { useReadContract } from "wagmi";
 
 interface ContestRewardsInfoProps {
@@ -21,9 +21,6 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
   const chainId = chains.filter(
     (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
   )?.[0]?.id;
-  const nativeCurrency = chains.filter(
-    (chain: { name: string }) => chain.name.toLowerCase().replace(" ", "") === chainName.toLowerCase(),
-  )?.[0]?.nativeCurrency.symbol;
   const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const {
@@ -31,7 +28,7 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     isLoading: isUnpaidTokensLoading,
     isError: isUnpaidTokensError,
     refetchUnpaidTokens,
-  } = useUnpaidRewardTokens("rewards-info-unpaid-tokens", rewardsModuleAddress, true);
+  } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress, true);
 
   const {
     paidTokens,
@@ -52,45 +49,16 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
     functionName: "getPayees",
   }) as { data: bigint[]; isLoading: boolean; isError: boolean; refetch: () => void };
 
-  const [tokenSymbols, setTokenSymbols] = useState<string[]>([]);
   const [currentUnpaidIndex, setCurrentUnpaidIndex] = useState(0);
   const [currentPaidIndex, setCurrentPaidIndex] = useState(0);
   const [animateUnpaid, setAnimateUnpaid] = useState(false);
   const [animatePaid, setAnimatePaid] = useState(false);
-
   const currentUnpaidToken = unpaidTokens ? unpaidTokens[currentUnpaidIndex] : null;
   const currentPaidToken = paidTokens ? paidTokens[currentPaidIndex] : null;
-
-  const currentUnpaidSymbol = tokenSymbols[currentUnpaidIndex];
-  const currentPaidSymbol = tokenSymbols[currentPaidIndex + (unpaidTokens?.length || 0)];
-
+  const currentUnpaidSymbol = currentUnpaidToken?.tokenSymbol ?? null;
+  const currentPaidSymbol = currentPaidToken?.tokenSymbol ?? null;
   const isLoading = isUnpaidTokensLoading || isPaidTokensLoading || isPayeesDataLoading;
   const isError = isUnpaidTokensError || isPaidTokensError || isPayeesDataError;
-
-  useEffect(() => {
-    const fetchTokenSymbols = async () => {
-      if (!unpaidTokens && !paidTokens) return;
-
-      const symbols = await Promise.all(
-        [...(unpaidTokens || []), ...(paidTokens || [])].map(async token => {
-          if (token.contractAddress === "native") {
-            return nativeCurrency;
-          } else {
-            const symbol = await readContract(config, {
-              address: token.contractAddress as `0x${string}`,
-              chainId: chainId,
-              abi: erc20Abi,
-              functionName: "symbol",
-            });
-            return symbol;
-          }
-        }),
-      );
-      setTokenSymbols(symbols);
-    };
-
-    fetchTokenSymbols();
-  }, [unpaidTokens, paidTokens, isUnpaidTokensLoading, nativeCurrency, chainId]);
 
   useEffect(() => {
     if (unpaidTokens && unpaidTokens.length > 1) {
@@ -168,10 +136,10 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
   return (
     <>
       {currentUnpaidToken ? (
-        <div className="flex shrink-0 h-8 w-52 max-w-56 p-4 justify-center items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11 overflow-hidden">
+        <div className="flex shrink-0 h-8 min-w-52 p-4 justify-center items-center bg-neutral-0 border border-transparent rounded-[10px] text-[16px] font-bold text-neutral-11 overflow-hidden">
           <span className="truncate flex items-center">
             <div className={`flex items-center ${animateUnpaid ? "animate-reveal" : ""}`}>
-              {currentUnpaidToken.tokenBalance} $
+              {formatBalance(currentUnpaidToken.tokenBalance)} $
               <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentUnpaidSymbol}</span>
             </div>
 
@@ -183,10 +151,10 @@ const ContestRewardsInfo: FC<ContestRewardsInfoProps> = ({ rewardsModuleAddress,
           </span>
         </div>
       ) : currentPaidToken ? (
-        <div className="flex shrink-0 h-8 w-52 max-w-56 p-4 justify-center items-center bg-neutral-0 border border-positive-11 rounded-[10px] text-[16px] font-bold text-positive-11 overflow-hidden">
+        <div className="flex shrink-0 h-8 min-w-52 p-4 justify-center items-center bg-neutral-0 border border-positive-11 rounded-[10px] text-[16px] font-bold text-positive-11 overflow-hidden">
           <span className="truncate flex items-center">
             <div className={`flex items-center ${animatePaid ? "animate-reveal" : ""}`}>
-              {currentPaidToken.tokenBalance} $
+              {formatBalance(currentPaidToken.tokenBalance)} $
               <span className="uppercase mr-1 truncate inline-block overflow-hidden">{currentPaidSymbol}</span>
             </div>
             paid out!

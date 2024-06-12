@@ -8,11 +8,12 @@ export enum Tab {
 }
 
 interface ContestTabsProps {
+  tab: Tab;
   onChange?: (tab: Tab) => void;
 }
 
-const ContestTabs: FC<ContestTabsProps> = ({ onChange }) => {
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.Contest);
+const ContestTabs: FC<ContestTabsProps> = ({ tab, onChange }) => {
+  const [activeTab, setActiveTab] = useState<Tab>(tab);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: "0px", width: "0px" });
   const tabRefs = useRef<(HTMLDivElement | null)[]>([]);
 

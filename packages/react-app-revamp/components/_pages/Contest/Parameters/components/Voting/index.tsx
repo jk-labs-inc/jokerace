@@ -1,8 +1,9 @@
 import { formatNumber } from "@helpers/formatNumber";
 import { FC, useMemo } from "react";
 import { formatEther } from "viem";
-import ContestParametersVotingRequirements from "../Requirements/Voting";
 import ContestParamatersCSVVoters from "../CSV/Voters";
+import ContestParametersVotingRequirements from "../Requirements/Voting";
+import { VoteType } from "@hooks/useDeployContest/types";
 
 interface ContestParametersVotingProps {
   anyoneCanVote: boolean;
@@ -10,7 +11,10 @@ interface ContestParametersVotingProps {
   currentUserAvailableVotesAmount: number;
   currentUserTotalVotesAmount: number;
   address: string;
-  costToVote?: number;
+  voteCharge: {
+    type: VoteType;
+    cost: number;
+  } | null;
   nativeCurrencySymbol?: string;
   votingRequirementsDescription?: string;
   openConnectModal?: () => void;
@@ -22,7 +26,7 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
   currentUserAvailableVotesAmount,
   currentUserTotalVotesAmount,
   address,
-  costToVote,
+  voteCharge,
   nativeCurrencySymbol,
   votingRequirementsDescription,
   openConnectModal,
@@ -36,7 +40,7 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
           you have{" "}
           <span className="font-bold">
             {formatNumber(currentUserAvailableVotesAmount)} vote{currentUserAvailableVotesAmount == 1 ? "" : "s"} ( 1
-            vote = {formatEther(BigInt(costToVote ?? 0))} {nativeCurrencySymbol})
+            vote = {formatEther(BigInt(voteCharge?.cost ?? 0))} {nativeCurrencySymbol})
           </span>
         </p>
       );
@@ -58,7 +62,7 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
     return "to vote, you must be on the allowlist";
   }, [
     anyoneCanVote,
-    costToVote,
+    voteCharge?.cost,
     currentUserAvailableVotesAmount,
     currentUserTotalVotesAmount,
     nativeCurrencySymbol,
@@ -87,9 +91,10 @@ const ContestParametersVoting: FC<ContestParametersVotingProps> = ({
             <ContestParamatersCSVVoters votingMerkleRoot={votingMerkleRoot} />
           </>
         )}
-        {costToVote ? (
+        {voteCharge ? (
           <li className="list-disc">
-            {formatEther(BigInt(costToVote))} {nativeCurrencySymbol}/vote
+            {formatEther(BigInt(voteCharge.cost))} {nativeCurrencySymbol}
+            {voteCharge.type === VoteType.PerVote ? "/vote" : " to vote"}
           </li>
         ) : null}
       </ul>

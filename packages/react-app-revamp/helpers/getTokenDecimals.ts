@@ -17,6 +17,21 @@ export const getTokenDecimals = async (tokenAddress: string, chainId: number) =>
   }
 };
 
+export const getTokenSymbol = async (tokenAddress: string, chainId: number) => {
+  try {
+    const symbol = (await readContract(config, {
+      address: tokenAddress as `0x${string}`,
+      abi: erc20Abi,
+      chainId: chainId,
+      functionName: "symbol",
+    })) as string;
+
+    return symbol;
+  } catch {
+    return null;
+  }
+};
+
 export const getTokenDecimalsBatch = async (
   tokenAddresses: string[],
   chainId: number,
@@ -36,5 +51,27 @@ export const getTokenDecimalsBatch = async (
       return acc;
     },
     {} as { [address: string]: number },
+  );
+};
+
+export const getTokenSymbolBatch = async (
+  tokenAddresses: string[],
+  chainId: number,
+): Promise<{ [address: string]: string }> => {
+  const symbolPromises = tokenAddresses.map(async address => {
+    const symbol = await getTokenSymbol(address, chainId);
+    return { address, symbol };
+  });
+
+  const symbolArray = await Promise.all(symbolPromises);
+
+  return symbolArray.reduce(
+    (acc, { address, symbol }) => {
+      if (symbol !== null) {
+        acc[address] = symbol;
+      }
+      return acc;
+    },
+    {} as { [address: string]: string },
   );
 };

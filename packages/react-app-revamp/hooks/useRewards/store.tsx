@@ -1,14 +1,25 @@
 import { createContext, useContext, useRef } from "react";
+import { Abi } from "viem";
 import { createStore, useStore } from "zustand";
+
+export interface RewardModuleInfo {
+  abi: Abi;
+  contractAddress: string;
+  creator: string;
+  payees: number[];
+  totalShares: number;
+  blockExplorers?: string;
+}
+
 interface RewardsState {
   isLoading: boolean;
   isSuccess: boolean;
   error: string;
-  rewards: any;
+  rewards: RewardModuleInfo;
   setIsLoading: (isLoading: boolean) => void;
   setIsSuccess: (value: boolean) => void;
   setError: (value: string) => void;
-  setRewards: (rewards: any) => void;
+  setRewards: (rewards: RewardModuleInfo) => void;
 }
 
 export const createRewardsStore = () =>
@@ -16,7 +27,14 @@ export const createRewardsStore = () =>
     isLoading: false,
     isSuccess: false,
     error: "",
-    rewards: {},
+    rewards: {
+      abi: [],
+      contractAddress: "",
+      creator: "",
+      payees: [],
+      totalShares: 0,
+      blockExplorers: "",
+    },
     setIsLoading: value => set({ isLoading: value }),
     setError: value => set({ error: value }),
     setIsSuccess: value => set({ isSuccess: value }),

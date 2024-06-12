@@ -17,6 +17,7 @@ interface TokenSearchModalProps {
   type: TokenSearchModalType;
   chains: Option[];
   isOpen: boolean;
+  hideChains?: boolean;
   setIsOpen?: (isOpen: boolean) => void;
   onClose?: () => void;
   onSelectToken?: (token: FilteredToken) => void;
@@ -29,6 +30,7 @@ const TokenSearchModal: FC<TokenSearchModalProps> = ({
   isOpen,
   setIsOpen,
   chains,
+  hideChains,
   onSelectToken,
   onClose,
   onSelectNft,
@@ -66,7 +68,7 @@ const TokenSearchModal: FC<TokenSearchModalProps> = ({
                   <div className="bg-primary-5 h-[2px]" />
                 </div>
                 {type === TokenSearchModalType.ERC20 ? (
-                  <TokenSearchModalERC20 chains={chains} onSelectToken={onSelectToken} />
+                  <TokenSearchModalERC20 chains={chains} onSelectToken={onSelectToken} hideChains={hideChains} />
                 ) : (
                   <TokenSearchModalNft chains={chains} onSelectNft={onSelectNft} onSelectChain={onSelectChain} />
                 )}

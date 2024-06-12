@@ -1,14 +1,21 @@
 import { SearchIcon } from "@heroicons/react/outline";
-import { ChangeEvent, FC, useEffect, useState } from "react";
+import { TOKENLISTOOOR_SUPPORTED_CHAIN_IDS } from "@hooks/useTokenList";
+import { ChangeEvent, FC, useState } from "react";
 import { debounce } from "underscore";
 
 interface TokenSearchModalSearchInputProps {
+  chainId: number;
   isChainDropdownOpen?: boolean;
   onSearchChange?: (value: string) => void;
 }
 
-const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({ isChainDropdownOpen, onSearchChange }) => {
+const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({
+  chainId,
+  isChainDropdownOpen,
+  onSearchChange,
+}) => {
   const [searchValue, setSearchValue] = useState("");
+  const isChainSupportedBySearch = TOKENLISTOOOR_SUPPORTED_CHAIN_IDS.includes(chainId);
 
   const debouncedOnSearchChange = debounce((value: string) => {
     onSearchChange?.(value);
@@ -36,7 +43,7 @@ const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({ isC
       <input
         className="text-[20px] bg-transparent text-neutral-11 ml-3 outline-none placeholder-neutral-14 w-full"
         type="text"
-        placeholder="search name or paste address"
+        placeholder={isChainSupportedBySearch ? "search name or paste address" : "paste token address"}
         value={searchValue}
         onChange={handleChange}
       />

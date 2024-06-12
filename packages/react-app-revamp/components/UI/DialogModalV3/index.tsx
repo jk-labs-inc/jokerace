@@ -7,6 +7,10 @@ interface DialogModalProps {
   isOpen: boolean;
   title: string;
   children: React.ReactNode;
+  closeButtonSize?: {
+    width: number;
+    height: number;
+  };
   className?: string;
   isMobile?: boolean;
   disableClose?: boolean;
@@ -23,6 +27,7 @@ const DialogModalV3: FC<DialogModalProps> = ({
   isMobile,
   disableClose,
   className,
+  closeButtonSize = { width: 33, height: 33 },
 }) => {
   const handleClose = useCallback(() => {
     setIsOpen?.(false);
@@ -48,7 +53,12 @@ const DialogModalV3: FC<DialogModalProps> = ({
                   isMobile || disableClose ? "hidden" : "absolute"
                 } z-10 top-0 right-[30px] inline-start-0 2xs:inline-start-auto 2xs:inline-end-0 p-4 hover:scale-[1.1] text-neutral-11`}
               >
-                <Image src="/modal/modal_close.svg" width={39} height={33} alt="close" />
+                <Image
+                  src="/modal/modal_close.svg"
+                  width={closeButtonSize.width}
+                  height={closeButtonSize.height}
+                  alt="close"
+                />
                 <span className="sr-only">Close modal</span>
               </button>
               <div className={`${isMobile ? "pt-0" : "pt-3 pb-6"} pie-3`}>{children}</div>

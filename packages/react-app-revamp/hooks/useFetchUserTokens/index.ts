@@ -17,10 +17,12 @@ export const useFetchUserTokens = (userAddress: string, chainName: string) => {
     queryFn: async (): Promise<FilteredToken[]> => {
       if (!userAddress) throw new Error("Wallet address is not available");
 
-      const alchemyAppUrl = chains.filter(chain => chain.name.toLowerCase() === chainName.toLowerCase())[0]?.rpcUrls
-        .default.http[0];
+      const chain = chains.find(chain => chain.name.toLowerCase() === chainName.toLowerCase());
+      const alchemyAppUrl = chain?.rpcUrls.default.http[0];
 
-      if (!alchemyAppUrl) throw new Error("Alchemy RPC URL is not available for the selected chain");
+      if (!alchemyAppUrl?.includes("alchemy")) {
+        return [];
+      }
 
       const tokenBalancesResponse = await fetch(alchemyAppUrl, {
         method: "POST",

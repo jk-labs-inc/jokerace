@@ -71,7 +71,7 @@ const ContestTab = () => {
 
   return (
     <div className="animate-reveal">
-      <div className="mt-8">
+      <div className="mt-12">
         <ContestPrompt prompt={contestPrompt} type="page" />
       </div>
       {contestStatus === ContestStatus.SubmissionOpen && <div className="mt-8">{renderSubmitButton()}</div>}

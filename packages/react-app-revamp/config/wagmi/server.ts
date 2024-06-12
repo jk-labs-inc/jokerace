@@ -95,6 +95,7 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
+import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
 
 type Transports = Record<Chain["id"], Transport>;
 
@@ -179,6 +180,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   neonDevnet,
   frameTestnet,
   fantomTestnet,
+  berachainBartioTestnet,
   berachainTestnet,
   taikoTestnet,
   palmTestnet,

@@ -15,7 +15,7 @@ import VotingQualifierMessage from "./components/VotingQualifierMessage";
 
 const VotingContestQualifier = () => {
   const { anyoneCanVote, charge } = useContestStore(state => state);
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { openConnectModal } = useConnectModal();
   const {
     currentUserAvailableVotesAmount,
@@ -29,17 +29,19 @@ const VotingContestQualifier = () => {
   const costToVoteFormatted = formatEther(BigInt(charge?.type.costToVote ?? 0));
   const asPath = usePathname();
   const { chainName } = extractPathSegments(asPath ?? "");
-  const nativeCurrency = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency;
+  const nativeCurrencySymbol = chains.find(chain => chain.name === chainName.toLowerCase())?.nativeCurrency.symbol;
+  const chainId = chains.find(chain => chain.name === chainName.toLowerCase())?.id;
 
   return (
     <div className="w-full flex flex-col gap-2 md:gap-4  md:pl-8">
       <div className="flex items-center gap-2">
         <Image src="/contest/ballot.svg" width={16} height={16} alt="timer" />
         {anyoneCanVote ? (
-          <div className="flex items-center gap-1">
-            <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">my votes</p>
-            <p className="hidden md:flex text-[8px] md:text-[12px] text-neutral-9">
-              (1 vote = {costToVoteFormatted} {nativeCurrency?.symbol})
+          <div className="flex items-center gap-2">
+            <p className="text-[12px] md:text-[16px] uppercase text-neutral-9">my wallet</p>
+            <span className="hidden md:flex text-[16px] text-neutral-9">|</span>
+            <p className="hidden md:flex text-[16px] text-neutral-9">
+              1 vote = {costToVoteFormatted} {nativeCurrencySymbol}
             </p>
           </div>
         ) : (
@@ -50,7 +52,7 @@ const VotingContestQualifier = () => {
         isCurrentUserVoteQualificationLoading ? (
           <Skeleton
             height={isMobile ? 16 : 24}
-            width={isMobile ? 100 : 200}
+            width={isMobile ? 100 : 300}
             baseColor="#706f78"
             highlightColor="#FFE25B"
             duration={1}
@@ -61,13 +63,15 @@ const VotingContestQualifier = () => {
           </p>
         ) : (
           <VotingQualifierMessage
+            userAddress={address}
+            chainId={chainId}
+            nativeCurrencySymbol={nativeCurrencySymbol}
             currentUserAvailableVotesAmount={currentUserAvailableVotesAmount}
             currentUserTotalVotesAmount={currentUserTotalVotesAmount}
             contestStatus={contestStatus}
             isMobile={isMobile}
             isReadOnly={isReadOnly}
             anyoneCanVote={anyoneCanVote}
-            costToVote={charge?.type.costToVote}
           />
         )
       ) : (
