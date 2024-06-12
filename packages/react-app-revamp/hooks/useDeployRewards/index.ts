@@ -30,6 +30,7 @@ export function useDeployRewardsPool() {
       await attachRewardsModule(contractRewardsModuleAddress);
       await fundPoolTokens(contractRewardsModuleAddress);
       setSupportsRewardsModule(true);
+      setTokens([]);
     } catch (e: any) {
       if (didUserReject(e)) {
         setStep(CreationStep.Review);
@@ -179,8 +180,6 @@ export function useDeployRewardsPool() {
         } catch (error) {
           console.error("Error while updating reward analytics", error);
         }
-
-        setTokens([]);
       } catch (tokenError) {
         setRewardPoolData(prevData => ({
           ...prevData,
