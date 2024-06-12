@@ -1,3 +1,4 @@
+import { Clusters } from "@clustersxyz/sdk";
 import { lensClient } from "@config/lens";
 import { config } from "@config/wagmi";
 import { mainnet } from "@config/wagmi/custom-chains/mainnet";
@@ -5,10 +6,8 @@ import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { QueryFunctionContext, useQuery } from "@tanstack/react-query";
 import { getEnsAvatar, getEnsName } from "@wagmi/core";
 import { normalize } from "viem/ens";
-import { type GetEnsAvatarReturnType } from "@wagmi/core";
 
 const DEFAULT_AVATAR_URL = "/contest/user.svg";
-
 const ETHERSCAN_BASE_URL = mainnet.blockExplorers?.etherscan?.url;
 const LENSFRENS_BASE_URL = "https://lensfrens.xyz";
 
@@ -18,8 +17,13 @@ interface ProfileData {
   socials: {
     etherscan: string;
     lens: string;
+    cluster: string;
   };
 }
+
+const normalizeClusterName = (clusterName: string) => {
+  return clusterName.split("/")[0] + "/";
+};
 
 const checkImageUrl = async (url: string): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -47,7 +51,9 @@ const fetchProfileData = async ({ queryKey }: QueryFunctionContext): Promise<Pro
   let socials = {
     etherscan: "",
     lens: "",
+    cluster: "",
   };
+  const clusters = new Clusters();
 
   try {
     const ensName = await getEnsName(config, { chainId: 1, address: ethereumAddress as `0x${string}` });
@@ -88,16 +94,37 @@ const fetchProfileData = async ({ queryKey }: QueryFunctionContext): Promise<Pro
           profileAvatar = DEFAULT_AVATAR_URL;
         }
         profileName = lensProfile.handle?.localName ? lensProfile.handle.localName + ".lens" : profileName;
+      } else {
+        const clusterName = await clusters.getName(ethereumAddress);
+        if (clusterName) {
+          try {
+            const cluster = await clusters.getCluster(normalizeClusterName(clusterName));
+
+            await checkImageUrl(cluster?.imageUrl ?? DEFAULT_AVATAR_URL);
+            profileAvatar = cluster?.imageUrl ?? DEFAULT_AVATAR_URL;
+            profileName = normalizeClusterName(clusterName);
+          } catch {
+            profileAvatar = DEFAULT_AVATAR_URL;
+          }
+        }
       }
     }
 
     if (includeSocials) {
       const lensProfile = await lensClient.profile.fetchDefault({ for: ethereumAddress });
       const handle = lensProfile?.handle?.localName;
+      const clusterName = await clusters.getName(ethereumAddress);
+      let clusterProfileUrl = "";
+
+      if (clusterName) {
+        const clusterMetadata = await clusters.getCluster(normalizeClusterName(clusterName));
+        clusterProfileUrl = clusterMetadata?.profileUrl ?? "";
+      }
 
       socials = {
         etherscan: `${ETHERSCAN_BASE_URL}/address/${ethereumAddress}`,
         lens: handle ? `${LENSFRENS_BASE_URL}/${handle}` : "",
+        cluster: clusterProfileUrl,
       };
     }
   } catch (error) {
