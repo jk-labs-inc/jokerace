@@ -2,24 +2,27 @@ import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatBalance } from "@helpers/formatBalance";
 import { returnOnlySuffix } from "@helpers/ordinalSuffix";
+import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
-import { useReadContract } from "wagmi";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { ERC20Token } from "../RewardsDistributionTable/components";
+import { Abi } from "viem";
+import { useReadContract } from "wagmi";
 
 interface RewardsTableShareProps {
   payee: number;
   contractRewardsModuleAddress: string;
-  tokens: ERC20Token[] | undefined;
-  isRewardsTokensLoading: boolean;
-  abiRewardsModule: any;
+  abiRewardsModule: Abi;
   chainId: number;
   totalShares: number;
 }
 
 export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
-  const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares, tokens, isRewardsTokensLoading } = props;
+  const { payee, contractRewardsModuleAddress, abiRewardsModule, totalShares } = props;
+  const { allBalances: allRewardsTokens, isLoading: isRewardsTokensLoading } = useAllRewardsTokens(
+    "allRewardsTokens",
+    contractRewardsModuleAddress,
+  );
   const pathname = usePathname();
   const { chainName } = extractPathSegments(pathname ?? "");
   const { data, isError, isLoading } = useReadContract({
@@ -64,12 +67,12 @@ export const RewardsTableShare: FC<RewardsTableShareProps> = ({ ...props }) => {
           <SkeletonTheme baseColor="#242424" highlightColor="#78FFC6" duration={1}>
             <Skeleton width={100} height={16} />
           </SkeletonTheme>
-        ) : tokens && tokens.length > 0 ? (
-          tokens.map((token, tokenIndex) => (
+        ) : allRewardsTokens && allRewardsTokens.length > 0 ? (
+          allRewardsTokens.map((token, tokenIndex) => (
             <p className="text-[16px]" key={tokenIndex}>
               {handleAmountPerShareAllocation(parseFloat(token.tokenBalance), parseFloat(shareForPayee))}{" "}
               <span className="uppercase">{token.tokenSymbol}</span>{" "}
-              {tokenIndex + 1 < tokens.length ? <span>,</span> : null}
+              {tokenIndex + 1 < allRewardsTokens.length ? <span>,</span> : null}
             </p>
           ))
         ) : (

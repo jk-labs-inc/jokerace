@@ -37,8 +37,13 @@ export const DistributableReward = (props: DistributableRewardProps) => {
       </li>
     );
 
-  if (!queryRankRewardsReleasable.data || queryTokenBalance.data.value === 0 || queryRankRewardsReleasable.data === 0)
-    return null;
+  if (!queryRankRewardsReleasable.data || queryTokenBalance.data.value === 0 || queryRankRewardsReleasable.data === 0) {
+    return (
+      <li>
+        <span className="uppercase">${queryTokenBalance?.data?.symbol}</span> — no funds to distribute
+      </li>
+    );
+  }
 
   if (queryRankRewardsReleasable.isLoading) {
     return <p className="loadingDots font-sabo text-[14px] text-neutral-14">loading distributable rewards</p>;
