@@ -45,6 +45,8 @@ export const getAllBalances = async (rewardsModuleAddress: string, networkName: 
   return [];
 };
 
+const epsilon = 1e-10; // Small value to handle floating-point precision
+
 export const getNetBalances = async (
   rewardsModuleAddress: string,
   networkName: string,
@@ -86,7 +88,8 @@ export const getNetBalances = async (
       {} as { [key: string]: RewardToken },
     );
 
-    return Object.values(balances).filter(token => token.balance > 0);
+    // Filter out balances close to zero considering floating-point precision
+    return Object.values(balances).filter(token => Math.abs(token.balance) > epsilon);
   }
 
   return [];
