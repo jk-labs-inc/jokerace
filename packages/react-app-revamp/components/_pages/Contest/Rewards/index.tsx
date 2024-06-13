@@ -10,7 +10,6 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { useContestStore } from "@hooks/useContest/store";
 import useRewardsModule from "@hooks/useRewards";
 import { useRewardsStore } from "@hooks/useRewards/store";
-import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
 import { useUnpaidRewardTokens } from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { compareVersions } from "compare-versions";
 import { usePathname } from "next/navigation";
@@ -42,10 +41,6 @@ const ContestRewards = () => {
   const { address: accountAddress } = useAccount();
   const { unpaidTokens } = useUnpaidRewardTokens("rewards-module-unpaid-tokens", rewardsModuleAddress, true);
   const creator = contestAuthorEthereumAddress === accountAddress;
-  const { allBalances: allRewardsTokens, isLoading: isRewardsTokensLoading } = useAllRewardsTokens(
-    "allRewardsTokens",
-    rewardsModuleAddress,
-  );
 
   useAccountEffect({
     onConnect(data) {
@@ -110,8 +105,6 @@ const ContestRewards = () => {
                   {rewardsStore?.rewards?.payees?.map((payee: number) => (
                     <RewardsTableShare
                       key={`rank-${`${payee}`}`}
-                      tokens={allRewardsTokens}
-                      isRewardsTokensLoading={isRewardsTokensLoading}
                       chainId={chainId}
                       payee={payee}
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
@@ -155,7 +148,7 @@ const ContestRewards = () => {
                       key={index}
                       chainId={chainId}
                       payee={payee}
-                      erc20Tokens={unpaidTokens?.filter(token => token.contractAddress !== "native") ?? []}
+                      tokens={unpaidTokens}
                       contractRewardsModuleAddress={rewardsStore.rewards.contractAddress}
                       abiRewardsModule={rewardsStore.rewards.abi}
                     />

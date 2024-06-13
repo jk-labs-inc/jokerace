@@ -1,16 +1,14 @@
 import { toastLoading, toastSuccess } from "@components/UI/Toast";
 import { config } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
-import { useDistributeRewardStore } from "@hooks/useDistributeRewards";
 import { useError } from "@hooks/useError";
 import useAllRewardsTokens from "@hooks/useRewardsTokens/useAllRewardsTokens";
 import useUnpaidRewardTokens from "@hooks/useRewardsTokens/useUnpaidRewardsTokens";
 import { waitForTransactionReceipt, writeContract } from "@wagmi/core";
 import { updateRewardAnalytics } from "lib/analytics/rewards";
 import { usePathname } from "next/navigation";
+import { Abi } from "viem";
 import { create } from "zustand";
-
-type TokenType = "erc20" | "native";
 
 type Store = {
   isLoading: boolean;
@@ -24,15 +22,13 @@ export const useWithdrawRewardStore = create<Store>(set => ({
 
 export const useWithdrawReward = (
   contractRewardsModuleAddress: string,
-  abiRewardsModule: any,
-  tokenType: TokenType,
+  abiRewardsModule: Abi,
+  tokenAddress: string,
   tokenBalance: string,
-  tokenAddress?: string,
 ) => {
   const asPath = usePathname();
   const { chainName, address: contestAddress } = extractPathSegments(asPath ?? "");
   const { setIsLoading } = useWithdrawRewardStore(state => state);
-  const { setRefetch: triggerDistributeRewardsRefetch } = useDistributeRewardStore(state => state);
   const { handleError } = useError();
   const { refetchUnpaidTokens } = useUnpaidRewardTokens(
     "rewards-module-unpaid-tokens",
@@ -50,14 +46,13 @@ export const useWithdrawReward = (
         address: contractRewardsModuleAddress as `0x${string}`,
         abi: abiRewardsModule,
         functionName: "withdrawRewards",
-        args: tokenType === "erc20" ? [tokenAddress ?? ""] : [],
+        args: tokenAddress === "native" ? [] : [tokenAddress],
       });
 
       await waitForTransactionReceipt(config, { hash });
 
       setIsLoading(false);
       toastSuccess("Funds withdrawn successfully!");
-      triggerDistributeRewardsRefetch(true);
 
       try {
         await updateRewardAnalytics({
@@ -66,7 +61,7 @@ export const useWithdrawReward = (
           network_name: chainName,
           amount: Number(tokenBalance),
           operation: "withdraw",
-          token_address: tokenAddress ? tokenAddress : null,
+          token_address: tokenAddress === "native" ? null : tokenAddress,
           created_at: Math.floor(Date.now() / 1000),
         });
 

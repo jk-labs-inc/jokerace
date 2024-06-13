@@ -1,23 +1,27 @@
 import { useDistributeRewards } from "@hooks/useDistributeRewards";
 import Reward from "../Reward";
+import { Abi } from "viem";
+import { ERC20Token } from "..";
 
-interface PayeeNativeRewardProps {
+interface PayeeRewardProps {
   payee: number;
-  share: any;
+  token: ERC20Token;
+  share: number;
   contractRewardsModuleAddress: string;
-  abiRewardsModule: any;
+  abiRewardsModule: Abi;
   chainId: number;
 }
 
-export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
-  const { payee, share, contractRewardsModuleAddress, abiRewardsModule, chainId } = props;
+export const PayeeReward = (props: PayeeRewardProps) => {
+  const { payee, token, share, contractRewardsModuleAddress, abiRewardsModule, chainId } = props;
   const { queryTokenBalance, queryRankRewardsReleasable, handleDistributeRewards } = useDistributeRewards(
     Number(payee),
     Number(share),
     contractRewardsModuleAddress,
     abiRewardsModule,
     chainId,
-    "native",
+    token.contractAddress,
+    token.decimals,
   );
 
   return (
@@ -28,3 +32,5 @@ export const PayeeNativeReward = (props: PayeeNativeRewardProps) => {
     />
   );
 };
+
+export default PayeeReward;
