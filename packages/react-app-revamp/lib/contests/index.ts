@@ -9,6 +9,7 @@ import moment from "moment";
 import { SearchOptions } from "types/search";
 import { formatUnits } from "viem";
 import { sortContests } from "./utils/sortContests";
+import { formatBalance } from "@helpers/formatBalance";
 
 export const ITEMS_PER_PAGE = 7;
 export const EMPTY_ROOT = "0x0000000000000000000000000000000000000000000000000000000000000000";
@@ -154,7 +155,7 @@ const processContestRewardsData = async (
               chain: contestChainName,
               token: {
                 symbol: rewardToken.symbol,
-                value: parseFloat(formatUnits(rewardToken.value, rewardToken.decimals)),
+                value: parseFloat(formatBalance(formatUnits(rewardToken.value, rewardToken.decimals))),
               },
               winners: winners.length,
               numberOfTokens: erc20Tokens?.length ?? 1,
