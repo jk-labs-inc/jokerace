@@ -36,7 +36,7 @@ const MainHeaderMobileLayout: FC<MainHeaderMobileLayoutProps> = ({
   const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
-  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms"];
+  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
 
   return (
