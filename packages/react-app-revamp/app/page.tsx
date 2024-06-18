@@ -78,7 +78,7 @@ const Page = () => {
   const [searchValue, setSearchValue] = useState("");
   const { address } = useAccount();
   const [isClient, setIsClient] = useState(false);
-  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms"];
+  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [sortBy, setSortBy] = useState<string>("");
   const sortOptions = useContestSortOptions("liveContests");
