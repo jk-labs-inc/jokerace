@@ -99,7 +99,6 @@
     "@types/react-dom": "18.0.5",
     "@types/react-virtualized": "9.21.30",
     "@types/react-window": "1.8.5",
-    "@types/tailwindcss": "3.1.0",
     "@types/underscore": "1.11.15",
     "@types/uuid": "9.0.8",
     "@vercel/node": "3.1.7",
