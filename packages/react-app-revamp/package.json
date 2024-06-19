@@ -85,7 +85,7 @@
     "valibot": "0.13.1",
     "viem": "^2.8.14",
     "wagmi": "^2.5.11",
-    "zod": "^3.17.3",
+    "zod": "^3.23.8",
     "zustand": "4.5.2"
   },
   "devDependencies": {
