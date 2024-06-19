@@ -102,7 +102,7 @@
     "@types/tailwindcss": "^3.1.0",
     "@types/underscore": "1.11.15",
     "@types/uuid": "^9.0.8",
-    "@vercel/node": "^3.0.7",
+    "@vercel/node": "^3.1.7",
     "autoprefixer": "^10.4.19",
     "eslint-config-next": "^13.5.3",
     "interweave-ssr": "^2.0.0",
