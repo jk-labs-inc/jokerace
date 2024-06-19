@@ -719,7 +719,7 @@
     json5 "^2.2.3"
     semver "^6.3.1"
 
-"@babel/core@^7.24.0":
+"@babel/core@^7.24.7":
   version "7.24.7"
   resolved "https://registry.yarnpkg.com/@babel/core/-/core-7.24.7.tgz#b676450141e0b52a3d43bc91da86aa608f950ac4"
   integrity sha512-nykK+LEK86ahTkX/3TgauT0ikKoNCfKHEaZYTUVupJdTLzGNvrblu4u6fa7DhZONAltdf8e662t/abY8idrd/g==
