@@ -113,6 +113,6 @@
     "tailwindcss": "^3.4.4",
     "tailwindcss-logical": "^3.0.0",
     "typescript": "5.0.4",
-    "webpack": "^5.85.0"
+    "webpack": "^5.92.0"
   }
 }
