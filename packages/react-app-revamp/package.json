@@ -54,7 +54,7 @@
     "next": "^14.1.4",
     "next-pwa": "^5.6.0",
     "nextjs-current-url": "^1.0.3",
-    "node-html-parser": "^6.1.10",
+    "node-html-parser": "^6.1.13",
     "papaparse": "^5.4.1",
     "rc-slider": "^10.2.1",
     "react": "^18.2.0",
