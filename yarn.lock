@@ -1988,10 +1988,10 @@
   resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-1.8.0.tgz#1c8651ea34adb8019b483e09de02aeeb1cd57d79"
   integrity sha512-qR9FwI8QKIveDnUYutvfzbC21UZJJryYrLuZGjeZ/VGz+vXelUkK+xgkOHsvPEdYEdxtgUUq4313N8QtOehJ1Q==
 
-"@clustersxyz/sdk@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@clustersxyz/sdk/-/sdk-0.2.1.tgz#51c379d82db4ff8d261dcc0751a5db6c90589254"
-  integrity sha512-Bp4lwt1EujX524zFGORPyucvzmpuMxp6yr6f++HmC+m0jqSe++kXRg8Ox8qW5dBiroARdqlZULLn0KxTck9CDA==
+"@clustersxyz/sdk@^0.2.2":
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/@clustersxyz/sdk/-/sdk-0.2.2.tgz#41b52df5c1502e14c2a7c918f255f6823af4121e"
+  integrity sha512-yRyaWjiq4CGFQKoeaJcfFkcww3a7xYgD3kIblrULQmI647NrSg5qftmHDAaQzoQetmfjQfOmReiCdHzW+rJAig==
 
 "@coinbase/wallet-sdk@3.9.1":
   version "3.9.1"
@@ -3270,24 +3270,24 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@lens-protocol/blockchain-bindings@0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/blockchain-bindings/-/blockchain-bindings-0.10.1.tgz#cc7b6caf03f2d73210da5c57f92501ad051811cc"
-  integrity sha512-D7DH2Rp05CbYW5jlyZfKuqchmtir5Id45rdXB9FcYTm+f3aYTH3GDSQoQ7VkdYlP072Ii2yz/HceX5qXi1h/hA==
+"@lens-protocol/blockchain-bindings@0.10.2":
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/blockchain-bindings/-/blockchain-bindings-0.10.2.tgz#a6db4cf43a1dc1dfc13d602caf56711e1a64b021"
+  integrity sha512-WIlp30gohy/EuTD+Oqb2ACftpIkBE3wOC1WgiaFeu1ybpnIY0PnUn0hAQeecG6TIekhP3VvMXK82BXppsv2Nhw==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/contracts" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
     "@ethersproject/units" "^5.7.0"
-    "@lens-protocol/domain" "0.11.1"
+    "@lens-protocol/domain" "0.12.0"
     "@lens-protocol/shared-kernel" "0.12.0"
     ethers "^5.7.2"
     tslib "^2.6.2"
 
-"@lens-protocol/client@^2.1.1":
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-2.1.1.tgz#81532efa0d62c4a5da6bf83c15e5278d0b764dea"
-  integrity sha512-mUsssdHuP83jWsXeo6acGX0n0AcI3JIo6cms9WtdFMvodzBHoX69nYccmbdYEPGTK8y5AQtlxR1MiyVd1cVwmg==
+"@lens-protocol/client@^2.3.0":
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-2.3.0.tgz#973925da542de6a9b3b8bb8a3185c3fc4dc295ca"
+  integrity sha512-NNNT7Bf5WsVrz22NWTlDYt/0RbRWvAgPv2M9Q+eBh0LKSHvZ4+imN9hwVeoMYmWA1EY4wkITbxwyUBFvJeCaSg==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-signer" "^5.7.0"
@@ -3297,7 +3297,7 @@
     "@ethersproject/hash" "^5.7.0"
     "@ethersproject/providers" "^5.7.2"
     "@ethersproject/wallet" "^5.7.0"
-    "@lens-protocol/blockchain-bindings" "0.10.1"
+    "@lens-protocol/blockchain-bindings" "0.10.2"
     "@lens-protocol/gated-content" "0.5.1"
     "@lens-protocol/shared-kernel" "0.12.0"
     "@lens-protocol/storage" "0.8.1"
@@ -3308,10 +3308,10 @@
     tslib "^2.6.2"
     zod "^3.22.4"
 
-"@lens-protocol/domain@0.11.1":
-  version "0.11.1"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/domain/-/domain-0.11.1.tgz#a7e86adcb85e6e05c69a0da6ed8a091c8834de6c"
-  integrity sha512-a4+GdYVoMKyJ+zIomIPRTwmrlMIFF+iQi4seZoQHgBN72q/OgwnC7FeRu62Z9zF3mANkBdhPAyzu+eJPQuIqfg==
+"@lens-protocol/domain@0.12.0":
+  version "0.12.0"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/domain/-/domain-0.12.0.tgz#2b40e3631f773197814a713f11a31523d8f9fe78"
+  integrity sha512-uyCuHstIPq3vtNkxOFiDah/EfNMjppHDOXnbnstDLpXD7xXZInYtdDqd0ENtg2j+0egGqHwvQJXciSDqGBJzmA==
   dependencies:
     "@lens-protocol/shared-kernel" "0.12.0"
     tslib "^2.6.2"
@@ -3331,11 +3331,12 @@
     siwe "^2.1.4"
     tslib "^2.6.2"
 
-"@lens-protocol/metadata@^1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/metadata/-/metadata-1.1.6.tgz#407c3eaecabe70fd5bbc4c40eca1bb00079ae706"
-  integrity sha512-GswaavJLD6iBW/i3ShcBTeV3oiYTaHa4qIGSVZWxNfAChOxonJC9FHw7UH2bVlj4GzURhuwzL0mSGthecGLibQ==
+"@lens-protocol/metadata@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/metadata/-/metadata-1.2.0.tgz#bb5ee5b9e01237e939c019de5c972931869b576e"
+  integrity sha512-fUB8+GvYiVt1uMqYJi/iN/aw/lzE+oEfpTjraTI87MqWPgYubbx0vFySjJs7uAdI7oftczvlwhthmMUl5DDuGA==
   dependencies:
+    json-stable-stringify "^1.1.1"
     uuid "^9.0.1"
 
 "@lens-protocol/shared-kernel@0.12.0":
@@ -3873,10 +3874,10 @@
   resolved "https://registry.yarnpkg.com/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-14.1.4.tgz#bccf5beccfde66d6c66fa4e2509118c796385eda"
   integrity sha512-4Rto21sPfw555sZ/XNLqfxDUNeLhNYGO2dlPqsnuCg8N8a2a9u1ltqBOPQ4vj1Gf7eJC0W2hHG2eYUHuiXgY2w==
 
-"@next/third-parties@^14.1.4":
-  version "14.1.4"
-  resolved "https://registry.yarnpkg.com/@next/third-parties/-/third-parties-14.1.4.tgz#a7d8243b7b55cf452630e5d42fc79d35d51f2ff5"
-  integrity sha512-e/kpEFq5/ZPhHkxpJkvhMfLp3OC6KCBou0/BV8BvgjXAPgEo6sa0ZXe0l4ZEb3wcA7NIEHIpqCmjU5Z7QAHcKQ==
+"@next/third-parties@^14.2.4":
+  version "14.2.4"
+  resolved "https://registry.yarnpkg.com/@next/third-parties/-/third-parties-14.2.4.tgz#9b3e24779fa19a8a30e115570cf98090be54c16c"
+  integrity sha512-bf5d5m4a+Fh9syLz0Pf9Ax7LdLazlp7ur7DqX0LUMDyIx9Z/F0J/XxieklA9lRqM9KjrCVNT8Tkhg0AvotTBTQ==
   dependencies:
     third-party-capital "1.0.20"
 
@@ -6253,17 +6254,17 @@
     "@stablelib/random" "^1.0.2"
     "@stablelib/wipe" "^1.0.1"
 
-"@supabase/functions-js@2.1.5":
-  version "2.1.5"
-  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.1.5.tgz#ed1b85f499dfda21d40fe39b86ab923117cb572b"
-  integrity sha512-BNzC5XhCzzCaggJ8s53DP+WeHHGT/NfTsx2wUSSGKR2/ikLFQTBCDzMvGz/PxYMqRko/LwncQtKXGOYp1PkPaw==
+"@supabase/auth-js@2.64.2":
+  version "2.64.2"
+  resolved "https://registry.yarnpkg.com/@supabase/auth-js/-/auth-js-2.64.2.tgz#fe6828ed2c9844bf2e71b27f88ddfb635f24d1c1"
+  integrity sha512-s+lkHEdGiczDrzXJ1YWt2y3bxRi+qIUnXcgkpLSrId7yjBeaXBFygNjTaoZLG02KNcYwbuZ9qkEIqmj2hF7svw==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
-"@supabase/gotrue-js@2.62.2":
-  version "2.62.2"
-  resolved "https://registry.yarnpkg.com/@supabase/gotrue-js/-/gotrue-js-2.62.2.tgz#9f15a451559d71475c953aa0027e1248b0210196"
-  integrity sha512-AP6e6W9rQXFTEJ7sTTNYQrNf0LCcnt1hUW+RIgUK+Uh3jbWvcIST7wAlYyNZiMlS9+PYyymWQ+Ykz/rOYSO0+A==
+"@supabase/functions-js@2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@supabase/functions-js/-/functions-js-2.4.1.tgz#373e75f8d3453bacd71fb64f88d7a341d7b53ad7"
+  integrity sha512-8sZ2ibwHlf+WkHDUZJUXqqmPvWQ3UHN0W30behOJngVh/qHHekhJLCFbh0AjkE9/FqqXtf9eoVvmYgfCLk5tNA==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
@@ -6274,41 +6275,41 @@
   dependencies:
     whatwg-url "^5.0.0"
 
-"@supabase/postgrest-js@1.9.2":
-  version "1.9.2"
-  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-1.9.2.tgz#39c839022ce73f4eb5da6fb7724fb6a6392150c7"
-  integrity sha512-I6yHo8CC9cxhOo6DouDMy9uOfW7hjdsnCxZiaJuIVZm1dBGTFiQPgfMa9zXCamEWzNyWRjZvupAUuX+tqcl5Sw==
+"@supabase/postgrest-js@1.15.5":
+  version "1.15.5"
+  resolved "https://registry.yarnpkg.com/@supabase/postgrest-js/-/postgrest-js-1.15.5.tgz#7fa7744cb0991328bb1a7757861e435a5477f358"
+  integrity sha512-YR4TiitTE2hizT7mB99Cl3V9i00RAY5sUxS2/NuWWzkreM7OeYlP2OqnqVwwb4z6ILn+j8x9e/igJDepFhjswQ==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
-"@supabase/realtime-js@2.9.3":
-  version "2.9.3"
-  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.9.3.tgz#f822401aed70883dca5d538179b11089d6d1b6ed"
-  integrity sha512-lAp50s2n3FhGJFq+wTSXLNIDPw5Y0Wxrgt44eM5nLSA3jZNUUP3Oq2Ccd1CbZdVntPCWLZvJaU//pAd2NE+QnQ==
+"@supabase/realtime-js@2.9.5":
+  version "2.9.5"
+  resolved "https://registry.yarnpkg.com/@supabase/realtime-js/-/realtime-js-2.9.5.tgz#22b7de952a7f37868ffc25d32d19f03f27bfcb40"
+  integrity sha512-TEHlGwNGGmKPdeMtca1lFTYCedrhTAv3nZVoSjrKQ+wkMmaERuCe57zkC5KSWFzLYkb5FVHW8Hrr+PX1DDwplQ==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
     "@types/phoenix" "^1.5.4"
     "@types/ws" "^8.5.10"
     ws "^8.14.2"
 
-"@supabase/storage-js@2.5.5":
-  version "2.5.5"
-  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.5.5.tgz#2958e2a2cec8440e605bb53bd36649288c4dfa01"
-  integrity sha512-OpLoDRjFwClwc2cjTJZG8XviTiQH4Ik8sCiMK5v7et0MDu2QlXjCAW3ljxJB5+z/KazdMOTnySi+hysxWUPu3w==
+"@supabase/storage-js@2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@supabase/storage-js/-/storage-js-2.6.0.tgz#0fa5e04db760ed7f78e4394844a6d409e537adc5"
+  integrity sha512-REAxr7myf+3utMkI2oOmZ6sdplMZZ71/2NEIEMBZHL9Fkmm3/JnaOZVSRqvG4LStYj2v5WhCruCzuMn6oD/Drw==
   dependencies:
     "@supabase/node-fetch" "^2.6.14"
 
-"@supabase/supabase-js@^2.39.0":
-  version "2.39.7"
-  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.39.7.tgz#61c3277a94bd9fd0574b39ecdf4fecffd73a139c"
-  integrity sha512-1vxsX10Uhc2b+Dv9pRjBjHfqmw2N2h1PyTg9LEfICR3x2xwE24By1MGCjDZuzDKH5OeHCsf4it6K8KRluAAEXA==
+"@supabase/supabase-js@^2.43.5":
+  version "2.43.5"
+  resolved "https://registry.yarnpkg.com/@supabase/supabase-js/-/supabase-js-2.43.5.tgz#e4d5f9e5e21ef4226e0cb013c7e51fb3c5262581"
+  integrity sha512-Y4GukjZWW6ouohMaPlYz8tSz9ykf9jY7w9/RhqKuScmla3Xiklce8eLr8TYAtA+oQYCWxo3RgS3B6O4rd/72FA==
   dependencies:
-    "@supabase/functions-js" "2.1.5"
-    "@supabase/gotrue-js" "2.62.2"
+    "@supabase/auth-js" "2.64.2"
+    "@supabase/functions-js" "2.4.1"
     "@supabase/node-fetch" "2.6.15"
-    "@supabase/postgrest-js" "1.9.2"
-    "@supabase/realtime-js" "2.9.3"
-    "@supabase/storage-js" "2.5.5"
+    "@supabase/postgrest-js" "1.15.5"
+    "@supabase/realtime-js" "2.9.5"
+    "@supabase/storage-js" "2.6.0"
 
 "@surma/rollup-plugin-off-main-thread@^2.2.3":
   version "2.2.3"
@@ -11499,6 +11500,16 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha512-Bdboy+l7tA3OGW6FjyFHWkP5LuByj1Tk33Ljyq0axyzdk9//JSi2u3fP1QSmd1KNwq6VOKYGlAu87CisVir6Pw==
 
+json-stable-stringify@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/json-stable-stringify/-/json-stable-stringify-1.1.1.tgz#52d4361b47d49168bcc4e564189a42e5a7439454"
+  integrity sha512-SU/971Kt5qVQfJpyDveVhQ/vya+5hvrjClFOcr8c0Fq5aODJjMwutrOfCU+eCnVD5gpx1Q3fEqkyom77zH1iIg==
+  dependencies:
+    call-bind "^1.0.5"
+    isarray "^2.0.5"
+    jsonify "^0.0.1"
+    object-keys "^1.1.1"
+
 json5@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/json5/-/json5-1.0.2.tgz#63d98d60f21b313b77c4d6da18bfa69d80e1d593"
@@ -11531,6 +11542,11 @@ jsonfile@^6.0.1:
     universalify "^2.0.0"
   optionalDependencies:
     graceful-fs "^4.1.6"
+
+jsonify@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/jsonify/-/jsonify-0.0.1.tgz#2aa3111dae3d34a0f151c63f3a45d995d9420978"
+  integrity sha512-2/Ki0GcmuqSrgFyelQq9M05y7PS0mEwuIzrf3f1fPqkVDVRvZrPZtVSMHxdgo8Aq0sxAOb/cr2aqqA3LeWHVPg==
 
 jsonpointer@^5.0.0:
   version "5.0.1"
