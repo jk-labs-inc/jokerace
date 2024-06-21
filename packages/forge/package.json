@@ -4,10 +4,10 @@
   "main": "index.js",
   "license": "AGPL-3.0-only",
   "devDependencies": {
-    "copyfiles": "^2.4.1"
+    "copyfiles": "2.4.1"
   },
   "dependencies": {
-    "copyfiles": "^2.4.1"
+    "copyfiles": "2.4.1"
   },
   "scripts": {
     "forgeformat": "forge fmt",
