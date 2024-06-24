@@ -15,7 +15,7 @@ interface StepperProps {
 }
 
 const Stepper: FC<StepperProps> = ({ steps }) => {
-  const { step: currentStep, setStep: setCurrentStep, isLoading, isSuccess } = useDeployContestStore(state => state);
+  const { step: currentStep, isLoading, isSuccess } = useDeployContestStore(state => state);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
   const onNextStep = useNextStep();
 
@@ -40,7 +40,7 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
   }
 
   return (
-    <div className="pl-4 pr-4 lg:pl-[120px] lg:pr-[60px]">
+    <div>
       {isLoading || isSuccess ? (
         <CreateContestDeploying />
       ) : (
