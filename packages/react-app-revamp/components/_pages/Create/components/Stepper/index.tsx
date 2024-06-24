@@ -2,8 +2,8 @@
 import { isSupabaseConfigured } from "@helpers/database";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, ReactElement, useState } from "react";
-import CreateContestDeploying from "../../pages/ContestDeploying";
 import { useNextStep } from "../../hooks/useNextStep";
+import CreateContestDeploying from "../../pages/ContestDeploying";
 
 interface Step {
   title: string;
@@ -20,11 +20,6 @@ const Stepper: FC<StepperProps> = ({ steps }) => {
   const onNextStep = useNextStep();
 
   const handleStepClick = (index: number) => {
-    if (index < currentStep) {
-      setCurrentStep(index);
-      return;
-    }
-
     onNextStep(index);
   };
 

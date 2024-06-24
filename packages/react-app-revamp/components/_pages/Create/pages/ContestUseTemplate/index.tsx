@@ -20,10 +20,11 @@ const templateOptions: TemplateOption[] = Object.values(TemplateType).map(value 
 const CreateContestTemplate = () => {
   const { setStartContestWithTemplate } = useCreateContestStartStore(state => state);
   const { step: currentStep, setStep } = useDeployContestStore(state => state);
+  const setContestTemplateConfig = useSetContestTemplate();
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateType | "">("");
   const [fadeBg, setFadeBg] = useState(false);
   const [showStepper, setShowStepper] = useState(false);
-  const setContestTemplateConfig = useSetContestTemplate();
+  const [isFullMode, setIsFullMode] = useState(false);
 
   const templateConfig = useMemo(
     () => (selectedTemplate ? getTemplateConfigByType(selectedTemplate) : null),
@@ -49,7 +50,12 @@ const CreateContestTemplate = () => {
   };
 
   if (showStepper) {
-    const stepsToShow = currentStep === filteredSteps.length - 1 ? steps : filteredSteps;
+    if (currentStep === filteredSteps.length - 1 && !isFullMode) {
+      setIsFullMode(true);
+      setStep(steps.length - 1);
+    }
+
+    const stepsToShow = isFullMode ? steps : filteredSteps;
     return <Stepper steps={stepsToShow} />;
   }
 
