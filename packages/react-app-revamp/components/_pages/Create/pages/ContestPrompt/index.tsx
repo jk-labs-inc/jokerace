@@ -13,7 +13,6 @@ import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
-import { validationFunctions } from "../../utils/validation";
 
 interface CreateEditorConfigArgs {
   content: string;
@@ -46,8 +45,7 @@ const CreateContestPrompt = () => {
     state => state,
   );
   const currentStepError = errors.find(error => error.step === step);
-  const promptValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => promptValidation?.[0].validation(prompt)]);
+  const onNextStep = useNextStep();
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const title = isMobile ? "description" : "now for the description";
@@ -180,7 +178,7 @@ const CreateContestPrompt = () => {
           </div>
         </div>
         <div className="mt-4">
-          <CreateNextButton step={step + 1} onClick={onNextStep} />
+          <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
         </div>
       </div>
     </div>

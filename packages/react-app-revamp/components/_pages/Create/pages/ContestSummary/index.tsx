@@ -8,7 +8,6 @@ import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH } from "../../constants/length";
 import { useNextStep } from "../../hooks/useNextStep";
-import { validationFunctions } from "../../utils/validation";
 
 // Define your mobile and desktop placeholders.
 const MOBILE_PLACEHOLDER = "eg. “submit a project”";
@@ -19,8 +18,7 @@ const CreateContestSummary = () => {
     state => state,
   );
   const currentStepError = errors.find(error => error.step === step);
-  const summaryValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => summaryValidation?.[0].validation(summary)]);
+  const onNextStep = useNextStep();
   const isMobile = useMedia("(max-width: 768px)");
   const stepTitle = isMobile ? "summary" : "what’s the summary?";
 
@@ -78,7 +76,7 @@ const CreateContestSummary = () => {
         </div>
 
         <div className="mt-4">
-          <CreateNextButton step={step + 1} onClick={onNextStep} />
+          <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
         </div>
       </div>
     </div>

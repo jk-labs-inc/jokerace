@@ -2,7 +2,6 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
-import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
@@ -25,8 +24,7 @@ const CreateSubmissionAllowlist = () => {
     resetMobileStepTitle,
     submissionTab,
   } = useDeployContestStore(state => state);
-  const submissionValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => submissionValidation?.[0].validation(submissionAllowlist.manual)]);
+  const onNextStep = useNextStep();
 
   const handleNextStepMobile = useCallback(() => {
     if (!mobileStepTitle || submissionTab !== 2) return;

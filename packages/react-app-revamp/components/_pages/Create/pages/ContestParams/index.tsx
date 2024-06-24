@@ -9,7 +9,6 @@ import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
-import { validationFunctions } from "../../utils/validation";
 import ContestParamsVisibility from "./components/ContestVisibility";
 import ContestParamsDownvote from "./components/Downvote";
 import ContestParamsSubmissionsPerContest from "./components/SubmissionsPerContest";
@@ -31,8 +30,7 @@ const CreateContestParams = () => {
   } = useDeployContestStore(state => state);
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
   const [maxSubmissionsError, setMaxSubmissionsError] = useState<string>("");
-  const validationFn = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => validationFn?.[0].validation(customization)]);
+  const onNextStep = useNextStep();
   const disableNextStep = Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const customizeTitle = isMobile ? "finally, we customize" : "finally, we do a little customizing";
@@ -152,7 +150,7 @@ const CreateContestParams = () => {
           />
         </div>
 
-        <CreateNextButton step={step} onClick={onNextStep} isDisabled={disableNextStep} />
+        <CreateNextButton step={step} onClick={() => onNextStep()} isDisabled={disableNextStep} />
       </div>
     </div>
   );

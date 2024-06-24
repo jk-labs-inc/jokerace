@@ -8,7 +8,6 @@ import StepCircle from "../../components/StepCircle";
 import CreateTextInput from "../../components/TextInput";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TITLE_MIN_LENGTH } from "../../constants/length";
 import { useNextStep } from "../../hooks/useNextStep";
-import { validationFunctions } from "../../utils/validation";
 
 const CreateContestTitle = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
@@ -16,8 +15,7 @@ const CreateContestTitle = () => {
     state => state,
   );
   const currentStepError = errors.find(error => error.step === step);
-  const titleValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => titleValidation?.[0].validation(title)]);
+  const onNextStep = useNextStep();
   const stepTitle = isMobile ? "contest title" : "what’s the title?";
 
   const handleNextStepMobile = useCallback(() => {
@@ -70,7 +68,7 @@ const CreateContestTitle = () => {
           {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
         </div>
         <div className="mt-4">
-          <CreateNextButton step={step + 1} onClick={onNextStep} />
+          <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
         </div>
       </div>
     </div>

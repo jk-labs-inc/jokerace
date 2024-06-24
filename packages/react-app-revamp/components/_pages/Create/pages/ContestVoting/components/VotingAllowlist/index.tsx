@@ -2,7 +2,6 @@ import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
 import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
-import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
@@ -31,8 +30,7 @@ const CreateVotingAllowlist = () => {
     resetMobileStepTitle,
     votingTab,
   } = useDeployContestStore(state => state);
-  const votingValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => votingValidation?.[0].validation(votingAllowlist.manual)]);
+  const onNextStep = useNextStep();
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
 
   const handleNextStepMobile = useCallback(() => {

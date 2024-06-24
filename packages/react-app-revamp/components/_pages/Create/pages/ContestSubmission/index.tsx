@@ -12,7 +12,7 @@ import { steps } from "../..";
 const CreateContestSubmissions = () => {
   const { step, submissionTypeOption, setSubmissionMerkle, setVotingMerkle, mobileStepTitle, resetMobileStepTitle } =
     useDeployContestStore(state => state);
-  const onNextStep = useNextStep([]);
+  const onNextStep = useNextStep();
 
   const handleNextStepMobile = useCallback(() => {
     if (!mobileStepTitle || submissionTypeOption.value !== SubmissionType.SameAsVoters) return;

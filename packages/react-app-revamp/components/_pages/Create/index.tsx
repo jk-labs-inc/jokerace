@@ -1,4 +1,5 @@
 import { usePageActionStore } from "@hooks/useCreateFlowAction/store";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Stepper from "./components/Stepper";
 import CreateContestConfirm from "./pages/ContestConfirm";
 import CreateContestMonetization from "./pages/ContestMonetization";
@@ -11,6 +12,7 @@ import CreateContestSummary from "./pages/ContestSummary";
 import CreateContestTiming from "./pages/ContestTiming";
 import CreateContestTitle from "./pages/ContestTitle";
 import CreateContestType from "./pages/ContestType";
+import CreateContestTemplate from "./pages/ContestUseTemplate";
 import CreateContestVoting from "./pages/ContestVoting";
 
 export enum StepTitle {
@@ -41,23 +43,37 @@ export const steps = [
 
 const CreateFlow = () => {
   const pageAction = usePageActionStore(state => state.pageAction);
-  const { startContest, setStartContest } = useCreateContestStartStore(state => state);
+  const { startContest, startContestWithTemplate, setStartContest, setStartContestWithTemplate } =
+    useCreateContestStartStore(state => state);
+  const { reset } = useDeployContestStore(state => state);
 
-  const handleStartCreating = () => {
-    setStartContest(true);
+  const handleStartCreating = (withTemplate: boolean) => {
+    reset();
+    if (withTemplate) {
+      setStartContestWithTemplate(true);
+    } else {
+      setStartContest(true);
+    }
   };
 
-  return (
-    <div className="pl-4 pr-4 lg:pl-[120px] lg:pr-[60px]">
-      {pageAction === "create" && !startContest ? (
-        <CreateContestStart onClick={handleStartCreating} />
-      ) : pageAction === "create" && startContest ? (
-        <Stepper steps={steps} />
-      ) : (
-        <ContestPlay />
-      )}
-    </div>
-  );
+  if (pageAction !== "create") {
+    return <ContestPlay />;
+  }
+
+  if (!startContest && !startContestWithTemplate) {
+    return (
+      <CreateContestStart
+        onCreateContest={() => handleStartCreating(false)}
+        onCreateContestWithTemplate={() => handleStartCreating(true)}
+      />
+    );
+  }
+
+  if (startContestWithTemplate) {
+    return <CreateContestTemplate />;
+  }
+
+  return <Stepper steps={steps} />;
 };
 
 export default CreateFlow;

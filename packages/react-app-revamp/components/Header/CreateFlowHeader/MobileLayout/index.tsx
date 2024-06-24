@@ -45,9 +45,9 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { setStartContest, startContest } = useCreateContestStartStore(state => state);
+  const { setStartContest, startContest, startContestWithTemplate } = useCreateContestStartStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
-  const contestCreationInProgress = pageAction === "create" && step > 0 && startContest;
+  const contestCreationInProgress = (pageAction === "create" && step > 0 && startContest) || startContestWithTemplate;
   const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
