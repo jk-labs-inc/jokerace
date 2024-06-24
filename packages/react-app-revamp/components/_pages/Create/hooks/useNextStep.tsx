@@ -1,35 +1,46 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useCallback } from "react";
+import { StateKey, validateField } from "../utils/validation";
 
-export const useNextStep = (validateSteps: Array<(arg?: any) => string | undefined>) => {
-  const { setError, step, setStep, furthestStep, setFurthestStep } = useDeployContestStore(state => state);
+type State = Record<StateKey, any>;
 
-  const onNextStep = (arg?: any) => {
-    let hasError = false;
+type Error = { step: number; message: string };
 
-    for (const validateStep of validateSteps) {
-      const errorMessage = validateStep(arg);
-      if (errorMessage) {
-        setError(step, { step, message: errorMessage });
-        hasError = true;
-        break; // Stop processing as soon as we encounter an error
+export const useNextStep = () => {
+  const { setError, step: currentStep, setStep, stepConfig, ...state } = useDeployContestStore(state => state);
+
+  const validateSteps = useCallback(
+    (start: number, end: number, state: State): Error | null => {
+      for (let step = start; step <= end; step++) {
+        const config = stepConfig[step];
+        if (!config) continue;
+
+        for (const field of config.fields) {
+          const errorMessage = validateField(field, state);
+          if (errorMessage) {
+            return { step, message: errorMessage };
+          }
+        }
       }
-    }
+      return null;
+    },
+    [stepConfig],
+  );
 
-    // If there were no errors, clear any previously set error message
-    if (!hasError) {
-      setError(step, { step, message: "" });
-    }
+  const onNextStep = useCallback(
+    (targetStep?: number) => {
+      const finalStep = targetStep ?? currentStep + 1;
+      const error = validateSteps(currentStep, finalStep - 1, state);
 
-    // Proceed to next step only if there were no errors
-    if (!hasError) {
-      const nextStep = step + 1;
-      setStep(nextStep);
-
-      if (nextStep > furthestStep) {
-        setFurthestStep(nextStep);
+      if (error) {
+        setError(error.step, error);
+      } else {
+        setError(currentStep, { step: currentStep, message: "" });
+        setStep(finalStep);
       }
-    }
-  };
+    },
+    [currentStep, state, setError, setStep, validateSteps],
+  );
 
   return onNextStep;
 };

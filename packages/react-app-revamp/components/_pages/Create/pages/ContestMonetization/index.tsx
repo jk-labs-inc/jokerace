@@ -7,20 +7,18 @@ import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 import { usePreviousStep } from "../../hooks/usePreviousStep";
-import { validationFunctions } from "../../utils/validation";
 import CreateContestCharge from "./components/Charge";
 import CreateContestChargeUnconnectedAccount from "./components/UnconnectedAccount";
 import CreateContestChargeUnsupportedChain from "./components/UnsupportedChain";
 
 const CreateContestMonetization = () => {
-  const { step, charge, mobileStepTitle, resetMobileStepTitle, votingRequirementsOption } = useDeployContestStore(
+  const { step, mobileStepTitle, resetMobileStepTitle, votingRequirementsOption } = useDeployContestStore(
     state => state,
   );
   const { isConnected, chain } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const [unsupportedChain, setUnsupportedChain] = useState(false);
-  const monetizationValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => monetizationValidation?.[0].validation(charge)]);
+  const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const monetizeTitle = isMobile ? `let’s monetize` : `let’s monetize this puppy`;
   const onPreviousStep = usePreviousStep();
@@ -74,7 +72,7 @@ const CreateContestMonetization = () => {
       <div className="grid col-start-1 md:col-start-2 col-span-2  md:ml-10 mt-8 md:mt-14">
         {switchLayout}
         <div className="mt-16">
-          <CreateNextButton step={step + 1} isDisabled={disableNextStep} onClick={onNextStep} />
+          <CreateNextButton step={step + 1} isDisabled={disableNextStep} onClick={() => onNextStep()} />
         </div>
       </div>
     </div>

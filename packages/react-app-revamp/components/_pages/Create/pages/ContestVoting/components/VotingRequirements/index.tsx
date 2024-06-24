@@ -4,7 +4,6 @@ import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
-import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { addressRegex } from "@helpers/regex";
 import useChargeDetails from "@hooks/useChargeDetails";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
@@ -50,9 +49,8 @@ const CreateVotingRequirements = () => {
     resetMobileStepTitle,
     votingTab,
   } = useDeployContestStore(state => state);
-  const votingValidation = validationFunctions.get(step);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
-  const onNextStep = useNextStep([arg => votingValidation?.[1].validation(arg)]);
+  const onNextStep = useNextStep();
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { isConnected, chain } = useAccount();
@@ -198,7 +196,7 @@ const CreateVotingRequirements = () => {
       timestamp: Date.now(),
     });
 
-    onNextStep({ records: results[0].allowList });
+    onNextStep();
     setError(step + 1, { step: step + 1, message: "" });
     toastSuccess("allowlists processed successfully.");
     resetManualAllowlist();
@@ -216,7 +214,7 @@ const CreateVotingRequirements = () => {
       timestamp: Date.now(),
     });
     setError(step + 1, { step: step + 1, message: "" });
-    onNextStep({ records: allowList });
+    onNextStep();
     toastSuccess("allowlist processed successfully.");
     resetManualAllowlist();
     terminateWorker(event.target as Worker);
@@ -344,10 +342,7 @@ const CreateVotingRequirements = () => {
       setAllVotingMerkles(null);
       setBothAllowlists({});
       setVotingAllowlistFields([]);
-      onNextStep({
-        records: {},
-        type: "anyone",
-      });
+      onNextStep();
 
       return;
     }

@@ -4,27 +4,36 @@ import { useMediaQuery } from "react-responsive";
 import { create } from "zustand";
 
 interface CreateContestStartProps {
-  onClick?: (value: boolean) => void;
+  onCreateContest?: (value: boolean) => void;
+  onCreateContestWithTemplate?: (value: boolean) => void;
 }
 
 interface CreateContestStartState {
   startContest: boolean;
+  startContestWithTemplate: boolean;
   setStartContest: (value: boolean) => void;
+  setStartContestWithTemplate: (value: boolean) => void;
 }
 
 export const useCreateContestStartStore = create<CreateContestStartState>(set => ({
   startContest: false,
+  startContestWithTemplate: false,
   setStartContest: value => set({ startContest: value }),
+  setStartContestWithTemplate: value => set({ startContestWithTemplate: value }),
 }));
 
-const CreateContestStart: FC<CreateContestStartProps> = ({ onClick }) => {
+const CreateContestStart: FC<CreateContestStartProps> = ({ onCreateContest, onCreateContestWithTemplate }) => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const stepTitle = isMobile ? "create a contest" : "let’s create a contest";
   const descriptionText = isMobile ? "how the contest works" : "about how the contest works";
   const timingText = isMobile ? "of submission/voting periods" : "of the submission and voting periods";
 
   const onCreateContestHandler = () => {
-    onClick?.(true);
+    onCreateContest?.(true);
+  };
+
+  const onCreateContestWithTemplateHandler = () => {
+    onCreateContestWithTemplate?.(true);
   };
 
   return (
@@ -48,18 +57,36 @@ const CreateContestStart: FC<CreateContestStartProps> = ({ onClick }) => {
         </div>
       </div>
       <div className="flex flex-col gap-8">
-        <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] hover:border-neutral-11 transition-colors duration-300">
-          <p className="text-neutral-11 text-[20px] font-bold">create new contest</p>
-          <p className="text-neutral-14 text-[16px]">
-            create a brand new contest according <br /> to whatever criteria you want.
-          </p>
-          <ButtonV3
-            colorClass={`bg-gradient-vote text-[20px] rounded-[30px] font-bold text-true-black pb-2 pt-1`}
-            size={ButtonSize.EXTRA_LARGE}
-            onClick={onCreateContestHandler}
-          >
-            create contest
-          </ButtonV3>
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] hover:border-neutral-11 transition-colors duration-300">
+            <p className="text-neutral-11 text-[20px] font-bold">create new contest</p>
+            <p className="text-neutral-14 text-[16px]">
+              create a brand new contest according <br /> to whatever criteria you want.
+            </p>
+            <ButtonV3
+              colorClass={`bg-gradient-vote text-[20px] rounded-[30px] font-bold text-true-black pb-2 pt-1`}
+              size={ButtonSize.EXTRA_LARGE}
+              onClick={onCreateContestHandler}
+            >
+              create contest
+            </ButtonV3>
+          </div>
+        </div>
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-4 w-full md:w-[360px] h-48 pt-4 pb-6 pl-4 border-neutral-9 border rounded-[10px] hover:border-neutral-11 transition-colors duration-300">
+            <p className="text-neutral-11 text-[20px] font-bold">use a template</p>
+            <p className="text-neutral-14 text-[16px]">
+              create a contest in two taps by choosing a <br />
+              prefilled template—you can edit it if you like
+            </p>
+            <ButtonV3
+              colorClass={`bg-gradient-vote text-[20px] rounded-[30px] font-bold text-true-black pb-2 pt-1`}
+              size={ButtonSize.EXTRA_LARGE}
+              onClick={onCreateContestWithTemplateHandler}
+            >
+              use a template
+            </ButtonV3>
+          </div>
         </div>
       </div>
     </div>

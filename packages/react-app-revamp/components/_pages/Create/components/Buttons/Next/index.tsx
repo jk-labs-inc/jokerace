@@ -14,7 +14,7 @@ interface CreateNextButtonProps {
 
 const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled }) => {
   const { errors } = useDeployContestStore(state => state);
-  const { setStartContest } = useCreateContestStartStore(state => state);
+  const { setStartContest, setStartContestWithTemplate } = useCreateContestStartStore(state => state);
   const [shake, setShake] = useState(false);
   const onPreviousStep = usePreviousStep();
   const isMobileOrTablet = useMediaQuery({ maxWidth: 1024 });
@@ -42,6 +42,7 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
   const onBackHandler = (step: number) => {
     if (step === 1) {
       setStartContest(false);
+      setStartContestWithTemplate(false);
     } else {
       onPreviousStep();
     }

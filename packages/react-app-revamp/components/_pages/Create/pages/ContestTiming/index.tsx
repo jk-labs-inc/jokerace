@@ -6,18 +6,14 @@ import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
-import { validationFunctions } from "../../utils/validation";
 import CreateSubmissionPeriod from "./components/SubmissionPeriod";
 import CreateVotingPeriod from "./components/VotingPeriod";
 
 const CreateContestTiming = () => {
-  const { step, votingOpen, votingClose, submissionOpen, setSubmissionOpen, mobileStepTitle, resetMobileStepTitle } =
-    useDeployContestStore(state => state);
-  const datesValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([
-    () => datesValidation?.[0].validation(votingOpen, submissionOpen),
-    () => datesValidation?.[1].validation(votingClose, votingOpen, submissionOpen),
-  ]);
+  const { step, submissionOpen, setSubmissionOpen, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(
+    state => state,
+  );
+  const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestTitle = isMobile ? "timing" : "how long will the contest run?";
 
@@ -56,7 +52,7 @@ const CreateContestTiming = () => {
           <CreateSubmissionPeriod />
           <CreateVotingPeriod />
           <div className="mt-12">
-            <CreateNextButton step={step + 1} onClick={onNextStep} />
+            <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
           </div>
         </div>
       </div>

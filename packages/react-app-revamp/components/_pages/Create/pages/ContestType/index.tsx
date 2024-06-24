@@ -1,13 +1,12 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useCallback, useEffect, useState } from "react";
+import { useMediaQuery } from "react-responsive";
 import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
 import CreateTagDropdown, { Option } from "../../components/TagDropdown";
 import { useNextStep } from "../../hooks/useNextStep";
-import { validationFunctions } from "../../utils/validation";
-import { useMediaQuery } from "react-responsive";
 
 const options: Option[] = [
   { value: "amend a proposal", label: "amend a proposal" },
@@ -31,8 +30,7 @@ const CreateContestType = () => {
   const { type, setType, errors, step, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const [fadeBg, setFadeBg] = useState(false);
-  const typeValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([() => typeValidation?.[0].validation(type)]);
+  const onNextStep = useNextStep();
   const stepTitle = isMobile ? "tag" : "let’s give it a lil’ tag";
 
   const handleNextStepMobile = useCallback(() => {
@@ -75,7 +73,7 @@ const CreateContestType = () => {
             {currentStepError ? <ErrorMessage error={(currentStepError || { message: "" }).message} /> : null}
           </div>
           <div className={`${fadeBg ? "opacity-50" : "opacity-100"} mt-4 transition-opacity duration-300 ease-in-out `}>
-            <CreateNextButton step={step + 1} onClick={onNextStep} />
+            <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
           </div>
         </div>
       </div>

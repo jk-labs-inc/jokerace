@@ -4,7 +4,6 @@ import CreateNextButton from "@components/_pages/Create/components/Buttons/Next"
 import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 import { Option } from "@components/_pages/Create/components/TagDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
-import { validationFunctions } from "@components/_pages/Create/utils/validation";
 import { addressRegex } from "@helpers/regex";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
@@ -38,10 +37,7 @@ const CreateSubmissionRequirements = () => {
     submissionTab,
     resetMobileStepTitle,
   } = useDeployContestStore(state => state);
-  const submissionRequirementsValidation = validationFunctions.get(step);
-  const onNextStep = useNextStep([
-    () => submissionRequirementsValidation?.[1].validation(submissionRequirementsOption, "submissionRequirements"),
-  ]);
+  const onNextStep = useNextStep();
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 

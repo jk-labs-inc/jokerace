@@ -1,15 +1,14 @@
 import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
-import { CustomizationOptions, SubmissionType, SubmissionTypeOption } from "@hooks/useDeployContest/store";
+import { CustomizationOptions } from "@hooks/useDeployContest/store";
 import { Charge } from "@hooks/useDeployContest/types";
 import moment from "moment";
-import { Option } from "../components/DefaultDropdown";
 import { CONTEST_TITLE_MAX_LENGTH, CONTEST_TYPE_MAX_LENGTH } from "../constants/length";
 
 export type StateKey =
   | "title"
   | "prompt"
-  | "type"
   | "summary"
+  | "type"
   | "votingOpen"
   | "votingClose"
   | "submissionOpen"
@@ -18,16 +17,6 @@ export type StateKey =
   | "submissionRequirements"
   | "charge"
   | "customization";
-
-interface SpecialStepConditions {
-  submissionMerkle: any;
-  submissionRequirementsOption: Option;
-  submissionTypeOption: SubmissionTypeOption;
-  votingMerkle: any;
-  votingRequirementsOption: Option;
-  votingTab: number;
-  submissionTab: number;
-}
 
 const titleValidation = (title: string) => {
   if (!title || title.length > CONTEST_TITLE_MAX_LENGTH) {
@@ -129,115 +118,51 @@ const customizationValidation = (customization: CustomizationOptions) => {
   return "";
 };
 
-export const validationFunctions = new Map<number, { validation: (...args: any[]) => string; stateKeys: StateKey[] }[]>(
-  [
-    [0, [{ validation: titleValidation, stateKeys: ["title"] }]],
-    [1, [{ validation: promptValidation, stateKeys: ["prompt"] }]],
-    [2, [{ validation: summaryValidation, stateKeys: ["summary"] }]],
-    [3, [{ validation: typeValidation, stateKeys: ["type"] }]],
-    [
-      4,
-      [
-        { validation: votingOpenValidation, stateKeys: ["votingOpen", "submissionOpen"] },
-        { validation: votingEndsValidation, stateKeys: ["votingClose", "votingOpen", "submissionOpen"] },
-      ],
-    ],
-    [
-      5,
-      [
-        { validation: submissionMerkleValidation, stateKeys: ["submissionMerkle"] },
-        { validation: submissionRequirementsValidation, stateKeys: ["submissionRequirements"] },
-      ],
-    ],
-    [
-      6,
-      [
-        { validation: votingMerkleValidation, stateKeys: ["votingMerkle"] },
-        {
-          validation: votingRequirementsValidation,
-          stateKeys: ["votingMerkle"],
-        },
-      ],
-    ],
-    [
-      7,
-      [
-        {
-          validation: monetizationValidation,
-          stateKeys: ["charge"],
-        },
-      ],
-    ],
-    [
-      8,
-      [
-        {
-          validation: customizationValidation,
-          stateKeys: ["customization"],
-        },
-      ],
-    ],
-  ],
-);
-
-// This function is only used when user clicks on a step in the stepper
-export const validateStep = (step: number, state: any, specialStepConditions: SpecialStepConditions) => {
-  const validationConfigs = validationFunctions.get(step);
-  const submissionStep = step === 5;
-  const votingStep = step === 6;
-
-  if (!validationConfigs) return;
-
-  if (submissionStep || votingStep) {
-    const canProceed = handleSpecialStepConditions(step, specialStepConditions);
-
-    if (!canProceed) {
-      return "error in step 5 or 6";
-    }
-    return "";
-  }
-
-  for (const validationConfig of validationConfigs) {
-    const { validation, stateKeys } = validationConfig;
-    const stateValues = stateKeys.map(key => state[key as StateKey]);
-    const errorMessage = validation(...stateValues);
-
-    if (errorMessage) {
-      return errorMessage;
-    }
-  }
-
-  return "";
+const validationMap: Record<StateKey, (...args: any[]) => string> = {
+  title: titleValidation,
+  prompt: promptValidation,
+  summary: summaryValidation,
+  type: typeValidation,
+  votingOpen: votingOpenValidation,
+  votingClose: votingEndsValidation,
+  submissionOpen: votingOpenValidation,
+  votingMerkle: votingMerkleValidation,
+  submissionMerkle: submissionMerkleValidation,
+  submissionRequirements: submissionRequirementsValidation,
+  charge: monetizationValidation,
+  customization: customizationValidation,
 };
 
-const handleSpecialStepConditions = (
-  currentStep: number,
-  {
-    submissionTypeOption,
-    submissionRequirementsOption,
-    submissionTab,
-    submissionMerkle,
-    votingMerkle,
-    votingRequirementsOption,
-    votingTab,
-  }: SpecialStepConditions,
-) => {
-  if (currentStep === 5) {
-    if (
-      submissionTypeOption.value === SubmissionType.SameAsVoters ||
-      (submissionRequirementsOption.value === "anyone" && submissionTab === 0)
-    ) {
-      return true;
-    }
-    return Object.values(submissionMerkle).some(merkle => merkle !== null);
-  }
+export const validateField = (key: StateKey, state: any): string => {
+  const validationFunction = validationMap[key];
+  if (!validationFunction) return "";
 
-  if (currentStep === 6) {
-    if (votingRequirementsOption.value === "anyone" && votingTab === 0) {
-      return true;
-    }
-    return Object.values(votingMerkle).some(merkle => merkle !== null);
-  }
+  switch (key) {
+    case "title":
+      return validationFunction(state.title);
+    case "prompt":
+      return validationFunction(state.prompt);
+    case "summary":
+      return validationFunction(state.summary);
+    case "type":
+      return validationFunction(state.type);
+    case "submissionOpen":
+      return validationFunction(state.votingOpen, state.submissionOpen);
+    case "votingOpen":
+      return validationFunction(state.votingOpen, state.submissionOpen);
+    case "votingClose":
+      return validationFunction(state.votingClose, state.votingOpen, state.submissionOpen);
+    case "votingMerkle":
+    case "submissionMerkle":
+      return validationFunction(state[key]);
+    case "submissionRequirements":
+      return validationFunction(state.submissionRequirements);
+    case "charge":
+      return validationFunction(state.charge);
+    case "customization":
+      return validationFunction(state.customization);
 
-  return true;
+    default:
+      return validationFunction(state[key]);
+  }
 };
