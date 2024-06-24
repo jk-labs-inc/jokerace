@@ -123,7 +123,11 @@ const CreateSubmissionCSVUploader = () => {
         </ul>
       </div>
       <SubmissionCSVFileUploader onChange={onAllowListChange} onNext={handleNextStep} />
-      <CreateNextButton step={step + 1} onClick={handleNextStep} />
+      <CreateNextButton
+        step={step + 1}
+        onClick={handleNextStep}
+        isDisabled={Object.keys(submissionAllowlist.csv).length === 0}
+      />
     </div>
   );
 };

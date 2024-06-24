@@ -213,7 +213,11 @@ const CreateVotingCSVUploader = () => {
         </ul>
       </div>
       <VotingCSVFileUploader onChange={handleAllowListChange} onNext={handleNextStep} />
-      <CreateNextButton step={step + 1} onClick={handleNextStep} />
+      <CreateNextButton
+        step={step + 1}
+        onClick={handleNextStep}
+        isDisabled={Object.keys(votingAllowlist.csv).length === 0}
+      />
     </div>
   );
 };

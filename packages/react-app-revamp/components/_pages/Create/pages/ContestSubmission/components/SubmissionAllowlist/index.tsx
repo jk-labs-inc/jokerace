@@ -120,7 +120,11 @@ const CreateSubmissionAllowlist = () => {
         <CSVEditorSubmission onChange={onAllowListChange} />
       </div>
 
-      <CreateNextButton step={step + 1} onClick={handleNextStep} />
+      <CreateNextButton
+        step={step + 1}
+        onClick={handleNextStep}
+        isDisabled={Object.keys(submissionAllowlist.manual).length === 0}
+      />
     </div>
   );
 };

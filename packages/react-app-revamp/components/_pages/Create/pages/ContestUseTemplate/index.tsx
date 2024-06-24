@@ -56,11 +56,15 @@ const CreateContestTemplate = () => {
     }
 
     const stepsToShow = isFullMode ? steps : filteredSteps;
-    return <Stepper steps={stepsToShow} />;
+    return (
+      <div className="pl-4 pr-4 lg:pl-[120px] lg:pr-[60px]">
+        <Stepper steps={stepsToShow} />
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col gap-12 lg:ml-[300px] mt-6 md:mt-32 animate-reveal">
+    <div className="flex flex-col gap-12 pl-4 pr-4 lg:pl-[120px] lg:pr-[60px] lg:ml-[300px] mt-8 md:mt-32 animate-reveal">
       <div className="flex flex-col gap-6">
         <p className="text-[24px] text-primary-10 font-bold">Pick a template</p>
         <p className="text-[20px] text-neutral-11">
