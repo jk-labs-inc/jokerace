@@ -5,7 +5,6 @@ import { IconTrophy } from "@components/UI/Icons";
 import { steps } from "@components/_pages/Create";
 import MobileStepper from "@components/_pages/Create/components/MobileStepper";
 import { useCreateContestStartStore } from "@components/_pages/Create/pages/ContestStart";
-import { StepTitle } from "@components/_pages/Create/types";
 import { FOOTER_LINKS } from "@config/links";
 import {
   ROUTE_CREATE_CONTEST,
@@ -20,126 +19,134 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React, { FC, useMemo } from "react";
+import { FC, useState } from "react";
 
 interface CreateFlowHeaderMobileLayoutProps {
   address: string;
   isConnected: boolean;
   pageAction: PageAction;
   step: number;
+  setPageAction?: (pageAction: PageAction) => void;
   openConnectModal?: () => void;
+  openAccountModal?: () => void;
   onPreviousStep?: () => void;
 }
 
 const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
+  address,
   isConnected,
   pageAction,
   step,
   openConnectModal,
   onPreviousStep,
 }) => {
+  const { setMobileStepTitle, isLoading: isDeployingContestLoading } = useDeployContestStore(state => state);
+  const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit"];
+  const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
+  const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { setMobileStepTitle, isLoading: isDeployingContestLoading, stepConfig } = useDeployContestStore();
-  const { setStartContest, startContest, startContestWithTemplate, setStartContestWithTemplate } =
-    useCreateContestStartStore();
+  const { setStartContest, startContest } = useCreateContestStartStore(state => state);
+  const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
+  const contestCreationInProgress = pageAction === "create" && step > 0 && startContest;
+  const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
+  const isOneOfActive = (routes: string[]) =>
+    routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
+  const isLastStep = step === steps.length;
 
-  const contestCreationInProgress = useMemo(
-    () => pageAction === "create" && step > 0 && (startContest || startContestWithTemplate),
-    [pageAction, step, startContest, startContestWithTemplate],
-  );
-
-  const currentSteps = useMemo(
-    () => (startContestWithTemplate ? stepConfig.map(config => ({ title: config.key as StepTitle })) : steps),
-    [startContestWithTemplate, stepConfig],
-  );
-
-  const isLastStep = step === currentSteps.length;
-  const isInPwaMode = typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches;
-
-  const handleBack = () => {
+  const onBackHandler = () => {
     if (step === 1) {
-      startContestWithTemplate ? setStartContestWithTemplate(false) : setStartContest(false);
+      setStartContest(false);
     } else {
       onPreviousStep?.();
     }
   };
 
-  const handleMobileStep = () => {
-    const currentStepTitle = currentSteps[step - 1].title;
-    setMobileStepTitle(currentStepTitle);
+  const onMobileStepHandler = () => {
+    setMobileStepTitle(steps[step - 1].title);
   };
 
-  const renderNavigationItem = (route: string, icon: React.ReactNode, label: string) => (
-    <Link
-      href={route}
-      className={`flex flex-col items-center ${pathname === route ? "text-primary-10 font-bold" : ""}`}
-    >
-      {icon}
-      <p className="text-[12px]">{label}</p>
-    </Link>
-  );
+  const onWalletClick = () => {
+    if (isConnected) return;
 
-  const renderWalletOrMenu = () => (
-    <div onClick={isConnected ? undefined : openConnectModal} className="transition-all duration-500">
-      {isConnected ? (
-        <BurgerMenu>
-          <div className="flex flex-col h-full justify-between pb-4">
-            <ConnectButtonCustom />
-            <div className="flex justify-end flex-col gap-2">
-              {FOOTER_LINKS.filter(link =>
-                ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit"].includes(link.label),
-              ).map((link, key) => (
-                <a
-                  key={`footer-link-${key}`}
-                  className="font-sabo text-neutral-11 text-[24px]"
-                  href={link.href}
-                  rel="nofollow noreferrer"
-                  target="_blank"
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          </div>
-        </BurgerMenu>
-      ) : (
-        <div className="flex flex-col items-center">
-          <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
-          <p className="text-[12px]">wallet</p>
-        </div>
-      )}
-    </div>
-  );
-
-  if (!contestCreationInProgress) {
-    return null;
-  }
+    openConnectModal?.();
+  };
 
   return (
-    <div className="mt-8">
-      {!isDeployingContestLoading && <MobileStepper currentStep={step - 1} totalSteps={currentSteps.length} />}
+    <div className={`${contestCreationInProgress ? "mt-8" : ""}`}>
+      {contestCreationInProgress && !isDeployingContestLoading ? (
+        <MobileStepper currentStep={step - 1} totalSteps={steps.length} />
+      ) : null}
       <header
-        className={`flex flex-col fixed mt-4 bottom-0 right-0 left-0 ${isInPwaMode ? "pb-8" : "pb-2"} bg-true-black z-50`}
+        className={`flex flex-col ${isBurgerMenuOpen ? "hidden" : "fixed"} mt-4 bottom-0 right-0 left-0 ${isInPwaMode ? "pb-8" : "pb-2"} bg-true-black z-50`}
       >
-        {!isDeployingContestLoading && (
-          <div className="flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2 px-8">
-            <p className="text-[20px] text-neutral-11" onClick={handleBack}>
+        {contestCreationInProgress && !isDeployingContestLoading && !isBurgerMenuOpen ? (
+          <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
+            <p className="text-[20px] text-neutral-11" onClick={onBackHandler}>
               back
             </p>
             <ButtonV3
-              onClick={handleMobileStep}
-              colorClass={`text-[20px] ${isLastStep ? "bg-gradient-create" : "bg-gradient-next"} rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
+              onClick={onMobileStepHandler}
+              colorClass={`text-[20px] ${isLastStep ? "bg-gradient-create" : "bg-gradient-next"}  rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
             >
               {isLastStep ? "create" : "next"}
             </ButtonV3>
           </div>
-        )}
-        <div className="flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2 pt-2 px-8">
-          {renderNavigationItem(ROUTE_LANDING, <HomeIcon width={26} />, "home")}
-          {renderNavigationItem(ROUTE_VIEW_CONTESTS, <SearchIcon width={26} />, "search")}
-          {renderNavigationItem(ROUTE_VIEW_LIVE_CONTESTS, <IconTrophy width={26} height={26} />, "play")}
-          {renderNavigationItem(ROUTE_CREATE_CONTEST, <PencilAltIcon width={26} />, "create")}
-          {renderWalletOrMenu()}
+        ) : null}
+
+        <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2 pt-2 px-8`}>
+          <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
+            <HomeIcon width={26} />
+            <p className="text-[12px]">home</p>
+          </Link>
+
+          <Link href={ROUTE_VIEW_CONTESTS} className={`flex flex-col ${isActive(ROUTE_VIEW_CONTESTS)}`}>
+            <SearchIcon width={26} />
+            <p className="text-[12px]">search</p>
+          </Link>
+
+          <Link
+            href={ROUTE_VIEW_LIVE_CONTESTS}
+            className={`flex flex-col text-neutral-11 ${isOneOfActive([ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_CONTEST])}`}
+          >
+            <IconTrophy width={26} height={26} />
+            <p className="text-[12px] text-center">play</p>
+          </Link>
+
+          <Link href={ROUTE_CREATE_CONTEST} className={`flex flex-col items-center ${isActive(ROUTE_CREATE_CONTEST)}`}>
+            <PencilAltIcon width={26} />
+            <p className="text-[12px]">create</p>
+          </Link>
+
+          <div onClick={onWalletClick} className="transition-all duration-500">
+            {isConnected ? (
+              <div className="flex flex-col items-center">
+                <BurgerMenu onOpen={() => setIsBurgerMenuOpen(true)} onClose={() => setIsBurgerMenuOpen(false)}>
+                  <div className="flex flex-col h-full justify-between pb-4">
+                    <ConnectButtonCustom />
+                    <div className="flex justify-end flex-col gap-2">
+                      {filteredLinks.map((link, key) => (
+                        <a
+                          className="font-sabo text-neutral-11 text-[24px]"
+                          key={`footer-link-${key}`}
+                          href={link.href}
+                          rel="nofollow noreferrer"
+                          target="_blank"
+                        >
+                          {link.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </BurgerMenu>
+                <p className="text-[12px]">menu</p>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center">
+                <Image width={26} height={26} src="/header/wallet.svg" alt="wallet" />
+                <p className="text-[12px]">wallet</p>
+              </div>
+            )}
+          </div>
         </div>
       </header>
     </div>
