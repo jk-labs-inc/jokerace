@@ -1,11 +1,9 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { useCallback, useEffect } from "react";
 import CSVEditorVoting, { VotingFieldObject } from "./components/CSVEditor";
 
 type WorkerMessageData = {
@@ -26,27 +24,10 @@ const CreateVotingAllowlist = () => {
     submissionTypeOption,
     charge,
     setCharge,
-    mobileStepTitle,
-    resetMobileStepTitle,
     votingTab,
   } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
   const submittersAsVoters = submissionTypeOption.value === SubmissionType.SameAsVoters;
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle || votingTab !== 2) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      handleNextStep();
-      resetMobileStepTitle();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const handleAllowListChange = (fields: VotingFieldObject[]) => {
     let newAllowList: Record<string, number> = {};

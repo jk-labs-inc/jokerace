@@ -2,10 +2,9 @@ import { toastError } from "@components/UI/Toast";
 import { MAX_SUBMISSIONS_LIMIT } from "@hooks/useDeployContest";
 import { ContestVisibility, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { fetchChargeDetails } from "lib/monetization";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
@@ -24,8 +23,7 @@ const CreateContestParams = () => {
     advancedOptions,
     setAdvancedOptions,
     step,
-    mobileStepTitle,
-    resetMobileStepTitle,
+
     setStep,
   } = useDeployContestStore(state => state);
   const [submissionsPerUserError, setSubmissionsPerUserError] = useState<string>("");
@@ -34,15 +32,6 @@ const CreateContestParams = () => {
   const disableNextStep = Boolean(submissionsPerUserError) || Boolean(maxSubmissionsError);
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const customizeTitle = isMobile ? "finally, we customize" : "finally, we do a little customizing";
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      onNextStep();
-      resetMobileStepTitle();
-    }
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
 
   useEffect(() => {
     if (!chain) return;
@@ -63,11 +52,6 @@ const CreateContestParams = () => {
 
     fetchDetails();
   }, [chain, setStep]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   useEffect(() => {
     validateMaxSubmissions(customization.maxSubmissions);

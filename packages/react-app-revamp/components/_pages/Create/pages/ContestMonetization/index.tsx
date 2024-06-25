@@ -1,8 +1,7 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
@@ -12,9 +11,7 @@ import CreateContestChargeUnconnectedAccount from "./components/UnconnectedAccou
 import CreateContestChargeUnsupportedChain from "./components/UnsupportedChain";
 
 const CreateContestMonetization = () => {
-  const { step, mobileStepTitle, resetMobileStepTitle, votingRequirementsOption } = useDeployContestStore(
-    state => state,
-  );
+  const { step, votingRequirementsOption } = useDeployContestStore(state => state);
   const { isConnected, chain } = useAccount();
   const [disableNextStep, setDisableNextStep] = useState(false);
   const [unsupportedChain, setUnsupportedChain] = useState(false);
@@ -22,20 +19,6 @@ const CreateContestMonetization = () => {
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const monetizeTitle = isMobile ? `let’s monetize` : `let’s monetize this puppy`;
   const onPreviousStep = usePreviousStep();
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      onNextStep();
-      resetMobileStepTitle();
-    }
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   useEffect(() => {
     setUnsupportedChain(false);

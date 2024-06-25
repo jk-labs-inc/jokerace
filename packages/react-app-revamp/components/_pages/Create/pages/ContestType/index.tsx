@@ -1,7 +1,6 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
@@ -27,25 +26,11 @@ const options: Option[] = [
 
 const CreateContestType = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { type, setType, errors, step, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(state => state);
+  const { type, setType, errors, step } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const [fadeBg, setFadeBg] = useState(false);
   const onNextStep = useNextStep();
   const stepTitle = isMobile ? "tag" : "let’s give it a lil’ tag";
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      onNextStep();
-      resetMobileStepTitle();
-    }
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const onOptionChangeHandler = (option: string) => {
     setType(option);

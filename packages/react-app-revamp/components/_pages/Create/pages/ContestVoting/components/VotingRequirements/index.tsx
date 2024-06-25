@@ -1,6 +1,5 @@
 /* eslint-disable react/no-unescaped-entities */
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown, { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
@@ -10,7 +9,7 @@ import { MerkleKey, SubmissionType, useDeployContestStore } from "@hooks/useDepl
 import { SubmissionMerkle, VoteType, VotingMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import CreateVotingRequirementsNftSettings from "./components/NFT";
 import CreateVotingRequirementsTokenSettings from "./components/Token";
@@ -45,8 +44,6 @@ const CreateVotingRequirements = () => {
     setCharge,
     charge,
     minCharge,
-    mobileStepTitle,
-    resetMobileStepTitle,
     votingTab,
   } = useDeployContestStore(state => state);
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
@@ -60,21 +57,6 @@ const CreateVotingRequirements = () => {
     isLoading: isChargeDetailsLoading,
   } = useChargeDetails(chain?.name.toLowerCase() ?? "");
   const { minCostToVote, minCostToPropose } = minCharge;
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle || votingTab !== 0) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      handleNextStep();
-      resetMobileStepTitle();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   useEffect(() => {
     if (isChargeDetailsLoading) return;

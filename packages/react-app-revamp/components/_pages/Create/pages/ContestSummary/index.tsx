@@ -1,7 +1,5 @@
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useCallback, useEffect } from "react";
 import { useMedia } from "react-use";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
@@ -14,27 +12,11 @@ const MOBILE_PLACEHOLDER = "eg. “submit a project”";
 const DESKTOP_PLACEHOLDER = "eg. “submit a project” “propose a delegate” “predict the market”";
 
 const CreateContestSummary = () => {
-  const { summary, setSummary, step, errors, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(
-    state => state,
-  );
+  const { summary, setSummary, step, errors } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const onNextStep = useNextStep();
   const isMobile = useMedia("(max-width: 768px)");
   const stepTitle = isMobile ? "summary" : "what’s the summary?";
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      onNextStep();
-      resetMobileStepTitle();
-    }
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const placeholderText = isMobile ? MOBILE_PLACEHOLDER : DESKTOP_PLACEHOLDER;
 

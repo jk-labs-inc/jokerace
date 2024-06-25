@@ -1,11 +1,9 @@
 import { toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import { useNextStep } from "@components/_pages/Create/hooks/useNextStep";
 import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store";
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
-import { useCallback, useEffect } from "react";
 import CSVEditorSubmission, { SubmissionFieldObject } from "./components/CSVEditor";
 
 type WorkerMessageData = {
@@ -14,32 +12,9 @@ type WorkerMessageData = {
 };
 
 const CreateSubmissionAllowlist = () => {
-  const {
-    step,
-    setSubmissionMerkle,
-    setError,
-    submissionAllowlist,
-    setSubmissionAllowlist,
-    mobileStepTitle,
-    resetMobileStepTitle,
-    submissionTab,
-  } = useDeployContestStore(state => state);
+  const { step, setSubmissionMerkle, setError, submissionAllowlist, setSubmissionAllowlist, submissionTab } =
+    useDeployContestStore(state => state);
   const onNextStep = useNextStep();
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle || submissionTab !== 2) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      handleNextStep();
-      resetMobileStepTitle();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const onAllowListChange = (fields: Array<SubmissionFieldObject>) => {
     const newAllowList: Record<string, number> = {};

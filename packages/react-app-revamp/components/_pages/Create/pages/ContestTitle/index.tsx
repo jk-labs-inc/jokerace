@@ -11,26 +11,10 @@ import { useNextStep } from "../../hooks/useNextStep";
 
 const CreateContestTitle = () => {
   const isMobile = useMediaQuery({ maxWidth: 768 });
-  const { title, setTitle, step, errors, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(
-    state => state,
-  );
+  const { title, setTitle, step, errors } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const onNextStep = useNextStep();
   const stepTitle = isMobile ? "contest title" : "what’s the title?";
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      onNextStep();
-      resetMobileStepTitle();
-    }
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const handleTitleChange = (value: string) => {
     setTitle(value);

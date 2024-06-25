@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import MobileBottomButton from "../Mobile";
 
 interface CreateContestButtonProps {
   step: number;
@@ -39,7 +40,22 @@ const CreateContestButton: FC<CreateContestButtonProps> = ({ step, onClick, isDi
     }
   };
 
-  if (isMobileOrTablet) return null;
+  if (isMobileOrTablet)
+    return (
+      <MobileBottomButton>
+        <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
+          <p className="text-[20px] text-neutral-11" onClick={onPreviousStep}>
+            back
+          </p>
+          <ButtonV3
+            onClick={handleClick}
+            colorClass="text-[20px] bg-gradient-create rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+          >
+            {isConnected ? "create" : "connect wallet"}
+          </ButtonV3>
+        </div>
+      </MobileBottomButton>
+    );
 
   return (
     <div className="flex gap-4 items-start pb-5 md:pb-0">

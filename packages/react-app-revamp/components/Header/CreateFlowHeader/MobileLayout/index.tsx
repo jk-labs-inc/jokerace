@@ -1,5 +1,4 @@
 import BurgerMenu from "@components/UI/BurgerMenu";
-import ButtonV3 from "@components/UI/ButtonV3";
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import { IconTrophy } from "@components/UI/Icons";
 import { steps } from "@components/_pages/Create";
@@ -29,7 +28,6 @@ interface CreateFlowHeaderMobileLayoutProps {
   setPageAction?: (pageAction: PageAction) => void;
   openConnectModal?: () => void;
   openAccountModal?: () => void;
-  onPreviousStep?: () => void;
 }
 
 const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
@@ -38,32 +36,18 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
   pageAction,
   step,
   openConnectModal,
-  onPreviousStep,
 }) => {
-  const { setMobileStepTitle, isLoading: isDeployingContestLoading } = useDeployContestStore(state => state);
+  const { isLoading: isDeployingContestLoading } = useDeployContestStore(state => state);
   const allowedLinks = ["Github", "Twitter", "Telegram", "Report a bug", "Terms", "Media Kit"];
   const filteredLinks = FOOTER_LINKS.filter(link => allowedLinks.includes(link.label));
   const [isBurgerMenuOpen, setIsBurgerMenuOpen] = useState(false);
   const pathname = usePathname();
-  const { setStartContest, startContest } = useCreateContestStartStore(state => state);
+  const { setStartContest, startContest, startContestWithTemplate } = useCreateContestStartStore(state => state);
   const isInPwaMode = window.matchMedia("(display-mode: standalone)").matches;
   const contestCreationInProgress = pageAction === "create" && step > 0 && startContest;
   const isActive = (route: string) => (pathname === route ? "text-primary-10 transition-colors font-bold" : "");
   const isOneOfActive = (routes: string[]) =>
     routes.includes(pathname ?? "") ? "text-primary-10 transition-colors font-bold" : "";
-  const isLastStep = step === steps.length;
-
-  const onBackHandler = () => {
-    if (step === 1) {
-      setStartContest(false);
-    } else {
-      onPreviousStep?.();
-    }
-  };
-
-  const onMobileStepHandler = () => {
-    setMobileStepTitle(steps[step - 1].title);
-  };
 
   const onWalletClick = () => {
     if (isConnected) return;
@@ -79,20 +63,6 @@ const CreateFlowHeaderMobileLayout: FC<CreateFlowHeaderMobileLayoutProps> = ({
       <header
         className={`flex flex-col ${isBurgerMenuOpen ? "hidden" : "fixed"} mt-4 bottom-0 right-0 left-0 ${isInPwaMode ? "pb-8" : "pb-2"} bg-true-black z-50`}
       >
-        {contestCreationInProgress && !isDeployingContestLoading && !isBurgerMenuOpen ? (
-          <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
-            <p className="text-[20px] text-neutral-11" onClick={onBackHandler}>
-              back
-            </p>
-            <ButtonV3
-              onClick={onMobileStepHandler}
-              colorClass={`text-[20px] ${isLastStep ? "bg-gradient-create" : "bg-gradient-next"}  rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out`}
-            >
-              {isLastStep ? "create" : "next"}
-            </ButtonV3>
-          </div>
-        ) : null}
-
         <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2 pt-2 px-8`}>
           <Link href={ROUTE_LANDING} className={`flex flex-col ${isActive(ROUTE_LANDING)}`}>
             <HomeIcon width={26} />

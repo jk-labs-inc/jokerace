@@ -13,7 +13,6 @@ const CreateFlowHeader = () => {
   const { isConnected, address } = useAccount();
   const { step, isLoading, isSuccess } = useDeployContestStore(state => state);
   const { pageAction, setPageAction } = usePageActionStore(state => state);
-  const onPreviousStep = usePreviousStep();
   const { openConnectModal } = useConnectModal();
   const { openAccountModal } = useAccountModal();
   const { width: confettiWidth, height: confettiHeight } = useWindowSize();
@@ -35,7 +34,6 @@ const CreateFlowHeader = () => {
           setPageAction={setPageAction}
           openConnectModal={openConnectModal}
           openAccountModal={openAccountModal}
-          onPreviousStep={onPreviousStep}
         />
       </MediaQuery>
       <MediaQuery minWidth={1025}>

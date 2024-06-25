@@ -1,5 +1,4 @@
 import { toastDismiss, toastError, toastLoading, toastSuccess } from "@components/UI/Toast";
-import { steps } from "@components/_pages/Create";
 import CreateNextButton from "@components/_pages/Create/components/Buttons/Next";
 import CreateDefaultDropdown from "@components/_pages/Create/components/DefaultDropdown";
 import { Option } from "@components/_pages/Create/components/TagDropdown";
@@ -9,7 +8,7 @@ import { MerkleKey, useDeployContestStore } from "@hooks/useDeployContest/store"
 import { SubmissionMerkle } from "@hooks/useDeployContest/types";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { fetchNftHolders, fetchTokenHolders } from "lib/permissioning";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import CreateSubmissionRequirementsNftSettings from "./components/NFT";
 import CreateSubmissionRequirementsTokenSettings from "./components/Token";
 
@@ -33,28 +32,11 @@ const CreateSubmissionRequirements = () => {
     setSubmissionMerkle,
     setSubmissionRequirements,
     submissionRequirements,
-    mobileStepTitle,
     submissionTab,
-    resetMobileStepTitle,
   } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
   const [inputError, setInputError] = useState<Record<string, string | undefined>>({});
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle || submissionTab !== 0) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      handleNextStep();
-      resetMobileStepTitle();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const renderLayout = () => {
     //TODO: see why content jumps when dropdown changes
