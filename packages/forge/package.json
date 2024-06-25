@@ -4,16 +4,16 @@
   "main": "index.js",
   "license": "AGPL-3.0-only",
   "devDependencies": {
-    "copyfiles": "^2.4.1"
+    "copyfiles": "2.4.1"
   },
   "dependencies": {
-    "copyfiles": "^2.4.1"
+    "copyfiles": "2.4.1"
   },
   "scripts": {
     "forgeformat": "forge fmt",
     "forgetest": "forge test",
     "forgecoverage": "forge coverage",
     "forgebuild": "forge build",
-    "forgebuildandcopy": "forge build && copyfiles -u 1 out/Contest.sol/*.json ../react-app-revamp/contracts/bytecodeAndAbi && copyfiles -u 1 out/RewardsModule.sol/*.json ../react-app-revamp/contracts/bytecodeAndAbi/modules/ && forge flatten src/Contest.sol | tail -n +4 > ../react-app-revamp/contracts/bytecodeAndAbi/Contest.sol/flattenedContest.sol && forge flatten src/modules/RewardsModule.sol | tail -n +4 > ../react-app-revamp/contracts/bytecodeAndAbi/modules/RewardsModule.sol/flattenedRewardsModule.sol"
+    "forgebuildandcopy": "forge build && copyfiles -u 1 out/Contest.sol/*.json ../react-app-revamp/contracts/bytecodeAndAbi && copyfiles -u 1 out/RewardsModule.sol/*.json ../react-app-revamp/contracts/bytecodeAndAbi/modules/ && forge flatten src/Contest.sol > ../react-app-revamp/contracts/bytecodeAndAbi/Contest.sol/flattenedContest.sol && forge flatten src/modules/RewardsModule.sol > ../react-app-revamp/contracts/bytecodeAndAbi/modules/RewardsModule.sol/flattenedRewardsModule.sol"
   }
 }
