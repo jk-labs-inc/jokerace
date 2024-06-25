@@ -4,7 +4,6 @@ import { ROUTE_VIEW_USER } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
 import Link from "next/link";
 import { FC } from "react";
-import Confetti from "react-confetti";
 
 interface CreateFlowHeaderDesktopLayoutProps {
   address: string;
@@ -49,8 +48,6 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
           </p>
         </div>
       )}
-
-      {isSuccess && <Confetti width={width} height={height} opacity={0.7} numberOfPieces={100} />}
 
       {!isLoading && !isSuccess && (
         <div className="flex items-center gap-3">

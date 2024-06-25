@@ -27,11 +27,9 @@ const CreateContestDeploying = () => {
   useEffect(() => {
     if (isSuccess && deployContestData) {
       toastDismiss();
-      setTimeout(() => {
-        router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
+      router.push(`/contest/${deployContestData.chain.toLowerCase()?.replace(" ", "")}/${deployContestData.address}`);
 
-        if (!deployContestData.downvote && deployContestData.sortingEnabled) setShowRewards(true);
-      }, 3000);
+      if (!deployContestData.downvote && deployContestData.sortingEnabled) setShowRewards(true);
     }
   }, [deployContestData, isSuccess, router, setShowRewards]);
 

@@ -239,6 +239,10 @@ li {
     text-transform: lowercase;
   }
 
+  .templates-normal-case * {
+    text-transform: none !important;
+  }
+
   /* implement markdown style */
   .markdown,
   .markdown * {
