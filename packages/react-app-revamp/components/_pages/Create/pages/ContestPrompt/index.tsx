@@ -6,9 +6,8 @@ import { Link as TiptapExtensionLink } from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
 import StepCircle from "../../components/StepCircle";
@@ -41,28 +40,12 @@ const createEditorConfig = ({ content, placeholderText, onUpdate }: CreateEditor
 });
 
 const CreateContestPrompt = () => {
-  const { step, prompt, setPrompt, errors, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(
-    state => state,
-  );
+  const { step, prompt, setPrompt, errors } = useDeployContestStore(state => state);
   const currentStepError = errors.find(error => error.step === step);
   const onNextStep = useNextStep();
   const [activeEditor, setActiveEditor] = useState<Editor | null>(null);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const title = isMobile ? "description" : "now for the description";
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      onNextStep();
-      resetMobileStepTitle();
-    }
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const editorSummarize = useEditor({
     ...createEditorConfig({

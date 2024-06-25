@@ -2,7 +2,6 @@ import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
-import { StepTitle } from "@components/_pages/Create/types";
 import { StateKey } from "@components/_pages/Create/utils/validation";
 import { create } from "zustand";
 import { DEFAULT_SUBMISSIONS } from ".";
@@ -118,7 +117,6 @@ export interface DeployContestState {
     minCostToVote: number;
   };
   prevChainRefInCharge: string;
-  mobileStepTitle: StepTitle | null;
   stepConfig: StepConfig[];
   setDeployContestData: (
     chain: string,
@@ -158,8 +156,6 @@ export interface DeployContestState {
   setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => void;
   setPrevChainRefInCharge: (chain: string) => void;
   reset: () => void;
-  setMobileStepTitle: (title: StepTitle | null) => void;
-  resetMobileStepTitle: () => void;
   setStepConfig: (stepConfig: StepConfig[]) => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
@@ -281,7 +277,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     step: 0,
     submissionTab: 0,
     votingTab: 0,
-    mobileStepTitle: null,
   };
 
   return {
@@ -374,8 +369,6 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => set({ minCharge }),
     setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
     reset: () => set({ ...initialState }),
-    setMobileStepTitle: (title: StepTitle | null) => set({ mobileStepTitle: title }),
-    resetMobileStepTitle: () => set({ mobileStepTitle: null }),
     setStepConfig: (stepConfig: StepConfig[]) => set({ stepConfig }),
   };
 });

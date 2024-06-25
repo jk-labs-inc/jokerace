@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { useMediaQuery } from "react-responsive";
-import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
@@ -10,26 +9,10 @@ import CreateSubmissionPeriod from "./components/SubmissionPeriod";
 import CreateVotingPeriod from "./components/VotingPeriod";
 
 const CreateContestTiming = () => {
-  const { step, submissionOpen, setSubmissionOpen, mobileStepTitle, resetMobileStepTitle } = useDeployContestStore(
-    state => state,
-  );
+  const { step, submissionOpen, setSubmissionOpen } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
   const isMobile = useMediaQuery({ query: "(max-width: 768px)" });
   const contestTitle = isMobile ? "timing" : "how long will the contest run?";
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      onNextStep();
-      resetMobileStepTitle();
-    }
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   useEffect(() => {
     const now = new Date();

@@ -6,28 +6,10 @@ import { useNextStep } from "../../hooks/useNextStep";
 import CreateSubmissionTabContent from "./components/SubmissionTabContent";
 import CreateSubmissionTabMessage from "./components/SubmissionTabMessage";
 import CreateSubmissionType from "./components/SubmissionType";
-import { useCallback, useEffect } from "react";
-import { steps } from "../..";
 
 const CreateContestSubmissions = () => {
-  const { step, submissionTypeOption, setSubmissionMerkle, setVotingMerkle, mobileStepTitle, resetMobileStepTitle } =
-    useDeployContestStore(state => state);
+  const { step, submissionTypeOption, setSubmissionMerkle, setVotingMerkle } = useDeployContestStore(state => state);
   const onNextStep = useNextStep();
-
-  const handleNextStepMobile = useCallback(() => {
-    if (!mobileStepTitle || submissionTypeOption.value !== SubmissionType.SameAsVoters) return;
-
-    if (mobileStepTitle === steps[step].title) {
-      handleNextStep();
-      resetMobileStepTitle();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobileStepTitle, onNextStep, resetMobileStepTitle, step]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const setAllSubmissionMerkles = (value: SubmissionMerkle | null) => {
     const keys: MerkleKey[] = ["csv", "prefilled", "manual"];

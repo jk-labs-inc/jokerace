@@ -49,15 +49,6 @@ const CreateContestConfirm = () => {
     }
   }, [chainId, deployContest]);
 
-  const handleNextStepMobile = useCallback(() => {
-    if (!state.mobileStepTitle) return;
-
-    if (state.mobileStepTitle === steps[state.step].title) {
-      onDeployHandler();
-      state.resetMobileStepTitle();
-    }
-  }, [onDeployHandler, state]);
-
   useEffect(() => {
     if (!chain) return;
 
@@ -76,11 +67,6 @@ const CreateContestConfirm = () => {
 
     fetchDetails();
   }, [chain, state]);
-
-  // Mobile listeners
-  useEffect(() => {
-    handleNextStepMobile();
-  }, [handleNextStepMobile]);
 
   const onNavigateToStep = (step: Steps) => {
     state.setStep(step);

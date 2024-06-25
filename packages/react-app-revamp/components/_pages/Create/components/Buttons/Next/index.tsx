@@ -5,6 +5,7 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import { FC, MouseEventHandler, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import MobileBottomButton from "../Mobile";
 
 interface CreateNextButtonProps {
   step: number;
@@ -48,7 +49,22 @@ const CreateNextButton: FC<CreateNextButtonProps> = ({ step, onClick, isDisabled
     }
   };
 
-  if (isMobileOrTablet) return null;
+  if (isMobileOrTablet)
+    return (
+      <MobileBottomButton>
+        <div className={`flex flex-row items-center h-12 justify-between border-t-neutral-2 border-t-2   px-8`}>
+          <p className="text-[20px] text-neutral-11" onClick={() => onBackHandler(step)}>
+            back
+          </p>
+          <ButtonV3
+            onClick={handleClick}
+            colorClass="text-[20px] bg-gradient-next rounded-[15px] font-bold text-true-black hover:scale-105 transition-transform duration-200 ease-in-out"
+          >
+            next
+          </ButtonV3>
+        </div>
+      </MobileBottomButton>
+    );
 
   return (
     <div className="flex gap-4 items-start mb-5">
