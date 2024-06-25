@@ -58,7 +58,6 @@
     "rc-slider": "^10.2.1",
     "react": "^18.2.0",
     "react-aria": "^3.16.0",
-    "react-confetti": "^6.1.0",
     "react-countdown": "^2.3.5",
     "react-csv": "^2.2.2",
     "react-datepicker": "^4.12.0",
