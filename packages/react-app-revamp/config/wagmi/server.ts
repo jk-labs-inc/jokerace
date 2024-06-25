@@ -13,6 +13,7 @@ import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
+import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
 import { berachainTestnet } from "./custom-chains/berachainTestnet";
 import { blast } from "./custom-chains/blast";
 import { blastTestnet } from "./custom-chains/blastTestnet";
@@ -35,6 +36,7 @@ import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
+import { goerli } from "./custom-chains/goerli";
 import { gold } from "./custom-chains/gold";
 import { ham } from "./custom-chains/ham";
 import { hedera } from "./custom-chains/hedera";
@@ -95,7 +97,6 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
-import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
 
 type Transports = Record<Chain["id"], Transport>;
 
@@ -194,6 +195,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   inEvmTestnet,
   campTestnet,
   fhenixTestnet,
+  goerli,
   mainnet,
 ];
 
