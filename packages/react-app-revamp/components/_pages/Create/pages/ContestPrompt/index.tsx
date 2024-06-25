@@ -8,8 +8,10 @@ import { Editor, EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useState } from "react";
 import { useMediaQuery } from "react-responsive";
+import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
 import ErrorMessage from "../../components/Error";
+import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 
@@ -102,66 +104,71 @@ const CreateContestPrompt = () => {
   });
 
   return (
-    <div className="full-width-create-flow-grid create-contest-prompt mt-12 lg:mt-[70px] animate-swingInLeft">
-      <div className="col-span-1">
-        <StepCircle step={step + 1} />
-      </div>
-      <div className="col-span-2 ml-10">
-        <p className="text-[24px] text-primary-10 font-bold">{title}</p>
-      </div>
-      <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-2 w-full">
-        <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] px-1 py-2 border-y border-neutral-10">
-          <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
+    <div className="flex flex-col">
+      {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
+      <div className="full-width-create-flow-grid create-contest-prompt mt-12 lg:mt-[70px] animate-swingInLeft">
+        <div className="col-span-1">
+          <StepCircle step={step + 1} />
         </div>
-        <div className="flex flex-col gap-8">
-          <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, prizes, and voters:</p>
-          <div className="flex flex-col gap-2">
-            <EditorContent
-              editor={editorSummarize}
-              className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
-            />
-
-            {currentStepError?.message.includes("Contest summary") ? (
-              <ErrorMessage error={(currentStepError || { message: "" }).message} />
-            ) : null}
-          </div>
+        <div className="col-span-2 ml-10">
+          <p className="text-[24px] text-primary-10 font-bold">{title}</p>
         </div>
-        <div className="flex flex-col gap-8">
-          <div className="flex flex-col gap-4">
-            <p className="text-[20px] text-neutral-11 font-bold">
-              how should voters evaluate if a submission is <i>good</i> ?
-            </p>
-            <p className="text-neutral-11 text-[16px] font-normal">(ie 50% for originality, 50% for thoughtfulness)</p>
+        <div className="grid gap-12 col-start-1 md:col-start-2 col-span-2 md:ml-10 mt-8 md:mt-2 w-full">
+          <div className="flex bg-true-black z-10 justify-start w-full md:w-[650px] px-1 py-2 border-y border-neutral-10">
+            <TipTapEditorControls editor={activeEditor ? activeEditor : editorSummarize} />
           </div>
+          <div className="flex flex-col gap-8">
+            <p className="text-neutral-11 text-[20px] font-bold">summarize the contest, prizes, and voters:</p>
+            <div className="flex flex-col gap-2">
+              <EditorContent
+                editor={editorSummarize}
+                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+              />
 
-          <div className="flex flex-col gap-2">
-            <EditorContent
-              editor={editorEvaluateVoters}
-              className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
-            />
-
-            {currentStepError?.message.includes("Voter evaluation") ? (
-              <ErrorMessage error={(currentStepError || { message: "" }).message} />
-            ) : (
-              <p className="text-[16px] font-bold text-neutral-14">
-                if you are offering rewards, voting must legally be based on skill or talent—not guessing
+              {currentStepError?.message.includes("Contest summary") ? (
+                <ErrorMessage error={(currentStepError || { message: "" }).message} />
+              ) : null}
+            </div>
+          </div>
+          <div className="flex flex-col gap-8">
+            <div className="flex flex-col gap-4">
+              <p className="text-[20px] text-neutral-11 font-bold">
+                how should voters evaluate if a submission is <i>good</i> ?
               </p>
-            )}
+              <p className="text-neutral-11 text-[16px] font-normal">
+                (ie 50% for originality, 50% for thoughtfulness)
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <EditorContent
+                editor={editorEvaluateVoters}
+                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+              />
+
+              {currentStepError?.message.includes("Voter evaluation") ? (
+                <ErrorMessage error={(currentStepError || { message: "" }).message} />
+              ) : (
+                <p className="text-[16px] font-bold text-neutral-14">
+                  if you are offering rewards, voting must legally be based on skill or talent—not guessing
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="flex flex-col gap-8">
-          <p className="text-neutral-11 text-[20px] font-bold">
-            what’s the best way for players to reach you? <span className="font-normal">(optional)</span>
-          </p>
-          <div className="flex flex-col gap-2">
-            <EditorContent
-              editor={editorContactDetails}
-              className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
-            />
+          <div className="flex flex-col gap-8">
+            <p className="text-neutral-11 text-[20px] font-bold">
+              what’s the best way for players to reach you? <span className="font-normal">(optional)</span>
+            </p>
+            <div className="flex flex-col gap-2">
+              <EditorContent
+                editor={editorContactDetails}
+                className="border-b border-neutral-11 bg-transparent outline-none placeholder-neutral-9 w-full md:w-[650px] overflow-y-auto max-h-[300px] pb-2"
+              />
+            </div>
           </div>
-        </div>
-        <div className="mt-4">
-          <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
+          <div className="mt-4">
+            <CreateNextButton step={step + 1} onClick={() => onNextStep()} />
+          </div>
         </div>
       </div>
     </div>

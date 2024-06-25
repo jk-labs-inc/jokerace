@@ -30,7 +30,7 @@ const CreateFlowHeader = () => {
           address={address ?? ""}
           isConnected={isConnected}
           pageAction={pageAction}
-          step={step + 1}
+          step={step}
           setPageAction={setPageAction}
           openConnectModal={openConnectModal}
           openAccountModal={openAccountModal}
