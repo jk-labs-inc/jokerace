@@ -2,9 +2,8 @@ import { Option } from "@components/_pages/Create/components/DefaultDropdown";
 import { EMPTY_FIELDS_SUBMISSION, EMPTY_FIELDS_VOTING } from "@components/_pages/Create/constants/csv";
 import { SubmissionFieldObject } from "@components/_pages/Create/pages/ContestSubmission/components/SubmissionAllowlist/components/CSVEditor";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
+import { StateKey } from "@components/_pages/Create/utils/validation";
 import { create } from "zustand";
-
-import { StepTitle } from "@components/_pages/Create";
 import { DEFAULT_SUBMISSIONS } from ".";
 import {
   Charge,
@@ -56,6 +55,11 @@ export interface SubmissionTypeOption {
 
 export type MerkleKey = "manual" | "prefilled" | "csv";
 
+type StepConfig = {
+  key: string;
+  fields: StateKey[];
+};
+
 export interface DeployContestState {
   deployContestData: {
     chain: string;
@@ -105,7 +109,6 @@ export interface DeployContestState {
   isSuccess: boolean;
   errors: ContestDeployError[];
   step: number;
-  furthestStep: number;
   submissionTab: number;
   votingTab: number;
   charge: Charge;
@@ -114,7 +117,7 @@ export interface DeployContestState {
     minCostToVote: number;
   };
   prevChainRefInCharge: string;
-  mobileStepTitle: StepTitle | null;
+  stepConfig: StepConfig[];
   setDeployContestData: (
     chain: string,
     chainId: number,
@@ -147,15 +150,13 @@ export interface DeployContestState {
   setIsSuccess: (isSuccess: boolean) => void;
   setError: (step: number, error: ContestDeployError) => void;
   setStep: (step: number) => void;
-  setFurthestStep: (furthestStep: number) => void;
   setSubmissionTab: (tab: number) => void;
   setVotingTab: (tab: number) => void;
   setCharge: (charge: Charge) => void;
   setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => void;
   setPrevChainRefInCharge: (chain: string) => void;
   reset: () => void;
-  setMobileStepTitle: (title: StepTitle | null) => void;
-  resetMobileStepTitle: () => void;
+  setStepConfig: (stepConfig: StepConfig[]) => void;
 }
 export const useDeployContestStore = create<DeployContestState>((set, get) => {
   const initialSubmissionOpen: Date = new Date();
@@ -274,15 +275,23 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
     isSuccess: false,
     errors: [],
     step: 0,
-    furthestStep: 0,
     submissionTab: 0,
     votingTab: 0,
-    mobileStepTitle: null,
   };
 
   return {
     ...initialState,
-
+    stepConfig: [
+      { key: "title", fields: ["title"] },
+      { key: "prompt", fields: ["prompt"] },
+      { key: "summary", fields: ["summary"] },
+      { key: "type", fields: ["type"] },
+      { key: "dates", fields: ["votingOpen", "votingClose", "submissionOpen"] },
+      { key: "submissionRequirements", fields: ["submissionMerkle", "submissionRequirements"] },
+      { key: "votingRequirements", fields: ["votingMerkle"] },
+      { key: "charge", fields: ["charge"] },
+      { key: "customization", fields: ["customization"] },
+    ],
     setDeployContestData: (
       chain: string,
       chainId: number,
@@ -354,14 +363,12 @@ export const useDeployContestStore = create<DeployContestState>((set, get) => {
       set({ errors: errorsCopy });
     },
     setStep: (step: number) => set({ step }),
-    setFurthestStep: (furthestStep: number) => set({ furthestStep }),
     setSubmissionTab: (submissionTab: number) => set({ submissionTab }),
     setVotingTab: (votingTab: number) => set({ votingTab }),
     setCharge: (charge: Charge) => set({ charge }),
     setMinCharge: (minCharge: { minCostToPropose: number; minCostToVote: number }) => set({ minCharge }),
     setPrevChainRefInCharge: (chain: string) => set({ prevChainRefInCharge: chain }),
     reset: () => set({ ...initialState }),
-    setMobileStepTitle: (title: StepTitle | null) => set({ mobileStepTitle: title }),
-    resetMobileStepTitle: () => set({ mobileStepTitle: null }),
+    setStepConfig: (stepConfig: StepConfig[]) => set({ stepConfig }),
   };
 });

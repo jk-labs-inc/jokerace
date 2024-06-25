@@ -1,9 +1,9 @@
 /* eslint-disable react/no-unescaped-entities */
 import { isSupabaseConfigured } from "@helpers/database";
-import { SubmissionType, useDeployContestStore } from "@hooks/useDeployContest/store";
+import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { FC, ReactElement, useState } from "react";
+import { useNextStep } from "../../hooks/useNextStep";
 import CreateContestDeploying from "../../pages/ContestDeploying";
-import { validateStep } from "../../utils/validation";
 
 interface Step {
   title: string;
@@ -15,56 +15,12 @@ interface StepperProps {
 }
 
 const Stepper: FC<StepperProps> = ({ steps }) => {
-  const {
-    step: currentStep,
-    setStep: setCurrentStep,
-    furthestStep,
-    setFurthestStep,
-    errors,
-    isLoading,
-    isSuccess,
-    submissionMerkle,
-    submissionRequirementsOption,
-    votingRequirementsOption,
-    submissionTypeOption,
-    votingMerkle,
-    votingTab,
-    submissionTab,
-    ...state
-  } = useDeployContestStore(state => state);
+  const { step: currentStep, isLoading, isSuccess } = useDeployContestStore(state => state);
   const [hoveredStep, setHoveredStep] = useState<number | null>(null);
+  const onNextStep = useNextStep();
 
   const handleStepClick = (index: number) => {
-    // Navigate backwards always allowed
-    if (index < currentStep) {
-      setCurrentStep(index);
-      return;
-    }
-
-    // Navigate forwards, validate each step from the current up to the clicked step
-    for (let stepToValidate = currentStep; stepToValidate <= index; stepToValidate++) {
-      const errorMessage = validateStep(stepToValidate, state, {
-        submissionMerkle,
-        submissionRequirementsOption,
-        submissionTypeOption,
-        votingMerkle,
-        votingRequirementsOption,
-        votingTab,
-        submissionTab,
-      });
-
-      // If an error is found, don't proceed and break out of the loop
-      if (errorMessage) {
-        setCurrentStep(stepToValidate);
-        return;
-      }
-    }
-
-    // If no errors found, move to the selected step
-    setCurrentStep(index);
-    if (index > furthestStep) {
-      setFurthestStep(index);
-    }
+    onNextStep(index);
   };
 
   if (!isSupabaseConfigured) {
