@@ -2,7 +2,9 @@ import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import { useEffect, useMemo, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { useAccount } from "wagmi";
+import { steps } from "../..";
 import CreateNextButton from "../../components/Buttons/Next";
+import MobileStepper from "../../components/MobileStepper";
 import StepCircle from "../../components/StepCircle";
 import { useNextStep } from "../../hooks/useNextStep";
 import { usePreviousStep } from "../../hooks/usePreviousStep";
@@ -45,17 +47,20 @@ const CreateContestMonetization = () => {
   }, [chain?.name, isConnected, onPreviousStep, unsupportedChain, votingRequirementsOption.value]);
 
   return (
-    <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
-      <div className="col-span-1">
-        <StepCircle step={step + 1} />
-      </div>
-      <div className="col-span-2 ml-10">
-        <p className="text-[24px] text-primary-10 font-bold">{monetizeTitle}</p>
-      </div>
-      <div className="grid col-start-1 md:col-start-2 col-span-2  md:ml-10 mt-8 md:mt-14">
-        {switchLayout}
-        <div className="mt-16">
-          <CreateNextButton step={step + 1} isDisabled={disableNextStep} onClick={() => onNextStep()} />
+    <div className="flex flex-col">
+      {isMobile ? <MobileStepper currentStep={step} totalSteps={steps.length} /> : null}
+      <div className="full-width-create-flow-grid mt-12 lg:mt-[70px] animate-swingInLeft">
+        <div className="col-span-1">
+          <StepCircle step={step + 1} />
+        </div>
+        <div className="col-span-2 ml-10">
+          <p className="text-[24px] text-primary-10 font-bold">{monetizeTitle}</p>
+        </div>
+        <div className="grid col-start-1 md:col-start-2 col-span-2  md:ml-10 mt-8 md:mt-14">
+          {switchLayout}
+          <div className="mt-16">
+            <CreateNextButton step={step + 1} isDisabled={disableNextStep} onClick={() => onNextStep()} />
+          </div>
         </div>
       </div>
     </div>
