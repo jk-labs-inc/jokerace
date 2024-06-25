@@ -111,6 +111,7 @@ import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
 import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
+import { goerli } from "./custom-chains/goerli";
 
 type ChainImages = {
   [key: string]: string;
@@ -219,6 +220,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   inEvmTestnet,
   campTestnet,
   fhenixTestnet,
+  goerli,
   mainnet,
 ];
 
