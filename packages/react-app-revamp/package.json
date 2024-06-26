@@ -13,7 +13,7 @@
     "@babel/core": "7.24.7",
     "@babel/preset-env": "7.24.0",
     "@clustersxyz/sdk": "0.2.2",
-    "@headlessui/react": "2.0.4",
+    "@headlessui/react": "2.1.1",
     "@heroicons/react": "1.0.6",
     "@lens-protocol/client": "2.3.0",
     "@lens-protocol/metadata": "1.2.0",
