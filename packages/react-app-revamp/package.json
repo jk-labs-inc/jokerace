@@ -18,7 +18,7 @@
     "@lens-protocol/client": "2.3.0",
     "@lens-protocol/metadata": "1.2.0",
     "@next/third-parties": "14.2.4",
-    "@rainbow-me/rainbowkit": "2.0.4",
+    "@rainbow-me/rainbowkit": "2.1.2",
     "@supabase/supabase-js": "2.43.5",
     "@tailwindcss/line-clamp": "0.4.4",
     "@tanstack/react-query": "5.45.1",
