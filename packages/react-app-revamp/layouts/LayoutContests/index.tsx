@@ -53,7 +53,7 @@ const LayoutContests = (props: LayoutContestsProps) => {
 
   return (
     <>
-      <div className="relative mt-6 flex-col gap-2">
+      <div className="relative mt-10 flex-col gap-2">
         <div className="flex gap-4 justify-center mb-4 px-2 sm:gap-8 sm:px-0">
           {navLinks.map((link, index) => (
             <Link href={link.href} key={link.href}>
