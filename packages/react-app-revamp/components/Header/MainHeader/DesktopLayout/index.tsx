@@ -11,7 +11,7 @@ interface MainHeaderDesktopLayoutProps {
 
 const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected, address }) => {
   return (
-    <header className="px-10 flex items-center justify-between mt-2 mb-4">
+    <header className="flex items-center justify-between pl-[120px] pr-[60px] mt-8">
       <Link href="/">
         <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">
           J<span className="text-[30px]">oke</span>R<span className="text-[30px]">ace</span>
@@ -19,9 +19,7 @@ const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected
       </Link>
       <div className="flex-1 flex justify-center items-center">
         <div
-          className={`bg-true-black flex items-center gap-5 ${
-            isConnected ? "ml-[100px]" : ""
-          } text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-neutral-10 shadow-create-header`}
+          className={`bg-true-black flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-neutral-10 shadow-create-header`}
         >
           <Link href={ROUTE_VIEW_LIVE_CONTESTS} className="text-neutral-11">
             play
