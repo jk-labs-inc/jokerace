@@ -86,7 +86,7 @@
     "viem": "2.8.14",
     "wagmi": "2.5.11",
     "zod": "3.23.8",
-    "zustand": "4.5.2"
+    "zustand": "4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/typography": "0.5.13",
