@@ -13801,10 +13801,10 @@ react-headless-pagination@1.1.6:
   dependencies:
     clsx "^2.1.0"
 
-react-html-props@1.0.33:
-  version "1.0.33"
-  resolved "https://registry.yarnpkg.com/react-html-props/-/react-html-props-1.0.33.tgz#3c501d06f88779156e14b7f1a6f9b9b3e1071a33"
-  integrity sha512-AmQb+N22J1P0VDPte/ttg3yyvp/j/aVQIPDyuS+5A8azFP3hAMC29Ab2YWM+pja+yy5lo54D6VNqg7UIjqhV6g==
+react-html-props@1.0.36:
+  version "1.0.36"
+  resolved "https://registry.yarnpkg.com/react-html-props/-/react-html-props-1.0.36.tgz#a02c86b744e1d6b571e09eba012634212f0b1069"
+  integrity sha512-vy1jqrkYpcbaySimJIVDy3GcuknMquHclhl0Coj98LxE7e31xTBHyKi/Gbsa1bBEIiWs7F77B1C7GoiiE1kYAw==
 
 react-i18next@^13.2.2:
   version "13.5.0"
