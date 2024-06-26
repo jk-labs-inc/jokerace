@@ -11,7 +11,7 @@ interface MainHeaderDesktopLayoutProps {
 
 const MainHeaderDesktopLayout: FC<MainHeaderDesktopLayoutProps> = ({ isConnected, address }) => {
   return (
-    <header className="px-10 flex items-center justify-between mt-2 mb-4">
+    <header className="flex items-center justify-between pl-[120px] pr-[60px] mt-8">
       <Link href="/">
         <h1 className="font-sabo text-neutral-11 normal-case text-[40px]">
           J<span className="text-[30px]">oke</span>R<span className="text-[30px]">ace</span>

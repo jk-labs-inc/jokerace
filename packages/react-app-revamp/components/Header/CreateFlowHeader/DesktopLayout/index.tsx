@@ -1,8 +1,9 @@
 import { ConnectButtonCustom } from "@components/UI/ConnectButton";
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
-import { ROUTE_VIEW_USER } from "@config/routes";
+import { ROUTE_CREATE_CONTEST, ROUTE_VIEW_LIVE_CONTESTS, ROUTE_VIEW_USER } from "@config/routes";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 
 interface CreateFlowHeaderDesktopLayoutProps {
@@ -10,9 +11,6 @@ interface CreateFlowHeaderDesktopLayoutProps {
   isLoading: boolean;
   isSuccess: boolean;
   pageAction: PageAction;
-  confettiWidth: number;
-  confettiHeight: number;
-  setPageAction?: (pageAction: PageAction) => void;
 }
 
 const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
@@ -20,10 +18,17 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
   isLoading,
   isSuccess,
   pageAction,
-  confettiWidth: width,
-  confettiHeight: height,
-  setPageAction,
 }) => {
+  const router = useRouter();
+
+  const handleNavigation = (action: "play" | "create") => {
+    if (action === "play") {
+      router.push(ROUTE_VIEW_LIVE_CONTESTS);
+    } else {
+      router.push(ROUTE_CREATE_CONTEST);
+    }
+  };
+
   return (
     <header className="flex flex-row items-center justify-between pl-[120px] pr-[60px] mt-8">
       <Link href="/">
@@ -36,13 +41,13 @@ const CreateFlowHeaderDesktopLayout: FC<CreateFlowHeaderDesktopLayoutProps> = ({
         <div className="flex items-center gap-5 text-[24px] font-bold border-2 rounded-[20px] py-[2px] px-[30px] border-neutral-10 shadow-create-header">
           <p
             className={`cursor-pointer ${pageAction === "play" ? "text-neutral-11" : "text-neutral-10"}`}
-            onClick={() => setPageAction?.("play")}
+            onClick={() => handleNavigation("play")}
           >
             play
           </p>
           <p
             className={`cursor-pointer ${pageAction === "create" ? "text-neutral-11" : "text-neutral-10"}`}
-            onClick={() => setPageAction?.("create")}
+            onClick={() => handleNavigation("create")}
           >
             create
           </p>

@@ -4,7 +4,6 @@ import Stepper from "./components/Stepper";
 import CreateContestConfirm from "./pages/ContestConfirm";
 import CreateContestMonetization from "./pages/ContestMonetization";
 import CreateContestParams from "./pages/ContestParams";
-import ContestPlay from "./pages/ContestPlay";
 import CreateContestPrompt from "./pages/ContestPrompt";
 import CreateContestStart, { useCreateContestStartStore } from "./pages/ContestStart";
 import CreateContestSubmissions from "./pages/ContestSubmission";
@@ -42,7 +41,6 @@ export const steps = [
 ];
 
 const CreateFlow = () => {
-  const pageAction = usePageActionStore(state => state.pageAction);
   const { startContest, startContestWithTemplate, setStartContest, setStartContestWithTemplate } =
     useCreateContestStartStore(state => state);
   const { reset } = useDeployContestStore(state => state);
@@ -55,10 +53,6 @@ const CreateFlow = () => {
       setStartContest(true);
     }
   };
-
-  if (pageAction !== "create") {
-    return <ContestPlay />;
-  }
 
   if (!startContest && !startContestWithTemplate) {
     return (
