@@ -1988,10 +1988,10 @@
   resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-1.8.0.tgz#1c8651ea34adb8019b483e09de02aeeb1cd57d79"
   integrity sha512-qR9FwI8QKIveDnUYutvfzbC21UZJJryYrLuZGjeZ/VGz+vXelUkK+xgkOHsvPEdYEdxtgUUq4313N8QtOehJ1Q==
 
-"@clustersxyz/sdk@0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@clustersxyz/sdk/-/sdk-0.2.2.tgz#41b52df5c1502e14c2a7c918f255f6823af4121e"
-  integrity sha512-yRyaWjiq4CGFQKoeaJcfFkcww3a7xYgD3kIblrULQmI647NrSg5qftmHDAaQzoQetmfjQfOmReiCdHzW+rJAig==
+"@clustersxyz/sdk@0.2.3":
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/@clustersxyz/sdk/-/sdk-0.2.3.tgz#dacb583ac3a50c616a71d31bab8f2183e6d3ff48"
+  integrity sha512-aXvJgcwtYgRWZ4oKuG2Ih4GVMCdShcRjlnF32WEzfU3EBJYniu2kJcppows95G4YcyaRY4/4YVZZkCcsCVLwxQ==
 
 "@coinbase/wallet-sdk@3.9.1":
   version "3.9.1"
