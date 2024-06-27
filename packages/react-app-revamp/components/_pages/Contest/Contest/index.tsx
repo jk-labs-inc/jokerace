@@ -78,7 +78,7 @@ const ContestTab = () => {
       <ContestStickyCards />
 
       <div className={`mt-4 ${isInPwaMode ? "mb-12" : "mb-0"}`}>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-2">
           {contestStatus !== ContestStatus.ContestOpen && !isContestLoading && (
             <ProposalStatistics
               contestStatus={contestStatus}

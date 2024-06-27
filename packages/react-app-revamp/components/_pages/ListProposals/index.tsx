@@ -1,7 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import ProposalContent from "@components/_pages/ProposalContent";
-import { formatNumber } from "@helpers/formatNumber";
-import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import useDeleteProposal from "@hooks/useDeleteProposal";
@@ -13,11 +11,11 @@ import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import { useAccount } from "wagmi";
 
 const ProposalSkeleton = ({ count, highlightColor }: { count?: number; highlightColor: string }) => (
-  <SkeletonTheme baseColor="#000000" highlightColor={highlightColor} duration={1}>
+  <SkeletonTheme baseColor="#141414" highlightColor={highlightColor} duration={1}>
     <Skeleton
       borderRadius={10}
       count={count}
-      className="flex flex-col w-full h-80 animate-appear rounded-[10px] border border-neutral-11 mt-3"
+      className="flex flex-col w-full h-80 animate-appear rounded-[10px] mt-3"
     />
   </SkeletonTheme>
 );
@@ -94,59 +92,30 @@ export const ListProposals = () => {
       hasMore={listProposalsData.length < submissionsCount}
       loader={<ProposalSkeleton count={skeletonRemainingLoaderCount} highlightColor="#FFE25B" />}
     >
-      <div className="flex flex-col gap-8 mt-6">
+      <div className="flex flex-col gap-8">
         {listProposalsData.map((proposal, index) => {
           if (deletingProposalIds.includes(proposal.id) && isDeleteInProcess) {
             return <ProposalSkeleton key={proposal.id} highlightColor="#FF78A9" />;
           }
-
           return (
-            <div key={index} className="relative">
-              <div className="relative p-1">
-                {proposal.netVotes > 0 ? (
-                  <div className="absolute top-0 right-0 transform translate-y-[-16px] p-4 z-10 h-7 rounded-[16px] bg-true-black flex items-center justify-center text-[16px] font-bold text-neutral-11 border border-neutral-11">
-                    {formatNumber(proposal.netVotes)} vote{proposal.netVotes !== 1 ? "s" : ""}
-                  </div>
-                ) : null}
-                <ProposalContent
-                  proposal={{
-                    id: proposal.id,
-                    authorEthereumAddress: proposal.author,
-                    content: proposal.description,
-                    exists: proposal.exists,
-                    isContentImage: proposal.isContentImage,
-                    tweet: proposal.tweet,
-                    votes: proposal.netVotes,
-                    rank: proposal.rank,
-                    isTied: proposal.isTied,
-                    commentsCount: proposal.commentsCount,
-                  }}
-                />
-              </div>
-
-              {allowDelete && (
-                <div
-                  className="absolute cursor-pointer -bottom-0 right-0 z-10"
-                  onClick={() => toggleProposalSelection(proposal.id)}
-                >
-                  <div className="relative h-6 w-6">
-                    <CheckIcon
-                      className={`absolute transform transition-all ease-in-out duration-300 
-        ${selectedProposalIds.includes(proposal.id) ? "opacity-100" : "opacity-0"}
-       h-8 text-primary-10 bg-white bg-true-black border border-neutral-11 hover:text-primary-9 
-       shadow-md hover:shadow-lg rounded-md`}
-                    />
-
-                    <TrashIcon
-                      className={`absolute transition-opacity duration-300  ${
-                        selectedProposalIds.includes(proposal.id) ? "opacity-0" : "opacity-100"
-                      }
-        h-8 text-negative-11 bg-true-black hover:text-negative-10`}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+            <ProposalContent
+              key={index}
+              proposal={{
+                id: proposal.id,
+                authorEthereumAddress: proposal.author,
+                content: proposal.description,
+                exists: proposal.exists,
+                isContentImage: proposal.isContentImage,
+                tweet: proposal.tweet,
+                votes: proposal.netVotes,
+                rank: proposal.rank,
+                isTied: proposal.isTied,
+                commentsCount: proposal.commentsCount,
+              }}
+              allowDelete={allowDelete}
+              selectedProposalIds={selectedProposalIds}
+              toggleProposalSelection={toggleProposalSelection}
+            />
           );
         })}
       </div>
