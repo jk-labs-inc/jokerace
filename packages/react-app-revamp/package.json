@@ -15,7 +15,7 @@
     "@clustersxyz/sdk": "0.2.3",
     "@headlessui/react": "2.1.1",
     "@heroicons/react": "1.0.6",
-    "@lens-protocol/client": "2.3.0",
+    "@lens-protocol/client": "2.3.1",
     "@lens-protocol/metadata": "1.2.0",
     "@next/third-parties": "14.2.4",
     "@rainbow-me/rainbowkit": "2.1.2",

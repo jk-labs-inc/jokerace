@@ -2989,10 +2989,10 @@
     ethers "^5.7.2"
     tslib "^2.6.2"
 
-"@lens-protocol/client@2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-2.3.0.tgz#973925da542de6a9b3b8bb8a3185c3fc4dc295ca"
-  integrity sha512-NNNT7Bf5WsVrz22NWTlDYt/0RbRWvAgPv2M9Q+eBh0LKSHvZ4+imN9hwVeoMYmWA1EY4wkITbxwyUBFvJeCaSg==
+"@lens-protocol/client@2.3.1":
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/@lens-protocol/client/-/client-2.3.1.tgz#833122c7780ea2ddd797e0d2272845d9c1214205"
+  integrity sha512-Ey1yg8N2lp51wyWXKacOs36aOHlmCsF4ysCBJH4C85wwxIFBKbN5jXZX9Zxd1Gfe658SxKU2zGjBsg3X6LikiA==
   dependencies:
     "@ethersproject/abi" "^5.7.0"
     "@ethersproject/abstract-signer" "^5.7.0"
