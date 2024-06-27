@@ -45,7 +45,7 @@
     "fuse.js": "7.0.0",
     "hono": "4.2.4",
     "i18next": "23.11.5",
-    "interweave": "13.0.0",
+    "interweave": "13.1.0",
     "interweave-autolink": "5.0.0",
     "lodash": "4.17.21",
     "merkletreejs": "0.3.11",
