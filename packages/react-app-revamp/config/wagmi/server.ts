@@ -85,6 +85,7 @@ import { scroll } from "./custom-chains/scroll";
 import { scrollSepoliaTestnet } from "./custom-chains/scrollSepoliaTestnet";
 import { scrollTestnet } from "./custom-chains/scrollTestnet";
 import { sei } from "./custom-chains/sei";
+import { seiTestnet } from "./custom-chains/seiTestnet";
 import { sepolia } from "./custom-chains/sepolia";
 import { syndicateFrame } from "./custom-chains/syndicateFrame";
 import { taiko } from "./custom-chains/taiko";
@@ -196,6 +197,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   campTestnet,
   fhenixTestnet,
   goerli,
+  seiTestnet,
   mainnet,
 ];
 

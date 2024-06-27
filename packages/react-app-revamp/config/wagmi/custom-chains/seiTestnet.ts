@@ -1,8 +1,8 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
-export const sei: Chain = {
-  id: 1329,
-  name: "sei",
+export const seiTestnet: Chain = {
+  id: 1328,
+  name: "seiTestnet",
   iconUrl: "/sei.png",
   nativeCurrency: {
     decimals: 18,
@@ -11,10 +11,10 @@ export const sei: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://evm-rpc.sei-apis.com"],
+      http: ["https://evm-rpc-testnet.sei-apis.com/"],
     },
     default: {
-      http: ["https://evm-rpc.sei-apis.com"],
+      http: ["https://evm-rpc-testnet.sei-apis.com/"],
     },
   },
   blockExplorers: {
