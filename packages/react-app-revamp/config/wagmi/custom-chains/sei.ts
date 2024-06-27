@@ -11,10 +11,10 @@ export const sei: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://evm-rpc-arctic-1.sei-apis.com"],
+      http: ["https://evm-rpc.sei-apis.com"],
     },
     default: {
-      http: ["https://evm-rpc-arctic-1.sei-apis.com"],
+      http: ["https://evm-rpc.sei-apis.com"],
     },
   },
   blockExplorers: {
