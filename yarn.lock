@@ -10783,10 +10783,10 @@ interweave-ssr@2.0.0:
     parse5 "^6.0.1"
     style-parser "^1.1.1"
 
-interweave@13.0.0:
-  version "13.0.0"
-  resolved "https://registry.yarnpkg.com/interweave/-/interweave-13.0.0.tgz#68fdaa6bde65cf296ba74829bb3746d2a5455a2b"
-  integrity sha512-Mckwj+ix/VtrZu1bRBIIohwrsXj12ZTvJCoYUMZlJmgtvIaQCj0i77eSZ63ckbA1TsPrz2VOvLW9/kTgm5d+mw==
+interweave@13.1.0:
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/interweave/-/interweave-13.1.0.tgz#4b7a0a87a7eb32001bef64525f68d95296dee03c"
+  integrity sha512-JIDq0+2NYg0cgL7AB26fBcV0yZdiJvPDBp+aF6k8gq6Cr1kH5Gd2/Xqn7j8z+TGb8jCWZn739jzalCz+nPYwcA==
   dependencies:
     escape-html "^1.0.3"
 
