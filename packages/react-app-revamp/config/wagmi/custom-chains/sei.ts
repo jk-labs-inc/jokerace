@@ -1,7 +1,7 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 
 export const sei: Chain = {
-  id: 713715,
+  id: 1329,
   name: "sei",
   iconUrl: "/sei.png",
   nativeCurrency: {
