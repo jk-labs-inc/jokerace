@@ -35,7 +35,7 @@
     "@wagmi/connectors": "4.3.10",
     "@wagmi/core": "2.6.9",
     "cheerio": "1.0.0-rc.12",
-    "class-variance-authority": "0.2.1",
+    "class-variance-authority": "0.7.0",
     "compare-versions": "6.1.0",
     "date-fns": "2.28.0",
     "eslint": "7.23.0",
