@@ -10770,10 +10770,10 @@ internal-slot@^1.0.5, internal-slot@^1.0.7:
     hasown "^2.0.0"
     side-channel "^1.0.4"
 
-interweave-autolink@5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/interweave-autolink/-/interweave-autolink-5.0.0.tgz#7ecd7c921dae8bfc55c27e18d2f63d8fbcc1e931"
-  integrity sha512-Hg+QTtul/57LesVouaBrvgknT01+2vx4Te8VOwV7PjEvmP0LQs2XYD2ZyF5uWRTn51mnSESAtz/Kx/MElwS50Q==
+interweave-autolink@5.1.1:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/interweave-autolink/-/interweave-autolink-5.1.1.tgz#1f3304991dc7a54fdf7607fb34995c91b24b0c05"
+  integrity sha512-IbIFle1DvHZYL6GLtUFWRT6BDFXnNHF106Bkkdx8J4SjjkLrftCHGVStcYRh7jEdD9uS6MeF55Oy+FvvBg12Sg==
 
 interweave-ssr@2.0.0:
   version "2.0.0"

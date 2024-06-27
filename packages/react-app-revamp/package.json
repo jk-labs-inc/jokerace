@@ -46,7 +46,7 @@
     "hono": "4.2.4",
     "i18next": "23.11.5",
     "interweave": "13.1.0",
-    "interweave-autolink": "5.0.0",
+    "interweave-autolink": "5.1.1",
     "lodash": "4.17.21",
     "merkletreejs": "0.3.11",
     "moment": "2.29.4",
