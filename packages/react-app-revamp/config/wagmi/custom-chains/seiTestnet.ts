@@ -18,7 +18,7 @@ export const seiTestnet: Chain = {
     },
   },
   blockExplorers: {
-    etherscan: { name: "Sei Block Explorer", url: "https://seiTestnettrace.com/" },
-    default: { name: "Sei Block Explorer", url: "https://seiTestnettrace.com/" },
+    etherscan: { name: "Sei Block Explorer", url: "https://seitrace.com/" },
+    default: { name: "Sei Block Explorer", url: "https://seitrace.com/" },
   },
 };
