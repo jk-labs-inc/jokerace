@@ -29,7 +29,7 @@
     "@tiptap/pm": "2.4.0",
     "@tiptap/react": "2.4.0",
     "@tiptap/starter-kit": "2.4.0",
-    "@types/lodash": "4.17.5",
+    "@types/lodash": "4.17.6",
     "@types/node": "18.19.39",
     "@typescript-eslint/parser": "4.33.0",
     "@wagmi/connectors": "4.3.10",
@@ -91,7 +91,7 @@
   "devDependencies": {
     "@tailwindcss/typography": "0.5.13",
     "@types/gtag.js": "0.0.20",
-    "@types/lodash": "4.17.5",
+    "@types/lodash": "4.17.6",
     "@types/papaparse": "5.3.14",
     "@types/react": "18.2.64",
     "@types/react-csv": "1.1.10",
