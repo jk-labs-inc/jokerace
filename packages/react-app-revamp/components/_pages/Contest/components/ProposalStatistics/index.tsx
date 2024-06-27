@@ -46,7 +46,7 @@ const ProposalStatistics: FC<ProposalStatisticsProps> = ({ contestStatus, onMenu
         ) : null}
         <p className="text-[24px] text-neutral-11 font-bold normal-case">{contestStatusTitle}</p>
       </div>
-      <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center">
+      <div className="flex flex-col md:flex-row gap-4 md:justify-between md:items-center border-b border-primary-2 pb-4">
         <ProposalStatisticsPanel submissionsCount={submissionsCount} contestStatus={contestStatus} />
         {submissionsCount > 1 ? (
           <SortProposalsDropdown
