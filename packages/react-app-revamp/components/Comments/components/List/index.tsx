@@ -2,9 +2,10 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { ChevronUpIcon } from "@heroicons/react/outline";
 import { COMMENTS_PER_PAGE } from "@hooks/useComments";
 import { Comment as CommentType } from "@hooks/useComments/store";
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import Comment from "../Comment";
+import { useSearchParams } from "next/navigation";
 
 interface CommentsListProps {
   comments: CommentType[];
@@ -53,11 +54,19 @@ const CommentsList: FC<CommentsListProps> = ({
   currentPage,
   totalPages,
 }) => {
+  const query = useSearchParams();
   const [selectedCommentIds, setSelectedCommentIds] = useState<string[]>([]);
   const showDeleteButton = selectedCommentIds.length > 0 && !isDeleting;
   const initialSkeletonCount = numberOfComments ? Math.min(numberOfComments, COMMENTS_PER_PAGE) : COMMENTS_PER_PAGE;
   const remainingCommentsToLoad = numberOfComments ? numberOfComments - comments.length : 0;
   const skeletonRemainingLoaderCount = Math.min(remainingCommentsToLoad, COMMENTS_PER_PAGE);
+  const commentsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (query.has("comments")) {
+      commentsRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [query]);
 
   useEffect(() => {
     if (isDeletingSuccess) {
@@ -98,7 +107,7 @@ const CommentsList: FC<CommentsListProps> = ({
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-10" ref={commentsRef}>
       {comments.map(comment => {
         if (selectedCommentIds.includes(comment.id) && isDeleting) {
           return <CommentsSkeleton key={comment.id} length={1} highlightColor="#FF78A9" />;
