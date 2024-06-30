@@ -100,7 +100,7 @@
     "@types/react-virtualized": "9.21.30",
     "@types/react-window": "1.8.8",
     "@types/underscore": "1.11.15",
-    "@types/uuid": "9.0.8",
+    "@types/uuid": "10.0.0",
     "@vercel/node": "3.2.0",
     "autoprefixer": "10.4.19",
     "eslint-config-next": "13.5.6",
