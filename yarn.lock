@@ -10611,10 +10611,10 @@ hono-og@0.0.27:
     "@vercel/og" "~0.6.2"
     workers-og "~0.0.23"
 
-hono@4.4.9:
-  version "4.4.9"
-  resolved "https://registry.yarnpkg.com/hono/-/hono-4.4.9.tgz#9b1d3943c987b29360304d20c1867320152def50"
-  integrity sha512-VW1hnYipHL/XsnSYiCTLJ+Z7iisZYWwSOiKXm9RBV2NKPxNqjfaHqeMFiDl11fK893ofmErvRpX20+FTNjZIjA==
+hono@4.4.10:
+  version "4.4.10"
+  resolved "https://registry.yarnpkg.com/hono/-/hono-4.4.10.tgz#f980feea3b74dd4edc9249a0726165df13c50e16"
+  integrity sha512-z6918u9rXRU5CCisMHd2uUVoQXcNyUrUMmYY7VH10v4HJG7+hqgMK/G8YNTd13C6s4rBfzF09iz8VpOip9qG3A==
 
 html-parse-stringify@^3.0.1:
   version "3.0.1"
