@@ -127,7 +127,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
       />
 
       {!isContentHidden ? (
-        <div className="animate-reveal md:mx-8 flex flex-col gap-4">
+        <div className="md:mx-8 flex flex-col gap-4">
           <Link
             className="p-4 rounded-[8px] bg-primary-1 border border-transparent hover:border-neutral-9 transition-colors duration-300 ease-in-out overflow-hidden"
             href={`/contest/${chainName}/${contestAddress}/submission/${proposal.id}`}
