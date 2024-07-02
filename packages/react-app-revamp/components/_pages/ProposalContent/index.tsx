@@ -74,14 +74,9 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   const element = node.tagName.toLowerCase();
 
   if (element === "img") {
-    return <MarkdownImage imageSize="compact" src={node.getAttribute("src") ?? ""} />;
+    console.log("here?");
+    return <MarkdownImage src={node.getAttribute("src") ?? ""} />;
   }
-
-  // if (element === "div") {
-  //   return <div className="flex gap-5 flex-col md:flex-row items-start md:items-center markdown">{children}</div>;
-  // } else if (element === "img") {
-  //   return <MarkdownImage imageSize="compact" src={node.getAttribute("src") ?? ""} />;
-  // }
 };
 
 const ProposalContent: FC<ProposalContentProps> = ({
@@ -166,7 +161,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
               <Tweet apiUrl={`/api/tweet/${proposal.tweet.id}`} id={proposal.tweet.id} />
             </div>
           ) : (
-            <Interweave className="prose prose-invert" content={proposal.content} />
+            <Interweave className="prose prose-invert" content={proposal.content} transform={transform} />
           )}
         </Link>
         <div className="flex items-center justify-between">
