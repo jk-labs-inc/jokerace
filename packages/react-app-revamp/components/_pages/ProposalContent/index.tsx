@@ -74,8 +74,18 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   const element = node.tagName.toLowerCase();
 
   if (element === "img") {
-    console.log("here?");
     return <MarkdownImage src={node.getAttribute("src") ?? ""} />;
+  }
+
+  if (element === "a") {
+    const content = node.textContent || "";
+    const truncatedContent = content.length > 70 ? content.substring(0, 67) + "..." : content;
+
+    return (
+      <a href={node.getAttribute("href") ?? "#"} target="_blank" rel="noopener noreferrer">
+        {truncatedContent}
+      </a>
+    );
   }
 };
 
