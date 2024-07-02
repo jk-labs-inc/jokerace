@@ -2,6 +2,7 @@
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
+import { loadFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
 import { ChatAltIcon, CheckIcon, TrashIcon } from "@heroicons/react/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
@@ -13,7 +14,7 @@ import moment from "moment";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { useMediaQuery } from "react-responsive";
 import { Tweet } from "react-tweet";
 import { useAccount } from "wagmi";
@@ -33,6 +34,13 @@ export interface Proposal {
   commentsCount: number;
 }
 
+interface ContestVisibilities {
+  [contestId: string]: string[];
+}
+
+const HIDDEN_PROPOSALS_STORAGE_KEY = "hiddenProposalsPerContest";
+const BROWSER_SESSION_CHECK_KEY = "browserSessionCheck";
+
 interface ProposalContentProps {
   proposal: Proposal;
   allowDelete: boolean;
@@ -46,6 +54,14 @@ const transform = (node: HTMLElement, children: Node[]): ReactNode => {
   if (element === "img") {
     return <img src={node.getAttribute("src") ?? ""} alt={"image"} className="rounded-[16px]" />;
   }
+};
+
+const clearStorageIfNeeded = () => {
+  let session = sessionStorage.getItem(BROWSER_SESSION_CHECK_KEY);
+  if (session == null) {
+    removeFromLocalStorage(HIDDEN_PROPOSALS_STORAGE_KEY);
+  }
+  sessionStorage.setItem(BROWSER_SESSION_CHECK_KEY, "1");
 };
 
 const ProposalContent: FC<ProposalContentProps> = ({
@@ -71,6 +87,15 @@ const ProposalContent: FC<ProposalContentProps> = ({
     pathname: `/contest/${chainName}/${contestAddress}/submission/${proposal.id}`,
     query: { comments: "comments" },
   };
+
+  useEffect(() => {
+    clearStorageIfNeeded();
+
+    const visibilityState = loadFromLocalStorage<ContestVisibilities>(HIDDEN_PROPOSALS_STORAGE_KEY, {});
+    const hiddenProposals = visibilityState[contestAddress] || [];
+
+    setIsContentHidden(hiddenProposals.includes(proposal.id));
+  }, [contestAddress, proposal.id]);
 
   let truncatedContent = "";
 
@@ -112,7 +137,30 @@ const ProposalContent: FC<ProposalContentProps> = ({
   };
 
   const toggleContentVisibility = () => {
-    setIsContentHidden(!isContentHidden);
+    const newVisibility = !isContentHidden;
+    setIsContentHidden(newVisibility);
+
+    const visibilityState = loadFromLocalStorage<ContestVisibilities>(HIDDEN_PROPOSALS_STORAGE_KEY, {});
+    let hiddenProposals = visibilityState[contestAddress] || [];
+
+    if (newVisibility) {
+      // addd proposal id to hidden list if not already there
+      if (!hiddenProposals.includes(proposal.id)) {
+        hiddenProposals = [...hiddenProposals, proposal.id];
+      }
+    } else {
+      // remove proposal id from hidden list
+      hiddenProposals = hiddenProposals.filter(id => id !== proposal.id);
+    }
+
+    if (hiddenProposals.length > 0) {
+      visibilityState[contestAddress] = hiddenProposals;
+    } else {
+      // if there are no hidden proposals, remove the contest from the visibility state
+      delete visibilityState[contestAddress];
+    }
+
+    saveToLocalStorage(HIDDEN_PROPOSALS_STORAGE_KEY, visibilityState);
   };
 
   return (
