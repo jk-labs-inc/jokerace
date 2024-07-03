@@ -1,6 +1,6 @@
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
-import { Comment } from "@hooks/useComments/store";
+import { Comment as CommentType } from "@hooks/useComments/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
@@ -8,7 +8,7 @@ import moment from "moment";
 import { FC } from "react";
 import { useAccount } from "wagmi";
 interface CommentProps {
-  comment: Comment;
+  comment: CommentType;
   toggleCommentSelection?: (commentId: string) => void;
   selectedCommentIds: string[];
 }
