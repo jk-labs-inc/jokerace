@@ -1,6 +1,6 @@
 import { IconClose } from "@components/UI/Icons";
 import { Dialog } from "@headlessui/react";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { FC, useCallback } from "react";
 
 interface DialogModalProps {

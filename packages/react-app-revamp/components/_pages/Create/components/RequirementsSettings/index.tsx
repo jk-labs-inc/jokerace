@@ -2,7 +2,7 @@
 import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
 import { chains, chainsImages } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FilteredToken } from "@hooks/useTokenList";
 import Image from "next/image";
@@ -165,7 +165,7 @@ const CreateRequirementsSettings: FC<CreateRequirementsSettingsProps> = ({
               )}
 
               {tokenDetailsExist ? (
-                <XIcon
+                <XMarkIcon
                   className="w-6 cursor-pointer text-negative-11 hover:text-negative-10 transition-all duration-300"
                   onClick={onRemoveToken}
                 />

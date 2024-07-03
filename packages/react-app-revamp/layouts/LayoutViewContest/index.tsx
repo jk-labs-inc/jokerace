@@ -17,7 +17,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { populateBugReportLink } from "@helpers/githubIssue";
 import { generateUrlContest } from "@helpers/share";
 import { MAX_MS_TIMEOUT } from "@helpers/timeout";
-import { RefreshIcon } from "@heroicons/react/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useAccountChange } from "@hooks/useAccountChange";
 import { useContest } from "@hooks/useContest";
 import { useContestStore } from "@hooks/useContest/store";
@@ -230,7 +230,7 @@ const LayoutViewContest = ({ children }: { children: React.ReactNode }) => {
                         className="standalone-pwa w-8 h-8 items-center rounded-[10px] border border-neutral-11 cursor-pointer"
                         onClick={() => window.location.reload()}
                       >
-                        <RefreshIcon className="w-4 h-4 m-auto" />
+                        <ArrowPathIcon className="w-4 h-4 m-auto" />
                       </div>
                     </div>
                   </div>

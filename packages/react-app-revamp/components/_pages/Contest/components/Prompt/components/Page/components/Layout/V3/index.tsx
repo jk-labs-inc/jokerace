@@ -1,4 +1,4 @@
-import { ChevronUpIcon } from "@heroicons/react/outline";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { Interweave } from "interweave";
 import { UrlMatcher } from "interweave-autolink";

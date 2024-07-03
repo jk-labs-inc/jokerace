@@ -1,5 +1,5 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { ChevronUpIcon } from "@heroicons/react/outline";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { COMMENTS_PER_PAGE } from "@hooks/useComments";
 import { Comment as CommentType } from "@hooks/useComments/store";
 import { FC, useEffect, useRef, useState } from "react";

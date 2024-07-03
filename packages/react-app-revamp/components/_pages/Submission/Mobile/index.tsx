@@ -9,7 +9,7 @@ import ListProposalVotes from "@components/_pages/ListProposalVotes";
 import { formatNumber } from "@helpers/formatNumber";
 import ordinalize from "@helpers/ordinalize";
 import { generateUrlSubmissions } from "@helpers/share";
-import { ArrowLeftIcon } from "@heroicons/react/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
 import { useProposalStore } from "@hooks/useProposal/store";

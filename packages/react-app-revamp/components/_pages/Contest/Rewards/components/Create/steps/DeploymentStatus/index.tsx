@@ -1,5 +1,5 @@
 import { formatBalance } from "@helpers/formatBalance";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/outline";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 import { useCreateRewardsStore } from "../../store";
