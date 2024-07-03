@@ -14,7 +14,7 @@
     "@babel/preset-env": "7.24.0",
     "@clustersxyz/sdk": "0.2.3",
     "@headlessui/react": "2.1.1",
-    "@heroicons/react": "1.0.6",
+    "@heroicons/react": "2.1.4",
     "@lens-protocol/client": "2.3.1",
     "@lens-protocol/metadata": "1.2.0",
     "@next/third-parties": "14.2.4",
