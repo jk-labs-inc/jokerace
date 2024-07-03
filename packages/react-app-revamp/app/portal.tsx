@@ -1,6 +1,6 @@
 "use client";
 import { Portal as HeadlessUiPortal } from "@headlessui/react";
-import { ToastContainer } from "react-toastify";
+import { Slide, ToastContainer } from "react-toastify";
 
 const Portal = () => {
   return (
@@ -16,6 +16,7 @@ const Portal = () => {
         pauseOnHover
         theme="colored"
         bodyClassName={() => "text-[16px] flex items-center"}
+        transition={Slide}
       />
     </HeadlessUiPortal>
   );
