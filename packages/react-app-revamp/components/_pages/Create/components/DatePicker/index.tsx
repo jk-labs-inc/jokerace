@@ -49,28 +49,6 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ onChange, minDate, error
         timeCaption="time"
         dateFormat="MMMM d, yyyy h:mm aa z"
         minDate={minDate}
-        popperModifiers={[
-          {
-            name: "offset",
-            options: {
-              offset: [5, 10],
-            },
-          },
-          {
-            name: "preventOverflow",
-            options: {
-              rootBoundary: "viewport",
-              tether: false,
-              altAxis: true,
-            },
-          },
-          {
-            name: "flip",
-            options: {
-              fallbackPlacements: [],
-            },
-          },
-        ]}
         customInput={
           <CustomInput
             value={""}
