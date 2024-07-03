@@ -9,7 +9,7 @@ import {
   ROUTE_VIEW_CONTESTS,
   ROUTE_VIEW_LIVE_CONTESTS,
 } from "@config/routes";
-import { HomeIcon, PencilAltIcon, SearchIcon } from "@heroicons/react/outline";
+import { HomeIcon, PencilAltIcon, SearchIcon } from "@heroicons/react/24/outline";
 import { PageAction } from "@hooks/useCreateFlowAction/store";
 import Image from "next/image";
 import Link from "next/link";

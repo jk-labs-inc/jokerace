@@ -1,6 +1,6 @@
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import ordinalize from "@helpers/ordinalize";
-import { MinusIcon, PlusIcon } from "@heroicons/react/outline";
+import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
 
 interface ProposalContentInfoProps {

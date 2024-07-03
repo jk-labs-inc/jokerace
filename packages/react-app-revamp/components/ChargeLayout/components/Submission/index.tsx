@@ -1,7 +1,7 @@
 import Collapsible from "@components/UI/Collapsible";
 import { formatBalance } from "@helpers/formatBalance";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { ChevronUpIcon } from "@heroicons/react/outline";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { SplitFeeDestination } from "@hooks/useDeployContest/types";
 import Image from "next/image";
 import { FC, useState } from "react";

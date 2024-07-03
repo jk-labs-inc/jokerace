@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { ClipboardIcon, TrashIcon } from "@heroicons/react/outline";
+import { ClipboardIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
 import { FundPoolToken, useFundPoolStore } from "../../store";
 import { formatBalance } from "@helpers/formatBalance";

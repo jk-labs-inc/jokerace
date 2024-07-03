@@ -3,7 +3,7 @@ import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumberAbbreviated } from "@helpers/formatNumber";
 import { Tweet as TweetType } from "@helpers/isContentTweet";
 import { loadFromLocalStorage, removeFromLocalStorage, saveToLocalStorage } from "@helpers/localStorage";
-import { ChatAltIcon, CheckIcon, TrashIcon } from "@heroicons/react/outline";
+import { ChatBubbleLeftEllipsisIcon, CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCastVotesStore } from "@hooks/useCastVotes/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { ContestStatus, useContestStatusStore } from "@hooks/useContestStatus/store";
@@ -221,7 +221,7 @@ const ProposalContent: FC<ProposalContentProps> = ({
                 shallow
                 scroll={false}
               >
-                <ChatAltIcon className="w-6 h-6 text-neutral-9 flex-shrink-0" />
+                <ChatBubbleLeftEllipsisIcon className="w-6 h-6 text-neutral-9 flex-shrink-0" />
                 <p className="text-[16px] text-neutral-9 font-bold flex-grow text-center">{proposal.commentsCount}</p>
               </Link>
             </div>

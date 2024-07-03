@@ -1,4 +1,4 @@
-import { DocumentAddIcon } from "@heroicons/react/outline";
+import { DocumentAddIcon } from "@heroicons/react/24/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useMemo, useRef, useState } from "react";

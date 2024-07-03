@@ -1,7 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import { MediaQuery } from "@helpers/mediaQuery";
 import { generateLensShareUrlForContest, generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
-import { DuplicateIcon } from "@heroicons/react/outline";
+import { DuplicateIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { FC, Fragment } from "react";
 

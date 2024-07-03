@@ -1,4 +1,4 @@
-import { SearchIcon } from "@heroicons/react/outline";
+import { SearchIcon } from "@heroicons/react/24/outline";
 import { TOKENLISTOOOR_SUPPORTED_CHAIN_IDS } from "@hooks/useTokenList";
 import { ChangeEvent, FC, useState } from "react";
 import { debounce } from "underscore";

@@ -2,7 +2,7 @@
 import TokenSearchModal, { TokenSearchModalType } from "@components/TokenSearchModal";
 import { chains, chainsImages } from "@config/wagmi";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
-import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon, XIcon } from "@heroicons/react/24/outline";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FilteredToken } from "@hooks/useTokenList";
 import Image from "next/image";

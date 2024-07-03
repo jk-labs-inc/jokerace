@@ -1,4 +1,4 @@
-import { SearchIcon } from "@heroicons/react/outline";
+import { SearchIcon } from "@heroicons/react/24/outline";
 import React, { ChangeEvent, useState } from "react";
 import { debounce } from "underscore";
 

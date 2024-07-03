@@ -1,6 +1,6 @@
 import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon, XIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon, XIcon } from "@heroicons/react/24/outline";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC, Fragment, useEffect, useState } from "react";
 

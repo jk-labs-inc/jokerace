@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { formatBalance } from "@helpers/formatBalance";
-import { ChevronDownIcon, RefreshIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon, RefreshIcon } from "@heroicons/react/24/outline";
 import { FilteredToken } from "@hooks/useTokenList";
 import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 import Image from "next/image";

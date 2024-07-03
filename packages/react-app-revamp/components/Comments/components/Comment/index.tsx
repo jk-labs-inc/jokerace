@@ -1,5 +1,5 @@
 import UserProfileDisplay from "@components/UI/UserProfileDisplay";
-import { CheckIcon, TrashIcon } from "@heroicons/react/outline";
+import { CheckIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Comment } from "@hooks/useComments/store";
 import { useContestStore } from "@hooks/useContest/store";
 import { Interweave } from "interweave";

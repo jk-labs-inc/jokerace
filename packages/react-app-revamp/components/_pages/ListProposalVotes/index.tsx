@@ -3,7 +3,7 @@ import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
-import { ChevronUpIcon, RefreshIcon } from "@heroicons/react/outline";
+import { ChevronUpIcon, RefreshIcon } from "@heroicons/react/24/outline";
 import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVotes";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useRef, useState } from "react";

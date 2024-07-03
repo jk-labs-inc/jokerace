@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { formatNumber } from "@helpers/formatNumber";
-import { BadgeCheckIcon } from "@heroicons/react/outline";
+import { BadgeCheckIcon } from "@heroicons/react/24/outline";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FC, useState } from "react";
 
