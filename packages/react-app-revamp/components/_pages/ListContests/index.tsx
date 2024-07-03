@@ -1,6 +1,6 @@
 import Search from "@components/Search";
 import Sort, { SortOption } from "@components/Sort";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { FC, useState } from "react";
 import { Pagination } from "react-headless-pagination";
 import Contest from "./Contest";

@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { Prompt } from "@hooks/useDeployContest/store";
 import { load } from "cheerio";
 import { Interweave } from "interweave";

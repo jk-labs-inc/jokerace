@@ -2,10 +2,6 @@
 
 Check out the live site at [jokerace.io](https://jokerace.io/)!
 
-Also, our smart contracts were audited by Certik in September 2023, check out the audit report [here](https://github.com/jk-labs-inc/jokerace-audits/blob/main/audit-reports/Sept23_Certik_Final_Report.pdf)!
-
-One other fun thing: you can find v1 at [jokedao.jokedao.io](https://jokedao.jokedao.io)!
-
 ## Pre-requisites
 - `yarn` installed
 - `node` version >= `17.0.0`
@@ -42,9 +38,6 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
 
-### Usage Note
-If you are not running Supabase, then the search functionality will not work. You can still access contests and the full functionality of the site, though, by visiting the URL with the format http://localhost:3000/contest/{chain}/{contest_address} where `chain` is the name of the chain that the contest is on as specified [here](https://github.com/jk-labs-inc/jokerace/blob/staging/packages/react-app-revamp/config/wagmi/index.ts), and `contest_address` is the address of the contest contract on that chain.
-
 ## Development Notes
 
 ### Updating bytecode
@@ -69,6 +62,10 @@ You will also need to do two more things if the ABI is changed:
 [Here](https://github.com/jk-labs-inc/jokerace/pull/111/commits/79072b212e603bcca0418dd5057557379444194f) is an example PR that does all of these steps.
 
 *Make sure to do all of these steps before committing any changes to the contract code to make sure that the bytecode that the site is deploying is the same as what you have written in the `forge` package! And also so that the site is able to correctly version a given deployed contract's ABI when reading from it.*
+
+## Audits
+
+Our smart contracts were audited by Certik in September 2023, the audit report is available [here](https://github.com/jk-labs-inc/jokerace-audits/blob/main/audit-reports/Sept23_Certik_Final_Report.pdf).
 
 ## Built with
 - NextJS

@@ -1,5 +1,5 @@
 import { chains } from "@config/wagmi";
-import { InformationCircleIcon } from "@heroicons/react/outline";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { FilteredToken, TOKENLISTOOOR_SUPPORTED_CHAIN_IDS } from "@hooks/useTokenList";
 import { FC, useState } from "react";
 import TokenSearchModalChainDropdown, { Option } from "../components/ChainDropdown";

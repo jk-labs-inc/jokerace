@@ -1,5 +1,5 @@
 import Collapsible from "@components/UI/Collapsible";
-import { ChevronUpIcon } from "@heroicons/react/outline";
+import { ChevronUpIcon } from "@heroicons/react/24/outline";
 import { Interweave, Node } from "interweave";
 import { UrlMatcher } from "interweave-autolink";
 import { FC, ReactNode } from "react";

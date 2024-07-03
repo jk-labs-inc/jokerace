@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 import { ROUTE_VIEW_CONTESTS } from "@config/routes";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/outline";
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 import { CommentsResult, CommentsWithContest } from "lib/user/types";
 import Link from "next/link";
 import { FC } from "react";

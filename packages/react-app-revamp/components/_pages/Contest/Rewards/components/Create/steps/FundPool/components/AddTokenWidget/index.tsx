@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { formatBalance } from "@helpers/formatBalance";
-import { ChevronDownIcon, RefreshIcon } from "@heroicons/react/outline";
+import { ArrowPathIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { FilteredToken } from "@hooks/useTokenList";
 import { RainbowKitChain } from "@rainbow-me/rainbowkit/dist/components/RainbowKitProvider/RainbowKitChainContext";
 import Image from "next/image";
@@ -243,7 +243,7 @@ const AddTokenWidget: FC<AddTokenWidgetProps> = ({
                       <p className="text-[12px] text-positive-11 infinite-submissions uppercase">max</p>
                     </div>
                   ) : null}
-                  <RefreshIcon
+                  <ArrowPathIcon
                     className="w-5 h-5 text-neutral-14 hover:text-neutral-11 transition-all cursor-pointer opacity-0 group-hover:opacity-100 duration-300"
                     onClick={handleRefreshBalance}
                   />
