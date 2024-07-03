@@ -1,7 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useRef, useState } from "react";
-import { MenuIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import Image from "next/image";
+import { Fragment, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 
 type BurgerMenuProps = {
@@ -69,7 +69,7 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
 
   return (
     <>
-      <MenuIcon className="h-[26px] w-[26px]" onClick={onMenuOpen} aria-label="Open menu" />
+      <Bars3Icon className="h-[26px] w-[26px]" onClick={onMenuOpen} aria-label="Open menu" />
       {typeof window !== "undefined" && ReactDOM.createPortal(menuContent, document.body)}
     </>
   );
