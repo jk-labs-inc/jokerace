@@ -51,6 +51,7 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ onChange, minDate, error
         timeCaption="time"
         dateFormat="MMMM d, yyyy h:mm aa z"
         minDate={minDate}
+        popperClassName="popper-custom"
         customInput={
           <CustomInput
             value={""}
