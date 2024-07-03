@@ -47,7 +47,7 @@ const MultiStepToast: FC<MultiStepToastProps> = ({ messages, promises, toastIdRe
       if (allCompleted) {
         toast.update(toastIdRef.current, {
           render: successMessage,
-          type: toast.TYPE.SUCCESS,
+          type: "success",
           autoClose: 4000,
         });
       }
