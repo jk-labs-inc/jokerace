@@ -1,4 +1,4 @@
-import { SearchIcon } from "@heroicons/react/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import React, { ChangeEvent, useState } from "react";
 import { debounce } from "underscore";
 
@@ -26,7 +26,7 @@ const Search: React.FC<SearchProps> = ({ onSearchChange }) => {
       } transition-colors duration-300 ease-in-out`}
     >
       <span className="text-neutral-11">
-        <SearchIcon
+        <MagnifyingGlassIcon
           className={`w-5  transition-colors duration-300 ease-in-out ${
             searchValue ? "text-true-white" : "text-neutral-9"
           }`}

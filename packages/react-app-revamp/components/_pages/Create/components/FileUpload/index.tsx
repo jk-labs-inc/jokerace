@@ -1,4 +1,4 @@
-import { DocumentAddIcon } from "@heroicons/react/outline";
+import { DocumentArrowDownIcon } from "@heroicons/react/24/outline";
 import { useDeployContestStore } from "@hooks/useDeployContest/store";
 import Image from "next/image";
 import React, { FC, useMemo, useRef, useState } from "react";
@@ -65,7 +65,7 @@ const FileUpload: FC<FileUploadProps> = ({ onFileSelect, type = "csv", step, isS
         <Image src="/create-flow/csv_upload.png" width={fileUploadIconWidth} height={fileUploadIconHeight} alt="csv" />
       );
     } else if (type === "docx") {
-      return <DocumentAddIcon className="w-[50px]" />;
+      return <DocumentArrowDownIcon className="w-[50px]" />;
     } else {
       return null;
     }

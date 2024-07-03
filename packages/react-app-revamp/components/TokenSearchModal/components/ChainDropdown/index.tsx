@@ -1,6 +1,6 @@
 import { FC, Fragment, useState } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon } from "@heroicons/react/outline";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { chainsImages } from "@config/wagmi";
 

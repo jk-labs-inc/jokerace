@@ -3,7 +3,7 @@ import UserProfileDisplay from "@components/UI/UserProfileDisplay";
 import { chains } from "@config/wagmi";
 import { extractPathSegments } from "@helpers/extractPath";
 import { formatNumber } from "@helpers/formatNumber";
-import { ChevronUpIcon, RefreshIcon } from "@heroicons/react/outline";
+import { ArrowPathIcon, ChevronUpIcon } from "@heroicons/react/24/outline";
 import { VOTES_PER_PAGE, useProposalVotes } from "@hooks/useProposalVotes";
 import { usePathname } from "next/navigation";
 import { FC, useCallback, useEffect, useRef, useState } from "react";
@@ -96,7 +96,7 @@ export const ListProposalVotes: FC<ListProposalVotesProps> = ({ proposalId, vote
 
         {isVotersOpen ? (
           <div onClick={onRefreshData} className="standalone-pwa cursor-pointer">
-            <RefreshIcon className="w-6 h-6 m-auto" />
+            <ArrowPathIcon className="w-6 h-6 m-auto" />
           </div>
         ) : null}
       </div>
