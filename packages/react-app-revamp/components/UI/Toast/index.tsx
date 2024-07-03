@@ -25,22 +25,22 @@ const createToast = (type: any, content: JSX.Element, additionalSettings: any = 
 };
 
 export const toastSuccess = (message: string) => {
-  createToast(toast.TYPE.SUCCESS, <SuccessToast message={message} />);
+  createToast("success", <SuccessToast message={message} />);
 };
 
 export const toastError = (message: string, messageToCopy?: string) => {
-  createToast(toast.TYPE.ERROR, <ErrorToast messageToShow={message} messageToCopy={messageToCopy} />, {
+  createToast("error", <ErrorToast messageToShow={message} messageToCopy={messageToCopy} />, {
     autoClose: false,
     className: "error-toast",
   });
 };
 
 export const toastWarning = (message: string) => {
-  createToast(toast.TYPE.WARNING, <WarningToast message={message} />);
+  createToast("warning", <WarningToast message={message} />);
 };
 
 export const toastLoading = (message: string, showSignMessage?: boolean) => {
-  createToast(toast.TYPE.INFO, <LoadingToast message={message} showSignMessage={showSignMessage} />, {
+  createToast("info", <LoadingToast message={message} showSignMessage={showSignMessage} />, {
     autoClose: false,
   });
 };
