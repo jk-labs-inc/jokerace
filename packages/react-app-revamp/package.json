@@ -95,7 +95,7 @@
     "@types/papaparse": "5.3.14",
     "@types/react": "18.2.64",
     "@types/react-csv": "1.1.10",
-    "@types/react-datepicker": "4.19.6",
+    "@types/react-datepicker": "6.2.0",
     "@types/react-dom": "18.0.5",
     "@types/react-virtualized": "9.21.30",
     "@types/react-window": "1.8.8",
