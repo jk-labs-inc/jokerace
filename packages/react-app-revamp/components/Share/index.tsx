@@ -1,7 +1,7 @@
 import { Menu, Transition } from "@headlessui/react";
 import { MediaQuery } from "@helpers/mediaQuery";
 import { generateLensShareUrlForContest, generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
-import { DuplicateIcon } from "@heroicons/react/24/outline";
+import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { FC, Fragment } from "react";
 
@@ -86,7 +86,7 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                   "flex items-center gap-1 px-4 py-2 text-[16px] hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
                 )}
               >
-                <DuplicateIcon className="h-8 w-8 text-gray-400 mr-2" />
+                <DocumentDuplicateIcon className="h-8 w-8 text-gray-400 mr-2" />
                 <span className="text-left">copy link</span>
               </a>
             )}

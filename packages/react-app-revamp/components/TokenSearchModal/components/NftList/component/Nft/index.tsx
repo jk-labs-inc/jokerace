@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { formatNumber } from "@helpers/formatNumber";
-import { BadgeCheckIcon } from "@heroicons/react/24/outline";
+import { CheckBadgeIcon } from "@heroicons/react/24/outline";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FC, useState } from "react";
 
@@ -45,7 +45,7 @@ const TokenSearchListNft: FC<TokenSearchListNftProps> = ({ nft, isChainDropdownO
           >
             {truncateTokenName(nft.name)}
           </p>
-          {nft.isVerified ? <BadgeCheckIcon width={20} className="text-blue" /> : null}
+          {nft.isVerified ? <CheckBadgeIcon width={20} className="text-blue" /> : null}
         </div>
 
         <p
