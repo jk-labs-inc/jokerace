@@ -1,6 +1,6 @@
 import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
 import { Menu, Transition } from "@headlessui/react";
-import { ChevronDownIcon, XIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC, Fragment, useEffect, useState } from "react";
 
@@ -123,7 +123,7 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
 
                           {selectedOption === property && (
                             <button onClick={e => handleResetSort(e, close)} className="ml-auto">
-                              <XIcon className="w-6 h-6 text-negative-11" />
+                              <XMarkIcon className="w-6 h-6 text-negative-11" />
                             </button>
                           )}
                         </div>

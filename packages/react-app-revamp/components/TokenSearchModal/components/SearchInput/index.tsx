@@ -1,4 +1,4 @@
-import { SearchIcon } from "@heroicons/react/24/outline";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { TOKENLISTOOOR_SUPPORTED_CHAIN_IDS } from "@hooks/useTokenList";
 import { ChangeEvent, FC, useState } from "react";
 import { debounce } from "underscore";
@@ -34,7 +34,7 @@ const TokenSearchModalSearchInput: FC<TokenSearchModalSearchInputProps> = ({
       }`}
     >
       <span className="text-neutral-11">
-        <SearchIcon
+        <MagnifyingGlassIcon
           className={`w-6 transition-colors duration-300 ease-in-out mt-1 ${
             searchValue ? "text-neutral-11" : "text-neutral-14"
           }`}
