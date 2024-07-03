@@ -114,17 +114,13 @@ import { zora } from "./custom-chains/zora";
 import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
 import { goerli } from "./custom-chains/goerli";
 
+declare module "wagmi";
+
 type ChainImages = {
   [key: string]: string;
 };
 
 type Transports = Record<Chain["id"], Transport>;
-
-declare module "wagmi" {
-  interface Register {
-    config: typeof config;
-  }
-}
 
 export const chains: readonly [Chain, ...Chain[]] = [
   polygon,
