@@ -87,7 +87,10 @@ const LayoutUser = (props: LayoutUserProps) => {
               {navLinks.map((link, index) => (
                 <Link href={link.href.replace("[address]", address)} key={link.href}>
                   <div
-                    ref={el => (tabRefs.current[index] = el)}
+                    ref={(el: HTMLDivElement | null) => {
+                      tabRefs.current[index] = el;
+                      return;
+                    }}
                     className={`font-sabo py-2 text-[16px] sm:text-[20px] cursor-pointer transition-colors duration-200 ${
                       isActiveLink(pathname ?? "", link.href, address) ? "text-primary-10" : "text-neutral-11"
                     }`}

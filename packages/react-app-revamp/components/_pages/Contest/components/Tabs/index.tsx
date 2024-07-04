@@ -39,7 +39,9 @@ const ContestTabs: FC<ContestTabsProps> = ({ tab, onChange }) => {
       <div className="flex gap-6 md:gap-8 mb-4">
         {Object.keys(Tab).map((tabKey, index) => (
           <div
-            ref={el => (tabRefs.current[index] = el)}
+            ref={(el: HTMLDivElement | null) => {
+              tabRefs.current[index] = el;
+            }}
             key={tabKey}
             className={`text-[16px] md:text-[24px] cursor-pointer font-bold transition-colors duration-200 ${
               tabKey === activeTab ? "text-primary-10" : "text-neutral-11"
