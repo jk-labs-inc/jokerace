@@ -119,6 +119,11 @@ li {
   animation: fadeIn 0.3s ease-in-out;
 }
 
+.popper-custom {
+  position: unset !important;
+  transform: none !important;
+}
+
 .react-datepicker__month-container {
   background-color: black !important;
   width: 300px;

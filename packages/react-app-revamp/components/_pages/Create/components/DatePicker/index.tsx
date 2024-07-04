@@ -1,7 +1,7 @@
+import Image from "next/image";
 import React, { forwardRef, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import ErrorMessage from "../Error";
-import Image from "next/image";
 
 interface CreateDatePicker {
   error?: string;
@@ -32,11 +32,13 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ onChange, minDate, error
     setStartDate(defaultDate);
   }, [defaultDate]);
 
-  const handleDateChange = (date: Date) => {
+  const handleDateChange = (date: Date | null) => {
     setStartDate(date);
-    onChange?.(date);
-  };
 
+    if (date && onChange) {
+      onChange(date);
+    }
+  };
   return (
     <div className="flex flex-col gap-2">
       <DatePicker
@@ -49,6 +51,7 @@ const CreateDatePicker: React.FC<CreateDatePicker> = ({ onChange, minDate, error
         timeCaption="time"
         dateFormat="MMMM d, yyyy h:mm aa z"
         minDate={minDate}
+        popperClassName="popper-custom"
         customInput={
           <CustomInput
             value={""}
