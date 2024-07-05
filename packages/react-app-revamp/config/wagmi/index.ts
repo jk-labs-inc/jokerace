@@ -16,6 +16,7 @@ import {
 } from "@rainbow-me/rainbowkit/wallets";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
+
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
@@ -28,6 +29,7 @@ import { astriaDusk2 } from "./custom-chains/astriaDusk2";
 import { avaxCChain } from "./custom-chains/avaxCChain";
 import { base } from "./custom-chains/base";
 import { baseTestnet } from "./custom-chains/baseTestnet";
+import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
 import { berachainTestnet } from "./custom-chains/berachainTestnet";
 import { blast } from "./custom-chains/blast";
 import { blastTestnet } from "./custom-chains/blastTestnet";
@@ -50,6 +52,7 @@ import { fraxtalTestnet } from "./custom-chains/fraxtalTestnet";
 import { fuse } from "./custom-chains/fuse";
 import { gnosis } from "./custom-chains/gnosis";
 import { gnosisTestnet } from "./custom-chains/gnosisTestnet";
+import { goerli } from "./custom-chains/goerli";
 import { gold } from "./custom-chains/gold";
 import { ham } from "./custom-chains/ham";
 import { hedera } from "./custom-chains/hedera";
@@ -74,6 +77,7 @@ import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
+import { metis } from "./custom-chains/metis";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
@@ -111,8 +115,6 @@ import { zetaTestnet } from "./custom-chains/zetaTestnet";
 import { zkFair } from "./custom-chains/zkFair";
 import { zkFairTestnet } from "./custom-chains/zkFairTestnet";
 import { zora } from "./custom-chains/zora";
-import { berachainBartioTestnet } from "./custom-chains/berachainBartioTestnet";
-import { goerli } from "./custom-chains/goerli";
 
 declare module "wagmi";
 
@@ -177,6 +179,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   hedera,
   taiko,
   ham,
+  metis, 
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
