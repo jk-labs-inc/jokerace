@@ -11,8 +11,7 @@ import { useContractFactoryStore } from "@hooks/useContractFactory";
 import { useError } from "@hooks/useError";
 import { readContract, waitForTransactionReceipt } from "@wagmi/core";
 import { differenceInSeconds, getUnixTime } from "date-fns";
-import { ContractFactory } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
+import { ContractFactory, formatUnits } from "ethers";
 import { loadFileFromBucket, saveFileToBucket } from "lib/buckets";
 import { Recipient } from "lib/merkletree/generateMerkleTree";
 import { canUploadLargeAllowlist } from "lib/vip";
@@ -109,7 +108,7 @@ export function useDeployContest() {
         costToVote: parseEther(chargeType.costToVote.toString()),
         payPerVote: charge.voteType === VoteType.PerVote ? 1 : 0,
         creatorSplitDestination: creatorSplitDestination,
-      }; 
+      };
 
       const contractContest = await factoryCreateContest.deploy(
         title,

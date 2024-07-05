@@ -6,7 +6,7 @@ import getContestContractVersion from "@helpers/getContestContractVersion";
 import { useError } from "@hooks/useError";
 import { readContracts } from "@wagmi/core";
 import { compareVersions } from "compare-versions";
-import { Result } from "ethers/lib/utils";
+import { Result } from "ethers";
 import { COMMENTS_VERSION } from "lib/proposal";
 import { shuffle, sortBy as sortUnique } from "lodash";
 import { usePathname } from "next/navigation";
