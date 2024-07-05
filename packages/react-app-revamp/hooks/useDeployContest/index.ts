@@ -51,7 +51,7 @@ export function useDeployContest() {
 
   async function deployContest() {
     const signer = await getEthersSigner(config, { chainId: chain?.id });
-    const isSpoofingDetected = await checkForSpoofing(signer?._address);
+    const isSpoofingDetected = await checkForSpoofing(signer?.address);
 
     if (isSpoofingDetected) {
       stateContestDeployment.setIsLoading(false);
@@ -84,7 +84,7 @@ export function useDeployContest() {
       const creatorSplitDestination =
         charge.splitFeeDestination.type === SplitFeeDestinationType.CreatorWallet ||
         charge.splitFeeDestination.type === SplitFeeDestinationType.NoSplit
-          ? signer._address
+          ? signer.address
           : charge.splitFeeDestination.address;
 
       // Handle allowedSubmissionsPerUser and maxSubmissions in case they are not set, they are zero, or we pass "infinity" to the contract
@@ -132,23 +132,25 @@ export function useDeployContest() {
         ],
       );
 
-      const transactionPromise = contractContest.deployTransaction.wait();
+      const transactionPromise = contractContest.waitForDeployment();
 
       // Wait for transaction to be executed
       await transactionPromise;
 
       const receiptDeployContest = await waitForTransactionReceipt(config, {
         chainId: chain?.id,
-        hash: contractContest.deployTransaction.hash as `0x${string}`,
+        hash: contractContest.deploymentTransaction()?.hash as `0x${string}`,
       });
 
-      const sortingEnabled = await isSortingEnabled(contractContest.address, chain?.id ?? 0);
+      const contractAddress = await contractContest.getAddress();
+
+      const sortingEnabled = await isSortingEnabled(contractAddress, chain?.id ?? 0);
 
       setDeployContestData(
         chain?.name ?? "",
         chain?.id ?? 0,
         receiptDeployContest.transactionHash,
-        contractContest.address.toLowerCase(),
+        contractAddress.toLowerCase(),
         advancedOptions.downvote,
         sortingEnabled,
       );
@@ -185,7 +187,7 @@ export function useDeployContest() {
         datetimeOpeningSubmissions: submissionOpen,
         datetimeOpeningVoting: votingOpen,
         datetimeClosingVoting: votingClose,
-        contractAddress: contractContest.address.toLowerCase(),
+        contractAddress: contractAddress.toLowerCase(),
         votingMerkleRoot: votingMerkle?.merkleRoot ?? EMPTY_ROOT,
         submissionMerkleRoot: submissionMerkle?.merkleRoot ?? EMPTY_ROOT,
         authorAddress: address,
