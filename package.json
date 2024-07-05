@@ -19,7 +19,7 @@
     "coverage": "yarn workspace @scaffold-eth/forge forgecoverage",
     "smartcheck": "yarn format && yarn test -vv && yarn deploy",
     "fecheck": "turbo build",
-    "postinstall": "husky install"
+    "postinstall": "husky"
   },
   "workspaces": [
     "packages/*"
