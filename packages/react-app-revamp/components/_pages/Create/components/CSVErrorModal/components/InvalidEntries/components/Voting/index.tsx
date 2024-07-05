@@ -2,7 +2,7 @@ import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import { VotingFieldObject } from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor";
 import ScrollableTableBody from "@components/_pages/Create/pages/ContestVoting/components/VotingAllowlist/components/CSVEditor/TableBody";
 import { validateVotingFields } from "@components/_pages/Create/utils/csv";
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel } from "@headlessui/react";
 import Image from "next/image";
 import { FC } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -80,7 +80,7 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
       <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="flex min-h-full w-full items-center justify-center">
-          <Dialog.Panel
+          <DialogPanel
             className={`text-sm mx-auto min-h-screen max-h-screen w-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] md:w-[900px] bg-true-black 2xs:rounded-[10px]`}
           >
             <div className="px-6 py-6 md:pl-24 md:pr-14 md:py-10">
@@ -151,7 +151,7 @@ const CSVErrorModalInvalidEntriesVoting: FC<CSVErrorModalInvalidEntriesVotingPro
                 </div>
               </div>
             </div>
-          </Dialog.Panel>
+          </DialogPanel>
         </div>
       </div>
     </Dialog>

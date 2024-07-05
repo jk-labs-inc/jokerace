@@ -1,4 +1,4 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { MediaQuery } from "@helpers/mediaQuery";
 import { generateLensShareUrlForContest, generateTwitterShareUrlForContest, generateUrlToCopy } from "@helpers/share";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
@@ -24,9 +24,9 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
         </Menu.Button>
       </MediaQuery>
       <MediaQuery minWidth={769}>
-        <Menu.Button className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
+        <MenuButton className="p-4 h-8 flex items-center gap-2 text-neutral-11 text-[16px] font-bold rounded-[10px] border border-neutral-11">
           Share <Image src="/forward.svg" alt="share" className="ml-1" width={20} height={20} />
-        </Menu.Button>
+        </MenuButton>
       </MediaQuery>
 
       <Transition
@@ -38,14 +38,14 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10  mt-2 w-48 origin-top-right rounded-md bg-true-black shadow-lg ring-1 ring-inset ring-primary-9 ring-opacity-10 focus:outline-none">
-          <Menu.Item>
-            {({ active }) => (
+        <MenuItems className="absolute right-0 z-10  mt-2 w-48 origin-top-right rounded-md bg-true-black shadow-lg ring-1 ring-inset ring-primary-9 ring-opacity-10 focus:outline-none">
+          <MenuItem>
+            {({ focus }) => (
               <a
                 target="_blank"
                 href={generateLensShareUrlForContest(contestName, contestAddress, chain)}
                 className={classNames(
-                  active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
+                  focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                   "flex items-center text-[16px] gap-1 px-4 py-2 hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
                 )}
                 rel="noreferrer"
@@ -54,14 +54,14 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 <span className="text-left">share on Lens</span>
               </a>
             )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
+          </MenuItem>
+          <MenuItem>
+            {({ focus }) => (
               <a
                 href={generateTwitterShareUrlForContest(contestName, contestAddress, chain)}
                 target="_blank"
                 className={classNames(
-                  active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
+                  focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                   "flex items-center text-[16px] gap-1 px-4 py-2  hover:bg-gray-100 hover:text-gray-900 border-b border-neutral-3",
                 )}
                 rel="noreferrer"
@@ -76,13 +76,13 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 <span className="text-left">share on Twitter</span>
               </a>
             )}
-          </Menu.Item>
-          <Menu.Item>
-            {({ active }) => (
+          </MenuItem>
+          <MenuItem>
+            {({ focus }) => (
               <a
                 onClick={() => generateUrlToCopy(contestAddress, chain)}
                 className={classNames(
-                  active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
+                  focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                   "flex items-center gap-1 px-4 py-2 text-[16px] hover:bg-gray-100 hover:text-gray-900 cursor-pointer",
                 )}
               >
@@ -90,8 +90,8 @@ const ShareDropdown: FC<ShareDropdownProps> = ({ contestName, contestAddress, ch
                 <span className="text-left">copy link</span>
               </a>
             )}
-          </Menu.Item>
-        </Menu.Items>
+          </MenuItem>
+        </MenuItems>
       </Transition>
     </Menu>
   );

@@ -1,4 +1,4 @@
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { FC, useState } from "react";
@@ -32,7 +32,7 @@ const CSVErrorModalDuplicates: FC<CSVErrorModalDuplicatesProps> = ({ addresses, 
       <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="flex min-h-full w-full items-center justify-center">
-          <Dialog.Panel
+          <DialogPanel
             className={`text-sm mx-auto min-h-screen max-h-screen w-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] md:w-[900px] bg-true-black 2xs:rounded-[10px]`}
           >
             <div className="px-6 py-6 md:pl-24 md:pr-14 md:py-10">
@@ -84,7 +84,9 @@ const CSVErrorModalDuplicates: FC<CSVErrorModalDuplicatesProps> = ({ addresses, 
                           {isExpanded ? "view less" : "view all"}
                         </p>
                         <ChevronDownIcon
-                          className={`w-6 transition-transform duration-300 text-positive-11 ${isExpanded ? "rotate-180" : ""}`}
+                          className={`w-6 transition-transform duration-300 text-positive-11 ${
+                            isExpanded ? "rotate-180" : ""
+                          }`}
                         />
                       </div>
                     )}
@@ -92,7 +94,7 @@ const CSVErrorModalDuplicates: FC<CSVErrorModalDuplicatesProps> = ({ addresses, 
                 </div>
               </div>
             </div>
-          </Dialog.Panel>
+          </DialogPanel>
         </div>
       </div>
     </Dialog>
