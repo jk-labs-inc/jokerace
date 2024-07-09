@@ -173,8 +173,12 @@ export async function getContestContractVersion(address: string, chainId: number
     }
 
     if (version === "1") {
-      const bytecode = await provider.getCode(address);
-      if (bytecode.length <= 2) return defaultReturn;
+      const bytecode = await provider?.getCode(address);
+
+      if (!bytecode || bytecode.length <= 2) {
+        return defaultReturn;
+      }
+
       if (!bytecode.includes(ethers.id("prompt()").slice(2, 10))) {
         return { abi: LegacyDeployedContestContract.abi, version };
       } else if (!bytecode.includes(ethers.id("allProposalTotalVotes()").slice(2, 10))) {
