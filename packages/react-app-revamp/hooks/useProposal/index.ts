@@ -168,7 +168,7 @@ export function useProposal() {
 
       const proposalsIdsRawData = await getProposalIdsRaw(contractConfig, useLegacyGetAllProposalsIdFn);
 
-      let proposalsIds: any;
+      let proposalsIds: string[];
       let mappedProposals: MappedProposalIds[] = [];
       const currentDate = new Date();
 
