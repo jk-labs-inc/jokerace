@@ -1,4 +1,4 @@
-import { RadioGroup } from "@headlessui/react";
+import { Radio, RadioGroup } from "@headlessui/react";
 import shortenEthereumAddress from "@helpers/shortenEthereumAddress";
 import { SplitFeeDestination, SplitFeeDestinationType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
@@ -41,7 +41,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
       <p className="text-[20px] md:text-[20px] text-neutral-11 font-bold">{percentageTitle}</p>
       <RadioGroup value={selected} onChange={handleSplitFeeDestinationTypeChange}>
         <div className="flex flex-col gap-2">
-          <RadioGroup.Option value={SplitFeeDestinationType.CreatorWallet}>
+          <Radio value={SplitFeeDestinationType.CreatorWallet}>
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
@@ -54,8 +54,8 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                 </div>
               </div>
             )}
-          </RadioGroup.Option>
-          <RadioGroup.Option value={SplitFeeDestinationType.AnotherWallet}>
+          </Radio>
+          <Radio value={SplitFeeDestinationType.AnotherWallet}>
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
@@ -77,8 +77,8 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                 </div>
               </div>
             )}
-          </RadioGroup.Option>
-          <RadioGroup.Option value={SplitFeeDestinationType.NoSplit}>
+          </Radio>
+          <Radio value={SplitFeeDestinationType.NoSplit}>
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
@@ -91,7 +91,7 @@ const ContestParamsSplitFeeDestination: FC<ContestParamsSplitFeeDestinationProps
                 </div>
               </div>
             )}
-          </RadioGroup.Option>
+          </Radio>
         </div>
       </RadioGroup>
     </div>

@@ -1,15 +1,15 @@
-import { Switch } from "@headlessui/react";
+import { Label, Switch } from "@headlessui/react";
 
 export const ToggleSwitch = (props: any) => {
   const { label, helpText, ...rest } = props;
   const { checked } = rest;
   return (
-    <Switch.Group>
+    <Switch>
       <div className="flex flex-col">
         <div className="flex items-center">
-          <Switch.Label className="flex flex-col font-bold text-sm">
+          <Label className="flex flex-col font-bold text-sm">
             <span className="pie-2">{label}</span>
-          </Switch.Label>
+          </Label>
           <Switch
             {...rest}
             type="button"
@@ -31,7 +31,7 @@ export const ToggleSwitch = (props: any) => {
         </div>
         {helpText && <span className="text-neutral-11 pt-1 text-2xs">{helpText}</span>}
       </div>
-    </Switch.Group>
+    </Switch>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Dialog, Transition } from "@headlessui/react";
+import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import { Fragment, useRef, useState } from "react";
@@ -26,7 +26,7 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
   };
 
   const menuContent = (
-    <Transition.Root show={isOpen} as={Fragment}>
+    <Transition show={isOpen} as={Fragment}>
       <Dialog
         as="div"
         className="fixed inset-0 overflow-hidden"
@@ -36,7 +36,7 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
       >
         <div tabIndex={-1} ref={initialFocusRef} />
         <div className="absolute inset-0 overflow-hidden" style={{ zIndex: 9999 }}>
-          <Transition.Child
+          <TransitionChild
             as={Fragment}
             enter="ease-in-out duration-300"
             enterFrom="translate-x-full"
@@ -49,7 +49,7 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
               className="pointer-events-auto fixed inset-y-0 right-0 flex max-w-full pl-10 bg-true-black"
               style={{ zIndex: 9999 }}
             >
-              <Dialog.Panel className={`w-screen max-w-md transform transition ease-in-out duration-300 ${className}`}>
+              <DialogPanel className={`w-screen max-w-md transform transition ease-in-out duration-300 ${className}`}>
                 <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
                   <div className="mt-24 relative flex-1">{children}</div>
                   <div className="absolute top-2 right-0 pt-4 pr-6">
@@ -59,12 +59,12 @@ const BurgerMenu = ({ children, className, onOpen, onClose }: BurgerMenuProps) =
                     </button>
                   </div>
                 </div>
-              </Dialog.Panel>
+              </DialogPanel>
             </div>
-          </Transition.Child>
+          </TransitionChild>
         </div>
       </Dialog>
-    </Transition.Root>
+    </Transition>
   );
 
   return (

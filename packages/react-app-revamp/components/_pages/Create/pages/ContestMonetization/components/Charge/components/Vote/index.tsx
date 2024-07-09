@@ -1,5 +1,5 @@
 import CreateNumberInput from "@components/_pages/Create/components/NumberInput";
-import { RadioGroup } from "@headlessui/react";
+import { Radio, RadioGroup } from "@headlessui/react";
 import { VoteType } from "@hooks/useDeployContest/types";
 import { FC, useState } from "react";
 import { useMediaQuery } from "react-responsive";
@@ -46,7 +46,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
       </p>
       <RadioGroup value={selected} onChange={handleVoteTypeChange}>
         <div className={`flex ${isAnyoneCanVote ? "flex-col-reverse" : "flex-col"} gap-4`}>
-          <RadioGroup.Option value={VoteType.PerTransaction} disabled={isAnyoneCanVote}>
+          <Radio value={VoteType.PerTransaction} disabled={isAnyoneCanVote}>
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
@@ -76,8 +76,8 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                 </div>
               </div>
             )}
-          </RadioGroup.Option>
-          <RadioGroup.Option value={VoteType.PerVote}>
+          </Radio>
+          <Radio value={VoteType.PerVote}>
             {({ checked }) => (
               <div className="flex gap-4 items-start cursor-pointer">
                 <div
@@ -109,7 +109,7 @@ const ContestParamsChargeVote: FC<ContestParamsChargeVoteProps> = ({
                 </div>
               </div>
             )}
-          </RadioGroup.Option>
+          </Radio>
         </div>
       </RadioGroup>
     </div>

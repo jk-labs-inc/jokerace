@@ -1,6 +1,7 @@
 import { Chain } from "@rainbow-me/rainbowkit";
 import { Transport } from "viem";
 import { cookieStorage, createConfig, createStorage, fallback, http } from "wagmi";
+
 import { aevo } from "./custom-chains/aevo";
 import { ancient8 } from "./custom-chains/ancient8";
 import { ancient8Testnet } from "./custom-chains/ancient8Testnet";
@@ -61,6 +62,7 @@ import { merlinTestnet } from "./custom-chains/merlinTestnet";
 import { mode } from "./custom-chains/mode";
 import { modeTestnet } from "./custom-chains/modeTestnet";
 import { morphTestnet } from "./custom-chains/morphTestnet";
+import { metis } from "./custom-chains/metis";
 import { nautilusChain } from "./custom-chains/nautilusChain";
 import { near } from "./custom-chains/near";
 import { nearTestnet } from "./custom-chains/nearTestnet";
@@ -156,6 +158,7 @@ export const chains: readonly [Chain, ...Chain[]] = [
   hedera,
   taiko,
   ham,
+  metis,
   polygonTestnet,
   sepolia,
   polygonZkTestnet,
