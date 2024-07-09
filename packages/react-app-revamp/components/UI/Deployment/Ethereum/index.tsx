@@ -1,10 +1,7 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel } from "@headlessui/react";
 import { useChainModal } from "@rainbow-me/rainbowkit";
-import Image from "next/image";
 import { FC } from "react";
-import { useMediaQuery } from "react-responsive";
-import { useMedia } from "react-use";
 
 interface EthereumDeploymentModalProps {
   isOpen: boolean;
@@ -25,7 +22,7 @@ const EthereumDeploymentModal: FC<EthereumDeploymentModalProps> = ({ isOpen, set
       <div className="fixed inset-0 pointer-events-none bg-neutral-8 bg-opacity-60" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="flex min-h-full w-full items-center justify-center">
-          <Dialog.Panel
+          <DialogPanel
             className={`text-sm mx-auto min-h-screen max-h-screen w-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] md:w-[800px] bg-true-black 2xs:rounded-[10px]`}
           >
             <div className="px-12 py-12 md:pl-24 md:pr-14 md:py-16">
@@ -56,7 +53,7 @@ const EthereumDeploymentModal: FC<EthereumDeploymentModalProps> = ({ isOpen, set
                 </div>
               </div>
             </div>
-          </Dialog.Panel>
+          </DialogPanel>
         </div>
       </div>
     </Dialog>

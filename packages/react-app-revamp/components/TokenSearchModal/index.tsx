@@ -1,11 +1,11 @@
-import { Dialog } from "@headlessui/react";
+import { Dialog, DialogPanel } from "@headlessui/react";
 import { NFTMetadata } from "@hooks/useSearchNfts";
 import { FilteredToken } from "@hooks/useTokenList";
 import Image from "next/image";
 import { FC, useCallback } from "react";
+import { Option } from "./components/ChainDropdown";
 import TokenSearchModalERC20 from "./ERC20";
 import TokenSearchModalNft from "./NFT";
-import { Option } from "./components/ChainDropdown";
 
 export enum TokenSearchModalType {
   ERC20 = "erc20",
@@ -48,7 +48,7 @@ const TokenSearchModal: FC<TokenSearchModalProps> = ({
       <div className="fixed inset-0 pointer-events-none bg-true-black bg-opacity-80" aria-hidden="true" />
       <div className="fixed inset-0 flex items-center justify-center">
         <div className="flex min-h-full w-full items-center justify-center">
-          <Dialog.Panel
+          <DialogPanel
             className={`text-sm shadow-file-upload mx-auto min-h-screen max-h-screen w-screen overflow-y-auto 2xs:min-h-auto 2xs:max-h-[calc(100vh-60px)] md:h-[658px] md:max-h-[658px] md:w-[552px] bg-true-black 2xs:rounded-[15px]`}
           >
             <div className="px-4 md:px-8 py-10">
@@ -74,7 +74,7 @@ const TokenSearchModal: FC<TokenSearchModalProps> = ({
                 )}
               </div>
             </div>
-          </Dialog.Panel>
+          </DialogPanel>
         </div>
       </div>
     </Dialog>

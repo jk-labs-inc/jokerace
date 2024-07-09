@@ -1,6 +1,6 @@
-import { FC, Fragment, useState, useRef } from "react";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { FC, Fragment, useRef, useState } from "react";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -37,10 +37,10 @@ const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, o
 
         return (
           <>
-            <Menu.Button className="flex items-center gap-2 text-[16px] text-positive-11 w-full">
+            <MenuButton className="flex items-center gap-2 text-[16px] text-positive-11 w-full">
               sort: {selectedLabel}
               <ChevronDownIcon className="w-6 h-6 text-positive-11" aria-hidden="true" />
-            </Menu.Button>
+            </MenuButton>
 
             <Transition
               as={Fragment}
@@ -51,14 +51,14 @@ const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, o
               leaveFrom="transform opacity-100 scale-100"
               leaveTo="transform opacity-0 scale-95"
             >
-              <Menu.Items className="absolute overflow-x-clip md:-right-2 z-10 mt-4 w-36 rounded-[10px] shadow-sortProposalDropdown focus:outline-none">
+              <MenuItems className="absolute overflow-x-clip md:-right-2 z-10 mt-4 w-36 rounded-[10px] shadow-sortProposalDropdown focus:outline-none">
                 {options.map(option => (
-                  <Menu.Item key={option.value}>
-                    {({ active }) => (
+                  <MenuItem key={option.value}>
+                    {({ focus }) => (
                       <button
                         type="button"
                         className={classNames(
-                          active ? "bg-neutral-2" : "bg-true-black",
+                          focus ? "bg-neutral-2" : "bg-true-black",
                           "block w-full px-4 py-2 text-left text-[16px]",
                           option.value === selectedValue ? "font-bold" : "",
                         )}
@@ -67,9 +67,9 @@ const SortProposalsDropdown: FC<SortProposalsDropdownProps> = ({ defaultValue, o
                         {option.label}
                       </button>
                     )}
-                  </Menu.Item>
+                  </MenuItem>
                 ))}
-              </Menu.Items>
+              </MenuItems>
             </Transition>
           </>
         );
