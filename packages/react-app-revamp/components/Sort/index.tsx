@@ -1,5 +1,5 @@
 import { ROUTE_VIEW_PAST_CONTESTS } from "@config/routes";
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FC, Fragment, useEffect, useState } from "react";
@@ -88,12 +88,12 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
                 selectedOption || open ? "border-primary-10" : "border-neutral-9"
               } transition-colors duration-300 ease-in-out`}
             >
-              <Menu.Button className="flex items-center gap-3 pl-2 pr-2 w-[100%] h-[100%] cursor-pointer text-[16px]">
+              <MenuButton className="flex items-center gap-3 pl-2 pr-2 w-[100%] h-[100%] cursor-pointer text-[16px]">
                 <span className={`${selectedOption || open ? `text-true-white` : `text-neutral-9`}`}>
                   {label ? label : "Sort"}
                 </span>
                 <ChevronDownIcon className="w-5 cursor-pointer ml-auto" />{" "}
-              </Menu.Button>
+              </MenuButton>
             </div>
 
             {open && (
@@ -106,13 +106,13 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
                 leaveFrom="transform opacity-100 scale-100"
                 leaveTo="transform opacity-0 scale-95"
               >
-                <Menu.Items className="absolute w-[220px] z-10 mt-4 origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
+                <MenuItems className="absolute w-[220px] z-10 mt-4 origin-top-right rounded-md bg-true-black shadow-lg dropdownBorder  focus:outline-none">
                   {sortOptions.map(({ property, label }) => (
-                    <Menu.Item key={property}>
-                      {({ active, close }) => (
+                    <MenuItem key={property}>
+                      {({ focus, close }) => (
                         <div
                           className={classNames(
-                            active ? "bg-neutral-3 text-gray-900" : "text-gray-700",
+                            focus ? "bg-neutral-3 text-gray-900" : "text-gray-700",
                             "flex items-center gap-1 px-4 py-2 text-[16px] font-normal hover:bg-gray-100 hover:text-gray-900 cursor-pointer transition-colors duration-300 ease-in-out",
                           )}
                           onClick={() => handleSortChange(property, label)}
@@ -128,9 +128,9 @@ const Sort: FC<SortProps> = ({ sortOptions, onSortChange, onMenuStateChange }) =
                           )}
                         </div>
                       )}
-                    </Menu.Item>
+                    </MenuItem>
                   ))}
-                </Menu.Items>
+                </MenuItems>
               </Transition>
             )}
           </>

@@ -1,4 +1,4 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { useEditorStore } from "@hooks/useEditor/store";
 import { FC, Fragment, useEffect, useState } from "react";
@@ -34,10 +34,10 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
 
   return (
     <Menu as="div" className="relative inline-block mt-[2px] text-left">
-      <Menu.Button className="inline-flex w-fit items-center justify-center gap-1 rounded-[5px] bg-transparent px-1 py-1 text-[14px] md:text-[16px] text-neutral-11 normal-case">
+      <MenuButton className="inline-flex w-fit items-center justify-center gap-1 rounded-[5px] bg-transparent px-1 py-1 text-[14px] md:text-[16px] text-neutral-11 normal-case">
         {selectedItem.label}
         <ChevronDownIcon className="-mr-1 h-4 w-4 text-gray-400" aria-hidden="true" />
-      </Menu.Button>
+      </MenuButton>
 
       <Transition
         as={Fragment}
@@ -48,14 +48,14 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute left-[5px] md:left-auto right-0 z-10 mt-2 w-52 origin-top-right overflow-x-clip rounded-[5px] bg-white border border-neutral-11 bg-true-black focus:outline-none">
+        <MenuItems className="absolute left-[5px] md:left-auto right-0 z-10 mt-2 w-52 origin-top-right overflow-x-clip rounded-[5px] bg-white border border-neutral-11 bg-true-black focus:outline-none">
           <div className="py-1">
-            <Menu.Item>
-              {({ active }) => (
+            <MenuItem>
+              {({ focus }) => (
                 <a
                   onClick={() => handleSelection("1", "Heading 1")}
                   className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block px-4 py-2 hover:bg-neutral-3 transition-colors duration-300 ease-in-out normal-case",
                     "text-custom-h1 cursor-pointer",
                   )}
@@ -63,13 +63,13 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
                   Heading 1
                 </a>
               )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
+            </MenuItem>
+            <MenuItem>
+              {({ focus }) => (
                 <a
                   onClick={() => handleSelection("2", "Heading 2")}
                   className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block px-4 py-2 hover:bg-neutral-3 transition-colors duration-300 ease-in-out normal-case",
                     "text-custom-h2 cursor-pointer",
                   )}
@@ -77,13 +77,13 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
                   Heading 2
                 </a>
               )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
+            </MenuItem>
+            <MenuItem>
+              {({ focus }) => (
                 <a
                   onClick={() => handleSelection("3", "Heading 3")}
                   className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block px-4 py-2 hover:bg-neutral-3 transition-colors duration-300 ease-in-out normal-case",
                     "text-custom-h3 cursor-pointer",
                   )}
@@ -91,13 +91,13 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
                   Heading 3
                 </a>
               )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
+            </MenuItem>
+            <MenuItem>
+              {({ focus }) => (
                 <a
                   onClick={() => handleSelection("4", "Heading 4")}
                   className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block px-4 py-2 hover:bg-neutral-3 transition-colors duration-300 ease-in-out normal-case",
                     "text-custom-h4 cursor-pointer",
                   )}
@@ -105,13 +105,13 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
                   Heading 4
                 </a>
               )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
+            </MenuItem>
+            <MenuItem>
+              {({ focus }) => (
                 <a
                   onClick={() => handleSelection("0", "Normal text")}
                   className={classNames(
-                    active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+                    focus ? "bg-gray-100 text-gray-900" : "text-gray-700",
                     "block px-4 py-2 hover:bg-neutral-3 transition-colors duration-300 ease-in-out normal-case",
                     "text-[16px] cursor-pointer",
                   )}
@@ -119,9 +119,9 @@ const TipTapEditorControlsTextDropdown: FC<TipTapEditorControlsTextDropdownProps
                   Normal text
                 </a>
               )}
-            </Menu.Item>
+            </MenuItem>
           </div>
-        </Menu.Items>
+        </MenuItems>
       </Transition>
     </Menu>
   );
