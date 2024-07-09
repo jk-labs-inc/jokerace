@@ -1,10 +1,12 @@
 import ButtonV3, { ButtonSize } from "@components/UI/ButtonV3";
 import {
   generateFacebookShareUrlForSubmission,
+  generateFarcasterShareUrlForSubmission,
   generateLensShareUrlForSubmission,
   generateLinkedInShareUrlForSubmission,
   generateTwitterShareUrlForSubmission,
 } from "@helpers/share";
+import { useContestStore } from "@hooks/useContest/store";
 import { useSubmitProposalStore } from "@hooks/useSubmitProposal/store";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,6 +24,7 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
   contestId,
   proposalId,
 }) => {
+  const { contestName } = useContestStore(state => state);
   const isMobile = useMediaQuery({ maxWidth: 768 });
   const { setIsModalOpen } = useSubmitProposalStore(state => state);
   const [copyText, setCopyText] = useState("copy");
@@ -55,6 +58,22 @@ const DialogModalSendProposalSuccessLayout: FC<DialogModalSendProposalSuccessLay
         >
           <Image src="/socials/share-submission/twitter.svg" width={32} height={32} alt="twitter" />
         </a>
+        <div className="relative w-8 h-8 rounded-full bg-[#855DCD] flex items-center justify-center">
+          <a
+            href={generateFarcasterShareUrlForSubmission(contestName, contestId, chainName, proposalId)}
+            className="flex items-center justify-center w-full h-full"
+            target="_blank"
+            aria-label="Share on Farcaster"
+          >
+            <Image
+              src="/socials/share-submission/farcaster.svg"
+              width={32}
+              height={32}
+              alt="farcaster"
+              className="w-5 h-5"
+            />
+          </a>
+        </div>
         <a href={generateLinkedInShareUrlForSubmission(contestId, chainName, proposalId)} target="_blank">
           <Image src="/socials/share-submission/linkedin.svg" width={32} height={32} alt="linkedIn" />
         </a>
