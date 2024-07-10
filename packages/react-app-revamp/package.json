@@ -8,8 +8,8 @@
     "build": "next build"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.609.0",
-    "@aws-sdk/s3-request-presigner": "3.609.0",
+    "@aws-sdk/client-s3": "3.613.0",
+    "@aws-sdk/s3-request-presigner": "3.613.0",
     "@babel/core": "7.24.7",
     "@babel/preset-env": "7.24.0",
     "@clustersxyz/sdk": "0.3.0",
